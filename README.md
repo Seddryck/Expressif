@@ -91,7 +91,7 @@ or based on its position with the syntax `#index` (where index is positive numbe
 
 ```csharp
 var context = new Context();
-context.PropertyObject.Set(new List() {'e', 's'});
+context.CurrentObject.Set(new List() {'e', 's'});
 
 var factory = new ExpressionFactory(context);
 var expression = factory.Instantiate("text-to-lower | text-to-remove-chars(#1)");
@@ -104,7 +104,7 @@ It's also possible to use a function's result as the value of a parameter for an
 ```csharp
 var context = new Context();
 context.Variable.Add("myVar", 6)
-context.PropertyObject.Set(new List() {15, 8, 3});
+context.CurrentObject.Set(new List() {15, 8, 3});
 
 var factory = new ExpressionFactory(context);
 var expression = factory.Instantiate("text-to-lower | text-to-skip-last-chars( {@myVar | numeric-to-subtract(#2) }));
