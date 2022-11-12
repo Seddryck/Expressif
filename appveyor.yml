@@ -1,0 +1,44 @@
+version: build.{build}
+image: Visual Studio 2022
+
+skip_commits:
+  files:
+    - docs/
+    - misc/
+    - README.md
+    - LICENSE
+
+environment:
+  github_access_token:
+    secure: j31Dt6ak1HtS5PTfhwc/He4jeCesBw9GULDRlPhNLjwBQEgFivhypRi5m4M7o3cb
+
+init:
+  - cmd: git config --global core.autocrlf true
+  - ps: $env:IGNORE_NORMALISATION_GIT_HEAD_MOVE = 1
+
+before_build:
+- cmd: gitversion /output buildserver /verbosity Minimal
+- cmd: echo "Building DubUrl version %GitVersion_SemVer%"
+
+build_script:
+  #- dotnet --info
+  - dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo 
+
+test_script:
+- dotnet test Expressif.Testing -c Release --test-adapter-path:. --logger:Appveyor --no-build --nologo 
+
+after_test:
+- dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo 
+
+artifacts:
+- path: '**\*.nupkg'
+- path: '**\*.snupkg'
+
+deploy:
+- provider: NuGet
+  api_key:
+    secure: ijpxFuIlbHkjRHDylNSFkJrpw3b6+iK8bUSBP2SdtjkP6S8mCoe2Kdb0pP46WXu2
+  skip_symbols: false
+  artifact: /.*(\.|\.s)nupkg/
+  on:
+    branch: main
