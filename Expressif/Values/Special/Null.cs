@@ -17,6 +17,7 @@ namespace Expressif.Values.Special
         public override bool Equals(object? value)
             => value switch
             {
+                Null => true,
                 null => true,
                 DBNull _ => true,
                 string v => AdvancedMatch(v),

@@ -115,7 +115,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", "(null)")]
         [TestCase("(empty)", "(empty)")]
         [TestCase("(blank)", "(empty)")]
-        public void Trim_Valid(object value, object expected)
+        public void TextToTrim_Valid(object value, object expected)
             => Assert.That(new TextToTrim().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -126,7 +126,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", "(null)")]
         [TestCase("(empty)", "(empty)")]
         [TestCase("(blank)", "(blank)")]
-        public void UpperCase_Valid(object value, object expected)
+        public void TextToUpper_Valid(object value, object expected)
             => Assert.That(new TextToUpper().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -137,7 +137,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", "(null)")]
         [TestCase("(empty)", "(empty)")]
         [TestCase("(blank)", "(blank)")]
-        public void LowerCase_Valid(object value, object expected)
+        public void TextToLower_Valid(object value, object expected)
             => Assert.That(new TextToLower().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -147,7 +147,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", 0)]
         [TestCase("(empty)", 0)]
         [TestCase("(blank)", -1)]
-        public void Length_Valid(object value, int length)
+        public void TextToLength_Valid(object value, int length)
             => Assert.That(new TextToLength().Evaluate(value), Is.EqualTo(length));
 
         [Test]
@@ -211,7 +211,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", "abc", "(null)")]
         [TestCase("(empty)", "abc", "abc")]
         [TestCase("(blank)", "abc", "abc")]
-        public void Execute_TextToSuffix_Valid(string value, string suffix, string expected)
+        public void TextToSuffix_Valid(string value, string suffix, string expected)
             => Assert.That(new TextToSuffix(new LiteralScalarResolver<string>(suffix)).Evaluate(value)
                 , Is.EqualTo(expected));
 
@@ -257,7 +257,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("123456789", 0, "123456789")]
         [TestCase("(null)", 3, "(null)")]
         [TestCase("(empty)", 3, "(empty)")]
-        public void Execute_TextToSkipLastChars_Valid(string value, int length, string expected)
+        public void TextToSkipLastChars_Valid(string value, int length, string expected)
             => Assert.That(new TextToSkipLastChars(new LiteralScalarResolver<int>(length)).Evaluate(value)
                 , Is.EqualTo(expected));
 
@@ -305,7 +305,7 @@ namespace Expressif.Testing.Functions.Text
         [Test]
         [TestCase("20190317111223", "yyyyMMddhhmmss", "fr-fr", "2019-03-17 11:12:23")]
         [TestCase("mercredi 25-sept.-19", "dddd dd-MMM-yy", "fr-fr", "2019-09-25")]
-        public void TextToDateTimeWithCulture_Valid(string value, string format, string culture, DateTime expected)
+        public void TextToDateTime_Culture_Valid(string value, string format, string culture, DateTime expected)
             => Assert.That(new TextToDateTime(new LiteralScalarResolver<string>(format), new LiteralScalarResolver<string>(culture))
                 .Evaluate(value), Is.EqualTo(expected));
 
@@ -317,7 +317,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(empty)", "*", "(empty)")]
         [TestCase("(blank)", "*", "(blank)")]
         [TestCase("(blank)", " ", "(empty)")]
-        public void Execute_TextToRemoveChars_Valid(string value, char charToRemove, string expected)
+        public void TextToRemoveChars_Valid(string value, char charToRemove, string expected)
             => Assert.That(new TextToRemoveChars(new LiteralScalarResolver<char>(charToRemove)).Evaluate(value)
                 , Is.EqualTo(expected));
 

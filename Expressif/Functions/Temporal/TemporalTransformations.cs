@@ -22,7 +22,7 @@ namespace Expressif.Functions.Temporal
             };
         }
 
-        private object? EvaluateUncasted(object value)
+        protected virtual object? EvaluateUncasted(object value)
         {
             if (new Null().Equals(value))
                 return EvaluateNull();
@@ -140,6 +140,27 @@ namespace Expressif.Functions.Temporal
 
         protected override object EvaluateNull() => Default.Execute();
         protected override object EvaluateDateTime(DateTime value) => value;
+    }
+
+    class InvalidToDate : AbstractTemporalTransformation
+    {
+        public IScalarResolver<DateTime> Default { get; }
+
+        public InvalidToDate(IScalarResolver<DateTime> dt)
+            => Default = dt;
+
+        protected override object EvaluateNull() => new Null();
+        protected override object EvaluateDateTime(DateTime value) => value;
+        protected override object? EvaluateUncasted(object value)
+        {
+            if (new Null().Equals(value))
+                return EvaluateNull();
+
+            var caster = new DateTimeCaster();
+            
+            try { return caster.Execute(value);} 
+            catch { return Default.Execute(); }
+        }
     }
 
     class DateTimeToFloorHour : AbstractTemporalTransformation
