@@ -1,4 +1,5 @@
 ﻿using Expressif.Functions.Temporal;
+using Expressif.Functions.Text;
 using Expressif.Values;
 using Expressif.Values.Special;
 using NUnit.Framework;
@@ -240,6 +241,20 @@ namespace Expressif.Testing.Functions.Temporal
                 Assert.That(result, Is.Null);
             else
                 Assert.That(result, Is.EqualTo(expected));
+        }
+
+        [Test]
+        [TestCase("2019-11-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "Brussels", "2019-11-01 20:58:00")]
+        [TestCase("2019-10-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "Brussels", "2019-10-01 21:58:00")]
+        [TestCase("2019-10-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "Moscow", "2019-10-01 22:58:00")]
+        [TestCase("2019-10-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "Pacific Standard Time", "2019-10-01 12:58:00")]
+        public void TextToDateThenTimeAndUtcToLocal_Valid(string value, string format, string timeZone, DateTime expected)
+        {
+            var textToDateTime = new TextToDateTime(new LiteralScalarResolver<string>(format));
+            var utcToLocal = new UtcToLocal(new LiteralScalarResolver<string>(timeZone));
+            var result = utcToLocal.Evaluate(textToDateTime.Evaluate(value));
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(((DateTime)result).Kind, Is.EqualTo(DateTimeKind.Unspecified));
         }
     }
 }

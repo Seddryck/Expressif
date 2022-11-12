@@ -105,6 +105,20 @@ namespace Expressif.Testing.Functions.Text
         public void EmptyToNull_NotNull(string value)
             => Assert.That(new EmptyToNull().Evaluate(value), Is.Not.EqualTo(new Null()));
 
+
+        [Test]
+        [TestCase("")]
+        [TestCase("(null)")]
+        [TestCase("(empty)")]
+        public void NullToEmpty_Null(string value)
+            => Assert.That(new NullToEmpty().Evaluate(value), Is.EqualTo(new Empty()));
+
+        [Test]
+        [TestCase("foo")]
+        [TestCase("(blank)")]
+        public void NullToEmpty_NotNull(string value)
+            => Assert.That(new NullToEmpty().Evaluate(value), Is.Not.EqualTo(new Null()));
+
         [Test]
         [TestCase("FOO", "FOO")]
         [TestCase("foo", "foo")]
