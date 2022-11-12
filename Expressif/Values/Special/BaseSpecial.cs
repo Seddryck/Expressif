@@ -13,5 +13,16 @@ namespace Expressif.Values.Special
 
         protected virtual bool AdvancedMatch(string value)
             => value.ToLower().Trim().Equals(Keyword);
+
+        public static bool operator ==(BaseSpecial left, object? right)
+            => left.Equals(right);
+        
+        public static bool operator !=(BaseSpecial left, object? right)
+            => !left.Equals(right);
+
+        public override bool Equals(object? value)
+            => false;
+
+        public override int GetHashCode() => base.GetHashCode();
     }
 }
