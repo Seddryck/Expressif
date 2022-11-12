@@ -10,6 +10,4 @@ namespace Expressif.Functions.Special
     {
         public object Evaluate(object value) => value;
     }
-
-    class Value : Neutral { }
 }
