@@ -23,12 +23,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase(0, "(null)", "(null)")]
         [TestCase(0, "(blank)", "(null)")]
         [TestCase(0, "(empty)", "(null)")]
-        public void Execute_TextToToken_DefaultSeparator(int index, string value, string expected)
-        {
-            var function = new TextToToken(new LiteralScalarResolver<int>(index));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToToken_DefaultSeparator_Valid(int index, string value, string expected)
+            => Assert.That(new TextToToken(new LiteralScalarResolver<int>(index)).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase(0, ';', "1;2017-07-06;CUST0001", "1")]
@@ -38,12 +34,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase(0, '|', "(blank)", "(blank)")]
         [TestCase(0, ' ', "(blank)", "(null)")]
         [TestCase(0, '|', "(empty)", "(null)")]
-        public void Execute_TextToToken_CustomSeparator(int index, char separator, string value, string expected)
-        {
-            var function = new TextToToken(new LiteralScalarResolver<int>(index), new LiteralScalarResolver<char>(separator));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToToken_CustomSeparator_Valid(int index, char separator, string value, string expected)
+        => Assert.That(new TextToToken(new LiteralScalarResolver<int>(index), new LiteralScalarResolver<char>(separator))
+            .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("abc 123")]
@@ -52,7 +45,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("abc   123")]
         [TestCase("  abc   123  ")]
         [TestCase("  abc ,  123  ")]
-        public void Execute_TextToTokenAndTextToTokenCount_Aligned(string value)
+        public void TextToTokenCount_DefaultSeparator_Valid(string value)
         {
             var tokenCount = (int)new TextToTokenCount().Evaluate(value);
 
@@ -68,47 +61,40 @@ namespace Expressif.Testing.Functions.Text
 
         [Test]
         [TestCase("")]
+        [TestCase("\t")]
+        [TestCase(" \t")]
+        [TestCase(" ")]
+        [TestCase("\r\n")]
+        public void BlankToEmpty_Empty(string value)
+            => Assert.That(new BlankToEmpty().Evaluate(value), Is.EqualTo(new Empty()));
+
+        [Test]
+        [TestCase("foo")]
+        [TestCase("(null)")]
+        public void BlankToEmpty_NotEmpty(string value)
+            => Assert.That(new BlankToEmpty().Evaluate(value), Is.Not.EqualTo(new Empty()));
+
+        [Test]
+        [TestCase("")]
         [TestCase("(null)")]
         [TestCase("\t")]
         [TestCase(" \t")]
         [TestCase(" ")]
         [TestCase("\r\n")]
-        public void Execute_BlankToNull_Null(string value)
-        {
-            var function = new BlankToNull();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(new Null()));
-        }
+        public void BlankToNull_Null(string value)
+            => Assert.That(new BlankToNull().Evaluate(value), Is.EqualTo(new Null()));
 
         [Test]
-        [TestCase("(null)")]
-        [TestCase("alpha")]
-        public void Execute_BlankToEmpty_NotEmpty(string value)
-        {
-            var function = new BlankToNull();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.Not.EqualTo(new Empty()));
-        }
-
-        [Test]
-        [TestCase("alpha")]
-        public void Execute_BlankToNull_NotNull(string value)
-        {
-            var function = new BlankToNull();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.Not.EqualTo(new Null()));
-        }
+        [TestCase("foo")]
+        public void BlankToNull_NotNull(string value)
+            => Assert.That(new BlankToNull().Evaluate(value), Is.Not.EqualTo(new Null()));
 
         [Test]
         [TestCase("")]
         [TestCase("(null)")]
         [TestCase("(empty)")]
-        public void Execute_EmptyToNull_Null(string value)
-        {
-            var function = new EmptyToNull();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(new Null()));
-        }
+        public void EmptyToNull_Null(string value)
+            => Assert.That(new EmptyToNull().Evaluate(value), Is.EqualTo(new Null()));
 
         [Test]
         [TestCase("alpha")]
@@ -116,88 +102,75 @@ namespace Expressif.Testing.Functions.Text
         [TestCase(" \t")]
         [TestCase(" ")]
         [TestCase("\r\n")]
-        public void Execute_EmptyToNull_NotNull(string value)
-        {
-            var function = new EmptyToNull();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.Not.EqualTo(new Null()));
-        }
+        public void EmptyToNull_NotNull(string value)
+            => Assert.That(new EmptyToNull().Evaluate(value), Is.Not.EqualTo(new Null()));
 
         [Test]
-        [TestCase("ABC")]
-        [TestCase(" ABC ")]
-        public void Execute_Trim_ABC(object value)
-        {
-            var function = new TextToTrim();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo("ABC"));
-        }
+        [TestCase("FOO", "FOO")]
+        [TestCase("foo", "foo")]
+        [TestCase(" foO", "foO")]
+        [TestCase("    foO", "foO")]
+        [TestCase("foO ", "foO")]
+        [TestCase("foO    ", "foO")]
+        [TestCase("(null)", "(null)")]
+        [TestCase("(empty)", "(empty)")]
+        [TestCase("(blank)", "(empty)")]
+        public void Trim_Valid(object value, object expected)
+            => Assert.That(new TextToTrim().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
-        [TestCase("(null)")]
-        [TestCase(" XYZ ")]
-        public void Execute_Trim_NotABC(object value)
-        {
-            var function = new TextToTrim();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.Not.EqualTo("ABC"));
-        }
-
-
-        [Test]
-        [TestCase("abC")]
-        public void Execute_UpperCase_ABC(object value)
-        {
-            var function = new TextToUpper();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo("ABC"));
-        }
+        [TestCase("FOO", "FOO")]
+        [TestCase("foo", "FOO")]
+        [TestCase("fOo", "FOO")]
+        [TestCase(" foO ", " FOO ")]
+        [TestCase("(null)", "(null)")]
+        [TestCase("(empty)", "(empty)")]
+        [TestCase("(blank)", "(blank)")]
+        public void UpperCase_Valid(object value, object expected)
+            => Assert.That(new TextToUpper().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
-        [TestCase(" abC ")]
-        public void Execute_LowerCase_abc(object value)
-        {
-            var function = new TextToLower();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(" abc "));
-        }
+        [TestCase("FOO", "foo")]
+        [TestCase("foo", "foo")]
+        [TestCase("fOo", "foo")]
+        [TestCase(" foO ", " foo ")]
+        [TestCase("(null)", "(null)")]
+        [TestCase("(empty)", "(empty)")]
+        [TestCase("(blank)", "(blank)")]
+        public void LowerCase_Valid(object value, object expected)
+            => Assert.That(new TextToLower().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
-        [TestCase(" abC ")]
-        public void Execute_Length_5(object value)
-        {
-            var function = new TextToLength();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(5));
-        }
+        [TestCase("foo", 3)]
+        [TestCase(" foo ", 5)]
+        [TestCase("", 0)]
+        [TestCase("(null)", 0)]
+        [TestCase("(empty)", 0)]
+        [TestCase("(blank)", -1)]
+        public void Length_Valid(object value, int length)
+            => Assert.That(new TextToLength().Evaluate(value), Is.EqualTo(length));
 
         [Test]
         [TestCase("Cédric")]
-        public void Execute_TextToHtml_Valid(object value)
-        {
-            var function = new TextToHtml();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo("C&#233;dric"));
-        }
+        public void TextToHtml_Valid(object value)
+            => Assert.That(new TextToHtml().Evaluate(value), Is.EqualTo("C&#233;dric"));
 
         [Test]
         [TestCase("C&#233;dric")]
         [TestCase("C&eacute;dric")]
-        public void Execute_HtmlToText_Valid(object value)
-        {
-            var function = new HtmlToText();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo("Cédric"));
-        }
+        public void HtmlToText_Valid(object value)
+            => Assert.That(new HtmlToText().Evaluate(value), Is.EqualTo("Cédric"));
 
         [Test]
         [TestCase("Cédric")]
-        public void Execute_Diacritics_Valid(object value)
-        {
-            var function = new TextToWithoutDiacritics();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo("Cedric"));
-        }
+        [TestCase("Cèdric")]
+        [TestCase("Cêdric")]
+        [TestCase("Cedrîc")]
+        [TestCase("Cedrïc")]
+        [TestCase("Cedriç")]
+        [TestCase("Cedrìc")]
+        public void TextToWithoutDiacritics_Valid(object value)
+            => Assert.That(new TextToWithoutDiacritics().Evaluate(value), Is.EqualTo("Cedric"));
 
         [Test]
         [TestCase("My taylor is rich", "Mytaylorisrich")]
@@ -207,12 +180,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase(null, "(null)")]
         [TestCase("(empty)", "(empty)")]
         [TestCase("(blank)", "(empty)")]
-        public void Execute_Whitespace_Valid(object value, string expected)
-        {
-            var function = new TextToWithoutWhitespaces();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToWithoutWhitespaces_Valid(object value, string expected)
+            => Assert.That(new TextToWithoutWhitespaces().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("My taylor is rich", 4)]
@@ -225,24 +194,17 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(blank)", 0)]
         [TestCase("1 2017-07-06      CUST0001", 3)]
         [TestCase("1 2017-07-06          CUST0001", 3)]
-        public void Execute_TokenCount_Valid(object value, int expected)
-        {
-            var function = new TextToTokenCount();
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToTokenCount_Valid(object value, int expected)
+            => Assert.That(new TextToTokenCount().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", "abc", "abc123456789")]
         [TestCase("(null)", "abc", "(null)")]
         [TestCase("(empty)", "abc", "abc")]
         [TestCase("(blank)", "abc", "abc")]
-        public void Execute_TextToPrefix_Valid(string value, string prefix, string expected)
-        {
-            var function = new TextToPrefix(new LiteralScalarResolver<string>(prefix));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToPrefix_Valid(string value, string prefix, string expected)
+            => Assert.That(new TextToPrefix(new LiteralScalarResolver<string>(prefix)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", "abc", "123456789abc")]
@@ -250,11 +212,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(empty)", "abc", "abc")]
         [TestCase("(blank)", "abc", "abc")]
         public void Execute_TextToSuffix_Valid(string value, string suffix, string expected)
-        {
-            var function = new TextToSuffix(new LiteralScalarResolver<string>(suffix));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+            => Assert.That(new TextToSuffix(new LiteralScalarResolver<string>(suffix)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", 9, "123456789")]
@@ -263,12 +222,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("123456789", 0, "")]
         [TestCase("(null)", 3, "(null)")]
         [TestCase("(empty)", 3, "(empty)")]
-        public void Execute_TextToFirstChars_Valid(string value, int length, string expected)
-        {
-            var function = new TextToFirstChars(new LiteralScalarResolver<int>(length));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToFirstChars_Valid(string value, int length, string expected)
+            => Assert.That(new TextToFirstChars(new LiteralScalarResolver<int>(length)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", 9, "123456789")]
@@ -277,12 +233,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("123456789", 0, "")]
         [TestCase("(null)", 3, "(null)")]
         [TestCase("(empty)", 3, "(empty)")]
-        public void Execute_TextToLastChars_Valid(string value, int length, string expected)
-        {
-            var function = new TextToLastChars(new LiteralScalarResolver<int>(length));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToLastChars_Valid(string value, int length, string expected)
+            => Assert.That(new TextToLastChars(new LiteralScalarResolver<int>(length)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", 9, "(empty)")]
@@ -292,12 +245,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("123456789", 0, "123456789")]
         [TestCase("(null)", 3, "(null)")]
         [TestCase("(empty)", 3, "(empty)")]
-        public void Execute_TextToSkipFirstChars_Valid(string value, int length, string expected)
-        {
-            var function = new TextToSkipFirstChars(new LiteralScalarResolver<int>(length));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToSkipFirstChars_Valid(string value, int length, string expected)
+            => Assert.That(new TextToSkipFirstChars(new LiteralScalarResolver<int>(length)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", 9, "(empty)")]
@@ -308,11 +258,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", 3, "(null)")]
         [TestCase("(empty)", 3, "(empty)")]
         public void Execute_TextToSkipLastChars_Valid(string value, int length, string expected)
-        {
-            var function = new TextToSkipLastChars(new LiteralScalarResolver<int>(length));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+            => Assert.That(new TextToSkipLastChars(new LiteralScalarResolver<int>(length)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("1234", 9, '0', "123400000")]
@@ -320,12 +267,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("123456789", 3, '0', "123456789")]
         [TestCase("(null)", 3, '0', "000")]
         [TestCase("(empty)", 3, '0', "000")]
-        public void Execute_TextToPadRight_Valid(string value, int length, char character, string expected)
-        {
-            var function = new TextToPadRight(new LiteralScalarResolver<int>(length), new LiteralScalarResolver<char>(character));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToPadRight_Valid(string value, int length, char character, string expected)
+            => Assert.That(new TextToPadRight(new LiteralScalarResolver<int>(length), new LiteralScalarResolver<char>(character))
+                .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("1234", 9, '0', "000001234")]
@@ -333,13 +277,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("123456789", 3, '0', "123456789")]
         [TestCase("(null)", 3, '0', "000")]
         [TestCase("(empty)", 3, '0', "000")]
-        public void Execute_TextToPadLeft_Valid(string value, int length, char character, string expected)
-        {
-            var function = new TextToPadLeft(new LiteralScalarResolver<int>(length), new LiteralScalarResolver<char>(character));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
-
+        public void TextToPadLeft_Valid(string value, int length, char character, string expected)
+            => Assert.That(new TextToPadLeft(new LiteralScalarResolver<int>(length), new LiteralScalarResolver<char>(character))
+                .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("20190317111223", "yyyyMMddhhmmss", "2019-03-17 11:12:23")]
@@ -351,23 +291,23 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Wed, 25.09.19", "ddd, dd.MM.yy", "2019-09-25")]
         [TestCase("Wednesday 25-SEP-19", "dddd dd-MMM-yy", "2019-09-25")]
         [TestCase("2019-10-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "2019-10-01 19:58:00")]
-        public void Execute_TextToDateTime_Valid(string value, string format, DateTime expected)
+        public void TextToDateTime_Valid(string value, string format, DateTime expected)
         {
             var function = new TextToDateTime(new LiteralScalarResolver<string>(format));
             var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-            Assert.That(((DateTime) result).Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.EqualTo(expected));
+                Assert.That(((DateTime)result).Kind, Is.EqualTo(DateTimeKind.Unspecified));
+            });
         }
 
         [Test]
         [TestCase("20190317111223", "yyyyMMddhhmmss", "fr-fr", "2019-03-17 11:12:23")]
         [TestCase("mercredi 25-sept.-19", "dddd dd-MMM-yy", "fr-fr", "2019-09-25")]
-        public void Execute_TextToDateTimeWithCulture_Valid(string value, string format, string culture, DateTime expected)
-        {
-            var function = new TextToDateTime(new LiteralScalarResolver<string>(format), new LiteralScalarResolver<string>(culture));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToDateTimeWithCulture_Valid(string value, string format, string culture, DateTime expected)
+            => Assert.That(new TextToDateTime(new LiteralScalarResolver<string>(format), new LiteralScalarResolver<string>(culture))
+                .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("123*456*78", "*", "12345678")]
@@ -378,11 +318,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(blank)", "*", "(blank)")]
         [TestCase("(blank)", " ", "(empty)")]
         public void Execute_TextToRemoveChars_Valid(string value, char charToRemove, string expected)
-        {
-            var function = new TextToRemoveChars(new LiteralScalarResolver<char>(charToRemove));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+            => Assert.That(new TextToRemoveChars(new LiteralScalarResolver<char>(charToRemove)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]
@@ -391,12 +328,9 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", "BE-***.***.**", "(null)")]
         [TestCase("(empty)", "BE-***.***.**", "BE-***.***.**")]
         [TestCase("(blank)", "BE-***.***.**", "BE-***.***.**")]
-        public void Execute_TextToMask_Valid(string value, string mask, string expected)
-        {
-            var function = new TextToMask(new LiteralScalarResolver<string>(mask));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void TextToMask_Valid(string value, string mask, string expected)
+            => Assert.That(new TextToMask(new LiteralScalarResolver<string>(mask)).Evaluate(value)
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]
@@ -407,11 +341,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(empty)", "********", "(empty)")]
         [TestCase("(null)", "BE-***.***.**", "(blank)")]
         [TestCase("(blank)", "********", "(blank)")]
-        public void Execute_MaskToText_Valid(string expected, string mask, string value)
-        {
-            var function = new MaskToText(new LiteralScalarResolver<string>(mask));
-            var result = function.Evaluate(value);
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        public void MaskToText_Valid(string expected, string mask, string value)
+            => Assert.That(new MaskToText(new LiteralScalarResolver<string>(mask)).Evaluate(value)
+                , Is.EqualTo(expected));
     }
 }
