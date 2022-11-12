@@ -7,7 +7,7 @@ Expressif allows you to define variables and transformation of these variables (
 @myVariable | text-to-lower | text-to-pad-right(@myCount, *)
 ```
 
-![Logo](https://github.com/Seddryck/expressif/raw/misc/icon/expressif-icon-256.png)
+![Logo](https://github.com/Seddryck/expressif/blob/main/misc/icon/expressif-icon-256.png)
 
 [About][] | [Quickstart][] | [Installing][] | [Functions][]
 
