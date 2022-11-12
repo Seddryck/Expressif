@@ -7,8 +7,7 @@ namespace Expressif.Functions.IO
 {
     abstract class AbstractPathTransformation : AbstractTextTransformation, IBasePathTransformation
     {
-        protected string BasePath { get; }
-        public AbstractPathTransformation(string basePath) => BasePath = basePath;
+        public AbstractPathTransformation() { }
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateEmpty() => new Empty().Keyword;
         protected override object EvaluateBlank() => new Empty().Keyword;
@@ -17,41 +16,31 @@ namespace Expressif.Functions.IO
 
     class PathToFilename : AbstractPathTransformation
     {
-        public PathToFilename(string basePath) : base(basePath) { }
         protected override object EvaluateString(string value) => Path.GetFileName(value);
     }
 
     class PathToFilenameWithoutExtension : AbstractPathTransformation
     {
-        public PathToFilenameWithoutExtension(string basePath) : base(basePath) { }
         protected override object EvaluateString(string value) => Path.GetFileNameWithoutExtension(value);
     }
 
     class PathToExtension : AbstractPathTransformation
     {
-        public PathToExtension(string basePath) : base(basePath) { }
         protected override object EvaluateString(string value) => Path.GetExtension(value);
     }
 
     class PathToRoot : AbstractPathTransformation
     {
-        public PathToRoot(string basePath) : base(basePath) { }
-        protected override object EvaluateString(string value)
-            //=> Path.GetPathRoot(PathExtensions.CombineOrRoot(BasePath, value));
-            => string.Empty;
+        protected override object EvaluateString(string value) => Path.GetPathRoot(value) ?? string.Empty;
     }
 
     class PathToDirectory : AbstractPathTransformation
     {
-        public PathToDirectory(string basePath) : base(basePath) { }
         protected override object EvaluateString(string value)
         {
-            var fullPath = (Path.IsPathRooted(value) || string.IsNullOrEmpty(BasePath))
-                ? value
-                : Path.Combine(BasePath, value);
-            return Path.GetDirectoryName(fullPath) == null 
-                ? Path.GetPathRoot(fullPath) ?? string.Empty 
-                : Path.GetDirectoryName(fullPath) + Path.DirectorySeparatorChar;
+            return Path.GetDirectoryName(value) == null 
+                ? Path.GetPathRoot(value) ?? string.Empty 
+                : Path.GetDirectoryName(value) + Path.DirectorySeparatorChar;
         }
             
     }
