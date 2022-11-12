@@ -214,9 +214,9 @@ namespace Expressif.Functions.Text
     class TextToToken : AbstractTextTransformation
     {
         public IScalarResolver<int> Index { get; }
-        public IScalarResolver<char> Separator { get; }
+        public IScalarResolver<char>? Separator { get; }
         public TextToToken(IScalarResolver<int> index)
-            => (Index, Separator) = (index, new LiteralScalarResolver<char>(string.Empty));
+            => (Index, Separator) = (index, null);
         public TextToToken(IScalarResolver<int> index, IScalarResolver<char> separator)
             => (Index, Separator) = (index, separator);
         protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Execute()) ? new Null().Keyword : new Whitespace().Keyword;
@@ -236,9 +236,9 @@ namespace Expressif.Functions.Text
 
     class TextToTokenCount : TextToLength
     {
-        public IScalarResolver<char> Separator { get; }
+        public IScalarResolver<char>? Separator { get; }
         public TextToTokenCount()
-            => Separator = new LiteralScalarResolver<char>(string.Empty);
+            => Separator = null;
         public TextToTokenCount(IScalarResolver<char> separator)
             => Separator = separator;
 

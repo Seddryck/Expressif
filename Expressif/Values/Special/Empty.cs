@@ -18,6 +18,7 @@ namespace Expressif.Values.Special
         public override bool Equals(object? value)
             => value switch
             {
+                Empty => true,
                 string v => string.IsNullOrEmpty(v) || AdvancedMatch(v),
                 _ => false,
             };

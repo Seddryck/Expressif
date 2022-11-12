@@ -17,6 +17,7 @@ namespace Expressif.Values.Special
         public override bool Equals(object? value)
             => value switch
             {
+                Whitespace => true,
                 string v => string.IsNullOrWhiteSpace(v) || AdvancedMatch(v),
                 _ => false,
             };
