@@ -28,7 +28,7 @@ Expressif allows you to define variables and transformation of these variables (
 ![Still maintained](https://img.shields.io/maintenance/yes/2022.svg)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Seddryck/Expressif)
 
-**Continuous integration builds:** [![Build status](https://ci.appveyor.com/api/projects/status/k26u1sesu2tt9pgl?svg=true)](https://ci.appveyor.com/project/Seddryck/Expressif/)
+**Continuous integration builds:** [![Build status](https://ci.appveyor.com/api/projects/status/7btqredpvl803ri5?svg=true)](https://ci.appveyor.com/project/Seddryck/Expressif/)
 [![Tests](https://img.shields.io/appveyor/tests/seddryck/Expressif.svg)](https://ci.appveyor.com/project/Seddryck/Expressif/build/tests)
 
 **Status:** [![stars badge](https://img.shields.io/github/stars/Seddryck/Expressif.svg)](https://github.com/Seddryck/Expressif/stargazers)
