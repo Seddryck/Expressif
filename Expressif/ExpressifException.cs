@@ -30,4 +30,32 @@ namespace Expressif
             : base($"Can't evaluate a file's property when the path of this file is equal to {initialValue}.")
         { }
     }
+
+    class VariableAlreadyExistingException : ExpressifException
+    {
+        public VariableAlreadyExistingException(string name)
+            : base($"There is already a variable named '{name}' available in the context.")
+        { }
+    }
+
+    class UnexpectedVariableException : ExpressifException
+    {
+        public UnexpectedVariableException(string name)
+            : base($"There is no variable named '{name}' in the context.")
+        { }
+    }
+
+    class NotIndexableContextObjectException : ExpressifException
+    {
+        public NotIndexableContextObjectException()
+            : base($"The current object of the context is not being accessible with the usage of a numeric index.")
+        { }
+    }
+
+    class NotNameableContextObjectException : ExpressifException
+    {
+        public NotNameableContextObjectException()
+            : base($"The current object of the context is not being accessible with properties' name.")
+        { }
+    }
 }
