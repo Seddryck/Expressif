@@ -1,5 +1,6 @@
 ﻿using Expressif.Values;
 using Expressif.Values.Casters;
+using Expressif.Values.Resolvers;
 using Expressif.Values.Special;
 using System;
 
@@ -10,7 +11,7 @@ namespace Expressif.Functions.Numeric
         public AbstractNumericTransformation()
         { }
 
-        public object? Evaluate(object value)
+        public object? Evaluate(object? value)
         {
             return value switch
             {

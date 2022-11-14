@@ -1,19 +1,20 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace Expressif.Values
+namespace Expressif.Values.Resolvers
 {
+    [TypeConverter(typeof(LiteralScalarResolverTypeConverter))]
     public class LiteralScalarResolver<T> : IScalarResolver<T>
     {
         private readonly object value;
 
-        internal LiteralScalarResolver(object value)
+        public LiteralScalarResolver(object value)
             => this.value = value;
 
         public T? Execute()
             => ConvertValue(value);
 
-        object? IScalarResolver.Execute() 
+        object? IScalarResolver.Execute()
             => Execute();
 
         protected virtual T? ConvertValue(object value)

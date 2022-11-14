@@ -1,6 +1,7 @@
 ﻿using Expressif.Functions.Numeric;
 using Expressif.Functions.Text;
 using Expressif.Values;
+using Expressif.Values.Resolvers;
 using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;

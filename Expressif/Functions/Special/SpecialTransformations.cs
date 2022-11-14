@@ -11,7 +11,7 @@ namespace Expressif.Functions.Special
 {
     abstract class AbstractSpecialTransformation : IFunction
     {
-        public object Evaluate(object value)
+        public object? Evaluate(object? value)
         {
             return value switch
             {

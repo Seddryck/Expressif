@@ -10,10 +10,13 @@ namespace Expressif.Functions
 {
     public class FunctionFactory
     {
-        public IFunction Instantiate(string functionName, IParameter[] parameters)
+        private ScalarResolverFactory ScalarResolverFactory { get; } = new ScalarResolverFactory();
+
+        public IFunction Instantiate(string functionName, IParameter[] parameters, Context context)
+            => Instantiate(GetFunctionType(functionName), parameters, context);
+        
+        public IFunction Instantiate(Type type, IParameter[] parameters, Context context)
         {
-            
-            var type = GetFunctionType(functionName);
             var ctor = GetMatchingConstructor(type, parameters.Length);
 
             var zip = ctor.GetParameters().Zip(parameters, (x, y) => new { x.ParameterType, Value = y });
@@ -21,13 +24,12 @@ namespace Expressif.Functions
 
             foreach (var param in zip)
             {
+                //If the parameter of the function is a IScalarResolver
                 if (typeof(IScalarResolver).IsAssignableFrom(param.ParameterType))
                 {
-                    
                     var scalarType = param.ParameterType.GenericTypeArguments[0];
-                    //var args = argsFactory.Instantiate(param.Value);
-                    //var resolver = factory.Instantiate(args, scalarType);
-                    typedFunctionParameters.Add(param.Value);
+                    var resolver = ScalarResolverFactory.Instantiate(param.Value, scalarType, context);
+                    typedFunctionParameters.Add(resolver);
                 }
                 else
                     typedFunctionParameters.Add(param.Value);
@@ -55,7 +57,7 @@ namespace Expressif.Functions
         }
 
         protected internal virtual ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
-            =>  type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
+            => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
                 ?? throw new MissingOrUnexpectedParametersFunctionException(type.Name, paramCount);
     }
 }
