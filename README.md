@@ -39,77 +39,68 @@ Expressif allows you to define variables and transformation of these variables (
 ## Quickstart
 
 ```csharp
-var factory = new ExpressionFactory();
-var expression = factory.Instantiate("text-to-lower");
-var result = expression.Execute("Nikola Tesla")
-Debug.WriteLine(result); // returns "nikola tesla"
+var expression = new Expression("text-to-lower");
+var result = expression.Evaluate("Nikola Tesla");
+Assert.That(result, Is.EqualTo("nikola tesla"));
 ```
 
 Some functions required arguments, you can specify them between the brackets after the function name. Note that literal textual values don't required quotes surronding the values.
 
 ```csharp
-var factory = new ExpressionFactory();
-var expression = factory.Instantiate("text-to-remove-chars(a)");
-var result = expression.Execute("Nikola Tesla")
-Debug.WriteLine(result); // returns "Nikol Tesl"
+var expression = new Expression("text-to-remove-chars(a)");
+var result = expression.Evaluate("Nikola Tesla");
+Assert.That(result, Is.EqualTo("Nikol Tesl"));
 ```
 
 You can chain the functions to apply to the initial value by using the operator pipe (`|`). The functions are executed from left to right.
 
 ```csharp
-var factory = new ExpressionFactory();
-var expression = factory.Instantiate("text-to-lower | text-to-remove-chars(a)");
-var result = expression.Execute("Nikola Tesla")
-Debug.WriteLine(result); // returns "nikol tesl"
-```
-
+var expression = new Expression("text-to-lower | text-to-remove-chars(a)");
+var result = expression.Evaluate("Nikola Tesla");```
+Assert.That(result, Is.EqualTo("nikol tesl"));
 It's possible to use variables as function parameters. the name of the variables must always start by an arobas (`@`)
 
 ```csharp
 var context = new Context();
-context.Variables.Add("myChar", 'k');
+context.Variables.Add<char>("myChar", 'k');
 
-var factory = new ExpressionFactory(context);
-var expression = factory.Instantiate("text-to-lower | text-to-remove-chars(@myChar)");
-var result = expression.Execute("Nikola Tesla")
-Debug.WriteLine(result); // returns "niola tesla"
+var expression = new Expression("text-to-lower | text-to-remove-chars(@myChar)", context);
+var result = expression.Evaluate("Nikola Tesla");
+Assert.That(result, Is.EqualTo("niola tesla"));
 ```
 
 In addition to the variables that must be scalar values (text, numeric, dateTime ...), you can also add a property-object to the context. An property-object can be a pure C# object, a Dictionnary, a List or a DataRow. You can access the properties of the property-object based on the property's name with the syntax `[property-name]`
 
 ```csharp
 var context = new Context();
-context.PropertyObject.Set(new {CharToBeRemoved = 't'});
+context.CurrentObject.Set(new { CharToBeRemoved = 't' });
 
-var factory = new ExpressionFactory(context);
-var expression = factory.Instantiate("text-to-lower | text-to-remove-chars([CharToBeRemoved])");
-var result = expression.Execute("Nikola Tesla")
-Debug.WriteLine(result); // returns "nikola esla"
+var expression = new Expression("text-to-lower | text-to-remove-chars([CharToBeRemoved])", context);
+var result = expression.Evaluate("Nikola Tesla");
+Assert.That(result, Is.EqualTo("nikola esla"));
 ```
 
 or based on its position with the syntax `#index` (where index is positive number).
 
 ```csharp
 var context = new Context();
-context.CurrentObject.Set(new List() {'e', 's'});
+context.CurrentObject.Set(new List<char>() { 'e', 's' });
 
-var factory = new ExpressionFactory(context);
-var expression = factory.Instantiate("text-to-lower | text-to-remove-chars(#1)");
-var result = expression.Execute(""Nikola Tesla"")
-Debug.WriteLine(result); // returns "nikola tela"
+var expression = new Expression("text-to-lower | text-to-remove-chars(#1)", context);
+var result = expression.Evaluate("Nikola Tesla");
+Assert.That(result, Is.EqualTo("nikola tela"));
 ```
 
 It's also possible to use a function's result as the value of a parameter for another function. To achieve this the function as a parameter must be surrounded by curly braces `{...}`
 
 ```csharp
 var context = new Context();
-context.Variable.Add("myVar", 6)
-context.CurrentObject.Set(new List() {15, 8, 3});
+context.Variables.Add<int>("myVar", 6);
+context.CurrentObject.Set(new List<int>() { 15, 8, 3 });
 
-var factory = new ExpressionFactory(context);
-var expression = factory.Instantiate("text-to-lower | text-to-skip-last-chars( {@myVar | numeric-to-subtract(#2) }));
-var result = expression.Execute(""Nikola Tesla"")
-Debug.WriteLine(result); // sub-function returns 6-3 = 3 and the main function returns "nikola te"
+var expression = new Expression("text-to-lower | text-to-skip-last-chars( {@myVar | numeric-to-subtract(#2) })", context);
+var result = expression.Evaluate("Nikola Tesla");
+Assert.That(result, Is.EqualTo("nikola te"));
 ```
 
 ## Installing
