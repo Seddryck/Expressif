@@ -1,3 +1,4 @@
+using Expressif.Values;
 using Expressif.Values.Special;
 using System.Data;
 
@@ -16,7 +17,7 @@ namespace Expressif
         {
             var context = new Context();
             Assert.That(context.Variables, Has.Count.EqualTo(0));
-            context.Variables.Add(name, "123");
+            context.Variables.Add<string>(name, "123");
             Assert.That(context.Variables, Has.Count.EqualTo(1));
             Assert.Multiple(() =>
             {
@@ -33,8 +34,8 @@ namespace Expressif
         public void VariableAdd_TwiceTheSameVariable_ThrowException(string name1, string name2)
         {
             var context = new Context();
-            context.Variables.Add(name1, "123");
-            Assert.That(() => context.Variables.Add(name2, "456"), Throws.TypeOf<VariableAlreadyExistingException>());
+            context.Variables.Add<string>(name1, "123");
+            Assert.That(() => context.Variables.Add<string>(name2, "456"), Throws.TypeOf<VariableAlreadyExistingException>());
         }
 
         [Test]
@@ -46,9 +47,9 @@ namespace Expressif
         {
             var context = new Context();
             Assert.That(context.Variables, Has.Count.EqualTo(0));
-            context.Variables.Set(name1, "123");
+            context.Variables.Set<string>(name1, "123");
             Assert.That(context.Variables, Has.Count.EqualTo(1));
-            context.Variables.Set(name2, "456");
+            context.Variables.Set<string>(name2, "456");
             Assert.That(context.Variables, Has.Count.EqualTo(1));
             Assert.That(context.Variables[name1], Is.EqualTo("456"));
         }
@@ -62,7 +63,7 @@ namespace Expressif
         {
             var context = new Context();
             Assert.That(context.Variables, Has.Count.EqualTo(0));
-            context.Variables.Set(name1, "123");
+            context.Variables.Set<string>(name1, "123");
             Assert.That(context.Variables, Has.Count.EqualTo(1));
             context.Variables.Remove(name2);
             Assert.That(context.Variables, Has.Count.EqualTo(0));

@@ -1,6 +1,7 @@
 ﻿using Expressif.Functions.Temporal;
 using Expressif.Functions.Text;
 using Expressif.Values;
+using Expressif.Values.Resolvers;
 using Expressif.Values.Special;
 using NUnit.Framework;
 using System;

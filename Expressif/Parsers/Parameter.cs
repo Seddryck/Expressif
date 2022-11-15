@@ -12,8 +12,8 @@ namespace Expressif.Parsers
 
     public record class LiteralParameter (string Value) : IParameter { }
     public record class VariableParameter(string Name) : IParameter { }
-    public record class ItemParameter(string Name) : IParameter { }
-    public record class IndexParameter(int Index) : IParameter { }
+    public record class ObjectPropertyParameter(string Name) : IParameter { }
+    public record class ObjectIndexParameter(int Index) : IParameter { }
 
     public record class ParameterizedExpressionParameter(ParametrizedExpression Expression) : IParameter { }
 
@@ -27,12 +27,12 @@ namespace Expressif.Parsers
             from _ in Parse.Char('[').Token()
             from name in Grammar.Literal
             from _1 in Parse.Char(']').Token()
-            select new ItemParameter(name);
+            select new ObjectPropertyParameter(name);
 
         private static readonly Parser<IParameter> IndexParameter =
             from _ in Parse.Char('#')
             from index in Parse.Number
-            select new IndexParameter(int.Parse(index));
+            select new ObjectIndexParameter(int.Parse(index));
 
         private static readonly Parser<IParameter> ParametrizedExpressionParameter =
             from _ in Parse.Char('{').Token()

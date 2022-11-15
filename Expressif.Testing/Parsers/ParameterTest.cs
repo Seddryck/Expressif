@@ -13,8 +13,8 @@ namespace Expressif.Testing.Parsers
         [TestCase("foo", typeof(LiteralParameter))]
         [TestCase("\"foo\"", typeof(LiteralParameter))]
         [TestCase("@foo", typeof(VariableParameter))]
-        [TestCase("[foo]", typeof(ItemParameter))]
-        [TestCase("#52", typeof(IndexParameter))]
+        [TestCase("[foo]", typeof(ObjectPropertyParameter))]
+        [TestCase("#52", typeof(ObjectIndexParameter))]
         [TestCase("{ @foo | text-to-func(bar) }", typeof(ParameterizedExpressionParameter))]
         public void Parse_Parameter_Valid(string value, Type type)
             => Assert.That(Parameter.Parser.Parse(value), Is.TypeOf(type));

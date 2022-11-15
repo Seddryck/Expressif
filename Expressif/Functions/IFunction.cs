@@ -8,6 +8,6 @@ namespace Expressif.Functions
 {
     public interface IFunction
     {
-        object? Evaluate(object value);
+        object? Evaluate(object? value);
     }
 }
