@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressif.Values.Casters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,7 +16,7 @@ namespace Expressif.Values.Resolvers
         public ObjectPropertyResolver(string propertyName, ContextObject obj)
             => (PropertyName, Object) = (propertyName, obj);
 
-        public T? Execute() => (T?)Object[PropertyName];
+        public T? Execute() => new Caster().Cast<T>(Object[PropertyName]);
         object? IScalarResolver.Execute() => Execute();
     }
 }

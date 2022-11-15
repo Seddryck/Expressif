@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressif.Values.Casters;
+using System;
 using System.ComponentModel;
 
 namespace Expressif.Values.Resolvers
@@ -11,7 +12,7 @@ namespace Expressif.Values.Resolvers
         public VariableScalarResolver(string name, ContextVariables variables)
             => (Name, Variables) = (name, variables);
 
-        public T? Execute() => (T?)Variables[Name];
+        public T? Execute() => new Caster().Cast<T>(Variables[Name]);
         object? IScalarResolver.Execute() => Execute();
     }
 }

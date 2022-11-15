@@ -1,4 +1,5 @@
 ﻿using Expressif.Functions;
+using Expressif.Values.Casters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,17 +16,8 @@ namespace Expressif.Values.Resolvers
         public ParametrizedExpressionResolver(IScalarResolver argument, IFunction expression)
             => (Argument, Expression) = (argument, expression);
 
-        public T? Execute()
-        {
-            var result = Expression.Evaluate(Argument);
-            result = result switch
-            {
-                decimal d when typeof(T).IsAssignableFrom(typeof(int)) => Convert.ToInt32(d),
-                string s when typeof(T).IsAssignableFrom(typeof(DateTime)) => Convert.ToDateTime(s),
-                _ => result,
-            };
-            return (T?)result;
-        }
+        public T? Execute() => new Caster().Cast<T>(Expression.Evaluate(Argument));
+            
         object? IScalarResolver.Execute() => Execute();
     }
 }
