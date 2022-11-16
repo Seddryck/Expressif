@@ -47,7 +47,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("  abc ,  123  ")]
         public void TextToTokenCount_DefaultSeparator_Valid(string value)
         {
-            var tokenCount = (int)new TextToTokenCount().Evaluate(value);
+            var tokenCount = (int)new TextToTokenCount().Evaluate(value)!;
 
             for (int i = 0; i < tokenCount; i++)
             {
@@ -312,7 +312,7 @@ namespace Expressif.Testing.Functions.Text
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.EqualTo(expected));
-                Assert.That(((DateTime)result).Kind, Is.EqualTo(DateTimeKind.Unspecified));
+                Assert.That(((DateTime)result!).Kind, Is.EqualTo(DateTimeKind.Unspecified));
             });
         }
 
