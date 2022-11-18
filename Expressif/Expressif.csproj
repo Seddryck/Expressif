@@ -2,4 +2,7 @@
 	<ItemGroup>
 		<PackageReference Include="Sprache" Version="2.3.1" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Predicates\Text\" />
+	</ItemGroup>
 </Project>
