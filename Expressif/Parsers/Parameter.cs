@@ -15,7 +15,7 @@ namespace Expressif.Parsers
     public record class ObjectPropertyParameter(string Name) : IParameter { }
     public record class ObjectIndexParameter(int Index) : IParameter { }
 
-    public record class ParameterizedExpressionParameter(ParametrizedExpression Expression) : IParameter { }
+    public record class InputExpressionParameter(InputExpression Expression) : IParameter { }
 
     public class Parameter
     {
@@ -36,9 +36,9 @@ namespace Expressif.Parsers
 
         private static readonly Parser<IParameter> ParametrizedExpressionParameter =
             from _ in Parse.Char('{').Token()
-            from expression in ParametrizedExpression.Parser
+            from expression in InputExpression.Parser
             from _1 in Parse.Char('}').Token()
-            select new ParameterizedExpressionParameter(expression);
+            select new InputExpressionParameter(expression);
 
         private static readonly Parser<IParameter> LiteralParameter =
             from name in Grammar.Literal
