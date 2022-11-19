@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Numeric
 {
-    abstract class BaseNumericPredicateReference : BasePredicateReference
+    abstract class BaseNumericPredicateReference : BasePredicate
     {
         public IScalarResolver<decimal> Reference { get; }
 

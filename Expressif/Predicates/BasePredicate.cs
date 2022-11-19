@@ -9,14 +9,11 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates
 {
-    abstract class BasePredicateReference : IPredicate
+    abstract class BasePredicate : IPredicate
     {
-        public BasePredicateReference() { }
-
+        public BasePredicate() { }
         public abstract bool Evaluate(object? value);
-
         protected virtual bool EvaluateNull() => false;
-        
         object? IFunction.Evaluate(object? value) => Evaluate(value);
     }
 }

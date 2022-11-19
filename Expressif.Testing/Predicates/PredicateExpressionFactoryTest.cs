@@ -2,6 +2,7 @@ using Expressif.Parsers;
 using System.Diagnostics;
 using Expressif.Predicates;
 using Expressif.Predicates.Numeric;
+using Expressif.Predicates.Text;
 
 namespace Expressif.Testing.Predicates
 {
@@ -13,16 +14,20 @@ namespace Expressif.Testing.Predicates
 
         [Test]
         [TestCase("equal-to", typeof(EqualTo))]
+        [TestCase("equivalent-to", typeof(EquivalentTo))]
         [TestCase("greater-than", typeof(GreaterThan))]
         public void GetFunctionType_FunctionName_Valid(string value, Type expected)
             => Assert.That(new PredicateExpressionFactory().GetFunctionType(value), Is.EqualTo(expected));
 
         [Test]
-        [TestCase("even")]
-        [TestCase("Even")]
-        [TestCase("numeric-is-even")]
-        public void GetFunctionType_FunctionNameVariations_Valid(string value)
-            => Assert.That(new PredicateExpressionFactory().GetFunctionType(value), Is.EqualTo(typeof(Even)));
+        [TestCase("even", typeof(Even))]
+        [TestCase("Even", typeof(Even))]
+        [TestCase("numeric-is-even", typeof(Even))]
+        [TestCase("equivalent-to", typeof(EquivalentTo))]
+        [TestCase("Equivalent-To", typeof(EquivalentTo))]
+        [TestCase("text-is-equivalent-to", typeof(EquivalentTo))]
+        public void GetFunctionType_FunctionNameVariations_Valid(string value, Type expected)
+            => Assert.That(new PredicateExpressionFactory().GetFunctionType(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("foo")]
@@ -36,6 +41,8 @@ namespace Expressif.Testing.Predicates
         [TestCase(typeof(EqualTo), 1)]
         [TestCase(typeof(Modulo), 1)]
         [TestCase(typeof(Modulo), 2)]
+        [TestCase(typeof(EquivalentTo), 1)]
+        [TestCase(typeof(EquivalentTo), 2)]
         public void GetMatchingConstructor_TypeAndParams_Valid(Type type, int paramCount)
         {
             var ctor = new PredicateExpressionFactory().GetMatchingConstructor(type, paramCount);
@@ -48,6 +55,8 @@ namespace Expressif.Testing.Predicates
         [TestCase(typeof(EqualTo), 0)]
         [TestCase(typeof(Modulo), 3)]
         [TestCase(typeof(Modulo), 0)]
+        [TestCase(typeof(EquivalentTo), 0)]
+        [TestCase(typeof(EquivalentTo), 3)]
         public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)
             => Assert.That(() => new PredicateExpressionFactory().GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
