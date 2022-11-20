@@ -1,4 +1,5 @@
-﻿using Sprache;
+﻿using Expressif.Values;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Expressif.Parsers
     { }
 
     public record class LiteralParameter (string Value) : IParameter { }
+    public record class IntervalParameter(Interval Value) : IParameter { }
     public record class VariableParameter(string Name) : IParameter { }
     public record class ObjectPropertyParameter(string Name) : IParameter { }
     public record class ObjectIndexParameter(int Index) : IParameter { }
@@ -44,9 +46,14 @@ namespace Expressif.Parsers
             from name in Grammar.Literal
             select new LiteralParameter(name);
 
+        private static readonly Parser<IParameter> IntervalParameter =
+            from interval in Grammar.Interval
+            select new IntervalParameter(interval);
+
 
         public static readonly Parser<IParameter> Parser = 
             VariableParameter
+            .Or(IntervalParameter)
             .Or(IndexParameter)
             .Or(ItemParameter)
             .Or(ParametrizedExpressionParameter)

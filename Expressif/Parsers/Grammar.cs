@@ -1,4 +1,5 @@
-﻿using Expressif.Values.Special;
+﻿using Expressif.Values;
+using Expressif.Values.Special;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -35,5 +36,13 @@ namespace Expressif.Parsers
             Parse.CharExcept("\"").AtLeastOnce().Text().Contained(Parse.Char('\"'), Parse.Char('\"')).Token();
 
         public static readonly Parser<string> Literal = UnquotedLiteral.Or(QuotedLiteral);
+
+        public static readonly Parser<Interval> Interval =
+            from lowerBoundType in Parse.Chars(']', '[').Token()
+            from lowerBound in Parse.Numeric.Or(Parse.Chars('.', '-', ':', ' ')).AtLeastOnce().Text()
+            from separator in Parse.Char(';')
+            from upperBound in Parse.Numeric.Or(Parse.Chars('.', '-', ':', ' ')).AtLeastOnce().Text()
+            from upperBoundType in Parse.Chars(']', '[').Token()
+            select new IntervalBuilder().Create(lowerBoundType,lowerBound,upperBound,upperBoundType);
     }
 }
