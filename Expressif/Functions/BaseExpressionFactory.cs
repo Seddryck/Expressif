@@ -38,6 +38,12 @@ namespace Expressif.Functions
                     };
                     typedFunctionParameters.Add(resolver);
                 }
+                else if (typeof(IInterval).IsAssignableFrom(param.ParameterType))
+                {
+                    var intervalType = param.ParameterType.GenericTypeArguments[0];
+                    var resolver = InstantiateInterval(param.Value, intervalType, context);
+                    typedFunctionParameters.Add(resolver);
+                }
                 else
                     typedFunctionParameters.Add(param.Value);
             }
@@ -78,7 +84,13 @@ namespace Expressif.Functions
             };
 
         private IScalarResolver InstantiateScalarResolver(Type generic, Type type, object[] parameters)
-            => (Activator.CreateInstance(generic.MakeGenericType(type), parameters) as IScalarResolver)!;
+                    => (Activator.CreateInstance(generic.MakeGenericType(type), parameters) as IScalarResolver)!;
+
+        protected IInterval InstantiateInterval(IParameter parameter, Type type, Context context)
+            => parameter switch
+            {
+                IntervalParameter i => new IntervalBuilder().Create(i.Value.LowerBoundType, i.Value.LowerBound, i.Value.UpperBound, i.Value.UpperBoundType),
+            };
 
         protected internal IScalarResolver GetParametrizedExpressionScalarResolver(InputExpressionParameter exp, Type type, Context context)
         {

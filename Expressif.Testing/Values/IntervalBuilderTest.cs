@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Parsers
+namespace Expressif.Testing.Values
 {
     public class IntervalBuilderTest
     {

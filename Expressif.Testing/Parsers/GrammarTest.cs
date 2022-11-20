@@ -84,44 +84,5 @@ namespace Expressif.Testing.Parsers
         public void Parse_Literal_Invalid(string value)
             => Assert.That(() => Grammar.Literal.End().Parse(value), Throws.TypeOf<ParseException>());
 
-        [Test]
-        [TestCase("[25;40]", IntervalType.Closed, 25, 40, IntervalType.Closed)]
-        [TestCase("]25;40]", IntervalType.Open, 25, 40, IntervalType.Closed)]
-        [TestCase("]25;40[", IntervalType.Open, 25, 40, IntervalType.Open)]
-        [TestCase("[25;40[", IntervalType.Closed, 25, 40, IntervalType.Open)]
-        [TestCase("[-25.1221;40.125]", IntervalType.Closed, -25.1221, 40.125, IntervalType.Closed)]
-        public void Parse_IntervalDecimal_Valid(string value, IntervalType lowerBoundIntervalType, decimal lowerBound, decimal upperBound, IntervalType upperBoundIntervalType)
-        {
-            var interval = Grammar.Interval.End().Parse(value);
-            Assert.That(interval, Is.Not.Null);
-            Assert.That(interval, Is.TypeOf<Interval<decimal>>());
-            Assert.Multiple(() =>
-            {
-                Assert.That(((Interval<decimal>)interval).LowerBoundIntervalType, Is.EqualTo(lowerBoundIntervalType));
-                Assert.That(((Interval<decimal>)interval).UpperBoundIntervalType, Is.EqualTo(upperBoundIntervalType));
-                Assert.That(((Interval<decimal>)interval).LowerBound, Is.EqualTo(lowerBound));
-                Assert.That(((Interval<decimal>)interval).UpperBound, Is.EqualTo(upperBound));
-            });
-        }
-
-        [Test]
-        [TestCase("[2022-10-01;2022-12-01]", IntervalType.Closed, "2022-10-01", "2022-12-01", IntervalType.Closed)]
-        [TestCase("]2022-10-01;2022-12-01]", IntervalType.Open, "2022-10-01", "2022-12-01", IntervalType.Closed)]
-        [TestCase("]2022-10-01;2022-12-01[", IntervalType.Open, "2022-10-01", "2022-12-01", IntervalType.Open)]
-        [TestCase("[2022-10-01;2022-12-01[", IntervalType.Closed, "2022-10-01", "2022-12-01", IntervalType.Open)]
-        [TestCase("[2022-10-01 16:45:12;2022-12-17 12:24:20]", IntervalType.Closed, "2022-10-01 16:45:12", "2022-12-17 12:24:20", IntervalType.Closed)]
-        public void Parse_IntervalDateTime_Valid(string value, IntervalType lowerBoundIntervalType, DateTime lowerBound, DateTime upperBound, IntervalType upperBoundIntervalType)
-        {
-            var interval = Grammar.Interval.End().Parse(value);
-            Assert.That(interval, Is.Not.Null);
-            Assert.That(interval, Is.TypeOf<Interval<DateTime>>());
-            Assert.Multiple(() =>
-            {
-                Assert.That(((Interval<DateTime>)interval).LowerBoundIntervalType, Is.EqualTo(lowerBoundIntervalType));
-                Assert.That(((Interval<DateTime>)interval).UpperBoundIntervalType, Is.EqualTo(upperBoundIntervalType));
-                Assert.That(((Interval<DateTime>)interval).LowerBound, Is.EqualTo(lowerBound));
-                Assert.That(((Interval<DateTime>)interval).UpperBound, Is.EqualTo(upperBound));
-            });
-        }
     }
 }

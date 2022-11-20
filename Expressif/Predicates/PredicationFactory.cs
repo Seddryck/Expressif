@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates
 {
-    public class PredicateExpressionFactory : BaseExpressionFactory
+    public class PredicationFactory : BaseExpressionFactory
     {
-        private Parser<Parsers.PredicateExpression> Parser { get; } = Parsers.PredicateExpression.Parser;
+        private Parser<Parsers.Predication> Parser { get; } = Parsers.Predication.Parser;
 
         public IPredicate Instantiate(string code, Context context)
         {

@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Parsers
+namespace Expressif.Values
 {
     internal class IntervalBuilder
     {
-        public Interval Create(char lowerBoundChar, string lowerBound, string upperBound, char upperBoundChar)
+        public IInterval Create(char lowerBoundChar, string lowerBound, string upperBound, char upperBoundChar)
         {
             var lowerBoundType = lowerBoundChar == ']' ? IntervalType.Open : IntervalType.Closed;
             var upperBoundType = upperBoundChar == '[' ? IntervalType.Open : IntervalType.Closed;

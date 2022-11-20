@@ -16,7 +16,7 @@ namespace Expressif.Testing.Parsers
         //[TestCase("is-func(foo) | numeric-to-func(foo, @bar)", 2)]
         //[TestCase("text-to-func(foo) | numeric-to-func(foo, @bar) | boolean-to-func", 3)]
         public void Parse_Expression_Valid(string value, int count)
-            => Assert.That(PredicateExpression.Parser.Parse(value).Member, Is.Not.Null);
+            => Assert.That(Expressif.Parsers.Predication.Parser.Parse(value).Member, Is.Not.Null);
         
         //[Test]
         //[TestCase("@foo | text-to-func(foo, @bar)", 1)]

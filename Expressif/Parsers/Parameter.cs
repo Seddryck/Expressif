@@ -47,7 +47,7 @@ namespace Expressif.Parsers
             select new LiteralParameter(name);
 
         private static readonly Parser<IParameter> IntervalParameter =
-            from interval in Grammar.Interval
+            from interval in Interval.Parser
             select new IntervalParameter(interval);
 
 

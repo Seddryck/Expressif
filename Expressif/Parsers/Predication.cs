@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace Expressif.Parsers
 {
-    public class PredicateExpression
+    public class Predication
     {
         public Function Member { get; }
 
-        public PredicateExpression(Function member)
+        public Predication(Function member)
             => (Member) = (member);
 
-        public static readonly Parser<PredicateExpression> Parser =
+        public static readonly Parser<Predication> Parser =
             from predicate in Function.Parser
-            select new PredicateExpression(predicate);
+            select new Predication(predicate);
     }
 }

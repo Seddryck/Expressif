@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Expressif.Values
 {
-    public interface Interval
+    public interface IInterval
     {
         
     }
 
-    public readonly struct Interval<T> : Interval where T : struct, IComparable
+    public readonly struct Interval<T> : IInterval where T : struct, IComparable
     {
         public T LowerBound { get; }
         public T UpperBound { get; }
