@@ -16,4 +16,10 @@ namespace Expressif.Predicates.Text
     {
         protected override bool EvaluateText(string value) => string.IsNullOrEmpty(value);
     }
+
+    class NullOrEmpty : BaseTextPredicateWithoutReference
+    {
+        protected override bool EvaluateNull() => true;
+        protected override bool EvaluateText(string value) => string.IsNullOrEmpty(value);
+    }
 }
