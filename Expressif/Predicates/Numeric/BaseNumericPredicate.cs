@@ -9,13 +9,8 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Numeric
 {
-    abstract class BaseNumericPredicateReference : BasePredicate
+    abstract class BaseNumericPredicate : BasePredicate
     {
-        public IScalarResolver<decimal> Reference { get; }
-
-        public BaseNumericPredicateReference(IScalarResolver<decimal> reference)
-            => Reference = reference;
-
         public override bool Evaluate(object? value)
         {
             return value switch
@@ -28,7 +23,7 @@ namespace Expressif.Predicates.Numeric
         }
         protected bool EvaluateUncasted(object value)
         {
-            if (new Null().Equals(value))
+            if (new Expressif.Values.Special.Null().Equals(value))
                 return EvaluateNull();
 
             var caster = new NumericCaster();
@@ -37,5 +32,13 @@ namespace Expressif.Predicates.Numeric
         }
 
         protected abstract bool EvaluateNumeric(decimal numeric);
+    }
+
+    abstract class BaseNumericPredicateReference : BaseNumericPredicate
+    {
+        public IScalarResolver<decimal> Reference { get; }
+
+        public BaseNumericPredicateReference(IScalarResolver<decimal> reference)
+            => Reference = reference;
     }
 }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Numeric
 {
-    public class EqualToTest
+    public class ComparisonTest
     {
         [Test]
         [TestCase(10, 10, true)]
@@ -96,7 +96,6 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(null, 4, false)]
         public void LessThanOrEqual_Numeric_Success(object value, object reference, bool expected)
         {
-            reference ??= new Null();
             var predicate = new LessThanOrEqual(new LiteralScalarResolver<decimal>(reference));
             Assert.Multiple(() =>
             {
