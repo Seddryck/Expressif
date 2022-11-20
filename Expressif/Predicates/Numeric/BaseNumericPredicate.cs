@@ -23,7 +23,7 @@ namespace Expressif.Predicates.Numeric
         }
         protected bool EvaluateUncasted(object value)
         {
-            if (new Expressif.Values.Special.Null().Equals(value))
+            if (new Null().Equals(value))
                 return EvaluateNull();
 
             var caster = new NumericCaster();

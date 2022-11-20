@@ -6,18 +6,12 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Text
 {
-    class Null : BaseTextPredicateWithoutReference
-    {
-        protected override bool EvaluateNull() => true;
-        protected override bool EvaluateText(string value) => false;
-    }
-
     class Empty : BaseTextPredicateWithoutReference
     {
         protected override bool EvaluateText(string value) => string.IsNullOrEmpty(value);
     }
 
-    class NullOrEmpty : BaseTextPredicateWithoutReference
+    class EmptyOrNull : BaseTextPredicateWithoutReference
     {
         protected override bool EvaluateNull() => true;
         protected override bool EvaluateText(string value) => string.IsNullOrEmpty(value);
