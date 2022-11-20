@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Text
 {
-    class EquivalentToTest
+    public class EquivalentToTest
     {
         [TestCase("A", "A", true)]
         [TestCase("A", "B", false)]

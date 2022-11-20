@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Text
 {
-    class CasingTest
+    public class CasingTest
     {
         [TestCase("Foobar", false)]
         [TestCase("foobar", true)]

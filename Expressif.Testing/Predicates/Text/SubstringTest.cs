@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Text
 {
-    internal class SubstringTest
+    public class SubstringTest
     {
         [TestCase("Foobar", "Foo", true)]
         [TestCase("Foobar", "bar", false)]

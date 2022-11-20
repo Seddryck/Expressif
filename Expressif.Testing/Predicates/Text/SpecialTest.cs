@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Text
 {
-    class SpecialTest
+    public class SpecialTest
     {
         [TestCase(null, true)]
         [TestCase("(null)", true)]
