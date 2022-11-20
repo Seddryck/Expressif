@@ -1,8 +1,10 @@
 ﻿using Expressif.Values;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Text
@@ -66,4 +68,19 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateText(string value, string reference)
             => value.Contains(reference, Comparison);
     }
+    class MatchesRegex : BaseTextPredicateSubstring
+    {
+        public MatchesRegex(IScalarResolver<string> regex)
+            : base(regex, StringComparer.InvariantCultureIgnoreCase) { }
+        public MatchesRegex(IScalarResolver<string> regex, StringComparer comparer)
+            : base(regex, comparer) { }
+
+        protected override bool EvaluateText(string value, string reference)
+        {
+            var regexOption = Comparison == StringComparison.InvariantCultureIgnoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+            var regex = new Regex(reference, regexOption);
+            return regex.IsMatch(value.ToString());
+        }
+    }
+
 }

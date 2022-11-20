@@ -69,5 +69,40 @@ namespace Expressif.Testing.Predicates.Text
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
+
+        [TestCase("FooBar", "^[A-Z][a-z]+$", true)]
+        [TestCase("FooBar", "^[A-Z]+$", true)]
+        [TestCase("FOOBAR", "^[A-Z]+$", true)]
+        [TestCase("(empty)", "^[A-Z]+$", false)]
+        [TestCase("", "^[A-Z]+$", false)]
+        [TestCase("(null)", "^[A-Z]+$", false)]
+        [TestCase(null, "^[A-Z]+$", false)]
+        public void MatchesRegex_TextIgnoreCase_Success(object value, object reference, bool expected)
+        {
+
+            var predicate = new MatchesRegex(new LiteralScalarResolver<string>(reference));
+            Assert.Multiple(() =>
+            {
+                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+            });
+        }
+
+        [TestCase("FooBar", "^[A-Z][a-z]+$", false)]
+        [TestCase("FOOBAR", "^[A-Z][a-z]+$", false)]
+        [TestCase("foobar", "^[A-Z][a-z]+$", false)]
+        [TestCase("FooBar", "^[A-Z]+$", false)]
+        [TestCase("FOOBAR", "^[A-Z]+$", true)]
+        [TestCase("FOOBAR", "^[a-z]+$", false)]
+        public void MatchesRegex_TextDontIgnoreCase_Success(object value, object reference, bool expected)
+        {
+
+            var predicate = new MatchesRegex(new LiteralScalarResolver<string>(reference), StringComparer.InvariantCulture);
+            Assert.Multiple(() =>
+            {
+                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+            });
+        }
     }
 }
