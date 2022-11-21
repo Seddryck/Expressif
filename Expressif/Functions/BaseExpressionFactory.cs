@@ -90,6 +90,7 @@ namespace Expressif.Functions
             => parameter switch
             {
                 IntervalParameter i => new IntervalBuilder().Create(i.Value.LowerBoundType, i.Value.LowerBound, i.Value.UpperBound, i.Value.UpperBoundType),
+                _ => throw new ArgumentOutOfRangeException(nameof(parameter))
             };
 
         protected internal IScalarResolver GetParametrizedExpressionScalarResolver(InputExpressionParameter exp, Type type, Context context)

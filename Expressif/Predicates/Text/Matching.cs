@@ -1,4 +1,5 @@
 ﻿using Expressif.Values;
+using Expressif.Values.Casters;
 using Expressif.Values.Resolvers;
 using System;
 using System.Collections.Generic;
@@ -38,28 +39,7 @@ namespace Expressif.Predicates.Text
             : base(culture) { }
 
         protected override bool EvaluateUncasted(object value)
-            => value switch
-            {
-                Byte => true,
-                SByte => true,
-                Int16 => true,
-                Int32 => true,
-                Int64 => true,
-                #if NET7_0_OR_GREATER
-                Int128 => true,
-                #endif
-                UInt16 => true,
-                UInt32 => true,
-                UInt64 => true,
-                #if NET7_0_OR_GREATER
-                UInt128 => true,
-                Half => true,
-                #endif
-                Single=> true,
-                Double => true,
-                Decimal => true,
-                _ => base.EvaluateUncasted(value),
-            };
+            => new NumericCaster().IsNumericType(value) || base.EvaluateUncasted(value);
 
         protected override bool EvaluateBaseText(string value)
             => decimal.TryParse(value, NumberStyles.Number & ~NumberStyles.AllowThousands, CultureInfo.NumberFormat, out var _);
