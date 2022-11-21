@@ -55,16 +55,16 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateUncasted(object value)
             => value switch
             {
-                DateTime dt => EvaluateDateTime(dt),
+                System.DateTime dt => EvaluateDateTime(dt),
                 DateOnly => true,
                 TimeOnly => false,
                 _ => base.EvaluateUncasted(value),
             };
 
         protected override bool EvaluateBaseText(string value)
-            => DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.ShortDatePattern, CultureInfo, DateTimeStyles.None, out var _);
+            => System.DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.ShortDatePattern, CultureInfo, DateTimeStyles.None, out var _);
 
-        protected virtual bool EvaluateDateTime(DateTime dt)
+        protected virtual bool EvaluateDateTime(System.DateTime dt)
             => dt.Equals(dt.Date);
     }
 
@@ -80,15 +80,14 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateUncasted(object value)
             => value switch
             {
-                DateTime => true,
+                System.DateTime => true,
                 DateOnly => true,
                 TimeOnly => false,
                 _ => base.EvaluateUncasted(value),
             };
 
         protected override bool EvaluateBaseText(string value)
-            => DateTime.TryParseExact(value, Pattern, CultureInfo, DateTimeStyles.None, out var _);
-
+            => System.DateTime.TryParseExact(value, Pattern, CultureInfo, DateTimeStyles.None, out var _);
     }
 
     class MatchesTime : BaseTextPredicateMatching
@@ -101,7 +100,7 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateUncasted(object value)
             => value switch
             {
-                DateTime => false,
+                System.DateTime => false,
                 DateOnly => false,
                 TimeOnly => true,
                 TimeSpan ts => EvaluateTimeSpan(ts),
@@ -109,7 +108,7 @@ namespace Expressif.Predicates.Text
             };
 
         protected override bool EvaluateBaseText(string value)
-            => DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.LongTimePattern, CultureInfo, DateTimeStyles.None, out var _);
+            => System.DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.LongTimePattern, CultureInfo, DateTimeStyles.None, out var _);
 
         protected virtual bool EvaluateTimeSpan(TimeSpan ts)
             => ts.TotalHours < 24;
