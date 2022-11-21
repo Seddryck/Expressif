@@ -56,8 +56,9 @@ You can chain the functions to apply to the initial value by using the operator 
 
 ```csharp
 var expression = new Expression("text-to-lower | text-to-remove-chars(a)");
-var result = expression.Evaluate("Nikola Tesla");```
+var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikol tesl"));
+```
 It's possible to use variables as function parameters. the name of the variables must always start by an arobas (`@`)
 
 ```csharp
