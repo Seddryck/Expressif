@@ -23,21 +23,21 @@ namespace Expressif.Parsers
             select new Expression(first.Concat(others));
     }
 
-    public class ParametrizedExpression
+    public class InputExpression
     {
         public IEnumerable<Function> Members { get; }
         public IParameter Parameter { get; }
 
-        public ParametrizedExpression(IParameter parameter, IEnumerable<Function> members)
+        public InputExpression(IParameter parameter, IEnumerable<Function> members)
             => (Parameter, Members) = (parameter, members);
 
-        public static readonly Parser<ParametrizedExpression> Parser =
+        public static readonly Parser<InputExpression> Parser =
             from parameter in Parsers.Parameter.Parser.Token()
             from remaining in (
                 from _ in Parse.Char('|').Token()
                 from expression in Expression.Parser
                 select expression.Members
             ).Optional()
-            select new ParametrizedExpression(parameter, remaining.GetOrElse(Enumerable.Empty<Function>()));
+            select new InputExpression(parameter, remaining.GetOrElse(Enumerable.Empty<Function>()));
     }
 }

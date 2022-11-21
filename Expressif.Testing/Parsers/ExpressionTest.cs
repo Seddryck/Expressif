@@ -23,6 +23,6 @@ namespace Expressif.Testing.Parsers
         [TestCase("@foo | text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
         [TestCase("foo", 0)]
         public void Parse_ParametrizedExpression_Valid(string value, int count)
-            => Assert.That(ParametrizedExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
+            => Assert.That(InputExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
     }
 }

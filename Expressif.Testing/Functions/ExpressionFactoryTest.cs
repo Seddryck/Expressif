@@ -112,7 +112,7 @@ namespace Expressif.Testing.Functions
         {
             var context = new Context();
             context.Variables.Add<int>("myVar", 4);
-            var subFunction = new ParameterizedExpressionParameter(new ParametrizedExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", Array.Empty<IParameter>()) }));
+            var subFunction = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", Array.Empty<IParameter>()) }));
             var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { subFunction }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<NumericToRound>());
@@ -125,9 +125,9 @@ namespace Expressif.Testing.Functions
             var context = new Context();
             context.Variables.Add<int>("myVar1", 4);
             context.Variables.Add<int>("myVar2", 5);
-            var subFunction1 = new ParameterizedExpressionParameter(new ParametrizedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", Array.Empty<IParameter>()) }));
-            var subFunction2 = new ParameterizedExpressionParameter(new ParametrizedExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", Array.Empty<IParameter>()) }));
-            var subFunction3 = new ParameterizedExpressionParameter(new ParametrizedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", new IParameter[] { subFunction1 }), new Function("numeric-to-multiply", new IParameter[] { subFunction2 }) }));
+            var subFunction1 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", Array.Empty<IParameter>()) }));
+            var subFunction2 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", Array.Empty<IParameter>()) }));
+            var subFunction3 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", new IParameter[] { subFunction1 }), new Function("numeric-to-multiply", new IParameter[] { subFunction2 }) }));
             var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { subFunction3 }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<NumericToRound>());

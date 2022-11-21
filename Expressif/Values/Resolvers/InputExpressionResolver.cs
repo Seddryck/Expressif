@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace Expressif.Values.Resolvers
 {
-    public class ParametrizedExpressionResolver<T> : IScalarResolver<T>
+    public class InputExpressionResolver<T> : IScalarResolver<T>
     {
         private IFunction Expression { get; }
         private IScalarResolver Argument { get; }
 
-        public ParametrizedExpressionResolver(IScalarResolver argument, IFunction expression)
+        public InputExpressionResolver(IScalarResolver argument, IFunction expression)
             => (Argument, Expression) = (argument, expression);
 
         public T? Execute() => new Caster().Cast<T>(Expression.Evaluate(Argument));

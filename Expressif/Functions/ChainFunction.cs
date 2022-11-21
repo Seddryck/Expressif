@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions
 {
-    public class ExpressionFunction : IFunction
+    public class ChainFunction : IFunction
     {
         private IEnumerable<IFunction> Functions { get; }
 
-        public ExpressionFunction(IEnumerable<IFunction> functions)
+        public ChainFunction(IEnumerable<IFunction> functions)
             => Functions = functions;
 
         public object? Evaluate(object? value)
