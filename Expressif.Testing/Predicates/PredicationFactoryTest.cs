@@ -6,7 +6,7 @@ using Expressif.Predicates.Text;
 
 namespace Expressif.Testing.Predicates
 {
-    public class PredicateExpressionFactoryTest
+    public class PredicationFactoryTest
     {
         [SetUp]
         public void Setup()

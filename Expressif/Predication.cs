@@ -10,7 +10,7 @@ namespace Expressif
 {
     public class Predication : IPredicate
     {
-        private readonly IFunction expression;
+        private readonly IPredicate expression;
 
         public Predication(string code)
             : this(code, new Context()) { }
@@ -19,7 +19,7 @@ namespace Expressif
         public Predication(string code, Context context, PredicationFactory factory)
             => expression = factory.Instantiate(code, context);
 
-        public bool Evaluate(object? value) => (bool)expression.Evaluate(value)!;
+        public bool Evaluate(object? value) => expression.Evaluate(value)!;
         object? IFunction.Evaluate(object? value) => expression.Evaluate(value);
     }
 }
