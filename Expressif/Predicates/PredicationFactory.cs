@@ -17,8 +17,10 @@ namespace Expressif.Predicates
         public IPredicate Instantiate(string code, Context context)
         {
             var expression = Parser.Parse(code);
-
-            return Instantiate<IPredicate>(expression.Member.Name, expression.Member.Parameters, context);
+            var predicates = new List<IPredicate>();
+            foreach (var member in expression.Members)
+                predicates.Add(Instantiate<IPredicate>(member.Name, member.Parameters, context));
+            return new ChainPredicate(predicates);
         }
 
         public IFunction Instantiate(Type type, IParameter[] parameters, Context context)

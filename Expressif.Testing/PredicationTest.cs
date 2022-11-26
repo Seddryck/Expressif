@@ -43,5 +43,13 @@ namespace Expressif
             var result = predication.Evaluate("28/12/1978");
             Assert.That(result, Is.True);
         }
+
+        [Test]
+        public void Evaluate_Negation_Valid()
+        {
+            var predication = new Predication("!starts-with(Nik)");
+            var result = predication.Evaluate("Nikola Tesla");
+            Assert.That(result, Is.False);
+        }
     }
 }

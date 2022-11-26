@@ -13,16 +13,13 @@ namespace Expressif.Testing.Parsers
         [Test]
         [TestCase("is-func(foo, @bar)", 1)]
         [TestCase("is-func", 1)]
-        //[TestCase("is-func(foo) | numeric-to-func(foo, @bar)", 2)]
-        //[TestCase("text-to-func(foo) | numeric-to-func(foo, @bar) | boolean-to-func", 3)]
+        [TestCase("!is-func(foo)", 2)]
+        [TestCase(" ! is-func(foo)", 2)]
         public void Parse_Expression_Valid(string value, int count)
-            => Assert.That(Expressif.Parsers.Predication.Parser.Parse(value).Member, Is.Not.Null);
-        
-        //[Test]
-        //[TestCase("@foo | text-to-func(foo, @bar)", 1)]
-        //[TestCase("@foo | text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
-        //[TestCase("foo", 0)]
-        //public void Parse_ParametrizedExpression_Valid(string value, int count)
-        //    => Assert.That(InputExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
+        {
+            var predication = Expressif.Parsers.Predication.Parser.Parse(value);
+            Assert.That(predication.Members, Is.Not.Null);
+            Assert.That(predication.Members, Has.Length.EqualTo(count));
+        }
     }
 }
