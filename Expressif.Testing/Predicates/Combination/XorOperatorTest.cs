@@ -1,4 +1,5 @@
-﻿using Expressif.Predicates;
+﻿using Expressif.Functions;
+using Expressif.Predicates;
 using Expressif.Predicates.Combination;
 using System;
 using System.Collections.Generic;
@@ -17,39 +18,43 @@ namespace Expressif.Testing.Predicates.Combination
         [TestCase(false, true, true)]
         public void Evaluate_Value_Success(bool state, bool value, bool expected)
         {
-            var factory = new Mock<PredicationFactory>();
-            var predication = new Mock<Predication>(new object[] { "any-code", new Context(), factory.Object });
-            predication.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
-            factory.Setup(x => x.Instantiate(It.IsAny<string>(), It.IsAny<Context>())).Returns(predication.Object);
-            var @operator = new XorOperator(predication.Object);
-            
-            Assert.That(@operator.Evaluate(state, "my value"), Is.EqualTo(expected));
+            var left = new Mock<IPredicate>();
+            left.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(state);
+            var right = new Mock<IPredicate>();
+            right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
+            var @operator = new XorOperator();
+
+            Assert.That(@operator.Evaluate(left.Object, right.Object, "my value"), Is.EqualTo(expected));
         }
 
         [Test]
-        public void Evaluate_StateIsTrue_EvaluatePredicate()
+        public void Evaluate_LeftIsTrue_EvaluateRightPredicate()
         {
-            var factory = new Mock<PredicationFactory>();
-            var predication = new Mock<Predication>(new object[] { "any-code", new Context(), factory.Object });
-            predication.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(true);
-            factory.Setup(x => x.Instantiate(It.IsAny<string>(), It.IsAny<Context>())).Returns(predication.Object);
-            var @operator = new XorOperator(predication.Object);
-            @operator.Evaluate(true, "my value");
+            var left = new Mock<IPredicate>();
+            left.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(true);
+            var right = new Mock<IPredicate>();
+            right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
 
-            predication.Verify(x => x.Evaluate(It.IsAny<object>()), Times.Once());
+            var @operator = new XorOperator();
+            @operator.Evaluate(left.Object, right.Object, "my value");
+
+            left.Verify(x => x.Evaluate("my value"), Times.Once());
+            right.Verify(x => x.Evaluate("my value"), Times.Once());
         }
 
         [Test]
-        public void Evaluate_StateIsFalse_EvaluatePredicate()
+        public void Evaluate_LeftIsFalse_EvaluateRightPredicate()
         {
-            var factory = new Mock<PredicationFactory>();
-            var predication = new Mock<Predication>(new object[] { "any-code", new Context(), factory.Object });
-            predication.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(true);
-            factory.Setup(x => x.Instantiate(It.IsAny<string>(), It.IsAny<Context>())).Returns(predication.Object);
-            var @operator = new XorOperator(predication.Object);
-            @operator.Evaluate(false, "my value");
+            var left = new Mock<IPredicate>();
+            left.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
+            var right = new Mock<IPredicate>();
+            right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
 
-            predication.Verify(x => x.Evaluate(It.IsAny<object>()), Times.Once());
+            var @operator = new XorOperator();
+            @operator.Evaluate(left.Object, right.Object, "my value");
+
+            left.Verify(x => x.Evaluate("my value"), Times.Once());
+            right.Verify(x => x.Evaluate("my value"), Times.Once());
         }
     }
 }

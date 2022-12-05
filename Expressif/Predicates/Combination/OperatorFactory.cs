@@ -10,10 +10,10 @@ namespace Expressif.Predicates.Combination
 {
     internal class OperatorFactory : BaseExpressionFactory
     {
-        public ICombinationOperator Instantiate(string operatorName, Predication rightMember)
+        public ICombinationOperator? Instantiate(string operatorName, Predication rightMember)
         {
             var @operator = GetFunctionType<ICombinationOperator>($"{operatorName.ToLowerInvariant()}-operator");
-
+            return null;
         }
 
     }

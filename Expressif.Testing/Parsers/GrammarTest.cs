@@ -18,11 +18,13 @@ namespace Expressif.Testing.Parsers
         [TestCase("  foo")]
         [TestCase("FoO")]
         [TestCase("foo-bar")]
-        [TestCase("foo-BAr-foo")]
+        [TestCase("  foo-bar")]
+        [TestCase("foo-bar  ")]
+        [TestCase("foo-BAr-foo")]       
         public void Parse_FunctionName_Valid(string value)
             => Assert.That(Grammar.FunctionName.End().Parse(value), Is.EqualTo(value.Trim()));
 
-        [Test]
+        [Test]  
         [TestCase("1foo")]
         [TestCase("fo1o")]
         [TestCase("foo1")]
@@ -60,6 +62,8 @@ namespace Expressif.Testing.Parsers
         [TestCase("@")]
         [TestCase("foo")]
         [TestCase("@foo-1")]
+        [TestCase("@ foo")]
+        [TestCase("@1foo")]
         public void Parse_Variable_Invalid(string value)
             => Assert.That(() => Grammar.Delimitator.End().Parse(value), Throws.TypeOf<ParseException>());
 

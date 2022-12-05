@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressif.Functions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Combination
 {
-    interface ICombinationOperator
+    public interface ICombinationOperator
     {
-        bool Evaluate(bool state, object? value);
+        bool Evaluate(IPredicate left, IPredicate right, object? value);
     }
 }
