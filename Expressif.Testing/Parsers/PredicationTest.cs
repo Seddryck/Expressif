@@ -31,9 +31,5 @@ namespace Expressif.Testing.Parsers
         [TestCase("123 |? { ! equal-to(125) |OR even } |AND !null ")]
         public void Parse_ParametrizedPredication_Valid(string value)
             => Assert.That(InputPredication.Parser.Parse(value).Predication, Is.Not.Null);
-            
-        //[TestCase("123 |? !equal-to(125) |OR even ")]
-        public void Parse_ParametrizedPredication_Valid(string value)
-            => Assert.That(Expressif.Parsers.InputPredication.Parser.Parse(value).Member, Is.Not.Null);
     }
 }
