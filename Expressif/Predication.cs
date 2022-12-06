@@ -19,7 +19,8 @@ namespace Expressif
         public Predication(string code, Context context, PredicationFactory factory)
             => expression = factory.Instantiate(code, context);
 
-        public bool Evaluate(object? value) => expression.Evaluate(value)!;
+        public virtual bool Evaluate(object? value) => expression.Evaluate(value)!;
+
         object? IFunction.Evaluate(object? value) => expression.Evaluate(value);
     }
 }

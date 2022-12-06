@@ -30,6 +30,7 @@ namespace Expressif.Testing.Functions
         [Test]
         [TestCase("null-to-zero")]
         [TestCase("Null-To-Zero")]
+        [TestCase("NULL-To-Zero")]
         [TestCase("null - to - zero")]
         public void GetFunctionType_FunctionNameVariations_Valid(string value)
             => Assert.That(new ExpressionFactory().GetFunctionType(value), Is.EqualTo(typeof(NullToZero)));

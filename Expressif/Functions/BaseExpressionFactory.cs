@@ -54,7 +54,7 @@ namespace Expressif.Functions
         protected virtual Type GetFunctionType<T>(string functionName)
         {
             var textInfo = CultureInfo.InvariantCulture.TextInfo;
-            var className = textInfo.ToTitleCase(functionName.Trim().Replace("-", " "))
+            var className = textInfo.ToTitleCase(functionName.Trim().ToLowerInvariant().Replace("-", " "))
                 .Replace(" ", "")
                 .Replace("Datetime", "DateTime")
                 .Replace("Timespan", "TimeSpan");
