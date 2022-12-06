@@ -9,23 +9,22 @@ namespace Expressif.Parsers
 {
     public class Grammar
     {
-        private static readonly Parser<string> FunctionNameToken =
-            from letters in Parse.Letter.AtLeastOnce().Text()
-            from dash in Parse.Char('-').Once().Text()
-            select string.Concat(letters.Concat(dash));
-
         public static readonly Parser<string> FunctionName =
-            from tokens in FunctionNameToken.Many().Optional()
-            from lastToken in Parse.Letter.AtLeastOnce().Text().Token()
-            select string.Concat(tokens.GetOrElse(Enumerable.Empty<string>()).Append(lastToken));
+            from tokens in Parse.Letter.AtLeastOnce().Text().DelimitedBy(Parse.Char('-')).Token()
+            select string.Join('-', tokens.ToArray());
 
         public static readonly Parser<char> Delimitator = Parse.Char('|').Token();
 
+        //public static readonly Parser<string> Variable =
+        //    from arobas in Parse.Char('@').Token()
+        //    from firstLetter in Parse.Letter.Once().Text()
+        //    from followingLetters in Parse.LetterOrDigit.Many().Text().Token().Optional()
+        //    select string.Concat(firstLetter.Concat(followingLetters.GetOrElse(string.Empty)));
+
         public static readonly Parser<string> Variable =
             from arobas in Parse.Char('@').Token()
-            from firstLetter in Parse.Letter.Once().Text()
-            from followingLetters in Parse.LetterOrDigit.Many().Text().Token().Optional()
-            select string.Concat(firstLetter.Concat(followingLetters.GetOrElse(string.Empty)));
+            from id in Parse.Identifier(Parse.Letter, Parse.LetterOrDigit).Token()
+            select id;
 
         private static readonly Parser<string> UnquotedLiteral =
             from firstChar in Parse.CharExcept(new[] { '\"', '@', ',', '(', '[', '{', ' ' }).Token()
