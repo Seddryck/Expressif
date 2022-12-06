@@ -1,4 +1,4 @@
-﻿using Expressif.Functions;
+using Expressif.Functions;
 using Expressif.Functions.Special;
 using Expressif.Predicates.Boolean;
 using Sprache;

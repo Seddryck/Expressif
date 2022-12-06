@@ -36,7 +36,6 @@ namespace Expressif.Predicates
             var predicates = new List<IPredicate>();
             foreach (var predicate in basic.Members)
                 predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
-
             return new ChainPredicate(predicates);
         }
 
@@ -72,6 +71,5 @@ namespace Expressif.Predicates
             else
                 return base.GetFunctionType<T>(functionName);
         }
-
     }
 }

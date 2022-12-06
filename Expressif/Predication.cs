@@ -20,6 +20,7 @@ namespace Expressif
             => expression = factory.Instantiate(code, context);
 
         public virtual bool Evaluate(object? value) => expression.Evaluate(value)!;
+
         object? IFunction.Evaluate(object? value) => expression.Evaluate(value);
     }
 }
