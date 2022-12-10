@@ -175,28 +175,28 @@
     "Scope": "Text"
   },
   {
-    "Name": "text-is-matches-numeric",
+    "Name": "text-matches-numeric",
     "Aliases": [
       "matches-numeric"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-matches-date",
+    "Name": "text-matches-date",
     "Aliases": [
       "matches-date"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-matches-datetime",
+    "Name": "text-matches-datetime",
     "Aliases": [
       "matches-datetime"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-matches-time",
+    "Name": "text-matches-time",
     "Aliases": [
       "matches-time"
     ],
@@ -252,28 +252,28 @@
     "Scope": "Text"
   },
   {
-    "Name": "text-is-starts-with",
+    "Name": "text-starts-with",
     "Aliases": [
       "starts-with"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-ends-with",
+    "Name": "text-ends-with",
     "Aliases": [
       "ends-with"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-contains",
+    "Name": "text-contains",
     "Aliases": [
       "contains"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-matches-regex",
+    "Name": "text-matches-regex",
     "Aliases": [
       "matches-regex"
     ],

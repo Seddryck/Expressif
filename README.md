@@ -132,10 +132,10 @@ Install-Package Expressif
 |Numeric  | numeric-to-add                     |                           |
 |Numeric  | numeric-to-ceiling                 | ceiling                   |
 |Numeric  | numeric-to-clip                    |                           |
-|Numeric  | numeric-to-decrement               |                           |
+|Numeric  | numeric-to-decrement               | decrement                 |
 |Numeric  | numeric-to-divide                  | divide                    |
 |Numeric  | numeric-to-floor                   | floor                     |
-|Numeric  | numeric-to-increment               |                           |
+|Numeric  | numeric-to-increment               | increment                 |
 |Numeric  | numeric-to-integer                 | integer                   |
 |Numeric  | numeric-to-invert                  | invert                    |
 |Numeric  | numeric-to-multiply                | multiply                  |
@@ -226,25 +226,28 @@ Install-Package Expressif
 |Temporal | temporal-is-on-the-hour                | on-the-hour                   |
 |Temporal | temporal-is-on-the-minute              | on-the-minute                 |
 |Temporal | temporal-is-same-instant               | same-instant                  |
+|Text     | text-contains                          | contains                      |
+|Text     | text-ends-with                         | ends-with                     |
 |Text     | text-is-any-of                         | any-of                        |
-|Text     | text-is-contains                       | contains                      |
 |Text     | text-is-empty                          | empty                         |
 |Text     | text-is-empty-or-null                  | empty-or-null                 |
-|Text     | text-is-ends-with                      | ends-with                     |
 |Text     | text-is-equivalent-to                  | equivalent-to                 |
 |Text     | text-is-lower-case                     | lower-case                    |
-|Text     | text-is-matches-date                   | matches-date                  |
-|Text     | text-is-matches-datetime               | matches-datetime              |
-|Text     | text-is-matches-numeric                | matches-numeric               |
-|Text     | text-is-matches-regex                  | matches-regex                 |
-|Text     | text-is-matches-time                   | matches-time                  |
 |Text     | text-is-sorted-after                   | sorted-after                  |
 |Text     | text-is-sorted-after-or-equivalent-to  | sorted-after-or-equivalent-to |
 |Text     | text-is-sorted-before                  | sorted-before                 |
 |Text     | text-is-sorted-before-or-equivalent-to | sorted-before-or-equivalent-to|
-|Text     | text-is-starts-with                    | starts-with                   |
 |Text     | text-is-upper-case                     | upper-case                    |
+|Text     | text-matches-date                      | matches-date                  |
+|Text     | text-matches-datetime                  | matches-datetime              |
+|Text     | text-matches-numeric                   | matches-numeric               |
+|Text     | text-matches-regex                     | matches-regex                 |
+|Text     | text-matches-time                      | matches-time                  |
+|Text     | text-starts-with                       | starts-with                   |
 <!-- END PREDICATE TABLE -->
+
+
+
 
 
 
