@@ -46,7 +46,7 @@ deploy:
 on_success:
 
   - pwsh: |
-      & .\generate-feature-info.ps1
+      & .\generate-function-info.ps1
       $exitCode = $LastExitCode
       & .\generate-predicate-info.ps1
       $exitCode += $LastExitCode
