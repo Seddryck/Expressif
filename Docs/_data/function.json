@@ -1,17 +1,10 @@
 [
   {
-    "Name": "text-to-without-diacritics",
+    "Name": "text-to-after",
     "Aliases": [
-      "without-diacritics"
+      "after"
     ],
     "Scope": "Text"
-  },
-  {
-    "Name": "numeric-to-ceiling",
-    "Aliases": [
-      "ceiling"
-    ],
-    "Scope": "Numeric"
   },
   {
     "Name": "null-to-zero",
@@ -92,18 +85,25 @@
     "Scope": "Temporal"
   },
   {
-    "Name": "numeric-to-floor",
-    "Aliases": [
-      "floor"
-    ],
-    "Scope": "Numeric"
-  },
-  {
     "Name": "datetime-to-set-time",
     "Aliases": [
       "set-time"
     ],
     "Scope": "Temporal"
+  },
+  {
+    "Name": "numeric-to-ceiling",
+    "Aliases": [
+      "ceiling"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-to-floor",
+    "Aliases": [
+      "floor"
+    ],
+    "Scope": "Numeric"
   },
   {
     "Name": "numeric-to-integer",
@@ -113,8 +113,10 @@
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-to-clip",
-    "Aliases": [],
+    "Name": "numeric-to-round",
+    "Aliases": [
+      "round"
+    ],
     "Scope": "Numeric"
   },
   {
@@ -167,18 +169,16 @@
     "Scope": "IO"
   },
   {
+    "Name": "datetime-to-clip",
+    "Aliases": [],
+    "Scope": "Temporal"
+  },
+  {
     "Name": "file-to-size",
     "Aliases": [
       "size"
     ],
     "Scope": "IO"
-  },
-  {
-    "Name": "numeric-to-invert",
-    "Aliases": [
-      "invert"
-    ],
-    "Scope": "Numeric"
   },
   {
     "Name": "numeric-to-divide",
@@ -219,16 +219,16 @@
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-to-round",
-    "Aliases": [
-      "round"
-    ],
+    "Name": "numeric-to-clip",
+    "Aliases": [],
     "Scope": "Numeric"
   },
   {
-    "Name": "datetime-to-clip",
-    "Aliases": [],
-    "Scope": "Temporal"
+    "Name": "numeric-to-invert",
+    "Aliases": [
+      "invert"
+    ],
+    "Scope": "Numeric"
   },
   {
     "Name": "datetime-to-previous-year",
@@ -245,9 +245,11 @@
     "Scope": "Temporal"
   },
   {
-    "Name": "blank-to-null",
-    "Aliases": [],
-    "Scope": "Text"
+    "Name": "datetime-to-previous-day",
+    "Aliases": [
+      "previous-day"
+    ],
+    "Scope": "Temporal"
   },
   {
     "Name": "blank-to-empty",
@@ -297,16 +299,14 @@
     "Scope": "Text"
   },
   {
-    "Name": "text-to-suffix",
-    "Aliases": [
-      "suffix"
-    ],
+    "Name": "blank-to-null",
+    "Aliases": [],
     "Scope": "Text"
   },
   {
-    "Name": "text-to-prefix",
+    "Name": "text-to-suffix",
     "Aliases": [
-      "prefix"
+      "suffix"
     ],
     "Scope": "Text"
   },
@@ -346,12 +346,35 @@
     "Scope": "Text"
   },
   {
-    "Name": "empty-to-null",
-    "Aliases": [],
+    "Name": "text-to-without-diacritics",
+    "Aliases": [
+      "without-diacritics"
+    ],
     "Scope": "Text"
   },
   {
-    "Name": "null-to-empty",
+    "Name": "text-to-before",
+    "Aliases": [
+      "before"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-to-prefix",
+    "Aliases": [
+      "prefix"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "path-to-root",
+    "Aliases": [
+      "root"
+    ],
+    "Scope": "IO"
+  },
+  {
+    "Name": "empty-to-null",
     "Aliases": [],
     "Scope": "Text"
   },
@@ -359,20 +382,6 @@
     "Name": "html-to-text",
     "Aliases": [],
     "Scope": "Text"
-  },
-  {
-    "Name": "text-to-length",
-    "Aliases": [
-      "length"
-    ],
-    "Scope": "Text"
-  },
-  {
-    "Name": "datetime-to-previous-day",
-    "Aliases": [
-      "previous-day"
-    ],
-    "Scope": "Temporal"
   },
   {
     "Name": "datetime-to-next-year",
@@ -417,13 +426,6 @@
     "Scope": "Temporal"
   },
   {
-    "Name": "path-to-root",
-    "Aliases": [
-      "root"
-    ],
-    "Scope": "IO"
-  },
-  {
     "Name": "datetime-to-first-of-month",
     "Aliases": [
       "first-of-month"
@@ -431,9 +433,14 @@
     "Scope": "Temporal"
   },
   {
-    "Name": "datetime-to-date",
+    "Name": "null-to-empty",
+    "Aliases": [],
+    "Scope": "Text"
+  },
+  {
+    "Name": "date-to-age",
     "Aliases": [
-      "date"
+      "age"
     ],
     "Scope": "Temporal"
   },
@@ -476,9 +483,16 @@
     "Scope": "Text"
   },
   {
-    "Name": "date-to-age",
+    "Name": "text-to-length",
     "Aliases": [
-      "age"
+      "length"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "datetime-to-date",
+    "Aliases": [
+      "date"
     ],
     "Scope": "Temporal"
   },

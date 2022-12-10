@@ -144,7 +144,6 @@ Install-Package Expressif
 |Special  | any-to-any                         |                           |
 |Special  | null-to-value                      |                           |
 |Special  | value-to-value                     |                           |
-|Temporal | date-to-age                        | age                       |
 |Temporal | datetime-to-add                    |                           |
 |Temporal | datetime-to-ceiling-hour           | ceiling-hour              |
 |Temporal | datetime-to-ceiling-minute         | ceiling-minute            |
@@ -164,6 +163,7 @@ Install-Package Expressif
 |Temporal | datetime-to-previous-year          | previous-year             |
 |Temporal | datetime-to-set-time               | set-time                  |
 |Temporal | datetime-to-subtract               |                           |
+|Temporal | date-to-age                        | age                       |
 |Temporal | invalid-to-date                    |                           |
 |Temporal | local-to-utc                       |                           |
 |Temporal | null-to-date                       |                           |
@@ -174,6 +174,8 @@ Install-Package Expressif
 |Text     | html-to-text                       |                           |
 |Text     | mask-to-text                       |                           |
 |Text     | null-to-empty                      |                           |
+|Text     | text-to-after                      | after                     |
+|Text     | text-to-before                     | before                    |
 |Text     | text-to-datetime                   |                           |
 |Text     | text-to-first-chars                | first-chars               |
 |Text     | text-to-html                       | html                      |
@@ -245,6 +247,8 @@ Install-Package Expressif
 |Text     | text-matches-time                      | matches-time                  |
 |Text     | text-starts-with                       | starts-with                   |
 <!-- END PREDICATE TABLE -->
+
+
 
 
 
