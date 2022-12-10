@@ -20,10 +20,15 @@ namespace Expressif.Testing.Functions
         [TestCase("neutral", typeof(Neutral))]
         [TestCase("null-to-zero", typeof(NullToZero))]
         [TestCase("numeric-to-ceiling", typeof(Ceiling))]
+        [TestCase("ceiling", typeof(Ceiling))]
         [TestCase("datetime-to-date", typeof(DateTimeToDate))]
         [TestCase("local-to-utc", typeof(LocalToUtc))]
         [TestCase("text-to-without-diacritics", typeof(WithoutDiacritics))]
+        [TestCase("without-diacritics", typeof(WithoutDiacritics))]
         [TestCase("path-to-filename-without-extension", typeof(FilenameWithoutExtension))]
+        [TestCase("filename-without-extension", typeof(FilenameWithoutExtension))]
+        [TestCase("whitespaces-to-empty", typeof(WhitespacesToEmpty))]
+        [TestCase("blank-to-empty", typeof(WhitespacesToEmpty))]
         public void GetFunctionType_FunctionName_Valid(string value, Type expected)
             => Assert.That(new ExpressionFactory().GetFunctionType(value), Is.EqualTo(expected));
 

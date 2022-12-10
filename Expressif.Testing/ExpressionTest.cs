@@ -70,6 +70,17 @@ namespace Expressif
         }
 
         [Test]
+        public void Evaluate_Synonyms_Valid()
+        {
+            var context = new Context();
+            context.CurrentObject.Set(new List<char>() { 'e', 's' });
+
+            var expression = new Expression("text-to-lower | text-to-remove-chars(#1)", context);
+            var result = expression.Evaluate("Nikola Tesla");
+            Assert.That(result, Is.EqualTo("nikola tela"));
+        }
+
+        [Test]
         public void Evaluate_FunctionAsParameter_Valid()
         {
             var context = new Context();
