@@ -19,11 +19,11 @@ namespace Expressif.Testing.Functions
         [Test]
         [TestCase("neutral", typeof(Neutral))]
         [TestCase("null-to-zero", typeof(NullToZero))]
-        [TestCase("numeric-to-ceiling", typeof(NumericToCeiling))]
+        [TestCase("numeric-to-ceiling", typeof(Ceiling))]
         [TestCase("datetime-to-date", typeof(DateTimeToDate))]
         [TestCase("local-to-utc", typeof(LocalToUtc))]
-        [TestCase("text-to-without-diacritics", typeof(TextToWithoutDiacritics))]
-        [TestCase("path-to-filename-without-extension", typeof(PathToFilenameWithoutExtension))]
+        [TestCase("text-to-without-diacritics", typeof(WithoutDiacritics))]
+        [TestCase("path-to-filename-without-extension", typeof(FilenameWithoutExtension))]
         public void GetFunctionType_FunctionName_Valid(string value, Type expected)
             => Assert.That(new ExpressionFactory().GetFunctionType(value), Is.EqualTo(expected));
 
@@ -44,10 +44,10 @@ namespace Expressif.Testing.Functions
 
         [Test]
         [TestCase(typeof(NullToZero), 0)]
-        [TestCase(typeof(NumericToRound), 1)]
-        [TestCase(typeof(TextToPadRight), 2)]
-        [TestCase(typeof(TextToToken), 1)]
-        [TestCase(typeof(TextToToken), 2)]
+        [TestCase(typeof(Round), 1)]
+        [TestCase(typeof(PadRight), 2)]
+        [TestCase(typeof(Token), 1)]
+        [TestCase(typeof(Token), 2)]
         public void GetMatchingConstructor_TypeAndParams_Valid(Type type, int paramCount)
         {
             var ctor = new ExpressionFactory().GetMatchingConstructor(type, paramCount);
@@ -57,71 +57,71 @@ namespace Expressif.Testing.Functions
 
         [Test]
         [TestCase(typeof(NullToZero), 1)]
-        [TestCase(typeof(NumericToRound), 2)]
-        [TestCase(typeof(TextToPadRight), 3)]
-        [TestCase(typeof(TextToToken), 0)]
-        [TestCase(typeof(TextToToken), 3)]
+        [TestCase(typeof(Round), 2)]
+        [TestCase(typeof(PadRight), 3)]
+        [TestCase(typeof(Token), 0)]
+        [TestCase(typeof(Token), 3)]
         public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)
             => Assert.That(() => new ExpressionFactory().GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
 
         [Test]
-        public void Instantiate_NumericToRoundLiteralParameter_Valid()
+        public void Instantiate_RoundLiteralParameter_Valid()
         {
-            var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { new LiteralParameter("1") }, new Context());
+            var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new LiteralParameter("1") }, new Context());
             Assert.That(function, Is.Not.Null);
-            Assert.That(function, Is.TypeOf<NumericToRound>());
-            Assert.That((function as NumericToRound)!.Digits.Execute(), Is.EqualTo(1));
+            Assert.That(function, Is.TypeOf<Round>());
+            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(1));
         }
 
         [Test]
-        public void Instantiate_NumericToRoundVariableParameter_Valid()
+        public void Instantiate_RoundVariableParameter_Valid()
         {
             var context = new Context();
             context.Variables.Add<int>("myVar", 2);
-            var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { new VariableParameter("myVar") }, context);
+            var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
             Assert.That(function, Is.Not.Null);
-            Assert.That(function, Is.TypeOf<NumericToRound>());
-            Assert.That((function as NumericToRound)!.Digits.Execute(), Is.EqualTo(2));
+            Assert.That(function, Is.TypeOf<Round>());
+            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(2));
         }
 
         [Test]
-        public void Instantiate_NumericToRoundObjectPropertyParameter_Valid()
+        public void Instantiate_RoundObjectPropertyParameter_Valid()
         {
             var context = new Context();
             context.CurrentObject.Set(new { Digits = 3 });
-            var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { new ObjectPropertyParameter("Digits") }, context);
+            var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
             Assert.That(function, Is.Not.Null);
-            Assert.That(function, Is.TypeOf<NumericToRound>());
-            Assert.That((function as NumericToRound)!.Digits.Execute(), Is.EqualTo(3));
+            Assert.That(function, Is.TypeOf<Round>());
+            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(3));
         }
 
 
         [Test]
-        public void Instantiate_NumericToRoundObjectIndexParameter_Valid()
+        public void Instantiate_RoundObjectIndexParameter_Valid()
         {
             var context = new Context();
             context.CurrentObject.Set(new List<int> { 0, 4 });
-            var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { new ObjectIndexParameter(1) }, context);
+            var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
             Assert.That(function, Is.Not.Null);
-            Assert.That(function, Is.TypeOf<NumericToRound>());
-            Assert.That((function as NumericToRound)!.Digits.Execute(), Is.EqualTo(4));
+            Assert.That(function, Is.TypeOf<Round>());
+            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(4));
         }
 
         [Test]
-        public void Instantiate_NumericToRoundExpressionParameter_Valid()
+        public void Instantiate_RoundExpressionParameter_Valid()
         {
             var context = new Context();
             context.Variables.Add<int>("myVar", 4);
             var subFunction = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", Array.Empty<IParameter>()) }));
-            var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { subFunction }, context);
+            var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction }, context);
             Assert.That(function, Is.Not.Null);
-            Assert.That(function, Is.TypeOf<NumericToRound>());
-            Assert.That((function as NumericToRound)!.Digits.Execute(), Is.EqualTo(5));
+            Assert.That(function, Is.TypeOf<Round>());
+            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(5));
         }
 
         [Test]
-        public void Instantiate_NumericToRoundMultipleExpressionParameter_Valid()
+        public void Instantiate_RoundMultipleExpressionParameter_Valid()
         {
             var context = new Context();
             context.Variables.Add<int>("myVar1", 4);
@@ -129,10 +129,10 @@ namespace Expressif.Testing.Functions
             var subFunction1 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", Array.Empty<IParameter>()) }));
             var subFunction2 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", Array.Empty<IParameter>()) }));
             var subFunction3 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", new IParameter[] { subFunction1 }), new Function("numeric-to-multiply", new IParameter[] { subFunction2 }) }));
-            var function = new ExpressionFactory().Instantiate(typeof(NumericToRound), new[] { subFunction3 }, context);
+            var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction3 }, context);
             Assert.That(function, Is.Not.Null);
-            Assert.That(function, Is.TypeOf<NumericToRound>());
-            Assert.That((function as NumericToRound)!.Digits.Execute(), Is.EqualTo(42)); // (4+3)*6
+            Assert.That(function, Is.TypeOf<Round>());
+            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(42)); // (4+3)*6
         }
 
     }

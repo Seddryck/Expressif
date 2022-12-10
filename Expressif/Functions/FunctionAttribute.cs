@@ -9,14 +9,13 @@ namespace Expressif.Functions
     [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public class FunctionAttribute : Attribute
     {
-        public bool IsCompactName { get; }
         public string[] Aliases { get; }
+        public string? Prefix { get; }
 
         public FunctionAttribute() 
-            : this(true) { }
-        public FunctionAttribute(bool isCompactName) 
-            : this(isCompactName, Array.Empty<string>()) { }
-        public FunctionAttribute(bool isCompactName, string[] aliases) 
-            => (IsCompactName, Aliases) = (isCompactName, aliases);
+            : this(null, Array.Empty<string>()) { }
+
+        public FunctionAttribute(string? prefix = null, string[]? aliases=null) 
+            => (Prefix, Aliases) = (prefix, aliases ?? Array.Empty<string>());
     }
 }

@@ -38,45 +38,44 @@ namespace Expressif.Functions.Numeric
         protected abstract decimal? EvaluateNumeric(decimal numeric);
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class NullToZero : AbstractNumericTransformation
     {
         protected override object EvaluateNull() => 0;
         protected override decimal? EvaluateNumeric(decimal numeric) => numeric;
     }
 
-    class NumericToCeiling : AbstractNumericTransformation
+    class Ceiling : AbstractNumericTransformation
     {
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Ceiling(numeric);
     }
 
-    class NumericToFloor : AbstractNumericTransformation
+    class Floor : AbstractNumericTransformation
     {
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Floor(numeric);
     }
 
-    class NumericToInteger : AbstractNumericTransformation
+    class Integer : AbstractNumericTransformation
     {
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Round(numeric, 0);
     }
 
-    class NumericToRound : AbstractNumericTransformation
+    class Round : AbstractNumericTransformation
     {
         public IScalarResolver<int> Digits { get; }
 
-        public NumericToRound(IScalarResolver<int> digits)
+        public Round(IScalarResolver<int> digits)
             => Digits = digits;
 
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Round(numeric, Digits.Execute());
     }
 
-    [Function(false)]
-    class NumericToClip : AbstractNumericTransformation
+    class Clip : AbstractNumericTransformation
     {
         public IScalarResolver<decimal> Min { get; }
         public IScalarResolver<decimal> Max { get; }
 
-        public NumericToClip(IScalarResolver<decimal> min, IScalarResolver<decimal> max)
+        public Clip(IScalarResolver<decimal> min, IScalarResolver<decimal> max)
             => (Min, Max) = (min, max);
 
         protected override decimal? EvaluateNumeric(decimal numeric) 
@@ -91,69 +90,65 @@ namespace Expressif.Functions.Numeric
             => Value = value;
     }
 
-    [Function(false)]
-    class NumericToAdd : AbstractNumericArithmetic
+    class Add : AbstractNumericArithmetic
     {
         public IScalarResolver<int> Times { get; }
 
-        public NumericToAdd(IScalarResolver<decimal> value, IScalarResolver<int> times)
+        public Add(IScalarResolver<decimal> value, IScalarResolver<int> times)
             : base(value) => Times = times;
 
-        public NumericToAdd(IScalarResolver<decimal> value)
+        public Add(IScalarResolver<decimal> value)
             : this(value, new LiteralScalarResolver<int>(1)) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
             => value + (Value.Execute() * Times.Execute());
     }
 
-    [Function(false)]
-    class NumericToSubtract : NumericToAdd
+    class Subtract : Add
     {
-        public NumericToSubtract(IScalarResolver<decimal> value, IScalarResolver<int> times)
+        public Subtract(IScalarResolver<decimal> value, IScalarResolver<int> times)
             : base(value, times) { }
 
-        public NumericToSubtract(IScalarResolver<decimal> value)
+        public Subtract(IScalarResolver<decimal> value)
             : base(value) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
             => value - (Value.Execute() * Times.Execute());
     }
 
-    [Function(true)]
-    class NumericToIncrement : NumericToAdd
+    class Increment : Add
     {
-        public NumericToIncrement()
+        public Increment()
         : base(new LiteralScalarResolver<decimal>(1)) { }
     }
 
-    [Function(true)]
-    class NumericToDecrement : NumericToSubtract
+    class Decrement : Subtract
     {
-        public NumericToDecrement()
+        public Decrement()
         : base(new LiteralScalarResolver<decimal>(1)) { }
     }
 
-    class NumericToMultiply : AbstractNumericArithmetic
+    class Multiply : AbstractNumericArithmetic
     {
-        public NumericToMultiply(IScalarResolver<decimal> value)
+        public Multiply(IScalarResolver<decimal> value)
             : base(value) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
             => value * Value.Execute();
     }
 
-    class NumericToDivide : AbstractNumericArithmetic
+    class Divide : AbstractNumericArithmetic
     {
-        public NumericToDivide(IScalarResolver<decimal> value)
+        public Divide(IScalarResolver<decimal> value)
             : base(value) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
             => value / Value.Execute();
     }
 
-    class NumericToInvert : AbstractNumericTransformation
+    class Invert : AbstractNumericTransformation
     {
-        public NumericToInvert()
+        public Invert()
         { }
 
         protected override decimal? EvaluateNumeric(decimal value) => value==0 ? null : 1/value;

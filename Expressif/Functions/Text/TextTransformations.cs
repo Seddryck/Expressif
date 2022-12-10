@@ -56,21 +56,22 @@ namespace Expressif.Functions.Text
         protected abstract object EvaluateString(string value);
     }
 
+    [Function(prefix: "")]
     class TextToHtml : AbstractTextTransformation
     {
         protected override object EvaluateString(string value) => WebUtility.HtmlEncode(value);
     }
 
-    class TextToLower : AbstractTextTransformation
+    class Lower : AbstractTextTransformation
     {
         protected override object EvaluateString(string value) => value.ToLowerInvariant();
     }
-    class TextToUpper : AbstractTextTransformation
+    class Upper : AbstractTextTransformation
     {
         protected override object EvaluateString(string value) => value.ToUpperInvariant();
     }
 
-    class TextToTrim : AbstractTextTransformation
+    class Trim : AbstractTextTransformation
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value.Trim();
@@ -85,16 +86,16 @@ namespace Expressif.Functions.Text
         protected override object EvaluateBlank() => Append.Execute() ?? string.Empty;
     }
 
-    class TextToPrefix : AbstractTextAppend
+    class Prefix : AbstractTextAppend
     {
-        public TextToPrefix(IScalarResolver<string> prefix)
+        public Prefix(IScalarResolver<string> prefix)
             : base(prefix) { }
         protected override object EvaluateString(string value) => $"{Append.Execute()}{value}";
     }
 
-    class TextToSuffix : AbstractTextAppend
+    class Suffix : AbstractTextAppend
     {
-        public TextToSuffix(IScalarResolver<string> suffix)
+        public Suffix(IScalarResolver<string> suffix)
             : base(suffix) { }
         protected override object EvaluateString(string value) => $"{value}{Append.Execute()}";
     }
@@ -107,36 +108,36 @@ namespace Expressif.Functions.Text
             => Length = length;
     }
 
-    class TextToFirstChars : AbstractTextLengthTransformation
+    class FirstChars : AbstractTextLengthTransformation
     {
-        public TextToFirstChars(IScalarResolver<int> length)
+        public FirstChars(IScalarResolver<int> length)
             : base(length) { }
 
         protected override object EvaluateString(string value)
             => value.Length >= Length.Execute() ? value.Substring(0, Length.Execute()) : value;
     }
 
-    class TextToLastChars : AbstractTextLengthTransformation
+    class LastChars : AbstractTextLengthTransformation
     {
-        public TextToLastChars(IScalarResolver<int> length)
+        public LastChars(IScalarResolver<int> length)
             : base(length) { }
 
         protected override object EvaluateString(string value)
             => value.Length >= Length.Execute() ? value.Substring(value.Length - Length.Execute(), Length.Execute()) : value;
     }
 
-    class TextToSkipFirstChars : AbstractTextLengthTransformation
+    class SkipFirstChars : AbstractTextLengthTransformation
     {
-        public TextToSkipFirstChars(IScalarResolver<int> length)
+        public SkipFirstChars(IScalarResolver<int> length)
             : base(length) { }
 
         protected override object EvaluateString(string value)
             => value.Length <= Length.Execute() ? new Empty().Keyword : value.Substring(Length.Execute(), value.Length - Length.Execute());
     }
 
-    class TextToSkipLastChars : AbstractTextLengthTransformation
+    class SkipLastChars : AbstractTextLengthTransformation
     {
-        public TextToSkipLastChars(IScalarResolver<int> length)
+        public SkipLastChars(IScalarResolver<int> length) 
             : base(length) { }
 
         protected override object EvaluateString(string value)
@@ -156,60 +157,60 @@ namespace Expressif.Functions.Text
 
     }
 
-    class TextToPadRight : AbstractTextPadTransformation
+    class PadRight : AbstractTextPadTransformation
     {
-        public TextToPadRight(IScalarResolver<int> length, IScalarResolver<char> character)
+        public PadRight(IScalarResolver<int> length, IScalarResolver<char> character)
             : base(length, character) { }
 
         protected override object EvaluateString(string value)
             => value.Length >= Length.Execute() ? value : value.PadRight(Length.Execute(), Character.Execute());
     }
 
-    class TextToPadLeft : AbstractTextPadTransformation
+    class PadLeft : AbstractTextPadTransformation
     {
-        public TextToPadLeft(IScalarResolver<int> length, IScalarResolver<char> character)
+        public PadLeft(IScalarResolver<int> length, IScalarResolver<char> character)
             : base(length, character) { }
 
         protected override object EvaluateString(string value)
             => value.Length >= Length.Execute() ? value : value.PadLeft(Length.Execute(), Character.Execute());
     }
 
-    [Function(false)]
-    class BlankToEmpty : AbstractTextTransformation
+    [Function(prefix:"", aliases: new[] {"blank-to-empty"})]
+    class WhitespacesToEmpty : AbstractTextTransformation
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
-    [Function(false)]
-    class BlankToNull : AbstractTextTransformation
+    [Function(prefix: "", aliases: new[] { "blank-to-null" })]
+    class WhitespacesToNull : AbstractTextTransformation
     {
         protected override object EvaluateBlank() => new Null().Keyword;
         protected override object EvaluateEmpty() => new Null().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class EmptyToNull : AbstractTextTransformation
     {
         protected override object EvaluateEmpty() => new Null().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class NullToEmpty : AbstractTextTransformation
     {
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class HtmlToText : AbstractTextTransformation
     {
         protected override object EvaluateString(string value) => WebUtility.HtmlDecode(value);
     }
 
-    class TextToLength : AbstractTextTransformation
+    class Length : AbstractTextTransformation
     {
         protected override object EvaluateSpecial(string value) => -1;
         protected override object EvaluateBlank() => -1;
@@ -218,13 +219,13 @@ namespace Expressif.Functions.Text
         protected override object EvaluateString(string value) => value.Length;
     }
 
-    class TextToToken : AbstractTextTransformation
+    class Token : AbstractTextTransformation
     {
         public IScalarResolver<int> Index { get; }
         public IScalarResolver<char>? Separator { get; }
-        public TextToToken(IScalarResolver<int> index)
+        public Token(IScalarResolver<int> index)
             => (Index, Separator) = (index, null);
-        public TextToToken(IScalarResolver<int> index, IScalarResolver<char> separator)
+        public Token(IScalarResolver<int> index, IScalarResolver<char> separator)
             => (Index, Separator) = (index, separator);
         protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Execute()) ? new Null().Keyword : new Whitespace().Keyword;
         protected override object EvaluateEmpty() => new Null().Keyword;
@@ -241,26 +242,25 @@ namespace Expressif.Functions.Text
         }
     }
 
-    class TextToTokenCount : TextToLength
+    class TokenCount : Length
     {
         public IScalarResolver<char>? Separator { get; }
-        public TextToTokenCount()
+        public TokenCount()
             => Separator = null;
-        public TextToTokenCount(IScalarResolver<char> separator)
+        public TokenCount(IScalarResolver<char> separator)
             => Separator = separator;
 
         protected override object EvaluateBlank() => 0;
-        protected override object EvaluateString(string value) => TokenCount(value);
+        protected override object EvaluateString(string value) => CountToken(value);
 
-        private int TokenCount(string value)
+        private int CountToken(string value)
         {
             var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Execute());
             return tokenizer.Execute(value).Length;
         }
     }
 
-
-    [Function(false)]
+    [Function(prefix: "")]
     class TextToDateTime : AbstractTextTransformation
     {
         public IScalarResolver<string> Format { get; }
@@ -283,10 +283,10 @@ namespace Expressif.Functions.Text
         }
     }
 
-    class TextToRemoveChars : AbstractTextTransformation
+    class RemoveChars : AbstractTextTransformation
     {
         public IScalarResolver<char> CharToRemove { get; }
-        public TextToRemoveChars(IScalarResolver<char> charToRemove)
+        public RemoveChars(IScalarResolver<char> charToRemove)
             => CharToRemove = charToRemove;
 
         protected override object EvaluateString(string value)
@@ -307,6 +307,7 @@ namespace Expressif.Functions.Text
         }
     }
 
+    [Function(prefix: "")]
     class TextToMask : AbstractTextTransformation
     {
         private char maskChar { get; } = '*';
@@ -333,7 +334,7 @@ namespace Expressif.Functions.Text
             => Mask.Execute() ?? string.Empty;
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class MaskToText : AbstractTextTransformation
     {
         private char maskChar { get; } = '*';

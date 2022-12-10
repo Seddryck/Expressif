@@ -5,6 +5,7 @@ using System.IO;
 
 namespace Expressif.Functions.IO
 {
+    [Function(prefix: "path")]
     abstract class AbstractPathTransformation : AbstractTextTransformation, IBasePathTransformation
     {
         public AbstractPathTransformation() { }
@@ -14,27 +15,27 @@ namespace Expressif.Functions.IO
         protected override object EvaluateSpecial(string value) => new Empty().Keyword;
     }
 
-    class PathToFilename : AbstractPathTransformation
+    class Filename : AbstractPathTransformation
     {
         protected override object EvaluateString(string value) => Path.GetFileName(value);
     }
 
-    class PathToFilenameWithoutExtension : AbstractPathTransformation
+    class FilenameWithoutExtension : AbstractPathTransformation
     {
         protected override object EvaluateString(string value) => Path.GetFileNameWithoutExtension(value);
     }
 
-    class PathToExtension : AbstractPathTransformation
+    class Extension : AbstractPathTransformation
     {
         protected override object EvaluateString(string value) => Path.GetExtension(value);
     }
 
-    class PathToRoot : AbstractPathTransformation
+    class Root : AbstractPathTransformation
     {
         protected override object EvaluateString(string value) => Path.GetPathRoot(value) ?? string.Empty;
     }
 
-    class PathToDirectory : AbstractPathTransformation
+    class Directory : AbstractPathTransformation
     {
         protected override object EvaluateString(string value)
         {
