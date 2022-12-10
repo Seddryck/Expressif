@@ -28,13 +28,13 @@ namespace Expressif.Testing.Predicates.Introspection
         }
 
         [Test]
-        public void Locate_ExpressifAssembly_NameEqualClass()
+        public void Locate_ExpressifAssembly_AliasEqualClass()
         {
             foreach(var info in Infos)
             {
                 Debug.WriteLine(info.Name);
-                Assert.That(info.Name, Is.Not.Null.Or.Empty);
-                Assert.That(info.Name.ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
+                Assert.That(info.Aliases.ElementAt(0), Is.Not.Null.Or.Empty);
+                Assert.That(info.Aliases.ElementAt(0).ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
             }
         }
 

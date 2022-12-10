@@ -27,9 +27,9 @@ namespace Expressif.Predicates.Introspection
             foreach (var predicate in predicates)
             {
                 yield return new PredicateInfo(
-                        predicate.Type.Name.ToKebabCase()
+                        $"{predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()}-is-{predicate.Type.Name.ToKebabCase()}"
                         , predicate.Attribute.Aliases.AsQueryable()
-                            .Prepend($"{predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()}-is-{predicate.Type.Name.ToKebabCase()}").ToArray()
+                            .Prepend(predicate.Type.Name.ToKebabCase()).ToArray()
                         , predicate.Type.Namespace!.ToToken('.').Last()
                         , predicate.Type
                     );
