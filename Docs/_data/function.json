@@ -196,12 +196,16 @@
   },
   {
     "Name": "numeric-to-decrement",
-    "Aliases": [],
+    "Aliases": [
+      "decrement"
+    ],
     "Scope": "Numeric"
   },
   {
     "Name": "numeric-to-increment",
-    "Aliases": [],
+    "Aliases": [
+      "increment"
+    ],
     "Scope": "Numeric"
   },
   {

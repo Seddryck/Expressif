@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Text
 {
+    [Predicate(false)]
     abstract class BaseTextPredicateSubstring : BaseTextPredicateReference
     {
         protected StringComparison Comparison { get; }

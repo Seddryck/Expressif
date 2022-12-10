@@ -119,12 +119,14 @@ namespace Expressif.Functions.Numeric
             => value - (Value.Execute() * Times.Execute());
     }
 
+    [Function(true)]
     class NumericToIncrement : NumericToAdd
     {
         public NumericToIncrement()
         : base(new LiteralScalarResolver<decimal>(1)) { }
     }
 
+    [Function(true)]
     class NumericToDecrement : NumericToSubtract
     {
         public NumericToDecrement()
