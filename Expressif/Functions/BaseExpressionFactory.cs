@@ -1,6 +1,7 @@
 ﻿using Expressif;
 using Expressif.Functions;
 using Expressif.Parsers;
+using Expressif.Predicates.Introspection;
 using Expressif.Values;
 using Expressif.Values.Resolvers;
 using Sprache;
@@ -10,14 +11,19 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace Expressif.Functions
 {
     public abstract class BaseExpressionFactory
     {
+        private IDictionary<string, Type>? _mapping;
+        protected IDictionary<string, Type> Mapping { get => _mapping ??= Initialize(); }
+
+        protected abstract IDictionary<string, Type> Initialize();
 
         protected T Instantiate<T>(string functionName, IParameter[] parameters, Context context)
-            => Instantiate<T>(GetFunctionType<T>(functionName), parameters, context);
+            => Instantiate<T>(GetFunctionType(functionName), parameters, context);
 
         protected T Instantiate<T>(Type type, IParameter[] parameters, Context context)
         {
@@ -52,8 +58,16 @@ namespace Expressif.Functions
             return (T)ctor.Invoke(typedFunctionParameters.ToArray());
         }
 
+        internal virtual Type GetFunctionType(string functionName)
+        {
+            var name = functionName.ToKebabCase();
+            if (!Mapping.ContainsKey(name))
+                throw new NotImplementedFunctionException(functionName);
+            return Mapping[name];
+        }
+
         protected virtual Type GetFunctionType<T>(string functionName)
-            =>typeof(T).Assembly.GetTypes()
+            => typeof(T).Assembly.GetTypes()
                 .Where(
                         t => t.IsClass
                         && t.IsAbstract == false
@@ -61,6 +75,7 @@ namespace Expressif.Functions
                         && t.GetInterface(typeof(T).Name) != null)
                 .SingleOrDefault()
                 ?? throw new NotImplementedFunctionException(functionName.ToPascalCase());
+
 
         protected internal ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
             => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)

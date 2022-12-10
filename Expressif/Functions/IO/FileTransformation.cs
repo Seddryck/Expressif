@@ -5,6 +5,7 @@ using System.IO;
 
 namespace Expressif.Functions.IO
 {
+    [Function(prefix: "file")]
     abstract class AbstractFileTransformation : AbstractTextTransformation, IBasePathTransformation
     {
         private Func<string, IFileInfo> FileInfoInitializer { get; set; }
@@ -27,27 +28,27 @@ namespace Expressif.Functions.IO
             => FileInfoInitializer = fileInfoInitializer;
     }
 
-    class FileToSize : AbstractFileTransformation
+    class Size : AbstractFileTransformation
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.Length;
     }
 
-    class FileToCreationDateTime : AbstractFileTransformation
+    class CreationDateTime : AbstractFileTransformation
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTime;
     }
 
-    class FileToCreationDateTimeUtc : AbstractFileTransformation
+    class CreationDateTimeUtc : AbstractFileTransformation
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTimeUtc;
     }
 
-    class FileToUpdateDateTime : AbstractFileTransformation
+    class UpdateDateTime : AbstractFileTransformation
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTime;
     }
 
-    class FileToUpdateDateTimeUtc : AbstractFileTransformation
+    class UpdateDateTimeUtc : AbstractFileTransformation
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTimeUtc;
     }

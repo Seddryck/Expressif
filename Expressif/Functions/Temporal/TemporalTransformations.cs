@@ -7,7 +7,7 @@ using System;
 
 namespace Expressif.Functions.Temporal
 {
-    [Function]
+    [Function(prefix: "dateTime")]
     abstract class AbstractTemporalTransformation : IFunction
     {
 
@@ -43,7 +43,7 @@ namespace Expressif.Functions.Temporal
         protected override object EvaluateDateTime(DateTime value) => value.Date;
     }
 
-    class DateToAge : AbstractTemporalTransformation
+    class Age : AbstractTemporalTransformation
     {
         protected override object EvaluateNull() => 0;
         protected override object EvaluateDateTime(DateTime value)
@@ -57,74 +57,74 @@ namespace Expressif.Functions.Temporal
         }
     }
 
-    class DateTimeToFirstOfMonth : AbstractTemporalTransformation
+    class FirstOfMonth : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1);
     }
 
-    class DateTimeToFirstOfYear : AbstractTemporalTransformation
+    class FirstOfYear : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 1, 1);
     }
 
-    class DateTimeToLastOfMonth : AbstractTemporalTransformation
+    class LastOfMonth : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1).AddMonths(1).AddDays(-1);
     }
 
-    class DateTimeToLastOfYear : AbstractTemporalTransformation
+    class LastOfYear : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 12, 31);
     }
 
-    class DateTimeToNextDay : AbstractTemporalTransformation
+    class NextDay : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddDays(1);
     }
 
-    class DateTimeToNextMonth : AbstractTemporalTransformation
+    class NextMonth : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddMonths(1);
     }
 
-    class DateTimeToNextYear : AbstractTemporalTransformation
+    class NextYear : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddYears(1);
     }
 
-    class DateTimeToPreviousDay : AbstractTemporalTransformation
+    class PreviousDay : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddDays(-1);
     }
 
-    class DateTimeToPreviousMonth : AbstractTemporalTransformation
+    class PreviousMonth : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddMonths(-1);
     }
 
-    class DateTimeToPreviousYear : AbstractTemporalTransformation
+    class PreviousYear : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddYears(-1);
     }
 
-    [Function(false)]
-    class DateTimeToClip : AbstractTemporalTransformation
+    [Function(prefix: "dateTime", aliases:new []{"dateTime-to-clip"})]
+    class CutOff : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Min { get; }
         public IScalarResolver<DateTime> Max { get; }
 
-        public DateTimeToClip(IScalarResolver<DateTime> min, IScalarResolver<DateTime> max)
+        public CutOff(IScalarResolver<DateTime> min, IScalarResolver<DateTime> max)
             => (Min, Max) = (min, max);
 
         protected override object EvaluateDateTime(DateTime value)
             => (value < Min.Execute()) ? Min.Execute() : (value > Max.Execute()) ? Max.Execute() : value;
     }
 
-    class DateTimeToSetTime : AbstractTemporalTransformation
+    class SetTime : AbstractTemporalTransformation
     {
         public IScalarResolver<string> Instant { get; }
 
-        public DateTimeToSetTime(IScalarResolver<string> instant)
+        public SetTime(IScalarResolver<string> instant)
             => Instant = instant;
 
         protected override object EvaluateDateTime(DateTime value)
@@ -134,7 +134,7 @@ namespace Expressif.Functions.Temporal
         }
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class NullToDate : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Default { get; }
@@ -146,7 +146,7 @@ namespace Expressif.Functions.Temporal
         protected override object EvaluateDateTime(DateTime value) => value;
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class InvalidToDate : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Default { get; }
@@ -168,53 +168,53 @@ namespace Expressif.Functions.Temporal
         }
     }
 
-    class DateTimeToFloorHour : AbstractTemporalTransformation
+    class FloorHour : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(-1 * (value.Ticks % TimeSpan.TicksPerHour));
     }
 
-    class DateTimeToCeilingHour : AbstractTemporalTransformation
+    class CeilingHour : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(TimeSpan.TicksPerHour - (value.Ticks % TimeSpan.TicksPerHour == 0 ? TimeSpan.TicksPerHour : value.Ticks % TimeSpan.TicksPerHour));
     }
 
-    class DateTimeToFloorMinute : AbstractTemporalTransformation
+    class FloorMinute : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(-1 * (value.Ticks % TimeSpan.TicksPerMinute));
     }
 
-    class DateTimeToCeilingMinute : AbstractTemporalTransformation
+    class CeilingMinute : AbstractTemporalTransformation
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(TimeSpan.TicksPerMinute - (value.Ticks % TimeSpan.TicksPerMinute == 0 ? TimeSpan.TicksPerMinute : value.Ticks % TimeSpan.TicksPerMinute));
     }
 
-    [Function(false)]
-    class DateTimeToAdd : AbstractTemporalTransformation
+    [Function(prefix: "dateTime", aliases: new[] {"dateTime-to-add"})]
+    class Forward : AbstractTemporalTransformation
     {
         public IScalarResolver<int> Times { get; }
         public IScalarResolver<string> TimeSpan { get; }
 
-        public DateTimeToAdd(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
+        public Forward(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
             => (TimeSpan, Times) = (timeSpan, times);
 
-        public DateTimeToAdd(IScalarResolver<string> timeSpan)
+        public Forward(IScalarResolver<string> timeSpan)
             : this(timeSpan, new LiteralScalarResolver<int>(1)) { }
 
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Execute()!).Ticks * Times.Execute());
     }
 
-    [Function(false)]
-    class DateTimeToSubtract : DateTimeToAdd
+    [Function(prefix: "dateTime", aliases: new[] { "dateTime-to-subtract" })]
+    class Back : Forward
     {
-        public DateTimeToSubtract(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
+        public Back(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
             : base(timeSpan, times) { }
 
-        public DateTimeToSubtract(IScalarResolver<string> timeSpan)
+        public Back(IScalarResolver<string> timeSpan)
             : base(timeSpan) { }
 
         protected override object EvaluateDateTime(DateTime value)

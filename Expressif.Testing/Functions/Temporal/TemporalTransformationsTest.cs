@@ -19,57 +19,57 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11", "2019-03-11")]
         [TestCase("2019-02-11", "2019-03-01")]
         [TestCase("2019-04-11", "2019-03-31")]
-        public void DateTimeToClip_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToClip(new LiteralScalarResolver<DateTime>("2019-03-01"), new LiteralScalarResolver<DateTime>("2019-03-31"))
+        public void CutOff_Valid(object value, DateTime expected)
+            => Assert.That(new CutOff(new LiteralScalarResolver<DateTime>("2019-03-01"), new LiteralScalarResolver<DateTime>("2019-03-31"))
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11", "2019-03-12")]
         [TestCase("2019-02-11", "2019-02-12")]
         [TestCase("2019-03-31", "2019-04-01")]
-        public void DateTimeToNextDay_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToNextDay().Evaluate(value), Is.EqualTo(expected));
+        public void NextDay_Valid(object value, DateTime expected)
+            => Assert.That(new NextDay().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11", "2019-04-11")]
         [TestCase("2019-03-31", "2019-04-30")]
         [TestCase("2020-01-31", "2020-02-29")]
-        public void DateTimeToNextMonth_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToNextMonth().Evaluate(value), Is.EqualTo(expected));
+        public void NextMonth_Valid(object value, DateTime expected)
+            => Assert.That(new NextMonth().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11", "2020-03-11")]
         [TestCase("2020-02-29", "2021-02-28")]
-        public void DateTimeToNextYear_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToNextYear().Evaluate(value), Is.EqualTo(expected));
+        public void NextYear_Valid(object value, DateTime expected)
+            => Assert.That(new NextYear().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11", "2019-03-10")]
         [TestCase("2019-02-01", "2019-01-31")]
         [TestCase("2020-03-01", "2020-02-29")]
         [TestCase("2020-03-01 17:30:12", "2020-02-29 17:30:12")]
-        public void DateTimeToPreviousDay_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToPreviousDay().Evaluate(value), Is.EqualTo(expected));
+        public void PreviousDay_Valid(object value, DateTime expected)
+            => Assert.That(new PreviousDay().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11", "2019-02-11")]
         [TestCase("2019-03-31", "2019-02-28")]
         [TestCase("2020-01-31", "2019-12-31")]
         [TestCase("2020-01-31 17:30:12", "2019-12-31 17:30:12")]
-        public void DateTimeToPreviousMonth_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToPreviousMonth().Evaluate(value), Is.EqualTo(expected));
+        public void PreviousMonth_Valid(object value, DateTime expected)
+            => Assert.That(new PreviousMonth().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11", "2018-03-11")]
         [TestCase("2020-02-29", "2019-02-28")]
-        public void DateTimeToPreviousYear_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToPreviousYear().Evaluate(value), Is.EqualTo(expected));
+        public void PreviousYear_Valid(object value, DateTime expected)
+            => Assert.That(new PreviousYear().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11 12:00:00", "07:00:00", "2019-03-11 07:00:00")]
         [TestCase("2019-02-11 08:45:12", "07:13:11", "2019-02-11 07:13:11")]
-        public void DateTimeToSetTime_Valid(object value, string instant, DateTime expected)
-            => Assert.That(new DateTimeToSetTime(new LiteralScalarResolver<string>(instant)).Evaluate(value)
+        public void SetTime_Valid(object value, string instant, DateTime expected)
+            => Assert.That(new SetTime(new LiteralScalarResolver<string>(instant)).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -77,40 +77,40 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11 17:20:00", "2019-03-11 17:00:00")]
         [TestCase("2019-03-11 17:20:24", "2019-03-11 17:00:00")]
         [TestCase("2019-03-11 17:40:00", "2019-03-11 17:00:00")]
-        public void DateTimeToFloorHour_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToFloorHour().Evaluate(value), Is.EqualTo(expected));
+        public void FloorHour_Valid(object value, DateTime expected)
+            => Assert.That(new FloorHour().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
         [TestCase("2019-03-11 17:20:00", "2019-03-11 18:00:00")]
         [TestCase("2019-03-11 17:20:24", "2019-03-11 18:00:00")]
         [TestCase("2019-03-11 17:40:00", "2019-03-11 18:00:00")]
-        public void DateTimeToCeilingHour_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToCeilingHour().Evaluate(value), Is.EqualTo(expected));
+        public void CeilingHour_Valid(object value, DateTime expected)
+            => Assert.That(new CeilingHour().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
         [TestCase("2019-03-11 17:20:00", "2019-03-11 17:20:00")]
         [TestCase("2019-03-11 17:20:24.120", "2019-03-11 17:20:00")]
         [TestCase("2019-03-11 17:40:59", "2019-03-11 17:40:00")]
-        public void DateTimeToFloorMinute_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToFloorMinute().Evaluate(value), Is.EqualTo(expected));
+        public void FloorMinute_Valid(object value, DateTime expected)
+            => Assert.That(new FloorMinute().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
         [TestCase("2019-03-11 17:20:00", "2019-03-11 17:20:00")]
         [TestCase("2019-03-11 17:20:24.120", "2019-03-11 17:21:00")]
         [TestCase("2019-03-11 17:59:59", "2019-03-11 18:00:00")]
-        public void DateTimeToCeilingMinute_Valid(object value, DateTime expected)
-            => Assert.That(new DateTimeToCeilingMinute().Evaluate(value), Is.EqualTo(expected));
+        public void CeilingMinute_Valid(object value, DateTime expected)
+            => Assert.That(new CeilingMinute().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2019-03-11 17:00:00", 0, "04:00:00", "2019-03-11 17:00:00")]
         [TestCase("2019-03-11 17:00:00", 1, "04:00:00", "2019-03-11 21:00:00")]
         [TestCase("2019-03-11 17:00:00", 2, "04:00:00", "2019-03-12 01:00:00")]
         [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 13:00:00")]
-        public void DateTimeToAdd_Valid(object value, int times, string timeSpan, DateTime expected)
-            => Assert.That(new DateTimeToAdd(new LiteralScalarResolver<string>(timeSpan), new LiteralScalarResolver<int>(times))
+        public void Forward_Valid(object value, int times, string timeSpan, DateTime expected)
+            => Assert.That(new Forward(new LiteralScalarResolver<string>(timeSpan), new LiteralScalarResolver<int>(times))
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -118,15 +118,15 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11 17:00:00", 1, "04:00:00", "2019-03-11 13:00:00")]
         [TestCase("2019-03-11 17:00:00", 5, "04:00:00", "2019-03-10 21:00:00")]
         [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 21:00:00")]
-        public void DateTimeToSubtract_Valid(object value, int times, string timeSpan, DateTime expected)
-        => Assert.That(new DateTimeToSubtract(new LiteralScalarResolver<string>(timeSpan), new LiteralScalarResolver<int>(times))
+        public void Back_Valid(object value, int times, string timeSpan, DateTime expected)
+        => Assert.That(new Back(new LiteralScalarResolver<string>(timeSpan), new LiteralScalarResolver<int>(times))
             .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase(9, 8, 44)]
         [TestCase(12, 28, 43)]
         public void DateToAge_Born1978_Min43(int month, int day, int age)
-            => Assert.That(new DateToAge().Evaluate(new DateTime(1978, month, day)), Is.AtLeast(age));
+            => Assert.That(new Age().Evaluate(new DateTime(1978, month, day)), Is.AtLeast(age));
 
         [Test]
         [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
@@ -185,9 +185,9 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-12 07:00:00", "2018-02-01")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void DateTimeToFirstOfMonth_Valid(object value, DateTime? expected)
+        public void FirstOfMonth_Valid(object value, DateTime? expected)
         {
-            var function = new DateTimeToFirstOfMonth();
+            var function = new FirstOfMonth();
             var result = function.Evaluate(value);
             if (expected == new DateTime(1, 1, 1))
                 Assert.That(result, Is.Null);
@@ -201,9 +201,9 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-12 07:00:00", "2018-01-01")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void DateTimeToFirstOfYear_Valid(object value, DateTime? expected)
+        public void FirstOfYear_Valid(object value, DateTime? expected)
         {
-            var function = new DateTimeToFirstOfYear();
+            var function = new FirstOfYear();
             var result = function.Evaluate(value);
             if (expected == new DateTime(1, 1, 1))
                 Assert.That(result, Is.Null);
@@ -218,9 +218,9 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2020-02-12 07:00:00", "2020-02-29")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void DateTimeToLastOfMonth_Valid(object value, DateTime? expected)
+        public void LastOfMonth_Valid(object value, DateTime? expected)
         {
-            var function = new DateTimeToLastOfMonth();
+            var function = new LastOfMonth();
             var result = function.Evaluate(value);
             if (expected == new DateTime(1, 1, 1))
                 Assert.That(result, Is.Null);
@@ -234,9 +234,9 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-12 07:00:00", "2018-12-31")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void DateTimeToLastOfYear_Valid(object value, DateTime? expected)
+        public void LastOfYear_Valid(object value, DateTime? expected)
         {
-            var function = new DateTimeToLastOfYear();
+            var function = new LastOfYear();
             var result = function.Evaluate(value);
             if (expected == new DateTime(1, 1, 1))
                 Assert.That(result, Is.Null);

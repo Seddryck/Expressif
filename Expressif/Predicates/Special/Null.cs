@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Special
 {
+    [Predicate(prefix: "")]
     class Null : BasePredicate
     {
         public override bool Evaluate(object? value)

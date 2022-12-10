@@ -45,8 +45,6 @@ namespace Expressif.Functions.Introspection
                     Array.Empty<Type>(), (types, asm)
                     => types.Concat(asm.GetTypes().Where(x => x.IsClass && !x.IsAbstract)).ToArray()
                 );
-
-
     }
 
     public interface ITypesProbe
