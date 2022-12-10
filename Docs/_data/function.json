@@ -7,13 +7,6 @@
     "Scope": "Text"
   },
   {
-    "Name": "ceiling",
-    "Aliases": [
-      "numeric-to-ceiling"
-    ],
-    "Scope": "Numeric"
-  },
-  {
     "Name": "null-to-zero",
     "Aliases": [],
     "Scope": "Numeric"
@@ -30,6 +23,11 @@
   },
   {
     "Name": "null-to-value",
+    "Aliases": [],
+    "Scope": "Special"
+  },
+  {
+    "Name": "neutral",
     "Aliases": [],
     "Scope": "Special"
   },
@@ -98,18 +96,18 @@
     "Scope": "Temporal"
   },
   {
+    "Name": "ceiling",
+    "Aliases": [
+      "numeric-to-ceiling"
+    ],
+    "Scope": "Numeric"
+  },
+  {
     "Name": "floor",
     "Aliases": [
       "numeric-to-floor"
     ],
     "Scope": "Numeric"
-  },
-  {
-    "Name": "set-time",
-    "Aliases": [
-      "dateTime-to-set-time"
-    ],
-    "Scope": "Temporal"
   },
   {
     "Name": "integer",
@@ -119,9 +117,9 @@
     "Scope": "Numeric"
   },
   {
-    "Name": "clip",
+    "Name": "round",
     "Aliases": [
-      "numeric-to-clip"
+      "numeric-to-round"
     ],
     "Scope": "Numeric"
   },
@@ -175,18 +173,18 @@
     "Scope": "IO"
   },
   {
+    "Name": "set-time",
+    "Aliases": [
+      "dateTime-to-set-time"
+    ],
+    "Scope": "Temporal"
+  },
+  {
     "Name": "size",
     "Aliases": [
       "file-to-size"
     ],
     "Scope": "IO"
-  },
-  {
-    "Name": "invert",
-    "Aliases": [
-      "numeric-to-invert"
-    ],
-    "Scope": "Numeric"
   },
   {
     "Name": "divide",
@@ -231,24 +229,31 @@
     "Scope": "Numeric"
   },
   {
-    "Name": "round",
+    "Name": "clip",
     "Aliases": [
-      "numeric-to-round"
+      "numeric-to-clip"
     ],
     "Scope": "Numeric"
+  },
+  {
+    "Name": "invert",
+    "Aliases": [
+      "numeric-to-invert"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "root",
+    "Aliases": [
+      "path-to-root"
+    ],
+    "Scope": "IO"
   },
   {
     "Name": "cut-off",
     "Aliases": [
       "dateTime-to-cut-off",
       "dateTime-to-clip"
-    ],
-    "Scope": "Temporal"
-  },
-  {
-    "Name": "previous-year",
-    "Aliases": [
-      "dateTime-to-previous-year"
     ],
     "Scope": "Temporal"
   },
@@ -434,11 +439,11 @@
     "Scope": "Temporal"
   },
   {
-    "Name": "root",
+    "Name": "previous-year",
     "Aliases": [
-      "path-to-root"
+      "dateTime-to-previous-year"
     ],
-    "Scope": "IO"
+    "Scope": "Temporal"
   },
   {
     "Name": "first-of-month",
