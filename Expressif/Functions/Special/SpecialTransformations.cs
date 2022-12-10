@@ -9,6 +9,7 @@ using System.Text;
 
 namespace Expressif.Functions.Special
 {
+    [Function(false)]
     abstract class AbstractSpecialTransformation : IFunction
     {
         public object? Evaluate(object? value)

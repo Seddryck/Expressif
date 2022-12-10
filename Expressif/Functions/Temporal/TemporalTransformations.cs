@@ -7,6 +7,7 @@ using System;
 
 namespace Expressif.Functions.Temporal
 {
+    [Function]
     abstract class AbstractTemporalTransformation : IFunction
     {
 
@@ -106,6 +107,7 @@ namespace Expressif.Functions.Temporal
         protected override object EvaluateDateTime(DateTime value) => value.AddYears(-1);
     }
 
+    [Function(false)]
     class DateTimeToClip : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Min { get; }
@@ -132,6 +134,7 @@ namespace Expressif.Functions.Temporal
         }
     }
 
+    [Function(false)]
     class NullToDate : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Default { get; }
@@ -143,6 +146,7 @@ namespace Expressif.Functions.Temporal
         protected override object EvaluateDateTime(DateTime value) => value;
     }
 
+    [Function(false)]
     class InvalidToDate : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Default { get; }
@@ -188,6 +192,7 @@ namespace Expressif.Functions.Temporal
             => value.AddTicks(TimeSpan.TicksPerMinute - (value.Ticks % TimeSpan.TicksPerMinute == 0 ? TimeSpan.TicksPerMinute : value.Ticks % TimeSpan.TicksPerMinute));
     }
 
+    [Function(false)]
     class DateTimeToAdd : AbstractTemporalTransformation
     {
         public IScalarResolver<int> Times { get; }
@@ -203,6 +208,7 @@ namespace Expressif.Functions.Temporal
             => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Execute()!).Ticks * Times.Execute());
     }
 
+    [Function(false)]
     class DateTimeToSubtract : DateTimeToAdd
     {
         public DateTimeToSubtract(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
