@@ -184,6 +184,8 @@ Install-Package Expressif
 |Text     | skip-first-chars           | text-to-skip-first-chars              |
 |Text     | skip-last-chars            | text-to-skip-last-chars               |
 |Text     | suffix                     | text-to-suffix                        |
+|Text     | text-to-after              | text-to-text-to-after                 |
+|Text     | text-to-before             | text-to-text-to-before                |
 |Text     | text-to-datetime           |                                       |
 |Text     | text-to-html               |                                       |
 |Text     | text-to-mask               |                                       |
@@ -246,6 +248,8 @@ Install-Package Expressif
 |Text     | starts-with                    | text-starts-with                      |
 |Text     | upper-case                     | text-is-upper-case                    |
 <!-- END PREDICATE TABLE -->
+
+
 
 
 
