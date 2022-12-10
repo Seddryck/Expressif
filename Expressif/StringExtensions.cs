@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressif.Functions.Temporal;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,17 +23,20 @@ namespace Expressif
                 return string.Empty;
 
             value = value
+                .Replace(" ", "")
                 .Replace("TimeSpan", "Timespan")
                 .Replace("DateTime", "Datetime");
 
             var builder = new StringBuilder();
             builder.Append(char.ToLower(value.First()));
 
+            char previous = value.First();
             foreach (var c in value.Skip(1))
             {
-                if (char.IsUpper(c))
+                if (char.IsUpper(c) && previous!='-' && !char.IsUpper(previous))
                     builder.Append('-');
                 builder.Append(char.ToLower(c));
+                previous = c;
             }
 
             return builder.ToString();

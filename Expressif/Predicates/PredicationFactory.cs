@@ -1,6 +1,7 @@
 ﻿using Expressif.Functions;
 using Expressif.Parsers;
 using Expressif.Predicates.Combination;
+using Expressif.Predicates.Introspection;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -45,31 +46,18 @@ namespace Expressif.Predicates
         public IPredicate Instantiate(Type type, IParameter[] parameters, Context context)
             => Instantiate<IPredicate>(type, parameters, context);
 
-        internal Type GetFunctionType(string functionName)
-            => GetFunctionType<IPredicate>(functionName);
-
-        protected override Type GetFunctionType<T>(string functionName)
+        protected override IDictionary<string, Type> Initialize()
         {
-            var textInfo = CultureInfo.InvariantCulture.TextInfo;
-            var className = textInfo.ToTitleCase(functionName.Trim());
-
-            var tokens = functionName.Split('-', StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToArray();
-            if (tokens.Length>1 && tokens[1].Equals("is", StringComparison.InvariantCultureIgnoreCase))
+            var introspector = new PredicateIntrospector();
+            var infos = introspector.Locate();
+            var mapping = new Dictionary<string, Type>();
+            foreach (var info in infos)
             {
-                var @namespace = tokens[0].Replace("Datetime", "DateTime").Replace("Timespan", "TimeSpan");
-                var shortClassName = string.Concat(tokens.Skip(2));
-                return typeof(T).Assembly.GetTypes()
-                       .Where(
-                                t => t.IsClass
-                                && t.IsAbstract == false
-                                && t.Name.Equals(shortClassName, StringComparison.InvariantCultureIgnoreCase)
-                                && t.Namespace!.EndsWith(@namespace, StringComparison.InvariantCultureIgnoreCase)
-                                && t.GetInterface(typeof(T).Name) != null)
-                       .SingleOrDefault()
-                       ?? throw new NotImplementedFunctionException(className);
+                mapping.Add(info.Name, info.ImplementationType);
+                foreach (var alias in info.Aliases)
+                    mapping.Add(alias, info.ImplementationType);
             }
-            else
-                return base.GetFunctionType<T>(functionName);
+            return mapping;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Expressif.Functions;
+using Expressif.Functions.Introspection;
 using Expressif.Parsers;
 using Expressif.Values;
 using Expressif.Values.Resolvers;
@@ -29,7 +30,18 @@ namespace Expressif.Functions
         public IFunction Instantiate(Type type, IParameter[] parameters, Context context)
             => Instantiate<IFunction>(type, parameters, context);
 
-        internal Type GetFunctionType(string functionName)
-            => GetFunctionType<IFunction>(functionName);
+        protected override IDictionary<string, Type> Initialize()
+        {
+            var introspector = new FunctionIntrospector();
+            var infos = introspector.Locate();
+            var mapping = new Dictionary<string, Type>();
+            foreach (var info in infos)
+            {
+                mapping.Add(info.Name, info.ImplementationType);
+                foreach (var alias in info.Aliases)
+                    mapping.Add(alias, info.ImplementationType);
+            }
+            return mapping;
+        }
     }
 }
