@@ -1,0 +1,310 @@
+[
+  {
+    "Name": "text-is-any-of",
+    "Aliases": [
+      "any-of"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "temporal-is-on-the-day",
+    "Aliases": [
+      "on-the-day"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "temporal-is-on-the-hour",
+    "Aliases": [
+      "on-the-hour"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "temporal-is-on-the-minute",
+    "Aliases": [
+      "on-the-minute"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "special-is-null",
+    "Aliases": [
+      "null"
+    ],
+    "Scope": "Special"
+  },
+  {
+    "Name": "numeric-is-equal-to",
+    "Aliases": [
+      "equal-to"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-greater-than",
+    "Aliases": [
+      "greater-than"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-greater-than-or-equal",
+    "Aliases": [
+      "greater-than-or-equal"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-less-than",
+    "Aliases": [
+      "less-than"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "temporal-is-contained-in",
+    "Aliases": [
+      "contained-in"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "numeric-is-less-than-or-equal",
+    "Aliases": [
+      "less-than-or-equal"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-modulo",
+    "Aliases": [
+      "modulo"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-even",
+    "Aliases": [
+      "even"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-odd",
+    "Aliases": [
+      "odd"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-integer",
+    "Aliases": [
+      "integer"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "numeric-is-zero-or-null",
+    "Aliases": [
+      "zero-or-null"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "boolean-is-identical-to",
+    "Aliases": [
+      "identical-to"
+    ],
+    "Scope": "Boolean"
+  },
+  {
+    "Name": "boolean-is-true",
+    "Aliases": [
+      "true"
+    ],
+    "Scope": "Boolean"
+  },
+  {
+    "Name": "boolean-is-true-or-null",
+    "Aliases": [
+      "true-or-null"
+    ],
+    "Scope": "Boolean"
+  },
+  {
+    "Name": "numeric-is-within-interval",
+    "Aliases": [
+      "within-interval"
+    ],
+    "Scope": "Numeric"
+  },
+  {
+    "Name": "temporal-is-before-or-same-instant",
+    "Aliases": [
+      "before-or-same-instant"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "temporal-is-before",
+    "Aliases": [
+      "before"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "temporal-is-after-or-same-instant",
+    "Aliases": [
+      "after-or-same-instant"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "text-is-lower-case",
+    "Aliases": [
+      "lower-case"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-upper-case",
+    "Aliases": [
+      "upper-case"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-matches-numeric",
+    "Aliases": [
+      "matches-numeric"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-matches-date",
+    "Aliases": [
+      "matches-date"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-matches-datetime",
+    "Aliases": [
+      "matches-datetime"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-matches-time",
+    "Aliases": [
+      "matches-time"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-equivalent-to",
+    "Aliases": [
+      "equivalent-to"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-sorted-after",
+    "Aliases": [
+      "sorted-after"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-sorted-after-or-equivalent-to",
+    "Aliases": [
+      "sorted-after-or-equivalent-to"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-sorted-before",
+    "Aliases": [
+      "sorted-before"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-sorted-before-or-equivalent-to",
+    "Aliases": [
+      "sorted-before-or-equivalent-to"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-empty",
+    "Aliases": [
+      "empty"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-is-empty-or-null",
+    "Aliases": [
+      "empty-or-null"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-starts-with",
+    "Aliases": [
+      "starts-with"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-ends-with",
+    "Aliases": [
+      "ends-with"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-contains",
+    "Aliases": [
+      "contains"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "text-matches-regex",
+    "Aliases": [
+      "matches-regex"
+    ],
+    "Scope": "Text"
+  },
+  {
+    "Name": "temporal-is-same-instant",
+    "Aliases": [
+      "same-instant"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "temporal-is-after",
+    "Aliases": [
+      "after"
+    ],
+    "Scope": "Temporal"
+  },
+  {
+    "Name": "boolean-is-false",
+    "Aliases": [
+      "false"
+    ],
+    "Scope": "Boolean"
+  },
+  {
+    "Name": "boolean-is-false-or-null",
+    "Aliases": [
+      "false-or-null"
+    ],
+    "Scope": "Boolean"
+  }
+]

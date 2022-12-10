@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Text
 {
+    [Predicate(false)]
     abstract class BaseTextPredicateMatching : BaseTextPredicate
     {
         protected CultureInfo CultureInfo { get; }

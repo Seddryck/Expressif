@@ -10,6 +10,7 @@ using System.Text;
 
 namespace Expressif.Functions.Text
 {
+    [Function]
     abstract class AbstractTextTransformation : IFunction
     {
         public object? Evaluate(object? value)
@@ -173,12 +174,14 @@ namespace Expressif.Functions.Text
             => value.Length >= Length.Execute() ? value : value.PadLeft(Length.Execute(), Character.Execute());
     }
 
+    [Function(false)]
     class BlankToEmpty : AbstractTextTransformation
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
+    [Function(false)]
     class BlankToNull : AbstractTextTransformation
     {
         protected override object EvaluateBlank() => new Null().Keyword;
@@ -186,18 +189,21 @@ namespace Expressif.Functions.Text
         protected override object EvaluateString(string value) => value;
     }
 
+    [Function(false)]
     class EmptyToNull : AbstractTextTransformation
     {
         protected override object EvaluateEmpty() => new Null().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
+    [Function(false)]
     class NullToEmpty : AbstractTextTransformation
     {
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
     }
 
+    [Function(false)]
     class HtmlToText : AbstractTextTransformation
     {
         protected override object EvaluateString(string value) => WebUtility.HtmlDecode(value);
@@ -254,7 +260,7 @@ namespace Expressif.Functions.Text
     }
 
 
-
+    [Function(false)]
     class TextToDateTime : AbstractTextTransformation
     {
         public IScalarResolver<string> Format { get; }
@@ -327,6 +333,7 @@ namespace Expressif.Functions.Text
             => Mask.Execute() ?? string.Empty;
     }
 
+    [Function(false)]
     class MaskToText : AbstractTextTransformation
     {
         private char maskChar { get; } = '*';

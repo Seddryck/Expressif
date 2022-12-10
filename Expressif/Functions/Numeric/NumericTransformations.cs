@@ -6,8 +6,10 @@ using System;
 
 namespace Expressif.Functions.Numeric
 {
+    [Function]
     abstract class AbstractNumericTransformation : IFunction
     {
+        
         public AbstractNumericTransformation()
         { }
 
@@ -36,6 +38,7 @@ namespace Expressif.Functions.Numeric
         protected abstract decimal? EvaluateNumeric(decimal numeric);
     }
 
+    [Function(false)]
     class NullToZero : AbstractNumericTransformation
     {
         protected override object EvaluateNull() => 0;
@@ -67,6 +70,7 @@ namespace Expressif.Functions.Numeric
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Round(numeric, Digits.Execute());
     }
 
+    [Function(false)]
     class NumericToClip : AbstractNumericTransformation
     {
         public IScalarResolver<decimal> Min { get; }
@@ -87,6 +91,7 @@ namespace Expressif.Functions.Numeric
             => Value = value;
     }
 
+    [Function(false)]
     class NumericToAdd : AbstractNumericArithmetic
     {
         public IScalarResolver<int> Times { get; }
@@ -101,6 +106,7 @@ namespace Expressif.Functions.Numeric
             => value + (Value.Execute() * Times.Execute());
     }
 
+    [Function(false)]
     class NumericToSubtract : NumericToAdd
     {
         public NumericToSubtract(IScalarResolver<decimal> value, IScalarResolver<int> times)
@@ -113,12 +119,14 @@ namespace Expressif.Functions.Numeric
             => value - (Value.Execute() * Times.Execute());
     }
 
+    [Function(true)]
     class NumericToIncrement : NumericToAdd
     {
         public NumericToIncrement()
         : base(new LiteralScalarResolver<decimal>(1)) { }
     }
 
+    [Function(true)]
     class NumericToDecrement : NumericToSubtract
     {
         public NumericToDecrement()

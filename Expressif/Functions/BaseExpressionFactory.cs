@@ -1,4 +1,5 @@
-﻿using Expressif.Functions;
+﻿using Expressif;
+using Expressif.Functions;
 using Expressif.Parsers;
 using Expressif.Values;
 using Expressif.Values.Resolvers;
@@ -52,22 +53,14 @@ namespace Expressif.Functions
         }
 
         protected virtual Type GetFunctionType<T>(string functionName)
-        {
-            var textInfo = CultureInfo.InvariantCulture.TextInfo;
-            var className = textInfo.ToTitleCase(functionName.Trim().ToLowerInvariant().Replace("-", " "))
-                .Replace(" ", "")
-                .Replace("Datetime", "DateTime")
-                .Replace("Timespan", "TimeSpan");
-
-            return typeof(T).Assembly.GetTypes()
-                       .Where(
-                                t => t.IsClass
-                                && t.IsAbstract == false
-                                && t.Name == className
-                                && t.GetInterface(typeof(T).Name) != null)
-                       .SingleOrDefault()
-                       ?? throw new NotImplementedFunctionException(className);
-        }
+            =>typeof(T).Assembly.GetTypes()
+                .Where(
+                        t => t.IsClass
+                        && t.IsAbstract == false
+                        && t.Name == functionName.ToPascalCase()
+                        && t.GetInterface(typeof(T).Name) != null)
+                .SingleOrDefault()
+                ?? throw new NotImplementedFunctionException(functionName.ToPascalCase());
 
         protected internal ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
             => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)

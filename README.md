@@ -9,12 +9,12 @@ Expressif allows you to define variables and transformation of these variables (
 
 ![Logo](https://raw.githubusercontent.com/Seddryck/Expressif/main/misc/icon/expressif-icon-256.png)
 
-[About][] | [Quickstart][] | [Installing][] | [Functions][]
+[About][] | [Quickstart][] | [Installing][] | [Functions and predicates][]
 
 [About]: #about (About)
 [Quickstart]: #quickstart (Quickstart)
 [Installing]: #installing (Installing)
-[Functions]: #functions (Functions)
+[Functions and predicates]: #supported (Functions and predicates)
 
 ## About
 
@@ -112,6 +112,149 @@ Install in the usual .NET fashion:
 Install-Package Expressif
 ```
 
-## Functions
+## Supported functions and predicates
 
-TBC
+### Functions
+<!-- START FUNCTION TABLE -->
+|Scope    | Name                               | Aliases                   |
+|-------- | ---------------------------------- | --------------------------|
+|IO       | file-to-creation-datetime          | creation-datetime         |
+|IO       | file-to-creation-datetime-utc      | creation-datetime-utc     |
+|IO       | file-to-size                       | size                      |
+|IO       | file-to-update-datetime            | update-datetime           |
+|IO       | file-to-update-datetime-utc        | update-datetime-utc       |
+|IO       | path-to-directory                  | directory                 |
+|IO       | path-to-extension                  | extension                 |
+|IO       | path-to-filename                   | filename                  |
+|IO       | path-to-filename-without-extension | filename-without-extension|
+|IO       | path-to-root                       | root                      |
+|Numeric  | null-to-zero                       |                           |
+|Numeric  | numeric-to-add                     |                           |
+|Numeric  | numeric-to-ceiling                 | ceiling                   |
+|Numeric  | numeric-to-clip                    |                           |
+|Numeric  | numeric-to-decrement               | decrement                 |
+|Numeric  | numeric-to-divide                  | divide                    |
+|Numeric  | numeric-to-floor                   | floor                     |
+|Numeric  | numeric-to-increment               | increment                 |
+|Numeric  | numeric-to-integer                 | integer                   |
+|Numeric  | numeric-to-invert                  | invert                    |
+|Numeric  | numeric-to-multiply                | multiply                  |
+|Numeric  | numeric-to-round                   | round                     |
+|Numeric  | numeric-to-subtract                |                           |
+|Special  | any-to-any                         |                           |
+|Special  | null-to-value                      |                           |
+|Special  | value-to-value                     |                           |
+|Temporal | date-to-age                        | age                       |
+|Temporal | datetime-to-add                    |                           |
+|Temporal | datetime-to-ceiling-hour           | ceiling-hour              |
+|Temporal | datetime-to-ceiling-minute         | ceiling-minute            |
+|Temporal | datetime-to-clip                   |                           |
+|Temporal | datetime-to-date                   | date                      |
+|Temporal | datetime-to-first-of-month         | first-of-month            |
+|Temporal | datetime-to-first-of-year          | first-of-year             |
+|Temporal | datetime-to-floor-hour             | floor-hour                |
+|Temporal | datetime-to-floor-minute           | floor-minute              |
+|Temporal | datetime-to-last-of-month          | last-of-month             |
+|Temporal | datetime-to-last-of-year           | last-of-year              |
+|Temporal | datetime-to-next-day               | next-day                  |
+|Temporal | datetime-to-next-month             | next-month                |
+|Temporal | datetime-to-next-year              | next-year                 |
+|Temporal | datetime-to-previous-day           | previous-day              |
+|Temporal | datetime-to-previous-month         | previous-month            |
+|Temporal | datetime-to-previous-year          | previous-year             |
+|Temporal | datetime-to-set-time               | set-time                  |
+|Temporal | datetime-to-subtract               |                           |
+|Temporal | invalid-to-date                    |                           |
+|Temporal | local-to-utc                       |                           |
+|Temporal | null-to-date                       |                           |
+|Temporal | utc-to-local                       |                           |
+|Text     | blank-to-empty                     |                           |
+|Text     | blank-to-null                      |                           |
+|Text     | empty-to-null                      |                           |
+|Text     | html-to-text                       |                           |
+|Text     | mask-to-text                       |                           |
+|Text     | null-to-empty                      |                           |
+|Text     | text-to-datetime                   |                           |
+|Text     | text-to-first-chars                | first-chars               |
+|Text     | text-to-html                       | html                      |
+|Text     | text-to-last-chars                 | last-chars                |
+|Text     | text-to-length                     | length                    |
+|Text     | text-to-lower                      | lower                     |
+|Text     | text-to-mask                       | mask                      |
+|Text     | text-to-pad-left                   | pad-left                  |
+|Text     | text-to-pad-right                  | pad-right                 |
+|Text     | text-to-prefix                     | prefix                    |
+|Text     | text-to-remove-chars               | remove-chars              |
+|Text     | text-to-skip-first-chars           | skip-first-chars          |
+|Text     | text-to-skip-last-chars            | skip-last-chars           |
+|Text     | text-to-suffix                     | suffix                    |
+|Text     | text-to-token                      | token                     |
+|Text     | text-to-token-count                | token-count               |
+|Text     | text-to-trim                       | trim                      |
+|Text     | text-to-upper                      | upper                     |
+|Text     | text-to-without-diacritics         | without-diacritics        |
+|Text     | text-to-without-whitespaces        | without-whitespaces       |
+<!-- END FUNCTION TABLE -->
+
+### Predicates
+<!-- START PREDICATE TABLE -->
+|Scope    | Name                                   | Aliases                       |
+|-------- | -------------------------------------- | ------------------------------|
+|Boolean  | boolean-is-false                       | false                         |
+|Boolean  | boolean-is-false-or-null               | false-or-null                 |
+|Boolean  | boolean-is-identical-to                | identical-to                  |
+|Boolean  | boolean-is-true                        | true                          |
+|Boolean  | boolean-is-true-or-null                | true-or-null                  |
+|Numeric  | numeric-is-equal-to                    | equal-to                      |
+|Numeric  | numeric-is-even                        | even                          |
+|Numeric  | numeric-is-greater-than                | greater-than                  |
+|Numeric  | numeric-is-greater-than-or-equal       | greater-than-or-equal         |
+|Numeric  | numeric-is-integer                     | integer                       |
+|Numeric  | numeric-is-less-than                   | less-than                     |
+|Numeric  | numeric-is-less-than-or-equal          | less-than-or-equal            |
+|Numeric  | numeric-is-modulo                      | modulo                        |
+|Numeric  | numeric-is-odd                         | odd                           |
+|Numeric  | numeric-is-within-interval             | within-interval               |
+|Numeric  | numeric-is-zero-or-null                | zero-or-null                  |
+|Special  | special-is-null                        | null                          |
+|Temporal | temporal-is-after                      | after                         |
+|Temporal | temporal-is-after-or-same-instant      | after-or-same-instant         |
+|Temporal | temporal-is-before                     | before                        |
+|Temporal | temporal-is-before-or-same-instant     | before-or-same-instant        |
+|Temporal | temporal-is-contained-in               | contained-in                  |
+|Temporal | temporal-is-on-the-day                 | on-the-day                    |
+|Temporal | temporal-is-on-the-hour                | on-the-hour                   |
+|Temporal | temporal-is-on-the-minute              | on-the-minute                 |
+|Temporal | temporal-is-same-instant               | same-instant                  |
+|Text     | text-contains                          | contains                      |
+|Text     | text-ends-with                         | ends-with                     |
+|Text     | text-is-any-of                         | any-of                        |
+|Text     | text-is-empty                          | empty                         |
+|Text     | text-is-empty-or-null                  | empty-or-null                 |
+|Text     | text-is-equivalent-to                  | equivalent-to                 |
+|Text     | text-is-lower-case                     | lower-case                    |
+|Text     | text-is-sorted-after                   | sorted-after                  |
+|Text     | text-is-sorted-after-or-equivalent-to  | sorted-after-or-equivalent-to |
+|Text     | text-is-sorted-before                  | sorted-before                 |
+|Text     | text-is-sorted-before-or-equivalent-to | sorted-before-or-equivalent-to|
+|Text     | text-is-upper-case                     | upper-case                    |
+|Text     | text-matches-date                      | matches-date                  |
+|Text     | text-matches-datetime                  | matches-datetime              |
+|Text     | text-matches-numeric                   | matches-numeric               |
+|Text     | text-matches-regex                     | matches-regex                 |
+|Text     | text-matches-time                      | matches-time                  |
+|Text     | text-starts-with                       | starts-with                   |
+<!-- END PREDICATE TABLE -->
+
+
+
+
+
+
+
+
+
+
+
+
+

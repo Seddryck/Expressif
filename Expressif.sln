@@ -9,8 +9,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Expressif.Testing", "Expres
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{E3F9B645-76C5-4031-8D7A-E0B535E88F3D}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{01685EF7-A74D-4D06-931B-5DD33CDA3FD8}"
+	ProjectSection(SolutionItems) = preProject
+		generate-function-info.ps1 = generate-function-info.ps1
+		generate-predicate-info.ps1 = generate-predicate-info.ps1
+		README.md = README.md
+		update-readme.ps1 = update-readme.ps1
 	EndProjectSection
 EndProject
 Global

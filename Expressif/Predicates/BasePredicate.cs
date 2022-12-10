@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates
 {
+    [Predicate]
     abstract class BasePredicate : IPredicate
     {
         public BasePredicate() { }
