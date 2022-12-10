@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Temporal
 {
+    [Predicate(prefix: "dateTime")]
     abstract class BaseDateTimePredicate : BasePredicate
     {
         public override bool Evaluate(object? value)

@@ -11,17 +11,18 @@ namespace Expressif.Predicates
     {
         public bool AppendIs { get; }
         public string[] Aliases { get; }
+        public string? Prefix { get; }
 
         public PredicateAttribute()
             : this(Array.Empty<string>()) { }
 
         public PredicateAttribute(bool appendIs)
-            : this(appendIs, Array.Empty<string>()) { }
+            : this(appendIs, null, Array.Empty<string>()) { }
 
         public PredicateAttribute(string[] aliases)
-            : this(true, aliases) { }
+            : this(true, null, aliases) { }
 
-        public PredicateAttribute(bool appendIs, string[] aliases)
-            => (AppendIs, Aliases) = (appendIs, aliases);
+        public PredicateAttribute(bool appendIs = true, string? prefix = null, string[]? aliases = null)
+            => (AppendIs, Prefix, Aliases) = (appendIs, prefix, aliases ?? Array.Empty<string>());
     }
 }

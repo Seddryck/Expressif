@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Expressif.Functions.Temporal
 {
-    [Function(false)]
+    [Function(prefix: "")]
     class UtcToLocal : AbstractTemporalTransformation
     {
         public IScalarResolver<string> TimeZoneLabel { get; }
@@ -34,7 +34,7 @@ namespace Expressif.Functions.Temporal
             .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
     }
 
-    [Function(false)]
+    [Function(prefix: "")]
     class LocalToUtc : UtcToLocal
     {
         public LocalToUtc(IScalarResolver<string> timeZoneLabel)

@@ -26,17 +26,23 @@ namespace Expressif.Predicates.Introspection
 
             foreach (var predicate in predicates)
             {
+                var prefix = predicate.Attribute.Prefix != null && string.IsNullOrEmpty(predicate.Attribute.Prefix)
+                                        ? string.Empty
+                                        : string.IsNullOrEmpty(predicate.Attribute.Prefix)
+                                            ? predicate.Type.Namespace!.Split('.').Last().ToKebabCase()
+                                            : predicate.Attribute.Prefix;
+
+                var suffix = predicate.Attribute.AppendIs ? $"is" : string.Empty;
+
+                var array = new[] { prefix, suffix, predicate.Type.Name.ToKebabCase() }.Where(x => !string.IsNullOrEmpty(x));
+
                 yield return new PredicateInfo(
-                        predicate.Attribute.AppendIs
-                        ? $"{predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()}-is-{predicate.Type.Name.ToKebabCase()}"
-                        : $"{predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()}-{predicate.Type.Name.ToKebabCase()}"
-                        , predicate.Attribute.Aliases.AsQueryable()
-                            .Prepend(predicate.Type.Name.ToKebabCase()).ToArray()
+                        predicate.Type.Name.ToKebabCase()
+                        , predicate.Attribute.Aliases.AsQueryable().Prepend(string.Join('-', array)).ToArray()
                         , predicate.Type.Namespace!.ToToken('.').Last()
                         , predicate.Type
                     );
             }
         }
-
     }
 }

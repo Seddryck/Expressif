@@ -14,9 +14,9 @@ namespace Expressif.Testing.Functions.IO
 
         [Test]
         [TestCase(@"C:\Dir\Child\file.txt", 4080)]
-        public void FileToSize_Valid(string value, long expected)
+        public void Size_Valid(string value, long expected)
         {
-            var function = new FileToSize();
+            var function = new Size();
             IFileInfo Init(string value)
             {
                 var fileInfo = new Mock<IFileInfo>();
@@ -30,9 +30,9 @@ namespace Expressif.Testing.Functions.IO
 
         [Test]
         [TestCase(@"C:\Dir\Child\file.txt")]
-        public void FileToCreationDateTime_Valid(string value)
+        public void CreationDateTime_Valid(string value)
         {
-            var function = new FileToCreationDateTime();
+            var function = new CreationDateTime();
             IFileInfo Init(string value)
             {
                 var fileInfo = new Mock<IFileInfo>();
@@ -46,9 +46,9 @@ namespace Expressif.Testing.Functions.IO
 
         [Test]
         [TestCase(@"C:\Dir\Child\file.txt")]
-        public void FileToCreationDateTimeUtc_Valid(string value)
+        public void CreationDateTimeUtc_Valid(string value)
         {
-            var function = new FileToCreationDateTimeUtc();
+            var function = new CreationDateTimeUtc();
             IFileInfo Init(string value)
             {
                 var fileInfo = new Mock<IFileInfo>();
@@ -62,9 +62,9 @@ namespace Expressif.Testing.Functions.IO
 
         [Test]
         [TestCase(@"C:\Dir\Child\file.txt")]
-        public void FileToUpdateDateTime_Valid(string value)
+        public void UpdateDateTime_Valid(string value)
         {
-            var function = new FileToUpdateDateTime();
+            var function = new UpdateDateTime();
             IFileInfo Init(string value)
             {
                 var fileInfo = new Mock<IFileInfo>();
@@ -78,9 +78,9 @@ namespace Expressif.Testing.Functions.IO
 
         [Test]
         [TestCase(@"C:\Dir\Child\file.txt")]
-        public void FileToUpdateDateTimeUtc_Valid(string value)
+        public void UpdateDateTimeUtc_Valid(string value)
         {
-            var function = new FileToUpdateDateTimeUtc();
+            var function = new UpdateDateTimeUtc();
             IFileInfo Init(string value)
             {
                 var fileInfo = new Mock<IFileInfo>();

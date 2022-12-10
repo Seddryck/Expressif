@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    class TextToWithoutDiacritics : AbstractTextTransformation
+    class WithoutDiacritics : AbstractTextTransformation
     {
         protected override object EvaluateString(string value) => RemoveDiacritics(value);
 

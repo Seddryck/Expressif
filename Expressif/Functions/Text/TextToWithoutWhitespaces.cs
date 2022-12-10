@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    class TextToWithoutWhitespaces : AbstractTextTransformation
+    class WithoutWhitespaces : AbstractTextTransformation
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => RemoveWhitespaces(value);

@@ -27,11 +27,13 @@ namespace Expressif.Functions.Introspection
             {
                 yield return new FunctionInfo(
                         function.Type.Name.ToKebabCase()
-                        , function.Attribute.Aliases.AsQueryable()
-                            .Prepend(function.Attribute.IsCompactName 
-                                ? function.Type.Name.ToKebabCase().ToToken().Skip(2).ToKebabCase()
-                                : string.Empty
-                            ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
+                        , function.Attribute.Prefix != null && string.IsNullOrEmpty(function.Attribute.Prefix)
+                            ? function.Attribute.Aliases
+                            : function.Attribute.Aliases.AsQueryable()
+                                .Prepend(string.IsNullOrEmpty(function.Attribute.Prefix) 
+                                    ? $"{function.Type.Namespace!.Split('.').Last().ToKebabCase()}-to-{function.Type.Name.ToKebabCase()}"
+                                    : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}"
+                                ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
                         , function.Type.Namespace!.ToToken('.').Last()
                         , function.Type
                     );
