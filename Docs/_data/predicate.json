@@ -1,309 +1,309 @@
 [
   {
-    "Name": "text-is-any-of",
+    "Name": "any-of",
     "Aliases": [
-      "any-of"
+      "text-is-any-of"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "temporal-is-on-the-day",
+    "Name": "on-the-day",
     "Aliases": [
-      "on-the-day"
+      "temporal-is-on-the-day"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "temporal-is-on-the-hour",
+    "Name": "on-the-hour",
     "Aliases": [
-      "on-the-hour"
+      "temporal-is-on-the-hour"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "temporal-is-on-the-minute",
+    "Name": "on-the-minute",
     "Aliases": [
-      "on-the-minute"
+      "temporal-is-on-the-minute"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "special-is-null",
+    "Name": "null",
     "Aliases": [
-      "null"
+      "special-is-null"
     ],
     "Scope": "Special"
   },
   {
-    "Name": "numeric-is-equal-to",
+    "Name": "equal-to",
     "Aliases": [
-      "equal-to"
+      "numeric-is-equal-to"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-greater-than",
+    "Name": "greater-than",
     "Aliases": [
-      "greater-than"
+      "numeric-is-greater-than"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-greater-than-or-equal",
+    "Name": "greater-than-or-equal",
     "Aliases": [
-      "greater-than-or-equal"
+      "numeric-is-greater-than-or-equal"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-less-than",
+    "Name": "less-than",
     "Aliases": [
-      "less-than"
+      "numeric-is-less-than"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "temporal-is-contained-in",
+    "Name": "contained-in",
     "Aliases": [
-      "contained-in"
+      "temporal-is-contained-in"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "numeric-is-less-than-or-equal",
+    "Name": "less-than-or-equal",
     "Aliases": [
-      "less-than-or-equal"
+      "numeric-is-less-than-or-equal"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-modulo",
+    "Name": "modulo",
     "Aliases": [
-      "modulo"
+      "numeric-is-modulo"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-even",
+    "Name": "even",
     "Aliases": [
-      "even"
+      "numeric-is-even"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-odd",
+    "Name": "odd",
     "Aliases": [
-      "odd"
+      "numeric-is-odd"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-integer",
+    "Name": "integer",
     "Aliases": [
-      "integer"
+      "numeric-is-integer"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "numeric-is-zero-or-null",
+    "Name": "zero-or-null",
     "Aliases": [
-      "zero-or-null"
+      "numeric-is-zero-or-null"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "boolean-is-identical-to",
+    "Name": "identical-to",
     "Aliases": [
-      "identical-to"
+      "boolean-is-identical-to"
     ],
     "Scope": "Boolean"
   },
   {
-    "Name": "boolean-is-true",
+    "Name": "true",
     "Aliases": [
-      "true"
+      "boolean-is-true"
     ],
     "Scope": "Boolean"
   },
   {
-    "Name": "boolean-is-true-or-null",
+    "Name": "true-or-null",
     "Aliases": [
-      "true-or-null"
+      "boolean-is-true-or-null"
     ],
     "Scope": "Boolean"
   },
   {
-    "Name": "numeric-is-within-interval",
+    "Name": "within-interval",
     "Aliases": [
-      "within-interval"
+      "numeric-is-within-interval"
     ],
     "Scope": "Numeric"
   },
   {
-    "Name": "temporal-is-before-or-same-instant",
+    "Name": "before-or-same-instant",
     "Aliases": [
-      "before-or-same-instant"
+      "temporal-is-before-or-same-instant"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "temporal-is-before",
+    "Name": "before",
     "Aliases": [
-      "before"
+      "temporal-is-before"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "temporal-is-after-or-same-instant",
+    "Name": "after-or-same-instant",
     "Aliases": [
-      "after-or-same-instant"
+      "temporal-is-after-or-same-instant"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "text-is-lower-case",
+    "Name": "lower-case",
     "Aliases": [
-      "lower-case"
+      "text-is-lower-case"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-upper-case",
+    "Name": "upper-case",
     "Aliases": [
-      "upper-case"
+      "text-is-upper-case"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-matches-numeric",
+    "Name": "matches-numeric",
     "Aliases": [
-      "matches-numeric"
+      "text-is-matches-numeric"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-matches-date",
+    "Name": "matches-date",
     "Aliases": [
-      "matches-date"
+      "text-is-matches-date"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-matches-datetime",
+    "Name": "matches-datetime",
     "Aliases": [
-      "matches-datetime"
+      "text-is-matches-datetime"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-matches-time",
+    "Name": "matches-time",
     "Aliases": [
-      "matches-time"
+      "text-is-matches-time"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-equivalent-to",
+    "Name": "equivalent-to",
     "Aliases": [
-      "equivalent-to"
+      "text-is-equivalent-to"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-sorted-after",
+    "Name": "sorted-after",
     "Aliases": [
-      "sorted-after"
+      "text-is-sorted-after"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-sorted-after-or-equivalent-to",
+    "Name": "sorted-after-or-equivalent-to",
     "Aliases": [
-      "sorted-after-or-equivalent-to"
+      "text-is-sorted-after-or-equivalent-to"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-sorted-before",
+    "Name": "sorted-before",
     "Aliases": [
-      "sorted-before"
+      "text-is-sorted-before"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-sorted-before-or-equivalent-to",
+    "Name": "sorted-before-or-equivalent-to",
     "Aliases": [
-      "sorted-before-or-equivalent-to"
+      "text-is-sorted-before-or-equivalent-to"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-empty",
+    "Name": "empty",
     "Aliases": [
-      "empty"
+      "text-is-empty"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-is-empty-or-null",
+    "Name": "empty-or-null",
     "Aliases": [
-      "empty-or-null"
+      "text-is-empty-or-null"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-starts-with",
+    "Name": "starts-with",
     "Aliases": [
-      "starts-with"
+      "text-is-starts-with"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-ends-with",
+    "Name": "ends-with",
     "Aliases": [
-      "ends-with"
+      "text-is-ends-with"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-contains",
+    "Name": "contains",
     "Aliases": [
-      "contains"
+      "text-is-contains"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "text-matches-regex",
+    "Name": "matches-regex",
     "Aliases": [
-      "matches-regex"
+      "text-is-matches-regex"
     ],
     "Scope": "Text"
   },
   {
-    "Name": "temporal-is-same-instant",
+    "Name": "same-instant",
     "Aliases": [
-      "same-instant"
+      "temporal-is-same-instant"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "temporal-is-after",
+    "Name": "after",
     "Aliases": [
-      "after"
+      "temporal-is-after"
     ],
     "Scope": "Temporal"
   },
   {
-    "Name": "boolean-is-false",
+    "Name": "false",
     "Aliases": [
-      "false"
+      "boolean-is-false"
     ],
     "Scope": "Boolean"
   },
   {
-    "Name": "boolean-is-false-or-null",
+    "Name": "false-or-null",
     "Aliases": [
-      "false-or-null"
+      "boolean-is-false-or-null"
     ],
     "Scope": "Boolean"
   }
