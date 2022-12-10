@@ -142,6 +142,7 @@ Install-Package Expressif
 |Numeric  | round                      | numeric-to-round                      |
 |Numeric  | subtract                   | numeric-to-subtract                   |
 |Special  | any-to-any                 |                                       |
+|Special  | neutral                    |                                       |
 |Special  | null-to-value              |                                       |
 |Special  | value-to-value             |                                       |
 |Temporal | age                        | dateTime-to-age                       |
@@ -245,6 +246,8 @@ Install-Package Expressif
 |Text     | starts-with                    | text-starts-with                      |
 |Text     | upper-case                     | text-is-upper-case                    |
 <!-- END PREDICATE TABLE -->
+
+
 
 
 
