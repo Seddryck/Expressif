@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.DateTime;
+﻿using Expressif.Predicates.Temporal;
 using Expressif.Values.Resolvers;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Predicates.DateTime
+namespace Expressif.Testing.Predicates.Temporal
 {
     public class ComparisonTest
     {

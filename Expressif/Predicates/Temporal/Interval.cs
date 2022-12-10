@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.DateTime
+namespace Expressif.Predicates.Temporal
 {
     internal class ContainedIn : BaseDateTimePredicate
     {
