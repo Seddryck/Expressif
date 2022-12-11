@@ -8,12 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Functions
+namespace Expressif.Testing
 {
     public class ExpressionBuilderTest
     {
         [Test]
-        public void As_WithoutParameter_CorrectlyEvaluate()
+        public void Chain_WithoutParameter_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder().Chain<Lower>();
             var expression = builder.Build();
@@ -21,7 +21,7 @@ namespace Expressif.Testing.Functions
         }
 
         [Test]
-        public void As_WithParameter_CorrectlyEvaluate()
+        public void Chain_WithParameter_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder().Chain<FirstChars>(5);
             var expression = builder.Build();
@@ -29,7 +29,7 @@ namespace Expressif.Testing.Functions
         }
 
         [Test]
-        public void As_WithParameters_CorrectlyEvaluate()
+        public void Chain_WithParameters_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder().Chain<PadRight>(15, '*');
             var expression = builder.Build();
@@ -37,7 +37,7 @@ namespace Expressif.Testing.Functions
         }
 
         [Test]
-        public void Chain_WithParameters_CorrectlyEvaluate()
+        public void Chain_Multiple_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder()
                 .Chain<Lower>()
@@ -48,7 +48,7 @@ namespace Expressif.Testing.Functions
         }
 
         [Test]
-        public void Chain_NotGenericWithParameters_CorrectlyEvaluate()
+        public void Chain_NotGeneric_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder()
                 .Chain(typeof(Lower))
@@ -92,6 +92,5 @@ namespace Expressif.Testing.Functions
             var str = builder.Serialize();
             serializer.Verify(x => x.Serialize(builder), Times.Once);
         }
-    }   
+    }
 }
-    

@@ -40,8 +40,11 @@ namespace Expressif.Predicates
             return new ChainPredicate(predicates);
         }
 
-        public ICombinationOperator Instantiate(string operatorName)
-            => Instantiate<ICombinationOperator>(GetFunctionType<ICombinationOperator>($"{operatorName}-operator"), Array.Empty<IParameter>(), new Context());
+        protected ICombinationOperator Instantiate(string operatorName)
+            => Instantiate(GetFunctionType<ICombinationOperator>($"{operatorName}-operator"));
+        
+        public ICombinationOperator Instantiate(Type @operator)
+            => Instantiate<ICombinationOperator>(@operator, Array.Empty<IParameter>(), new Context());
 
         public IPredicate Instantiate(Type type, IParameter[] parameters, Context context)
             => Instantiate<IPredicate>(type, parameters, context);
