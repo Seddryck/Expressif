@@ -61,11 +61,14 @@ namespace Expressif.Testing
         [Test]
         public void Chain_SubExpression_CorrectlyEvaluate()
         {
-            var subExpressionBuilder = new ExpressionBuilder();
-            subExpressionBuilder.Chain<FirstChars>(5).Chain<PadRight>(7, '*');
+            var subExpressionBuilder = new ExpressionBuilder()
+                .Chain<FirstChars>(5)
+                .Chain<PadRight>(7, '*');
 
-            var builder = new ExpressionBuilder();
-            builder.Chain<Lower>().Chain(subExpressionBuilder).Chain<Upper>();
+            var builder = new ExpressionBuilder()
+                .Chain<Lower>()
+                .Chain(subExpressionBuilder)
+                .Chain<Upper>();
 
             var expression = builder.Build();
             Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));

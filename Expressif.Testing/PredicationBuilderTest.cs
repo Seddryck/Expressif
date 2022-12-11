@@ -69,18 +69,21 @@ namespace Expressif.Testing
             Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
         }
 
-        //[Test]
-        //public void Chain_SubPredication_CorrectlyEvaluate()
-        //{
-        //    var subPredicationBuilder = new PredicationBuilder();
-        //    subPredicationBuilder.Chain<FirstChars>(5).Chain<PadRight>(7, '*');
+        [Test]
+        public void Chain_SubPredication_CorrectlyEvaluate()
+        {
+            var subPredicationBuilder = new PredicationBuilder()
+                .Chain<StartsWith>("Nik")
+                .Chain<AndOperator, EndsWith>("sla"); ;
 
-        //    var builder = new PredicationBuilder();
-        //    builder.Chain<Lower>().Chain(subPredicationBuilder).Chain<Upper>();
+            var builder = new PredicationBuilder()
+                .Chain<LowerCase>()
+                .Chain<OrOperator>(subPredicationBuilder)
+                .Chain<OrOperator, UpperCase>();
 
-        //    var expression = builder.Build();
-        //    Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));
-        //}
+            var expression = builder.Build();
+            Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
+        }
 
 
         //[Test]

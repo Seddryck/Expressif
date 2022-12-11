@@ -80,8 +80,8 @@ namespace Expressif
 
                 if (member is PredicationMember m)
                     (@operator, memberPredicate) = m.Build(Context, Factory);
-                //else if (member is PredicationBuilder pb)
-                //    (@operator, memberPredicate) = pb.Build();
+                else if (member is SubPredicationMember sub)
+                   (@operator, memberPredicate) = sub.Build(Context, Factory);
                 else
                     throw new NotSupportedException();
                 predicate = predicate is null ? memberPredicate : new CombinedPredicate(predicate, @operator!, memberPredicate!);
