@@ -1,4 +1,15 @@
-﻿using Expressif.Parsers;
+﻿
+/* Unmerged change from project 'Expressif (net6.0)'
+Before:
+using Expressif.Parsers;
+After:
+using Expressif;
+using Expressif;
+using Expressif.Parsers;
+*/
+using Expressif.Functions;
+using Expressif.Functions.Serializer;
+using Expressif.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,32 +18,19 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace Expressif.Functions
+namespace Expressif
 {
     public class ExpressionBuilder
     {
-        private record class ExpressionMember(Type Type, object[] Parameters)
-        {
-            public IFunction Build(Context context, ExpressionFactory factory)
-            {
-                var typedParameters = new List<IParameter>();
-                foreach (var parameter in Parameters)
-                {
-                    if (parameter is not IParameter)
-                        typedParameters.Add(new LiteralParameter(parameter.ToString()!));
-                }
-                return factory.Instantiate(Type, typedParameters.ToArray(), context);
-            }
-        };
-
+        
         private Context Context { get; }
         private ExpressionFactory Factory { get; }
+        private ExpressionSerializer Serializer { get; }
+
         public ExpressionBuilder()
             : this(new Context()) { }
-        public ExpressionBuilder(Context context)
-            : this(context, new ExpressionFactory()) { }
-        public ExpressionBuilder(Context context, ExpressionFactory factory)
-            => (Context, Factory) = (context, factory);
+        public ExpressionBuilder(Context? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
+            => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new ExpressionFactory(), serializer ?? new ExpressionSerializer());
 
         public Queue<object> Pile { get; } = new();
 
@@ -65,7 +63,7 @@ namespace Expressif.Functions
             IFunction? function = null;
             if (!Pile.Any())
                 throw new InvalidOperationException();
-            
+
             while (Pile.Any())
             {
                 var member = Pile.Dequeue() switch
@@ -78,6 +76,14 @@ namespace Expressif.Functions
                 function = function is null ? member : new ChainFunction(new[] { function, member });
             }
             return function!;
+        }
+
+        public string Serialize()
+        {
+            if (!Pile.Any())
+                throw new InvalidOperationException();
+
+            return Serializer.Serialize(this);
         }
     }
 }
