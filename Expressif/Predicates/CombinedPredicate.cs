@@ -1,4 +1,5 @@
-﻿using Expressif.Predicates.Combination;
+﻿using Expressif.Functions;
+using Expressif.Predicates.Combination;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;   
 
-namespace Expressif.Functions
+namespace Expressif.Predicates
 {
     public class CombinedPredicate : IPredicate
     {
