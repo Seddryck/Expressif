@@ -2,13 +2,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Expressif.Functions
 {
     public class ExpressionBuilder
     {
+        private record class ExpressionMember(Type Type, object[] Parameters)
+        {
+            public IFunction Build(Context context, ExpressionFactory factory)
+            {
+                var typedParameters = new List<IParameter>();
+                foreach (var parameter in Parameters)
+                {
+                    if (parameter is not IParameter)
+                        typedParameters.Add(new LiteralParameter(parameter.ToString()!));
+                }
+                return factory.Instantiate(Type, typedParameters.ToArray(), context);
+            }
+        };
+
         private Context Context { get; }
         private ExpressionFactory Factory { get; }
         public ExpressionBuilder()
@@ -18,54 +34,50 @@ namespace Expressif.Functions
         public ExpressionBuilder(Context context, ExpressionFactory factory)
             => (Context, Factory) = (context, factory);
 
-        public ExpressionMember? Root { get; private set; }
+        public Queue<object> Pile { get; } = new();
 
-        public ExpressionMember As<T>(params object[] parameters) where T : IFunction
-            => As(typeof(T), parameters);
+        public ExpressionBuilder Chain<T>(params object[] parameters) where T : IFunction
+            => Chain(typeof(T), parameters);
 
-        public ExpressionMember As(Type type, params object[] parameters)
-            => Root = new ExpressionMember(type, parameters, Context, Factory);
+        public ExpressionBuilder Chain(Type type, params object[] parameters)
+        {
+            if (!type.GetInterfaces().Contains(typeof(IFunction)))
+                throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IFunction)}'. Only types implementing this interface can be chained to create an expression.", nameof(type));
+
+            Pile.Enqueue(new ExpressionMember(type, parameters));
+            return this;
+        }
+
+        public ExpressionBuilder Chain(ExpressionBuilder builder)
+        {
+            Pile.Enqueue(builder);
+            return this;
+        }
+
+        public ExpressionBuilder Chain(IFunction function)
+        {
+            Pile.Enqueue(function);
+            return this;
+        }
 
         public IFunction Build()
         {
-            if (Root is null)
+            IFunction? function = null;
+            if (!Pile.Any())
                 throw new InvalidOperationException();
             
-            IFunction function = Root.Value;    
-            var member = Root;
-            while (member.Next is not null)
+            while (Pile.Any())
             {
-                member = member.Next;
-                function = new ChainFunction(new[] { function, member.Value });
-            }
-            return function;
-        }
-
-        public class ExpressionMember
-        {
-            private Context Context { get; }
-            private ExpressionFactory Factory { get; }
-            public IFunction Value { get; private set; }
-            public ExpressionMember(Type type, object[] parameters, Context context, ExpressionFactory factory)
-            {
-                (Context, Factory) = (context, factory);
-                var typedParameters = new List<IParameter>();
-                foreach (var parameter in parameters)
+                var member = Pile.Dequeue() switch
                 {
-                    if (parameter is not IParameter)
-                        typedParameters.Add(new LiteralParameter(parameter.ToString()!));
-                }
-                Value = factory.Instantiate(type, typedParameters.ToArray(), context);
+                    ExpressionMember m => m.Build(Context, Factory),
+                    ExpressionBuilder b => b.Build(),
+                    IFunction f => f,
+                    _ => throw new NotSupportedException()
+                };
+                function = function is null ? member : new ChainFunction(new[] { function, member });
             }
-
-            public ExpressionMember? Next { get; private set; }
-
-            public ExpressionMember Chain<T>(params object[] parameters) where T : IFunction
-                => Chain(typeof(T), parameters);
-
-            public ExpressionMember Chain(Type type, params object[] parameters)
-                => Next = new ExpressionMember(type, parameters, Context, Factory);
-
+            return function!;
         }
     }
 }
