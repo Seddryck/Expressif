@@ -14,7 +14,7 @@ Expressif allows you to define variables and transformation of these variables (
 [About]: #about (About)
 [Quickstart]: #quickstart (Quickstart)
 [Installing]: #installing (Installing)
-[Functions and predicates]: #supported (Functions and predicates)
+[Functions and predicates]: #supported-functions-and-predicates (Functions and predicates)
 
 ## About
 
