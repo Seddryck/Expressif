@@ -1,10 +1,6 @@
-﻿using Expressif.Functions;
-using Expressif.Functions.Serializer;
-using Expressif.Functions.Text;
-using Expressif.Predicates.Combination;
+﻿using Expressif.Predicates.Combination;
 using Expressif.Predicates.Serializer;
 using Expressif.Predicates.Text;
-using Expressif.Values.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,16 +15,16 @@ namespace Expressif.Testing
         public void As_WithoutParameter_CorrectlyEvaluate()
         {
             var builder = new PredicationBuilder().Chain<LowerCase>();
-            var expression = builder.Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.False);
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.False);
         }
 
         [Test]
         public void As_WithParameter_CorrectlyEvaluate()
         {
             var builder = new PredicationBuilder().Chain<StartsWith>("Nik");
-            var expression = builder.Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         }
 
         //[Test]
@@ -45,8 +41,8 @@ namespace Expressif.Testing
             var builder = new PredicationBuilder()
                 .Chain<StartsWith>("Nik")
                 .Chain<AndOperator, EndsWith>("sla");
-            var expression = builder.Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         }
 
         [Test]
@@ -55,8 +51,8 @@ namespace Expressif.Testing
             var builder = new PredicationBuilder()
                 .Chain<StartsWith>("ola")
                 .Chain<OrOperator, EndsWith>("sla");
-            var expression = builder.Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         }
 
         [Test]
@@ -65,8 +61,8 @@ namespace Expressif.Testing
             var builder = new PredicationBuilder()
                 .Chain(typeof(StartsWith), "ola")
                 .Chain(typeof(OrOperator), typeof(EndsWith), "sla");
-            var expression = builder.Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         }
 
         [Test]
@@ -81,8 +77,24 @@ namespace Expressif.Testing
                 .Chain<OrOperator>(subPredicationBuilder)
                 .Chain<OrOperator, UpperCase>();
 
-            var expression = builder.Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.True);
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
+        }
+
+        [Test]
+        public void Serialize_SubPredication_CorrectlySerialized()
+        {
+            var subPredicationBuilder = new PredicationBuilder()
+                .Chain<StartsWith>("Nik")
+                .Chain<AndOperator, EndsWith>("sla"); ;
+
+            var builder = new PredicationBuilder()
+                .Chain<LowerCase>()
+                .Chain<OrOperator>(subPredicationBuilder)
+                .Chain<OrOperator, UpperCase>();
+
+            var str = builder.Serialize();
+            Assert.That(str, Is.EqualTo("lower-case |OR { starts-with(Nik) |AND ends-with(sla) } |OR upper-case"));
         }
 
 
