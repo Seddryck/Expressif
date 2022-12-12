@@ -108,12 +108,12 @@ namespace Expressif.Functions.Temporal
     }
 
     [Function(prefix: "dateTime", aliases:new []{"dateTime-to-clip"})]
-    class CutOff : AbstractTemporalTransformation
+    class Clamp : AbstractTemporalTransformation
     {
         public IScalarResolver<DateTime> Min { get; }
         public IScalarResolver<DateTime> Max { get; }
 
-        public CutOff(IScalarResolver<DateTime> min, IScalarResolver<DateTime> max)
+        public Clamp(IScalarResolver<DateTime> min, IScalarResolver<DateTime> max)
             => (Min, Max) = (min, max);
 
         protected override object EvaluateDateTime(DateTime value)

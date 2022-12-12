@@ -20,7 +20,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-02-11", "2019-03-01")]
         [TestCase("2019-04-11", "2019-03-31")]
         public void CutOff_Valid(object value, DateTime expected)
-            => Assert.That(new CutOff(new LiteralScalarResolver<DateTime>("2019-03-01"), new LiteralScalarResolver<DateTime>("2019-03-31"))
+            => Assert.That(new Clamp(new LiteralScalarResolver<DateTime>("2019-03-01"), new LiteralScalarResolver<DateTime>("2019-03-31"))
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
