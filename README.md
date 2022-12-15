@@ -39,7 +39,7 @@ Expressif allows you to define variables and transformation of these variables (
 ## Quickstart
 
 ```csharp
-var expression = new Expression("text-to-lower");
+var expression = new Expression("lower");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola tesla"));
 ```
@@ -47,7 +47,7 @@ Assert.That(result, Is.EqualTo("nikola tesla"));
 Some functions required arguments, you can specify them between the brackets after the function name. Note that literal textual values don't required quotes surronding the values.
 
 ```csharp
-var expression = new Expression("text-to-remove-chars(a)");
+var expression = new Expression("remove-chars(a)");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("Nikol Tesl"));
 ```
@@ -55,7 +55,7 @@ Assert.That(result, Is.EqualTo("Nikol Tesl"));
 You can chain the functions to apply to the initial value by using the operator pipe (`|`). The functions are executed from left to right.
 
 ```csharp
-var expression = new Expression("text-to-lower | text-to-remove-chars(a)");
+var expression = new Expression("lower | remove-chars(a)");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikol tesl"));
 ```
@@ -65,7 +65,7 @@ It's possible to use variables as function parameters. the name of the variables
 var context = new Context();
 context.Variables.Add<char>("myChar", 'k');
 
-var expression = new Expression("text-to-lower | text-to-remove-chars(@myChar)", context);
+var expression = new Expression("lower | remove-chars(@myChar)", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("niola tesla"));
 ```
@@ -76,7 +76,7 @@ In addition to the variables that must be scalar values (text, numeric, dateTime
 var context = new Context();
 context.CurrentObject.Set(new { CharToBeRemoved = 't' });
 
-var expression = new Expression("text-to-lower | text-to-remove-chars([CharToBeRemoved])", context);
+var expression = new Expression("lower | remove-chars([CharToBeRemoved])", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola esla"));
 ```
@@ -87,7 +87,7 @@ or based on its position with the syntax `#index` (where index is positive numbe
 var context = new Context();
 context.CurrentObject.Set(new List<char>() { 'e', 's' });
 
-var expression = new Expression("text-to-lower | text-to-remove-chars(#1)", context);
+var expression = new Expression("lower | remove-chars(#1)", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola tela"));
 ```
@@ -99,7 +99,7 @@ var context = new Context();
 context.Variables.Add<int>("myVar", 6);
 context.CurrentObject.Set(new List<int>() { 15, 8, 3 });
 
-var expression = new Expression("text-to-lower | text-to-skip-last-chars( {@myVar | numeric-to-subtract(#2) })", context);
+var expression = new Expression("lower | skip-last-chars( {@myVar | numeric-to-subtract(#2) })", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola te"));
 ```
