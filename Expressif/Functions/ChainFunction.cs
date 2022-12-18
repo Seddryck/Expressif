@@ -9,7 +9,7 @@ namespace Expressif.Functions
 {
     public class ChainFunction : IFunction
     {
-        private IEnumerable<IFunction> Functions { get; }
+        internal IEnumerable<IFunction> Functions { get; }
 
         public ChainFunction(IEnumerable<IFunction> functions)
             => Functions = functions;
