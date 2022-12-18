@@ -1,6 +1,6 @@
 ﻿#requires -PSEdition Core
 
-$destinationPath = ".\Docs\_data"
+$destinationPath = ".\docs\_data"
 $destinationFile = "predicate.json"
 
 

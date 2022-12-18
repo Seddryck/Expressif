@@ -1,6 +1,6 @@
 ﻿#requires -PSEdition Core
 
-$destinationPath = ".\Docs\_data"
+$destinationPath = ".\docs\_data"
 $destinationFile = "function.json"
 
 
@@ -32,7 +32,7 @@ Set-Location "..\..\"
 Write-Host "Generating JSON for functions based on $assemblyPath\$directory\$dllfile"
 $elapsed = Measure-Command -Expression {
     $locator = New-Object  Expressif.Functions.Introspection.FunctionIntrospector
-    $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, Aliases, Scope
+    $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, Aliases, Scope, Summary
     Write-Host  "`t$($functions.Count) functions identified"
     $functions | ForEach-Object {Write-Host "`t`t$($_.Name)"}
     $functions | ConvertTo-Json | Out-File "$destinationPath\$destinationFile"
