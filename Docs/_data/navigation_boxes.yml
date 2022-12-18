@@ -3,14 +3,14 @@
 - title: Why Expressif
   desc: variable substitution with a rich functions and predicates library
   icon: check
-  doc: why-expressif
+  doc: why-expressif/
 
 - title: Getting Started
   desc: Get started fast with installation and basic usages
   icon: cog
-  doc: installation-expressif
+  doc: first-steps-with-expressif/
 
 - title: Functions and predicates
   desc: List the available functions and predicates
   icon: bookmark
-  doc: doc
+  doc: list-functions-predicates/
