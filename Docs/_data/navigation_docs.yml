@@ -3,7 +3,6 @@
   - why-expressif
   - installation-expressif
   - first-steps-with-expressif
-  - variables
 
 - title: Functions library
   docs:
@@ -11,6 +10,7 @@
   - text-functions
   - numeric-functions
   - temporal-functions
+  - io-functions
 
 - title: Predicates library
   docs:
@@ -25,6 +25,6 @@
   - composition-named-functions
   - custom-function
 
-- title: Other usages of Expressif
+- title: Alternative usages of Expressif 
   docs:
   - classical-csharp-functions
