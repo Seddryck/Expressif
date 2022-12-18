@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Expressif.Testing.Functions.IO
 {
     [TestFixture]
-    public class PathTransformationsTest
+    public class PathFunctionsTest
     { 
         [Test]
         [TestCase(@"C:\", "")]

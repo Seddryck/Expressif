@@ -4,8 +4,12 @@ using System.Linq;
 
 namespace Expressif.Functions.Temporal
 {
+
+    /// <summary>
+    /// Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.
+    /// </summary>
     [Function(prefix: "")]
-    class UtcToLocal : AbstractTemporalTransformation
+    class UtcToLocal : BaseTemporalFunction
     {
         public IScalarResolver<string> TimeZoneLabel { get; }
 
@@ -34,6 +38,9 @@ namespace Expressif.Functions.Temporal
             .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
     }
 
+    /// <summary>
+    /// Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
+    /// </summary>
     [Function(prefix: "")]
     class LocalToUtc : UtcToLocal
     {

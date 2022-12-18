@@ -6,36 +6,36 @@ using System.IO;
 namespace Expressif.Functions.IO
 {
     [Function(prefix: "path")]
-    abstract class AbstractPathTransformation : AbstractTextTransformation, IBasePathTransformation
+    abstract class BasePathFunction : BaseTextFunction, IBasePathTransformation
     {
-        public AbstractPathTransformation() { }
+        public BasePathFunction() { }
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateEmpty() => new Empty().Keyword;
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateSpecial(string value) => new Empty().Keyword;
     }
 
-    class Filename : AbstractPathTransformation
+    class Filename : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetFileName(value);
     }
 
-    class FilenameWithoutExtension : AbstractPathTransformation
+    class FilenameWithoutExtension : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetFileNameWithoutExtension(value);
     }
 
-    class Extension : AbstractPathTransformation
+    class Extension : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetExtension(value);
     }
 
-    class Root : AbstractPathTransformation
+    class Root : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetPathRoot(value) ?? string.Empty;
     }
 
-    class Directory : AbstractPathTransformation
+    class Directory : BasePathFunction
     {
         protected override object EvaluateString(string value)
         {

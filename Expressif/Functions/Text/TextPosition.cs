@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    abstract class AbstractTextToPosition : AbstractTextTransformation
+    abstract class AbstractTextToPosition : BaseTextFunction
     {
         public IScalarResolver<string> Substring { get; }
         public AbstractTextToPosition(IScalarResolver<string> substring)
             => (Substring) = substring;
     }
 
+    /// <summary>
+    /// Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
+    /// </summary>
     class TextToAfter : AbstractTextToPosition
     {
         public TextToAfter(IScalarResolver<string> substring)
@@ -33,7 +36,10 @@ namespace Expressif.Functions.Text
         }
     }
 
-    class TextToBefore: AbstractTextToPosition
+    /// <summary>
+    /// Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
+    /// </summary>
+    class TextToBefore : AbstractTextToPosition
     {
         public TextToBefore(IScalarResolver<string> substring)
             : base(substring) { }

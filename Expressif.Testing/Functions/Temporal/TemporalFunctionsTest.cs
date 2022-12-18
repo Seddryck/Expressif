@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Expressif.Testing.Functions.Temporal
 {
     [TestFixture]
-    public class TemporalTransformationsTest
+    public class TemporalFunctionsTest
     {
         [Test]
         [TestCase("2019-03-11", "2019-03-11")]

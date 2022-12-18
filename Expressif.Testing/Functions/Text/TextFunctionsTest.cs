@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Expressif.Testing.Functions.Text
 {
     [TestFixture]
-    public class TextTransformationsTest
+    public class TextFunctionsTest
     {
         [Test]
         [TestCase(0, "1 2017-07-06      CUST0001", "1")]

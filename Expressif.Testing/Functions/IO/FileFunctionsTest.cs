@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Expressif.Testing.Functions.IO
 {
     [TestFixture]
-    public class FileTransformationsTest
+    public class FileFunctionsTest
     {
 
         [Test]

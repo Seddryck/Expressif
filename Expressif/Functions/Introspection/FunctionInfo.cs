@@ -11,6 +11,7 @@ namespace Expressif.Functions.Introspection
         string Name,
         string[] Aliases,
         string Scope,
-        Type ImplementationType
+        Type ImplementationType,
+        string Summary
     );
 }

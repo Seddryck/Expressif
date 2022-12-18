@@ -4,7 +4,7 @@ using Expressif.Values.Special;
 namespace Expressif.Testing.Functions.Special
 {
     [TestFixture]
-    public class SpecialTransformationsTest
+    public class SpecialFunctionsTest
     {
 
         [Test]
