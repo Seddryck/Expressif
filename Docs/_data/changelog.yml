@@ -1,0 +1,25 @@
+# Changelog page source
+
+- title: Documentation work started
+  label:
+  date: Dec 18, 2022
+  list:
+  - Initial Jekyll setup (always a lot of fun)
+  - Create visual identity and review stylesheets
+
+
+- title: Basic functions and predicates implemented
+  label:
+  date: Nov 15, 2022
+  list:
+  - Pre-existing functions of nbi.io are ported to Expressif
+  - Supported predicates of nbi.io are implemented into Expressif
+
+- title: First commits
+  label:
+  date: Nov 12, 2022
+  list:
+  - Create repository on GitHub
+  - Initial README with first ideas and references
+  - selection of license Apache 2.0
+  - Write quick-start

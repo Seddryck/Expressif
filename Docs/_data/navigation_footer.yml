@@ -1,0 +1,13 @@
+# Footer navigation links
+
+- title: Home
+  url: /
+
+- title: Docs
+  url: /docs/why-expressif/
+
+- title: GitHub
+  url: https://github.com/Seddryck/Expressif
+
+- title: Contact
+  url: /contact/

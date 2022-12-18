@@ -1,0 +1,30 @@
+- title: Getting Started
+  docs:
+  - why-expressif
+  - installation-expressif
+  - first-steps-with-expressif
+
+- title: Functions library
+  docs:
+  - special-functions
+  - text-functions
+  - numeric-functions
+  - temporal-functions
+  - io-functions
+
+- title: Predicates library
+  docs:
+  - special-predicates
+  - boolean-predicates
+  - text-predicates
+  - numeric-predicates
+  - temporal-predicates
+
+- title: Extending Expressif
+  docs:
+  - composition-named-functions
+  - custom-function
+
+- title: Alternative usages of Expressif 
+  docs:
+  - classical-csharp-functions
