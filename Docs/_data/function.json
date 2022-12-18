@@ -110,9 +110,9 @@
     "Scope": "Temporal"
   },
   {
-    "Name": "cut-off",
+    "Name": "clamp",
     "Aliases": [
-      "dateTime-to-cut-off",
+      "dateTime-to-clamp",
       "dateTime-to-clip"
     ],
     "Scope": "Temporal"

@@ -149,7 +149,7 @@ Install-Package Expressif
 |Temporal | back                       | dateTime-to-back, dateTime-to-subtract|
 |Temporal | ceiling-hour               | dateTime-to-ceiling-hour              |
 |Temporal | ceiling-minute             | dateTime-to-ceiling-minute            |
-|Temporal | cut-off                    | dateTime-to-cut-off, dateTime-to-clip |
+|Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip   |
 |Temporal | datetime-to-date           | dateTime-to-datetime-to-date          |
 |Temporal | first-of-month             | dateTime-to-first-of-month            |
 |Temporal | first-of-year              | dateTime-to-first-of-year             |
@@ -248,6 +248,8 @@ Install-Package Expressif
 |Text     | starts-with                    | text-starts-with                      |
 |Text     | upper-case                     | text-is-upper-case                    |
 <!-- END PREDICATE TABLE -->
+
+
 
 
 
