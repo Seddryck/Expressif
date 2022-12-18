@@ -19,7 +19,7 @@ permalink:          /:title/
 url:                ""
 
 # Site logo # e.g. logo.png, upload logo image file to /uploads/ folder
-logo: Expressif-icon-64.png
+logo: expressif-icon-64.png
 
 navbar:
     sticky:         false

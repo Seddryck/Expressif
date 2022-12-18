@@ -4,7 +4,7 @@ width: expand
 hero:
     title: Expressif
     subtitle: A variable substitution engine combined with a rich library of predicates and functions.
-    image: Expressif-icon-256.png
+    image: expressif-icon-256.png
     search: false
 ---
 
