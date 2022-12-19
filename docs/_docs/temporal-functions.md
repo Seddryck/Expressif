@@ -2,6 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
+keywords: [age, back, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-of-month, last-of-year, local-to-utc, next-day, next-month, next-year, null-to-date, previous-day, previous-month, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age

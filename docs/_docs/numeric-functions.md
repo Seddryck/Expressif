@@ -2,6 +2,7 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
+keywords: [add, ceiling, clip, decrement, divide, floor, increment, integer, invert, multiply, null-to-zero, round, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.

@@ -13,8 +13,10 @@ $elapsed = Measure-Command -Expression {
     $members = $members | where {$_.Scope -ieq $scope} | Sort-Object Name
     Write-Host  "`t$($members.Count) $($class.ToLower())s found within scope $scope"
     $text=""
+    $keywords=@()
 
     ForEach($member in $members) {
+        $keywords += $member.Name
         $doc += "##### $($member.Name)`r`n"
         $doc += "###### Overview`r`n`r`n$($member.Summary)`r`n"
         if($member.Parameters.Length -gt 0) {
@@ -42,13 +44,21 @@ $elapsed = Measure-Command -Expression {
     [bool] $skip = $false
     ForEach ($line in Get-Content -Path $destinationFile) {
         $i+=1
+
+        
+
+
         if($line -eq "<!-- END AUTO-GENERATED -->") {
             $skip = $false
             Write-Host  "`t`tPrevious content skipped between lines $j and $i"
         }
 
         if (-not $skip) {
-            $text += $line + "`r`n"
+            if ($line.EndsWith("# AUTO-GENERATED KEYWORDS")) {
+                $text += "keywords: [$($keywords -join ', ')] # AUTO-GENERATED KEYWORDS`r`n"
+            } else {
+                $text += $line + "`r`n"
+            }
         }
 
         if ($line -eq "<!-- START AUTO-GENERATED -->"){
