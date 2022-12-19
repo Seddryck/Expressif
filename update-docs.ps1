@@ -15,9 +15,24 @@ $elapsed = Measure-Command -Expression {
     $text=""
 
     ForEach($member in $members) {
-        $doc += "### $($member.Name)`r`n`r`n$($member.Summary)`r`n`r`n"
+        $doc += "##### $($member.Name)`r`n"
+        $doc += "###### Overview`r`n`r`n$($member.Summary)`r`n"
+        if($member.Parameters.Length -gt 0) {
+            $doc += "`r`n###### Parameter"
+            if($member.Parameters.Length -gt 1) {
+                $doc += "s"
+            }
+            $doc += "`r`n"
+            foreach ($parameter in $member.Parameters) {
+                $doc += "* $($parameter.Name)"
+                if($parameter.Optional) {
+                    $doc += " (optional) "
+                }
+                $doc += ": $($parameter.Summary)`r`n"
+            }
+        }
+        $doc += "`r`n"
     }
-
     Write-Host $doc
     
     ########### Update the sub-part of the docs file ##########
@@ -44,7 +59,7 @@ $elapsed = Measure-Command -Expression {
         } 
     }
     Write-Host  $text
-    $text | Out-File -FilePath $destinationFile -Encoding utf8 -NoNewline
+    $text | Out-File -FilePath $destinationFile  -NoNewline -Encoding ascii
     Write-Host  "`tNew content written"
 }
 Write-Host "New version of $destinationFile created in $($elapsed.TotalSeconds) seconds"

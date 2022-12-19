@@ -32,10 +32,10 @@ Set-Location "..\..\"
 Write-Host "Generating JSON for functions based on $assemblyPath\$directory\$dllfile"
 $elapsed = Measure-Command -Expression {
     $locator = New-Object  Expressif.Functions.Introspection.FunctionIntrospector
-    $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, Aliases, Scope, Summary
+    $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, Aliases, Scope, Summary, Parameters
     Write-Host  "`t$($functions.Count) functions identified"
     $functions | ForEach-Object {Write-Host "`t`t$($_.Name)"}
-    $functions | ConvertTo-Json | Out-File "$destinationPath\$destinationFile"
+    $functions | ConvertTo-Json -depth 4 | Out-File "$destinationPath\$destinationFile"
 }
 Write-Host  "File created at $destinationPath\$destinationFile in $($elapsed.TotalSeconds) seconds"
 

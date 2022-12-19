@@ -5,9 +5,14 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Expressif.Functions.Introspection
 {
+    public record CtorInfo(ParamInfo[] Parameters);
+
+    public record ParamInfo(string Name, string Type, string Summary);
+
     /// <summary>
     /// Utility class to provide documentation for various types where available with the assembly
     /// </summary>
@@ -64,6 +69,32 @@ namespace Expressif.Functions.Introspection
             => type.GetDocumentation()?.SelectSingleNode("summary")?.InnerText.Trim() ?? string.Empty;
 
         /// <summary>
+        /// Gets the summary portion of a type's documenation or returns an empty string if not available
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static CtorInfo[] GetInfoConstructors(this Type type)
+        {
+            var ctorNodes = XmlFromPattern(type, 'M', "#ctor");
+
+            if (ctorNodes == null || !ctorNodes.Any())
+                return Array.Empty<CtorInfo>();
+
+            var ctorInfos = new List<CtorInfo>();
+            foreach (var ctorNode in ctorNodes)
+            {
+                var paramInfos = new List<ParamInfo>();
+                var paramNodes = ctorNode.SelectNodes("param");
+                foreach (XmlElement paramNode in paramNodes!)
+                    paramInfos.Add(new ParamInfo(paramNode.GetAttribute("name"), "Undefined", paramNode.InnerText.Trim()));
+                ctorInfos.Add(new CtorInfo(paramInfos.ToArray()));
+            }
+            return ctorInfos.ToArray();
+        }
+
+       
+
+        /// <summary>
         /// Obtains the XML Element that describes a reflection element by searching the 
         /// members for a member that has a name that describes the element.
         /// </summary>
@@ -74,14 +105,35 @@ namespace Expressif.Functions.Introspection
         private static XmlElement? XmlFromName(this Type type, char prefix, string name)
         {
             string fullName = string.IsNullOrEmpty(name)
-                ? prefix + ":" + type.FullName
-                : prefix + ":" + type.FullName + "." + name;
+                ? $"{prefix}:{type.FullName}"
+                : $"{prefix}:{type.FullName}.{name}";
 
             var xmlDocument = XmlFromAssembly(type.Assembly);
 
             var matchedElement = xmlDocument["doc"]!["members"]!.SelectSingleNode($"member[@name='{fullName}']") as XmlElement;
 
             return matchedElement;
+        }
+
+        /// <summary>
+        /// Obtains the XML Element that describes a reflection element by searching the 
+        /// members for a member that is starting by .
+        /// </summary>
+        /// <param name="type">The type or parent type, used to fetch the assembly</param>
+        /// <param name="prefix">The prefix as seen in the name attribute in the documentation XML</param>
+        /// <param name="pattern">Where relevant, the full name qualifier for the element</param>
+        /// <returns>The member that has a name that describes the specified reflection element</returns>
+        private static XmlElement[] XmlFromPattern(this Type type, char prefix, string pattern)
+        {
+            string fullName = string.IsNullOrEmpty(pattern)
+                ? $"{prefix}:{type.FullName}"
+                : $"{prefix}:{type.FullName}.{pattern}";
+
+            var xmlDocument = XmlFromAssembly(type.Assembly);
+
+            var matchedElements = xmlDocument["doc"]!["members"]!.SelectNodes($"member[@name[starts-with(., '{fullName}')]]")!.Cast<XmlElement>();
+
+            return matchedElements.ToArray();
         }
 
         /// <summary>

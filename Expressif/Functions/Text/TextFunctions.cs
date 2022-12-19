@@ -1,4 +1,5 @@
-﻿using Expressif.Values;
+﻿using Expressif.Functions.Numeric;
+using Expressif.Values;
 using Expressif.Values.Casters;
 using Expressif.Values.Resolvers;
 using Expressif.Values.Special;
@@ -65,10 +66,13 @@ namespace Expressif.Functions.Text
         protected override object EvaluateString(string value) => WebUtility.HtmlEncode(value);
     }
 
+    abstract class BaseTextCasing : BaseTextFunction
+    { }
+
     /// <summary>
     /// Returns the argument value converted to lowercase using the casing rules of the invariant culture.
     /// </summary>
-    class Lower : BaseTextFunction
+    class Lower : BaseTextCasing
     {
         protected override object EvaluateString(string value) => value.ToLowerInvariant();
     }
@@ -76,7 +80,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument value converted to uppercase using the casing rules of the invariant culture.
     /// </summary>
-    class Upper : BaseTextFunction
+    class Upper : BaseTextCasing
     {
         protected override object EvaluateString(string value) => value.ToUpperInvariant();
     }
@@ -105,6 +109,7 @@ namespace Expressif.Functions.Text
     /// </summary>
     class Prefix : BaseTextAppend
     {
+        /// <param name="prefix">The text to append</param>
         public Prefix(IScalarResolver<string> prefix)
             : base(prefix) { }
         protected override object EvaluateString(string value) => $"{Append.Execute()}{value}";
@@ -115,24 +120,26 @@ namespace Expressif.Functions.Text
     /// </summary>
     class Suffix : BaseTextAppend
     {
+        /// <param name="suffix">The text to append</param>
         public Suffix(IScalarResolver<string> suffix)
             : base(suffix) { }
         protected override object EvaluateString(string value) => $"{value}{Append.Execute()}";
     }
 
-    abstract class BaseTextLengthTransformation : BaseTextFunction
+    abstract class BaseTextLength : BaseTextFunction
     {
         public IScalarResolver<int> Length { get; }
 
-        public BaseTextLengthTransformation(IScalarResolver<int> length)
+        public BaseTextLength(IScalarResolver<int> length)
             => Length = length;
     }
 
     /// <summary>
     /// Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
     /// </summary>
-    class FirstChars : BaseTextLengthTransformation
+    class FirstChars : BaseTextLength
     {
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
         public FirstChars(IScalarResolver<int> length)
             : base(length) { }
 
@@ -143,8 +150,9 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
     /// </summary>
-    class LastChars : BaseTextLengthTransformation
+    class LastChars : BaseTextLength
     {
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
         public LastChars(IScalarResolver<int> length)
             : base(length) { }
 
@@ -155,8 +163,9 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`. 
     /// </summary>
-    class SkipFirstChars : BaseTextLengthTransformation
+    class SkipFirstChars : BaseTextLength
     {
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
         public SkipFirstChars(IScalarResolver<int> length)
             : base(length) { }
 
@@ -167,8 +176,9 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`. 
     /// </summary>
-    class SkipLastChars : BaseTextLengthTransformation
+    class SkipLastChars : BaseTextLength
     {
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
         public SkipLastChars(IScalarResolver<int> length) 
             : base(length) { }
 
@@ -176,7 +186,7 @@ namespace Expressif.Functions.Text
             => value.Length <= Length.Execute() ? new Empty().Keyword : value.Substring(0, value.Length - Length.Execute());
     }
 
-    abstract class BaseTextPadTransformation : BaseTextLengthTransformation
+    abstract class BaseTextPadTransformation : BaseTextLength
     {
         public IScalarResolver<char> Character { get; }
 
@@ -194,6 +204,8 @@ namespace Expressif.Functions.Text
     /// </summary>
     class PadRight : BaseTextPadTransformation
     {
+        /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
+        /// <param name="character">The padding character</param>
         public PadRight(IScalarResolver<int> length, IScalarResolver<char> character)
             : base(length, character) { }
 
@@ -206,6 +218,8 @@ namespace Expressif.Functions.Text
     /// </summary>
     class PadLeft : BaseTextPadTransformation
     {
+        /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
+        /// <param name="character">The padding character</param>
         public PadLeft(IScalarResolver<int> length, IScalarResolver<char> character)
             : base(length, character) { }
 
@@ -282,8 +296,13 @@ namespace Expressif.Functions.Text
     {
         public IScalarResolver<int> Index { get; }
         public IScalarResolver<char>? Separator { get; }
+
+        /// <param name="index">An integer value between 0 and +Infinity, defining the position of the token to be returned.</param>
         public Token(IScalarResolver<int> index)
             => (Index, Separator) = (index, null);
+
+        /// <param name="index">An integer value between 0 and +Infinity, defining the position of the token to be returned.</param>
+        /// <param name="separator">A character that delimits the substrings in this instance.</param>
         public Token(IScalarResolver<int> index, IScalarResolver<char> separator)
             => (Index, Separator) = (index, separator);
         protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Execute()) ? new Null().Keyword : new Whitespace().Keyword;
@@ -309,6 +328,8 @@ namespace Expressif.Functions.Text
         public IScalarResolver<char>? Separator { get; }
         public TokenCount()
             => Separator = null;
+        
+        /// <param name="separator">A character that delimits the substrings in this instance.</param>
         public TokenCount(IScalarResolver<char> separator)
             => Separator = separator;
 
@@ -331,9 +352,12 @@ namespace Expressif.Functions.Text
         public IScalarResolver<string> Format { get; }
         public IScalarResolver<string> Culture { get; }
 
+        /// <param name="format">A string representing the required format.</param>
         public TextToDateTime(IScalarResolver<string> format)
             => (Format, Culture) = (format, new LiteralScalarResolver<string>(string.Empty));
 
+        /// <param name="format">A string representing the required format.</param>
+        /// <param name="culture">A string representing a pre-defined culture.</param>
         public TextToDateTime(IScalarResolver<string> format, IScalarResolver<string> culture)
             => (Format, Culture) = (format, culture);
 
@@ -354,6 +378,8 @@ namespace Expressif.Functions.Text
     class RemoveChars : BaseTextFunction
     {
         public IScalarResolver<char> CharToRemove { get; }
+
+        /// <param name="charToRemove">The char to be removed from the argument string</param>
         public RemoveChars(IScalarResolver<char> charToRemove)
             => CharToRemove = charToRemove;
 
@@ -383,6 +409,8 @@ namespace Expressif.Functions.Text
     {
         private char maskChar { get; } = '*';
         public IScalarResolver<string> Mask { get; }
+
+        /// <param name="mask">The string representing the mask to apply to the argument string</param>
         public TextToMask(IScalarResolver<string> mask)
             => Mask = mask;
 
@@ -413,6 +441,8 @@ namespace Expressif.Functions.Text
     {
         private char maskChar { get; } = '*';
         public IScalarResolver<string> Mask { get; }
+
+        /// <param name="mask">The string representing the mask to be unset from the argument string</param>
         public MaskToText(IScalarResolver<string> mask)
             => Mask = mask;
 
