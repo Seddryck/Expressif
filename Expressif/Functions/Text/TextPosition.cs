@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    abstract class AbstractTextPosition : BaseTextFunction
+    abstract class BasePositionFunction : BaseTextFunction
     {
         public IScalarResolver<string> Substring { get; }
         public IScalarResolver<int> Count { get; }
-        public AbstractTextPosition(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public BasePositionFunction(IScalarResolver<string> substring, IScalarResolver<int> count)
             => (Substring, Count) = (substring, count);
     }
 
     /// <summary>
     /// Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
     /// </summary>
-    class TextToAfter : AbstractTextPosition
+    class After : BasePositionFunction
     {
         /// <param name="substring">The string to seek.</param>
-        public TextToAfter(IScalarResolver<string> substring)
-            : this(substring, new LiteralScalarResolver<int>(1)) { }
+        public After(IScalarResolver<string> substring)
+            : this(substring, new LiteralScalarResolver<int>(0)) { }
 
         /// <param name="substring">The string to seek.</param>
         /// <param name="count">The number of character positions to examine.</param>
-        public TextToAfter(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public After(IScalarResolver<string> substring, IScalarResolver<int> count)
             : base(substring, count) { }
 
         protected override object EvaluateString(string value)
@@ -40,23 +40,35 @@ namespace Expressif.Functions.Text
             if (!value.Contains(substring))
                 return string.Empty;
 
-            var index = value.IndexOf(substring, 0, Count.Execute()) + substring.Length;
-            return value[index .. value.Length];
+            var i = 0;
+            var index = substring.Length * -1;
+            do
+            {
+                index += substring.Length;
+                index = value.IndexOf(substring, index);
+                i += 1;
+            }
+            while (index != -1 && i <= Count.Execute());
+            
+            if (index == -1)
+                return new Null().Keyword;
+
+            return value[(index + substring.Length)..value.Length];
         }
     }
 
     /// <summary>
     /// Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
     /// </summary>
-    class TextToBefore : AbstractTextPosition
+    class Before : BasePositionFunction
     {
         /// <param name="substring">The string to seek.</param>
-        public TextToBefore(IScalarResolver<string> substring)
-            : this(substring, new LiteralScalarResolver<int>(1)) { }
+        public Before(IScalarResolver<string> substring)
+            : this(substring, new LiteralScalarResolver<int>(0)) { }
 
         /// <param name="substring">The string to seek.</param>
         /// <param name="count">The number of character positions to examine.</param>
-        public TextToBefore(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public Before(IScalarResolver<string> substring, IScalarResolver<int> count)
             : base(substring, count) { }
 
         protected override object EvaluateString(string value)
@@ -68,7 +80,19 @@ namespace Expressif.Functions.Text
             if (!value.Contains(substring))
                 return string.Empty;
 
-            var index = value.IndexOf(substring, 0, Count.Execute());
+            var i = 0;
+            var index = substring.Length * -1;
+            do
+            {
+                index += substring.Length;
+                index = value.IndexOf(substring, index);
+                i += 1;
+            }
+            while (index != -1 && i <= Count.Execute());
+
+            if (index == -1)
+                return new Null().Keyword;
+
             return value[..index];
         }
     }

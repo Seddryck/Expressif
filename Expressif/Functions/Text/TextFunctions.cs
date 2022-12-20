@@ -186,11 +186,11 @@ namespace Expressif.Functions.Text
             => value.Length <= Length.Execute() ? new Empty().Keyword : value.Substring(0, value.Length - Length.Execute());
     }
 
-    abstract class BaseTextPadTransformation : BaseTextLength
+    abstract class BasePaddingFunction : BaseTextLength
     {
         public IScalarResolver<char> Character { get; }
 
-        public BaseTextPadTransformation(IScalarResolver<int> length, IScalarResolver<char> character)
+        public BasePaddingFunction(IScalarResolver<int> length, IScalarResolver<char> character)
             : base(length)
             => Character = character;
 
@@ -202,7 +202,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
     /// </summary>
-    class PadRight : BaseTextPadTransformation
+    class PadRight : BasePaddingFunction
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
         /// <param name="character">The padding character</param>
@@ -216,7 +216,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
     /// </summary>
-    class PadLeft : BaseTextPadTransformation
+    class PadLeft : BasePaddingFunction
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
         /// <param name="character">The padding character</param>
