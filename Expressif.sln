@@ -19,6 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{01685EF7-A
 		generate-function-info.ps1 = generate-function-info.ps1
 		generate-predicate-info.ps1 = generate-predicate-info.ps1
 		README.md = README.md
+		update-docs.ps1 = update-docs.ps1
+		update-index.ps1 = update-index.ps1
+		update-quick-start.ps1 = update-quick-start.ps1
 		update-readme.ps1 = update-readme.ps1
 	EndProjectSection
 EndProject

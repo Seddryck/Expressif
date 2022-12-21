@@ -4,7 +4,7 @@ Write-Host($class)
 Write-Host($class.ToLower())
 Write-Host("$($class.ToLower())")
 
-$sourceFile = ".\Docs\_data\$($class.ToLower()).json"
+$sourceFile = ".\docs\_data\$($class.ToLower()).json"
 $destinationFile = ".\README.md"
 
 ########### Create a markdown table ##########
@@ -55,16 +55,36 @@ $elapsed = Measure-Command -Expression {
     }
     Write-Host  "`tCreated markdown table with $($table.Split("`r`n").GetUpperBound(0)) lines and a width of $($table.Split("`r`n")[0].Length) chars"
 
+    ########### Extract content of the quick-start ##########
+
+    switch -Exact -CaseSensitive ($class)
+    {
+        "function" {$classGroup = "expression"}
+        "predicate" {$classGroup = "predication"}
+    }
+
+    $quickStartFile = ".\docs\_docs\quick-start-$($classGroup.ToLower()).md"
+    Write-Host  "`tReading content of $quickStartFile ..."
+    [int] $headerMarkup = 0
+    ForEach ($line in Get-Content -Path $quickStartFile) {
+        if ($headerMarkup -ge 2) {
+            if(!$line.Trim().StartsWith("<!-- ")) {
+                $quickStart += $line + "`r`n"
+            }
+        }        
+        
+        if($line.Trim() -eq "---") {
+            $headerMarkup += 1
+        }
+    }
     ########### Update the sub-part of the readme ##########
 
     Write-Host  "`tReplacing content in $destinationFile ..."
     $text = ""
     [bool] $skip = $false
     ForEach ($line in Get-Content -Path $destinationFile) {
-        $i+=1
-        if($line -eq "<!-- END $($class.ToUpper()) TABLE -->") {
+        if($line.StartsWith("<!-- END ")) {
             $skip = $false
-            Write-Host  "`t`tPrevious content skipped between lines $j and $i"
         }
 
         if (-not $skip) {
@@ -73,12 +93,15 @@ $elapsed = Measure-Command -Expression {
 
         if ($line -eq "<!-- START $($class.ToUpper()) TABLE -->"){
             $skip = $true
-            $text += $table 
-            Write-Host  "`t`tNew content inserted after line $i"
-            $j = $i+1
-        } 
+            $text += $table
+            Write-Host  "`tReplaced content of $($class.ToUpper()) table"
+        }
+        if ($line -eq "<!-- START $($classGroup.ToUpper()) QUICK START -->"){
+            $skip = $true
+            $text += $quickStart
+            Write-Host  "`tReplaced content of $($classGroup.ToUpper()) quick start"
+        }
     }
-    $text | Out-File -Path $destinationFile
-    Write-Host  "`tNew content written"
+    $text | Out-File -FilePath $destinationFile -NoNewline -Encoding ascii
 }
 Write-Host "New version of $destinationFile created in $($elapsed.TotalSeconds) seconds"
