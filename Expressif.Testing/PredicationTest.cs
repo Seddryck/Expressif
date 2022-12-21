@@ -67,5 +67,17 @@ namespace Expressif
             var result = predication.Evaluate("Nikola Tesla");
             Assert.That(result, Is.True);
         }
+
+        [Test]
+        public void Evaluate_CombinationsGroup_Valid()
+        {
+            var predication = new Predication("{starts-with(Nik) |AND ends-with(sla)} |OR {starts-with(ola) |AND ends-with(Tes)}");
+            var result = predication.Evaluate("Nikola Tesla");
+            Assert.That(result, Is.True);
+
+            var withoutGroupsPredication = new Predication("starts-with(Nik) |AND ends-with(sla) |OR starts-with(ola) |AND ends-with(Tes)");
+            var secondResult = withoutGroupsPredication.Evaluate("Nikola Tesla");
+            Assert.That(result, Is.Not.EqualTo(secondResult));
+        }
     }
 }
