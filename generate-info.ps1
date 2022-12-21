@@ -21,13 +21,12 @@ If(Test-Path -LiteralPath $destinationPath\$destinationFile -PathType leaf) {
 $assemblyPath = "Expressif\bin"
 Set-Location $assemblyPath
 $dllfile = "net6.0\Expressif.dll"
-Set-Location "..\..\"
-
 If ((-not (Test-Path -Path "Release\$dllfile")) -or ("Release\$dllfile".CreationTime -lt "Debug\$dllfile".CreationTime)) {
     $directory = "Debug"    
 } else {
     $directory = "Release"   
 }
+Set-Location "..\..\"
 Write-Host "Generating JSON for $($class.ToLower())s based on $assemblyPath\$directory\$dllfile"
 
 $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $destination)
