@@ -2,9 +2,27 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-left, pad-right, prefix, remove-chars, skip-first-chars, skip-last-chars, suffix, text-to-after, text-to-before, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, before-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-left, pad-right, prefix, remove-chars, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
+##### after-substring
+###### Overview
+
+Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
+
+###### Parameters
+* substring: The string to seek.
+* count (optional) : The number of character positions to examine.
+
+##### before-substring
+###### Overview
+
+Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
+
+###### Parameters
+* substring: The string to seek.
+* count (optional) : The number of character positions to examine.
+
 ##### empty-to-null
 ###### Overview
 
@@ -111,24 +129,6 @@ Returns the argument value followed by the parameter value.
 
 ###### Parameter
 * suffix: The text to append
-
-##### text-to-after
-###### Overview
-
-Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
-
-###### Parameters
-* substring: The string to seek.
-* count (optional) : The number of character positions to examine.
-
-##### text-to-before
-###### Overview
-
-Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
-
-###### Parameters
-* substring: The string to seek.
-* count (optional) : The number of character positions to examine.
 
 ##### text-to-datetime
 ###### Overview
