@@ -51,6 +51,19 @@ on_success:
       & .\generate-predicate-info.ps1
       $exitCode += $LastExitCode
       if ($exitCode -gt 0) {
+        Write-Host "Update of Library index needed"
+        & .\update-index.ps1
+        Write-Host "Update of docs needed"
+        & .\update-docs.ps1 function special
+        & .\update-docs.ps1 function text
+        & .\update-docs.ps1 function numeric
+        & .\update-docs.ps1 function temporal
+        & .\update-docs.ps1 function io
+        & .\update-docs.ps1 predicate special
+        & .\update-docs.ps1 predicate text
+        & .\update-docs.ps1 predicate numeric
+        & .\update-docs.ps1 predicate temporal
+        & .\update-docs.ps1 predicate boolean
         Write-Host "Update of README.md needed"
         & .\update-readme.ps1 function
         & .\update-readme.ps1 predicate
