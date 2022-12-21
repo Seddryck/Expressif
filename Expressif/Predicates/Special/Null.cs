@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Special
 {
+    /// <summary>
+    /// Returns `true` if the argument is effectively `null` else return `false`.
+    /// </summary>
     [Predicate(prefix: "")]
     class Null : BasePredicate
     {

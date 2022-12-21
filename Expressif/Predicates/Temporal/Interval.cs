@@ -8,14 +8,18 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Temporal
 {
+    /// <summary>
+    /// Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
+    /// </summary>
     internal class ContainedIn : BaseDateTimePredicate
     {
-        public Interval<System.DateTime> Interval { get; }
+        public Interval<DateTime> Interval { get; }
 
-        public ContainedIn(Interval<System.DateTime> interval)
+        /// <param name="interval">A temporal interval to compare to the argument</param>
+        public ContainedIn(Interval<DateTime> interval)
             => Interval = interval;
 
-        protected override bool EvaluateDateTime(System.DateTime dt)
+        protected override bool EvaluateDateTime(DateTime dt)
             => Interval.Contains(dt);
     }
 }

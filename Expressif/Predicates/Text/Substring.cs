@@ -34,23 +34,35 @@ namespace Expressif.Predicates.Text
         }
     }
 
+    /// <summary>
+    /// Returns `true` if the value passed as argument starts with the text value passed as parameter. Returns `false` otherwise.
+    /// </summary>
     class StartsWith : BaseTextPredicateSubstring
     {
+        /// <param name="reference">A string to be compared to the argument value</param>
         public StartsWith(IScalarResolver<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
+        /// <param name="reference">A string to be compared to the argument value</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
         public StartsWith(IScalarResolver<string> reference, StringComparer comparer)
-            : base(reference,comparer) {}
+            : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
             => value.StartsWith(reference, Comparison);
     }
 
+    /// <summary>
+    /// Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.
+    /// </summary>
     class EndsWith : BaseTextPredicateSubstring
     {
+        /// <param name="reference">A string to be compared to the argument value</param>
         public EndsWith(IScalarResolver<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
+        /// <param name="reference">A string to be compared to the argument value</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
         public EndsWith(IScalarResolver<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
@@ -58,21 +70,35 @@ namespace Expressif.Predicates.Text
             => value.EndsWith(reference, Comparison);
     }
 
+    /// <summary>
+    /// Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.
+    /// </summary>
     class Contains : BaseTextPredicateSubstring
     {
+        /// <param name="reference">A string to be compared to the argument value</param>
         public Contains(IScalarResolver<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
+        /// <param name="reference">A string to be compared to the argument value</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
         public Contains(IScalarResolver<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
             => value.Contains(reference, Comparison);
     }
+
+    /// <summary>
+    /// Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.
+    /// </summary>
     class MatchesRegex : BaseTextPredicateSubstring
     {
+        /// <param name="regex">A string to be compared to the argument value</param>
         public MatchesRegex(IScalarResolver<string> regex)
             : base(regex, StringComparer.InvariantCultureIgnoreCase) { }
+
+        /// <param name="regex">A string to be compared to the argument value</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
         public MatchesRegex(IScalarResolver<string> regex, StringComparer comparer)
             : base(regex, comparer) { }
 
