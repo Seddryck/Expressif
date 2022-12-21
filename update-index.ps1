@@ -15,7 +15,7 @@ $elapsed = Measure-Command -Expression {
         $doc += "## $($class)s`r`n`r`n"
 
         ForEach($member in $members) {
-            $doc += "* [$($member.Name)](/docs/$($member.Scope.ToLower())-$($class.ToLower())s/#$($member.Name))`r`n"
+            $doc += "* [$($member.Name)]({{ site.baseurl }}/docs/$($member.Scope.ToLower())-$($class.ToLower())s/#$($member.Name))`r`n"
         }
         $doc += "`r`n`r`n"
     }

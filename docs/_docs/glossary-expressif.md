@@ -17,7 +17,7 @@ tags: [quick-start]
     <dd>{{site.data.glossary.Optional | markdownify }}</dd>
 </dl>
 
-<img src="/uploads/glossary-expression.png" />
+<img src="{{ site.baseurl }}/uploads/glossary-expression.png" alt="Visual explaining the relation between expression, function, and parameters">
 
 <dl class="dl-horizontal">
     <dt id="Predicate">Predicate</dt>
@@ -28,7 +28,7 @@ tags: [quick-start]
     <dd>{{site.data.glossary.Combinational | markdownify }}</dd>
 </dl>
 
-<img src="/uploads/glossary-predication.png" />
+<img src="{{ site.baseurl }}/uploads/glossary-predication.png" alt="Visual explaining the relation between predication, predicate, and combinational operator">
 
 <dl class="dl-horizontal">
     <dt id="Type">Type</dt>

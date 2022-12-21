@@ -8,7 +8,7 @@
 - title: Getting Started
   desc: Get started fast with installation and basic usages
   icon: cog
-  doc: first-steps-with-expressif
+  doc: quick-start-expression
 
 - title: Functions and predicates
   desc: List the available functions and predicates
