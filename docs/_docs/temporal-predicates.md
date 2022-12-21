@@ -8,46 +8,64 @@ keywords: [after, after-or-same-instant, before, before-or-same-instant, contain
 ##### after
 ###### Overview
 
+Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.
 
+###### Parameter
+* reference: A temporal value to compare to the argument
 
 ##### after-or-same-instant
 ###### Overview
 
+Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
 
+###### Parameter
+* reference: A temporal value to compare to the argument
 
 ##### before
 ###### Overview
 
+Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.
 
+###### Parameter
+* reference: A temporal value to compare to the argument
 
 ##### before-or-same-instant
 ###### Overview
 
+Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
 
+###### Parameter
+* reference: A temporal value to compare to the argument
 
 ##### contained-in
 ###### Overview
 
+Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 
+###### Parameter
+* interval: A temporal interval to compare to the argument
 
 ##### on-the-day
 ###### Overview
 
-
+Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.
 
 ##### on-the-hour
 ###### Overview
 
-
+Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.
 
 ##### on-the-minute
 ###### Overview
 
-
+Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.
 
 ##### same-instant
 ###### Overview
 
+Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.
 
+###### Parameter
+* reference: A temporal value to compare to the argument
 
 <!-- END AUTO-GENERATED -->

@@ -8,6 +8,6 @@ keywords: [null] # AUTO-GENERATED KEYWORDS
 ##### null
 ###### Overview
 
-
+Returns `true` if the argument is effectively `null` else return `false`.
 
 <!-- END AUTO-GENERATED -->
