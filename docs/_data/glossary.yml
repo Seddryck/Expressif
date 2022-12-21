@@ -1,0 +1,15 @@
+Function: A function is a technique of wrapping code to perform a certain task and then return a value.
+Expression: An expression is a list of one or more [functions](#Function) which are applied one after the other.
+Argument: A value passed as input of a [function](#Function) or [predicate](#Predicate).
+Parameter: A parameter is directly defined in the [function](#Function) and alter its code influencing the value returned by this function. [Predicates](#Predicate) also accept parameters.
+Optional: Some [parameters](#Parameter) are optional and can be not specified when invoking the [function](#Function) or [predicate](#Predicate). They usually take a default value.
+
+Predicate: A predicate is a [function](#Function) that returns a boolean value.
+Predication: A predication is a list of one or more [predicates](#Predicate) which are combined to eventually return a single boolean.
+Combinational: A combinational operator defines how two [predicates](#Predicate) must be combined to return a single boolean. The operators are classical operators of the logical algebra `and`, `or`, `xor`.
+
+Type: Each value is of a specific type. Types can be `text`, `numeric`, `dateTime`, `boolean`.
+Scalar: A scalar value can be a [variable](#Variable), a [parameter](#Parameter), an [argument](#Argument), or the value returned by a function. The data type of a scalar value contains only a single value.
+Context: A context is set of values which can be used in an [expression](#Expression) or [predication](#Predication). During the evaluation of the expression or predication, the values in the context are not modified. The context can be modified between two evaluations of the expression without having to redefine this expression.
+Variable: A variable is a container for storing a data value. The variables are stored in the [context](#Context) and each of them has a unique name used to address them. 
+CurrentObject: A specific variable in the [context](#Context) that can be addressed by the means of named properties or an index.

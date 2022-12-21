@@ -1218,7 +1218,7 @@
         @if(mixin-exists(hook-inverse-text-meta)) {@include hook-inverse-text-meta();}
     }
 
-    .uk-text-muted { color: $inverse-text-muted-color !important; }
+    .uk-text-muted { color: $global-primary-background !important; }
     .uk-text-primary { color: $inverse-text-primary-color !important; }
 
 }

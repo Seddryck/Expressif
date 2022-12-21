@@ -90,7 +90,7 @@ $text-background-color:                          $global-primary-background !def
 /* Color modifiers
  ========================================================================== */
 
-.uk-text-muted { color: $text-muted-color !important; }
+.uk-text-muted { color: $global-primary-background !important; }
 .uk-text-primary { color: $text-primary-color !important; }
 .uk-text-success { color: $text-success-color !important; }
 .uk-text-warning { color: $text-warning-color !important; }
