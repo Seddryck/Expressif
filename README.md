@@ -144,7 +144,7 @@ Install-Package Expressif
 |Numeric  | round                      | numeric-to-round                      |
 |Numeric  | subtract                   | numeric-to-subtract                   |
 |Special  | any-to-any                 |                                       |
-|Special  | neutral                    |                                       |
+|Special  | neutral                    | Special-to-neutral                    |
 |Special  | null-to-value              |                                       |
 |Special  | value-to-value             |                                       |
 |Temporal | age                        | dateTime-to-age                       |
@@ -171,6 +171,8 @@ Install-Package Expressif
 |Temporal | previous-year              | dateTime-to-previous-year             |
 |Temporal | set-time                   | dateTime-to-set-time                  |
 |Temporal | utc-to-local               |                                       |
+|Text     | after                      | text-to-after                         |
+|Text     | before                     | text-to-before                        |
 |Text     | empty-to-null              |                                       |
 |Text     | first-chars                | text-to-first-chars                   |
 |Text     | html-to-text               |                                       |
@@ -186,8 +188,6 @@ Install-Package Expressif
 |Text     | skip-first-chars           | text-to-skip-first-chars              |
 |Text     | skip-last-chars            | text-to-skip-last-chars               |
 |Text     | suffix                     | text-to-suffix                        |
-|Text     | text-to-after              | text-to-text-to-after                 |
-|Text     | text-to-before             | text-to-text-to-before                |
 |Text     | text-to-datetime           |                                       |
 |Text     | text-to-html               |                                       |
 |Text     | text-to-mask               |                                       |
@@ -250,6 +250,8 @@ Install-Package Expressif
 |Text     | starts-with                    | text-starts-with                      |
 |Text     | upper-case                     | text-is-upper-case                    |
 <!-- END PREDICATE TABLE -->
+
+
 
 
 
