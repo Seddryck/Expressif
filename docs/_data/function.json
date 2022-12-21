@@ -236,7 +236,7 @@
       "path-to-extension"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the extension of a file path provided as argument.",
     "Parameters": []
   },
   {
@@ -245,7 +245,7 @@
       "path-to-filename-without-extension"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the file name without the extension of a file path provided as argument.",
     "Parameters": []
   },
   {
@@ -254,7 +254,7 @@
       "path-to-filename"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the file name and extension of a file path provided as argument.",
     "Parameters": []
   },
   {
@@ -263,7 +263,7 @@
       "file-to-update-datetime-utc"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the last update time of the file provided as argument in UTC.",
     "Parameters": []
   },
   {
@@ -272,7 +272,7 @@
       "file-to-update-datetime"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the last update time of the file provided as argument in local time.",
     "Parameters": []
   },
   {
@@ -281,7 +281,7 @@
       "file-to-creation-datetime-utc"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the creation time of the file provided as argument in UTC.",
     "Parameters": []
   },
   {
@@ -290,7 +290,7 @@
       "file-to-creation-datetime"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the creation time of the file provided as argument in local time.",
     "Parameters": []
   },
   {
@@ -308,7 +308,7 @@
       "file-to-size"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the size of the file provided as argument in bytes.",
     "Parameters": []
   },
   {
@@ -434,7 +434,7 @@
       "path-to-root"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
     "Parameters": []
   },
   {
@@ -908,7 +908,7 @@
       "path-to-directory"
     ],
     "Scope": "IO",
-    "Summary": "",
+    "Summary": "Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.",
     "Parameters": []
   }
 ]
