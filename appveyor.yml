@@ -46,9 +46,9 @@ deploy:
 on_success:
 
   - pwsh: |
-      & .\generate-function-info.ps1
+      & .\generate-info.ps1 function
       $exitCode = $LastExitCode
-      & .\generate-predicate-info.ps1
+      & .\generate-info.ps1 predicate
       $exitCode += $LastExitCode
       if ($exitCode -gt 0) {
         Write-Host "Update of Library index needed"

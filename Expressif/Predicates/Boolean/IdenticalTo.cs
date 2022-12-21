@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Boolean
 {
     /// <summary>
-    /// Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter.
+    /// Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.
     /// </summary>
     class IdenticalTo : BaseBooleanPredicate
     {
