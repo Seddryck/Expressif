@@ -183,133 +183,133 @@ Install-Package Expressif
 <!-- START FUNCTION TABLE -->
 |Scope    | Name                       | Aliases                               |
 |-------- | -------------------------- | --------------------------------------|
-|Text     | text-to-html               |                                       |
-|Numeric  | null-to-zero               |                                       |
-|Special  | value-to-value             |                                       |
-|Special  | any-to-any                 |                                       |
-|Special  | null-to-value              |                                       |
-|Special  | neutral                    | Special-to-neutral                    |
-|Temporal | local-to-utc               |                                       |
-|Temporal | utc-to-local               |                                       |
-|Numeric  | ceiling                    | numeric-to-ceiling                    |
-|Temporal | back                       | dateTime-to-back, dateTime-to-subtract|
-|Temporal | ceiling-minute             | dateTime-to-ceiling-minute            |
-|Temporal | floor-minute               | dateTime-to-floor-minute              |
-|Temporal | ceiling-hour               | dateTime-to-ceiling-hour              |
-|Temporal | floor-hour                 | dateTime-to-floor-hour                |
-|Temporal | invalid-to-date            |                                       |
-|Temporal | null-to-date               |                                       |
-|Temporal | set-time                   | dateTime-to-set-time                  |
-|Temporal | forward                    | dateTime-to-forward, dateTime-to-add  |
-|Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip   |
-|Numeric  | floor                      | numeric-to-floor                      |
-|Numeric  | round                      | numeric-to-round                      |
-|IO       | extension                  | path-to-extension                     |
-|IO       | filename-without-extension | path-to-filename-without-extension    |
-|IO       | filename                   | path-to-filename                      |
-|IO       | update-datetime-utc        | file-to-update-datetime-utc           |
-|IO       | update-datetime            | file-to-update-datetime               |
-|IO       | creation-datetime-utc      | file-to-creation-datetime-utc         |
 |IO       | creation-datetime          | file-to-creation-datetime             |
-|Numeric  | integer                    | numeric-to-integer                    |
-|IO       | size                       | file-to-size                          |
-|Numeric  | divide                     | numeric-to-divide                     |
-|Numeric  | multiply                   | numeric-to-multiply                   |
-|Numeric  | decrement                  | numeric-to-decrement                  |
-|Numeric  | increment                  | numeric-to-increment                  |
-|Numeric  | subtract                   | numeric-to-subtract                   |
-|Numeric  | add                        | numeric-to-add                        |
-|Numeric  | clip                       | numeric-to-clip                       |
-|Numeric  | invert                     | numeric-to-invert                     |
+|IO       | creation-datetime-utc      | file-to-creation-datetime-utc         |
+|IO       | directory                  | path-to-directory                     |
+|IO       | extension                  | path-to-extension                     |
+|IO       | filename                   | path-to-filename                      |
+|IO       | filename-without-extension | path-to-filename-without-extension    |
 |IO       | root                       | path-to-root                          |
-|Temporal | previous-year              | dateTime-to-previous-year             |
+|IO       | size                       | file-to-size                          |
+|IO       | update-datetime            | file-to-update-datetime               |
+|IO       | update-datetime-utc        | file-to-update-datetime-utc           |
+|Numeric  | add                        | numeric-to-add                        |
+|Numeric  | ceiling                    | numeric-to-ceiling                    |
+|Numeric  | clip                       | numeric-to-clip                       |
+|Numeric  | decrement                  | numeric-to-decrement                  |
+|Numeric  | divide                     | numeric-to-divide                     |
+|Numeric  | floor                      | numeric-to-floor                      |
+|Numeric  | increment                  | numeric-to-increment                  |
+|Numeric  | integer                    | numeric-to-integer                    |
+|Numeric  | invert                     | numeric-to-invert                     |
+|Numeric  | multiply                   | numeric-to-multiply                   |
+|Numeric  | null-to-zero               |                                       |
+|Numeric  | round                      | numeric-to-round                      |
+|Numeric  | subtract                   | numeric-to-subtract                   |
+|Special  | any-to-any                 |                                       |
+|Special  | neutral                    | Special-to-neutral                    |
+|Special  | null-to-value              |                                       |
+|Special  | value-to-value             |                                       |
+|Temporal | age                        | dateTime-to-age                       |
+|Temporal | back                       | dateTime-to-back, dateTime-to-subtract|
+|Temporal | ceiling-hour               | dateTime-to-ceiling-hour              |
+|Temporal | ceiling-minute             | dateTime-to-ceiling-minute            |
+|Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip   |
+|Temporal | datetime-to-date           | dateTime-to-datetime-to-date          |
+|Temporal | first-of-month             | dateTime-to-first-of-month            |
+|Temporal | first-of-year              | dateTime-to-first-of-year             |
+|Temporal | floor-hour                 | dateTime-to-floor-hour                |
+|Temporal | floor-minute               | dateTime-to-floor-minute              |
+|Temporal | forward                    | dateTime-to-forward, dateTime-to-add  |
+|Temporal | invalid-to-date            |                                       |
+|Temporal | last-of-month              | dateTime-to-last-of-month             |
+|Temporal | last-of-year               | dateTime-to-last-of-year              |
+|Temporal | local-to-utc               |                                       |
+|Temporal | next-day                   | dateTime-to-next-day                  |
+|Temporal | next-month                 | dateTime-to-next-month                |
+|Temporal | next-year                  | dateTime-to-next-year                 |
+|Temporal | null-to-date               |                                       |
 |Temporal | previous-day               | dateTime-to-previous-day              |
-|Text     | html-to-text               |                                       |
-|Text     | null-to-empty              |                                       |
+|Temporal | previous-month             | dateTime-to-previous-month            |
+|Temporal | previous-year              | dateTime-to-previous-year             |
+|Temporal | set-time                   | dateTime-to-set-time                  |
+|Temporal | utc-to-local               |                                       |
+|Text     | after-substring            | text-to-after-substring               |
+|Text     | before-substring           | text-to-before-substring              |
 |Text     | empty-to-null              |                                       |
-|Text     | whitespaces-to-null        | blank-to-null                         |
-|Text     | whitespaces-to-empty       | blank-to-empty                        |
+|Text     | first-chars                | text-to-first-chars                   |
+|Text     | html-to-text               |                                       |
+|Text     | last-chars                 | text-to-last-chars                    |
+|Text     | length                     | text-to-length                        |
+|Text     | lower                      | text-to-lower                         |
+|Text     | mask-to-text               |                                       |
+|Text     | null-to-empty              |                                       |
 |Text     | pad-left                   | text-to-pad-left                      |
 |Text     | pad-right                  | text-to-pad-right                     |
-|Text     | length                     | text-to-length                        |
-|Text     | skip-last-chars            | text-to-skip-last-chars               |
-|Text     | last-chars                 | text-to-last-chars                    |
-|Text     | first-chars                | text-to-first-chars                   |
-|Text     | suffix                     | text-to-suffix                        |
 |Text     | prefix                     | text-to-prefix                        |
+|Text     | remove-chars               | text-to-remove-chars                  |
+|Text     | skip-first-chars           | text-to-skip-first-chars              |
+|Text     | skip-last-chars            | text-to-skip-last-chars               |
+|Text     | suffix                     | text-to-suffix                        |
+|Text     | text-to-datetime           |                                       |
+|Text     | text-to-html               |                                       |
+|Text     | text-to-mask               |                                       |
+|Text     | token                      | text-to-token                         |
+|Text     | token-count                | text-to-token-count                   |
 |Text     | trim                       | text-to-trim                          |
 |Text     | upper                      | text-to-upper                         |
-|Text     | lower                      | text-to-lower                         |
-|Text     | skip-first-chars           | text-to-skip-first-chars              |
-|Temporal | previous-month             | dateTime-to-previous-month            |
-|Text     | token                      | text-to-token                         |
-|Text     | text-to-datetime           |                                       |
-|Temporal | next-year                  | dateTime-to-next-year                 |
-|Temporal | next-month                 | dateTime-to-next-month                |
-|Temporal | next-day                   | dateTime-to-next-day                  |
-|Temporal | last-of-year               | dateTime-to-last-of-year              |
-|Temporal | last-of-month              | dateTime-to-last-of-month             |
-|Temporal | first-of-year              | dateTime-to-first-of-year             |
-|Temporal | first-of-month             | dateTime-to-first-of-month            |
-|Text     | token-count                | text-to-token-count                   |
-|Temporal | age                        | dateTime-to-age                       |
-|Text     | without-whitespaces        | text-to-without-whitespaces           |
+|Text     | whitespaces-to-empty       | blank-to-empty                        |
+|Text     | whitespaces-to-null        | blank-to-null                         |
 |Text     | without-diacritics         | text-to-without-diacritics            |
-|Text     | before                     | text-to-before                        |
-|Text     | after                      | text-to-after                         |
-|Text     | mask-to-text               |                                       |
-|Text     | text-to-mask               |                                       |
-|Text     | remove-chars               | text-to-remove-chars                  |
-|Temporal | datetime-to-date           | dateTime-to-datetime-to-date          |
-|IO       | directory                  | path-to-directory                     |
+|Text     | without-whitespaces        | text-to-without-whitespaces           |
 <!-- END FUNCTION TABLE -->
 
 ### Predicates
 <!-- START PREDICATE TABLE -->
 |Scope    | Name                           | Aliases                               |
 |-------- | ------------------------------ | --------------------------------------|
-|Text     | any-of                         | text-is-any-of                        |
-|Temporal | on-the-day                     | dateTime-is-on-the-day                |
-|Temporal | on-the-hour                    | dateTime-is-on-the-hour               |
-|Temporal | on-the-minute                  | dateTime-is-on-the-minute             |
-|Special  | null                           | is-null                               |
-|Numeric  | equal-to                       | numeric-is-equal-to                   |
-|Numeric  | greater-than                   | numeric-is-greater-than               |
-|Numeric  | greater-than-or-equal          | numeric-is-greater-than-or-equal      |
-|Numeric  | less-than                      | numeric-is-less-than                  |
-|Temporal | contained-in                   | dateTime-is-contained-in              |
-|Numeric  | less-than-or-equal             | numeric-is-less-than-or-equal         |
-|Numeric  | modulo                         | numeric-is-modulo                     |
-|Numeric  | even                           | numeric-is-even                       |
-|Numeric  | odd                            | numeric-is-odd                        |
-|Numeric  | integer                        | numeric-is-integer                    |
-|Numeric  | zero-or-null                   | numeric-is-zero-or-null               |
+|Boolean  | false                          | boolean-is-false                      |
+|Boolean  | false-or-null                  | boolean-is-false-or-null              |
 |Boolean  | identical-to                   | boolean-is-identical-to               |
 |Boolean  | true                           | boolean-is-true                       |
 |Boolean  | true-or-null                   | boolean-is-true-or-null               |
+|Numeric  | equal-to                       | numeric-is-equal-to                   |
+|Numeric  | even                           | numeric-is-even                       |
+|Numeric  | greater-than                   | numeric-is-greater-than               |
+|Numeric  | greater-than-or-equal          | numeric-is-greater-than-or-equal      |
+|Numeric  | integer                        | numeric-is-integer                    |
+|Numeric  | less-than                      | numeric-is-less-than                  |
+|Numeric  | less-than-or-equal             | numeric-is-less-than-or-equal         |
+|Numeric  | modulo                         | numeric-is-modulo                     |
+|Numeric  | odd                            | numeric-is-odd                        |
 |Numeric  | within-interval                | numeric-is-within-interval            |
-|Temporal | before-or-same-instant         | dateTime-is-before-or-same-instant    |
-|Temporal | before                         | dateTime-is-before                    |
+|Numeric  | zero-or-null                   | numeric-is-zero-or-null               |
+|Special  | null                           | is-null                               |
+|Temporal | after                          | dateTime-is-after                     |
 |Temporal | after-or-same-instant          | dateTime-is-after-or-same-instant     |
+|Temporal | before                         | dateTime-is-before                    |
+|Temporal | before-or-same-instant         | dateTime-is-before-or-same-instant    |
+|Temporal | contained-in                   | dateTime-is-contained-in              |
+|Temporal | on-the-day                     | dateTime-is-on-the-day                |
+|Temporal | on-the-hour                    | dateTime-is-on-the-hour               |
+|Temporal | on-the-minute                  | dateTime-is-on-the-minute             |
+|Temporal | same-instant                   | dateTime-is-same-instant              |
+|Text     | any-of                         | text-is-any-of                        |
+|Text     | contains                       | text-contains                         |
+|Text     | empty                          | text-is-empty                         |
+|Text     | empty-or-null                  | text-is-empty-or-null                 |
+|Text     | ends-with                      | text-ends-with                        |
+|Text     | equivalent-to                  | text-is-equivalent-to                 |
 |Text     | lower-case                     | text-is-lower-case                    |
-|Text     | upper-case                     | text-is-upper-case                    |
-|Text     | matches-numeric                | text-matches-numeric                  |
 |Text     | matches-date                   | text-matches-date                     |
 |Text     | matches-datetime               | text-matches-datetime                 |
+|Text     | matches-numeric                | text-matches-numeric                  |
+|Text     | matches-regex                  | text-matches-regex                    |
 |Text     | matches-time                   | text-matches-time                     |
-|Text     | equivalent-to                  | text-is-equivalent-to                 |
 |Text     | sorted-after                   | text-is-sorted-after                  |
 |Text     | sorted-after-or-equivalent-to  | text-is-sorted-after-or-equivalent-to |
 |Text     | sorted-before                  | text-is-sorted-before                 |
 |Text     | sorted-before-or-equivalent-to | text-is-sorted-before-or-equivalent-to|
-|Text     | empty                          | text-is-empty                         |
-|Text     | empty-or-null                  | text-is-empty-or-null                 |
 |Text     | starts-with                    | text-starts-with                      |
-|Text     | ends-with                      | text-ends-with                        |
-|Text     | contains                       | text-contains                         |
-|Text     | matches-regex                  | text-matches-regex                    |
-|Temporal | same-instant                   | dateTime-is-same-instant              |
-|Temporal | after                          | dateTime-is-after                     |
-|Boolean  | false                          | boolean-is-false                      |
-|Boolean  | false-or-null                  | boolean-is-false-or-null              |
+|Text     | upper-case                     | text-is-upper-case                    |
 <!-- END PREDICATE TABLE -->

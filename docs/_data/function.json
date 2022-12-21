@@ -813,9 +813,9 @@
     "Parameters": []
   },
   {
-    "Name": "before",
+    "Name": "before-substring",
     "Aliases": [
-      "text-to-before"
+      "text-to-before-substring"
     ],
     "Scope": "Text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
@@ -833,9 +833,9 @@
     ]
   },
   {
-    "Name": "after",
+    "Name": "after-substring",
     "Aliases": [
-      "text-to-after"
+      "text-to-after-substring"
     ],
     "Scope": "Text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",

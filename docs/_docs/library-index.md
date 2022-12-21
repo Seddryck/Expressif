@@ -10,9 +10,11 @@ tags: [predicates, functions]
 ## Functions
 
 * [add](/docs/numeric-functions/#add)
+* [after-substring](/docs/text-functions/#after-substring)
 * [age](/docs/temporal-functions/#age)
 * [any-to-any](/docs/special-functions/#any-to-any)
 * [back](/docs/temporal-functions/#back)
+* [before-substring](/docs/text-functions/#before-substring)
 * [ceiling](/docs/numeric-functions/#ceiling)
 * [ceiling-hour](/docs/temporal-functions/#ceiling-hour)
 * [ceiling-minute](/docs/temporal-functions/#ceiling-minute)
@@ -71,8 +73,6 @@ tags: [predicates, functions]
 * [skip-last-chars](/docs/text-functions/#skip-last-chars)
 * [subtract](/docs/numeric-functions/#subtract)
 * [suffix](/docs/text-functions/#suffix)
-* [text-to-after](/docs/text-functions/#text-to-after)
-* [text-to-before](/docs/text-functions/#text-to-before)
 * [text-to-datetime](/docs/text-functions/#text-to-datetime)
 * [text-to-html](/docs/text-functions/#text-to-html)
 * [text-to-mask](/docs/text-functions/#text-to-mask)
