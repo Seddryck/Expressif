@@ -38,7 +38,10 @@ Expressif allows you to define variables and transformation of these variables (
 
 ## Quickstart
 
-Expressif provides a class named Expression to define a chain of functions to apply to a value. The class is expecting the textual representation of the chained functions in its constructor.
+### Expression
+<!-- START EXPRESSION QUICK START -->
+
+Expressif provides a class named *Expression* to define a chain of functions applied to a value. The class is expecting the textual representation of the chained functions in its constructor.
 
 ```csharp
 var expression = new Expression("lower");
@@ -46,7 +49,7 @@ var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola tesla"));
 ```
 
-Some functions require parameters, you can specify them between the parenthesis following the function name. Note that literal textual values don’t required quotes surronding them.
+Some functions require parameters, you can specify them between the parenthesis following the function name. Note that literal textual values don't required quotes surronding them.
 
 ```csharp
 var expression = new Expression("remove-chars(a)");
@@ -61,6 +64,7 @@ var expression = new Expression("lower | remove-chars(a)");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikol tesl"));
 ```
+
 It's possible to use variables as function parameters. The name of the variables must always start by an arobas (`@`)
 
 ```csharp
@@ -72,7 +76,7 @@ var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("niola tesla"));
 ```
 
-In addition to the variables that must be scalar values (text, numeric, dateTime ...), you can also add a property-object to the context. A property-object must be a pure C# object, an IDictionnary, an IList, or a DataRow. You can access the properties of the property-object based on the property's name with the syntax `[property-name]`
+In addition to the variables that must be scalar values (text, numeric, dateTime ...), you can also add a property-object to the context. A property-object must be a pure C# object, an IDictionnary, an IList, or a DataRow. You can access the properties of the property-object based on the property's name with the syntax `[property-name]`.
 
 ```csharp
 var context = new Context();
@@ -101,10 +105,69 @@ var context = new Context();
 context.Variables.Add<int>("myVar", 6);
 context.CurrentObject.Set(new List<int>() { 15, 8, 3 });
 
-var expression = new Expression("lower | skip-last-chars( {@myVar | numeric-to-subtract(#2) })", context);
+var expression = new Expression("lower | skip-last-chars( {@myVar | subtract(#2) })", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola te"));
 ```
+<!-- END EXPRESSION QUICK START -->
+
+### Predication
+<!-- START PREDICATION QUICK START -->
+
+Expressif provides a class named *Predication* to define a combination of predicates applied to an argument. The class is expecting the textual representation of the predicates in its constructor.
+
+```csharp
+var predication = new Predication("lower-case");
+var result = predication.Evaluate("Nikola Tesla");
+Assert.That(result, Is.False);
+```
+
+Same than for expressions, some predicates require parameters, you can specify them between the parenthesis immediately following the predicate name. More specifically, some predicates require an interval as parameter. The parameter can be define with the help of square brackets or parenthesis.
+
+```csharp
+var predication = new Predication("within-interval([0;20[)");
+var result = predication.Evaluate(15);
+Assert.That(result, Is.True);
+```
+
+Other predicates require a culture as parameter. To specify a culture just use the textual representation of the culture composed of the two letter ISO code of the language then the two letters ISO code of the country separated by a dash i.e. `fr-be` for Belgian French, `nl-be` for Belgian Dutch or `de-de` for German.
+
+```csharp
+var predication = new Predication("matches-date(fr-fr)");
+var result = predication.Evaluate("28/12/1978");
+Assert.That(result, Is.True);
+```
+
+Any predicate can be negated to return the opposite result. To negate a predicate just put the exclamation mark (`!`) in front of the predicate name.
+
+```csharp
+var predication = new Predication("!starts-with(Nik)");
+var result = predication.Evaluate("Nikola Tesla");
+Assert.That(result, Is.False);
+```
+
+You can combine the predicates. Each predicate will accept the same argument and will be evaluated separatly. The results of the combination is dependening on the combinational operator used. To specify the name of the combinational operator use the pipe operator (`|`) immediately followed by the name of the operator. The following operators are valid `|AND`, `|OR`, `|XOR`. 
+
+Take into account that when possible, the operators are implementing a short-circuit. If the two predicates are combined with the operator `|AND` and the first is returning `false`, the second will not be evaluated. Following the same reasoning, if the two predicates are combined with the operator `|OR` and the first is returning `true`, the second will also be ignored.
+
+```csharp
+var predication = new Predication("starts-with(Nik) |AND ends-with(sla)");
+var result = predication.Evaluate("Nikola Tesla");
+Assert.That(result, Is.True);
+```
+
+By default, the predicates are combined from left to right. If you've three predicates, the two firsts will be combined and then the result of this combination will be combined with the third predicate. To alter this order, you must group the predicates with the help of curly braces `{...}`. Each predicate inside a group is evaluated from left to right and then the result of the group is combined with another group or predicate also from left to right.
+
+```csharp
+var predication = new Predication("{starts-with(Nik) |AND ends-with(sla)} |OR {starts-with(ola) |AND ends-with(Tes)}");
+var result = predication.Evaluate("Nikola Tesla");
+Assert.That(result, Is.True);
+
+var withoutGroupsPredication = new Predication("starts-with(Nik) |AND ends-with(sla) |OR starts-with(ola) |AND ends-with(Tes)");
+var secondResult = withoutGroupsPredication.Evaluate("Nikola Tesla");
+Assert.That(result, Is.Not.EqualTo(secondResult));
+```
+<!-- END PREDICATION QUICK START -->
 
 ## Installing
 
@@ -144,7 +207,7 @@ Install-Package Expressif
 |Numeric  | round                      | numeric-to-round                      |
 |Numeric  | subtract                   | numeric-to-subtract                   |
 |Special  | any-to-any                 |                                       |
-|Special  | neutral                    |                                       |
+|Special  | neutral                    | Special-to-neutral                    |
 |Special  | null-to-value              |                                       |
 |Special  | value-to-value             |                                       |
 |Temporal | age                        | dateTime-to-age                       |
@@ -171,6 +234,8 @@ Install-Package Expressif
 |Temporal | previous-year              | dateTime-to-previous-year             |
 |Temporal | set-time                   | dateTime-to-set-time                  |
 |Temporal | utc-to-local               |                                       |
+|Text     | after-substring            | text-to-after-substring               |
+|Text     | before-substring           | text-to-before-substring              |
 |Text     | empty-to-null              |                                       |
 |Text     | first-chars                | text-to-first-chars                   |
 |Text     | html-to-text               |                                       |
@@ -186,8 +251,6 @@ Install-Package Expressif
 |Text     | skip-first-chars           | text-to-skip-first-chars              |
 |Text     | skip-last-chars            | text-to-skip-last-chars               |
 |Text     | suffix                     | text-to-suffix                        |
-|Text     | text-to-after              | text-to-text-to-after                 |
-|Text     | text-to-before             | text-to-text-to-before                |
 |Text     | text-to-datetime           |                                       |
 |Text     | text-to-html               |                                       |
 |Text     | text-to-mask               |                                       |
@@ -250,31 +313,3 @@ Install-Package Expressif
 |Text     | starts-with                    | text-starts-with                      |
 |Text     | upper-case                     | text-is-upper-case                    |
 <!-- END PREDICATE TABLE -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

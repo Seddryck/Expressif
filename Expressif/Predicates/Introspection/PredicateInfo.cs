@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressif.Functions.Introspection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,8 @@ namespace Expressif.Predicates.Introspection
         string Name,
         string[] Aliases,
         string Scope,
-        Type ImplementationType
+        Type ImplementationType,
+        string Summary,
+        ParameterInfo[] Parameters
     );
 }

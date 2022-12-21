@@ -32,6 +32,9 @@ namespace Expressif.Predicates.Text
         }
     }
 
+    /// <summary>
+    /// Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise. 
+    /// </summary>
     class MatchesNumeric : BaseTextPredicateMatching
     {
         public MatchesNumeric()
@@ -46,6 +49,9 @@ namespace Expressif.Predicates.Text
             => decimal.TryParse(value, NumberStyles.Number & ~NumberStyles.AllowThousands, CultureInfo.NumberFormat, out var _);
     }
 
+    /// <summary>
+    /// Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise. 
+    /// </summary>
     class MatchesDate : BaseTextPredicateMatching
     {
         public MatchesDate()
@@ -56,19 +62,22 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateUncasted(object value)
             => value switch
             {
-                System.DateTime dt => EvaluateDateTime(dt),
+                DateTime dt => EvaluateDateTime(dt),
                 DateOnly => true,
                 TimeOnly => false,
                 _ => base.EvaluateUncasted(value),
             };
 
         protected override bool EvaluateBaseText(string value)
-            => System.DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.ShortDatePattern, CultureInfo, DateTimeStyles.None, out var _);
+            => DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.ShortDatePattern, CultureInfo, DateTimeStyles.None, out var _);
 
         protected virtual bool EvaluateDateTime(System.DateTime dt)
             => dt.Equals(dt.Date);
     }
 
+    /// <summary>
+    /// Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise. 
+    /// </summary>
     class MatchesDateTime : BaseTextPredicateMatching
     {
         private string Pattern { get => CultureInfo.DateTimeFormat.ShortDatePattern + " " + CultureInfo.DateTimeFormat.LongTimePattern; }
@@ -81,16 +90,19 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateUncasted(object value)
             => value switch
             {
-                System.DateTime => true,
+                DateTime => true,
                 DateOnly => true,
                 TimeOnly => false,
                 _ => base.EvaluateUncasted(value),
             };
 
         protected override bool EvaluateBaseText(string value)
-            => System.DateTime.TryParseExact(value, Pattern, CultureInfo, DateTimeStyles.None, out var _);
+            => DateTime.TryParseExact(value, Pattern, CultureInfo, DateTimeStyles.None, out var _);
     }
 
+    /// <summary>
+    /// Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise. 
+    /// </summary>
     class MatchesTime : BaseTextPredicateMatching
     {
         public MatchesTime()
@@ -101,7 +113,7 @@ namespace Expressif.Predicates.Text
         protected override bool EvaluateUncasted(object value)
             => value switch
             {
-                System.DateTime => false,
+                DateTime => false,
                 DateOnly => false,
                 TimeOnly => true,
                 TimeSpan ts => EvaluateTimeSpan(ts),
@@ -109,7 +121,7 @@ namespace Expressif.Predicates.Text
             };
 
         protected override bool EvaluateBaseText(string value)
-            => System.DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.LongTimePattern, CultureInfo, DateTimeStyles.None, out var _);
+            => DateTime.TryParseExact(value, CultureInfo.DateTimeFormat.LongTimePattern, CultureInfo, DateTimeStyles.None, out var _);
 
         protected virtual bool EvaluateTimeSpan(TimeSpan ts)
             => ts.TotalHours < 24;

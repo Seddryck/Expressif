@@ -7,10 +7,14 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Boolean
 {
+    /// <summary>
+    /// Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.
+    /// </summary>
     class IdenticalTo : BaseBooleanPredicate
     {
         public IScalarResolver<bool> Reference { get; }
 
+        /// <param name="reference">A boolean value to compare to the argument</param>
         public IdenticalTo(IScalarResolver<bool> reference)
             => Reference = reference;
 

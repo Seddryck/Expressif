@@ -23,7 +23,7 @@ logo: expressif-icon-64.png
 
 navbar:
     sticky:         false
-    search:         false
+    search:         true
 
 # Default author settings
 author:

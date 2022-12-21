@@ -11,6 +11,16 @@ namespace Expressif.Functions.Introspection
         string Name,
         string[] Aliases,
         string Scope,
-        Type ImplementationType
+        Type ImplementationType,
+        string Summary,
+        ParameterInfo[] Parameters
     );
+
+    public record ParameterInfo
+    (
+        string Name,
+        bool Optional,
+        string Summary
+    );
+    
 }

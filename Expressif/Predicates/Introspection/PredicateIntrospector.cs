@@ -41,6 +41,8 @@ namespace Expressif.Predicates.Introspection
                         , predicate.Attribute.Aliases.AsQueryable().Prepend(string.Join('-', array)).ToArray()
                         , predicate.Type.Namespace!.ToToken('.').Last()
                         , predicate.Type
+                        , predicate.Type.GetSummary()
+                        , BuildParameters(predicate.Type.GetInfoConstructors()).ToArray()
                     );
             }
         }

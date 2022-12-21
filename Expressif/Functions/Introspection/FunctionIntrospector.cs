@@ -36,9 +36,12 @@ namespace Expressif.Functions.Introspection
                                 ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
                         , function.Type.Namespace!.ToToken('.').Last()
                         , function.Type
+                        , function.Type.GetSummary()
+                        , BuildParameters(function.Type.GetInfoConstructors()).ToArray()
                     );
             }
         }
 
+        
     }
 }

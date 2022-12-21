@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Special
 {
-    [Function(prefix: "")]
+    /// <summary>
+    /// Returns the argument value.
+    /// </summary>
+    [Function(prefix: "Special")]
     class Neutral : IFunction
     {
         public object? Evaluate(object? value) => value;

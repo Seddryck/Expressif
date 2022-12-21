@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 namespace Expressif.Testing.Functions.Temporal
 {
     [TestFixture]
-    public class TemporalTransformationsTest
+    public class TemporalFunctionsTest
     {
         [Test]
         [TestCase("2019-03-11", "2019-03-11")]
         [TestCase("2019-02-11", "2019-03-01")]
         [TestCase("2019-04-11", "2019-03-31")]
-        public void CutOff_Valid(object value, DateTime expected)
+        public void Clamp_Valid(object value, DateTime expected)
             => Assert.That(new Clamp(new LiteralScalarResolver<DateTime>("2019-03-01"), new LiteralScalarResolver<DateTime>("2019-03-31"))
                 .Evaluate(value), Is.EqualTo(expected));
 

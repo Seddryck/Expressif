@@ -6,36 +6,51 @@ using System.IO;
 namespace Expressif.Functions.IO
 {
     [Function(prefix: "path")]
-    abstract class AbstractPathTransformation : AbstractTextTransformation, IBasePathTransformation
+    abstract class BasePathFunction : BaseTextFunction, IBasePathTransformation
     {
-        public AbstractPathTransformation() { }
+        public BasePathFunction() { }
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateEmpty() => new Empty().Keyword;
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateSpecial(string value) => new Empty().Keyword;
     }
 
-    class Filename : AbstractPathTransformation
+    /// <summary>
+    /// Returns the file name and extension of a file path provided as argument.
+    /// </summary>
+    class Filename : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetFileName(value);
     }
 
-    class FilenameWithoutExtension : AbstractPathTransformation
+    /// <summary>
+    /// Returns the file name without the extension of a file path provided as argument.
+    /// </summary>
+    class FilenameWithoutExtension : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetFileNameWithoutExtension(value);
     }
 
-    class Extension : AbstractPathTransformation
+    /// <summary>
+    /// Returns the extension of a file path provided as argument.
+    /// </summary>
+    class Extension : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetExtension(value);
     }
 
-    class Root : AbstractPathTransformation
+    /// <summary>
+    /// Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.
+    /// </summary>
+    class Root : BasePathFunction
     {
         protected override object EvaluateString(string value) => Path.GetPathRoot(value) ?? string.Empty;
     }
 
-    class Directory : AbstractPathTransformation
+    /// <summary>
+    /// Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.
+    /// </summary>
+    class Directory : BasePathFunction
     {
         protected override object EvaluateString(string value)
         {
@@ -43,6 +58,5 @@ namespace Expressif.Functions.IO
                 ? Path.GetPathRoot(value) ?? string.Empty 
                 : Path.GetDirectoryName(value) + Path.DirectorySeparatorChar;
         }
-            
     }
 }

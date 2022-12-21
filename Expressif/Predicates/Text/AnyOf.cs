@@ -8,13 +8,20 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Text
 {
+    /// <summary>
+    /// Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
+    /// </summary>
     class AnyOf : BaseTextPredicate
     {
         public IEnumerable<IScalarResolver<string>> References { get; }
         protected StringComparer Comparer { get; }
 
+        /// <param name="references">An array of text values</param>
         public AnyOf(IEnumerable<IScalarResolver<string>> references)
             : this(references, StringComparer.InvariantCultureIgnoreCase) { }
+        
+        /// <param name="references"></param>
+        /// <param name="comparer"></param>
         public AnyOf(IEnumerable<IScalarResolver<string>> references, StringComparer comparer)
                    => (References, Comparer) = (references, comparer);
 

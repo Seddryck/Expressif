@@ -2,7 +2,9 @@
   docs:
   - why-expressif
   - installation-expressif
-  - first-steps-with-expressif
+  - glossary-expressif
+  - quick-start-expression
+  - quick-start-predication
 
 - title: Functions library
   docs:

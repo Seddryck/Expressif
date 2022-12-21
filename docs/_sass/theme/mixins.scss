@@ -37,7 +37,7 @@
         height: 50px;
         font-size: 1.0625rem;
         padding-left: 1.1875rem;
-        background: #fff;
+        background: $global-primary-background;
     }
 }
 
@@ -330,7 +330,7 @@
 
         ul:not(#markdown-toc):not(#markdown-toc ul):not(.uk-slideshow-items),
         .uk-alert {
-            margin-bottom: $global-medium-margin;
+            margin-bottom: 20px;
         }
 
         table {
@@ -682,7 +682,7 @@
         margin: 10px 0 0 0;
         box-shadow: $global-medium-box-shadow;
         border-radius: $border-radius-medium;
-        background: #fff;
+        background: $global-primary-background;
         li {
             margin: 0;
             line-height: 1.4;

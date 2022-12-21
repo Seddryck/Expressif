@@ -28,6 +28,18 @@ namespace Expressif.Functions.Introspection
                         x.Attribute
                     ));
         }
+
+        protected IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
+            => ctorInfos.SelectMany(x => x.Parameters)
+                        .Select(y => new ParameterInfo(
+                                    y.Name
+                                    , !ctorInfos.All(c => c.Parameters.Any(p => p.Name == y.Name))
+                                    , ctorInfos.First(c => c.Parameters.Any(p => p.Name == y.Name))
+                                                    .Parameters
+                                                    .Single(p => p.Name == y.Name)
+                                                    .Summary
+                            )
+                        ).Distinct();
     }
 
     public class AssemblyTypesProbe : ITypesProbe

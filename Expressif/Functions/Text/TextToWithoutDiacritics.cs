@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    class WithoutDiacritics : AbstractTextTransformation
+
+    /// <summary>
+    /// Returns the argument string without diacritics
+    /// </summary>
+    class WithoutDiacritics : BaseTextFunction
     {
         protected override object EvaluateString(string value) => RemoveDiacritics(value);
 
@@ -28,17 +32,13 @@ namespace Expressif.Functions.Text
                 {
                     System.Globalization.UnicodeCategory uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(stFormD[i]);
                     if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
-                    {
                         sb.Append(stFormD[i]);
-                    }
                 }
 
                 return (sb.ToString().Normalize(NormalizationForm.FormC));
             }
             else
-            {
                 return value;
-            }
         }
     }
 }

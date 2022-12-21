@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Expressif.Testing.Functions.Numeric
 {
     [TestFixture]
-    public class NumericTransformationsTest
+    public class NumericFunctionsTest
     {
         [Test]
         [TestCase(0, 0)]

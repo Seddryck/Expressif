@@ -18,7 +18,8 @@ namespace Expressif.Predicates.Temporal
             {
                 null => EvaluateNull(),
                 DBNull => EvaluateNull(),
-                System.DateTime dt => EvaluateDateTime(dt),
+                DateTime dt => EvaluateDateTime(dt),
+                DateOnly d => EvaluateDate(d),
                 _ => EvaluateUncasted(value),
             };
         }
@@ -32,14 +33,16 @@ namespace Expressif.Predicates.Temporal
             return EvaluateDateTime(dt);
         }
 
-        protected abstract bool EvaluateDateTime(System.DateTime dt);
+        protected virtual bool EvaluateDate(DateOnly date) => EvaluateDateTime(date.ToDateTime(TimeOnly.MinValue));
+
+        protected abstract bool EvaluateDateTime(DateTime dt);
     }
 
     abstract class BaseDateTimePredicateReference : BaseDateTimePredicate
     {
-        public IScalarResolver<System.DateTime> Reference { get; }
+        public IScalarResolver<DateTime> Reference { get; }
 
-        public BaseDateTimePredicateReference(IScalarResolver<System.DateTime> reference)
+        public BaseDateTimePredicateReference(IScalarResolver<DateTime> reference)
             => Reference = reference;
     }
 }

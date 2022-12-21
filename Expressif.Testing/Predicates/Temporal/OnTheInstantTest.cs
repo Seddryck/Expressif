@@ -22,6 +22,11 @@ namespace Expressif.Testing.Predicates.Temporal
 
         [Test]
         [TestCase("2022-11-21", true)]
+        public void OnTheDay_Date_Expected(string value, bool expected)
+            => Assert.That(new OnTheDay().Evaluate(DateOnly.Parse(value)), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase("2022-11-21", true)]
         [TestCase("2022-11-21 00:00:00", true)]
         [TestCase("2022-11-21 17:00:00", true)]
         [TestCase("2022-11-21 17:12:00", false)]
@@ -33,6 +38,11 @@ namespace Expressif.Testing.Predicates.Temporal
 
         [Test]
         [TestCase("2022-11-21", true)]
+        public void OnTheHour_Date_Expected(string value, bool expected)
+            => Assert.That(new OnTheHour().Evaluate(DateOnly.Parse(value)), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase("2022-11-21", true)]
         [TestCase("2022-11-21 00:00:00", true)]
         [TestCase("2022-11-21 17:00:00", true)]
         [TestCase("2022-11-21 17:12:00", true)]
@@ -41,5 +51,10 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("(null)", false)]
         public void OnTheMinute_DateTime_Expected(object value, bool expected)
             => Assert.That(new OnTheMinute().Evaluate(value), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase("2022-11-21", true)]
+        public void OnTheMinute_Date_Expected(string value, bool expected)
+            => Assert.That(new OnTheMinute().Evaluate(DateOnly.Parse(value)), Is.EqualTo(expected));
     }
 }

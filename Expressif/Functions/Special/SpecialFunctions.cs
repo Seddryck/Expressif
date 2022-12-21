@@ -9,8 +9,9 @@ using System.Text;
 
 namespace Expressif.Functions.Special
 {
+
     [Function(prefix: "")]
-    abstract class AbstractSpecialTransformation : IFunction
+    abstract class BaseSpecialFunction : IFunction
     {
         public object? Evaluate(object? value)
         {
@@ -63,7 +64,10 @@ namespace Expressif.Functions.Special
         protected abstract object EvaluateString(string value);
     }
 
-    class NullToValue : AbstractSpecialTransformation
+    /// <summary>
+    /// Returns the value passed as argument, except if the value is `null` then it returns `value`.
+    /// </summary>
+    class NullToValue : BaseSpecialFunction
     {
         protected override object EvaluateNull() => new Value().Keyword;
         protected override object EvaluateEmpty() => new Empty().Keyword;
@@ -73,7 +77,10 @@ namespace Expressif.Functions.Special
         protected override object EvaluateString(string value) => value;
     }
 
-    class AnyToAny : AbstractSpecialTransformation
+    /// <summary>
+    /// Returns `any`.
+    /// </summary>
+    class AnyToAny : BaseSpecialFunction
     {
         protected override object EvaluateNull() => new Any().Keyword;
         protected override object EvaluateEmpty() => new Any().Keyword;
@@ -83,7 +90,10 @@ namespace Expressif.Functions.Special
         protected override object EvaluateString(string value) => new Any().Keyword;
     }
 
-    class ValueToValue : AbstractSpecialTransformation
+    /// <summary>
+    /// Returns `value` except if the argument value is `null` then it returns `null`.
+    /// </summary>
+    class ValueToValue : BaseSpecialFunction
     {
         protected override object EvaluateNull() => new Null().Keyword;
         protected override object EvaluateEmpty() => new Value().Keyword;

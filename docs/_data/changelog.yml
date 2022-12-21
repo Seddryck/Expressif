@@ -1,5 +1,12 @@
 # Changelog page source
 
+- title: Documentation aligned with code
+  label:
+  date: Dec 22, 2022
+  list:
+  - Available predicates and function are documented
+  - Quick-start, glossary and installation are up-to-date 
+
 - title: Documentation work started
   label:
   date: Dec 18, 2022
