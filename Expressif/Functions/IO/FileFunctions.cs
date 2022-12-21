@@ -28,26 +28,41 @@ namespace Expressif.Functions.IO
             => FileInfoInitializer = fileInfoInitializer;
     }
 
+    /// <summary>
+    /// Returns the size of the file provided as argument in bytes.
+    /// </summary>
     class Size : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.Length;
     }
 
+    /// <summary>
+    /// Returns the creation time of the file provided as argument in local time.
+    /// </summary>
     class CreationDateTime : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTime;
     }
 
+    /// <summary>
+    /// Returns the creation time of the file provided as argument in UTC.
+    /// </summary>
     class CreationDateTimeUtc : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTimeUtc;
     }
 
+    /// <summary>
+    /// Returns the last update time of the file provided as argument in local time.
+    /// </summary>
     class UpdateDateTime : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTime;
     }
 
+    /// <summary>
+    /// Returns the last update time of the file provided as argument in UTC.
+    /// </summary>
     class UpdateDateTimeUtc : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTimeUtc;

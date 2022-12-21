@@ -24,7 +24,6 @@ $elapsed = Measure-Command -Expression {
                 $columns[$_.Name] = $_.Value.ToString().Length
             }
         }
-        Write-Host "`t`t$($member.Name)"
     }
 
     ForEach($key in $($columns.Keys)) {

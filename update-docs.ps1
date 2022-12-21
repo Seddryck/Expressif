@@ -43,14 +43,8 @@ $elapsed = Measure-Command -Expression {
     $text = ""
     [bool] $skip = $false
     ForEach ($line in Get-Content -Path $destinationFile) {
-        $i+=1
-
-        
-
-
         if($line -eq "<!-- END AUTO-GENERATED -->") {
             $skip = $false
-            Write-Host  "`t`tPrevious content skipped between lines $j and $i"
         }
 
         if (-not $skip) {
@@ -64,12 +58,8 @@ $elapsed = Measure-Command -Expression {
         if ($line -eq "<!-- START AUTO-GENERATED -->"){
             $skip = $true
             $text += $doc
-            Write-Host  "`t`tNew content inserted after line $i"
-            $j = $i+1
         } 
     }
-    Write-Host  $text
     $text | Out-File -FilePath $destinationFile  -NoNewline -Encoding ascii
-    Write-Host  "`tNew content written"
 }
 Write-Host "New version of $destinationFile created in $($elapsed.TotalSeconds) seconds"

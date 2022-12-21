@@ -59,7 +59,6 @@ $elapsed = Measure-Command -Expression {
             $text += $captured
         } 
     }
-    Write-Host  $text
     $text | Out-File -FilePath $docFile  -NoNewline -Encoding ascii
 }
 Write-Host "New version of $docFile created in $($elapsed.TotalSeconds) seconds"
