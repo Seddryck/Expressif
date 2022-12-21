@@ -9,26 +9,26 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    abstract class BasePositionFunction : BaseTextFunction
+    abstract class BaseSubstringFunction : BaseTextFunction
     {
         public IScalarResolver<string> Substring { get; }
         public IScalarResolver<int> Count { get; }
-        public BasePositionFunction(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public BaseSubstringFunction(IScalarResolver<string> substring, IScalarResolver<int> count)
             => (Substring, Count) = (substring, count);
     }
 
     /// <summary>
     /// Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
     /// </summary>
-    class After : BasePositionFunction
+    class AfterSubstring : BaseSubstringFunction
     {
         /// <param name="substring">The string to seek.</param>
-        public After(IScalarResolver<string> substring)
+        public AfterSubstring(IScalarResolver<string> substring)
             : this(substring, new LiteralScalarResolver<int>(0)) { }
 
         /// <param name="substring">The string to seek.</param>
         /// <param name="count">The number of character positions to examine.</param>
-        public After(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public AfterSubstring(IScalarResolver<string> substring, IScalarResolver<int> count)
             : base(substring, count) { }
 
         protected override object EvaluateString(string value)
@@ -60,15 +60,15 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
     /// </summary>
-    class Before : BasePositionFunction
+    class BeforeSubstring : BaseSubstringFunction
     {
         /// <param name="substring">The string to seek.</param>
-        public Before(IScalarResolver<string> substring)
+        public BeforeSubstring(IScalarResolver<string> substring)
             : this(substring, new LiteralScalarResolver<int>(0)) { }
 
         /// <param name="substring">The string to seek.</param>
         /// <param name="count">The number of character positions to examine.</param>
-        public Before(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public BeforeSubstring(IScalarResolver<string> substring, IScalarResolver<int> count)
             : base(substring, count) { }
 
         protected override object EvaluateString(string value)

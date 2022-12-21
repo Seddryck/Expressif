@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Functions.Text
 {
-    public class TextPositionTest
+    public class TextSubstringTest
     {
         [Test]
         [TestCase("Foo+ Bar", "+ ", "Foo")]
@@ -20,8 +20,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Foo+ Bar", "(empty)", "")]
         [TestCase("(null)", ", ", "(null)")]
         [TestCase("(empty)", ", ", "(empty)")]
-        public void Before_Valid(string value, string substring, string expected)
-            => Assert.That(new Before(new LiteralScalarResolver<string>(substring)).Evaluate(value)
+        public void BeforeSubstring_Valid(string value, string substring, string expected)
+            => Assert.That(new BeforeSubstring(new LiteralScalarResolver<string>(substring)).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -29,8 +29,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Foo+Bar+Bez+Quark", "+", 1, "Foo+Bar")]
         [TestCase("Foo+Bar+Bez+Quark", "+", 2, "Foo+Bar+Bez")]
         [TestCase("Foo+Bar+Bez+Quark", "+", 3, "(null)")]
-        public void Before_Position_Valid(string value, string substring, int position, string expected)
-            => Assert.That(new Before(new LiteralScalarResolver<string>(substring), new LiteralScalarResolver<int>(position)).Evaluate(value)
+        public void BeforeSubstring_Position_Valid(string value, string substring, int position, string expected)
+            => Assert.That(new BeforeSubstring(new LiteralScalarResolver<string>(substring), new LiteralScalarResolver<int>(position)).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -42,8 +42,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Foo+ Bar", "(empty)", "Foo+ Bar")]
         [TestCase("(null)", ", ", "(null)")]
         [TestCase("(empty)", ", ", "(empty)")]
-        public void After_Valid(string value, string substring, string expected)
-            => Assert.That(new After(new LiteralScalarResolver<string>(substring)).Evaluate(value)
+        public void AfterSubstring_Valid(string value, string substring, string expected)
+            => Assert.That(new AfterSubstring(new LiteralScalarResolver<string>(substring)).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -51,8 +51,8 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Foo+Bar+Bez+Quark", "+", 1, "Bez+Quark")]
         [TestCase("Foo+Bar+Bez+Quark", "+", 2, "Quark")]
         [TestCase("Foo+Bar+Bez+Quark", "+", 3, "(null)")]
-        public void After_Position_Valid(string value, string substring, int position, string expected)
-            => Assert.That(new After(new LiteralScalarResolver<string>(substring), new LiteralScalarResolver<int>(position)).Evaluate(value)
+        public void AfterSubstring_Position_Valid(string value, string substring, int position, string expected)
+            => Assert.That(new AfterSubstring(new LiteralScalarResolver<string>(substring), new LiteralScalarResolver<int>(position)).Evaluate(value)
                 , Is.EqualTo(expected));
     }
 }
