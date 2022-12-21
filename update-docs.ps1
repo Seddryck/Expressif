@@ -35,7 +35,6 @@ $elapsed = Measure-Command -Expression {
         }
         $doc += "`r`n"
     }
-    Write-Host $doc
     
     ########### Update the sub-part of the docs file ##########
 

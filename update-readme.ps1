@@ -1,9 +1,5 @@
 ﻿param ([string] $class)
 
-Write-Host($class)
-Write-Host($class.ToLower())
-Write-Host("$($class.ToLower())")
-
 $sourceFile = ".\docs\_data\$($class.ToLower()).json"
 $destinationFile = ".\README.md"
 
