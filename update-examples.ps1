@@ -1,4 +1,5 @@
 ﻿param (
+    [string] $page,
     [string] $class
 )
 
@@ -10,13 +11,17 @@ function ParseTestFile {
     )
     $sourceFile = "Expressif.Testing/$fileName"
     [bool] $capture = $false
+    [string] $leadingSpace = ""
     ForEach ($line in Get-Content -Path $sourceFile) {
         if ($capture -and $line.Trim() -eq ("}")) {
             $capture = $false
         }
         
         if ($capture -and $line.Trim() -ne ("{")) {
-            $textCaptured += $line.TrimStart()
+            if ($leadingSpace.Length -eq 0 -and $line.Length -gt 0) {
+                $leadingSpace = $line.Substring(0,$line.IndexOf($line.TrimStart()[0]))
+            }
+            $textCaptured += $line.Replace($leadingSpace, "")
             $textCaptured += "`r`n"
         }
         
@@ -27,13 +32,11 @@ function ParseTestFile {
     return $textCaptured
 }
 
-$docFile = ".\docs\_docs\quick-start-$($class.ToLower()).md"
+$docFile = ".\docs\_docs\$($page.ToLower())-$($class.ToLower()).md"
 
-########### Create a markdown table ##########
 Write-Host "Creating new version of $docFile ..."
 $elapsed = Measure-Command -Expression {
     ########### Update the sub-part of the docs file ##########
-
     Write-Host  "`tReplacing content in $docFile ..."
     $text = ""
     [bool] $skip = $false
