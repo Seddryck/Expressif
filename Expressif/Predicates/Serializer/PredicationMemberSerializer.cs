@@ -30,13 +30,16 @@ namespace Expressif.Predicates.Serializer
                     _ => new LiteralParameter(parameter.ToString()!)
                 }));
             }
+
+            var negation = member.Negation==typeof(NotOperator) ? "!" : string.Empty;
+
             var predicateName = member.Predicate.Name.ToKebabCase();
 
             var predicate = serializedParameters.Any()
                 ? $"{predicateName}({string.Join(", ", serializedParameters)})"
                 : predicateName;
             
-            return $"{Serialize(member.Operator)}{predicate}";
+            return $"{Serialize(member.Operator)}{negation}{predicate}";
         }
 
         public virtual string Serialize(Type? @operator)

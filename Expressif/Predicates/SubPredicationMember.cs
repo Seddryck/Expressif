@@ -12,7 +12,7 @@ namespace Expressif.Predicates
     {
         public (ICombinationOperator?, IPredicate) Build(Context context, PredicationFactory factory)
         {
-            var @operator = Operator == null ? null : factory.Instantiate(Operator);
+            var @operator = Operator == null ? null : factory.Instantiate<ICombinationOperator>(Operator);
             var predicate = PredicationBuilder.Build()!;
             return (@operator, predicate);
         }
