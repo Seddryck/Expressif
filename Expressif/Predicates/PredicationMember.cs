@@ -10,10 +10,13 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates
 {
-    public record class PredicationMember(Type? Operator, Type Predicate, object[] Parameters)
+    public record class PredicationMember(Type? Operator, Type Negation, Type Predicate, object[] Parameters)
     {
         public PredicationMember(Type predicate, object[] parameters)
-            : this(null, predicate, parameters) { }
+            : this(null, typeof(EverOperator), predicate, parameters) { }
+
+        public PredicationMember(Type @operator, Type predicate, object[] parameters)
+            : this(@operator, typeof(EverOperator), predicate, parameters) { }
 
         public (ICombinationOperator?, IPredicate) Build(Context context, PredicationFactory factory)
         {
@@ -26,8 +29,8 @@ namespace Expressif.Predicates
                     _ => new LiteralParameter(parameter.ToString()!)
                 });
             }
-            var @operator = Operator==null ? null : factory.Instantiate(Operator);
-            var predicate = factory.Instantiate(Predicate, typedParameters.ToArray(), context);
+            var @operator = Operator==null ? null : factory.Instantiate<ICombinationOperator>(Operator);
+            var predicate = factory.Instantiate(Negation, Predicate, typedParameters.ToArray(), context);
             return (@operator, predicate);
         }
     };

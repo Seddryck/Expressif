@@ -1,5 +1,6 @@
 ﻿using Expressif.Functions;
 using Expressif.Parsers;
+using Expressif.Predicates.Boolean;
 using Expressif.Predicates.Combination;
 using Expressif.Predicates.Introspection;
 using Sprache;
@@ -41,13 +42,24 @@ namespace Expressif.Predicates
         }
 
         protected ICombinationOperator Instantiate(string operatorName)
-            => Instantiate(GetFunctionType<ICombinationOperator>($"{operatorName}-operator"));
+            => Instantiate<ICombinationOperator>(GetFunctionType<ICombinationOperator>($"{operatorName}-operator"));
         
-        public ICombinationOperator Instantiate(Type @operator)
-            => Instantiate<ICombinationOperator>(@operator, Array.Empty<IParameter>(), new Context());
+        public T Instantiate<T>(Type @operator)
+            => Instantiate<T>(@operator, Array.Empty<IParameter>(), new Context());
 
         public IPredicate Instantiate(Type type, IParameter[] parameters, Context context)
             => Instantiate<IPredicate>(type, parameters, context);
+
+        public IPredicate Instantiate(Type negation, Type type, IParameter[] parameters, Context context)
+        {
+            var predicate = Instantiate<IPredicate>(type, parameters, context);
+            var negative = Instantiate<INegationOperator>(negation);
+            return (negative) switch
+            {
+                NotOperator _ => new Negate(predicate),
+                _ => predicate
+            };
+        }
 
         protected override IDictionary<string, Type> Initialize()
         {
