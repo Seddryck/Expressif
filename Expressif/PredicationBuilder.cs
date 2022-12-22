@@ -29,6 +29,18 @@ namespace Expressif
             where P : IPredicate
             => ChainWork(null, typeof(P), parameters);
 
+        public PredicationBuilder And<P>(params object[] parameters)
+            where P : IPredicate
+            => ChainWork(typeof(AndOperator), typeof(P), parameters);
+
+        public PredicationBuilder Or<P>(params object[] parameters)
+            where P : IPredicate
+            => ChainWork(typeof(OrOperator), typeof(P), parameters);
+
+        public PredicationBuilder Xor<P>(params object[] parameters)
+            where P : IPredicate
+            => ChainWork(typeof(XorOperator), typeof(P), parameters);
+
         public PredicationBuilder Chain<O, P>(params object[] parameters) 
             where O: ICombinationOperator
             where P : IPredicate
@@ -36,6 +48,16 @@ namespace Expressif
 
         public PredicationBuilder Chain(Type predicate, params object[] parameters)
             => ChainWork(null, predicate, parameters);
+
+        public PredicationBuilder And(Type predicate, params object[] parameters)
+            => ChainWork(typeof(AndOperator), predicate, parameters);
+
+        public PredicationBuilder Or(Type predicate, params object[] parameters)
+            => ChainWork(typeof(OrOperator), predicate, parameters);
+
+        public PredicationBuilder Xor(Type predicate, params object[] parameters)
+            => ChainWork(typeof(XorOperator), predicate, parameters);
+
         public PredicationBuilder Chain(Type @operator, Type predicate, params object[] parameters)
             => ChainWork(@operator, predicate, parameters);
 

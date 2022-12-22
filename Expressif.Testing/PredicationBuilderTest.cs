@@ -1,4 +1,5 @@
-﻿using Expressif.Predicates.Combination;
+﻿using Expressif.Functions.Text;
+using Expressif.Predicates.Combination;
 using Expressif.Predicates.Serializer;
 using Expressif.Predicates.Text;
 using System;
@@ -51,6 +52,30 @@ namespace Expressif.Testing
             var builder = new PredicationBuilder()
                 .Chain<StartsWith>("ola")
                 .Chain<OrOperator, EndsWith>("sla");
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
+        }
+
+        [Test]
+        public void AndOrXor_Generic_CorrectlyEvaluate()
+        {
+            var builder = new PredicationBuilder()
+                .Chain<StartsWith>("ola")
+                .Or<EndsWith>("sla")
+                .And<SortedAfter>("Alan Turing")
+                .Xor<SortedBefore>("Marie Curie");
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
+        }
+
+        [Test]
+        public void AndOrXor_NonGeneric_CorrectlyEvaluate()
+        {
+            var builder = new PredicationBuilder()
+                .Chain<StartsWith>("ola")
+                .Or(typeof(EndsWith), ("sla"))
+                .And(typeof(SortedAfter), "Alan Turing")
+                .Xor(typeof(SortedBefore), "Marie Curie");
             var predication = builder.Build();
             Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         }
