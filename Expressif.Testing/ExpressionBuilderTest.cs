@@ -37,6 +37,16 @@ namespace Expressif.Testing
         }
 
         [Test]
+        public void Chain_MultipleWithoutParameters_CorrectlyEvaluate()
+        {
+            var builder = new ExpressionBuilder()
+                .Chain<Lower>()
+                .Chain<Length>();
+            var expression = builder.Build();
+            Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo(12));
+        }
+
+        [Test]
         public void Chain_Multiple_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder()
@@ -94,6 +104,17 @@ namespace Expressif.Testing
                 .Chain<PadRight>(7, '*');
             var str = builder.Serialize();
             serializer.Verify(x => x.Serialize(builder), Times.Once);
+        }
+
+        [Test]
+        public void Serialize_WithParameters_CorrectlySerialized()
+        {
+            var builder = new ExpressionBuilder()
+                .Chain<Lower>()
+                .Chain<FirstChars>(5)
+                .Chain<PadRight>(7, '*');
+            var str = builder.Serialize();
+            Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
         }
     }
 }
