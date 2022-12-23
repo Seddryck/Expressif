@@ -14,7 +14,7 @@ namespace Expressif.Testing
     public class PredicationBuilderTest
     {
         [Test]
-        public void As_WithoutParameter_CorrectlyEvaluate()
+        public void Chain_WithoutParameter_CorrectlyEvaluate()
         {
             var builder = new PredicationBuilder().Chain<LowerCase>();
             var predication = builder.Build();
@@ -115,6 +115,16 @@ namespace Expressif.Testing
             var builder = new PredicationBuilder()
                 .Chain<StartsWith>("ola")
                 .Or<NotOperator, EndsWith>("Tes");
+            var predication = builder.Build();
+            Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
+        }
+
+        [Test]
+        public void Chain_NegateGenericNotFluent_CorrectlyEvaluate()
+        {
+            var builder = new PredicationBuilder()
+                .Chain<StartsWith>("ola")
+                .Chain<OrOperator, NotOperator, EndsWith>("Tes");
             var predication = builder.Build();
             Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
         }
