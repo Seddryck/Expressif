@@ -120,12 +120,6 @@ namespace Expressif
             return this;
         }
 
-        public PredicationBuilder Chain<O>(IPredicate predicate) where O : ICombinationOperator
-        {
-            Pile.Enqueue(predicate);
-            return this;
-        }
-
         public IPredicate Build()
         {
             IPredicate? predicate = null;

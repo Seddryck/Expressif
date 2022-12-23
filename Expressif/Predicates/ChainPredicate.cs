@@ -1,4 +1,5 @@
-﻿using Expressif.Predicates;
+﻿using Expressif.Functions;
+using Expressif.Predicates;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;   
 
-namespace Expressif.Functions
+namespace Expressif.Predicates
 {
     public class ChainPredicate : IPredicate
     {
@@ -18,6 +19,6 @@ namespace Expressif.Functions
         public bool Evaluate(object? value)
             => (bool)Predicates.Aggregate(value is IScalarResolver resolver ? resolver.Execute() : value, (v, func) => func.Evaluate(v) )!;
         
-        object? IFunction.Evaluate(object? value) => throw new NotImplementedException();
+        object? IFunction.Evaluate(object? value) => Evaluate(value);
     }
 }

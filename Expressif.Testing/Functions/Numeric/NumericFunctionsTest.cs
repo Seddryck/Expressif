@@ -6,6 +6,7 @@ using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,6 +26,21 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(blank)", 0)]
         public void NullToZero_Valid(object value, decimal? expected)
             => Assert.That(new NullToZero().Evaluate(value), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase(0, 0)]
+        [TestCase(1, 1)]
+        [TestCase(-1, -1)]
+        [TestCase(0.9999, 0.9999)]
+        public void NullToZero_Valid(decimal value, decimal? expected)
+            => Assert.That(new NullToZero().Evaluate(value), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase(typeof(DBNull), 0)]
+        public void NullToZero_DBNull_Valid(Type type, decimal? expected)
+            => Assert.That(new NullToZero().Evaluate(
+                type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+                , Is.EqualTo(expected));
 
         [Test]
         [TestCase(0, 0)]
