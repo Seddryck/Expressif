@@ -9,6 +9,8 @@ skip_commits:
     - LICENSE
 
 environment:
+  CODECOV_TOKEN:
+    secure: Vf4D1ql/bpdkTV4HOn57P8fBH0JPbPpMbdPZWjpsYTZ17O/CUjdGg+Xe/61GoU70
   github_access_token:
     secure: j31Dt6ak1HtS5PTfhwc/He4jeCesBw9GULDRlPhNLjwBQEgFivhypRi5m4M7o3cb
 
@@ -28,6 +30,15 @@ test_script:
 - dotnet test Expressif.Testing -c Release --test-adapter-path:. --logger:Appveyor --no-build --nologo 
 
 after_test:
+- ps: >-
+    $ErrorActionPreference = "Stop"
+
+    dotnet test -c Debug /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
+
+    if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
+- ps: choco install codecov --no-progress
+- ps: codecov.exe -f "DotNet.Helpers.Tests\coverage.net48.opencover.xml" -t $env:CODECOV_TOKEN
+
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo 
 
 artifacts:
