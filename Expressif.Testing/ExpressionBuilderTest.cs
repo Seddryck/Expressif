@@ -58,6 +58,20 @@ namespace Expressif.Testing
         }
 
         [Test]
+        public void Chain_MultipleWithContext_CorrectlyEvaluate()
+        {
+            var context = new Context();
+            context.Variables.Add<int>("myVar", 15);
+            context.CurrentObject.Set(new List<char>() { '-', '*', ' ' });
+
+            var builder = new ExpressionBuilder()
+                .Chain<Lower>()
+                .Chain<PadRight>(context.Variables["myVar"]!, context.CurrentObject[1]!);
+            var expression = builder.Build();
+            Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla***"));
+        }
+
+        [Test]
         public void Chain_NotGeneric_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder()
@@ -83,7 +97,6 @@ namespace Expressif.Testing
             var expression = builder.Build();
             Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));
         }
-
 
         [Test]
         public void Chain_IFunction_CorrectlyEvaluate()

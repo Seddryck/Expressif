@@ -26,7 +26,23 @@ Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("Nikola Tesla***"));
 ```
 <!-- END INCLUDE -->
 
-You can build your final expression by combining other expressions. Use also the function `Chain` with an expression as parameter.
+You can use the context values as parameters of the function. 
+
+<!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_MultipleWithContext_CorrectlyEvaluate" -->
+```csharp
+var context = new Context();
+context.Variables.Add<int>("myVar", 15);
+context.CurrentObject.Set(new List<char>() { '-', '*', ' ' });
+
+var builder = new ExpressionBuilder()
+    .Chain<Lower>()
+    .Chain<PadRight>(context.Variables["myVar"]!, context.CurrentObject[1]!);
+var expression = builder.Build();
+Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla***"));
+```
+<!-- END INCLUDE -->
+
+You can build your final expression by combining other expressions. Use also the function `Chain` with an expression as parameter. Using subexpression to define a parameter of a function is currently not supported.
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_SubExpression_CorrectlyEvaluate" -->
 ```csharp
@@ -44,7 +60,7 @@ Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));
 ```
 <!-- END INCLUDE -->
 
-If you don't like generics, you can also use the override of the method `Chain` accepting types.
+If you don't like generics (or if you cannot use them), you can also use the override of the method `Chain` accepting types.
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_NotGeneric_CorrectlyEvaluate" -->
 ```csharp
