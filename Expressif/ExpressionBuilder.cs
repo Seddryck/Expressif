@@ -34,10 +34,10 @@ namespace Expressif
 
         public Queue<object> Pile { get; } = new();
 
-        public ExpressionBuilder Chain<T>(params object[] parameters) where T : IFunction
+        public ExpressionBuilder Chain<T>(params object?[] parameters) where T : IFunction
             => Chain(typeof(T), parameters);
 
-        public ExpressionBuilder Chain(Type type, params object[] parameters)
+        public ExpressionBuilder Chain(Type type, params object?[] parameters)
         {
             if (!type.GetInterfaces().Contains(typeof(IFunction)))
                 throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IFunction)}'. Only types implementing this interface can be chained to create an expression.", nameof(type));

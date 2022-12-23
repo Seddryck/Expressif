@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Expressif.Functions.Serializer
                 serializedParameters.Add(ParameterSerializer.Serialize(parameter switch
                 {
                     IParameter p => p,
-                    _ => new LiteralParameter(parameter.ToString()!)
+                    _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
                 }));
             }
             var function = member.Type.Name.ToKebabCase();
