@@ -25,78 +25,78 @@ namespace Expressif
 
         public Queue<object> Pile { get; } = new();
 
-        public PredicationBuilder Chain<P>(params object[] parameters)
+        public PredicationBuilder Chain<P>(params object?[] parameters)
             where P : IPredicate
             => ChainWork(null, typeof(P), parameters);
 
-        public PredicationBuilder Ever<P>(params object[] parameters)
+        public PredicationBuilder Ever<P>(params object?[] parameters)
             where P : IPredicate
             => Chain<P>(parameters);
 
-        public PredicationBuilder Not<P>(params object[] parameters)
+        public PredicationBuilder Not<P>(params object?[] parameters)
             where P : IPredicate
             => ChainWork(null, typeof(NotOperator), typeof(P), parameters);
 
-        public PredicationBuilder And<P>(params object[] parameters)
+        public PredicationBuilder And<P>(params object?[] parameters)
             where P : IPredicate
             => ChainWork(typeof(AndOperator), typeof(P), parameters);
 
-        public PredicationBuilder Or<P>(params object[] parameters)
+        public PredicationBuilder Or<P>(params object?[] parameters)
             where P : IPredicate
             => ChainWork(typeof(OrOperator), typeof(P), parameters);
 
-        public PredicationBuilder Xor<P>(params object[] parameters)
+        public PredicationBuilder Xor<P>(params object?[] parameters)
             where P : IPredicate
             => ChainWork(typeof(XorOperator), typeof(P), parameters);
 
-        public PredicationBuilder Chain<O, P>(params object[] parameters)
+        public PredicationBuilder Chain<O, P>(params object?[] parameters)
             where O : ICombinationOperator
             where P : IPredicate
             => ChainWork(typeof(O), typeof(P), parameters);
 
-        public PredicationBuilder And<N, P>(params object[] parameters)
+        public PredicationBuilder And<N, P>(params object?[] parameters)
             where N : INegationOperator
             where P : IPredicate
             => ChainWork(typeof(AndOperator), typeof(N), typeof(P), parameters);
 
-        public PredicationBuilder Or<N, P>(params object[] parameters)
+        public PredicationBuilder Or<N, P>(params object?[] parameters)
             where N : INegationOperator
             where P : IPredicate
             => ChainWork(typeof(OrOperator), typeof(N), typeof(P), parameters);
 
-        public PredicationBuilder Xor<N, P>(params object[] parameters)
+        public PredicationBuilder Xor<N, P>(params object?[] parameters)
             where N : INegationOperator
             where P : IPredicate
             => ChainWork(typeof(XorOperator), typeof(N), typeof(P), parameters);
 
-        public PredicationBuilder Chain<O, N, P>(params object[] parameters)
+        public PredicationBuilder Chain<O, N, P>(params object?[] parameters)
             where O : ICombinationOperator
             where N : INegationOperator
             where P : IPredicate
             => ChainWork(typeof(O), typeof(N), typeof(P), parameters);
 
-        public PredicationBuilder Chain(Type predicate, params object[] parameters)
+        public PredicationBuilder Chain(Type predicate, params object?[] parameters)
             => ChainWork(null, predicate, parameters);
 
-        public PredicationBuilder And(Type predicate, params object[] parameters)
+        public PredicationBuilder And(Type predicate, params object?[] parameters)
             => ChainWork(typeof(AndOperator), predicate, parameters);
 
-        public PredicationBuilder Or(Type predicate, params object[] parameters)
+        public PredicationBuilder Or(Type predicate, params object?[] parameters)
             => ChainWork(typeof(OrOperator), predicate, parameters);
 
-        public PredicationBuilder Xor(Type predicate, params object[] parameters)
+        public PredicationBuilder Xor(Type predicate, params object?[] parameters)
             => ChainWork(typeof(XorOperator), predicate, parameters);
 
-        public PredicationBuilder Chain(Type @operator, Type predicate, params object[] parameters)
+        public PredicationBuilder Chain(Type @operator, Type predicate, params object?[] parameters)
             => ChainWork(@operator, predicate, parameters);
 
-        public PredicationBuilder Chain(Type @operator, Type negation, Type predicate, params object[] parameters)
+        public PredicationBuilder Chain(Type @operator, Type negation, Type predicate, params object?[] parameters)
             => ChainWork(@operator, negation, predicate, parameters);
 
-        protected PredicationBuilder ChainWork(Type? @operator, Type predicate, params object[] parameters)
+        protected PredicationBuilder ChainWork(Type? @operator, Type predicate, params object?[] parameters)
             => ChainWork(@operator, typeof(EverOperator), predicate, parameters);
 
-        protected PredicationBuilder ChainWork(Type? @operator, Type negation, Type predicate, params object[] parameters)
+        protected PredicationBuilder ChainWork(Type? @operator, Type negation, Type predicate, params object?[] parameters)
         {
             if (@operator != null && !@operator.GetInterfaces().Contains(typeof(ICombinationOperator)))
                 throw new ArgumentException($"The type '{@operator.FullName}' doesn't implement the interface '{nameof(ICombinationOperator)}'. Only types implementing this interface can create chains in a predication.", nameof(@operator));

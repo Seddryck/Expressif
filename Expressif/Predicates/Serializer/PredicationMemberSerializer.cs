@@ -1,6 +1,7 @@
 ﻿using Expressif.Functions.Serializer;
 using Expressif.Parsers;
 using Expressif.Predicates.Combination;
+using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Expressif.Predicates.Serializer
                 serializedParameters.Add(ParameterSerializer.Serialize(parameter switch
                 {
                     IParameter p => p,
-                    _ => new LiteralParameter(parameter.ToString()!)
+                    _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
                 }));
             }
 
