@@ -23,11 +23,13 @@
   - numeric-predicates
   - temporal-predicates
 
+- title: Alternative usages of Expressif 
+  docs:
+  - builder-expression
+  - builder-predication
+
 - title: Extending Expressif
   docs:
   - composition-named-functions
   - custom-function
 
-- title: Alternative usages of Expressif 
-  docs:
-  - classical-csharp-functions
