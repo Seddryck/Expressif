@@ -32,15 +32,15 @@ after_test:
 - ps: >-
     $ErrorActionPreference = "Stop"
 
-    dotnet test -c Release -f net6.0 /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,cobertura\" /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
+    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,cobertura\" /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
 
     if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
-- ps: >-
-    $ProgressPreference = 'SilentlyContinue'
-    
-    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-    
-    .\codecov.exe
+#- ps: >-
+#    $ProgressPreference = 'SilentlyContinue'
+#    
+#    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+#    
+#    .\codecov.exe
 
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo 
 
