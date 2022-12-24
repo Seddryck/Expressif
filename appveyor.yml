@@ -31,12 +31,10 @@ after_test:
 - ps: >-
     $ErrorActionPreference = "Stop"
 
-    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
+    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,cobertura\" /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
 
     if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
 - ps: >-
-    get-content Expressif.Testing/coverage.net7.0.json
-
     $ProgressPreference = 'SilentlyContinue'
     
     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
