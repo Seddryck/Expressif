@@ -31,7 +31,7 @@ after_test:
 - ps: >-
     $ErrorActionPreference = "Stop"
 
-    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
+    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
 
     if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
 - ps: >-
