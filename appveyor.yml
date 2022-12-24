@@ -35,6 +35,8 @@ after_test:
 
     if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
 - ps: >-
+    get-content Expressif.Testing/coverage.net7.0.json
+
     $ProgressPreference = 'SilentlyContinue'
     
     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
