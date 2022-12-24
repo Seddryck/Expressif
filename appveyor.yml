@@ -15,6 +15,7 @@ environment:
 init:
   - cmd: git config --global core.autocrlf true
   - ps: $env:IGNORE_NORMALISATION_GIT_HEAD_MOVE = 1
+  - cmd: dotnet --version
 
 before_build:
 - cmd: gitversion /output buildserver /verbosity Minimal
