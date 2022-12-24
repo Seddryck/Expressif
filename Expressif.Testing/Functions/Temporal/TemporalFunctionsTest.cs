@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -123,10 +124,15 @@ namespace Expressif.Testing.Functions.Temporal
             .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
-        [TestCase(9, 8, 44)]
-        [TestCase(12, 28, 43)]
-        public void DateToAge_Born1978_Min43(int month, int day, int age)
-            => Assert.That(new Age().Evaluate(new DateTime(1978, month, day)), Is.AtLeast(age));
+        [TestCase("1978-12-28", 43)]
+        [TestCase("2010-07-04", 12)]
+        public void Age_Valid(DateTime value, int expected)
+            => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
+
+        [Test]
+        [TestCase(null, 0)]
+        public void Age_Null_0(object? value, int expected)
+            => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
 
         [Test]
         [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
@@ -157,11 +163,22 @@ namespace Expressif.Testing.Functions.Temporal
                 , Is.EqualTo(expected));
 
         [Test]
-        [TestCase("2018-02-01")]
-        [TestCase("2018-02-01 00:00:00")]
-        [TestCase("2018-02-01 07:00:00")]
-        public void DateTimeToDate_Valid(object value)
-            => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(new DateTime(2018, 2, 1)));
+        [TestCase("2018-02-01", "2018-02-01")]
+        [TestCase("2018-02-01 00:00:00", "2018-02-01")]
+        [TestCase("2018-02-01 07:00:00", "2018-02-01")]
+        public void DateTimeToDate_Valid(object value, DateTime expected)
+            => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase("2018-02-01", "2018-02-01")]
+        public void DateTimeToDate_DateOnly_Valid(string value, DateTime expected)
+            => Assert.That(new DateTimeToDate().Evaluate(DateOnly.Parse(value)), Is.EqualTo(expected));
+
+        [Test]
+        [TestCase("2018-02-01T00:00:00Z", "2018-02-01")]
+        [TestCase("2018-02-01T00:00:00+01:00", "2018-01-31")]
+        public void DateTimeToDate_DateTimeOffset_Valid(string value, DateTime expected)
+            => Assert.That(new DateTimeToDate().Evaluate(DateTimeOffset.Parse(value)), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2018-02-01 07:00:00", "2018-02-01 07:00:00")]
@@ -175,9 +192,17 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("(empty)", "2001-01-01")]
         [TestCase("2018-02-31", "2001-01-01")]
         [TestCase("(null)", null)]
+        [TestCase(null, null)]
         public void InvalidToDate_Valid(object value, DateTime? expected)
             => Assert.That(new InvalidToDate(new LiteralScalarResolver<DateTime>(new DateTime(2001, 1, 1))).Evaluate(value)
                 , Is.EqualTo(expected==null ? new Null() : expected));
+
+        [Test]
+        [TestCase(typeof(DBNull), "2001-01-01")]
+        public void InvalidToDate_DBNull_Valid(Type type, DateTime ? expected)
+            => Assert.That(new InvalidToDate(new LiteralScalarResolver<DateTime>(new DateTime(2001, 1, 1))).Evaluate(
+                type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+                , Is.EqualTo(new Null()));
 
         [Test]
         [TestCase("2018-02-01 00:00:00", "2018-02-01")]

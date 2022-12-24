@@ -47,10 +47,10 @@ namespace Expressif.Functions.Special
             if (new Whitespace().Equals(value))
                 return EvaluateBlank();
 
-            if (new Any().Equals(value))
+            if (new Any().Keyword.Equals(value))
                 return EvaluateAny();
 
-            if (new Value().Equals(value))
+            if (new Value().Keyword.Equals(value))
                 return EvaluateValue();
 
             return EvaluateString(value);

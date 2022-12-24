@@ -14,6 +14,10 @@ namespace Expressif.Testing
     public class PredicationBuilderTest
     {
         [Test]
+        public void Build_NoPredicate_ThrowException()
+            => Assert.Throws<InvalidOperationException>(() => new PredicationBuilder().Build());
+
+        [Test]
         public void Chain_WithoutParameter_CorrectlyEvaluate()
         {
             var builder = new PredicationBuilder().Chain<LowerCase>();
@@ -200,5 +204,9 @@ namespace Expressif.Testing
             var str = builder.Serialize();
             Assert.That(str, Is.EqualTo("starts-with(ola) |OR !ends-with(sla)"));
         }
+
+        [Test]
+        public void Serialize_NoPredicate_ThrowException()
+            => Assert.Throws<InvalidOperationException>(() => new PredicationBuilder().Serialize());
     }
 }

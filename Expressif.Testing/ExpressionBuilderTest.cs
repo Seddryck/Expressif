@@ -13,6 +13,10 @@ namespace Expressif.Testing
     public class ExpressionBuilderTest
     {
         [Test]
+        public void Build_NoPredicate_ThrowException()
+            => Assert.Throws<InvalidOperationException>(() => new ExpressionBuilder().Build());
+
+        [Test]
         public void Chain_WithoutParameter_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder().Chain<Lower>();
@@ -129,5 +133,9 @@ namespace Expressif.Testing
             var str = builder.Serialize();
             Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
         }
+
+        [Test]
+        public void Serialize_NoPredicate_ThrowException()
+            => Assert.Throws<InvalidOperationException>(() => new ExpressionBuilder().Serialize());
     }
 }

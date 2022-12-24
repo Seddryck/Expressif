@@ -5,6 +5,7 @@ using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("abc   123")]
         [TestCase("  abc   123  ")]
         [TestCase("  abc ,  123  ")]
+        [TestCase("")]
         public void TokenCount_DefaultSeparator_Valid(string value)
         {
             var tokenCount = (int)new TokenCount().Evaluate(value)!;
@@ -61,19 +63,65 @@ namespace Expressif.Testing.Functions.Text
         }
 
         [Test]
+        [TestCase("abc-123")]
+        [TestCase("abc 123 ")]
+        [TestCase("-abc-123")]
+        [TestCase("abc---123")]
+        [TestCase("--abc---123--")]
+        [TestCase("--abc-,--123--")]
+        [TestCase("")]
+        public void TokenCount_CustomSeparator_Valid(string value)
+        {
+            var tokenCount = (int)new TokenCount(new LiteralScalarResolver<char>('-')).Evaluate(value)!;
+
+            for (int i = 0; i < tokenCount; i++)
+            {
+                var nextToken = new Token(new LiteralScalarResolver<int>(i), new LiteralScalarResolver<char>('-'));
+                Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(new Null()));
+            }
+
+            var Token = new Token(new LiteralScalarResolver<int>(tokenCount), new LiteralScalarResolver<char>('-'));
+            Assert.That(Token.Evaluate(value), Is.EqualTo(new Null()));
+        }
+
+        [Test]
         [TestCase("")]
         [TestCase("\t")]
         [TestCase(" \t")]
         [TestCase(" ")]
         [TestCase("\r\n")]
-        public void BlankToEmpty_Empty(string value)
+        public void WhitespacesToEmpty_Empty(string value)
             => Assert.That(new WhitespacesToEmpty().Evaluate(value), Is.EqualTo(new Empty()));
+
+        [Test]
+        [TestCase(typeof(Empty))]
+        [TestCase(typeof(Whitespace))]
+        public void WhitespacesToEmpty_SpecialType_Empty(Type type)
+        {
+            var obj = type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>());
+            Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.EqualTo(new Empty()));
+        }
 
         [Test]
         [TestCase("foo")]
         [TestCase("(null)")]
-        public void BlankToEmpty_NotEmpty(string value)
+        public void WhitespacesToEmpty_NotEmpty(string value)
             => Assert.That(new WhitespacesToEmpty().Evaluate(value), Is.Not.EqualTo(new Empty()));
+
+        [Test]
+        [TestCase(typeof(Null))]
+        public void WhitespacesToEmpty_SpecialType_NotEmpty(Type type)
+        {
+            var obj = type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>());
+            Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.Not.EqualTo(new Empty()));
+        }
+
+        [Test]
+        [TestCase(typeof(DBNull))]
+        public void NullToValue_DBNull_Null(Type type)
+            => Assert.That(new WhitespacesToEmpty().Evaluate(
+                type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+                , Is.Not.EqualTo(new Empty()));
 
         [Test]
         [TestCase("")]
@@ -278,11 +326,13 @@ namespace Expressif.Testing.Functions.Text
 
         [Test]
         [TestCase("1234", 9, '0', "123400000")]
+        [TestCase(1234, 9, '0', "123400000")]
         [TestCase("1234", 9, '*', "1234*****")]
+        [TestCase(1234, 9, '*', "1234*****")]
         [TestCase("123456789", 3, '0', "123456789")]
         [TestCase("(null)", 3, '0', "000")]
         [TestCase("(empty)", 3, '0', "000")]
-        public void PadRight_Valid(string value, int length, char character, string expected)
+        public void PadRight_Valid(object value, int length, char character, string expected)
             => Assert.That(new PadRight(new LiteralScalarResolver<int>(length), new LiteralScalarResolver<char>(character))
                 .Evaluate(value), Is.EqualTo(expected));
 

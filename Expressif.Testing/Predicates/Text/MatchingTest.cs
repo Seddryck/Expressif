@@ -75,15 +75,19 @@ namespace Expressif.Testing.Predicates.Text
 
         [Test]
         public void MatchesDate_InvariantCultureDateTime_Valid()
-            => Assert.That(new MatchesDate().Evaluate(new System.DateTime(2022, 10, 5)), Is.True);
+            => Assert.That(new MatchesDate().Evaluate(new DateTime(2022, 10, 5)), Is.True);
 
         [Test]
         public void MatchesDate_InvariantCultureDateTime_Invalid()
-            => Assert.That(new MatchesDate().Evaluate(new System.DateTime(2022, 10, 5, 10, 5, 10)), Is.False);
+            => Assert.That(new MatchesDate().Evaluate(new DateTime(2022, 10, 5, 10, 5, 10)), Is.False);
 
         [Test]
-        public void MatchesDateOnly_InvariantCultureDateOnly_Valid()
-            => Assert.That(new MatchesDateTime().Evaluate(new DateOnly(2022, 10, 5)), Is.True);
+        public void MatchesDate_InvariantCultureDateOnly_Valid()
+            => Assert.That(new MatchesDate().Evaluate(new DateOnly(2022, 10, 5)), Is.True);
+
+        [Test]
+        public void MatchesDate_InvariantCultureTimeOnly_Valid()
+            => Assert.That(new MatchesDate().Evaluate(new TimeOnly(10, 10, 5)), Is.False);
 
         [Test]
         [TestCase("2022-11-02", false)]
@@ -106,11 +110,11 @@ namespace Expressif.Testing.Predicates.Text
 
         [Test]
         public void MatchesDate_FrenchCultureDateTime_Valid()
-            => Assert.That(new MatchesDate().Evaluate(new System.DateTime(2022, 10, 5)), Is.True);
+            => Assert.That(new MatchesDate().Evaluate(new DateTime(2022, 10, 5)), Is.True);
 
         [Test]
         public void MatchesDate_FrenchCultureDateTime_Invalid()
-            => Assert.That(new MatchesDate().Evaluate(new System.DateTime(2022, 10, 5, 10, 5, 10)), Is.False);
+            => Assert.That(new MatchesDate().Evaluate(new DateTime(2022, 10, 5, 10, 5, 10)), Is.False);
 
         [Test]
         [TestCase("2022-11-02", false)]
@@ -162,6 +166,10 @@ namespace Expressif.Testing.Predicates.Text
         [Test]
         public void MatchesDateTime_InvariantCultureDateOnly_Valid()
             => Assert.That(new MatchesDateTime().Evaluate(new DateOnly(2022, 10, 5)), Is.True);
+
+        [Test]
+        public void MatchesDateTime_InvariantCultureTimeOnly_Valid()
+            => Assert.That(new MatchesDateTime().Evaluate(new TimeOnly(10, 10, 5)), Is.False);
 
         [Test]
         [TestCase("2022-11-02", false)]

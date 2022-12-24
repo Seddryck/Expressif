@@ -15,6 +15,7 @@ environment:
 init:
   - cmd: git config --global core.autocrlf true
   - ps: $env:IGNORE_NORMALISATION_GIT_HEAD_MOVE = 1
+  - cmd: dotnet --version
 
 before_build:
 - cmd: gitversion /output buildserver /verbosity Minimal
@@ -28,6 +29,19 @@ test_script:
 - dotnet test Expressif.Testing -c Release --test-adapter-path:. --logger:Appveyor --no-build --nologo 
 
 after_test:
+- ps: >-
+    $ErrorActionPreference = "Stop"
+
+    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,cobertura\" /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
+
+    if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
+#- ps: >-
+#    $ProgressPreference = 'SilentlyContinue'
+#    
+#    Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
+#    
+#    .\codecov.exe
+
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo 
 
 artifacts:

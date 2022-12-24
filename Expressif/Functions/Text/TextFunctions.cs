@@ -19,7 +19,10 @@ namespace Expressif.Functions.Text
             return value switch
             {
                 null => EvaluateNull(),
+                Null => EvaluateNull(),
                 DBNull _ => EvaluateNull(),
+                Empty _ => EvaluateEmpty(),
+                Whitespace _ => EvaluateBlank(),
                 string s => EvaluateHighLevelString(s),
                 _ => EvaluateUncasted(value),
             };
