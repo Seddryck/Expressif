@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Text
 {
-    abstract class BaseTextPredicate : BasePredicate
+    public abstract class BaseTextPredicate : BasePredicate
     {
         public override bool Evaluate(object? value)
         {
@@ -38,7 +38,7 @@ namespace Expressif.Predicates.Text
         }
     }
 
-    abstract class BaseTextPredicateWithoutReference : BaseTextPredicate
+    public abstract class BaseTextPredicateWithoutReference : BaseTextPredicate
     {
         protected override bool EvaluateBaseText(string value)
         {
@@ -53,7 +53,7 @@ namespace Expressif.Predicates.Text
         protected abstract bool EvaluateText(string value);
     }
 
-    abstract class BaseTextPredicateReference : BaseTextPredicate
+    public abstract class BaseTextPredicateReference : BaseTextPredicate
     {
         public Func<string> Reference { get; }
 

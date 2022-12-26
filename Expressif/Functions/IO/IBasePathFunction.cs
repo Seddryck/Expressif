@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.IO
 {
-    public interface IBasePathTransformation
+    public interface IBasePathFunction
     { }
 }

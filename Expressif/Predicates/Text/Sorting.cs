@@ -13,7 +13,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Compare the text value passed as argument and the text value passed as parameter and returns `true` if they are equal. By default the comparison is agnostic of the culture and case-insensitive.
     /// </summary>
-    internal class EquivalentTo : BaseTextPredicateReference
+    public class EquivalentTo : BaseTextPredicateReference
     {
         protected StringComparer Comparer { get; }
 
@@ -33,7 +33,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value. By default the comparison is agnostic of the culture and case-insensitive.
     /// </summary>
-    internal class SortedAfter : EquivalentTo
+    public class SortedAfter : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public SortedAfter(Func<string> reference)
@@ -50,7 +50,7 @@ namespace Expressif.Predicates.Text
 
     /// <summary>
     /// Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive./// </summary>
-    internal class SortedAfterOrEquivalentTo : EquivalentTo
+    public class SortedAfterOrEquivalentTo : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public SortedAfterOrEquivalentTo(Func<string> reference)
@@ -68,7 +68,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value. By default the comparison is agnostic of the culture and case-insensitive.
     /// </summary>
-    internal class SortedBefore : EquivalentTo
+    public class SortedBefore : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public SortedBefore(Func<string> reference)
@@ -86,7 +86,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.
     /// </summary>
-    internal class SortedBeforeOrEquivalentTo : EquivalentTo
+    public class SortedBeforeOrEquivalentTo : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public SortedBeforeOrEquivalentTo(Func<string> reference)

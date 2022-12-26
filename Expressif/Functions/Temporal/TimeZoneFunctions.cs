@@ -9,7 +9,7 @@ namespace Expressif.Functions.Temporal
     /// Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.
     /// </summary>
     [Function(prefix: "")]
-    class UtcToLocal : BaseTemporalFunction
+    public class UtcToLocal : BaseTemporalFunction
     {
         public Func<string> TimeZoneLabel { get; }
 
@@ -42,7 +42,7 @@ namespace Expressif.Functions.Temporal
     /// Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
     /// </summary>
     [Function(prefix: "")]
-    class LocalToUtc : UtcToLocal
+    public class LocalToUtc : UtcToLocal
     {
         public LocalToUtc(Func<string> timeZoneLabel)
             : base(timeZoneLabel)

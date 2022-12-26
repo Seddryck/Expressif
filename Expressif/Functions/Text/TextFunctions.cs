@@ -12,7 +12,7 @@ using System.Text;
 namespace Expressif.Functions.Text
 {
     [Function]
-    abstract class BaseTextFunction : IFunction
+    public abstract class BaseTextFunction : IFunction
     {
         public object? Evaluate(object? value)
         {
@@ -64,18 +64,18 @@ namespace Expressif.Functions.Text
     /// Returns the argument value converted to an HTML-encoded string
     /// </summary>
     [Function(prefix: "")]
-    class TextToHtml : BaseTextFunction
+    public class TextToHtml : BaseTextFunction
     {
         protected override object EvaluateString(string value) => WebUtility.HtmlEncode(value);
     }
 
-    abstract class BaseTextCasing : BaseTextFunction
+    public abstract class BaseTextCasing : BaseTextFunction
     { }
 
     /// <summary>
     /// Returns the argument value converted to lowercase using the casing rules of the invariant culture.
     /// </summary>
-    class Lower : BaseTextCasing
+    public class Lower : BaseTextCasing
     {
         protected override object EvaluateString(string value) => value.ToLowerInvariant();
     }
@@ -83,7 +83,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument value converted to uppercase using the casing rules of the invariant culture.
     /// </summary>
-    class Upper : BaseTextCasing
+    public class Upper : BaseTextCasing
     {
         protected override object EvaluateString(string value) => value.ToUpperInvariant();
     }
@@ -91,13 +91,13 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument value without all leading or trailing white-space characters.
     /// </summary>
-    class Trim : BaseTextFunction
+    public class Trim : BaseTextFunction
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value.Trim();
     }
 
-    abstract class BaseTextAppend : BaseTextFunction
+    public abstract class BaseTextAppend : BaseTextFunction
     {
         public Func<string> Append { get; }
         public BaseTextAppend(Func<string> append)
@@ -110,7 +110,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument value preceeded by the parameter value.
     /// </summary>
-    class Prefix : BaseTextAppend
+    public class Prefix : BaseTextAppend
     {
         /// <param name="prefix">The text to append</param>
         public Prefix(Func<string> prefix)
@@ -121,7 +121,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument value followed by the parameter value.
     /// </summary>
-    class Suffix : BaseTextAppend
+    public class Suffix : BaseTextAppend
     {
         /// <param name="suffix">The text to append</param>
         public Suffix(Func<string> suffix)
@@ -129,7 +129,7 @@ namespace Expressif.Functions.Text
         protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
     }
 
-    abstract class BaseTextLength : BaseTextFunction
+    public abstract class BaseTextLength : BaseTextFunction
     {
         public Func<int> Length { get; }
 
@@ -140,7 +140,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
     /// </summary>
-    class FirstChars : BaseTextLength
+    public class FirstChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
         public FirstChars(Func<int> length)
@@ -153,7 +153,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
     /// </summary>
-    class LastChars : BaseTextLength
+    public class LastChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
         public LastChars(Func<int> length)
@@ -166,7 +166,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`. 
     /// </summary>
-    class SkipFirstChars : BaseTextLength
+    public class SkipFirstChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
         public SkipFirstChars(Func<int> length)
@@ -179,7 +179,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`. 
     /// </summary>
-    class SkipLastChars : BaseTextLength
+    public class SkipLastChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
         public SkipLastChars(Func<int> length) 
@@ -189,7 +189,7 @@ namespace Expressif.Functions.Text
             => value.Length <= Length.Invoke() ? new Empty().Keyword : value.Substring(0, value.Length - Length.Invoke());
     }
 
-    abstract class BasePaddingFunction : BaseTextLength
+    public abstract class BasePaddingFunction : BaseTextLength
     {
         public Func<char> Character { get; }
 
@@ -205,7 +205,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
     /// </summary>
-    class PadRight : BasePaddingFunction
+    public class PadRight : BasePaddingFunction
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
         /// <param name="character">The padding character</param>
@@ -219,7 +219,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
     /// </summary>
-    class PadLeft : BasePaddingFunction
+    public class PadLeft : BasePaddingFunction
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
         /// <param name="character">The padding character</param>
@@ -234,7 +234,7 @@ namespace Expressif.Functions.Text
     /// Returns the argument value except if this value only contains white-space characters then it returns `empty`.
     /// </summary>
     [Function(prefix:"", aliases: new[] {"blank-to-empty"})]
-    class WhitespacesToEmpty : BaseTextFunction
+    public class WhitespacesToEmpty : BaseTextFunction
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
@@ -244,7 +244,7 @@ namespace Expressif.Functions.Text
     /// Returns the argument value except if this value only contains white-space characters then it returns `null`.
     /// </summary>
     [Function(prefix: "", aliases: new[] { "blank-to-null" })]
-    class WhitespacesToNull : BaseTextFunction
+    public class WhitespacesToNull : BaseTextFunction
     {
         protected override object EvaluateBlank() => new Null().Keyword;
         protected override object EvaluateEmpty() => new Null().Keyword;
@@ -255,7 +255,7 @@ namespace Expressif.Functions.Text
     /// Returns the argument value except if this value is `empty` then it returns `null`.
     /// </summary>
     [Function(prefix: "")]
-    class EmptyToNull : BaseTextFunction
+    public class EmptyToNull : BaseTextFunction
     {
         protected override object EvaluateEmpty() => new Null().Keyword;
         protected override object EvaluateString(string value) => value;
@@ -265,7 +265,7 @@ namespace Expressif.Functions.Text
     /// Returns the argument value except if this value is `null` then it returns `empty`.
     /// </summary>
     [Function(prefix: "")]
-    class NullToEmpty : BaseTextFunction
+    public class NullToEmpty : BaseTextFunction
     {
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
@@ -275,7 +275,7 @@ namespace Expressif.Functions.Text
     /// Returns the argument value that has previously been HTML-encoded into a decoded string.
     /// </summary>
     [Function(prefix: "")]
-    class HtmlToText : BaseTextFunction
+    public class HtmlToText : BaseTextFunction
     {
         protected override object EvaluateString(string value) => WebUtility.HtmlDecode(value);
     }
@@ -283,7 +283,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`. 
     /// </summary>
-    class Length : BaseTextFunction
+    public class Length : BaseTextFunction
     {
         protected override object EvaluateSpecial(string value) => -1;
         protected override object EvaluateBlank() => -1;
@@ -295,7 +295,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.
     /// </summary>
-    class Token : BaseTextFunction
+    public class Token : BaseTextFunction
     {
         public Func<int> Index { get; }
         public Func<char>? Separator { get; }
@@ -326,7 +326,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.
     /// </summary>
-    class TokenCount : Length
+    public class TokenCount : Length
     {
         public Func<char>? Separator { get; }
         public TokenCount()
@@ -350,7 +350,7 @@ namespace Expressif.Functions.Text
     /// Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
     /// </summary>
     [Function(prefix: "")]
-    class TextToDateTime : BaseTextFunction
+    public class TextToDateTime : BaseTextFunction
     {
         public Func<string> Format { get; }
         public Func<string> Culture { get; }
@@ -378,7 +378,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.
     /// </summary>
-    class RemoveChars : BaseTextFunction
+    public class RemoveChars : BaseTextFunction
     {
         public Func<char> CharToRemove { get; }
 
@@ -408,7 +408,7 @@ namespace Expressif.Functions.Text
     /// Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.
     /// </summary>
     [Function(prefix: "")]
-    class TextToMask : BaseTextFunction
+    public class TextToMask : BaseTextFunction
     {
         private char maskChar { get; } = '*';
         public Func<string> Mask { get; }
@@ -440,7 +440,7 @@ namespace Expressif.Functions.Text
     /// Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.
     /// </summary>
     [Function(prefix: "")]
-    class MaskToText : BaseTextFunction
+    public class MaskToText : BaseTextFunction
     {
         private char maskChar { get; } = '*';
         public Func<string> Mask { get; }

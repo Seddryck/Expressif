@@ -11,7 +11,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
     /// </summary>
-    class AnyOf : BaseTextPredicate
+    public class AnyOf : BaseTextPredicate
     {
         public IEnumerable<Func<string>> References { get; }
         protected StringComparer Comparer { get; }

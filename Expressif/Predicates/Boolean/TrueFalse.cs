@@ -10,7 +10,7 @@ namespace Expressif.Predicates.Boolean
     /// <summary>
     /// Returns `true` if the argument is effectively `true` else return `false`.
     /// </summary>
-    class True : BaseBooleanPredicate
+    public class True : BaseBooleanPredicate
     {
         protected override bool EvaluateBoolean(bool boolean) => boolean;
     }
@@ -18,7 +18,7 @@ namespace Expressif.Predicates.Boolean
     /// <summary>
     /// Returns `true` if the argument is effectively `true` or `null` else return `false`.
     /// </summary>
-    class TrueOrNull : True
+    public class TrueOrNull : True
     {
         protected override bool EvaluateNull() => true;
     }
@@ -26,7 +26,7 @@ namespace Expressif.Predicates.Boolean
     /// <summary>
     /// Returns `true` if the argument is effectively `false` else return `false`.
     /// </summary>
-    class False : BaseBooleanPredicate
+    public class False : BaseBooleanPredicate
     {
         protected override bool EvaluateBoolean(bool boolean) => !boolean;
     }
@@ -34,7 +34,7 @@ namespace Expressif.Predicates.Boolean
     /// <summary>
     /// Returns `true` if the argument is effectively `false` or `null` else return `false`.
     /// </summary>
-    class FalseOrNull : False
+    public class FalseOrNull : False
     {
         protected override bool EvaluateNull() => true;
     }

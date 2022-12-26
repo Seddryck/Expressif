@@ -1,6 +1,7 @@
 [
   {
     "Name": "any-of",
+    "IsPublic": true,
     "Aliases": [
       "text-is-any-of"
     ],
@@ -21,6 +22,7 @@
   },
   {
     "Name": "on-the-day",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-on-the-day"
     ],
@@ -30,6 +32,7 @@
   },
   {
     "Name": "on-the-hour",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-on-the-hour"
     ],
@@ -39,6 +42,7 @@
   },
   {
     "Name": "on-the-minute",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-on-the-minute"
     ],
@@ -48,6 +52,7 @@
   },
   {
     "Name": "null",
+    "IsPublic": true,
     "Aliases": [
       "is-null"
     ],
@@ -57,6 +62,7 @@
   },
   {
     "Name": "equal-to",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-equal-to"
     ],
@@ -72,6 +78,7 @@
   },
   {
     "Name": "greater-than",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-greater-than"
     ],
@@ -87,6 +94,7 @@
   },
   {
     "Name": "greater-than-or-equal",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-greater-than-or-equal"
     ],
@@ -102,6 +110,7 @@
   },
   {
     "Name": "less-than",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-less-than"
     ],
@@ -117,6 +126,7 @@
   },
   {
     "Name": "contained-in",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-contained-in"
     ],
@@ -132,6 +142,7 @@
   },
   {
     "Name": "less-than-or-equal",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-less-than-or-equal"
     ],
@@ -147,6 +158,7 @@
   },
   {
     "Name": "modulo",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-modulo"
     ],
@@ -167,6 +179,7 @@
   },
   {
     "Name": "even",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-even"
     ],
@@ -176,6 +189,7 @@
   },
   {
     "Name": "odd",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-odd"
     ],
@@ -185,6 +199,7 @@
   },
   {
     "Name": "integer",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-integer"
     ],
@@ -194,6 +209,7 @@
   },
   {
     "Name": "zero-or-null",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-zero-or-null"
     ],
@@ -203,6 +219,7 @@
   },
   {
     "Name": "identical-to",
+    "IsPublic": true,
     "Aliases": [
       "boolean-is-identical-to"
     ],
@@ -218,6 +235,7 @@
   },
   {
     "Name": "true",
+    "IsPublic": true,
     "Aliases": [
       "boolean-is-true"
     ],
@@ -227,6 +245,7 @@
   },
   {
     "Name": "true-or-null",
+    "IsPublic": true,
     "Aliases": [
       "boolean-is-true-or-null"
     ],
@@ -236,6 +255,7 @@
   },
   {
     "Name": "within-interval",
+    "IsPublic": true,
     "Aliases": [
       "numeric-is-within-interval"
     ],
@@ -251,6 +271,7 @@
   },
   {
     "Name": "before-or-same-instant",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-before-or-same-instant"
     ],
@@ -266,6 +287,7 @@
   },
   {
     "Name": "before",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-before"
     ],
@@ -281,6 +303,7 @@
   },
   {
     "Name": "after-or-same-instant",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-after-or-same-instant"
     ],
@@ -296,6 +319,7 @@
   },
   {
     "Name": "lower-case",
+    "IsPublic": true,
     "Aliases": [
       "text-is-lower-case"
     ],
@@ -305,6 +329,7 @@
   },
   {
     "Name": "upper-case",
+    "IsPublic": true,
     "Aliases": [
       "text-is-upper-case"
     ],
@@ -314,6 +339,7 @@
   },
   {
     "Name": "matches-numeric",
+    "IsPublic": true,
     "Aliases": [
       "text-matches-numeric"
     ],
@@ -323,6 +349,7 @@
   },
   {
     "Name": "matches-date",
+    "IsPublic": true,
     "Aliases": [
       "text-matches-date"
     ],
@@ -332,6 +359,7 @@
   },
   {
     "Name": "matches-datetime",
+    "IsPublic": true,
     "Aliases": [
       "text-matches-datetime"
     ],
@@ -341,6 +369,7 @@
   },
   {
     "Name": "matches-time",
+    "IsPublic": true,
     "Aliases": [
       "text-matches-time"
     ],
@@ -350,6 +379,7 @@
   },
   {
     "Name": "equivalent-to",
+    "IsPublic": true,
     "Aliases": [
       "text-is-equivalent-to"
     ],
@@ -370,6 +400,7 @@
   },
   {
     "Name": "sorted-after",
+    "IsPublic": true,
     "Aliases": [
       "text-is-sorted-after"
     ],
@@ -390,6 +421,7 @@
   },
   {
     "Name": "sorted-after-or-equivalent-to",
+    "IsPublic": true,
     "Aliases": [
       "text-is-sorted-after-or-equivalent-to"
     ],
@@ -410,6 +442,7 @@
   },
   {
     "Name": "sorted-before",
+    "IsPublic": true,
     "Aliases": [
       "text-is-sorted-before"
     ],
@@ -430,6 +463,7 @@
   },
   {
     "Name": "sorted-before-or-equivalent-to",
+    "IsPublic": true,
     "Aliases": [
       "text-is-sorted-before-or-equivalent-to"
     ],
@@ -450,6 +484,7 @@
   },
   {
     "Name": "empty",
+    "IsPublic": true,
     "Aliases": [
       "text-is-empty"
     ],
@@ -459,6 +494,7 @@
   },
   {
     "Name": "empty-or-null",
+    "IsPublic": true,
     "Aliases": [
       "text-is-empty-or-null"
     ],
@@ -468,6 +504,7 @@
   },
   {
     "Name": "starts-with",
+    "IsPublic": true,
     "Aliases": [
       "text-starts-with"
     ],
@@ -488,6 +525,7 @@
   },
   {
     "Name": "ends-with",
+    "IsPublic": true,
     "Aliases": [
       "text-ends-with"
     ],
@@ -508,6 +546,7 @@
   },
   {
     "Name": "contains",
+    "IsPublic": true,
     "Aliases": [
       "text-contains"
     ],
@@ -528,6 +567,7 @@
   },
   {
     "Name": "matches-regex",
+    "IsPublic": true,
     "Aliases": [
       "text-matches-regex"
     ],
@@ -548,6 +588,7 @@
   },
   {
     "Name": "same-instant",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-same-instant"
     ],
@@ -563,6 +604,7 @@
   },
   {
     "Name": "after",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-is-after"
     ],
@@ -578,6 +620,7 @@
   },
   {
     "Name": "false",
+    "IsPublic": true,
     "Aliases": [
       "boolean-is-false"
     ],
@@ -587,6 +630,7 @@
   },
   {
     "Name": "false-or-null",
+    "IsPublic": true,
     "Aliases": [
       "boolean-is-false-or-null"
     ],

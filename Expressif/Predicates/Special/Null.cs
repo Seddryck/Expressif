@@ -11,7 +11,7 @@ namespace Expressif.Predicates.Special
     /// Returns `true` if the argument is effectively `null` else return `false`.
     /// </summary>
     [Predicate(prefix: "")]
-    class Null : BasePredicate
+    public class Null : BasePredicate
     {
         public override bool Evaluate(object? value)
         {

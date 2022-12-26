@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Text
 {
     [Predicate(false)]
-    abstract class BaseTextPredicateMatching : BaseTextPredicate
+    public abstract class BaseTextPredicateMatching : BaseTextPredicate
     {
         protected CultureInfo CultureInfo { get; }
 
@@ -35,7 +35,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise. 
     /// </summary>
-    class MatchesNumeric : BaseTextPredicateMatching
+    public class MatchesNumeric : BaseTextPredicateMatching
     {
         public MatchesNumeric()
             : base() { }
@@ -52,7 +52,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise. 
     /// </summary>
-    class MatchesDate : BaseTextPredicateMatching
+    public class MatchesDate : BaseTextPredicateMatching
     {
         public MatchesDate()
             : base() { }
@@ -78,7 +78,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise. 
     /// </summary>
-    class MatchesDateTime : BaseTextPredicateMatching
+    public class MatchesDateTime : BaseTextPredicateMatching
     {
         private string Pattern { get => CultureInfo.DateTimeFormat.ShortDatePattern + " " + CultureInfo.DateTimeFormat.LongTimePattern; }
 
@@ -103,7 +103,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise. 
     /// </summary>
-    class MatchesTime : BaseTextPredicateMatching
+    public class MatchesTime : BaseTextPredicateMatching
     {
         public MatchesTime()
             : base() { }

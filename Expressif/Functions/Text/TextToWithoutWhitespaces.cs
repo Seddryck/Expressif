@@ -10,7 +10,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument string without white-space characters
     /// </summary>
-    class WithoutWhitespaces : BaseTextFunction
+    public class WithoutWhitespaces : BaseTextFunction
     {
         protected override object EvaluateBlank() => new Empty().Keyword;
         protected override object EvaluateString(string value) => RemoveWhitespaces(value);
