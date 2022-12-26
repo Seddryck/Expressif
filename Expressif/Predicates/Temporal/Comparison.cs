@@ -13,11 +13,11 @@ namespace Expressif.Predicates.Temporal
     internal class SameInstant : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
-        public SameInstant(IScalarResolver<DateTime> reference)
+        public SameInstant(Func<DateTime> reference)
             : base(reference) { }
 
         protected override bool EvaluateDateTime(DateTime value)
-            => value.Equals(Reference.Execute());
+            => value.Equals(Reference.Invoke());
     }
 
     /// <summary>
@@ -26,11 +26,11 @@ namespace Expressif.Predicates.Temporal
     internal class After : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
-        public After(IScalarResolver<DateTime> reference)
+        public After(Func<DateTime> reference)
             : base(reference) { }
 
         protected override bool EvaluateDateTime(DateTime value)
-            => value > Reference.Execute();
+            => value > Reference.Invoke();
     }
 
     /// <summary>
@@ -39,11 +39,11 @@ namespace Expressif.Predicates.Temporal
     internal class AfterOrSameInstant : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
-        public AfterOrSameInstant(IScalarResolver<DateTime> reference)
+        public AfterOrSameInstant(Func<DateTime> reference)
             : base(reference) { }
 
         protected override bool EvaluateDateTime(DateTime value)
-            => value >= Reference.Execute();
+            => value >= Reference.Invoke();
     }
 
     /// <summary>
@@ -52,11 +52,11 @@ namespace Expressif.Predicates.Temporal
     internal class Before : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
-        public Before(IScalarResolver<DateTime> reference)
+        public Before(Func<DateTime> reference)
             : base(reference) { }
 
         protected override bool EvaluateDateTime(DateTime value)
-            => value < Reference.Execute();
+            => value < Reference.Invoke();
     }
 
     /// <summary>
@@ -65,10 +65,10 @@ namespace Expressif.Predicates.Temporal
     internal class BeforeOrSameInstant : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
-        public BeforeOrSameInstant(IScalarResolver<DateTime> reference)
+        public BeforeOrSameInstant(Func<DateTime> reference)
             : base(reference) { }
 
         protected override bool EvaluateDateTime(DateTime value)
-            => value <= Reference.Execute();
+            => value <= Reference.Invoke();
     }
 }

@@ -3,8 +3,7 @@ using System.ComponentModel;
 
 namespace Expressif.Values.Resolvers
 {
-    [TypeConverter(typeof(LiteralScalarResolverTypeConverter))]
-    public class LiteralScalarResolver<T> : IScalarResolver<T>
+    internal class LiteralScalarResolver<T> : IScalarResolver<T>
     {
         private readonly object value;
 

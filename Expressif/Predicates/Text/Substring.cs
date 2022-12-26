@@ -14,10 +14,10 @@ namespace Expressif.Predicates.Text
     {
         protected StringComparison Comparison { get; }
 
-        public BaseTextPredicateSubstring(IScalarResolver<string> reference)
+        public BaseTextPredicateSubstring(Func<string> reference)
             : this(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
-        public BaseTextPredicateSubstring(IScalarResolver<string> reference, StringComparer comparer)
+        public BaseTextPredicateSubstring(Func<string> reference, StringComparer comparer)
             : base(reference) { Comparison = GetComparison(comparer); }
 
         protected virtual StringComparison GetComparison(StringComparer comparer)
@@ -40,12 +40,12 @@ namespace Expressif.Predicates.Text
     class StartsWith : BaseTextPredicateSubstring
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public StartsWith(IScalarResolver<string> reference)
+        public StartsWith(Func<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public StartsWith(IScalarResolver<string> reference, StringComparer comparer)
+        public StartsWith(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
@@ -58,12 +58,12 @@ namespace Expressif.Predicates.Text
     class EndsWith : BaseTextPredicateSubstring
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public EndsWith(IScalarResolver<string> reference)
+        public EndsWith(Func<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public EndsWith(IScalarResolver<string> reference, StringComparer comparer)
+        public EndsWith(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
@@ -76,12 +76,12 @@ namespace Expressif.Predicates.Text
     class Contains : BaseTextPredicateSubstring
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public Contains(IScalarResolver<string> reference)
+        public Contains(Func<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public Contains(IScalarResolver<string> reference, StringComparer comparer)
+        public Contains(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
@@ -94,12 +94,12 @@ namespace Expressif.Predicates.Text
     class MatchesRegex : BaseTextPredicateSubstring
     {
         /// <param name="regex">A string to be compared to the argument value</param>
-        public MatchesRegex(IScalarResolver<string> regex)
+        public MatchesRegex(Func<string> regex)
             : base(regex, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="regex">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public MatchesRegex(IScalarResolver<string> regex, StringComparer comparer)
+        public MatchesRegex(Func<string> regex, StringComparer comparer)
             : base(regex, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)

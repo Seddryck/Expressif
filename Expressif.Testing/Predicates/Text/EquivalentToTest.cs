@@ -17,13 +17,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("A", "(empty)", false)]
         [TestCase("(empty)", "", true)]
         [TestCase("(empty)", "A", false)]
-        public void EquivalentTo_Text_Success(object value, object reference, bool expected)
+        public void EquivalentTo_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new EquivalentTo(new LiteralScalarResolver<string>(reference));
+            var predicate = new EquivalentTo(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -35,13 +35,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("A", "(empty)", true)]
         [TestCase("(empty)", "", false)]
         [TestCase("(empty)", "A", false)]
-        public void SortedAfter_Text_Success(object value, object reference, bool expected)
+        public void SortedAfter_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new SortedAfter(new LiteralScalarResolver<string>(reference));
+            var predicate = new SortedAfter(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -53,13 +53,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("A", "(empty)", true)]
         [TestCase("(empty)", "", true)]
         [TestCase("(empty)", "A", false)]
-        public void SortedAfterOrEquivalentTo_Text_Success(object value, object reference, bool expected)
+        public void SortedAfterOrEquivalentTo_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new SortedAfterOrEquivalentTo(new LiteralScalarResolver<string>(reference));
+            var predicate = new SortedAfterOrEquivalentTo(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -71,13 +71,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("A", "(empty)", false)]
         [TestCase("(empty)", "", false)]
         [TestCase("(empty)", "A", true)]
-        public void SortedBefore_Text_Success(object value, object reference, bool expected)
+        public void SortedBefore_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new SortedBefore(new LiteralScalarResolver<string>(reference));
+            var predicate = new SortedBefore(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -89,13 +89,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("A", "(empty)", false)]
         [TestCase("(empty)", "", true)]
         [TestCase("(empty)", "A", true)]
-        public void SortedBeforeOrEquivalentTo_Text_Success(object value, object reference, bool expected)
+        public void SortedBeforeOrEquivalentTo_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new SortedBeforeOrEquivalentTo(new LiteralScalarResolver<string>(reference));
+            var predicate = new SortedBeforeOrEquivalentTo(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }

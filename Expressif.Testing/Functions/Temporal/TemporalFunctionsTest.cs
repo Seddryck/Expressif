@@ -21,7 +21,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-02-11", "2019-03-01")]
         [TestCase("2019-04-11", "2019-03-31")]
         public void Clamp_Valid(object value, DateTime expected)
-            => Assert.That(new Clamp(new LiteralScalarResolver<DateTime>("2019-03-01"), new LiteralScalarResolver<DateTime>("2019-03-31"))
+            => Assert.That(new Clamp(() => new DateTime(2019,03,01), () => new DateTime(2019,03,31))
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -70,7 +70,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11 12:00:00", "07:00:00", "2019-03-11 07:00:00")]
         [TestCase("2019-02-11 08:45:12", "07:13:11", "2019-02-11 07:13:11")]
         public void SetTime_Valid(object value, string instant, DateTime expected)
-            => Assert.That(new SetTime(new LiteralScalarResolver<string>(instant)).Evaluate(value)
+            => Assert.That(new SetTime(() => instant).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -111,7 +111,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11 17:00:00", 2, "04:00:00", "2019-03-12 01:00:00")]
         [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 13:00:00")]
         public void Forward_Valid(object value, int times, string timeSpan, DateTime expected)
-            => Assert.That(new Forward(new LiteralScalarResolver<string>(timeSpan), new LiteralScalarResolver<int>(times))
+            => Assert.That(new Forward(() => timeSpan, () => times)
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -120,7 +120,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11 17:00:00", 5, "04:00:00", "2019-03-10 21:00:00")]
         [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 21:00:00")]
         public void Back_Valid(object value, int times, string timeSpan, DateTime expected)
-        => Assert.That(new Back(new LiteralScalarResolver<string>(timeSpan), new LiteralScalarResolver<int>(times))
+        => Assert.That(new Back(() => timeSpan, () => times)
             .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -138,28 +138,28 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
         [TestCase("2018-08-01 00:00:00", "2018-08-01 02:00:00")]
         public void UtcToLocal_RomanceStandardTime_Valid(object value, DateTime expected)
-            => Assert.That(new UtcToLocal(new LiteralScalarResolver<string>("Romance Standard Time")).Evaluate(value)
+            => Assert.That(new UtcToLocal(() => "Romance Standard Time").Evaluate(value)
             , Is.EqualTo(expected));
 
         [Test]
         [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
         [TestCase("2018-08-01 00:00:00", "2018-08-01 02:00:00")]
         public void UtcToLocal_CityName_Valid(object value, DateTime expected)
-            => Assert.That(new UtcToLocal(new LiteralScalarResolver<string>("Brussels")).Evaluate(value)
+            => Assert.That(new UtcToLocal(() => "Brussels").Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
         [TestCase("2018-02-01 03:00:00", "2018-02-01 02:00:00")]
         [TestCase("2018-08-01 02:00:00", "2018-08-01 00:00:00")]
         public void LocalToUtc_RomanceStandardTime_Valid(object value, DateTime expected)
-            => Assert.That(new LocalToUtc(new LiteralScalarResolver<string>("Romance Standard Time")).Evaluate(value)
+            => Assert.That(new LocalToUtc(() => "Romance Standard Time").Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
         [TestCase("2018-02-01 07:00:00", "2018-02-01 06:00:00")]
         [TestCase("2018-08-01 01:00:00", "2018-07-31 23:00:00")]
         public void LocalToUtc_CityName_Valid(object value, DateTime expected)
-            => Assert.That(new LocalToUtc(new LiteralScalarResolver<string>("Brussels")).Evaluate(value)
+            => Assert.That(new LocalToUtc(() => "Brussels").Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -184,7 +184,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-01 07:00:00", "2018-02-01 07:00:00")]
         [TestCase("(null)", "2001-01-01")]
         public void NullToDate_Valid(object value, DateTime expected)
-            => Assert.That(new NullToDate(new LiteralScalarResolver<DateTime>(new DateTime(2001, 1, 1))).Evaluate(value)
+            => Assert.That(new NullToDate(() => new DateTime(2001, 1, 1)).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -194,13 +194,13 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("(null)", null)]
         [TestCase(null, null)]
         public void InvalidToDate_Valid(object value, DateTime? expected)
-            => Assert.That(new InvalidToDate(new LiteralScalarResolver<DateTime>(new DateTime(2001, 1, 1))).Evaluate(value)
+            => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(value)
                 , Is.EqualTo(expected==null ? new Null() : expected));
 
         [Test]
         [TestCase(typeof(DBNull), "2001-01-01")]
         public void InvalidToDate_DBNull_Valid(Type type, DateTime ? expected)
-            => Assert.That(new InvalidToDate(new LiteralScalarResolver<DateTime>(new DateTime(2001, 1, 1))).Evaluate(
+            => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(
                 type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
                 , Is.EqualTo(new Null()));
 
@@ -276,8 +276,8 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-10-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "Pacific Standard Time", "2019-10-01 12:58:00")]
         public void TextToDateThenTimeAndUtcToLocal_Valid(string value, string format, string timeZone, DateTime expected)
         {
-            var textToDateTime = new TextToDateTime(new LiteralScalarResolver<string>(format));
-            var utcToLocal = new UtcToLocal(new LiteralScalarResolver<string>(timeZone));
+            var textToDateTime = new TextToDateTime(() => format);
+            var utcToLocal = new UtcToLocal(() => timeZone);
             var result = utcToLocal.Evaluate(textToDateTime.Evaluate(value));
             Assert.That(result, Is.EqualTo(expected));
             Assert.That(((DateTime)result).Kind, Is.EqualTo(DateTimeKind.Unspecified));

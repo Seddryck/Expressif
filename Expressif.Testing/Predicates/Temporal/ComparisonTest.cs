@@ -17,8 +17,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-11-21 17:12:25", "2022-11-21 17:12:24", false)]
         [TestCase(null, "2022-11-21", false)]
         [TestCase("(null)", "2022-11-21", false)]
-        public void SameInstant_DateTime_Expected(object value, object reference, bool expected)
-            => Assert.That(new SameInstant(new LiteralScalarResolver<System.DateTime>(reference)).Evaluate(value), Is.EqualTo(expected));
+        public void SameInstant_DateTime_Expected(object value, DateTime reference, bool expected)
+            => Assert.That(new SameInstant(() => reference).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-21", "2022-11-21", false)]
@@ -27,8 +27,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-11-21 17:12:25", "2022-11-21 17:12:24", true)]
         [TestCase(null, "2022-11-21", false)]
         [TestCase("(null)", "2022-11-21", false)]
-        public void After_DateTime_Expected(object value, object reference, bool expected)
-            => Assert.That(new After(new LiteralScalarResolver<System.DateTime>(reference)).Evaluate(value), Is.EqualTo(expected));
+        public void After_DateTime_Expected(object value, DateTime reference, bool expected)
+            => Assert.That(new After(() => reference).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-21", "2022-11-21", true)]
@@ -37,8 +37,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-11-21 17:12:25", "2022-11-21 17:12:24", true)]
         [TestCase(null, "2022-11-21", false)]
         [TestCase("(null)", "2022-11-21", false)]
-        public void AfterOrSameInstant_DateTime_Expected(object value, object reference, bool expected)
-            => Assert.That(new AfterOrSameInstant(new LiteralScalarResolver<System.DateTime>(reference)).Evaluate(value), Is.EqualTo(expected));
+        public void AfterOrSameInstant_DateTime_Expected(object value, DateTime reference, bool expected)
+            => Assert.That(new AfterOrSameInstant(() => reference).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-21", "2022-11-21", false)]
@@ -47,8 +47,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-11-21 17:12:25", "2022-11-21 17:12:24", false)]
         [TestCase(null, "2022-11-21", false)]
         [TestCase("(null)", "2022-11-21", false)]
-        public void Before_DateTime_Expected(object value, object reference, bool expected)
-            => Assert.That(new Before(new LiteralScalarResolver<System.DateTime>(reference)).Evaluate(value), Is.EqualTo(expected));
+        public void Before_DateTime_Expected(object value, DateTime reference, bool expected)
+            => Assert.That(new Before(() => reference).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-21", "2022-11-21", true)]
@@ -57,7 +57,7 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-11-21 17:12:25", "2022-11-21 17:12:24", false)]
         [TestCase(null, "2022-11-21", false)]
         [TestCase("(null)", "2022-11-21", false)]
-        public void BeforeOrSameInstant_DateTime_Expected(object value, object reference, bool expected)
-            => Assert.That(new BeforeOrSameInstant(new LiteralScalarResolver<System.DateTime>(reference)).Evaluate(value), Is.EqualTo(expected));
+        public void BeforeOrSameInstant_DateTime_Expected(object value, DateTime reference, bool expected)
+            => Assert.That(new BeforeOrSameInstant(() => reference).Evaluate(value), Is.EqualTo(expected));
     }
 }

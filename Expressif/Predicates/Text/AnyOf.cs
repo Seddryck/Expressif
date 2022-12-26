@@ -13,16 +13,16 @@ namespace Expressif.Predicates.Text
     /// </summary>
     class AnyOf : BaseTextPredicate
     {
-        public IEnumerable<IScalarResolver<string>> References { get; }
+        public IEnumerable<Func<string>> References { get; }
         protected StringComparer Comparer { get; }
 
         /// <param name="references">An array of text values</param>
-        public AnyOf(IEnumerable<IScalarResolver<string>> references)
+        public AnyOf(IEnumerable<Func<string>> references)
             : this(references, StringComparer.InvariantCultureIgnoreCase) { }
         
         /// <param name="references"></param>
         /// <param name="comparer"></param>
-        public AnyOf(IEnumerable<IScalarResolver<string>> references, StringComparer comparer)
+        public AnyOf(IEnumerable<Func<string>> references, StringComparer comparer)
                    => (References, Comparer) = (references, comparer);
 
         protected override bool EvaluateBaseText(string value)

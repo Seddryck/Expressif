@@ -2,7 +2,7 @@ using Expressif.Values;
 using Expressif.Values.Special;
 using System.Data;
 
-namespace Expressif
+namespace Expressif.Testing
 {
     public class ContextTest
     {

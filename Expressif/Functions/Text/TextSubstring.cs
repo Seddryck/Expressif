@@ -11,9 +11,9 @@ namespace Expressif.Functions.Text
 {
     abstract class BaseSubstringFunction : BaseTextFunction
     {
-        public IScalarResolver<string> Substring { get; }
-        public IScalarResolver<int> Count { get; }
-        public BaseSubstringFunction(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public Func<string> Substring { get; }
+        public Func<int> Count { get; }
+        public BaseSubstringFunction(Func<string> substring, Func<int> count)
             => (Substring, Count) = (substring, count);
     }
 
@@ -23,17 +23,17 @@ namespace Expressif.Functions.Text
     class AfterSubstring : BaseSubstringFunction
     {
         /// <param name="substring">The string to seek.</param>
-        public AfterSubstring(IScalarResolver<string> substring)
-            : this(substring, new LiteralScalarResolver<int>(0)) { }
+        public AfterSubstring(Func<string> substring)
+            : this(substring, () => 0) { }
 
         /// <param name="substring">The string to seek.</param>
         /// <param name="count">The number of character positions to examine.</param>
-        public AfterSubstring(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public AfterSubstring(Func<string> substring, Func<int> count)
             : base(substring, count) { }
 
         protected override object EvaluateString(string value)
         {
-            var substring = Substring.Execute();
+            var substring = Substring.Invoke();
             if (string.IsNullOrEmpty(substring) || new Empty().Equals(substring) || new Null().Equals(substring))
                 return value;
 
@@ -48,7 +48,7 @@ namespace Expressif.Functions.Text
                 index = value.IndexOf(substring, index);
                 i += 1;
             }
-            while (index != -1 && i <= Count.Execute());
+            while (index != -1 && i <= Count.Invoke());
             
             if (index == -1)
                 return new Null().Keyword;
@@ -63,17 +63,17 @@ namespace Expressif.Functions.Text
     class BeforeSubstring : BaseSubstringFunction
     {
         /// <param name="substring">The string to seek.</param>
-        public BeforeSubstring(IScalarResolver<string> substring)
-            : this(substring, new LiteralScalarResolver<int>(0)) { }
+        public BeforeSubstring(Func<string> substring)
+            : this(substring, () => 0) { }
 
         /// <param name="substring">The string to seek.</param>
         /// <param name="count">The number of character positions to examine.</param>
-        public BeforeSubstring(IScalarResolver<string> substring, IScalarResolver<int> count)
+        public BeforeSubstring(Func<string> substring, Func<int> count)
             : base(substring, count) { }
 
         protected override object EvaluateString(string value)
         {
-            var substring = Substring.Execute();
+            var substring = Substring.Invoke();
             if (string.IsNullOrEmpty(substring) || new Empty().Equals(substring) || new Null().Equals(substring))
                 return string.Empty;
 
@@ -88,7 +88,7 @@ namespace Expressif.Functions.Text
                 index = value.IndexOf(substring, index);
                 i += 1;
             }
-            while (index != -1 && i <= Count.Execute());
+            while (index != -1 && i <= Count.Invoke());
 
             if (index == -1)
                 return new Null().Keyword;

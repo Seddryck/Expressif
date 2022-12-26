@@ -76,7 +76,7 @@ namespace Expressif.Testing.Functions
             var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new LiteralParameter("1") }, new Context());
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<Round>());
-            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(1));
+            Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(1));
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace Expressif.Testing.Functions
             var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<Round>());
-            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(2));
+            Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(2));
         }
 
         [Test]
@@ -98,7 +98,7 @@ namespace Expressif.Testing.Functions
             var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<Round>());
-            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(3));
+            Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(3));
         }
 
 
@@ -110,7 +110,7 @@ namespace Expressif.Testing.Functions
             var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<Round>());
-            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(4));
+            Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(4));
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace Expressif.Testing.Functions
             var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<Round>());
-            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(5));
+            Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(5));
         }
 
         [Test]
@@ -137,7 +137,7 @@ namespace Expressif.Testing.Functions
             var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction3 }, context);
             Assert.That(function, Is.Not.Null);
             Assert.That(function, Is.TypeOf<Round>());
-            Assert.That((function as Round)!.Digits.Execute(), Is.EqualTo(42)); // (4+3)*6
+            Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(42)); // (4+3)*6
         }
 
     }

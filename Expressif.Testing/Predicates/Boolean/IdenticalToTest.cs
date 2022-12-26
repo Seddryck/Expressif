@@ -37,7 +37,7 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("yes", false, false)]
         [TestCase("no", false, true)]
         [TestCase("text", false, true)]
-        public void False_Boolean_Expected(object value, object reference, bool expected)
-            => Assert.That(new IdenticalTo(new LiteralScalarResolver<bool>(reference)).Evaluate(value), Is.EqualTo(expected));
+        public void False_Boolean_Expected(object value, bool reference, bool expected)
+            => Assert.That(new IdenticalTo(() => reference).Evaluate(value), Is.EqualTo(expected));
     }
 }

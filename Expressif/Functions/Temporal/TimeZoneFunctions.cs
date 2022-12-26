@@ -11,15 +11,15 @@ namespace Expressif.Functions.Temporal
     [Function(prefix: "")]
     class UtcToLocal : BaseTemporalFunction
     {
-        public IScalarResolver<string> TimeZoneLabel { get; }
+        public Func<string> TimeZoneLabel { get; }
 
-        public UtcToLocal(IScalarResolver<string> timeZoneLabel)
+        public UtcToLocal(Func<string> timeZoneLabel)
         {
             TimeZoneLabel = timeZoneLabel;
         }
 
         protected override object EvaluateDateTime(DateTime value) =>
-            TimeZoneInfo.ConvertTimeFromUtc(value, InstantiateTimeZoneInfo(TimeZoneLabel.Execute()!));
+            TimeZoneInfo.ConvertTimeFromUtc(value, InstantiateTimeZoneInfo(TimeZoneLabel.Invoke()!));
 
         protected TimeZoneInfo InstantiateTimeZoneInfo(string label)
         {
@@ -44,11 +44,11 @@ namespace Expressif.Functions.Temporal
     [Function(prefix: "")]
     class LocalToUtc : UtcToLocal
     {
-        public LocalToUtc(IScalarResolver<string> timeZoneLabel)
+        public LocalToUtc(Func<string> timeZoneLabel)
             : base(timeZoneLabel)
         { }
 
         protected override object EvaluateDateTime(DateTime value) =>
-            TimeZoneInfo.ConvertTimeToUtc(value, InstantiateTimeZoneInfo(TimeZoneLabel.Execute()!));
+            TimeZoneInfo.ConvertTimeToUtc(value, InstantiateTimeZoneInfo(TimeZoneLabel.Invoke()!));
     }
 }

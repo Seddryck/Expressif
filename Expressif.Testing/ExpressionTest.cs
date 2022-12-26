@@ -4,7 +4,7 @@ using Expressif.Values.Special;
 using System.Data;
 using System.Diagnostics;
 
-namespace Expressif
+namespace Expressif.Testing
 {
     public class ExpressionTest
     {

@@ -2,12 +2,12 @@
 
 namespace Expressif.Values
 {
-    public interface IScalarResolver
+    internal interface IScalarResolver
     {
         object? Execute();
     }
 
-    public interface IScalarResolver<T> : IScalarResolver
+    internal interface IScalarResolver<T> : IScalarResolver
     {
         new T? Execute();
     }

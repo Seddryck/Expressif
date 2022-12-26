@@ -149,16 +149,16 @@ namespace Expressif.Functions.Temporal
     [Function(prefix: "dateTime", aliases:new []{"dateTime-to-clip"})]
     class Clamp : BaseTemporalFunction
     {
-        public IScalarResolver<DateTime> Min { get; }
-        public IScalarResolver<DateTime> Max { get; }
+        public Func<DateTime> Min { get; }
+        public Func<DateTime> Max { get; }
 
         /// <param name="min">value returned in case the argument value is before than it</param>
         /// <param name="max">value returned in case the argument value is after than it</param>
-        public Clamp(IScalarResolver<DateTime> min, IScalarResolver<DateTime> max)
+        public Clamp(Func<DateTime> min, Func<DateTime> max)
             => (Min, Max) = (min, max);
 
         protected override object EvaluateDateTime(DateTime value)
-            => (value < Min.Execute()) ? Min.Execute() : (value > Max.Execute()) ? Max.Execute() : value;
+            => (value < Min.Invoke()) ? Min.Invoke() : (value > Max.Invoke()) ? Max.Invoke() : value;
     }
 
     /// <summary>
@@ -167,15 +167,15 @@ namespace Expressif.Functions.Temporal
     class SetTime : BaseTemporalFunction
     {
 
-        public IScalarResolver<string> Instant { get; }
+        public Func<string> Instant { get; }
 
         /// <param name="instant">The time value to set as hours, minutes, seconds of the dateTime argument</param>
-        public SetTime(IScalarResolver<string> instant)
+        public SetTime(Func<string> instant)
             => Instant = instant;
 
         protected override object EvaluateDateTime(DateTime value)
         {
-            var time = TimeSpan.Parse(Instant.Execute()!);
+            var time = TimeSpan.Parse(Instant.Invoke()!);
             return new DateTime(value.Year, value.Month, value.Day, time.Hours, time.Minutes, time.Seconds);
         }
     }
@@ -186,13 +186,13 @@ namespace Expressif.Functions.Temporal
     [Function(prefix: "")]
     class NullToDate : BaseTemporalFunction
     {
-        public IScalarResolver<DateTime> Default { get; }
+        public Func<DateTime> Default { get; }
 
         /// <param name="default">The dateTime to be returned if the argument is `null`.</param>
-        public NullToDate(IScalarResolver<DateTime> @default)
+        public NullToDate(Func<DateTime> @default)
             => Default = @default;
 
-        protected override object EvaluateNull() => Default.Execute();
+        protected override object EvaluateNull() => Default.Invoke();
         protected override object EvaluateDateTime(DateTime value) => value;
     }
 
@@ -202,10 +202,10 @@ namespace Expressif.Functions.Temporal
     [Function(prefix: "")]
     class InvalidToDate : BaseTemporalFunction
     {
-        public IScalarResolver<DateTime> Default { get; }
+        public Func<DateTime> Default { get; }
 
         /// <param name="default">The dateTime to be returned if the argument is not a valid dateTime.</param>
-        public InvalidToDate(IScalarResolver<DateTime> @default)
+        public InvalidToDate(Func<DateTime> @default)
             => Default = @default;
 
         protected override object EvaluateNull() => new Null();
@@ -218,7 +218,7 @@ namespace Expressif.Functions.Temporal
             var caster = new DateTimeCaster();
             
             try { return caster.Execute(value);} 
-            catch { return Default.Execute(); }
+            catch { return Default.Invoke(); }
         }
     }
 
@@ -264,20 +264,20 @@ namespace Expressif.Functions.Temporal
     [Function(prefix: "dateTime", aliases: new[] {"dateTime-to-add"})]
     class Forward : BaseTemporalFunction
     {
-        public IScalarResolver<int> Times { get; }
-        public IScalarResolver<string> TimeSpan { get; }
+        public Func<int> Times { get; }
+        public Func<string> TimeSpan { get; }
 
         /// <param name="timeSpan">The value to be added to the argument value</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the addition</param>
-        public Forward(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
+        public Forward(Func<string> timeSpan, Func<int> times)
             => (TimeSpan, Times) = (timeSpan, times);
 
         /// <param name="timeSpan">The value to be added to the argument value</param>
-        public Forward(IScalarResolver<string> timeSpan)
-            : this(timeSpan, new LiteralScalarResolver<int>(1)) { }
+        public Forward(Func<string> timeSpan)
+            : this(timeSpan, () => 1) { }
 
         protected override object EvaluateDateTime(DateTime value)
-            => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Execute()!).Ticks * Times.Execute());
+            => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Invoke()!).Ticks * Times.Invoke());
     }
 
     /// <summary>
@@ -289,14 +289,14 @@ namespace Expressif.Functions.Temporal
         /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
 
-        public Back(IScalarResolver<string> timeSpan, IScalarResolver<int> times)
+        public Back(Func<string> timeSpan, Func<int> times)
             : base(timeSpan, times) { }
 
         /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
-        public Back(IScalarResolver<string> timeSpan)
+        public Back(Func<string> timeSpan)
             : base(timeSpan) { }
 
         protected override object EvaluateDateTime(DateTime value)
-            => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Execute()!).Ticks * Times.Execute() * -1);
+            => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Invoke()!).Ticks * Times.Invoke() * -1);
     }
 }
