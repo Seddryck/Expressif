@@ -9,6 +9,7 @@ namespace Expressif.Functions.Introspection
     public record FunctionInfo
     (
         string Name,
+        bool IsPublic,
         string[] Aliases,
         string Scope,
         Type ImplementationType,

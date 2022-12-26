@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Text
 {
     [Predicate(false)]
-    abstract class BaseTextPredicateSubstring : BaseTextPredicateReference
+    public abstract class BaseTextPredicateSubstring : BaseTextPredicateReference
     {
         protected StringComparison Comparison { get; }
 
@@ -37,7 +37,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the value passed as argument starts with the text value passed as parameter. Returns `false` otherwise.
     /// </summary>
-    class StartsWith : BaseTextPredicateSubstring
+    public class StartsWith : BaseTextPredicateSubstring
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public StartsWith(Func<string> reference)
@@ -55,7 +55,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.
     /// </summary>
-    class EndsWith : BaseTextPredicateSubstring
+    public class EndsWith : BaseTextPredicateSubstring
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public EndsWith(Func<string> reference)
@@ -73,7 +73,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.
     /// </summary>
-    class Contains : BaseTextPredicateSubstring
+    public class Contains : BaseTextPredicateSubstring
     {
         /// <param name="reference">A string to be compared to the argument value</param>
         public Contains(Func<string> reference)
@@ -91,7 +91,7 @@ namespace Expressif.Predicates.Text
     /// <summary>
     /// Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.
     /// </summary>
-    class MatchesRegex : BaseTextPredicateSubstring
+    public class MatchesRegex : BaseTextPredicateSubstring
     {
         /// <param name="regex">A string to be compared to the argument value</param>
         public MatchesRegex(Func<string> regex)

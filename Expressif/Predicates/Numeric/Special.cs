@@ -10,7 +10,7 @@ namespace Expressif.Predicates.Numeric
     /// <summary>
     /// Returns true if the numeric value passed as argument is an integer value. Returns `false` otherwise.
     /// </summary>
-    class Integer : BaseNumericPredicate
+    public class Integer : BaseNumericPredicate
     {
         protected override bool EvaluateNumeric(decimal value) => value % 1 == 0;
     }
@@ -18,7 +18,7 @@ namespace Expressif.Predicates.Numeric
     /// <summary>
     /// Returns true if the numeric value passed as argument is equal to `0` or `null`. Returns `false` otherwise.
     /// </summary>
-    class ZeroOrNull : BaseNumericPredicate
+    public class ZeroOrNull : BaseNumericPredicate
     {
         protected override bool EvaluateNull() => true;
         protected override bool EvaluateNumeric(decimal value) => value.Equals(0);

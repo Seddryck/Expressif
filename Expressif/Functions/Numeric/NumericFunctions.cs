@@ -7,7 +7,7 @@ using System;
 namespace Expressif.Functions.Numeric
 {
     [Function]
-    abstract class BaseNumericFunction : IFunction
+    public abstract class BaseNumericFunction : IFunction
     {
         
         public BaseNumericFunction()
@@ -42,19 +42,19 @@ namespace Expressif.Functions.Numeric
     /// Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.
     /// </summary>
     [Function(prefix: "")]
-    class NullToZero : BaseNumericFunction
+    public class NullToZero : BaseNumericFunction
     {
         protected override object EvaluateNull() => 0;
         protected override decimal? EvaluateNumeric(decimal numeric) => numeric;
     }
 
-    abstract class BaseNumericRounding : BaseNumericFunction
+    public abstract class BaseNumericRounding : BaseNumericFunction
     { }
 
     /// <summary>
     /// Returns the smallest integer greater than or equal to the argument number.
     /// </summary>
-    class Ceiling : BaseNumericRounding
+    public class Ceiling : BaseNumericRounding
     {
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Ceiling(numeric);
     }
@@ -62,7 +62,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the largest integer less than or equal to the argument number.
     /// </summary>
-    class Floor : BaseNumericRounding
+    public class Floor : BaseNumericRounding
     {
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Floor(numeric);
     }
@@ -70,7 +70,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the value of an argument number rounded to the nearest integer. 
     /// </summary>
-    class Integer : BaseNumericRounding
+    public class Integer : BaseNumericRounding
     {
         protected override decimal? EvaluateNumeric(decimal numeric) => Math.Round(numeric, 0);
     }
@@ -78,7 +78,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the value of an argument number to the specified number of fractional digits.
     /// </summary>
-    class Round : BaseNumericRounding
+    public class Round : BaseNumericRounding
     {
         public Func<int> Digits { get; }
 
@@ -92,7 +92,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.
     /// </summary>
-    class Clip : BaseNumericFunction
+    public class Clip : BaseNumericFunction
     {
         public Func<decimal> Min { get; }
         public Func<decimal> Max { get; }
@@ -106,7 +106,7 @@ namespace Expressif.Functions.Numeric
             => (numeric < Min.Invoke()) ? Min.Invoke() : (numeric > Max.Invoke()) ? Max.Invoke() : numeric;
     }
 
-    abstract class BaseNumericArithmetic : BaseNumericFunction
+    public abstract class BaseNumericArithmetic : BaseNumericFunction
     {
         public Func<decimal> Value { get; }
 
@@ -117,7 +117,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the sum of an argument number and the parameter value.
     /// </summary>
-    class Add : BaseNumericArithmetic
+    public class Add : BaseNumericArithmetic
     {
         public Func<int> Times { get; }
 
@@ -136,7 +136,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the difference between the argument number and the parameter value.
     /// </summary>
-    class Subtract : Add
+    public class Subtract : Add
     {
         /// <param name="value">The value to be subtracted to the argument value</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
@@ -153,7 +153,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the argument number incremented of one unit.
     /// </summary>
-    class Increment : Add
+    public class Increment : Add
     {
         public Increment()
         : base(() => 1) { }
@@ -162,7 +162,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the argument number decremented of one unit.
     /// </summary>
-    class Decrement : Subtract
+    public class Decrement : Subtract
     {
         public Decrement()
         : base(() => 1) { }
@@ -171,7 +171,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the argument number multiplied by the parameter value.
     /// </summary>
-    class Multiply : BaseNumericArithmetic
+    public class Multiply : BaseNumericArithmetic
     {
         /// <param name="value">The value to be multiplied by the argument value</param>
         public Multiply(Func<decimal> value)
@@ -184,7 +184,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.
     /// </summary>
-    class Divide : BaseNumericArithmetic
+    public class Divide : BaseNumericArithmetic
     {
         /// <param name="value">The value to divide the argument value</param>
         public Divide(Func<decimal> value)
@@ -197,7 +197,7 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.
     /// </summary>
-    class Invert : BaseNumericFunction
+    public class Invert : BaseNumericFunction
     {
         public Invert()
         { }

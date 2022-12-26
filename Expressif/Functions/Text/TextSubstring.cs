@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-    abstract class BaseSubstringFunction : BaseTextFunction
+    public abstract class BaseSubstringFunction : BaseTextFunction
     {
         public Func<string> Substring { get; }
         public Func<int> Count { get; }
@@ -20,7 +20,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
     /// </summary>
-    class AfterSubstring : BaseSubstringFunction
+    public class AfterSubstring : BaseSubstringFunction
     {
         /// <param name="substring">The string to seek.</param>
         public AfterSubstring(Func<string> substring)
@@ -60,7 +60,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
     /// </summary>
-    class BeforeSubstring : BaseSubstringFunction
+    public class BeforeSubstring : BaseSubstringFunction
     {
         /// <param name="substring">The string to seek.</param>
         public BeforeSubstring(Func<string> substring)

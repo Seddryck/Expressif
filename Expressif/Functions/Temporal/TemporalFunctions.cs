@@ -8,7 +8,7 @@ using System;
 namespace Expressif.Functions.Temporal
 {
     [Function(prefix: "dateTime")]
-    abstract class BaseTemporalFunction : IFunction
+    public abstract class BaseTemporalFunction : IFunction
     {
 
         public object? Evaluate(object? value)
@@ -41,7 +41,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the date at midnight of the argument dateTime.
     /// </summary>
-    class DateTimeToDate : BaseTemporalFunction
+    public class DateTimeToDate : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.Date;
     }
@@ -49,7 +49,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns how many years separate the argument dateTime and now.
     /// </summary>
-    class Age : BaseTemporalFunction
+    public class Age : BaseTemporalFunction
     {
         protected override object EvaluateNull() => 0;
         protected override object EvaluateDateTime(DateTime value)
@@ -66,7 +66,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the first day of the month of the same month/year than the argument dateTime.
     /// </summary>
-    class FirstOfMonth : BaseTemporalFunction
+    public class FirstOfMonth : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1);
     }
@@ -74,7 +74,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the first of January of the same year than the argument dateTime.
     /// </summary>
-    class FirstOfYear : BaseTemporalFunction
+    public class FirstOfYear : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 1, 1);
     }
@@ -82,7 +82,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the last day of the month of the same month/year than the argument dateTime.
     /// </summary>
-    class LastOfMonth : BaseTemporalFunction
+    public class LastOfMonth : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1).AddMonths(1).AddDays(-1);
     }
@@ -90,7 +90,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the 31st of December of the same year than the argument dateTime.
     /// </summary>
-    class LastOfYear : BaseTemporalFunction
+    public class LastOfYear : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 12, 31);
     }
@@ -98,7 +98,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the day immediately following the dateTime passed as argument value.
     /// </summary>
-    class NextDay : BaseTemporalFunction
+    public class NextDay : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddDays(1);
     }
@@ -106,7 +106,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime that adds a month to the dateTime passed as argument value.
     /// </summary>
-    class NextMonth : BaseTemporalFunction
+    public class NextMonth : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddMonths(1);
     }
@@ -114,7 +114,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime that adds a year to the dateTime passed as argument value.
     /// </summary>
-    class NextYear : BaseTemporalFunction
+    public class NextYear : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddYears(1);
     }
@@ -122,7 +122,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime that substract a day to the dateTime passed as argument value.
     /// </summary>
-    class PreviousDay : BaseTemporalFunction
+    public class PreviousDay : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddDays(-1);
     }
@@ -130,7 +130,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime that substract a month to the dateTime passed as argument value.
     /// </summary>
-    class PreviousMonth : BaseTemporalFunction
+    public class PreviousMonth : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddMonths(-1);
     }
@@ -138,7 +138,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime that substract a year to the dateTime passed as argument value.
     /// </summary>
-    class PreviousYear : BaseTemporalFunction
+    public class PreviousYear : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value) => value.AddYears(-1);
     }
@@ -147,7 +147,7 @@ namespace Expressif.Functions.Temporal
     /// Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).
     /// </summary>
     [Function(prefix: "dateTime", aliases:new []{"dateTime-to-clip"})]
-    class Clamp : BaseTemporalFunction
+    public class Clamp : BaseTemporalFunction
     {
         public Func<DateTime> Min { get; }
         public Func<DateTime> Max { get; }
@@ -164,7 +164,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.
     /// </summary>
-    class SetTime : BaseTemporalFunction
+    public class SetTime : BaseTemporalFunction
     {
 
         public Func<string> Instant { get; }
@@ -184,7 +184,7 @@ namespace Expressif.Functions.Temporal
     /// Returns the dateTime argument except if the value is `null` then it returns the parameter value.
     /// </summary>
     [Function(prefix: "")]
-    class NullToDate : BaseTemporalFunction
+    public class NullToDate : BaseTemporalFunction
     {
         public Func<DateTime> Default { get; }
 
@@ -200,7 +200,7 @@ namespace Expressif.Functions.Temporal
     /// Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.
     /// </summary>
     [Function(prefix: "")]
-    class InvalidToDate : BaseTemporalFunction
+    public class InvalidToDate : BaseTemporalFunction
     {
         public Func<DateTime> Default { get; }
 
@@ -225,7 +225,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero.
     /// </summary>
-    class FloorHour : BaseTemporalFunction
+    public class FloorHour : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(-1 * (value.Ticks % TimeSpan.TicksPerHour));
@@ -234,7 +234,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero and an hour added.
     /// </summary>
-    class CeilingHour : BaseTemporalFunction
+    public class CeilingHour : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(TimeSpan.TicksPerHour - (value.Ticks % TimeSpan.TicksPerHour == 0 ? TimeSpan.TicksPerHour : value.Ticks % TimeSpan.TicksPerHour));
@@ -243,7 +243,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime passed as argument value with the seconds and milliseconds set to zero.
     /// </summary>
-    class FloorMinute : BaseTemporalFunction
+    public class FloorMinute : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(-1 * (value.Ticks % TimeSpan.TicksPerMinute));
@@ -252,7 +252,7 @@ namespace Expressif.Functions.Temporal
     /// <summary>
     /// Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.
     /// </summary>
-    class CeilingMinute : BaseTemporalFunction
+    public class CeilingMinute : BaseTemporalFunction
     {
         protected override object EvaluateDateTime(DateTime value)
             => value.AddTicks(TimeSpan.TicksPerMinute - (value.Ticks % TimeSpan.TicksPerMinute == 0 ? TimeSpan.TicksPerMinute : value.Ticks % TimeSpan.TicksPerMinute));
@@ -262,7 +262,7 @@ namespace Expressif.Functions.Temporal
     /// Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
     /// </summary>
     [Function(prefix: "dateTime", aliases: new[] {"dateTime-to-add"})]
-    class Forward : BaseTemporalFunction
+    public class Forward : BaseTemporalFunction
     {
         public Func<int> Times { get; }
         public Func<string> TimeSpan { get; }
@@ -284,7 +284,7 @@ namespace Expressif.Functions.Temporal
     /// Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
     /// </summary>
     [Function(prefix: "dateTime", aliases: new[] { "dateTime-to-subtract" })]
-    class Back : Forward
+    public class Back : Forward
     {
         /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>

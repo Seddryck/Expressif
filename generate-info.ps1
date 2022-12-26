@@ -34,9 +34,15 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $destination)
     $elapsed = Measure-Command -Expression {
         $TextInfo = (Get-Culture).TextInfo
         $locator = New-Object -TypeName "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
-        $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, Aliases, Scope, Summary, Parameters
+        $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, IsPublic, Aliases, Scope, Summary, Parameters
         Write-Host  "`t$($functions.Count) $($class.ToLower()) identified"
-        $functions | ForEach-Object {Write-Host "`t`t$($_.Name)"}
+        $functions | ForEach-Object {
+            if ($_.IsPublic) {
+                Write-Host "`t`t$($_.Name)"
+            } else {
+                Write-Warning "`t$($_.Name)"
+            }
+        }
         $functions | ConvertTo-Json -depth 4 | Out-File "$destination"
     }
     Write-Host  "File created at $destination in $($elapsed.TotalSeconds) seconds"

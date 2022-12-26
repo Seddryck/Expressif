@@ -6,7 +6,7 @@ using System.IO;
 namespace Expressif.Functions.IO
 {
     [Function(prefix: "file")]
-    abstract class BaseFileFunction : BaseTextFunction, IBasePathTransformation
+    public abstract class BaseFileFunction : BaseTextFunction, IBasePathFunction
     {
         private Func<string, IFileInfo> FileInfoInitializer { get; set; }
         public BaseFileFunction() => FileInfoInitializer = x => new FileInfoWrapper(x);
@@ -31,7 +31,7 @@ namespace Expressif.Functions.IO
     /// <summary>
     /// Returns the size of the file provided as argument in bytes.
     /// </summary>
-    class Size : BaseFileFunction
+    public class Size : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.Length;
     }
@@ -39,7 +39,7 @@ namespace Expressif.Functions.IO
     /// <summary>
     /// Returns the creation time of the file provided as argument in local time.
     /// </summary>
-    class CreationDateTime : BaseFileFunction
+    public class CreationDateTime : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTime;
     }
@@ -47,7 +47,7 @@ namespace Expressif.Functions.IO
     /// <summary>
     /// Returns the creation time of the file provided as argument in UTC.
     /// </summary>
-    class CreationDateTimeUtc : BaseFileFunction
+    public class CreationDateTimeUtc : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTimeUtc;
     }
@@ -55,7 +55,7 @@ namespace Expressif.Functions.IO
     /// <summary>
     /// Returns the last update time of the file provided as argument in local time.
     /// </summary>
-    class UpdateDateTime : BaseFileFunction
+    public class UpdateDateTime : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTime;
     }
@@ -63,7 +63,7 @@ namespace Expressif.Functions.IO
     /// <summary>
     /// Returns the last update time of the file provided as argument in UTC.
     /// </summary>
-    class UpdateDateTimeUtc : BaseFileFunction
+    public class UpdateDateTimeUtc : BaseFileFunction
     {
         protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTimeUtc;
     }

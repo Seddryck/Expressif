@@ -10,7 +10,7 @@ namespace Expressif.Functions.Text
     /// <summary>
     /// Returns the argument string without diacritics
     /// </summary>
-    class WithoutDiacritics : BaseTextFunction
+    public class WithoutDiacritics : BaseTextFunction
     {
         protected override object EvaluateString(string value) => RemoveDiacritics(value);
 

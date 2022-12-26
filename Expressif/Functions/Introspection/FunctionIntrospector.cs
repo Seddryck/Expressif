@@ -27,6 +27,7 @@ namespace Expressif.Functions.Introspection
             {
                 yield return new FunctionInfo(
                         function.Type.Name.ToKebabCase()
+                        , function.Type.IsPublic
                         , function.Attribute.Prefix != null && string.IsNullOrEmpty(function.Attribute.Prefix)
                             ? function.Attribute.Aliases
                             : function.Attribute.Aliases.AsQueryable()

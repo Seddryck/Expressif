@@ -1,6 +1,7 @@
 [
   {
     "Name": "text-to-html",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value converted to an HTML-encoded string",
@@ -8,6 +9,7 @@
   },
   {
     "Name": "null-to-zero",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Numeric",
     "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
@@ -15,6 +17,7 @@
   },
   {
     "Name": "value-to-value",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Special",
     "Summary": "Returns `value` except if the argument value is `null` then it returns `null`.",
@@ -22,6 +25,7 @@
   },
   {
     "Name": "any-to-any",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Special",
     "Summary": "Returns `any`.",
@@ -29,6 +33,7 @@
   },
   {
     "Name": "null-to-value",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Special",
     "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
@@ -36,6 +41,7 @@
   },
   {
     "Name": "neutral",
+    "IsPublic": true,
     "Aliases": [
       "Special-to-neutral"
     ],
@@ -45,6 +51,7 @@
   },
   {
     "Name": "local-to-utc",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
     "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
@@ -52,6 +59,7 @@
   },
   {
     "Name": "utc-to-local",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
     "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
@@ -59,6 +67,7 @@
   },
   {
     "Name": "ceiling",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-ceiling"
     ],
@@ -68,6 +77,7 @@
   },
   {
     "Name": "back",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-back",
       "dateTime-to-subtract"
@@ -89,6 +99,7 @@
   },
   {
     "Name": "ceiling-minute",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-ceiling-minute"
     ],
@@ -98,6 +109,7 @@
   },
   {
     "Name": "floor-minute",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-floor-minute"
     ],
@@ -107,6 +119,7 @@
   },
   {
     "Name": "ceiling-hour",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-ceiling-hour"
     ],
@@ -116,6 +129,7 @@
   },
   {
     "Name": "floor-hour",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-floor-hour"
     ],
@@ -125,6 +139,7 @@
   },
   {
     "Name": "invalid-to-date",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
     "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
@@ -138,6 +153,7 @@
   },
   {
     "Name": "null-to-date",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
     "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
@@ -151,6 +167,7 @@
   },
   {
     "Name": "set-time",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-set-time"
     ],
@@ -166,6 +183,7 @@
   },
   {
     "Name": "forward",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-forward",
       "dateTime-to-add"
@@ -187,6 +205,7 @@
   },
   {
     "Name": "clamp",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-clamp",
       "dateTime-to-clip"
@@ -208,6 +227,7 @@
   },
   {
     "Name": "floor",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-floor"
     ],
@@ -217,6 +237,7 @@
   },
   {
     "Name": "round",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-round"
     ],
@@ -232,6 +253,7 @@
   },
   {
     "Name": "extension",
+    "IsPublic": true,
     "Aliases": [
       "path-to-extension"
     ],
@@ -241,6 +263,7 @@
   },
   {
     "Name": "filename-without-extension",
+    "IsPublic": true,
     "Aliases": [
       "path-to-filename-without-extension"
     ],
@@ -250,6 +273,7 @@
   },
   {
     "Name": "filename",
+    "IsPublic": true,
     "Aliases": [
       "path-to-filename"
     ],
@@ -259,6 +283,7 @@
   },
   {
     "Name": "update-datetime-utc",
+    "IsPublic": true,
     "Aliases": [
       "file-to-update-datetime-utc"
     ],
@@ -268,6 +293,7 @@
   },
   {
     "Name": "update-datetime",
+    "IsPublic": true,
     "Aliases": [
       "file-to-update-datetime"
     ],
@@ -277,6 +303,7 @@
   },
   {
     "Name": "creation-datetime-utc",
+    "IsPublic": true,
     "Aliases": [
       "file-to-creation-datetime-utc"
     ],
@@ -286,6 +313,7 @@
   },
   {
     "Name": "creation-datetime",
+    "IsPublic": true,
     "Aliases": [
       "file-to-creation-datetime"
     ],
@@ -295,6 +323,7 @@
   },
   {
     "Name": "integer",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-integer"
     ],
@@ -304,6 +333,7 @@
   },
   {
     "Name": "size",
+    "IsPublic": true,
     "Aliases": [
       "file-to-size"
     ],
@@ -313,6 +343,7 @@
   },
   {
     "Name": "divide",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-divide"
     ],
@@ -328,6 +359,7 @@
   },
   {
     "Name": "multiply",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-multiply"
     ],
@@ -343,6 +375,7 @@
   },
   {
     "Name": "decrement",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-decrement"
     ],
@@ -352,6 +385,7 @@
   },
   {
     "Name": "increment",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-increment"
     ],
@@ -361,6 +395,7 @@
   },
   {
     "Name": "subtract",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-subtract"
     ],
@@ -381,6 +416,7 @@
   },
   {
     "Name": "add",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-add"
     ],
@@ -401,6 +437,7 @@
   },
   {
     "Name": "clip",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-clip"
     ],
@@ -421,6 +458,7 @@
   },
   {
     "Name": "invert",
+    "IsPublic": true,
     "Aliases": [
       "numeric-to-invert"
     ],
@@ -430,6 +468,7 @@
   },
   {
     "Name": "root",
+    "IsPublic": true,
     "Aliases": [
       "path-to-root"
     ],
@@ -439,6 +478,7 @@
   },
   {
     "Name": "previous-year",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-previous-year"
     ],
@@ -448,6 +488,7 @@
   },
   {
     "Name": "previous-day",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-previous-day"
     ],
@@ -457,6 +498,7 @@
   },
   {
     "Name": "html-to-text",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
@@ -464,6 +506,7 @@
   },
   {
     "Name": "null-to-empty",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
@@ -471,6 +514,7 @@
   },
   {
     "Name": "empty-to-null",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
@@ -478,6 +522,7 @@
   },
   {
     "Name": "whitespaces-to-null",
+    "IsPublic": true,
     "Aliases": [
       "blank-to-null"
     ],
@@ -487,6 +532,7 @@
   },
   {
     "Name": "whitespaces-to-empty",
+    "IsPublic": true,
     "Aliases": [
       "blank-to-empty"
     ],
@@ -496,6 +542,7 @@
   },
   {
     "Name": "pad-left",
+    "IsPublic": true,
     "Aliases": [
       "text-to-pad-left"
     ],
@@ -516,6 +563,7 @@
   },
   {
     "Name": "pad-right",
+    "IsPublic": true,
     "Aliases": [
       "text-to-pad-right"
     ],
@@ -536,6 +584,7 @@
   },
   {
     "Name": "length",
+    "IsPublic": true,
     "Aliases": [
       "text-to-length"
     ],
@@ -545,6 +594,7 @@
   },
   {
     "Name": "skip-last-chars",
+    "IsPublic": true,
     "Aliases": [
       "text-to-skip-last-chars"
     ],
@@ -560,6 +610,7 @@
   },
   {
     "Name": "last-chars",
+    "IsPublic": true,
     "Aliases": [
       "text-to-last-chars"
     ],
@@ -575,6 +626,7 @@
   },
   {
     "Name": "first-chars",
+    "IsPublic": true,
     "Aliases": [
       "text-to-first-chars"
     ],
@@ -590,6 +642,7 @@
   },
   {
     "Name": "suffix",
+    "IsPublic": true,
     "Aliases": [
       "text-to-suffix"
     ],
@@ -605,6 +658,7 @@
   },
   {
     "Name": "prefix",
+    "IsPublic": true,
     "Aliases": [
       "text-to-prefix"
     ],
@@ -620,6 +674,7 @@
   },
   {
     "Name": "trim",
+    "IsPublic": true,
     "Aliases": [
       "text-to-trim"
     ],
@@ -629,6 +684,7 @@
   },
   {
     "Name": "upper",
+    "IsPublic": true,
     "Aliases": [
       "text-to-upper"
     ],
@@ -638,6 +694,7 @@
   },
   {
     "Name": "lower",
+    "IsPublic": true,
     "Aliases": [
       "text-to-lower"
     ],
@@ -647,6 +704,7 @@
   },
   {
     "Name": "skip-first-chars",
+    "IsPublic": true,
     "Aliases": [
       "text-to-skip-first-chars"
     ],
@@ -662,6 +720,7 @@
   },
   {
     "Name": "previous-month",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-previous-month"
     ],
@@ -671,6 +730,7 @@
   },
   {
     "Name": "token",
+    "IsPublic": true,
     "Aliases": [
       "text-to-token"
     ],
@@ -691,6 +751,7 @@
   },
   {
     "Name": "text-to-datetime",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
@@ -709,6 +770,7 @@
   },
   {
     "Name": "next-year",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-next-year"
     ],
@@ -718,6 +780,7 @@
   },
   {
     "Name": "next-month",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-next-month"
     ],
@@ -727,6 +790,7 @@
   },
   {
     "Name": "next-day",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-next-day"
     ],
@@ -736,6 +800,7 @@
   },
   {
     "Name": "last-of-year",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-last-of-year"
     ],
@@ -745,6 +810,7 @@
   },
   {
     "Name": "last-of-month",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-last-of-month"
     ],
@@ -754,6 +820,7 @@
   },
   {
     "Name": "first-of-year",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-first-of-year"
     ],
@@ -763,6 +830,7 @@
   },
   {
     "Name": "first-of-month",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-first-of-month"
     ],
@@ -772,6 +840,7 @@
   },
   {
     "Name": "token-count",
+    "IsPublic": true,
     "Aliases": [
       "text-to-token-count"
     ],
@@ -787,6 +856,7 @@
   },
   {
     "Name": "age",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-age"
     ],
@@ -796,6 +866,7 @@
   },
   {
     "Name": "without-whitespaces",
+    "IsPublic": true,
     "Aliases": [
       "text-to-without-whitespaces"
     ],
@@ -805,6 +876,7 @@
   },
   {
     "Name": "without-diacritics",
+    "IsPublic": true,
     "Aliases": [
       "text-to-without-diacritics"
     ],
@@ -814,6 +886,7 @@
   },
   {
     "Name": "before-substring",
+    "IsPublic": true,
     "Aliases": [
       "text-to-before-substring"
     ],
@@ -834,6 +907,7 @@
   },
   {
     "Name": "after-substring",
+    "IsPublic": true,
     "Aliases": [
       "text-to-after-substring"
     ],
@@ -854,6 +928,7 @@
   },
   {
     "Name": "mask-to-text",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.",
@@ -867,6 +942,7 @@
   },
   {
     "Name": "text-to-mask",
+    "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.",
@@ -880,6 +956,7 @@
   },
   {
     "Name": "remove-chars",
+    "IsPublic": true,
     "Aliases": [
       "text-to-remove-chars"
     ],
@@ -895,6 +972,7 @@
   },
   {
     "Name": "datetime-to-date",
+    "IsPublic": true,
     "Aliases": [
       "dateTime-to-datetime-to-date"
     ],
@@ -904,6 +982,7 @@
   },
   {
     "Name": "directory",
+    "IsPublic": true,
     "Aliases": [
       "path-to-directory"
     ],

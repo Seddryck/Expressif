@@ -10,7 +10,7 @@ namespace Expressif.Functions.Special
     /// Returns the argument value.
     /// </summary>
     [Function(prefix: "Special")]
-    class Neutral : IFunction
+    public class Neutral : IFunction
     {
         public object? Evaluate(object? value) => value;
     }
