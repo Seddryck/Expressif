@@ -11,12 +11,12 @@ namespace Expressif.Values.Resolvers
     public class InputExpressionResolver<T> : IScalarResolver<T>
     {
         private IFunction Expression { get; }
-        private IScalarResolver Argument { get; }
+        private Func<object> Argument { get; }
 
-        public InputExpressionResolver(IScalarResolver argument, IFunction expression)
+        public InputExpressionResolver(Func<object> argument, IFunction expression)
             => (Argument, Expression) = (argument, expression);
 
-        public T? Execute() => new Caster().Cast<T>(Expression.Evaluate(Argument));
+        public T? Execute() => new Caster().Cast<T>(Expression.Evaluate(Argument.Invoke()));
             
         object? IScalarResolver.Execute() => Execute();
     }
