@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Values.Resolvers
 {
-    public class IntervalResolver<T> : IScalarResolver<T> where T : IInterval
+    internal class IntervalResolver<T> : IScalarResolver<T> where T : IInterval
     {
         private readonly object value;
         public IntervalResolver(object value)

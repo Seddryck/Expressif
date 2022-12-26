@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace Expressif.Values.Resolvers
 {
-    public class VariableScalarResolver<T> : IScalarResolver<T>
+    internal class VariableScalarResolver<T> : IScalarResolver<T>
     {
         private string Name { get; }
         private ContextVariables Variables { get; }

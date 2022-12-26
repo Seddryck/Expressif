@@ -91,7 +91,7 @@ namespace Expressif.Functions
             return Delegate.CreateDelegate(funcType, resolver, execute);
         }
 
-        protected static IScalarResolver<T> InstantiateScalarResolver<T>(IParameter parameter, Context context)
+        private static IScalarResolver<T> InstantiateScalarResolver<T>(IParameter parameter, Context context)
             => parameter switch
             {
                 LiteralParameter l => InstantiateScalarResolver<T>(typeof(LiteralScalarResolver<T>), new object[] { l.Value }),

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Values.Resolvers
 {
-    public class InputExpressionResolver<T> : IScalarResolver<T>
+    internal class InputExpressionResolver<T> : IScalarResolver<T>
     {
         private IFunction Expression { get; }
         private Func<object> Argument { get; }

@@ -11,7 +11,7 @@ namespace Expressif.Values
     {
         private IDictionary<string, IScalarResolver> Variables { get; } = new Dictionary<string, IScalarResolver>();
 
-        public void Add(string name, IScalarResolver value)
+        internal void Add(string name, IScalarResolver value)
         {
             name = name.StartsWith("@") ? name[1..] : name;
             if (Variables.ContainsKey(name))
@@ -22,7 +22,7 @@ namespace Expressif.Values
         public void Add<T>(string name, object value)
             => Add(name, new LiteralScalarResolver<T>(value));
 
-        public void Set(string name, IScalarResolver value)
+        internal void Set(string name, IScalarResolver value)
         {
             name = name.StartsWith("@") ? name[1..] : name;
             if (Variables.ContainsKey(name))

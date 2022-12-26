@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Builds", "Builds", "{E3F9B6
 		appveyor.yml = appveyor.yml
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
+		GitVersion.yml = GitVersion.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{01685EF7-A74D-4D06-931B-5DD33CDA3FD8}"
@@ -19,8 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{01685EF7-A
 		generate-info.ps1 = generate-info.ps1
 		README.md = README.md
 		update-docs.ps1 = update-docs.ps1
-		update-index.ps1 = update-index.ps1
 		update-examples.ps1 = update-examples.ps1
+		update-index.ps1 = update-index.ps1
 		update-readme.ps1 = update-readme.ps1
 	EndProjectSection
 EndProject
