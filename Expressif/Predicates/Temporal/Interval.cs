@@ -11,7 +11,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
     /// </summary>
-    internal class ContainedIn : BaseDateTimePredicate
+    public class ContainedIn : BaseDateTimePredicate
     {
         public Interval<DateTime> Interval { get; }
 

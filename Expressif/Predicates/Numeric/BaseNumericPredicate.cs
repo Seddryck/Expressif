@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Numeric
 {
-    abstract class BaseNumericPredicate : BasePredicate
+    public abstract class BaseNumericPredicate : BasePredicate
     {
         public override bool Evaluate(object? value)
         {
@@ -34,7 +34,7 @@ namespace Expressif.Predicates.Numeric
         protected abstract bool EvaluateNumeric(decimal numeric);
     }
 
-    abstract class BaseNumericPredicateReference : BaseNumericPredicate
+    public abstract class BaseNumericPredicateReference : BaseNumericPredicate
     {
         public Func<decimal> Reference { get; }
 

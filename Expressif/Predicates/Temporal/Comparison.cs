@@ -10,7 +10,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.
     /// </summary>
-    internal class SameInstant : BaseDateTimePredicateReference
+    public class SameInstant : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
         public SameInstant(Func<DateTime> reference)
@@ -23,7 +23,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.
     /// </summary>
-    internal class After : BaseDateTimePredicateReference
+    public class After : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
         public After(Func<DateTime> reference)
@@ -36,7 +36,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
     /// </summary>
-    internal class AfterOrSameInstant : BaseDateTimePredicateReference
+    public class AfterOrSameInstant : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
         public AfterOrSameInstant(Func<DateTime> reference)
@@ -49,7 +49,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.
     /// </summary>
-    internal class Before : BaseDateTimePredicateReference
+    public class Before : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
         public Before(Func<DateTime> reference)
@@ -62,7 +62,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
     /// </summary>
-    internal class BeforeOrSameInstant : BaseDateTimePredicateReference
+    public class BeforeOrSameInstant : BaseDateTimePredicateReference
     {
         /// <param name="reference">A temporal value to compare to the argument</param>
         public BeforeOrSameInstant(Func<DateTime> reference)

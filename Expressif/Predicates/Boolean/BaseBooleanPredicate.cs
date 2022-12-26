@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Boolean
 {
-    abstract class BaseBooleanPredicate : BasePredicate
+    public abstract class BaseBooleanPredicate : BasePredicate
     {
         public override bool Evaluate(object? value)
         {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates
 {
     [Predicate]
-    abstract class BasePredicate : IPredicate
+    public abstract class BasePredicate : IPredicate
     {
         public BasePredicate() { }
         public abstract bool Evaluate(object? value);

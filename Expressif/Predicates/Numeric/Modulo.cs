@@ -15,7 +15,7 @@ namespace Expressif.Predicates.Numeric
     /// <summary>
     /// Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the remainder provided as a second parameter. If no remainder is provided then 0 is expected. Returns `false` otherwise.
     /// </summary>
-    internal class Modulo : BaseNumericPredicateReference
+    public class Modulo : BaseNumericPredicateReference
     {
         public Func<decimal> Remainder { get; }
         public Func<decimal> Modulus { get => Reference; }
@@ -36,7 +36,7 @@ namespace Expressif.Predicates.Numeric
     /// <summary>
     /// Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise.
     /// </summary>
-    internal class Even : Modulo
+    public class Even : Modulo
     {
         public Even()
             : base(() => 2) { }
@@ -46,7 +46,7 @@ namespace Expressif.Predicates.Numeric
     /// <summary>
     /// Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.
     /// </summary>
-    internal class Odd : Modulo
+    public class Odd : Modulo
     {
         public Odd()
             : base(() => 2, () => 1) { }

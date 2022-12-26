@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Temporal
 {
     [Predicate(prefix: "dateTime")]
-    abstract class BaseDateTimePredicate : BasePredicate
+    public abstract class BaseDateTimePredicate : BasePredicate
     {
         public override bool Evaluate(object? value)
         {
@@ -38,7 +38,7 @@ namespace Expressif.Predicates.Temporal
         protected abstract bool EvaluateDateTime(DateTime dt);
     }
 
-    abstract class BaseDateTimePredicateReference : BaseDateTimePredicate
+    public abstract class BaseDateTimePredicateReference : BaseDateTimePredicate
     {
         public Func<DateTime> Reference { get; }
 
