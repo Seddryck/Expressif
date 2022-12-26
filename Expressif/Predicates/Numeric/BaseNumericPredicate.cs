@@ -36,9 +36,9 @@ namespace Expressif.Predicates.Numeric
 
     abstract class BaseNumericPredicateReference : BaseNumericPredicate
     {
-        public IScalarResolver<decimal> Reference { get; }
+        public Func<decimal> Reference { get; }
 
-        public BaseNumericPredicateReference(IScalarResolver<decimal> reference)
+        public BaseNumericPredicateReference(Func<decimal> reference)
             => Reference = reference;
     }
 }

@@ -19,13 +19,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("Foobar", "(empty)", true)]
         [TestCase("(empty)", "", true)]
         [TestCase("(empty)", "Foo", false)]
-        public void StartsWith_Text_Success(object value, object reference, bool expected)
+        public void StartsWith_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new StartsWith(new LiteralScalarResolver<string>(reference));
+            var predicate = new StartsWith(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -39,13 +39,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("Foobar", "(empty)", true)]
         [TestCase("(empty)", "", true)]
         [TestCase("(empty)", "bar", false)]
-        public void EndsWith_Text_Success(object value, object reference, bool expected)
+        public void EndsWith_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new EndsWith(new LiteralScalarResolver<string>(reference));
+            var predicate = new EndsWith(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -59,13 +59,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("Foobar", "(empty)", true)]
         [TestCase("(empty)", "", true)]
         [TestCase("(empty)", "bar", false)]
-        public void Contains_Text_Success(object value, object reference, bool expected)
+        public void Contains_Text_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new Expressif.Predicates.Text.Contains(new LiteralScalarResolver<string>(reference));
+            var predicate = new Expressif.Predicates.Text.Contains(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -77,13 +77,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", "^[A-Z]+$", false)]
         [TestCase("(null)", "^[A-Z]+$", false)]
         [TestCase(null, "^[A-Z]+$", false)]
-        public void MatchesRegex_TextIgnoreCase_Success(object value, object reference, bool expected)
+        public void MatchesRegex_TextIgnoreCase_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new MatchesRegex(new LiteralScalarResolver<string>(reference));
+            var predicate = new MatchesRegex(() => reference);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
@@ -94,13 +94,13 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("FooBar", "^[A-Z]+$", false)]
         [TestCase("FOOBAR", "^[A-Z]+$", true)]
         [TestCase("FOOBAR", "^[a-z]+$", false)]
-        public void MatchesRegex_TextDontIgnoreCase_Success(object value, object reference, bool expected)
+        public void MatchesRegex_TextDontIgnoreCase_Success(object value, string reference, bool expected)
         {
 
-            var predicate = new MatchesRegex(new LiteralScalarResolver<string>(reference), StringComparer.InvariantCulture);
+            var predicate = new MatchesRegex(() => reference, StringComparer.InvariantCulture);
             Assert.Multiple(() =>
             {
-                Assert.That(predicate.Reference.Execute(), Is.EqualTo(reference));
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }

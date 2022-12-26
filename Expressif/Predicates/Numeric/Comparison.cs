@@ -15,11 +15,11 @@ namespace Expressif.Predicates.Numeric
     internal class EqualTo : BaseNumericPredicateReference
     {
         /// <param name="reference">A numeric value to compare to the argument</param>
-        public EqualTo(IScalarResolver<decimal> reference)
+        public EqualTo(Func<decimal> reference)
             : base(reference) { }
 
         protected override bool EvaluateNumeric(decimal value)
-            => value == Reference.Execute();
+            => value == Reference.Invoke();
     }
 
     /// <summary>
@@ -28,11 +28,11 @@ namespace Expressif.Predicates.Numeric
     internal class GreaterThan : BaseNumericPredicateReference
     {
         /// <param name="reference">A numeric value to compare to the argument</param>
-        public GreaterThan(IScalarResolver<decimal> reference)
+        public GreaterThan(Func<decimal> reference)
             : base(reference) { }
 
         protected override bool EvaluateNumeric(decimal value)
-            =>  value > Reference.Execute();
+            =>  value > Reference.Invoke();
     }
 
     /// <summary>
@@ -41,11 +41,11 @@ namespace Expressif.Predicates.Numeric
     internal class GreaterThanOrEqual : EqualTo
     {
         /// <param name="reference">A numeric value to compare to the argument</param>
-        public GreaterThanOrEqual(IScalarResolver<decimal> reference)
+        public GreaterThanOrEqual(Func<decimal> reference)
             : base(reference) { }
 
         protected override bool EvaluateNumeric(decimal value)
-            => value >= Reference.Execute();
+            => value >= Reference.Invoke();
     }
 
     /// <summary>
@@ -54,11 +54,11 @@ namespace Expressif.Predicates.Numeric
     internal class LessThan : BaseNumericPredicateReference
     {
         /// <param name="reference">A numeric value to compare to the argument</param>
-        public LessThan(IScalarResolver<decimal> reference)
+        public LessThan(Func<decimal> reference)
             : base(reference) { }
 
         protected override bool EvaluateNumeric(decimal value)
-            => value < Reference.Execute();
+            => value < Reference.Invoke();
     }
 
     /// <summary>
@@ -67,10 +67,10 @@ namespace Expressif.Predicates.Numeric
     internal class LessThanOrEqual : EqualTo
     {
         /// <param name="reference">A numeric value to compare to the argument</param>
-        public LessThanOrEqual(IScalarResolver<decimal> reference)
+        public LessThanOrEqual(Func<decimal> reference)
             : base(reference) { }
 
         protected override bool EvaluateNumeric(decimal value) 
-            => value <= Reference.Execute();
+            => value <= Reference.Invoke();
     }
 }

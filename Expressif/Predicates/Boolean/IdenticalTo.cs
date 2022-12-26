@@ -12,12 +12,12 @@ namespace Expressif.Predicates.Boolean
     /// </summary>
     class IdenticalTo : BaseBooleanPredicate
     {
-        public IScalarResolver<bool> Reference { get; }
+        public Func<bool> Reference { get; }
 
         /// <param name="reference">A boolean value to compare to the argument</param>
-        public IdenticalTo(IScalarResolver<bool> reference)
+        public IdenticalTo(Func<bool> reference)
             => Reference = reference;
 
-        protected override bool EvaluateBoolean(bool boolean) => boolean.Equals(Reference.Execute());
+        protected override bool EvaluateBoolean(bool boolean) => boolean.Equals(Reference.Invoke());
     }
 }

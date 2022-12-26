@@ -67,7 +67,7 @@ namespace Expressif.Testing.Predicates
             var predicate = new PredicationFactory().Instantiate(typeof(EqualTo), new[] { new LiteralParameter("1") }, new Context());
             Assert.That(predicate, Is.Not.Null);
             Assert.That(predicate, Is.TypeOf<EqualTo>());
-            Assert.That((predicate as EqualTo)!.Reference.Execute(), Is.EqualTo(1));
+            Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(1));
         }
 
         [Test]
@@ -78,7 +78,7 @@ namespace Expressif.Testing.Predicates
             var predicate = new PredicationFactory().Instantiate(typeof(EqualTo), new[] { new VariableParameter("myVar") }, context);
             Assert.That(predicate, Is.Not.Null);
             Assert.That(predicate, Is.TypeOf<EqualTo>());
-            Assert.That((predicate as EqualTo)!.Reference.Execute(), Is.EqualTo(2));
+            Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(2));
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace Expressif.Testing.Predicates
             var predicate = new PredicationFactory().Instantiate(typeof(EqualTo), new[] { new ObjectPropertyParameter("Digits") }, context);
             Assert.That(predicate, Is.Not.Null);
             Assert.That(predicate, Is.TypeOf<EqualTo>());
-            Assert.That((predicate as EqualTo)!.Reference.Execute(), Is.EqualTo(3));
+            Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(3));
         }
 
 
@@ -101,7 +101,7 @@ namespace Expressif.Testing.Predicates
             var predicate = new PredicationFactory().Instantiate(typeof(EqualTo), new[] { new ObjectIndexParameter(1) }, context);
             Assert.That(predicate, Is.Not.Null);
             Assert.That(predicate, Is.TypeOf<EqualTo>());
-            Assert.That((predicate as EqualTo)!.Reference.Execute(), Is.EqualTo(4));
+            Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(4));
         }
 
         //[Test]

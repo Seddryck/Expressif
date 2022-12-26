@@ -20,11 +20,11 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", new[] { "foo", "bar", "(empty)" }, true)]
         [TestCase("", new[] { "foo", "bar", "" }, true)]
         [TestCase("", new[] { "foo", "bar" }, false)]
-        public void EquivalentTo_Text_Success(object value, object[] references, bool expected)
+        public void EquivalentTo_Text_Success(object value, string[] references, bool expected)
         {
-            var scalars = new List<LiteralScalarResolver<string>>();
+            var scalars = new List<Func<string>>();
             foreach (var reference in references)
-                scalars.Add(new LiteralScalarResolver<string>(reference));
+                scalars.Add(() => reference);
 
             var predicate = new AnyOf(scalars);
             Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));

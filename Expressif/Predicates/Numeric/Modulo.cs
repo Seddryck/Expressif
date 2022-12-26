@@ -17,20 +17,20 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     internal class Modulo : BaseNumericPredicateReference
     {
-        public IScalarResolver<decimal> Remainder { get; }
-        public IScalarResolver<decimal> Modulus { get => Reference; }
+        public Func<decimal> Remainder { get; }
+        public Func<decimal> Modulus { get => Reference; }
 
         /// <param name="modulus">An integer value used as the modulus.</param>
-        public Modulo(IScalarResolver<decimal> modulus)
-            : this(modulus, new LiteralScalarResolver<decimal>(0)) { }
+        public Modulo(Func<decimal> modulus)
+            : this(modulus, () => 0) { }
 
         /// <param name="modulus">An integer value used as the modulus.</param>
         /// <param name="remainder">An integer value defined as the expected reminder.</param>
-        public Modulo(IScalarResolver<decimal> modulus, IScalarResolver<decimal> remainder)
+        public Modulo(Func<decimal> modulus, Func<decimal> remainder)
             : base(modulus) { Remainder = remainder; }
 
         protected override bool EvaluateNumeric(decimal value)
-            => value % Modulus.Execute() == Remainder.Execute();
+            => value % Modulus.Invoke() == Remainder.Invoke();
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ namespace Expressif.Predicates.Numeric
     internal class Even : Modulo
     {
         public Even()
-            : base(new LiteralScalarResolver<decimal>(2)) { }
+            : base(() => 2) { }
 
     }
 
@@ -49,6 +49,6 @@ namespace Expressif.Predicates.Numeric
     internal class Odd : Modulo
     {
         public Odd()
-            : base(new LiteralScalarResolver<decimal>(2), new LiteralScalarResolver<decimal>(1)) { }
+            : base(() => 2, () => 1) { }
     }
 }

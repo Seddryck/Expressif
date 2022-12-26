@@ -18,12 +18,12 @@ namespace Expressif.Predicates.Text
         protected StringComparer Comparer { get; }
 
         /// <param name="reference">A string to be compared to the argument value</param>
-        public EquivalentTo(IScalarResolver<string> reference)
+        public EquivalentTo(Func<string> reference)
             : this(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public EquivalentTo(IScalarResolver<string> reference, StringComparer comparer)
+        public EquivalentTo(Func<string> reference, StringComparer comparer)
             : base(reference) { Comparer = comparer; }
 
         protected override bool EvaluateText(string value, string reference)
@@ -36,12 +36,12 @@ namespace Expressif.Predicates.Text
     internal class SortedAfter : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public SortedAfter(IScalarResolver<string> reference)
+        public SortedAfter(Func<string> reference)
             : this(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public SortedAfter(IScalarResolver<string> reference, StringComparer comparer)
+        public SortedAfter(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
@@ -53,12 +53,12 @@ namespace Expressif.Predicates.Text
     internal class SortedAfterOrEquivalentTo : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public SortedAfterOrEquivalentTo(IScalarResolver<string> reference)
+        public SortedAfterOrEquivalentTo(Func<string> reference)
             : this(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public SortedAfterOrEquivalentTo(IScalarResolver<string> reference, StringComparer comparer)
+        public SortedAfterOrEquivalentTo(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
@@ -71,12 +71,12 @@ namespace Expressif.Predicates.Text
     internal class SortedBefore : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public SortedBefore(IScalarResolver<string> reference)
+        public SortedBefore(Func<string> reference)
             : this(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public SortedBefore(IScalarResolver<string> reference, StringComparer comparer)
+        public SortedBefore(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)
@@ -89,12 +89,12 @@ namespace Expressif.Predicates.Text
     internal class SortedBeforeOrEquivalentTo : EquivalentTo
     {
         /// <param name="reference">A string to be compared to the argument value</param>
-        public SortedBeforeOrEquivalentTo(IScalarResolver<string> reference)
+        public SortedBeforeOrEquivalentTo(Func<string> reference)
             : this(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
         /// <param name="reference">A string to be compared to the argument value</param>
         /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
-        public SortedBeforeOrEquivalentTo(IScalarResolver<string> reference, StringComparer comparer)
+        public SortedBeforeOrEquivalentTo(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
         protected override bool EvaluateText(string value, string reference)

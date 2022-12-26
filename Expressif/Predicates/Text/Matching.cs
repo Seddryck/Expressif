@@ -16,9 +16,9 @@ namespace Expressif.Predicates.Text
         protected CultureInfo CultureInfo { get; }
 
         public BaseTextPredicateMatching()
-            : this(new LiteralScalarResolver<string>(string.Empty)) { }
-        public BaseTextPredicateMatching(IScalarResolver<string> culture)
-            => CultureInfo = GetCulture(culture.Execute() ?? string.Empty);
+            : this(() => string.Empty) { }
+        public BaseTextPredicateMatching(Func<string> culture)
+            => CultureInfo = GetCulture(culture.Invoke() ?? string.Empty);
 
         protected virtual CultureInfo GetCulture(string culture)
         {
@@ -39,7 +39,7 @@ namespace Expressif.Predicates.Text
     {
         public MatchesNumeric()
             : base() { }
-        public MatchesNumeric(IScalarResolver<string> culture)
+        public MatchesNumeric(Func<string> culture)
             : base(culture) { }
 
         protected override bool EvaluateUncasted(object value)
@@ -56,7 +56,7 @@ namespace Expressif.Predicates.Text
     {
         public MatchesDate()
             : base() { }
-        public MatchesDate(IScalarResolver<string> culture)
+        public MatchesDate(Func<string> culture)
             : base(culture) { }
 
         protected override bool EvaluateUncasted(object value)
@@ -84,7 +84,7 @@ namespace Expressif.Predicates.Text
 
         public MatchesDateTime()
             : base() { }
-        public MatchesDateTime(IScalarResolver<string> culture)
+        public MatchesDateTime(Func<string> culture)
             : base(culture) { }
 
         protected override bool EvaluateUncasted(object value)
@@ -107,7 +107,7 @@ namespace Expressif.Predicates.Text
     {
         public MatchesTime()
             : base() { }
-        public MatchesTime(IScalarResolver<string> culture)
+        public MatchesTime(Func<string> culture)
             : base(culture) { }
 
         protected override bool EvaluateUncasted(object value)

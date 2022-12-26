@@ -40,9 +40,9 @@ namespace Expressif.Predicates.Temporal
 
     abstract class BaseDateTimePredicateReference : BaseDateTimePredicate
     {
-        public IScalarResolver<DateTime> Reference { get; }
+        public Func<DateTime> Reference { get; }
 
-        public BaseDateTimePredicateReference(IScalarResolver<DateTime> reference)
+        public BaseDateTimePredicateReference(Func<DateTime> reference)
             => Reference = reference;
     }
 }

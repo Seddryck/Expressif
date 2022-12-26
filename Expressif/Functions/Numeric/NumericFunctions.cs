@@ -80,13 +80,13 @@ namespace Expressif.Functions.Numeric
     /// </summary>
     class Round : BaseNumericRounding
     {
-        public IScalarResolver<int> Digits { get; }
+        public Func<int> Digits { get; }
 
         /// <param name="digits">An integer between 0 and +Infinity, indicating the number of fractional digits in the return value.</param>
-        public Round(IScalarResolver<int> digits)
+        public Round(Func<int> digits)
             => Digits = digits;
 
-        protected override decimal? EvaluateNumeric(decimal numeric) => Math.Round(numeric, Digits.Execute());
+        protected override decimal? EvaluateNumeric(decimal numeric) => Math.Round(numeric, Digits.Invoke());
     }
 
     /// <summary>
@@ -94,23 +94,23 @@ namespace Expressif.Functions.Numeric
     /// </summary>
     class Clip : BaseNumericFunction
     {
-        public IScalarResolver<decimal> Min { get; }
-        public IScalarResolver<decimal> Max { get; }
+        public Func<decimal> Min { get; }
+        public Func<decimal> Max { get; }
 
         /// <param name="min">value returned in case the argument value is smaller than it</param>
         /// <param name="max">value returned in case the argument value is greater than it</param>
-        public Clip(IScalarResolver<decimal> min, IScalarResolver<decimal> max)
+        public Clip(Func<decimal> min, Func<decimal> max)
             => (Min, Max) = (min, max);
 
         protected override decimal? EvaluateNumeric(decimal numeric) 
-            => (numeric < Min.Execute()) ? Min.Execute() : (numeric > Max.Execute()) ? Max.Execute() : numeric;
+            => (numeric < Min.Invoke()) ? Min.Invoke() : (numeric > Max.Invoke()) ? Max.Invoke() : numeric;
     }
 
     abstract class BaseNumericArithmetic : BaseNumericFunction
     {
-        public IScalarResolver<decimal> Value { get; }
+        public Func<decimal> Value { get; }
 
-        public BaseNumericArithmetic(IScalarResolver<decimal> value)
+        public BaseNumericArithmetic(Func<decimal> value)
             => Value = value;
     }
 
@@ -119,18 +119,18 @@ namespace Expressif.Functions.Numeric
     /// </summary>
     class Add : BaseNumericArithmetic
     {
-        public IScalarResolver<int> Times { get; }
+        public Func<int> Times { get; }
 
         /// <param name="value">The value to be added to the argument value</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the sum</param>
-        public Add(IScalarResolver<decimal> value, IScalarResolver<int> times)
+        public Add(Func<decimal> value, Func<int> times)
             : base(value) => Times = times;
 
-        public Add(IScalarResolver<decimal> value)
-            : this(value, new LiteralScalarResolver<int>(1)) { }
+        public Add(Func<decimal> value)
+            : this(value, () => 1) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
-            => value + (Value.Execute() * Times.Execute());
+            => value + (Value.Invoke() * Times.Invoke());
     }
 
     /// <summary>
@@ -140,14 +140,14 @@ namespace Expressif.Functions.Numeric
     {
         /// <param name="value">The value to be subtracted to the argument value</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
-        public Subtract(IScalarResolver<decimal> value, IScalarResolver<int> times)
+        public Subtract(Func<decimal> value, Func<int> times)
             : base(value, times) { }
 
-        public Subtract(IScalarResolver<decimal> value)
+        public Subtract(Func<decimal> value)
             : base(value) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
-            => value - (Value.Execute() * Times.Execute());
+            => value - (Value.Invoke() * Times.Invoke());
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ namespace Expressif.Functions.Numeric
     class Increment : Add
     {
         public Increment()
-        : base(new LiteralScalarResolver<decimal>(1)) { }
+        : base(() => 1) { }
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ namespace Expressif.Functions.Numeric
     class Decrement : Subtract
     {
         public Decrement()
-        : base(new LiteralScalarResolver<decimal>(1)) { }
+        : base(() => 1) { }
     }
 
     /// <summary>
@@ -174,11 +174,11 @@ namespace Expressif.Functions.Numeric
     class Multiply : BaseNumericArithmetic
     {
         /// <param name="value">The value to be multiplied by the argument value</param>
-        public Multiply(IScalarResolver<decimal> value)
+        public Multiply(Func<decimal> value)
             : base(value) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
-            => value * Value.Execute();
+            => value * Value.Invoke();
     }
 
     /// <summary>
@@ -187,11 +187,11 @@ namespace Expressif.Functions.Numeric
     class Divide : BaseNumericArithmetic
     {
         /// <param name="value">The value to divide the argument value</param>
-        public Divide(IScalarResolver<decimal> value)
+        public Divide(Func<decimal> value)
             : base(value) { }
 
         protected override decimal? EvaluateNumeric(decimal value)
-            => Value.Execute()==0 ? null : value / Value.Execute();
+            => Value.Invoke()==0 ? null : value / Value.Invoke();
     }
 
     /// <summary>

@@ -52,7 +52,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase(125.17, true)]
         [TestCase(125, true)]
         public void MatchesNumeric_FrenchCulture_Success(object value, bool expected)
-            => Assert.That(new MatchesNumeric(new LiteralScalarResolver<string>("fr-fr")).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new MatchesNumeric(() => "fr-fr").Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-02", true)]
@@ -106,7 +106,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(null)", false)]
         [TestCase(null, false)]
         public void MatchesDate_FrenchCulture_Success(object value, bool expected)
-            => Assert.That(new MatchesDate(new LiteralScalarResolver<string>("fr-fr")).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new MatchesDate(() => "fr-fr").Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         public void MatchesDate_FrenchCultureDateTime_Valid()
@@ -134,7 +134,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(null)", false)]
         [TestCase(null, false)]
         public void MatchesDate_DutchCulture_Success(object value, bool expected)
-            => Assert.That(new MatchesDate(new LiteralScalarResolver<string>("nl-be")).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new MatchesDate(() => "nl-be").Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-02", false)]
@@ -207,7 +207,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(null)", false)]
         [TestCase(null, false)]
         public void MatchesTime_EnglishCulture_Success(object value, bool expected)
-            => Assert.That(new MatchesTime(new LiteralScalarResolver<string>("en-gb")).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new MatchesTime(() => "en-gb").Evaluate(value), Is.EqualTo(expected));
 
 
         [Test]

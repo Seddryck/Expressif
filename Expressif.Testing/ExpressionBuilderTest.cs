@@ -106,7 +106,7 @@ namespace Expressif.Testing
         public void Chain_IFunction_CorrectlyEvaluate()
         {
             var builder = new ExpressionBuilder();
-            var expression = builder.Chain(new Lower()).Chain(new FirstChars(new LiteralScalarResolver<int>(5))).Build();
+            var expression = builder.Chain(new Lower()).Chain(new FirstChars(() => 5)).Build();
             Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol"));
         }
 

@@ -99,12 +99,12 @@ namespace Expressif.Functions.Text
 
     abstract class BaseTextAppend : BaseTextFunction
     {
-        public IScalarResolver<string> Append { get; }
-        public BaseTextAppend(IScalarResolver<string> append)
+        public Func<string> Append { get; }
+        public BaseTextAppend(Func<string> append)
             => Append = append;
 
-        protected override object EvaluateEmpty() => Append.Execute() ?? string.Empty;
-        protected override object EvaluateBlank() => Append.Execute() ?? string.Empty;
+        protected override object EvaluateEmpty() => Append.Invoke() ?? string.Empty;
+        protected override object EvaluateBlank() => Append.Invoke() ?? string.Empty;
     }
 
     /// <summary>
@@ -113,9 +113,9 @@ namespace Expressif.Functions.Text
     class Prefix : BaseTextAppend
     {
         /// <param name="prefix">The text to append</param>
-        public Prefix(IScalarResolver<string> prefix)
+        public Prefix(Func<string> prefix)
             : base(prefix) { }
-        protected override object EvaluateString(string value) => $"{Append.Execute()}{value}";
+        protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
     }
 
     /// <summary>
@@ -124,16 +124,16 @@ namespace Expressif.Functions.Text
     class Suffix : BaseTextAppend
     {
         /// <param name="suffix">The text to append</param>
-        public Suffix(IScalarResolver<string> suffix)
+        public Suffix(Func<string> suffix)
             : base(suffix) { }
-        protected override object EvaluateString(string value) => $"{value}{Append.Execute()}";
+        protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
     }
 
     abstract class BaseTextLength : BaseTextFunction
     {
-        public IScalarResolver<int> Length { get; }
+        public Func<int> Length { get; }
 
-        public BaseTextLength(IScalarResolver<int> length)
+        public BaseTextLength(Func<int> length)
             => Length = length;
     }
 
@@ -143,11 +143,11 @@ namespace Expressif.Functions.Text
     class FirstChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
-        public FirstChars(IScalarResolver<int> length)
+        public FirstChars(Func<int> length)
             : base(length) { }
 
         protected override object EvaluateString(string value)
-            => value.Length >= Length.Execute() ? value.Substring(0, Length.Execute()) : value;
+            => value.Length >= Length.Invoke() ? value[..Length.Invoke()] : value;
     }
 
     /// <summary>
@@ -156,11 +156,11 @@ namespace Expressif.Functions.Text
     class LastChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
-        public LastChars(IScalarResolver<int> length)
+        public LastChars(Func<int> length)
             : base(length) { }
 
         protected override object EvaluateString(string value)
-            => value.Length >= Length.Execute() ? value.Substring(value.Length - Length.Execute(), Length.Execute()) : value;
+            => value.Length >= Length.Invoke() ? value.Substring(value.Length - Length.Invoke(), Length.Invoke()) : value;
     }
 
     /// <summary>
@@ -169,11 +169,11 @@ namespace Expressif.Functions.Text
     class SkipFirstChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
-        public SkipFirstChars(IScalarResolver<int> length)
+        public SkipFirstChars(Func<int> length)
             : base(length) { }
 
         protected override object EvaluateString(string value)
-            => value.Length <= Length.Execute() ? new Empty().Keyword : value.Substring(Length.Execute(), value.Length - Length.Execute());
+            => value.Length <= Length.Invoke() ? new Empty().Keyword : value.Substring(Length.Invoke(), value.Length - Length.Invoke());
     }
 
     /// <summary>
@@ -182,23 +182,23 @@ namespace Expressif.Functions.Text
     class SkipLastChars : BaseTextLength
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
-        public SkipLastChars(IScalarResolver<int> length) 
+        public SkipLastChars(Func<int> length) 
             : base(length) { }
 
         protected override object EvaluateString(string value)
-            => value.Length <= Length.Execute() ? new Empty().Keyword : value.Substring(0, value.Length - Length.Execute());
+            => value.Length <= Length.Invoke() ? new Empty().Keyword : value.Substring(0, value.Length - Length.Invoke());
     }
 
     abstract class BasePaddingFunction : BaseTextLength
     {
-        public IScalarResolver<char> Character { get; }
+        public Func<char> Character { get; }
 
-        public BasePaddingFunction(IScalarResolver<int> length, IScalarResolver<char> character)
+        public BasePaddingFunction(Func<int> length, Func<char> character)
             : base(length)
             => Character = character;
 
-        protected override object EvaluateEmpty() => new string(Character.Execute(), Length.Execute());
-        protected override object EvaluateNull() => new string(Character.Execute(), Length.Execute());
+        protected override object EvaluateEmpty() => new string(Character.Invoke(), Length.Invoke());
+        protected override object EvaluateNull() => new string(Character.Invoke(), Length.Invoke());
 
     }
 
@@ -209,11 +209,11 @@ namespace Expressif.Functions.Text
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
         /// <param name="character">The padding character</param>
-        public PadRight(IScalarResolver<int> length, IScalarResolver<char> character)
+        public PadRight(Func<int> length, Func<char> character)
             : base(length, character) { }
 
         protected override object EvaluateString(string value)
-            => value.Length >= Length.Execute() ? value : value.PadRight(Length.Execute(), Character.Execute());
+            => value.Length >= Length.Invoke() ? value : value.PadRight(Length.Invoke(), Character.Invoke());
     }
 
     /// <summary>
@@ -223,11 +223,11 @@ namespace Expressif.Functions.Text
     {
         /// <param name="length">An integer value between 0 and +Infinity, defining the minimal length of the string returned</param>
         /// <param name="character">The padding character</param>
-        public PadLeft(IScalarResolver<int> length, IScalarResolver<char> character)
+        public PadLeft(Func<int> length, Func<char> character)
             : base(length, character) { }
 
         protected override object EvaluateString(string value)
-            => value.Length >= Length.Execute() ? value : value.PadLeft(Length.Execute(), Character.Execute());
+            => value.Length >= Length.Invoke() ? value : value.PadLeft(Length.Invoke(), Character.Invoke());
     }
 
     /// <summary>
@@ -297,25 +297,25 @@ namespace Expressif.Functions.Text
     /// </summary>
     class Token : BaseTextFunction
     {
-        public IScalarResolver<int> Index { get; }
-        public IScalarResolver<char>? Separator { get; }
+        public Func<int> Index { get; }
+        public Func<char>? Separator { get; }
 
         /// <param name="index">An integer value between 0 and +Infinity, defining the position of the token to be returned.</param>
-        public Token(IScalarResolver<int> index)
+        public Token(Func<int> index)
             => (Index, Separator) = (index, null);
 
         /// <param name="index">An integer value between 0 and +Infinity, defining the position of the token to be returned.</param>
         /// <param name="separator">A character that delimits the substrings in this instance.</param>
-        public Token(IScalarResolver<int> index, IScalarResolver<char> separator)
+        public Token(Func<int> index, Func<char> separator)
             => (Index, Separator) = (index, separator);
-        protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Execute()) ? new Null().Keyword : new Whitespace().Keyword;
+        protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Invoke()) ? new Null().Keyword : new Whitespace().Keyword;
         protected override object EvaluateEmpty() => new Null().Keyword;
         protected override object EvaluateString(string value)
         {
-            var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Execute());
+            var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Invoke());
 
             var tokens = tokenizer.Execute(value);
-            var indexValue = Index.Execute();
+            var indexValue = Index.Invoke();
             if (indexValue < tokens.Length)
                 return tokens[indexValue];
             else
@@ -328,12 +328,12 @@ namespace Expressif.Functions.Text
     /// </summary>
     class TokenCount : Length
     {
-        public IScalarResolver<char>? Separator { get; }
+        public Func<char>? Separator { get; }
         public TokenCount()
             => Separator = null;
         
         /// <param name="separator">A character that delimits the substrings in this instance.</param>
-        public TokenCount(IScalarResolver<char> separator)
+        public TokenCount(Func<char> separator)
             => Separator = separator;
 
         protected override object EvaluateBlank() => 0;
@@ -341,7 +341,7 @@ namespace Expressif.Functions.Text
 
         private int CountToken(string value)
         {
-            var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Execute());
+            var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Invoke());
             return tokenizer.Execute(value).Length;
         }
     }
@@ -352,23 +352,23 @@ namespace Expressif.Functions.Text
     [Function(prefix: "")]
     class TextToDateTime : BaseTextFunction
     {
-        public IScalarResolver<string> Format { get; }
-        public IScalarResolver<string> Culture { get; }
+        public Func<string> Format { get; }
+        public Func<string> Culture { get; }
 
         /// <param name="format">A string representing the required format.</param>
-        public TextToDateTime(IScalarResolver<string> format)
-            => (Format, Culture) = (format, new LiteralScalarResolver<string>(string.Empty));
+        public TextToDateTime(Func<string> format)
+            => (Format, Culture) = (format, () => string.Empty);
 
         /// <param name="format">A string representing the required format.</param>
         /// <param name="culture">A string representing a pre-defined culture.</param>
-        public TextToDateTime(IScalarResolver<string> format, IScalarResolver<string> culture)
+        public TextToDateTime(Func<string> format, Func<string> culture)
             => (Format, Culture) = (format, culture);
 
         protected override object EvaluateString(string value)
         {
-            var info = (string.IsNullOrEmpty(Culture.Execute()) ? CultureInfo.InvariantCulture : new CultureInfo(Culture.Execute()!)).DateTimeFormat;
+            var info = (string.IsNullOrEmpty(Culture.Invoke()) ? CultureInfo.InvariantCulture : new CultureInfo(Culture.Invoke()!)).DateTimeFormat;
 
-            if (DateTime.TryParseExact(value, Format.Execute(), info, DateTimeStyles.RoundtripKind, out var dateTime))
+            if (DateTime.TryParseExact(value, Format.Invoke(), info, DateTimeStyles.RoundtripKind, out var dateTime))
                 return DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
 
             throw new ArgumentException($"Impossible to transform the value '{value}' into a date using the format '{Format}'");
@@ -380,24 +380,24 @@ namespace Expressif.Functions.Text
     /// </summary>
     class RemoveChars : BaseTextFunction
     {
-        public IScalarResolver<char> CharToRemove { get; }
+        public Func<char> CharToRemove { get; }
 
         /// <param name="charToRemove">The char to be removed from the argument string</param>
-        public RemoveChars(IScalarResolver<char> charToRemove)
+        public RemoveChars(Func<char> charToRemove)
             => CharToRemove = charToRemove;
 
         protected override object EvaluateString(string value)
         {
             var stringBuilder = new StringBuilder();
             foreach (var c in value)
-                if (!c.Equals(CharToRemove.Execute()))
+                if (!c.Equals(CharToRemove.Invoke()))
                     stringBuilder.Append(c);
             return stringBuilder.ToString();
         }
 
         protected override object EvaluateBlank()
         {
-            if (char.IsWhiteSpace(CharToRemove.Execute()))
+            if (char.IsWhiteSpace(CharToRemove.Invoke()))
                 return new Empty().Keyword;
             else
                 return base.EvaluateBlank();
@@ -411,15 +411,15 @@ namespace Expressif.Functions.Text
     class TextToMask : BaseTextFunction
     {
         private char maskChar { get; } = '*';
-        public IScalarResolver<string> Mask { get; }
+        public Func<string> Mask { get; }
 
         /// <param name="mask">The string representing the mask to apply to the argument string</param>
-        public TextToMask(IScalarResolver<string> mask)
+        public TextToMask(Func<string> mask)
             => Mask = mask;
 
         protected override object EvaluateString(string value)
         {
-            var mask = Mask.Execute() ?? string.Empty;
+            var mask = Mask.Invoke() ?? string.Empty;
             var stringBuilder = new StringBuilder();
             var index = 0;
             foreach (var c in mask)
@@ -431,9 +431,9 @@ namespace Expressif.Functions.Text
         }
 
         protected override object EvaluateBlank()
-            => Mask.Execute() ?? string.Empty;
+            => Mask.Invoke() ?? string.Empty;
         protected override object EvaluateEmpty()
-            => Mask.Execute() ?? string.Empty;
+            => Mask.Invoke() ?? string.Empty;
     }
 
     /// <summary>
@@ -443,15 +443,15 @@ namespace Expressif.Functions.Text
     class MaskToText : BaseTextFunction
     {
         private char maskChar { get; } = '*';
-        public IScalarResolver<string> Mask { get; }
+        public Func<string> Mask { get; }
 
         /// <param name="mask">The string representing the mask to be unset from the argument string</param>
-        public MaskToText(IScalarResolver<string> mask)
+        public MaskToText(Func<string> mask)
             => Mask = mask;
 
         protected override object EvaluateString(string value)
         {
-            var mask = Mask.Execute() ?? string.Empty;
+            var mask = Mask.Invoke() ?? string.Empty;
             var stringBuilder = new StringBuilder();
             if (mask.Length != value.Length)
                 return new Null().Keyword;
@@ -465,8 +465,8 @@ namespace Expressif.Functions.Text
         }
 
         protected override object EvaluateBlank()
-            => ((Mask.Execute() ?? string.Empty).Replace(maskChar.ToString(), "").Length == 0) ? new Whitespace().Keyword : new Null().Keyword;
+            => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), "").Length == 0) ? new Whitespace().Keyword : new Null().Keyword;
         protected override object EvaluateEmpty()
-            => ((Mask.Execute() ?? string.Empty).Replace(maskChar.ToString(), "").Length == 0) ? new Empty().Keyword : new Null().Keyword;
+            => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), "").Length == 0) ? new Empty().Keyword : new Null().Keyword;
     }
 }

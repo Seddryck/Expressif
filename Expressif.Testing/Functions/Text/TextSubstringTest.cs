@@ -21,7 +21,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", ", ", "(null)")]
         [TestCase("(empty)", ", ", "(empty)")]
         public void BeforeSubstring_Valid(string value, string substring, string expected)
-            => Assert.That(new BeforeSubstring(new LiteralScalarResolver<string>(substring)).Evaluate(value)
+            => Assert.That(new BeforeSubstring(() => substring).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -30,7 +30,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Foo+Bar+Bez+Quark", "+", 2, "Foo+Bar+Bez")]
         [TestCase("Foo+Bar+Bez+Quark", "+", 3, "(null)")]
         public void BeforeSubstring_Position_Valid(string value, string substring, int position, string expected)
-            => Assert.That(new BeforeSubstring(new LiteralScalarResolver<string>(substring), new LiteralScalarResolver<int>(position)).Evaluate(value)
+            => Assert.That(new BeforeSubstring(() => substring, () => position).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -43,7 +43,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(null)", ", ", "(null)")]
         [TestCase("(empty)", ", ", "(empty)")]
         public void AfterSubstring_Valid(string value, string substring, string expected)
-            => Assert.That(new AfterSubstring(new LiteralScalarResolver<string>(substring)).Evaluate(value)
+            => Assert.That(new AfterSubstring(() => substring).Evaluate(value)
                 , Is.EqualTo(expected));
 
         [Test]
@@ -52,7 +52,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("Foo+Bar+Bez+Quark", "+", 2, "Quark")]
         [TestCase("Foo+Bar+Bez+Quark", "+", 3, "(null)")]
         public void AfterSubstring_Position_Valid(string value, string substring, int position, string expected)
-            => Assert.That(new AfterSubstring(new LiteralScalarResolver<string>(substring), new LiteralScalarResolver<int>(position)).Evaluate(value)
+            => Assert.That(new AfterSubstring(() => substring, () => position).Evaluate(value)
                 , Is.EqualTo(expected));
     }
 }

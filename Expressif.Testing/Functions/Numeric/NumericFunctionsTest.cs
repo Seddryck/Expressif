@@ -103,7 +103,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Round_Valid(object value, decimal? expected)
-            => Assert.That(new Round(new LiteralScalarResolver<int>(2)).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new Round(() => 2).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase(0, 0)]
@@ -117,9 +117,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Clip_Interval1010Valid(object value, decimal? expected)
-            => Assert.That(new Clip(
-                    new LiteralScalarResolver<decimal>(-10)
-                    , new LiteralScalarResolver<decimal>(10))
+            => Assert.That(new Clip(() => -10, () => 10)
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -150,7 +148,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Add_3_Valid(object value, decimal? expected)
-            => Assert.That(new Add(new LiteralScalarResolver<decimal>(3)).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new Add(() => 3).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase(0, 6)]
@@ -160,9 +158,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Add_3Times2_Valid(object value, decimal? expected)
-            => Assert.That(new Add(
-                    new LiteralScalarResolver<decimal>(3)
-                    , new LiteralScalarResolver<int>(2))
+            => Assert.That(new Add(() => 3, () => 2)
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -173,7 +169,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Subtract_3_Valid(object value, decimal? expected)
-            => Assert.That(new Subtract(new LiteralScalarResolver<decimal>(3)).Evaluate(value), Is.EqualTo(expected));
+            => Assert.That(new Subtract(() => 3).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase(0, -6)]
@@ -183,9 +179,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Subtract_3Times2_Valid(object value, decimal? expected)
-            => Assert.That(new Subtract(
-                    new LiteralScalarResolver<decimal>(3)
-                    , new LiteralScalarResolver<int>(2))
+            => Assert.That(new Subtract(() => 3, () => 2)
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -196,8 +190,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Multiply_3_Valid(object value, decimal? expected)
-            => Assert.That(new Multiply(
-                    new LiteralScalarResolver<decimal>(3))
+            => Assert.That(new Multiply(() => 3)
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -208,8 +201,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
         public void Divide_4_Valid(object value, decimal? expected)
-            => Assert.That(new Divide(
-                    new LiteralScalarResolver<decimal>(4))
+            => Assert.That(new Divide(() => 4)
                 .Evaluate(value), Is.EqualTo(expected));
 
         [Test]

@@ -12,13 +12,13 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     class WithinInterval : BaseNumericPredicate
     {
-        public Interval<decimal> Interval { get; }
+        public Func<Interval<decimal>> Interval { get; }
 
         /// <param name="interval">A numeric interval to compare to the argument</param>
-        public WithinInterval(Interval<decimal> interval) 
+        public WithinInterval(Func<Interval<decimal>> interval) 
             => Interval = interval;
 
         protected override bool EvaluateNumeric(decimal numeric) 
-            => Interval.Contains(numeric);
+            => Interval.Invoke().Contains(numeric);
     }
 }

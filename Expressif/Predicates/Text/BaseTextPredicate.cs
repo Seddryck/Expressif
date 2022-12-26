@@ -55,23 +55,23 @@ namespace Expressif.Predicates.Text
 
     abstract class BaseTextPredicateReference : BaseTextPredicate
     {
-        public IScalarResolver<string> Reference { get; }
+        public Func<string> Reference { get; }
 
-        public BaseTextPredicateReference(IScalarResolver<string> reference)
+        public BaseTextPredicateReference(Func<string> reference)
             => Reference = reference;
         
         protected override bool EvaluateBaseText(string value)
         {
-            if (new Values.Special.Null().Equals(value) || new Values.Special.Null().Equals(Reference.Execute()))
+            if (new Values.Special.Null().Equals(value) || new Values.Special.Null().Equals(Reference.Invoke()))
                 return EvaluateNull();
-            if ((new Values.Special.Whitespace().Equals(value) || new Values.Special.Whitespace().Equals(Reference.Execute()))
-                && !(new Values.Special.Empty().Equals(value) || new Values.Special.Empty().Equals(Reference.Execute())))
+            if ((new Values.Special.Whitespace().Equals(value) || new Values.Special.Whitespace().Equals(Reference.Invoke()))
+                && !(new Values.Special.Empty().Equals(value) || new Values.Special.Empty().Equals(Reference.Invoke())))
                 return EvaluateWhitespaces();
 
             if (new Values.Special.Empty().Equals(value))
                 value = string.Empty;
 
-            var reference = Reference.Execute()!;
+            var reference = Reference.Invoke()!;
             if (new Values.Special.Empty().Equals(reference))
                 reference = string.Empty;
 
