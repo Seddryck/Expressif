@@ -68,6 +68,7 @@ on_success:
         Write-Host "Update of Library index needed"
         & .\update-index.ps1
         Write-Host "Update of docs needed"
+        & .\update-homepage.ps1
         & .\update-docs.ps1 function special
         & .\update-docs.ps1 function text
         & .\update-docs.ps1 function numeric
