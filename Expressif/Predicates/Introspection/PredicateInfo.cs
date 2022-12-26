@@ -10,6 +10,7 @@ namespace Expressif.Predicates.Introspection
     public record PredicateInfo
     (
         string Name,
+        bool IsPublic,
         string[] Aliases,
         string Scope,
         Type ImplementationType,

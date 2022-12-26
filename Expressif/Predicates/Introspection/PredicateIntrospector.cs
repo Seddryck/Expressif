@@ -38,6 +38,7 @@ namespace Expressif.Predicates.Introspection
 
                 yield return new PredicateInfo(
                         predicate.Type.Name.ToKebabCase()
+                        , predicate.Type.IsPublic
                         , predicate.Attribute.Aliases.AsQueryable().Prepend(string.Join('-', array)).ToArray()
                         , predicate.Type.Namespace!.ToToken('.').Last()
                         , predicate.Type
