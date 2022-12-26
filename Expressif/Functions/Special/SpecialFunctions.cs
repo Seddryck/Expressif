@@ -11,7 +11,7 @@ namespace Expressif.Functions.Special
 {
 
     [Function(prefix: "")]
-    abstract class BaseSpecialFunction : IFunction
+    public abstract class BaseSpecialFunction : IFunction
     {
         public object? Evaluate(object? value)
         {
@@ -67,7 +67,7 @@ namespace Expressif.Functions.Special
     /// <summary>
     /// Returns the value passed as argument, except if the value is `null` then it returns `value`.
     /// </summary>
-    class NullToValue : BaseSpecialFunction
+    public class NullToValue : BaseSpecialFunction
     {
         protected override object EvaluateNull() => new Value().Keyword;
         protected override object EvaluateEmpty() => new Empty().Keyword;
@@ -80,7 +80,7 @@ namespace Expressif.Functions.Special
     /// <summary>
     /// Returns `any`.
     /// </summary>
-    class AnyToAny : BaseSpecialFunction
+    public class AnyToAny : BaseSpecialFunction
     {
         protected override object EvaluateNull() => new Any().Keyword;
         protected override object EvaluateEmpty() => new Any().Keyword;
@@ -93,7 +93,7 @@ namespace Expressif.Functions.Special
     /// <summary>
     /// Returns `value` except if the argument value is `null` then it returns `null`.
     /// </summary>
-    class ValueToValue : BaseSpecialFunction
+    public class ValueToValue : BaseSpecialFunction
     {
         protected override object EvaluateNull() => new Null().Keyword;
         protected override object EvaluateEmpty() => new Value().Keyword;
