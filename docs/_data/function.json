@@ -16,14 +16,6 @@
     ]
   },
   {
-    "Name": "null-to-zero",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
-    "Parameters": []
-  },
-  {
     "Name": "divide",
     "IsPublic": true,
     "Aliases": [
@@ -126,21 +118,19 @@
     "Parameters": []
   },
   {
-    "Name": "ceiling",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-ceiling"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Special",
     "Summary": "Returns `any`.",
+    "Parameters": []
+  },
+  {
+    "Name": "null-to-value",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
     "Parameters": []
   },
   {
@@ -244,11 +234,45 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-value",
+    "Name": "floor-hour",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-floor-hour"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero.",
+    "Parameters": []
+  },
+  {
+    "Name": "invalid-to-date",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
-    "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
+      }
+    ]
+  },
+  {
+    "Name": "null-to-zero",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Numeric",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Parameters": []
+  },
+  {
+    "Name": "ceiling",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-ceiling"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
     "Parameters": []
   },
   {
@@ -270,22 +294,6 @@
     "Scope": "Numeric",
     "Summary": "Returns the value of an argument number rounded to the nearest integer.",
     "Parameters": []
-  },
-  {
-    "Name": "round",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-round"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
-    "Parameters": [
-      {
-        "Name": "digits",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
-      }
-    ]
   },
   {
     "Name": "extension",
@@ -378,6 +386,20 @@
     "Parameters": []
   },
   {
+    "Name": "null-to-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is `null`."
+      }
+    ]
+  },
+  {
     "Name": "sign",
     "IsPublic": true,
     "Aliases": [
@@ -385,16 +407,6 @@
     ],
     "Scope": "Numeric",
     "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
-    "Parameters": []
-  },
-  {
-    "Name": "cube-root",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-cube-root"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns cube root of the numeric argument value",
     "Parameters": []
   },
   {
@@ -489,42 +501,40 @@
     ]
   },
   {
-    "Name": "floor-hour",
+    "Name": "round",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-floor-hour"
+      "numeric-to-round"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero.",
+    "Scope": "Numeric",
+    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
+    "Parameters": [
+      {
+        "Name": "digits",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
+      }
+    ]
+  },
+  {
+    "Name": "cube-root",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-cube-root"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns cube root of the numeric argument value",
     "Parameters": []
   },
   {
-    "Name": "invalid-to-date",
+    "Name": "root",
     "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
-      }
-    ]
-  },
-  {
-    "Name": "null-to-date",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
-      }
-    ]
+    "Aliases": [
+      "path-to-root"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Parameters": []
   },
   {
     "Name": "set-time",
@@ -543,61 +553,14 @@
     ]
   },
   {
-    "Name": "null-to-empty",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
-    "Parameters": []
-  },
-  {
-    "Name": "empty-to-null",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "whitespaces-to-null",
+    "Name": "previous-year",
     "IsPublic": true,
     "Aliases": [
-      "blank-to-null"
+      "dateTime-to-previous-year"
     ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
     "Parameters": []
-  },
-  {
-    "Name": "whitespaces-to-empty",
-    "IsPublic": true,
-    "Aliases": [
-      "blank-to-empty"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
-    "Parameters": []
-  },
-  {
-    "Name": "before-substring",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-before-substring"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
-    "Parameters": [
-      {
-        "Name": "substring",
-        "Optional": false,
-        "Summary": "The string to seek."
-      },
-      {
-        "Name": "count",
-        "Optional": true,
-        "Summary": "The number of character positions to examine."
-      }
-    ]
   },
   {
     "Name": "after-substring",
@@ -747,6 +710,58 @@
     "Parameters": []
   },
   {
+    "Name": "token-count",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-token-count"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
+    "Parameters": [
+      {
+        "Name": "separator",
+        "Optional": false,
+        "Summary": "A character that delimits the substrings in this instance."
+      }
+    ]
+  },
+  {
+    "Name": "count-substring",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-count-substring"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The substring to count in the argument value"
+      }
+    ]
+  },
+  {
+    "Name": "count-distinct-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-count-distinct-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
+    "Parameters": []
+  },
+  {
+    "Name": "length",
+    "IsPublic": true,
+    "Aliases": [
+      "count-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
+    "Parameters": []
+  },
+  {
     "Name": "replace-chars",
     "IsPublic": true,
     "Aliases": [
@@ -804,6 +819,32 @@
     "Parameters": []
   },
   {
+    "Name": "replace-slice",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-replace-slice"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value with a subset of the string substitued by a another string.",
+    "Parameters": [
+      {
+        "Name": "start",
+        "Optional": false,
+        "Summary": "The position to start to replace"
+      },
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "The length to replace"
+      },
+      {
+        "Name": "append",
+        "Optional": false,
+        "Summary": "The text to append when the slice has been removed"
+      }
+    ]
+  },
+  {
     "Name": "suffix",
     "IsPublic": true,
     "Aliases": [
@@ -820,86 +861,52 @@
     ]
   },
   {
-    "Name": "length",
+    "Name": "before-substring",
     "IsPublic": true,
     "Aliases": [
-      "text-to-length"
+      "text-to-before-substring"
     ],
     "Scope": "Text",
-    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
-    "Parameters": []
-  },
-  {
-    "Name": "root",
-    "IsPublic": true,
-    "Aliases": [
-      "path-to-root"
-    ],
-    "Scope": "IO",
-    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "without-diacritics",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-without-diacritics"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument string without diacritics",
-    "Parameters": []
-  },
-  {
-    "Name": "token",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-token"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
+    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
     "Parameters": [
       {
-        "Name": "index",
+        "Name": "substring",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
+        "Summary": "The string to seek."
       },
       {
-        "Name": "separator",
+        "Name": "count",
         "Optional": true,
-        "Summary": "A character that delimits the substrings in this instance."
+        "Summary": "The number of character positions to examine."
       }
     ]
   },
   {
-    "Name": "clamp",
+    "Name": "whitespaces-to-empty",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-clamp",
-      "dateTime-to-clip"
+      "blank-to-empty"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is before than it"
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is after than it"
-      }
-    ]
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
+    "Parameters": []
   },
   {
-    "Name": "previous-year",
+    "Name": "whitespaces-to-null",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-year"
+      "blank-to-null"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "empty-to-null",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
     "Parameters": []
   },
   {
@@ -993,6 +1000,28 @@
     "Parameters": []
   },
   {
+    "Name": "clamp",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-clamp",
+      "dateTime-to-clip"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is before than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is after than it"
+      }
+    ]
+  },
+  {
     "Name": "age",
     "IsPublic": true,
     "Aliases": [
@@ -1000,16 +1029,6 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns how many years separate the argument dateTime and now.",
-    "Parameters": []
-  },
-  {
-    "Name": "datetime-to-date",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-datetime-to-date"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the date at midnight of the argument dateTime.",
     "Parameters": []
   },
   {
@@ -1087,17 +1106,22 @@
     ]
   },
   {
-    "Name": "token-count",
+    "Name": "token",
     "IsPublic": true,
     "Aliases": [
-      "text-to-token-count"
+      "text-to-token"
     ],
     "Scope": "Text",
-    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
+    "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
     "Parameters": [
       {
-        "Name": "separator",
+        "Name": "index",
         "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
+      },
+      {
+        "Name": "separator",
+        "Optional": true,
         "Summary": "A character that delimits the substrings in this instance."
       }
     ]
@@ -1110,6 +1134,34 @@
     ],
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters",
+    "Parameters": []
+  },
+  {
+    "Name": "without-diacritics",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-without-diacritics"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument string without diacritics",
+    "Parameters": []
+  },
+  {
+    "Name": "null-to-empty",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
+    "Parameters": []
+  },
+  {
+    "Name": "datetime-to-date",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-datetime-to-date"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the date at midnight of the argument dateTime.",
     "Parameters": []
   },
   {
