@@ -2,7 +2,7 @@
 title: Numeric predicates
 subtitle: Predicates applicable to numeric values
 tags: [predicates, numeric]
-keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-than, less-than-or-equal, modulo, odd, within-interval, zero-or-null] # AUTO-GENERATED KEYWORDS
+keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-than, less-than-or-equal, modulo, negative, negative-or-zero, odd, one, positive, positive-or-zero, within-interval, zero, zero-or-null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### equal-to
@@ -64,10 +64,35 @@ Returns `true` if the division of the numeric value passed as argument by the mo
 * modulus: An integer value used as the modulus.
 * remainder (optional) : An integer value defined as the expected reminder.
 
+##### negative
+###### Overview
+
+Returns true if the numeric argument is less than 0.
+
+##### negative-or-zero
+###### Overview
+
+Returns true if the numeric argument is less or equal to 0.
+
 ##### odd
 ###### Overview
 
 Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.
+
+##### one
+###### Overview
+
+Returns true if the numeric argument is equal to 1.
+
+##### positive
+###### Overview
+
+Returns true if the numeric argument is greater than 0.
+
+##### positive-or-zero
+###### Overview
+
+Returns true if the numeric argument is greater or equal to 0.
 
 ##### within-interval
 ###### Overview
@@ -76,6 +101,11 @@ Returns true if the numeric value passed as argument is between the lower bound 
 
 ###### Parameter
 * interval: A numeric interval to compare to the argument
+
+##### zero
+###### Overview
+
+Returns true if the numeric argument is equal to 0.
 
 ##### zero-or-null
 ###### Overview

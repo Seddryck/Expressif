@@ -21,36 +21,6 @@
     ]
   },
   {
-    "Name": "on-the-day",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-on-the-day"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "on-the-hour",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-on-the-hour"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "on-the-minute",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-on-the-minute"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
     "Name": "null",
     "IsPublic": true,
     "Aliases": [
@@ -125,22 +95,6 @@
     ]
   },
   {
-    "Name": "contained-in",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-contained-in"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "interval",
-        "Optional": false,
-        "Summary": "A temporal interval to compare to the argument"
-      }
-    ]
-  },
-  {
     "Name": "less-than-or-equal",
     "IsPublic": true,
     "Aliases": [
@@ -153,6 +107,82 @@
         "Name": "reference",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument"
+      }
+    ]
+  },
+  {
+    "Name": "zero",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-zero"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is equal to 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "one",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-one"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is equal to 1.",
+    "Parameters": []
+  },
+  {
+    "Name": "positive",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-positive"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is greater than 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "positive-or-zero",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-positive-or-zero"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is greater or equal to 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "negative",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-negative"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is less than 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "negative-or-zero",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-negative-or-zero"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is less or equal to 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "within-interval",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-within-interval"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "interval",
+        "Optional": false,
+        "Summary": "A numeric interval to compare to the argument"
       }
     ]
   },
@@ -254,66 +284,48 @@
     "Parameters": []
   },
   {
-    "Name": "within-interval",
+    "Name": "on-the-minute",
     "IsPublic": true,
     "Aliases": [
-      "numeric-is-within-interval"
+      "dateTime-is-on-the-minute"
     ],
-    "Scope": "Numeric",
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "on-the-hour",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-on-the-hour"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "on-the-day",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-on-the-day"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "contained-in",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-contained-in"
+    ],
+    "Scope": "Temporal",
     "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "interval",
         "Optional": false,
-        "Summary": "A numeric interval to compare to the argument"
-      }
-    ]
-  },
-  {
-    "Name": "before-or-same-instant",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-before-or-same-instant"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
-      }
-    ]
-  },
-  {
-    "Name": "before",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-before"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
-      }
-    ]
-  },
-  {
-    "Name": "after-or-same-instant",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-after-or-same-instant"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
+        "Summary": "A temporal interval to compare to the argument"
       }
     ]
   },
@@ -462,6 +474,16 @@
     ]
   },
   {
+    "Name": "false",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-false"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
+    "Parameters": []
+  },
+  {
     "Name": "sorted-before-or-equivalent-to",
     "IsPublic": true,
     "Aliases": [
@@ -481,16 +503,6 @@
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)"
       }
     ]
-  },
-  {
-    "Name": "empty",
-    "IsPublic": true,
-    "Aliases": [
-      "text-is-empty"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if argument value has a length of `0`. Return `false` otherwise.",
-    "Parameters": []
   },
   {
     "Name": "empty-or-null",
@@ -619,13 +631,61 @@
     ]
   },
   {
-    "Name": "false",
+    "Name": "after-or-same-instant",
     "IsPublic": true,
     "Aliases": [
-      "boolean-is-false"
+      "dateTime-is-after-or-same-instant"
     ],
-    "Scope": "Boolean",
-    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
+    "Scope": "Temporal",
+    "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A temporal value to compare to the argument"
+      }
+    ]
+  },
+  {
+    "Name": "before",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-before"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A temporal value to compare to the argument"
+      }
+    ]
+  },
+  {
+    "Name": "before-or-same-instant",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-before-or-same-instant"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A temporal value to compare to the argument"
+      }
+    ]
+  },
+  {
+    "Name": "empty",
+    "IsPublic": true,
+    "Aliases": [
+      "text-is-empty"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns `true` if argument value has a length of `0`. Return `false` otherwise.",
     "Parameters": []
   },
   {
