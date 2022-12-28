@@ -43,5 +43,20 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(blank)", "foo", -1)]
         public void CountSubstring_Valid(object value, string substring, int expected)
             => Assert.That(new CountSubstring(() => substring).Evaluate(value), Is.EqualTo(expected));
+
+
+        [Test]
+        [TestCase("My taylor is rich", 4)]
+        [TestCase(" My Lord ! ", 2)]
+        [TestCase("  My     Lord    !   ", 2)]
+        [TestCase("  My     Lord    !   C-L.", 3)]
+        [TestCase("(null)", 0)]
+        [TestCase(null, 0)]
+        [TestCase("(empty)", 0)]
+        [TestCase("(blank)", 0)]
+        [TestCase("1 2017-07-06      CUST0001", 3)]
+        [TestCase("1 2017-07-06          CUST0001", 3)]
+        public void TokenCount_Valid(object value, int expected)
+            => Assert.That(new TokenCount().Evaluate(value), Is.EqualTo(expected));
     }
 }
