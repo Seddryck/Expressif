@@ -49,9 +49,9 @@ namespace Expressif.Functions.Numeric
     /// <summary>
     /// Returns the root specified by the parameter value of the numeric argument value.
     /// </summary>
-    public class Root : BaseNumericPowerRootFunction
+    public class NthRoot : BaseNumericPowerRootFunction
     {
-        public Root(Func<decimal> exponent)
+        public NthRoot(Func<decimal> exponent)
             : base(exponent) { }
 
         protected override decimal? EvaluateNumeric(decimal numeric)
