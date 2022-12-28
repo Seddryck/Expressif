@@ -101,14 +101,11 @@ Returns the unmodified argument value except if the argument value is `null`, `e
 ###### Overview
 
 Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.
-<<<<<<< HEAD
 
 ##### power
 ###### Overview
 
 Returns the the numeric argument value raised to the power specified by the parameter value.
-=======
->>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
 
 ##### round
 ###### Overview

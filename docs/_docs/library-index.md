@@ -72,6 +72,7 @@ tags: [predicates, functions]
 * [previous-month]({{ site.baseurl }}/docs/temporal-functions/#previous-month)
 * [previous-year]({{ site.baseurl }}/docs/temporal-functions/#previous-year)
 * [remove-chars]({{ site.baseurl }}/docs/text-functions/#remove-chars)
+* [replace-chars]({{ site.baseurl }}/docs/text-functions/#replace-chars)
 * [root]({{ site.baseurl }}/docs/io-functions/#root)
 * [round]({{ site.baseurl }}/docs/numeric-functions/#round)
 * [set-time]({{ site.baseurl }}/docs/temporal-functions/#set-time)
