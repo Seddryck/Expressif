@@ -102,21 +102,19 @@
     "Parameters": []
   },
   {
-    "Name": "decrement",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-decrement"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the argument number decremented of one unit.",
-    "Parameters": []
-  },
-  {
     "Name": "local-to-utc",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
     "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
+    "Parameters": []
+  },
+  {
+    "Name": "utc-to-local",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
     "Parameters": []
   },
   {
@@ -218,12 +216,44 @@
     ]
   },
   {
-    "Name": "utc-to-local",
+    "Name": "null-to-date",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is `null`."
+      }
+    ]
+  },
+  {
+    "Name": "decrement",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-decrement"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the argument number decremented of one unit.",
     "Parameters": []
+  },
+  {
+    "Name": "set-time",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-set-time"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
+    "Parameters": [
+      {
+        "Name": "instant",
+        "Optional": false,
+        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
+      }
+    ]
   },
   {
     "Name": "multiply",
@@ -238,22 +268,6 @@
         "Name": "value",
         "Optional": false,
         "Summary": "The value to be multiplied by the argument value"
-      }
-    ]
-  },
-  {
-    "Name": "divide",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-divide"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Optional": false,
-        "Summary": "The value to divide the argument value"
       }
     ]
   },
@@ -453,34 +467,30 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-date",
+    "Name": "divide",
     "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Aliases": [
+      "numeric-to-divide"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
     "Parameters": [
       {
-        "Name": "default",
+        "Name": "value",
         "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
+        "Summary": "The value to divide the argument value"
       }
     ]
   },
   {
-    "Name": "set-time",
+    "Name": "root",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-set-time"
+      "path-to-root"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
-    "Parameters": [
-      {
-        "Name": "instant",
-        "Optional": false,
-        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
-      }
-    ]
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Parameters": []
   },
   {
     "Name": "clamp",
@@ -505,21 +515,13 @@
     ]
   },
   {
-    "Name": "previous-year",
+    "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-year"
+      "dateTime-to-previous-month"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "null-to-empty",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
+    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -593,6 +595,27 @@
     ]
   },
   {
+    "Name": "pad-center",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-pad-center"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
+      },
+      {
+        "Name": "character",
+        "Optional": false,
+        "Summary": "The padding character"
+      }
+    ]
+  },
+  {
     "Name": "pad-left",
     "IsPublic": true,
     "Aliases": [
@@ -631,6 +654,25 @@
         "Name": "character",
         "Optional": false,
         "Summary": "The padding character"
+      }
+    ]
+  },
+  {
+    "Name": "text-to-datetime",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
+    "Parameters": [
+      {
+        "Name": "format",
+        "Optional": false,
+        "Summary": "A string representing the required format."
+      },
+      {
+        "Name": "culture",
+        "Optional": true,
+        "Summary": "A string representing a pre-defined culture."
       }
     ]
   },
@@ -695,25 +737,6 @@
     ]
   },
   {
-    "Name": "text-to-datetime",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
-    "Parameters": [
-      {
-        "Name": "format",
-        "Optional": false,
-        "Summary": "A string representing the required format."
-      },
-      {
-        "Name": "culture",
-        "Optional": true,
-        "Summary": "A string representing a pre-defined culture."
-      }
-    ]
-  },
-  {
     "Name": "upper",
     "IsPublic": true,
     "Aliases": [
@@ -750,6 +773,24 @@
     ]
   },
   {
+    "Name": "null-to-empty",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
+    "Parameters": []
+  },
+  {
+    "Name": "previous-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
+    "Parameters": []
+  },
+  {
     "Name": "length",
     "IsPublic": true,
     "Aliases": [
@@ -760,54 +801,13 @@
     "Parameters": []
   },
   {
-    "Name": "root",
+    "Name": "without-whitespaces",
     "IsPublic": true,
     "Aliases": [
-      "path-to-root"
-    ],
-    "Scope": "IO",
-    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "without-diacritics",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-without-diacritics"
+      "text-to-without-whitespaces"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument string without diacritics",
-    "Parameters": []
-  },
-  {
-    "Name": "token",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-token"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
-    "Parameters": [
-      {
-        "Name": "index",
-        "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
-      },
-      {
-        "Name": "separator",
-        "Optional": true,
-        "Summary": "A character that delimits the substrings in this instance."
-      }
-    ]
-  },
-  {
-    "Name": "previous-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-previous-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Summary": "Returns the argument string without white-space characters",
     "Parameters": []
   },
   {
@@ -1001,13 +1001,34 @@
     ]
   },
   {
-    "Name": "without-whitespaces",
+    "Name": "token",
     "IsPublic": true,
     "Aliases": [
-      "text-to-without-whitespaces"
+      "text-to-token"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument string without white-space characters",
+    "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
+    "Parameters": [
+      {
+        "Name": "index",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
+      },
+      {
+        "Name": "separator",
+        "Optional": true,
+        "Summary": "A character that delimits the substrings in this instance."
+      }
+    ]
+  },
+  {
+    "Name": "without-diacritics",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-without-diacritics"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument string without diacritics",
     "Parameters": []
   },
   {
