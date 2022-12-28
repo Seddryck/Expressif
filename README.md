@@ -253,6 +253,7 @@ Install-Package Expressif
 |Text     | lower                      | text-to-lower                         |
 |Text     | mask-to-text               |                                       |
 |Text     | null-to-empty              |                                       |
+|Text     | pad-center                 | text-to-pad-center                    |
 |Text     | pad-left                   | text-to-pad-left                      |
 |Text     | pad-right                  | text-to-pad-right                     |
 |Text     | prefix                     | text-to-prefix                        |

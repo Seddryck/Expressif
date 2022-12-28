@@ -63,6 +63,7 @@ tags: [predicates, functions]
 * [null-to-value]({{ site.baseurl }}/docs/special-functions/#null-to-value)
 * [null-to-zero]({{ site.baseurl }}/docs/numeric-functions/#null-to-zero)
 * [oppose]({{ site.baseurl }}/docs/numeric-functions/#oppose)
+* [pad-center]({{ site.baseurl }}/docs/text-functions/#pad-center)
 * [pad-left]({{ site.baseurl }}/docs/text-functions/#pad-left)
 * [pad-right]({{ site.baseurl }}/docs/text-functions/#pad-right)
 * [power]({{ site.baseurl }}/docs/numeric-functions/#power)

@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, before-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-left, pad-right, prefix, remove-chars, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, before-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, remove-chars, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -71,6 +71,15 @@ Returns the value that passed to the function TextToMask will return the argumen
 ###### Overview
 
 Returns the argument value except if this value is `null` then it returns `empty`.
+
+##### pad-center
+###### Overview
+
+Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.
+
+###### Parameters
+* length: An integer value between 0 and +Infinity, defining the minimal length of the string returned
+* character: The padding character
 
 ##### pad-left
 ###### Overview
