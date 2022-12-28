@@ -103,5 +103,25 @@ namespace Expressif.Testing.Predicates.Numeric
                 Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
             });
         }
+
+
+        [Test]
+        [TestCase(10, -10, true)]
+        [TestCase(10, -11, false)]
+        [TestCase(0, 0, true)]
+        [TestCase(10, 10, false)]
+        [TestCase(-4, 4, true)]
+        [TestCase(-4, 5, false)]
+        [TestCase(-4, -4, false)]
+        [TestCase(null, 4, false)]
+        public void Opposite_Numeric_Success(object value, decimal reference, bool expected)
+        {
+            var predicate = new Opposite(() => reference);
+            Assert.Multiple(() =>
+            {
+                Assert.That(predicate.Reference.Invoke(), Is.EqualTo(reference));
+                Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+            });
+        }
     }
 }
