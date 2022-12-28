@@ -8,6 +8,16 @@
     "Parameters": []
   },
   {
+    "Name": "ceiling",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-ceiling"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
+    "Parameters": []
+  },
+  {
     "Name": "null-to-zero",
     "IsPublic": true,
     "Aliases": [],
@@ -58,6 +68,16 @@
     "Parameters": []
   },
   {
+    "Name": "floor",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-floor"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the largest integer less than or equal to the argument number.",
+    "Parameters": []
+  },
+  {
     "Name": "utc-to-local",
     "IsPublic": true,
     "Aliases": [],
@@ -66,34 +86,24 @@
     "Parameters": []
   },
   {
-    "Name": "ceiling",
+    "Name": "forward",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-ceiling"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
-    "Name": "back",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-back",
-      "dateTime-to-subtract"
+      "dateTime-to-forward",
+      "dateTime-to-add"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
+    "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
         "Name": "timeSpan",
         "Optional": false,
-        "Summary": "The value to be subtracted to the argument value."
+        "Summary": "The value to be added to the argument value"
       },
       {
         "Name": "times",
         "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
       }
     ]
   },
@@ -166,73 +176,35 @@
     ]
   },
   {
-    "Name": "set-time",
+    "Name": "back",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-set-time"
+      "dateTime-to-back",
+      "dateTime-to-subtract"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
-    "Parameters": [
-      {
-        "Name": "instant",
-        "Optional": false,
-        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
-      }
-    ]
-  },
-  {
-    "Name": "forward",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-forward",
-      "dateTime-to-add"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
+    "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
         "Name": "timeSpan",
         "Optional": false,
-        "Summary": "The value to be added to the argument value"
+        "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
         "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
       }
     ]
   },
   {
-    "Name": "clamp",
+    "Name": "integer",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-clamp",
-      "dateTime-to-clip"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is before than it"
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is after than it"
-      }
-    ]
-  },
-  {
-    "Name": "floor",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-floor"
+      "numeric-to-integer"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the largest integer less than or equal to the argument number.",
+    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
     "Parameters": []
   },
   {
@@ -248,6 +220,27 @@
         "Name": "digits",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
+      }
+    ]
+  },
+  {
+    "Name": "clip",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-clip"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is smaller than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is greater than it"
       }
     ]
   },
@@ -322,16 +315,6 @@
     "Parameters": []
   },
   {
-    "Name": "integer",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-integer"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
-    "Parameters": []
-  },
-  {
     "Name": "size",
     "IsPublic": true,
     "Aliases": [
@@ -339,6 +322,36 @@
     ],
     "Scope": "IO",
     "Summary": "Returns the size of the file provided as argument in bytes.",
+    "Parameters": []
+  },
+  {
+    "Name": "absolute",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-absolute"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the absolute value of the argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "sign",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-sign"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
+    "Parameters": []
+  },
+  {
+    "Name": "invert",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-invert"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
     "Parameters": []
   },
   {
@@ -436,35 +449,20 @@
     ]
   },
   {
-    "Name": "clip",
+    "Name": "set-time",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-clip"
+      "dateTime-to-set-time"
     ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Scope": "Temporal",
+    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
     "Parameters": [
       {
-        "Name": "min",
+        "Name": "instant",
         "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it"
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it"
+        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
       }
     ]
-  },
-  {
-    "Name": "invert",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-invert"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
-    "Parameters": []
   },
   {
     "Name": "root",
@@ -477,23 +475,35 @@
     "Parameters": []
   },
   {
-    "Name": "previous-year",
+    "Name": "clamp",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-year"
+      "dateTime-to-clamp",
+      "dateTime-to-clip"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
-    "Parameters": []
+    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is before than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is after than it"
+      }
+    ]
   },
   {
-    "Name": "previous-day",
+    "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-day"
+      "dateTime-to-previous-month"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
+    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -719,16 +729,6 @@
     ]
   },
   {
-    "Name": "previous-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-previous-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
-    "Parameters": []
-  },
-  {
     "Name": "token",
     "IsPublic": true,
     "Aliases": [
@@ -745,6 +745,22 @@
       {
         "Name": "separator",
         "Optional": true,
+        "Summary": "A character that delimits the substrings in this instance."
+      }
+    ]
+  },
+  {
+    "Name": "token-count",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-token-count"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
+    "Parameters": [
+      {
+        "Name": "separator",
+        "Optional": false,
         "Summary": "A character that delimits the substrings in this instance."
       }
     ]
@@ -767,6 +783,16 @@
         "Summary": "A string representing a pre-defined culture."
       }
     ]
+  },
+  {
+    "Name": "previous-day",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-day"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
+    "Parameters": []
   },
   {
     "Name": "next-year",
@@ -839,22 +865,6 @@
     "Parameters": []
   },
   {
-    "Name": "token-count",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-token-count"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
-    "Parameters": [
-      {
-        "Name": "separator",
-        "Optional": false,
-        "Summary": "A character that delimits the substrings in this instance."
-      }
-    ]
-  },
-  {
     "Name": "age",
     "IsPublic": true,
     "Aliases": [
@@ -862,6 +872,16 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns how many years separate the argument dateTime and now.",
+    "Parameters": []
+  },
+  {
+    "Name": "datetime-to-date",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-datetime-to-date"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the date at midnight of the argument dateTime.",
     "Parameters": []
   },
   {
@@ -971,13 +991,13 @@
     ]
   },
   {
-    "Name": "datetime-to-date",
+    "Name": "previous-year",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-datetime-to-date"
+      "dateTime-to-previous-year"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the date at midnight of the argument dateTime.",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
     "Parameters": []
   },
   {

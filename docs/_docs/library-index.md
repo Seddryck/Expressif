@@ -9,6 +9,7 @@ tags: [predicates, functions]
 
 ## Functions
 
+* [absolute]({{ site.baseurl }}/docs/numeric-functions/#absolute)
 * [add]({{ site.baseurl }}/docs/numeric-functions/#add)
 * [after-substring]({{ site.baseurl }}/docs/text-functions/#after-substring)
 * [age]({{ site.baseurl }}/docs/temporal-functions/#age)
@@ -68,6 +69,7 @@ tags: [predicates, functions]
 * [root]({{ site.baseurl }}/docs/io-functions/#root)
 * [round]({{ site.baseurl }}/docs/numeric-functions/#round)
 * [set-time]({{ site.baseurl }}/docs/temporal-functions/#set-time)
+* [sign]({{ site.baseurl }}/docs/numeric-functions/#sign)
 * [size]({{ site.baseurl }}/docs/io-functions/#size)
 * [skip-first-chars]({{ site.baseurl }}/docs/text-functions/#skip-first-chars)
 * [skip-last-chars]({{ site.baseurl }}/docs/text-functions/#skip-last-chars)
