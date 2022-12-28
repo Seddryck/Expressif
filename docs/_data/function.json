@@ -1,11 +1,19 @@
 [
   {
-    "Name": "text-to-html",
+    "Name": "prefix",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "text-to-prefix"
+    ],
     "Scope": "Text",
-    "Summary": "Returns the argument value converted to an HTML-encoded string",
-    "Parameters": []
+    "Summary": "Returns the argument value preceeded by the parameter value.",
+    "Parameters": [
+      {
+        "Name": "prefix",
+        "Optional": false,
+        "Summary": "The text to append"
+      }
+    ]
   },
   {
     "Name": "ceiling",
@@ -365,6 +373,70 @@
     "Parameters": []
   },
   {
+<<<<<<< HEAD
+=======
+    "Name": "absolute",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-absolute"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the absolute value of the argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "sign",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-sign"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
+    "Parameters": []
+  },
+  {
+    "Name": "oppose",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-oppose"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "invert",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-invert"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "clip",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-clip"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is smaller than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is greater than it"
+      }
+    ]
+  },
+  {
+>>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
     "Name": "round",
     "IsPublic": true,
     "Aliases": [
@@ -540,6 +612,7 @@
     ]
   },
   {
+<<<<<<< HEAD
     "Name": "length",
     "IsPublic": true,
     "Aliases": [
@@ -555,6 +628,15 @@
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
+=======
+    "Name": "previous-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
+>>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
     "Parameters": []
   },
   {
@@ -592,6 +674,48 @@
     "Scope": "Text",
     "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
     "Parameters": []
+  },
+  {
+    "Name": "before-substring",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-before-substring"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The string to seek."
+      },
+      {
+        "Name": "count",
+        "Optional": true,
+        "Summary": "The number of character positions to examine."
+      }
+    ]
+  },
+  {
+    "Name": "after-substring",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-after-substring"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The string to seek."
+      },
+      {
+        "Name": "count",
+        "Optional": true,
+        "Summary": "The number of character positions to examine."
+      }
+    ]
   },
   {
     "Name": "pad-left",
@@ -652,94 +776,87 @@
     ]
   },
   {
+<<<<<<< HEAD
     "Name": "skip-first-chars",
+=======
+    "Name": "mask-to-text",
     "IsPublic": true,
-    "Aliases": [
-      "text-to-skip-first-chars"
-    ],
+    "Aliases": [],
     "Scope": "Text",
-    "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
+    "Summary": "Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.",
     "Parameters": [
       {
-        "Name": "length",
+        "Name": "mask",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
+        "Summary": "The string representing the mask to be unset from the argument string"
       }
     ]
   },
   {
-    "Name": "last-chars",
+    "Name": "text-to-mask",
+>>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
     "IsPublic": true,
-    "Aliases": [
-      "text-to-last-chars"
-    ],
+    "Aliases": [],
     "Scope": "Text",
-    "Summary": "Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
+    "Summary": "Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.",
     "Parameters": [
       {
-        "Name": "length",
+        "Name": "mask",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return"
+        "Summary": "The string representing the mask to apply to the argument string"
       }
     ]
   },
   {
-    "Name": "first-chars",
+    "Name": "text-to-html",
     "IsPublic": true,
-    "Aliases": [
-      "text-to-first-chars"
-    ],
+    "Aliases": [],
     "Scope": "Text",
-    "Summary": "Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
-    "Parameters": [
-      {
-        "Name": "length",
-        "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return"
-      }
-    ]
-  },
-  {
-    "Name": "suffix",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-suffix"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value followed by the parameter value.",
-    "Parameters": [
-      {
-        "Name": "suffix",
-        "Optional": false,
-        "Summary": "The text to append"
-      }
-    ]
-  },
-  {
-    "Name": "prefix",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-prefix"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value preceeded by the parameter value.",
-    "Parameters": [
-      {
-        "Name": "prefix",
-        "Optional": false,
-        "Summary": "The text to append"
-      }
-    ]
-  },
-  {
-    "Name": "trim",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-trim"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
+    "Summary": "Returns the argument value converted to an HTML-encoded string",
     "Parameters": []
+  },
+  {
+    "Name": "html-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
+    "Parameters": []
+  },
+  {
+    "Name": "remove-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-remove-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "charToRemove",
+        "Optional": false,
+        "Summary": "The char to be removed from the argument string"
+      }
+    ]
+  },
+  {
+    "Name": "text-to-datetime",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
+    "Parameters": [
+      {
+        "Name": "format",
+        "Optional": false,
+        "Summary": "A string representing the required format."
+      },
+      {
+        "Name": "culture",
+        "Optional": true,
+        "Summary": "A string representing a pre-defined culture."
+      }
+    ]
   },
   {
     "Name": "upper",
@@ -762,7 +879,57 @@
     "Parameters": []
   },
   {
+<<<<<<< HEAD
     "Name": "skip-last-chars",
+=======
+    "Name": "suffix",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-suffix"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value followed by the parameter value.",
+    "Parameters": [
+      {
+        "Name": "suffix",
+        "Optional": false,
+        "Summary": "The text to append"
+      }
+    ]
+  },
+  {
+    "Name": "length",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-length"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
+    "Parameters": []
+  },
+  {
+    "Name": "root",
+    "IsPublic": true,
+    "Aliases": [
+      "path-to-root"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "without-diacritics",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-without-diacritics"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument string without diacritics",
+    "Parameters": []
+  },
+  {
+    "Name": "token",
+>>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
     "IsPublic": true,
     "Aliases": [
       "text-to-skip-last-chars"
@@ -778,6 +945,7 @@
     ]
   },
   {
+<<<<<<< HEAD
     "Name": "text-to-datetime",
     "IsPublic": true,
     "Aliases": [],
@@ -875,6 +1043,8 @@
     "Parameters": []
   },
   {
+=======
+>>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
     "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
@@ -985,6 +1155,96 @@
     "Parameters": []
   },
   {
+    "Name": "trim",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-trim"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
+    "Parameters": []
+  },
+  {
+    "Name": "skip-last-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-skip-last-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
+      }
+    ]
+  },
+  {
+    "Name": "skip-first-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-skip-first-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
+      }
+    ]
+  },
+  {
+    "Name": "last-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-last-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return"
+      }
+    ]
+  },
+  {
+    "Name": "first-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-first-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return"
+      }
+    ]
+  },
+  {
+    "Name": "token-count",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-token-count"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
+    "Parameters": [
+      {
+        "Name": "separator",
+        "Optional": false,
+        "Summary": "A character that delimits the substrings in this instance."
+      }
+    ]
+  },
+  {
     "Name": "without-whitespaces",
     "IsPublic": true,
     "Aliases": [
@@ -995,6 +1255,7 @@
     "Parameters": []
   },
   {
+<<<<<<< HEAD
     "Name": "without-diacritics",
     "IsPublic": true,
     "Aliases": [
@@ -1071,6 +1332,8 @@
     "Parameters": []
   },
   {
+=======
+>>>>>>> 2e5f2e4 (Update the automatically generated documentation related to the list of functions and predicates)
     "Name": "directory",
     "IsPublic": true,
     "Aliases": [
