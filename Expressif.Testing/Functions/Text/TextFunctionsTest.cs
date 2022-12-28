@@ -324,27 +324,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new SkipLastChars(() => (length)).Evaluate(value)
                 , Is.EqualTo(expected));
 
-        [Test]
-        [TestCase("1234", 9, '0', "123400000")]
-        [TestCase(1234, 9, '0', "123400000")]
-        [TestCase("1234", 9, '*', "1234*****")]
-        [TestCase(1234, 9, '*', "1234*****")]
-        [TestCase("123456789", 3, '0', "123456789")]
-        [TestCase("(null)", 3, '0', "000")]
-        [TestCase("(empty)", 3, '0', "000")]
-        public void PadRight_Valid(object value, int length, char character, string expected)
-            => Assert.That(new PadRight(() => (length), () => (character))
-                .Evaluate(value), Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("1234", 9, '0', "000001234")]
-        [TestCase("1234", 9, '*', "*****1234")]
-        [TestCase("123456789", 3, '0', "123456789")]
-        [TestCase("(null)", 3, '0', "000")]
-        [TestCase("(empty)", 3, '0', "000")]
-        public void PadLeft_Valid(string value, int length, char character, string expected)
-            => Assert.That(new PadLeft(() => (length), () => (character))
-                .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("20190317111223", "yyyyMMddhhmmss", "2019-03-17 11:12:23")]

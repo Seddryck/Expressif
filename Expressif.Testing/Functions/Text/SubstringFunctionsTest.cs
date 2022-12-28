@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Functions.Text
 {
-    public class TextSubstringTest
+    public class SubstringFunctionsTest
     {
         [Test]
         [TestCase("Foo+ Bar", "+ ", "Foo")]
