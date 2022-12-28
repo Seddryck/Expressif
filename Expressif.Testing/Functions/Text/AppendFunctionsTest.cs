@@ -28,7 +28,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new Suffix(() => suffix).Evaluate(value)
                 , Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("123456789", 3, 2, "abc", "123abc6789")]
         [TestCase("123456789", 3, 5, "abc", "123abc9")]

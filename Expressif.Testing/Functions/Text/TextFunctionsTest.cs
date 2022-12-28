@@ -238,38 +238,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new WithoutWhitespaces().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
-        [TestCase("My taylor is rich", 4)]
-        [TestCase(" My Lord ! ", 2)]
-        [TestCase("  My     Lord    !   ", 2)]
-        [TestCase("  My     Lord    !   C-L.", 3)]
-        [TestCase("(null)", 0)]
-        [TestCase(null, 0)]
-        [TestCase("(empty)", 0)]
-        [TestCase("(blank)", 0)]
-        [TestCase("1 2017-07-06      CUST0001", 3)]
-        [TestCase("1 2017-07-06          CUST0001", 3)]
-        public void TokenCount_Valid(object value, int expected)
-            => Assert.That(new TokenCount().Evaluate(value), Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("123456789", "abc", "abc123456789")]
-        [TestCase("(null)", "abc", "(null)")]
-        [TestCase("(empty)", "abc", "abc")]
-        [TestCase("(blank)", "abc", "abc")]
-        public void Prefix_Valid(string value, string prefix, string expected)
-            => Assert.That(new Prefix(() => prefix).Evaluate(value)
-                , Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("123456789", "abc", "123456789abc")]
-        [TestCase("(null)", "abc", "(null)")]
-        [TestCase("(empty)", "abc", "abc")]
-        [TestCase("(blank)", "abc", "abc")]
-        public void Suffix_Valid(string value, string suffix, string expected)
-            => Assert.That(new Suffix(() => suffix).Evaluate(value)
-                , Is.EqualTo(expected));
-
-        [Test]
         [TestCase("123456789", 9, "123456789")]
         [TestCase("123456789", 10, "123456789")]
         [TestCase("123456789", 8, "12345678")]
