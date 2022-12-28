@@ -205,6 +205,7 @@ Install-Package Expressif
 |Numeric  | invert                     | numeric-to-invert                     |
 |Numeric  | multiply                   | numeric-to-multiply                   |
 |Numeric  | null-to-zero               |                                       |
+|Numeric  | oppose                     | numeric-to-oppose                     |
 |Numeric  | round                      | numeric-to-round                      |
 |Numeric  | sign                       | numeric-to-sign                       |
 |Numeric  | subtract                   | numeric-to-subtract                   |
@@ -287,6 +288,7 @@ Install-Package Expressif
 |Numeric  | negative-or-zero               | numeric-is-negative-or-zero           |
 |Numeric  | odd                            | numeric-is-odd                        |
 |Numeric  | one                            | numeric-is-one                        |
+|Numeric  | opposite                       | numeric-is-opposite                   |
 |Numeric  | positive                       | numeric-is-positive                   |
 |Numeric  | positive-or-zero               | numeric-is-positive-or-zero           |
 |Numeric  | within-interval                | numeric-is-within-interval            |

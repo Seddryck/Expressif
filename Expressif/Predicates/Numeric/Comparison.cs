@@ -73,4 +73,17 @@ namespace Expressif.Predicates.Numeric
         protected override bool EvaluateNumeric(decimal value) 
             => value <= Reference.Invoke();
     }
+
+    /// <summary>
+    /// Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.
+    /// </summary>
+    public class Opposite : EqualTo
+    {
+        /// <param name="reference">A numeric value to compare to the argument</param>
+        public Opposite(Func<decimal> reference)
+            : base(reference) { }
+
+        protected override bool EvaluateNumeric(decimal value)
+            => value * -1 == Reference.Invoke();
+    }
 }

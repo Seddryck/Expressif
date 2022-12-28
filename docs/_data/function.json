@@ -8,22 +8,56 @@
     "Parameters": []
   },
   {
-    "Name": "ceiling",
+    "Name": "increment",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-ceiling"
+      "numeric-to-increment"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
+    "Summary": "Returns the argument number incremented of one unit.",
     "Parameters": []
   },
   {
-    "Name": "null-to-zero",
+    "Name": "subtract",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "numeric-to-subtract"
+    ],
     "Scope": "Numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
-    "Parameters": []
+    "Summary": "Returns the difference between the argument number and the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "The value to be subtracted to the argument value"
+      },
+      {
+        "Name": "times",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
+      }
+    ]
+  },
+  {
+    "Name": "add",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-add"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the sum of an argument number and the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "The value to be added to the argument value"
+      },
+      {
+        "Name": "times",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum"
+      }
+    ]
   },
   {
     "Name": "value-to-value",
@@ -60,6 +94,16 @@
     "Parameters": []
   },
   {
+    "Name": "decrement",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-decrement"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the argument number decremented of one unit.",
+    "Parameters": []
+  },
+  {
     "Name": "local-to-utc",
     "IsPublic": true,
     "Aliases": [],
@@ -68,22 +112,26 @@
     "Parameters": []
   },
   {
-    "Name": "floor",
+    "Name": "back",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-floor"
+      "dateTime-to-back",
+      "dateTime-to-subtract"
     ],
-    "Scope": "Numeric",
-    "Summary": "Returns the largest integer less than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
-    "Name": "utc-to-local",
-    "IsPublic": true,
-    "Aliases": [],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
-    "Parameters": []
+    "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
+    "Parameters": [
+      {
+        "Name": "timeSpan",
+        "Optional": false,
+        "Summary": "The value to be subtracted to the argument value."
+      },
+      {
+        "Name": "times",
+        "Optional": true,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
+      }
+    ]
   },
   {
     "Name": "forward",
@@ -162,87 +210,52 @@
     ]
   },
   {
-    "Name": "null-to-date",
+    "Name": "utc-to-local",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
-      }
-    ]
-  },
-  {
-    "Name": "back",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-back",
-      "dateTime-to-subtract"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
-    "Parameters": [
-      {
-        "Name": "timeSpan",
-        "Optional": false,
-        "Summary": "The value to be subtracted to the argument value."
-      },
-      {
-        "Name": "times",
-        "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
-      }
-    ]
-  },
-  {
-    "Name": "integer",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-integer"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
+    "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
     "Parameters": []
   },
   {
-    "Name": "round",
+    "Name": "multiply",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-round"
+      "numeric-to-multiply"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
+    "Summary": "Returns the argument number multiplied by the parameter value.",
     "Parameters": [
       {
-        "Name": "digits",
+        "Name": "value",
         "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
+        "Summary": "The value to be multiplied by the argument value"
       }
     ]
   },
   {
-    "Name": "clip",
+    "Name": "divide",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-clip"
+      "numeric-to-divide"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
     "Parameters": [
       {
-        "Name": "min",
+        "Name": "value",
         "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it"
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it"
+        "Summary": "The value to divide the argument value"
       }
     ]
+  },
+  {
+    "Name": "null-to-zero",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Numeric",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Parameters": []
   },
   {
     "Name": "extension",
@@ -345,6 +358,16 @@
     "Parameters": []
   },
   {
+    "Name": "oppose",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-oppose"
+    ],
+    "Scope": "Numeric",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
     "Name": "invert",
     "IsPublic": true,
     "Aliases": [
@@ -355,96 +378,83 @@
     "Parameters": []
   },
   {
-    "Name": "divide",
+    "Name": "clip",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-divide"
+      "numeric-to-clip"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
+    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
     "Parameters": [
       {
-        "Name": "value",
+        "Name": "min",
         "Optional": false,
-        "Summary": "The value to divide the argument value"
+        "Summary": "value returned in case the argument value is smaller than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is greater than it"
       }
     ]
   },
   {
-    "Name": "multiply",
+    "Name": "round",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-multiply"
+      "numeric-to-round"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the argument number multiplied by the parameter value.",
+    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
     "Parameters": [
       {
-        "Name": "value",
+        "Name": "digits",
         "Optional": false,
-        "Summary": "The value to be multiplied by the argument value"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
       }
     ]
   },
   {
-    "Name": "decrement",
+    "Name": "integer",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-decrement"
+      "numeric-to-integer"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the argument number decremented of one unit.",
+    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
     "Parameters": []
   },
   {
-    "Name": "increment",
+    "Name": "floor",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-increment"
+      "numeric-to-floor"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the argument number incremented of one unit.",
+    "Summary": "Returns the largest integer less than or equal to the argument number.",
     "Parameters": []
   },
   {
-    "Name": "subtract",
+    "Name": "ceiling",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-subtract"
+      "numeric-to-ceiling"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the difference between the argument number and the parameter value.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Optional": false,
-        "Summary": "The value to be subtracted to the argument value"
-      },
-      {
-        "Name": "times",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
-      }
-    ]
+    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
+    "Parameters": []
   },
   {
-    "Name": "add",
+    "Name": "null-to-date",
     "IsPublic": true,
-    "Aliases": [
-      "numeric-to-add"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the sum of an argument number and the parameter value.",
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
     "Parameters": [
       {
-        "Name": "value",
+        "Name": "default",
         "Optional": false,
-        "Summary": "The value to be added to the argument value"
-      },
-      {
-        "Name": "times",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum"
+        "Summary": "The dateTime to be returned if the argument is `null`."
       }
     ]
   },
@@ -463,16 +473,6 @@
         "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
       }
     ]
-  },
-  {
-    "Name": "root",
-    "IsPublic": true,
-    "Aliases": [
-      "path-to-root"
-    ],
-    "Scope": "IO",
-    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
-    "Parameters": []
   },
   {
     "Name": "clamp",
@@ -497,13 +497,23 @@
     ]
   },
   {
-    "Name": "previous-month",
+    "Name": "previous-year",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-month"
+      "dateTime-to-previous-year"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "length",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-length"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
     "Parameters": []
   },
   {
@@ -593,16 +603,6 @@
     ]
   },
   {
-    "Name": "length",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-length"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
-    "Parameters": []
-  },
-  {
     "Name": "skip-last-chars",
     "IsPublic": true,
     "Aliases": [
@@ -610,6 +610,22 @@
     ],
     "Scope": "Text",
     "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
+      }
+    ]
+  },
+  {
+    "Name": "skip-first-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-skip-first-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
     "Parameters": [
       {
         "Name": "length",
@@ -713,22 +729,6 @@
     "Parameters": []
   },
   {
-    "Name": "skip-first-chars",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-skip-first-chars"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
-    "Parameters": [
-      {
-        "Name": "length",
-        "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
-      }
-    ]
-  },
-  {
     "Name": "token",
     "IsPublic": true,
     "Aliases": [
@@ -750,6 +750,16 @@
     ]
   },
   {
+    "Name": "root",
+    "IsPublic": true,
+    "Aliases": [
+      "path-to-root"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Parameters": []
+  },
+  {
     "Name": "token-count",
     "IsPublic": true,
     "Aliases": [
@@ -766,23 +776,30 @@
     ]
   },
   {
-    "Name": "text-to-datetime",
+    "Name": "remove-chars",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "text-to-remove-chars"
+    ],
     "Scope": "Text",
-    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
+    "Summary": "Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.",
     "Parameters": [
       {
-        "Name": "format",
+        "Name": "charToRemove",
         "Optional": false,
-        "Summary": "A string representing the required format."
-      },
-      {
-        "Name": "culture",
-        "Optional": true,
-        "Summary": "A string representing a pre-defined culture."
+        "Summary": "The char to be removed from the argument string"
       }
     ]
+  },
+  {
+    "Name": "previous-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-month"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Parameters": []
   },
   {
     "Name": "previous-day",
@@ -975,30 +992,23 @@
     ]
   },
   {
-    "Name": "remove-chars",
+    "Name": "text-to-datetime",
     "IsPublic": true,
-    "Aliases": [
-      "text-to-remove-chars"
-    ],
+    "Aliases": [],
     "Scope": "Text",
-    "Summary": "Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.",
+    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
     "Parameters": [
       {
-        "Name": "charToRemove",
+        "Name": "format",
         "Optional": false,
-        "Summary": "The char to be removed from the argument string"
+        "Summary": "A string representing the required format."
+      },
+      {
+        "Name": "culture",
+        "Optional": true,
+        "Summary": "A string representing a pre-defined culture."
       }
     ]
-  },
-  {
-    "Name": "previous-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-previous-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
-    "Parameters": []
   },
   {
     "Name": "directory",

@@ -2,7 +2,7 @@
 title: Numeric predicates
 subtitle: Predicates applicable to numeric values
 tags: [predicates, numeric]
-keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-than, less-than-or-equal, modulo, negative, negative-or-zero, odd, one, positive, positive-or-zero, within-interval, zero, zero-or-null] # AUTO-GENERATED KEYWORDS
+keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-than, less-than-or-equal, modulo, negative, negative-or-zero, odd, one, opposite, positive, positive-or-zero, within-interval, zero, zero-or-null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### equal-to
@@ -83,6 +83,14 @@ Returns `true` if the numeric value passed as argument is odd. Returns `false` o
 ###### Overview
 
 Returns true if the numeric argument is equal to 1.
+
+##### opposite
+###### Overview
+
+Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.
+
+###### Parameter
+* reference: A numeric value to compare to the argument
 
 ##### positive
 ###### Overview

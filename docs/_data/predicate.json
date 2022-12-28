@@ -111,6 +111,22 @@
     ]
   },
   {
+    "Name": "opposite",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-opposite"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A numeric value to compare to the argument"
+      }
+    ]
+  },
+  {
     "Name": "zero",
     "IsPublic": true,
     "Aliases": [
@@ -141,6 +157,16 @@
     "Parameters": []
   },
   {
+    "Name": "on-the-minute",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-on-the-minute"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
     "Name": "positive-or-zero",
     "IsPublic": true,
     "Aliases": [
@@ -148,16 +174,6 @@
     ],
     "Scope": "Numeric",
     "Summary": "Returns true if the numeric argument is greater or equal to 0.",
-    "Parameters": []
-  },
-  {
-    "Name": "negative",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-is-negative"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns true if the numeric argument is less than 0.",
     "Parameters": []
   },
   {
@@ -284,13 +300,23 @@
     "Parameters": []
   },
   {
-    "Name": "on-the-minute",
+    "Name": "negative",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-on-the-minute"
+      "numeric-is-negative"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is less than 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "false",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-false"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
     "Parameters": []
   },
   {
@@ -301,16 +327,6 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "on-the-day",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-on-the-day"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -474,13 +490,13 @@
     ]
   },
   {
-    "Name": "false",
+    "Name": "on-the-day",
     "IsPublic": true,
     "Aliases": [
-      "boolean-is-false"
+      "dateTime-is-on-the-day"
     ],
-    "Scope": "Boolean",
-    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
     "Parameters": []
   },
   {
