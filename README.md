@@ -258,6 +258,7 @@ Install-Package Expressif
 |Text     | pad-right                  | text-to-pad-right                     |
 |Text     | prefix                     | text-to-prefix                        |
 |Text     | remove-chars               | text-to-remove-chars                  |
+|Text     | replace-chars              | text-to-replace-chars                 |
 |Text     | skip-first-chars           | text-to-skip-first-chars              |
 |Text     | skip-last-chars            | text-to-skip-last-chars               |
 |Text     | suffix                     | text-to-suffix                        |
