@@ -2,7 +2,7 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
-keywords: [absolute, add, ceiling, clip, decrement, divide, floor, increment, integer, invert, multiply, null-to-zero, oppose, round, sign, subtract] # AUTO-GENERATED KEYWORDS
+keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, increment, integer, invert, multiply, nth-root, null-to-zero, oppose, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.
@@ -35,6 +35,16 @@ Returns the value of an argument number, unless it is smaller than min, in which
 ###### Parameters
 * min: value returned in case the argument value is smaller than it
 * max: value returned in case the argument value is greater than it
+
+##### cube-power
+###### Overview
+
+Returns the the numeric argument value raised to the cube power.
+
+##### cube-root
+###### Overview
+
+Returns cube root of the numeric argument value
 
 ##### decrement
 ###### Overview
@@ -77,6 +87,11 @@ Returns the argument number multiplied by the parameter value.
 ###### Parameter
 * value: The value to be multiplied by the argument value
 
+##### nth-root
+###### Overview
+
+Returns the root specified by the parameter value of the numeric argument value.
+
 ##### null-to-zero
 ###### Overview
 
@@ -85,7 +100,12 @@ Returns the unmodified argument value except if the argument value is `null`, `e
 ##### oppose
 ###### Overview
 
+Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.
 
+##### power
+###### Overview
+
+Returns the the numeric argument value raised to the power specified by the parameter value.
 
 ##### round
 ###### Overview
@@ -99,6 +119,16 @@ Returns the value of an argument number to the specified number of fractional di
 ###### Overview
 
 Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.
+
+##### square-power
+###### Overview
+
+Returns the the numeric argument value raised to the square power.
+
+##### square-root
+###### Overview
+
+Returns square root of the numeric argument value
 
 ##### subtract
 ###### Overview

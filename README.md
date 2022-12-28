@@ -197,6 +197,8 @@ Install-Package Expressif
 |Numeric  | add                        | numeric-to-add                        |
 |Numeric  | ceiling                    | numeric-to-ceiling                    |
 |Numeric  | clip                       | numeric-to-clip                       |
+|Numeric  | cube-power                 | numeric-to-cube-power                 |
+|Numeric  | cube-root                  | numeric-to-cube-root                  |
 |Numeric  | decrement                  | numeric-to-decrement                  |
 |Numeric  | divide                     | numeric-to-divide                     |
 |Numeric  | floor                      | numeric-to-floor                      |
@@ -204,10 +206,14 @@ Install-Package Expressif
 |Numeric  | integer                    | numeric-to-integer                    |
 |Numeric  | invert                     | numeric-to-invert                     |
 |Numeric  | multiply                   | numeric-to-multiply                   |
+|Numeric  | nth-root                   | numeric-to-nth-root                   |
 |Numeric  | null-to-zero               |                                       |
 |Numeric  | oppose                     | numeric-to-oppose                     |
+|Numeric  | power                      | numeric-to-power                      |
 |Numeric  | round                      | numeric-to-round                      |
 |Numeric  | sign                       | numeric-to-sign                       |
+|Numeric  | square-power               | numeric-to-square-power               |
+|Numeric  | square-root                | numeric-to-square-root                |
 |Numeric  | subtract                   | numeric-to-subtract                   |
 |Special  | any-to-any                 |                                       |
 |Special  | neutral                    | Special-to-neutral                    |
