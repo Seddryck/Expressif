@@ -101,15 +101,4 @@ namespace Expressif.Functions.Text
         protected override object EvaluateString(string value) => value;
     }
 
-    /// <summary>
-    /// Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`. 
-    /// </summary>
-    public class Length : BaseTextFunction
-    {
-        protected override object EvaluateSpecial(string value) => -1;
-        protected override object EvaluateBlank() => -1;
-        protected override object EvaluateEmpty() => 0;
-        protected override object EvaluateNull() => 0;
-        protected override object EvaluateString(string value) => value.Length;
-    }
 }

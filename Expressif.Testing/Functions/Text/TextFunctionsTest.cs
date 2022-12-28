@@ -203,15 +203,6 @@ namespace Expressif.Testing.Functions.Text
         public void Lower_Valid(object value, object expected)
             => Assert.That(new Lower().Evaluate(value), Is.EqualTo(expected));
 
-        [Test]
-        [TestCase("foo", 3)]
-        [TestCase(" foo ", 5)]
-        [TestCase("", 0)]
-        [TestCase("(null)", 0)]
-        [TestCase("(empty)", 0)]
-        [TestCase("(blank)", -1)]
-        public void Length_Valid(object value, int length)
-            => Assert.That(new Length().Evaluate(value), Is.EqualTo(length));
 
         [Test]
         [TestCase("Cédric")]
