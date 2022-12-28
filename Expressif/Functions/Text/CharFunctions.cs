@@ -37,4 +37,34 @@ namespace Expressif.Functions.Text
         }
     }
 
+    /// <summary>
+    /// Returns the argument value where a specific char has been replaced by another, both specified as parameters.
+    /// </summary>
+    public class ReplaceChars : BaseTextFunction
+    {
+        public Func<char> CharToReplace { get; }
+        public Func<char> CharReplacing { get; }
+
+        /// <param name="charToReplace">The char to be replaced from the argument string</param>
+        /// <param name="charReplacing">The replacing char from the argument string</param>
+        public ReplaceChars(Func<char> charToReplace, Func<char> charReplacing)
+            => (CharToReplace, CharReplacing) = (charToReplace, charReplacing);
+
+        protected override object EvaluateString(string value)
+        {
+            var charToReplace = CharToReplace.Invoke();
+            var charReplacing = CharReplacing.Invoke();
+
+            var stringBuilder = new StringBuilder();
+            foreach (var c in value)
+                if (!c.Equals(charToReplace))
+                    stringBuilder.Append(c);
+                else
+                    stringBuilder.Append(charReplacing);
+            return stringBuilder.ToString();
+        }
+
+        protected override object EvaluateBlank()
+            => new Whitespace().Keyword;
+    }
 }
