@@ -193,6 +193,7 @@ Install-Package Expressif
 |IO       | size                       | file-to-size                          |
 |IO       | update-datetime            | file-to-update-datetime               |
 |IO       | update-datetime-utc        | file-to-update-datetime-utc           |
+|Numeric  | absolute                   | numeric-to-absolute                   |
 |Numeric  | add                        | numeric-to-add                        |
 |Numeric  | ceiling                    | numeric-to-ceiling                    |
 |Numeric  | clip                       | numeric-to-clip                       |
@@ -205,6 +206,7 @@ Install-Package Expressif
 |Numeric  | multiply                   | numeric-to-multiply                   |
 |Numeric  | null-to-zero               |                                       |
 |Numeric  | round                      | numeric-to-round                      |
+|Numeric  | sign                       | numeric-to-sign                       |
 |Numeric  | subtract                   | numeric-to-subtract                   |
 |Special  | any-to-any                 |                                       |
 |Special  | neutral                    | Special-to-neutral                    |

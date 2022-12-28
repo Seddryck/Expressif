@@ -2,12 +2,17 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
-keywords: [add, ceiling, clip, decrement, divide, floor, increment, integer, invert, multiply, null-to-zero, round, subtract] # AUTO-GENERATED KEYWORDS
+keywords: [absolute, add, ceiling, clip, decrement, divide, floor, increment, integer, invert, multiply, null-to-zero, round, sign, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.
 
 <!-- START AUTO-GENERATED -->
+##### absolute
+###### Overview
+
+Returns the absolute value of the argument value.
+
 ##### add
 ###### Overview
 
@@ -84,6 +89,11 @@ Returns the value of an argument number to the specified number of fractional di
 
 ###### Parameter
 * digits: An integer between 0 and +Infinity, indicating the number of fractional digits in the return value.
+
+##### sign
+###### Overview
+
+Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.
 
 ##### subtract
 ###### Overview
