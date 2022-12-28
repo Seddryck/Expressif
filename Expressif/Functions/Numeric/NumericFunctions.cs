@@ -119,6 +119,7 @@ namespace Expressif.Functions.Numeric
 
     /// <summary>
     /// Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.
+    /// </summary>
     public class Oppose : BaseNumericFunction
     {
         public Oppose()
