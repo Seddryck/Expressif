@@ -43,8 +43,6 @@ Generated\ Files/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 **/[Cc]overage.*.json
-coverage.net6.0.json
-Expressif.Testing/coverage.net6.0.json
 
 # NUnit
 *.VisualState.xml
