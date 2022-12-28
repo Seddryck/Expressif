@@ -353,17 +353,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new TextToDateTime(() => (format), () => (culture))
                 .Evaluate(value), Is.EqualTo(expected));
 
-        [Test]
-        [TestCase("123*456*78", "*", "12345678")]
-        [TestCase("***123***456*78****", "*", "12345678")]
-        [TestCase("******", "*", "")]
-        [TestCase("(null)", "*", "(null)")]
-        [TestCase("(empty)", "*", "(empty)")]
-        [TestCase("(blank)", "*", "(blank)")]
-        [TestCase("(blank)", " ", "(empty)")]
-        public void RemoveChars_Valid(string value, char charToRemove, string expected)
-            => Assert.That(new RemoveChars(() => (charToRemove)).Evaluate(value)
-                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]
