@@ -2,7 +2,7 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
-keywords: [absolute, add, ceiling, clip, decrement, divide, floor, increment, integer, invert, multiply, null-to-zero, round, sign, subtract] # AUTO-GENERATED KEYWORDS
+keywords: [absolute, add, ceiling, clip, decrement, divide, floor, increment, integer, invert, multiply, null-to-zero, oppose, round, sign, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.
@@ -81,6 +81,11 @@ Returns the argument number multiplied by the parameter value.
 ###### Overview
 
 Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.
+
+##### oppose
+###### Overview
+
+
 
 ##### round
 ###### Overview
