@@ -1,45 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Expressif.Values.Casters
 {
-    public class BooleanCaster
+    public class BooleanCaster : BaseNumericCaster<bool>, ICaster<bool>, IParser<bool>
     {
-        public bool Execute(object value)
+        protected override bool One { get => true; }
+
+        protected override bool CastNumeric(object numeric)
+            => Convert.ToBoolean(numeric, CultureInfo.InvariantCulture.NumberFormat);
+
+        public bool Cast(object obj)
+            => TryCast(obj, out var b)
+            ? b
+            : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type Boolean. The type Boolean can only be casted from the underlying numeric types (int, float, ...), and String. The expect string format can include decimal point, thousand separators, sign symbol and white spaces.");
+
+        public override bool TryParse(string text, [NotNullWhen(true)] out bool value)
         {
-            if (value is bool boolean)
-                return boolean;
+            if (bool.TryParse(text, out var boolean))
+                return (Result: true, value = boolean).Result;
 
-            if (TryParseNumeric(value, out decimal? numeric))
-                return Cast(numeric ?? throw new ArgumentNullException(nameof(value)));
-
-            return Cast(value.ToString());
+            return text.Trim().ToLowerInvariant() switch
+            {
+                "1" => (Result: true, value = true).Result,
+                "yes" => (Result: true, value = true).Result,
+                "0" => (Result: true, value = false).Result,
+                "no" => (Result: true, value = false).Result,
+                _ => (Result: true, value = false).Result,
+            };
         }
 
-        protected bool TryParseNumeric(object value, [NotNullWhen(true)] out decimal? numeric)
+        protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out bool value)
         {
-            var caster = new NumericCaster();
-            if (caster.IsNumericType(value))
-                numeric = caster.Execute(value);
-            else
-                numeric = null;
-            return numeric is not null;
+            if (TypeChecker.IsNumericType(obj))
+                return (Result: true, value = CastNumeric(obj)).Result;
+            return (Result: false, value = default!).Result;
         }
-
-
-        protected virtual bool Cast(decimal numeric) => Convert.ToBoolean(numeric);
-
-        protected virtual bool Cast(string? str)
-            => str?.Trim().ToLowerInvariant() switch
-                {
-                    "true" => true,
-                    "yes" => true,
-                    "1" => true,
-                    _ => false,
-                };
     }
 }

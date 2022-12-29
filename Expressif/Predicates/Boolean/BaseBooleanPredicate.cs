@@ -27,7 +27,7 @@ namespace Expressif.Predicates.Boolean
                 return EvaluateNull();
 
             var caster = new BooleanCaster();
-            var boolean = caster.Execute(value);
+            var boolean = caster.Cast(value);
             return EvaluateBoolean(boolean);
         }
 

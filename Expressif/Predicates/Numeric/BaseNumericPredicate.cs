@@ -27,7 +27,7 @@ namespace Expressif.Predicates.Numeric
                 return EvaluateNull();
 
             var caster = new NumericCaster();
-            var numeric = caster.Execute(value);
+            var numeric = caster.Cast(value);
             return EvaluateNumeric(numeric);
         }
 

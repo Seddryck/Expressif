@@ -30,7 +30,7 @@ namespace Expressif.Functions.Temporal
                 return EvaluateNull();
 
             var caster = new DateTimeCaster();
-            var dateTime = caster.Execute(value);
+            var dateTime = caster.Cast(value);
             return EvaluateDateTime(dateTime);
         }
 
@@ -217,7 +217,7 @@ namespace Expressif.Functions.Temporal
 
             var caster = new DateTimeCaster();
             
-            try { return caster.Execute(value);} 
+            try { return caster.Cast(value);} 
             catch { return Default.Invoke(); }
         }
     }
