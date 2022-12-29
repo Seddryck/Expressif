@@ -12,7 +12,7 @@
 
 - title: Functions and predicates
   #Template#  desc: List the <function> available functions and <predicate> predicates
-<<<<<<< HEAD
+  desc: List the 95 available functions and 70 predicates
   desc: List the 95 available functions and 66 predicates
 =======
   desc: List the 95 available functions and 52 predicates

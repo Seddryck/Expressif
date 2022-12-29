@@ -3,9 +3,9 @@ title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
 <<<<<<< HEAD
-keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
+keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, in-the-future, in-the-future-or-today, in-the-past, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
 =======
-keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant] # AUTO-GENERATED KEYWORDS
+keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, in-the-future, in-the-future-or-today, in-the-past, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
 >>>>>>> 02b10588d9b6606d24077bb407bc9a42848321fe
 ---
 <!-- START AUTO-GENERATED -->
@@ -48,6 +48,26 @@ Returns true if the numeric value passed as argument is between the lower bound 
 
 ###### Parameter
 * interval: A temporal interval to compare to the argument
+
+##### in-the-future
+###### Overview
+
+Returns true if the date passed as argument is after today. Returns false otherwise.
+
+##### in-the-future-or-today
+###### Overview
+
+Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be after now. Returns false otherwise.
+
+##### in-the-past
+###### Overview
+
+Returns true if the date passed as argument is before today. Returns false otherwise.
+
+##### in-the-past-or-today
+###### Overview
+
+Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it must be after now. Returns false otherwise.
 
 ##### leap-year
 ###### Overview
