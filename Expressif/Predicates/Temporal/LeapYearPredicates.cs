@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Temporal
 {
-    public abstract class BaseTemporalYearMonthPredicate : BaseDateTimePredicate
+    public abstract class BaseTemporalLeapYearPredicate : BaseDateTimePredicate
     {
         public override bool Evaluate(object? value)
         {
@@ -42,7 +42,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the year of the dateTime value passed as the argument is a leap year. If the argument is not a dateTime but a numeric, returns true if the integer part of this value corresponds to a year that is a leap year. Returns false otherwise.
     /// </summary>
-    public class LeapYear : BaseTemporalYearMonthPredicate
+    public class LeapYear : BaseTemporalLeapYearPredicate
     {
         protected override bool EvaluateDateTime(DateTime dt)
             => EvaluateYear(dt.Year);
