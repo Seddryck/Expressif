@@ -245,6 +245,19 @@
     "Parameters": []
   },
   {
+<<<<<<< HEAD
+=======
+    "Name": "leap-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-leap-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the year of the dateTime value passed as the argument is a leap year. If the argument is not a dateTime but a numeric, returns true if the integer part of this value corresponds to a year that is a leap year. Returns false otherwise.",
+    "Parameters": []
+  },
+  {
+>>>>>>> 02b10588d9b6606d24077bb407bc9a42848321fe
     "Name": "positive-or-zero",
     "IsPublic": true,
     "Aliases": [
@@ -391,13 +404,38 @@
     "Name": "within-preceding-year",
     "IsPublic": true,
     "Aliases": [
+<<<<<<< HEAD
       "dateTime-is-within-preceding-year"
+=======
+      "numeric-is-negative"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns true if the numeric argument is less than 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "on-the-minute",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-on-the-minute"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "on-the-hour",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-on-the-hour"
+>>>>>>> 02b10588d9b6606d24077bb407bc9a42848321fe
     ],
     "Scope": "Temporal",
     "Summary": "Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.",
     "Parameters": []
   },
   {
+<<<<<<< HEAD
     "Name": "within-preceding-month",
     "IsPublic": true,
     "Aliases": [
@@ -425,6 +463,15 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.",
+=======
+    "Name": "on-the-day",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-on-the-day"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
+>>>>>>> 02b10588d9b6606d24077bb407bc9a42848321fe
     "Parameters": []
   },
   {
@@ -766,6 +813,7 @@
     ]
   },
   {
+<<<<<<< HEAD
     "Name": "tomorrow",
     "IsPublic": true,
     "Aliases": [
@@ -865,6 +913,32 @@
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)"
       }
     ]
+=======
+    "Name": "contained-in",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-contained-in"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "interval",
+        "Optional": false,
+        "Summary": "A temporal interval to compare to the argument"
+      }
+    ]
+  },
+  {
+    "Name": "false",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-false"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
+    "Parameters": []
+>>>>>>> 02b10588d9b6606d24077bb407bc9a42848321fe
   },
   {
     "Name": "false-or-null",
