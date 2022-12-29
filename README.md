@@ -313,6 +313,7 @@ Install-Package Expressif
 |Temporal | before                         | dateTime-is-before                    |
 |Temporal | before-or-same-instant         | dateTime-is-before-or-same-instant    |
 |Temporal | contained-in                   | dateTime-is-contained-in              |
+|Temporal | leap-year                      | dateTime-is-leap-year                 |
 |Temporal | on-the-day                     | dateTime-is-on-the-day                |
 |Temporal | on-the-hour                    | dateTime-is-on-the-hour               |
 |Temporal | on-the-minute                  | dateTime-is-on-the-minute             |

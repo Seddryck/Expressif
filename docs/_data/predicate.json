@@ -157,13 +157,13 @@
     "Parameters": []
   },
   {
-    "Name": "on-the-minute",
+    "Name": "leap-year",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-on-the-minute"
+      "dateTime-is-leap-year"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
+    "Summary": "Returns true if the year of the dateTime value passed as the argument is a leap year. If the argument is not a dateTime but a numeric, returns true if the integer part of this value corresponds to a year that is a leap year. Returns false otherwise.",
     "Parameters": []
   },
   {
@@ -310,13 +310,13 @@
     "Parameters": []
   },
   {
-    "Name": "false",
+    "Name": "on-the-minute",
     "IsPublic": true,
     "Aliases": [
-      "boolean-is-false"
+      "dateTime-is-on-the-minute"
     ],
-    "Scope": "Boolean",
-    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
+    "Scope": "Temporal",
+    "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -330,20 +330,14 @@
     "Parameters": []
   },
   {
-    "Name": "contained-in",
+    "Name": "on-the-day",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-contained-in"
+      "dateTime-is-on-the-day"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "interval",
-        "Optional": false,
-        "Summary": "A temporal interval to compare to the argument"
-      }
-    ]
+    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
+    "Parameters": []
   },
   {
     "Name": "lower-case",
@@ -490,16 +484,6 @@
     ]
   },
   {
-    "Name": "on-the-day",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-on-the-day"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
     "Name": "sorted-before-or-equivalent-to",
     "IsPublic": true,
     "Aliases": [
@@ -519,6 +503,16 @@
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)"
       }
     ]
+  },
+  {
+    "Name": "empty",
+    "IsPublic": true,
+    "Aliases": [
+      "text-is-empty"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns `true` if argument value has a length of `0`. Return `false` otherwise.",
+    "Parameters": []
   },
   {
     "Name": "empty-or-null",
@@ -695,13 +689,29 @@
     ]
   },
   {
-    "Name": "empty",
+    "Name": "contained-in",
     "IsPublic": true,
     "Aliases": [
-      "text-is-empty"
+      "dateTime-is-contained-in"
     ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if argument value has a length of `0`. Return `false` otherwise.",
+    "Scope": "Temporal",
+    "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "interval",
+        "Optional": false,
+        "Summary": "A temporal interval to compare to the argument"
+      }
+    ]
+  },
+  {
+    "Name": "false",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-false"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
     "Parameters": []
   },
   {

@@ -127,6 +127,7 @@ tags: [predicates, functions]
 * [greater-than-or-equal]({{ site.baseurl }}/docs/numeric-predicates/#greater-than-or-equal)
 * [identical-to]({{ site.baseurl }}/docs/boolean-predicates/#identical-to)
 * [integer]({{ site.baseurl }}/docs/numeric-predicates/#integer)
+* [leap-year]({{ site.baseurl }}/docs/temporal-predicates/#leap-year)
 * [less-than]({{ site.baseurl }}/docs/numeric-predicates/#less-than)
 * [less-than-or-equal]({{ site.baseurl }}/docs/numeric-predicates/#less-than-or-equal)
 * [lower-case]({{ site.baseurl }}/docs/text-predicates/#lower-case)
