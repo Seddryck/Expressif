@@ -14,9 +14,12 @@ namespace Expressif.Values.Casters
                 return default;
 
             var @switch = new Dictionary<Type, Func<object>> {
-                { typeof(decimal), () => new NumericCaster().Cast(value) },
+                { typeof(bool), () => new BooleanCaster().Cast(value) },
                 { typeof(DateTime), () => new DateTimeCaster().Cast(value) },
+                { typeof(int), () => new IntegerCaster().Cast(value) },
+                { typeof(decimal), () => new NumericCaster().Cast(value) },
                 { typeof(string), () => new TextCaster().Cast(value) },
+                { typeof(YearMonth), () => new YearMonthCaster().Cast(value) },
             };
 
             if (@switch.TryGetValue(typeof(T), out var cast))
