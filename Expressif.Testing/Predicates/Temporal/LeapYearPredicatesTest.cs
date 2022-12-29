@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Temporal
 {
-    public class YearMonthPredicatesTest
+    public class LeapYearPredicatesTest
     {
         [Test]
         [TestCase(1900, false)]
