@@ -134,6 +134,14 @@
     "Parameters": []
   },
   {
+    "Name": "null-to-zero",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Numeric",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Parameters": []
+  },
+  {
     "Name": "neutral",
     "IsPublic": true,
     "Aliases": [
@@ -141,14 +149,6 @@
     ],
     "Scope": "Special",
     "Summary": "Returns the argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "local-to-utc",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
     "Parameters": []
   },
   {
@@ -258,12 +258,42 @@
     ]
   },
   {
-    "Name": "null-to-zero",
+    "Name": "null-to-date",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is `null`."
+      }
+    ]
+  },
+  {
+    "Name": "local-to-utc",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
     "Parameters": []
+  },
+  {
+    "Name": "set-time",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-set-time"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
+    "Parameters": [
+      {
+        "Name": "instant",
+        "Optional": false,
+        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
+      }
+    ]
   },
   {
     "Name": "ceiling",
@@ -273,16 +303,6 @@
     ],
     "Scope": "Numeric",
     "Summary": "Returns the smallest integer greater than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
-    "Name": "floor",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-floor"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the largest integer less than or equal to the argument number.",
     "Parameters": []
   },
   {
@@ -386,18 +406,14 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-date",
+    "Name": "floor",
     "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
-      }
-    ]
+    "Aliases": [
+      "numeric-to-floor"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the largest integer less than or equal to the argument number.",
+    "Parameters": []
   },
   {
     "Name": "sign",
@@ -537,30 +553,57 @@
     "Parameters": []
   },
   {
-    "Name": "set-time",
+    "Name": "clamp",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-set-time"
+      "dateTime-to-clamp",
+      "dateTime-to-clip"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
+    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
     "Parameters": [
       {
-        "Name": "instant",
+        "Name": "min",
         "Optional": false,
-        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
+        "Summary": "value returned in case the argument value is before than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is after than it"
       }
     ]
   },
   {
-    "Name": "previous-year",
+    "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-year"
+      "dateTime-to-previous-month"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
+    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
     "Parameters": []
+  },
+  {
+    "Name": "before-substring",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-before-substring"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The string to seek."
+      },
+      {
+        "Name": "count",
+        "Optional": true,
+        "Summary": "The number of character positions to examine."
+      }
+    ]
   },
   {
     "Name": "after-substring",
@@ -702,28 +745,22 @@
     "Parameters": []
   },
   {
+    "Name": "whitespaces-to-empty",
+    "IsPublic": true,
+    "Aliases": [
+      "blank-to-empty"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
+    "Parameters": []
+  },
+  {
     "Name": "html-to-text",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
     "Parameters": []
-  },
-  {
-    "Name": "token-count",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-token-count"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
-    "Parameters": [
-      {
-        "Name": "separator",
-        "Optional": false,
-        "Summary": "A character that delimits the substrings in this instance."
-      }
-    ]
   },
   {
     "Name": "count-substring",
@@ -861,34 +898,29 @@
     ]
   },
   {
-    "Name": "before-substring",
+    "Name": "token-count",
     "IsPublic": true,
     "Aliases": [
-      "text-to-before-substring"
+      "text-to-token-count"
     ],
     "Scope": "Text",
-    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
+    "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
     "Parameters": [
       {
-        "Name": "substring",
+        "Name": "separator",
         "Optional": false,
-        "Summary": "The string to seek."
-      },
-      {
-        "Name": "count",
-        "Optional": true,
-        "Summary": "The number of character positions to examine."
+        "Summary": "A character that delimits the substrings in this instance."
       }
     ]
   },
   {
-    "Name": "whitespaces-to-empty",
+    "Name": "previous-year",
     "IsPublic": true,
     "Aliases": [
-      "blank-to-empty"
+      "dateTime-to-previous-year"
     ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -902,21 +934,11 @@
     "Parameters": []
   },
   {
-    "Name": "empty-to-null",
+    "Name": "null-to-empty",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "previous-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-previous-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
     "Parameters": []
   },
   {
@@ -1000,28 +1022,6 @@
     "Parameters": []
   },
   {
-    "Name": "clamp",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-clamp",
-      "dateTime-to-clip"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is before than it"
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is after than it"
-      }
-    ]
-  },
-  {
     "Name": "age",
     "IsPublic": true,
     "Aliases": [
@@ -1029,6 +1029,34 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns how many years separate the argument dateTime and now.",
+    "Parameters": []
+  },
+  {
+    "Name": "empty-to-null",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "datetime-to-date",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-datetime-to-date"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the date at midnight of the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "length-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-length-of-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument. \r\n            If the argument is not a dateTime but an integer, returns count of days of the corresponding year.\r\n            It returns 365 or 366 (for leap years).",
     "Parameters": []
   },
   {
@@ -1147,21 +1175,13 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-empty",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
-    "Parameters": []
-  },
-  {
-    "Name": "datetime-to-date",
+    "Name": "length-of-month",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-datetime-to-date"
+      "dateTime-to-length-of-month"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the date at midnight of the argument dateTime.",
+    "Summary": "returns the count of days within the month of the dateTime value passed as the argument. \r\n            If the argument is not a dateTime but a text at format \"YYYY-MM\", it returns count of days of the month represented by this value. \r\n            It returns a value between 28 and 31 (depending of leap year and month).",
     "Parameters": []
   },
   {

@@ -23,17 +23,18 @@ namespace Expressif.Predicates.Temporal
                 _ => EvaluateUncasted(value),
             };
         }
-        protected bool EvaluateUncasted(object value)
+        protected virtual bool EvaluateUncasted(object value)
         {
             if (new Null().Equals(value))
                 return EvaluateNull();
 
-            var caster = new DateTimeCaster();
-            var dt = caster.Cast(value);
-            return EvaluateDateTime(dt);
+            if (new DateTimeCaster().TryCast(value, out var dt))
+                return EvaluateDateTime(dt);
+            return false;
         }
 
-        protected virtual bool EvaluateDate(DateOnly date) => EvaluateDateTime(date.ToDateTime(TimeOnly.MinValue));
+        protected virtual bool EvaluateDate(DateOnly date)
+            => EvaluateDateTime(date.ToDateTime(TimeOnly.MinValue));
 
         protected abstract bool EvaluateDateTime(DateTime dt);
     }

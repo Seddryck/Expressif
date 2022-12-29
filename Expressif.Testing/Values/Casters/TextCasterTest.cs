@@ -14,18 +14,18 @@ namespace Expressif.Testing.Values.Casters
     {
         public TextCasterTest()
         {
-            //TypeDescriptor.AddAttributes(
-            //    typeof(DateOnly)
-            //    , new TypeConverterAttribute(typeof(Expressif.Values.Converters.DateOnlyConverter))
-            //);
+            TypeDescriptor.AddAttributes(
+                typeof(DateOnly)
+                , new TypeConverterAttribute(typeof(Expressif.Values.Converters.DateOnlyConverter))
+            );
         }
 
         [Test]
         
         [TestCase("Foo bar", typeof(string), "Foo bar")]
-        //[TestCase("2022-12-01", typeof(DateOnly), "2022-12-01")]
+        [TestCase("2022-12-01", typeof(DateOnly), "2022-12-01")]
         [TestCase("2022-12-01 16:45:12", typeof(DateTime), "2022-12-01 16:45:12")]
-        //[TestCase("2022-12", typeof(YearMonth), "2022-12")]
+        [TestCase("2022-12", typeof(YearMonth), "2022-12")]
         public void TryCast_Type_Success(string text, Type type, string expected)
         {
             var obj = TypeDescriptor.GetConverter(type).ConvertFromInvariantString(text)!;

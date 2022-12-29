@@ -40,16 +40,6 @@ namespace Expressif.Testing.Predicates.Numeric
             });
         }
 
-        //[Test]
-        //[TestCase(5, null, 2)]
-        //[TestCase(5, 5, null)]
-        //public void Modulo_Numeric_Exception(object value, int modulus, int remainder)
-        //    => Assert.That(() => new Modulo(
-        //            () => modulus
-        //            , () => remainder
-        //        ).Evaluate(value)
-        //    , Throws.TypeOf<NullReferenceException>());
-
         [Test]
         [TestCase(10, true)]
         [TestCase(1, false)]
