@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, before-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-left, pad-right, prefix, remove-chars, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, before-substring, count-distinct-chars, count-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -22,6 +22,19 @@ Returns the substring of the argument string, containing all the characters imme
 ###### Parameters
 * substring: The string to seek.
 * count (optional) : The number of character positions to examine.
+
+##### count-distinct-chars
+###### Overview
+
+Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.
+
+##### count-substring
+###### Overview
+
+Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.
+
+###### Parameter
+* substring: The substring to count in the argument value
 
 ##### empty-to-null
 ###### Overview
@@ -72,6 +85,15 @@ Returns the value that passed to the function TextToMask will return the argumen
 
 Returns the argument value except if this value is `null` then it returns `empty`.
 
+##### pad-center
+###### Overview
+
+Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.
+
+###### Parameters
+* length: An integer value between 0 and +Infinity, defining the minimal length of the string returned
+* character: The padding character
+
 ##### pad-left
 ###### Overview
 
@@ -105,6 +127,25 @@ Returns the argument value without the specified character. If the argument and 
 
 ###### Parameter
 * charToRemove: The char to be removed from the argument string
+
+##### replace-chars
+###### Overview
+
+Returns the argument value where a specific char has been replaced by another, both specified as parameters.
+
+###### Parameters
+* charToReplace: The char to be replaced from the argument string
+* charReplacing: The replacing char from the argument string
+
+##### replace-slice
+###### Overview
+
+Returns the argument value with a subset of the string substitued by a another string.
+
+###### Parameters
+* start: The position to start to replace
+* length: The length to replace
+* append: The text to append when the slice has been removed
 
 ##### skip-first-chars
 ###### Overview

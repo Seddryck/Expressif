@@ -245,18 +245,23 @@ Install-Package Expressif
 |Temporal | utc-to-local               |                                       |
 |Text     | after-substring            | text-to-after-substring               |
 |Text     | before-substring           | text-to-before-substring              |
+|Text     | count-distinct-chars       | text-to-count-distinct-chars          |
+|Text     | count-substring            | text-to-count-substring               |
 |Text     | empty-to-null              |                                       |
 |Text     | first-chars                | text-to-first-chars                   |
 |Text     | html-to-text               |                                       |
 |Text     | last-chars                 | text-to-last-chars                    |
-|Text     | length                     | text-to-length                        |
+|Text     | length                     | count-chars                           |
 |Text     | lower                      | text-to-lower                         |
 |Text     | mask-to-text               |                                       |
 |Text     | null-to-empty              |                                       |
+|Text     | pad-center                 | text-to-pad-center                    |
 |Text     | pad-left                   | text-to-pad-left                      |
 |Text     | pad-right                  | text-to-pad-right                     |
 |Text     | prefix                     | text-to-prefix                        |
 |Text     | remove-chars               | text-to-remove-chars                  |
+|Text     | replace-chars              | text-to-replace-chars                 |
+|Text     | replace-slice              | text-to-replace-slice                 |
 |Text     | skip-first-chars           | text-to-skip-first-chars              |
 |Text     | skip-last-chars            | text-to-skip-last-chars               |
 |Text     | suffix                     | text-to-suffix                        |

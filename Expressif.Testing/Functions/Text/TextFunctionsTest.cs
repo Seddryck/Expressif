@@ -203,15 +203,6 @@ namespace Expressif.Testing.Functions.Text
         public void Lower_Valid(object value, object expected)
             => Assert.That(new Lower().Evaluate(value), Is.EqualTo(expected));
 
-        [Test]
-        [TestCase("foo", 3)]
-        [TestCase(" foo ", 5)]
-        [TestCase("", 0)]
-        [TestCase("(null)", 0)]
-        [TestCase("(empty)", 0)]
-        [TestCase("(blank)", -1)]
-        public void Length_Valid(object value, int length)
-            => Assert.That(new Length().Evaluate(value), Is.EqualTo(length));
 
         [Test]
         [TestCase("Cédric")]
@@ -245,38 +236,6 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(blank)", "(empty)")]
         public void WithoutWhitespaces_Valid(object value, string expected)
             => Assert.That(new WithoutWhitespaces().Evaluate(value), Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("My taylor is rich", 4)]
-        [TestCase(" My Lord ! ", 2)]
-        [TestCase("  My     Lord    !   ", 2)]
-        [TestCase("  My     Lord    !   C-L.", 3)]
-        [TestCase("(null)", 0)]
-        [TestCase(null, 0)]
-        [TestCase("(empty)", 0)]
-        [TestCase("(blank)", 0)]
-        [TestCase("1 2017-07-06      CUST0001", 3)]
-        [TestCase("1 2017-07-06          CUST0001", 3)]
-        public void TokenCount_Valid(object value, int expected)
-            => Assert.That(new TokenCount().Evaluate(value), Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("123456789", "abc", "abc123456789")]
-        [TestCase("(null)", "abc", "(null)")]
-        [TestCase("(empty)", "abc", "abc")]
-        [TestCase("(blank)", "abc", "abc")]
-        public void Prefix_Valid(string value, string prefix, string expected)
-            => Assert.That(new Prefix(() => prefix).Evaluate(value)
-                , Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("123456789", "abc", "123456789abc")]
-        [TestCase("(null)", "abc", "(null)")]
-        [TestCase("(empty)", "abc", "abc")]
-        [TestCase("(blank)", "abc", "abc")]
-        public void Suffix_Valid(string value, string suffix, string expected)
-            => Assert.That(new Suffix(() => suffix).Evaluate(value)
-                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("123456789", 9, "123456789")]
@@ -324,27 +283,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new SkipLastChars(() => (length)).Evaluate(value)
                 , Is.EqualTo(expected));
 
-        [Test]
-        [TestCase("1234", 9, '0', "123400000")]
-        [TestCase(1234, 9, '0', "123400000")]
-        [TestCase("1234", 9, '*', "1234*****")]
-        [TestCase(1234, 9, '*', "1234*****")]
-        [TestCase("123456789", 3, '0', "123456789")]
-        [TestCase("(null)", 3, '0', "000")]
-        [TestCase("(empty)", 3, '0', "000")]
-        public void PadRight_Valid(object value, int length, char character, string expected)
-            => Assert.That(new PadRight(() => (length), () => (character))
-                .Evaluate(value), Is.EqualTo(expected));
-
-        [Test]
-        [TestCase("1234", 9, '0', "000001234")]
-        [TestCase("1234", 9, '*', "*****1234")]
-        [TestCase("123456789", 3, '0', "123456789")]
-        [TestCase("(null)", 3, '0', "000")]
-        [TestCase("(empty)", 3, '0', "000")]
-        public void PadLeft_Valid(string value, int length, char character, string expected)
-            => Assert.That(new PadLeft(() => (length), () => (character))
-                .Evaluate(value), Is.EqualTo(expected));
 
         [Test]
         [TestCase("20190317111223", "yyyyMMddhhmmss", "2019-03-17 11:12:23")]
@@ -374,17 +312,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new TextToDateTime(() => (format), () => (culture))
                 .Evaluate(value), Is.EqualTo(expected));
 
-        [Test]
-        [TestCase("123*456*78", "*", "12345678")]
-        [TestCase("***123***456*78****", "*", "12345678")]
-        [TestCase("******", "*", "")]
-        [TestCase("(null)", "*", "(null)")]
-        [TestCase("(empty)", "*", "(empty)")]
-        [TestCase("(blank)", "*", "(blank)")]
-        [TestCase("(blank)", " ", "(empty)")]
-        public void RemoveChars_Valid(string value, char charToRemove, string expected)
-            => Assert.That(new RemoveChars(() => (charToRemove)).Evaluate(value)
-                , Is.EqualTo(expected));
 
         [Test]
         [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]
