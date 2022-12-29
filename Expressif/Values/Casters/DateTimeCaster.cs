@@ -19,7 +19,7 @@ namespace Expressif.Values.Casters
         public virtual bool TryCast(object obj, [NotNullWhen(true)] out DateTime value)
             => (obj switch
             {
-                YearMonth yearMonth => (Result: true, value = new DateTime(yearMonth.Year, yearMonth.Month, 1)),
+                //YearMonth yearMonth => (Result: true, value = new DateTime(yearMonth.Year, yearMonth.Month, 1)),
                 DateTime dt => (Result: true, value = dt),
                 DateOnly d => (Result: true, value = d.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc)),
                 string s => (Result: TryParse(s, out var dt), value = dt),

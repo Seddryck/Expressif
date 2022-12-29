@@ -21,7 +21,7 @@ namespace Expressif.Values.Casters
 
             return (obj switch
             {
-                YearMonth yearMonth => (Result: true, value = yearMonth.ToString()),
+                //YearMonth yearMonth => (Result: true, value = yearMonth.ToString()),
                 DateTime dt => (Result: true, value = dt.ToString(DateTimeFormat)),
                 DateOnly d => (Result: true, value = d.ToString(DateFormat)),
                 string s => (Result: true, value = s),
