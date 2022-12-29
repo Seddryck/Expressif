@@ -15,10 +15,10 @@ namespace Expressif.Testing.Values.Casters
     {
         public BooleanCasterTest()
         {
-            //TypeDescriptor.AddAttributes(
-            //    typeof(DateOnly)
-            //    , new TypeConverterAttribute(typeof(Expressif.Values.Converters.DateOnlyConverter))
-            //);
+            TypeDescriptor.AddAttributes(
+                typeof(DateOnly)
+                , new TypeConverterAttribute(typeof(Expressif.Values.Converters.DateOnlyConverter))
+            );
         }
 
         [Test]
@@ -48,8 +48,8 @@ namespace Expressif.Testing.Values.Casters
 
         [Test]
         [TestCase("2022-12-01 16:45:12Z", typeof(DateTime))]
-        //[TestCase("2022-12-01", typeof(DateOnly))]
-        //[TestCase("2022-12", typeof(YearMonth))]
+        [TestCase("2022-12-01", typeof(DateOnly))]
+        [TestCase("2022-12", typeof(YearMonth))]
         public void TryCast_Failure(string text, Type type)
         {
             var obj = TypeDescriptor.GetConverter(type).ConvertFromInvariantString(text)!;

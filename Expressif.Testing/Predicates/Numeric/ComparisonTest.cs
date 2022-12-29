@@ -29,13 +29,6 @@ namespace Expressif.Testing.Predicates.Numeric
             });
         }
 
-        //[Test]
-        //[TestCase(4, null)]
-        //public void Equal_NullReference_Success(object value, decimal reference)
-        //    => Assert.That(
-        //        () => new EqualTo(() => reference).Evaluate(value)
-        //        , Throws.TypeOf<NullReferenceException>());
-
         [Test]
         [TestCase(10, 10, false)]
         [TestCase(10, 4, true)]
