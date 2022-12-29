@@ -2,7 +2,7 @@
 title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
-keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, yesterday] # AUTO-GENERATED KEYWORDS
+keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after
@@ -82,6 +82,67 @@ Returns true if the date passed as argument is representing the current date. Re
 ###### Overview
 
 Returns true if the date passed as argument is representing the next date compared to the current date. Returns false otherwise.
+
+##### within-current-month
+###### Overview
+
+Returns true if the date passed as argument is part of the same month than the current date. Returns false otherwise.
+
+##### within-current-week
+###### Overview
+
+Returns true if the date passed as argument is part of the same week than the current date. A week is starting on Monday and ending on Sunday. Returns false otherwise.
+
+##### within-current-year
+###### Overview
+
+Returns true if the date passed as argument is part of the same year than the current date. Returns false otherwise.
+
+##### within-following-month
+###### Overview
+
+Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.
+
+##### within-following-week
+###### Overview
+
+Returns true if the date passed as argument is part of the week following the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
+
+##### within-following-year
+###### Overview
+
+Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.
+
+##### within-next-days
+###### Overview
+
+Returns true if the date passed as argument is between tomorrow and the count of days after the current date. Returns false otherwise.
+
+###### Parameter
+* count: Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false.
+
+##### within-preceding-month
+###### Overview
+
+Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.
+
+##### within-preceding-week
+###### Overview
+
+Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
+
+##### within-preceding-year
+###### Overview
+
+Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.
+
+##### within-previous-days
+###### Overview
+
+Returns true if the date passed as argument is between the count of days before the current date and yesterday (both included). Returns false otherwise.
+
+###### Parameter
+* count: Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false.
 
 ##### yesterday
 ###### Overview
