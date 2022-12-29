@@ -233,6 +233,8 @@ Install-Package Expressif
 |Temporal | invalid-to-date            |                                       |
 |Temporal | last-of-month              | dateTime-to-last-of-month             |
 |Temporal | last-of-year               | dateTime-to-last-of-year              |
+|Temporal | length-of-month            | dateTime-to-length-of-month           |
+|Temporal | length-of-year             | dateTime-to-length-of-year            |
 |Temporal | local-to-utc               |                                       |
 |Temporal | next-day                   | dateTime-to-next-day                  |
 |Temporal | next-month                 | dateTime-to-next-month                |

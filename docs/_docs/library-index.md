@@ -51,6 +51,8 @@ tags: [predicates, functions]
 * [last-of-month]({{ site.baseurl }}/docs/temporal-functions/#last-of-month)
 * [last-of-year]({{ site.baseurl }}/docs/temporal-functions/#last-of-year)
 * [length]({{ site.baseurl }}/docs/text-functions/#length)
+* [length-of-month]({{ site.baseurl }}/docs/temporal-functions/#length-of-month)
+* [length-of-year]({{ site.baseurl }}/docs/temporal-functions/#length-of-year)
 * [local-to-utc]({{ site.baseurl }}/docs/temporal-functions/#local-to-utc)
 * [lower]({{ site.baseurl }}/docs/text-functions/#lower)
 * [mask-to-text]({{ site.baseurl }}/docs/text-functions/#mask-to-text)

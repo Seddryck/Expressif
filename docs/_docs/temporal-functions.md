@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, back, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-of-month, last-of-year, local-to-utc, next-day, next-month, next-year, null-to-date, previous-day, previous-month, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
+keywords: [age, back, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, next-day, next-month, next-year, null-to-date, previous-day, previous-month, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -89,6 +89,20 @@ Returns the last day of the month of the same month/year than the argument dateT
 ###### Overview
 
 Returns the 31st of December of the same year than the argument dateTime.
+
+##### length-of-month
+###### Overview
+
+returns the count of days within the month of the dateTime value passed as the argument. 
+            If the argument is not a dateTime but a text at format "YYYY-MM", it returns count of days of the month represented by this value. 
+            It returns a value between 28 and 31 (depending of leap year and month).
+
+##### length-of-year
+###### Overview
+
+Returns the count of days within the year of the dateTime value passed as the argument. 
+            If the argument is not a dateTime but an integer, returns count of days of the corresponding year.
+            It returns 365 or 366 (for leap years).
 
 ##### local-to-utc
 ###### Overview
