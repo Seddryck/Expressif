@@ -33,7 +33,7 @@ namespace Expressif.Predicates.Text
                 return EvaluateBaseText(string.Empty);
 
             var caster = new TextCaster();
-            var text = caster.Execute(value);
+            var text = caster.Cast(value);
             return EvaluateBaseText(text);
         }
     }

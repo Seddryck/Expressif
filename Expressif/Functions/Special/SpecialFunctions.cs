@@ -32,7 +32,7 @@ namespace Expressif.Functions.Special
         private object EvaluateUncasted(object value)
         {
             var caster = new TextCaster();
-            var str = caster.Execute(value);
+            var str = caster.Cast(value);
             return EvaluateHighLevelString(str);
         }
 

@@ -20,7 +20,7 @@ namespace Expressif.Values
             if (new MatchesNumeric().Evaluate(lowerBound) && new MatchesNumeric().Evaluate(upperBound))
             {
                 var caster = new NumericCaster();
-                return new Interval<decimal>(caster.Execute(lowerBound), caster.Execute(upperBound), lowerBoundType, upperBoundType);
+                return new Interval<decimal>(caster.Cast(lowerBound), caster.Cast(upperBound), lowerBoundType, upperBoundType);
             }
             else if(
                 (new MatchesDateTime().Evaluate(lowerBound) && new MatchesDateTime().Evaluate(upperBound))
@@ -28,7 +28,7 @@ namespace Expressif.Values
             )
             {
                 var caster = new DateTimeCaster();
-                return new Interval<DateTime>(caster.Execute(lowerBound), caster.Execute(upperBound), lowerBoundType, upperBoundType);
+                return new Interval<DateTime>(caster.Cast(lowerBound), caster.Cast(upperBound), lowerBoundType, upperBoundType);
             }
             throw new ArgumentException();
         }

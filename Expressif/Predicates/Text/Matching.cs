@@ -43,7 +43,7 @@ namespace Expressif.Predicates.Text
             : base(culture) { }
 
         protected override bool EvaluateUncasted(object value)
-            => new NumericCaster().IsNumericType(value) || base.EvaluateUncasted(value);
+            => TypeChecker.IsNumericType(value) || base.EvaluateUncasted(value);
 
         protected override bool EvaluateBaseText(string value)
             => decimal.TryParse(value, NumberStyles.Number & ~NumberStyles.AllowThousands, CultureInfo.NumberFormat, out var _);

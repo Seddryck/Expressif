@@ -29,7 +29,7 @@ namespace Expressif.Predicates.Temporal
                 return EvaluateNull();
 
             var caster = new DateTimeCaster();
-            var dt = caster.Execute(value);
+            var dt = caster.Cast(value);
             return EvaluateDateTime(dt);
         }
 
