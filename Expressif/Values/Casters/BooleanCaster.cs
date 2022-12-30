@@ -23,23 +23,21 @@ namespace Expressif.Values.Casters
         public override bool TryParse(string text, [NotNullWhen(true)] out bool value)
         {
             if (bool.TryParse(text, out var boolean))
-                return (Result: true, value = boolean).Result;
+                return (value = boolean) == value;
 
             return text.Trim().ToLowerInvariant() switch
             {
-                "1" => (Result: true, value = true).Result,
-                "yes" => (Result: true, value = true).Result,
-                "0" => (Result: true, value = false).Result,
-                "no" => (Result: true, value = false).Result,
-                _ => (Result: true, value = false).Result,
+                "1" => (value = true) == value ,
+                "yes" => (value = true) == value,
+                "0" => (value = false) == value,
+                "no" => (value = false) == value,
+                _ => (value = false) == value,
             };
         }
 
         protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out bool value)
-        {
-            if (TypeChecker.IsNumericType(obj))
-                return (Result: true, value = CastNumeric(obj)).Result;
-            return (Result: false, value = default!).Result;
-        }
+            => TypeChecker.IsNumericType(obj)
+                ?(value = CastNumeric(obj))==value
+                :(value = default)!=value;
     }
 }

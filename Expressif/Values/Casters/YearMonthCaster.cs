@@ -14,14 +14,14 @@ namespace Expressif.Values.Casters
         private readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
 
         public virtual bool TryCast(object obj, [NotNullWhen(true)] out YearMonth? value)
-            => (obj switch
+            => obj switch
             {
-                YearMonth yearMonth => (Result: true, value = yearMonth),
-                DateTime dt => (Result: true, value = new YearMonth(dt.Year, dt.Month)),
-                DateOnly d => (Result: true, value = new YearMonth(d.Year, d.Month)),
-                string s => (Result: TryParse(s, out YearMonth? ym), value = ym),
-                _ => (Result: false, value = null)
-            }).Result;
+                YearMonth yearMonth => (value = yearMonth) is not null,
+                DateTime dt => (value = new YearMonth(dt.Year, dt.Month)) is not null,
+                DateOnly d => (value = new YearMonth(d.Year, d.Month)) is not null,
+                string s => TryParse(s, out value),
+                _ => (value = null) is not null
+            };
 
         public virtual YearMonth Cast(object obj)
             => TryCast(obj, out var yearMonth)
@@ -36,9 +36,9 @@ namespace Expressif.Values.Casters
                     || !int.TryParse(text[5..], Style, Format, out var month)
                     || month > 12
                 )
-                return (Result: false, value = null).Result;
+                return (value = null) is not null;
 
-            return (Result: true, value = new YearMonth(year, month)).Result;
+            return (value = new YearMonth(year, month)) is not null;
         }
 
         public virtual YearMonth Parse(string text)
