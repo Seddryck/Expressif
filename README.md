@@ -225,12 +225,14 @@ Install-Package Expressif
 |Temporal | ceiling-minute             | dateTime-to-ceiling-minute            |
 |Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip   |
 |Temporal | datetime-to-date           | dateTime-to-datetime-to-date          |
+|Temporal | first-in-month             | dateTime-to-first-in-month            |
 |Temporal | first-of-month             | dateTime-to-first-of-month            |
 |Temporal | first-of-year              | dateTime-to-first-of-year             |
 |Temporal | floor-hour                 | dateTime-to-floor-hour                |
 |Temporal | floor-minute               | dateTime-to-floor-minute              |
 |Temporal | forward                    | dateTime-to-forward, dateTime-to-add  |
 |Temporal | invalid-to-date            |                                       |
+|Temporal | last-in-month              | dateTime-to-last-in-month             |
 |Temporal | last-of-month              | dateTime-to-last-of-month             |
 |Temporal | last-of-year               | dateTime-to-last-of-year              |
 |Temporal | length-of-month            | dateTime-to-length-of-month           |
@@ -238,10 +240,14 @@ Install-Package Expressif
 |Temporal | local-to-utc               |                                       |
 |Temporal | next-day                   | dateTime-to-next-day                  |
 |Temporal | next-month                 | dateTime-to-next-month                |
+|Temporal | next-weekday               | dateTime-to-next-weekday              |
+|Temporal | next-weekday-or-same       | dateTime-to-next-weekday-or-same      |
 |Temporal | next-year                  | dateTime-to-next-year                 |
 |Temporal | null-to-date               |                                       |
 |Temporal | previous-day               | dateTime-to-previous-day              |
 |Temporal | previous-month             | dateTime-to-previous-month            |
+|Temporal | previous-weekday           | dateTime-to-previous-weekday          |
+|Temporal | previous-weekday-or-same   | dateTime-to-previous-weekday-or-same  |
 |Temporal | previous-year              | dateTime-to-previous-year             |
 |Temporal | set-time                   | dateTime-to-set-time                  |
 |Temporal | utc-to-local               |                                       |
