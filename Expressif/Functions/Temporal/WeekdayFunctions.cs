@@ -52,7 +52,7 @@ namespace Expressif.Functions.Temporal
     }
 
     /// <summary>
-    /// Returns a new dateTime value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument.
+    /// Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument.
     /// </summary>
     public class PreviousWeekday : BaseTemporalWeekdayFunction
     {
@@ -70,7 +70,7 @@ namespace Expressif.Functions.Temporal
     }
 
     /// <summary>
-    /// Returns a new dateTime value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.
+    /// Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.
     /// </summary>
     public class PreviousWeekdayOrSame : BaseTemporalWeekdayFunction
     {
@@ -85,5 +85,31 @@ namespace Expressif.Functions.Temporal
             var backward = DayOfWeek.Invoke().Index - date.ToWeekday().Index;
             return date.AddDays(backward > 0 ? backward - 7 : backward);
         }
+    }
+
+    /// <summary>
+    /// Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
+    /// </summary>
+    public class FirstInMonth : NextWeekdayOrSame
+    {
+        /// <param name="weekday">The day of week to compare to the argument</param>
+        public FirstInMonth(Func<Weekday> weekday)
+            : base(weekday) { }
+
+        protected override object EvaluateDate(DateOnly date)
+            => base.EvaluateDate(new DateOnly(date.Year, date.Month, 1));
+    }
+
+    /// <summary>
+    /// Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
+    /// </summary>
+    public class LastInMonth : PreviousWeekdayOrSame
+    {
+        /// <param name="weekday">The day of week to compare to the argument</param>
+        public LastInMonth(Func<Weekday> weekday)
+            : base(weekday) { }
+
+        protected override object EvaluateDate(DateOnly date)
+            => base.EvaluateDate(new DateOnly(date.Year, date.Month, 1).AddMonths(1).AddDays(-1));
     }
 }
