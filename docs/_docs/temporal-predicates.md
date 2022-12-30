@@ -41,7 +41,7 @@ Returns true if the temporal value passed as argument is chronologically before 
 ##### business-day
 ###### Overview
 
-
+Returns `true` if the date passed as the argument doesn't correspond to a Saturday or a Sunday. Returns `false` otherwise.
 
 ##### contained-in
 ###### Overview
@@ -112,12 +112,15 @@ Returns true if the date passed as argument is representing the next date compar
 ##### weekday
 ###### Overview
 
+Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.
 
+###### Parameter
+* weekday: The day of week to compare to the argument
 
 ##### weekend
 ###### Overview
 
-
+Returns `true` if the date passed as the argument corresponds to a Saturday or a Sunday. Returns `false` otherwise.
 
 ##### within-current-month
 ###### Overview

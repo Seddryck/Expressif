@@ -69,7 +69,7 @@
       "dateTime-is-business-day"
     ],
     "Scope": "Temporal",
-    "Summary": "",
+    "Summary": "Returns `true` if the date passed as the argument doesn't correspond to a Saturday or a Sunday. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -79,7 +79,7 @@
       "dateTime-is-weekend"
     ],
     "Scope": "Temporal",
-    "Summary": "",
+    "Summary": "Returns `true` if the date passed as the argument corresponds to a Saturday or a Sunday. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -89,8 +89,14 @@
       "dateTime-is-weekday"
     ],
     "Scope": "Temporal",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "weekday",
+        "Optional": false,
+        "Summary": "The day of week to compare to the argument"
+      }
+    ]
   },
   {
     "Name": "greater-than-or-equal",
@@ -155,46 +161,52 @@
     ]
   },
   {
-    "Name": "within-previous-days",
+    "Name": "before-or-same-instant",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-within-previous-days"
+      "dateTime-is-before-or-same-instant"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is between the count of days before the current date and yesterday (both included). Returns false otherwise.",
+    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
     "Parameters": [
       {
-        "Name": "count",
+        "Name": "reference",
         "Optional": false,
-        "Summary": "Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false."
+        "Summary": "A temporal value to compare to the argument"
       }
     ]
   },
   {
-    "Name": "within-next-days",
+    "Name": "before",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-within-next-days"
+      "dateTime-is-before"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is between tomorrow and the count of days after the current date. Returns false otherwise.",
+    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
-        "Name": "count",
+        "Name": "reference",
         "Optional": false,
-        "Summary": "Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false."
+        "Summary": "A temporal value to compare to the argument"
       }
     ]
   },
   {
-    "Name": "within-preceding-year",
+    "Name": "after-or-same-instant",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-within-preceding-year"
+      "dateTime-is-after-or-same-instant"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.",
-    "Parameters": []
+    "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A temporal value to compare to the argument"
+      }
+    ]
   },
   {
     "Name": "on-the-hour",
@@ -428,14 +440,20 @@
     "Parameters": []
   },
   {
-    "Name": "within-preceding-month",
+    "Name": "after",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-within-preceding-month"
+      "dateTime-is-after"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.",
-    "Parameters": []
+    "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A temporal value to compare to the argument"
+      }
+    ]
   },
   {
     "Name": "false",
@@ -448,24 +466,36 @@
     "Parameters": []
   },
   {
-    "Name": "within-preceding-week",
+    "Name": "same-instant",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-within-preceding-week"
+      "dateTime-is-same-instant"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
-    "Parameters": []
+    "Summary": "Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Optional": false,
+        "Summary": "A temporal value to compare to the argument"
+      }
+    ]
   },
   {
-    "Name": "within-following-month",
+    "Name": "within-next-days",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-within-following-month"
+      "dateTime-is-within-next-days"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.",
-    "Parameters": []
+    "Summary": "Returns true if the date passed as argument is between tomorrow and the count of days after the current date. Returns false otherwise.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Optional": false,
+        "Summary": "Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false."
+      }
+    ]
   },
   {
     "Name": "starts-with",
@@ -737,20 +767,64 @@
     ]
   },
   {
-    "Name": "same-instant",
+    "Name": "in-the-future",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-same-instant"
+      "dateTime-is-in-the-future"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
-      }
-    ]
+    "Summary": "Returns true if the date passed as argument is after today. Returns false otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "within-preceding-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-within-preceding-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "within-preceding-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-within-preceding-month"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "within-preceding-week",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-within-preceding-week"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "within-following-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-within-following-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "within-following-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-is-within-following-month"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.",
+    "Parameters": []
   },
   {
     "Name": "within-following-week",
@@ -853,88 +927,20 @@
     "Parameters": []
   },
   {
-    "Name": "in-the-future",
+    "Name": "within-previous-days",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-is-in-the-future"
+      "dateTime-is-within-previous-days"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is after today. Returns false otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "before-or-same-instant",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-before-or-same-instant"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
+    "Summary": "Returns true if the date passed as argument is between the count of days before the current date and yesterday (both included). Returns false otherwise.",
     "Parameters": [
       {
-        "Name": "reference",
+        "Name": "count",
         "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
+        "Summary": "Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false."
       }
     ]
-  },
-  {
-    "Name": "before",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-before"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
-      }
-    ]
-  },
-  {
-    "Name": "after-or-same-instant",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-after-or-same-instant"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
-      }
-    ]
-  },
-  {
-    "Name": "after",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-after"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
-      }
-    ]
-  },
-  {
-    "Name": "within-following-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-is-within-following-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.",
-    "Parameters": []
   },
   {
     "Name": "false-or-null",
