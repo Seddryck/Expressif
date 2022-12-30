@@ -2,7 +2,7 @@
 title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
-keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, in-the-future, in-the-future-or-today, in-the-past, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
+keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
 =======
 ---
 <!-- START AUTO-GENERATED -->
@@ -51,20 +51,30 @@ Returns true if the numeric value passed as argument is between the lower bound 
 
 Returns true if the date passed as argument is after today. Returns false otherwise.
 
+##### in-the-future-or-now
+###### Overview
+
+Returns true if the dateTime passed as argument is after now. If a Date is passed as argument, it returns true if the date is today or after. Returns false otherwise.
+
 ##### in-the-future-or-today
 ###### Overview
 
-Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be after now. Returns false otherwise.
+Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be today or after. Returns false otherwise.
 
 ##### in-the-past
 ###### Overview
 
 Returns true if the date passed as argument is before today. Returns false otherwise.
 
+##### in-the-past-or-now
+###### Overview
+
+Returns true if the dateTime passed as argument is before now. If a Date is passed as argument, it returns true if the date is today or before. Returns false otherwise.
+
 ##### in-the-past-or-today
 ###### Overview
 
-Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it must be after now. Returns false otherwise.
+Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it returns true if the date of this datetime is today or any other date before today. Returns false otherwise.
 
 ##### leap-year
 ###### Overview
@@ -119,20 +129,20 @@ Returns true if the date passed as argument is part of the same week than the cu
 
 Returns true if the date passed as argument is part of the same year than the current date. Returns false otherwise.
 
-##### within-following-month
+##### within-last-month
 ###### Overview
 
-Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.
+Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.
 
-##### within-following-week
+##### within-last-week
 ###### Overview
 
-Returns true if the date passed as argument is part of the week following the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
+Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
 
-##### within-following-year
+##### within-last-year
 ###### Overview
 
-Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.
+Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.
 
 ##### within-next-days
 ###### Overview
@@ -142,21 +152,6 @@ Returns true if the date passed as argument is between tomorrow and the count of
 ###### Parameter
 * count: Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false.
 
-##### within-preceding-month
-###### Overview
-
-Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.
-
-##### within-preceding-week
-###### Overview
-
-Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
-
-##### within-preceding-year
-###### Overview
-
-Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.
-
 ##### within-previous-days
 ###### Overview
 
@@ -164,6 +159,21 @@ Returns true if the date passed as argument is between the count of days before 
 
 ###### Parameter
 * count: Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false.
+
+##### within-upcoming-month
+###### Overview
+
+Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.
+
+##### within-upcoming-week
+###### Overview
+
+Returns true if the date passed as argument is part of the week following the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
+
+##### within-upcoming-year
+###### Overview
+
+Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.
 
 ##### yesterday
 ###### Overview
