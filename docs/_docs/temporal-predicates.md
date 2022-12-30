@@ -2,7 +2,7 @@
 title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
-keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, in-the-future, in-the-future-or-today, in-the-past, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
+keywords: [after, after-or-same-instant, before, before-or-same-instant, business-day, contained-in, in-the-future, in-the-future-or-today, in-the-past, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, weekday, weekend, within-current-month, within-current-week, within-current-year, within-following-month, within-following-week, within-following-year, within-next-days, within-preceding-month, within-preceding-week, within-preceding-year, within-previous-days, yesterday] # AUTO-GENERATED KEYWORDS
 =======
 ---
 <!-- START AUTO-GENERATED -->
@@ -37,6 +37,11 @@ Returns true if the temporal value passed as argument is chronologically before 
 
 ###### Parameter
 * reference: A temporal value to compare to the argument
+
+##### business-day
+###### Overview
+
+
 
 ##### contained-in
 ###### Overview
@@ -103,6 +108,16 @@ Returns true if the date passed as argument is representing the current date. Re
 ###### Overview
 
 Returns true if the date passed as argument is representing the next date compared to the current date. Returns false otherwise.
+
+##### weekday
+###### Overview
+
+
+
+##### weekend
+###### Overview
+
+
 
 ##### within-current-month
 ###### Overview
