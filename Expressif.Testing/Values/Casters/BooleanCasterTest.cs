@@ -28,15 +28,20 @@ namespace Expressif.Testing.Values.Casters
         [TestCase("False", false)]
         [TestCase("TRUE", true)]
         [TestCase("FALSE", false)]
+        [TestCase("   TrUe   ", true)]
+        [TestCase("   FaLsE  ", false)]
         [TestCase("1", true)]
         [TestCase("0", false)]
+        [TestCase("   1  ", true)]
+        [TestCase("   0  ", false)]
         [TestCase("yes", true)]
         [TestCase("no", false)]
         [TestCase("Yes", true)]
         [TestCase("No", false)]
         [TestCase("YES", true)]
         [TestCase("NO", false)]
-        [TestCase("foo", false)]
+        [TestCase("   YeS   ", true)]
+        [TestCase("   nO    ", false)]
         public void TryCast_String_Success(string text, bool expected)
         {
             Assert.Multiple(() =>
@@ -50,6 +55,7 @@ namespace Expressif.Testing.Values.Casters
         [TestCase("2022-12-01 16:45:12Z", typeof(DateTime))]
         [TestCase("2022-12-01", typeof(DateOnly))]
         [TestCase("2022-12", typeof(YearMonth))]
+        [TestCase("foo", typeof(string))]
         public void TryCast_Failure(string text, Type type)
         {
             var obj = TypeDescriptor.GetConverter(type).ConvertFromInvariantString(text)!;

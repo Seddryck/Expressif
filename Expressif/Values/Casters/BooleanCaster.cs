@@ -31,7 +31,7 @@ namespace Expressif.Values.Casters
                 "yes" => (value = true) == value,
                 "0" => (value = false) == value,
                 "no" => (value = false) == value,
-                _ => (value = false) == value,
+                _ => (value = false) != value,
             };
         }
 

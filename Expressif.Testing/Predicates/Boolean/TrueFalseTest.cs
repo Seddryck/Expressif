@@ -22,7 +22,6 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("false", false)]
         [TestCase("yes", true)]
         [TestCase("no", false)]
-        [TestCase("text", false)]
         public void True_Boolean_Expected(object value, bool expected)
             => Assert.That(new True().Evaluate(value), Is.EqualTo(expected));
 
@@ -39,7 +38,6 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("false", false)]
         [TestCase("yes", true)]
         [TestCase("no", false)]
-        [TestCase("text", false)]
         public void TrueOrNull_Boolean_Expected(object value, bool expected)
             => Assert.That(new TrueOrNull().Evaluate(value), Is.EqualTo(expected));
 
@@ -56,7 +54,6 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("false", true)]
         [TestCase("yes", false)]
         [TestCase("no", true)]
-        [TestCase("text", true)]
         public void False_Boolean_Expected(object value, bool expected)
             => Assert.That(new False().Evaluate(value), Is.EqualTo(expected));
 
@@ -73,7 +70,6 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("false", true)]
         [TestCase("yes", false)]
         [TestCase("no", true)]
-        [TestCase("text", true)]
         public void FalseOrNull_Boolean_Expected(object value, bool expected)
             => Assert.That(new FalseOrNull().Evaluate(value), Is.EqualTo(expected));
     }
