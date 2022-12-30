@@ -23,7 +23,6 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("false", true, false)]
         [TestCase("yes", true, true)]
         [TestCase("no", true, false)]
-        [TestCase("text", true, false)]
         [TestCase(true, false, false)]
         [TestCase(false, false, true)]
         [TestCase(null, false, false)]
@@ -36,7 +35,6 @@ namespace Expressif.Testing.Predicates.Boolean
         [TestCase("false", false, true)]
         [TestCase("yes", false, false)]
         [TestCase("no", false, true)]
-        [TestCase("text", false, true)]
         public void False_Boolean_Expected(object value, bool reference, bool expected)
             => Assert.That(new IdenticalTo(() => reference).Evaluate(value), Is.EqualTo(expected));
     }
