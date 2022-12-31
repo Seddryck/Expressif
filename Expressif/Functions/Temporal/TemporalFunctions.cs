@@ -284,16 +284,16 @@ namespace Expressif.Functions.Temporal
     /// Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
     /// </summary>
     [Function(prefix: "dateTime", aliases: new[] { "dateTime-to-subtract" })]
-    public class Back : Forward
+    public class Backward : Forward
     {
         /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
 
-        public Back(Func<string> timeSpan, Func<int> times)
+        public Backward(Func<string> timeSpan, Func<int> times)
             : base(timeSpan, times) { }
 
         /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
-        public Back(Func<string> timeSpan)
+        public Backward(Func<string> timeSpan)
             : base(timeSpan) { }
 
         protected override object EvaluateDateTime(DateTime value)

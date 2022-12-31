@@ -2,7 +2,11 @@
 title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
-keywords: [after, after-or-same-instant, before, before-or-same-instant, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
+<<<<<<< HEAD
+keywords: [after, after-or-same-instant, before, before-or-same-instant, business-day, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, weekday, weekend, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
+=======
+keywords: [after, after-or-same-instant, before, before-or-same-instant, business-day, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, weekday, weekend, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
+>>>>>>> main
 =======
 ---
 <!-- START AUTO-GENERATED -->
@@ -37,6 +41,11 @@ Returns true if the temporal value passed as argument is chronologically before 
 
 ###### Parameter
 * reference: A temporal value to compare to the argument
+
+##### business-day
+###### Overview
+
+Returns `true` if the date passed as the argument doesn't correspond to a Saturday or a Sunday. Returns `false` otherwise.
 
 ##### contained-in
 ###### Overview
@@ -113,6 +122,19 @@ Returns true if the date passed as argument is representing the current date. Re
 ###### Overview
 
 Returns true if the date passed as argument is representing the next date compared to the current date. Returns false otherwise.
+
+##### weekday
+###### Overview
+
+Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
+
+##### weekend
+###### Overview
+
+Returns `true` if the date passed as the argument corresponds to a Saturday or a Sunday. Returns `false` otherwise.
 
 ##### within-current-month
 ###### Overview

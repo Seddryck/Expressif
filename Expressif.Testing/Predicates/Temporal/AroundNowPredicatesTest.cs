@@ -9,9 +9,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Expressif.Testing.Predicates.Temporal
 {
-    public class ComparisonAroundNowPredicatesTest
+    public class AroundNowPredicatesTest
     {
-        public ComparisonAroundNowPredicatesTest()
+        public AroundNowPredicatesTest()
         {
             TypeDescriptor.AddAttributes(
                 typeof(DateOnly)

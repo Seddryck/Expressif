@@ -120,7 +120,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2019-03-11 17:00:00", 5, "04:00:00", "2019-03-10 21:00:00")]
         [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 21:00:00")]
         public void Back_Valid(object value, int times, string timeSpan, DateTime expected)
-        => Assert.That(new Back(() => timeSpan, () => times)
+        => Assert.That(new Backward(() => timeSpan, () => times)
             .Evaluate(value), Is.EqualTo(expected));
 
         [Test]

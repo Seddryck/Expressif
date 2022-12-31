@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, back, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, next-day, next-month, next-year, null-to-date, previous-day, previous-month, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
+keywords: [age, backward, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -10,7 +10,7 @@ keywords: [age, back, ceiling-hour, ceiling-minute, clamp, datetime-to-date, fir
 
 Returns how many years separate the argument dateTime and now.
 
-##### back
+##### backward
 ###### Overview
 
 Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
@@ -42,6 +42,14 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 ###### Overview
 
 Returns the date at midnight of the argument dateTime.
+
+##### first-in-month
+###### Overview
+
+Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
 
 ##### first-of-month
 ###### Overview
@@ -80,6 +88,14 @@ Returns the dateTime argument except if the value is not a valid dateTime then i
 ###### Parameter
 * default: The dateTime to be returned if the argument is not a valid dateTime.
 
+##### last-in-month
+###### Overview
+
+Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
+
 ##### last-of-month
 ###### Overview
 
@@ -109,6 +125,14 @@ Returns the count of days within the year of the dateTime value passed as the ar
 
 Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
 
+##### next-business-days
+###### Overview
+
+Returns a new date value corresponding to the date passed as the argument, counting forward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.
+
+###### Parameter
+* count: The count of business days to move forward
+
 ##### next-day
 ###### Overview
 
@@ -118,6 +142,22 @@ Returns the day immediately following the dateTime passed as argument value.
 ###### Overview
 
 Returns the dateTime that adds a month to the dateTime passed as argument value.
+
+##### next-weekday
+###### Overview
+
+Returns a new date value corresponding to the occurrence of the weekday, passed as a parameter, following the date passed as the argument.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
+
+##### next-weekday-or-same
+###### Overview
+
+Returns a new date value corresponding to the occurrence of the weekday passed as a parameter following the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
 
 ##### next-year
 ###### Overview
@@ -132,6 +172,14 @@ Returns the dateTime argument except if the value is `null` then it returns the 
 ###### Parameter
 * default: The dateTime to be returned if the argument is `null`.
 
+##### previous-business-days
+###### Overview
+
+Returns a new date value corresponding to the date passed as the argument, counting backward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.
+
+###### Parameter
+* count: The count of business days to move forward
+
 ##### previous-day
 ###### Overview
 
@@ -141,6 +189,22 @@ Returns the dateTime that substract a day to the dateTime passed as argument val
 ###### Overview
 
 Returns the dateTime that substract a month to the dateTime passed as argument value.
+
+##### previous-weekday
+###### Overview
+
+Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
+
+##### previous-weekday-or-same
+###### Overview
+
+Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.
+
+###### Parameter
+* weekday: The day of week to compare to the argument
 
 ##### previous-year
 ###### Overview
