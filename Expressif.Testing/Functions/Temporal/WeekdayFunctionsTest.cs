@@ -131,5 +131,41 @@ namespace Expressif.Testing.Functions.Temporal
                         TypeDescriptor.GetConverter(typeof(DateOnly))
                         .ConvertFromInvariantString(expected)!
                 ));
+
+        [Test]
+        [TestCase("2022-12-28", 1, "2022-12-29")]
+        [TestCase("2022-12-28", 4, "2023-01-03")]
+        [TestCase("2022-12-28", 14, "2023-01-17")]
+        [TestCase("2022-12-30", 1, "2023-01-02")]
+        [TestCase("2022-12-31", 1, "2023-01-02")]
+        [TestCase("2023-01-01", 1, "2023-01-02")]
+        public void NextBusinessDays_Date_Valid(string argument, int count, string expected)
+            => Assert.That(new NextBusinessDays(() => count)
+                    .Evaluate(
+                        TypeDescriptor.GetConverter(typeof(DateOnly))
+                        .ConvertFromInvariantString(argument)!
+                    )
+                , Is.EqualTo(
+                        TypeDescriptor.GetConverter(typeof(DateOnly))
+                        .ConvertFromInvariantString(expected)!
+                ));
+
+        [Test]
+        [TestCase("2022-12-28", 1, "2022-12-27")]
+        [TestCase("2022-12-28", 4, "2022-12-22")]
+        [TestCase("2022-12-28", 14, "2022-12-08")]
+        [TestCase("2022-12-31", 1, "2022-12-30")]
+        [TestCase("2023-01-01", 1, "2022-12-30")]
+        [TestCase("2023-01-02", 1, "2022-12-30")]
+        public void PreviousBusinessDays_Date_Valid(string argument, int count, string expected)
+            => Assert.That(new PreviousBusinessDays(() => count)
+                    .Evaluate(
+                        TypeDescriptor.GetConverter(typeof(DateOnly))
+                        .ConvertFromInvariantString(argument)!
+                    )
+                , Is.EqualTo(
+                        TypeDescriptor.GetConverter(typeof(DateOnly))
+                        .ConvertFromInvariantString(expected)!
+                ));
     }
 }

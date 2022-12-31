@@ -112,4 +112,54 @@ namespace Expressif.Functions.Temporal
         protected override object EvaluateDate(DateOnly date)
             => base.EvaluateDate(new DateOnly(date.Year, date.Month, 1).AddMonths(1).AddDays(-1));
     }
+
+    /// <summary>
+    /// Returns a new date value corresponding to the date passed as the argument, counting forward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.
+    /// </summary>
+    [Function(aliases: new[] { "next-business-day", "add-business-days" })]
+    public class NextBusinessDays : BaseTemporalWeekdayFunction
+    {
+        internal Func<int> Count { get; }
+        internal Func<object?, bool> IsBusinessDay { get; }
+
+        /// <param name="count">The count of business days to move forward</param>
+        public NextBusinessDays(Func<int> count)
+            : base() => (Count, IsBusinessDay) = (count, new Predicates.Temporal.BusinessDay().Evaluate);
+
+        protected override object EvaluateDate(DateOnly date)
+            => BasicStrategy(date, 1);
+
+        protected virtual DateOnly BasicStrategy(DateOnly date, int direction)
+        {
+            //Move backward to previous business day
+            while (!IsBusinessDay(date))
+                date = date.AddDays(-1 * direction);
+
+            //Move forward to next Business day
+            var i = 0;
+            var count = Count.Invoke();
+            while (i != count)
+            {
+                date = date.AddDays(direction);
+                if (IsBusinessDay(date))
+                    i += 1;
+            }
+            return date;
+        }
+    }
+
+    /// <summary>
+    /// Returns a new date value corresponding to the date passed as the argument, counting backward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.
+    /// </summary>
+    [Function(aliases: new[] { "previous-business-day", "subtract-business-days" })]
+    public class PreviousBusinessDays : NextBusinessDays
+    {
+
+        /// <param name="count">The count of business days to move forward</param>
+        public PreviousBusinessDays(Func<int> count)
+            : base(count) { }
+
+        protected override object EvaluateDate(DateOnly date)
+            => BasicStrategy(date, -1);
+    }
 }
