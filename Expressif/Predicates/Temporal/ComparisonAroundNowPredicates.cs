@@ -20,7 +20,7 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is after today. Returns false otherwise.
     /// </summary>
-    public class InTheFuture : BaseTemporalAroundNowPredicate
+    public class InTheFuture : BaseTemporalAroundTodayPredicate
     {
         protected internal InTheFuture(DateTime now) : base(now) { }
 
@@ -28,14 +28,12 @@ namespace Expressif.Predicates.Temporal
 
         protected override bool EvaluateDate(DateOnly date)
             => date >= Today.AddDays(1);
-        protected override bool EvaluateDateTime(DateTime dt)
-            => dt > Now;
     }
 
     /// <summary>
-    /// Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be after now. Returns false otherwise.
+    /// Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be today or after. Returns false otherwise.
     /// </summary>
-    public class InTheFutureOrToday : BaseTemporalAroundNowPredicate
+    public class InTheFutureOrToday : BaseTemporalAroundTodayPredicate
     {
         protected internal InTheFutureOrToday(DateTime now) : base(now) { }
 
@@ -43,14 +41,28 @@ namespace Expressif.Predicates.Temporal
 
         protected override bool EvaluateDate(DateOnly date)
             => date >= Today;
+    }
+
+    /// <summary>
+    /// Returns true if the dateTime passed as argument is after now. If a Date is passed as argument, it returns true if the date is today or after. Returns false otherwise.
+    /// </summary>
+    public class InTheFutureOrNow : BaseTemporalAroundNowPredicate
+    {
+        protected internal InTheFutureOrNow(DateTime now) : base(now) { }
+
+        public InTheFutureOrNow() : base() { }
+
         protected override bool EvaluateDateTime(DateTime dt)
-            => dt >= Today.ToDateTime(new TimeOnly(0, 0, 0));
+            => dt >= Now;
+
+        protected override bool EvaluateDate(DateOnly date)
+            => date >= Today;
     }
 
     /// <summary>
     /// Returns true if the date passed as argument is before today. Returns false otherwise.
     /// </summary>
-    public class InThePast : BaseTemporalAroundNowPredicate
+    public class InThePast : BaseTemporalAroundTodayPredicate
     {
         protected internal InThePast(DateTime now) : base(now) { }
 
@@ -58,14 +70,12 @@ namespace Expressif.Predicates.Temporal
 
         protected override bool EvaluateDate(DateOnly date)
             => date < Today;
-        protected override bool EvaluateDateTime(DateTime dt)
-            => dt < Now;
     }
 
     /// <summary>
-    /// Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it must be after now. Returns false otherwise.
+    /// Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it returns true if the date of this datetime is today or any other date before today. Returns false otherwise.
     /// </summary>
-    public class InThePastOrToday : BaseTemporalAroundNowPredicate
+    public class InThePastOrToday : BaseTemporalAroundTodayPredicate
     {
         protected internal InThePastOrToday(DateTime now) : base(now) { }
 
@@ -73,7 +83,21 @@ namespace Expressif.Predicates.Temporal
 
         protected override bool EvaluateDate(DateOnly date)
             => date <= Today;
+    }
+
+    /// <summary>
+    /// Returns true if the dateTime passed as argument is before now. If a Date is passed as argument, it returns true if the date is today or before. Returns false otherwise.
+    /// </summary>
+    public class InThePastOrNow : BaseTemporalAroundNowPredicate
+    {
+        protected internal InThePastOrNow(DateTime now) : base(now) { }
+
+        public InThePastOrNow() : base() { }
+
         protected override bool EvaluateDateTime(DateTime dt)
-            => dt < Today.AddDays(1).ToDateTime(new TimeOnly(0, 0, 0));
+            => dt <= Now;
+
+        protected override bool EvaluateDate(DateOnly date)
+            => date <= Today;
     }
 }
