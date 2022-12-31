@@ -17,17 +17,17 @@ namespace Expressif.Values.Casters
         public virtual bool TryCast(object obj, [NotNullWhen(true)] out string? value)
         {
             if (TypeChecker.IsNumericType(obj))
-                return (Result: true, value = Convert.ToDecimal(obj).ToString(NumberFormat)).Result;
+                return (value = Convert.ToDecimal(obj).ToString(NumberFormat)) == value;
 
-            return (obj switch
+            return obj switch
             {
-                YearMonth yearMonth => (Result: true, value = yearMonth.ToString()),
-                DateTime dt => (Result: true, value = dt.ToString(DateTimeFormat)),
-                DateOnly d => (Result: true, value = d.ToString(DateFormat)),
-                string s => (Result: true, value = s),
-                object o => (Result: true, value = o.ToString()),
-                _ => (Result: false, value = null)
-            }).Result;
+                YearMonth yearMonth => (value = yearMonth.ToString()) is not null,
+                DateTime dt => (value = dt.ToString(DateTimeFormat)) == value,
+                DateOnly d => (value = d.ToString(DateFormat)) == value,
+                string s => (value = s) == value,
+                object o => (value = o.ToString()) == value,
+                _ => (value = null) != value
+            };
         }
 
         public virtual string Cast(object obj)
@@ -36,7 +36,7 @@ namespace Expressif.Values.Casters
                 : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type 'Text'. The type 'Text' can only be casted from types DateTime, DateOnly, Underlying numeric types, boolean and YearMonth.");
 
         public virtual bool TryParse(string text, [NotNullWhen(true)] out string? value)
-            => (Result: true, value = text).Result;
+            => (value = text) == value;
 
         public virtual string Parse(string text)
             => text;

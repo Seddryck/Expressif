@@ -108,10 +108,10 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is part of the week following the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
     /// </summary>
-    public class WithinFollowingWeek : BaseTemporalAroundTodayPredicate
+    public class WithinUpcomingWeek : BaseTemporalAroundTodayPredicate
     {
-        public WithinFollowingWeek() : base() { }
-        internal WithinFollowingWeek(DateTime now)
+        public WithinUpcomingWeek() : base() { }
+        internal WithinUpcomingWeek(DateTime now)
             : base(now) { }
 
         protected override bool EvaluateDate(DateOnly date)
@@ -121,10 +121,10 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.
     /// </summary>
-    public class WithinFollowingMonth : BaseTemporalAroundTodayPredicate
+    public class WithinUpcomingMonth : BaseTemporalAroundTodayPredicate
     {
-        public WithinFollowingMonth() : base() { }
-        internal WithinFollowingMonth(DateTime now)
+        public WithinUpcomingMonth() : base() { }
+        internal WithinUpcomingMonth(DateTime now)
             : base(now) { }
 
         protected override bool EvaluateDate(DateOnly date)
@@ -134,10 +134,10 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.
     /// </summary>
-    public class WithinFollowingYear : BaseTemporalAroundTodayPredicate
+    public class WithinUpcomingYear : BaseTemporalAroundTodayPredicate
     {
-        public WithinFollowingYear() : base() { }
-        internal WithinFollowingYear(DateTime now)
+        public WithinUpcomingYear() : base() { }
+        internal WithinUpcomingYear(DateTime now)
             : base(now) { }
 
         protected override bool EvaluateDate(DateOnly date)
@@ -148,10 +148,10 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
     /// </summary>
-    public class WithinPrecedingWeek : BaseTemporalAroundTodayPredicate
+    public class WithinLastWeek : BaseTemporalAroundTodayPredicate
     {
-        public WithinPrecedingWeek() : base() { }
-        internal WithinPrecedingWeek(DateTime now)
+        public WithinLastWeek() : base() { }
+        internal WithinLastWeek(DateTime now)
             : base(now) { }
 
         protected override bool EvaluateDate(DateOnly date)
@@ -161,10 +161,10 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.
     /// </summary>
-    public class WithinPrecedingMonth : BaseTemporalAroundTodayPredicate
+    public class WithinLastMonth : BaseTemporalAroundTodayPredicate
     {
-        public WithinPrecedingMonth() : base() { }
-        internal WithinPrecedingMonth(DateTime now)
+        public WithinLastMonth() : base() { }
+        internal WithinLastMonth(DateTime now)
             : base(now) { }
 
         protected override bool EvaluateDate(DateOnly date)
@@ -174,10 +174,10 @@ namespace Expressif.Predicates.Temporal
     /// <summary>
     /// Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.
     /// </summary>
-    public class WithinPrecedingYear : BaseTemporalAroundTodayPredicate
+    public class WithinLastYear : BaseTemporalAroundTodayPredicate
     {
-        public WithinPrecedingYear() : base() { }
-        internal WithinPrecedingYear(DateTime now)
+        public WithinLastYear() : base() { }
+        internal WithinLastYear(DateTime now)
             : base(now) { }
 
         protected override bool EvaluateDate(DateOnly date)

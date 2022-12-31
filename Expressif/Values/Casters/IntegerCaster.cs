@@ -21,13 +21,11 @@ namespace Expressif.Values.Casters
                 : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type Integer. The type Integer can only be casted from the underlying numeric types (int, float, ...), Boolean and String. The expect string format can include decimal point, thousand separators, sign symbol and white spaces.");
 
         public override bool TryParse(string text, [NotNullWhen(true)] out int value)
-            => (Result: int.TryParse(text, Style, Format, out var integer), value = integer).Result;
+            => int.TryParse(text, Style, Format, out value);
 
         protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out int value)
-        {
-            if (TypeChecker.IsNumericType(obj) && Convert.ToDouble(obj) % 1 == 0)
-                return (Result: true, value = CastNumeric(obj)).Result;
-            return (Result: false, value = default!).Result;
-        }
+            => (TypeChecker.IsNumericType(obj) && Convert.ToDouble(obj) % 1 == 0)
+                ? (value = CastNumeric(obj)) == value
+                : (value = default) != default;
     }
 }

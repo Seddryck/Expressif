@@ -102,8 +102,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2023-01-08", true)]
         [TestCase("2023-01-09", false)]
         [TestCase("1970-05-06", false)]
-        public void WithinFollowingWeek_DateTime_Valid(DateTime dt, bool expected)
-            => Assert.That(new WithinFollowingWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
+        public void WithinUpcomingWeek_DateTime_Valid(DateTime dt, bool expected)
+            => Assert.That(new WithinUpcomingWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-11-30", false)]
@@ -115,8 +115,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2023-01-31", true)]
         [TestCase("2023-02-01", false)]
         [TestCase("1970-05-06", false)]
-        public void WithinFollowingMonth_DateTime_Valid(DateTime dt, bool expected)
-            => Assert.That(new WithinFollowingMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
+        public void WithinUpcomingMonth_DateTime_Valid(DateTime dt, bool expected)
+            => Assert.That(new WithinUpcomingMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2021-12-31", false)]
@@ -129,8 +129,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2023-12-31", true)]
         [TestCase("2024-01-01", false)]
         [TestCase("1970-05-06", false)]
-        public void WithinFollowingYear_DateTime_Valid(DateTime dt, bool expected)
-            => Assert.That(new WithinFollowingYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
+        public void WithinUpcomingYear_DateTime_Valid(DateTime dt, bool expected)
+            => Assert.That(new WithinUpcomingYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
 
 
@@ -142,8 +142,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-12-29", false)]
         [TestCase("2022-12-30", false)]
         [TestCase("2023-01-01", false)]
-        public void WithinPrecedingWeek_DateTime_Valid(DateTime dt, bool expected)
-            => Assert.That(new WithinPrecedingWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
+        public void WithinLastWeek_DateTime_Valid(DateTime dt, bool expected)
+            => Assert.That(new WithinLastWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2022-10-31", false)]
@@ -153,8 +153,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-12-28", false)]
         [TestCase("2022-12-29", false)]       
         [TestCase("2023-01-01", false)]
-        public void WithinPrecedingMonth_DateTime_Valid(DateTime dt, bool expected)
-            => Assert.That(new WithinPrecedingMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
+        public void WithinLastMonth_DateTime_Valid(DateTime dt, bool expected)
+            => Assert.That(new WithinLastMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
         [Test]
         [TestCase("2020-12-31", false)]
@@ -165,8 +165,8 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-12-01", false)]
         [TestCase("2022-12-30", false)]
         [TestCase("2023-01-01", false)]
-        public void WithinPrecedingYear_DateTime_Valid(DateTime dt, bool expected)
-            => Assert.That(new WithinPrecedingYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
+        public void WithinLastYear_DateTime_Valid(DateTime dt, bool expected)
+            => Assert.That(new WithinLastYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
 
         [Test]

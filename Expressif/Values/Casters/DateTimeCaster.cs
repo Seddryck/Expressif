@@ -17,14 +17,14 @@ namespace Expressif.Values.Casters
         private readonly DateTimeFormatInfo Format = CultureInfo.InvariantCulture.DateTimeFormat;
 
         public virtual bool TryCast(object obj, [NotNullWhen(true)] out DateTime value)
-            => (obj switch
+            => obj switch
             {
-                YearMonth yearMonth => (Result: true, value = new DateTime(yearMonth.Year, yearMonth.Month, 1)),
-                DateTime dt => (Result: true, value = dt),
-                DateOnly d => (Result: true, value = d.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc)),
-                string s => (Result: TryParse(s, out var dt), value = dt),
-                _ => (Result: false, value = default)
-            }).Result;
+                YearMonth yearMonth => (value = new DateTime(yearMonth.Year, yearMonth.Month, 1)) == value,
+                DateTime dt => (value = dt) == value,
+                DateOnly d => (value = d.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc)) == value,
+                string s => TryParse(s, out value),
+                _ => (value = default) != value
+            };
 
         public virtual DateTime Cast(object obj)
             => TryCast(obj, out var dt)
@@ -32,7 +32,7 @@ namespace Expressif.Values.Casters
                 : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to type {nameof(DateTime)}. The type {nameof(DateTime)} can only be casted from types YearMonth, DateOnly and String. The expect string format is '{Format.FullDateTimePattern}'");
 
         public virtual bool TryParse(string text, [NotNullWhen(true)] out DateTime value)
-            => (Result: DateTime.TryParse(text, Format, Style, out var result), value=result).Result;
+            => DateTime.TryParse(text, Format, Style, out value);
 
         public virtual DateTime Parse(string text)
             => TryParse(text, out var value) ? value : throw new FormatException();

@@ -16,14 +16,14 @@ namespace Expressif.Values.Casters
         protected abstract T One { get; }
         public virtual bool TryCast(object obj, [NotNullWhen(true)] out T value)
         {
-            if (TryNumericCast(obj, out var num))
-                return (Result: true, value = num).Result;
+            if (TryNumericCast(obj, out value))
+                return true;
 
             return obj switch
             {
-                bool b => (Result: true, value = (b ? One : default)!).Result,
-                string str => (Result: TryParse(str, out var valueStr), value = valueStr).Result,
-                _ => (Result: false, value = default!).Result
+                bool b => (value = (b ? One : default!)) is not null,
+                string str => TryParse(str, out value),
+                _ => (value = default!) is null
             };
         }
 
@@ -43,11 +43,9 @@ namespace Expressif.Values.Casters
         protected override decimal One { get => 1m; }
 
         protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out decimal value)
-        {
-            if (TypeChecker.IsNumericType(obj))
-                return (Result: true, value = CastNumeric(obj)).Result;
-            return (Result: false, value = default!).Result;
-        }
+            => TypeChecker.IsNumericType(obj)
+                ? (value = CastNumeric(obj))==value
+                : (value = default)!=value;
 
         protected override decimal CastNumeric(object numeric)
             => Convert.ToDecimal(numeric, CultureInfo.InvariantCulture.NumberFormat);
@@ -58,6 +56,6 @@ namespace Expressif.Values.Casters
                 : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type Numeric. The type Numeric can only be casted from the underlying numeric types (int, float, ...), Boolean and String. The expect string format can include decimal point, thousand separators, sign symbol and white spaces.");
 
         public override bool TryParse(string text, [NotNullWhen(true)] out decimal value)
-            => (Result: decimal.TryParse(text, Style, Format, out var decimalStr), value = decimalStr).Result;
+            =>  decimal.TryParse(text, Style, Format, out value);
     }
 }
