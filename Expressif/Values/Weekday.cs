@@ -1,4 +1,5 @@
-﻿using Expressif.Values.Converters;
+﻿using Expressif.Values.Casters;
+using Expressif.Values.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,26 @@ namespace Expressif.Values
 {
     [TypeConverter(typeof(WeekdayConverter))]
     public record Weekday(int Index, string Name)
-    { }
+#if NET7_0_OR_GREATER
+        : IParsable<Weekday>
+#endif
+    {
+
+        private static readonly NumberStyles Style = NumberStyles.None;
+        private static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
+
+        public static bool TryParse(string? text, IFormatProvider? provider, [NotNullWhen(true)] out Weekday? value)
+            => Weekdays.TryGetByName(string.IsNullOrEmpty(text) ? string.Empty : text.Trim().ToLowerInvariant(), out value)
+               || (TryParseInteger(text, out var integer)
+                    && Weekdays.TryGetByIndex(integer, out value)
+                  );
+
+        private static bool TryParseInteger(string? text, [NotNullWhen(true)] out int value)
+            => int.TryParse(text, Style, Format, out value);
+
+        public static Weekday Parse(string text, IFormatProvider? provider)
+            => TryParse(text, provider, out var value) ? value : throw new FormatException();
+    }
 
     public static class Weekdays
     {
@@ -56,6 +76,7 @@ namespace Expressif.Values
         public static Weekday Friday { get => weekdays[4]; }
         public static Weekday Saturday { get => weekdays[5]; }
         public static Weekday Sunday { get => weekdays[6]; }
+
     }
 
 }
