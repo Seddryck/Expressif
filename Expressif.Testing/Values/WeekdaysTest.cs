@@ -21,6 +21,23 @@ namespace Expressif.Testing.Values
         [Test]
         public void Sunday_Name_Sunday()
             => Assert.That(Weekdays.Sunday.Name, Is.EqualTo("Sunday"));
+
+        [Test]
+        public void Parse_Name_Sunday()
+            => Assert.That(Weekday.Parse("Sunday", null), Is.EqualTo(Weekdays.Sunday));
+
+        [Test]
+        public void TryParse_Name_Sunday()
+        => Assert.Multiple(() =>
+            {
+                Assert.That(Weekday.TryParse("Sunday", null, out var value), Is.True);
+                Assert.That(value, Is.EqualTo(Weekdays.Sunday));
+            });
+
+        [Test]
+        public void TryParse_Name_Anyday()
+            => Assert.That(Weekday.TryParse("Anyday", null, out var _), Is.False);
+
         [Test]
         public void AllDays_Index_CorrectlyOrdered()
             => Assert.That(

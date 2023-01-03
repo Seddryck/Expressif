@@ -11,9 +11,6 @@ namespace Expressif.Values.Casters
 {
     public class WeekdayCaster : ICaster<Weekday>, IParser<Weekday>
     {
-        private readonly NumberStyles Style = NumberStyles.None;
-        private readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
-
         public virtual bool TryCast(object obj, [NotNullWhen(true)] out Weekday? value)
             => obj switch
             {
@@ -28,16 +25,10 @@ namespace Expressif.Values.Casters
                 ? weekday
                 : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to type {nameof(Weekday)}. The type {nameof(Weekday)} can only be casted from types DateTime, DateOnly, and String. The expect string format is English weekday name or an integer between 0 (Monday) and 6 (Sunday).");
 
-        public virtual bool TryParse(string text, [NotNullWhen(true)] out Weekday? value)
-            => Weekdays.TryGetByName(text.Trim().ToLowerInvariant(), out value)
-               || (TryParseInteger(text, out var integer)
-                    && Weekdays.TryGetByIndex(integer, out value)
-                  );
+        public bool TryParse(string text, [NotNullWhen(true)] out Weekday? value)
+            => Weekday.TryParse(text, null, out value);
 
-        protected virtual bool TryParseInteger(string text, [NotNullWhen(true)] out int value)
-            => int.TryParse(text, Style, Format, out value);
-
-        public virtual Weekday Parse(string text)
-            => TryParse(text, out var value) ? value : throw new FormatException();
+        public Weekday Parse(string text)
+            => Weekday.Parse(text, null);
     }
 }
