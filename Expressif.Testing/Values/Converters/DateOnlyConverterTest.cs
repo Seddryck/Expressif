@@ -21,6 +21,23 @@ namespace Expressif.Testing.Values.Converters
         }
 
         [Test]
+        public void CanConvertFrom_Valid()
+            => Assert.That(
+                TypeDescriptor.GetConverter(typeof(DateOnly)).CanConvertFrom(typeof(string))
+                , Is.True);
+
+        [Test]
+        [TestCase(typeof(int))]
+        [TestCase(typeof(decimal))]
+        [TestCase(typeof(bool))]
+        [TestCase(typeof(TimeOnly))]
+        [TestCase(typeof(DateTime))]
+        public void CanConvertFrom_Invalid(Type type)
+            => Assert.That(
+                TypeDescriptor.GetConverter(typeof(DateOnly)).CanConvertFrom(type)
+                , Is.False);
+
+        [Test]
         public void ConvertFromInvariantString_Valid()
             => Assert.That(
                 TypeDescriptor.GetConverter(typeof(DateOnly)).ConvertFromInvariantString("2022-12-29")
@@ -32,5 +49,28 @@ namespace Expressif.Testing.Values.Converters
         public void ConvertFromInvariantString_Invalid(string value)
             => Assert.Throws<FormatException>(
                 () => TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(value));
+
+        [Test]
+        public void CanConvertTo_Valid()
+            => Assert.That(
+                TypeDescriptor.GetConverter(typeof(DateOnly)).CanConvertTo(typeof(string))
+                , Is.True);
+
+        [Test]
+        [TestCase(typeof(int))]
+        [TestCase(typeof(decimal))]
+        [TestCase(typeof(bool))]
+        [TestCase(typeof(TimeOnly))]
+        public void CanConvertTo_Invalid(Type type)
+            => Assert.That(
+                TypeDescriptor.GetConverter(typeof(DateOnly)).CanConvertTo(type)
+                , Is.False);
+
+
+        [Test]
+        public void ConvertToInvariantString_Valid()
+            => Assert.That(
+                TypeDescriptor.GetConverter(typeof(DateOnly)).ConvertToInvariantString("2022-12-29")
+                , Is.EqualTo("2022-12-29"));
     }
 }
