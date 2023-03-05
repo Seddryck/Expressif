@@ -41,7 +41,6 @@ namespace Expressif.Testing.Values.Converters
             => Assert.Throws<FormatException>(
                 () => TypeDescriptor.GetConverter(typeof(Weekday)).ConvertFromInvariantString(value));
 
-
         [Test]
         public void CanConvertTo_Valid()
             => Assert.That(
@@ -57,7 +56,6 @@ namespace Expressif.Testing.Values.Converters
             => Assert.That(
                 TypeDescriptor.GetConverter(typeof(Weekday)).CanConvertTo(type)
                 , Is.False);
-
 
         [Test]
         public void ConvertToInvariantString_Valid()

@@ -66,7 +66,6 @@ namespace Expressif.Testing.Values.Converters
                 TypeDescriptor.GetConverter(typeof(DateOnly)).CanConvertTo(type)
                 , Is.False);
 
-
         [Test]
         public void ConvertToInvariantString_Valid()
             => Assert.That(

@@ -28,7 +28,6 @@ namespace Expressif.Testing.Values.Converters
                 TypeDescriptor.GetConverter(typeof(YearMonth)).CanConvertFrom(type)
                 , Is.False);
 
-
         [Test]
         public void ConvertFromInvariantString_Valid()
             => Assert.That(
@@ -41,7 +40,6 @@ namespace Expressif.Testing.Values.Converters
         public void ConvertFromInvariantString_Invalid(string value)
             => Assert.Throws<FormatException>(
                 () => TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(value));
-
 
         [Test]
         public void CanConvertTo_Valid()
@@ -58,7 +56,6 @@ namespace Expressif.Testing.Values.Converters
             => Assert.That(
                 TypeDescriptor.GetConverter(typeof(YearMonth)).CanConvertTo(type)
                 , Is.False);
-
 
         [Test]
         [TestCase(2023, 3, "2023-03")]
