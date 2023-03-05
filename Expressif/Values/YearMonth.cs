@@ -18,7 +18,7 @@ namespace Expressif.Values
         : IParsable<YearMonth>
 #endif
     {
-        public override string ToString() => $"{Year:####}-{Month:##}";
+        public override string ToString() => $"{Year:####}-{Month:0#}";
         public override int GetHashCode() => Year.GetHashCode()^97 * Month.GetHashCode();
 
         public virtual bool Equals(YearMonth? other)
