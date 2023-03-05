@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     /// <summary>
     /// Returns the argument value that has previously been HTML-encoded into a decoded string.
     /// </summary>
@@ -25,6 +24,4 @@ namespace Expressif.Functions.Text
     {
         protected override object EvaluateString(string value) => WebUtility.HtmlEncode(value);
     }
-
-
 }

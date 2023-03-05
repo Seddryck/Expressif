@@ -56,7 +56,6 @@ namespace Expressif.Testing.Predicates.Temporal
         public void Yesterday_DateTime_Valid(DateTime dt, bool expected)
             => Assert.That(new Yesterday(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("2022-12-25", false)]
         [TestCase("2022-12-28", true)]
@@ -90,7 +89,6 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("1970-05-06", false)]
         public void WithinCurrentYear_DateTime_Valid(DateTime dt, bool expected)
             => Assert.That(new WithinCurrentYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
-
 
         [Test]
         [TestCase("2022-12-25", false)]
@@ -132,8 +130,6 @@ namespace Expressif.Testing.Predicates.Temporal
         public void WithinUpcomingYear_DateTime_Valid(DateTime dt, bool expected)
             => Assert.That(new WithinUpcomingYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
-
-
         [Test]
         [TestCase("2022-12-18", false)]
         [TestCase("2022-12-19", true)]
@@ -168,7 +164,6 @@ namespace Expressif.Testing.Predicates.Temporal
         public void WithinLastYear_DateTime_Valid(DateTime dt, bool expected)
             => Assert.That(new WithinLastYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("2022-12-25", false)]
         [TestCase("2022-12-26", false)]
@@ -183,7 +178,6 @@ namespace Expressif.Testing.Predicates.Temporal
         public void WithinNextDays_DateTime_Valid(DateTime dt, bool expected)
             => Assert.That(new WithinNextDays(new DateTime(2022, 12, 29), () => 3).Evaluate(dt), Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("2022-12-25", false)]
         [TestCase("2022-12-26", true)]
@@ -197,6 +191,5 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("1970-05-06", false)]
         public void WithinPreviousDays_DateTime_Valid(DateTime dt, bool expected)
             => Assert.That(new WithinPreviousDays(new DateTime(2022, 12, 29), () => 3).Evaluate(dt), Is.EqualTo(expected));
-
     }
 }

@@ -182,7 +182,6 @@ namespace Expressif.Testing
             });
         }
 
-
         [Test]
         public void CurrentObjectName_List_ThrowsException()
         {
@@ -286,7 +285,6 @@ namespace Expressif.Testing
             });
         }
 
-
         [Test]
         public void CurrentObjectIndex_Dictionary_ThrowsException()
         {
@@ -298,6 +296,5 @@ namespace Expressif.Testing
                 Assert.That(() => context.CurrentObject[0], Throws.TypeOf<NotIndexableContextObjectException>());
             });
         }
-
     }
 }

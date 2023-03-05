@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Expressif.Testing.Functions.Text
 {
     [TestFixture]
@@ -154,7 +153,6 @@ namespace Expressif.Testing.Functions.Text
         public void EmptyToNull_NotNull(string value)
             => Assert.That(new EmptyToNull().Evaluate(value), Is.Not.EqualTo(new Null()));
 
-
         [Test]
         [TestCase("")]
         [TestCase("(null)")]
@@ -202,7 +200,6 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(blank)", "(blank)")]
         public void Lower_Valid(object value, object expected)
             => Assert.That(new Lower().Evaluate(value), Is.EqualTo(expected));
-
 
         [Test]
         [TestCase("Cédric")]
@@ -283,7 +280,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new SkipLastChars(() => (length)).Evaluate(value)
                 , Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("20190317111223", "yyyyMMddhhmmss", "2019-03-17 11:12:23")]
         [TestCase("2019-03-17 11:12:23", "yyyy-MM-dd hh:mm:ss", "2019-03-17 11:12:23")]
@@ -311,7 +307,6 @@ namespace Expressif.Testing.Functions.Text
         public void TextToDateTime_Culture_Valid(string value, string format, string culture, DateTime expected)
             => Assert.That(new TextToDateTime(() => (format), () => (culture))
                 .Evaluate(value), Is.EqualTo(expected));
-
 
         [Test]
         [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]

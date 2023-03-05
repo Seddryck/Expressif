@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     public abstract class BaseTextAppend : BaseTextFunction
     {
         public Func<string> Append { get; }
@@ -38,7 +37,6 @@ namespace Expressif.Functions.Text
             : base(suffix) { }
         protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
     }
-
 
     /// <summary>
     /// Returns the argument value with a subset of the string substitued by a another string.
@@ -79,5 +77,4 @@ namespace Expressif.Functions.Text
             return text.ToString();
         }
     }
-
 }

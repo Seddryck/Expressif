@@ -11,7 +11,6 @@ namespace Expressif.Testing.Functions.IO
     [TestFixture]
     public class FileFunctionsTest
     {
-
         [Test]
         [TestCase(@"C:\Dir\Child\file.txt", 4080)]
         public void Size_Valid(string value, long expected)
@@ -23,7 +22,7 @@ namespace Expressif.Testing.Functions.IO
                 fileInfo.SetupGet(x => x.Exists).Returns(true);
                 fileInfo.SetupGet(x => x.Length).Returns(4080);
                 return fileInfo.Object;
-            };
+            }
             function.SetFileInfoInitializer(Init);
             Assert.That(function.Evaluate(value), Is.EqualTo(expected));
         }
@@ -39,7 +38,7 @@ namespace Expressif.Testing.Functions.IO
                 fileInfo.SetupGet(x => x.Exists).Returns(true);
                 fileInfo.SetupGet(x => x.CreationTime).Returns(new DateTime(2022, 11, 06, 23, 07, 02, DateTimeKind.Local));
                 return fileInfo.Object;
-            };
+            }
             function.SetFileInfoInitializer(Init);
             Assert.That(function.Evaluate(value), Is.EqualTo(new DateTime(2022, 11, 06, 23, 07, 02, DateTimeKind.Local)));
         }
@@ -71,7 +70,7 @@ namespace Expressif.Testing.Functions.IO
                 fileInfo.SetupGet(x => x.Exists).Returns(true);
                 fileInfo.SetupGet(x => x.LastWriteTime).Returns(new DateTime(2022, 11, 06, 23, 07, 02, DateTimeKind.Local));
                 return fileInfo.Object;
-            };
+            }
             function.SetFileInfoInitializer(Init);
             Assert.That(function.Evaluate(value), Is.EqualTo(new DateTime(2022, 11, 06, 23, 07, 02, DateTimeKind.Local)));
         }
@@ -87,7 +86,7 @@ namespace Expressif.Testing.Functions.IO
                 fileInfo.SetupGet(x => x.Exists).Returns(true);
                 fileInfo.SetupGet(x => x.LastWriteTimeUtc).Returns(new DateTime(2022, 11, 06, 23, 07, 02, DateTimeKind.Utc));
                 return fileInfo.Object;
-            };
+            }
             function.SetFileInfoInitializer(Init);
             Assert.That(function.Evaluate(value), Is.EqualTo(new DateTime(2022, 11, 06, 23, 07, 02, DateTimeKind.Utc)));
         }
