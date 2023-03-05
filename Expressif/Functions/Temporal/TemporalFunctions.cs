@@ -4,13 +4,11 @@ using Expressif.Values.Resolvers;
 using Expressif.Values.Special;
 using System;
 
-
 namespace Expressif.Functions.Temporal
 {
     [Function(prefix: "dateTime")]
     public abstract class BaseTemporalFunction : IFunction
     {
-
         public object? Evaluate(object? value)
         {
             return value switch
@@ -166,7 +164,6 @@ namespace Expressif.Functions.Temporal
     /// </summary>
     public class SetTime : BaseTemporalFunction
     {
-
         public Func<string> Instant { get; }
 
         /// <param name="instant">The time value to set as hours, minutes, seconds of the dateTime argument</param>
@@ -288,7 +285,6 @@ namespace Expressif.Functions.Temporal
     {
         /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
         /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
-
         public Backward(Func<string> timeSpan, Func<int> times)
             : base(timeSpan, times) { }
 
