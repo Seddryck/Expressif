@@ -22,8 +22,7 @@ before_build:
 - cmd: echo "Building DubUrl version %GitVersion_SemVer%"
 
 build_script:
-  #- dotnet --info
-  - dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo
+- dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo
 
 test_script:
 - dotnet test Expressif.Testing -c Release --test-adapter-path:. --logger:Appveyor --no-build --nologo
@@ -31,18 +30,15 @@ test_script:
 after_test:
 - ps: >-
     $ErrorActionPreference = "Stop"
-
     dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Threshold=90 /p:ThresholdType=line --no-build --nologo
-
     if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
+
 - ps: >-
     $ProgressPreference = 'SilentlyContinue'
-    
     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
-    
     .\codecov.exe --dir "./Expressif.Testing"
 
-- dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo 
+- dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo
 
 artifacts:
 - path: '**\*.nupkg'
