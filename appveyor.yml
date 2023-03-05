@@ -23,16 +23,16 @@ before_build:
 
 build_script:
   #- dotnet --info
-  - dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo 
+  - dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo
 
 test_script:
-- dotnet test Expressif.Testing -c Release --test-adapter-path:. --logger:Appveyor --no-build --nologo 
+- dotnet test Expressif.Testing -c Release --test-adapter-path:. --logger:Appveyor --no-build --nologo
 
 after_test:
 - ps: >-
     $ErrorActionPreference = "Stop"
 
-    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,cobertura\" /p:Threshold=90 /p:ThresholdType=line --no-build --nologo 
+    dotnet test -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Threshold=90 /p:ThresholdType=line --no-build --nologo
 
     if($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode )  }
 #- ps: >-

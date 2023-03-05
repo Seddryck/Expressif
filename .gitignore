@@ -323,8 +323,13 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-# OpenCover UI analysis results
-OpenCover/
+# Cover UI analysis results
+[Oo]pen[Cc]over/
+.[Cc]overage/
+coverage.**.opencover.xml
+coverage.**.cobertura.xml
+coverage.**.info
+coverage.**.json
 
 # Azure Stream Analytics local run output
 ASALocalRun/
