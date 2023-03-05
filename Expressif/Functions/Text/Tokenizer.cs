@@ -52,7 +52,7 @@ namespace Expressif.Functions.Text
                 var boundedTokens = startTokens.Zip(endTokens, (start, end) => new { Start = start, End = end });
                 foreach (var tokenBoundary in boundedTokens)
                 {
-                    var substring = value.Substring(tokenBoundary.Start, tokenBoundary.End - tokenBoundary.Start);
+                    var substring = value[tokenBoundary.Start..tokenBoundary.End];
                     if (!string.IsNullOrWhiteSpace(substring))
                         tokens.Add(substring.Trim());
                 }
