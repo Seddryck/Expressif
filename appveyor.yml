@@ -40,7 +40,7 @@ after_test:
     
     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
     
-    .\codecov.exe
+    .\codecov.exe --dir "./Expressif.Testing"
 
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo 
 
