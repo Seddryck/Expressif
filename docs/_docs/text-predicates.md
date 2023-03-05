@@ -11,7 +11,7 @@ keywords: [any-of, contains, empty, empty-or-null, ends-with, equivalent-to, low
 Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
 
 ###### Parameters
-* references: An array of text values
+* references: An array of text values.
 * comparer (optional) : 
 
 ##### contains
@@ -20,8 +20,8 @@ Returns `true` if the list of text values passed as parameter contains the text 
 Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### empty
 ###### Overview
@@ -39,8 +39,8 @@ Returns `true` if argument value has a length of `0` or is `null`. Return `false
 Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value..
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### equivalent-to
 ###### Overview
@@ -48,8 +48,8 @@ Returns `true` if the value passed as argument ends with the text value passed a
 Compare the text value passed as argument and the text value passed as parameter and returns `true` if they are equal. By default the comparison is agnostic of the culture and case-insensitive.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)..
 
 ##### lower-case
 ###### Overview
@@ -77,8 +77,8 @@ Returns `true` if the text value passed as argument is a valid representation of
 Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.
 
 ###### Parameters
-* regex: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* regex: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### matches-time
 ###### Overview
@@ -91,17 +91,17 @@ Returns `true` if the text value passed as argument is a valid representation of
 Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value. By default the comparison is agnostic of the culture and case-insensitive.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### sorted-after-or-equivalent-to
 ###### Overview
 
-Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.///
+Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### sorted-before
 ###### Overview
@@ -109,8 +109,8 @@ Compare the text value passed as argument and the text value passed as parameter
 Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value. By default the comparison is agnostic of the culture and case-insensitive.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### sorted-before-or-equivalent-to
 ###### Overview
@@ -118,8 +118,8 @@ Compare the text value passed as argument and the text value passed as parameter
 Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### starts-with
 ###### Overview
@@ -127,8 +127,8 @@ Compare the text value passed as argument and the text value passed as parameter
 Returns `true` if the value passed as argument starts with the text value passed as parameter. Returns `false` otherwise.
 
 ###### Parameters
-* reference: A string to be compared to the argument value
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)
+* reference: A string to be compared to the argument value..
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### upper-case
 ###### Overview

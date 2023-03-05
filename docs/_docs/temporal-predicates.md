@@ -16,7 +16,7 @@ keywords: [after, after-or-same-instant, before, before-or-same-instant, busines
 Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A temporal value to compare to the argument
+* reference: A temporal value to compare to the argument.
 
 ##### after-or-same-instant
 ###### Overview
@@ -24,7 +24,7 @@ Returns true if the temporal value passed as argument is chronologically after t
 Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
 
 ###### Parameter
-* reference: A temporal value to compare to the argument
+* reference: A temporal value to compare to the argument.
 
 ##### before
 ###### Overview
@@ -40,7 +40,7 @@ Returns true if the temporal value passed as argument is chronologically before 
 Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
 
 ###### Parameter
-* reference: A temporal value to compare to the argument
+* reference: A temporal value to compare to the argument.
 
 ##### business-day
 ###### Overview
@@ -53,7 +53,7 @@ Returns `true` if the date passed as the argument doesn't correspond to a Saturd
 Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 
 ###### Parameter
-* interval: A temporal interval to compare to the argument
+* interval: A temporal interval to compare to the argument.
 
 ##### in-the-future
 ###### Overview
@@ -111,7 +111,7 @@ Returns `true` if the argument is of type `DateTime` and the seconds and millise
 Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.
 
 ###### Parameter
-* reference: A temporal value to compare to the argument
+* reference: A temporal value to compare to the argument.
 
 ##### today
 ###### Overview
@@ -129,7 +129,7 @@ Returns true if the date passed as argument is representing the next date compar
 Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.
 
 ###### Parameter
-* weekday: The day of week to compare to the argument
+* weekday: The day of week to compare to the argument.
 
 ##### weekend
 ###### Overview

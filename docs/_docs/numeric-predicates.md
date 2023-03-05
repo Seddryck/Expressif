@@ -11,7 +11,7 @@ keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-th
 Returns true if the numeric value passed as argument is equal to the numeric value passed as parameter.
 
 ###### Parameter
-* reference: A numeric value to compare to the argument
+* reference: A numeric value to compare to the argument.
 
 ##### even
 ###### Overview
@@ -24,7 +24,7 @@ Returns `true` if the numeric value passed as argument is even. Returns `false` 
 Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A numeric value to compare to the argument
+* reference: A numeric value to compare to the argument.
 
 ##### greater-than-or-equal
 ###### Overview
@@ -32,7 +32,7 @@ Returns true if the numeric value passed as argument is greater than the numeric
 Returns true if the numeric value passed as argument is greater than or equal to the numeric value passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A numeric value to compare to the argument
+* reference: A numeric value to compare to the argument.
 
 ##### integer
 ###### Overview
@@ -45,7 +45,7 @@ Returns true if the numeric value passed as argument is an integer value. Return
 Returns true if the numeric value passed as argument is less than the numeric value passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A numeric value to compare to the argument
+* reference: A numeric value to compare to the argument.
 
 ##### less-than-or-equal
 ###### Overview
@@ -53,7 +53,7 @@ Returns true if the numeric value passed as argument is less than the numeric va
 Returns true if the numeric value passed as argument is less than or equal to the numeric value passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A numeric value to compare to the argument
+* reference: A numeric value to compare to the argument.
 
 ##### modulo
 ###### Overview
@@ -90,7 +90,7 @@ Returns true if the numeric argument is equal to 1.
 Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A numeric value to compare to the argument
+* reference: A numeric value to compare to the argument.
 
 ##### positive
 ###### Overview
@@ -108,7 +108,7 @@ Returns true if the numeric argument is greater or equal to 0.
 Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 
 ###### Parameter
-* interval: A numeric interval to compare to the argument
+* interval: A numeric interval to compare to the argument.
 
 ##### zero
 ###### Overview
