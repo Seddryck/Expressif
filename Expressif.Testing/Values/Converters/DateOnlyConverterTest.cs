@@ -70,7 +70,7 @@ namespace Expressif.Testing.Values.Converters
         [Test]
         public void ConvertToInvariantString_Valid()
             => Assert.That(
-                TypeDescriptor.GetConverter(typeof(DateOnly)).ConvertToInvariantString("2022-12-29")
+                TypeDescriptor.GetConverter(typeof(DateOnly)).ConvertToInvariantString(new DateOnly(2022,12,29))
                 , Is.EqualTo("2022-12-29"));
     }
 }
