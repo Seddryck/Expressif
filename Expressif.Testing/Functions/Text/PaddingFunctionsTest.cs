@@ -31,7 +31,6 @@ namespace Expressif.Testing.Functions.Text
             => Assert.That(new PadLeft(() => (length), () => (character))
                 .Evaluate(value), Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("1234", 4, '*', "1234")]
         [TestCase("1234", 5, '*', "1234*")]

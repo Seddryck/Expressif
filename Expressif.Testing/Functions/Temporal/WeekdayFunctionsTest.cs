@@ -38,7 +38,6 @@ namespace Expressif.Testing.Functions.Temporal
                         .ConvertFromInvariantString(expected)!
                 ));
 
-
         [Test]
         [TestCase("2022-12-28", "Tuesday", "2023-01-03")]
         [TestCase("2022-12-28", "Wednesday", "2022-12-28")]
@@ -56,7 +55,6 @@ namespace Expressif.Testing.Functions.Temporal
                         TypeDescriptor.GetConverter(typeof(DateOnly))
                         .ConvertFromInvariantString(expected)!
                 ));
-
 
         [Test]
         [TestCase("2022-12-28", "Tuesday", "2022-12-27")]
@@ -94,7 +92,6 @@ namespace Expressif.Testing.Functions.Temporal
                         .ConvertFromInvariantString(expected)!
                 ));
 
-
         [Test]
         [TestCase("2022-12-28", "Tuesday", "2022-12-06")]
         [TestCase("2022-12-28", "Wednesday", "2022-12-07")]
@@ -112,7 +109,6 @@ namespace Expressif.Testing.Functions.Temporal
                         TypeDescriptor.GetConverter(typeof(DateOnly))
                         .ConvertFromInvariantString(expected)!
                 ));
-
 
         [Test]
         [TestCase("2022-12-28", "Tuesday", "2022-12-27")]

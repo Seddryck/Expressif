@@ -24,5 +24,5 @@ namespace Expressif.Functions
             }
             return factory.Instantiate(Type, typedParameters.ToArray(), context);
         }
-    };
+    }
 }

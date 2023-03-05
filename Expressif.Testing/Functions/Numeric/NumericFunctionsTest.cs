@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Expressif.Testing.Functions.Numeric
 {
     [TestFixture]
@@ -133,7 +132,6 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(blank)", null)]
         public void Invert_Valid(object value, decimal? expected)
             => Assert.That(new Invert().Evaluate(value), Is.EqualTo(expected));
-
 
         [Test]
         [TestCase(0, 0)]

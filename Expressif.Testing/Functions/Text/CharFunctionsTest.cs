@@ -9,7 +9,6 @@ namespace Expressif.Testing.Functions.Text
 {
     public class CharFunctionsTest
     {
-
         [Test]
         [TestCase("123*456*78", "*", "12345678")]
         [TestCase("***123***456*78****", "*", "12345678")]

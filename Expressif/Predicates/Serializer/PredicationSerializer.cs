@@ -20,7 +20,6 @@ namespace Expressif.Predicates.Serializer
             var predication = new StringBuilder();
             foreach (var member in builder.Pile)
             {
-
                 predication.Append(member switch
                 {
                     PredicationMember em => MemberSerializer.Serialize(em),

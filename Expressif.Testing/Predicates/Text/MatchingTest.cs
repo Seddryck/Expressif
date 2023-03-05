@@ -209,7 +209,6 @@ namespace Expressif.Testing.Predicates.Text
         public void MatchesTime_EnglishCulture_Success(object value, bool expected)
             => Assert.That(new MatchesTime(() => "en-gb").Evaluate(value), Is.EqualTo(expected));
 
-
         [Test]
         public void MatchesTime_InvariantCultureDateTimeOnDate_Valid()
             => Assert.That(new MatchesTime().Evaluate(new System.DateTime(2022, 10, 5)), Is.False);
@@ -233,6 +232,5 @@ namespace Expressif.Testing.Predicates.Text
         [Test]
         public void MatchesTime_InvariantCultureTimeSpanOver24_Valid()
             => Assert.That(new MatchesTime().Evaluate(new TimeSpan(24, 10, 5)), Is.False);
-
     }
 }

@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     /// <summary>
     /// Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.
     /// </summary>

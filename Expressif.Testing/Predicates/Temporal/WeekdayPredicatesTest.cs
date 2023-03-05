@@ -57,7 +57,6 @@ namespace Expressif.Testing.Predicates.Temporal
             => Assert.That(new Weekend().Evaluate(dateTime)
                 , Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("2022-12-30", true)]
         [TestCase("2022-12-31", false)]

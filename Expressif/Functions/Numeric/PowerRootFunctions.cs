@@ -36,7 +36,6 @@ namespace Expressif.Functions.Numeric
             : base(() => 2) { }
     }
 
-
     /// <summary>
     /// Returns the the numeric argument value raised to the cube power.
     /// </summary>
@@ -73,7 +72,7 @@ namespace Expressif.Functions.Numeric
     }
 
     /// <summary>
-    /// Returns square root of the numeric argument value
+    /// Returns square root of the numeric argument value.
     /// </summary>
     public class SquareRoot : BaseNumericPowerRootFunction
     {
@@ -84,9 +83,8 @@ namespace Expressif.Functions.Numeric
             => Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(numeric)));
     }
 
-
     /// <summary>
-    /// Returns cube root of the numeric argument value
+    /// Returns cube root of the numeric argument value.
     /// </summary>
     public class CubeRoot : BaseNumericPowerRootFunction
     {

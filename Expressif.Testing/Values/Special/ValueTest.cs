@@ -39,7 +39,7 @@ namespace Expressif.Testing.Values.Special
         [Test]
         public void Equals_ValueLiteral_Valid()
             => Assert.That(new Value().Equals("(any)"), Is.True);
-        
+
         [Test]
         public void EqualOperator_ValueLiteral_Valid()
             => Assert.That(new Value() == "(any)", Is.True);

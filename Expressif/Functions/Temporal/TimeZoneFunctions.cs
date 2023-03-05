@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Expressif.Functions.Temporal
 {
-
     /// <summary>
     /// Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.
     /// </summary>
@@ -25,7 +24,7 @@ namespace Expressif.Functions.Temporal
         {
             var zones = TimeZoneInfo.GetSystemTimeZones();
             var zone = zones.SingleOrDefault(z => z.Id == label)
-                ?? zones.SingleOrDefault(z => Tokenize(z.DisplayName).Contains(label.Replace(" ", "")));
+                ?? zones.SingleOrDefault(z => Tokenize(z.DisplayName).Contains(label.Replace(" ", string.Empty)));
 
             return zone ?? throw new ArgumentOutOfRangeException($"TimeZone '{label}' is not existing on this computer.");
         }
@@ -34,7 +33,7 @@ namespace Expressif.Functions.Temporal
             label.Replace("(", ",")
             .Replace(")", ",")
             .Replace(":", ",")
-            .Replace(" ", "")
+            .Replace(" ", string.Empty)
             .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
     }
 

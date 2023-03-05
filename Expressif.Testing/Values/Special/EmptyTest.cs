@@ -20,7 +20,7 @@ namespace Expressif.Testing.Values.Special
         [Test]
         public void Equals_EmptyLiteral_Valid()
             => Assert.That(new Empty().Equals("(empty)"), Is.True);
-        
+
         [Test]
         public void EqualOperator_EmptyLiteral_Valid()
             => Assert.That(new Empty() == "(empty)", Is.True);

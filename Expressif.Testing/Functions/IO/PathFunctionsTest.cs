@@ -10,7 +10,7 @@ namespace Expressif.Testing.Functions.IO
 {
     [TestFixture]
     public class PathFunctionsTest
-    { 
+    {
         [Test]
         [TestCase(@"C:\", "")]
         [TestCase(@"C:\Dir\", "")]

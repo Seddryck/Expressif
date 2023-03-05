@@ -15,7 +15,7 @@ namespace Expressif.Functions.Serializer
         public ExpressionMemberSerializer()
             : this(new ParameterSerializer()) { }
 
-        public ExpressionMemberSerializer(ParameterSerializer? parameterSerializer=null)
+        public ExpressionMemberSerializer(ParameterSerializer? parameterSerializer = null)
             => ParameterSerializer = parameterSerializer ?? new ParameterSerializer();
 
         public virtual string Serialize(ExpressionMember member)

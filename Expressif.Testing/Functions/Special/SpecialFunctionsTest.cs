@@ -105,7 +105,6 @@ namespace Expressif.Testing.Functions.Special
         public void NullToValue_NotNull_Value(object value)
             => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(value));
 
-
         [Test]
         [TestCase(typeof(Empty))]
         [TestCase(typeof(Whitespace))]

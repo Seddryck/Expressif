@@ -55,6 +55,5 @@ namespace Expressif.Testing.Values.Casters
            => Assert.That(new NumericCaster().Cast(
                 Activator.CreateInstance(type)!)
                 , Is.EqualTo(0));
-
     }
 }

@@ -50,7 +50,6 @@ namespace Expressif.Parsers
             from interval in Interval.Parser
             select new IntervalParameter(interval);
 
-
         public static readonly Parser<IParameter> Parser = 
             VariableParameter
             .Or(IntervalParameter)

@@ -25,7 +25,6 @@ namespace Expressif.Values.Special
                 _ => true,
             };
 
-
         protected override bool AdvancedMatch(string value)
             => base.AdvancedMatch(value) || !new Null().Equals(value);
 

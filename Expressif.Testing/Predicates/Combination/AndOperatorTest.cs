@@ -24,7 +24,6 @@ namespace Expressif.Testing.Predicates.Combination
             right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
 
             var @operator = new AndOperator();
-            
             Assert.That(@operator.Evaluate(left.Object, right.Object, "my value"), Is.EqualTo(expected));
         }
 

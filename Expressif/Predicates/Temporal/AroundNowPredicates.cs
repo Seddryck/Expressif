@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Temporal
 {
-
     public abstract class BaseTemporalAroundNowPredicate : BaseTemporalAroundTodayPredicate
     {
         protected DateTime Now { get; }

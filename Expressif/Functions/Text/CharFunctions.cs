@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     /// <summary>
     /// Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.
     /// </summary>
@@ -15,7 +14,7 @@ namespace Expressif.Functions.Text
     {
         public Func<char> CharToRemove { get; }
 
-        /// <param name="charToRemove">The char to be removed from the argument string</param>
+        /// <param name="charToRemove">The char to be removed from the argument string.</param>
         public RemoveChars(Func<char> charToRemove)
             => CharToRemove = charToRemove;
 
@@ -45,8 +44,8 @@ namespace Expressif.Functions.Text
         public Func<char> CharToReplace { get; }
         public Func<char> CharReplacing { get; }
 
-        /// <param name="charToReplace">The char to be replaced from the argument string</param>
-        /// <param name="charReplacing">The replacing char from the argument string</param>
+        /// <param name="charToReplace">The char to be replaced from the argument string.</param>
+        /// <param name="charReplacing">The replacing char from the argument string.</param>
         public ReplaceChars(Func<char> charToReplace, Func<char> charReplacing)
             => (CharToReplace, CharReplacing) = (charToReplace, charReplacing);
 

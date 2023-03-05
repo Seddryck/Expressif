@@ -12,7 +12,7 @@ namespace Expressif.Values.Casters
     {
         private readonly DateTimeStyles Style = DateTimeStyles.AllowWhiteSpaces
                                                 | DateTimeStyles.NoCurrentDateDefault
-                                                | DateTimeStyles.AdjustToUniversal ;
+                                                | DateTimeStyles.AdjustToUniversal;
 
         private readonly DateTimeFormatInfo Format = CultureInfo.InvariantCulture.DateTimeFormat;
 

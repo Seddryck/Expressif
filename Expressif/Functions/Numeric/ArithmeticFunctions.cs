@@ -21,8 +21,8 @@ namespace Expressif.Functions.Numeric
     {
         public Func<int> Times { get; }
 
-        /// <param name="value">The value to be added to the argument value</param>
-        /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the sum</param>
+        /// <param name="value">The value to be added to the argument value.</param>
+        /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the sum.</param>
         public Add(Func<decimal> value, Func<int> times)
             : base(value) => Times = times;
 
@@ -38,8 +38,8 @@ namespace Expressif.Functions.Numeric
     /// </summary>
     public class Subtract : Add
     {
-        /// <param name="value">The value to be subtracted to the argument value</param>
-        /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
+        /// <param name="value">The value to be subtracted to the argument value.</param>
+        /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction.</param>
         public Subtract(Func<decimal> value, Func<int> times)
             : base(value, times) { }
 
@@ -73,7 +73,7 @@ namespace Expressif.Functions.Numeric
     /// </summary>
     public class Multiply : BaseNumericArithmetic
     {
-        /// <param name="value">The value to be multiplied by the argument value</param>
+        /// <param name="value">The value to be multiplied by the argument value.</param>
         public Multiply(Func<decimal> value)
             : base(value) { }
 
@@ -86,7 +86,7 @@ namespace Expressif.Functions.Numeric
     /// </summary>
     public class Divide : BaseNumericArithmetic
     {
-        /// <param name="value">The value to divide the argument value</param>
+        /// <param name="value">The value to divide the argument value.</param>
         public Divide(Func<decimal> value)
             : base(value) { }
 

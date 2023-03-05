@@ -10,8 +10,6 @@ namespace Expressif
     public class Expression : IFunction
     {
         private readonly IFunction expression;
-
-
         public Expression(string code)
             : this(code, new Context()) { }
         public Expression(string code, Context context)

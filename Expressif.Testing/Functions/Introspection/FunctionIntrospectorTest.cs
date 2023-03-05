@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Functions.Introspection
 {
-    [TestFixture()]
+    [TestFixture]
     [FixtureLifeCycle(LifeCycle.SingleInstance)]
     [Parallelizable(scope: ParallelScope.Fixtures)]
     public class FunctionIntrospectorTest
@@ -55,7 +55,6 @@ namespace Expressif.Testing.Functions.Introspection
         public void Locate_ExpressifAssembly_NoDuplicateAlias()
         {
             var infos = Infos.Where(x => x.Aliases.Any());
-            
             foreach (var info in infos)
                 Assert.That(infos.Count(x => x.Aliases.Contains(info.Aliases.ElementAt(0))), Is.EqualTo(1));
         }

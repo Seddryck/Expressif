@@ -54,8 +54,8 @@ namespace Expressif.Functions.IO
     {
         protected override object EvaluateString(string value)
         {
-            return Path.GetDirectoryName(value) == null 
-                ? Path.GetPathRoot(value) ?? string.Empty 
+            return Path.GetDirectoryName(value) == null
+                ? Path.GetPathRoot(value) ?? string.Empty
                 : Path.GetDirectoryName(value) + Path.DirectorySeparatorChar;
         }
     }

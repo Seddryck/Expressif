@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     /// <summary>
     /// Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.
     /// </summary>
@@ -17,7 +16,7 @@ namespace Expressif.Functions.Text
         private char maskChar { get; } = '*';
         public Func<string> Mask { get; }
 
-        /// <param name="mask">The string representing the mask to apply to the argument string</param>
+        /// <param name="mask">The string representing the mask to apply to the argument string.</param>
         public TextToMask(Func<string> mask)
             => Mask = mask;
 
@@ -49,7 +48,7 @@ namespace Expressif.Functions.Text
         private char maskChar { get; } = '*';
         public Func<string> Mask { get; }
 
-        /// <param name="mask">The string representing the mask to be unset from the argument string</param>
+        /// <param name="mask">The string representing the mask to be unset from the argument string.</param>
         public MaskToText(Func<string> mask)
             => Mask = mask;
 
@@ -69,8 +68,8 @@ namespace Expressif.Functions.Text
         }
 
         protected override object EvaluateBlank()
-            => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), "").Length == 0) ? new Whitespace().Keyword : new Null().Keyword;
+            => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), string.Empty).Length == 0) ? new Whitespace().Keyword : new Null().Keyword;
         protected override object EvaluateEmpty()
-            => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), "").Length == 0) ? new Empty().Keyword : new Null().Keyword;
+            => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), string.Empty).Length == 0) ? new Empty().Keyword : new Null().Keyword;
     }
 }

@@ -97,7 +97,6 @@ namespace Expressif.Testing.Predicates.Numeric
             });
         }
 
-
         [Test]
         [TestCase(10, -10, true)]
         [TestCase(10, -11, false)]

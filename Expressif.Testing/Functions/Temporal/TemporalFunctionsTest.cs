@@ -195,11 +195,11 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase(null, null)]
         public void InvalidToDate_Valid(object value, DateTime? expected)
             => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(value)
-                , Is.EqualTo(expected==null ? new Null() : expected));
+                , Is.EqualTo(expected == null ? new Null() : expected));
 
         [Test]
         [TestCase(typeof(DBNull), "2001-01-01")]
-        public void InvalidToDate_DBNull_Valid(Type type, DateTime ? expected)
+        public void InvalidToDate_DBNull_Valid(Type type, DateTime? expected)
             => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(
                 type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
                 , Is.EqualTo(new Null()));

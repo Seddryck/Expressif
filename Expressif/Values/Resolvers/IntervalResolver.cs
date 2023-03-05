@@ -12,7 +12,7 @@ namespace Expressif.Values.Resolvers
         public IntervalResolver(object value)
             => this.value = value;
 
-        public T? Execute() => (T) value;
+        public T? Execute() => (T)value;
         object? IScalarResolver.Execute() => Execute();
     }
 }

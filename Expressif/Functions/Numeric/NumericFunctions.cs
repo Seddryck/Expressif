@@ -9,7 +9,6 @@ namespace Expressif.Functions.Numeric
     [Function]
     public abstract class BaseNumericFunction : IFunction
     {
-        
         public BaseNumericFunction()
         { }
 
@@ -97,8 +96,8 @@ namespace Expressif.Functions.Numeric
         public Func<decimal> Min { get; }
         public Func<decimal> Max { get; }
 
-        /// <param name="min">value returned in case the argument value is smaller than it</param>
-        /// <param name="max">value returned in case the argument value is greater than it</param>
+        /// <param name="min">value returned in case the argument value is smaller than it.</param>
+        /// <param name="max">value returned in case the argument value is greater than it.</param>
         public Clip(Func<decimal> min, Func<decimal> max)
             => (Min, Max) = (min, max);
 
@@ -114,7 +113,7 @@ namespace Expressif.Functions.Numeric
         public Invert()
         { }
 
-        protected override decimal? EvaluateNumeric(decimal value) => value==0 ? null : 1/value;
+        protected override decimal? EvaluateNumeric(decimal value) => value == 0 ? null : 1 / value;
     }
 
     /// <summary>

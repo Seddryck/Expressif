@@ -15,7 +15,7 @@ namespace Expressif.Predicates.Temporal
     {
         public Interval<DateTime> Interval { get; }
 
-        /// <param name="interval">A temporal interval to compare to the argument</param>
+        /// <param name="interval">A temporal interval to compare to the argument.</param>
         public ContainedIn(Interval<DateTime> interval)
             => Interval = interval;
 

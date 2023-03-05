@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Expressif.Functions.Text
 {
     /// <summary>
-    /// Returns the argument string without white-space characters
+    /// Returns the argument string without white-space characters.
     /// </summary>
     public class WithoutWhitespaces : BaseTextFunction
     {

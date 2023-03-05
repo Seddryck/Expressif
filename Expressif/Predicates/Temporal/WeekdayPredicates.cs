@@ -20,7 +20,7 @@ namespace Expressif.Predicates.Temporal
     {
         public Func<Values.Weekday> DayOfWeek { get; }
         
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public Weekday(Func<Values.Weekday> weekday)
             : base() { DayOfWeek = weekday; }
 

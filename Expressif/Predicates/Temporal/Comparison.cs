@@ -12,7 +12,7 @@ namespace Expressif.Predicates.Temporal
     /// </summary>
     public class SameInstant : BaseDateTimePredicateReference
     {
-        /// <param name="reference">A temporal value to compare to the argument</param>
+        /// <param name="reference">A temporal value to compare to the argument.</param>
         public SameInstant(Func<DateTime> reference)
             : base(reference) { }
 
@@ -25,7 +25,7 @@ namespace Expressif.Predicates.Temporal
     /// </summary>
     public class After : BaseDateTimePredicateReference
     {
-        /// <param name="reference">A temporal value to compare to the argument</param>
+        /// <param name="reference">A temporal value to compare to the argument.</param>
         public After(Func<DateTime> reference)
             : base(reference) { }
 
@@ -38,7 +38,7 @@ namespace Expressif.Predicates.Temporal
     /// </summary>
     public class AfterOrSameInstant : BaseDateTimePredicateReference
     {
-        /// <param name="reference">A temporal value to compare to the argument</param>
+        /// <param name="reference">A temporal value to compare to the argument.</param>
         public AfterOrSameInstant(Func<DateTime> reference)
             : base(reference) { }
 
@@ -64,7 +64,7 @@ namespace Expressif.Predicates.Temporal
     /// </summary>
     public class BeforeOrSameInstant : BaseDateTimePredicateReference
     {
-        /// <param name="reference">A temporal value to compare to the argument</param>
+        /// <param name="reference">A temporal value to compare to the argument.</param>
         public BeforeOrSameInstant(Func<DateTime> reference)
             : base(reference) { }
 

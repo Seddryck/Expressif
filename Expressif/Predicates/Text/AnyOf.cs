@@ -16,7 +16,7 @@ namespace Expressif.Predicates.Text
         public IEnumerable<Func<string>> References { get; }
         protected StringComparer Comparer { get; }
 
-        /// <param name="references">An array of text values</param>
+        /// <param name="references">An array of text values.</param>
         public AnyOf(IEnumerable<Func<string>> references)
             : this(references, StringComparer.InvariantCultureIgnoreCase) { }
         

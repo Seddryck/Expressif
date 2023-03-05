@@ -80,6 +80,5 @@ namespace Expressif.Predicates.Text
 
         protected abstract bool EvaluateText(string value, string reference);
         protected virtual bool EvaluateWhitespaces() => false;
-
     }
 }

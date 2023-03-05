@@ -18,7 +18,7 @@ namespace Expressif.Predicates
 
         public bool Evaluate(object? value)
             => (bool)Predicates.Aggregate(value is IScalarResolver resolver ? resolver.Execute() : value, (v, func) => func.Evaluate(v) )!;
-        
+
         object? IFunction.Evaluate(object? value) => Evaluate(value);
     }
 }

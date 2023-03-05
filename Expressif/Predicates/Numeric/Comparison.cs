@@ -14,7 +14,7 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     public class EqualTo : BaseNumericPredicateReference
     {
-        /// <param name="reference">A numeric value to compare to the argument</param>
+        /// <param name="reference">A numeric value to compare to the argument.</param>
         public EqualTo(Func<decimal> reference)
             : base(reference) { }
 
@@ -27,7 +27,7 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     public class GreaterThan : BaseNumericPredicateReference
     {
-        /// <param name="reference">A numeric value to compare to the argument</param>
+        /// <param name="reference">A numeric value to compare to the argument.</param>
         public GreaterThan(Func<decimal> reference)
             : base(reference) { }
 
@@ -40,7 +40,7 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     public class GreaterThanOrEqual : EqualTo
     {
-        /// <param name="reference">A numeric value to compare to the argument</param>
+        /// <param name="reference">A numeric value to compare to the argument.</param>
         public GreaterThanOrEqual(Func<decimal> reference)
             : base(reference) { }
 
@@ -53,7 +53,7 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     public class LessThan : BaseNumericPredicateReference
     {
-        /// <param name="reference">A numeric value to compare to the argument</param>
+        /// <param name="reference">A numeric value to compare to the argument.</param>
         public LessThan(Func<decimal> reference)
             : base(reference) { }
 
@@ -66,7 +66,7 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     public class LessThanOrEqual : EqualTo
     {
-        /// <param name="reference">A numeric value to compare to the argument</param>
+        /// <param name="reference">A numeric value to compare to the argument.</param>
         public LessThanOrEqual(Func<decimal> reference)
             : base(reference) { }
 
@@ -79,7 +79,7 @@ namespace Expressif.Predicates.Numeric
     /// </summary>
     public class Opposite : EqualTo
     {
-        /// <param name="reference">A numeric value to compare to the argument</param>
+        /// <param name="reference">A numeric value to compare to the argument.</param>
         public Opposite(Func<decimal> reference)
             : base(reference) { }
 

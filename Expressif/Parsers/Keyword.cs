@@ -13,4 +13,4 @@ namespace Expressif.Parsers
         public static readonly Parser<string> AndOperator = Parse.IgnoreCase("AND").Text();
         public static readonly Parser<string> XorOperator = Parse.IgnoreCase("XOR").Text();
     }
-}   
+}

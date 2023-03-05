@@ -45,8 +45,8 @@ namespace Expressif.Values
         /// <summary>
         /// Check if given point lies within the interval.
         /// </summary>
-        /// <param name="point">Point to check</param>
-        /// <returns>True if point lies within the interval, otherwise false</returns>
+        /// <param name="point">Point to check.</param>
+        /// <returns>True if point lies within the interval, otherwise false.</returns>
         public bool Contains(T point)
         {
             var lower = LowerBoundIntervalType == IntervalType.Open

@@ -39,12 +39,12 @@ namespace Expressif.Predicates.Text
     /// </summary>
     public class StartsWith : BaseTextPredicateSubstring
     {
-        /// <param name="reference">A string to be compared to the argument value</param>
+        /// <param name="reference">A string to be compared to the argument value..</param>
         public StartsWith(Func<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
-        /// <param name="reference">A string to be compared to the argument value</param>
-        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
+        /// <param name="reference">A string to be compared to the argument value.</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).</param>
         public StartsWith(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
@@ -57,12 +57,12 @@ namespace Expressif.Predicates.Text
     /// </summary>
     public class EndsWith : BaseTextPredicateSubstring
     {
-        /// <param name="reference">A string to be compared to the argument value</param>
+        /// <param name="reference">A string to be compared to the argument value..</param>
         public EndsWith(Func<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
-        /// <param name="reference">A string to be compared to the argument value</param>
-        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
+        /// <param name="reference">A string to be compared to the argument value.</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).</param>
         public EndsWith(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
@@ -75,12 +75,12 @@ namespace Expressif.Predicates.Text
     /// </summary>
     public class Contains : BaseTextPredicateSubstring
     {
-        /// <param name="reference">A string to be compared to the argument value</param>
+        /// <param name="reference">A string to be compared to the argument value.</param>
         public Contains(Func<string> reference)
             : base(reference, StringComparer.InvariantCultureIgnoreCase) { }
 
-        /// <param name="reference">A string to be compared to the argument value</param>
-        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
+        /// <param name="reference">A string to be compared to the argument value.</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).</param>
         public Contains(Func<string> reference, StringComparer comparer)
             : base(reference, comparer) { }
 
@@ -93,12 +93,12 @@ namespace Expressif.Predicates.Text
     /// </summary>
     public class MatchesRegex : BaseTextPredicateSubstring
     {
-        /// <param name="regex">A string to be compared to the argument value</param>
+        /// <param name="regex">A string to be compared to the argument value.</param>
         public MatchesRegex(Func<string> regex)
             : base(regex, StringComparer.InvariantCultureIgnoreCase) { }
 
-        /// <param name="regex">A string to be compared to the argument value</param>
-        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)</param>
+        /// <param name="regex">A string to be compared to the argument value.</param>
+        /// <param name="comparer">A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).</param>
         public MatchesRegex(Func<string> regex, StringComparer comparer)
             : base(regex, comparer) { }
 

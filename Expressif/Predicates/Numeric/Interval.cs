@@ -14,7 +14,7 @@ namespace Expressif.Predicates.Numeric
     {
         public Func<Interval<decimal>> Interval { get; }
 
-        /// <param name="interval">A numeric interval to compare to the argument</param>
+        /// <param name="interval">A numeric interval to compare to the argument.</param>
         public WithinInterval(Func<Interval<decimal>> interval) 
             => Interval = interval;
 

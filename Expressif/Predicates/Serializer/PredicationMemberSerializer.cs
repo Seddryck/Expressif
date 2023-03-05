@@ -17,7 +17,7 @@ namespace Expressif.Predicates.Serializer
         public PredicationMemberSerializer()
             : this(new ParameterSerializer()) { }
 
-        public PredicationMemberSerializer(ParameterSerializer? parameterSerializer=null)
+        public PredicationMemberSerializer(ParameterSerializer? parameterSerializer = null)
             => ParameterSerializer = parameterSerializer ?? new ParameterSerializer();
 
         public virtual string Serialize(PredicationMember member)
@@ -32,7 +32,7 @@ namespace Expressif.Predicates.Serializer
                 }));
             }
 
-            var negation = member.Negation==typeof(NotOperator) ? "!" : string.Empty;
+            var negation = member.Negation == typeof(NotOperator) ? "!" : string.Empty;
 
             var predicateName = member.Predicate.Name.ToKebabCase();
 
@@ -45,12 +45,12 @@ namespace Expressif.Predicates.Serializer
 
         public virtual string Serialize(Type? @operator)
         {
-            if (@operator!= null && !@operator.GetInterfaces().Contains(typeof(ICombinationOperator)))
+            if (@operator != null && !@operator.GetInterfaces().Contains(typeof(ICombinationOperator)))
                 throw new ArgumentException();
-            
+
             return @operator == null
                 ? string.Empty
-                : $"|{@operator.Name.Replace("Operator", "").ToUpper()} ";
+                : $"|{@operator.Name.Replace("Operator", string.Empty).ToUpper()} ";
         }
     }
 }

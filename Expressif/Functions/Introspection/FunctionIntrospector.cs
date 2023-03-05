@@ -42,7 +42,5 @@ namespace Expressif.Functions.Introspection
                     );
             }
         }
-
-        
     }
 }

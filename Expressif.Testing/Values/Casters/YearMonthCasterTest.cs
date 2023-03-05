@@ -35,7 +35,6 @@ namespace Expressif.Testing.Values.Casters
                 Assert.That(value, Is.Not.Null);
                 Assert.That(value, Is.EqualTo((YearMonth)expected));
             });
-            
         }
 
         [Test]

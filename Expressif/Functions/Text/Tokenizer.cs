@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
-    interface ITokenizer
+    internal interface ITokenizer
     {
         string[] Execute(string value);
     }
 
-    class Tokenizer : ITokenizer
+    internal class Tokenizer : ITokenizer
     {
         private char Separator { get; }
         public Tokenizer(char separator)
@@ -23,7 +22,6 @@ namespace Expressif.Functions.Text
 
     class WhitespaceTokenizer : ITokenizer
     {
-
         public string[] Execute(string value)
         {
             if (!string.IsNullOrWhiteSpace(value))

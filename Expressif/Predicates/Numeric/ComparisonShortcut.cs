@@ -54,7 +54,6 @@ namespace Expressif.Predicates.Numeric
             : base(() => 0) { }
     }
 
-
     /// <summary>
     /// Returns true if the numeric argument is less or equal to 0.
     /// </summary>

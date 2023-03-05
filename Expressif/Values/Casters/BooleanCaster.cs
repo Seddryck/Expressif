@@ -37,7 +37,7 @@ namespace Expressif.Values.Casters
 
         protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out bool value)
             => TypeChecker.IsNumericType(obj)
-                ?(value = CastNumeric(obj))==value
-                :(value = default)!=value;
+                ? (value = CastNumeric(obj)) == value
+                : (value = default) != value;
     }
 }

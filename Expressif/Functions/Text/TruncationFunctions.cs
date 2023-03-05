@@ -21,7 +21,7 @@ namespace Expressif.Functions.Text
     /// </summary>
     public class FirstChars : BaseTextLength
     {
-        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return.</param>
         public FirstChars(Func<int> length)
             : base(length) { }
 
@@ -34,7 +34,7 @@ namespace Expressif.Functions.Text
     /// </summary>
     public class LastChars : BaseTextLength
     {
-        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return</param>
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to return.</param>
         public LastChars(Func<int> length)
             : base(length) { }
 
@@ -47,7 +47,7 @@ namespace Expressif.Functions.Text
     /// </summary>
     public class SkipFirstChars : BaseTextLength
     {
-        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip.</param>
         public SkipFirstChars(Func<int> length)
             : base(length) { }
 
@@ -60,7 +60,7 @@ namespace Expressif.Functions.Text
     /// </summary>
     public class SkipLastChars : BaseTextLength
     {
-        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip</param>
+        /// <param name="length">An integer value between 0 and +Infinity, defining the length of the substring to skip.</param>
         public SkipLastChars(Func<int> length)
             : base(length) { }
 
