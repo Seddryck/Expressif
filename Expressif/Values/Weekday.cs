@@ -33,6 +33,8 @@ namespace Expressif.Values
 
         public static Weekday Parse(string text, IFormatProvider? provider)
             => TryParse(text, provider, out var value) ? value : throw new FormatException();
+
+        public override string ToString() => Name.ToString();
     }
 
     public static class Weekdays
