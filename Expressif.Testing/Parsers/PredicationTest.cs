@@ -14,7 +14,7 @@ namespace Expressif.Testing.Parsers
         [TestCase("is-func(foo, @bar)", 1)]
         [TestCase("is-func", 1)]
         [TestCase("!is-func(foo)", 2)]
-        [TestCase(" ! is-func(foo)", 2)]  
+        [TestCase(" ! is-func(foo)", 2)]
         [TestCase("{is-func(foo)}", 2)]
         [TestCase("is-func(foo) |AND is-foo", 2)]
         [TestCase("{is-func(foo) |AND is-foo}", 2)]

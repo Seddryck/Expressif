@@ -19,8 +19,8 @@ Returns the absolute value of the argument value.
 Returns the sum of an argument number and the parameter value.
 
 ###### Parameters
-* value: The value to be added to the argument value
-* times: An integer between 0 and +Infinity, indicating the number of times to repeat the sum
+* value: The value to be added to the argument value.
+* times: An integer between 0 and +Infinity, indicating the number of times to repeat the sum.
 
 ##### ceiling
 ###### Overview
@@ -33,8 +33,8 @@ Returns the smallest integer greater than or equal to the argument number.
 Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.
 
 ###### Parameters
-* min: value returned in case the argument value is smaller than it
-* max: value returned in case the argument value is greater than it
+* min: value returned in case the argument value is smaller than it.
+* max: value returned in case the argument value is greater than it.
 
 ##### cube-power
 ###### Overview
@@ -44,7 +44,7 @@ Returns the the numeric argument value raised to the cube power.
 ##### cube-root
 ###### Overview
 
-Returns cube root of the numeric argument value
+Returns cube root of the numeric argument value.
 
 ##### decrement
 ###### Overview
@@ -57,7 +57,7 @@ Returns the argument number decremented of one unit.
 Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.
 
 ###### Parameter
-* value: The value to divide the argument value
+* value: The value to divide the argument value.
 
 ##### floor
 ###### Overview
@@ -85,7 +85,7 @@ Returns the reciprocal of the argument number, meaning the result of the divisio
 Returns the argument number multiplied by the parameter value.
 
 ###### Parameter
-* value: The value to be multiplied by the argument value
+* value: The value to be multiplied by the argument value.
 
 ##### nth-root
 ###### Overview
@@ -128,7 +128,7 @@ Returns the the numeric argument value raised to the square power.
 ##### square-root
 ###### Overview
 
-Returns square root of the numeric argument value
+Returns square root of the numeric argument value.
 
 ##### subtract
 ###### Overview
@@ -136,7 +136,7 @@ Returns square root of the numeric argument value
 Returns the difference between the argument number and the parameter value.
 
 ###### Parameters
-* value: The value to be subtracted to the argument value
-* times: An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction
+* value: The value to be subtracted to the argument value.
+* times: An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction.
 
 <!-- END AUTO-GENERATED -->

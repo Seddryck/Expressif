@@ -40,7 +40,6 @@ namespace Expressif.Predicates.Numeric
     {
         public Even()
             : base(() => 2) { }
-
     }
 
     /// <summary>

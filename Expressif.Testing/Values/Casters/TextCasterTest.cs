@@ -21,7 +21,6 @@ namespace Expressif.Testing.Values.Casters
         }
 
         [Test]
-        
         [TestCase("Foo bar", typeof(string), "Foo bar")]
         [TestCase("2022-12-01", typeof(DateOnly), "2022-12-01")]
         [TestCase("2022-12-01 16:45:12", typeof(DateTime), "2022-12-01 16:45:12")]

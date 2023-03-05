@@ -34,7 +34,7 @@ Returns the count of distinct chars in the textual argument value. If the value 
 Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.
 
 ###### Parameter
-* substring: The substring to count in the argument value
+* substring: The substring to count in the argument value.
 
 ##### empty-to-null
 ###### Overview
@@ -47,7 +47,7 @@ Returns the argument value except if this value is `empty` then it returns `null
 Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
 
 ###### Parameter
-* length: An integer value between 0 and +Infinity, defining the length of the substring to return
+* length: An integer value between 0 and +Infinity, defining the length of the substring to return.
 
 ##### html-to-text
 ###### Overview
@@ -60,7 +60,7 @@ Returns the argument value that has previously been HTML-encoded into a decoded 
 Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
 
 ###### Parameter
-* length: An integer value between 0 and +Infinity, defining the length of the substring to return
+* length: An integer value between 0 and +Infinity, defining the length of the substring to return.
 
 ##### length
 ###### Overview
@@ -78,7 +78,7 @@ Returns the argument value converted to lowercase using the casing rules of the 
 Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.
 
 ###### Parameter
-* mask: The string representing the mask to be unset from the argument string
+* mask: The string representing the mask to be unset from the argument string.
 
 ##### null-to-empty
 ###### Overview
@@ -126,7 +126,7 @@ Returns the argument value preceeded by the parameter value.
 Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.
 
 ###### Parameter
-* charToRemove: The char to be removed from the argument string
+* charToRemove: The char to be removed from the argument string.
 
 ##### replace-chars
 ###### Overview
@@ -134,8 +134,8 @@ Returns the argument value without the specified character. If the argument and 
 Returns the argument value where a specific char has been replaced by another, both specified as parameters.
 
 ###### Parameters
-* charToReplace: The char to be replaced from the argument string
-* charReplacing: The replacing char from the argument string
+* charToReplace: The char to be replaced from the argument string.
+* charReplacing: The replacing char from the argument string.
 
 ##### replace-slice
 ###### Overview
@@ -153,7 +153,7 @@ Returns the argument value with a subset of the string substitued by a another s
 Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.
 
 ###### Parameter
-* length: An integer value between 0 and +Infinity, defining the length of the substring to skip
+* length: An integer value between 0 and +Infinity, defining the length of the substring to skip.
 
 ##### skip-last-chars
 ###### Overview
@@ -161,7 +161,7 @@ Returns the last chars of the argument value. The length of the string omitted a
 Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.
 
 ###### Parameter
-* length: An integer value between 0 and +Infinity, defining the length of the substring to skip
+* length: An integer value between 0 and +Infinity, defining the length of the substring to skip.
 
 ##### suffix
 ###### Overview
@@ -191,7 +191,7 @@ Returns the argument value converted to an HTML-encoded string
 Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.
 
 ###### Parameter
-* mask: The string representing the mask to apply to the argument string
+* mask: The string representing the mask to apply to the argument string.
 
 ##### token
 ###### Overview
@@ -233,11 +233,11 @@ Returns the argument value except if this value only contains white-space charac
 ##### without-diacritics
 ###### Overview
 
-Returns the argument string without diacritics
+Returns the argument string without diacritics.
 
 ##### without-whitespaces
 ###### Overview
 
-Returns the argument string without white-space characters
+Returns the argument string without white-space characters.
 
 <!-- END AUTO-GENERATED -->

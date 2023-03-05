@@ -91,6 +91,5 @@ namespace Expressif.Testing
             var result = expression.Evaluate("Nikola Tesla");
             Assert.That(result, Is.EqualTo("nikola te"));
         }
-
     }
 }

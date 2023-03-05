@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     /// <summary>
-    /// Returns the argument string without diacritics
+    /// Returns the argument string without diacritics.
     /// </summary>
     public class WithoutDiacritics : BaseTextFunction
     {
@@ -35,7 +34,7 @@ namespace Expressif.Functions.Text
                         sb.Append(stFormD[i]);
                 }
 
-                return (sb.ToString().Normalize(NormalizationForm.FormC));
+                return sb.ToString().Normalize(NormalizationForm.FormC);
             }
             else
                 return value;

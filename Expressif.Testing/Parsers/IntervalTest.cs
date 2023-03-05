@@ -10,7 +10,6 @@ namespace Expressif.Testing.Parsers
 {
     public class IntervalTest
     {
-
         [Test]
         [TestCase("[25;40]", '[', "25", "40", ']')]
         [TestCase("]25;40]", ']', "25", "40", ']')]

@@ -16,8 +16,8 @@ namespace Expressif.Functions.Serializer
                 LiteralParameter l => l.Value.Any(
                     x => Grammar.AlongQuotedChars
                             .Union(Grammar.OpeningQuotedChars)
-                            .Union(Grammar.ClosingQuotedChars).Contains(x)) 
-                        ? $"\"{l.Value}\"" 
+                            .Union(Grammar.ClosingQuotedChars).Contains(x))
+                        ? $"\"{l.Value}\""
                         : l.Value,
                 VariableParameter v => $"@{v.Name}",
                 ObjectPropertyParameter op => $"[{op.Name}]",

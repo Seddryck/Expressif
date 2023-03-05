@@ -9,7 +9,6 @@ namespace Expressif.Testing.Values
 {
     public class YearMonthTest
     {
-
         [Test]
         public void Parse_Name_January2023()
             => Assert.That(YearMonth.Parse("2023-01", null), Is.EqualTo(new YearMonth(2023,1)));

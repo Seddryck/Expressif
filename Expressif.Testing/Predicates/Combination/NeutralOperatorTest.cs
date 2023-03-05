@@ -20,7 +20,7 @@ namespace Expressif.Testing.Predicates.Combination
             predication.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
             factory.Setup(x => x.Instantiate(It.IsAny<string>(), It.IsAny<Context>())).Returns(predication.Object);
             var @operator = new NeutralOperator(predication.Object);
-            
+
             Assert.That(@operator.Evaluate(true, "my value"), Is.EqualTo(expected));
             predication.VerifyAll();
         }

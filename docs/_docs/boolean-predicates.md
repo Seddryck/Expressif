@@ -21,7 +21,7 @@ Returns `true` if the argument is effectively `false` or `null` else return `fal
 Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.
 
 ###### Parameter
-* reference: A boolean value to compare to the argument
+* reference: A boolean value to compare to the argument.
 
 ##### true
 ###### Overview

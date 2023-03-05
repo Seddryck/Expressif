@@ -31,5 +31,4 @@ namespace Expressif.Predicates.Special
             return false;
         }
     }
-
 }

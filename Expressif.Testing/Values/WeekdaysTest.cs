@@ -44,7 +44,7 @@ namespace Expressif.Testing.Values
                     Weekdays.Monday.Index < Weekdays.Tuesday.Index &&
                     Weekdays.Tuesday.Index < Weekdays.Wednesday.Index &&
                     Weekdays.Wednesday.Index < Weekdays.Thursday.Index &&
-                    Weekdays.Thursday.Index  < Weekdays.Friday.Index &&
+                    Weekdays.Thursday.Index < Weekdays.Friday.Index &&
                     Weekdays.Friday.Index < Weekdays.Saturday.Index &&
                     Weekdays.Saturday.Index < Weekdays.Sunday.Index
                 );

@@ -49,7 +49,5 @@ namespace Expressif
          => string.IsNullOrEmpty(value) 
                 ? Array.Empty<string>() 
                 : value.Split(separator);
-
-
     }
 }

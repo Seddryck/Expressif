@@ -148,7 +148,7 @@ namespace Expressif.Testing
         {
             var subPredicationBuilder = new PredicationBuilder()
                 .Chain<StartsWith>("Nik")
-                .Chain<AndOperator, EndsWith>("sla"); ;
+                .Chain<AndOperator, EndsWith>("sla");
 
             var builder = new PredicationBuilder()
                 .Chain<LowerCase>()
@@ -164,7 +164,7 @@ namespace Expressif.Testing
         {
             var subPredicationBuilder = new PredicationBuilder()
                 .Chain<StartsWith>("Nik")
-                .Chain<AndOperator, EndsWith>("sla"); ;
+                .Chain<AndOperator, EndsWith>("sla");
 
             var builder = new PredicationBuilder()
                 .Chain<LowerCase>()

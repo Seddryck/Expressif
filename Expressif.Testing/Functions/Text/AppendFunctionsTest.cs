@@ -9,7 +9,6 @@ namespace Expressif.Testing.Functions.Text
 {
     public class AppendFunctionsTest
     {
-
         [Test]
         [TestCase("123456789", "abc", "abc123456789")]
         [TestCase("(null)", "abc", "(null)")]

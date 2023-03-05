@@ -67,7 +67,6 @@ namespace Expressif.Parsers
             Parse.ChainOperator(Operator.Parser, SubPredication.Parser.Or(BasicPredication.Parser), (op, left, right) => new Predication(left, op, right));
     }
 
-
     public class InputPredication
     {
         public IPredication Predication { get; }

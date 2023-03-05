@@ -13,7 +13,6 @@ namespace Expressif
 {
     public class PredicationBuilder
     {
-
         private Context Context { get; }
         private PredicationFactory Factory { get; }
         private PredicationSerializer Serializer { get; }
@@ -139,8 +138,7 @@ namespace Expressif
                 else
                     throw new NotSupportedException();
 
-                //TODO implement negation
-
+                // TODO implement negation
                 predicate = predicate is null ? memberPredicate : new CombinedPredicate(predicate, @operator!, memberPredicate!);
             }
             return predicate!;

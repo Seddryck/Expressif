@@ -11,7 +11,7 @@ namespace Expressif.Predicates.Text
     /// </summary>
     public class Empty : BaseTextPredicateWithoutReference
     {
-        protected override bool EvaluateText(string value) => value.Length==0;
+        protected override bool EvaluateText(string value) => value.Length == 0;
     }
 
     /// <summary>

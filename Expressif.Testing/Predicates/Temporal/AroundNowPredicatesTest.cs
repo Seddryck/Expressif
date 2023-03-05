@@ -79,7 +79,6 @@ namespace Expressif.Testing.Predicates.Temporal
                     )
                 , Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("2022-12-28", true)]
         [TestCase("2022-12-29", true)]

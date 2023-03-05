@@ -32,7 +32,7 @@ namespace Expressif.Testing.Values.Special
         [Test]
         public void Equals_WhitespaceLiteral_Valid()
             => Assert.That(new Whitespace().Equals("(blank)"), Is.True);
-        
+
         [Test]
         public void EqualOperator_WhitespaceLiteral_Valid()
             => Assert.That(new Whitespace() == "(blank)", Is.True);

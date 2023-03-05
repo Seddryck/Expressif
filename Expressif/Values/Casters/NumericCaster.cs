@@ -35,7 +35,6 @@ namespace Expressif.Values.Casters
 
         public virtual T Parse(string text)
             => TryParse(text, out var value) ? value : throw new FormatException();
-
     }
 
     public class NumericCaster : BaseNumericCaster<decimal>, ICaster<decimal>, IParser<decimal>
@@ -44,8 +43,8 @@ namespace Expressif.Values.Casters
 
         protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out decimal value)
             => TypeChecker.IsNumericType(obj)
-                ? (value = CastNumeric(obj))==value
-                : (value = default)!=value;
+                ? (value = CastNumeric(obj)) == value
+                : (value = default) != value;
 
         protected override decimal CastNumeric(object numeric)
             => Convert.ToDecimal(numeric, CultureInfo.InvariantCulture.NumberFormat);
@@ -56,6 +55,6 @@ namespace Expressif.Values.Casters
                 : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type Numeric. The type Numeric can only be casted from the underlying numeric types (int, float, ...), Boolean and String. The expect string format can include decimal point, thousand separators, sign symbol and white spaces.");
 
         public override bool TryParse(string text, [NotNullWhen(true)] out decimal value)
-            =>  decimal.TryParse(text, Style, Format, out value);
+            => decimal.TryParse(text, Style, Format, out value);
     }
 }

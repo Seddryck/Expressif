@@ -43,7 +43,6 @@ namespace Expressif.Functions.Text
             if (new Null().Equals(value))
                 return EvaluateNull();
 
-
             if (new Whitespace().Equals(value))
                 return EvaluateBlank();
 
@@ -100,5 +99,4 @@ namespace Expressif.Functions.Text
         protected override object EvaluateNull() => new Empty().Keyword;
         protected override object EvaluateString(string value) => value;
     }
-
 }

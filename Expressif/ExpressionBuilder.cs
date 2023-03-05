@@ -75,6 +75,7 @@ namespace Expressif
                 };
                 function = function is null ? member : new ChainFunction(new[] { function, member });
             }
+
             return function!;
         }
 

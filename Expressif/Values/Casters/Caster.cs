@@ -13,7 +13,8 @@ namespace Expressif.Values.Casters
             if (value == null)
                 return default;
 
-            var @switch = new Dictionary<Type, Func<object>> {
+            var @switch = new Dictionary<Type, Func<object>> 
+            {
                 { typeof(bool), () => new BooleanCaster().Cast(value) },
                 { typeof(DateTime), () => new DateTimeCaster().Cast(value) },
                 { typeof(int), () => new IntegerCaster().Cast(value) },

@@ -49,7 +49,7 @@ namespace Expressif.Functions.Text
                 i += 1;
             }
             while (index != -1 && i <= Count.Invoke());
-            
+
             if (index == -1)
                 return new Null().Keyword;
 

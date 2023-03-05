@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     /// <summary>
     /// Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
     /// </summary>
@@ -36,5 +35,4 @@ namespace Expressif.Functions.Text
             throw new ArgumentException($"Impossible to transform the value '{value}' into a date using the format '{Format}'");
         }
     }
-
 }

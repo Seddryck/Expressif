@@ -23,5 +23,4 @@ namespace Expressif.Functions.Introspection
         bool Optional,
         string Summary
     );
-    
 }

@@ -69,7 +69,6 @@ namespace Expressif.Testing.Functions.Numeric
         public void CubeRoot_Valid(object value, decimal? expected)
             => Assert.That(new CubeRoot().Evaluate(value), Is.EqualTo(expected));
 
-
         [Test]
         [TestCase(0, 0, null)]
         [TestCase(1, 0, null)]

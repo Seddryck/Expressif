@@ -9,7 +9,6 @@ using System.Text;
 
 namespace Expressif.Functions.Special
 {
-
     [Function(prefix: "")]
     public abstract class BaseSpecialFunction : IFunction
     {

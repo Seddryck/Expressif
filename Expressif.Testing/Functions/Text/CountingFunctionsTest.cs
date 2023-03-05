@@ -44,7 +44,6 @@ namespace Expressif.Testing.Functions.Text
         public void CountSubstring_Valid(object value, string substring, int expected)
             => Assert.That(new CountSubstring(() => substring).Evaluate(value), Is.EqualTo(expected));
 
-
         [Test]
         [TestCase("My taylor is rich", 4)]
         [TestCase(" My Lord ! ", 2)]

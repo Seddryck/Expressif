@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     public abstract class BaseTextCasing : BaseTextFunction
     { }
 
@@ -25,5 +24,4 @@ namespace Expressif.Functions.Text
     {
         protected override object EvaluateString(string value) => value.ToUpperInvariant();
     }
-
 }

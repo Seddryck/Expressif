@@ -12,7 +12,7 @@ namespace Expressif.Functions.Introspection
         protected record class AttributeInfo<T>(Type Type, T Attribute) { }
         private ITypesProbe Probe { get; }
 
-        protected Type[]? _types;
+        private Type[]? _types;
         protected Type[] Types { get => _types ??= Probe.Locate().ToArray(); }
 
         protected BaseIntrospector(ITypesProbe probe)

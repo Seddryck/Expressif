@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     public abstract class BaseTextCountingFunction : BaseTextFunction
     {
         protected override object EvaluateSpecial(string value) => -1;
@@ -51,7 +50,7 @@ namespace Expressif.Functions.Text
     {
         public Func<string> Substring { get; }
 
-        /// <param name="substring">The substring to count in the argument value</param>
+        /// <param name="substring">The substring to count in the argument value.</param>
         public CountSubstring(Func<string> substring)
             => Substring = substring;
 
@@ -96,5 +95,4 @@ namespace Expressif.Functions.Text
             return tokenizer.Execute(value).Length;
         }
     }
-
 }

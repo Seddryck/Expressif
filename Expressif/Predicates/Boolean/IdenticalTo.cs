@@ -14,7 +14,7 @@ namespace Expressif.Predicates.Boolean
     {
         public Func<bool> Reference { get; }
 
-        /// <param name="reference">A boolean value to compare to the argument</param>
+        /// <param name="reference">A boolean value to compare to the argument.</param>
         public IdenticalTo(Func<bool> reference)
             => Reference = reference;
 

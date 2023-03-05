@@ -126,6 +126,4 @@ namespace Expressif.Predicates.Text
         protected virtual bool EvaluateTimeSpan(TimeSpan ts)
             => ts.TotalHours < 24;
     }
-
-    
 }

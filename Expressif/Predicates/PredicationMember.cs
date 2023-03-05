@@ -30,7 +30,7 @@ namespace Expressif.Predicates
                     _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
                 });
             }
-            var @operator = Operator==null ? null : factory.Instantiate<ICombinationOperator>(Operator);
+            var @operator = Operator == null ? null : factory.Instantiate<ICombinationOperator>(Operator);
             var predicate = factory.Instantiate(Negation, Predicate, typedParameters.ToArray(), context);
             return (@operator, predicate);
         }

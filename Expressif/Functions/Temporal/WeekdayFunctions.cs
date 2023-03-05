@@ -22,7 +22,7 @@ namespace Expressif.Functions.Temporal
     {
         public Func<Weekday> DayOfWeek { get; }
 
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public NextWeekday(Func<Weekday> weekday)
             : base() { DayOfWeek = weekday; }
 
@@ -40,7 +40,7 @@ namespace Expressif.Functions.Temporal
     {
         public Func<Weekday> DayOfWeek { get; }
 
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public NextWeekdayOrSame(Func<Weekday> weekday)
             : base() { DayOfWeek = weekday; }
 
@@ -58,7 +58,7 @@ namespace Expressif.Functions.Temporal
     {
         public Func<Weekday> DayOfWeek { get; }
 
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public PreviousWeekday(Func<Weekday> weekday)
             : base() { DayOfWeek = weekday; }
 
@@ -76,7 +76,7 @@ namespace Expressif.Functions.Temporal
     {
         public Func<Weekday> DayOfWeek { get; }
 
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public PreviousWeekdayOrSame(Func<Weekday> weekday)
             : base() { DayOfWeek = weekday; }
 
@@ -92,7 +92,7 @@ namespace Expressif.Functions.Temporal
     /// </summary>
     public class FirstInMonth : NextWeekdayOrSame
     {
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public FirstInMonth(Func<Weekday> weekday)
             : base(weekday) { }
 
@@ -105,7 +105,7 @@ namespace Expressif.Functions.Temporal
     /// </summary>
     public class LastInMonth : PreviousWeekdayOrSame
     {
-        /// <param name="weekday">The day of week to compare to the argument</param>
+        /// <param name="weekday">The day of week to compare to the argument.</param>
         public LastInMonth(Func<Weekday> weekday)
             : base(weekday) { }
 
@@ -122,7 +122,7 @@ namespace Expressif.Functions.Temporal
         internal Func<int> Count { get; }
         internal Func<object?, bool> IsBusinessDay { get; }
 
-        /// <param name="count">The count of business days to move forward</param>
+        /// <param name="count">The count of business days to move forward.</param>
         public NextBusinessDays(Func<int> count)
             : base() => (Count, IsBusinessDay) = (count, new Predicates.Temporal.BusinessDay().Evaluate);
 
@@ -131,11 +131,11 @@ namespace Expressif.Functions.Temporal
 
         protected virtual DateOnly BasicStrategy(DateOnly date, int direction)
         {
-            //Move backward to previous business day
+            // Move backward to previous business day
             while (!IsBusinessDay(date))
                 date = date.AddDays(-1 * direction);
 
-            //Move forward to next Business day
+            // Move forward to next Business day
             var i = 0;
             var count = Count.Invoke();
             while (i != count)
@@ -154,8 +154,7 @@ namespace Expressif.Functions.Temporal
     [Function(aliases: new[] { "previous-business-day", "subtract-business-days" })]
     public class PreviousBusinessDays : NextBusinessDays
     {
-
-        /// <param name="count">The count of business days to move forward</param>
+        /// <param name="count">The count of business days to move forward.</param>
         public PreviousBusinessDays(Func<int> count)
             : base(count) { }
 

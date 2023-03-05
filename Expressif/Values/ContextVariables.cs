@@ -41,7 +41,7 @@ namespace Expressif.Values
                 Variables.Remove(name);
         }
 
-        public int Count {get => Variables.Count;}
+        public int Count { get => Variables.Count; }
 
         public object? this[string name]
         {

@@ -47,12 +47,12 @@
       {
         "Name": "value",
         "Optional": false,
-        "Summary": "The value to be subtracted to the argument value"
+        "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
         "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
       }
     ]
   },
@@ -68,12 +68,12 @@
       {
         "Name": "value",
         "Optional": false,
-        "Summary": "The value to be added to the argument value"
+        "Summary": "The value to be added to the argument value."
       },
       {
         "Name": "times",
         "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
       }
     ]
   },
@@ -125,7 +125,7 @@
       {
         "Name": "count",
         "Optional": false,
-        "Summary": "The count of business days to move forward"
+        "Summary": "The count of business days to move forward."
       }
     ]
   },
@@ -143,7 +143,7 @@
       {
         "Name": "count",
         "Optional": false,
-        "Summary": "The count of business days to move forward"
+        "Summary": "The count of business days to move forward."
       }
     ]
   },
@@ -159,7 +159,7 @@
       {
         "Name": "value",
         "Optional": false,
-        "Summary": "The value to be multiplied by the argument value"
+        "Summary": "The value to be multiplied by the argument value."
       }
     ]
   },
@@ -175,7 +175,7 @@
       {
         "Name": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument"
+        "Summary": "The day of week to compare to the argument."
       }
     ]
   },
@@ -191,7 +191,7 @@
       {
         "Name": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument"
+        "Summary": "The day of week to compare to the argument."
       }
     ]
   },
@@ -207,7 +207,7 @@
       {
         "Name": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument"
+        "Summary": "The day of week to compare to the argument."
       }
     ]
   },
@@ -223,7 +223,7 @@
       {
         "Name": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument"
+        "Summary": "The day of week to compare to the argument."
       }
     ]
   },
@@ -239,7 +239,7 @@
       {
         "Name": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument"
+        "Summary": "The day of week to compare to the argument."
       }
     ]
   },
@@ -335,7 +335,7 @@
       {
         "Name": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument"
+        "Summary": "The day of week to compare to the argument."
       }
     ]
   },
@@ -361,7 +361,7 @@
       {
         "Name": "value",
         "Optional": false,
-        "Summary": "The value to divide the argument value"
+        "Summary": "The value to divide the argument value."
       }
     ]
   },
@@ -490,7 +490,7 @@
       "numeric-to-cube-root"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns cube root of the numeric argument value",
+    "Summary": "Returns cube root of the numeric argument value.",
     "Parameters": []
   },
   {
@@ -565,12 +565,12 @@
       {
         "Name": "min",
         "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it"
+        "Summary": "value returned in case the argument value is smaller than it."
       },
       {
         "Name": "max",
         "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it"
+        "Summary": "value returned in case the argument value is greater than it."
       }
     ]
   },
@@ -617,7 +617,7 @@
       "numeric-to-square-root"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns square root of the numeric argument value",
+    "Summary": "Returns square root of the numeric argument value.",
     "Parameters": []
   },
   {
@@ -808,7 +808,7 @@
       {
         "Name": "mask",
         "Optional": false,
-        "Summary": "The string representing the mask to be unset from the argument string"
+        "Summary": "The string representing the mask to be unset from the argument string."
       }
     ]
   },
@@ -822,7 +822,7 @@
       {
         "Name": "mask",
         "Optional": false,
-        "Summary": "The string representing the mask to apply to the argument string"
+        "Summary": "The string representing the mask to apply to the argument string."
       }
     ]
   },
@@ -870,7 +870,7 @@
       {
         "Name": "substring",
         "Optional": false,
-        "Summary": "The substring to count in the argument value"
+        "Summary": "The substring to count in the argument value."
       }
     ]
   },
@@ -906,12 +906,12 @@
       {
         "Name": "charToReplace",
         "Optional": false,
-        "Summary": "The char to be replaced from the argument string"
+        "Summary": "The char to be replaced from the argument string."
       },
       {
         "Name": "charReplacing",
         "Optional": false,
-        "Summary": "The replacing char from the argument string"
+        "Summary": "The replacing char from the argument string."
       }
     ]
   },
@@ -927,7 +927,7 @@
       {
         "Name": "charToRemove",
         "Optional": false,
-        "Summary": "The char to be removed from the argument string"
+        "Summary": "The char to be removed from the argument string."
       }
     ]
   },
@@ -1030,7 +1030,7 @@
       "text-to-without-whitespaces"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument string without white-space characters",
+    "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
   },
   {
@@ -1158,7 +1158,7 @@
       "text-to-without-diacritics"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument string without diacritics",
+    "Summary": "Returns the argument string without diacritics.",
     "Parameters": []
   },
   {
@@ -1208,7 +1208,7 @@
       "dateTime-to-length-of-year"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument. \r\n            If the argument is not a dateTime but an integer, returns count of days of the corresponding year.\r\n            It returns 365 or 366 (for leap years).",
+    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument.\r\n            If the argument is not a dateTime but an integer, returns count of days of the corresponding year.\r\n            It returns 365 or 366 (for leap years).",
     "Parameters": []
   },
   {
@@ -1233,7 +1233,7 @@
       {
         "Name": "length",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
     ]
   },
@@ -1249,7 +1249,7 @@
       {
         "Name": "length",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip"
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
     ]
   },
@@ -1265,7 +1265,7 @@
       {
         "Name": "length",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return"
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
       }
     ]
   },
@@ -1281,7 +1281,7 @@
       {
         "Name": "length",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return"
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
       }
     ]
   },

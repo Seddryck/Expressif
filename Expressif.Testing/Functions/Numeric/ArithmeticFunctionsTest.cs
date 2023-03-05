@@ -9,7 +9,6 @@ namespace Expressif.Testing.Functions.Numeric
 {
     public class ArithmeticFunctionsTest
     {
-
         [Test]
         [TestCase(0, 1)]
         [TestCase(1, 2)]
@@ -93,6 +92,5 @@ namespace Expressif.Testing.Functions.Numeric
         public void Divide_4_Valid(object value, decimal? expected)
             => Assert.That(new Divide(() => 4)
                 .Evaluate(value), Is.EqualTo(expected));
-
     }
 }

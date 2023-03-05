@@ -33,5 +33,4 @@ namespace Expressif.Predicates.Boolean
 
         protected abstract bool EvaluateBoolean(bool boolean);
     }
-
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Text
 {
     /// <summary>
-    /// Returns `true` if all characters of the text value passed as argument are lower-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise. 
+    /// Returns `true` if all characters of the text value passed as argument are lower-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
     /// </summary>
     public class LowerCase : BaseTextPredicateWithoutReference
     {
