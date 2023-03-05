@@ -19,7 +19,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "A", false)]
         public void EquivalentTo_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new EquivalentTo(() => reference);
             Assert.Multiple(() =>
             {
@@ -37,7 +36,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "A", false)]
         public void SortedAfter_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new SortedAfter(() => reference);
             Assert.Multiple(() =>
             {
@@ -55,7 +53,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "A", false)]
         public void SortedAfterOrEquivalentTo_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new SortedAfterOrEquivalentTo(() => reference);
             Assert.Multiple(() =>
             {
@@ -73,7 +70,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "A", true)]
         public void SortedBefore_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new SortedBefore(() => reference);
             Assert.Multiple(() =>
             {
@@ -91,7 +87,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "A", true)]
         public void SortedBeforeOrEquivalentTo_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new SortedBeforeOrEquivalentTo(() => reference);
             Assert.Multiple(() =>
             {

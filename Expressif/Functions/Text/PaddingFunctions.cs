@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text
 {
-
     public abstract class BasePaddingFunction : BaseTextLength
     {
         public Func<char> Character { get; }
@@ -17,7 +16,6 @@ namespace Expressif.Functions.Text
 
         protected override object EvaluateEmpty() => new string(Character.Invoke(), Length.Invoke());
         protected override object EvaluateNull() => new string(Character.Invoke(), Length.Invoke());
-
     }
 
     /// <summary>
@@ -72,5 +70,4 @@ namespace Expressif.Functions.Text
             return text.ToString();
         }
     }
-
 }

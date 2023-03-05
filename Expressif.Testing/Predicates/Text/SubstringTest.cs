@@ -21,7 +21,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "Foo", false)]
         public void StartsWith_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new StartsWith(() => reference);
             Assert.Multiple(() =>
             {
@@ -41,7 +40,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "bar", false)]
         public void EndsWith_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new EndsWith(() => reference);
             Assert.Multiple(() =>
             {
@@ -61,7 +59,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", "bar", false)]
         public void Contains_Text_Success(object value, string reference, bool expected)
         {
-
             var predicate = new Expressif.Predicates.Text.Contains(() => reference);
             Assert.Multiple(() =>
             {
@@ -79,7 +76,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase(null, "^[A-Z]+$", false)]
         public void MatchesRegex_TextIgnoreCase_Success(object value, string reference, bool expected)
         {
-
             var predicate = new MatchesRegex(() => reference);
             Assert.Multiple(() =>
             {
@@ -96,7 +92,6 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("FOOBAR", "^[a-z]+$", false)]
         public void MatchesRegex_TextDontIgnoreCase_Success(object value, string reference, bool expected)
         {
-
             var predicate = new MatchesRegex(() => reference, StringComparer.InvariantCulture);
             Assert.Multiple(() =>
             {

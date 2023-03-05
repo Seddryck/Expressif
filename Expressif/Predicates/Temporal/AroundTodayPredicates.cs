@@ -91,7 +91,6 @@ namespace Expressif.Predicates.Temporal
             => date >= new DateOnly(Today.Year, Today.Month, 1) && date <= new DateOnly(Today.Year, Today.Month, 1).AddMonths(1).AddDays(-1);
     }
 
-
     /// <summary>
     /// Returns true if the date passed as argument is part of the same year than the current date. Returns false otherwise.
     /// </summary>
@@ -143,7 +142,6 @@ namespace Expressif.Predicates.Temporal
         protected override bool EvaluateDate(DateOnly date)
             => date >= new DateOnly(Today.Year, 1, 1).AddYears(1) && date <= new DateOnly(Today.Year, 1, 1).AddYears(1).AddDays(-1).AddYears(1);
     }
-
 
     /// <summary>
     /// Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.
@@ -219,6 +217,4 @@ namespace Expressif.Predicates.Temporal
         protected override bool EvaluateDate(DateOnly date)
             => date >= Today.AddDays(-1 * Count.Invoke()) && date <= Today.AddDays(-1);
     }
-
 }
-
