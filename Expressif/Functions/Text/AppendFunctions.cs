@@ -65,7 +65,6 @@ namespace Expressif.Functions.Text
         public Append(Func<string> text)
             : base(text) { }
         protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
-        
     }
 
     /// <summary>
