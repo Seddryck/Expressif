@@ -17,7 +17,6 @@ namespace Expressif.Functions.Text
         protected override object EvaluateBlank() => Append.Invoke() ?? string.Empty;
     }
 
-
     public abstract class BaseTextAppendNonNullable : BaseTextAppend
     {
         public BaseTextAppendNonNullable(Func<string> append)
@@ -54,7 +53,6 @@ namespace Expressif.Functions.Text
             : base(suffix) { }
         protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
     }
-
 
     /// <summary>
     /// Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
@@ -105,7 +103,6 @@ namespace Expressif.Functions.Text
     {
         public AppendSpace()
             : base(() => ((char)32).ToString()) { }
-
     }
 
     /// <summary>
