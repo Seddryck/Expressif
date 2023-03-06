@@ -28,6 +28,26 @@ namespace Expressif.Testing.Functions.Text
                 , Is.EqualTo(expected));
 
         [Test]
+        [TestCase("123456789", "abc", "abc123456789")]
+        [TestCase("(null)", "abc", "abc")]
+        [TestCase("(null)", "(null)", "")]
+        [TestCase("(empty)", "abc", "abc")]
+        [TestCase("(blank)", "abc", "abc")]
+        public void Prepend_Valid(string value, string prepend, string expected)
+            => Assert.That(new Prepend(() => prepend).Evaluate(value)
+                , Is.EqualTo(expected));
+
+        [Test]
+        [TestCase("123456789", "abc", "123456789abc")]
+        [TestCase("(null)", "abc", "abc")]
+        [TestCase("(null)", "(null)", "")]
+        [TestCase("(empty)", "abc", "abc")]
+        [TestCase("(blank)", "abc", "abc")]
+        public void Append_Valid(string value, string append, string expected)
+            => Assert.That(new Append(() => append).Evaluate(value)
+                , Is.EqualTo(expected));
+
+        [Test]
         [TestCase("123456789", 3, 2, "abc", "123abc6789")]
         [TestCase("123456789", 3, 5, "abc", "123abc9")]
         [TestCase("123456789", 3, 20, "abc", "123abc")]

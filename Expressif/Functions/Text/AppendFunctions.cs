@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Expressif.Values.Special;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,6 +37,44 @@ namespace Expressif.Functions.Text
         public Suffix(Func<string> suffix)
             : base(suffix) { }
         protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
+    }
+
+    public abstract class BaseTextAppendNonNullable : BaseTextAppend
+    {
+        public BaseTextAppendNonNullable(Func<string> append)
+            : base(append) { }
+
+        protected override object EvaluateNull()
+        {
+            var value = Append.Invoke();
+            if (new Null().Equals(value))
+                return string.Empty;
+            else
+                return value;
+        }
+    }
+
+    /// <summary>
+    /// Returns a text value with the text specified as the parameter after the argument. If the argument is `null`, it returns the text specified as the parameter.
+    /// </summary>
+    public class Append : BaseTextAppendNonNullable
+    {
+        /// <param name="text">The text to append</param>
+        public Append(Func<string> text)
+            : base(text) { }
+        protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
+        
+    }
+
+    /// <summary>
+    /// Returns a text value with the text specified as the parameter before the argument. If the argument is `null`, it returns the text specified as the parameter.
+    /// </summary>
+    public class Prepend : BaseTextAppendNonNullable
+    {
+        /// <param name="text">The text to prepend</param>
+        public Prepend(Func<string> text)
+            : base(text) { }
+        protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
     }
 
     /// <summary>
