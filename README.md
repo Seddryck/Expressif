@@ -256,6 +256,7 @@ Install-Package Expressif
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | utc-to-local               |                                                                                  |
 |Text     | after-substring            | text-to-after-substring                                                          |
+|Text     | append                     | text-to-append                                                                   |
 |Text     | before-substring           | text-to-before-substring                                                         |
 |Text     | count-distinct-chars       | text-to-count-distinct-chars                                                     |
 |Text     | count-substring            | text-to-count-substring                                                          |
@@ -271,6 +272,7 @@ Install-Package Expressif
 |Text     | pad-left                   | text-to-pad-left                                                                 |
 |Text     | pad-right                  | text-to-pad-right                                                                |
 |Text     | prefix                     | text-to-prefix                                                                   |
+|Text     | prepend                    | text-to-prepend                                                                  |
 |Text     | remove-chars               | text-to-remove-chars                                                             |
 |Text     | replace-chars              | text-to-replace-chars                                                            |
 |Text     | replace-slice              | text-to-replace-slice                                                            |

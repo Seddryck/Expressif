@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, before-substring, count-distinct-chars, count-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, append, before-substring, count-distinct-chars, count-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prepend, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -13,6 +13,14 @@ Returns the substring of the argument string, containing all the characters imme
 ###### Parameters
 * substring: The string to seek.
 * count (optional) : The number of character positions to examine.
+
+##### append
+###### Overview
+
+Returns a text value with the text specified as the parameter after the argument. If the argument is `null`, it returns the text specified as the parameter.
+
+###### Parameter
+* text: The text to append
 
 ##### before-substring
 ###### Overview
@@ -119,6 +127,14 @@ Returns the argument value preceeded by the parameter value.
 
 ###### Parameter
 * prefix: The text to append
+
+##### prepend
+###### Overview
+
+Returns a text value with the text specified as the parameter before the argument. If the argument is `null`, it returns the text specified as the parameter.
+
+###### Parameter
+* text: The text to prepend
 
 ##### remove-chars
 ###### Overview

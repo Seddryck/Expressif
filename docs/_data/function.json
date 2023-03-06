@@ -16,16 +16,6 @@
     ]
   },
   {
-    "Name": "decrement",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-decrement"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the argument number decremented of one unit.",
-    "Parameters": []
-  },
-  {
     "Name": "increment",
     "IsPublic": true,
     "Aliases": [
@@ -148,22 +138,6 @@
     ]
   },
   {
-    "Name": "multiply",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-multiply"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the argument number multiplied by the parameter value.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Optional": false,
-        "Summary": "The value to be multiplied by the argument value."
-      }
-    ]
-  },
-  {
     "Name": "last-in-month",
     "IsPublic": true,
     "Aliases": [
@@ -180,13 +154,23 @@
     ]
   },
   {
-    "Name": "previous-weekday-or-same",
+    "Name": "decrement",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-weekday-or-same"
+      "numeric-to-decrement"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the argument number decremented of one unit.",
+    "Parameters": []
+  },
+  {
+    "Name": "first-in-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-in-month"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
+    "Summary": "Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
     "Parameters": [
       {
         "Name": "weekday",
@@ -324,13 +308,23 @@
     "Parameters": []
   },
   {
-    "Name": "first-in-month",
+    "Name": "ceiling-hour",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-first-in-month"
+      "dateTime-to-ceiling-hour"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
+    "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero and an hour added.",
+    "Parameters": []
+  },
+  {
+    "Name": "previous-weekday-or-same",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-weekday-or-same"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
     "Parameters": [
       {
         "Name": "weekday",
@@ -340,14 +334,20 @@
     ]
   },
   {
-    "Name": "ceiling-hour",
+    "Name": "multiply",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-ceiling-hour"
+      "numeric-to-multiply"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero and an hour added.",
-    "Parameters": []
+    "Scope": "Numeric",
+    "Summary": "Returns the argument number multiplied by the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "The value to be multiplied by the argument value."
+      }
+    ]
   },
   {
     "Name": "divide",
@@ -366,13 +366,11 @@
     ]
   },
   {
-    "Name": "ceiling",
+    "Name": "null-to-zero",
     "IsPublic": true,
-    "Aliases": [
-      "numeric-to-ceiling"
-    ],
+    "Aliases": [],
     "Scope": "Numeric",
-    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
     "Parameters": []
   },
   {
@@ -476,14 +474,6 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-zero",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
-    "Parameters": []
-  },
-  {
     "Name": "cube-root",
     "IsPublic": true,
     "Aliases": [
@@ -491,6 +481,16 @@
     ],
     "Scope": "Numeric",
     "Summary": "Returns cube root of the numeric argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "square-root",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-square-root"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns square root of the numeric argument value.",
     "Parameters": []
   },
   {
@@ -611,23 +611,13 @@
     "Parameters": []
   },
   {
-    "Name": "square-root",
+    "Name": "ceiling",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-square-root"
+      "numeric-to-ceiling"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns square root of the numeric argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "root",
-    "IsPublic": true,
-    "Aliases": [
-      "path-to-root"
-    ],
-    "Scope": "IO",
-    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
     "Parameters": []
   },
   {
@@ -641,38 +631,44 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-date",
+    "Name": "root",
+    "IsPublic": true,
+    "Aliases": [
+      "path-to-root"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "invalid-to-date",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
     "Parameters": [
       {
         "Name": "default",
         "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
+        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
       }
     ]
   },
   {
-    "Name": "whitespaces-to-null",
+    "Name": "set-time",
     "IsPublic": true,
     "Aliases": [
-      "blank-to-null"
+      "dateTime-to-set-time"
     ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "whitespaces-to-empty",
-    "IsPublic": true,
-    "Aliases": [
-      "blank-to-empty"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
-    "Parameters": []
+    "Scope": "Temporal",
+    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
+    "Parameters": [
+      {
+        "Name": "instant",
+        "Optional": false,
+        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
+      }
+    ]
   },
   {
     "Name": "before-substring",
@@ -827,19 +823,29 @@
     ]
   },
   {
-    "Name": "empty-to-null",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
-    "Parameters": []
-  },
-  {
     "Name": "text-to-html",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value converted to an HTML-encoded string",
+    "Parameters": []
+  },
+  {
+    "Name": "html-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Text",
+    "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
+    "Parameters": []
+  },
+  {
+    "Name": "whitespaces-to-empty",
+    "IsPublic": true,
+    "Aliases": [
+      "blank-to-empty"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
     "Parameters": []
   },
   {
@@ -855,22 +861,6 @@
         "Name": "separator",
         "Optional": false,
         "Summary": "A character that delimits the substrings in this instance."
-      }
-    ]
-  },
-  {
-    "Name": "count-substring",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-count-substring"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.",
-    "Parameters": [
-      {
-        "Name": "substring",
-        "Optional": false,
-        "Summary": "The substring to count in the argument value."
       }
     ]
   },
@@ -978,6 +968,38 @@
     ]
   },
   {
+    "Name": "prepend",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-prepend"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns a text value with the text specified as the parameter before the argument. If the argument is `null`, it returns the text specified as the parameter.",
+    "Parameters": [
+      {
+        "Name": "text",
+        "Optional": false,
+        "Summary": "The text to prepend"
+      }
+    ]
+  },
+  {
+    "Name": "append",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-append"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns a text value with the text specified as the parameter after the argument. If the argument is `null`, it returns the text specified as the parameter.",
+    "Parameters": [
+      {
+        "Name": "text",
+        "Optional": false,
+        "Summary": "The text to append"
+      }
+    ]
+  },
+  {
     "Name": "suffix",
     "IsPublic": true,
     "Aliases": [
@@ -994,26 +1016,38 @@
     ]
   },
   {
-    "Name": "html-to-text",
+    "Name": "count-substring",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "text-to-count-substring"
+    ],
     "Scope": "Text",
-    "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
+    "Summary": "Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The substring to count in the argument value."
+      }
+    ]
+  },
+  {
+    "Name": "whitespaces-to-null",
+    "IsPublic": true,
+    "Aliases": [
+      "blank-to-null"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
     "Parameters": []
   },
   {
-    "Name": "invalid-to-date",
+    "Name": "empty-to-null",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
-      }
-    ]
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
+    "Parameters": []
   },
   {
     "Name": "null-to-empty",
@@ -1022,32 +1056,6 @@
     "Scope": "Text",
     "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
     "Parameters": []
-  },
-  {
-    "Name": "without-whitespaces",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-without-whitespaces"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument string without white-space characters.",
-    "Parameters": []
-  },
-  {
-    "Name": "set-time",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-set-time"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
-    "Parameters": [
-      {
-        "Name": "instant",
-        "Optional": false,
-        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
-      }
-    ]
   },
   {
     "Name": "clamp",
@@ -1152,16 +1160,6 @@
     "Parameters": []
   },
   {
-    "Name": "without-diacritics",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-without-diacritics"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument string without diacritics.",
-    "Parameters": []
-  },
-  {
     "Name": "first-of-year",
     "IsPublic": true,
     "Aliases": [
@@ -1169,6 +1167,16 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns the first of January of the same year than the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "first-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-of-month"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the first day of the month of the same month/year than the argument dateTime.",
     "Parameters": []
   },
   {
@@ -1307,14 +1315,38 @@
     ]
   },
   {
-    "Name": "first-of-month",
+    "Name": "without-whitespaces",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-first-of-month"
+      "text-to-without-whitespaces"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the first day of the month of the same month/year than the argument dateTime.",
+    "Scope": "Text",
+    "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "without-diacritics",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-without-diacritics"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument string without diacritics.",
+    "Parameters": []
+  },
+  {
+    "Name": "null-to-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is `null`."
+      }
+    ]
   },
   {
     "Name": "directory",
