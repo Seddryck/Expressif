@@ -17,27 +17,6 @@ namespace Expressif.Functions.Text
         protected override object EvaluateBlank() => Append.Invoke() ?? string.Empty;
     }
 
-    /// <summary>
-    /// Returns the argument value preceeded by the parameter value.
-    /// </summary>
-    public class Prefix : BaseTextAppend
-    {
-        /// <param name="prefix">The text to append</param>
-        public Prefix(Func<string> prefix)
-            : base(prefix) { }
-        protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
-    }
-
-    /// <summary>
-    /// Returns the argument value followed by the parameter value.
-    /// </summary>
-    public class Suffix : BaseTextAppend
-    {
-        /// <param name="suffix">The text to append</param>
-        public Suffix(Func<string> suffix)
-            : base(suffix) { }
-        protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
-    }
 
     public abstract class BaseTextAppendNonNullable : BaseTextAppend
     {
@@ -55,7 +34,30 @@ namespace Expressif.Functions.Text
     }
 
     /// <summary>
-    /// Returns a text value with the text specified as the parameter after the argument. If the argument is `null`, it returns the text specified as the parameter.
+    /// Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.
+    /// </summary>
+    public class Prefix : BaseTextAppend
+    {
+        /// <param name="prefix">The text to append</param>
+        public Prefix(Func<string> prefix)
+            : base(prefix) { }
+        protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
+    }
+
+    /// <summary>
+    /// Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.
+    /// </summary>
+    public class Suffix : BaseTextAppend
+    {
+        /// <param name="suffix">The text to append</param>
+        public Suffix(Func<string> suffix)
+            : base(suffix) { }
+        protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
+    }
+
+
+    /// <summary>
+    /// Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
     /// </summary>
     public class Append : BaseTextAppendNonNullable
     {
@@ -67,7 +69,7 @@ namespace Expressif.Functions.Text
     }
 
     /// <summary>
-    /// Returns a text value with the text specified as the parameter before the argument. If the argument is `null`, it returns the text specified as the parameter.
+    /// Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
     /// </summary>
     public class Prepend : BaseTextAppendNonNullable
     {
@@ -76,6 +78,87 @@ namespace Expressif.Functions.Text
             : base(text) { }
         protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
     }
+
+    #region Space
+
+    /// <summary>
+    /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
+    /// </summary>
+    public class PrefixSpace : Prefix
+    {
+        public PrefixSpace()
+            : base(() => ((char)32).ToString()) { }
+    }
+
+    /// <summary>
+    /// Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
+    /// </summary>
+    public class SuffixSpace : Suffix
+    {
+        public SuffixSpace()
+            : base(() => ((char)32).ToString()) { }
+    }
+
+    /// <summary>
+    /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
+    /// </summary>
+    public class AppendSpace : Append
+    {
+        public AppendSpace()
+            : base(() => ((char)32).ToString()) { }
+
+    }
+
+    /// <summary>
+    /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
+    /// </summary>
+    public class PrependSpace : Prepend
+    {
+        public PrependSpace()
+            : base(() => ((char)32).ToString()) { }
+    }
+
+    #endregion
+
+    #region NewLine
+
+    /// <summary>
+    /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
+    /// </summary>
+    public class PrefixNewLine : Prefix
+    {
+        public PrefixNewLine()
+            : base(() => Environment.NewLine) { }
+    }
+
+    /// <summary>
+    /// Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
+    /// </summary>
+    public class SuffixNewLine : Suffix
+    {
+        public SuffixNewLine()
+            : base(() => Environment.NewLine) { }
+    }
+
+    /// <summary>
+    /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
+    /// </summary>
+    public class AppendNewLine : Append
+    {
+        public AppendNewLine()
+            : base(() => Environment.NewLine) { }
+    }
+
+    /// <summary>
+    /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
+    /// </summary>
+    public class PrependNewLine : Prepend
+    {
+        public PrependNewLine()
+            : base(() => Environment.NewLine) { }
+    }
+
+    #endregion
 
     /// <summary>
     /// Returns the argument value with a subset of the string substitued by a another string.
