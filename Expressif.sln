@@ -28,6 +28,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{01685EF7-A
 		update-readme.ps1 = update-readme.ps1
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Edition", "Edition", "{F06F33F1-4F60-49BC-814E-93E9EC325B6E}"
+	ProjectSection(SolutionItems) = preProject
+		.commitlint.yaml = .commitlint.yaml
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
