@@ -256,6 +256,9 @@ Install-Package Expressif
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | utc-to-local               |                                                                                  |
 |Text     | after-substring            | text-to-after-substring                                                          |
+|Text     | append                     | text-to-append                                                                   |
+|Text     | append-new-line            | text-to-append-new-line                                                          |
+|Text     | append-space               | text-to-append-space                                                             |
 |Text     | before-substring           | text-to-before-substring                                                         |
 |Text     | count-distinct-chars       | text-to-count-distinct-chars                                                     |
 |Text     | count-substring            | text-to-count-substring                                                          |
@@ -271,12 +274,19 @@ Install-Package Expressif
 |Text     | pad-left                   | text-to-pad-left                                                                 |
 |Text     | pad-right                  | text-to-pad-right                                                                |
 |Text     | prefix                     | text-to-prefix                                                                   |
+|Text     | prefix-new-line            | text-to-prefix-new-line                                                          |
+|Text     | prefix-space               | text-to-prefix-space                                                             |
+|Text     | prepend                    | text-to-prepend                                                                  |
+|Text     | prepend-new-line           | text-to-prepend-new-line                                                         |
+|Text     | prepend-space              | text-to-prepend-space                                                            |
 |Text     | remove-chars               | text-to-remove-chars                                                             |
 |Text     | replace-chars              | text-to-replace-chars                                                            |
 |Text     | replace-slice              | text-to-replace-slice                                                            |
 |Text     | skip-first-chars           | text-to-skip-first-chars                                                         |
 |Text     | skip-last-chars            | text-to-skip-last-chars                                                          |
 |Text     | suffix                     | text-to-suffix                                                                   |
+|Text     | suffix-new-line            | text-to-suffix-new-line                                                          |
+|Text     | suffix-space               | text-to-suffix-space                                                             |
 |Text     | text-to-datetime           |                                                                                  |
 |Text     | text-to-html               |                                                                                  |
 |Text     | text-to-mask               |                                                                                  |

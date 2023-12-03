@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, before-substring, count-distinct-chars, count-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, append, append-new-line, append-space, before-substring, count-distinct-chars, count-substring, empty-to-null, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, suffix-new-line, suffix-space, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -13,6 +13,24 @@ Returns the substring of the argument string, containing all the characters imme
 ###### Parameters
 * substring: The string to seek.
 * count (optional) : The number of character positions to examine.
+
+##### append
+###### Overview
+
+Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
+
+###### Parameter
+* text: The text to append
+
+##### append-new-line
+###### Overview
+
+Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
+
+##### append-space
+###### Overview
+
+Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 
 ##### before-substring
 ###### Overview
@@ -115,10 +133,38 @@ Returns a new string that left-aligns the characters in this string by padding t
 ##### prefix
 ###### Overview
 
-Returns the argument value preceeded by the parameter value.
+Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.
 
 ###### Parameter
 * prefix: The text to append
+
+##### prefix-new-line
+###### Overview
+
+Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
+
+##### prefix-space
+###### Overview
+
+Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
+
+##### prepend
+###### Overview
+
+Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
+
+###### Parameter
+* text: The text to prepend
+
+##### prepend-new-line
+###### Overview
+
+Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
+
+##### prepend-space
+###### Overview
+
+Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
 
 ##### remove-chars
 ###### Overview
@@ -166,10 +212,20 @@ Returns the first chars of the argument value. The length of the string omitted 
 ##### suffix
 ###### Overview
 
-Returns the argument value followed by the parameter value.
+Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.
 
 ###### Parameter
 * suffix: The text to append
+
+##### suffix-new-line
+###### Overview
+
+Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
+
+##### suffix-space
+###### Overview
+
+Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
 
 ##### text-to-datetime
 ###### Overview
