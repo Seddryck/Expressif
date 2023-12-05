@@ -19,7 +19,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(null)", null)]
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
-        public void SquarePower_Valid(object value, decimal? expected)
+        public void SquarePower_Valid(object? value, decimal? expected)
             => Assert.That(new SquarePower().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -29,7 +29,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(2, 8)]
         [TestCase(-2, -8)]
         [TestCase(null, null)]
-        public void CubePower_Valid(object value, decimal? expected)
+        public void CubePower_Valid(object? value, decimal? expected)
             => Assert.That(new CubePower().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -47,7 +47,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(2, 5, 32)]
         [TestCase(-2, 5, -32)]
         [TestCase(null, 1, null)]
-        public void Power_Exponent_Valid(object value, decimal exponent, decimal? expected)
+        public void Power_Exponent_Valid(object? value, decimal exponent, decimal? expected)
             => Assert.That(new Power(() => exponent).Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -56,7 +56,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(4, 2)]
         [TestCase(9, 3)]
         [TestCase(null, null)]
-        public void SquareRoot_Valid(object value, decimal? expected)
+        public void SquareRoot_Valid(object? value, decimal? expected)
             => Assert.That(new SquareRoot().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -66,7 +66,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(8, 2)]
         [TestCase(-8, -2)]
         [TestCase(null, null)]
-        public void CubeRoot_Valid(object value, decimal? expected)
+        public void CubeRoot_Valid(object? value, decimal? expected)
             => Assert.That(new CubeRoot().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -83,7 +83,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(32, 5, 2)]
         [TestCase(-32, 5, -2)]
         [TestCase(null, 1, null)]
-        public void NthRoot_Exponent_Valid(object value, decimal exponent, decimal? expected)
+        public void NthRoot_Exponent_Valid(object? value, decimal exponent, decimal? expected)
             => Assert.That(new NthRoot(() => exponent).Evaluate(value), Is.EqualTo(expected));
     }
 }

@@ -74,7 +74,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", "^[A-Z]+$", false)]
         [TestCase("(null)", "^[A-Z]+$", false)]
         [TestCase(null, "^[A-Z]+$", false)]
-        public void MatchesRegex_TextIgnoreCase_Success(object value, string reference, bool expected)
+        public void MatchesRegex_TextIgnoreCase_Success(object? value, string reference, bool expected)
         {
             var predicate = new MatchesRegex(() => reference);
             Assert.Multiple(() =>

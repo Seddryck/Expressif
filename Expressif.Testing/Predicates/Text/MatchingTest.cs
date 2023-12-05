@@ -29,7 +29,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase(null, false)]
         [TestCase(125.17, true)]
         [TestCase(125, true)]
-        public void MatchesNumeric_InvariantCulture_Success(object value, bool expected)
+        public void MatchesNumeric_InvariantCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesNumeric().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -51,7 +51,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase(null, false)]
         [TestCase(125.17, true)]
         [TestCase(125, true)]
-        public void MatchesNumeric_FrenchCulture_Success(object value, bool expected)
+        public void MatchesNumeric_FrenchCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesNumeric(() => "fr-fr").Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -70,7 +70,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", false)]
         [TestCase("(null)", false)]
         [TestCase(null, false)]
-        public void MatchesDate_InvariantCulture_Success(object value, bool expected)
+        public void MatchesDate_InvariantCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesDate().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -105,7 +105,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", false)]
         [TestCase("(null)", false)]
         [TestCase(null, false)]
-        public void MatchesDate_FrenchCulture_Success(object value, bool expected)
+        public void MatchesDate_FrenchCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesDate(() => "fr-fr").Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -133,7 +133,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", false)]
         [TestCase("(null)", false)]
         [TestCase(null, false)]
-        public void MatchesDate_DutchCulture_Success(object value, bool expected)
+        public void MatchesDate_DutchCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesDate(() => "nl-be").Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -152,7 +152,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", false)]
         [TestCase("(null)", false)]
         [TestCase(null, false)]
-        public void MatchesDateTime_InvariantCulture_Success(object value, bool expected)
+        public void MatchesDateTime_InvariantCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesDateTime().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -187,7 +187,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", false)]
         [TestCase("(null)", false)]
         [TestCase(null, false)]
-        public void MatchesTime_InvariantCulture_Success(object value, bool expected)
+        public void MatchesTime_InvariantCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesTime().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -206,7 +206,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("", false)]
         [TestCase("(null)", false)]
         [TestCase(null, false)]
-        public void MatchesTime_EnglishCulture_Success(object value, bool expected)
+        public void MatchesTime_EnglishCulture_Success(object? value, bool expected)
             => Assert.That(new MatchesTime(() => "en-gb").Evaluate(value), Is.EqualTo(expected));
 
         [Test]

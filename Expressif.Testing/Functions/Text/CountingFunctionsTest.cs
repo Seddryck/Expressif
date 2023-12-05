@@ -55,7 +55,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase("(blank)", 0)]
         [TestCase("1 2017-07-06      CUST0001", 3)]
         [TestCase("1 2017-07-06          CUST0001", 3)]
-        public void TokenCount_Valid(object value, int expected)
+        public void TokenCount_Valid(object? value, int expected)
             => Assert.That(new TokenCount().Evaluate(value), Is.EqualTo(expected));
     }
 }

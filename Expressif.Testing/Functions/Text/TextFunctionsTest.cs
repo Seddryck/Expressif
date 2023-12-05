@@ -231,7 +231,7 @@ namespace Expressif.Testing.Functions.Text
         [TestCase(null, "(null)")]
         [TestCase("(empty)", "(empty)")]
         [TestCase("(blank)", "(empty)")]
-        public void WithoutWhitespaces_Valid(object value, string expected)
+        public void WithoutWhitespaces_Valid(object? value, string expected)
             => Assert.That(new WithoutWhitespaces().Evaluate(value), Is.EqualTo(expected));
 
         [Test]

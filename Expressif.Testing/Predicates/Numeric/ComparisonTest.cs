@@ -19,7 +19,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(4.001, 4, false)]
         [TestCase(3.999, 4, false)]
         [TestCase(null, 4, false)]
-        public void Equal_Numeric_Success(object value, decimal reference, bool expected)
+        public void Equal_Numeric_Success(object? value, decimal reference, bool expected)
         {
             var predicate = new EqualTo(() => reference);
             Assert.Multiple(() =>
@@ -36,7 +36,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(4.001, 4, true)]
         [TestCase(3.999, 4, false)]
         [TestCase(null, 4, false)]
-        public void GreaterThan_Numeric_Success(object value, decimal reference, bool expected)
+        public void GreaterThan_Numeric_Success(object? value, decimal reference, bool expected)
         {
             var predicate = new GreaterThan(() => reference);
             Assert.Multiple(() =>
@@ -53,7 +53,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(4.001, 4, true)]
         [TestCase(3.999, 4, false)]
         [TestCase(null, 4, false)]
-        public void GreaterThanOrEqual_Numeric_Success(object value, decimal reference, bool expected)
+        public void GreaterThanOrEqual_Numeric_Success(object? value, decimal reference, bool expected)
         {
             var predicate = new GreaterThanOrEqual(() => reference);
             Assert.Multiple(() =>
@@ -70,7 +70,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(4.001, 4, false)]
         [TestCase(3.999, 4, true)]
         [TestCase(null, 4, false)]
-        public void LessThan_Numeric_Success(object value, decimal reference, bool expected)
+        public void LessThan_Numeric_Success(object? value, decimal reference, bool expected)
         {
             var predicate = new LessThan(() => reference);
             Assert.Multiple(() =>
@@ -87,7 +87,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(4.001, 4, false)]
         [TestCase(3.999, 4, true)]
         [TestCase(null, 4, false)]
-        public void LessThanOrEqual_Numeric_Success(object value, decimal reference, bool expected)
+        public void LessThanOrEqual_Numeric_Success(object? value, decimal reference, bool expected)
         {
             var predicate = new LessThanOrEqual(() => reference);
             Assert.Multiple(() =>
@@ -106,7 +106,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(-4, 5, false)]
         [TestCase(-4, -4, false)]
         [TestCase(null, 4, false)]
-        public void Opposite_Numeric_Success(object value, decimal reference, bool expected)
+        public void Opposite_Numeric_Success(object? value, decimal reference, bool expected)
         {
             var predicate = new Opposite(() => reference);
             Assert.Multiple(() =>

@@ -16,7 +16,7 @@ namespace Expressif.Testing.Functions.Special
         [TestCase("(null)")]
         [TestCase(null)]
         [TestCase(150)]
-        public void AnyToAny_Any(object value)
+        public void AnyToAny_Any(object? value)
             => Assert.That(new AnyToAny().Evaluate(value), Is.EqualTo(new Any()));
 
         [Test]
@@ -60,7 +60,7 @@ namespace Expressif.Testing.Functions.Special
         [Test]
         [TestCase("(null)")]
         [TestCase(null)]
-        public void ValueToValue_Null_Null(object value)
+        public void ValueToValue_Null_Null(object? value)
             => Assert.That(new ValueToValue().Evaluate(value), Is.EqualTo(new Null()));
 
         [Test]
@@ -80,7 +80,7 @@ namespace Expressif.Testing.Functions.Special
         [Test]
         [TestCase("(null)")]
         [TestCase(null)]
-        public void NullToValue_Null_Value(object value)
+        public void NullToValue_Null_Value(object? value)
             => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(new Value()));
 
         [Test]

@@ -19,7 +19,7 @@ namespace Expressif.Testing.Values.Special
         [Test]
         [TestCase(null)]
         [TestCase("(null)")]
-        public void Equals_Null_Invalid(object value)
+        public void Equals_Null_Invalid(object? value)
             => Assert.That(new Value().Equals(value), Is.False);
 
         [Test]
@@ -27,13 +27,13 @@ namespace Expressif.Testing.Values.Special
         [TestCase("(empty)")]
         [TestCase("(blank)")]
         [TestCase("(value)")]
-        public void EqualOperator_Value_Valid(object value)
+        public void EqualOperator_Value_Valid(object? value)
             => Assert.That(new Value() == value, Is.True);
 
         [Test]
         [TestCase(null)]
         [TestCase("(null)")]
-        public void EqualOperator_Null_Invalid(object value)
+        public void EqualOperator_Null_Invalid(object? value)
             => Assert.That(new Value() == value, Is.False);
 
         [Test]
