@@ -16,7 +16,7 @@ namespace Expressif.Testing.Values.Special
         [TestCase("(blank)")]
         [TestCase("(any)")]
         [TestCase("(value)")]
-        public void Equals_Any_Valid(object value)
+        public void Equals_Any_Valid(object? value)
             => Assert.That(new Any().Equals(value), Is.True);
 
         [Test]
@@ -27,7 +27,7 @@ namespace Expressif.Testing.Values.Special
         [TestCase("(blank)")]
         [TestCase("(any)")]
         [TestCase("(value)")]
-        public void EqualOperator_Null_Valid(object value)
+        public void EqualOperator_Null_Valid(object? value)
             => Assert.That(new Any() == value, Is.True);
 
         [Test]

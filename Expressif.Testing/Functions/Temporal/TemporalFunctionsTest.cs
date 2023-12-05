@@ -193,7 +193,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-31", "2001-01-01")]
         [TestCase("(null)", null)]
         [TestCase(null, null)]
-        public void InvalidToDate_Valid(object value, DateTime? expected)
+        public void InvalidToDate_Valid(object? value, DateTime? expected)
             => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(value)
                 , Is.EqualTo(expected == null ? new Null() : expected));
 
@@ -210,7 +210,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-12 07:00:00", "2018-02-01")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void FirstOfMonth_Valid(object value, DateTime? expected)
+        public void FirstOfMonth_Valid(object? value, DateTime? expected)
         {
             var function = new FirstOfMonth();
             var result = function.Evaluate(value);
@@ -226,7 +226,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-12 07:00:00", "2018-01-01")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void FirstOfYear_Valid(object value, DateTime? expected)
+        public void FirstOfYear_Valid(object? value, DateTime? expected)
         {
             var function = new FirstOfYear();
             var result = function.Evaluate(value);
@@ -243,7 +243,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2020-02-12 07:00:00", "2020-02-29")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void LastOfMonth_Valid(object value, DateTime? expected)
+        public void LastOfMonth_Valid(object? value, DateTime? expected)
         {
             var function = new LastOfMonth();
             var result = function.Evaluate(value);
@@ -259,7 +259,7 @@ namespace Expressif.Testing.Functions.Temporal
         [TestCase("2018-02-12 07:00:00", "2018-12-31")]
         [TestCase(null, null)]
         [TestCase("(null)", null)]
-        public void LastOfYear_Valid(object value, DateTime? expected)
+        public void LastOfYear_Valid(object? value, DateTime? expected)
         {
             var function = new LastOfYear();
             var result = function.Evaluate(value);

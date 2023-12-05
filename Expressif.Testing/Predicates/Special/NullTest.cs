@@ -18,7 +18,7 @@ namespace Expressif.Testing.Predicates.Special
         [TestCase("(empty)", false)]
         [TestCase("(blank)", false)]
         [TestCase("foo", false)]
-        public void Null_Numeric_Success(object value, bool expected)
+        public void Null_Numeric_Success(object? value, bool expected)
         => Assert.That(new Null().Evaluate(value), Is.EqualTo(expected));
     }
 }

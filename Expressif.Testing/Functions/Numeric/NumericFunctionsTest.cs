@@ -143,7 +143,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase("(null)", null)]
         [TestCase("(empty)", null)]
         [TestCase("(blank)", null)]
-        public void Oppose_Valid(object value, decimal? expected)
+        public void Oppose_Valid(object? value, decimal? expected)
             => Assert.That(new Oppose().Evaluate(value), Is.EqualTo(expected));
     }
 }

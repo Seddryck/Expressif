@@ -16,7 +16,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", true)]
         [TestCase("(blank)", false)]
         [TestCase("foo", false)]
-        public void Empty_Text_Success(object value, bool expected)
+        public void Empty_Text_Success(object? value, bool expected)
             => Assert.That(new Empty().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -26,7 +26,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", true)]
         [TestCase("(blank)", false)]
         [TestCase("foo", false)]
-        public void NullOrEmpty_Text_Success(object value, bool expected)
+        public void NullOrEmpty_Text_Success(object? value, bool expected)
             => Assert.That(new EmptyOrNull().Evaluate(value), Is.EqualTo(expected));
     }
 }

@@ -18,7 +18,7 @@ namespace Expressif.Testing.Predicates.Temporal
         [TestCase("2022-11-25 17:12:25", false)]
         [TestCase(null, false)]
         [TestCase("(null)", false)]
-        public void ContainedIn_DateTime_Expected(object value, bool expected)
+        public void ContainedIn_DateTime_Expected(object? value, bool expected)
             => Assert.That(new ContainedIn(
                 new Interval<System.DateTime>(
                     new System.DateTime(2022, 11, 20)

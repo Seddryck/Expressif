@@ -19,7 +19,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", true)]
         [TestCase("(null)", true)]
         [TestCase(null, true)]
-        public void LowerCase_Text_Success(object value, bool expected)
+        public void LowerCase_Text_Success(object? value, bool expected)
             => Assert.That(new LowerCase().Evaluate(value), Is.EqualTo(expected));
 
         [TestCase("Foobar", false)]
@@ -32,7 +32,7 @@ namespace Expressif.Testing.Predicates.Text
         [TestCase("(empty)", true)]
         [TestCase("(null)", true)]
         [TestCase(null, true)]
-        public void UpperCase_Text_Success(object value, bool expected)
+        public void UpperCase_Text_Success(object? value, bool expected)
             => Assert.That(new UpperCase().Evaluate(value), Is.EqualTo(expected));
     }
 }

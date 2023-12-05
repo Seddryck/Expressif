@@ -15,7 +15,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, false)]
         [TestCase(-10, false)]
         [TestCase(null, false)]
-        public void Zero_Numeric_Success(object value, bool expected)
+        public void Zero_Numeric_Success(object? value, bool expected)
             => Assert.That(new Zero().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -24,7 +24,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, false)]
         [TestCase(-10, false)]
         [TestCase(null, false)]
-        public void One_Numeric_Success(object value, bool expected)
+        public void One_Numeric_Success(object? value, bool expected)
             => Assert.That(new One().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -33,7 +33,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, true)]
         [TestCase(-10, false)]
         [TestCase(null, false)]
-        public void Positive_Numeric_Success(object value, bool expected)
+        public void Positive_Numeric_Success(object? value, bool expected)
             => Assert.That(new Positive().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -42,7 +42,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, true)]
         [TestCase(-10, false)]
         [TestCase(null, false)]
-        public void PositiveOrZero_Numeric_Success(object value, bool expected)
+        public void PositiveOrZero_Numeric_Success(object? value, bool expected)
             => Assert.That(new PositiveOrZero().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -51,7 +51,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, false)]
         [TestCase(-10, true)]
         [TestCase(null, false)]
-        public void Negative_Numeric_Success(object value, bool expected)
+        public void Negative_Numeric_Success(object? value, bool expected)
             => Assert.That(new Negative().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -60,7 +60,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, false)]
         [TestCase(-10, true)]
         [TestCase(null, false)]
-        public void NegativeOrZero_Numeric_Success(object value, bool expected)
+        public void NegativeOrZero_Numeric_Success(object? value, bool expected)
             => Assert.That(new NegativeOrZero().Evaluate(value), Is.EqualTo(expected));
     }
 }

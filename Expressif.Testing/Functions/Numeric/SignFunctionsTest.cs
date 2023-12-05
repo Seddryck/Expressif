@@ -16,7 +16,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(5, 1)]
         [TestCase(-5, -1)]
         [TestCase(null, null)]
-        public void Sign_Valid(object value, decimal? expected)
+        public void Sign_Valid(object? value, decimal? expected)
             => Assert.That(new Sign().Evaluate(value), Is.EqualTo(expected));
 
         [Test]
@@ -26,7 +26,7 @@ namespace Expressif.Testing.Functions.Numeric
         [TestCase(5, 5)]
         [TestCase(-5, 5)]
         [TestCase(null, null)]
-        public void Absolute_Valid(object value, decimal? expected)
+        public void Absolute_Valid(object? value, decimal? expected)
             => Assert.That(new Absolute().Evaluate(value), Is.EqualTo(expected));
     }
 }

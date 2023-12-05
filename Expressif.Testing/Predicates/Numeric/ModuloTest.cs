@@ -29,7 +29,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(10, 6, 0)]
         [TestCase(10, 5, 1)]
         [TestCase(null, 5, 2)]
-        public void Modulo_Numeric_Failure(object value, int modulus, int remainder)
+        public void Modulo_Numeric_Failure(object? value, int modulus, int remainder)
         {
             var predicate = new Modulo(() => modulus, () => remainder);
             Assert.Multiple(() =>
@@ -45,7 +45,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(1, false)]
         [TestCase(0, true)]
         [TestCase(null, false)]
-        public void Even_Numeric_Valid(object value, bool expected)
+        public void Even_Numeric_Valid(object? value, bool expected)
         {
             var predicate = new Even();
             Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
@@ -56,7 +56,7 @@ namespace Expressif.Testing.Predicates.Numeric
         [TestCase(1, true)]
         [TestCase(0, false)]
         [TestCase(null, false)]
-        public void Odd_Numeric_Valid(object value, bool expected)
+        public void Odd_Numeric_Valid(object? value, bool expected)
         {
             var predicate = new Odd();
             Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
