@@ -1,13 +1,13 @@
 ﻿using Expressif.Functions;
 using Expressif.Predicates;
-using Expressif.Predicates.Combination;
+using Expressif.Predicates.Operators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Predicates.Combination
+namespace Expressif.Testing.Predicates.Operators
 {
     public class OrOperatorTest
     {
@@ -22,9 +22,9 @@ namespace Expressif.Testing.Predicates.Combination
             left.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(state);
             var right = new Mock<IPredicate>();
             right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
-            var @operator = new OrOperator();
+            var @operator = new OrOperator(left.Object, right.Object);
 
-            Assert.That(@operator.Evaluate(left.Object, right.Object, "my value"), Is.EqualTo(expected));
+            Assert.That(@operator.Evaluate("my value"), Is.EqualTo(expected));
         }
 
         [Test]
@@ -35,8 +35,8 @@ namespace Expressif.Testing.Predicates.Combination
             var right = new Mock<IPredicate>();
             right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
 
-            var @operator = new OrOperator();
-            @operator.Evaluate(left.Object, right.Object, "my value");
+            var @operator = new OrOperator(left.Object, right.Object);
+            @operator.Evaluate("my value");
 
             left.Verify(x => x.Evaluate("my value"), Times.Once());
             right.Verify(x => x.Evaluate(It.IsAny<object>()), Times.Never());
@@ -50,8 +50,8 @@ namespace Expressif.Testing.Predicates.Combination
             var right = new Mock<IPredicate>();
             right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(true);
 
-            var @operator = new OrOperator();
-            @operator.Evaluate(left.Object, right.Object, "my value");
+            var @operator = new OrOperator(left.Object, right.Object);
+            @operator.Evaluate("my value");
 
             left.Verify(x => x.Evaluate("my value"), Times.Once());
             right.Verify(x => x.Evaluate("my value"), Times.Once());

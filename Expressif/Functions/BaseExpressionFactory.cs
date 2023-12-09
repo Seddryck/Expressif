@@ -1,7 +1,4 @@
-﻿using Expressif;
-using Expressif.Functions;
-using Expressif.Parsers;
-using Expressif.Predicates.Introspection;
+﻿using Expressif.Parsers;
 using Expressif.Values;
 using Expressif.Values.Resolvers;
 using Sprache;
@@ -11,21 +8,18 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Expressif.Functions
 {
     public abstract class BaseExpressionFactory
     {
-        private IDictionary<string, Type>? _mapping;
-        protected IDictionary<string, Type> Mapping { get => _mapping ??= Initialize(); }
+        protected BaseTypeMapper TypeMapper { get; }
 
-        protected abstract IDictionary<string, Type> Initialize();
+        protected BaseExpressionFactory(BaseTypeMapper typeSetter)
+            => TypeMapper = typeSetter;
 
-        protected T Instantiate<T>(string functionName, IParameter[] parameters, Context context)
-            => Instantiate<T>(GetFunctionType(functionName), parameters, context);
+        protected internal T Instantiate<T>(string functionName, IParameter[] parameters, Context context)
+            => Instantiate<T>(TypeMapper.Execute(functionName), parameters, context);
 
         protected T Instantiate<T>(Type type, IParameter[] parameters, Context context)
         {
@@ -54,25 +48,6 @@ namespace Expressif.Functions
 
             return (T)ctor.Invoke(typedFunctionParameters.ToArray());
         }
-
-        internal virtual Type GetFunctionType(string functionName)
-        {
-            var name = functionName.ToKebabCase();
-            if (!Mapping.ContainsKey(name))
-                throw new NotImplementedFunctionException(functionName);
-            return Mapping[name];
-        }
-
-        protected virtual Type GetFunctionType<T>(string functionName)
-            => typeof(T).Assembly.GetTypes()
-                .Where(
-                        t => t.IsClass
-                        && t.IsAbstract == false
-                        && t.Name == functionName.ToPascalCase()
-                        && t.GetInterface(typeof(T).Name) != null)
-                .SingleOrDefault()
-                ?? throw new NotImplementedFunctionException(functionName.ToPascalCase());
-
 
         protected internal ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
             => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
@@ -145,6 +120,5 @@ namespace Expressif.Functions
             var funcType = typeof(Func<>).MakeGenericType(type);
             return Delegate.CreateDelegate(funcType, resolver, execute);
         }
-
     }
 }

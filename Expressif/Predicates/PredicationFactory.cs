@@ -1,8 +1,6 @@
 ﻿using Expressif.Functions;
 using Expressif.Parsers;
-using Expressif.Predicates.Boolean;
-using Expressif.Predicates.Combination;
-using Expressif.Predicates.Introspection;
+using Expressif.Predicates.Operators;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -18,61 +16,51 @@ namespace Expressif.Predicates
     {
         private Parser<IPredication> Parser { get; } = Parsers.Predication.Parser;
 
+        protected UnaryOperatorFactory UnaryOperatorFactory { get; }
+        protected BinaryOperatorFactory BinaryOperatorFactory { get; }
+
+        protected internal PredicationFactory(PredicateTypeMapper mapper, UnaryOperatorFactory unary, BinaryOperatorFactory binary)
+            : base(mapper)
+            => (UnaryOperatorFactory, BinaryOperatorFactory) = (unary, binary);
+
+        public PredicationFactory()
+            : this(new PredicateTypeMapper(), new UnaryOperatorFactory(), new BinaryOperatorFactory()) { }
+
         public virtual IPredicate Instantiate(string code, Context context)
         {
-            var rootPredication = Parser.Parse(code);
-            var predicate = Instantiate(rootPredication, context);
+            var predication = Parser.Parse(code);
+            var predicate = Instantiate(predication, context);
             return predicate;
         }
 
         public IPredicate Instantiate(IPredication predication, Context context)
         => predication switch
         {
-            Parsers.BasicPredication basic => Instantiate(basic, context),
-            Parsers.Predication combined => new CombinedPredicate(Instantiate(combined.LeftMember, context), Instantiate(combined.Operator.Name), Instantiate(combined.RightMember, context)),
+            SinglePredication single => Instantiate(single, context),
+            UnaryPredication unary => Instantiate(unary, context),
+            BinaryPredication binary => Instantiate(binary, context),
             _ => throw new NotImplementedException()
         };
 
-        public IPredicate Instantiate(BasicPredication basic, Context context)
+        internal IPredicate Instantiate(SinglePredication basic, Context context)
         {
             var predicates = new List<IPredicate>();
             foreach (var predicate in basic.Members)
                 predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
-            return new ChainPredicate(predicates);
+            return predicates[0];
         }
 
-        protected ICombinationOperator Instantiate(string operatorName)
-            => Instantiate<ICombinationOperator>(GetFunctionType<ICombinationOperator>($"{operatorName}-operator"));
-        
-        public T Instantiate<T>(Type @operator)
-            => Instantiate<T>(@operator, Array.Empty<IParameter>(), new Context());
-
-        public IPredicate Instantiate(Type type, IParameter[] parameters, Context context)
-            => Instantiate<IPredicate>(type, parameters, context);
-
-        public IPredicate Instantiate(Type negation, Type type, IParameter[] parameters, Context context)
+        internal IPredicate Instantiate(UnaryPredication unary, Context context)
         {
-            var predicate = Instantiate<IPredicate>(type, parameters, context);
-            var negative = Instantiate<INegationOperator>(negation);
-            return (negative) switch
-            {
-                NotOperator _ => new Negate(predicate),
-                _ => predicate
-            };
+            var predicate = Instantiate(unary.Member, context);
+            return UnaryOperatorFactory.Instantiate(unary.Operator.Name, predicate);
         }
 
-        protected override IDictionary<string, Type> Initialize()
+        internal IPredicate Instantiate(BinaryPredication binary, Context context)
         {
-            var introspector = new PredicateIntrospector();
-            var infos = introspector.Locate();
-            var mapping = new Dictionary<string, Type>();
-            foreach (var info in infos)
-            {
-                mapping.Add(info.Name, info.ImplementationType);
-                foreach (var alias in info.Aliases)
-                    mapping.Add(alias, info.ImplementationType);
-            }
-            return mapping;
+            var left = Instantiate(binary.LeftMember, context);
+            var right = Instantiate(binary.RightMember, context);
+            return BinaryOperatorFactory.Instantiate(binary.Operator.Name, left, right);
         }
     }
 }

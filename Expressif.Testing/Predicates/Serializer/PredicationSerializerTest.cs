@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Predicates.Combination;
+using Expressif.Predicates.Operators;
 
 namespace Expressif.Testing.Predicates.Serializer
 {
@@ -16,75 +16,75 @@ namespace Expressif.Testing.Predicates.Serializer
         [Test]
         public void Serialize_SingleMember_NoPipe()
         {
-            var Predication = new PredicationBuilder();
-            Predication.Pile.Enqueue(new PredicationMember(typeof(Even), Array.Empty<object>()));
-            Assert.That(new PredicationSerializer().Serialize(Predication), Is.EqualTo("even"));
+            var predication = new SinglePredication(new Function("even", []));
+            Assert.That(new PredicationSerializer().Serialize(predication), Is.EqualTo("even"));
         }
 
         [Test]
         public void Serialize_SingleParameter_SinglePredicationMemberSerializerCall()
         {
-            var internalSerializer = new Mock<PredicationMemberSerializer>();
-            internalSerializer.Setup(x => x.Serialize(It.IsAny<PredicationMember>())).Returns("exp");
+            var internalSerializer = new Mock<SinglePredicationSerializer>();
 
-            var Predication = new PredicationBuilder();
-            Predication.Pile.Enqueue(new PredicationMember(typeof(Even), Array.Empty<object>()));
-            var serializer = new PredicationSerializer(predicationMemberSerializer: internalSerializer.Object);
-            serializer.Serialize(Predication);
+            var predication = new SinglePredication(new Function("even", []));
+            var serializer = new PredicationSerializer(internalSerializer.Object);
+            serializer.Serialize(predication);
 
-            internalSerializer.Verify(x => x.Serialize(It.IsAny<PredicationMember>()), Times.Once);
-        }
-
-        [Test]
-        public void Serialize_SingleMember_QueueNotEmpty()
-        {
-            var Predication = new PredicationBuilder();
-            Predication.Pile.Enqueue(new PredicationMember(typeof(Even), Array.Empty<object>()));
-            new PredicationSerializer().Serialize(Predication);
-            Assert.That(Predication.Pile, Is.Not.Null.And.Not.Empty);
+            internalSerializer.Verify(x => x.Serialize(predication, ref It.Ref<StringBuilder>.IsAny), Times.Once);
         }
 
         [Test]
         public void Serialize_MultipleMembers_WithPipe()
         {
-            var Predication = new PredicationBuilder();
-            Predication.Pile.Enqueue(new PredicationMember(typeof(Even), Array.Empty<object>()));
-            Predication.Pile.Enqueue(new PredicationMember(typeof(OrOperator), typeof(GreaterThan), new object[] { 5 }));
-            Predication.Pile.Enqueue(new PredicationMember(typeof(AndOperator), typeof(Modulo), new object[] { 7, 3 }));
-            Assert.That(new PredicationSerializer().Serialize(Predication)
-                , Is.EqualTo("even |OR greater-than(5) |AND modulo(7, 3)"));
+            var evenPredication = new SinglePredication(new Function("even", []));
+            var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
+            var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+            var compositePredication = new BinaryPredication(
+                BinaryOperator.And
+                , new BinaryPredication(BinaryOperator.Or, evenPredication, greaterThanPredication)
+                , moduloPredication);
+            Assert.That(new PredicationSerializer().Serialize(compositePredication)
+                , Is.EqualTo("{{even |OR greater-than(5)} |AND modulo(7, 3)}"));
         }
 
         [Test]
         public void Serialize_MultipleMembers_MultiplePredicationMemberSerializerCall()
         {
-            var internalSerializer = new Mock<PredicationMemberSerializer>();
-            internalSerializer.Setup(x => x.Serialize(It.IsAny<PredicationMember>())).Returns("exp");
+            var sb = new StringBuilder();
+            var internalSerializer = new Mock<SinglePredicationSerializer>();
 
             var Predication = new PredicationBuilder();
-            Predication.Pile.Enqueue(new PredicationMember(typeof(Even), Array.Empty<object>()));
-            Predication.Pile.Enqueue(new PredicationMember(typeof(OrOperator), typeof(GreaterThan), new object[] { 5 }));
-            Predication.Pile.Enqueue(new PredicationMember(typeof(AndOperator), typeof(Modulo), new object[] { 7, 3 }));
-            var serializer = new PredicationSerializer(predicationMemberSerializer: internalSerializer.Object);
-            serializer.Serialize(Predication);
+            var evenPredication = new SinglePredication(new Function("even", []));
+            var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
+            var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+            var compositePredication = new BinaryPredication(
+                BinaryOperator.And
+                , new BinaryPredication(BinaryOperator.Or, evenPredication, greaterThanPredication)
+                , moduloPredication);
+            var serializer = new PredicationSerializer(internalSerializer.Object);
+            serializer.Serialize(compositePredication);
 
-            internalSerializer.Verify(x => x.Serialize(It.IsAny<PredicationMember>()), Times.Exactly(3));
+            internalSerializer.Verify(x => x.Serialize(It.IsAny<SinglePredication>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
         }
 
         [Test]
         public void Serialize_WithSubPredication_WithPipe()
         {
-            var subPredication = new PredicationBuilder();
-            subPredication.Pile.Enqueue(new PredicationMember(typeof(GreaterThan), new object[] { 5 }));
-            subPredication.Pile.Enqueue(new PredicationMember(typeof(OrOperator), typeof(Modulo), new object[] { 7, 3 }));
-
             var Predication = new PredicationBuilder();
-            Predication.Pile.Enqueue(new PredicationMember(typeof(Even), Array.Empty<object>()));
-            Predication.Pile.Enqueue(new SubPredicationMember(typeof(AndOperator), subPredication));
-            Predication.Pile.Enqueue(new PredicationMember(typeof(OrOperator), typeof(ZeroOrNull), Array.Empty<object>()));
+            var evenPredication = new SinglePredication(new Function("even", []));
+            var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
+            var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+            var zeroOrNullPredication = new SinglePredication(new Function("ZeroOrNull", []));
+            var compositePredication = new BinaryPredication(
+                BinaryOperator.And
+                , evenPredication
+                , new BinaryPredication(BinaryOperator.Or, greaterThanPredication, moduloPredication));
+            var fullPredication = new BinaryPredication(
+                BinaryOperator.Or
+                , compositePredication
+                , zeroOrNullPredication);
 
-            Assert.That(new PredicationSerializer().Serialize(Predication)
-                , Is.EqualTo("even |AND { greater-than(5) |OR modulo(7, 3) } |OR zero-or-null"));
+            Assert.That(new PredicationSerializer().Serialize(fullPredication)
+                , Is.EqualTo("{{even |AND {greater-than(5) |OR modulo(7, 3)}} |OR zero-or-null}"));
         }
     }
 }

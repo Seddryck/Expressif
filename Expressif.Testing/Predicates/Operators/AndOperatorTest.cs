@@ -1,30 +1,30 @@
 ﻿using Expressif.Functions;
 using Expressif.Predicates;
-using Expressif.Predicates.Combination;
+using Expressif.Predicates.Operators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Predicates.Combination
+namespace Expressif.Testing.Predicates.Operators
 {
-    public class XorOperatorTest
+    public class AndOperatorTest
     {
         [Test]
-        [TestCase(true, true, false)]
-        [TestCase(true, false, true)]
+        [TestCase(true, true, true)]
+        [TestCase(true, false, false)]
         [TestCase(false, false, false)]
-        [TestCase(false, true, true)]
+        [TestCase(false, true, false)]
         public void Evaluate_Value_Success(bool state, bool value, bool expected)
         {
             var left = new Mock<IPredicate>();
             left.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(state);
             var right = new Mock<IPredicate>();
             right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
-            var @operator = new XorOperator();
 
-            Assert.That(@operator.Evaluate(left.Object, right.Object, "my value"), Is.EqualTo(expected));
+            var @operator = new AndOperator(left.Object, right.Object);
+            Assert.That(@operator.Evaluate("my value"), Is.EqualTo(expected));
         }
 
         [Test]
@@ -35,26 +35,26 @@ namespace Expressif.Testing.Predicates.Combination
             var right = new Mock<IPredicate>();
             right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
 
-            var @operator = new XorOperator();
-            @operator.Evaluate(left.Object, right.Object, "my value");
+            var @operator = new AndOperator(left.Object, right.Object);
+            @operator.Evaluate("my value");
 
             left.Verify(x => x.Evaluate("my value"), Times.Once());
             right.Verify(x => x.Evaluate("my value"), Times.Once());
         }
 
         [Test]
-        public void Evaluate_LeftIsFalse_EvaluateRightPredicate()
+        public void Evaluate_LeftIsFalse_DontEvaluateRightPredicate()
         {
             var left = new Mock<IPredicate>();
             left.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
             var right = new Mock<IPredicate>();
-            right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
+            right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(true);
 
-            var @operator = new XorOperator();
-            @operator.Evaluate(left.Object, right.Object, "my value");
+            var @operator = new AndOperator(left.Object, right.Object);
+            @operator.Evaluate("my value");
 
             left.Verify(x => x.Evaluate("my value"), Times.Once());
-            right.Verify(x => x.Evaluate("my value"), Times.Once());
+            right.Verify(x => x.Evaluate(It.IsAny<object>()), Times.Never());
         }
     }
 }

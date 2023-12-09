@@ -13,13 +13,13 @@ using Expressif.Functions.Serializer;
 
 namespace Expressif.Testing.Predicates.Serializer
 {
-    public class PredicationMemberSerializerTest
+    public class SinglePredicationSerializerTest
     {
         [Test]
         public void Serialize_NoParameter_NoParenthesis()
         {
-            var member = new PredicationMember(typeof(Even), Array.Empty<object>());
-            Assert.That(new PredicationMemberSerializer().Serialize(member), Is.EqualTo("even"));
+            var single = new SinglePredication(new Function("Even", []));
+            Assert.That(new SinglePredicationSerializer().Serialize(single), Is.EqualTo("even"));
         }
 
         [Test]
@@ -28,9 +28,9 @@ namespace Expressif.Testing.Predicates.Serializer
             var internalSerializer = new Mock<ParameterSerializer>();
             internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-            var member = new PredicationMember(typeof(Even), Array.Empty<object>());
-            var serializer = new PredicationMemberSerializer(parameterSerializer: internalSerializer.Object);
-            serializer.Serialize(member);
+            var single = new SinglePredication(new Function("Even", []));
+            var serializer = new SinglePredicationSerializer(parameterSerializer: internalSerializer.Object);
+            serializer.Serialize(single);
 
             internalSerializer.Verify(x => x.Serialize(It.IsAny<IParameter>()), Times.Never);
         }
@@ -38,8 +38,8 @@ namespace Expressif.Testing.Predicates.Serializer
         [Test]
         public void Serialize_WithSingleParameter_Parenthesis()
         {
-            var member = new PredicationMember(typeof(GreaterThan), new object[] { 5 });
-            Assert.That(new PredicationMemberSerializer().Serialize(member), Is.EqualTo("greater-than(5)"));
+            var single = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
+            Assert.That(new SinglePredicationSerializer().Serialize(single), Is.EqualTo("greater-than(5)"));
         }
 
         [Test]
@@ -48,9 +48,9 @@ namespace Expressif.Testing.Predicates.Serializer
             var internalSerializer = new Mock<ParameterSerializer>();
             internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-            var member = new PredicationMember(typeof(GreaterThan), new object[] { 5 });
-            var serializer = new PredicationMemberSerializer(parameterSerializer: internalSerializer.Object);
-            serializer.Serialize(member);
+            var single = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
+            var serializer = new SinglePredicationSerializer(parameterSerializer: internalSerializer.Object);
+            serializer.Serialize(single);
 
             internalSerializer.Verify(x => x.Serialize(It.IsAny<LiteralParameter>()), Times.Once);
         }
@@ -58,8 +58,8 @@ namespace Expressif.Testing.Predicates.Serializer
         [Test]
         public void Serialize_MultipleParameter_ParenthesisAndComas()
         {
-            var member = new PredicationMember(typeof(Modulo), new object[] { 7, 3 });
-            Assert.That(new PredicationMemberSerializer().Serialize(member), Is.EqualTo("modulo(7, 3)"));
+            var single = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+            Assert.That(new SinglePredicationSerializer().Serialize(single), Is.EqualTo("modulo(7, 3)"));
         }
 
         [Test]
@@ -68,9 +68,9 @@ namespace Expressif.Testing.Predicates.Serializer
             var internalSerializer = new Mock<ParameterSerializer>();
             internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-            var member = new PredicationMember(typeof(Modulo), new object[] { 7, 3 });
-            var serializer = new PredicationMemberSerializer(parameterSerializer: internalSerializer.Object);
-            serializer.Serialize(member);
+            var single = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+            var serializer = new SinglePredicationSerializer(parameterSerializer: internalSerializer.Object);
+            serializer.Serialize(single);
 
             internalSerializer.Verify(x => x.Serialize(It.IsAny<LiteralParameter>()), Times.Exactly(2));
         }

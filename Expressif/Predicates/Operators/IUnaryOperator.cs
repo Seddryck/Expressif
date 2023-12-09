@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.Combination
+namespace Expressif.Predicates.Operators
 {
-    public interface ICombinationOperator
+    public interface IUnaryOperator : IPredicate, IOperator
     {
-        bool Evaluate(IPredicate left, IPredicate right, object? value);
+        IPredicate Member { get; }
     }
 }

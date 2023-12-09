@@ -9,9 +9,9 @@ namespace Expressif.Parsers
 {
     public class Grammar
     {
-        public static readonly char[] OpeningQuotedChars = new[] { '\"', '@', ',', '(', '[', '{'};
-        public static readonly char[] ClosingQuotedChars = new[] { '\"', '@', ',', ')', ']', '}'};
-        public static readonly char[] AlongQuotedChars = new[] { '\"', '@', ',', '|', ' '};
+        public static readonly char[] OpeningQuotedChars = ['\"', '@', ',', '(', '[', '{'];
+        public static readonly char[] ClosingQuotedChars = ['\"', '@', ',', ')', ']', '}'];
+        public static readonly char[] AlongQuotedChars = ['\"', '@', ',', '|', ' '];
 
         public static readonly Parser<string> FunctionName =
             from tokens in Parse.Letter.AtLeastOnce().Text().DelimitedBy(Parse.Char('-')).Token()

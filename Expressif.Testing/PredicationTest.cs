@@ -45,7 +45,6 @@ namespace Expressif.Testing
         }
 
         [Test]
-        [Ignore("Bug #147 and bug #148")]
         public void Evaluate_Negation_Valid()
         {
             var predication = new Predication("!starts-with(Nik)");
