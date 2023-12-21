@@ -58,4 +58,27 @@ public class DatePartFunctionsTest
     [TestCase("0800-03", "03")]
     public void Month_YearMonth_Valid(YearMonth yearMonth, string expected)
     => Assert.That(new Month().Evaluate(yearMonth), Is.EqualTo(expected));
+
+
+    [Test]
+    [TestCase("1900-01-01", "01-01")]
+    [TestCase("2000-10-01", "10-01")]
+    [TestCase("800-03-17", "03-17")]
+    public void MonthDay_DateTime_Valid(DateTime dt, string expected)
+        => Assert.That(new MonthDay().Evaluate(dt), Is.EqualTo(expected));
+
+
+    [Test]
+    [TestCase("2000-01-01", "1999-W52")]
+    [TestCase("2000-01-08", "2000-W01")]
+    public void YearWeek_DateTime_Valid(DateTime dt, string expected)
+        => Assert.That(new YearWeek().Evaluate(dt), Is.EqualTo(expected));
+
+    [Test]
+    [TestCase("1999-12-31", "1999-W52-5")]
+    [TestCase("2000-01-01", "1999-W52-6")]
+    [TestCase("2000-01-02", "1999-W52-7")]
+    [TestCase("2000-01-03", "2000-W01-1")]
+    public void YearWeekDay_DateTime_Valid(DateTime dt, string expected)
+    => Assert.That(new YearWeekDay().Evaluate(dt), Is.EqualTo(expected));
 }

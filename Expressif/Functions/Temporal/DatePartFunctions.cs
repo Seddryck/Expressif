@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,8 +28,8 @@ public abstract class BaseDatePartFunction : BaseTemporalFunction
         return null;
     }
 
-    protected abstract object? EvaluateInteger(int numeric);
-    protected abstract object? EvaluateYearMonth(YearMonth yearMonth);
+    protected virtual object? EvaluateInteger(int numeric) => null;
+    protected virtual object? EvaluateYearMonth(YearMonth yearMonth) => null;
 }
 
 /// <summary>
@@ -54,3 +55,29 @@ public class Month : BaseDatePartFunction
     protected override object? EvaluateYearMonth(YearMonth yearMonth) => yearMonth.Month.ToString("D2");
 }
 
+/// <summary>
+/// returns a textual value at format MM-DD representing the month and day of the date passed as the argument
+/// </summary>
+public class MonthDay : BaseDatePartFunction
+{
+    protected override object EvaluateDateTime(DateTime value) => $"{value.Month:D2}-{value.Day:D2}";
+}
+
+/// <summary>
+/// returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument
+/// </summary>
+public class YearWeek : BaseDatePartFunction
+{
+    protected override object EvaluateDateTime(DateTime value)
+        => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}";
+}
+
+/// <summary>
+/// returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601),
+/// and the day number (1 being Monday) of the date passed as the argument
+/// </summary>
+public class YearWeekDay : BaseDatePartFunction
+{
+    protected override object EvaluateDateTime(DateTime value)
+        => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}-{(value.DayOfWeek==0 ? 7 : (int)value.DayOfWeek)}";
+}
