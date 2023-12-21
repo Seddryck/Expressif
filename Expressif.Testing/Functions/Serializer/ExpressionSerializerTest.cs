@@ -16,75 +16,62 @@ namespace Expressif.Testing.Functions.Serializer
         [Test]
         public void Serialize_SingleMember_NoPipe()
         {
-            var expression = new ExpressionBuilder();
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Lower), Array.Empty<object>()));
-            Assert.That(new ExpressionSerializer().Serialize(expression), Is.EqualTo("lower"));
+            var expression = new Function("Lower", []);
+            Assert.That(new ExpressionSerializer().Serialize([expression]), Is.EqualTo("lower"));
         }
 
         [Test]
         public void Serialize_SingleParameter_SingleExpressionMemberSerializerCall()
         {
-            var internalSerializer = new Mock<ExpressionMemberSerializer>();
-            internalSerializer.Setup(x => x.Serialize(It.IsAny<ExpressionMember>())).Returns("exp");
+            var internalSerializer = new Mock<FunctionSerializer>();
+            internalSerializer.Setup(x => x.Serialize(It.IsAny<Function>())).Returns("exp");
 
-            var expression = new ExpressionBuilder();
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Lower), Array.Empty<object>()));
-            var serializer = new ExpressionSerializer(expressionMemberSerializer: internalSerializer.Object);
-            serializer.Serialize(expression);
+            var expression = new Function("Lower", []); var serializer = new ExpressionSerializer(internalSerializer.Object);
+            serializer.Serialize([expression]);
 
-            internalSerializer.Verify(x => x.Serialize(It.IsAny<ExpressionMember>()), Times.Once);
-        }
-
-        [Test]
-        public void Serialize_SingleMember_QueueNotEmpty()
-        {
-            var expression = new ExpressionBuilder();
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Lower), Array.Empty<object>()));
-            new ExpressionSerializer().Serialize(expression);
-            Assert.That(expression.Pile, Is.Not.Null.And.Not.Empty);
+            internalSerializer.Verify(x => x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Once);
         }
 
         [Test]
         public void Serialize_MultipleMembers_WithPipe()
         {
-            var expression = new ExpressionBuilder();
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Lower), Array.Empty<object>()));
-            expression.Pile.Enqueue(new ExpressionMember(typeof(FirstChars), new object[] { 5 }));
-            expression.Pile.Enqueue(new ExpressionMember(typeof(PadRight), new object[] { 7, "*" }));
-            Assert.That(new ExpressionSerializer().Serialize(expression)
+            var lowerExpression = new Function("Lower", []);
+            var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
+            var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+            Assert.That(new ExpressionSerializer().Serialize([lowerExpression, firstCharsExpression, PadRightExpression])
                 , Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
         }
 
         [Test]
         public void Serialize_MultipleMembers_MultipleExpressionMemberSerializerCall()
         {
-            var internalSerializer = new Mock<ExpressionMemberSerializer>();
-            internalSerializer.Setup(x => x.Serialize(It.IsAny<ExpressionMember>())).Returns("exp");
+            var internalSerializer = new Mock<FunctionSerializer>();
+            internalSerializer.Setup(x => x.Serialize(It.IsAny<Function>())).Returns("exp");
 
-            var expression = new ExpressionBuilder();
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Lower), Array.Empty<object>()));
-            expression.Pile.Enqueue(new ExpressionMember(typeof(FirstChars), new object[] { 5 }));
-            expression.Pile.Enqueue(new ExpressionMember(typeof(PadRight), new object[] { 7, "*" }));
-            var serializer = new ExpressionSerializer(expressionMemberSerializer: internalSerializer.Object);
-            serializer.Serialize(expression);
+            var lowerExpression = new Function("Lower", []);
+            var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
+            var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+            var serializer = new ExpressionSerializer(internalSerializer.Object);
+            serializer.Serialize([lowerExpression, firstCharsExpression, PadRightExpression]);
 
-            internalSerializer.Verify(x => x.Serialize(It.IsAny<ExpressionMember>()), Times.Exactly(3));
+            internalSerializer.Verify(x => x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
         }
 
         [Test]
+        [Ignore("Limited added-value to manage subexpression")]
         public void Serialize_WithSubExpression_WithPipe()
         {
-            var subExpression = new ExpressionBuilder();
-            subExpression.Pile.Enqueue(new ExpressionMember(typeof(FirstChars), new object[] { 5 }));
-            subExpression.Pile.Enqueue(new ExpressionMember(typeof(PadRight), new object[] { 7, "*" }));
+            var lowerExpression = new Function("Lower", []);
+            var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
+            var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+            var upperExpression = new Function("Upper", []);
 
-            var expression = new ExpressionBuilder();
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Lower), Array.Empty<object>()));
-            expression.Pile.Enqueue(subExpression);
-            expression.Pile.Enqueue(new ExpressionMember(typeof(Upper), Array.Empty<object>()));
+            var subExpression = new Expressif.Parsers.Expression([firstCharsExpression, PadRightExpression]);
+            
+            //var expression = new Expressif.Parsers.Expression([lowerExpression, subExpression, upperExpression]);
 
-            Assert.That(new ExpressionSerializer().Serialize(expression)
-                , Is.EqualTo("lower | { first-chars(5) | pad-right(7, *) } | upper"));
+            //Assert.That(new ExpressionSerializer().Serialize(expression)
+            //    , Is.EqualTo("lower | { first-chars(5) | pad-right(7, *) } | upper"));
         }
     }
 }

@@ -11,13 +11,13 @@ using Expressif.Functions.Text;
 
 namespace Expressif.Testing.Functions.Serializer
 {
-    public class ExpressionMemberSerializerTest
+    public class FunctionSerializerTest
     {
         [Test]
         public void Serialize_NoParameter_NoParenthesis()
         {
-            var member = new ExpressionMember(typeof(Lower), Array.Empty<object>());
-            Assert.That(new ExpressionMemberSerializer().Serialize(member), Is.EqualTo("lower"));
+            var function = new Function("Lower", []);
+            Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("lower"));
         }
 
         [Test]
@@ -26,9 +26,9 @@ namespace Expressif.Testing.Functions.Serializer
             var internalSerializer = new Mock<ParameterSerializer>();
             internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-            var member = new ExpressionMember(typeof(Lower), Array.Empty<object>());
-            var serializer = new ExpressionMemberSerializer(parameterSerializer: internalSerializer.Object);
-            serializer.Serialize(member);
+            var function = new Function("Lower", []);
+            var serializer = new FunctionSerializer(parameterSerializer: internalSerializer.Object);
+            serializer.Serialize(function);
 
             internalSerializer.Verify(x => x.Serialize(It.IsAny<IParameter>()), Times.Never);
         }
@@ -36,8 +36,8 @@ namespace Expressif.Testing.Functions.Serializer
         [Test]
         public void Serialize_WithSingleParameter_Parenthesis()
         {
-            var member = new ExpressionMember(typeof(FirstChars), new object[] { 5 });
-            Assert.That(new ExpressionMemberSerializer().Serialize(member), Is.EqualTo("first-chars(5)"));
+            var function = new Function("FirstChars", [new LiteralParameter("5")]);
+            Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("first-chars(5)"));
         }
 
         [Test]
@@ -46,9 +46,9 @@ namespace Expressif.Testing.Functions.Serializer
             var internalSerializer = new Mock<ParameterSerializer>();
             internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-            var member = new ExpressionMember(typeof(FirstChars), new object[] { 5 });
-            var serializer = new ExpressionMemberSerializer(parameterSerializer: internalSerializer.Object);
-            serializer.Serialize(member);
+            var function = new Function("FirstChars", [new LiteralParameter("5")]);
+            var serializer = new FunctionSerializer(parameterSerializer: internalSerializer.Object);
+            serializer.Serialize(function);
 
             internalSerializer.Verify(x => x.Serialize(It.IsAny<LiteralParameter>()), Times.Once);
         }
@@ -56,8 +56,8 @@ namespace Expressif.Testing.Functions.Serializer
         [Test]
         public void Serialize_MultipleParameter_ParenthesisAndComas()
         {
-            var member = new ExpressionMember(typeof(PadRight), new object[] { 7, "*" });
-            Assert.That(new ExpressionMemberSerializer().Serialize(member), Is.EqualTo("pad-right(7, *)"));
+            var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+            Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, *)"));
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace Expressif.Testing.Functions.Serializer
             var internalSerializer = new Mock<ParameterSerializer>();
             internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-            var member = new ExpressionMember(typeof(PadRight), new object[] { 7, "*" });
-            var serializer = new ExpressionMemberSerializer(parameterSerializer: internalSerializer.Object);
-            serializer.Serialize(member);
+            var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+            var serializer = new FunctionSerializer(parameterSerializer: internalSerializer.Object);
+            serializer.Serialize(function);
 
             internalSerializer.Verify(x => x.Serialize(It.IsAny<LiteralParameter>()), Times.Exactly(2));
         }

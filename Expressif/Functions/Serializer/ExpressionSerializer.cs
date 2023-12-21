@@ -3,33 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Parsers;
 
 namespace Expressif.Functions.Serializer
 {
     public class ExpressionSerializer
     {
-        private ExpressionMemberSerializer ExpressionMemberSerializer { get; }
+        private FunctionSerializer FunctionSerializer { get; }
 
         public ExpressionSerializer()
-            : this(new ExpressionMemberSerializer()) {}
-        public ExpressionSerializer(ExpressionMemberSerializer? expressionMemberSerializer = null)
-            => ExpressionMemberSerializer = expressionMemberSerializer ?? new ExpressionMemberSerializer();
+            : this(new FunctionSerializer()) { }
+        public ExpressionSerializer(FunctionSerializer? functionSerializer = null)
+            => FunctionSerializer = functionSerializer ?? new FunctionSerializer();
 
-        public virtual string Serialize(ExpressionBuilder builder)
+        public virtual void Serialize(IExpression expression, ref StringBuilder stringBuilder)
         {
-            var expression = new StringBuilder();
-            foreach (var member in builder.Pile)
+            switch (expression)
             {
+                case Parsers.Function f:
+                    FunctionSerializer.Serialize(f, ref stringBuilder);
+                    break;
+                case Parsers.Expression exp:
+                    Serialize(exp, ref stringBuilder);
+                    break;
+                default:
+                    throw new NotSupportedException();
+            };
+        }
 
-                expression.Append(member switch
-                {
-                    ExpressionMember em => ExpressionMemberSerializer.Serialize(em),
-                    ExpressionBuilder eb => $"{{ {Serialize(eb)} }}",
-                    _ => throw new NotSupportedException()
-                }).Append(" | ");
+        public virtual void Serialize(IExpression[] expressions, ref StringBuilder stringBuilder)
+        {
+            foreach (var expression in expressions)
+            {
+                Serialize(expression, ref stringBuilder);
+                stringBuilder.Append(" | ");
             }
-            expression.Remove(expression.Length - 3, 3);
-            return expression.ToString();
+            stringBuilder.Remove(stringBuilder.Length - 3, 3);
+        }
+
+        public virtual string Serialize(IExpression expression)
+            => Serialize([expression]);
+
+        public virtual string Serialize(IExpression[] expressions)
+        {
+            var sb = new StringBuilder();
+            Serialize(expressions, ref sb);
+            return sb.ToString();
         }
     }
 }

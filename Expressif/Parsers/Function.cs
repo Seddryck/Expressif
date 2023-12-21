@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Expressif.Parsers
 {
-    public class Function
+    public class Function : IExpression
     {
         public static readonly Parser<Function> Parser =
             from functionName in Grammar.FunctionName

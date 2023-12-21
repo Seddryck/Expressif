@@ -30,6 +30,9 @@ namespace Expressif.Functions
             return new ChainFunction(functions);
         }
 
+        public IFunction Instantiate(string name, IParameter[] parameters, Context context)
+            => Instantiate<IFunction>(name, parameters, context);
+
         public IFunction Instantiate(Type type, IParameter[] parameters, Context context)
             => Instantiate<IFunction>(type, parameters, context);
     }

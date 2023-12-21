@@ -7,7 +7,9 @@ using System.Xml.Linq;
 
 namespace Expressif.Parsers
 {
-    public class Expression
+    public interface IExpression { }
+
+    public class Expression : IExpression
     {
         public IEnumerable<Function> Members { get; }
 
