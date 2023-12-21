@@ -240,6 +240,8 @@ Install-Package Expressif
 |Temporal | length-of-month            | dateTime-to-length-of-month                                                      |
 |Temporal | length-of-year             | dateTime-to-length-of-year                                                       |
 |Temporal | local-to-utc               |                                                                                  |
+|Temporal | month                      | dateTime-to-month                                                                |
+|Temporal | month-day                  | dateTime-to-month-day                                                            |
 |Temporal | next-business-days         | temporal-to-next-business-days, next-business-day, add-business-days             |
 |Temporal | next-day                   | dateTime-to-next-day                                                             |
 |Temporal | next-month                 | dateTime-to-next-month                                                           |
@@ -255,6 +257,9 @@ Install-Package Expressif
 |Temporal | previous-year              | dateTime-to-previous-year                                                        |
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | utc-to-local               |                                                                                  |
+|Temporal | year                       | dateTime-to-year                                                                 |
+|Temporal | year-week                  | dateTime-to-year-week                                                            |
+|Temporal | year-week-day              | dateTime-to-year-week-day                                                        |
 |Text     | after-substring            | text-to-after-substring                                                          |
 |Text     | append                     | text-to-append                                                                   |
 |Text     | append-new-line            | text-to-append-new-line                                                          |

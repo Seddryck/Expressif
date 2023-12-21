@@ -61,6 +61,8 @@ tags: [predicates, functions]
 * [local-to-utc]({{ site.baseurl }}/docs/temporal-functions/#local-to-utc)
 * [lower]({{ site.baseurl }}/docs/text-functions/#lower)
 * [mask-to-text]({{ site.baseurl }}/docs/text-functions/#mask-to-text)
+* [month]({{ site.baseurl }}/docs/temporal-functions/#month)
+* [month-day]({{ site.baseurl }}/docs/temporal-functions/#month-day)
 * [multiply]({{ site.baseurl }}/docs/numeric-functions/#multiply)
 * [neutral]({{ site.baseurl }}/docs/special-functions/#neutral)
 * [next-business-days]({{ site.baseurl }}/docs/temporal-functions/#next-business-days)
@@ -122,6 +124,9 @@ tags: [predicates, functions]
 * [whitespaces-to-null]({{ site.baseurl }}/docs/text-functions/#whitespaces-to-null)
 * [without-diacritics]({{ site.baseurl }}/docs/text-functions/#without-diacritics)
 * [without-whitespaces]({{ site.baseurl }}/docs/text-functions/#without-whitespaces)
+* [year]({{ site.baseurl }}/docs/temporal-functions/#year)
+* [year-week]({{ site.baseurl }}/docs/temporal-functions/#year-week)
+* [year-week-day]({{ site.baseurl }}/docs/temporal-functions/#year-week-day)
 
 
 ## Predicates

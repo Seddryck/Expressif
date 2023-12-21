@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, backward, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
+keywords: [age, backward, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, month, month-day, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, utc-to-local, year, year-week, year-week-day] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -125,6 +125,16 @@ Returns the count of days within the year of the dateTime value passed as the ar
 
 Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
 
+##### month
+###### Overview
+
+returns a textual value at format MM representing the month of the date passed as the argument
+
+##### month-day
+###### Overview
+
+returns a textual value at format MM-DD representing the month and day of the date passed as the argument
+
 ##### next-business-days
 ###### Overview
 
@@ -223,5 +233,21 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 ###### Overview
 
 Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.
+
+##### year
+###### Overview
+
+returns a textual value at format YYYY representing the year of the date passed as the argument
+
+##### year-week
+###### Overview
+
+returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument
+
+##### year-week-day
+###### Overview
+
+returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601),
+            and the day number (1 being Monday) of the date passed as the argument
 
 <!-- END AUTO-GENERATED -->
