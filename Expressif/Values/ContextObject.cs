@@ -6,85 +6,84 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Expressif.Values
+namespace Expressif.Values;
+
+public class ContextObject
 {
-    public class ContextObject
+    public object? Value { get; private set; }
+    private PropertyInfo[]? Cache { get; set; }
+
+    public void Set(object value)
     {
-        public object? Value { get; private set; }
-        private PropertyInfo[]? Cache { get; set; }
+        if (Value == null || Value.GetType() != value.GetType())
+            Cache = null;
+        Value = value;
+    }
 
-        public void Set(object value)
+    public bool Exists(string name)
+        => Value switch
         {
-            if (Value == null || Value.GetType() != value.GetType())
-                Cache = null;
-            Value = value;
-        }
+            DataRow row => row.Table.Columns.Contains(name),
+            IDictionary dico => dico.Contains(name),
+            IList => throw new NotNameableContextObjectException(),
+            _ => RetrieveObjectProperty(name).Exists,
+        };
 
-        public bool Exists(string name)
-            => Value switch
+    public object? this[string name]
+    {
+        get
+        {
+            return Value switch
             {
-                DataRow row => row.Table.Columns.Contains(name),
-                IDictionary dico => dico.Contains(name),
+                DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
+                IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
                 IList => throw new NotNameableContextObjectException(),
-                _ => RetrieveObjectProperty(name).Exists,
+                _ => retrieveObjectProperty(name),
             };
 
-        public object? this[string name]
-        {
-            get
+            object? retrieveObjectProperty(string name)
             {
-                return Value switch
-                {
-                    DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
-                    IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
-                    IList => throw new NotNameableContextObjectException(),
-                    _ => retrieveObjectProperty(name),
-                };
-
-                object? retrieveObjectProperty(string name)
-                {
-                    var result = RetrieveObjectProperty(name);
-                    if (result.Exists)
-                        return result.Value;
-                    throw new ArgumentOutOfRangeException(name);
-                }
+                var result = RetrieveObjectProperty(name);
+                if (result.Exists)
+                    return result.Value;
+                throw new ArgumentOutOfRangeException(name);
             }
         }
+    }
 
-        public bool Exists(int index)
-            => Value switch
+    public bool Exists(int index)
+        => Value switch
+        {
+            DataRow row => index < row.Table.Columns.Count,
+            IList list => index < list.Count,
+            _ => throw new NotIndexableContextObjectException()
+        };
+
+    public object? this[int index]
+    {
+        get
+        {
+            return Value switch
             {
-                DataRow row => index < row.Table.Columns.Count,
-                IList list => index < list.Count,
+                DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
+                IList list => list[index],
                 _ => throw new NotIndexableContextObjectException()
             };
-
-        public object? this[int index]
-        {
-            get
-            {
-                return Value switch
-                {
-                    DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
-                    IList list => list[index],
-                    _ => throw new NotIndexableContextObjectException()
-                };
-            }
         }
+    }
 
-        private (bool Exists, object? Value) RetrieveObjectProperty(string name)
-        {
-            if (Value == null)
-                return (false, null);
+    private (bool Exists, object? Value) RetrieveObjectProperty(string name)
+    {
+        if (Value == null)
+            return (false, null);
 
-            Cache ??= Value.GetType().GetProperties();
+        Cache ??= Value.GetType().GetProperties();
 
-            var prop = Cache.FirstOrDefault(
-                x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
-                && x.CanRead
-            );
+        var prop = Cache.FirstOrDefault(
+            x => x.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)
+            && x.CanRead
+        );
 
-            return (prop == null ? (false, null) : (true, prop.GetValue(Value)));
-        }
+        return (prop == null ? (false, null) : (true, prop.GetValue(Value)));
     }
 }

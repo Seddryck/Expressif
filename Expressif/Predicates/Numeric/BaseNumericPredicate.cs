@@ -7,38 +7,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.Numeric
+namespace Expressif.Predicates.Numeric;
+
+public abstract class BaseNumericPredicate : BasePredicate
 {
-    public abstract class BaseNumericPredicate : BasePredicate
+    public override bool Evaluate(object? value)
     {
-        public override bool Evaluate(object? value)
+        return value switch
         {
-            return value switch
-            {
-                null => EvaluateNull(),
-                DBNull => EvaluateNull(),
-                decimal numeric => EvaluateNumeric(numeric),
-                _ => EvaluateUncasted(value),
-            };
-        }
-        protected bool EvaluateUncasted(object value)
-        {
-            if (new Null().Equals(value))
-                return EvaluateNull();
+            null => EvaluateNull(),
+            DBNull => EvaluateNull(),
+            decimal numeric => EvaluateNumeric(numeric),
+            _ => EvaluateUncasted(value),
+        };
+    }
+    protected bool EvaluateUncasted(object value)
+    {
+        if (new Null().Equals(value))
+            return EvaluateNull();
 
-            var caster = new NumericCaster();
-            var numeric = caster.Cast(value);
-            return EvaluateNumeric(numeric);
-        }
-
-        protected abstract bool EvaluateNumeric(decimal numeric);
+        var caster = new NumericCaster();
+        var numeric = caster.Cast(value);
+        return EvaluateNumeric(numeric);
     }
 
-    public abstract class BaseNumericPredicateReference : BaseNumericPredicate
-    {
-        public Func<decimal> Reference { get; }
+    protected abstract bool EvaluateNumeric(decimal numeric);
+}
 
-        public BaseNumericPredicateReference(Func<decimal> reference)
-            => Reference = reference;
-    }
+public abstract class BaseNumericPredicateReference : BaseNumericPredicate
+{
+    public Func<decimal> Reference { get; }
+
+    public BaseNumericPredicateReference(Func<decimal> reference)
+        => Reference = reference;
 }

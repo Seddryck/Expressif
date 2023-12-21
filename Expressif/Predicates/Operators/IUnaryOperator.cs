@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.Operators
+namespace Expressif.Predicates.Operators;
+
+public interface IUnaryOperator : IPredicate, IOperator
 {
-    public interface IUnaryOperator : IPredicate, IOperator
-    {
-        IPredicate Member { get; }
-    }
+    IPredicate Member { get; }
 }

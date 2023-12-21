@@ -5,24 +5,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Functions.IO
+namespace Expressif.Functions.IO;
+
+internal class FileInfoWrapper : IFileInfo
 {
-    internal class FileInfoWrapper : IFileInfo
-    {
-        private FileInfo FileInfo { get;  }
+    private FileInfo FileInfo { get;  }
 
-        public FileInfoWrapper(string value) => FileInfo = new FileInfo(value);
+    public FileInfoWrapper(string value) => FileInfo = new FileInfo(value);
 
-        public DateTime LastWriteTimeUtc => FileInfo.LastWriteTimeUtc;
+    public DateTime LastWriteTimeUtc => FileInfo.LastWriteTimeUtc;
 
-        public DateTime LastWriteTime => FileInfo.LastWriteTime;
+    public DateTime LastWriteTime => FileInfo.LastWriteTime;
 
-        public DateTime CreationTimeUtc => FileInfo.CreationTimeUtc;
+    public DateTime CreationTimeUtc => FileInfo.CreationTimeUtc;
 
-        public DateTime CreationTime => FileInfo.CreationTime;
+    public DateTime CreationTime => FileInfo.CreationTime;
 
-        public long Length => FileInfo.Length;
+    public long Length => FileInfo.Length;
 
-        public bool Exists => FileInfo.Exists;
-    }
+    public bool Exists => FileInfo.Exists;
 }

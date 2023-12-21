@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Functions.Special
+namespace Expressif.Functions.Special;
+
+/// <summary>
+/// Returns the argument value.
+/// </summary>
+[Function(prefix: "Special")]
+public class Neutral : IFunction
 {
-    /// <summary>
-    /// Returns the argument value.
-    /// </summary>
-    [Function(prefix: "Special")]
-    public class Neutral : IFunction
-    {
-        public object? Evaluate(object? value) => value;
-    }
+    public object? Evaluate(object? value) => value;
 }

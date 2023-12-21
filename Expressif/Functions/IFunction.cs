@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Functions
+namespace Expressif.Functions;
+
+public interface IFunction
 {
-    public interface IFunction
-    {
-        object? Evaluate(object? value);
-    }
+    object? Evaluate(object? value);
 }

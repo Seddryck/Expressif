@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.Operators
+namespace Expressif.Predicates.Operators;
+
+public interface IBinaryOperator : IPredicate, IOperator
 {
-    public interface IBinaryOperator : IPredicate, IOperator
-    {
-        IPredicate LeftMember { get; }
-        IPredicate RightMember { get; }
-    }
+    IPredicate LeftMember { get; }
+    IPredicate RightMember { get; }
 }

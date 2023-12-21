@@ -5,19 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.Operators
+namespace Expressif.Predicates.Operators;
+
+[Operator]
+internal class OrOperator : IBinaryOperator
 {
-    [Operator]
-    internal class OrOperator : IBinaryOperator
-    {
-        public IPredicate LeftMember { get; }
-        public IPredicate RightMember { get; }
+    public IPredicate LeftMember { get; }
+    public IPredicate RightMember { get; }
 
-        public OrOperator(IPredicate leftMember, IPredicate rightMember)
-            => (LeftMember, RightMember) = (leftMember, rightMember);
+    public OrOperator(IPredicate leftMember, IPredicate rightMember)
+        => (LeftMember, RightMember) = (leftMember, rightMember);
 
-        public bool Evaluate(object? value)
-            => LeftMember.Evaluate(value) || RightMember.Evaluate(value);
-        object? IFunction.Evaluate(object? value) => Evaluate(value);
-    }
+    public bool Evaluate(object? value)
+        => LeftMember.Evaluate(value) || RightMember.Evaluate(value);
+    object? IFunction.Evaluate(object? value) => Evaluate(value);
 }

@@ -6,34 +6,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates.Text
+namespace Expressif.Predicates.Text;
+
+/// <summary>
+/// Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
+/// </summary>
+public class AnyOf : BaseTextPredicate
 {
-    /// <summary>
-    /// Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
-    /// </summary>
-    public class AnyOf : BaseTextPredicate
+    public IEnumerable<Func<string>> References { get; }
+    protected StringComparer Comparer { get; }
+
+    /// <param name="references">An array of text values.</param>
+    public AnyOf(IEnumerable<Func<string>> references)
+        : this(references, StringComparer.InvariantCultureIgnoreCase) { }
+    
+    /// <param name="references"></param>
+    /// <param name="comparer"></param>
+    public AnyOf(IEnumerable<Func<string>> references, StringComparer comparer)
+               => (References, Comparer) = (references, comparer);
+
+    protected override bool EvaluateBaseText(string value)
     {
-        public IEnumerable<Func<string>> References { get; }
-        protected StringComparer Comparer { get; }
-
-        /// <param name="references">An array of text values.</param>
-        public AnyOf(IEnumerable<Func<string>> references)
-            : this(references, StringComparer.InvariantCultureIgnoreCase) { }
-        
-        /// <param name="references"></param>
-        /// <param name="comparer"></param>
-        public AnyOf(IEnumerable<Func<string>> references, StringComparer comparer)
-                   => (References, Comparer) = (references, comparer);
-
-        protected override bool EvaluateBaseText(string value)
+        foreach (var reference in References)
         {
-            foreach (var reference in References)
-            {
-                var predicate = new EquivalentTo(reference, Comparer);
-                if (predicate.Evaluate(value))
-                    return true;
-            }
-            return false;
+            var predicate = new EquivalentTo(reference, Comparer);
+            if (predicate.Evaluate(value))
+                return true;
         }
+        return false;
     }
 }

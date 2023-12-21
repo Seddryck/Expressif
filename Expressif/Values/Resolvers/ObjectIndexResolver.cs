@@ -6,17 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Expressif.Values.Resolvers
+namespace Expressif.Values.Resolvers;
+
+internal class ObjectIndexResolver<T> : IScalarResolver<T>
 {
-    internal class ObjectIndexResolver<T> : IScalarResolver<T>
-    {
-        private int Index { get; }
-        private ContextObject Object { get; }
+    private int Index { get; }
+    private ContextObject Object { get; }
 
-        public ObjectIndexResolver(int index, ContextObject obj)
-            => (Index, Object) = (index, obj);
+    public ObjectIndexResolver(int index, ContextObject obj)
+        => (Index, Object) = (index, obj);
 
-        public T? Execute() => new Caster().Cast<T>(Object[Index]);
-        object? IScalarResolver.Execute() => Execute();
-    }
+    public T? Execute() => new Caster().Cast<T>(Object[Index]);
+    object? IScalarResolver.Execute() => Execute();
 }

@@ -5,12 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Expressif.Parsers
+namespace Expressif.Parsers;
+
+public class Keyword
 {
-    public class Keyword
-    {
-        public static readonly Parser<string> OrOperator = Parse.IgnoreCase("OR").Text();
-        public static readonly Parser<string> AndOperator = Parse.IgnoreCase("AND").Text();
-        public static readonly Parser<string> XorOperator = Parse.IgnoreCase("XOR").Text();
-    }
+    public static readonly Parser<string> OrOperator = Parse.IgnoreCase("OR").Text();
+    public static readonly Parser<string> AndOperator = Parse.IgnoreCase("AND").Text();
+    public static readonly Parser<string> XorOperator = Parse.IgnoreCase("XOR").Text();
 }

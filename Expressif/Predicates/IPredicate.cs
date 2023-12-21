@@ -5,15 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Predicates
-{
-    public interface IPredicate : IFunction
-    {
-        new bool Evaluate(object? value);
-    }
+namespace Expressif.Predicates;
 
-    public interface IPredicate<T> : IPredicate
-    {
-        bool Evaluate(T? value);
-    }
+public interface IPredicate : IFunction
+{
+    new bool Evaluate(object? value);
+}
+
+public interface IPredicate<T> : IPredicate
+{
+    bool Evaluate(T? value);
 }
