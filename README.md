@@ -258,6 +258,7 @@ Install-Package Expressif
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | utc-to-local               |                                                                                  |
 |Temporal | year                       | dateTime-to-year                                                                 |
+|Temporal | year-day                   | dateTime-to-year-day                                                             |
 |Temporal | year-week                  | dateTime-to-year-week                                                            |
 |Temporal | year-week-day              | dateTime-to-year-week-day                                                        |
 |Text     | after-substring            | text-to-after-substring                                                          |
