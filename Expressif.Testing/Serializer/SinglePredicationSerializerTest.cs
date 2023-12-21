@@ -1,17 +1,11 @@
-﻿using Expressif.Predicates.Serializer;
-using Expressif.Predicates;
+﻿using Expressif.Serializers;
 using Expressif.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Expressif.Predicates.Text;
-using Expressif.Functions.Text;
-using Expressif.Predicates.Numeric;
-using Expressif.Functions.Serializer;
 
-namespace Expressif.Testing.Predicates.Serializer
+namespace Expressif.Testing.Serializers
 {
     public class SinglePredicationSerializerTest
     {

@@ -1,15 +1,12 @@
-﻿using Expressif.Functions.Serializer;
-using Expressif.Functions;
-using Expressif.Parsers;
+﻿using Expressif.Parsers;
+using Expressif.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Predicates.Text;
-using Expressif.Functions.Text;
 
-namespace Expressif.Testing.Functions.Serializer
+namespace Expressif.Testing.Serializers
 {
     public class ExpressionSerializerTest
     {
@@ -67,7 +64,7 @@ namespace Expressif.Testing.Functions.Serializer
             var upperExpression = new Function("Upper", []);
 
             var subExpression = new Expressif.Parsers.Expression([firstCharsExpression, PadRightExpression]);
-            
+
             //var expression = new Expressif.Parsers.Expression([lowerExpression, subExpression, upperExpression]);
 
             //Assert.That(new ExpressionSerializer().Serialize(expression)

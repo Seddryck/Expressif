@@ -1,4 +1,4 @@
-﻿using Expressif.Functions.Serializer;
+﻿using Expressif.Serializers;
 using Expressif.Parsers;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Functions.Serializer
+namespace Expressif.Testing.Serializers
 {
     public class ParameterSerializerTest
     {

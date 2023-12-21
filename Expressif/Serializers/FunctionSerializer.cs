@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Functions.Serializer
+namespace Expressif.Serializers
 {
     public class FunctionSerializer
     {

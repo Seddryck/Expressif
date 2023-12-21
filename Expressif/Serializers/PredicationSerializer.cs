@@ -1,14 +1,11 @@
-﻿using System;
+﻿using Expressif.Parsers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Functions;
-using Expressif.Functions.Serializer;
-using Expressif.Parsers;
-using Expressif.Predicates.Operators;
 
-namespace Expressif.Predicates.Serializer
+namespace Expressif.Serializers
 {
     public class PredicationSerializer
     {

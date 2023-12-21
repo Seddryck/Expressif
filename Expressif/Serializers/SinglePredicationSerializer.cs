@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Expressif.Functions;
-using Expressif.Functions.Serializer;
 using Expressif.Parsers;
 using Expressif.Predicates.Operators;
 
-namespace Expressif.Predicates.Serializer
+namespace Expressif.Serializers
 {
     public class SinglePredicationSerializer
     {

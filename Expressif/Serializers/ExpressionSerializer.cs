@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Expressif.Parsers;
 
-namespace Expressif.Functions.Serializer
+namespace Expressif.Serializers
 {
     public class ExpressionSerializer
     {
@@ -20,7 +20,7 @@ namespace Expressif.Functions.Serializer
         {
             switch (expression)
             {
-                case Parsers.Function f:
+                case Function f:
                     FunctionSerializer.Serialize(f, ref stringBuilder);
                     break;
                 case Parsers.Expression exp:
