@@ -1,6 +1,6 @@
-﻿using Expressif.Functions;
-using Expressif.Functions.Serializer;
-using Expressif.Functions.Text;
+﻿using Expressif.Functions.Text;
+using Expressif.Parsers;
+using Expressif.Serializers;
 using Expressif.Values.Resolvers;
 using System;
 using System.Collections.Generic;
@@ -103,24 +103,16 @@ namespace Expressif.Testing
         }
 
         [Test]
-        public void Chain_IFunction_CorrectlyEvaluate()
-        {
-            var builder = new ExpressionBuilder();
-            var expression = builder.Chain(new Lower()).Chain(new FirstChars(() => 5)).Build();
-            Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol"));
-        }
-
-        [Test]
         public void Serialize_WithParameters_CorrectlyEvaluate()
         {
-            var serializer = new Mock<ExpressionSerializer>();
-            serializer.Setup(x => x.Serialize(It.IsAny<ExpressionBuilder>())).Returns("serialization");
-            var builder = new ExpressionBuilder(serializer: serializer.Object)
+            var internalSerializer = new Mock<FunctionSerializer>();
+            var serializer = new ExpressionSerializer(internalSerializer.Object);
+            var builder = new ExpressionBuilder(serializer: serializer)
                 .Chain<Lower>()
                 .Chain<FirstChars>(5)
                 .Chain<PadRight>(7, '*');
             var str = builder.Serialize();
-            serializer.Verify(x => x.Serialize(builder), Times.Once);
+            internalSerializer.Verify(x=>x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
         }
 
         [Test]

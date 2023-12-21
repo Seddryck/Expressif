@@ -45,11 +45,18 @@ namespace Expressif.Testing
         }
 
         [Test]
-        [Ignore("Bug #147 and bug #148")]
         public void Evaluate_Negation_Valid()
         {
             var predication = new Predication("!starts-with(Nik)");
             var result = predication.Evaluate("Nikola Tesla");
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void Evaluate_Negation_CheckParam()
+        {
+            var predication = new Predication("!starts-with(True)");
+            var result = predication.Evaluate("Truesla");
             Assert.That(result, Is.False);
         }
 

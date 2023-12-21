@@ -1,13 +1,13 @@
 ﻿using Expressif.Predicates;
-using Expressif.Predicates.Serializer;
-using Expressif.Predicates.Combination;
+using Expressif.Parsers;
+using Expressif.Values.Special;
+using Expressif.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Functions;
 
 namespace Expressif
 {
@@ -16,140 +16,127 @@ namespace Expressif
         private Context Context { get; }
         private PredicationFactory Factory { get; }
         private PredicationSerializer Serializer { get; }
-
+        
         public PredicationBuilder()
             : this(new Context()) { }
         public PredicationBuilder(Context? context = null, PredicationFactory? factory = null, PredicationSerializer? serializer = null)
             => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new(), serializer ?? new());
 
-        public Queue<object> Pile { get; } = new();
+        private IPredication? Pile { get; set; }
 
-        public PredicationBuilder Chain<P>(params object?[] parameters)
+        public PredicationBuilder Create<P>(params object?[] parameters)
             where P : IPredicate
-            => ChainWork(null, typeof(P), parameters);
-
-        public PredicationBuilder Ever<P>(params object?[] parameters)
-            where P : IPredicate
-            => Chain<P>(parameters);
-
-        public PredicationBuilder Not<P>(params object?[] parameters)
-            where P : IPredicate
-            => ChainWork(null, typeof(NotOperator), typeof(P), parameters);
-
-        public PredicationBuilder And<P>(params object?[] parameters)
-            where P : IPredicate
-            => ChainWork(typeof(AndOperator), typeof(P), parameters);
-
-        public PredicationBuilder Or<P>(params object?[] parameters)
-            where P : IPredicate
-            => ChainWork(typeof(OrOperator), typeof(P), parameters);
-
-        public PredicationBuilder Xor<P>(params object?[] parameters)
-            where P : IPredicate
-            => ChainWork(typeof(XorOperator), typeof(P), parameters);
-
-        public PredicationBuilder Chain<O, P>(params object?[] parameters)
-            where O : ICombinationOperator
-            where P : IPredicate
-            => ChainWork(typeof(O), typeof(P), parameters);
-
-        public PredicationBuilder And<N, P>(params object?[] parameters)
-            where N : INegationOperator
-            where P : IPredicate
-            => ChainWork(typeof(AndOperator), typeof(N), typeof(P), parameters);
-
-        public PredicationBuilder Or<N, P>(params object?[] parameters)
-            where N : INegationOperator
-            where P : IPredicate
-            => ChainWork(typeof(OrOperator), typeof(N), typeof(P), parameters);
-
-        public PredicationBuilder Xor<N, P>(params object?[] parameters)
-            where N : INegationOperator
-            where P : IPredicate
-            => ChainWork(typeof(XorOperator), typeof(N), typeof(P), parameters);
-
-        public PredicationBuilder Chain<O, N, P>(params object?[] parameters)
-            where O : ICombinationOperator
-            where N : INegationOperator
-            where P : IPredicate
-            => ChainWork(typeof(O), typeof(N), typeof(P), parameters);
-
-        public PredicationBuilder Chain(Type predicate, params object?[] parameters)
-            => ChainWork(null, predicate, parameters);
-
-        public PredicationBuilder And(Type predicate, params object?[] parameters)
-            => ChainWork(typeof(AndOperator), predicate, parameters);
-
-        public PredicationBuilder Or(Type predicate, params object?[] parameters)
-            => ChainWork(typeof(OrOperator), predicate, parameters);
-
-        public PredicationBuilder Xor(Type predicate, params object?[] parameters)
-            => ChainWork(typeof(XorOperator), predicate, parameters);
-
-        public PredicationBuilder Chain(Type @operator, Type predicate, params object?[] parameters)
-            => ChainWork(@operator, predicate, parameters);
-
-        public PredicationBuilder Chain(Type @operator, Type negation, Type predicate, params object?[] parameters)
-            => ChainWork(@operator, negation, predicate, parameters);
-
-        protected PredicationBuilder ChainWork(Type? @operator, Type predicate, params object?[] parameters)
-            => ChainWork(@operator, typeof(EverOperator), predicate, parameters);
-
-        protected PredicationBuilder ChainWork(Type? @operator, Type negation, Type predicate, params object?[] parameters)
         {
-            if (@operator != null && !@operator.GetInterfaces().Contains(typeof(ICombinationOperator)))
-                throw new ArgumentException($"The type '{@operator.FullName}' doesn't implement the interface '{nameof(ICombinationOperator)}'. Only types implementing this interface can create chains in a predication.", nameof(@operator));
-
-            if (negation != null && !negation.GetInterfaces().Contains(typeof(INegationOperator)))
-                throw new ArgumentException($"The type '{negation.FullName}' doesn't implement the interface '{nameof(ICombinationOperator)}'. Only types implementing this interface can be chained to create a predicate.", nameof(negation));
-
-            if (!predicate.GetInterfaces().Contains(typeof(IPredicate)))
-                throw new ArgumentException($"The type '{predicate.FullName}' doesn't implement the interface '{nameof(IPredicate)}'. Only types implementing this interface can be chained to create a predication.", nameof(predicate));
-
-            Pile.Enqueue(new PredicationMember(@operator, negation!, predicate, parameters));
+            Pile = new SinglePredication(new Function(typeof(P).Name, Parametrize(parameters)));
             return this;
         }
 
-        public PredicationBuilder Chain<O>(PredicationBuilder builder) where O : ICombinationOperator
-            => Chain(typeof(O), builder);
+        private UnaryPredication BuildNot<P>(object?[] parameters)
+            => new (new UnaryOperator("!") 
+                    , new SinglePredication(new Function(typeof(P).Name, Parametrize(parameters)))
+                );
 
-        public PredicationBuilder Chain(Type @operator, PredicationBuilder builder)
+        public PredicationBuilder Not<P>(params object?[] parameters)
+            where P : IPredicate
         {
-            Pile.Enqueue(new SubPredicationMember(@operator, builder));
+            Pile = BuildNot<P>(parameters);
+            return this;
+        }
+
+        public PredicationBuilder And<P>(params object?[] parameters)
+            where P : IPredicate
+        {
+            var right = new SinglePredication(new Function(typeof(P).Name, Parametrize(parameters)));
+            Pile = new BinaryPredication(new BinaryOperator("And"), Pile!, right);
+            return this;
+        }
+
+        public PredicationBuilder And(PredicationBuilder builder)
+        {
+            Pile = new BinaryPredication(new BinaryOperator("And"), Pile!, builder.Pile!);
+            return this;
+        }
+
+        public PredicationBuilder AndNot<P>(params object?[] parameters)
+            where P : IPredicate
+        {
+            var right = BuildNot<P>(parameters);
+            Pile = new BinaryPredication(new BinaryOperator("And"), Pile!, right);
+            return this;
+        }
+
+        public PredicationBuilder Or<P>(params object?[] parameters)
+            where P : IPredicate
+        {
+            var right = new SinglePredication(new Function(typeof(P).Name, Parametrize(parameters)));
+            Pile = new BinaryPredication(new BinaryOperator("Or"), Pile!, right);
+            return this;
+        }
+
+        public PredicationBuilder Or(PredicationBuilder builder)
+        {
+            Pile = new BinaryPredication(new BinaryOperator("Or"), Pile!, builder.Pile!);
+            return this;
+        }
+
+        public PredicationBuilder OrNot<P>(params object?[] parameters)
+            where P : IPredicate
+        {
+            var right = BuildNot<P>(parameters);
+            Pile = new BinaryPredication(new BinaryOperator("Or"), Pile!, right);
+            return this;
+        }
+
+        public PredicationBuilder Xor<P>(params object?[] parameters)
+            where P : IPredicate
+        {
+            var right = new SinglePredication(new Function(typeof(P).Name, Parametrize(parameters)));
+            Pile = new BinaryPredication(new BinaryOperator("Xor"), Pile!, right);
+            return this;
+        }
+
+        public PredicationBuilder Xor(PredicationBuilder builder)
+        {
+            Pile = new BinaryPredication(new BinaryOperator("Xor"), Pile!, builder.Pile!);
+            return this;
+        }
+
+        public PredicationBuilder XorNot<P>(params object?[] parameters)
+            where P : IPredicate
+        {
+            var right = BuildNot<P>(parameters);
+            Pile = new BinaryPredication(new BinaryOperator("Xor"), Pile!, right);
             return this;
         }
 
         public IPredicate Build()
         {
-            IPredicate? predicate = null;
-            if (!Pile.Any())
+            if (Pile is null)
                 throw new InvalidOperationException();
+            var predicate = Factory.Instantiate(Pile, Context);
+            return predicate;
+        }
 
-            while (Pile.Any())
+        private IParameter[] Parametrize(object?[] parameters)
+        {
+            var typedParameters = new List<IParameter>();
+            foreach (var parameter in parameters)
             {
-                ICombinationOperator? @operator = null;
-                IPredicate? memberPredicate = null;
-                var member = Pile.Dequeue();
-
-                if (member is PredicationMember m)
-                    (@operator, memberPredicate) = m.Build(Context, Factory);
-                else if (member is SubPredicationMember sub)
-                    (@operator, memberPredicate) = sub.Build(Context, Factory);
-                else
-                    throw new NotSupportedException();
-
-                // TODO implement negation
-                predicate = predicate is null ? memberPredicate : new CombinedPredicate(predicate, @operator!, memberPredicate!);
+                typedParameters.Add(parameter switch
+                {
+                    IParameter p => p,
+                    _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
+                });
             }
-            return predicate!;
+            return typedParameters.ToArray();
         }
 
         public string Serialize()
         {
-            if (!Pile.Any())
+            if (Pile is null)
                 throw new InvalidOperationException();
 
-            return Serializer.Serialize(this);
+            return Serializer.Serialize(Pile);
         }
     }
 }

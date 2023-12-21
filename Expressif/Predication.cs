@@ -10,17 +10,17 @@ namespace Expressif
 {
     public class Predication : IPredicate
     {
-        private readonly IPredicate expression;
+        private readonly IPredicate predicate;
 
         public Predication(string code)
             : this(code, new Context()) { }
         public Predication(string code, Context context)
             : this(code, context, new PredicationFactory()) { }
         public Predication(string code, Context context, PredicationFactory factory)
-            => expression = factory.Instantiate(code, context);
+            => predicate = factory.Instantiate(code, context);
 
-        public virtual bool Evaluate(object? value) => expression.Evaluate(value)!;
+        public virtual bool Evaluate(object? value) => predicate.Evaluate(value)!;
 
-        object? IFunction.Evaluate(object? value) => expression.Evaluate(value);
+        object? IFunction.Evaluate(object? value) => predicate.Evaluate(value);
     }
 }

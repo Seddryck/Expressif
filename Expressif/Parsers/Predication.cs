@@ -13,58 +13,65 @@ namespace Expressif.Parsers
 {
     public interface IPredication { }
 
-    public class BasicPredication : IPredication
+    public class Predication : IPredication
+    {
+        public static readonly Parser<IPredication> Parser =
+            UnaryPredication.Parser
+                .Or(BinaryPredication.Parser)
+                .Or(SubPredication.Parser)
+                .Or(SinglePredication.Parser);
+    }
+
+    public class SinglePredication : IPredication
     {
         public Function[] Members { get; }
         
-        public BasicPredication(Function[] members)
+        public SinglePredication(Function[] members)
             => (Members) = (members);
 
-        private static readonly Parser<BasicPredication> PositiveParser =
-            from predicate in Function.Parser
-            select new BasicPredication(new[] { predicate });
+        public SinglePredication(Function member)
+            : this([member]) { }
 
-        private static readonly Parser<BasicPredication> NegativeParser =
-            from negation in Parse.Char('!').Token()
+        public static readonly Parser<IPredication> Parser =
             from predicate in Function.Parser
-            select new BasicPredication(new[] { new Function(nameof(False), Array.Empty<IParameter>()), predicate });
-
-        public static readonly Parser<BasicPredication> Parser = NegativeParser.Or(PositiveParser);
+            select new SinglePredication([predicate]);
     }
 
-    public class Operator
+    internal class UnaryPredication : IPredication
     {
-        public string Name { get; }
+        public UnaryOperator Operator { get; }
+        public IPredication Member { get; }
 
-        public Operator(string name)
-            => (Name) = (name);
+        public UnaryPredication(UnaryOperator @operator, IPredication predication)
+            => (Operator, Member) = (@operator, predication);
 
-        public static readonly Parser<Operator> Parser =
-            from _ in Parse.Char('|')
-            from @operator in Keyword.OrOperator.Or(Keyword.AndOperator).Or(Keyword.XorOperator)
-            select new Operator(@operator);
+        public static readonly Parser<IPredication> Parser =
+            from unaryOperator in UnaryOperator.Parser
+            from predicate in Predication.Parser
+            select new UnaryPredication(unaryOperator, predicate);
     }
 
-    class SubPredication : IPredication
+    internal class BinaryPredication : IPredication
+    {
+        public IPredication LeftMember { get; }
+        public BinaryOperator Operator { get; }
+        public IPredication RightMember { get; }
+
+        public BinaryPredication(BinaryOperator @operator, IPredication left, IPredication right)
+            => (Operator, LeftMember, RightMember) = (@operator, left, right);
+
+        public static readonly Parser<IPredication> Parser =
+            Parse.ChainOperator(BinaryOperator.Parser, SubPredication.Parser.Or(UnaryPredication.Parser).Or(SinglePredication.Parser), (op, left, right)
+                => new BinaryPredication(op, left, right));
+    }
+
+    internal class SubPredication : IPredication
     {
         public static readonly Parser<IPredication> Parser =
             from open in Parse.Char('{').Token()
             from chain in Predication.Parser
             from close in Parse.Char('}').Token()
             select chain;
-    }
-
-    public class Predication : IPredication
-    {
-        public IPredication LeftMember { get; }
-        public Operator Operator { get; }
-        public IPredication RightMember { get; }
-
-        public Predication(IPredication leftMember, Operator @operator, IPredication rightMember)
-            => (LeftMember, Operator, RightMember) = (leftMember, @operator, rightMember);
-
-        public static readonly Parser<IPredication> Parser =
-            Parse.ChainOperator(Operator.Parser, SubPredication.Parser.Or(BasicPredication.Parser), (op, left, right) => new Predication(left, op, right));
     }
 
     public class InputPredication
@@ -82,4 +89,3 @@ namespace Expressif.Parsers
             select new InputPredication(parameter, predication);
     }
 }
-    
