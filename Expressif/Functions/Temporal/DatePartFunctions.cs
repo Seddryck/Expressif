@@ -81,3 +81,17 @@ public class YearWeekDay : BaseDatePartFunction
     protected override object EvaluateDateTime(DateTime value)
         => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}-{(value.DayOfWeek==0 ? 7 : (int)value.DayOfWeek)}";
 }
+
+/// <summary>
+///returns a textual value at format YYYY-ddd representing the year,
+/// and the day number of the date passed as the argument (both according to ISO 8601)
+/// </summary>
+public class YearDay : BaseDatePartFunction
+{
+    protected override object EvaluateDateTime(DateTime value)
+    {
+        var year = ISOWeek.GetYear(value);
+        var day = value.Subtract(ISOWeek.GetYearStart(year)).Days + 1;
+        return $"{year:D4}-{day:D3}";
+    }
+}

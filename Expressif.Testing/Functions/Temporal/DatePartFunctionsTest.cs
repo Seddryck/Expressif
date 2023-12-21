@@ -80,5 +80,13 @@ public class DatePartFunctionsTest
     [TestCase("2000-01-02", "1999-W52-7")]
     [TestCase("2000-01-03", "2000-W01-1")]
     public void YearWeekDay_DateTime_Valid(DateTime dt, string expected)
-    => Assert.That(new YearWeekDay().Evaluate(dt), Is.EqualTo(expected));
+        => Assert.That(new YearWeekDay().Evaluate(dt), Is.EqualTo(expected));
+
+    [Test]
+    [TestCase("1999-12-31", "1999-362")]
+    [TestCase("2000-01-01", "1999-363")]
+    [TestCase("2000-01-02", "1999-364")]
+    [TestCase("2000-01-03", "2000-001")]
+    public void YearDay_DateTime_Valid(DateTime dt, string expected)
+        => Assert.That(new YearDay().Evaluate(dt), Is.EqualTo(expected));
 }
