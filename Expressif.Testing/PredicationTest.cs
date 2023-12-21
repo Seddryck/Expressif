@@ -53,6 +53,14 @@ namespace Expressif.Testing
         }
 
         [Test]
+        public void Evaluate_Negation_CheckParam()
+        {
+            var predication = new Predication("!starts-with(True)");
+            var result = predication.Evaluate("Truesla");
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
         public void Evaluate_CombinationAnd_Valid()
         {
             var predication = new Predication("starts-with(Nik) |AND ends-with(sla)");
