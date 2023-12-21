@@ -13,7 +13,7 @@ public class ContextVariables
 
     internal void Add(string name, IScalarResolver value)
     {
-        name = name.StartsWith("@") ? name[1..] : name;
+        name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
             throw new VariableAlreadyExistingException(name);
         Variables.Add(name, value);
@@ -24,7 +24,7 @@ public class ContextVariables
 
     internal void Set(string name, IScalarResolver value)
     {
-        name = name.StartsWith("@") ? name[1..] : name;
+        name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
             Variables[name] = value;
         else
@@ -36,7 +36,7 @@ public class ContextVariables
 
     public void Remove(string name)
     {
-        name = name.StartsWith("@") ? name[1..] : name;
+        name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
             Variables.Remove(name);
     }
@@ -47,9 +47,9 @@ public class ContextVariables
     {
         get
         {
-            name = name.StartsWith("@") ? name[1..] : name;
-            if (Variables.ContainsKey(name))
-                return Variables[name].Execute();
+            name = name.StartsWith('@') ? name[1..] : name;
+            if (Variables.TryGetValue(name, out var value))
+                return value.Execute();
             throw new UnexpectedVariableException(name);
         }
     }

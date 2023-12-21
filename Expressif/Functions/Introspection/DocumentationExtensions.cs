@@ -78,8 +78,8 @@ public static class DocumentationExtensions
     {
         var ctorNodes = XmlFromPattern(type, 'M', "#ctor");
 
-        if (ctorNodes == null || !ctorNodes.Any())
-            return Array.Empty<CtorInfo>();
+        if (ctorNodes == null || ctorNodes.Length==0)
+            return [];
 
         var ctorInfos = new List<CtorInfo>();
         foreach (var ctorNode in ctorNodes)
@@ -137,12 +137,12 @@ public static class DocumentationExtensions
     /// <summary>
     /// A cache used to remember Xml documentation for assemblies.
     /// </summary>
-    private static readonly Dictionary<Assembly, XmlDocument> Cache = new();
+    private static readonly Dictionary<Assembly, XmlDocument> cache = [];
 
     /// <summary>
     /// A cache used to store failure exceptions for assembly lookups.
     /// </summary>
-    private static readonly Dictionary<Assembly, Exception> FailCache = new();
+    private static readonly Dictionary<Assembly, Exception> failCache = [];
 
     /// <summary>
     /// Obtains the documentation file for the specified assembly.
@@ -153,19 +153,19 @@ public static class DocumentationExtensions
     /// the XML file is not loaded and parsed on every single lookup.</remarks>
     public static XmlDocument XmlFromAssembly(this Assembly assembly)
     {
-        if (FailCache.TryGetValue(assembly, out var value))
+        if (failCache.TryGetValue(assembly, out var value))
             throw value;
 
         try
         {
-            if (!Cache.ContainsKey(assembly))
-                Cache[assembly] = XmlFromAssemblyNonCached(assembly);
+            if (!cache.ContainsKey(assembly))
+                cache[assembly] = XmlFromAssemblyNonCached(assembly);
 
-            return Cache[assembly];
+            return cache[assembly];
         }
         catch (Exception exception)
         {
-            FailCache[assembly] = exception;
+            failCache[assembly] = exception;
             throw;
         }
     }

@@ -41,7 +41,7 @@ internal class OperatorIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NoDuplicateAlias()
     {
-        var infos = Infos.Where(x => x.Aliases.Any());
+        var infos = Infos.Where(x => x.Aliases.Length != 0);
         foreach (var info in infos)
             Assert.That(infos.Count(x => x.Aliases.Contains(info.Aliases.ElementAt(0))), Is.EqualTo(1));
     }

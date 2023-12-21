@@ -279,7 +279,10 @@ public class TemporalFunctionsTest
         var textToDateTime = new TextToDateTime(() => format);
         var utcToLocal = new UtcToLocal(() => timeZone);
         var result = utcToLocal.Evaluate(textToDateTime.Evaluate(value));
-        Assert.That(result, Is.EqualTo(expected));
-        Assert.That(((DateTime)result).Kind, Is.EqualTo(DateTimeKind.Unspecified));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(((DateTime)result!).Kind, Is.EqualTo(DateTimeKind.Unspecified));
+        });
     }
 }

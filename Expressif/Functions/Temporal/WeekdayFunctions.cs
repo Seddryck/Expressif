@@ -116,7 +116,7 @@ public class LastInMonth : PreviousWeekdayOrSame
 /// <summary>
 /// Returns a new date value corresponding to the date passed as the argument, counting forward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.
 /// </summary>
-[Function(aliases: new[] { "next-business-day", "add-business-days" })]
+[Function(aliases: ["next-business-day", "add-business-days"])]
 public class NextBusinessDays : BaseTemporalWeekdayFunction
 {
     internal Func<int> Count { get; }
@@ -151,7 +151,7 @@ public class NextBusinessDays : BaseTemporalWeekdayFunction
 /// <summary>
 /// Returns a new date value corresponding to the date passed as the argument, counting backward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.
 /// </summary>
-[Function(aliases: new[] { "previous-business-day", "subtract-business-days" })]
+[Function(aliases: ["previous-business-day", "subtract-business-days"])]
 public class PreviousBusinessDays : NextBusinessDays
 {
     /// <param name="count">The count of business days to move forward.</param>

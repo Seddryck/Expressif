@@ -68,10 +68,10 @@ public class ExpressionBuilder
     public IFunction Build()
     {
         IFunction? function = null;
-        if (!Pile.Any())
+        if (Pile.Count == 0)
             throw new InvalidOperationException();
 
-        while (Pile.Any())
+        while (Pile.Count != 0)
         {
             var member = Pile.Dequeue() switch
             {
@@ -88,7 +88,7 @@ public class ExpressionBuilder
 
     public string Serialize()
     {
-        if (!Pile.Any())
+        if (Pile.Count == 0)
             throw new InvalidOperationException();
 
         return Serializer.Serialize(Pile.ToArray());

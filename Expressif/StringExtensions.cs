@@ -47,6 +47,6 @@ static class StringExtensions
 
     public static string[] ToToken(this string value, char separator = '-')
      => string.IsNullOrEmpty(value) 
-            ? Array.Empty<string>() 
+            ? []
             : value.Split(separator);
 }

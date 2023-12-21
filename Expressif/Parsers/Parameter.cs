@@ -21,32 +21,32 @@ public record class InputExpressionParameter(InputExpression Expression) : IPara
 
 public class Parameter
 {
-    private static readonly Parser<IParameter> VariableParameter =
+    protected static readonly Parser<IParameter> VariableParameter =
         from name in Grammar.Variable
         select new VariableParameter(name);
-    
-    private static readonly Parser<IParameter> ItemParameter =
+
+    protected static readonly Parser<IParameter> ItemParameter =
         from _ in Parse.Char('[').Token()
         from name in Grammar.Literal
         from _1 in Parse.Char(']').Token()
         select new ObjectPropertyParameter(name);
 
-    private static readonly Parser<IParameter> IndexParameter =
+    protected static readonly Parser<IParameter> IndexParameter =
         from _ in Parse.Char('#')
         from index in Parse.Number
         select new ObjectIndexParameter(int.Parse(index));
 
-    private static readonly Parser<IParameter> ParametrizedExpressionParameter =
+    protected static readonly Parser<IParameter> ParametrizedExpressionParameter =
         from _ in Parse.Char('{').Token()
         from expression in InputExpression.Parser
         from _1 in Parse.Char('}').Token()
         select new InputExpressionParameter(expression);
 
-    private static readonly Parser<IParameter> LiteralParameter =
+    protected static readonly Parser<IParameter> LiteralParameter =
         from name in Grammar.Literal
         select new LiteralParameter(name);
 
-    private static readonly Parser<IParameter> IntervalParameter =
+    protected static readonly Parser<IParameter> IntervalParameter =
         from interval in Interval.Parser
         select new IntervalParameter(interval);
 

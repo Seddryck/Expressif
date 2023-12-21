@@ -144,7 +144,7 @@ public class PreviousYear : BaseTemporalFunction
 /// <summary>
 /// Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).
 /// </summary>
-[Function(prefix: "dateTime", aliases:new []{"dateTime-to-clip"})]
+[Function(prefix: "dateTime", aliases:["dateTime-to-clip"])]
 public class Clamp : BaseTemporalFunction
 {
     public Func<DateTime> Min { get; }
@@ -258,7 +258,7 @@ public class CeilingMinute : BaseTemporalFunction
 /// <summary>
 /// Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
 /// </summary>
-[Function(prefix: "dateTime", aliases: new[] {"dateTime-to-add"})]
+[Function(prefix: "dateTime", aliases: ["dateTime-to-add"])]
 public class Forward : BaseTemporalFunction
 {
     public Func<int> Times { get; }
@@ -280,7 +280,7 @@ public class Forward : BaseTemporalFunction
 /// <summary>
 /// Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
 /// </summary>
-[Function(prefix: "dateTime", aliases: new[] { "dateTime-to-subtract" })]
+[Function(prefix: "dateTime", aliases: ["dateTime-to-subtract"])]
 public class Backward : Forward
 {
     /// <param name="timeSpan">The value to be subtracted to the argument value.</param>

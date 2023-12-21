@@ -14,14 +14,14 @@ public class PredicateAttribute : Attribute
     public string? Prefix { get; }
 
     public PredicateAttribute()
-        : this(Array.Empty<string>()) { }
+        : this([]) { }
 
     public PredicateAttribute(bool appendIs)
-        : this(appendIs, null, Array.Empty<string>()) { }
+        : this(appendIs, null, []) { }
 
     public PredicateAttribute(string[] aliases)
         : this(true, null, aliases) { }
 
     public PredicateAttribute(bool appendIs = true, string? prefix = null, string[]? aliases = null)
-        => (AppendIs, Prefix, Aliases) = (appendIs, prefix, aliases ?? Array.Empty<string>());
+        => (AppendIs, Prefix, Aliases) = (appendIs, prefix, aliases ?? []);
 }

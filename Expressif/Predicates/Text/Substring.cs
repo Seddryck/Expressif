@@ -30,7 +30,7 @@ public abstract class BaseTextPredicateSubstring : BaseTextPredicateReference
         if (map.TryGetValue(comparer, out var comparison))
             return comparison;
         else
-            throw new ArgumentException(nameof(comparer));
+            throw new ArgumentException($"The value '{comparer}' is not mapped to any comparison.", nameof(comparer));
     }
 }
 

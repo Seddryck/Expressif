@@ -60,7 +60,7 @@ class WhitespaceTokenizer : ITokenizer
         }
         else
         {
-            return Array.Empty<string>();
+            return [];
         }
     }
 }

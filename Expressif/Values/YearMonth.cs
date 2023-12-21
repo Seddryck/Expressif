@@ -31,8 +31,8 @@ public record YearMonth(int Year, int Month)
     public static implicit operator YearMonth(string v)
         => (YearMonth)TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(v)!;
 
-    private static readonly NumberStyles Style = NumberStyles.None;
-    private static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
+    protected static readonly NumberStyles Style = NumberStyles.None;
+    protected static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
 
     public static YearMonth Parse(string value, IFormatProvider? provider)
      => TryParse(value, provider, out var result) ? result : throw new FormatException();

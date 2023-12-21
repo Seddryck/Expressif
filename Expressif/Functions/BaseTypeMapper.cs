@@ -8,8 +8,8 @@ namespace Expressif.Functions;
 
 public abstract class BaseTypeMapper
 {
-    private IDictionary<string, Type>? _mapping;
-    protected IDictionary<string, Type> Mapping { get => _mapping ??= Initialize(); }
+    private IDictionary<string, Type>? mapping;
+    protected IDictionary<string, Type> Mapping { get => mapping ??= Initialize(); }
 
     public Type Execute(string functionName)
     {

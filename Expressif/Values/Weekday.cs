@@ -19,8 +19,8 @@ public record Weekday(int Index, string Name)
 #endif
 {
 
-    private static readonly NumberStyles Style = NumberStyles.None;
-    private static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
+    protected static readonly NumberStyles Style = NumberStyles.None;
+    protected static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
 
     public static bool TryParse(string? text, IFormatProvider? provider, [NotNullWhen(true)] out Weekday? value)
         => Weekdays.TryGetByName(string.IsNullOrEmpty(text) ? string.Empty : text.Trim().ToLowerInvariant(), out value)

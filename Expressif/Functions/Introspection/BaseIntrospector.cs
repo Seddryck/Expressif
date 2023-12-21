@@ -12,8 +12,8 @@ public abstract class BaseIntrospector
     protected record class AttributeInfo<T>(Type Type, T Attribute) { }
     private ITypesProbe Probe { get; }
 
-    private Type[]? _types;
-    protected Type[] Types { get => _types ??= Probe.Locate().ToArray(); }
+    private Type[]? types;
+    protected Type[] Types { get => types ??= Probe.Locate().ToArray(); }
 
     protected BaseIntrospector(ITypesProbe probe)
         => Probe = probe;
@@ -44,7 +44,7 @@ public abstract class BaseIntrospector
 
 public class AssemblyTypesProbe : ITypesProbe
 {
-    public Assembly[] Assemblies { get; } = new[] { typeof(Expression).Assembly };
+    public Assembly[] Assemblies { get; } = [typeof(Expression).Assembly];
 
     public AssemblyTypesProbe()
     { }

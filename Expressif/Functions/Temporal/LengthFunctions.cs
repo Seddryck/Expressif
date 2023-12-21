@@ -53,7 +53,7 @@ public class LengthOfYear : BaseTemporalLengthFunction
 /// </summary>
 public class LengthOfMonth : BaseTemporalLengthFunction
 {
-    private static readonly int[] LongMonths = { 1, 3, 5, 7, 8, 10, 12 };
+    protected static readonly int[] LongMonths = [1, 3, 5, 7, 8, 10, 12];
     protected override object EvaluateDateTime(DateTime value)
         => EvaluateYearMonth(new YearMonth(value.Year, value.Month));
 

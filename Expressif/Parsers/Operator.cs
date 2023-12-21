@@ -34,7 +34,7 @@ internal class BinaryOperator : IPredication
         from @operator in Keyword.OrOperator.Or(Keyword.AndOperator).Or(Keyword.XorOperator)
         select new BinaryOperator(@operator);
 
-    public static BinaryOperator And => new BinaryOperator("And");
-    public static BinaryOperator Or => new BinaryOperator("Or");
-    public static BinaryOperator Xor => new BinaryOperator("Xor");
+    public static BinaryOperator And => new("And");
+    public static BinaryOperator Or => new("Or");
+    public static BinaryOperator Xor => new("Xor");
 }

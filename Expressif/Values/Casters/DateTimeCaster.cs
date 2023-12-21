@@ -10,11 +10,11 @@ namespace Expressif.Values.Casters;
 
 public class DateTimeCaster : ICaster<DateTime>, IParser<DateTime>
 {
-    private readonly DateTimeStyles Style = DateTimeStyles.AllowWhiteSpaces
+    protected readonly DateTimeStyles Style = DateTimeStyles.AllowWhiteSpaces
                                             | DateTimeStyles.NoCurrentDateDefault
                                             | DateTimeStyles.AdjustToUniversal;
 
-    private readonly DateTimeFormatInfo Format = CultureInfo.InvariantCulture.DateTimeFormat;
+    protected readonly DateTimeFormatInfo Format = CultureInfo.InvariantCulture.DateTimeFormat;
 
     public virtual bool TryCast(object obj, [NotNullWhen(true)] out DateTime value)
         => obj switch

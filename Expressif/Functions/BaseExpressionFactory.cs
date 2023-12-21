@@ -55,7 +55,7 @@ public abstract class BaseExpressionFactory
 
     protected Delegate InstantiateScalarDelegate(IParameter parameter, Type scalarType, Context context)
     {
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, new[] { typeof(IParameter), typeof(Context) })
+        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(IParameter), typeof(Context)])
             ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
         var instantiateGeneric = instantiate.MakeGenericMethod(scalarType);
         var resolver = instantiateGeneric.Invoke(null, new object[] { parameter, context })!;
@@ -69,10 +69,10 @@ public abstract class BaseExpressionFactory
     private static IScalarResolver<T> InstantiateScalarResolver<T>(IParameter parameter, Context context)
         => parameter switch
         {
-            LiteralParameter l => InstantiateScalarResolver<T>(typeof(LiteralScalarResolver<T>), new object[] { l.Value }),
-            VariableParameter v => InstantiateScalarResolver<T>(typeof(VariableScalarResolver<T>), new object[] { v.Name, context.Variables }),
-            ObjectPropertyParameter item => InstantiateScalarResolver<T>(typeof(ObjectPropertyResolver<T>), new object[] { item.Name, context.CurrentObject }),
-            ObjectIndexParameter index => InstantiateScalarResolver<T>(typeof(ObjectIndexResolver<T>), new object[] { index.Index, context.CurrentObject }),
+            LiteralParameter l => InstantiateScalarResolver<T>(typeof(LiteralScalarResolver<T>), [l.Value]),
+            VariableParameter v => InstantiateScalarResolver<T>(typeof(VariableScalarResolver<T>), [v.Name, context.Variables]),
+            ObjectPropertyParameter item => InstantiateScalarResolver<T>(typeof(ObjectPropertyResolver<T>), [item.Name, context.CurrentObject]),
+            ObjectIndexParameter index => InstantiateScalarResolver<T>(typeof(ObjectIndexResolver<T>), [index.Index, context.CurrentObject]),
             _ => throw new ArgumentOutOfRangeException(nameof(parameter))
         };
 
@@ -86,7 +86,7 @@ public abstract class BaseExpressionFactory
 
         var interval = new IntervalBuilder().Create(i.Value.LowerBoundType, i.Value.LowerBound, i.Value.UpperBound, i.Value.UpperBoundType);
 
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, new[] { typeof(Type), typeof(object[]) })
+        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(Type), typeof(object[])])
             ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
         var instantiateGeneric = instantiate.MakeGenericMethod(type);
 
@@ -108,7 +108,7 @@ public abstract class BaseExpressionFactory
 
         var arg = InstantiateScalarDelegate(exp.Expression.Parameter, typeof(object), context);
 
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, new[] { typeof(Type), typeof(object[]) })
+        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(Type), typeof(object[])])
             ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
         var instantiateGeneric = instantiate.MakeGenericMethod(type);
 

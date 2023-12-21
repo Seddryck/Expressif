@@ -25,5 +25,5 @@ public class IntervalBuilderTest
     [TestCase("-7.25", "")]
     [TestCase("2020-12-16", "4.12355")]
     public void Create_MixedValidType_Invalid(string lowerBound, string upperBound)
-        => Assert.That(() => new IntervalBuilder().Create(']', lowerBound, upperBound, '['), Throws.ArgumentException);
+        => Assert.That(() => new IntervalBuilder().Create(']', lowerBound, upperBound, '['), Throws.InvalidOperationException);
 }

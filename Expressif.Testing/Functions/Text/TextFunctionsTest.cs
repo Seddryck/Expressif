@@ -97,7 +97,7 @@ public class TextFunctionsTest
     [TestCase(typeof(Whitespace))]
     public void WhitespacesToEmpty_SpecialType_Empty(Type type)
     {
-        var obj = type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>());
+        var obj = type.GetConstructor([])!.Invoke(Array.Empty<Type>());
         Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.EqualTo(new Empty()));
     }
 
@@ -111,7 +111,7 @@ public class TextFunctionsTest
     [TestCase(typeof(Null))]
     public void WhitespacesToEmpty_SpecialType_NotEmpty(Type type)
     {
-        var obj = type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>());
+        var obj = type.GetConstructor([])!.Invoke(Array.Empty<Type>());
         Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.Not.EqualTo(new Empty()));
     }
 

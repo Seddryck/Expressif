@@ -12,8 +12,8 @@ public sealed class OperatorAttribute : Attribute
     public string[] Aliases { get; }
 
     public OperatorAttribute()
-        : this(Array.Empty<string>()) { }
+        : this([]) { }
 
     public OperatorAttribute(string[]? aliases = null)
-        => (Aliases) = (aliases ?? Array.Empty<string>());
+        => (Aliases) = aliases ?? [];
 }

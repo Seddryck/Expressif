@@ -46,7 +46,7 @@ public abstract class BaseTextFunction : IFunction
         if (new Whitespace().Equals(value))
             return EvaluateBlank();
 
-        if (value.StartsWith("(") && value.EndsWith(")"))
+        if (value.StartsWith('(') && value.EndsWith(')'))
             return EvaluateSpecial(value);
 
         return EvaluateString(value);
@@ -62,7 +62,7 @@ public abstract class BaseTextFunction : IFunction
 /// <summary>
 /// Returns the argument value except if this value only contains white-space characters then it returns `empty`.
 /// </summary>
-[Function(prefix:"", aliases: new[] {"blank-to-empty"})]
+[Function(prefix:"", aliases: ["blank-to-empty"])]
 public class WhitespacesToEmpty : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Empty().Keyword;
@@ -72,7 +72,7 @@ public class WhitespacesToEmpty : BaseTextFunction
 /// <summary>
 /// Returns the argument value except if this value only contains white-space characters then it returns `null`.
 /// </summary>
-[Function(prefix: "", aliases: new[] { "blank-to-null" })]
+[Function(prefix: "", aliases: ["blank-to-null"])]
 public class WhitespacesToNull : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Null().Keyword;

@@ -30,6 +30,6 @@ internal class IntervalBuilder
             var caster = new DateTimeCaster();
             return new Interval<DateTime>(caster.Cast(lowerBound), caster.Cast(upperBound), lowerBoundType, upperBoundType);
         }
-        throw new ArgumentException();
+        throw new InvalidOperationException();
     }
 }

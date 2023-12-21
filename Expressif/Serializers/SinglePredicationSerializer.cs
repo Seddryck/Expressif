@@ -31,7 +31,7 @@ public class SinglePredicationSerializer
     protected virtual void Serialize(Function predicate, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(predicate.Name.ToKebabCase());
-        if (predicate.Parameters.Any())
+        if (predicate.Parameters.Length != 0)
         {
             stringBuilder.Append('(');
             foreach (var parameter in predicate.Parameters)

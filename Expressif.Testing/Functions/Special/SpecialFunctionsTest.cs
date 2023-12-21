@@ -27,7 +27,7 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Value))]
     public void AnyToAny_SpecialType_Any(Type type)
         => Assert.That(new AnyToAny().Evaluate(
-            type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>()))
+            type.GetConstructor([])!.Invoke(Array.Empty<Type>()))
             , Is.EqualTo(new Any()));
 
     [Test]
@@ -54,7 +54,7 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Value))]
     public void ValueToValue_SpecialType_Value(Type type)
         => Assert.That(new ValueToValue().Evaluate(
-            type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>()))
+            type.GetConstructor([])!.Invoke(Array.Empty<Type>()))
             , Is.EqualTo(new Value()));
 
     [Test]
@@ -67,7 +67,7 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Null))]
     public void ValueToValue_SpecialType_Null(Type type)
         => Assert.That(new ValueToValue().Evaluate(
-            type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>()))
+            type.GetConstructor([])!.Invoke(Array.Empty<Type>()))
             , Is.EqualTo(new Null()));
 
     [Test]
@@ -87,7 +87,7 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Null))]
     public void NullToValue_SpecialType_Null(Type type)
         => Assert.That(new NullToValue().Evaluate(
-            type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>()))
+            type.GetConstructor([])!.Invoke(Array.Empty<Type>()))
             , Is.EqualTo(new Value()));
 
     [Test]
@@ -112,7 +112,7 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Value))]
     public void NullToValue_SpecialType_Value(Type type)
     {
-        var obj = type.GetConstructor(Array.Empty<Type>())!.Invoke(Array.Empty<Type>());
+        var obj = type.GetConstructor([])!.Invoke(Array.Empty<Type>());
         Assert.That(new NullToValue().Evaluate(obj), Is.EqualTo(obj));
     }
 }
