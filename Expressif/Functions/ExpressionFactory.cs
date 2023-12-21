@@ -11,29 +11,28 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Expressif.Functions
+namespace Expressif.Functions;
+
+public class ExpressionFactory : BaseExpressionFactory
 {
-    public class ExpressionFactory : BaseExpressionFactory
+    private Parser<Parsers.Expression> Parser { get; } = Parsers.Expression.Parser;
+
+    public ExpressionFactory()
+        : base(new FunctionTypeMapper()) { }
+
+    public IFunction Instantiate(string code, Context context)
     {
-        private Parser<Parsers.Expression> Parser { get; } = Parsers.Expression.Parser;
+        var expression = Parser.Parse(code);
 
-        public ExpressionFactory()
-            : base(new FunctionTypeMapper()) { }
-
-        public IFunction Instantiate(string code, Context context)
-        {
-            var expression = Parser.Parse(code);
-
-            var functions = new List<IFunction>();
-            foreach (var member in expression.Members)
-                functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
-            return new ChainFunction(functions);
-        }
-
-        public IFunction Instantiate(string name, IParameter[] parameters, Context context)
-            => Instantiate<IFunction>(name, parameters, context);
-
-        public IFunction Instantiate(Type type, IParameter[] parameters, Context context)
-            => Instantiate<IFunction>(type, parameters, context);
+        var functions = new List<IFunction>();
+        foreach (var member in expression.Members)
+            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
+        return new ChainFunction(functions);
     }
+
+    public IFunction Instantiate(string name, IParameter[] parameters, Context context)
+        => Instantiate<IFunction>(name, parameters, context);
+
+    public IFunction Instantiate(Type type, IParameter[] parameters, Context context)
+        => Instantiate<IFunction>(type, parameters, context);
 }

@@ -7,24 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Predicates.Temporal
+namespace Expressif.Testing.Predicates.Temporal;
+
+public class IntervalTest
 {
-    public class IntervalTest
-    {
-        [Test]
-        [TestCase("2022-11-21", true)]
-        [TestCase("2022-11-25", false)]
-        [TestCase("2022-11-21 17:12:25", true)]
-        [TestCase("2022-11-25 17:12:25", false)]
-        [TestCase(null, false)]
-        [TestCase("(null)", false)]
-        public void ContainedIn_DateTime_Expected(object? value, bool expected)
-            => Assert.That(new ContainedIn(
-                new Interval<System.DateTime>(
-                    new System.DateTime(2022, 11, 20)
-                    , new System.DateTime(2022, 11, 24)
-                    , IntervalType.Open
-                    , IntervalType.Closed)
-                ).Evaluate(value), Is.EqualTo(expected));
-    }
+    [Test]
+    [TestCase("2022-11-21", true)]
+    [TestCase("2022-11-25", false)]
+    [TestCase("2022-11-21 17:12:25", true)]
+    [TestCase("2022-11-25 17:12:25", false)]
+    [TestCase(null, false)]
+    [TestCase("(null)", false)]
+    public void ContainedIn_DateTime_Expected(object? value, bool expected)
+        => Assert.That(new ContainedIn(
+            new Interval<System.DateTime>(
+                new System.DateTime(2022, 11, 20)
+                , new System.DateTime(2022, 11, 24)
+                , IntervalType.Open
+                , IntervalType.Closed)
+            ).Evaluate(value), Is.EqualTo(expected));
 }

@@ -4,64 +4,63 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Functions.Text
+namespace Expressif.Functions.Text;
+
+internal interface ITokenizer
 {
-    internal interface ITokenizer
-    {
-        string[] Execute(string value);
-    }
+    string[] Execute(string value);
+}
 
-    internal class Tokenizer : ITokenizer
-    {
-        private char Separator { get; }
-        public Tokenizer(char separator)
-            => Separator = separator;
+internal class Tokenizer : ITokenizer
+{
+    private char Separator { get; }
+    public Tokenizer(char separator)
+        => Separator = separator;
 
-        public string[] Execute(string value) => value.Split(new char[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
-    }
+    public string[] Execute(string value) => value.Split(new char[] { Separator }, StringSplitOptions.RemoveEmptyEntries);
+}
 
-    class WhitespaceTokenizer : ITokenizer
+class WhitespaceTokenizer : ITokenizer
+{
+    public string[] Execute(string value)
     {
-        public string[] Execute(string value)
+        if (!string.IsNullOrWhiteSpace(value))
         {
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                var startTokens = new List<int>();
-                var endTokens = new List<int>();
-                bool tokenRunning = false;
+            var startTokens = new List<int>();
+            var endTokens = new List<int>();
+            bool tokenRunning = false;
 
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (char.IsLetterOrDigit(value[i]) || char.Parse("-") == value[i])
-                    {
-                        if (!tokenRunning)
-                            startTokens.Add(i);
-                        tokenRunning = true;
-                    }
-                    else if (char.IsWhiteSpace(value[i]))
-                    {
-                        if (tokenRunning)
-                            endTokens.Add(i);
-                        tokenRunning = false;
-                    }
-                }
-                if (tokenRunning)
-                    endTokens.Add(value.Length);
-
-                var tokens = new List<string>();
-                var boundedTokens = startTokens.Zip(endTokens, (start, end) => new { Start = start, End = end });
-                foreach (var tokenBoundary in boundedTokens)
-                {
-                    var substring = value[tokenBoundary.Start..tokenBoundary.End];
-                    if (!string.IsNullOrWhiteSpace(substring))
-                        tokens.Add(substring.Trim());
-                }
-                return tokens.ToArray();
-            }
-            else
+            for (int i = 0; i < value.Length; i++)
             {
-                return Array.Empty<string>();
+                if (char.IsLetterOrDigit(value[i]) || char.Parse("-") == value[i])
+                {
+                    if (!tokenRunning)
+                        startTokens.Add(i);
+                    tokenRunning = true;
+                }
+                else if (char.IsWhiteSpace(value[i]))
+                {
+                    if (tokenRunning)
+                        endTokens.Add(i);
+                    tokenRunning = false;
+                }
             }
+            if (tokenRunning)
+                endTokens.Add(value.Length);
+
+            var tokens = new List<string>();
+            var boundedTokens = startTokens.Zip(endTokens, (start, end) => new { Start = start, End = end });
+            foreach (var tokenBoundary in boundedTokens)
+            {
+                var substring = value[tokenBoundary.Start..tokenBoundary.End];
+                if (!string.IsNullOrWhiteSpace(substring))
+                    tokens.Add(substring.Trim());
+            }
+            return tokens.ToArray();
+        }
+        else
+        {
+            return Array.Empty<string>();
         }
     }
 }

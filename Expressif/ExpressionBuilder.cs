@@ -10,88 +10,87 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif
+namespace Expressif;
+
+public class ExpressionBuilder
 {
-    public class ExpressionBuilder
+    
+    private Context Context { get; }
+    private ExpressionFactory Factory { get; }
+    private ExpressionSerializer Serializer { get; }
+
+    public ExpressionBuilder()
+        : this(new Context()) { }
+    public ExpressionBuilder(Context? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
+        => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new ExpressionFactory(), serializer ?? new ExpressionSerializer());
+
+    private Queue<IExpression> Pile { get; } = new();
+
+    public ExpressionBuilder Chain<T>(params object?[] parameters) where T : IFunction
+        => Chain(typeof(T), parameters);
+
+    public ExpressionBuilder Chain(Type type, params object?[] parameters)
     {
-        
-        private Context Context { get; }
-        private ExpressionFactory Factory { get; }
-        private ExpressionSerializer Serializer { get; }
+        if (!type.GetInterfaces().Contains(typeof(IFunction)))
+            throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IFunction)}'. Only types implementing this interface can be chained to create an expression.", nameof(type));
 
-        public ExpressionBuilder()
-            : this(new Context()) { }
-        public ExpressionBuilder(Context? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
-            => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new ExpressionFactory(), serializer ?? new ExpressionSerializer());
+        Pile.Enqueue(new Function(type.Name, Parametrize(parameters)));
+        return this;
+    }
 
-        private Queue<IExpression> Pile { get; } = new();
-
-        public ExpressionBuilder Chain<T>(params object?[] parameters) where T : IFunction
-            => Chain(typeof(T), parameters);
-
-        public ExpressionBuilder Chain(Type type, params object?[] parameters)
+    private IParameter[] Parametrize(object?[] parameters)
+    {
+        var typedParameters = new List<IParameter>();
+        foreach (var parameter in parameters)
         {
-            if (!type.GetInterfaces().Contains(typeof(IFunction)))
-                throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IFunction)}'. Only types implementing this interface can be chained to create an expression.", nameof(type));
-
-            Pile.Enqueue(new Function(type.Name, Parametrize(parameters)));
-            return this;
-        }
-
-        private IParameter[] Parametrize(object?[] parameters)
-        {
-            var typedParameters = new List<IParameter>();
-            foreach (var parameter in parameters)
+            typedParameters.Add(parameter switch
             {
-                typedParameters.Add(parameter switch
-                {
-                    IParameter p => p,
-                    _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
-                });
-            }
-            return typedParameters.ToArray();
+                IParameter p => p,
+                _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
+            });
         }
+        return typedParameters.ToArray();
+    }
 
-        public ExpressionBuilder Chain(ExpressionBuilder builder)
+    public ExpressionBuilder Chain(ExpressionBuilder builder)
+    {
+        foreach (var element in builder.Pile)
+            Pile.Enqueue(element);
+        return this;
+    }
+
+    public ExpressionBuilder Chain(Function function)
+    {
+        Pile.Enqueue(function);
+        return this;
+    }
+
+    public IFunction Build()
+    {
+        IFunction? function = null;
+        if (!Pile.Any())
+            throw new InvalidOperationException();
+
+        while (Pile.Any())
         {
-            foreach (var element in builder.Pile)
-                Pile.Enqueue(element);
-            return this;
-        }
-
-        public ExpressionBuilder Chain(Function function)
-        {
-            Pile.Enqueue(function);
-            return this;
-        }
-
-        public IFunction Build()
-        {
-            IFunction? function = null;
-            if (!Pile.Any())
-                throw new InvalidOperationException();
-
-            while (Pile.Any())
+            var member = Pile.Dequeue() switch
             {
-                var member = Pile.Dequeue() switch
-                {
-                    Function f => Factory.Instantiate(f.Name, f.Parameters, Context),
-                    ExpressionBuilder b => b.Build(),
-                    IFunction f => f,
-                    _ => throw new NotSupportedException()
-                };
-                function = function is null ? member : new ChainFunction(new[] { function, member });
-            }
-
-            return function!;
+                Function f => Factory.Instantiate(f.Name, f.Parameters, Context),
+                ExpressionBuilder b => b.Build(),
+                IFunction f => f,
+                _ => throw new NotSupportedException()
+            };
+            function = function is null ? member : new ChainFunction(new[] { function, member });
         }
 
-        public string Serialize()
-        {
-            if (!Pile.Any())
-                throw new InvalidOperationException();
+        return function!;
+    }
 
-            return Serializer.Serialize(Pile.ToArray());
-        }
+    public string Serialize()
+    {
+        if (!Pile.Any())
+            throw new InvalidOperationException();
+
+        return Serializer.Serialize(Pile.ToArray());
     }
 }

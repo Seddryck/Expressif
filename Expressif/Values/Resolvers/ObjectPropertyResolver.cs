@@ -6,17 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Expressif.Values.Resolvers
+namespace Expressif.Values.Resolvers;
+
+internal class ObjectPropertyResolver<T> : IScalarResolver<T>
 {
-    internal class ObjectPropertyResolver<T> : IScalarResolver<T>
-    {
-        private string PropertyName { get; }
-        private ContextObject Object { get; }
+    private string PropertyName { get; }
+    private ContextObject Object { get; }
 
-        public ObjectPropertyResolver(string propertyName, ContextObject obj)
-            => (PropertyName, Object) = (propertyName, obj);
+    public ObjectPropertyResolver(string propertyName, ContextObject obj)
+        => (PropertyName, Object) = (propertyName, obj);
 
-        public T? Execute() => new Caster().Cast<T>(Object[PropertyName]);
-        object? IScalarResolver.Execute() => Execute();
-    }
+    public T? Execute() => new Caster().Cast<T>(Object[PropertyName]);
+    object? IScalarResolver.Execute() => Execute();
 }

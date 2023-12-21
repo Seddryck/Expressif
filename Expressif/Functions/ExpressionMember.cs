@@ -7,22 +7,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Functions
+namespace Expressif.Functions;
+
+public record class ExpressionMember(Type Type, object?[] Parameters)
 {
-    public record class ExpressionMember(Type Type, object?[] Parameters)
+    public IFunction Build(Context context, ExpressionFactory factory)
     {
-        public IFunction Build(Context context, ExpressionFactory factory)
+        var typedParameters = new List<IParameter>();
+        foreach (var parameter in Parameters)
         {
-            var typedParameters = new List<IParameter>();
-            foreach (var parameter in Parameters)
+            typedParameters.Add(parameter switch
             {
-                typedParameters.Add(parameter switch
-                {
-                    IParameter p => p,
-                    _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
-                });
-            }
-            return factory.Instantiate(Type, typedParameters.ToArray(), context);
+                IParameter p => p,
+                _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
+            });
         }
+        return factory.Instantiate(Type, typedParameters.ToArray(), context);
     }
 }

@@ -5,19 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Expressif.Functions;
 
-namespace Expressif.Predicates.Operators
+namespace Expressif.Predicates.Operators;
+
+[Operator(["!"])]
+internal class NotOperator : IUnaryOperator
 {
-    [Operator(["!"])]
-    internal class NotOperator : IUnaryOperator
-    {
-        public IPredicate Member { get; }
+    public IPredicate Member { get; }
 
-        public NotOperator(IPredicate member)
-            => (Member) = (member);
+    public NotOperator(IPredicate member)
+        => (Member) = (member);
 
-        public bool Evaluate(object? value)
-            => !Member.Evaluate(value);
+    public bool Evaluate(object? value)
+        => !Member.Evaluate(value);
 
-        object? IFunction.Evaluate(object? value) => Evaluate(value);
-    }
+    object? IFunction.Evaluate(object? value) => Evaluate(value);
 }
