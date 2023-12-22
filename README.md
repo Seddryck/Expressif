@@ -292,6 +292,7 @@ Install-Package Expressif
 |Text     | count-distinct-chars       | text-to-count-distinct-chars                                                     |
 |Text     | count-substring            | text-to-count-substring                                                          |
 |Text     | empty-to-null              |                                                                                  |
+|Text     | filter-chars               | text-to-filter-chars                                                             |
 |Text     | first-chars                | text-to-first-chars                                                              |
 |Text     | html-to-text               |                                                                                  |
 |Text     | last-chars                 | text-to-last-chars                                                               |

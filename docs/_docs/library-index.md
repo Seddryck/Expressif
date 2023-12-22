@@ -46,6 +46,7 @@ tags: [predicates, functions]
 * [extension]({{ site.baseurl }}/docs/io-functions/#extension)
 * [filename]({{ site.baseurl }}/docs/io-functions/#filename)
 * [filename-without-extension]({{ site.baseurl }}/docs/io-functions/#filename-without-extension)
+* [filter-chars]({{ site.baseurl }}/docs/text-functions/#filter-chars)
 * [first-chars]({{ site.baseurl }}/docs/text-functions/#first-chars)
 * [first-in-month]({{ site.baseurl }}/docs/temporal-functions/#first-in-month)
 * [first-of-month]({{ site.baseurl }}/docs/temporal-functions/#first-of-month)
