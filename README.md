@@ -225,8 +225,13 @@ Install-Package Expressif
 |Temporal | backward                   | dateTime-to-backward, dateTime-to-subtract                                       |
 |Temporal | ceiling-hour               | dateTime-to-ceiling-hour                                                         |
 |Temporal | ceiling-minute             | dateTime-to-ceiling-minute                                                       |
+|Temporal | change-of-month            | dateTime-to-change-of-month                                                      |
+|Temporal | change-of-year             | dateTime-to-change-of-year                                                       |
 |Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip                                              |
 |Temporal | datetime-to-date           | dateTime-to-datetime-to-date                                                     |
+|Temporal | day-of-month               | dateTime-to-day-of-month                                                         |
+|Temporal | day-of-week                | dateTime-to-day-of-week                                                          |
+|Temporal | day-of-year                | dateTime-to-day-of-year                                                          |
 |Temporal | first-in-month             | dateTime-to-first-in-month                                                       |
 |Temporal | first-of-month             | dateTime-to-first-of-month                                                       |
 |Temporal | first-of-year              | dateTime-to-first-of-year                                                        |
@@ -234,6 +239,11 @@ Install-Package Expressif
 |Temporal | floor-minute               | dateTime-to-floor-minute                                                         |
 |Temporal | forward                    | dateTime-to-forward, dateTime-to-add                                             |
 |Temporal | invalid-to-date            |                                                                                  |
+|Temporal | iso-day-of-year            | dateTime-to-iso-day-of-year                                                      |
+|Temporal | iso-week-of-year           | dateTime-to-iso-week-of-year                                                     |
+|Temporal | iso-year-day               | dateTime-to-iso-year-day                                                         |
+|Temporal | iso-year-week              | dateTime-to-iso-year-week                                                        |
+|Temporal | iso-year-week-day          | dateTime-to-iso-year-week-day                                                    |
 |Temporal | last-in-month              | dateTime-to-last-in-month                                                        |
 |Temporal | last-of-month              | dateTime-to-last-of-month                                                        |
 |Temporal | last-of-year               | dateTime-to-last-of-year                                                         |
@@ -242,6 +252,7 @@ Install-Package Expressif
 |Temporal | local-to-utc               |                                                                                  |
 |Temporal | month                      | dateTime-to-month                                                                |
 |Temporal | month-day                  | dateTime-to-month-day                                                            |
+|Temporal | month-of-year              | dateTime-to-month-of-year                                                        |
 |Temporal | next-business-days         | temporal-to-next-business-days, next-business-day, add-business-days             |
 |Temporal | next-day                   | dateTime-to-next-day                                                             |
 |Temporal | next-month                 | dateTime-to-next-month                                                           |
@@ -258,9 +269,7 @@ Install-Package Expressif
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | utc-to-local               |                                                                                  |
 |Temporal | year                       | dateTime-to-year                                                                 |
-|Temporal | year-day                   | dateTime-to-year-day                                                             |
-|Temporal | year-week                  | dateTime-to-year-week                                                            |
-|Temporal | year-week-day              | dateTime-to-year-week-day                                                        |
+|Temporal | year-of-era                | dateTime-to-year-of-era                                                          |
 |Text     | after-substring            | text-to-after-substring                                                          |
 |Text     | append                     | text-to-append                                                                   |
 |Text     | append-new-line            | text-to-append-new-line                                                          |
