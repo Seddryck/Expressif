@@ -73,25 +73,3 @@ Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol**"));
 ```
 <!-- END INCLUDE -->
 
-You can also instantiate by yourself the functions and chain them.
-
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_IFunction_CorrectlyEvaluate" -->
-```csharp
-var builder = new ExpressionBuilder();
-var expression = builder.Chain(new Lower()).Chain(new FirstChars(new LiteralScalarResolver<int>(5))).Build();
-Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol"));
-```
-<!-- END INCLUDE -->
-
-Finally, you can also serialize the expression into the Expressif language. To achieve this use the function `Serialize` of the class `ExpressionBuilder`.
-
-<!-- START INCLUDE "ExpressionBuilderTest.cs/Serialize_WithParameters_CorrectlySerialized" -->
-```csharp
-var builder = new ExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<FirstChars>(5)
-    .Chain<PadRight>(7, '*');
-var str = builder.Serialize();
-Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
-```
-<!-- END INCLUDE -->
