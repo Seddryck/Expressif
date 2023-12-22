@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, backward, ceiling-hour, ceiling-minute, clamp, datetime-to-date, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, utc-to-local] # AUTO-GENERATED KEYWORDS
+keywords: [age, backward, ceiling-hour, ceiling-minute, change-of-month, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -29,6 +29,18 @@ Returns the dateTime passed as argument value with the minutes, seconds and mill
 
 Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.
 
+##### change-of-month
+###### Overview
+
+returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter.
+            If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.
+
+##### change-of-year
+###### Overview
+
+returns a temporal value corresponding to the same day and month of the argument value but of the year passed as the parameter.
+            If the original date was the 29th of February and the year passed as a parameter is not a leap year then it returns the 28th of February.
+
 ##### clamp
 ###### Overview
 
@@ -42,6 +54,21 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 ###### Overview
 
 Returns the date at midnight of the argument dateTime.
+
+##### day-of-month
+###### Overview
+
+returns a numeric value representing the day of the month of the date passed as the argument
+
+##### day-of-week
+###### Overview
+
+returns a numeric value representing the day of the week (1 being Monday and 7 being Sunday) of the date passed as the argument
+
+##### day-of-year
+###### Overview
+
+returns a numeric value representing the day position within the year of the date passed as the argument
 
 ##### first-in-month
 ###### Overview
@@ -88,6 +115,33 @@ Returns the dateTime argument except if the value is not a valid dateTime then i
 ###### Parameter
 * default: The dateTime to be returned if the argument is not a valid dateTime.
 
+##### iso-day-of-year
+###### Overview
+
+returns a numeric value representing the day position within the year of the date passed as the argument
+
+##### iso-week-of-year
+###### Overview
+
+returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument
+
+##### iso-year-day
+###### Overview
+
+returns a textual value at format YYYY-ddd representing the year,
+             and the day number of the date passed as the argument (both according to ISO 8601)
+
+##### iso-year-week
+###### Overview
+
+returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument
+
+##### iso-year-week-day
+###### Overview
+
+returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601),
+            and the day number (1 being Monday) of the date passed as the argument
+
 ##### last-in-month
 ###### Overview
 
@@ -124,6 +178,21 @@ Returns the count of days within the year of the dateTime value passed as the ar
 ###### Overview
 
 Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
+
+##### month
+###### Overview
+
+returns a textual value at format MM representing the month of the date passed as the argument
+
+##### month-day
+###### Overview
+
+returns a textual value at format MM-DD representing the month and day of the date passed as the argument
+
+##### month-of-year
+###### Overview
+
+returns a numeric value representing the month of the date passed as the argument
 
 ##### next-business-days
 ###### Overview
@@ -223,5 +292,15 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 ###### Overview
 
 Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.
+
+##### year
+###### Overview
+
+returns a textual value at format YYYY representing the year of the date passed as the argument
+
+##### year-of-era
+###### Overview
+
+returns a numeric value representing the year of the date passed as the argument
 
 <!-- END AUTO-GENERATED -->
