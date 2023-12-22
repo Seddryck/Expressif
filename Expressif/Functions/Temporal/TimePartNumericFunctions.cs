@@ -59,4 +59,3 @@ public class SecondOfDay : BaseDatePartNumericFunction
 {
     protected override object EvaluateDateTime(DateTime value) => (value.Hour * 60 + value.Minute) * 60 + value.Second;
 }
-

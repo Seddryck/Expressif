@@ -11,5 +11,4 @@ public class Context
 {
     public ContextVariables Variables { get; } = new ();
     public ContextObject CurrentObject { get; } = new ();
-
 }
