@@ -267,6 +267,8 @@ Install-Package Expressif
 |Temporal | previous-weekday-or-same   | dateTime-to-previous-weekday-or-same                                             |
 |Temporal | previous-year              | dateTime-to-previous-year                                                        |
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
+|Temporal | set-to-local               |                                                                                  |
+|Temporal | set-to-utc                 |                                                                                  |
 |Temporal | utc-to-local               |                                                                                  |
 |Temporal | year                       | dateTime-to-year                                                                 |
 |Temporal | year-of-era                | dateTime-to-year-of-era                                                          |

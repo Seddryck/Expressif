@@ -110,6 +110,8 @@ tags: [predicates, functions]
 * [root]({{ site.baseurl }}/docs/io-functions/#root)
 * [round]({{ site.baseurl }}/docs/numeric-functions/#round)
 * [set-time]({{ site.baseurl }}/docs/temporal-functions/#set-time)
+* [set-to-local]({{ site.baseurl }}/docs/temporal-functions/#set-to-local)
+* [set-to-utc]({{ site.baseurl }}/docs/temporal-functions/#set-to-utc)
 * [sign]({{ site.baseurl }}/docs/numeric-functions/#sign)
 * [size]({{ site.baseurl }}/docs/io-functions/#size)
 * [skip-first-chars]({{ site.baseurl }}/docs/text-functions/#skip-first-chars)
