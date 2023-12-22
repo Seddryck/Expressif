@@ -1,5 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+        <PackageId>Expressif</PackageId>
+        <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
+        <PackageTags>predicate-functions;variable-binding;predicate;variable-substitution</PackageTags>
+        <Description>Expressif is the variable substitution syntax combined with a library of predicates and functions. Initially designed for NBi.io, Expressif allows you to define variables, transformations of these variables (with expressions and functions), in plain text, which can then be interpreted by the engine. Same can be done with predicates.</Description>
+    </PropertyGroup>
+	<PropertyGroup>
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>

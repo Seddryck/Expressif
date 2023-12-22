@@ -27,7 +27,7 @@
 		<Owners>Seddryck</Owners>
 		<Company>nbiguity</Company>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<PackageProjectUrl>https://seddryck.github.io/expressif</PackageProjectUrl>
+		<PackageProjectUrl>https://seddryck.github.io/Expressif</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<RequireLicenseAcceptance>false</RequireLicenseAcceptance>
 		<PackageIcon>icon\expressif-icon-128.png</PackageIcon>

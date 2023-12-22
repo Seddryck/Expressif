@@ -1,4 +1,3 @@
-next-version: 1.0.0
 mode: Mainline
 major-version-bump-message: "^(feat|fix|perf|revert)(\\([\\w\\s-]*\\))?(!:|:.*\\n\\n((.+\\n)+\\n)?BREAKING CHANGE:\\s.+)"
 minor-version-bump-message: "^(feat)(\\([\\w\\s-]*\\))?:"
