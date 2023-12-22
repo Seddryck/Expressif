@@ -4,7 +4,7 @@
   label:
   date: Dec 22, 2022
   list:
-  - Available predicates and function are documented
+  - Available predicates and functions are documented
   - Quick-start, glossary and installation are up-to-date 
 
 - title: Documentation work started
@@ -13,7 +13,6 @@
   list:
   - Initial Jekyll setup (always a lot of fun)
   - Create visual identity and review stylesheets
-
 
 - title: Basic functions and predicates implemented
   label:
