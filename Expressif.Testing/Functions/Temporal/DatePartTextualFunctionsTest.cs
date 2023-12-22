@@ -7,7 +7,7 @@ using Expressif.Functions.Temporal;
 using Expressif.Values;
 
 namespace Expressif.Testing.Functions.Temporal;
-public class DatePartFunctionsTest
+public class DatePartTextualFunctionsTest
 {
     [Test]
     [TestCase(1900, "1900")]
@@ -33,17 +33,10 @@ public class DatePartFunctionsTest
     => Assert.That(new Year().Evaluate(yearMonth), Is.EqualTo(expected));
 
     [Test]
-    [TestCase(1, "01")]
-    [TestCase(10, "10")]
-    public void Month_Integer_Valid(int month, string expected)
-    => Assert.That(new Month().Evaluate(month), Is.EqualTo(expected));
-
-    [Test]
-    [TestCase(0)]
-    [TestCase(-1)]
-    [TestCase(13)]
-    public void Month_InvalidInteger_Valid(int month)
-    => Assert.That(() => new Month().Evaluate(month), Throws.InstanceOf<ArgumentOutOfRangeException>());
+    [TestCase(1)]
+    [TestCase(10)]
+    public void Month_Integer_Valid(int month)
+    => Assert.That(new Month().Evaluate(month), Is.Null);
 
     [Test]
     [TestCase("1900-01-01", "01")]
@@ -71,22 +64,22 @@ public class DatePartFunctionsTest
     [Test]
     [TestCase("2000-01-01", "1999-W52")]
     [TestCase("2000-01-08", "2000-W01")]
-    public void YearWeek_DateTime_Valid(DateTime dt, string expected)
-        => Assert.That(new YearWeek().Evaluate(dt), Is.EqualTo(expected));
+    public void IsoYearWeek_DateTime_Valid(DateTime dt, string expected)
+        => Assert.That(new IsoYearWeek().Evaluate(dt), Is.EqualTo(expected));
 
     [Test]
     [TestCase("1999-12-31", "1999-W52-5")]
     [TestCase("2000-01-01", "1999-W52-6")]
     [TestCase("2000-01-02", "1999-W52-7")]
     [TestCase("2000-01-03", "2000-W01-1")]
-    public void YearWeekDay_DateTime_Valid(DateTime dt, string expected)
-        => Assert.That(new YearWeekDay().Evaluate(dt), Is.EqualTo(expected));
+    public void IsoYearWeekDay_DateTime_Valid(DateTime dt, string expected)
+        => Assert.That(new IsoYearWeekDay().Evaluate(dt), Is.EqualTo(expected));
 
     [Test]
     [TestCase("1999-12-31", "1999-362")]
     [TestCase("2000-01-01", "1999-363")]
     [TestCase("2000-01-02", "1999-364")]
     [TestCase("2000-01-03", "2000-001")]
-    public void YearDay_DateTime_Valid(DateTime dt, string expected)
-        => Assert.That(new YearDay().Evaluate(dt), Is.EqualTo(expected));
+    public void IsoYearDay_DateTime_Valid(DateTime dt, string expected)
+        => Assert.That(new IsoYearDay().Evaluate(dt), Is.EqualTo(expected));
 }

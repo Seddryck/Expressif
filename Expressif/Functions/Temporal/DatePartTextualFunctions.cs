@@ -9,7 +9,7 @@ using Expressif.Values.Casters;
 using Expressif.Values.Special;
 
 namespace Expressif.Functions.Temporal;
-public abstract class BaseDatePartFunction : BaseTemporalFunction
+public abstract class BaseDatePartTextualFunction : BaseTemporalFunction
 {
     protected override object? EvaluateUncasted(object value)
     {
@@ -35,7 +35,7 @@ public abstract class BaseDatePartFunction : BaseTemporalFunction
 /// <summary>
 /// returns a textual value at format YYYY representing the year of the date passed as the argument
 /// </summary>
-public class Year : BaseDatePartFunction
+public class Year : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value) => value.Year.ToString("D4");
     protected override object? EvaluateInteger(int numeric) => numeric.ToString("D4");
@@ -45,20 +45,16 @@ public class Year : BaseDatePartFunction
 /// <summary>
 /// returns a textual value at format MM representing the month of the date passed as the argument
 /// </summary>
-public class Month : BaseDatePartFunction
+public class Month : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value) => value.Month.ToString("D2");
-    protected override object? EvaluateInteger(int numeric)
-        => numeric >=1 && numeric <=12  
-            ? numeric.ToString("D2")
-            : throw new ArgumentOutOfRangeException($"The value of month cannot be less than 1 or more than 12. Current value is '{numeric}'.");
     protected override object? EvaluateYearMonth(YearMonth yearMonth) => yearMonth.Month.ToString("D2");
 }
 
 /// <summary>
 /// returns a textual value at format MM-DD representing the month and day of the date passed as the argument
 /// </summary>
-public class MonthDay : BaseDatePartFunction
+public class MonthDay : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value) => $"{value.Month:D2}-{value.Day:D2}";
 }
@@ -66,7 +62,7 @@ public class MonthDay : BaseDatePartFunction
 /// <summary>
 /// returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument
 /// </summary>
-public class YearWeek : BaseDatePartFunction
+public class IsoYearWeek : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value)
         => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}";
@@ -76,7 +72,7 @@ public class YearWeek : BaseDatePartFunction
 /// returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601),
 /// and the day number (1 being Monday) of the date passed as the argument
 /// </summary>
-public class YearWeekDay : BaseDatePartFunction
+public class IsoYearWeekDay : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value)
         => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}-{(value.DayOfWeek==0 ? 7 : (int)value.DayOfWeek)}";
@@ -86,7 +82,7 @@ public class YearWeekDay : BaseDatePartFunction
 ///returns a textual value at format YYYY-ddd representing the year,
 /// and the day number of the date passed as the argument (both according to ISO 8601)
 /// </summary>
-public class YearDay : BaseDatePartFunction
+public class IsoYearDay : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value)
     {
