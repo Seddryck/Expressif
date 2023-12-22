@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, backward, ceiling-hour, ceiling-minute, change-of-month, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, set-to-local, set-to-utc, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
+keywords: [age, backward, ceiling-hour, ceiling-minute, change-of-hour, change-of-minute, change-of-month, change-of-second, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, hour, hour-minute, hour-minute-second, hour-of-day, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, minute-of-day, minute-of-hour, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, second-of-day, second-of-hour, second-of-minute, set-time, set-to-local, set-to-utc, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -29,11 +29,26 @@ Returns the dateTime passed as argument value with the minutes, seconds and mill
 
 Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.
 
+##### change-of-hour
+###### Overview
+
+returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
+
+##### change-of-minute
+###### Overview
+
+returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
+
 ##### change-of-month
 ###### Overview
 
 returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter.
             If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.
+
+##### change-of-second
+###### Overview
+
+returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
 
 ##### change-of-year
 ###### Overview
@@ -107,6 +122,26 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 * timeSpan: The value to be added to the argument value
 * times (optional) : An integer between 0 and +Infinity, indicating the number of times to repeat the addition
 
+##### hour
+###### Overview
+
+returns a textual value at format hh (24 hours format) representing the hours of the dateTime passed as the argument
+
+##### hour-minute
+###### Overview
+
+returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument
+
+##### hour-minute-second
+###### Overview
+
+returns a textual value at format hh:mm:ss (24 hours format) representing the hours, minutes, and seconds of the dateTime passed as the argument
+
+##### hour-of-day
+###### Overview
+
+returns a numeric value representing the hours of the date passed as the argument
+
 ##### invalid-to-date
 ###### Overview
 
@@ -178,6 +213,16 @@ Returns the count of days within the year of the dateTime value passed as the ar
 ###### Overview
 
 Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
+
+##### minute-of-day
+###### Overview
+
+returns a numeric value representing the minutes of the date passed as the argument
+
+##### minute-of-hour
+###### Overview
+
+returns a numeric value representing the minutes of the hour passed as the argument
 
 ##### month
 ###### Overview
@@ -279,6 +324,21 @@ Returns a new date value corresponding to the occurrence of the weekday passed a
 ###### Overview
 
 Returns the dateTime that substract a year to the dateTime passed as argument value.
+
+##### second-of-day
+###### Overview
+
+returns a numeric value representing the seconds of the day of the date passed as the argument
+
+##### second-of-hour
+###### Overview
+
+returns a numeric value representing the seconds of the hour of the date passed as the argument
+
+##### second-of-minute
+###### Overview
+
+returns a numeric value representing the seconds of the minute of the date passed as the argument
 
 ##### set-time
 ###### Overview
