@@ -225,7 +225,10 @@ Install-Package Expressif
 |Temporal | backward                   | dateTime-to-backward, dateTime-to-subtract                                       |
 |Temporal | ceiling-hour               | dateTime-to-ceiling-hour                                                         |
 |Temporal | ceiling-minute             | dateTime-to-ceiling-minute                                                       |
+|Temporal | change-of-hour             | dateTime-to-change-of-hour                                                       |
+|Temporal | change-of-minute           | dateTime-to-change-of-minute                                                     |
 |Temporal | change-of-month            | dateTime-to-change-of-month                                                      |
+|Temporal | change-of-second           | dateTime-to-change-of-second                                                     |
 |Temporal | change-of-year             | dateTime-to-change-of-year                                                       |
 |Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip                                              |
 |Temporal | datetime-to-date           | dateTime-to-datetime-to-date                                                     |
