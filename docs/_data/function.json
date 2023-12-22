@@ -182,19 +182,32 @@
     ]
   },
   {
+    "Name": "add",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-add"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the sum of an argument number and the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "The value to be added to the argument value."
+      },
+      {
+        "Name": "times",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
+      }
+    ]
+  },
+  {
     "Name": "local-to-utc",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Temporal",
     "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
-    "Parameters": []
-  },
-  {
-    "Name": "utc-to-local",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
     "Parameters": []
   },
   {
@@ -358,25 +371,32 @@
     "Parameters": []
   },
   {
-    "Name": "add",
+    "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-add"
+      "dateTime-to-previous-month"
     ],
-    "Scope": "Numeric",
-    "Summary": "Returns the sum of an argument number and the parameter value.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Optional": false,
-        "Summary": "The value to be added to the argument value."
-      },
-      {
-        "Name": "times",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
-      }
-    ]
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "utc-to-local",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
+    "Parameters": []
+  },
+  {
+    "Name": "previous-day",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-day"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
+    "Parameters": []
   },
   {
     "Name": "subtract",
@@ -398,16 +418,6 @@
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
       }
     ]
-  },
-  {
-    "Name": "increment",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-increment"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the argument number incremented of one unit.",
-    "Parameters": []
   },
   {
     "Name": "decrement",
@@ -540,13 +550,13 @@
     "Parameters": []
   },
   {
-    "Name": "previous-month",
+    "Name": "increment",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-month"
+      "numeric-to-increment"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Scope": "Numeric",
+    "Summary": "Returns the argument number incremented of one unit.",
     "Parameters": []
   },
   {
@@ -717,13 +727,13 @@
     "Parameters": []
   },
   {
-    "Name": "previous-day",
+    "Name": "root",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-day"
+      "path-to-root"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
     "Parameters": []
   },
   {
@@ -737,13 +747,13 @@
     "Parameters": []
   },
   {
-    "Name": "next-month",
+    "Name": "next-day",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-next-month"
+      "dateTime-to-next-day"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that adds a month to the dateTime passed as argument value.",
+    "Summary": "Returns the day immediately following the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -1115,13 +1125,13 @@
     "Parameters": []
   },
   {
-    "Name": "root",
+    "Name": "next-month",
     "IsPublic": true,
     "Aliases": [
-      "path-to-root"
+      "dateTime-to-next-month"
     ],
-    "Scope": "IO",
-    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that adds a month to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -1165,16 +1175,6 @@
         "Summary": "The number of character positions to examine."
       }
     ]
-  },
-  {
-    "Name": "next-day",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-next-day"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the day immediately following the dateTime passed as argument value.",
-    "Parameters": []
   },
   {
     "Name": "last-of-year",
@@ -1254,6 +1254,16 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns the count of days within the year of the dateTime value passed as the argument.\r\n            If the argument is not a dateTime but an integer, returns count of days of the corresponding year.\r\n            It returns 365 or 366 (for leap years).",
+    "Parameters": []
+  },
+  {
+    "Name": "year-day",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-year-day"
+    ],
+    "Scope": "Temporal",
+    "Summary": "returns a textual value at format YYYY-ddd representing the year,\r\n             and the day number of the date passed as the argument (both according to ISO 8601)",
     "Parameters": []
   },
   {

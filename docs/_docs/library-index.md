@@ -125,6 +125,7 @@ tags: [predicates, functions]
 * [without-diacritics]({{ site.baseurl }}/docs/text-functions/#without-diacritics)
 * [without-whitespaces]({{ site.baseurl }}/docs/text-functions/#without-whitespaces)
 * [year]({{ site.baseurl }}/docs/temporal-functions/#year)
+* [year-day]({{ site.baseurl }}/docs/temporal-functions/#year-day)
 * [year-week]({{ site.baseurl }}/docs/temporal-functions/#year-week)
 * [year-week-day]({{ site.baseurl }}/docs/temporal-functions/#year-week-day)
 
