@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, backward, ceiling-hour, ceiling-minute, change-of-month, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
+keywords: [age, backward, ceiling-hour, ceiling-minute, change-of-month, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, set-time, set-to-local, set-to-utc, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -287,6 +287,16 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 
 ###### Parameter
 * instant: The time value to set as hours, minutes, seconds of the dateTime argument
+
+##### set-to-local
+###### Overview
+
+Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to local
+
+##### set-to-utc
+###### Overview
+
+Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to UTC
 
 ##### utc-to-local
 ###### Overview
