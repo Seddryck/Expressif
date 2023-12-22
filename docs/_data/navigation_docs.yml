@@ -27,6 +27,7 @@
   docs:
   - builder-expression
   - builder-predication
+  - serializers
 
 - title: Extending Expressif
   docs:

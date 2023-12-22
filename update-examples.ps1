@@ -1,6 +1,6 @@
 ﻿param (
     [string] $page,
-    [string] $class
+    [string] $class=""
 )
 
 function ParseTestFile {
@@ -32,7 +32,12 @@ function ParseTestFile {
     return $textCaptured
 }
 
-$docFile = ".\docs\_docs\$($page.ToLower())-$($class.ToLower()).md"
+if ($class -eq '') {
+    $docFile = ".\docs\_docs\$($page.ToLower()).md"
+} else {
+    $docFile = ".\docs\_docs\$($page.ToLower())-$($class.ToLower()).md"
+}
+
 
 Write-Host "Creating new version of $docFile ..."
 $elapsed = Measure-Command -Expression {
