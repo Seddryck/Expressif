@@ -82,4 +82,3 @@ public class ChangeOfMonth : BaseDatePartChangeFunction
         return new YearMonth(yearMonth.Year, newMonth);
     }
 }
-

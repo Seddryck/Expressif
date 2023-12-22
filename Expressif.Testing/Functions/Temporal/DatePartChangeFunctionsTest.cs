@@ -35,7 +35,7 @@ public class DatePartChangeFunctionsTest
         => Assert.That(new ChangeOfYear(() => newYear).Evaluate(yearMonth), Is.EqualTo(expected));
 
     [Test]
-    [TestCase("1900-01-01", 3, "1903-01-01")]
+    [TestCase("1900-01-01", 3, "1900-03-01")]
     [TestCase("2000-01-31", 3, "2000-03-31")]
     [TestCase("2000-01-31", 4, "2000-04-30")]
     [TestCase("2000-01-31", 2, "2000-02-29")]
@@ -51,7 +51,8 @@ public class DatePartChangeFunctionsTest
         => Assert.That(new ChangeOfMonth(() => newMonth).Evaluate(dt)!.Equals(null), Is.True);
 
     [Test]
-    [TestCase("1900-01", 3, "1903-03")]
+    [TestCase("1900-01", 3, "1900-03")]
+    [TestCase("1900-01", 3, "1900-03")]
     [TestCase("2000-01", 1, "2000-01")]
     [TestCase("0800-01", 3, "0800-03")]
     public void ChangeOfMonth_YearMonth_Valid(YearMonth yearMonth, int newMonth, YearMonth expected)

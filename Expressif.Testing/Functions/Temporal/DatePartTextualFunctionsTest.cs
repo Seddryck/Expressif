@@ -52,14 +52,12 @@ public class DatePartTextualFunctionsTest
     public void Month_YearMonth_Valid(YearMonth yearMonth, string expected)
     => Assert.That(new Month().Evaluate(yearMonth), Is.EqualTo(expected));
 
-
     [Test]
     [TestCase("1900-01-01", "01-01")]
     [TestCase("2000-10-01", "10-01")]
     [TestCase("800-03-17", "03-17")]
     public void MonthDay_DateTime_Valid(DateTime dt, string expected)
         => Assert.That(new MonthDay().Evaluate(dt), Is.EqualTo(expected));
-
 
     [Test]
     [TestCase("2000-01-01", "1999-W52")]
