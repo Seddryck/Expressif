@@ -238,6 +238,10 @@ Install-Package Expressif
 |Temporal | floor-hour                 | dateTime-to-floor-hour                                                           |
 |Temporal | floor-minute               | dateTime-to-floor-minute                                                         |
 |Temporal | forward                    | dateTime-to-forward, dateTime-to-add                                             |
+|Temporal | hour                       | dateTime-to-hour                                                                 |
+|Temporal | hour-minute                | dateTime-to-hour-minute                                                          |
+|Temporal | hour-minute-second         | dateTime-to-hour-minute-second                                                   |
+|Temporal | hour-of-day                | dateTime-to-hour-of-day                                                          |
 |Temporal | invalid-to-date            |                                                                                  |
 |Temporal | iso-day-of-year            | dateTime-to-iso-day-of-year                                                      |
 |Temporal | iso-week-of-year           | dateTime-to-iso-week-of-year                                                     |
@@ -250,6 +254,8 @@ Install-Package Expressif
 |Temporal | length-of-month            | dateTime-to-length-of-month                                                      |
 |Temporal | length-of-year             | dateTime-to-length-of-year                                                       |
 |Temporal | local-to-utc               |                                                                                  |
+|Temporal | minute-of-day              | dateTime-to-minute-of-day                                                        |
+|Temporal | minute-of-hour             | dateTime-to-minute-of-hour                                                       |
 |Temporal | month                      | dateTime-to-month                                                                |
 |Temporal | month-day                  | dateTime-to-month-day                                                            |
 |Temporal | month-of-year              | dateTime-to-month-of-year                                                        |
@@ -266,6 +272,9 @@ Install-Package Expressif
 |Temporal | previous-weekday           | dateTime-to-previous-weekday                                                     |
 |Temporal | previous-weekday-or-same   | dateTime-to-previous-weekday-or-same                                             |
 |Temporal | previous-year              | dateTime-to-previous-year                                                        |
+|Temporal | second-of-day              | dateTime-to-second-of-day                                                        |
+|Temporal | second-of-hour             | dateTime-to-second-of-hour                                                       |
+|Temporal | second-of-minute           | dateTime-to-second-of-minute                                                     |
 |Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | set-to-local               |                                                                                  |
 |Temporal | set-to-utc                 |                                                                                  |

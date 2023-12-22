@@ -12,6 +12,6 @@
 
 - title: Functions and predicates
   #Template#  desc: List the <function> available functions and <predicate> predicates
-  desc: List the 130 available functions and 75 predicates
+  desc: List the 139 available functions and 75 predicates
   icon: bookmark
   doc: library-index
