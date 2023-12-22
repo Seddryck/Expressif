@@ -32,4 +32,27 @@ public class CharFunctionsTest
     public void ReplaceChars_Valid(string value, char charToReplace, char replacingChar, string expected)
         => Assert.That(new ReplaceChars(() => charToReplace, () => replacingChar).Evaluate(value)
             , Is.EqualTo(expected));
+
+
+    [Test]
+    [TestCase("12345678", new[] { '2', '8', '4' }, "248")]
+    [TestCase("12314561789", new[] { '2', '1', '4' }, "12141")]
+    [TestCase("(null)", new[] { '2', '1', '4' }, "(null)")]
+    [TestCase("(empty)", new[] { '2', '1', '4' }, "(empty)")]
+    [TestCase("(blank)", new[] { '2', '1', '4' }, "(blank)")]
+    [TestCase("(blank)", new[] { '2', '1', '4' }, "(blank)")]
+    public void FilterChars_Chars_Valid(string value, char[] filter, string expected)
+        => Assert.That(new FilterChars(() => filter).Evaluate(value)
+            , Is.EqualTo(expected));
+
+    [Test]
+    [TestCase("12345678", "284", "248")]
+    [TestCase("12314561789", "214", "12141")]
+    [TestCase("(null)", "214", "(null)")]
+    [TestCase("(empty)", "214", "(empty)")]
+    [TestCase("(blank)", "214", "(blank)")]
+    [TestCase("(blank)", "214", "(blank)")]
+    public void FilterChars_String_Valid(string value, string filter, string expected)
+        => Assert.That(new FilterChars(() => filter).Evaluate(value)
+            , Is.EqualTo(expected));
 }
