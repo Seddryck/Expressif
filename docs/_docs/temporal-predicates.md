@@ -2,12 +2,7 @@
 title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
-<<<<<<< HEAD
 keywords: [after, after-or-same-instant, before, before-or-same-instant, business-day, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, weekday, weekend, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
-=======
-keywords: [after, after-or-same-instant, before, before-or-same-instant, business-day, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, weekday, weekend, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
->>>>>>> main
-=======
 ---
 <!-- START AUTO-GENERATED -->
 ##### after
