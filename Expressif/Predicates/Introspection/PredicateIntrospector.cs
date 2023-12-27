@@ -18,9 +18,12 @@ public class PredicateIntrospector : BaseIntrospector
         : base(probe) { }
 
     public IEnumerable<PredicateInfo> Locate()
-        => Locate<PredicateAttribute>();
+        => Locate<PredicateAttribute>(true);
 
-    protected IEnumerable<PredicateInfo> Locate<T>() where T : PredicateAttribute
+    public IEnumerable<PredicateInfo> Describe()
+        => Locate<PredicateAttribute>(false);
+
+    protected IEnumerable<PredicateInfo> Locate<T>(bool fast = true) where T : PredicateAttribute
     {
         var predicates = LocateAttribute<PredicateAttribute>();
 
@@ -42,8 +45,8 @@ public class PredicateIntrospector : BaseIntrospector
                     , predicate.Attribute.Aliases.AsQueryable().Prepend(string.Join('-', array)).ToArray()
                     , predicate.Type.Namespace!.ToToken('.').Last()
                     , predicate.Type
-                    , predicate.Type.GetSummary()
-                    , BuildParameters(predicate.Type.GetInfoConstructors()).ToArray()
+                    , fast ? "" : predicate.Type.GetSummary()
+                    , fast ? [] : BuildParameters(predicate.Type.GetInfoConstructors()).ToArray()
                 );
         }
     }

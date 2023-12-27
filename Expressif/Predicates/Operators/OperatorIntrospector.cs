@@ -17,6 +17,12 @@ internal class OperatorIntrospector : BaseIntrospector
         : base(probe) { }
 
     public IEnumerable<OperatorInfo> Locate()
+        => Locate(true);
+
+    public IEnumerable<OperatorInfo> Describe()
+        => Locate(false);
+
+    protected IEnumerable<OperatorInfo> Locate(bool fast = true)
     {
         var operators = LocateAttribute<OperatorAttribute>();
 
@@ -27,7 +33,7 @@ internal class OperatorIntrospector : BaseIntrospector
                     , @operator.Type.IsPublic
                     , @operator.Attribute.Aliases
                     , @operator.Type
-                    , @operator.Type.GetSummary()
+                    , fast ? "" : @operator.Type.GetSummary()
                 );
         }
     }

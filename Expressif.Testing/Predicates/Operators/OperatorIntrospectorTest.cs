@@ -18,7 +18,7 @@ internal class OperatorIntrospectorTest
 
     [SetUp]
     public void Setup()
-        => Infos ??= new OperatorIntrospector().Locate().ToArray();
+        => Infos ??= new OperatorIntrospector().Describe().ToArray();
 
     [Test]
     public void Locate_ExpressifAssembly_ElementsReturned()

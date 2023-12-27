@@ -34,7 +34,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $destination)
     $elapsed = Measure-Command -Expression {
         $TextInfo = (Get-Culture).TextInfo
         $locator = New-Object -TypeName "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
-        $functions = $locator.Locate() | Sort-Object ListingPriority | Select-Object -Property Name, IsPublic, Aliases, Scope, Summary, Parameters
+        $functions = $locator.Describe() | Sort-Object ListingPriority | Select-Object -Property Name, IsPublic, Aliases, Scope, Summary, Parameters
         Write-Host  "`t$($functions.Count) $($class.ToLower()) identified"
         $functions | ForEach-Object {
             if ($_.IsPublic) {
