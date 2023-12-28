@@ -296,7 +296,7 @@ Install-Package Expressif
 |Text     | first-chars                | text-to-first-chars                                                              |
 |Text     | html-to-text               |                                                                                  |
 |Text     | last-chars                 | text-to-last-chars                                                               |
-|Text     | length                     | count-chars                                                                      |
+|Text     | length                     | text-to-length, count-chars                                                      |
 |Text     | lower                      | text-to-lower                                                                    |
 |Text     | mask-to-text               |                                                                                  |
 |Text     | null-to-empty              |                                                                                  |
