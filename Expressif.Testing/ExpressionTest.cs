@@ -70,7 +70,7 @@ public class ExpressionTest
     }
 
     [Test]
-    public void Evaluate_Synonyms_Valid()
+    public void Evaluate_AliasesPrefix_Valid()
     {
         var context = new Context();
         context.CurrentObject.Set(new List<char>() { 'e', 's' });
@@ -78,6 +78,25 @@ public class ExpressionTest
         var expression = new Expression("text-to-lower | text-to-remove-chars(#1)", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola tela"));
+    }
+
+    [Test]
+    public void Evaluate_AliasesDateTime_Valid()
+    {
+        var expression = new Expression("dateTime-to-add(04:00:00, 4)", new Context());
+        var result = expression.Evaluate("2023-12-28 02:00:00");
+        Assert.That(result, Is.EqualTo(DateTime.Parse("2023-12-28 18:00:00")));
+    }
+
+    [Test]
+    [TestCase("null-to-empty | count-chars")]
+    [TestCase("null-to-empty | text-to-length")]
+    [TestCase("null-to-empty | length")]
+    public void Evaluate_AliasesAllStyles_Valid(string code)
+    {
+        var expression = new Expression(code, new Context());
+        var result = expression.Evaluate("foo");
+        Assert.That(result, Is.EqualTo(3));
     }
 
     [Test]

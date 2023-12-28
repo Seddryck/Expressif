@@ -948,6 +948,7 @@
     "Name": "length",
     "IsPublic": true,
     "Aliases": [
+      "text-to-length",
       "count-chars"
     ],
     "Scope": "Text",
