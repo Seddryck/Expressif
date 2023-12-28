@@ -18,7 +18,7 @@ public abstract class BaseTextCountingFunction : BaseTextFunction
 /// <summary>
 /// Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`. 
 /// </summary>
-[Function(prefix: "", aliases: ["count-chars"])]
+[Function(aliases: ["count-chars"])]
 public class Length : BaseTextCountingFunction
 {
     protected override object EvaluateSpecial(string value) => -1;
