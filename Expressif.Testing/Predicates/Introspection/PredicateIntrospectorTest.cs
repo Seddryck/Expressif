@@ -18,7 +18,7 @@ public class PredicateIntrospectorTest
 
     [SetUp]
     public void Setup()
-        => Infos ??= new PredicateIntrospector().Locate();
+        => Infos ??= new PredicateIntrospector().Describe();
 
     [Test]
     public void Locate_ExpressifAssembly_ElementsReturned()

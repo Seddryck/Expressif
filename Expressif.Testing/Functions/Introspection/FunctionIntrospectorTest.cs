@@ -18,7 +18,7 @@ public class FunctionIntrospectorTest
 
     [SetUp]
     public void Setup()
-        => Infos ??= new FunctionIntrospector().Locate();
+        => Infos ??= new FunctionIntrospector().Describe();
 
     [Test]
     public void Locate_ExpressifAssembly_ElementsReturned()

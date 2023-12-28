@@ -17,9 +17,12 @@ public class FunctionIntrospector : BaseIntrospector
         : base(probe) { }
 
     public IEnumerable<FunctionInfo> Locate()
-        => Locate<FunctionAttribute>();
+        => Locate<FunctionAttribute>(true);
 
-    protected IEnumerable<FunctionInfo> Locate<T>() where T : FunctionAttribute
+    public IEnumerable<FunctionInfo> Describe()
+        => Locate<FunctionAttribute>(false);
+
+    protected IEnumerable<FunctionInfo> Locate<T>(bool fast) where T : FunctionAttribute
     {
         var functions = LocateAttribute<FunctionAttribute>();
 
@@ -37,8 +40,8 @@ public class FunctionIntrospector : BaseIntrospector
                             ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
                     , function.Type.Namespace!.ToToken('.').Last()
                     , function.Type
-                    , function.Type.GetSummary()
-                    , BuildParameters(function.Type.GetInfoConstructors()).ToArray()
+                    , fast ? "" : function.Type.GetSummary()
+                    , fast ? [] : BuildParameters(function.Type.GetInfoConstructors()).ToArray()
                 );
         }
     }
