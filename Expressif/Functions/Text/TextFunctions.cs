@@ -28,14 +28,14 @@ public abstract class BaseTextFunction : IFunction
         };
     }
 
-    private object EvaluateUncasted(object value)
+    private object? EvaluateUncasted(object value)
     {
         var caster = new TextCaster();
         var str = caster.Cast(value);
         return EvaluateHighLevelString(str);
     }
 
-    protected virtual object EvaluateHighLevelString(string value)
+    protected virtual object? EvaluateHighLevelString(string value)
     {
         if (new Empty().Equals(value))
             return EvaluateEmpty();
@@ -52,11 +52,11 @@ public abstract class BaseTextFunction : IFunction
         return EvaluateString(value);
     }
 
-    protected virtual object EvaluateNull() => new Null().Keyword;
-    protected virtual object EvaluateEmpty() => new Empty().Keyword;
-    protected virtual object EvaluateBlank() => new Whitespace().Keyword;
-    protected virtual object EvaluateSpecial(string value) => value;
-    protected abstract object EvaluateString(string value);
+    protected virtual object? EvaluateNull() => new Null().Keyword;
+    protected virtual object? EvaluateEmpty() => new Empty().Keyword;
+    protected virtual object? EvaluateBlank() => new Whitespace().Keyword;
+    protected virtual object? EvaluateSpecial(string value) => value;
+    protected abstract object? EvaluateString(string value);
 }
 
 /// <summary>

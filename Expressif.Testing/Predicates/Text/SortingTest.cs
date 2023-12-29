@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Predicates.Text;
 
-public class EquivalentToTest
+public class SortingTest
 {
     [TestCase("A", "A", true)]
     [TestCase("A", "B", false)]
@@ -17,7 +17,10 @@ public class EquivalentToTest
     [TestCase("A", "(empty)", false)]
     [TestCase("(empty)", "", true)]
     [TestCase("(empty)", "A", false)]
-    public void EquivalentTo_Text_Success(object value, string reference, bool expected)
+    [TestCase("(null)", null, true)]
+    [TestCase(null, null, true)]
+    [TestCase(null, "(null)", true)]
+    public void EquivalentTo_Text_Success(object? value, string? reference, bool expected)
     {
         var predicate = new EquivalentTo(() => reference);
         Assert.Multiple(() =>
@@ -34,7 +37,10 @@ public class EquivalentToTest
     [TestCase("A", "(empty)", true)]
     [TestCase("(empty)", "", false)]
     [TestCase("(empty)", "A", false)]
-    public void SortedAfter_Text_Success(object value, string reference, bool expected)
+    [TestCase("(null)", null, false)]
+    [TestCase(null, null, false)]
+    [TestCase(null, "(null)", false)]
+    public void SortedAfter_Text_Success(object? value, string? reference, bool expected)
     {
         var predicate = new SortedAfter(() => reference);
         Assert.Multiple(() =>
@@ -51,7 +57,10 @@ public class EquivalentToTest
     [TestCase("A", "(empty)", true)]
     [TestCase("(empty)", "", true)]
     [TestCase("(empty)", "A", false)]
-    public void SortedAfterOrEquivalentTo_Text_Success(object value, string reference, bool expected)
+    [TestCase("(null)", null, true)]
+    [TestCase(null, null, true)]
+    [TestCase(null, "(null)", true)]
+    public void SortedAfterOrEquivalentTo_Text_Success(object? value, string? reference, bool expected)
     {
         var predicate = new SortedAfterOrEquivalentTo(() => reference);
         Assert.Multiple(() =>
@@ -68,7 +77,10 @@ public class EquivalentToTest
     [TestCase("A", "(empty)", false)]
     [TestCase("(empty)", "", false)]
     [TestCase("(empty)", "A", true)]
-    public void SortedBefore_Text_Success(object value, string reference, bool expected)
+    [TestCase("(null)", null, false)]
+    [TestCase(null, null, false)]
+    [TestCase(null, "(null)", false)]
+    public void SortedBefore_Text_Success(object? value, string? reference, bool expected)
     {
         var predicate = new SortedBefore(() => reference);
         Assert.Multiple(() =>
@@ -85,7 +97,10 @@ public class EquivalentToTest
     [TestCase("A", "(empty)", false)]
     [TestCase("(empty)", "", true)]
     [TestCase("(empty)", "A", true)]
-    public void SortedBeforeOrEquivalentTo_Text_Success(object value, string reference, bool expected)
+    [TestCase("(null)", null, true)]
+    [TestCase(null, null, true)]
+    [TestCase(null, "(null)", true)]
+    public void SortedBeforeOrEquivalentTo_Text_Success(object? value, string? reference, bool expected)
     {
         var predicate = new SortedBeforeOrEquivalentTo(() => reference);
         Assert.Multiple(() =>

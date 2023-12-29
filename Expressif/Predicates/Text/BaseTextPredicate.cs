@@ -55,16 +55,16 @@ public abstract class BaseTextPredicateWithoutReference : BaseTextPredicate
 
 public abstract class BaseTextPredicateReference : BaseTextPredicate
 {
-    public Func<string> Reference { get; }
+    public Func<string?> Reference { get; }
 
-    public BaseTextPredicateReference(Func<string> reference)
+    public BaseTextPredicateReference(Func<string?> reference)
         => Reference = reference;
     
     protected override bool EvaluateBaseText(string value)
     {
-        if (new Values.Special.Null().Equals(value) || new Values.Special.Null().Equals(Reference.Invoke()))
+        if (new Null().Equals(value) || new Null().Equals(Reference.Invoke()))
             return EvaluateNull();
-        if ((new Values.Special.Whitespace().Equals(value) || new Values.Special.Whitespace().Equals(Reference.Invoke()))
+        if ((new Whitespace().Equals(value) || new Whitespace().Equals(Reference.Invoke()))
             && !(new Values.Special.Empty().Equals(value) || new Values.Special.Empty().Equals(Reference.Invoke())))
             return EvaluateWhitespaces();
 

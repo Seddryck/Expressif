@@ -4,15 +4,16 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
 public abstract class BaseTextCountingFunction : BaseTextFunction
 {
-    protected override object EvaluateSpecial(string value) => -1;
-    protected override object EvaluateBlank() => -1;
-    protected override object EvaluateEmpty() => 0;
-    protected override object EvaluateNull() => 0;
+    protected override object? EvaluateSpecial(string value) => null;
+    protected override object? EvaluateBlank() => null;
+    protected override object? EvaluateEmpty() => 0;
+    protected override object? EvaluateNull() => 0;
 }
 
 /// <summary>
@@ -21,11 +22,7 @@ public abstract class BaseTextCountingFunction : BaseTextFunction
 [Function(aliases: ["count-chars"])]
 public class Length : BaseTextCountingFunction
 {
-    protected override object EvaluateSpecial(string value) => -1;
-    protected override object EvaluateBlank() => -1;
-    protected override object EvaluateEmpty() => 0;
-    protected override object EvaluateNull() => 0;
-    protected override object EvaluateString(string value) => value.Length;
+    protected override object? EvaluateString(string value) => value.Length;
 }
 
 /// <summary>
@@ -33,7 +30,7 @@ public class Length : BaseTextCountingFunction
 /// </summary>
 public class CountDistinctChars : BaseTextCountingFunction
 {
-    protected override object EvaluateString(string value)
+    protected override object? EvaluateString(string value)
     {
         var chars = new List<char>(value.Length);
         for (int i = 0; i < value.Length; i++)
@@ -48,15 +45,17 @@ public class CountDistinctChars : BaseTextCountingFunction
 /// </summary>
 public class CountSubstring : BaseTextCountingFunction
 {
-    public Func<string> Substring { get; }
+    public Func<string?> Substring { get; }
 
     /// <param name="substring">The substring to count in the argument value.</param>
-    public CountSubstring(Func<string> substring)
+    public CountSubstring(Func<string?> substring)
         => Substring = substring;
 
-    protected override object EvaluateString(string value)
+    protected override object? EvaluateString(string value)
     {
         var substring = Substring.Invoke();
+        if (substring is null || new Null().Equals(substring) || new Empty().Equals(substring))
+            return 0;
         var index = 0;
         var count = 0;
         do
@@ -71,6 +70,9 @@ public class CountSubstring : BaseTextCountingFunction
         while (index != -1 && index <= value.Length - substring.Length);
         return count;
     }
+
+    protected override object? EvaluateBlank()
+        => (Substring?.Invoke() ?? string.Empty).ToCharArray().Any(x => !char.IsWhiteSpace(x)) ? 0 : null;
 }
 
 /// <summary>
@@ -86,8 +88,8 @@ public class TokenCount : BaseTextCountingFunction
     public TokenCount(Func<char> separator)
         => Separator = separator;
 
-    protected override object EvaluateBlank() => 0;
-    protected override object EvaluateString(string value) => CountToken(value);
+    protected override object? EvaluateBlank() => 0;
+    protected override object? EvaluateString(string value) => CountToken(value);
 
     private int CountToken(string value)
     {
