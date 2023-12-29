@@ -9,9 +9,9 @@ namespace Expressif.Values;
 
 public class ContextVariables
 {
-    private IDictionary<string, IScalarResolver> Variables { get; } = new Dictionary<string, IScalarResolver>();
+    private IDictionary<string, Func<object?>> Variables { get; } = new Dictionary<string, Func<object?>>();
 
-    internal void Add(string name, IScalarResolver value)
+    public void Add(string name, Func<object?> value)
     {
         name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
@@ -20,9 +20,12 @@ public class ContextVariables
     }
 
     public void Add<T>(string name, object value)
-        => Add(name, new LiteralScalarResolver<T>(value));
+    {
+        var resolver = new LiteralScalarResolver<T>(value);
+        Add(name, () => resolver.Execute());
+    }
 
-    internal void Set(string name, IScalarResolver value)
+    public void Set(string name, Func<object?> value)
     {
         name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
@@ -32,7 +35,10 @@ public class ContextVariables
     }
 
     public void Set<T>(string name, object value)
-        => Set(name, new LiteralScalarResolver<T>(value));
+    {
+        var resolver = new LiteralScalarResolver<T>(value);
+        Set(name, () => resolver.Execute());
+    }
 
     public void Remove(string name)
     {
@@ -49,7 +55,7 @@ public class ContextVariables
         {
             name = name.StartsWith('@') ? name[1..] : name;
             if (Variables.TryGetValue(name, out var value))
-                return value.Execute();
+                return value.Invoke();
             throw new UnexpectedVariableException(name);
         }
     }
