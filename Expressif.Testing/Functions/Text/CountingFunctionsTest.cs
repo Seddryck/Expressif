@@ -14,9 +14,10 @@ public class CountingFunctionsTest
     [TestCase(" foo ", 5)]
     [TestCase("", 0)]
     [TestCase("(null)", 0)]
+    [TestCase(null, 0)]
     [TestCase("(empty)", 0)]
     [TestCase("(blank)", null)]
-    public void Length_Valid(object value, int? expected)
+    public void Length_Valid(object? value, int? expected)
         => Assert.That(new Length().Evaluate(value), Is.EqualTo(expected));
 
     [Test]
@@ -25,9 +26,10 @@ public class CountingFunctionsTest
     [TestCase("barfoobar", 5)]
     [TestCase("FOOfoo", 4)]
     [TestCase("(null)", 0)]
+    [TestCase(null, 0)]
     [TestCase("(empty)", 0)]
     [TestCase("(blank)", null)]
-    public void CountDistinctChars_Valid(object value, int? expected)
+    public void CountDistinctChars_Valid(object? value, int? expected)
         => Assert.That(new CountDistinctChars().Evaluate(value), Is.EqualTo(expected));
 
     [Test]
@@ -40,7 +42,10 @@ public class CountingFunctionsTest
     [TestCase("---*#*#*---", "*#*", 1)]
     [TestCase("(null)", "foo", 0)]
     [TestCase("(null)", "(null)", 0)]
+    [TestCase(null, "foo", 0)]
+    [TestCase(null, "(null)", 0)]
     [TestCase("foo", "(null)", 0)]
+    [TestCase("foo", null, 0)]
     [TestCase("(empty)", "foo", 0)]
     [TestCase("foo", "(empty)", 0)]
     [TestCase("(empty)", "(empty)", 0)]
@@ -48,7 +53,7 @@ public class CountingFunctionsTest
     [TestCase("(blank)", " ", null)]
     [TestCase("(blank)", "\t", null)]
     [TestCase("(blank)", "\r\n", null)]
-    public void CountSubstring_Valid(object value, string substring, int? expected)
+    public void CountSubstring_Valid(object? value, string? substring, int? expected)
         => Assert.That(new CountSubstring(() => substring).Evaluate(value), Is.EqualTo(expected));
 
     [Test]

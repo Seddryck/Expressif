@@ -4,6 +4,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
@@ -44,15 +45,17 @@ public class CountDistinctChars : BaseTextCountingFunction
 /// </summary>
 public class CountSubstring : BaseTextCountingFunction
 {
-    public Func<string> Substring { get; }
+    public Func<string?> Substring { get; }
 
     /// <param name="substring">The substring to count in the argument value.</param>
-    public CountSubstring(Func<string> substring)
+    public CountSubstring(Func<string?> substring)
         => Substring = substring;
 
     protected override object? EvaluateString(string value)
     {
         var substring = Substring.Invoke();
+        if (substring is null || new Null().Equals(substring) || new Empty().Equals(substring))
+            return 0;
         var index = 0;
         var count = 0;
         do
@@ -69,7 +72,7 @@ public class CountSubstring : BaseTextCountingFunction
     }
 
     protected override object? EvaluateBlank()
-        => Substring.Invoke().ToCharArray().Any(x => !char.IsWhiteSpace(x)) ? 0 : null;
+        => (Substring?.Invoke() ?? string.Empty).ToCharArray().Any(x => !char.IsWhiteSpace(x)) ? 0 : null;
 }
 
 /// <summary>
