@@ -18,7 +18,7 @@ public class RemoveChars : BaseTextFunction
     public RemoveChars(Func<char> charToRemove)
         => CharToRemove = charToRemove;
 
-    protected override object EvaluateString(string value)
+    protected override object? EvaluateString(string value)
     {
         var stringBuilder = new StringBuilder();
         foreach (var c in value)
@@ -27,7 +27,7 @@ public class RemoveChars : BaseTextFunction
         return stringBuilder.ToString();
     }
 
-    protected override object EvaluateBlank()
+    protected override object? EvaluateBlank()
     {
         if (char.IsWhiteSpace(CharToRemove.Invoke()))
             return new Empty().Keyword;
@@ -49,7 +49,7 @@ public class ReplaceChars : BaseTextFunction
     public ReplaceChars(Func<char> charToReplace, Func<char> charReplacing)
         => (CharToReplace, CharReplacing) = (charToReplace, charReplacing);
 
-    protected override object EvaluateString(string value)
+    protected override object? EvaluateString(string value)
     {
         var charToReplace = CharToReplace.Invoke();
         var charReplacing = CharReplacing.Invoke();
@@ -63,7 +63,7 @@ public class ReplaceChars : BaseTextFunction
         return stringBuilder.ToString();
     }
 
-    protected override object EvaluateBlank()
+    protected override object? EvaluateBlank()
         => new Whitespace().Keyword;
 }
 
@@ -86,7 +86,7 @@ public class FilterChars : BaseTextFunction
         Filter = toCharArray(filter.Invoke());
     }
 
-    protected override object EvaluateString(string value)
+    protected override object? EvaluateString(string value)
     {
         var filter = Filter.Invoke();
 
@@ -97,6 +97,52 @@ public class FilterChars : BaseTextFunction
         return stringBuilder.ToString();
     }
 
-    protected override object EvaluateBlank()
+    protected override object? EvaluateBlank()
+        => new Whitespace().Keyword;
+}
+
+/// <summary>
+/// returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\r\n` is considered as a single character.
+/// </summary>
+public class CollapseWhitespace : BaseTextFunction
+{
+    protected override object? EvaluateString(string value)
+    {
+        char? previousWithespace = null;
+        var stringBuilder = new StringBuilder();
+        foreach (var c in value)
+        {
+            if (previousWithespace == '\r' && c == '\n')
+                previousWithespace = null;
+            if (previousWithespace is null || !char.IsWhiteSpace(c))
+                stringBuilder.Append(c);
+            previousWithespace = char.IsWhiteSpace(c) ? c : null;
+        }
+        return stringBuilder.ToString().Trim();
+    }
+
+    protected override object? EvaluateBlank()
+        => new Empty().Keyword;
+}
+
+/// <summary>
+/// returns the argument with any whitespace replaced by a space character. `\r\n` is considered as a single character.
+/// </summary>
+public class CleanWhitespace : BaseTextFunction
+{
+    protected override object? EvaluateString(string value)
+    {
+        char? previousWithespace = null;
+        var stringBuilder = new StringBuilder();
+        foreach (var c in value)
+        {
+            if (!(previousWithespace == '\r' && c == '\n'))
+                stringBuilder.Append(char.IsWhiteSpace(c) ? ' ' : c);
+            previousWithespace = char.IsWhiteSpace(c) ? c : null;
+        }
+            
+        return stringBuilder.ToString();
+    }
+    protected override object? EvaluateBlank()
         => new Whitespace().Keyword;
 }
