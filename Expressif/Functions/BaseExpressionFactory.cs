@@ -18,10 +18,10 @@ public abstract class BaseExpressionFactory
     protected BaseExpressionFactory(BaseTypeMapper typeSetter)
         => TypeMapper = typeSetter;
 
-    protected internal T Instantiate<T>(string functionName, IParameter[] parameters, Context context)
+    protected internal T Instantiate<T>(string functionName, IParameter[] parameters, IContext context)
         => Instantiate<T>(TypeMapper.Execute(functionName), parameters, context);
 
-    protected T Instantiate<T>(Type type, IParameter[] parameters, Context context)
+    protected T Instantiate<T>(Type type, IParameter[] parameters, IContext context)
     {
         var ctor = GetMatchingConstructor(type, parameters.Length);
 
@@ -53,9 +53,9 @@ public abstract class BaseExpressionFactory
         => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
             ?? throw new MissingOrUnexpectedParametersFunctionException(type.Name, paramCount);
 
-    protected Delegate InstantiateScalarDelegate(IParameter parameter, Type scalarType, Context context)
+    protected Delegate InstantiateScalarDelegate(IParameter parameter, Type scalarType, IContext context)
     {
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(IParameter), typeof(Context)])
+        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(IParameter), typeof(IContext)])
             ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
         var instantiateGeneric = instantiate.MakeGenericMethod(scalarType);
         var resolver = instantiateGeneric.Invoke(null, new object[] { parameter, context })!;
@@ -66,7 +66,7 @@ public abstract class BaseExpressionFactory
         return Delegate.CreateDelegate(funcType, resolver, execute);
     }
 
-    private static IScalarResolver<T> InstantiateScalarResolver<T>(IParameter parameter, Context context)
+    private static IScalarResolver<T> InstantiateScalarResolver<T>(IParameter parameter, IContext context)
         => parameter switch
         {
             LiteralParameter l => InstantiateScalarResolver<T>(typeof(LiteralScalarResolver<T>), [l.Value]),
@@ -79,7 +79,7 @@ public abstract class BaseExpressionFactory
     private static IScalarResolver<T> InstantiateScalarResolver<T>(Type generic, object[] parameters)
         => (Activator.CreateInstance(generic, parameters) as IScalarResolver<T>)!;
 
-    protected Delegate InstantiateIntervalDelegate(IParameter parameter, Type type, Context context)
+    protected Delegate InstantiateIntervalDelegate(IParameter parameter, Type type, IContext context)
     {
         if (parameter is not IntervalParameter i)
             throw new ArgumentOutOfRangeException(nameof(parameter));
@@ -99,7 +99,7 @@ public abstract class BaseExpressionFactory
         return Delegate.CreateDelegate(funcType, resolver, execute);
     }
 
-    protected Delegate InstantiateInputExpressionDelegate(InputExpressionParameter exp, Type type, Context context)
+    protected Delegate InstantiateInputExpressionDelegate(InputExpressionParameter exp, Type type, IContext context)
     {
         var functions = new List<IFunction>();
         foreach (var member in exp.Expression.Members)

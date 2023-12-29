@@ -13,13 +13,13 @@ namespace Expressif;
 
 public class PredicationBuilder
 {
-    private Context Context { get; }
+    private IContext Context { get; }
     private PredicationFactory Factory { get; }
     private PredicationSerializer Serializer { get; }
     
     public PredicationBuilder()
         : this(new Context()) { }
-    public PredicationBuilder(Context? context = null, PredicationFactory? factory = null, PredicationSerializer? serializer = null)
+    public PredicationBuilder(IContext? context = null, PredicationFactory? factory = null, PredicationSerializer? serializer = null)
         => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new(), serializer ?? new());
 
     private IPredication? Pile { get; set; }

@@ -26,14 +26,14 @@ public class PredicationFactory : BaseExpressionFactory
     public PredicationFactory()
         : this(new PredicateTypeMapper(), new UnaryOperatorFactory(), new BinaryOperatorFactory()) { }
 
-    public virtual IPredicate Instantiate(string code, Context context)
+    public virtual IPredicate Instantiate(string code, IContext context)
     {
         var predication = Parser.Parse(code);
         var predicate = Instantiate(predication, context);
         return predicate;
     }
 
-    public IPredicate Instantiate(IPredication predication, Context context)
+    public IPredicate Instantiate(IPredication predication, IContext context)
     => predication switch
     {
         SinglePredication single => Instantiate(single, context),
@@ -42,7 +42,7 @@ public class PredicationFactory : BaseExpressionFactory
         _ => throw new NotImplementedException()
     };
 
-    internal IPredicate Instantiate(SinglePredication basic, Context context)
+    internal IPredicate Instantiate(SinglePredication basic, IContext context)
     {
         var predicates = new List<IPredicate>();
         foreach (var predicate in basic.Members)
@@ -50,13 +50,13 @@ public class PredicationFactory : BaseExpressionFactory
         return predicates[0];
     }
 
-    internal IPredicate Instantiate(UnaryPredication unary, Context context)
+    internal IPredicate Instantiate(UnaryPredication unary, IContext context)
     {
         var predicate = Instantiate(unary.Member, context);
         return UnaryOperatorFactory.Instantiate(unary.Operator.Name, predicate);
     }
 
-    internal IPredicate Instantiate(BinaryPredication binary, Context context)
+    internal IPredicate Instantiate(BinaryPredication binary, IContext context)
     {
         var left = Instantiate(binary.LeftMember, context);
         var right = Instantiate(binary.RightMember, context);

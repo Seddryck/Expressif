@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace Expressif;
 
-public class Context
+public class Context : IContext
 {
     public ContextVariables Variables { get; } = new ();
     public ContextObject CurrentObject { get; } = new ();
+}
+
+public interface IContext
+{
+    ContextVariables Variables { get; }
+    ContextObject CurrentObject { get; }
 }

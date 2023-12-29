@@ -15,13 +15,13 @@ namespace Expressif;
 public class ExpressionBuilder
 {
     
-    private Context Context { get; }
+    private IContext Context { get; }
     private ExpressionFactory Factory { get; }
     private ExpressionSerializer Serializer { get; }
 
     public ExpressionBuilder()
         : this(new Context()) { }
-    public ExpressionBuilder(Context? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
+    public ExpressionBuilder(IContext? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
         => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new ExpressionFactory(), serializer ?? new ExpressionSerializer());
 
     private Queue<IExpression> Pile { get; } = new();

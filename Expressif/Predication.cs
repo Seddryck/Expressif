@@ -14,9 +14,9 @@ public class Predication : IPredicate
 
     public Predication(string code)
         : this(code, new Context()) { }
-    public Predication(string code, Context context)
+    public Predication(string code, IContext context)
         : this(code, context, new PredicationFactory()) { }
-    public Predication(string code, Context context, PredicationFactory factory)
+    public Predication(string code, IContext context, PredicationFactory factory)
         => predicate = factory.Instantiate(code, context);
 
     public virtual bool Evaluate(object? value) => predicate.Evaluate(value)!;

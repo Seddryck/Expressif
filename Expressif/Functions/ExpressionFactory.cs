@@ -20,7 +20,7 @@ public class ExpressionFactory : BaseExpressionFactory
     public ExpressionFactory()
         : base(new FunctionTypeMapper()) { }
 
-    public IFunction Instantiate(string code, Context context)
+    public IFunction Instantiate(string code, IContext context)
     {
         var expression = Parser.Parse(code);
 
@@ -30,9 +30,9 @@ public class ExpressionFactory : BaseExpressionFactory
         return new ChainFunction(functions);
     }
 
-    public IFunction Instantiate(string name, IParameter[] parameters, Context context)
+    public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
         => Instantiate<IFunction>(name, parameters, context);
 
-    public IFunction Instantiate(Type type, IParameter[] parameters, Context context)
+    public IFunction Instantiate(Type type, IParameter[] parameters, IContext context)
         => Instantiate<IFunction>(type, parameters, context);
 }
