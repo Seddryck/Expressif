@@ -25,7 +25,7 @@ public class ContextObject
         {
             DataRow row => row.Table.Columns.Contains(name),
             IDictionary dico => dico.Contains(name),
-            IList => throw new NotNameableContextObjectException(),
+            IList => throw new NotNameableContextObjectException(Value),
             _ => RetrieveObjectProperty(name).Exists,
         };
 
@@ -37,7 +37,7 @@ public class ContextObject
             {
                 DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
                 IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
-                IList => throw new NotNameableContextObjectException(),
+                IList => throw new NotNameableContextObjectException(Value),
                 _ => retrieveObjectProperty(name),
             };
 
@@ -56,7 +56,7 @@ public class ContextObject
         {
             DataRow row => index < row.Table.Columns.Count,
             IList list => index < list.Count,
-            _ => throw new NotIndexableContextObjectException()
+            _ => throw new NotIndexableContextObjectException(Value)
         };
 
     public object? this[int index]
@@ -67,7 +67,7 @@ public class ContextObject
             {
                 DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
                 IList list => list[index],
-                _ => throw new NotIndexableContextObjectException()
+                _ => throw new NotIndexableContextObjectException(Value)
             };
         }
     }
