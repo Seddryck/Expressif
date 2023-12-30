@@ -289,6 +289,8 @@ Install-Package Expressif
 |Text     | append-new-line            | text-to-append-new-line                                                          |
 |Text     | append-space               | text-to-append-space                                                             |
 |Text     | before-substring           | text-to-before-substring                                                         |
+|Text     | clean-whitespace           | text-to-clean-whitespace                                                         |
+|Text     | collapse-whitespace        | text-to-collapse-whitespace                                                      |
 |Text     | count-distinct-chars       | text-to-count-distinct-chars                                                     |
 |Text     | count-substring            | text-to-count-substring                                                          |
 |Text     | empty-to-null              |                                                                                  |

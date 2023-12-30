@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, append, append-new-line, append-space, before-substring, count-distinct-chars, count-substring, empty-to-null, filter-chars, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, suffix-new-line, suffix-space, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, append, append-new-line, append-space, before-substring, clean-whitespace, collapse-whitespace, count-distinct-chars, count-substring, empty-to-null, filter-chars, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, suffix-new-line, suffix-space, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -40,6 +40,16 @@ Returns the substring of the argument string, containing all the characters imme
 ###### Parameters
 * substring: The string to seek.
 * count (optional) : The number of character positions to examine.
+
+##### clean-whitespace
+###### Overview
+
+returns the argument with any whitespace replaced by a space character. `\r\n` is considered as a single character.
+
+##### collapse-whitespace
+###### Overview
+
+returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\r\n` is considered as a single character.
 
 ##### count-distinct-chars
 ###### Overview
