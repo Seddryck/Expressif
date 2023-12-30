@@ -47,14 +47,14 @@ public class UnexpectedVariableException : ExpressifException
 
 public class NotIndexableContextObjectException : ExpressifException
 {
-    public NotIndexableContextObjectException()
-        : base($"The current object of the context is not being accessible with the usage of a numeric index.")
+    public NotIndexableContextObjectException(object? value)
+        : base($"The current object of the context of type '{value?.GetType().Name ?? "null"}' is not being accessible with the usage of a numeric index.")
     { }
 }
 
 public class NotNameableContextObjectException : ExpressifException
 {
-    public NotNameableContextObjectException()
-        : base($"The current object of the context is not being accessible with properties' name.")
+    public NotNameableContextObjectException(object? value)
+        : base($"The current object of the context of type '{value?.GetType().Name ?? "null"}' is not being accessible with properties' name.")
     { }
 }
