@@ -19,6 +19,7 @@
     "Name": "second-of-hour",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-second-of-hour",
       "dateTime-to-second-of-hour"
     ],
     "Scope": "Temporal",
@@ -29,6 +30,7 @@
     "Name": "second-of-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-second-of-day",
       "dateTime-to-second-of-day"
     ],
     "Scope": "Temporal",
@@ -39,6 +41,7 @@
     "Name": "hour",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-hour",
       "dateTime-to-hour"
     ],
     "Scope": "Temporal",
@@ -49,6 +52,7 @@
     "Name": "hour-minute",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-hour-minute",
       "dateTime-to-hour-minute"
     ],
     "Scope": "Temporal",
@@ -59,6 +63,7 @@
     "Name": "hour-minute-second",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-hour-minute-second",
       "dateTime-to-hour-minute-second"
     ],
     "Scope": "Temporal",
@@ -77,6 +82,7 @@
     "Name": "second-of-minute",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-second-of-minute",
       "dateTime-to-second-of-minute"
     ],
     "Scope": "Temporal",
@@ -103,6 +109,7 @@
     "Name": "next-weekday",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-next-weekday",
       "dateTime-to-next-weekday"
     ],
     "Scope": "Temporal",
@@ -119,6 +126,7 @@
     "Name": "next-weekday-or-same",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-next-weekday-or-same",
       "dateTime-to-next-weekday-or-same"
     ],
     "Scope": "Temporal",
@@ -135,6 +143,7 @@
     "Name": "previous-weekday",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-previous-weekday",
       "dateTime-to-previous-weekday"
     ],
     "Scope": "Temporal",
@@ -151,6 +160,7 @@
     "Name": "previous-weekday-or-same",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-previous-weekday-or-same",
       "dateTime-to-previous-weekday-or-same"
     ],
     "Scope": "Temporal",
@@ -167,6 +177,7 @@
     "Name": "first-in-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-first-in-month",
       "dateTime-to-first-in-month"
     ],
     "Scope": "Temporal",
@@ -191,6 +202,7 @@
     "Name": "last-in-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-last-in-month",
       "dateTime-to-last-in-month"
     ],
     "Scope": "Temporal",
@@ -207,6 +219,7 @@
     "Name": "minute-of-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-minute-of-day",
       "dateTime-to-minute-of-day"
     ],
     "Scope": "Temporal",
@@ -217,6 +230,7 @@
     "Name": "hour-of-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-hour-of-day",
       "dateTime-to-hour-of-day"
     ],
     "Scope": "Temporal",
@@ -227,6 +241,7 @@
     "Name": "previous-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-previous-year",
       "dateTime-to-previous-year"
     ],
     "Scope": "Temporal",
@@ -237,6 +252,7 @@
     "Name": "clamp",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-clamp",
       "dateTime-to-clamp",
       "dateTime-to-clip"
     ],
@@ -259,6 +275,7 @@
     "Name": "set-time",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-set-time",
       "dateTime-to-set-time"
     ],
     "Scope": "Temporal",
@@ -303,6 +320,7 @@
     "Name": "floor-hour",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-floor-hour",
       "dateTime-to-floor-hour"
     ],
     "Scope": "Temporal",
@@ -313,6 +331,7 @@
     "Name": "minute-of-hour",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-minute-of-hour",
       "dateTime-to-minute-of-hour"
     ],
     "Scope": "Temporal",
@@ -323,6 +342,7 @@
     "Name": "ceiling-hour",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-ceiling-hour",
       "dateTime-to-ceiling-hour"
     ],
     "Scope": "Temporal",
@@ -333,6 +353,7 @@
     "Name": "ceiling-minute",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-ceiling-minute",
       "dateTime-to-ceiling-minute"
     ],
     "Scope": "Temporal",
@@ -343,6 +364,7 @@
     "Name": "forward",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-forward",
       "dateTime-to-forward",
       "dateTime-to-add"
     ],
@@ -365,6 +387,7 @@
     "Name": "backward",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-backward",
       "dateTime-to-backward",
       "dateTime-to-subtract"
     ],
@@ -387,6 +410,7 @@
     "Name": "change-of-hour",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-change-of-hour",
       "dateTime-to-change-of-hour"
     ],
     "Scope": "Temporal",
@@ -397,6 +421,7 @@
     "Name": "change-of-minute",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-change-of-minute",
       "dateTime-to-change-of-minute"
     ],
     "Scope": "Temporal",
@@ -407,6 +432,7 @@
     "Name": "change-of-second",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-change-of-second",
       "dateTime-to-change-of-second"
     ],
     "Scope": "Temporal",
@@ -417,6 +443,7 @@
     "Name": "floor-minute",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-floor-minute",
       "dateTime-to-floor-minute"
     ],
     "Scope": "Temporal",
@@ -463,7 +490,7 @@
     "Name": "neutral",
     "IsPublic": true,
     "Aliases": [
-      "Special-to-neutral"
+      "special-to-neutral"
     ],
     "Scope": "Special",
     "Summary": "Returns the argument value.",
@@ -553,7 +580,8 @@
     "Name": "creation-datetime-utc",
     "IsPublic": true,
     "Aliases": [
-      "file-to-creation-datetime-utc"
+      "io-to-creation-datetime-utc",
+      "file-to-creation-dateTime-utc"
     ],
     "Scope": "IO",
     "Summary": "Returns the creation time of the file provided as argument in UTC.",
@@ -563,7 +591,8 @@
     "Name": "update-datetime",
     "IsPublic": true,
     "Aliases": [
-      "file-to-update-datetime"
+      "io-to-update-datetime",
+      "file-to-update-dateTime"
     ],
     "Scope": "IO",
     "Summary": "Returns the last update time of the file provided as argument in local time.",
@@ -573,7 +602,8 @@
     "Name": "update-datetime-utc",
     "IsPublic": true,
     "Aliases": [
-      "file-to-update-datetime-utc"
+      "io-to-update-datetime-utc",
+      "file-to-update-dateTime-utc"
     ],
     "Scope": "IO",
     "Summary": "Returns the last update time of the file provided as argument in UTC.",
@@ -613,7 +643,8 @@
     "Name": "creation-datetime",
     "IsPublic": true,
     "Aliases": [
-      "file-to-creation-datetime"
+      "io-to-creation-datetime",
+      "file-to-creation-dateTime"
     ],
     "Scope": "IO",
     "Summary": "Returns the creation time of the file provided as argument in local time.",
@@ -846,6 +877,7 @@
     "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-previous-month",
       "dateTime-to-previous-month"
     ],
     "Scope": "Temporal",
@@ -866,6 +898,7 @@
     "Name": "previous-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-previous-day",
       "dateTime-to-previous-day"
     ],
     "Scope": "Temporal",
@@ -876,6 +909,7 @@
     "Name": "next-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-next-month",
       "dateTime-to-next-month"
     ],
     "Scope": "Temporal",
@@ -988,7 +1022,9 @@
   {
     "Name": "text-to-datetime",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "text-to-dateTime"
+    ],
     "Scope": "Text",
     "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
     "Parameters": [
@@ -1382,6 +1418,7 @@
     "Name": "month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-month",
       "dateTime-to-month"
     ],
     "Scope": "Temporal",
@@ -1392,6 +1429,7 @@
     "Name": "month-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-month-day",
       "dateTime-to-month-day"
     ],
     "Scope": "Temporal",
@@ -1402,6 +1440,7 @@
     "Name": "iso-year-week",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-iso-year-week",
       "dateTime-to-iso-year-week"
     ],
     "Scope": "Temporal",
@@ -1412,6 +1451,7 @@
     "Name": "iso-year-week-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-iso-year-week-day",
       "dateTime-to-iso-year-week-day"
     ],
     "Scope": "Temporal",
@@ -1422,6 +1462,7 @@
     "Name": "iso-year-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-iso-year-day",
       "dateTime-to-iso-year-day"
     ],
     "Scope": "Temporal",
@@ -1432,6 +1473,7 @@
     "Name": "length-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-length-of-year",
       "dateTime-to-length-of-year"
     ],
     "Scope": "Temporal",
@@ -1442,6 +1484,7 @@
     "Name": "year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-year",
       "dateTime-to-year"
     ],
     "Scope": "Temporal",
@@ -1452,6 +1495,7 @@
     "Name": "length-of-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-length-of-month",
       "dateTime-to-length-of-month"
     ],
     "Scope": "Temporal",
@@ -1462,7 +1506,8 @@
     "Name": "age",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-age"
+      "temporal-to-age",
+      "date-to-age"
     ],
     "Scope": "Temporal",
     "Summary": "Returns how many years separate the argument dateTime and now.",
@@ -1472,6 +1517,7 @@
     "Name": "first-of-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-first-of-month",
       "dateTime-to-first-of-month"
     ],
     "Scope": "Temporal",
@@ -1482,6 +1528,7 @@
     "Name": "first-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-first-of-year",
       "dateTime-to-first-of-year"
     ],
     "Scope": "Temporal",
@@ -1492,6 +1539,7 @@
     "Name": "last-of-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-last-of-month",
       "dateTime-to-last-of-month"
     ],
     "Scope": "Temporal",
@@ -1502,6 +1550,7 @@
     "Name": "last-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-last-of-year",
       "dateTime-to-last-of-year"
     ],
     "Scope": "Temporal",
@@ -1512,6 +1561,7 @@
     "Name": "next-day",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-next-day",
       "dateTime-to-next-day"
     ],
     "Scope": "Temporal",
@@ -1522,7 +1572,7 @@
     "Name": "datetime-to-date",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-datetime-to-date"
+      "dateTime-to-date"
     ],
     "Scope": "Temporal",
     "Summary": "Returns the date at midnight of the argument dateTime.",
@@ -1532,6 +1582,7 @@
     "Name": "iso-week-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-iso-week-of-year",
       "dateTime-to-iso-week-of-year"
     ],
     "Scope": "Temporal",
@@ -1542,6 +1593,7 @@
     "Name": "iso-day-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-iso-day-of-year",
       "dateTime-to-iso-day-of-year"
     ],
     "Scope": "Temporal",
@@ -1552,6 +1604,7 @@
     "Name": "day-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-day-of-year",
       "dateTime-to-day-of-year"
     ],
     "Scope": "Temporal",
@@ -1685,6 +1738,7 @@
     "Name": "change-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-change-of-year",
       "dateTime-to-change-of-year"
     ],
     "Scope": "Temporal",
@@ -1695,6 +1749,7 @@
     "Name": "change-of-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-change-of-month",
       "dateTime-to-change-of-month"
     ],
     "Scope": "Temporal",
@@ -1705,6 +1760,7 @@
     "Name": "year-of-era",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-year-of-era",
       "dateTime-to-year-of-era"
     ],
     "Scope": "Temporal",
@@ -1715,6 +1771,7 @@
     "Name": "month-of-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-month-of-year",
       "dateTime-to-month-of-year"
     ],
     "Scope": "Temporal",
@@ -1725,6 +1782,7 @@
     "Name": "day-of-week",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-day-of-week",
       "dateTime-to-day-of-week"
     ],
     "Scope": "Temporal",
@@ -1735,6 +1793,7 @@
     "Name": "day-of-month",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-day-of-month",
       "dateTime-to-day-of-month"
     ],
     "Scope": "Temporal",
@@ -1745,6 +1804,7 @@
     "Name": "next-year",
     "IsPublic": true,
     "Aliases": [
+      "date-time-to-next-year",
       "dateTime-to-next-year"
     ],
     "Scope": "Temporal",
