@@ -1001,7 +1001,7 @@
       {
         "Name": "format",
         "Optional": false,
-        "Summary": "A string representing the required format."
+        "Summary": "A string representing the required format. By default the value is \"yyyy-MM-dd hh:mm:ss\""
       },
       {
         "Name": "culture",

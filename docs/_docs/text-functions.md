@@ -251,7 +251,7 @@ Returns the argument value followed by a space character. If the argument is `nu
 Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
 
 ###### Parameters
-* format: A string representing the required format.
+* format: A string representing the required format. By default the value is "yyyy-MM-dd hh:mm:ss"
 * culture (optional) : A string representing a pre-defined culture.
 
 ##### text-to-html
