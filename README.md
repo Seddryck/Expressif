@@ -218,72 +218,72 @@ Install-Package Expressif
 |Numeric  | square-root                | numeric-to-square-root                                                           |
 |Numeric  | subtract                   | numeric-to-subtract                                                              |
 |Special  | any-to-any                 |                                                                                  |
-|Special  | neutral                    | special-to-neutral                                                               |
+|Special  | neutral                    | Special-to-neutral                                                               |
 |Special  | null-to-value              |                                                                                  |
 |Special  | value-to-value             |                                                                                  |
 |Temporal | age                        | temporal-to-age, date-to-age                                                     |
-|Temporal | backward                   | date-time-to-backward, dateTime-to-backward, dateTime-to-subtract                |
-|Temporal | ceiling-hour               | date-time-to-ceiling-hour, dateTime-to-ceiling-hour                              |
-|Temporal | ceiling-minute             | date-time-to-ceiling-minute, dateTime-to-ceiling-minute                          |
-|Temporal | change-of-hour             | date-time-to-change-of-hour, dateTime-to-change-of-hour                          |
-|Temporal | change-of-minute           | date-time-to-change-of-minute, dateTime-to-change-of-minute                      |
-|Temporal | change-of-month            | date-time-to-change-of-month, dateTime-to-change-of-month                        |
-|Temporal | change-of-second           | date-time-to-change-of-second, dateTime-to-change-of-second                      |
-|Temporal | change-of-year             | date-time-to-change-of-year, dateTime-to-change-of-year                          |
-|Temporal | clamp                      | date-time-to-clamp, dateTime-to-clamp, dateTime-to-clip                          |
+|Temporal | backward                   | dateTime-to-backward, dateTime-to-subtract                                       |
+|Temporal | ceiling-hour               | dateTime-to-ceiling-hour                                                         |
+|Temporal | ceiling-minute             | dateTime-to-ceiling-minute                                                       |
+|Temporal | change-of-hour             | dateTime-to-change-of-hour                                                       |
+|Temporal | change-of-minute           | dateTime-to-change-of-minute                                                     |
+|Temporal | change-of-month            | dateTime-to-change-of-month                                                      |
+|Temporal | change-of-second           | dateTime-to-change-of-second                                                     |
+|Temporal | change-of-year             | dateTime-to-change-of-year                                                       |
+|Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip                                              |
 |Temporal | datetime-to-date           | dateTime-to-date                                                                 |
-|Temporal | day-of-month               | date-time-to-day-of-month, dateTime-to-day-of-month                              |
-|Temporal | day-of-week                | date-time-to-day-of-week, dateTime-to-day-of-week                                |
-|Temporal | day-of-year                | date-time-to-day-of-year, dateTime-to-day-of-year                                |
-|Temporal | first-in-month             | date-time-to-first-in-month, dateTime-to-first-in-month                          |
-|Temporal | first-of-month             | date-time-to-first-of-month, dateTime-to-first-of-month                          |
-|Temporal | first-of-year              | date-time-to-first-of-year, dateTime-to-first-of-year                            |
-|Temporal | floor-hour                 | date-time-to-floor-hour, dateTime-to-floor-hour                                  |
-|Temporal | floor-minute               | date-time-to-floor-minute, dateTime-to-floor-minute                              |
-|Temporal | forward                    | date-time-to-forward, dateTime-to-forward, dateTime-to-add                       |
-|Temporal | hour                       | date-time-to-hour, dateTime-to-hour                                              |
-|Temporal | hour-minute                | date-time-to-hour-minute, dateTime-to-hour-minute                                |
-|Temporal | hour-minute-second         | date-time-to-hour-minute-second, dateTime-to-hour-minute-second                  |
-|Temporal | hour-of-day                | date-time-to-hour-of-day, dateTime-to-hour-of-day                                |
+|Temporal | day-of-month               | dateTime-to-day-of-month                                                         |
+|Temporal | day-of-week                | dateTime-to-day-of-week                                                          |
+|Temporal | day-of-year                | dateTime-to-day-of-year                                                          |
+|Temporal | first-in-month             | dateTime-to-first-in-month                                                       |
+|Temporal | first-of-month             | dateTime-to-first-of-month                                                       |
+|Temporal | first-of-year              | dateTime-to-first-of-year                                                        |
+|Temporal | floor-hour                 | dateTime-to-floor-hour                                                           |
+|Temporal | floor-minute               | dateTime-to-floor-minute                                                         |
+|Temporal | forward                    | dateTime-to-forward, dateTime-to-add                                             |
+|Temporal | hour                       | dateTime-to-hour                                                                 |
+|Temporal | hour-minute                | dateTime-to-hour-minute                                                          |
+|Temporal | hour-minute-second         | dateTime-to-hour-minute-second                                                   |
+|Temporal | hour-of-day                | dateTime-to-hour-of-day                                                          |
 |Temporal | invalid-to-date            |                                                                                  |
-|Temporal | iso-day-of-year            | date-time-to-iso-day-of-year, dateTime-to-iso-day-of-year                        |
-|Temporal | iso-week-of-year           | date-time-to-iso-week-of-year, dateTime-to-iso-week-of-year                      |
-|Temporal | iso-year-day               | date-time-to-iso-year-day, dateTime-to-iso-year-day                              |
-|Temporal | iso-year-week              | date-time-to-iso-year-week, dateTime-to-iso-year-week                            |
-|Temporal | iso-year-week-day          | date-time-to-iso-year-week-day, dateTime-to-iso-year-week-day                    |
-|Temporal | last-in-month              | date-time-to-last-in-month, dateTime-to-last-in-month                            |
-|Temporal | last-of-month              | date-time-to-last-of-month, dateTime-to-last-of-month                            |
-|Temporal | last-of-year               | date-time-to-last-of-year, dateTime-to-last-of-year                              |
-|Temporal | length-of-month            | date-time-to-length-of-month, dateTime-to-length-of-month                        |
-|Temporal | length-of-year             | date-time-to-length-of-year, dateTime-to-length-of-year                          |
+|Temporal | iso-day-of-year            | dateTime-to-iso-day-of-year                                                      |
+|Temporal | iso-week-of-year           | dateTime-to-iso-week-of-year                                                     |
+|Temporal | iso-year-day               | dateTime-to-iso-year-day                                                         |
+|Temporal | iso-year-week              | dateTime-to-iso-year-week                                                        |
+|Temporal | iso-year-week-day          | dateTime-to-iso-year-week-day                                                    |
+|Temporal | last-in-month              | dateTime-to-last-in-month                                                        |
+|Temporal | last-of-month              | dateTime-to-last-of-month                                                        |
+|Temporal | last-of-year               | dateTime-to-last-of-year                                                         |
+|Temporal | length-of-month            | dateTime-to-length-of-month                                                      |
+|Temporal | length-of-year             | dateTime-to-length-of-year                                                       |
 |Temporal | local-to-utc               |                                                                                  |
-|Temporal | minute-of-day              | date-time-to-minute-of-day, dateTime-to-minute-of-day                            |
-|Temporal | minute-of-hour             | date-time-to-minute-of-hour, dateTime-to-minute-of-hour                          |
-|Temporal | month                      | date-time-to-month, dateTime-to-month                                            |
-|Temporal | month-day                  | date-time-to-month-day, dateTime-to-month-day                                    |
-|Temporal | month-of-year              | date-time-to-month-of-year, dateTime-to-month-of-year                            |
+|Temporal | minute-of-day              | dateTime-to-minute-of-day                                                        |
+|Temporal | minute-of-hour             | dateTime-to-minute-of-hour                                                       |
+|Temporal | month                      | dateTime-to-month                                                                |
+|Temporal | month-day                  | dateTime-to-month-day                                                            |
+|Temporal | month-of-year              | dateTime-to-month-of-year                                                        |
 |Temporal | next-business-days         | temporal-to-next-business-days, next-business-day, add-business-days             |
-|Temporal | next-day                   | date-time-to-next-day, dateTime-to-next-day                                      |
-|Temporal | next-month                 | date-time-to-next-month, dateTime-to-next-month                                  |
-|Temporal | next-weekday               | date-time-to-next-weekday, dateTime-to-next-weekday                              |
-|Temporal | next-weekday-or-same       | date-time-to-next-weekday-or-same, dateTime-to-next-weekday-or-same              |
-|Temporal | next-year                  | date-time-to-next-year, dateTime-to-next-year                                    |
+|Temporal | next-day                   | dateTime-to-next-day                                                             |
+|Temporal | next-month                 | dateTime-to-next-month                                                           |
+|Temporal | next-weekday               | dateTime-to-next-weekday                                                         |
+|Temporal | next-weekday-or-same       | dateTime-to-next-weekday-or-same                                                 |
+|Temporal | next-year                  | dateTime-to-next-year                                                            |
 |Temporal | null-to-date               |                                                                                  |
 |Temporal | previous-business-days     | temporal-to-previous-business-days, previous-business-day, subtract-business-days|
-|Temporal | previous-day               | date-time-to-previous-day, dateTime-to-previous-day                              |
-|Temporal | previous-month             | date-time-to-previous-month, dateTime-to-previous-month                          |
-|Temporal | previous-weekday           | date-time-to-previous-weekday, dateTime-to-previous-weekday                      |
-|Temporal | previous-weekday-or-same   | date-time-to-previous-weekday-or-same, dateTime-to-previous-weekday-or-same      |
-|Temporal | previous-year              | date-time-to-previous-year, dateTime-to-previous-year                            |
-|Temporal | second-of-day              | date-time-to-second-of-day, dateTime-to-second-of-day                            |
-|Temporal | second-of-hour             | date-time-to-second-of-hour, dateTime-to-second-of-hour                          |
-|Temporal | second-of-minute           | date-time-to-second-of-minute, dateTime-to-second-of-minute                      |
-|Temporal | set-time                   | date-time-to-set-time, dateTime-to-set-time                                      |
+|Temporal | previous-day               | dateTime-to-previous-day                                                         |
+|Temporal | previous-month             | dateTime-to-previous-month                                                       |
+|Temporal | previous-weekday           | dateTime-to-previous-weekday                                                     |
+|Temporal | previous-weekday-or-same   | dateTime-to-previous-weekday-or-same                                             |
+|Temporal | previous-year              | dateTime-to-previous-year                                                        |
+|Temporal | second-of-day              | dateTime-to-second-of-day                                                        |
+|Temporal | second-of-hour             | dateTime-to-second-of-hour                                                       |
+|Temporal | second-of-minute           | dateTime-to-second-of-minute                                                     |
+|Temporal | set-time                   | dateTime-to-set-time                                                             |
 |Temporal | set-to-local               |                                                                                  |
 |Temporal | set-to-utc                 |                                                                                  |
 |Temporal | utc-to-local               |                                                                                  |
-|Temporal | year                       | date-time-to-year, dateTime-to-year                                              |
-|Temporal | year-of-era                | date-time-to-year-of-era, dateTime-to-year-of-era                                |
+|Temporal | year                       | dateTime-to-year                                                                 |
+|Temporal | year-of-era                | dateTime-to-year-of-era                                                          |
 |Text     | after-substring            | text-to-after-substring                                                          |
 |Text     | append                     | text-to-append                                                                   |
 |Text     | append-new-line            | text-to-append-new-line                                                          |
