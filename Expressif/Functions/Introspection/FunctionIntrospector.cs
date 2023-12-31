@@ -34,7 +34,7 @@ public class FunctionIntrospector : BaseIntrospector
                     , function.Attribute.Prefix != null && string.IsNullOrEmpty(function.Attribute.Prefix)
                         ? function.Attribute.Aliases
                         : function.Attribute.Aliases.AsQueryable()
-                            .Prepend(string.IsNullOrEmpty(function.Attribute.Prefix) 
+                            .Prepend(string.IsNullOrEmpty(function.Attribute.Prefix)
                                 ? $"{function.Type.Namespace!.Split('.').Last().ToKebabCase()}-to-{function.Type.Name.ToKebabCase()}"
                                 : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}"
                             ).Where(x => !string.IsNullOrEmpty(x)).ToArray()

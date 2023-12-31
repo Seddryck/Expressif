@@ -10,7 +10,7 @@ namespace Expressif.Functions.Text;
 /// <summary>
 /// Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
 /// </summary>
-[Function(prefix: "")]
+[Function(prefix: "", aliases: ["text-to-dateTime"])]
 public class TextToDateTime : BaseTextFunction
 {
     public Func<string> Format { get; }

@@ -553,7 +553,8 @@
     "Name": "creation-datetime-utc",
     "IsPublic": true,
     "Aliases": [
-      "file-to-creation-datetime-utc"
+      "file-to-creation-datetime-utc",
+      "file-to-creation-dateTime-utc"
     ],
     "Scope": "IO",
     "Summary": "Returns the creation time of the file provided as argument in UTC.",
@@ -563,7 +564,8 @@
     "Name": "update-datetime",
     "IsPublic": true,
     "Aliases": [
-      "file-to-update-datetime"
+      "file-to-update-datetime",
+      "file-to-update-dateTime"
     ],
     "Scope": "IO",
     "Summary": "Returns the last update time of the file provided as argument in local time.",
@@ -573,7 +575,8 @@
     "Name": "update-datetime-utc",
     "IsPublic": true,
     "Aliases": [
-      "file-to-update-datetime-utc"
+      "file-to-update-datetime-utc",
+      "file-to-update-dateTime-utc"
     ],
     "Scope": "IO",
     "Summary": "Returns the last update time of the file provided as argument in UTC.",
@@ -613,7 +616,8 @@
     "Name": "creation-datetime",
     "IsPublic": true,
     "Aliases": [
-      "file-to-creation-datetime"
+      "file-to-creation-datetime",
+      "file-to-creation-dateTime"
     ],
     "Scope": "IO",
     "Summary": "Returns the creation time of the file provided as argument in local time.",
@@ -988,7 +992,9 @@
   {
     "Name": "text-to-datetime",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "text-to-dateTime"
+    ],
     "Scope": "Text",
     "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
     "Parameters": [
@@ -1462,7 +1468,7 @@
     "Name": "age",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-age"
+      "date-to-age"
     ],
     "Scope": "Temporal",
     "Summary": "Returns how many years separate the argument dateTime and now.",
@@ -1522,7 +1528,7 @@
     "Name": "datetime-to-date",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-datetime-to-date"
+      "dateTime-to-date"
     ],
     "Scope": "Temporal",
     "Summary": "Returns the date at midnight of the argument dateTime.",
