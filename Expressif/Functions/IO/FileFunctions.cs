@@ -39,6 +39,7 @@ public class Size : BaseFileFunction
 /// <summary>
 /// Returns the creation time of the file provided as argument in local time.
 /// </summary>
+[Function(aliases: ["file-to-creation-dateTime"])]
 public class CreationDateTime : BaseFileFunction
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTime;
@@ -47,6 +48,7 @@ public class CreationDateTime : BaseFileFunction
 /// <summary>
 /// Returns the creation time of the file provided as argument in UTC.
 /// </summary>
+[Function(aliases: ["file-to-creation-dateTime-utc"])]
 public class CreationDateTimeUtc : BaseFileFunction
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTimeUtc;
@@ -55,6 +57,7 @@ public class CreationDateTimeUtc : BaseFileFunction
 /// <summary>
 /// Returns the last update time of the file provided as argument in local time.
 /// </summary>
+[Function(aliases: ["file-to-update-dateTime"])]
 public class UpdateDateTime : BaseFileFunction
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTime;
@@ -63,6 +66,7 @@ public class UpdateDateTime : BaseFileFunction
 /// <summary>
 /// Returns the last update time of the file provided as argument in UTC.
 /// </summary>
+[Function(aliases: ["file-to-update-dateTime-utc"])]
 public class UpdateDateTimeUtc : BaseFileFunction
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTimeUtc;

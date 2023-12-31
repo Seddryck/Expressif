@@ -39,6 +39,7 @@ public abstract class BaseTemporalFunction : IFunction
 /// <summary>
 /// Returns the date at midnight of the argument dateTime.
 /// </summary>
+[Function(prefix: "", aliases: ["dateTime-to-date"])]
 public class DateTimeToDate : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => value.Date;
@@ -47,6 +48,7 @@ public class DateTimeToDate : BaseTemporalFunction
 /// <summary>
 /// Returns how many years separate the argument dateTime and now.
 /// </summary>
+[Function(aliases: ["date-to-age"])]
 public class Age : BaseTemporalFunction
 {
     protected override object EvaluateNull() => 0;
