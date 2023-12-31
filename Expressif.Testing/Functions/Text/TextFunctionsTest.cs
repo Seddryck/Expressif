@@ -280,6 +280,18 @@ public class TextFunctionsTest
         => Assert.That(new SkipLastChars(() => (length)).Evaluate(value)
             , Is.EqualTo(expected));
 
+    [TestCase("2019-03-17 11:12:23", "2019-03-17 11:12:23")]
+    public void TextToDateTime_Valid(string value, DateTime expected)
+    {
+        var function = new TextToDateTime();
+        var result = function.Evaluate(value);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(((DateTime)result!).Kind, Is.EqualTo(DateTimeKind.Unspecified));
+        });
+    }
+
     [Test]
     [TestCase("20190317111223", "yyyyMMddhhmmss", "2019-03-17 11:12:23")]
     [TestCase("2019-03-17 11:12:23", "yyyy-MM-dd hh:mm:ss", "2019-03-17 11:12:23")]
@@ -290,7 +302,7 @@ public class TextFunctionsTest
     [TestCase("Wed, 25.09.19", "ddd, dd.MM.yy", "2019-09-25")]
     [TestCase("Wednesday 25-SEP-19", "dddd dd-MMM-yy", "2019-09-25")]
     [TestCase("2019-10-01T19:58Z", "yyyy-MM-ddTHH:mmZ", "2019-10-01 19:58:00")]
-    public void TextToDateTime_Valid(string value, string format, DateTime expected)
+    public void TextToDateTime_Format_Valid(string value, string format, DateTime expected)
     {
         var function = new TextToDateTime(() => (format));
         var result = function.Evaluate(value);
@@ -304,7 +316,7 @@ public class TextFunctionsTest
     [Test]
     [TestCase("20190317111223", "yyyyMMddhhmmss", "fr-fr", "2019-03-17 11:12:23")]
     [TestCase("mercredi 25-sept.-19", "dddd dd-MMM-yy", "fr-fr", "2019-09-25")]
-    public void TextToDateTime_Culture_Valid(string value, string format, string culture, DateTime expected)
+    public void TextToDateTime_FormatCulture_Valid(string value, string format, string culture, DateTime expected)
         => Assert.That(new TextToDateTime(() => (format), () => (culture))
             .Evaluate(value), Is.EqualTo(expected));
 

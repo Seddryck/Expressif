@@ -16,7 +16,10 @@ public class TextToDateTime : BaseTextFunction
     public Func<string> Format { get; }
     public Func<string> Culture { get; }
 
-    /// <param name="format">A string representing the required format.</param>
+    public TextToDateTime()
+        => (Format, Culture) = (() => "yyyy-MM-dd hh:mm:ss", () => string.Empty);
+
+    /// <param name="format">A string representing the required format. By default the value is "yyyy-MM-dd hh:mm:ss"</param>
     public TextToDateTime(Func<string> format)
         => (Format, Culture) = (format, () => string.Empty);
 
