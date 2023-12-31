@@ -48,7 +48,7 @@ public class DateTimeToDate : BaseTemporalFunction
 /// <summary>
 /// Returns how many years separate the argument dateTime and now.
 /// </summary>
-[Function(aliases: ["date-to-age"])]
+[Function(prefix: "", aliases: ["date-to-age"])]
 public class Age : BaseTemporalFunction
 {
     protected override object EvaluateNull() => 0;
