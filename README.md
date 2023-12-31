@@ -185,16 +185,16 @@ Install-Package Expressif
 <!-- START FUNCTION TABLE -->
 |Scope    | Name                       | Aliases                                                                          |
 |-------- | -------------------------- | ---------------------------------------------------------------------------------|
-|IO       | creation-datetime          | io-to-creation-datetime, file-to-creation-dateTime                               |
-|IO       | creation-datetime-utc      | io-to-creation-datetime-utc, file-to-creation-dateTime-utc                       |
+|IO       | creation-datetime          | file-to-creation-datetime, file-to-creation-dateTime                             |
+|IO       | creation-datetime-utc      | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                     |
 |IO       | directory                  | path-to-directory                                                                |
 |IO       | extension                  | path-to-extension                                                                |
 |IO       | filename                   | path-to-filename                                                                 |
 |IO       | filename-without-extension | path-to-filename-without-extension                                               |
 |IO       | root                       | path-to-root                                                                     |
 |IO       | size                       | file-to-size                                                                     |
-|IO       | update-datetime            | io-to-update-datetime, file-to-update-dateTime                                   |
-|IO       | update-datetime-utc        | io-to-update-datetime-utc, file-to-update-dateTime-utc                           |
+|IO       | update-datetime            | file-to-update-datetime, file-to-update-dateTime                                 |
+|IO       | update-datetime-utc        | file-to-update-datetime-utc, file-to-update-dateTime-utc                         |
 |Numeric  | absolute                   | numeric-to-absolute                                                              |
 |Numeric  | add                        | numeric-to-add                                                                   |
 |Numeric  | ceiling                    | numeric-to-ceiling                                                               |
@@ -221,7 +221,7 @@ Install-Package Expressif
 |Special  | neutral                    | Special-to-neutral                                                               |
 |Special  | null-to-value              |                                                                                  |
 |Special  | value-to-value             |                                                                                  |
-|Temporal | age                        | temporal-to-age, date-to-age                                                     |
+|Temporal | age                        | date-to-age                                                                      |
 |Temporal | backward                   | dateTime-to-backward, dateTime-to-subtract                                       |
 |Temporal | ceiling-hour               | dateTime-to-ceiling-hour                                                         |
 |Temporal | ceiling-minute             | dateTime-to-ceiling-minute                                                       |
