@@ -77,8 +77,12 @@ public class GrammarTest
     [TestCase("\" foo bar \"")]
     [TestCase("\"foo , bar\"")]
     [TestCase("\"(foo)\"")]
+    [TestCase("`foo`")]
+    [TestCase("` foo bar `")]
+    [TestCase("`foo , bar`")]
+    [TestCase("`(foo)`")]
     public void Parse_Literal_Valid(string value)
-        => Assert.That(Grammar.Literal.End().Parse(value), Is.EqualTo(value.Trim().Trim('\"')));
+        => Assert.That(Grammar.Literal.End().Parse(value), Is.EqualTo(value.Trim().Trim('\"').Trim('`')));
 
     [Test]
     [TestCase("@foo")]
