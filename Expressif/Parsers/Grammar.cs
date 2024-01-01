@@ -9,9 +9,9 @@ namespace Expressif.Parsers;
 
 public class Grammar
 {
-    public static readonly char[] OpeningQuotedChars = ['\"', '@', ',', '(', '[', '{'];
-    public static readonly char[] ClosingQuotedChars = ['\"', '@', ',', ')', ']', '}'];
-    public static readonly char[] AlongQuotedChars = ['\"', '@', ',', '|', ' '];
+    public static readonly char[] OpeningQuotedChars = ['\"', '`', '@', ',', '(', '[', '{'];
+    public static readonly char[] ClosingQuotedChars = ['\"', '`', '@', ',', ')', ']', '}'];
+    public static readonly char[] AlongQuotedChars = ['\"', '`', '@', ',', '|', ' '];
 
     public static readonly Parser<string> FunctionName =
         from tokens in Parse.Letter.AtLeastOnce().Text().DelimitedBy(Parse.Char('-')).Token()
@@ -29,8 +29,14 @@ public class Grammar
         from otherChars in Parse.CharExcept(ClosingQuotedChars.Union(AlongQuotedChars)).Many().Token().Optional()
         select string.Concat(firstChar.ToString().Concat(otherChars.GetOrElse(string.Empty)));
 
-    protected static readonly Parser<string> QuotedLiteral =
+    protected static readonly Parser<string> DoubleQuotedLiteral =
         Parse.CharExcept("\"").AtLeastOnce().Text().Contained(Parse.Char('\"'), Parse.Char('\"')).Token();
+
+    protected static readonly Parser<string> BacktickQuotedLiteral =
+        Parse.CharExcept("`").AtLeastOnce().Text().Contained(Parse.Char('`'), Parse.Char('`')).Token();
+
+    protected static readonly Parser<string> QuotedLiteral =
+        DoubleQuotedLiteral.Or(BacktickQuotedLiteral);
 
     public static readonly Parser<string> Literal = UnquotedLiteral.Or(QuotedLiteral);
 }
