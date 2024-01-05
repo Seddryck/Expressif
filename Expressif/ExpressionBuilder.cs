@@ -6,6 +6,7 @@ using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,13 @@ public class ExpressionBuilder
 
     private Queue<IExpression> Pile { get; } = new();
 
+    public ExpressionBuilder Chain<T>() where T : IFunction
+        => Chain(typeof(T), []);
+
     public ExpressionBuilder Chain<T>(params object?[] parameters) where T : IFunction
+        => Chain(typeof(T), parameters);
+
+    public ExpressionBuilder Chain<T>(params Expression<Func<IContext, object?>>[] parameters) where T : IFunction
         => Chain(typeof(T), parameters);
 
     public ExpressionBuilder Chain(Type type, params object?[] parameters)
@@ -46,6 +53,7 @@ public class ExpressionBuilder
             typedParameters.Add(parameter switch
             {
                 IParameter p => p,
+                Expression<Func<IContext, object?>> expression => new ContextParameter(expression.Compile()),
                 _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
             });
         }

@@ -30,16 +30,11 @@ public abstract class BaseExpressionFactory
 
         foreach (var param in zip)
         {
-            //If the parameter of the function is a Func<>
-            if (param.ParameterType.IsGenericType && param.ParameterType.GetGenericTypeDefinition()==typeof(Func<>))
+            //If the parameter of the contextReference is a Func<>
+            if (param.ParameterType.IsGenericType && param.ParameterType.GetGenericTypeDefinition() == typeof(Func<>))
             {
                 var scalarType = param.ParameterType.GenericTypeArguments[0];
-                var @delegate = param.Value switch
-                {
-                    InputExpressionParameter exp => InstantiateInputExpressionDelegate(exp, scalarType, context),
-                    IntervalParameter interval => InstantiateIntervalDelegate(param.Value, scalarType, context),
-                    _ => InstantiateScalarDelegate(param.Value, scalarType, context),
-                };
+                var @delegate = CreateParameter(param.Value, scalarType, context);
                 typedFunctionParameters.Add(@delegate);
             }
             else
@@ -53,71 +48,58 @@ public abstract class BaseExpressionFactory
         => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
             ?? throw new MissingOrUnexpectedParametersFunctionException(type.Name, paramCount);
 
-    protected Delegate InstantiateScalarDelegate(IParameter parameter, Type scalarType, IContext context)
+    protected virtual Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
     {
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(IParameter), typeof(IContext)])
-            ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
-        var instantiateGeneric = instantiate.MakeGenericMethod(scalarType);
-        var resolver = instantiateGeneric.Invoke(null, new object[] { parameter, context })!;
-        var execute = resolver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.Public)!;
-
-        var funcType = typeof(Func<>).MakeGenericType(scalarType);
-
-        return Delegate.CreateDelegate(funcType, resolver, execute);
-    }
-
-    private static IScalarResolver<T> InstantiateScalarResolver<T>(IParameter parameter, IContext context)
-        => parameter switch
+        return parameter switch
         {
-            LiteralParameter l => InstantiateScalarResolver<T>(typeof(LiteralScalarResolver<T>), [l.Value]),
-            VariableParameter v => InstantiateScalarResolver<T>(typeof(VariableScalarResolver<T>), [v.Name, context.Variables]),
-            ObjectPropertyParameter item => InstantiateScalarResolver<T>(typeof(ObjectPropertyResolver<T>), [item.Name, context.CurrentObject]),
-            ObjectIndexParameter index => InstantiateScalarResolver<T>(typeof(ObjectIndexResolver<T>), [index.Index, context.CurrentObject]),
-            _ => throw new ArgumentOutOfRangeException(nameof(parameter))
+            InputExpressionParameter input => CreateFunctionCast(CreateInputExpression(input, scalarType, context), scalarType),
+            IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
+            LiteralParameter literal => CreateCast(literal.Value, scalarType),
+            ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
+            ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
+            VariableParameter variable => CreateFunctionCast(() => context.Variables[variable.Name], scalarType),
+            ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
+            _ => throw new NotImplementedException($"Cannot handle the parameter type '{parameter.GetType().Name}'")
         };
 
-    private static IScalarResolver<T> InstantiateScalarResolver<T>(Type generic, object[] parameters)
-        => (Activator.CreateInstance(generic, parameters) as IScalarResolver<T>)!;
-
-    protected Delegate InstantiateIntervalDelegate(IParameter parameter, Type type, IContext context)
-    {
-        if (parameter is not IntervalParameter i)
-            throw new ArgumentOutOfRangeException(nameof(parameter));
-
-        var interval = new IntervalBuilder().Create(i.Value.LowerBoundType, i.Value.LowerBound, i.Value.UpperBound, i.Value.UpperBoundType);
-
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(Type), typeof(object[])])
-            ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
-        var instantiateGeneric = instantiate.MakeGenericMethod(type);
-
-        var typeGeneric = typeof(IntervalResolver<>).MakeGenericType(type);
-
-        var resolver = instantiateGeneric.Invoke(null, new object[] { typeGeneric, new object[] { interval } })!;
-        var execute = resolver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.Public)!;
-
-        var funcType = typeof(Func<>).MakeGenericType(type);
-        return Delegate.CreateDelegate(funcType, resolver, execute);
+        static IInterval buildInterval(Interval value)
+            => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
     }
 
-    protected Delegate InstantiateInputExpressionDelegate(InputExpressionParameter exp, Type type, IContext context)
+
+    private MethodInfo? cacheCastInfo;
+    protected Delegate CreateCast(object value, Type type)
+    {
+        var method = cacheCastInfo ??= typeof(BaseExpressionFactory).GetMethod(nameof(Cast), BindingFlags.Static | BindingFlags.NonPublic)
+                        ?? throw new MissingMethodException();
+        var genericMethod = method.MakeGenericMethod(type);
+        return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), value, genericMethod);
+    }
+
+    protected static T? Cast<T>(object value)
+        => value.To<T>();
+
+    private MethodInfo? cacheFunctionCastInfo;
+    protected Delegate CreateFunctionCast(Delegate function, Type type)
+    {
+        var method = cacheFunctionCastInfo ??= typeof(BaseExpressionFactory).GetMethod(nameof(FunctionCast), BindingFlags.Static | BindingFlags.NonPublic)
+                        ?? throw new MissingMethodException();
+        var genericMethod = method.MakeGenericMethod(type);
+        return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), function, genericMethod);
+    }
+
+    protected static T? FunctionCast<T>(Delegate function)
+        => function.DynamicInvoke().To<T>();
+
+    protected virtual Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {
         var functions = new List<IFunction>();
-        foreach (var member in exp.Expression.Members)
+        foreach (var member in input.Expression.Members)
             functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
         var expression = new ChainFunction(functions);
 
-        var arg = InstantiateScalarDelegate(exp.Expression.Parameter, typeof(object), context);
+        var arg = CreateParameter(input.Expression.Parameter, typeof(object), context);
 
-        var instantiate = typeof(BaseExpressionFactory).GetMethod(nameof(InstantiateScalarResolver), BindingFlags.Static | BindingFlags.NonPublic, [typeof(Type), typeof(object[])])
-            ?? throw new InvalidProgramException(nameof(InstantiateScalarResolver));
-        var instantiateGeneric = instantiate.MakeGenericMethod(type);
-
-        var typeGeneric = typeof(InputExpressionResolver<>).MakeGenericType(type);
-
-        var resolver = instantiateGeneric.Invoke(null, new object[] {typeGeneric, new object[] { arg, expression } })!;
-        var execute = resolver.GetType().GetMethod("Execute", BindingFlags.Instance | BindingFlags.Public)!;
-
-        var funcType = typeof(Func<>).MakeGenericType(type);
-        return Delegate.CreateDelegate(funcType, resolver, execute);
+        return CreateFunctionCast(() => expression.Evaluate(arg.DynamicInvoke()), type);
     }
 }

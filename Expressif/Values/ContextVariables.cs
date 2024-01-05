@@ -1,6 +1,7 @@
 ﻿using Expressif.Values.Resolvers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +10,15 @@ namespace Expressif.Values;
 
 public class ContextVariables
 {
-    private IDictionary<string, Func<object?>> Variables { get; } = new Dictionary<string, Func<object?>>();
+    private IDictionary<string, object?> Variables { get; }
 
-    public void Add(string name, Func<object?> value)
+    public ContextVariables()
+        : this(new Dictionary<string, object?>()) { }
+
+    public ContextVariables(IDictionary<string, object?> variables)
+        => Variables = variables;
+
+    public void Add<T>(string name, object? value)
     {
         name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
@@ -19,25 +26,13 @@ public class ContextVariables
         Variables.Add(name, value);
     }
 
-    public void Add<T>(string name, object value)
-    {
-        var resolver = new LiteralScalarResolver<T>(value);
-        Add(name, () => resolver.Execute());
-    }
-
-    public void Set(string name, Func<object?> value)
+    public void Set(string name, object? value)
     {
         name = name.StartsWith('@') ? name[1..] : name;
         if (Variables.ContainsKey(name))
             Variables[name] = value;
         else
             Variables.Add(name, value);
-    }
-
-    public void Set<T>(string name, object value)
-    {
-        var resolver = new LiteralScalarResolver<T>(value);
-        Set(name, () => resolver.Execute());
     }
 
     public void Remove(string name)
@@ -50,13 +45,17 @@ public class ContextVariables
     public int Count { get => Variables.Count; }
 
     public object? this[string name]
+        => Variables.TryGetValue(name.StartsWith('@') ? name[1..] : name, out var value)
+            ? value
+            : throw new UnexpectedVariableException(name);
+
+    public bool TryGetValue(string name, [NotNullWhen(true)] out object? value)
     {
-        get
-        {
-            name = name.StartsWith('@') ? name[1..] : name;
-            if (Variables.TryGetValue(name, out var value))
-                return value.Invoke();
-            throw new UnexpectedVariableException(name);
-        }
+        var response = Variables.TryGetValue(name.StartsWith('@') ? name[1..] : name, out var result);
+        value = response ? result : null;
+        return response;
     }
+            
+    public bool Contains(string name)
+        => Variables.ContainsKey(name.StartsWith('@') ? name[1..] : name);
 }

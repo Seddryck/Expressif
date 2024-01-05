@@ -21,8 +21,8 @@ public class ContextTest
         Assert.That(context.Variables, Has.Count.EqualTo(1));
         Assert.Multiple(() =>
         {
-            Assert.That(context.Variables[name], Is.EqualTo("123"));
-            Assert.That(context.Variables[name.Replace("@", "")], Is.EqualTo("123"));
+            Assert.That(context.Variables.Contains(name), Is.True);
+            Assert.That(context.Variables.Contains(name.Replace("@", "")), Is.True);
         });
     }
 
@@ -47,9 +47,9 @@ public class ContextTest
     {
         var context = new Context();
         Assert.That(context.Variables, Has.Count.EqualTo(0));
-        context.Variables.Set<string>(name1, "123");
+        context.Variables.Set(name1, "123");
         Assert.That(context.Variables, Has.Count.EqualTo(1));
-        context.Variables.Set<string>(name2, "456");
+        context.Variables.Set(name2, "456");
         Assert.That(context.Variables, Has.Count.EqualTo(1));
         Assert.That(context.Variables[name1], Is.EqualTo("456"));
     }
@@ -63,21 +63,32 @@ public class ContextTest
     {
         var context = new Context();
         Assert.That(context.Variables, Has.Count.EqualTo(0));
-        context.Variables.Set<string>(name1, "123");
+        context.Variables.Set(name1, "123");
         Assert.That(context.Variables, Has.Count.EqualTo(1));
         context.Variables.Remove(name2);
         Assert.That(context.Variables, Has.Count.EqualTo(0));
     }
 
     [Test]
+    [TestCase("foo", true)]
+    [TestCase("@foo", true)]
+    [TestCase("@bar", false)]
+    [TestCase("bar", false)]
+    public void VariableContains_FooExisting_CorrectResult(string name, bool expected)
+    {
+        var context = new Context(new() { { "foo", () => "123" } });
+        Assert.That(context.Variables.Contains(name), Is.EqualTo(expected));
+    }
+
+    [Test]
     public void CurrentObjectName_DictionaryWithExistingKey_KeyReturned()
     {
         var context = new Context();
-        context.CurrentObject.Set(new Dictionary<string, object>{ { "foo", 123 }, { "bar", 456 } });
+        context.CurrentObject.Set(new Dictionary<string, object> { { "foo", 123 }, { "bar", 456 } });
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists("foo"), Is.True);
-            Assert.That(context.CurrentObject.Exists("bar"), Is.True);
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.True);
         });
         Assert.Multiple(() =>
         {
@@ -93,8 +104,8 @@ public class ContextTest
         context.CurrentObject.Set(new { foo = 123, bar = 456 });
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists("foo"), Is.True);
-            Assert.That(context.CurrentObject.Exists("bar"), Is.True);
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.True);
         });
         Assert.Multiple(() =>
         {
@@ -116,8 +127,8 @@ public class ContextTest
         context.CurrentObject.Set(row);
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists("foo"), Is.True);
-            Assert.That(context.CurrentObject.Exists("bar"), Is.True);
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.True);
         });
         Assert.Multiple(() =>
         {
@@ -133,8 +144,8 @@ public class ContextTest
         context.CurrentObject.Set(new Dictionary<string, object> { { "foo", 123 } });
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists("foo"), Is.True);
-            Assert.That(context.CurrentObject.Exists("bar"), Is.False);
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.False);
         });
         Assert.Multiple(() =>
         {
@@ -150,8 +161,8 @@ public class ContextTest
         context.CurrentObject.Set(new { foo = 123 });
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists("foo"), Is.True);
-            Assert.That(context.CurrentObject.Exists("bar"), Is.False);
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.False);
         });
         Assert.Multiple(() =>
         {
@@ -172,8 +183,8 @@ public class ContextTest
         context.CurrentObject.Set(row);
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists("foo"), Is.True);
-            Assert.That(context.CurrentObject.Exists("bar"), Is.False);
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.False);
         });
         Assert.Multiple(() =>
         {
@@ -186,10 +197,10 @@ public class ContextTest
     public void CurrentObjectName_List_ThrowsException()
     {
         var context = new Context();
-        context.CurrentObject.Set(new List<int>{ 123 });
+        context.CurrentObject.Set(new List<int> { 123 });
         Assert.Multiple(() =>
         {
-            Assert.That(() => context.CurrentObject.Exists("myVar"), Throws.TypeOf<NotNameableContextObjectException>());
+            Assert.That(() => context.CurrentObject.Contains("myVar"), Throws.TypeOf<NotNameableContextObjectException>());
             Assert.That(() => context.CurrentObject["myVar"], Throws.TypeOf<NotNameableContextObjectException>());
         });
     }
@@ -198,11 +209,11 @@ public class ContextTest
     public void CurrentObjectIndex_ListWithExistingIndex_ValueReturned()
     {
         var context = new Context();
-        context.CurrentObject.Set(new List<int>() { 123 , 456 });
+        context.CurrentObject.Set(new List<int>() { 123, 456 });
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists(0), Is.True);
-            Assert.That(context.CurrentObject.Exists(1), Is.True);
+            Assert.That(context.CurrentObject.Contains(0), Is.True);
+            Assert.That(context.CurrentObject.Contains(1), Is.True);
         });
         Assert.Multiple(() =>
         {
@@ -224,8 +235,8 @@ public class ContextTest
         context.CurrentObject.Set(row);
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists(0), Is.True);
-            Assert.That(context.CurrentObject.Exists(1), Is.True);
+            Assert.That(context.CurrentObject.Contains(0), Is.True);
+            Assert.That(context.CurrentObject.Contains(1), Is.True);
         });
         Assert.Multiple(() =>
         {
@@ -241,8 +252,8 @@ public class ContextTest
         context.CurrentObject.Set(new List<int>() { 123 });
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists(0), Is.True);
-            Assert.That(context.CurrentObject.Exists(1), Is.False);
+            Assert.That(context.CurrentObject.Contains(0), Is.True);
+            Assert.That(context.CurrentObject.Contains(1), Is.False);
         });
         Assert.Multiple(() =>
         {
@@ -263,8 +274,8 @@ public class ContextTest
         context.CurrentObject.Set(row);
         Assert.Multiple(() =>
         {
-            Assert.That(context.CurrentObject.Exists(0), Is.True);
-            Assert.That(context.CurrentObject.Exists(1), Is.False);
+            Assert.That(context.CurrentObject.Contains(0), Is.True);
+            Assert.That(context.CurrentObject.Contains(1), Is.False);
         });
         Assert.Multiple(() =>
         {
@@ -277,10 +288,10 @@ public class ContextTest
     public void CurrentObjectIndex_Object_ThrowsException()
     {
         var context = new Context();
-        context.CurrentObject.Set(new { foo=123 });
+        context.CurrentObject.Set(new { foo = 123 });
         Assert.Multiple(() =>
         {
-            Assert.That(() => context.CurrentObject.Exists(0), Throws.TypeOf<NotIndexableContextObjectException>());
+            Assert.That(() => context.CurrentObject.Contains(0), Throws.TypeOf<NotIndexableContextObjectException>());
             Assert.That(() => context.CurrentObject[0], Throws.TypeOf<NotIndexableContextObjectException>());
         });
     }
@@ -292,7 +303,7 @@ public class ContextTest
         context.CurrentObject.Set(new Dictionary<string, object> { { "foo", 123 }, { "bar", 456 } });
         Assert.Multiple(() =>
         {
-            Assert.That(() => context.CurrentObject.Exists(0), Throws.TypeOf<NotIndexableContextObjectException>());
+            Assert.That(() => context.CurrentObject.Contains(0), Throws.TypeOf<NotIndexableContextObjectException>());
             Assert.That(() => context.CurrentObject[0], Throws.TypeOf<NotIndexableContextObjectException>());
         });
     }

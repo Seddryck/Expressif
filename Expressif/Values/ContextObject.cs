@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Expressif.Values;
 
 public class ContextObject
 {
-    public object? Value { get; private set; }
+    protected object? Value { get; private set; }
     private PropertyInfo[]? Cache { get; set; }
 
     public void Set(object value)
@@ -20,13 +21,13 @@ public class ContextObject
         Value = value;
     }
 
-    public bool Exists(string name)
+    public bool Contains(string name)
         => Value switch
         {
             DataRow row => row.Table.Columns.Contains(name),
             IDictionary dico => dico.Contains(name),
             IList => throw new NotNameableContextObjectException(Value),
-            _ => RetrieveObjectProperty(name).Exists,
+            _ => TryRetrieveObjectProperty(name, out var _),
         };
 
     public object? this[string name]
@@ -36,22 +37,26 @@ public class ContextObject
             return Value switch
             {
                 DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
-                IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
+                IDictionary dico =>  dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
                 IList => throw new NotNameableContextObjectException(Value),
                 _ => retrieveObjectProperty(name),
             };
 
             object? retrieveObjectProperty(string name)
-            {
-                var result = RetrieveObjectProperty(name);
-                if (result.Exists)
-                    return result.Value;
-                throw new ArgumentOutOfRangeException(name);
-            }
+                => TryRetrieveObjectProperty(name, out var value)
+                    ? value
+                    : throw new ArgumentOutOfRangeException(name);
         }
     }
 
-    public bool Exists(int index)
+    public bool TryGetValue(string name, out object? value)
+    {
+        var contains = Contains(name);
+        value = contains ? this[name] : null;
+        return contains;
+    }
+
+    public bool Contains(int index)
         => Value switch
         {
             DataRow row => index < row.Table.Columns.Count,
@@ -72,10 +77,20 @@ public class ContextObject
         }
     }
 
-    private (bool Exists, object? Value) RetrieveObjectProperty(string name)
+    public bool TryGetValue(int index, out object? value)
+    {
+        var contains = Contains(index);
+        value = contains ? this[index] : null;
+        return contains;
+    }
+
+    private bool TryRetrieveObjectProperty(string name, [NotNullWhen(true)] out object? value)
     {
         if (Value == null)
-            return (false, null);
+        {
+            value = null;
+            return false;
+        }
 
         Cache ??= Value.GetType().GetProperties();
 
@@ -84,6 +99,7 @@ public class ContextObject
             && x.CanRead
         );
 
-        return (prop == null ? (false, null) : (true, prop.GetValue(Value)));
+        value = prop?.GetValue(Value);
+        return prop != null;
     }
 }
