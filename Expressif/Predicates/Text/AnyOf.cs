@@ -13,23 +13,23 @@ namespace Expressif.Predicates.Text;
 /// </summary>
 public class AnyOf : BaseTextPredicate
 {
-    public IEnumerable<Func<string>> References { get; }
+    public Func<IEnumerable<string>> References { get; }
     protected StringComparer Comparer { get; }
 
     /// <param name="references">An array of text values.</param>
-    public AnyOf(IEnumerable<Func<string>> references)
+    public AnyOf(Func<IEnumerable<string>> references)
         : this(references, StringComparer.InvariantCultureIgnoreCase) { }
     
     /// <param name="references"></param>
     /// <param name="comparer"></param>
-    public AnyOf(IEnumerable<Func<string>> references, StringComparer comparer)
+    public AnyOf(Func<IEnumerable<string>> references, StringComparer comparer)
                => (References, Comparer) = (references, comparer);
 
     protected override bool EvaluateBaseText(string value)
     {
-        foreach (var reference in References)
+        foreach (var reference in References.Invoke())
         {
-            var predicate = new EquivalentTo(reference, Comparer);
+            var predicate = new EquivalentTo(() => reference, Comparer);
             if (predicate.Evaluate(value))
                 return true;
         }
