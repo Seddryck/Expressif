@@ -76,8 +76,26 @@ public class ContextTest
     [TestCase("bar", false)]
     public void VariableContains_FooExisting_CorrectResult(string name, bool expected)
     {
-        var context = new Context(new() { { "foo", () => "123" } });
+        var context = new Context(new() { { "foo", "123" } });
         Assert.That(context.Variables.Contains(name), Is.EqualTo(expected));
+    }
+
+    [Test]
+    [TestCase("foo", true)]
+    [TestCase("@foo", true)]
+    [TestCase("@bar", false)]
+    [TestCase("bar", false)]
+    public void VariableTryGetValue_FooExisting_CorrectResult(string name, bool expected)
+    {
+        var context = new Context(new() { { "foo", "123" } });
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.Variables.TryGetValue(name, out var result), Is.EqualTo(expected));
+            if (expected)
+                Assert.That(result, Is.EqualTo("123"));
+            else
+                Assert.That(result, Is.Null);
+        });
     }
 
     [Test]
@@ -206,6 +224,23 @@ public class ContextTest
     }
 
     [Test]
+    [TestCase("foo", true)]
+    [TestCase("bar", false)]
+    public void CurrentObjectNameTryGetValue_NameExisting_CorrectResult(string name, bool expected)
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new Dictionary<string, object> { { "foo", 123 } });
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject.TryGetValue(name, out var result), Is.EqualTo(expected));
+            if (expected)
+                Assert.That(result, Is.EqualTo(123));
+            else
+                Assert.That(result, Is.Null);
+        });
+    }
+
+    [Test]
     public void CurrentObjectIndex_ListWithExistingIndex_ValueReturned()
     {
         var context = new Context();
@@ -305,6 +340,23 @@ public class ContextTest
         {
             Assert.That(() => context.CurrentObject.Contains(0), Throws.TypeOf<NotIndexableContextObjectException>());
             Assert.That(() => context.CurrentObject[0], Throws.TypeOf<NotIndexableContextObjectException>());
+        });
+    }
+
+    [Test]
+    [TestCase(0, true)]
+    [TestCase(100, false)]
+    public void CurrentObjectIndexTryGetValue_IndexExisting_CorrectResult(int index, bool expected)
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new List<int>() { 123, 456 });
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject.TryGetValue(index, out var result), Is.EqualTo(expected));
+            if (expected)
+                Assert.That(result, Is.EqualTo(123));
+            else
+                Assert.That(result, Is.Null);
         });
     }
 }
