@@ -21,10 +21,7 @@ public class AnyOfTest
     [TestCase("", new[] { "foo", "bar" }, false)]
     public void EquivalentTo_Text_Success(object value, string[] references, bool expected)
     {
-        var scalars = new List<Func<string>>();
-        foreach (var reference in references)
-            scalars.Add(() => reference);
-
+        var scalars = new Func<List<string>>(() => references.ToList());
         var predicate = new AnyOf(scalars);
         Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
     }
