@@ -50,7 +50,7 @@ public abstract class BaseExpressionFactory
     {
         return parameter switch
         {
-            InputExpressionParameter input => CreateFunctionCast(CreateInputExpression(input, scalarType, context), scalarType),
+            InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
@@ -77,7 +77,7 @@ public abstract class BaseExpressionFactory
         => value.To<T>();
 
     private MethodInfo? cacheFunctionCastInfo;
-    protected Delegate CreateFunctionCast(Delegate function, Type type)
+    protected Delegate CreateFunctionCast(Func<object?> function, Type type)
     {
         var method = cacheFunctionCastInfo ??= typeof(BaseExpressionFactory).GetMethod(nameof(FunctionCast), BindingFlags.Static | BindingFlags.NonPublic)
                         ?? throw new MissingMethodException();
@@ -85,8 +85,20 @@ public abstract class BaseExpressionFactory
         return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), function, genericMethod);
     }
 
-    protected static T? FunctionCast<T>(Delegate function)
-        => function.DynamicInvoke().To<T>();
+    protected static T? FunctionCast<T>(Func<object?> function)
+        => function.Invoke().To<T>();
+
+    private MethodInfo? cacheDelegateCastInfo;
+    protected Delegate CreateDelegateCast(Delegate function, Type type)
+    {
+        var method = cacheDelegateCastInfo ??= typeof(BaseExpressionFactory).GetMethod(nameof(DelegateCast), BindingFlags.Static | BindingFlags.NonPublic)
+                        ?? throw new MissingMethodException();
+        var genericMethod = method.MakeGenericMethod(type);
+        return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), function, genericMethod);
+    }
+
+    protected static T? DelegateCast<T>(Delegate @delegate)
+        => @delegate.DynamicInvoke().To<T>();
 
     protected virtual Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {
