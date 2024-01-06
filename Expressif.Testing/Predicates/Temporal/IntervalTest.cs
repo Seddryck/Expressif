@@ -19,9 +19,9 @@ public class IntervalTest
     [TestCase("(null)", false)]
     public void ContainedIn_DateTime_Expected(object? value, bool expected)
         => Assert.That(new ContainedIn(
-            new Interval<System.DateTime>(
-                new System.DateTime(2022, 11, 20)
-                , new System.DateTime(2022, 11, 24)
+            () => new Interval<DateTime>(
+                new DateTime(2022, 11, 20)
+                , new DateTime(2022, 11, 24)
                 , IntervalType.Open
                 , IntervalType.Closed)
             ).Evaluate(value), Is.EqualTo(expected));

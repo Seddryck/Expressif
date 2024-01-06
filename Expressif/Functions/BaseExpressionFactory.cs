@@ -42,7 +42,7 @@ public abstract class BaseExpressionFactory
         return (T)ctor.Invoke(typedFunctionParameters.ToArray());
     }
 
-    protected internal ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
+    protected internal virtual ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
         => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
             ?? throw new MissingOrUnexpectedParametersFunctionException(type.Name, paramCount);
 
