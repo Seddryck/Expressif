@@ -55,5 +55,19 @@ public class NumericCaster : BaseNumericCaster<decimal>, ICaster<decimal>, IPars
             : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type Numeric. The type Numeric can only be casted from the underlying numeric types (int, float, ...), Boolean and String. The expect string format can include decimal point, thousand separators, sign symbol and white spaces.");
 
     public override bool TryParse(string text, [NotNullWhen(true)] out decimal value)
-        => decimal.TryParse(text, Style, Format, out value);
+    {
+        if (decimal.TryParse(text, Style, Format, out value))
+            return true;
+        if (string.Equals(text, "-INF", StringComparison.OrdinalIgnoreCase))
+        {
+            value = decimal.MinValue;
+            return true;
+        }
+        if (string.Equals(text, "+INF", StringComparison.OrdinalIgnoreCase))
+        {
+            value = decimal.MaxValue;
+            return true;
+        }
+        return false;
+    }
 }
