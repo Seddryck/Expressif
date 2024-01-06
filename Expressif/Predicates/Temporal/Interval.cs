@@ -13,12 +13,12 @@ namespace Expressif.Predicates.Temporal;
 /// </summary>
 public class ContainedIn : BaseDateTimePredicate
 {
-    public Interval<DateTime> Interval { get; }
+    public Func<Interval<DateTime>> Interval { get; }
 
     /// <param name="interval">A temporal interval to compare to the argument.</param>
-    public ContainedIn(Interval<DateTime> interval)
+    public ContainedIn(Func<Interval<DateTime>> interval)
         => Interval = interval;
 
     protected override bool EvaluateDateTime(DateTime dt)
-        => Interval.Contains(dt);
+        => Interval.Invoke().Contains(dt);
 }
