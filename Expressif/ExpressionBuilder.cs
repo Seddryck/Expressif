@@ -45,7 +45,7 @@ public class ExpressionBuilder
         return this;
     }
 
-    private IParameter[] Parametrize(object?[] parameters)
+    protected virtual IParameter[] Parametrize(object?[] parameters)
     {
         var typedParameters = new List<IParameter>();
         foreach (var parameter in parameters)
@@ -57,7 +57,7 @@ public class ExpressionBuilder
                 _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
             });
         }
-        return typedParameters.ToArray();
+        return [.. typedParameters];
     }
 
     public ExpressionBuilder Chain(ExpressionBuilder builder)
@@ -99,6 +99,6 @@ public class ExpressionBuilder
         if (Pile.Count == 0)
             throw new InvalidOperationException();
 
-        return Serializer.Serialize(Pile.ToArray());
+        return Serializer.Serialize([.. Pile]);
     }
 }
