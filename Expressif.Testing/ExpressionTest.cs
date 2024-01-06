@@ -70,13 +70,11 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo("nikola esla"));
     }
 
-
     [Test]
     public void Evaluate_ObjectPropertyAsParameterDoublePass_Valid()
     {
         var context = new Context();
         var expression = new Expression("lower | remove-chars([CharToBeRemoved])", context);
-
 
         context.CurrentObject.Set(new { CharToBeRemoved = 't' });
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola esla"));

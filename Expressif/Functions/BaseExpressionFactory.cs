@@ -64,7 +64,6 @@ public abstract class BaseExpressionFactory
             => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
     }
 
-
     private MethodInfo? cacheCastInfo;
     protected Delegate CreateCast(object value, Type type)
     {
