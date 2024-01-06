@@ -1,7 +1,6 @@
 ﻿using Expressif.Functions.Text;
 using Expressif.Parsers;
 using Expressif.Serializers;
-using Expressif.Values.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,14 +64,18 @@ public class ExpressionBuilderTest
     public void Chain_MultipleWithContext_CorrectlyEvaluate()
     {
         var context = new Context();
+        var builder = new ExpressionBuilder(context)
+            .Chain<Lower>()
+            .Chain<PadRight>(ctx => ctx.Variables["myVar"], ctx => ctx.CurrentObject[1]);
+        var expression = builder.Build();
+
         context.Variables.Add<int>("myVar", 15);
         context.CurrentObject.Set(new List<char>() { '-', '*', ' ' });
-
-        var builder = new ExpressionBuilder()
-            .Chain<Lower>()
-            .Chain<PadRight>(context.Variables["myVar"]!, context.CurrentObject[1]!);
-        var expression = builder.Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla***"));
+
+        context.Variables.Set("myVar", 16);
+        context.CurrentObject.Set(new List<char>() { '*', '+' });
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla++++"));
     }
 
     [Test]

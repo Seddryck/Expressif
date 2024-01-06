@@ -48,6 +48,18 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_VariableAsParameterDoublePass_Valid()
+    {
+        var context = new Context();
+        var expression = new Expression("lower | remove-chars(@myChar)", context);
+
+        context.Variables.Add<char>("myChar", 'k');
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("niola tesla"));
+        context.Variables.Set("myChar", 'a');
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol tesl"));
+    }
+
+    [Test]
     public void Evaluate_ObjectPropertyAsParameter_Valid()
     {
         var context = new Context();
@@ -59,6 +71,19 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ObjectPropertyAsParameterDoublePass_Valid()
+    {
+        var context = new Context();
+        var expression = new Expression("lower | remove-chars([CharToBeRemoved])", context);
+
+        context.CurrentObject.Set(new { CharToBeRemoved = 't' });
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola esla"));
+
+        context.CurrentObject.Set(new { CharToBeRemoved = 'k' });
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("niola tesla"));
+    }
+
+    [Test]
     public void Evaluate_ObjectIndexAsParameter_Valid()
     {
         var context = new Context();
@@ -67,6 +92,19 @@ public class ExpressionTest
         var expression = new Expression("lower | remove-chars(#1)", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola tela"));
+    }
+
+    [Test]
+    public void Evaluate_ObjectIndexAsParameterDoublePass_Valid()
+    {
+        var context = new Context();
+        var expression = new Expression("lower | remove-chars(#1)", context);
+
+        context.CurrentObject.Set(new List<char>() { 'e', 's' });
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tela"));
+
+        context.CurrentObject.Set(new List<char>() { 'e', 'o' });
+        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikla tesla"));
     }
 
     [Test]
@@ -104,7 +142,7 @@ public class ExpressionTest
     {
         var context = new Context();
         context.Variables.Add<int>("myVar", 6);
-        context.CurrentObject.Set(new List<int>() { 15, 8, 3 });
+        context.CurrentObject.Set(new List<decimal>() { 15, 8, 3 });
 
         var expression = new Expression("lower | skip-last-chars( {@myVar | subtract(#2) })", context);
         var result = expression.Evaluate("Nikola Tesla");
