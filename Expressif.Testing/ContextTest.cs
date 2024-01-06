@@ -99,6 +99,53 @@ public class ContextTest
     }
 
     [Test]
+    public void VariableCount_AddRemove_CorrectResult()
+    {
+        var context = new Context(new() { { "foo", "123" } });
+        Assert.That(context.Variables.Count, Is.EqualTo(1));
+
+        context.Variables.Add<string>("bar", "456");
+        Assert.That(context.Variables.Count, Is.EqualTo(2));
+
+        context.Variables.Remove("foo");
+        Assert.That(context.Variables.Count, Is.EqualTo(1));
+        context.Variables.Remove("bar");
+        Assert.That(context.Variables.Count, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void VariableKeys_AddRemove_CorrectResult()
+    {
+        var context = new Context(new() { { "foo", "123" } });
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.Variables.Keys, Does.Contain("foo"));
+            Assert.That(context.Variables.Keys, Does.Not.Contain("bar"));
+        });
+
+        context.Variables.Add<string>("bar", "456");
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.Variables.Keys, Does.Contain("foo"));
+            Assert.That(context.Variables.Keys, Does.Contain("bar"));
+        });
+
+        context.Variables.Remove("foo");
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.Variables.Keys, Does.Not.Contain("foo"));
+            Assert.That(context.Variables.Keys, Does.Contain("bar"));
+        });
+
+        context.Variables.Remove("bar");
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.Variables.Keys, Does.Not.Contain("foo"));
+            Assert.That(context.Variables.Keys, Does.Not.Contain("bar"));
+        });
+    }
+
+    [Test]
     public void CurrentObjectName_DictionaryWithExistingKey_KeyReturned()
     {
         var context = new Context();
@@ -358,5 +405,15 @@ public class ContextTest
             else
                 Assert.That(result, Is.Null);
         });
+    }
+
+    [Test]
+    public void CurrentObjectValue_Any_CorrectResult()
+    {
+        var context = new Context();
+        Assert.That(context.CurrentObject.Value, Is.Null);
+
+        context.CurrentObject.Set(new List<int>() { 123, 456 });
+        Assert.That(context.CurrentObject.Value, Is.AssignableTo<IList<int>>());
     }
 }

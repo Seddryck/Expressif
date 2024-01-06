@@ -41,7 +41,9 @@ public class ContextVariables
             Variables.Remove(name);
     }
 
-    public int Count { get => Variables.Count; }
+    public int Count => Variables.Count;
+
+    public ICollection<string> Keys => Variables.Keys;
 
     public object? this[string name]
         => Variables.TryGetValue(name.StartsWith('@') ? name[1..] : name, out var value)

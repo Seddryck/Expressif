@@ -11,7 +11,7 @@ namespace Expressif.Values;
 
 public class ContextObject
 {
-    protected object? Value { get; private set; }
+    public object? Value { get; private set; }
     private PropertyInfo[]? Cache { get; set; }
 
     public void Set(object value)
