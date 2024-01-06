@@ -15,5 +15,5 @@ public class ChainFunction : IFunction
         => Functions = functions;
 
     public object? Evaluate(object? value)
-        => Functions.Aggregate(value is IScalarResolver resolver ? resolver.Execute() : value, (v, func) => func.Evaluate(v) );
+        => Functions.Aggregate(value, (v, func) => func.Evaluate(v) );
 }
