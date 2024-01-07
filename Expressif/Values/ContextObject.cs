@@ -14,9 +14,9 @@ public class ContextObject
     public object? Value { get; private set; }
     private PropertyInfo[]? Cache { get; set; }
 
-    public void Set(object value)
+    public void Set(object? value)
     {
-        if (Value == null || Value.GetType() != value.GetType())
+        if (value == null || Value == null || Value.GetType() != value.GetType())
             Cache = null;
         Value = value;
     }
@@ -25,6 +25,7 @@ public class ContextObject
         => Value switch
         {
             DataRow row => row.Table.Columns.Contains(name),
+            IReadOnlyDataRow row => row.ContainsColumn(name),
             IDictionary dico => dico.Contains(name),
             IList => throw new NotNameableContextObjectException(Value),
             _ => TryRetrieveObjectProperty(name, out var _),
@@ -37,7 +38,8 @@ public class ContextObject
             return Value switch
             {
                 DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
-                IDictionary dico =>  dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
+                IReadOnlyDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
+                IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
                 IList => throw new NotNameableContextObjectException(Value),
                 _ => retrieveObjectProperty(name),
             };
@@ -45,7 +47,7 @@ public class ContextObject
             object? retrieveObjectProperty(string name)
                 => TryRetrieveObjectProperty(name, out var value)
                     ? value
-                    : throw new ArgumentOutOfRangeException(name);
+                    : throw new ArgumentException($"Cannot find a property named '{name}' in the object of type '{Value?.GetType().Name ?? "null"}'.");
         }
     }
 
@@ -60,6 +62,7 @@ public class ContextObject
         => Value switch
         {
             DataRow row => index < row.Table.Columns.Count,
+            IReadOnlyDataRow row => index < row.ColumnsCount,
             IList list => index < list.Count,
             _ => throw new NotIndexableContextObjectException(Value)
         };
@@ -71,6 +74,7 @@ public class ContextObject
             return Value switch
             {
                 DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
+                IReadOnlyDataRow row => index < row.ColumnsCount ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
                 IList list => list[index],
                 _ => throw new NotIndexableContextObjectException(Value)
             };
