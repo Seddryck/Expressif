@@ -1,5 +1,6 @@
 using Expressif.Values;
 using Expressif.Values.Special;
+using NUnit.Framework.Constraints;
 using System.Data;
 
 namespace Expressif.Testing;
@@ -220,7 +221,7 @@ public class ContextTest
     }
 
     [Test]
-    public void CurrentObjectName_ObjectWithUnavailableProperty_ThrowsException()
+    public void CurrentObjectName_AnonymousObjectWithUnavailableProperty_ThrowsException()
     {
         var context = new Context();
         context.CurrentObject.Set(new { foo = 123 });
@@ -232,7 +233,38 @@ public class ContextTest
         Assert.Multiple(() =>
         {
             Assert.That(() => context.CurrentObject["foo"], Throws.Nothing);
-            Assert.That(() => context.CurrentObject["bar"], Throws.TypeOf<ArgumentOutOfRangeException>());
+            Assert.That(() => context.CurrentObject["bar"], Throws.TypeOf<ArgumentException>()
+                .With.Message.EqualTo("Cannot find a property named 'bar' in the object of type '<>f__AnonymousType1`1'."));
+        });
+    }
+
+    private record ObjectTest(string Name) { }
+    [Test]
+    public void CurrentObjectName_ObjectWithUnavailableProperty_ThrowsException()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new ObjectTest("foo"));
+        Assert.That(context.CurrentObject.Contains("Bar"), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => context.CurrentObject["Bar"], Throws.TypeOf<ArgumentException>()
+                .With.Message.EqualTo("Cannot find a property named 'Bar' in the object of type 'ObjectTest'."));
+        });
+    }
+
+    [Test]
+    public void CurrentObjectName_ObjectNull_ThrowsException()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject.Contains("bar"), Is.False);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => context.CurrentObject["bar"], Throws.TypeOf<ArgumentException>()
+                .With.Message.EqualTo("Cannot find a property named 'bar' in the object of type 'null'."));
         });
     }
 
@@ -415,5 +447,67 @@ public class ContextTest
 
         context.CurrentObject.Set(new List<int>() { 123, 456 });
         Assert.That(context.CurrentObject.Value, Is.AssignableTo<IList<int>>());
+    }
+
+    private class DataRowWrapper(DataRow row) : IReadOnlyDataRow
+    {
+        private DataRow Row { get; } = row;
+
+        public object? this[string columnName] => Row[columnName];
+
+        public object? this[int index] => Row[index];
+
+        public int ColumnsCount => Row.Table.Columns.Count;
+
+        public bool ContainsColumn(string columnName) => Row.Table.Columns.Contains(columnName);
+    }
+
+    [Test]
+    public void CurrentObjectIndex_IReadOnlyDataRowWithUnavailableColumn_ThrowsException()
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("foo", typeof(int));
+        var row = dt.NewRow();
+        row.ItemArray = new object[] { 123 };
+        dt.Rows.Add(row);
+        var wrapper = new DataRowWrapper(row);
+
+        var context = new Context();
+        context.CurrentObject.Set(wrapper);
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject.Contains(0), Is.True);
+            Assert.That(context.CurrentObject.Contains(1), Is.False);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => context.CurrentObject[0], Throws.Nothing);
+            Assert.That(() => context.CurrentObject[1], Throws.TypeOf<ArgumentOutOfRangeException>());
+        });
+    }
+
+    [Test]
+    public void CurrentObjectName_IReadOnlyDataRowWithExistingColumn_ValueReturned()
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("foo", typeof(int));
+        dt.Columns.Add("bar", typeof(object));
+        var row = dt.NewRow();
+        row.ItemArray = new object[] { 123, 456 };
+        dt.Rows.Add(row);
+        var wrapper = new DataRowWrapper(row);
+
+        var context = new Context();
+        context.CurrentObject.Set(wrapper);
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject.Contains("foo"), Is.True);
+            Assert.That(context.CurrentObject.Contains("bar"), Is.True);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject["foo"], Is.EqualTo(123));
+            Assert.That(context.CurrentObject["bar"], Is.EqualTo(456));
+        });
     }
 }
