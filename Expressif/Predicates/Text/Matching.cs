@@ -1,6 +1,7 @@
 ﻿using Expressif.Values;
 using Expressif.Values.Casters;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -42,10 +43,11 @@ public class MatchesNumeric : BaseTextPredicateMatching
         : base(culture) { }
 
     protected override bool EvaluateUncasted(object value)
-        => TypeChecker.IsNumericType(value) || base.EvaluateUncasted(value);
+        => TypeChecker.IsNumericType(value) ||  base.EvaluateUncasted(value);
 
     protected override bool EvaluateBaseText(string value)
-        => decimal.TryParse(value, NumberStyles.Number & ~NumberStyles.AllowThousands, CultureInfo.NumberFormat, out var _);
+        => decimal.TryParse(value, NumberStyles.Number & ~NumberStyles.AllowThousands, CultureInfo.NumberFormat, out var _)
+            || value.Trim() == "+INF" || value.Trim() == "-INF";
 }
 
 /// <summary>
