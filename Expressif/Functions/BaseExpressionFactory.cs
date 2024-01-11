@@ -1,5 +1,6 @@
 ﻿using Expressif.Parsers;
 using Expressif.Values;
+using Expressif.Values.Casters;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -74,7 +75,7 @@ public abstract class BaseExpressionFactory
     }
 
     protected static T? Cast<T>(object value)
-        => value.To<T>();
+        => new Caster().Cast<T>(value);
 
     private MethodInfo? cacheFunctionCastInfo;
     protected Delegate CreateFunctionCast(Func<object?> function, Type type)
@@ -86,7 +87,8 @@ public abstract class BaseExpressionFactory
     }
 
     protected static T? FunctionCast<T>(Func<object?> function)
-        => function.Invoke().To<T>();
+        => new Caster().Cast<T>(function.Invoke());
+        
 
     private MethodInfo? cacheDelegateCastInfo;
     protected Delegate CreateDelegateCast(Delegate function, Type type)
@@ -98,7 +100,7 @@ public abstract class BaseExpressionFactory
     }
 
     protected static T? DelegateCast<T>(Delegate @delegate)
-        => @delegate.DynamicInvoke().To<T>();
+        => new Caster().Cast<T>(@delegate.DynamicInvoke());
 
     protected virtual Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {

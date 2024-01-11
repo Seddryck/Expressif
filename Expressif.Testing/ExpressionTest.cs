@@ -1,4 +1,5 @@
 using Expressif.Functions;
+using Expressif.Parsers;
 using Expressif.Values;
 using Expressif.Values.Special;
 using System.Data;
@@ -147,5 +148,27 @@ public class ExpressionTest
         var expression = new Expression("lower | skip-last-chars( {@myVar | subtract(#2) })", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola te"));
+    }
+
+    [Test]
+    public void Evaluate_FunctionWithIntegerForDecimal_Valid()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new List<int>() { 2, 3 });
+
+        var expression = new Expression("numeric-to-multiply(#1)", context);
+        var result = expression.Evaluate(10);
+        Assert.That(result, Is.EqualTo(30));
+    }
+
+    [Test]
+    public void Evaluate_FunctionWithTextForDateTime_Valid()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new List<string>() { "2020-01-01", "2021-12-31" });
+
+        var expression = new Expression("dateTime-to-clip(#0, #1)", context);
+        var result = expression.Evaluate("2018-01-01");
+        Assert.That(result, Is.EqualTo(new DateTime(2020, 01, 01)));
     }
 }
