@@ -25,7 +25,7 @@ public class ContextObject
         => Value switch
         {
             DataRow row => row.Table.Columns.Contains(name),
-            IReadOnlyDataRow row => row.ContainsColumn(name),
+            ILiteDataRow row => row.ContainsColumn(name),
             IDictionary dico => dico.Contains(name),
             IList => throw new NotNameableContextObjectException(Value),
             _ => TryRetrieveObjectProperty(name, out var _),
@@ -38,7 +38,7 @@ public class ContextObject
             return Value switch
             {
                 DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
-                IReadOnlyDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
+                ILiteDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
                 IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
                 IList => throw new NotNameableContextObjectException(Value),
                 _ => retrieveObjectProperty(name),
@@ -62,7 +62,7 @@ public class ContextObject
         => Value switch
         {
             DataRow row => index < row.Table.Columns.Count,
-            IReadOnlyDataRow row => index < row.ColumnsCount,
+            ILiteDataRow row => index < row.ColumnCount,
             IList list => index < list.Count,
             _ => throw new NotIndexableContextObjectException(Value)
         };
@@ -74,7 +74,7 @@ public class ContextObject
             return Value switch
             {
                 DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
-                IReadOnlyDataRow row => index < row.ColumnsCount ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
+                ILiteDataRow row => index < row.ColumnCount ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
                 IList list => list[index],
                 _ => throw new NotIndexableContextObjectException(Value)
             };

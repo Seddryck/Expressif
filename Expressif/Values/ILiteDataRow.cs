@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Expressif.Values;
-public interface IReadOnlyDataRow
+public interface ILiteDataRow
 {
-    int ColumnsCount { get; }
+    int ColumnCount { get; }
     bool ContainsColumn(string columnName);
     object? this[string columnName] { get; }
     object? this[int index] { get; }
