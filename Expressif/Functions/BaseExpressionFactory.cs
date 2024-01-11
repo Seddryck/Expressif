@@ -13,7 +13,9 @@ namespace Expressif.Functions;
 public abstract class BaseExpressionFactory
 {
     protected BaseTypeMapper TypeMapper { get; }
-    private Caster Caster = new();
+
+    private static Caster? caster;
+    private static Caster Caster => caster ??= new();
 
     protected BaseExpressionFactory(BaseTypeMapper typeSetter)
         => TypeMapper = typeSetter;
@@ -75,7 +77,7 @@ public abstract class BaseExpressionFactory
         return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), value, genericMethod);
     }
 
-    protected virtual T? Cast<T>(object value)
+    protected static T? Cast<T>(object value)
         => Caster.Cast<T>(value);
 
     private MethodInfo? cacheFunctionCastInfo;
@@ -87,7 +89,7 @@ public abstract class BaseExpressionFactory
         return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), function, genericMethod);
     }
 
-    protected virtual T? FunctionCast<T>(Func<object?> function)
+    protected static T? FunctionCast<T>(Func<object?> function)
         => Caster.Cast<T>(function.Invoke());
 
     private MethodInfo? cacheDelegateCastInfo;
@@ -99,7 +101,7 @@ public abstract class BaseExpressionFactory
         return Delegate.CreateDelegate(typeof(Func<>).MakeGenericType(type), function, genericMethod);
     }
 
-    protected virtual T? DelegateCast<T>(Delegate @delegate)
+    protected static T? DelegateCast<T>(Delegate @delegate)
         => Caster.Cast<T>(@delegate.DynamicInvoke());
 
     protected virtual Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
