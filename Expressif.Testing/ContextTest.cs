@@ -449,7 +449,7 @@ public class ContextTest
         Assert.That(context.CurrentObject.Value, Is.AssignableTo<IList<int>>());
     }
 
-    private class DataRowWrapper(DataRow row) : IReadOnlyDataRow
+    private class DataRowWrapper(DataRow row) : ILiteDataRow
     {
         private DataRow Row { get; } = row;
 
@@ -457,7 +457,7 @@ public class ContextTest
 
         public object? this[int index] => Row[index];
 
-        public int ColumnsCount => Row.Table.Columns.Count;
+        public int ColumnCount => Row.Table.Columns.Count;
 
         public bool ContainsColumn(string columnName) => Row.Table.Columns.Contains(columnName);
     }
