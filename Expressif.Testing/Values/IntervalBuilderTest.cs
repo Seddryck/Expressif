@@ -46,4 +46,40 @@ public class IntervalBuilderTest
             Assert.That(() => new IntervalBuilder().Create(value), Is.Not.Null);
             Assert.That(() => new IntervalBuilder().Create(value), Is.TypeOf<Interval<decimal>>());
         });
+
+    [Test]
+    public void CreateNumericWithPositiveInfinite_FromString_valid()
+    {
+        var interval = new IntervalBuilder().Create("(0+)");
+        Assert.Multiple(() =>
+        {
+            Assert.That(interval, Is.Not.Null);
+            Assert.That(interval, Is.TypeOf<Interval<decimal>>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(((Interval<decimal>)interval).LowerBoundIntervalType, Is.EqualTo(IntervalType.Closed));
+            Assert.That(((Interval<decimal>)interval).LowerBound, Is.EqualTo(0));
+            Assert.That(((Interval<decimal>)interval).UpperBound, Is.EqualTo(decimal.MaxValue));
+            Assert.That(((Interval<decimal>)interval).UpperBoundIntervalType, Is.EqualTo(IntervalType.Closed));
+        });
+    }
+
+    [Test]
+    public void CreateNumericWithNegativeInfinite_FromString_valid()
+    {
+        var interval = new IntervalBuilder().Create("[-INF;45]");
+        Assert.Multiple(() =>
+        {
+            Assert.That(interval, Is.Not.Null);
+            Assert.That(interval, Is.TypeOf<Interval<decimal>>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(((Interval<decimal>)interval).LowerBoundIntervalType, Is.EqualTo(IntervalType.Closed));
+            Assert.That(((Interval<decimal>)interval).LowerBound, Is.EqualTo(decimal.MinValue));
+            Assert.That(((Interval<decimal>)interval).UpperBound, Is.EqualTo(45));
+            Assert.That(((Interval<decimal>)interval).UpperBoundIntervalType, Is.EqualTo(IntervalType.Closed));
+        });
+    }
 }

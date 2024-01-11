@@ -457,7 +457,7 @@ public class ContextTest
 
         public object? this[int index] => Row[index];
 
-        public int ColumnCount => Row.Table.Columns.Count;
+        public int ColumnsCount => Row.Table.Columns.Count;
 
         public bool ContainsColumn(string columnName) => Row.Table.Columns.Contains(columnName);
     }
