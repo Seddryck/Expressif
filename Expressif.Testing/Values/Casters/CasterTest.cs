@@ -82,6 +82,6 @@ public class CasterTest
     public void Cast_NotCasterableToTimeSpan_Throws()
         => Assert.Multiple(() =>
         {
-            Assert.That(() => new Caster().Cast<TimeSpan>(10f), Throws.ArgumentException));
+            Assert.That(() => new Caster().Cast<TimeSpan>(10f), Throws.ArgumentException);
         });
 }
