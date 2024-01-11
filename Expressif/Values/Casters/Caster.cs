@@ -11,14 +11,11 @@ public class Caster
 {
     public virtual T? Cast<T>(object? value)
     {
-        if (value == null)
+        if (value == null || value == DBNull.Value)
             return default;
 
         if (value is T)
             return (T?)value;
-
-        if (value == DBNull.Value)
-            return (T?)(object?)null;
 
         var @switch = new Dictionary<Type, Func<object>>
         {
