@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
 using Expressif.Values.Casters;
 
 namespace Expressif.Testing.Values.Casters;
@@ -37,7 +38,7 @@ public class CasterTest
         => Assert.That(new Caster().Cast<DateTime>("2023-01-01"), Is.EqualTo(new DateTime(2023,1,1)));
 
     [Test]
-    public void Cast_TypedCasterToDecimal_Correct()
+    public void Cast_TypedCasterToNumeric_Correct()
         => Assert.Multiple(() =>
         {
             Assert.That(new Caster().Cast<decimal>(10), Is.EqualTo(10m));
@@ -50,10 +51,37 @@ public class CasterTest
         });
 
     [Test]
+    public void Cast_TypedCasterToBoolean_Correct()
+         => Assert.Multiple(() =>
+         {
+             Assert.That(new Caster().Cast<bool>("true"), Is.EqualTo(true));
+             Assert.That(new Caster().Cast<bool>(1), Is.EqualTo(true));
+         });
+
+    [Test]
     public void Cast_TypedCasterToDateTime_Correct()
         => Assert.Multiple(() =>
         {
             Assert.That(new Caster().Cast<DateTime>("2023-10-18"), Is.EqualTo(new DateTime(2023, 10, 18)));
             Assert.That(new Caster().Cast<DateTime>("2023-10-18 07:10:45"), Is.EqualTo(new DateTime(2023, 10, 18, 7, 10, 45)));
+        });
+
+    [Test]
+    public void Cast_TypedCasterToYearMonth_Correct()
+        => Assert.That(new Caster().Cast<YearMonth>("2023-10"), Is.EqualTo(new YearMonth(2023, 10)));
+
+    [Test]
+    public void Cast_TypedCasterToText_Correct()
+        => Assert.Multiple(() =>
+        {
+            Assert.That(new Caster().Cast<string>(new DateTime(2023, 10, 18)), Is.EqualTo("2023-10-18 00:00:00"));
+            Assert.That(new Caster().Cast<string>(10f), Is.EqualTo("10"));
+        });
+
+    [Test]
+    public void Cast_NotCasterableToTimeSpan_Throws()
+        => Assert.Multiple(() =>
+        {
+            Assert.That(() => new Caster().Cast<TimeSpan>(10f), Throws.ArgumentException));
         });
 }
