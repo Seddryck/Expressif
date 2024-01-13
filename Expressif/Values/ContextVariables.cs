@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace Expressif.Values;
 
@@ -46,17 +48,27 @@ public class ContextVariables
     public ICollection<string> Keys => Variables.Keys;
 
     public object? this[string name]
-        => Variables.TryGetValue(name.StartsWith('@') ? name[1..] : name, out var value)
+        => TryGetValue(name, out var value)
             ? value
             : throw new UnexpectedVariableException(name);
 
     public bool TryGetValue(string name, [NotNullWhen(true)] out object? value)
     {
         var response = Variables.TryGetValue(name.StartsWith('@') ? name[1..] : name, out var result);
-        value = response ? result : null;
+        value = response ? Evaluate(result) : null;       
         return response;
     }
-            
+
+    protected virtual object? Evaluate(object? value)
+    {
+        if (value is null)
+            return null;
+        if (value is Delegate @delegate)
+            return @delegate.DynamicInvoke();
+        else
+            return value;
+    }
+
     public bool Contains(string name)
         => Variables.ContainsKey(name.StartsWith('@') ? name[1..] : name);
 }
