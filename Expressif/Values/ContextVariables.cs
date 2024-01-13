@@ -63,8 +63,8 @@ public class ContextVariables
     {
         if (value is null)
             return null;
-        if (value is Delegate @delegate)
-            return @delegate.DynamicInvoke();
+        if (value.GetType() == typeof(Func<>))
+            return ((Func<object>) value).Invoke();
         else
             return value;
     }

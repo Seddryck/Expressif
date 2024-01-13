@@ -96,6 +96,14 @@ public class ContextVariablesTest
     }
 
     [Test]
+    public void Get_FooExistingAsAction_Throws()
+    {
+        var context = new Context(new() { { "foo", (int x) => x * x } });
+        Assert.That(() => context.Variables["foo"], Throws.Nothing);
+        Assert.That(context.Variables["foo"], Is.TypeOf<Func<int, int>>());
+    }
+
+    [Test]
     public void Get_BarNotExisting_CorrectResult()
     {
         var context = new Context(new() { { "foo", "123" } });
