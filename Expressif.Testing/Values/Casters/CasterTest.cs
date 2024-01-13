@@ -15,15 +15,23 @@ public class CasterTest
 
     [Test]
     public void Cast_NullToPrimitive_Null()
-    => Assert.That(new Caster().Cast<int>(null), Is.Zero);
+        => Assert.Multiple(() =>
+        {
+            Assert.That(new Caster().Cast<int>(null), Is.Zero);
+            Assert.That(new Caster().Cast<int?>(null), Is.Null);
+        });
 
     [Test]
     public void Cast_DBNullToNullableType_Null()
     => Assert.That(new Caster().Cast<string>(DBNull.Value), Is.Null);
 
     [Test]
-    public void Cast_DBNullToPrimitive_Null()
-        => Assert.That(new Caster().Cast<int>(DBNull.Value), Is.Zero);
+    public void Cast_DBNullToPrimitive_NullOredafult()
+        => Assert.Multiple(() =>
+        {
+            Assert.That(new Caster().Cast<int>(DBNull.Value), Is.Zero);
+            Assert.That(new Caster().Cast<int?>(DBNull.Value), Is.Null);
+        });
 
     [Test]
     public void Cast_TypedToNullableType_Itself()

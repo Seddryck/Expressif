@@ -145,6 +145,23 @@ public class PredicationBuilderTest
     }
 
     [Test]
+    public void Chain_MultipleWithContext_CorrectlyEvaluate()
+    {
+        var context = new Context();
+        var builder = new PredicationBuilder(context)
+            .Create<StartsWith>(ctx => ctx.Variables["myVar"])
+            .And<EndsWith>(ctx => ctx.CurrentObject[1]);
+        var predication = builder.Build();
+
+        context.Variables.Add<string>("myVar", "Nik");
+        context.CurrentObject.Set(new List<string>() { "stein", "sla", "Alb" });
+        Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
+
+        context.CurrentObject.Set(new List<string>() { "sla", "stein","Alb" });
+        Assert.That(predication.Evaluate("Nikola Tesla"), Is.False);
+    }
+
+    [Test]
     public void Serialize_NoPredicate_ThrowException()
         => Assert.Throws<InvalidOperationException>(() => new PredicationBuilder().Serialize());
 }
