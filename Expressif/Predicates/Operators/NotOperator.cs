@@ -8,11 +8,11 @@ using Expressif.Functions;
 namespace Expressif.Predicates.Operators;
 
 [Operator(["!"])]
-internal class NotOperator : IUnaryOperator
+internal class NotOperator<P> : IUnaryOperator<P> where P : IPredicate
 {
-    public IPredicate Member { get; }
+    public P Member { get; }
 
-    public NotOperator(IPredicate member)
+    public NotOperator(P member)
         => (Member) = (member);
 
     public bool Evaluate(object? value)

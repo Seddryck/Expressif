@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Expressif.Functions;
 using Expressif.Parsers;
-using Expressif.Predicates.Operators;
+using Expressif.Predicates;
 
 namespace Expressif.Serializers;
 
@@ -18,17 +18,17 @@ public class SinglePredicationSerializer
     public SinglePredicationSerializer(ParameterSerializer? parameterSerializer = null)
         => ParameterSerializer = parameterSerializer ?? new();
 
-    internal virtual string Serialize(SinglePredication predication)
+    internal virtual string Serialize(SinglePredicationMeta predication)
     {
         var stringBuilder = new StringBuilder();
         Serialize(predication, ref stringBuilder);
         return stringBuilder.ToString();
     }
 
-    public virtual void Serialize(SinglePredication predication, ref StringBuilder stringBuilder)
-        => Serialize(predication.Members[0], ref stringBuilder);
+    public virtual void Serialize(SinglePredicationMeta predication, ref StringBuilder stringBuilder)
+        => Serialize(predication.Member, ref stringBuilder);
 
-    protected virtual void Serialize(Function predicate, ref StringBuilder stringBuilder)
+    protected virtual void Serialize(FunctionMeta predicate, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(predicate.Name.ToKebabCase());
         if (predicate.Parameters.Length != 0)

@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Predicates;
 using Expressif.Predicates.Text;
 using Expressif.Serializers;
 using NUnit.Framework;
@@ -19,7 +20,7 @@ public class PredicationBuilderTest
     [Test]
     public void Chain_WithoutParameter_CorrectlyEvaluate()
     {
-        var builder = new PredicationBuilder().Create<LowerCase>();
+        var builder = new PredicationBuilder().Is<LowerCase>();
         var predicate = builder.Build();
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.False);
     }
@@ -27,7 +28,7 @@ public class PredicationBuilderTest
     [Test]
     public void Chain_WithParameter_CorrectlyEvaluate()
     {
-        var builder = new PredicationBuilder().Create<StartsWith>("Nik");
+        var builder = new PredicationBuilder().Is<StartsWith>("Nik");
         var predicate = builder.Build();
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
     }
@@ -35,7 +36,7 @@ public class PredicationBuilderTest
     [Test]
     public void Not_WithParameters_CorrectlyEvaluate()
     {
-        var builder = new PredicationBuilder().Not<StartsWith>("Nik");
+        var builder = new PredicationBuilder().IsNot<StartsWith>("Nik");
         var expression = builder.Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.False);
     }
@@ -44,7 +45,7 @@ public class PredicationBuilderTest
     public void Chain_CombinationAnd_CorrectlyEvaluate()
     {
         var builder = new PredicationBuilder()
-            .Create<StartsWith>("Nik")
+            .Is<StartsWith>("Nik")
             .And<EndsWith>("sla");
         var predicate = builder.Build();
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
@@ -54,7 +55,7 @@ public class PredicationBuilderTest
     public void Chain_CombinationOr_CorrectlyEvaluate()
     {
         var builder = new PredicationBuilder()
-            .Create<StartsWith>("ola")
+            .Is<StartsWith>("ola")
             .Or<EndsWith>("sla");
         var predicate = builder.Build();
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
@@ -64,7 +65,7 @@ public class PredicationBuilderTest
     public void AndOrXor_Generic_CorrectlyEvaluate()
     {
         var builder = new PredicationBuilder()
-            .Create<StartsWith>("ola")
+            .Is<StartsWith>("ola")
             .Or<EndsWith>("sla")
             .And<SortedAfter>("Alan Turing")
             .Xor<SortedBefore>("Marie Curie");
@@ -76,7 +77,7 @@ public class PredicationBuilderTest
     public void Chain_NegateGenericFluent_CorrectlyEvaluate()
     {
         var builder = new PredicationBuilder()
-            .Create<StartsWith>("ola")
+            .Is<StartsWith>("ola")
             .OrNot<EndsWith>("Tes");
         var predicate = builder.Build();
         Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
@@ -86,11 +87,11 @@ public class PredicationBuilderTest
     public void Chain_SubPredication_CorrectlyEvaluate()
     {
         var subPredicate = new PredicationBuilder()
-            .Create<StartsWith>("Nik")
+            .Is<StartsWith>("Nik")
             .And<EndsWith>("sla");
 
         var builder = new PredicationBuilder()
-            .Create<LowerCase>()
+            .Is<LowerCase>()
             .Or(subPredicate)
             .Or<UpperCase>();
 
@@ -102,11 +103,11 @@ public class PredicationBuilderTest
     public void Serialize_SubPredication_CorrectlySerialized()
     {
         var subPredicate = new PredicationBuilder()
-            .Create<StartsWith>("Nik")
+            .Is<StartsWith>("Nik")
             .And<EndsWith>("sla");
 
         var builder = new PredicationBuilder()
-            .Create<LowerCase>()
+            .Is<LowerCase>()
             .Or(subPredicate)
             .Or<UpperCase>();
 
@@ -118,18 +119,18 @@ public class PredicationBuilderTest
     public void Serialize_SerializerCalledOnce()
     {
         var serializer = new Mock<PredicationSerializer>();
-        serializer.Setup(x => x.Serialize(It.IsAny<IPredication>())).Returns("serialization");
+        serializer.Setup(x => x.Serialize(It.IsAny<IPredicationBuilder>())).Returns("serialization");
         var builder = new PredicationBuilder(serializer: serializer.Object)
-            .Create<StartsWith>("ola")
+            .Is<StartsWith>("ola")
             .Or<EndsWith>("sla");
         var str = builder.Serialize();
-        serializer.Verify(x => x.Serialize(It.IsAny<IPredication>()), Times.Once);
+        serializer.Verify(x => x.Serialize(It.IsAny<IPredicationBuilder>()), Times.Once);
     }
 
     [Test]
     public void Serialize_Not_CorrectlySerialized()
     {
-        var builder = new PredicationBuilder().Not<StartsWith>("Nik");
+        var builder = new PredicationBuilder().IsNot<StartsWith>("Nik");
         var str = builder.Serialize();
         Assert.That(str, Is.EqualTo("!{starts-with(Nik)}"));
     }
@@ -138,7 +139,7 @@ public class PredicationBuilderTest
     public void Serialize_Negate_CorrectlySerialized()
     {
         var builder = new PredicationBuilder()
-            .Create<StartsWith>("ola")
+            .Is<StartsWith>("ola")
             .OrNot<EndsWith>("sla");
         var str = builder.Serialize();
         Assert.That(str, Is.EqualTo("{starts-with(ola) |OR !{ends-with(sla)}}"));
@@ -149,7 +150,7 @@ public class PredicationBuilderTest
     {
         var context = new Context();
         var builder = new PredicationBuilder(context)
-            .Create<StartsWith>(ctx => ctx.Variables["myVar"])
+            .Is<StartsWith>(ctx => ctx.Variables["myVar"])
             .And<EndsWith>(ctx => ctx.CurrentObject[1]);
         var predication = builder.Build();
 

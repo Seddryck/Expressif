@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Operators;
 
-public interface IBinaryOperator : IPredicate, IOperator
+public interface IBinaryOperator: IPredicate, IOperator
+{ }
+
+public interface IBinaryOperator<P> : IBinaryOperator where P : IPredicate
 {
-    IPredicate LeftMember { get; }
-    IPredicate RightMember { get; }
+    P LeftMember { get; }
+    P RightMember { get; }
 }

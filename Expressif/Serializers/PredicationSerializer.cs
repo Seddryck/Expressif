@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Predicates;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,35 +17,45 @@ public class PredicationSerializer
     public PredicationSerializer(SinglePredicationSerializer? singleSerializer = null)
         => SingleSerializer = singleSerializer ?? new();
 
-    public virtual string Serialize(IPredication predication)
+    public virtual string Serialize(IPredicationBuilder builder)
+    {
+        var stringBuilder = new StringBuilder();
+        Serialize(builder, ref stringBuilder);
+        return stringBuilder.ToString();
+    }
+
+    protected virtual void Serialize(IPredicationBuilder builder, ref StringBuilder stringBuilder)
+        => Serialize(builder.Pile ?? throw new InvalidOperationException(), ref stringBuilder);
+
+    public virtual string Serialize(IPredicationParsable predication)
     {
         var stringBuilder = new StringBuilder();
         Serialize(predication, ref stringBuilder);
         return stringBuilder.ToString();
     }
 
-    protected virtual void Serialize(IPredication predication, ref StringBuilder stringBuilder)
+    protected virtual void Serialize(IPredicationParsable predication, ref StringBuilder stringBuilder)
     {
         switch (predication)
         {
-            case SinglePredication single:
+            case SinglePredicationMeta single:
                 SingleSerializer.Serialize(single, ref stringBuilder);
                 break;
-            case UnaryPredication unary:
+            case UnaryPredicationMeta unary:
                 stringBuilder.Append('!');
                 stringBuilder.Append('{');
                 Serialize(unary.Member, ref stringBuilder);
                 stringBuilder.Append('}');
                 break;
-            case BinaryPredication binary:
+            case BinaryPredicationMeta binary:
                 stringBuilder.Append('{');
-                Serialize(binary.LeftMember, ref stringBuilder);
+                Serialize(binary.Left, ref stringBuilder);
                 stringBuilder
                     .Append(' ')
                     .Append('|')
                     .Append(binary.Operator.Name.ToUpperInvariant())
                     .Append(' ');
-                Serialize(binary.RightMember, ref stringBuilder);
+                Serialize(binary.Right, ref stringBuilder);
                 stringBuilder.Append('}');
                 break;
             default:

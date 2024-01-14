@@ -1,4 +1,5 @@
-﻿using Expressif.Functions.Text;
+﻿using Expressif.Functions;
+using Expressif.Functions.Text;
 using Expressif.Parsers;
 using Expressif.Serializers;
 using System;
@@ -115,7 +116,7 @@ public class ExpressionBuilderTest
             .Chain<FirstChars>(5)
             .Chain<PadRight>(7, '*');
         var str = builder.Serialize();
-        internalSerializer.Verify(x=>x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
+        internalSerializer.Verify(x=>x.Serialize(It.IsAny<FunctionMeta>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
     }
 
     [Test]

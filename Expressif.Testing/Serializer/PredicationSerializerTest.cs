@@ -1,10 +1,13 @@
-﻿using Expressif.Parsers;
+﻿using Expressif.Functions;
+using Expressif.Parsers;
+using Expressif.Predicates;
 using Expressif.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace Expressif.Testing.Serializers;
 
@@ -13,7 +16,7 @@ public class PredicationSerializerTest
     [Test]
     public void Serialize_SingleMember_NoPipe()
     {
-        var predication = new SinglePredication(new Function("even", []));
+        var predication = new SinglePredicationMeta(new FunctionMeta("even", []));
         Assert.That(new PredicationSerializer().Serialize(predication), Is.EqualTo("even"));
     }
 
@@ -22,7 +25,7 @@ public class PredicationSerializerTest
     {
         var internalSerializer = new Mock<SinglePredicationSerializer>();
 
-        var predication = new SinglePredication(new Function("even", []));
+        var predication = new SinglePredicationMeta(new FunctionMeta("even", []));
         var serializer = new PredicationSerializer(internalSerializer.Object);
         serializer.Serialize(predication);
 
@@ -32,12 +35,12 @@ public class PredicationSerializerTest
     [Test]
     public void Serialize_MultipleMembers_WithPipe()
     {
-        var evenPredication = new SinglePredication(new Function("even", []));
-        var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
-        var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
-        var compositePredication = new BinaryPredication(
-            BinaryOperator.And
-            , new BinaryPredication(BinaryOperator.Or, evenPredication, greaterThanPredication)
+        var evenPredication = new SinglePredicationMeta(new FunctionMeta("even", []));
+        var greaterThanPredication = new SinglePredicationMeta(new FunctionMeta("GreaterThan", [new LiteralParameter("5")]));
+        var moduloPredication = new SinglePredicationMeta(new FunctionMeta("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+        var compositePredication = new BinaryPredicationMeta(
+            BinaryOperatorParser.And
+            , new BinaryPredicationMeta(BinaryOperatorParser.Or, evenPredication, greaterThanPredication)
             , moduloPredication);
         Assert.That(new PredicationSerializer().Serialize(compositePredication)
             , Is.EqualTo("{{even |OR greater-than(5)} |AND modulo(7, 3)}"));
@@ -50,33 +53,33 @@ public class PredicationSerializerTest
         var internalSerializer = new Mock<SinglePredicationSerializer>();
 
         var Predication = new PredicationBuilder();
-        var evenPredication = new SinglePredication(new Function("even", []));
-        var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
-        var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
-        var compositePredication = new BinaryPredication(
-            BinaryOperator.And
-            , new BinaryPredication(BinaryOperator.Or, evenPredication, greaterThanPredication)
+        var evenPredication = new SinglePredicationMeta(new FunctionMeta("even", []));
+        var greaterThanPredication = new SinglePredicationMeta(new FunctionMeta("GreaterThan", [new LiteralParameter("5")]));
+        var moduloPredication = new SinglePredicationMeta(new FunctionMeta("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+        var compositePredication = new BinaryPredicationMeta(
+            BinaryOperatorParser.And
+            , new BinaryPredicationMeta(BinaryOperatorParser.Or, evenPredication, greaterThanPredication)
             , moduloPredication);
         var serializer = new PredicationSerializer(internalSerializer.Object);
         serializer.Serialize(compositePredication);
 
-        internalSerializer.Verify(x => x.Serialize(It.IsAny<SinglePredication>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
+        internalSerializer.Verify(x => x.Serialize(It.IsAny<SinglePredicationMeta>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
     }
 
     [Test]
     public void Serialize_WithSubPredication_WithPipe()
     {
         var Predication = new PredicationBuilder();
-        var evenPredication = new SinglePredication(new Function("even", []));
-        var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
-        var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
-        var zeroOrNullPredication = new SinglePredication(new Function("ZeroOrNull", []));
-        var compositePredication = new BinaryPredication(
-            BinaryOperator.And
+        var evenPredication = new SinglePredicationMeta(new FunctionMeta("even", []));
+        var greaterThanPredication = new SinglePredicationMeta(new FunctionMeta("GreaterThan", [new LiteralParameter("5")]));
+        var moduloPredication = new SinglePredicationMeta(new FunctionMeta("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
+        var zeroOrNullPredication = new SinglePredicationMeta(new FunctionMeta("ZeroOrNull", []));
+        var compositePredication = new BinaryPredicationMeta(
+            BinaryOperatorParser.And
             , evenPredication
-            , new BinaryPredication(BinaryOperator.Or, greaterThanPredication, moduloPredication));
-        var fullPredication = new BinaryPredication(
-            BinaryOperator.Or
+            , new BinaryPredicationMeta(BinaryOperatorParser.Or, greaterThanPredication, moduloPredication));
+        var fullPredication = new BinaryPredicationMeta(
+            BinaryOperatorParser.Or
             , compositePredication
             , zeroOrNullPredication);
 

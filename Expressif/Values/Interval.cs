@@ -7,9 +7,16 @@ using System.Threading.Tasks;
 namespace Expressif.Values;
 
 public interface IInterval
-{
-    
-}
+{ }
+
+public record IntervalMeta
+(
+    char LowerBoundType
+    , string LowerBound
+    , string UpperBound
+    , char UpperBoundType
+)
+{ }
 
 public readonly struct Interval<T> : IInterval where T : struct, IComparable
 {

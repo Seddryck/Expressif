@@ -6,25 +6,23 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Expressif.Predicates;
 
 public class PredicationFactory : BaseExpressionFactory
 {
-    private Parser<IPredication> Parser { get; } = Parsers.Predication.Parser;
+    private Parser<IPredicationParsable> Parser { get; } = PredicationParser.Parser;
 
-    protected UnaryOperatorFactory UnaryOperatorFactory { get; }
-    protected BinaryOperatorFactory BinaryOperatorFactory { get; }
+    protected UnaryOperatorFactory<IPredicate> UnaryOperatorFactory { get; }
+    protected BinaryOperatorFactory<IPredicate> BinaryOperatorFactory { get; }
 
-    protected internal PredicationFactory(PredicateTypeMapper mapper, UnaryOperatorFactory unary, BinaryOperatorFactory binary)
+    protected internal PredicationFactory(PredicateTypeMapper mapper, UnaryOperatorFactory<IPredicate> unary, BinaryOperatorFactory<IPredicate> binary)
         : base(mapper)
         => (UnaryOperatorFactory, BinaryOperatorFactory) = (unary, binary);
 
     public PredicationFactory()
-        : this(new PredicateTypeMapper(), new UnaryOperatorFactory(), new BinaryOperatorFactory()) { }
+        : this(new PredicateTypeMapper(), new UnaryOperatorFactory<IPredicate>(), new BinaryOperatorFactory<IPredicate>()) { }
 
     public virtual IPredicate Instantiate(string code, IContext context)
     {
@@ -33,33 +31,28 @@ public class PredicationFactory : BaseExpressionFactory
         return predicate;
     }
 
-    public IPredicate Instantiate(IPredication predication, IContext context)
+    public virtual IPredicate Instantiate(IPredicationParsable predication, IContext context)
     => predication switch
     {
-        SinglePredication single => Instantiate(single, context),
-        UnaryPredication unary => Instantiate(unary, context),
-        BinaryPredication binary => Instantiate(binary, context),
+        SinglePredicationMeta single => Instantiate(single, context),
+        UnaryPredicationMeta unary => Instantiate(unary, context),
+        BinaryPredicationMeta binary => Instantiate(binary, context),
         _ => throw new NotImplementedException()
     };
 
-    internal IPredicate Instantiate(SinglePredication basic, IContext context)
-    {
-        var predicates = new List<IPredicate>();
-        foreach (var predicate in basic.Members)
-            predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
-        return predicates[0];
-    }
+    internal virtual IPredicate Instantiate(SinglePredicationMeta basic, IContext context)
+        => (Instantiate<IPredicate>(basic.Member.Name, basic.Member.Parameters, context));
 
-    internal IPredicate Instantiate(UnaryPredication unary, IContext context)
+    internal IPredicate Instantiate(UnaryPredicationMeta unary, IContext context)
     {
         var predicate = Instantiate(unary.Member, context);
         return UnaryOperatorFactory.Instantiate(unary.Operator.Name, predicate);
     }
 
-    internal IPredicate Instantiate(BinaryPredication binary, IContext context)
+    internal IPredicate Instantiate(BinaryPredicationMeta binary, IContext context)
     {
-        var left = Instantiate(binary.LeftMember, context);
-        var right = Instantiate(binary.RightMember, context);
+        var left = Instantiate(binary.Left, context);
+        var right = Instantiate(binary.Right, context);
         return BinaryOperatorFactory.Instantiate(binary.Operator.Name, left, right);
     }
 }

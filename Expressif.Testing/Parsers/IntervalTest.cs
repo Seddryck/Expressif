@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Values;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ public class IntervalTest
     [TestCase("[-25.1221;40.125]", '[', "-25.1221", "40.125", ']')]
     public void Parse_IntervalDecimal_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
-        var interval = Interval.Parser.End().Parse(value);
+        var interval = IntervalParser.Parser.End().Parse(value);
         Assert.That(interval, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -34,7 +35,7 @@ public class IntervalTest
     [TestCase("[-INF;40[", '[', "-INF", "40", '[')]
     public void Parse_IntervalInfinite_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
-        var interval = Interval.Parser.End().Parse(value);
+        var interval = IntervalParser.Parser.End().Parse(value);
         Assert.That(interval, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -52,7 +53,7 @@ public class IntervalTest
     [TestCase("(0-)", '[', "-INF", "0", ']')]
     public void Parse_IntervalZeroBasedShorthand_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
-        var interval = Interval.Parser.End().Parse(value);
+        var interval = IntervalParser.Parser.End().Parse(value);
         Assert.That(interval, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -70,7 +71,7 @@ public class IntervalTest
     [TestCase("(negative)", '[', "-INF", "0", ']')]
     public void Parse_IntervalZeroBasedLonghand_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
-        var interval = Interval.Parser.End().Parse(value);
+        var interval = IntervalParser.Parser.End().Parse(value);
         Assert.That(interval, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -88,7 +89,7 @@ public class IntervalTest
     [TestCase("(<=40)", '[', "-INF", "40", ']')]
     public void Parse_IntervalNonZeroBasedShorthand_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
-        var interval = Interval.Parser.End().Parse(value);
+        var interval = IntervalParser.Parser.End().Parse(value);
         Assert.That(interval, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -107,7 +108,7 @@ public class IntervalTest
     [TestCase("[2022-10-01 16:45:12;2022-12-17 12:24:20]", '[', "2022-10-01 16:45:12", "2022-12-17 12:24:20", ']')]
     public void Parse_IntervalDateTime_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
-        var interval = Interval.Parser.End().Parse(value);
+        var interval = IntervalParser.Parser.End().Parse(value);
         Assert.That(interval, Is.Not.Null);
         Assert.Multiple(() =>
         {

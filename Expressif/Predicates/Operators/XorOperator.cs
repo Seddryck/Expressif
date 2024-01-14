@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Operators;
 
 [Operator]
-internal class XorOperator : IBinaryOperator
+internal class XorOperator<P> : IBinaryOperator<P> where P : IPredicate
 {
-    public IPredicate LeftMember { get; }
-    public IPredicate RightMember { get; }
+    public P LeftMember { get; }
+    public P RightMember { get; }
 
-    public XorOperator(IPredicate leftMember, IPredicate rightMember)
+    public XorOperator(P leftMember, P rightMember)
         => (LeftMember, RightMember) = (leftMember, rightMember);
 
     public bool Evaluate(object? value)

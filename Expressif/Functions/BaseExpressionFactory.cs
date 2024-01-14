@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Predicates.Operators;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using System;
@@ -64,7 +65,7 @@ public abstract class BaseExpressionFactory
             _ => throw new NotImplementedException($"Cannot handle the parameter type '{parameter.GetType().Name}'")
         };
 
-        static IInterval buildInterval(Interval value)
+        static IInterval buildInterval(IntervalMeta value)
             => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
     }
 
@@ -109,7 +110,7 @@ public abstract class BaseExpressionFactory
         var functions = new List<IFunction>();
         foreach (var member in input.Expression.Members)
             functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
-        var expression = new ChainFunction(functions);
+        var expression = new ChainOperator(functions);
 
         var arg = CreateParameter(input.Expression.Parameter, typeof(object), context);
 

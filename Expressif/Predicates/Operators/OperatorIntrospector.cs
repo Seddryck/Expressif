@@ -29,7 +29,7 @@ internal class OperatorIntrospector : BaseIntrospector
         foreach (var @operator in operators)
         {
             yield return new OperatorInfo(
-                    @operator.Type.Name.ToKebabCase()
+                    @operator.Type.Name.ToKebabCase().TrimAt('`')
                     , @operator.Type.IsPublic
                     , @operator.Attribute.Aliases
                     , @operator.Type

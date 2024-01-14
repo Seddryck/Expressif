@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Predicates.Operators;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Expressif.Functions;
 
 public class ExpressionFactory : BaseExpressionFactory
 {
-    private Parser<Parsers.Expression> Parser { get; } = Parsers.Expression.Parser;
+    private Parser<ExpressionMeta> Parser { get; } = ExpressionParser.Parser;
 
     public ExpressionFactory()
         : base(new FunctionTypeMapper()) { }
@@ -23,7 +24,7 @@ public class ExpressionFactory : BaseExpressionFactory
         var functions = new List<IFunction>();
         foreach (var member in expression.Members)
             functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
-        return new ChainFunction(functions);
+        return new ChainOperator(functions);
     }
 
     public IFunction Instantiate(string name, IParameter[] parameters, IContext context)

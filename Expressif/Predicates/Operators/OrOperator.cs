@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Operators;
 
 [Operator]
-internal class OrOperator : IBinaryOperator
+internal class OrOperator<P> : IBinaryOperator<P> where P : IPredicate
 {
-    public IPredicate LeftMember { get; }
-    public IPredicate RightMember { get; }
+    public P LeftMember { get; }
+    public P RightMember { get; }
 
-    public OrOperator(IPredicate leftMember, IPredicate rightMember)
+    public OrOperator(P leftMember, P rightMember)
         => (LeftMember, RightMember) = (leftMember, rightMember);
 
     public bool Evaluate(object? value)
-        => LeftMember.Evaluate(value) || RightMember.Evaluate(value);
+        => LeftMember!.Evaluate(value) || RightMember!.Evaluate(value);
     object? IFunction.Evaluate(object? value) => Evaluate(value);
 }

@@ -8,13 +8,13 @@ using Expressif.Predicates.Operators;
 namespace Expressif.Predicates;
 public class PredicateCombiner
 {
-    protected UnaryOperatorFactory UnaryFactory { get; }
-    protected BinaryOperatorFactory BinaryFactory { get; }
+    protected UnaryOperatorFactory<IPredicate> UnaryFactory { get; }
+    protected BinaryOperatorFactory<IPredicate> BinaryFactory { get; }
 
     public PredicateCombiner()
         : this(new(), new()) { }
 
-    public PredicateCombiner(UnaryOperatorFactory unaryFactory , BinaryOperatorFactory binaryFactory)
+    public PredicateCombiner(UnaryOperatorFactory<IPredicate> unaryFactory , BinaryOperatorFactory<IPredicate> binaryFactory)
         => (UnaryFactory, BinaryFactory) = (unaryFactory, binaryFactory);
 
     public PredicateRightCombiner With(IPredicate left)
@@ -25,11 +25,11 @@ public class PredicateCombiner
 
     public class PredicateRightCombiner
     {
-        protected UnaryOperatorFactory UnaryFactory { get; }
-        protected BinaryOperatorFactory BinaryFactory { get; }
+        protected UnaryOperatorFactory<IPredicate> UnaryFactory { get; }
+        protected BinaryOperatorFactory<IPredicate> BinaryFactory { get; }
         private IPredicate State { get; }
 
-        internal PredicateRightCombiner(UnaryOperatorFactory unaryFactory, BinaryOperatorFactory binaryFactory, IPredicate state)
+        internal PredicateRightCombiner(UnaryOperatorFactory<IPredicate> unaryFactory, BinaryOperatorFactory<IPredicate> binaryFactory, IPredicate state)
             => (UnaryFactory, BinaryFactory, State) = (unaryFactory, binaryFactory, state);
 
         public PredicateRightCombiner Or(IPredicate right)

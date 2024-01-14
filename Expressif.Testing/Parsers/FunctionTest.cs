@@ -17,7 +17,7 @@ public class FunctionTest
     [TestCase("text-to-func(foo, @bar)", 2)]
     public void Parse_Function_Valid(string value, int count)
     {
-        var function = Expressif.Parsers.Function.Parser.Parse(value);
+        var function = Expressif.Parsers.FunctionParser.Parser.Parse(value);
         Assert.Multiple(() =>
         {
             Assert.That(function.Name, Is.EqualTo("text-to-func"));

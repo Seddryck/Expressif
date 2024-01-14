@@ -1,6 +1,7 @@
 ﻿
 using Expressif.Functions;
 using Expressif.Parsers;
+using Expressif.Predicates.Operators;
 using Expressif.Serializers;
 using Expressif.Values.Special;
 using System;
@@ -15,7 +16,6 @@ namespace Expressif;
 
 public class ExpressionBuilder
 {
-    
     private IContext Context { get; }
     private ExpressionFactory Factory { get; }
     private ExpressionSerializer Serializer { get; }
@@ -25,7 +25,7 @@ public class ExpressionBuilder
     public ExpressionBuilder(IContext? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
         => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new ExpressionFactory(), serializer ?? new ExpressionSerializer());
 
-    private Queue<IExpression> Pile { get; } = new();
+    private Queue<IExpressionParsable> Pile { get; } = new();
 
     public ExpressionBuilder Chain<T>() where T : IFunction
         => Chain(typeof(T), []);
@@ -41,7 +41,14 @@ public class ExpressionBuilder
         if (!type.GetInterfaces().Contains(typeof(IFunction)))
             throw new ArgumentException($"The type '{type.FullName}' doesn't implement the interface '{nameof(IFunction)}'. Only types implementing this interface can be chained to create an expression.", nameof(type));
 
-        Pile.Enqueue(new Function(type.Name, Parametrize(parameters)));
+        Pile.Enqueue(new FunctionMeta(type.Name, Parametrize(parameters)));
+        return this;
+    }
+
+    public ExpressionBuilder Chain(ExpressionBuilder builder)
+    {
+        foreach (var element in builder.Pile)
+            Pile.Enqueue(element);
         return this;
     }
 
@@ -60,19 +67,6 @@ public class ExpressionBuilder
         return [.. typedParameters];
     }
 
-    public ExpressionBuilder Chain(ExpressionBuilder builder)
-    {
-        foreach (var element in builder.Pile)
-            Pile.Enqueue(element);
-        return this;
-    }
-
-    public ExpressionBuilder Chain(Function function)
-    {
-        Pile.Enqueue(function);
-        return this;
-    }
-
     public IFunction Build()
     {
         IFunction? function = null;
@@ -83,12 +77,12 @@ public class ExpressionBuilder
         {
             var member = Pile.Dequeue() switch
             {
-                Function f => Factory.Instantiate(f.Name, f.Parameters, Context),
+                FunctionMeta f => Factory.Instantiate(f.Name, f.Parameters, Context),
                 ExpressionBuilder b => b.Build(),
                 IFunction f => f,
                 _ => throw new NotSupportedException()
             };
-            function = function is null ? member : new ChainFunction(new[] { function, member });
+            function = function is null ? member : new ChainOperator(new[] { function, member });
         }
 
         return function!;

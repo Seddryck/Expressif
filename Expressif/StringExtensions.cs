@@ -49,4 +49,7 @@ static class StringExtensions
      => string.IsNullOrEmpty(value) 
             ? []
             : value.Split(separator);
+
+    public static string TrimAt(this string value, char separator)
+        => value.ToToken(separator)[0];
 }

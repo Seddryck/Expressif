@@ -37,10 +37,10 @@ public class IntervalBuilder
 
     public virtual IInterval Create(string value)
     {
-        var interval = Interval.Parser.Parse(value);
+        var interval = IntervalParser.Parser.Parse(value);
         return Create(interval);
     }
 
-    public virtual IInterval Create(Interval interval)
+    public virtual IInterval Create(IntervalMeta interval)
         => Create(interval.LowerBoundType, interval.LowerBound, interval.UpperBound, interval.UpperBoundType);
 }

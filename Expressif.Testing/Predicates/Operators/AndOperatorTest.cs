@@ -23,7 +23,7 @@ public class AndOperatorTest
         var right = new Mock<IPredicate>();
         right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(value);
 
-        var @operator = new AndOperator(left.Object, right.Object);
+        var @operator = new AndOperator<IPredicate>(left.Object, right.Object);
         Assert.That(@operator.Evaluate("my value"), Is.EqualTo(expected));
     }
 
@@ -35,7 +35,7 @@ public class AndOperatorTest
         var right = new Mock<IPredicate>();
         right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(false);
 
-        var @operator = new AndOperator(left.Object, right.Object);
+        var @operator = new AndOperator<IPredicate>(left.Object, right.Object);
         @operator.Evaluate("my value");
 
         left.Verify(x => x.Evaluate("my value"), Times.Once());
@@ -50,7 +50,7 @@ public class AndOperatorTest
         var right = new Mock<IPredicate>();
         right.Setup(x => x.Evaluate(It.IsAny<object>())).Returns(true);
 
-        var @operator = new AndOperator(left.Object, right.Object);
+        var @operator = new AndOperator<IPredicate>(left.Object, right.Object);
         @operator.Evaluate("my value");
 
         left.Verify(x => x.Evaluate("my value"), Times.Once());

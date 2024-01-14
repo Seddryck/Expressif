@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Operators;
 
 public interface IUnaryOperator : IPredicate, IOperator
+{ }
+
+public interface IUnaryOperator<P> : IUnaryOperator where P : IPredicate
 {
-    IPredicate Member { get; }
+    P Member { get; }
 }

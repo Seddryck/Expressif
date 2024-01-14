@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Operators;
 
 [Operator]
-internal class AndOperator : IBinaryOperator
+internal class AndOperator<P> : IBinaryOperator<P> where P : IPredicate
 {
-    public IPredicate LeftMember { get; }
-    public IPredicate RightMember { get; }
+    public P LeftMember { get; }
+    public P RightMember { get; }
 
-    public AndOperator(IPredicate leftMember, IPredicate rightMember)
+    public AndOperator(P leftMember, P rightMember)
         => (LeftMember, RightMember) = (leftMember, rightMember);
 
     public bool Evaluate(object? value)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
 
 namespace Expressif.Testing.Serializers;
 
@@ -24,7 +25,7 @@ public class ParameterSerializerTest
     [TestCase("(123)")]
     [TestCase("123,125")]
     public void Serialize_LiteralParameter_Quoted(string value)
-        => Assert.That(new ParameterSerializer().Serialize(new LiteralParameter(value)), Is.EqualTo($"\"{value}\""));
+        => Assert.That(new ParameterSerializer().Serialize(new LiteralParameter(value)), Is.EqualTo($"`{value}`"));
 
     [Test]
     [TestCase("foo")]

@@ -1,4 +1,5 @@
-﻿using Expressif.Parsers;
+﻿using Expressif.Functions;
+using Expressif.Parsers;
 using Expressif.Serializers;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_NoParameter_NoParenthesis()
     {
-        var function = new Function("Lower", []);
+        var function = new FunctionMeta("Lower", []);
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("lower"));
     }
 
@@ -23,7 +24,7 @@ public class FunctionSerializerTest
         var internalSerializer = new Mock<ParameterSerializer>();
         internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-        var function = new Function("Lower", []);
+        var function = new FunctionMeta("Lower", []);
         var serializer = new FunctionSerializer(parameterSerializer: internalSerializer.Object);
         serializer.Serialize(function);
 
@@ -33,7 +34,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_WithSingleParameter_Parenthesis()
     {
-        var function = new Function("FirstChars", [new LiteralParameter("5")]);
+        var function = new FunctionMeta("FirstChars", [new LiteralParameter("5")]);
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("first-chars(5)"));
     }
 
@@ -43,7 +44,7 @@ public class FunctionSerializerTest
         var internalSerializer = new Mock<ParameterSerializer>();
         internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-        var function = new Function("FirstChars", [new LiteralParameter("5")]);
+        var function = new FunctionMeta("FirstChars", [new LiteralParameter("5")]);
         var serializer = new FunctionSerializer(parameterSerializer: internalSerializer.Object);
         serializer.Serialize(function);
 
@@ -53,7 +54,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_MultipleParameter_ParenthesisAndComas()
     {
-        var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+        var function = new FunctionMeta("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, *)"));
     }
 
@@ -63,7 +64,7 @@ public class FunctionSerializerTest
         var internalSerializer = new Mock<ParameterSerializer>();
         internalSerializer.Setup(x => x.Serialize(It.IsAny<IParameter>())).Returns("param");
 
-        var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+        var function = new FunctionMeta("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         var serializer = new FunctionSerializer(parameterSerializer: internalSerializer.Object);
         serializer.Serialize(function);
 

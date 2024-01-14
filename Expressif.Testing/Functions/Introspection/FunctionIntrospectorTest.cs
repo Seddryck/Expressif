@@ -16,7 +16,7 @@ public class FunctionIntrospectorTest
 {
     private IEnumerable<FunctionInfo> Infos { get; set; }
 
-    [SetUp]
+    [OneTimeSetUp]
     public void Setup()
         => Infos ??= new FunctionIntrospector().Describe();
 
@@ -45,7 +45,7 @@ public class FunctionIntrospectorTest
 
         foreach (var info in Infos)
         {
-            Debug.WriteLine($"{info.Name}: {(info.Aliases.Any() ? info.Aliases.ElementAt(0) : string.Empty)}");
+            Debug.WriteLine($"{info.Name}: {(info.Aliases.Length != 0 ? info.Aliases.ElementAt(0) : string.Empty)}");
             foreach (var alias in info.Aliases)
                 Assert.That(info.Aliases.ElementAt(0), Is.Not.Null.Or.Empty);
         }
@@ -54,7 +54,7 @@ public class FunctionIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NoDuplicateAlias()
     {
-        var infos = Infos.Where(x => x.Aliases.Any());
+        var infos = Infos.Where(x => x.Aliases.Length != 0);
         foreach (var info in infos)
             Assert.That(infos.Count(x => x.Aliases.Contains(info.Aliases.ElementAt(0))), Is.EqualTo(1));
     }

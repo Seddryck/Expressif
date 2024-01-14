@@ -1,3 +1,4 @@
+using Expressif.Functions;
 using Expressif.Parsers;
 using Sprache;
 
@@ -17,7 +18,7 @@ public class ParameterTest
     [TestCase("#52", typeof(ObjectIndexParameter))]
     [TestCase("{ @foo | text-to-func(bar) }", typeof(InputExpressionParameter))]
     public void Parse_Parameter_Valid(string value, Type type)
-        => Assert.That(Parameter.Parser.Parse(value), Is.TypeOf(type));
+        => Assert.That(ParameterParser.Parser.Parse(value), Is.TypeOf(type));
 
     [Test]
     [TestCase("(foo, bar)")]
@@ -29,5 +30,5 @@ public class ParameterTest
     [TestCase("(@foo , { @foo | text-to-func(bar, @foo) })")]
     [TestCase("(@foo , { @foo | text-to-func(bar, { @fool | numeric-to-func(#3, [bez]) }) })")]
     public void Parse_Parameters_Valid(string value)
-        => Assert.That(Parameters.Parser.Parse(value).Count, Is.EqualTo(2));
+        => Assert.That(ParametersParser.Parser.Parse(value).Count, Is.EqualTo(2));
 }
