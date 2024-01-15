@@ -13,7 +13,14 @@ public class PredicationApplicable : IPredicationApplicable
     private IPredicate Predication { get; }
     private IContext Context { get; }
 
-    public PredicationApplicable(IParameter argument, IPredicate predication, IContext context)
+    public PredicationApplicable(string code, IContext? context = null, PredicationApplicableFactory? factory = null)
+    {
+        context ??= new Context();
+        var applicable = (factory ?? new PredicationApplicableFactory()).Instantiate(code, context);
+        (Argument, Predication, Context) = (applicable.Argument, applicable.Predication, context);
+    }
+
+    internal PredicationApplicable(IParameter argument, IPredicate predication, IContext context)
         => (Argument, Predication, Context) = (argument, predication, context);
 
     public bool Evaluate()
