@@ -54,6 +54,10 @@ public class FunctionIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NoDuplicateAlias()
     {
+        var names = Infos.Aggregate(Array.Empty<string>(), (current, next) => current.Concat(next.Aliases.Append(next.Name)).ToArray());
+        if (names.Distinct().Count() == names.Length)
+            Assert.Pass();
+
         var infos = Infos.Where(x => x.Aliases.Length != 0);
         foreach (var info in infos)
             Assert.That(infos.Count(x => x.Aliases.Contains(info.Aliases.ElementAt(0))), Is.EqualTo(1));
