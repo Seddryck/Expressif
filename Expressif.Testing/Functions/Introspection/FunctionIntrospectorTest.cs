@@ -11,7 +11,7 @@ namespace Expressif.Testing.Functions.Introspection;
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.SingleInstance)]
-[Parallelizable(scope: ParallelScope.Fixtures)]
+[NonParallelizable]
 public class FunctionIntrospectorTest
 {
     private IEnumerable<FunctionInfo> Infos { get; set; }
