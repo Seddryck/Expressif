@@ -23,7 +23,7 @@ public abstract class BaseTextPredicateMatching : BaseTextPredicate
     protected virtual CultureInfo GetCulture(string culture)
     {
         if (!string.IsNullOrEmpty(culture))
-            return (new CultureInfo(culture).Clone() as CultureInfo)!;
+            return new CultureInfo(culture, false);
 
         var invariantCulture = (CultureInfo.InvariantCulture.Clone() as CultureInfo)!;
         invariantCulture.DateTimeFormat.ShortDatePattern = "yyyy/MM/dd";

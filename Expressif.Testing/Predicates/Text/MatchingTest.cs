@@ -190,6 +190,17 @@ public class MatchingTest
         => Assert.That(new MatchesTime().Evaluate(value), Is.EqualTo(expected));
 
     [Test]
+    [TestCase("25/12/2025 10:01:55", false)]
+    public void MatchesDateTime_AmericanCulture_Fail(object? value, bool expected)
+        => Assert.That(new MatchesDateTime(() => "en-US").Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    [TestCase("25/12/2025 10:01:55", true)]
+    public void MatchesDateTime_FrenchCulture_Success(object? value, bool expected)
+        => Assert.That(new MatchesDateTime(() => "fr-FR").Evaluate(value), Is.EqualTo(expected));
+
+
+    [Test]
     [TestCase("2022-11-02", false)]
     [TestCase("2022-11-02 13:57:00", false)]
     [TestCase("2022-11-02 13:57:00.123", false)]
