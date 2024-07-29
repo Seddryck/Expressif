@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, append, append-new-line, append-space, before-substring, clean-whitespace, collapse-whitespace, count-distinct-chars, count-substring, empty-to-null, filter-chars, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, skip-first-chars, skip-last-chars, suffix, suffix-new-line, suffix-space, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, append, append-new-line, append-space, before-substring, clean-whitespace, collapse-whitespace, count-distinct-chars, count-substring, empty-to-null, filter-chars, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, retain-alpha, retain-alpha-numeric, retain-numeric, retain-numeric-symbol, skip-first-chars, skip-last-chars, suffix, suffix-new-line, suffix-space, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -210,6 +210,26 @@ Returns the argument value with a subset of the string substitued by a another s
 * start: The position to start to replace
 * length: The length to replace
 * append: The text to append when the slice has been removed
+
+##### retain-alpha
+###### Overview
+
+Returns the input string with all characters removed except for letters (A-Z, a-z). If the argument is `null`, it returns `null`.
+
+##### retain-alpha-numeric
+###### Overview
+
+Returns the input string with all characters removed except for letters (A-Z, a-z) and digits (0-9). If the argument is `null`, it returns `null`.
+
+##### retain-numeric
+###### Overview
+
+Returns the input string with all non-numeric characters removed, leaving only digits (0-9).. If the argument is `null`, it returns `null`.
+
+##### retain-numeric-symbol
+###### Overview
+
+Returns the input string with all characters removed except for digits (0-9) and the symbols `+`, `-`, `,` and `.` If the argument is `null`, it returns `null`.
 
 ##### skip-first-chars
 ###### Overview
