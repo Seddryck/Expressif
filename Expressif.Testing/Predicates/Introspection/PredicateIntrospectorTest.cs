@@ -11,7 +11,7 @@ namespace Expressif.Testing.Predicates.Introspection;
 
 [TestFixture]
 [FixtureLifeCycle(LifeCycle.SingleInstance)]
-[Parallelizable(scope: ParallelScope.Fixtures)]
+[NonParallelizable]
 public class PredicateIntrospectorTest
 {
     private IEnumerable<PredicateInfo> Infos { get; set; }
