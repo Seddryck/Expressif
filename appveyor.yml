@@ -6,10 +6,14 @@ branches:
     - /v\d+\.\d+\.\d+/
 skip_commits:
   files:
+    - .github/
     - docs/
     - misc/
     - README.md
     - LICENSE
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - SECURITY.md
 
 environment:
   github_access_token:
