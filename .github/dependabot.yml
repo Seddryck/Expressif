@@ -6,14 +6,24 @@
 version: 2
 updates:
   - package-ecosystem: "nuget" 
-    directory: "/Expressif/" 
+    directories:
+      - "/Expressif*/" 
     schedule:
       interval: "daily"
     labels:
       - "dependency-update"
-  - package-ecosystem: "nuget" 
-    directory: "/Expressif.Testing/" 
-    schedule:
-      interval: "daily"
-    labels:
-      - "dependency-update"
+    commit-message:
+      prefix: "chore"
+    groups:
+      NUnit:
+          patterns:
+            - "NUnit"
+      Microsoft.NET.Test.Sdk:
+          patterns:
+            - "Microsoft.NET.Test.Sdk"
+      Moq:
+          patterns:
+            - "Moq"
+      DotNet.ReproducibleBuilds:
+          patterns:
+            - "DotNet.ReproducibleBuilds"
