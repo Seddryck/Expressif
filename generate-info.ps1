@@ -20,7 +20,7 @@ If(Test-Path -LiteralPath $destinationPath\$destinationFile -PathType leaf) {
 
 $assemblyPath = "Expressif\bin"
 Set-Location $assemblyPath
-$dllfile = "net6.0\Expressif.dll"
+$dllfile = "net8.0\Expressif.dll"
 If ((-not (Test-Path -Path "Release\$dllfile")) -or ("Release\$dllfile".CreationTime -lt "Debug\$dllfile".CreationTime)) {
     $directory = "Debug"    
 } else {
