@@ -15,7 +15,7 @@ skip_commits:
 
 environment:
   github_access_token:
-    secure: gtEHCUmmDjYfrp/NEe2qUHs3JGCaPUR00Y2eBn8YdQdGEG7ERnw6rnlv0fSi/uVfC/gdMwT75uai9n/0N7BZ/6Sf2HjzqUdUtTPUD+QiO2WFaxn8pPXPZxKeKVFPFsZN
+    secure: gtEHCUmmDjYfrp/NEe2qUHbXNkSOJlKv+p6VxRIP3UCUjizdyws+qQ5do45El8Zad5rkhIIiAvNKABQFKlpCKHOXkdEegn3AsrCw9+9qyoi0e2wpbqMZ7aP7A8D2Yckb
 
 init:
 - cmd: git config --global core.autocrlf true
@@ -71,7 +71,7 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    secure: kI/1eEvtzIRLTq6UKJs1ANNFoU1T/ziCisV8ew7CkLyOFtLD0ozXirF8qYBFMk6d
+    secure: h9Ya9xxJClhyreQwiQRG8YJmnX2m5GGYVoJ7YXwEtkDmsLl2WjWNrLejsn/jyOKY
   skip_symbols: false
   artifact: /.*(\.|\.s)nupkg/
   on:
