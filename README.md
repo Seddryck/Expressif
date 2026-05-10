@@ -183,157 +183,159 @@ Install-Package Expressif
 
 ### Functions
 <!-- START FUNCTION TABLE -->
-|Scope    | Name                       | Aliases                                                                          |
-|-------- | -------------------------- | ---------------------------------------------------------------------------------|
-|IO       | creation-datetime          | file-to-creation-datetime, file-to-creation-dateTime                             |
-|IO       | creation-datetime-utc      | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                     |
-|IO       | directory                  | path-to-directory                                                                |
-|IO       | extension                  | path-to-extension                                                                |
-|IO       | filename                   | path-to-filename                                                                 |
-|IO       | filename-without-extension | path-to-filename-without-extension                                               |
-|IO       | root                       | path-to-root                                                                     |
-|IO       | size                       | file-to-size                                                                     |
-|IO       | update-datetime            | file-to-update-datetime, file-to-update-dateTime                                 |
-|IO       | update-datetime-utc        | file-to-update-datetime-utc, file-to-update-dateTime-utc                         |
-|Numeric  | absolute                   | numeric-to-absolute                                                              |
-|Numeric  | add                        | numeric-to-add                                                                   |
-|Numeric  | ceiling                    | numeric-to-ceiling                                                               |
-|Numeric  | clip                       | numeric-to-clip                                                                  |
-|Numeric  | cube-power                 | numeric-to-cube-power                                                            |
-|Numeric  | cube-root                  | numeric-to-cube-root                                                             |
-|Numeric  | decrement                  | numeric-to-decrement                                                             |
-|Numeric  | divide                     | numeric-to-divide                                                                |
-|Numeric  | floor                      | numeric-to-floor                                                                 |
-|Numeric  | increment                  | numeric-to-increment                                                             |
-|Numeric  | integer                    | numeric-to-integer                                                               |
-|Numeric  | invert                     | numeric-to-invert                                                                |
-|Numeric  | multiply                   | numeric-to-multiply                                                              |
-|Numeric  | nth-root                   | numeric-to-nth-root                                                              |
-|Numeric  | null-to-zero               |                                                                                  |
-|Numeric  | oppose                     | numeric-to-oppose                                                                |
-|Numeric  | power                      | numeric-to-power                                                                 |
-|Numeric  | round                      | numeric-to-round                                                                 |
-|Numeric  | sign                       | numeric-to-sign                                                                  |
-|Numeric  | square-power               | numeric-to-square-power                                                          |
-|Numeric  | square-root                | numeric-to-square-root                                                           |
-|Numeric  | subtract                   | numeric-to-subtract                                                              |
-|Special  | any-to-any                 |                                                                                  |
-|Special  | neutral                    | Special-to-neutral                                                               |
-|Special  | null-to-value              |                                                                                  |
-|Special  | value-to-value             |                                                                                  |
-|Temporal | age                        | date-to-age                                                                      |
-|Temporal | backward                   | dateTime-to-backward, dateTime-to-subtract                                       |
-|Temporal | ceiling-hour               | dateTime-to-ceiling-hour                                                         |
-|Temporal | ceiling-minute             | dateTime-to-ceiling-minute                                                       |
-|Temporal | change-of-hour             | dateTime-to-change-of-hour                                                       |
-|Temporal | change-of-minute           | dateTime-to-change-of-minute                                                     |
-|Temporal | change-of-month            | dateTime-to-change-of-month                                                      |
-|Temporal | change-of-second           | dateTime-to-change-of-second                                                     |
-|Temporal | change-of-year             | dateTime-to-change-of-year                                                       |
-|Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip                                              |
-|Temporal | datetime-to-date           | dateTime-to-date                                                                 |
-|Temporal | day-of-month               | dateTime-to-day-of-month                                                         |
-|Temporal | day-of-week                | dateTime-to-day-of-week                                                          |
-|Temporal | day-of-year                | dateTime-to-day-of-year                                                          |
-|Temporal | first-in-month             | dateTime-to-first-in-month                                                       |
-|Temporal | first-of-month             | dateTime-to-first-of-month                                                       |
-|Temporal | first-of-year              | dateTime-to-first-of-year                                                        |
-|Temporal | floor-hour                 | dateTime-to-floor-hour                                                           |
-|Temporal | floor-minute               | dateTime-to-floor-minute                                                         |
-|Temporal | forward                    | dateTime-to-forward, dateTime-to-add                                             |
-|Temporal | hour                       | dateTime-to-hour                                                                 |
-|Temporal | hour-minute                | dateTime-to-hour-minute                                                          |
-|Temporal | hour-minute-second         | dateTime-to-hour-minute-second                                                   |
-|Temporal | hour-of-day                | dateTime-to-hour-of-day                                                          |
-|Temporal | invalid-to-date            |                                                                                  |
-|Temporal | iso-day-of-year            | dateTime-to-iso-day-of-year                                                      |
-|Temporal | iso-week-of-year           | dateTime-to-iso-week-of-year                                                     |
-|Temporal | iso-year-day               | dateTime-to-iso-year-day                                                         |
-|Temporal | iso-year-week              | dateTime-to-iso-year-week                                                        |
-|Temporal | iso-year-week-day          | dateTime-to-iso-year-week-day                                                    |
-|Temporal | last-in-month              | dateTime-to-last-in-month                                                        |
-|Temporal | last-of-month              | dateTime-to-last-of-month                                                        |
-|Temporal | last-of-year               | dateTime-to-last-of-year                                                         |
-|Temporal | length-of-month            | dateTime-to-length-of-month                                                      |
-|Temporal | length-of-year             | dateTime-to-length-of-year                                                       |
-|Temporal | local-to-utc               |                                                                                  |
-|Temporal | minute-of-day              | dateTime-to-minute-of-day                                                        |
-|Temporal | minute-of-hour             | dateTime-to-minute-of-hour                                                       |
-|Temporal | month                      | dateTime-to-month                                                                |
-|Temporal | month-day                  | dateTime-to-month-day                                                            |
-|Temporal | month-of-year              | dateTime-to-month-of-year                                                        |
-|Temporal | next-business-days         | temporal-to-next-business-days, next-business-day, add-business-days             |
-|Temporal | next-day                   | dateTime-to-next-day                                                             |
-|Temporal | next-month                 | dateTime-to-next-month                                                           |
-|Temporal | next-weekday               | dateTime-to-next-weekday                                                         |
-|Temporal | next-weekday-or-same       | dateTime-to-next-weekday-or-same                                                 |
-|Temporal | next-year                  | dateTime-to-next-year                                                            |
-|Temporal | null-to-date               |                                                                                  |
-|Temporal | previous-business-days     | temporal-to-previous-business-days, previous-business-day, subtract-business-days|
-|Temporal | previous-day               | dateTime-to-previous-day                                                         |
-|Temporal | previous-month             | dateTime-to-previous-month                                                       |
-|Temporal | previous-weekday           | dateTime-to-previous-weekday                                                     |
-|Temporal | previous-weekday-or-same   | dateTime-to-previous-weekday-or-same                                             |
-|Temporal | previous-year              | dateTime-to-previous-year                                                        |
-|Temporal | second-of-day              | dateTime-to-second-of-day                                                        |
-|Temporal | second-of-hour             | dateTime-to-second-of-hour                                                       |
-|Temporal | second-of-minute           | dateTime-to-second-of-minute                                                     |
-|Temporal | set-time                   | dateTime-to-set-time                                                             |
-|Temporal | set-to-local               |                                                                                  |
-|Temporal | set-to-utc                 |                                                                                  |
-|Temporal | utc-to-local               |                                                                                  |
-|Temporal | year                       | dateTime-to-year                                                                 |
-|Temporal | year-of-era                | dateTime-to-year-of-era                                                          |
-|Text     | after-substring            | text-to-after-substring                                                          |
-|Text     | append                     | text-to-append                                                                   |
-|Text     | append-new-line            | text-to-append-new-line                                                          |
-|Text     | append-space               | text-to-append-space                                                             |
-|Text     | before-substring           | text-to-before-substring                                                         |
-|Text     | clean-whitespace           | text-to-clean-whitespace                                                         |
-|Text     | collapse-whitespace        | text-to-collapse-whitespace                                                      |
-|Text     | count-distinct-chars       | text-to-count-distinct-chars                                                     |
-|Text     | count-substring            | text-to-count-substring                                                          |
-|Text     | empty-to-null              |                                                                                  |
-|Text     | filter-chars               | text-to-filter-chars                                                             |
-|Text     | first-chars                | text-to-first-chars                                                              |
-|Text     | html-to-text               |                                                                                  |
-|Text     | last-chars                 | text-to-last-chars                                                               |
-|Text     | length                     | text-to-length, count-chars                                                      |
-|Text     | lower                      | text-to-lower                                                                    |
-|Text     | mask-to-text               |                                                                                  |
-|Text     | null-to-empty              |                                                                                  |
-|Text     | pad-center                 | text-to-pad-center                                                               |
-|Text     | pad-left                   | text-to-pad-left                                                                 |
-|Text     | pad-right                  | text-to-pad-right                                                                |
-|Text     | prefix                     | text-to-prefix                                                                   |
-|Text     | prefix-new-line            | text-to-prefix-new-line                                                          |
-|Text     | prefix-space               | text-to-prefix-space                                                             |
-|Text     | prepend                    | text-to-prepend                                                                  |
-|Text     | prepend-new-line           | text-to-prepend-new-line                                                         |
-|Text     | prepend-space              | text-to-prepend-space                                                            |
-|Text     | remove-chars               | text-to-remove-chars                                                             |
-|Text     | replace-chars              | text-to-replace-chars                                                            |
-|Text     | replace-slice              | text-to-replace-slice                                                            |
-|Text     | retain-alpha               | text-to-retain-alpha                                                             |
-|Text     | retain-alpha-numeric       | text-to-retain-alpha-numeric                                                     |
-|Text     | retain-numeric             | text-to-retain-numeric                                                           |
-|Text     | retain-numeric-symbol      | text-to-retain-numeric-symbol                                                    |
-|Text     | skip-first-chars           | text-to-skip-first-chars                                                         |
-|Text     | skip-last-chars            | text-to-skip-last-chars                                                          |
-|Text     | suffix                     | text-to-suffix                                                                   |
-|Text     | suffix-new-line            | text-to-suffix-new-line                                                          |
-|Text     | suffix-space               | text-to-suffix-space                                                             |
-|Text     | text-to-datetime           | text-to-dateTime                                                                 |
-|Text     | text-to-html               |                                                                                  |
-|Text     | text-to-mask               |                                                                                  |
-|Text     | token                      | text-to-token                                                                    |
-|Text     | token-count                | text-to-token-count                                                              |
-|Text     | trim                       | text-to-trim                                                                     |
-|Text     | upper                      | text-to-upper                                                                    |
-|Text     | whitespaces-to-empty       | blank-to-empty                                                                   |
-|Text     | whitespaces-to-null        | blank-to-null                                                                    |
-|Text     | without-diacritics         | text-to-without-diacritics                                                       |
-|Text     | without-whitespaces        | text-to-without-whitespaces                                                      |
+|Scope    | Name                       | Aliases                                                                           |
+|-------- | -------------------------- | ----------------------------------------------------------------------------------|
+|IO       | creation-datetime          | file-to-creation-datetime, file-to-creation-dateTime                              |
+|IO       | creation-datetime-utc      | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                      |
+|IO       | directory                  | path-to-directory                                                                 |
+|IO       | extension                  | path-to-extension                                                                 |
+|IO       | filename                   | path-to-filename                                                                  |
+|IO       | filename-without-extension | path-to-filename-without-extension                                                |
+|IO       | root                       | path-to-root                                                                      |
+|IO       | size                       | file-to-size                                                                      |
+|IO       | update-datetime            | file-to-update-datetime, file-to-update-dateTime                                  |
+|IO       | update-datetime-utc        | file-to-update-datetime-utc, file-to-update-dateTime-utc                          |
+|Numeric  | absolute                   | numeric-to-absolute                                                               |
+|Numeric  | add                        | numeric-to-add                                                                    |
+|Numeric  | ceiling                    | numeric-to-ceiling                                                                |
+|Numeric  | clip                       | numeric-to-clip                                                                   |
+|Numeric  | cube-power                 | numeric-to-cube-power                                                             |
+|Numeric  | cube-root                  | numeric-to-cube-root                                                              |
+|Numeric  | decrement                  | numeric-to-decrement                                                              |
+|Numeric  | divide                     | numeric-to-divide                                                                 |
+|Numeric  | floor                      | numeric-to-floor                                                                  |
+|Numeric  | greatest-common-divisor    | numeric-to-greatest-common-divisor                                                |
+|Numeric  | increment                  | numeric-to-increment                                                              |
+|Numeric  | integer                    | numeric-to-integer                                                                |
+|Numeric  | invert                     | numeric-to-invert                                                                 |
+|Numeric  | lowest-common-multiple     | numeric-to-lowest-common-multiple, least-common-multiple, smallest-common-multiple|
+|Numeric  | multiply                   | numeric-to-multiply                                                               |
+|Numeric  | nth-root                   | numeric-to-nth-root                                                               |
+|Numeric  | null-to-zero               |                                                                                   |
+|Numeric  | oppose                     | numeric-to-oppose                                                                 |
+|Numeric  | power                      | numeric-to-power                                                                  |
+|Numeric  | round                      | numeric-to-round                                                                  |
+|Numeric  | sign                       | numeric-to-sign                                                                   |
+|Numeric  | square-power               | numeric-to-square-power                                                           |
+|Numeric  | square-root                | numeric-to-square-root                                                            |
+|Numeric  | subtract                   | numeric-to-subtract                                                               |
+|Special  | any-to-any                 |                                                                                   |
+|Special  | neutral                    | Special-to-neutral                                                                |
+|Special  | null-to-value              |                                                                                   |
+|Special  | value-to-value             |                                                                                   |
+|Temporal | age                        | date-to-age                                                                       |
+|Temporal | backward                   | dateTime-to-backward, dateTime-to-subtract                                        |
+|Temporal | ceiling-hour               | dateTime-to-ceiling-hour                                                          |
+|Temporal | ceiling-minute             | dateTime-to-ceiling-minute                                                        |
+|Temporal | change-of-hour             | dateTime-to-change-of-hour                                                        |
+|Temporal | change-of-minute           | dateTime-to-change-of-minute                                                      |
+|Temporal | change-of-month            | dateTime-to-change-of-month                                                       |
+|Temporal | change-of-second           | dateTime-to-change-of-second                                                      |
+|Temporal | change-of-year             | dateTime-to-change-of-year                                                        |
+|Temporal | clamp                      | dateTime-to-clamp, dateTime-to-clip                                               |
+|Temporal | datetime-to-date           | dateTime-to-date                                                                  |
+|Temporal | day-of-month               | dateTime-to-day-of-month                                                          |
+|Temporal | day-of-week                | dateTime-to-day-of-week                                                           |
+|Temporal | day-of-year                | dateTime-to-day-of-year                                                           |
+|Temporal | first-in-month             | dateTime-to-first-in-month                                                        |
+|Temporal | first-of-month             | dateTime-to-first-of-month                                                        |
+|Temporal | first-of-year              | dateTime-to-first-of-year                                                         |
+|Temporal | floor-hour                 | dateTime-to-floor-hour                                                            |
+|Temporal | floor-minute               | dateTime-to-floor-minute                                                          |
+|Temporal | forward                    | dateTime-to-forward, dateTime-to-add                                              |
+|Temporal | hour                       | dateTime-to-hour                                                                  |
+|Temporal | hour-minute                | dateTime-to-hour-minute                                                           |
+|Temporal | hour-minute-second         | dateTime-to-hour-minute-second                                                    |
+|Temporal | hour-of-day                | dateTime-to-hour-of-day                                                           |
+|Temporal | invalid-to-date            |                                                                                   |
+|Temporal | iso-day-of-year            | dateTime-to-iso-day-of-year                                                       |
+|Temporal | iso-week-of-year           | dateTime-to-iso-week-of-year                                                      |
+|Temporal | iso-year-day               | dateTime-to-iso-year-day                                                          |
+|Temporal | iso-year-week              | dateTime-to-iso-year-week                                                         |
+|Temporal | iso-year-week-day          | dateTime-to-iso-year-week-day                                                     |
+|Temporal | last-in-month              | dateTime-to-last-in-month                                                         |
+|Temporal | last-of-month              | dateTime-to-last-of-month                                                         |
+|Temporal | last-of-year               | dateTime-to-last-of-year                                                          |
+|Temporal | length-of-month            | dateTime-to-length-of-month                                                       |
+|Temporal | length-of-year             | dateTime-to-length-of-year                                                        |
+|Temporal | local-to-utc               |                                                                                   |
+|Temporal | minute-of-day              | dateTime-to-minute-of-day                                                         |
+|Temporal | minute-of-hour             | dateTime-to-minute-of-hour                                                        |
+|Temporal | month                      | dateTime-to-month                                                                 |
+|Temporal | month-day                  | dateTime-to-month-day                                                             |
+|Temporal | month-of-year              | dateTime-to-month-of-year                                                         |
+|Temporal | next-business-days         | temporal-to-next-business-days, next-business-day, add-business-days              |
+|Temporal | next-day                   | dateTime-to-next-day                                                              |
+|Temporal | next-month                 | dateTime-to-next-month                                                            |
+|Temporal | next-weekday               | dateTime-to-next-weekday                                                          |
+|Temporal | next-weekday-or-same       | dateTime-to-next-weekday-or-same                                                  |
+|Temporal | next-year                  | dateTime-to-next-year                                                             |
+|Temporal | null-to-date               |                                                                                   |
+|Temporal | previous-business-days     | temporal-to-previous-business-days, previous-business-day, subtract-business-days |
+|Temporal | previous-day               | dateTime-to-previous-day                                                          |
+|Temporal | previous-month             | dateTime-to-previous-month                                                        |
+|Temporal | previous-weekday           | dateTime-to-previous-weekday                                                      |
+|Temporal | previous-weekday-or-same   | dateTime-to-previous-weekday-or-same                                              |
+|Temporal | previous-year              | dateTime-to-previous-year                                                         |
+|Temporal | second-of-day              | dateTime-to-second-of-day                                                         |
+|Temporal | second-of-hour             | dateTime-to-second-of-hour                                                        |
+|Temporal | second-of-minute           | dateTime-to-second-of-minute                                                      |
+|Temporal | set-time                   | dateTime-to-set-time                                                              |
+|Temporal | set-to-local               |                                                                                   |
+|Temporal | set-to-utc                 |                                                                                   |
+|Temporal | utc-to-local               |                                                                                   |
+|Temporal | year                       | dateTime-to-year                                                                  |
+|Temporal | year-of-era                | dateTime-to-year-of-era                                                           |
+|Text     | after-substring            | text-to-after-substring                                                           |
+|Text     | append                     | text-to-append                                                                    |
+|Text     | append-new-line            | text-to-append-new-line                                                           |
+|Text     | append-space               | text-to-append-space                                                              |
+|Text     | before-substring           | text-to-before-substring                                                          |
+|Text     | clean-whitespace           | text-to-clean-whitespace                                                          |
+|Text     | collapse-whitespace        | text-to-collapse-whitespace                                                       |
+|Text     | count-distinct-chars       | text-to-count-distinct-chars                                                      |
+|Text     | count-substring            | text-to-count-substring                                                           |
+|Text     | empty-to-null              |                                                                                   |
+|Text     | filter-chars               | text-to-filter-chars                                                              |
+|Text     | first-chars                | text-to-first-chars                                                               |
+|Text     | html-to-text               |                                                                                   |
+|Text     | last-chars                 | text-to-last-chars                                                                |
+|Text     | length                     | text-to-length, count-chars                                                       |
+|Text     | lower                      | text-to-lower                                                                     |
+|Text     | mask-to-text               |                                                                                   |
+|Text     | null-to-empty              |                                                                                   |
+|Text     | pad-center                 | text-to-pad-center                                                                |
+|Text     | pad-left                   | text-to-pad-left                                                                  |
+|Text     | pad-right                  | text-to-pad-right                                                                 |
+|Text     | prefix                     | text-to-prefix                                                                    |
+|Text     | prefix-new-line            | text-to-prefix-new-line                                                           |
+|Text     | prefix-space               | text-to-prefix-space                                                              |
+|Text     | prepend                    | text-to-prepend                                                                   |
+|Text     | prepend-new-line           | text-to-prepend-new-line                                                          |
+|Text     | prepend-space              | text-to-prepend-space                                                             |
+|Text     | remove-chars               | text-to-remove-chars                                                              |
+|Text     | replace-chars              | text-to-replace-chars                                                             |
+|Text     | replace-slice              | text-to-replace-slice                                                             |
+|Text     | retain-alpha               | text-to-retain-alpha                                                              |
+|Text     | retain-alpha-numeric       | text-to-retain-alpha-numeric                                                      |
+|Text     | retain-numeric             | text-to-retain-numeric                                                            |
+|Text     | retain-numeric-symbol      | text-to-retain-numeric-symbol                                                     |
+|Text     | skip-first-chars           | text-to-skip-first-chars                                                          |
+|Text     | skip-last-chars            | text-to-skip-last-chars                                                           |
+|Text     | suffix                     | text-to-suffix                                                                    |
+|Text     | suffix-new-line            | text-to-suffix-new-line                                                           |
+|Text     | suffix-space               | text-to-suffix-space                                                              |
+|Text     | text-to-datetime           | text-to-dateTime                                                                  |
+|Text     | text-to-html               |                                                                                   |
+|Text     | text-to-mask               |                                                                                   |
+|Text     | token                      | text-to-token                                                                     |
+|Text     | token-count                | text-to-token-count                                                               |
+|Text     | trim                       | text-to-trim                                                                      |
+|Text     | upper                      | text-to-upper                                                                     |
+|Text     | whitespaces-to-empty       | blank-to-empty                                                                    |
+|Text     | whitespaces-to-null        | blank-to-null                                                                     |
+|Text     | without-diacritics         | text-to-without-diacritics                                                        |
+|Text     | without-whitespaces        | text-to-without-whitespaces                                                       |
 <!-- END FUNCTION TABLE -->
 
 ### Predicates

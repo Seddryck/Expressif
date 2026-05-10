@@ -92,4 +92,34 @@ public class ArithmeticFunctionsTest
     public void Divide_4_Valid(object value, decimal? expected)
         => Assert.That(new Divide(() => 4)
             .Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    [TestCase(8, 12, 4)]
+    [TestCase(12, 8, 4)]
+    [TestCase(-8, 12, 4)]
+    [TestCase(8, -12, 4)]
+    [TestCase(0, 12, 12)]
+    [TestCase(12, 0, 12)]
+    [TestCase(0, 0, null)]
+    [TestCase("(null)", 12, null)]
+    [TestCase("(empty)", 12, null)]
+    [TestCase("(blank)", 12, null)]
+    [TestCase(7.5, 12, null)]
+    public void GreatestCommonDivisor_Valid(object value, int parameter, decimal? expected)
+        => Assert.That(new GreatestCommonDivisor(() => parameter).Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    [TestCase(8, 12, 24)]
+    [TestCase(12, 8, 24)]
+    [TestCase(-8, 12, 24)]
+    [TestCase(8, -12, 24)]
+    [TestCase(0, 12, 0)]
+    [TestCase(12, 0, 0)]
+    [TestCase(0, 0, 0)]
+    [TestCase("(null)", 12, null)]
+    [TestCase("(empty)", 12, null)]
+    [TestCase("(blank)", 12, null)]
+    [TestCase(7.5, 12, null)]
+    public void LowestCommonMultiple_Valid(object value, int parameter, decimal? expected)
+        => Assert.That(new LowestCommonMultiple(() => parameter).Evaluate(value), Is.EqualTo(expected));
 }

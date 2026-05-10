@@ -2,7 +2,7 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
-keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, increment, integer, invert, multiply, nth-root, null-to-zero, oppose, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
+keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, greatest-common-divisor, increment, integer, invert, lowest-common-multiple, multiply, nth-root, null-to-zero, oppose, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.
@@ -64,6 +64,14 @@ Returns the argument number divided by the parameter value. If the parameter val
 
 Returns the largest integer less than or equal to the argument number.
 
+##### greatest-common-divisor
+###### Overview
+
+Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
+
+###### Parameter
+* value: The integer used to compute the greatest common divisor with the argument value.
+
 ##### increment
 ###### Overview
 
@@ -78,6 +86,14 @@ Returns the value of an argument number rounded to the nearest integer.
 ###### Overview
 
 Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.
+
+##### lowest-common-multiple
+###### Overview
+
+Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
+
+###### Parameter
+* value: The integer used to compute the lowest common multiple with the argument value.
 
 ##### multiply
 ###### Overview
