@@ -33,7 +33,7 @@ public class FunctionIntrospectorTest
         foreach(var info in Infos)
         {
             Debug.WriteLine(info.Name);
-            Assert.That(info.Name, Is.Not.Null.Or.Empty);
+            Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
             Assert.That(info.Name.ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
         }
     }
@@ -47,7 +47,7 @@ public class FunctionIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {(info.Aliases.Any() ? info.Aliases.ElementAt(0) : string.Empty)}");
             foreach (var alias in info.Aliases)
-                Assert.That(info.Aliases.ElementAt(0), Is.Not.Null.Or.Empty);
+                Assert.That(info.Aliases.ElementAt(0), Is.Not.Null.And.Not.Empty);
         }
     }
 
@@ -97,7 +97,7 @@ public class FunctionIntrospectorTest
         foreach (var info in Infos)
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
-            Assert.That(info.Scope, Is.Not.Null.Or.Empty);
+            Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
             Assert.That(info.Scope, Is.EqualTo("Text").Or.EqualTo("Numeric").Or.EqualTo("IO").Or.EqualTo("Temporal").Or.EqualTo("Special"));
         }
     }

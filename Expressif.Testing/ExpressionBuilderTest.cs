@@ -13,7 +13,7 @@ public class ExpressionBuilderTest
 {
     [Test]
     public void Build_NoPredicate_ThrowException()
-        => Assert.Throws<InvalidOperationException>(() => new ExpressionBuilder().Build());
+        => Assert.That(() => new ExpressionBuilder().Build(), Throws.TypeOf<InvalidOperationException>());
 
     [Test]
     public void Chain_WithoutParameter_CorrectlyEvaluate()
@@ -131,5 +131,5 @@ public class ExpressionBuilderTest
 
     [Test]
     public void Serialize_NoPredicate_ThrowException()
-        => Assert.Throws<InvalidOperationException>(() => new ExpressionBuilder().Serialize());
+        => Assert.That(() => new ExpressionBuilder().Serialize(), Throws.TypeOf<InvalidOperationException>());
 }

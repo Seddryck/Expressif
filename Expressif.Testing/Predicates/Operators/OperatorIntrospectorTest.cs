@@ -33,7 +33,7 @@ internal class OperatorIntrospectorTest
         foreach (var info in Infos)
         {
             Debug.WriteLine(info.Name);
-            Assert.That(info.Name, Is.Not.Null.Or.Empty);
+            Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
             Assert.That(info.Name.ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
         }
     }
