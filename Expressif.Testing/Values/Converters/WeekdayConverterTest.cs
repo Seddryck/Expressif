@@ -38,8 +38,9 @@ public class WeekdayConverterTest
     [TestCase("2022-12-30")]
     [TestCase("foo")]
     public void ConvertFromInvariantString_Invalid(string value)
-        => Assert.Throws<FormatException>(
-            () => TypeDescriptor.GetConverter(typeof(Weekday)).ConvertFromInvariantString(value));
+        => Assert.That(
+            () => TypeDescriptor.GetConverter(typeof(Weekday)).ConvertFromInvariantString(value)
+            , Throws.TypeOf<FormatException>());
 
     [Test]
     public void CanConvertTo_Valid()

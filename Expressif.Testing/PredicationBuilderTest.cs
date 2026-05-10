@@ -14,7 +14,7 @@ public class PredicationBuilderTest
 {
     [Test]
     public void Build_NoPredicate_ThrowException()
-        => Assert.Throws<InvalidOperationException>(() => new PredicationBuilder().Build());
+        => Assert.That(() => new PredicationBuilder().Build(), Throws.TypeOf<InvalidOperationException>());
 
     [Test]
     public void Chain_WithoutParameter_CorrectlyEvaluate()
@@ -163,5 +163,5 @@ public class PredicationBuilderTest
 
     [Test]
     public void Serialize_NoPredicate_ThrowException()
-        => Assert.Throws<InvalidOperationException>(() => new PredicationBuilder().Serialize());
+        => Assert.That(() => new PredicationBuilder().Serialize(), Throws.TypeOf<InvalidOperationException>());
 }

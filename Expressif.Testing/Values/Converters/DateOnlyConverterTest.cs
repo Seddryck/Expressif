@@ -47,8 +47,9 @@ public class DateOnlyConverterTest
     [TestCase("2022-15-78")]
     [TestCase("foo")]
     public void ConvertFromInvariantString_Invalid(string value)
-        => Assert.Throws<FormatException>(
-            () => TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(value));
+        => Assert.That(
+            () => TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(value)
+            , Throws.TypeOf<FormatException>());
 
     [Test]
     public void CanConvertTo_Valid()
