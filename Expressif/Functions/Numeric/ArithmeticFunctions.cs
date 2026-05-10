@@ -93,3 +93,85 @@ public class Divide : BaseNumericArithmetic
     protected override decimal? EvaluateNumeric(decimal value)
         => Value.Invoke() == 0 ? null : value / Value.Invoke();
 }
+
+/// <summary>
+/// Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
+/// </summary>
+public class GreatestCommonDivisor : BaseNumericFunction
+{
+    public Func<int> Value { get; }
+
+    /// <param name="value">The integer used to compute the greatest common divisor with the argument value.</param>
+    public GreatestCommonDivisor(Func<int> value)
+        => Value = value;
+
+    protected override decimal? EvaluateNumeric(decimal value)
+    {
+        if (!TryGetInt32(value, out var left))
+            return null;
+
+        var right = Value.Invoke();
+        var gcd = ComputeGcd(left, right);
+        return gcd;
+    }
+
+    internal static bool TryGetInt32(decimal value, out int integer)
+    {
+        integer = default;
+        if (value != decimal.Truncate(value))
+            return false;
+        if (value < int.MinValue || value > int.MaxValue)
+            return false;
+
+        integer = decimal.ToInt32(value);
+        return true;
+    }
+
+    internal static int? ComputeGcd(int a, int b)
+    {
+        if (a == 0 && b == 0)
+            return null;
+
+        a = Math.Abs(a);
+        b = Math.Abs(b);
+
+        while (b != 0)
+        {
+            var remainder = a % b;
+            a = b;
+            b = remainder;
+        }
+
+        return a;
+    }
+}
+
+/// <summary>
+/// Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
+/// </summary>
+[Function(aliases: ["least-common-multiple", "smallest-common-multiple"])]
+public class LowestCommonMultiple : BaseNumericFunction
+{
+    public Func<int> Value { get; }
+
+    /// <param name="value">The integer used to compute the lowest common multiple with the argument value.</param>
+    public LowestCommonMultiple(Func<int> value)
+        => Value = value;
+
+    protected override decimal? EvaluateNumeric(decimal value)
+    {
+        if (!GreatestCommonDivisor.TryGetInt32(value, out var left))
+            return null;
+
+        var right = Value.Invoke();
+
+        if (left == 0 || right == 0)
+            return 0;
+
+        var gcd = GreatestCommonDivisor.ComputeGcd(left, right);
+        if (!gcd.HasValue || gcd.Value == 0)
+            return null;
+
+        return Math.Abs((left / gcd.Value) * right);
+    }
+}
