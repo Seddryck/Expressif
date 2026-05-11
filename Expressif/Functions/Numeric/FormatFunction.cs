@@ -58,19 +58,7 @@ internal static class HumanReadableFormatter
         string number;
         if (unitIndex == 0 && omitDecimalsForBaseUnit)
         {
-            var roundedBase = Math.Round(rounded, 0, MidpointRounding.AwayFromZero);
-            if (roundedBase >= @base && unitIndex < units.Length - 1)
-            {
-                rounded = roundedBase / @base;
-                unitIndex++;
-                number = precision == 0
-                    ? rounded.ToString("0", CultureInfo.InvariantCulture)
-                    : rounded.ToString($"F{precision}", CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                number = roundedBase.ToString("0", CultureInfo.InvariantCulture);
-            }
+            (number, rounded, unitIndex) = FormatBaseUnitNumber(rounded, precision, @base, units, unitIndex);
         }
         else if (precision == 0)
             number = rounded.ToString("0", CultureInfo.InvariantCulture);
@@ -82,6 +70,25 @@ internal static class HumanReadableFormatter
 
         var unit = units[unitIndex];
         return string.IsNullOrEmpty(unit) ? number : $"{number} {unit}";
+    }
+
+    private static (string number, decimal rounded, int unitIndex) FormatBaseUnitNumber(decimal rounded, int precision, int @base, string[] units, int unitIndex)
+    {
+        var roundedBase = Math.Round(rounded, 0, MidpointRounding.AwayFromZero);
+        if (roundedBase >= @base && unitIndex < units.Length - 1)
+        {
+            rounded = roundedBase / @base;
+            unitIndex++;
+            var number = precision == 0
+                ? rounded.ToString("0", CultureInfo.InvariantCulture)
+                : rounded.ToString($"F{precision}", CultureInfo.InvariantCulture);
+            return (number, rounded, unitIndex);
+        }
+        else
+        {
+            var number = roundedBase.ToString("0", CultureInfo.InvariantCulture);
+            return (number, rounded, unitIndex);
+        }
     }
 }
 
