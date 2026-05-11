@@ -59,9 +59,9 @@ internal static class HumanReadableFormatter
         if (unitIndex == 0 && omitDecimalsForBaseUnit)
         {
             var roundedBase = Math.Round(rounded, 0, MidpointRounding.AwayFromZero);
-            if (roundedBase >= `@base` && unitIndex < units.Length - 1)
+            if (roundedBase >= @base && unitIndex < units.Length - 1)
             {
-                rounded = roundedBase / `@base`;
+                rounded = roundedBase / @base;
                 unitIndex++;
                 number = precision == 0
                     ? rounded.ToString("0", CultureInfo.InvariantCulture)
@@ -72,10 +72,6 @@ internal static class HumanReadableFormatter
                 number = roundedBase.ToString("0", CultureInfo.InvariantCulture);
             }
         }
-        else if (precision == 0)
-            number = rounded.ToString("0", CultureInfo.InvariantCulture);
-        else
-            number = rounded.ToString($"F{precision}", CultureInfo.InvariantCulture);
         else if (precision == 0)
             number = rounded.ToString("0", CultureInfo.InvariantCulture);
         else

@@ -63,4 +63,31 @@ public class FormatFunctionTest
         Assert.That(new HumanReadableFormatDecimalBytes(() => precision).Evaluate(1000), Is.Null);
         Assert.That(new HumanReadableFormatBinaryBytes(() => precision).Evaluate(1024), Is.Null);
     }
+
+    [Test]
+    public void FormatFunctions_SentinelValues_ReturnNull()
+    {
+        object?[] sentinels =
+        [
+            null,
+            DBNull.Value,
+            new Expressif.Values.Special.Null(),
+            new Expressif.Values.Special.Empty(),
+            new Expressif.Values.Special.Whitespace(),
+            "(null)",
+            "(empty)",
+            "(blank)"
+        ];
+
+        foreach (var sentinel in sentinels)
+        {
+            var sentinelLabel = sentinel ?? "null";
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(new HumanReadableFormatDecimal().Evaluate(sentinel), Is.Null, $"Failed for HumanReadableFormatDecimal with sentinel '{sentinelLabel}'");
+                Assert.That(new HumanReadableFormatDecimalBytes().Evaluate(sentinel), Is.Null, $"Failed for HumanReadableFormatDecimalBytes with sentinel '{sentinelLabel}'");
+                Assert.That(new HumanReadableFormatBinaryBytes().Evaluate(sentinel), Is.Null, $"Failed for HumanReadableFormatBinaryBytes with sentinel '{sentinelLabel}'");
+            }
+        }
+    }
 }
