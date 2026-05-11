@@ -2,7 +2,7 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
-keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, greatest-common-divisor, increment, integer, invert, lowest-common-multiple, multiply, nth-root, null-to-zero, oppose, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
+keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, greatest-common-divisor, human-readable-format-binary-bytes, human-readable-format-decimal, human-readable-format-decimal-bytes, increment, integer, invert, lowest-common-multiple, multiply, nth-root, null-to-zero, oppose, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.
@@ -71,6 +71,21 @@ Returns the greatest common divisor (GCD) of the argument integer and the parame
 
 ###### Parameter
 * value: The integer used to compute the greatest common divisor with the argument value.
+
+##### human-readable-format-binary-bytes
+###### Overview
+
+Formats a numeric value as binary bytes using IEC prefixes.
+
+##### human-readable-format-decimal
+###### Overview
+
+Formats a numeric value using decimal SI prefixes.
+
+##### human-readable-format-decimal-bytes
+###### Overview
+
+Formats a numeric value as decimal bytes using SI prefixes.
 
 ##### increment
 ###### Overview
