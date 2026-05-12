@@ -1,4 +1,5 @@
-﻿using Expressif.Values.Casters;
+﻿using Expressif.Values;
+using Expressif.Values.Casters;
 using Expressif.Values.Special;
 using System;
 
@@ -58,6 +59,72 @@ public class Age : BaseTemporalFunction
         var age = today.Year - value.Year;
         // Go back to the year the person was born in case of a leap year
         return value.AddYears(age) > today ? age-- : age;
+    }
+}
+
+/// <summary>
+/// Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument.
+/// Returns `null` if the event is unknown.
+/// </summary>
+[Function(prefix: "", aliases: ["calendar-catholic"])]
+public class CatholicCalendar : BaseDatePartChangeFunction
+{
+    public Func<string> Event { get; }
+
+    public CatholicCalendar(Func<string> @event)
+        => Event = @event;
+
+    protected override object? EvaluateInteger(int numeric) => EvaluateYear(numeric);
+    protected override object EvaluateDateTime(DateTime value) => EvaluateYear(value.Year)!;
+    protected override object? EvaluateYearMonth(YearMonth yearMonth) => EvaluateYear(yearMonth.Year);
+
+    private DateTime? EvaluateYear(int year)
+    {
+        var easter = Easter(year);
+        return Normalize(Event.Invoke()) switch
+        {
+            "epiphany" => new DateTime(year, 1, 6),
+            "candlemas" => new DateTime(year, 2, 2),
+            "the annunciation" => new DateTime(year, 3, 25),
+            "shrove tuesday" => easter.AddDays(-47),
+            "ash wednesday" => easter.AddDays(-46),
+            "palm sunday" => easter.AddDays(-7),
+            "maundy thursday" => easter.AddDays(-3),
+            "good friday" => easter.AddDays(-2),
+            "easter sunday" => easter,
+            "ascension day" => easter.AddDays(39),
+            "pentecost" or "whit sunday" => easter.AddDays(49),
+            "whit monday" => easter.AddDays(50),
+            "trinity sunday" => easter.AddDays(56),
+            "corpus christi" => easter.AddDays(60),
+            "the assumption" => new DateTime(year, 8, 15),
+            "immaculate conception" => new DateTime(year, 9, 8),
+            "all saints' day" => new DateTime(year, 11, 1),
+            "first sunday of advent" => FirstSundayOfAdvent(year),
+            "christmas" => new DateTime(year, 12, 25),
+            _ => null,
+        };
+    }
+
+    private static string Normalize(string? value)
+        => (value ?? string.Empty).Trim().Replace('’', '\'').ToLowerInvariant();
+
+    private static DateTime FirstSundayOfAdvent(int year)
+    {
+        var decemberThird = new DateTime(year, 12, 3);
+        return decemberThird.AddDays(-(int)decemberThird.DayOfWeek);
+    }
+
+    private static DateTime Easter(int year)
+    {
+        int a = year % 19;
+        int b = year / 100;
+        int c = (b - (b / 4) - ((8 * b + 13) / 25) + (19 * a) + 15) % 30;
+        int d = c - (c / 28) * (1 - (c / 28) * (29 / (c + 1)) * ((21 - a) / 11));
+        int e = d - ((year + (year / 4) + d + 2 - b + (b / 4)) % 7);
+        int month = 3 + ((e + 40) / 44);
+        int day = e + 28 - (31 * (month / 4));
+        return new DateTime(year, month, day);
     }
 }
 

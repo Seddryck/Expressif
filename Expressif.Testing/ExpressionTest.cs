@@ -128,6 +128,14 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_CalendarCatholic_Valid()
+    {
+        var expression = new Expression("calendar-catholic(\"eAsTeR sUnDaY\")", new Context());
+        var result = expression.Evaluate(2023);
+        Assert.That(result, Is.EqualTo(DateTime.Parse("2023-04-09")));
+    }
+
+    [Test]
     [TestCase("null-to-empty | count-chars")]
     [TestCase("null-to-empty | text-to-length")]
     [TestCase("null-to-empty | length")]
