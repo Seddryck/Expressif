@@ -98,7 +98,7 @@ public class CatholicCalendar : BaseDatePartChangeFunction
             "trinity sunday" => easter.AddDays(56),
             "corpus christi" => easter.AddDays(60),
             "the assumption" => new DateTime(year, 8, 15),
-            "immaculate conception" => new DateTime(year, 9, 8),
+            "immaculate conception" => new DateTime(year, 12, 8),
             "all saints' day" => new DateTime(year, 11, 1),
             "first sunday of advent" => FirstSundayOfAdvent(year),
             "christmas" => new DateTime(year, 12, 25),
@@ -107,7 +107,7 @@ public class CatholicCalendar : BaseDatePartChangeFunction
     }
 
     private static string Normalize(string? value)
-        => (value ?? string.Empty).Trim().Replace('’', '\'').ToLowerInvariant();
+        => (value ?? string.Empty).Trim().Replace('\u2019', '\'').ToLowerInvariant();
 
     private static DateTime FirstSundayOfAdvent(int year)
     {

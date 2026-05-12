@@ -141,7 +141,7 @@ public class TemporalFunctionsTest
     [TestCase(2023, "Ash Wednesday", "2023-02-22")]
     [TestCase(2023, "Whit Sunday", "2023-05-28")]
     [TestCase(2023, "All Saints’ Day", "2023-11-01")]
-    [TestCase("2023-01-01", "immaculate conception", "2023-09-08")]
+    [TestCase("2023-01-01", "immaculate conception", "2023-12-08")]
     public void CatholicCalendar_Valid(object value, string @event, DateTime expected)
         => Assert.That(new CatholicCalendar(() => @event).Evaluate(value), Is.EqualTo(expected));
 
