@@ -111,8 +111,8 @@ public class CatholicCalendar : BaseDatePartChangeFunction
 
     private static DateTime FirstSundayOfAdvent(int year)
     {
-        var decemberThird = new DateTime(year, 12, 3);
-        return decemberThird.AddDays(-(int)decemberThird.DayOfWeek);
+        var december3rd = new DateTime(year, 12, 3);
+        return december3rd.AddDays(-(int)december3rd.DayOfWeek);
     }
 
     private static DateTime Easter(int year)
