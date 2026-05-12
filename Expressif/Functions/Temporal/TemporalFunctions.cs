@@ -84,7 +84,8 @@ public class CatholicCalendar : BaseDatePartChangeFunction
 
     private DateTime? EvaluateYear(int year)
     {
-        var kind = InstantiateKind();
+        var kindValue = Kind.Invoke();
+        var kind = InstantiateKind(kindValue);
         var easter = Easter(year, kind);
         return Normalize(Event.Invoke()) switch
         {
@@ -114,14 +115,14 @@ public class CatholicCalendar : BaseDatePartChangeFunction
     private static string Normalize(string? value)
     {
         var normalized = (value ?? string.Empty).Trim().Replace('\u2019', '\'').ToLowerInvariant();
-        return normalized.StartsWith("the ") ? normalized[4..] : normalized;
+        return normalized.StartsWith("the ") ? normalized[4..].TrimStart() : normalized;
     }
 
-    private DateTimeKind InstantiateKind()
+    private static DateTimeKind InstantiateKind(string? kind)
     {
-        if (Enum.TryParse<DateTimeKind>(Kind.Invoke(), true, out var kind))
-            return kind;
-        throw new ArgumentOutOfRangeException(nameof(Kind), $"DateTimeKind '{Kind.Invoke()}' is not valid.");
+        if (Enum.TryParse<DateTimeKind>(kind, true, out var dateTimeKind))
+            return dateTimeKind;
+        throw new ArgumentOutOfRangeException(nameof(kind), $"DateTimeKind '{kind}' is not valid.");
     }
 
     private static DateTime FirstSundayOfAdvent(int year, DateTimeKind kind)

@@ -19,7 +19,6 @@ tags: [predicates, functions]
 * [append-space]({{ site.baseurl }}/docs/text-functions/#append-space)
 * [backward]({{ site.baseurl }}/docs/temporal-functions/#backward)
 * [before-substring]({{ site.baseurl }}/docs/text-functions/#before-substring)
-* [catholic-calendar]({{ site.baseurl }}/docs/temporal-functions/#catholic-calendar)
 * [ceiling]({{ site.baseurl }}/docs/numeric-functions/#ceiling)
 * [ceiling-hour]({{ site.baseurl }}/docs/temporal-functions/#ceiling-hour)
 * [ceiling-minute]({{ site.baseurl }}/docs/temporal-functions/#ceiling-minute)
