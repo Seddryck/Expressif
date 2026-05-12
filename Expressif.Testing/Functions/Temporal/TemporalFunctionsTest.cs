@@ -133,6 +133,31 @@ public class TemporalFunctionsTest
         => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
 
     [Test]
+    [TestCase(2023, "Christmas", "2023-12-25")]
+    [TestCase(2023, "Easter Sunday", "2023-04-09")]
+    [TestCase(2023, "Corpus Christi", "2023-06-08")]
+    [TestCase(2022, "First Sunday of Advent", "2022-11-27")]
+    [TestCase(2023, "First Sunday of Advent", "2023-12-03")]
+    [TestCase(2023, "Ash Wednesday", "2023-02-22")]
+    [TestCase(2023, "Whit Sunday", "2023-05-28")]
+    [TestCase(2023, "Assumption", "2023-08-15")]
+    [TestCase(2023, "All Saints’ Day", "2023-11-01")]
+    [TestCase("2023-01-01", "immaculate conception", "2023-12-08")]
+    public void CatholicCalendar_Valid(object value, string @event, DateTime expected)
+        => Assert.That(new CatholicCalendar(() => @event).Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    public void CatholicCalendar_UnknownEvent_Null()
+        => Assert.That(new CatholicCalendar(() => "unknown").Evaluate(2023), Is.Null);
+
+    [Test]
+    [TestCase(DateTimeKind.Local)]
+    [TestCase(DateTimeKind.Utc)]
+    [TestCase(DateTimeKind.Unspecified)]
+    public void CatholicCalendar_Kind_Valid(DateTimeKind expected)
+        => Assert.That(((DateTime)new CatholicCalendar(() => "Christmas", () => expected.ToString()).Evaluate(2023)!).Kind, Is.EqualTo(expected));
+
+    [Test]
     [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
     [TestCase("2018-08-01 00:00:00", "2018-08-01 02:00:00")]
     public void UtcToLocal_RomanceStandardTime_Valid(object value, DateTime expected)
