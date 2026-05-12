@@ -114,7 +114,7 @@ public class CatholicCalendar : BaseDatePartChangeFunction
     private static string Normalize(string? value)
     {
         var normalized = (value ?? string.Empty).Trim().Replace('\u2019', '\'').ToLowerInvariant();
-        return normalized.StartsWith("the ") ? normalized[4..].TrimStart() : normalized;
+        return normalized.StartsWith("the ") ? normalized[4..] : normalized;
     }
 
     private DateTimeKind InstantiateKind()
