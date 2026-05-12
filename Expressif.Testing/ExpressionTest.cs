@@ -136,6 +136,18 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_CalendarCatholicWithKind_Valid()
+    {
+        var expression = new Expression("calendar-catholic(\"The Assumption\", \"Utc\")", new Context());
+        var result = (DateTime)expression.Evaluate(2023)!;
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(DateTime.SpecifyKind(DateTime.Parse("2023-08-15"), DateTimeKind.Utc)));
+            Assert.That(result.Kind, Is.EqualTo(DateTimeKind.Utc));
+        });
+    }
+
+    [Test]
     [TestCase("null-to-empty | count-chars")]
     [TestCase("null-to-empty | text-to-length")]
     [TestCase("null-to-empty | length")]

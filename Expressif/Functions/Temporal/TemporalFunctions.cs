@@ -70,9 +70,13 @@ public class Age : BaseTemporalFunction
 public class CatholicCalendar : BaseDatePartChangeFunction
 {
     public Func<string> Event { get; }
+    public Func<string> Kind { get; }
 
     public CatholicCalendar(Func<string> @event)
-        => Event = @event;
+        : this(@event, () => nameof(DateTimeKind.Local)) { }
+
+    public CatholicCalendar(Func<string> @event, Func<string> kind)
+        => (Event, Kind) = (@event, kind);
 
     protected override object? EvaluateInteger(int numeric) => EvaluateYear(numeric);
     protected override object EvaluateDateTime(DateTime value) => EvaluateYear(value.Year)!;
@@ -80,12 +84,13 @@ public class CatholicCalendar : BaseDatePartChangeFunction
 
     private DateTime? EvaluateYear(int year)
     {
-        var easter = Easter(year);
+        var kind = InstantiateKind();
+        var easter = Easter(year, kind);
         return Normalize(Event.Invoke()) switch
         {
-            "epiphany" => new DateTime(year, 1, 6),
-            "candlemas" => new DateTime(year, 2, 2),
-            "the annunciation" => new DateTime(year, 3, 25),
+            "epiphany" => CreateDate(year, 1, 6, kind),
+            "candlemas" => CreateDate(year, 2, 2, kind),
+            "annunciation" => CreateDate(year, 3, 25, kind),
             "shrove tuesday" => easter.AddDays(-47),
             "ash wednesday" => easter.AddDays(-46),
             "palm sunday" => easter.AddDays(-7),
@@ -97,25 +102,35 @@ public class CatholicCalendar : BaseDatePartChangeFunction
             "whit monday" => easter.AddDays(50),
             "trinity sunday" => easter.AddDays(56),
             "corpus christi" => easter.AddDays(60),
-            "the assumption" => new DateTime(year, 8, 15),
-            "immaculate conception" => new DateTime(year, 12, 8),
-            "all saints' day" => new DateTime(year, 11, 1),
-            "first sunday of advent" => FirstSundayOfAdvent(year),
-            "christmas" => new DateTime(year, 12, 25),
+            "assumption" => CreateDate(year, 8, 15, kind),
+            "immaculate conception" => CreateDate(year, 12, 8, kind),
+            "all saints' day" => CreateDate(year, 11, 1, kind),
+            "first sunday of advent" => FirstSundayOfAdvent(year, kind),
+            "christmas" => CreateDate(year, 12, 25, kind),
             _ => null,
         };
     }
 
     private static string Normalize(string? value)
-        => (value ?? string.Empty).Trim().Replace('\u2019', '\'').ToLowerInvariant();
-
-    private static DateTime FirstSundayOfAdvent(int year)
     {
-        var december3rd = new DateTime(year, 12, 3);
+        var normalized = (value ?? string.Empty).Trim().Replace('\u2019', '\'').ToLowerInvariant();
+        return normalized.StartsWith("the ") ? normalized[4..].TrimStart() : normalized;
+    }
+
+    private DateTimeKind InstantiateKind()
+    {
+        if (Enum.TryParse<DateTimeKind>(Kind.Invoke(), true, out var kind))
+            return kind;
+        throw new ArgumentOutOfRangeException(nameof(Kind), $"DateTimeKind '{Kind.Invoke()}' is not valid.");
+    }
+
+    private static DateTime FirstSundayOfAdvent(int year, DateTimeKind kind)
+    {
+        var december3rd = CreateDate(year, 12, 3, kind);
         return december3rd.AddDays(-(int)december3rd.DayOfWeek);
     }
 
-    private static DateTime Easter(int year)
+    private static DateTime Easter(int year, DateTimeKind kind)
     {
         int a = year % 19;
         int b = year / 100;
@@ -124,8 +139,11 @@ public class CatholicCalendar : BaseDatePartChangeFunction
         int e = d - ((year + (year / 4) + d + 2 - b + (b / 4)) % 7);
         int month = 3 + ((e + 40) / 44);
         int day = e + 28 - (31 * (month / 4));
-        return new DateTime(year, month, day);
+        return CreateDate(year, month, day, kind);
     }
+
+    private static DateTime CreateDate(int year, int month, int day, DateTimeKind kind)
+        => new(year, month, day, 0, 0, 0, kind);
 }
 
 /// <summary>
