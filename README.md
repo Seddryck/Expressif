@@ -228,6 +228,7 @@ Install-Package Expressif
 |Special  | value-to-value                      |                                                                                   |
 |Temporal | age                                 | date-to-age                                                                       |
 |Temporal | backward                            | dateTime-to-backward, dateTime-to-subtract                                        |
+|Temporal | catholic-calendar                   | calendar-catholic                                                                 |
 |Temporal | ceiling-hour                        | dateTime-to-ceiling-hour                                                          |
 |Temporal | ceiling-minute                      | dateTime-to-ceiling-minute                                                        |
 |Temporal | change-of-hour                      | dateTime-to-change-of-hour                                                        |
