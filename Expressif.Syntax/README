@@ -1,0 +1,55 @@
+# Expressif
+
+This Visual Studio Code extension adds syntax highlighting for **Expressif** expressions, making functions and parameters easier to read and write.
+
+Expressif is a transformation expression language with rich built-in functions and first-class support in Visual Studio Code.
+
+## Features of the extension
+Syntax highlighting for Expressif expressions
+
+## Expressif language
+
+### Examples
+
+```
+[date]
+| next-business-days(2)
+| year
+```
+
+```
+"hello"
+| prefix(">> ")
+| upper
+```
+
+### cheat Sheet
+
+Literals: null, empty, blank, any, value
+Operators: Pipe |
+Strings:
+- "double quotes"
+- `backticks`
+
+## Installation
+
+From VSIX
+Open Visual Studio Code
+Go to Extensions
+Click ... (top-right)
+Select Install from VSIX...
+Choose your .vsix file
+File Types
+
+Use one of the following extensions:
+
+- .expr
+- .expressif
+
+## License
+
+Licensed under the Apache License 2.0. See the LICENSE file for details.
+
+## Source
+
+https://github.com/Seddryck/Expressif

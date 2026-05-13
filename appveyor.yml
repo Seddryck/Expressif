@@ -30,6 +30,9 @@ install:
 - ps: |
     Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
     & $env:temp\dotnet-install.ps1 -Architecture x64 -Version '10.0.100' -InstallDir "$env:ProgramFiles\dotnet"
+- cmd: npm install -g @vscode/vsce
+- cmd: dotnet new tool-manifest --force
+- cmd: dotnet tool install didot-cli
 
 before_build:
 - cmd: gitversion /output buildserver /verbosity Minimal
@@ -53,6 +56,17 @@ before_build:
 
 build_script:
 - dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo
+- pwsh: |
+    & .\generate-info.ps1 function
+    & .\generate-info.ps1 predicate
+- pwsh: |
+    Push-Location ".\Expressif.Syntax"
+    try {
+        .\New-tmBundle.ps1 -Bundle "expressif-syntax" -Version $env:GitVersion_SemVer
+    }
+    finally {
+        Pop-Location
+    }    
 
 test_script:
 - cmd: dotnet test Expressif.Testing -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../.coverage/coverage.Expressif.xml /p:Threshold=10 /p:ThresholdType=line --test-adapter-path:. --logger:Appveyor --no-build --nologo
@@ -67,6 +81,7 @@ after_test:
 artifacts:
 - path: '**\*.nupkg'
 - path: '**\*.snupkg'
+- path: '**\*.vsix'
 
 deploy:
 - provider: NuGet
@@ -101,11 +116,7 @@ on_success:
         Write-Host "No release published on GitHub when not on branch main."
     }
 - pwsh: |
-    & .\generate-info.ps1 function
-    $exitCode = $LastExitCode
-    & .\generate-info.ps1 predicate
-    $exitCode += $LastExitCode
-    if ($exitCode -gt 0) {
+    if (git status --porcelain) {
       Write-Host "Update of Library index needed"
       & .\update-index.ps1
       Write-Host "Update of docs needed"
