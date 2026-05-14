@@ -15,6 +15,7 @@ Expressif allows you to define variables and transformation of these variables (
 [Quickstart]: #quickstart (Quickstart)
 [Installing]: #installing (Installing)
 [Functions and predicates]: #supported-functions-and-predicates (Functions and predicates)
+[VSCode Syntax Highlighting Extension]: #vscode-syntax-highlighting-extension (VSCode Syntax Highlighting Extension)
 
 ## About
 
@@ -178,6 +179,24 @@ Install in the usual .NET fashion:
 ```sh
 Install-Package Expressif
 ```
+
+## VSCode Syntax Highlighting Extension
+
+Expressif provides a Visual Studio Code extension (VSIX) for syntax highlighting of Expressif expressions. This extension makes it easier to read and write Expressif code in VSCode by providing colorization and improved readability.
+
+### Download
+
+You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-*.vsix`.
+
+### Installation
+
+1. Open Visual Studio Code.
+2. Go to the Extensions view (`Ctrl+Shift+X`).
+3. Click the three-dot menu in the top right and select `Install from VSIX...`.
+4. Browse to the downloaded `.vsix` file and select it.
+5. Reload VSCode if prompted.
+
+Once installed, Expressif files and code blocks will be highlighted automatically.
 
 ## Supported functions and predicates
 
