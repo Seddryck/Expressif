@@ -1,0 +1,35 @@
+{
+    "name": "expressif-syntax",
+    "displayName": "Expressif Syntax",
+    "description": "Syntax highlighting for Expressif expressions in Visual Studio Code.",
+    "categories": [ "Programming Languages" ],
+    "version": "{{model.version}}",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Seddryck/Expressif.git"
+    },
+    "license": "Apache-2.0",
+    "author": "Cédric L. Charlier",
+    "publisher": "seddryck",
+    "icon": "images/icon.png",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "expressif",
+                "aliases": [ "Expressif" ],
+                "extensions": [ ".expr", ".expressif" ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "expressif",
+                "scopeName": "source.expressif",
+                "path": "./syntaxes/expressif.tmLanguage.json"
+            }
+        ]
+    }
+}

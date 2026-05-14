@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "didot-cli": {
+      "version": "0.32.36",
+      "commands": [
+        "didot"
+      ],
+      "rollForward": false
+    }
+  }
+}

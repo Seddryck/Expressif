@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Expressif",
+  "scopeName": "source.expressif",
+  "fileTypes": ["expressif", "expr"],
+  "patterns": [
+{{~ for function in model.functions ~}}
+    {
+      "name": "support.function.expressif.{{ function.scope | string.downcase }}",
+      "match": "\\b{{ function.regex }}\\b"
+    }{{ if !for.last }},{{ end ~}}
+{{~ end ~}}
+{{~ if model.functions.size > 0 ~}},{{~ end ~}}
+{{~ for predicate in model.predicates ~}}
+    {
+      "name": "support.function.expressif.predicate.{{ predicate.scope | string.downcase }}",
+      "match": "\\b{{ predicate.regex }}\\b"
+    }{{ if !for.last }},{{ end ~}}
+{{~ end ~}}
+{{~ if model.predicates.size > 0 ~}},{{~ end ~}}
+    {
+        "name": "constant.language.null.expressif",
+        "match": "\\b(null|empty|blank|any|value)\\b"
+    },
+    {
+        "name": "constant.numeric.expressif",
+        "match": "\\b[+-]?\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "string.quoted.double.expressif",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+           "name": "constant.character.escape.expressif",
+           "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "string.quoted.backtick.expressif",
+      "begin": "`",
+      "end": "`",
+      "patterns": [
+        {
+          "name": "constant.character.escape.expressif",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "keyword.operator.pipe.expressif",
+      "match": "\\|"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 function Get-GitHub-Headers {
     [CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
         [string] $secretToken
 	)
@@ -13,7 +13,7 @@ function Get-GitHub-Headers {
 
 function Send-GitHub-Get-Request {
 	[CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true)]
         [string] $owner,
 		[Parameter(Mandatory=$true)]
@@ -30,7 +30,7 @@ function Send-GitHub-Get-Request {
 
 function Send-GitHub-Post-Request {
 	[CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
         [object] $body,
 		[Parameter(Mandatory=$true)]
@@ -49,9 +49,36 @@ function Send-GitHub-Post-Request {
 					-Body $($(ConvertTo-Json $body))
 }
 
+function Send-GitHub-FileUpload-Request {
+	[CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
+        [object] $payload,
+		[Parameter(Mandatory=$true)]
+		[string] $uri,
+        [Parameter(Mandatory=$true)]
+		[string] $name, 
+		[Parameter(Mandatory=$true)]
+		[System.Collections.IDictionary] $headers
+	)
+    if ($headers.Keys -contains "Content-Type") {
+        $headers.Remove("Content-Type")
+    }
+    $headers.Add("Content-Type", "application/zip")
+
+    $uri = $uri -replace '{.*}', ''
+    $uri = $uri + "?name=" + $name
+
+	$response = Invoke-WebRequest `
+					-Method POST `
+					-Uri $uri `
+					-Headers $headers `
+					-Body $payload
+}
+
 function Get-Pull-Request-Title {
     [CmdletBinding()]
-	Param(
+	param(
         [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
         [object] $context
 	)
@@ -65,7 +92,7 @@ function Get-Pull-Request-Title {
 
 function Get-Pull-Request-Labels {
     [CmdletBinding()]
-	Param(
+	param(
         [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
         [object] $context
 	)
@@ -79,7 +106,7 @@ function Get-Pull-Request-Labels {
 
 function Get-Commit-Associated-Pull-Requests {
     [CmdletBinding()]
-	Param(
+	param(
         [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
         [object] $context
 	)
@@ -94,7 +121,7 @@ function Get-Commit-Associated-Pull-Requests {
 
 function Check-Release-Published {
     [CmdletBinding()]
-	Param(
+	param(
         [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
         [object] $context,
 		[Parameter(Mandatory=$true)]
@@ -106,7 +133,7 @@ function Check-Release-Published {
 					-Segments @('releases') `
 					-Headers $($context.SecretToken | Get-GitHub-Headers)
 	$existing = ($response.Content | ConvertFrom-Json) `
-					| ? {$_.tag_name -eq $tag}`
+					| Where-Object {$_.tag_name -eq $tag}`
 					| Select-Object -Unique -ExpandProperty 'published_at'
 	if ($existing) {
 		Write-Host "Release already published at $existing"
@@ -115,9 +142,82 @@ function Check-Release-Published {
     return $false
 }
 
+function Get-Release-Info {
+    [CmdletBinding()]
+	param(
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
+        [object] $context,
+		[Parameter(Mandatory=$true)]
+		[string] $tag
+	)
+	$response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('releases') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+    $json = $response | Select-Object -ExpandProperty Content | ConvertFrom-Json
+    return $json | Where-Object {$_.tag_name -eq $tag}
+}
+
+function Get-Latest-Release-Info {
+    [CmdletBinding()]
+	param(
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
+        [object] $context
+	)
+	$response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('releases', 'latest') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+    return $response | Select-Object -ExpandProperty Content | ConvertFrom-Json
+}
+
+function Upload-Release-Assets {
+    [CmdletBinding()]
+	param(
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
+        [object] $context,
+		[Parameter(Mandatory=$true)]
+		[string] $tag,
+        [Parameter(Mandatory=$true)]
+		[string] $path,
+        [Parameter(Mandatory = $false)]
+        [string[]] $extensions = @('zip', 'vsix')
+	)
+    $headers = $context.SecretToken | Get-GitHub-Headers
+	$info = $context | Get-Release-Info -Tag $tag
+    $url = $info | Select-Object -Unique -ExpandProperty 'upload_url'
+    
+    $normalizedExtensions = $extensions |
+        ForEach-Object {
+            if ($_.StartsWith('.')) { $_.ToLowerInvariant() }
+            else { ".$($_.ToLowerInvariant())" }
+        }
+
+    $files = Get-ChildItem -Path $path -File |
+        Where-Object { $_.Extension.ToLowerInvariant() -in $normalizedExtensions }
+
+    if ($files.Count -eq 0) {
+        Write-Warning "No file with extension(s) '$($normalizedExtensions -join "', '")' found in '$path'."
+    }
+
+    foreach ($file in $files) {
+        $payload = [System.IO.File]::ReadAllBytes($file.FullName)
+
+        Send-GitHub-FileUpload-Request `
+            -Payload $payload `
+            -Uri $url `
+            -Headers $headers `
+            -Name $file.Name.ToLower()
+
+        Write-Host "Asset '$($file.Name)' uploaded."
+    }
+}
+
 function Post-Pull-Request-Labels {
     [CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
 		[object] $context,
 		[Parameter(Mandatory=$true)]
@@ -134,7 +234,7 @@ function Post-Pull-Request-Labels {
 
 function Publish-Release {
     [CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
 		[object] $context,
 		[string] $tag,
@@ -158,9 +258,66 @@ function Publish-Release {
 					-Body $body
 }
 
+function Download-Release-Asset {
+    [CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
+		[object] $context,
+        [Parameter(Mandatory=$false)]
+		[string] $tag,
+        [Parameter(Mandatory=$true)]
+		[string] $pattern
+	)
+    if ($null -eq $tag -or $tag -eq "") {
+        $tag = $context | Get-Latest-Release-Info | Select-Object -ExpandProperty tag_Name
+    }
+
+    $assets = $context | List-Release-Assets -Tag $tag
+    $assets = $assets | Where-Object {$_.name -like $pattern}
+
+    if ($null -eq $assets)
+    {
+        Write-Host "No assets found for pattern $pattern and for tag $tag"
+        return
+    }
+
+    if ($null -eq $assets.Count) {$count = "1 asset"} else {$count = "$($assets.Count) assets"}
+    Write-Host "$count found for pattern $pattern and for tag $tag!"
+    $asset = $assets | Select-Object -First 1
+    $url = $asset | Select-Object -ExpandProperty browser_download_url 
+
+    Write-Host "Downloading $($asset.name) from $url ..."
+	$filename = $url.Split('/')[-1]
+	Invoke-WebRequest -Uri $url -OutFile $filename
+    Write-Host "$($asset.name) downloaded."    
+}
+
+function List-Release-Assets {
+    [CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
+		[object] $context,
+        [Parameter(Mandatory=$false)]
+		[string] $tag
+	)
+    if ($null -eq $tag -or $tag -eq "") {
+        $release = $context | Get-Latest-Release-Info
+    } else {
+        $release = $context | Get-Release-Info -Tag $tag
+    }
+    $releaseId = $release | Select-Object -ExpandProperty id
+
+    $response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('releases', $releaseId, 'assets') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+    return $response | Select-Object -ExpandProperty Content | ConvertFrom-Json
+}
+
 function Get-Expected-Labels {
 	[CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
         [string] $title,
 		[System.Collections.IDictionary] $mapping
@@ -193,7 +350,7 @@ function Get-Expected-Labels {
 
 function Set-Pull-Request-Expected-Labels {
 	[CmdletBinding()]
-	Param(
+	param(
 		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
 		[object] $context,
 		[string] $config
@@ -225,8 +382,8 @@ function Set-Pull-Request-Expected-Labels {
 		throw "Pull Request title is not a valid conventional commit"
 	}
 
-	[array]$expected = $expected | ? {$_ -ne 'none'}
-	[array]$missing = $expected | ? {-not($existing -contains $_)}
+	[array]$expected = $expected | Where-Object {$_ -ne 'none'}
+	[array]$missing = $expected | Where-Object {-not($existing -contains $_)}
 	if ($missing.Length -gt 0) {
 		$context | Post-Pull-Request-Labels -Labels $missing
 		Write-Host "Pull request #$($context.Id): added following labels: $($missing -Join ',')"
