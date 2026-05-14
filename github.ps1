@@ -49,6 +49,33 @@ function Send-GitHub-Post-Request {
 					-Body $($(ConvertTo-Json $body))
 }
 
+function Send-GitHub-FileUpload-Request {
+	[CmdletBinding()]
+	Param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
+        [object] $payload,
+		[Parameter(Mandatory=$true)]
+		[string] $uri,
+        [Parameter(Mandatory=$true)]
+		[string] $name, 
+		[Parameter(Mandatory=$true)]
+		[System.Collections.IDictionary] $headers
+	)
+    if ($headers.Keys -contains "Content-Type") {
+        $headers.Remove("Content-Type")
+    }
+    $headers.Add("Content-Type", "application/zip")
+
+    $uri = $uri -replace '{.*}', ''
+    $uri = $uri + "?name=" + $name
+
+	$response = Invoke-WebRequest `
+					-Method POST `
+					-Uri $uri `
+					-Headers $headers `
+					-Body $payload
+}
+
 function Get-Pull-Request-Title {
     [CmdletBinding()]
 	Param(
@@ -115,6 +142,79 @@ function Check-Release-Published {
     return $false
 }
 
+function Get-Release-Info {
+    [CmdletBinding()]
+	Param(
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
+        [object] $context,
+		[Parameter(Mandatory=$true)]
+		[string] $tag
+	)
+	$response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('releases') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+    $json = $response | Select-Object -ExpandProperty Content | ConvertFrom-Json
+    return $json | ? {$_.tag_name -eq $tag}
+}
+
+function Get-Latest-Release-Info {
+    [CmdletBinding()]
+	Param(
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
+        [object] $context
+	)
+	$response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('releases', 'latest') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+    return $response | Select-Object -ExpandProperty Content | ConvertFrom-Json
+}
+
+function Upload-Release-Assets {
+    [CmdletBinding()]
+	Param(
+        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
+        [object] $context,
+		[Parameter(Mandatory=$true)]
+		[string] $tag,
+        [Parameter(Mandatory=$true)]
+		[string] $path,
+        [Parameter(Mandatory = $false)]
+        [string[]] $extensions = @('zip', 'vsix')
+	)
+    $headers = $context.SecretToken | Get-GitHub-Headers
+	$info = $context | Get-Release-Info -Tag $tag
+    $url = $info | Select-Object -Unique -ExpandProperty 'upload_url'
+    
+    $normalizedExtensions = $extensions |
+        ForEach-Object {
+            if ($_.StartsWith('.')) { $_.ToLowerInvariant() }
+            else { ".$($_.ToLowerInvariant())" }
+        }
+
+    $files = Get-ChildItem -Path $path -File |
+        Where-Object { $_.Extension.ToLowerInvariant() -in $normalizedExtensions }
+
+    if ($files.Count -eq 0) {
+        Write-Warning "No file with extension(s) '$($normalizedExtensions -join "', '")' found in '$path'."
+    }
+
+    foreach ($file in $files) {
+        $payload = [System.IO.File]::ReadAllBytes($file.FullName)
+
+        Send-GitHub-FileUpload-Request `
+            -Payload $payload `
+            -Uri $url `
+            -Headers $headers `
+            -Name $file.Name.ToLower()
+
+        Write-Host "Asset '$($file.Name)' uploaded."
+    }
+}
+
 function Post-Pull-Request-Labels {
     [CmdletBinding()]
 	Param(
@@ -156,6 +256,62 @@ function Publish-Release {
 					-Segments @('releases') `
 					-Headers $($context.SecretToken | Get-GitHub-Headers) `
 					-Body $body
+}
+
+function Download-Release-Asset {
+    [CmdletBinding()]
+	Param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
+		[object] $context,
+        [Parameter(Mandatory=$false)]
+		[string] $tag,
+        [Parameter(Mandatory=$true)]
+		[string] $pattern
+	)
+    if ($null -eq $tag -or $tag -eq "") {
+        $tag = $context | Get-Latest-Release-Info | Select-Object -ExpandProperty tag_Name
+    }
+
+    $assets = $context | List-Release-Assets -Tag $tag
+    $assets = $assets | ? {$_.name -like $pattern}
+
+    if ($null -eq $assets)
+    {
+        Write-Host "No assets found for pattern $pattern and for tag $tag"
+        return
+    }
+
+    if ($null -eq $assets.Count) {$count = "1 asset"} else {$count = "$($assets.Count) assets"}
+    Write-Host "$count found for pattern $pattern and for tag $tag!"
+    $asset = $assets | Select-Object -First 1
+    $url = $asset | Select-Object -ExpandProperty browser_download_url 
+
+    Write-Host "Downloading $($asset.name) from $url ..."
+	Invoke-WebRequest -Uri $url -OutFile $url.Substring($url.LastIndexOf('/') + 1)
+    Write-Host "$($asset.name) downloaded."    
+}
+
+function List-Release-Assets {
+    [CmdletBinding()]
+	Param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
+		[object] $context,
+        [Parameter(Mandatory=$false)]
+		[string] $tag
+	)
+    if ($null -eq $tag -or $tag -eq "") {
+        $release = $context | Get-Latest-Release-Info
+    } else {
+        $release = $context | Get-Release-Info -Tag $tag
+    }
+    $releaseId = $release | Select-Object -ExpandProperty id
+
+    $response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('releases', $releaseId, 'assets') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+    return $response | Select-Object -ExpandProperty Content | ConvertFrom-Json
 }
 
 function Get-Expected-Labels {
