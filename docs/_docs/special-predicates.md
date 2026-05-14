@@ -6,6 +6,9 @@ keywords: [null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### null
+
+###### Alias: `is-null`
+
 ###### Overview
 
 Returns `true` if the argument is effectively `null` else return `false`.

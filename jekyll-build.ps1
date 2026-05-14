@@ -1,0 +1,1 @@
+docker compose run --rm jekyll bundle exec jekyll build

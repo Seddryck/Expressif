@@ -10,6 +10,8 @@ hero:
 
 {% include boxes.html columns="3" title="Browse Topics" subtitle="Chose an option that you need help with or search above" %}
 
+{% include counter.html %}
+
 {% include changelog.html %}
 
 {% include cta.html title="Didn't find an answer?" button_text="Contact Us" button_url="https://github.com/seddryck/Expressif/discussions" subtitle="Get in touch with us through GitHub discussions" %}

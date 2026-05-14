@@ -11,6 +11,9 @@ keywords: [any-to-any, neutral, null-to-value, value-to-value] # AUTO-GENERATED 
 Returns `any`.
 
 ##### neutral
+
+###### Alias: `Special-to-neutral`
+
 ###### Overview
 
 Returns the argument value.
