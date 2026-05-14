@@ -1,5 +1,11 @@
 # Changelog page source
 
+- title: Release 1.14
+  label:
+  date: May 14, 2026
+  list:
+  - VSCode extension for syntax highlighting
+
 - title: Release 1.0
   label:
   date: Dec 22, 2023

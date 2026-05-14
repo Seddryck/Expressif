@@ -6,16 +6,25 @@ keywords: [false, false-or-null, identical-to, true, true-or-null] # AUTO-GENERA
 ---
 <!-- START AUTO-GENERATED -->
 ##### false
+
+###### Alias: `boolean-is-false`
+
 ###### Overview
 
 Returns `true` if the argument is effectively `false` else return `false`.
 
 ##### false-or-null
+
+###### Alias: `boolean-is-false-or-null`
+
 ###### Overview
 
 Returns `true` if the argument is effectively `false` or `null` else return `false`.
 
 ##### identical-to
+
+###### Alias: `boolean-is-identical-to`
+
 ###### Overview
 
 Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.
@@ -24,11 +33,17 @@ Returns `true` if the boolean passed as argument has the same value than the boo
 * reference: A boolean value to compare to the argument.
 
 ##### true
+
+###### Alias: `boolean-is-true`
+
 ###### Overview
 
 Returns `true` if the argument is effectively `true` else return `false`.
 
 ##### true-or-null
+
+###### Alias: `boolean-is-true-or-null`
+
 ###### Overview
 
 Returns `true` if the argument is effectively `true` or `null` else return `false`.

@@ -42,6 +42,7 @@ Assert.That(predicate.Evaluate("Nikola Tesla"), Is.True);
 
 Any subpredication is automatically assigned as group. The [serialization](../serializers/) is illustrating this behaviour
 
+{% raw %}
 <!-- START INCLUDE "PredicationBuilderTest.cs/Serialize_SubPredication_CorrectlySerialized" -->
 ```csharp
 var subPredicate = new PredicationBuilder()
@@ -57,4 +58,4 @@ var str = builder.Serialize();
 Assert.That(str, Is.EqualTo("{{lower-case |OR {starts-with(Nik) |AND ends-with(sla)}} |OR upper-case}"));
 ```
 <!-- END INCLUDE -->
-
+{% endraw %}

@@ -18,6 +18,24 @@ $elapsed = Measure-Command -Expression {
     ForEach($member in $members) {
         $keywords += $member.Name
         $doc += "##### $($member.Name)`r`n"
+        if($member.Aliases.Length -gt 0) {
+            $doc += "`r`n###### Alias"
+            if($member.Aliases.Length -gt 1) {
+                $doc += "es"
+            }
+            $doc += ": "
+            $i=0
+            foreach ($alias in $member.Aliases) {
+                $i+=1
+                $doc += "``$($alias)``"
+                if ($i -lt $member.Aliases.Length) {
+                    $doc += ", "
+                } else {
+                    $doc += "`r`n"
+                }
+            }
+            $doc += "`r`n"
+        }
         $doc += "###### Overview`r`n`r`n$($member.Summary)`r`n"
         if($member.Parameters.Length -gt 0) {
             $doc += "`r`n###### Parameter"
