@@ -28,7 +28,7 @@ function New-VsCodeExtension {
         Pop-Location
     }
 
-    Write-Host "-> VSIX package generated in $OutputFolder"
+    Write-Host "-> VSIX package generated in $OutputPath"
 }
 
 function Copy-RemoteText {
@@ -101,4 +101,3 @@ New-VsCodeExtension `
     -OutputPath ".\bin\$Bundle-$Version.vsix"
 
 Write-Host "== Done =="
-Write-Host "Output: .\bin\$Bundle-$Version.vsix"

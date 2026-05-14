@@ -11,7 +11,7 @@ $tools = dotnet tool list --local |
         ($_ -split '\s{2,}')[0]
     }
 
-if (!($tools -contains $ToolName)) {
+if (-not($tools -contains $ToolName)) {
     Write-Host "Locally installing $ToolName..."
     dotnet tool install --local $ToolName
 } else {

@@ -11,7 +11,7 @@ $model = [ordered]@{
     }
     | ConvertTo-Json -Depth 20
 
-Write-Host "Model sets version to value '$($model.version)'."
+Write-Host "Model sets version to value '$Version'."
 
 Write-Host "Running Didot via local installation..."
 $model | dotnet tool run didot `

@@ -6,7 +6,7 @@
     "version": "{{model.version}}",
     "repository": {
         "type": "git",
-        "url": "https://github.com/your-org/expressif.git"
+        "url": "https://github.com/Seddryck/Expressif.git"
     },
     "license": "Apache-2.0",
     "author": "Cédric L. Charlier",

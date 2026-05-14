@@ -3,30 +3,29 @@ param(
     [string] $InputFolder,
 
     [Parameter(Mandatory = $false)]
-    [string] $OutputPath = ".\obj\syntaxes\expressif.tmLanguage.json",
-
-    [string] $LanguageName = "Expressif",
-    [string] $ScopeName = "source.expressif"
+    [string] $OutputPath = ".\obj\syntaxes\expressif.tmLanguage.json"
 )
 
 $model = [ordered]@{
-        functions =  Get-Content $InputFolder\function.json -Raw | ConvertFrom-Json |
+        functions =  Get-Content $InputFolder\function.json -Raw |
+            ConvertFrom-Json |
             Where-Object { $_.IsPublic -eq $true } |
-            ForEach-Object { 
+            ForEach-Object {
                 [ordered]@{
                     name = $_.Name
                     scope = $_.Scope
                     regex = [regex]::Escape($_.Name)
-                } 
+                }
             } 
-        predicates =  Get-Content $InputFolder\predicate.json -Raw | ConvertFrom-Json |
+        predicates =  Get-Content $InputFolder\predicate.json -Raw |
+            ConvertFrom-Json |
             Where-Object { $_.IsPublic -eq $true } |
-            ForEach-Object { 
+            ForEach-Object {
                 [ordered]@{
                     name = $_.Name
                     scope = $_.Scope
                     regex = [regex]::Escape($_.Name)
-                } 
+                }
             }
     }
     | ConvertTo-Json -Depth 20
