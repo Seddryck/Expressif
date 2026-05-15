@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "didot-cli": {
-      "version": "0.32.36",
+      "version": "0.32.42",
       "commands": [
         "didot"
       ],
