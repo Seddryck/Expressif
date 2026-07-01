@@ -15,6 +15,10 @@ public class ParameterTest
     [TestCase("@foo", typeof(VariableParameter))]
     [TestCase("[foo]", typeof(ObjectPropertyParameter))]
     [TestCase("#52", typeof(ObjectIndexParameter))]
+    [TestCase("{}", typeof(ArrayParameter))]
+    [TestCase("{1,2,3}", typeof(ArrayParameter))]
+    [TestCase("{@foo}", typeof(ArrayParameter))]
+    [TestCase("{ @foo, #1, [bar] }", typeof(ArrayParameter))]
     [TestCase("{ @foo | text-to-func(bar) }", typeof(InputExpressionParameter))]
     public void Parse_Parameter_Valid(string value, Type type)
         => Assert.That(Parameter.Parser.Parse(value), Is.TypeOf(type));

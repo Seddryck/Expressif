@@ -131,6 +131,7 @@ on_success:
       & .\update-docs.ps1 function numeric
       & .\update-docs.ps1 function temporal
       & .\update-docs.ps1 function io
+      & .\update-docs.ps1 function array
       & .\update-docs.ps1 predicate special
       & .\update-docs.ps1 predicate text
       & .\update-docs.ps1 predicate numeric

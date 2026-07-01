@@ -1,12 +1,7 @@
 using Expressif.Parsers;
 using Expressif.Functions;
-using Expressif.Functions.IO;
 using Expressif.Functions.Numeric;
-using Expressif.Functions.Special;
-using Expressif.Functions.Temporal;
 using Expressif.Functions.Text;
-using System.Diagnostics;
-
 
 namespace Expressif.Testing.Functions;
 
@@ -86,7 +81,7 @@ public class ExpressionFactoryTest
     public void Instantiate_RoundExpressionParameter_Valid()
     {
         var context = new Context();
-        var subFunction = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", []) }));
+        var subFunction = new InputExpressionParameter(new Expressif.Parsers.ClosedExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", []) }));
         var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction }, context);
         context.Variables.Add<int>("myVar", 4);
         Assert.That(function, Is.Not.Null);
@@ -98,9 +93,9 @@ public class ExpressionFactoryTest
     public void Instantiate_RoundMultipleExpressionParameter_Valid()
     {
         var context = new Context();
-        var subFunction1 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", []) }));
-        var subFunction2 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", []) }));
-        var subFunction3 = new InputExpressionParameter(new InputExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", [subFunction1]), new Function("numeric-to-multiply", [subFunction2]) }));
+        var subFunction1 = new InputExpressionParameter(new Expressif.Parsers.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", []) }));
+        var subFunction2 = new InputExpressionParameter(new Expressif.Parsers.ClosedExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", []) }));
+        var subFunction3 = new InputExpressionParameter(new Expressif.Parsers.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", [subFunction1]), new Function("numeric-to-multiply", [subFunction2]) }));
         var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction3 }, context);
         context.Variables.Add<int>("myVar1", 4);
         context.Variables.Add<int>("myVar2", 5);

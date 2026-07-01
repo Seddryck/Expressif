@@ -204,6 +204,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 <!-- START FUNCTION TABLE -->
 |Scope    | Name                                | Aliases                                                                           |
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
+|Array    | fold                                | array-to-fold                                                                     |
 |IO       | creation-datetime                   | file-to-creation-datetime, file-to-creation-dateTime                              |
 |IO       | creation-datetime-utc               | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                      |
 |IO       | directory                           | path-to-directory                                                                 |

@@ -54,6 +54,7 @@ public abstract class BaseExpressionFactory
     {
         return parameter switch
         {
+            ArrayParameter array => CreateFunctionCast(() => BuildArray(array, context), scalarType),
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
@@ -63,6 +64,18 @@ public abstract class BaseExpressionFactory
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
             _ => throw new NotImplementedException($"Cannot handle the parameter type '{parameter.GetType().Name}'")
         };
+
+        object?[] BuildArray(ArrayParameter array, IContext currentContext)
+        {
+            var values = new object?[array.Values.Length];
+            for (var i = 0; i < array.Values.Length; i++)
+            {
+                var elementFactory = CreateParameter(array.Values[i], typeof(object), currentContext);
+                values[i] = elementFactory.DynamicInvoke();
+            }
+
+            return values;
+        }
 
         static IInterval buildInterval(Interval value)
             => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);

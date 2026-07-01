@@ -17,8 +17,9 @@ public record class VariableParameter(string Name) : IParameter { }
 public record class ObjectPropertyParameter(string Name) : IParameter { }
 public record class ObjectIndexParameter(int Index) : IParameter { }
 public record class ContextParameter(Func<IContext, object?> Function) : IParameter { }
+public record class ArrayParameter(IParameter[] Values) : IParameter { }
 
-public record class InputExpressionParameter(InputExpression Expression) : IParameter { }
+public record class InputExpressionParameter(ClosedExpression Expression) : IParameter { }
 
 public class Parameter
 {
@@ -39,9 +40,28 @@ public class Parameter
 
     protected static readonly Parser<IParameter> ParametrizedExpressionParameter =
         from _ in Parse.Char('{').Token()
-        from expression in InputExpression.Parser
+        from parameter in VariableParameter.Or(IndexParameter).Or(ItemParameter).Or(LiteralParameter).Token()
+        from _0 in Parse.Char('|').Token()
+        from expression in Parsers.OpenExpression.Parser
         from _1 in Parse.Char('}').Token()
-        select new InputExpressionParameter(expression);
+        select new InputExpressionParameter(new ClosedExpression(parameter, expression.Members));
+
+    protected static readonly Parser<IParameter> ArrayLiteralParameter =
+        from _ in Parse.Char('{').Token()
+        from values in (
+            from close in Parse.Char('}').Token()
+            select Array.Empty<IParameter>()
+        ).Or(
+            from first in VariableParameter.Or(IntervalParameter).Or(IndexParameter).Or(ItemParameter).Or(LiteralParameter).Token().Once()
+            from others in (
+                from __ in Parse.Char(',').Token()
+                from p in VariableParameter.Or(IntervalParameter).Or(IndexParameter).Or(ItemParameter).Or(LiteralParameter).Token()
+                select p
+            ).Many()
+            from close in Parse.Char('}').Token()
+            select first.Concat(others).ToArray()
+        )
+        select new ArrayParameter(values);
 
     protected static readonly Parser<IParameter> LiteralParameter =
         from name in Grammar.Literal
@@ -56,6 +76,7 @@ public class Parameter
         .Or(IntervalParameter)
         .Or(IndexParameter)
         .Or(ItemParameter)
+        .Or(ArrayLiteralParameter)
         .Or(ParametrizedExpressionParameter)
         .Or(LiteralParameter)
         ;

@@ -191,4 +191,67 @@ public class ExpressionTest
         var result = expression.Evaluate("2018-01-01");
         Assert.That(result, Is.EqualTo(new DateTime(2020, 01, 01)));
     }
+
+    [Test]
+    public void Evaluate_ArrayLiteralPipeSum_Valid()
+    {
+        var expression = new ClosedExpression("{1,2,3} | sum");
+        var result = expression.Evaluate();
+        Assert.That(result, Is.EqualTo(6m));
+    }
+
+    [Test]
+    public void Evaluate_VariableArrayPipeCount_Valid()
+    {
+        var context = new Context();
+        context.Variables.Add<int[]>("arr", new[] { 1, 2, 3, 4 });
+
+        var expression = new ClosedExpression("@arr | count", context);
+        var result = expression.Evaluate();
+        Assert.That(result, Is.EqualTo(4));
+    }
+
+    [Test]
+    public void Evaluate_ObjectPropertyArrayPipeSum_Valid()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new { Values = new object[] { "1", 2, true } });
+
+        var expression = new ClosedExpression("[Values] | sum", context);
+        var result = expression.Evaluate();
+        Assert.That(result, Is.EqualTo(4m));
+    }
+
+    [Test]
+    public void Evaluate_ObjectIndexArrayPipeMax_Valid()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new List<object> { new[] { 1, 9, 4 } });
+
+        var expression = new ClosedExpression("#0 | max", context);
+        var result = expression.Evaluate();
+        Assert.That(result, Is.EqualTo(9m));
+    }
+
+    [Test]
+    public void Evaluate_OpenExpression_StartWithArrayFunctionThenAdd_Valid()
+    {
+        var expression = new Expression("sum | add(4)");
+        var result = expression.Evaluate(new[] { 1, 2, 3 });
+        Assert.That(result, Is.EqualTo(10m));
+    }
+
+    [Test]
+    public void Evaluate_EmptyArrayPipeAggregators_Valid()
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(new ClosedExpression("{} | count").Evaluate(), Is.Zero);
+            Assert.That(new ClosedExpression("{} | sum").Evaluate(), Is.Zero);
+            Assert.That(new ClosedExpression("{} | min").Evaluate(), Is.Null);
+            Assert.That(new ClosedExpression("{} | max").Evaluate(), Is.Null);
+            Assert.That(new ClosedExpression("{} | first").Evaluate(), Is.Null);
+            Assert.That(new ClosedExpression("{} | last").Evaluate(), Is.Null);
+        }
+    }
 }
