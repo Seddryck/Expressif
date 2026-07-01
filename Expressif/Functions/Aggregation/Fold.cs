@@ -3,7 +3,6 @@ using System;
 
 namespace Expressif.Functions.Array;
 
-[Function]
 public class Fold : IFunction
 {
     public Func<IAccumulator> Accumulator { get; }

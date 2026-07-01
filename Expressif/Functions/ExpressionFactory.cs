@@ -36,12 +36,12 @@ public class ExpressionFactory : BaseExpressionFactory
 
             var accumulatorFunction = inputExpression.GetImplicitFoldAccumulator()!;
             var sourceParameter = CreateParameter(inputExpression.Parameter, typeof(object), context);
+            var aggregationFunction = Instantiate<IFunction>(accumulatorFunction.Name, accumulatorFunction.Parameters, context);
 
             return new DelegatedFunction(_ =>
             {
                 var source = sourceParameter.DynamicInvoke();
-                var fold = new Fold(() => InstantiateAccumulator(accumulatorFunction.Name, accumulatorFunction.Parameters, context));
-                return fold.Evaluate(source);
+                return aggregationFunction.Evaluate(source);
             });
         }
     }
@@ -51,22 +51,6 @@ public class ExpressionFactory : BaseExpressionFactory
 
     public IFunction Instantiate(Type type, IParameter[] parameters, IContext context)
         => Instantiate<IFunction>(type, parameters, context);
-
-    private IAccumulator InstantiateAccumulator(string name, IParameter[] parameters, IContext context)
-    {
-        var type = name.ToKebabCase() switch
-        {
-            "count" => typeof(CountAccumulator),
-            "sum" => typeof(SumAccumulator),
-            "min" => typeof(MinAccumulator),
-            "max" => typeof(MaxAccumulator),
-            "first" => typeof(FirstAccumulator),
-            "last" => typeof(LastAccumulator),
-            _ => throw new NotImplementedFunctionException(name),
-        };
-
-        return Instantiate<IAccumulator>(type, parameters, context);
-    }
 
     private sealed class DelegatedFunction : IFunction
     {

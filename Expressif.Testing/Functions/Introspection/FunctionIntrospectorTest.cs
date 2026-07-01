@@ -101,4 +101,19 @@ public class FunctionIntrospectorTest
             Assert.That(info.Scope, Is.EqualTo("Text").Or.EqualTo("Numeric").Or.EqualTo("IO").Or.EqualTo("Temporal").Or.EqualTo("Special").Or.EqualTo("Array"));
         }
     }
+
+    [Test]
+    public void Locate_ExpressifAssembly_ArrayAggregationsExposedWithoutFold()
+    {
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Infos.Any(x => x.Name == "count"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "sum"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "min"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "max"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "first"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "last"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "fold"), Is.False);
+        }
+    }
 }
