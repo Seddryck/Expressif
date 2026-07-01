@@ -24,4 +24,12 @@ public class ExpressionTest
     [TestCase("foo", 0)]
     public void Parse_ParametrizedExpression_Valid(string value, int count)
         => Assert.That(InputExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
+
+    [Test]
+    [TestCase("{1,2,3} | sum")]
+    [TestCase("@foo | count")]
+    [TestCase("[foo] | min")]
+    [TestCase("#1 | last")]
+    public void Parse_InputExpression_ImplicitFoldAggregation_Valid(string value)
+        => Assert.That(InputExpression.Parser.Parse(value).IsImplicitFoldAggregation, Is.True);
 }

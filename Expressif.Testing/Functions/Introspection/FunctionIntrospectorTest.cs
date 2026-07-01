@@ -98,7 +98,7 @@ public class FunctionIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
             Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Scope, Is.EqualTo("Text").Or.EqualTo("Numeric").Or.EqualTo("IO").Or.EqualTo("Temporal").Or.EqualTo("Special"));
+            Assert.That(info.Scope, Is.EqualTo("Text").Or.EqualTo("Numeric").Or.EqualTo("IO").Or.EqualTo("Temporal").Or.EqualTo("Special").Or.EqualTo("Array"));
         }
     }
 }

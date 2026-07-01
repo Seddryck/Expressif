@@ -27,11 +27,28 @@ public class Expression : IExpression
 
 public class InputExpression
 {
+    private static readonly HashSet<string> ImplicitFoldAccumulators =
+    [
+        "count",
+        "sum",
+        "min",
+        "max",
+        "first",
+        "last"
+    ];
+
     public IEnumerable<Function> Members { get; }
     public IParameter Parameter { get; }
 
     public InputExpression(IParameter parameter, IEnumerable<Function> members)
         => (Parameter, Members) = (parameter, members);
+
+    public bool IsImplicitFoldAggregation
+        => Members.Count() == 1
+        && ImplicitFoldAccumulators.Contains(Members.First().Name, StringComparer.OrdinalIgnoreCase);
+
+    public Function? GetImplicitFoldAccumulator()
+        => IsImplicitFoldAggregation ? Members.First() : null;
 
     public static readonly Parser<InputExpression> Parser =
         from parameter in Parsers.Parameter.Parser.Token()

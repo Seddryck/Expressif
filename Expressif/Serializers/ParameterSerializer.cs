@@ -13,6 +13,7 @@ public class ParameterSerializer
     {
         return parameter switch
         {
+            ArrayParameter a => $"{{{string.Join(", ", a.Values.Select(Serialize))}}}",
             LiteralParameter l => l.Value.Any(
                 x => Grammar.AlongQuotedChars
                         .Union(Grammar.OpeningQuotedChars)
