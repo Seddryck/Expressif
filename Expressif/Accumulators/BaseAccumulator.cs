@@ -1,6 +1,6 @@
 using System;
 
-namespace Expressif.Functions.Array;
+namespace Expressif.Accumulators;
 
 public abstract class BaseAccumulator : IAccumulator
 {

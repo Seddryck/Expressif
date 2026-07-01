@@ -15,6 +15,7 @@
   - numeric-functions
   - temporal-functions
   - io-functions
+  - array-functions
 
 - title: Predicates library
   docs:
@@ -23,6 +24,10 @@
   - text-predicates
   - numeric-predicates
   - temporal-predicates
+
+- title: Accumulators library
+  docs:
+  - array-accumulators
 
 - title: Alternative usages of Expressif 
   docs:

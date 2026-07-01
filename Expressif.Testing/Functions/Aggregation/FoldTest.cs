@@ -1,4 +1,5 @@
 using Expressif.Functions.Array;
+using Expressif.Accumulators;
 
 namespace Expressif.Testing.Functions.Aggregation;
 

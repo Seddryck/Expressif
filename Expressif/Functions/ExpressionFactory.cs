@@ -11,6 +11,15 @@ namespace Expressif.Functions;
 public class ExpressionFactory : BaseExpressionFactory
 {
     private Parser<IRootExpression> Parser { get; } = RootExpression.Parser;
+    private static readonly HashSet<string> ImplicitFoldAccumulators =
+    [
+        "count",
+        "sum",
+        "min",
+        "max",
+        "first",
+        "last"
+    ];
 
     public ExpressionFactory()
         : base(new FunctionTypeMapper()) { }
@@ -36,7 +45,7 @@ public class ExpressionFactory : BaseExpressionFactory
     {
         var functions = new List<IFunction>();
         foreach (var member in expression.Members)
-            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
+            functions.Add(InstantiateOrWrapAggregation(member, context));
 
         return new ChainFunction(functions);
     }
@@ -46,13 +55,45 @@ public class ExpressionFactory : BaseExpressionFactory
         var sourceParameter = CreateParameter(expression.Parameter, typeof(object), context);
         var functions = new List<IFunction>();
         foreach (var member in expression.Members)
-            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
+            functions.Add(InstantiateOrWrapAggregation(member, context));
 
         return new DelegatedFunction(_ =>
         {
             var source = sourceParameter.DynamicInvoke();
             return functions.Aggregate(source, (current, function) => function.Evaluate(current));
         });
+    }
+
+    private IFunction InstantiateOrWrapAggregation(Parsers.Function function, IContext context)
+    {
+        var name = function.Name.ToKebabCase();
+
+        if (name == "fold")
+        {
+            if (function.Parameters.Length != 1)
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+            return new Fold(BuildAccumulatorNameProvider(function.Parameters[0], context));
+        }
+
+        if (name == "broadcast")
+        {
+            if (function.Parameters.Length != 1)
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+            return new Broadcast(BuildAccumulatorNameProvider(function.Parameters[0], context));
+        }
+
+        if (ImplicitFoldAccumulators.Contains(name, StringComparer.OrdinalIgnoreCase) && function.Parameters.Length == 0)
+            return new Fold(() => name);
+
+        return Instantiate<IFunction>(function.Name, function.Parameters, context);
+    }
+
+    private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
+    {
+        var provider = CreateParameter(parameter, typeof(string), context);
+        return () => provider.DynamicInvoke()?.ToString() ?? string.Empty;
     }
 
     private sealed class DelegatedFunction : IFunction

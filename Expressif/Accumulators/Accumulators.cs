@@ -1,8 +1,12 @@
 using Expressif.Values.Casters;
 using System;
 
-namespace Expressif.Functions.Array;
+namespace Expressif.Accumulators;
 
+/// <summary>
+/// Counts the number of accumulated items, including <see langword="null"/> values.
+/// </summary>
+[Accumulator(prefix: "", aliases: ["count"])]
 public class CountAccumulator : BaseAccumulator
 {
     private int count;
@@ -17,6 +21,14 @@ public class CountAccumulator : BaseAccumulator
         => count;
 }
 
+/// <summary>
+/// Computes the sum of all accumulated numeric values.
+/// </summary>
+/// <remarks>
+/// Each item is converted using <see cref="NumericCaster"/>.
+/// A <see cref="InvalidCastException"/> is thrown when a <see langword="null"/> value is accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["sum"])]
 public class SumAccumulator : BaseAccumulator
 {
     private decimal sum;
@@ -32,6 +44,13 @@ public class SumAccumulator : BaseAccumulator
         => sum;
 }
 
+/// <summary>
+/// Tracks the smallest numeric value found during accumulation.
+/// </summary>
+/// <remarks>
+/// Returns <see langword="null"/> when no value has been accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["min"])]
 public class MinAccumulator : BaseAccumulator
 {
     private decimal? min;
@@ -50,6 +69,13 @@ public class MinAccumulator : BaseAccumulator
         => min;
 }
 
+/// <summary>
+/// Tracks the greatest numeric value found during accumulation.
+/// </summary>
+/// <remarks>
+/// Returns <see langword="null"/> when no value has been accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["max"])]
 public class MaxAccumulator : BaseAccumulator
 {
     private decimal? max;
@@ -68,6 +94,13 @@ public class MaxAccumulator : BaseAccumulator
         => max;
 }
 
+/// <summary>
+/// Stores the first accumulated item and ignores all subsequent items.
+/// </summary>
+/// <remarks>
+/// Returns <see langword="null"/> when no value has been accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["first"])]
 public class FirstAccumulator : BaseAccumulator
 {
     private object? first;
@@ -92,6 +125,13 @@ public class FirstAccumulator : BaseAccumulator
         => hasValue ? first : null;
 }
 
+/// <summary>
+/// Stores the most recently accumulated item.
+/// </summary>
+/// <remarks>
+/// Returns <see langword="null"/> when no value has been accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["last"])]
 public class LastAccumulator : BaseAccumulator
 {
     private object? last;

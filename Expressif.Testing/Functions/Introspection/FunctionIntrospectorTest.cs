@@ -103,17 +103,19 @@ public class FunctionIntrospectorTest
     }
 
     [Test]
-    public void Locate_ExpressifAssembly_ArrayAggregationsExposedWithoutFold()
+    public void Locate_ExpressifAssembly_ArrayAggregationsExposeFoldAndBroadcastOnly()
     {
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(Infos.Any(x => x.Name == "count"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "sum"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "min"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "max"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "first"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "last"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "fold"), Is.False);
+            Assert.That(Infos.Any(x => x.Name == "fold"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "broadcast"), Is.True);
+
+            Assert.That(Infos.Any(x => x.Name == "count"), Is.False);
+            Assert.That(Infos.Any(x => x.Name == "sum"), Is.False);
+            Assert.That(Infos.Any(x => x.Name == "min"), Is.False);
+            Assert.That(Infos.Any(x => x.Name == "max"), Is.False);
+            Assert.That(Infos.Any(x => x.Name == "first"), Is.False);
+            Assert.That(Infos.Any(x => x.Name == "last"), Is.False);
         }
     }
 }

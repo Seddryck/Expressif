@@ -1,5 +1,6 @@
 
 using Expressif.Functions;
+using Expressif.Accumulators;
 
 namespace Expressif.Functions.Array;
 
@@ -8,7 +9,6 @@ namespace Expressif.Functions.Array;
 /// It iterates over an enumerable input and delegates state management to an accumulator.
 /// Returns `null` when the input is not an enumerable or is a string.
 /// </summary>
-[Function]
 public abstract class BaseAggregationFunction : IFunction
 {
     public object? Evaluate(object? value)

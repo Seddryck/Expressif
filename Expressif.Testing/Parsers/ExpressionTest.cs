@@ -49,6 +49,7 @@ public class ExpressionTest
     [TestCase("@arr | count", typeof(ClosedRootExpression))]
     [TestCase("sum | add(3)", typeof(OpenRootExpression))]
     [TestCase("lower(foo) | trim", typeof(OpenRootExpression))]
+    [TestCase("{1,2,3} | broadcast(sum)", typeof(ClosedRootExpression))]
     public void Parse_RootExpression_ClosedFirst(string value, Type expectedType)
         => Assert.That(RootExpression.Parser.Parse(value), Is.TypeOf(expectedType));
 }
