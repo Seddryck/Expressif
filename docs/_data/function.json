@@ -16,16 +16,6 @@
     ]
   },
   {
-    "Name": "hour",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-hour"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a textual value at format hh (24 hours format) representing the hours of the dateTime passed as the argument",
-    "Parameters": []
-  },
-  {
     "Name": "hour-minute",
     "IsPublic": true,
     "Aliases": [
@@ -210,6 +200,26 @@
     ]
   },
   {
+    "Name": "neutral",
+    "IsPublic": true,
+    "Aliases": [
+      "Special-to-neutral"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "hour",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-hour"
+    ],
+    "Scope": "Temporal",
+    "Summary": "returns a textual value at format hh (24 hours format) representing the hours of the dateTime passed as the argument",
+    "Parameters": []
+  },
+  {
     "Name": "second-of-day",
     "IsPublic": true,
     "Aliases": [
@@ -237,26 +247,6 @@
     ],
     "Scope": "Temporal",
     "Summary": "returns a numeric value representing the seconds of the minute of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "minute-of-day",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-minute-of-day"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a numeric value representing the minutes of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "previous-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-previous-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -346,16 +336,6 @@
     "Parameters": []
   },
   {
-    "Name": "neutral",
-    "IsPublic": true,
-    "Aliases": [
-      "Special-to-neutral"
-    ],
-    "Scope": "Special",
-    "Summary": "Returns the argument value.",
-    "Parameters": []
-  },
-  {
     "Name": "floor-minute",
     "IsPublic": true,
     "Aliases": [
@@ -366,26 +346,22 @@
     "Parameters": []
   },
   {
-    "Name": "forward",
+    "Name": "null-to-value",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
+    "Parameters": []
+  },
+  {
+    "Name": "ceiling-minute",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-forward",
-      "dateTime-to-add"
+      "dateTime-to-ceiling-minute"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
-    "Parameters": [
-      {
-        "Name": "timeSpan",
-        "Optional": false,
-        "Summary": "The value to be added to the argument value"
-      },
-      {
-        "Name": "times",
-        "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
-      }
-    ]
+    "Summary": "Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.",
+    "Parameters": []
   },
   {
     "Name": "backward",
@@ -460,50 +436,75 @@
     "Parameters": []
   },
   {
-    "Name": "ceiling-minute",
+    "Name": "minute-of-day",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-ceiling-minute"
+      "dateTime-to-minute-of-day"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.",
+    "Summary": "returns a numeric value representing the minutes of the date passed as the argument",
     "Parameters": []
   },
   {
-    "Name": "previous-month",
+    "Name": "forward",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-month"
+      "dateTime-to-forward",
+      "dateTime-to-add"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
+    "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
+    "Parameters": [
+      {
+        "Name": "timeSpan",
+        "Optional": false,
+        "Summary": "The value to be added to the argument value"
+      },
+      {
+        "Name": "times",
+        "Optional": true,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
+      }
+    ]
+  },
+  {
+    "Name": "previous-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
-    "Name": "null-to-value",
+    "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Special",
-    "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
+    "Summary": "Returns `any`.",
     "Parameters": []
   },
   {
-    "Name": "value-to-value",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Special",
-    "Summary": "Returns `value` except if the argument value is `null` then it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "square-power",
+    "Name": "add",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-square-power"
+      "numeric-to-add"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the the numeric argument value raised to the square power.",
-    "Parameters": []
+    "Summary": "Returns the sum of an argument number and the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "The value to be added to the argument value."
+      },
+      {
+        "Name": "times",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
+      }
+    ]
   },
   {
     "Name": "cube-power",
@@ -650,6 +651,26 @@
     "Parameters": []
   },
   {
+    "Name": "root",
+    "IsPublic": true,
+    "Aliases": [
+      "path-to-root"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "square-power",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-square-power"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the the numeric argument value raised to the square power.",
+    "Parameters": []
+  },
+  {
     "Name": "power",
     "IsPublic": true,
     "Aliases": [
@@ -678,48 +699,6 @@
     "Scope": "Numeric",
     "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
     "Parameters": []
-  },
-  {
-    "Name": "clip",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-clip"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it."
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it."
-      }
-    ]
-  },
-  {
-    "Name": "add",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-add"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the sum of an argument number and the parameter value.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Optional": false,
-        "Summary": "The value to be added to the argument value."
-      },
-      {
-        "Name": "times",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
-      }
-    ]
   },
   {
     "Name": "subtract",
@@ -811,14 +790,6 @@
     ]
   },
   {
-    "Name": "any-to-any",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Special",
-    "Summary": "Returns `any`.",
-    "Parameters": []
-  },
-  {
     "Name": "lowest-common-multiple",
     "IsPublic": true,
     "Aliases": [
@@ -837,13 +808,21 @@
     ]
   },
   {
-    "Name": "human-readable-format-decimal-bytes",
+    "Name": "value-to-value",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Summary": "Returns `value` except if the argument value is `null` then it returns `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-decimal",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-human-readable-format-decimal-bytes"
+      "numeric-to-human-readable-format-decimal"
     ],
     "Scope": "Numeric",
-    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
+    "Summary": "Formats a numeric value using decimal SI prefixes.",
     "Parameters": []
   },
   {
@@ -911,23 +890,44 @@
     ]
   },
   {
-    "Name": "human-readable-format-decimal",
+    "Name": "clip",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-human-readable-format-decimal"
+      "numeric-to-clip"
     ],
     "Scope": "Numeric",
-    "Summary": "Formats a numeric value using decimal SI prefixes.",
+    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is smaller than it."
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is greater than it."
+      }
+    ]
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal-bytes"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
     "Parameters": []
   },
   {
-    "Name": "root",
+    "Name": "previous-month",
     "IsPublic": true,
     "Aliases": [
-      "path-to-root"
+      "dateTime-to-previous-month"
     ],
-    "Scope": "IO",
-    "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -941,13 +941,13 @@
     "Parameters": []
   },
   {
-    "Name": "next-month",
+    "Name": "next-year",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-next-month"
+      "dateTime-to-next-year"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that adds a month to the dateTime passed as argument value.",
+    "Summary": "Returns the dateTime that adds a year to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -1440,16 +1440,6 @@
     "Parameters": []
   },
   {
-    "Name": "next-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-next-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that adds a year to the dateTime passed as argument value.",
-    "Parameters": []
-  },
-  {
     "Name": "before-substring",
     "IsPublic": true,
     "Aliases": [
@@ -1469,6 +1459,16 @@
         "Summary": "The number of character positions to examine."
       }
     ]
+  },
+  {
+    "Name": "whitespaces-to-empty",
+    "IsPublic": true,
+    "Aliases": [
+      "blank-to-empty"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
+    "Parameters": []
   },
   {
     "Name": "whitespaces-to-null",
@@ -1551,6 +1551,16 @@
     "Parameters": []
   },
   {
+    "Name": "year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "returns a textual value at format YYYY representing the year of the date passed as the argument",
+    "Parameters": []
+  },
+  {
     "Name": "datetime-to-date",
     "IsPublic": true,
     "Aliases": [
@@ -1558,16 +1568,6 @@
     ],
     "Scope": "Temporal",
     "Summary": "Returns the date at midnight of the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "age",
-    "IsPublic": true,
-    "Aliases": [
-      "date-to-age"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns how many years separate the argument dateTime and now.",
     "Parameters": []
   },
   {
@@ -1631,13 +1631,33 @@
     "Parameters": []
   },
   {
-    "Name": "year",
+    "Name": "next-month",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-year"
+      "dateTime-to-next-month"
     ],
     "Scope": "Temporal",
-    "Summary": "returns a textual value at format YYYY representing the year of the date passed as the argument",
+    "Summary": "Returns the dateTime that adds a month to the dateTime passed as argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "age",
+    "IsPublic": true,
+    "Aliases": [
+      "date-to-age"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns how many years separate the argument dateTime and now.",
+    "Parameters": []
+  },
+  {
+    "Name": "directory",
+    "IsPublic": true,
+    "Aliases": [
+      "path-to-directory"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.",
     "Parameters": []
   },
   {
@@ -1648,16 +1668,6 @@
     ],
     "Scope": "Temporal",
     "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "iso-day-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-iso-day-of-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
     "Parameters": []
   },
   {
@@ -1760,13 +1770,13 @@
     ]
   },
   {
-    "Name": "whitespaces-to-empty",
+    "Name": "iso-day-of-year",
     "IsPublic": true,
     "Aliases": [
-      "blank-to-empty"
+      "dateTime-to-iso-day-of-year"
     ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
+    "Scope": "Temporal",
+    "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
     "Parameters": []
   },
   {
@@ -1872,13 +1882,13 @@
     ]
   },
   {
-    "Name": "directory",
+    "Name": "fold",
     "IsPublic": true,
     "Aliases": [
-      "path-to-directory"
+      "array-to-fold"
     ],
-    "Scope": "IO",
-    "Summary": "Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.",
+    "Scope": "Array",
+    "Summary": "",
     "Parameters": []
   }
 ]

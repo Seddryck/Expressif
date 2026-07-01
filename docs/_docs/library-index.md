@@ -57,6 +57,7 @@ tags: [predicates, functions]
 * [floor]({{ site.baseurl }}/docs/numeric-functions/#floor)
 * [floor-hour]({{ site.baseurl }}/docs/temporal-functions/#floor-hour)
 * [floor-minute]({{ site.baseurl }}/docs/temporal-functions/#floor-minute)
+* [fold]({{ site.baseurl }}/docs/array-functions/#fold)
 * [forward]({{ site.baseurl }}/docs/temporal-functions/#forward)
 * [greatest-common-divisor]({{ site.baseurl }}/docs/numeric-functions/#greatest-common-divisor)
 * [hour]({{ site.baseurl }}/docs/temporal-functions/#hour)
