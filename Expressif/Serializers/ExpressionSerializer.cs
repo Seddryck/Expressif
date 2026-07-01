@@ -10,11 +10,12 @@ namespace Expressif.Serializers;
 public class ExpressionSerializer
 {
     private FunctionSerializer FunctionSerializer { get; }
+    private ParameterSerializer ParameterSerializer { get; }
 
     public ExpressionSerializer()
         : this(new FunctionSerializer()) { }
     public ExpressionSerializer(FunctionSerializer? functionSerializer = null)
-        => FunctionSerializer = functionSerializer ?? new FunctionSerializer();
+        => (FunctionSerializer, ParameterSerializer) = (functionSerializer ?? new FunctionSerializer(), new ParameterSerializer());
 
     public virtual void Serialize(IExpression expression, ref StringBuilder stringBuilder)
     {
@@ -23,12 +24,28 @@ public class ExpressionSerializer
             case Function f:
                 FunctionSerializer.Serialize(f, ref stringBuilder);
                 break;
-            case Parsers.Expression exp:
+            case OpenExpression exp:
+                Serialize(exp, ref stringBuilder);
+                break;
+            case Parsers.ClosedExpression exp:
                 Serialize(exp, ref stringBuilder);
                 break;
             default:
                 throw new NotSupportedException();
         };
+    }
+
+    public virtual void Serialize(OpenExpression expression, ref StringBuilder stringBuilder)
+        => Serialize([.. expression.Members], ref stringBuilder);
+
+    public virtual void Serialize(Parsers.ClosedExpression expression, ref StringBuilder stringBuilder)
+    {
+        stringBuilder.Append(ParameterSerializer.Serialize(expression.Parameter));
+        if (!expression.Members.Any())
+            return;
+
+        stringBuilder.Append(" | ");
+        Serialize([.. expression.Members], ref stringBuilder);
     }
 
     public virtual void Serialize(IExpression[] expressions, ref StringBuilder stringBuilder)

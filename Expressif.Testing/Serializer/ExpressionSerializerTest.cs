@@ -55,6 +55,14 @@ public class ExpressionSerializerTest
     }
 
     [Test]
+    public void Serialize_ClosedExpression_WithRootAndMembers()
+    {
+        var expression = new Expressif.Parsers.ClosedExpression(new VariableParameter("arr"), [new Function("count", [])]);
+
+        Assert.That(new ExpressionSerializer().Serialize(expression), Is.EqualTo("@arr | count"));
+    }
+
+    [Test]
     [Ignore("Limited added-value to manage subexpression")]
     public void Serialize_WithSubExpression_WithPipe()
     {
@@ -63,7 +71,7 @@ public class ExpressionSerializerTest
         var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         var upperExpression = new Function("Upper", []);
 
-        var subExpression = new Expressif.Parsers.Expression([firstCharsExpression, PadRightExpression]);
+        //var subExpression = new Expressif.Parsers.ClosedExpression([firstCharsExpression, PadRightExpression]);
 
         //var expression = new Expressif.Parsers.Expression([lowerExpression, subExpression, upperExpression]);
 

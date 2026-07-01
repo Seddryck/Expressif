@@ -19,7 +19,7 @@ public record class ObjectIndexParameter(int Index) : IParameter { }
 public record class ContextParameter(Func<IContext, object?> Function) : IParameter { }
 public record class ArrayParameter(IParameter[] Values) : IParameter { }
 
-public record class InputExpressionParameter(InputExpression Expression) : IParameter { }
+public record class InputExpressionParameter(ClosedExpression Expression) : IParameter { }
 
 public class Parameter
 {
@@ -42,9 +42,9 @@ public class Parameter
         from _ in Parse.Char('{').Token()
         from parameter in VariableParameter.Or(IndexParameter).Or(ItemParameter).Or(LiteralParameter).Token()
         from _0 in Parse.Char('|').Token()
-        from expression in Parsers.Expression.Parser
+        from expression in Parsers.OpenExpression.Parser
         from _1 in Parse.Char('}').Token()
-        select new InputExpressionParameter(new InputExpression(parameter, expression.Members));
+        select new InputExpressionParameter(new ClosedExpression(parameter, expression.Members));
 
     protected static readonly Parser<IParameter> ArrayLiteralParameter =
         from _ in Parse.Char('{').Token()

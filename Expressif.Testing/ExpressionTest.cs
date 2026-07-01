@@ -234,6 +234,14 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_OpenExpression_StartWithArrayFunctionThenAdd_Valid()
+    {
+        var expression = new Expression("sum | add(3)");
+        var result = expression.Evaluate(new[] { 1, 2, 3 });
+        Assert.That(result, Is.EqualTo(9m));
+    }
+
+    [Test]
     public void Evaluate_EmptyArrayPipeAggregators_Valid()
     {
         using (Assert.EnterMultipleScope())
