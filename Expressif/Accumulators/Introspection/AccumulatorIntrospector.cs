@@ -30,18 +30,25 @@ public class AccumulatorIntrospector : BaseIntrospector
             yield return new AccumulatorInfo(
                     accumulator.Type.Name.ToKebabCase().Replace("-accumulator", "")
                     , accumulator.Type.IsPublic
-                    , accumulator.Attribute.Prefix != null && string.IsNullOrEmpty(accumulator.Attribute.Prefix)
-                        ? accumulator.Attribute.Aliases
-                        : accumulator.Attribute.Aliases.AsQueryable()
-                            .Prepend(string.IsNullOrEmpty(accumulator.Attribute.Prefix)
-                                ? $"{accumulator.Type.Namespace!.Split('.').Last().ToKebabCase()}-to-{accumulator.Type.Name.ToKebabCase()}"
-                                : $"{accumulator.Attribute.Prefix}-to-{accumulator.Type.Name.ToKebabCase()}"
-                            ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
+                    , BuildAliases(new(typeof(T), accumulator))
                     , "Array"
                     , accumulator.Type
                     , fast ? "" : accumulator.Type.GetSummary()
                     , fast ? [] : BuildParameters(accumulator.Type.GetInfoConstructors()).ToArray()
                 );
         }
+    }
+
+    private static string[] BuildAliases((Type Type, AttributeInfo<AccumulatorAttribute> Attribute) accumulator)
+    {
+        var prefix = accumulator.Attribute.Attribute.Prefix;
+        if (prefix == string.Empty)
+            return accumulator.Attribute.Attribute.Aliases;
+
+        var implicitAlias = prefix is null
+            ? $"{accumulator.Type.Namespace!.Split('.').Last().ToKebabCase()}-to-{accumulator.Type.Name.ToKebabCase()}"
+            : $"{prefix}-to-{accumulator.Type.Name.ToKebabCase()}";
+
+        return accumulator.Attribute.Attribute.Aliases.Prepend(implicitAlias).ToArray();
     }
 }

@@ -7,13 +7,14 @@ internal static class AccumulatorFactory
     public static IAccumulator Instantiate(string? name)
     {
         var key = (name ?? string.Empty).Trim();
+        var typeName = $"{key}Accumulator";
+        var fullName = $"{typeof(AccumulatorFactory).Namespace}.{typeName}";
 
-        if (key.Equals("count", StringComparison.OrdinalIgnoreCase)) return new CountAccumulator();
-        if (key.Equals("sum", StringComparison.OrdinalIgnoreCase)) return new SumAccumulator();
-        if (key.Equals("min", StringComparison.OrdinalIgnoreCase)) return new MinAccumulator();
-        if (key.Equals("max", StringComparison.OrdinalIgnoreCase)) return new MaxAccumulator();
-        if (key.Equals("first", StringComparison.OrdinalIgnoreCase)) return new FirstAccumulator();
-        if (key.Equals("last", StringComparison.OrdinalIgnoreCase)) return new LastAccumulator();
+        var type = typeof(AccumulatorFactory).Assembly.GetType(fullName, false, true);
+        if (type is not null
+            && typeof(IAccumulator).IsAssignableFrom(type)
+            && type.GetConstructor(Type.EmptyTypes) is not null)
+            return (IAccumulator)Activator.CreateInstance(type)!;
 
         throw new NotImplementedFunctionException(name ?? string.Empty);
     }
