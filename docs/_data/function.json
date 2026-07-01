@@ -1904,7 +1904,7 @@
       "array-to-fold"
     ],
     "Scope": "Array",
-    "Summary": "",
+    "Summary": "Executes an accumulator once over the full input enumerable and returns\r\n            the final accumulated value.\r\n            Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "accumulator",
