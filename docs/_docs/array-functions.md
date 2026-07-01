@@ -2,61 +2,33 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [count, first, last, max, min, sum] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, fold] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
-##### count
+##### broadcast
 
-###### Alias: `array-to-count`
+###### Alias: `array-to-broadcast`
 
 ###### Overview
 
-Returns the number of items in the input enumerable.
+Executes an accumulator once over the full input enumerable, then returns
+            the final accumulated value repeated once for each input element.
             Returns `null` when the input is not an enumerable or is a string.
 
-##### first
+###### Parameter
+* accumulator: Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`).
 
-###### Alias: `array-to-first`
+##### fold
 
-###### Overview
-
-Returns the first item of the input enumerable.
-            Returns `null` for an empty enumerable, and `null` when the input is not an enumerable or is a string.
-
-##### last
-
-###### Alias: `array-to-last`
+###### Alias: `array-to-fold`
 
 ###### Overview
 
-Returns the last item of the input enumerable.
-            Returns `null` for an empty enumerable, and `null` when the input is not an enumerable or is a string.
+Executes an accumulator once over the full input enumerable and returns
+            the final accumulated value.
+            Returns `null` when the input is not an enumerable or is a string.
 
-##### max
-
-###### Alias: `array-to-max`
-
-###### Overview
-
-Returns the maximum value among numeric-convertible items in the input enumerable.
-            Returns `null` for an empty enumerable, and `null` when the input is not an enumerable or is a string.
-
-##### min
-
-###### Alias: `array-to-min`
-
-###### Overview
-
-Returns the minimum value among numeric-convertible items in the input enumerable.
-            Returns `null` for an empty enumerable, and `null` when the input is not an enumerable or is a string.
-
-##### sum
-
-###### Alias: `array-to-sum`
-
-###### Overview
-
-Returns the sum of all numeric-convertible items in the input enumerable.
-            Returns `0` for an empty enumerable and `null` when the input is not an enumerable or is a string.
+###### Parameter
+* accumulator: Factory that creates the accumulator instance used for the fold execution.
 
 <!-- END AUTO-GENERATED -->
