@@ -103,12 +103,13 @@ public class FunctionIntrospectorTest
     }
 
     [Test]
-    public void Locate_ExpressifAssembly_ArrayAggregationsExposeFoldAndBroadcastOnly()
+    public void Locate_ExpressifAssembly_ArrayAggregationsExposeFoldBroadcastAndScanOnly()
     {
         using (Assert.EnterMultipleScope())
         {
             Assert.That(Infos.Any(x => x.Name == "fold"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "broadcast"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "scan"), Is.True);
 
             Assert.That(Infos.Any(x => x.Name == "count"), Is.False);
             Assert.That(Infos.Any(x => x.Name == "sum"), Is.False);
