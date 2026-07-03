@@ -31,8 +31,7 @@ Returns a dateTime that subtract the timestamp passed as parameter to the argume
 
 ###### Overview
 
-Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument.
-            Returns `null` if the event is unknown.
+Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.
 
 ##### ceiling-hour
 
@@ -72,8 +71,7 @@ returns a temporal value corresponding to the same instant of the argument value
 
 ###### Overview
 
-returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter.
-            If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.
+returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter. If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.
 
 ##### change-of-second
 
@@ -89,8 +87,7 @@ returns a temporal value corresponding to the same instant of the argument value
 
 ###### Overview
 
-returns a temporal value corresponding to the same day and month of the argument value but of the year passed as the parameter.
-            If the original date was the 29th of February and the year passed as a parameter is not a leap year then it returns the 28th of February.
+returns a temporal value corresponding to the same day and month of the argument value but of the year passed as the parameter. If the original date was the 29th of February and the year passed as a parameter is not a leap year then it returns the 28th of February.
 
 ##### clamp
 
@@ -253,8 +250,7 @@ returns a textual value at format YYYY-Www representing the year and week number
 
 ###### Overview
 
-returns a textual value at format YYYY-ddd representing the year,
-             and the day number of the date passed as the argument (both according to ISO 8601)
+returns a textual value at format YYYY-ddd representing the year, and the day number of the date passed as the argument (both according to ISO 8601)
 
 ##### iso-year-week
 
@@ -270,8 +266,7 @@ returns a textual value at format YYYY-Www representing the year and week number
 
 ###### Overview
 
-returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601),
-            and the day number (1 being Monday) of the date passed as the argument
+returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601), and the day number (1 being Monday) of the date passed as the argument
 
 ##### last-in-month
 
@@ -306,9 +301,7 @@ Returns the 31st of December of the same year than the argument dateTime.
 
 ###### Overview
 
-returns the count of days within the month of the dateTime value passed as the argument. 
-            If the argument is not a dateTime but a text at format "YYYY-MM", it returns count of days of the month represented by this value. 
-            It returns a value between 28 and 31 (depending of leap year and month).
+returns the count of days within the month of the dateTime value passed as the argument. If the argument is not a dateTime but a text at format "YYYY-MM", it returns count of days of the month represented by this value. It returns a value between 28 and 31 (depending of leap year and month).
 
 ##### length-of-year
 
@@ -316,9 +309,7 @@ returns the count of days within the month of the dateTime value passed as the a
 
 ###### Overview
 
-Returns the count of days within the year of the dateTime value passed as the argument.
-            If the argument is not a dateTime but an integer, returns count of days of the corresponding year.
-            It returns 365 or 366 (for leap years).
+Returns the count of days within the year of the dateTime value passed as the argument. If the argument is not a dateTime but an integer, returns count of days of the corresponding year. It returns 365 or 366 (for leap years).
 
 ##### local-to-utc
 ###### Overview
