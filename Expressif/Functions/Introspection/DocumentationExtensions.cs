@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -67,7 +68,27 @@ public static class DocumentationExtensions
     /// <param name="type"></param>
     /// <returns></returns>
     public static string GetSummary(this Type type)
-        => type.GetDocumentation()?.SelectSingleNode("summary")?.InnerText.Trim() ?? string.Empty;
+    => FormatSummary(type.GetDocumentation()?.SelectSingleNode("summary"));
+
+    private static string FormatSummary(XmlNode? summaryNode)
+    {
+        if (summaryNode is null)
+            return string.Empty;
+
+        var text = summaryNode.InnerXml;
+
+        // <see langword="null"/> => `null`
+        text = Regex.Replace(
+            text,
+            "<see\\s+langword\\s*=\\s*\"([^\"]+)\"\\s*/>",
+            "`$1`",
+            RegexOptions.IgnoreCase
+        );
+
+        // Remove any remaining XML tags and normalize spaces
+        text = Regex.Replace(text, "<.*?>", string.Empty);
+        return Regex.Replace(text, "\\s+", " ").Trim();
+    }
 
     /// <summary>
     /// Gets the summary portion of a type's documenation or returns an empty string if not available.

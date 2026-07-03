@@ -6,37 +6,7 @@
       "count"
     ],
     "Scope": "Array",
-    "Summary": "Counts the number of accumulated items, including  values.",
-    "Parameters": []
-  },
-  {
-    "Name": "sum",
-    "IsPublic": true,
-    "Aliases": [
-      "sum"
-    ],
-    "Scope": "Array",
-    "Summary": "Computes the sum of all accumulated numeric values.",
-    "Parameters": []
-  },
-  {
-    "Name": "min",
-    "IsPublic": true,
-    "Aliases": [
-      "min"
-    ],
-    "Scope": "Array",
-    "Summary": "Tracks the smallest numeric value found during accumulation.",
-    "Parameters": []
-  },
-  {
-    "Name": "max",
-    "IsPublic": true,
-    "Aliases": [
-      "max"
-    ],
-    "Scope": "Array",
-    "Summary": "Tracks the greatest numeric value found during accumulation.",
+    "Summary": "Counts the number of accumulated items, including `null` values.",
     "Parameters": []
   },
   {
@@ -57,6 +27,36 @@
     ],
     "Scope": "Array",
     "Summary": "Stores the most recently accumulated item.",
+    "Parameters": []
+  },
+  {
+    "Name": "max",
+    "IsPublic": true,
+    "Aliases": [
+      "max"
+    ],
+    "Scope": "Array",
+    "Summary": "Tracks the greatest numeric value found during accumulation.",
+    "Parameters": []
+  },
+  {
+    "Name": "min",
+    "IsPublic": true,
+    "Aliases": [
+      "min"
+    ],
+    "Scope": "Array",
+    "Summary": "Tracks the smallest numeric value found during accumulation.",
+    "Parameters": []
+  },
+  {
+    "Name": "sum",
+    "IsPublic": true,
+    "Aliases": [
+      "sum"
+    ],
+    "Scope": "Array",
+    "Summary": "Computes the sum of all accumulated numeric values.",
     "Parameters": []
   }
 ]

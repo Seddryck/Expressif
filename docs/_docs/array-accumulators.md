@@ -11,7 +11,7 @@ keywords: [count, first, last, max, min, sum] # AUTO-GENERATED KEYWORDS
 
 ###### Overview
 
-Counts the number of accumulated items, including  values.
+Counts the number of accumulated items, including `null` values.
 
 ##### first
 
