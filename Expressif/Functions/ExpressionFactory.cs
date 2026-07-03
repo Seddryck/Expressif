@@ -68,13 +68,14 @@ public class ExpressionFactory : BaseExpressionFactory
     private IFunction InstantiateOrWrapAggregation(Parsers.Function function, IContext context)
     {
         var name = function.Name.ToKebabCase();
+
+        if (ImplicitFoldAccumulators.Contains(name, StringComparer.OrdinalIgnoreCase) && function.Parameters.Length == 0)
+            return new Fold(() => name);
+
         var type = TypeMapper.Execute(function.Name);
 
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
-
-        if (ImplicitFoldAccumulators.Contains(name, StringComparer.OrdinalIgnoreCase) && function.Parameters.Length == 0)
-            return new Fold(() => name);
 
         return Instantiate<IFunction>(type, function.Parameters, context);
     }

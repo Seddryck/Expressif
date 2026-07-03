@@ -1,7 +1,7 @@
 using Expressif.Functions.Array;
 using Expressif.Accumulators;
 
-namespace Expressif.Testing.Functions.Aggregation;
+namespace Expressif.Testing.Functions.Array;
 
 public class FoldTest
 {
@@ -34,12 +34,12 @@ public class FoldTest
     {
         Assert.Multiple(() =>
         {
-            Assert.That(new Fold(() => new CountAccumulator()).Evaluate(Array.Empty<object>()), Is.EqualTo(0));
-            Assert.That(new Fold(() => new SumAccumulator()).Evaluate(Array.Empty<object>()), Is.EqualTo(0m));
-            Assert.That(new Fold(() => new MinAccumulator()).Evaluate(Array.Empty<object>()), Is.Null);
-            Assert.That(new Fold(() => new MaxAccumulator()).Evaluate(Array.Empty<object>()), Is.Null);
-            Assert.That(new Fold(() => new FirstAccumulator()).Evaluate(Array.Empty<object>()), Is.Null);
-            Assert.That(new Fold(() => new LastAccumulator()).Evaluate(Array.Empty<object>()), Is.Null);
+            Assert.That(new Fold(() => new CountAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(0));
+            Assert.That(new Fold(() => new SumAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(0m));
+            Assert.That(new Fold(() => new MinAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
+            Assert.That(new Fold(() => new MaxAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
+            Assert.That(new Fold(() => new FirstAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
+            Assert.That(new Fold(() => new LastAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
         });
     }
 
