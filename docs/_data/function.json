@@ -942,7 +942,7 @@
       {
         "Name": "accumulator",
         "Optional": false,
-        "Summary": "Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`)."
+        "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
       }
     ]
   },
