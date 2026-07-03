@@ -1,7 +1,10 @@
 using Expressif.Parsers;
+using Expressif.Accumulators;
 using Expressif.Functions;
+using Expressif.Functions.Array;
 using Expressif.Functions.Numeric;
 using Expressif.Functions.Text;
+using System.Reflection;
 
 namespace Expressif.Testing.Functions;
 
@@ -102,6 +105,50 @@ public class ExpressionFactoryTest
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(42)); // (4+3)*6
+    }
+
+    [Test]
+    public void Instantiate_FoldWithAccumulatorName_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("fold(sum)", new Context());
+        var fold = GetSingleFunction<Fold>(function);
+        var accumulator = fold.Accumulator.Invoke();
+
+        Assert.That(fold, Is.Not.Null);
+        Assert.That(accumulator, Is.TypeOf<SumAccumulator>());
+    }
+
+    [Test]
+    public void Instantiate_BroadcastWithAccumulatorName_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("broadcast(sum)", new Context());
+        var broadcast = GetSingleFunction<Broadcast>(function);
+        var accumulator = broadcast.Accumulator.Invoke();
+
+        Assert.That(broadcast, Is.Not.Null);
+        Assert.That(accumulator, Is.TypeOf<SumAccumulator>());
+    }
+
+    [Test]
+    public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
+    {
+        var function = new ExpressionFactory().Instantiate("prefix(abc)", new Context());
+        var prefix = GetSingleFunction<Prefix>(function);
+
+        Assert.That(prefix, Is.Not.Null);
+        Assert.That(prefix.Append.Invoke(), Is.EqualTo("abc"));
+    }
+
+    private static T GetSingleFunction<T>(IFunction function)
+        where T : class, IFunction
+    {
+        var property = typeof(ChainFunction).GetProperty("Functions", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate ChainFunction.Functions property.");
+        var functions = property.GetValue(function) as IEnumerable<IFunction>
+            ?? throw new InvalidOperationException("Could not read ChainFunction functions.");
+
+        return functions.Single() as T
+            ?? throw new InvalidOperationException($"Could not find function of type '{typeof(T).Name}'.");
     }
 
 }

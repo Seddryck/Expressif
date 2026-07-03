@@ -12,20 +12,28 @@ namespace Expressif.Functions.Array;
 [Function]
 public class Broadcast : IFunction
 {
-    public Func<string> AccumulatorName { get; }
+    public Func<IAccumulator> Accumulator { get; }
+
+    /// <param name="accumulator">Factory that creates the accumulator instance used for the broadcast execution.</param>
+    public Broadcast(Func<IAccumulator> accumulator)
+        => Accumulator = accumulator;
 
     /// <param name="accumulator">
     /// Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`).
     /// </param>
     public Broadcast(Func<string> accumulator)
-        => AccumulatorName = accumulator;
+        : this(() => AccumulatorFactory.Instantiate(accumulator.Invoke())) { }
+
+    /// <param name="accumulator">Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`, ...).</param>
+    public Broadcast(string accumulator)
+        : this(() => AccumulatorFactory.Instantiate(accumulator)) { }
 
     public object? Evaluate(object? value)
     {
         if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
             return null;
 
-        var accumulator = AccumulatorFactory.Instantiate(AccumulatorName.Invoke());
+        var accumulator = Accumulator.Invoke();
         accumulator.Initialize();
 
         var count = 0;

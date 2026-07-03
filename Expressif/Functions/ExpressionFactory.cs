@@ -1,5 +1,6 @@
 ﻿using Expressif.Parsers;
 using Expressif.Functions.Array;
+using Expressif.Accumulators;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -67,27 +68,38 @@ public class ExpressionFactory : BaseExpressionFactory
     private IFunction InstantiateOrWrapAggregation(Parsers.Function function, IContext context)
     {
         var name = function.Name.ToKebabCase();
+        var type = TypeMapper.Execute(function.Name);
 
-        if (name == "fold")
-        {
-            if (function.Parameters.Length != 1)
-                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
-
-            return new Fold(BuildAccumulatorNameProvider(function.Parameters[0], context));
-        }
-
-        if (name == "broadcast")
-        {
-            if (function.Parameters.Length != 1)
-                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
-
-            return new Broadcast(BuildAccumulatorNameProvider(function.Parameters[0], context));
-        }
+        if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
+            return aggregation;
 
         if (ImplicitFoldAccumulators.Contains(name, StringComparer.OrdinalIgnoreCase) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
-        return Instantiate<IFunction>(function.Name, function.Parameters, context);
+        return Instantiate<IFunction>(type, function.Parameters, context);
+    }
+
+    private bool TryInstantiateWithAccumulatorProvider(Type type, Parsers.Function function, IContext context, out IFunction aggregation)
+    {
+        aggregation = null!;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length == 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IAccumulator>));
+        if (ctor is null)
+            return false;
+
+        if (function.Parameters.Length != 1)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        aggregation = (IFunction)ctor.Invoke([BuildAccumulatorProvider(function.Parameters[0], context)]);
+        return true;
+    }
+
+    private Func<IAccumulator> BuildAccumulatorProvider(IParameter parameter, IContext context)
+    {
+        var nameProvider = BuildAccumulatorNameProvider(parameter, context);
+        return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
     }
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)

@@ -4,7 +4,6 @@ using System;
 
 namespace Expressif.Functions.Array;
 
-
 /// <summary>
 /// Executes an accumulator once over the full input enumerable and returns
 /// the final accumulated value.
