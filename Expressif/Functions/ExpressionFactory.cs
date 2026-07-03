@@ -1,5 +1,7 @@
 ﻿using Expressif.Parsers;
 using Expressif.Functions.Array;
+using Expressif.Accumulators;
+using Expressif.Accumulators.Introspection;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,10 @@ namespace Expressif.Functions;
 public class ExpressionFactory : BaseExpressionFactory
 {
     private Parser<IRootExpression> Parser { get; } = RootExpression.Parser;
+    private static readonly HashSet<string> ImplicitFoldAccumulators = new(
+        new AccumulatorIntrospector().Locate().Select(x => x.Name),
+        StringComparer.OrdinalIgnoreCase
+    );
 
     public ExpressionFactory()
         : base(new FunctionTypeMapper()) { }
@@ -36,7 +42,7 @@ public class ExpressionFactory : BaseExpressionFactory
     {
         var functions = new List<IFunction>();
         foreach (var member in expression.Members)
-            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
+            functions.Add(InstantiateOrWrapAggregation(member, context));
 
         return new ChainFunction(functions);
     }
@@ -46,13 +52,57 @@ public class ExpressionFactory : BaseExpressionFactory
         var sourceParameter = CreateParameter(expression.Parameter, typeof(object), context);
         var functions = new List<IFunction>();
         foreach (var member in expression.Members)
-            functions.Add(Instantiate<IFunction>(member.Name, member.Parameters, context));
+            functions.Add(InstantiateOrWrapAggregation(member, context));
 
         return new DelegatedFunction(_ =>
         {
             var source = sourceParameter.DynamicInvoke();
             return functions.Aggregate(source, (current, function) => function.Evaluate(current));
         });
+    }
+
+    private IFunction InstantiateOrWrapAggregation(Parsers.Function function, IContext context)
+    {
+        var name = function.Name.ToKebabCase();
+
+        if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
+            return new Fold(() => name);
+
+        var type = TypeMapper.Execute(function.Name);
+
+        if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
+            return aggregation;
+
+        return Instantiate<IFunction>(type, function.Parameters, context);
+    }
+
+    private bool TryInstantiateWithAccumulatorProvider(Type type, Parsers.Function function, IContext context, out IFunction aggregation)
+    {
+        aggregation = null!;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length == 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IAccumulator>));
+        if (ctor is null)
+            return false;
+
+        if (function.Parameters.Length != 1)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        aggregation = (IFunction)ctor.Invoke([BuildAccumulatorProvider(function.Parameters[0], context)]);
+        return true;
+    }
+
+    private Func<IAccumulator> BuildAccumulatorProvider(IParameter parameter, IContext context)
+    {
+        var nameProvider = BuildAccumulatorNameProvider(parameter, context);
+        return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
+    }
+
+    private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
+    {
+        var provider = CreateParameter(parameter, typeof(string), context);
+        return () => provider.DynamicInvoke()?.ToString() ?? string.Empty;
     }
 
     private sealed class DelegatedFunction : IFunction

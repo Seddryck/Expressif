@@ -242,6 +242,15 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_DirectAccumulatorSyntax_StillScalar()
+    {
+        var expression = new ClosedExpression("{1,2,3} | sum");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(6m));
+    }
+
+    [Test]
     public void Evaluate_EmptyArrayPipeAggregators_Valid()
     {
         using (Assert.EnterMultipleScope())
