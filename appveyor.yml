@@ -23,8 +23,6 @@ init:
 - cmd: setx DOTNET_NO_WORKLOAD_UPDATE_NOTIFICATION 1
 - cmd: setx DOTNET_CLI_TELEMETRY_OPTOUT 1
 - cmd: setx DOTNET_NOLOGO 1
-- cmd: RefreshEnv.cmd
-- pwsh: Write-Host "Target branch is '$($env:APPVEYOR_REPO_BRANCH)'"
 
 install:
 # - ps: |
@@ -32,8 +30,11 @@ install:
 #     & $env:temp\dotnet-install.ps1 -Architecture x64 -Version '10.0.100' -InstallDir "$env:ProgramFiles\dotnet"
 - cmd: npm install -g @vscode/vsce
 - cmd: dotnet tool restore
+- pwsh: .\install-gitversion.ps1
+- cmd: RefreshEnv.cmd
 
 before_build:
+- pwsh: Write-Host "Target branch is '$($env:APPVEYOR_REPO_BRANCH)'"
 - cmd: gitversion /output buildserver /verbosity Minimal
 - pwsh: Write-Host "Building Expressif version version $($env:GitVersion_SemVer)"
 - pwsh: |
