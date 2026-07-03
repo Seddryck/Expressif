@@ -130,6 +130,17 @@ public class ExpressionFactoryTest
     }
 
     [Test]
+    public void Instantiate_ScanWithAccumulatorName_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("scan(sum)", new Context());
+        var scan = GetSingleFunction<Scan>(function);
+        var accumulator = scan.Accumulator.Invoke();
+
+        Assert.That(scan, Is.Not.Null);
+        Assert.That(accumulator, Is.TypeOf<SumAccumulator>());
+    }
+
+    [Test]
     public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
     {
         var function = new ExpressionFactory().Instantiate("prefix(abc)", new Context());

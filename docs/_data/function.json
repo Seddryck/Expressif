@@ -16,16 +16,6 @@
     ]
   },
   {
-    "Name": "hour-minute",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-hour-minute"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument",
-    "Parameters": []
-  },
-  {
     "Name": "hour-minute-second",
     "IsPublic": true,
     "Aliases": [
@@ -210,6 +200,24 @@
     "Parameters": []
   },
   {
+    "Name": "null-to-value",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
+    "Parameters": []
+  },
+  {
+    "Name": "hour-minute",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-hour-minute"
+    ],
+    "Scope": "Temporal",
+    "Summary": "returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument",
+    "Parameters": []
+  },
+  {
     "Name": "hour",
     "IsPublic": true,
     "Aliases": [
@@ -238,38 +246,6 @@
     "Scope": "Temporal",
     "Summary": "returns a numeric value representing the seconds of the hour of the date passed as the argument",
     "Parameters": []
-  },
-  {
-    "Name": "second-of-minute",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-second-of-minute"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a numeric value representing the seconds of the minute of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "clamp",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-clamp",
-      "dateTime-to-clip"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is before than it"
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is after than it"
-      }
-    ]
   },
   {
     "Name": "set-time",
@@ -346,14 +322,6 @@
     "Parameters": []
   },
   {
-    "Name": "null-to-value",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Special",
-    "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
-    "Parameters": []
-  },
-  {
     "Name": "ceiling-minute",
     "IsPublic": true,
     "Aliases": [
@@ -364,24 +332,32 @@
     "Parameters": []
   },
   {
-    "Name": "backward",
+    "Name": "any-to-any",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Summary": "Returns `any`.",
+    "Parameters": []
+  },
+  {
+    "Name": "forward",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-backward",
-      "dateTime-to-subtract"
+      "dateTime-to-forward",
+      "dateTime-to-add"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
+    "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
         "Name": "timeSpan",
         "Optional": false,
-        "Summary": "The value to be subtracted to the argument value."
+        "Summary": "The value to be added to the argument value"
       },
       {
         "Name": "times",
         "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
       }
     ]
   },
@@ -446,34 +422,36 @@
     "Parameters": []
   },
   {
-    "Name": "forward",
+    "Name": "second-of-minute",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-forward",
-      "dateTime-to-add"
+      "dateTime-to-second-of-minute"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
+    "Summary": "returns a numeric value representing the seconds of the minute of the date passed as the argument",
+    "Parameters": []
+  },
+  {
+    "Name": "backward",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-backward",
+      "dateTime-to-subtract"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
         "Name": "timeSpan",
         "Optional": false,
-        "Summary": "The value to be added to the argument value"
+        "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
         "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
       }
     ]
-  },
-  {
-    "Name": "any-to-any",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Special",
-    "Summary": "Returns `any`.",
-    "Parameters": []
   },
   {
     "Name": "value-to-value",
@@ -505,14 +483,25 @@
     ]
   },
   {
-    "Name": "cube-power",
+    "Name": "subtract",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-cube-power"
+      "numeric-to-subtract"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns the the numeric argument value raised to the cube power.",
-    "Parameters": []
+    "Summary": "Returns the difference between the argument number and the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "The value to be subtracted to the argument value."
+      },
+      {
+        "Name": "times",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
+      }
+    ]
   },
   {
     "Name": "nth-root",
@@ -575,16 +564,6 @@
     "Parameters": []
   },
   {
-    "Name": "square-power",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-square-power"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the the numeric argument value raised to the square power.",
-    "Parameters": []
-  },
-  {
     "Name": "creation-datetime",
     "IsPublic": true,
     "Aliases": [
@@ -596,14 +575,24 @@
     "Parameters": []
   },
   {
-    "Name": "update-datetime",
+    "Name": "cube-power",
     "IsPublic": true,
     "Aliases": [
-      "file-to-update-datetime",
-      "file-to-update-dateTime"
+      "numeric-to-cube-power"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the the numeric argument value raised to the cube power.",
+    "Parameters": []
+  },
+  {
+    "Name": "creation-datetime-utc",
+    "IsPublic": true,
+    "Aliases": [
+      "file-to-creation-datetime-utc",
+      "file-to-creation-dateTime-utc"
     ],
     "Scope": "IO",
-    "Summary": "Returns the last update time of the file provided as argument in local time.",
+    "Summary": "Returns the creation time of the file provided as argument in UTC.",
     "Parameters": []
   },
   {
@@ -668,66 +657,73 @@
     "Parameters": []
   },
   {
-    "Name": "creation-datetime-utc",
+    "Name": "broadcast",
     "IsPublic": true,
     "Aliases": [
-      "file-to-creation-datetime-utc",
-      "file-to-creation-dateTime-utc"
+      "array-to-broadcast"
     ],
-    "Scope": "IO",
-    "Summary": "Returns the creation time of the file provided as argument in UTC.",
-    "Parameters": []
-  },
-  {
-    "Name": "previous-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-previous-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "power",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-power"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the the numeric argument value raised to the power specified by the parameter value.",
-    "Parameters": []
-  },
-  {
-    "Name": "invert",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-invert"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "subtract",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-subtract"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the difference between the argument number and the parameter value.",
+    "Scope": "Array",
+    "Summary": "Executes an accumulator once over the full input enumerable, then returns\r\n            the final accumulated value repeated once for each input element.\r\n            Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
-        "Name": "value",
+        "Name": "accumulator",
         "Optional": false,
-        "Summary": "The value to be subtracted to the argument value."
-      },
-      {
-        "Name": "times",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
+        "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
       }
     ]
+  },
+  {
+    "Name": "update-datetime",
+    "IsPublic": true,
+    "Aliases": [
+      "file-to-update-datetime",
+      "file-to-update-dateTime"
+    ],
+    "Scope": "IO",
+    "Summary": "Returns the last update time of the file provided as argument in local time.",
+    "Parameters": []
+  },
+  {
+    "Name": "clamp",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-clamp",
+      "dateTime-to-clip"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is before than it"
+      },
+      {
+        "Name": "max",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is after than it"
+      }
+    ]
+  },
+  {
+    "Name": "square-power",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-square-power"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the the numeric argument value raised to the square power.",
+    "Parameters": []
+  },
+  {
+    "Name": "oppose",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-oppose"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
+    "Parameters": []
   },
   {
     "Name": "increment",
@@ -816,16 +812,6 @@
     ]
   },
   {
-    "Name": "oppose",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-oppose"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
-    "Parameters": []
-  },
-  {
     "Name": "human-readable-format-decimal",
     "IsPublic": true,
     "Aliases": [
@@ -836,13 +822,23 @@
     "Parameters": []
   },
   {
-    "Name": "human-readable-format-binary-bytes",
+    "Name": "power",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-human-readable-format-binary-bytes"
+      "numeric-to-power"
     ],
     "Scope": "Numeric",
-    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
+    "Summary": "Returns the the numeric argument value raised to the power specified by the parameter value.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal-bytes"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
     "Parameters": []
   },
   {
@@ -921,30 +917,34 @@
     ]
   },
   {
-    "Name": "human-readable-format-decimal-bytes",
+    "Name": "invert",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-human-readable-format-decimal-bytes"
+      "numeric-to-invert"
     ],
     "Scope": "Numeric",
-    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
+    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
     "Parameters": []
   },
   {
-    "Name": "broadcast",
+    "Name": "human-readable-format-binary-bytes",
     "IsPublic": true,
     "Aliases": [
-      "array-to-broadcast"
+      "numeric-to-human-readable-format-binary-bytes"
     ],
-    "Scope": "Array",
-    "Summary": "Executes an accumulator once over the full input enumerable, then returns\r\n            the final accumulated value repeated once for each input element.\r\n            Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": [
-      {
-        "Name": "accumulator",
-        "Optional": false,
-        "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
-      }
-    ]
+    "Scope": "Numeric",
+    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
+    "Parameters": []
+  },
+  {
+    "Name": "previous-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-previous-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
+    "Parameters": []
   },
   {
     "Name": "previous-month",
@@ -957,13 +957,13 @@
     "Parameters": []
   },
   {
-    "Name": "next-year",
+    "Name": "previous-day",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-next-year"
+      "dateTime-to-previous-day"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that adds a year to the dateTime passed as argument value.",
+    "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
@@ -1053,6 +1053,17 @@
     ]
   },
   {
+    "Name": "length",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-length",
+      "count-chars"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
+    "Parameters": []
+  },
+  {
     "Name": "text-to-datetime",
     "IsPublic": true,
     "Aliases": [
@@ -1070,27 +1081,6 @@
         "Name": "culture",
         "Optional": true,
         "Summary": "A string representing a pre-defined culture."
-      }
-    ]
-  },
-  {
-    "Name": "pad-right",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-pad-right"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
-    "Parameters": [
-      {
-        "Name": "length",
-        "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
-      },
-      {
-        "Name": "character",
-        "Optional": false,
-        "Summary": "The padding character"
       }
     ]
   },
@@ -1177,15 +1167,67 @@
     "Parameters": []
   },
   {
-    "Name": "length",
+    "Name": "after-substring",
     "IsPublic": true,
     "Aliases": [
-      "text-to-length",
-      "count-chars"
+      "text-to-after-substring"
     ],
     "Scope": "Text",
-    "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
-    "Parameters": []
+    "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The string to seek."
+      },
+      {
+        "Name": "count",
+        "Optional": true,
+        "Summary": "The number of character positions to examine."
+      }
+    ]
+  },
+  {
+    "Name": "pad-right",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-pad-right"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
+      },
+      {
+        "Name": "character",
+        "Optional": false,
+        "Summary": "The padding character"
+      }
+    ]
+  },
+  {
+    "Name": "before-substring",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-before-substring"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "substring",
+        "Optional": false,
+        "Summary": "The string to seek."
+      },
+      {
+        "Name": "count",
+        "Optional": true,
+        "Summary": "The number of character positions to examine."
+      }
+    ]
   },
   {
     "Name": "clean-whitespace",
@@ -1195,16 +1237,6 @@
     ],
     "Scope": "Text",
     "Summary": "returns the argument with any whitespace replaced by a space character. `\\r\\n` is considered as a single character.",
-    "Parameters": []
-  },
-  {
-    "Name": "collapse-whitespace",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-collapse-whitespace"
-    ],
-    "Scope": "Text",
-    "Summary": "returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\\r\\n` is considered as a single character.",
     "Parameters": []
   },
   {
@@ -1312,25 +1344,14 @@
     "Parameters": []
   },
   {
-    "Name": "after-substring",
+    "Name": "collapse-whitespace",
     "IsPublic": true,
     "Aliases": [
-      "text-to-after-substring"
+      "text-to-collapse-whitespace"
     ],
     "Scope": "Text",
-    "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",
-    "Parameters": [
-      {
-        "Name": "substring",
-        "Optional": false,
-        "Summary": "The string to seek."
-      },
-      {
-        "Name": "count",
-        "Optional": true,
-        "Summary": "The number of character positions to examine."
-      }
-    ]
+    "Summary": "returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\\r\\n` is considered as a single character.",
+    "Parameters": []
   },
   {
     "Name": "prefix-new-line",
@@ -1456,23 +1477,18 @@
     "Parameters": []
   },
   {
-    "Name": "before-substring",
+    "Name": "fold",
     "IsPublic": true,
     "Aliases": [
-      "text-to-before-substring"
+      "array-to-fold"
     ],
-    "Scope": "Text",
-    "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
+    "Scope": "Array",
+    "Summary": "Executes an accumulator once over the full input enumerable and returns\r\n            the final accumulated value.\r\n            Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
-        "Name": "substring",
+        "Name": "accumulator",
         "Optional": false,
-        "Summary": "The string to seek."
-      },
-      {
-        "Name": "count",
-        "Optional": true,
-        "Summary": "The number of character positions to examine."
+        "Summary": "Factory that creates the accumulator instance used for the fold execution."
       }
     ]
   },
@@ -1487,23 +1503,11 @@
     "Parameters": []
   },
   {
-    "Name": "whitespaces-to-null",
+    "Name": "empty-to-null",
     "IsPublic": true,
-    "Aliases": [
-      "blank-to-null"
-    ],
+    "Aliases": [],
     "Scope": "Text",
-    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a textual value at format MM representing the month of the date passed as the argument",
+    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
     "Parameters": []
   },
   {
@@ -1567,16 +1571,6 @@
     "Parameters": []
   },
   {
-    "Name": "year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a textual value at format YYYY representing the year of the date passed as the argument",
-    "Parameters": []
-  },
-  {
     "Name": "datetime-to-date",
     "IsPublic": true,
     "Aliases": [
@@ -1587,13 +1581,23 @@
     "Parameters": []
   },
   {
-    "Name": "catholic-calendar",
+    "Name": "month",
     "IsPublic": true,
     "Aliases": [
-      "calendar-catholic"
+      "dateTime-to-month"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument.\r\n            Returns `null` if the event is unknown.",
+    "Summary": "returns a textual value at format MM representing the month of the date passed as the argument",
+    "Parameters": []
+  },
+  {
+    "Name": "age",
+    "IsPublic": true,
+    "Aliases": [
+      "date-to-age"
+    ],
+    "Scope": "Temporal",
+    "Summary": "Returns how many years separate the argument dateTime and now.",
     "Parameters": []
   },
   {
@@ -1657,51 +1661,53 @@
     "Parameters": []
   },
   {
-    "Name": "age",
+    "Name": "next-year",
     "IsPublic": true,
     "Aliases": [
-      "date-to-age"
+      "dateTime-to-next-year"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns how many years separate the argument dateTime and now.",
+    "Summary": "Returns the dateTime that adds a year to the dateTime passed as argument value.",
     "Parameters": []
   },
   {
-    "Name": "previous-day",
+    "Name": "catholic-calendar",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-previous-day"
+      "calendar-catholic"
     ],
     "Scope": "Temporal",
-    "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
+    "Summary": "Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument.\r\n            Returns `null` if the event is unknown.",
     "Parameters": []
   },
   {
-    "Name": "iso-week-of-year",
+    "Name": "whitespaces-to-null",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-iso-week-of-year"
+      "blank-to-null"
     ],
-    "Scope": "Temporal",
-    "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
+    "Scope": "Text",
+    "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
     "Parameters": []
   },
   {
-    "Name": "day-of-year",
+    "Name": "year",
     "IsPublic": true,
     "Aliases": [
-      "dateTime-to-day-of-year"
+      "dateTime-to-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "returns a textual value at format YYYY representing the year of the date passed as the argument",
+    "Parameters": []
+  },
+  {
+    "Name": "iso-day-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-iso-day-of-year"
     ],
     "Scope": "Temporal",
     "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "empty-to-null",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Text",
-    "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
     "Parameters": []
   },
   {
@@ -1786,16 +1792,6 @@
     ]
   },
   {
-    "Name": "iso-day-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-iso-day-of-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
-    "Parameters": []
-  },
-  {
     "Name": "skip-first-chars",
     "IsPublic": true,
     "Aliases": [
@@ -1812,14 +1808,30 @@
     ]
   },
   {
-    "Name": "trim",
+    "Name": "iso-week-of-year",
     "IsPublic": true,
     "Aliases": [
-      "text-to-trim"
+      "dateTime-to-iso-week-of-year"
+    ],
+    "Scope": "Temporal",
+    "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
+    "Parameters": []
+  },
+  {
+    "Name": "skip-last-chars",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-skip-last-chars"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
-    "Parameters": []
+    "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
+    "Parameters": [
+      {
+        "Name": "length",
+        "Optional": false,
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
+      }
+    ]
   },
   {
     "Name": "change-of-year",
@@ -1882,34 +1894,38 @@
     "Parameters": []
   },
   {
-    "Name": "skip-last-chars",
+    "Name": "day-of-year",
     "IsPublic": true,
     "Aliases": [
-      "text-to-skip-last-chars"
+      "dateTime-to-day-of-year"
     ],
-    "Scope": "Text",
-    "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
-    "Parameters": [
-      {
-        "Name": "length",
-        "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
-      }
-    ]
+    "Scope": "Temporal",
+    "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
+    "Parameters": []
   },
   {
-    "Name": "fold",
+    "Name": "trim",
     "IsPublic": true,
     "Aliases": [
-      "array-to-fold"
+      "text-to-trim"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
+    "Parameters": []
+  },
+  {
+    "Name": "scan",
+    "IsPublic": true,
+    "Aliases": [
+      "array-to-scan"
     ],
     "Scope": "Array",
-    "Summary": "Executes an accumulator once over the full input enumerable and returns\r\n            the final accumulated value.\r\n            Returns `null` when the input is not an enumerable or is a string.",
+    "Summary": "Executes an accumulator progressively over the input enumerable and returns\r\n            the intermediate accumulated value after each input element.\r\n            Preserves input cardinality (one output item per input item).\r\n            This differs from fold (final value only) and broadcast (final value repeated).\r\n            Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "accumulator",
         "Optional": false,
-        "Summary": "Factory that creates the accumulator instance used for the fold execution."
+        "Summary": "Factory that creates the accumulator instance used for the scan execution."
       }
     ]
   }

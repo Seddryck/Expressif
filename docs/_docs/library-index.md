@@ -133,6 +133,7 @@ tags: [predicates, functions]
 * [retain-numeric-symbol]({{ site.baseurl }}/docs/text-functions/#retain-numeric-symbol)
 * [root]({{ site.baseurl }}/docs/io-functions/#root)
 * [round]({{ site.baseurl }}/docs/numeric-functions/#round)
+* [scan]({{ site.baseurl }}/docs/array-functions/#scan)
 * [second-of-day]({{ site.baseurl }}/docs/temporal-functions/#second-of-day)
 * [second-of-hour]({{ site.baseurl }}/docs/temporal-functions/#second-of-hour)
 * [second-of-minute]({{ site.baseurl }}/docs/temporal-functions/#second-of-minute)
