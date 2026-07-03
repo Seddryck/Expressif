@@ -35,24 +35,24 @@ public class BroadcastTest
     {
         Assert.Multiple(() =>
         {
-            Assert.That(new Fold(() => new CountAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(0));
-            Assert.That(new Fold(() => new SumAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(0m));
-            Assert.That(new Fold(() => new MinAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
-            Assert.That(new Fold(() => new MaxAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
-            Assert.That(new Fold(() => new FirstAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
-            Assert.That(new Fold(() => new LastAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
+            Assert.That(new Broadcast(() => new CountAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+            Assert.That(new Broadcast(() => new SumAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+            Assert.That(new Broadcast(() => new MinAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+            Assert.That(new Broadcast(() => new MaxAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+            Assert.That(new Broadcast(() => new FirstAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+            Assert.That(new Broadcast(() => new LastAccumulator()).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
         });
     }
 
     [Test]
     public void Evaluate_NonEnumerableInput_Null()
-        => Assert.That(new Fold(() => new SumAccumulator()).Evaluate(10), Is.Null);
+        => Assert.That(new Broadcast(() => new SumAccumulator()).Evaluate(10), Is.Null );
 
     [Test]
     public void Evaluate_Broadcast_EnumeratesInputOnce()
     {
         var source = new SingleEnumerationEnumerable(new object?[] { 1, 2, 3 });
-        var expression = new Expression("broadcast(sum)");
+        var expression = new Broadcast(() => new SumAccumulator());
 
         var result = expression.Evaluate(source);
 

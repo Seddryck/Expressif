@@ -241,7 +241,6 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(10m));
     }
 
-
     [Test]
     public void Evaluate_DirectAccumulatorSyntax_StillScalar()
     {
@@ -250,7 +249,6 @@ public class ExpressionTest
 
         Assert.That(result, Is.EqualTo(6m));
     }
-
 
     [Test]
     public void Evaluate_EmptyArrayPipeAggregators_Valid()

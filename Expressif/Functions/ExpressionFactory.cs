@@ -1,6 +1,7 @@
 ﻿using Expressif.Parsers;
 using Expressif.Functions.Array;
 using Expressif.Accumulators;
+using Expressif.Accumulators.Introspection;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,10 @@ namespace Expressif.Functions;
 public class ExpressionFactory : BaseExpressionFactory
 {
     private Parser<IRootExpression> Parser { get; } = RootExpression.Parser;
-    private static readonly HashSet<string> ImplicitFoldAccumulators =
-    [
-        "count",
-        "sum",
-        "min",
-        "max",
-        "first",
-        "last"
-    ];
+    private static readonly HashSet<string> ImplicitFoldAccumulators = new(
+        new AccumulatorIntrospector().Locate().Select(x => x.Name),
+        StringComparer.OrdinalIgnoreCase
+    );
 
     public ExpressionFactory()
         : base(new FunctionTypeMapper()) { }
@@ -69,7 +65,7 @@ public class ExpressionFactory : BaseExpressionFactory
     {
         var name = function.Name.ToKebabCase();
 
-        if (ImplicitFoldAccumulators.Contains(name, StringComparer.OrdinalIgnoreCase) && function.Parameters.Length == 0)
+        if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
         var type = TypeMapper.Execute(function.Name);
