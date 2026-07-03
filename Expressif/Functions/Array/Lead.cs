@@ -18,17 +18,19 @@ public class Lead : IFunction
             return null;
 
         var output = new List<object?>();
-        var iterator = enumerable!.GetEnumerator();
+        var hasItems = false;
 
-        if (!iterator.MoveNext())
-            return output.ToArray();
-
-        while (iterator.MoveNext())
+        foreach (var item in enumerable!)
         {
-            output.Add(iterator.Current);
+            if (hasItems)
+                output.Add(item);
+
+            hasItems = true;
         }
 
-        output.Add(null);
+        if (hasItems)
+            output.Add(null);
+
         return output.ToArray();
     }
 }
