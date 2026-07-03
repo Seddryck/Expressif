@@ -16,7 +16,7 @@ Executes an accumulator once over the full input enumerable, then returns
             Returns `null` when the input is not an enumerable or is a string.
 
 ###### Parameter
-* accumulator: Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`).
+* accumulator: Factory that creates the accumulator instance used for the broadcast execution.
 
 ##### fold
 
