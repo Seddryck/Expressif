@@ -33,10 +33,7 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 ###### Overview
 
-Returns the previous value for each input element.
-            The first output value is  because there is no previous element.
-            Preserves input cardinality (one output item per input item).
-            Returns  when the input is not an enumerable or is a string.
+Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
 ##### lead
 
@@ -44,10 +41,7 @@ Returns the previous value for each input element.
 
 ###### Overview
 
-Returns the next value for each input element.
-            The last output value is  because there is no next element.
-            Preserves input cardinality (one output item per input item).
-            Returns  when the input is not an enumerable or is a string.
+Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
 ##### scan
 
