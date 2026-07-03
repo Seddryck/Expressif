@@ -206,6 +206,8 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
 |Array    | broadcast                           | array-to-broadcast                                                                |
 |Array    | fold                                | array-to-fold                                                                     |
+|Array    | lag                                 | array-to-lag                                                                      |
+|Array    | lead                                | array-to-lead                                                                     |
 |Array    | scan                                | array-to-scan                                                                     |
 |IO       | creation-datetime                   | file-to-creation-datetime, file-to-creation-dateTime                              |
 |IO       | creation-datetime-utc               | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                      |

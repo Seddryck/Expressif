@@ -141,6 +141,24 @@ public class ExpressionFactoryTest
     }
 
     [Test]
+    public void Instantiate_Lag_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("lag", new Context());
+        var lag = GetSingleFunction<Lag>(function);
+
+        Assert.That(lag, Is.Not.Null);
+    }
+
+    [Test]
+    public void Instantiate_Lead_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("lead", new Context());
+        var lead = GetSingleFunction<Lead>(function);
+
+        Assert.That(lead, Is.Not.Null);
+    }
+
+    [Test]
     public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
     {
         var function = new ExpressionFactory().Instantiate("prefix(abc)", new Context());
