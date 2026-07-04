@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -87,6 +88,7 @@ public static class DocumentationExtensions
 
         // Remove any remaining XML tags and normalize spaces
         text = Regex.Replace(text, "<.*?>", string.Empty);
+        text = WebUtility.HtmlDecode(text);
         return Regex.Replace(text, "\\s+", " ").Trim();
     }
 

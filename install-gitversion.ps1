@@ -80,4 +80,5 @@ if ($gitVersion) {
 else {
     Write-Warning "GitVersion was installed, but it is not available in the current session."
     Write-Warning "Open a new terminal and run: gitversion /version"
+    exit 1
 }
