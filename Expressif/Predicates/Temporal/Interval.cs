@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Expressif.Predicates.Temporal;
 
 /// <summary>
-/// Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
+/// Returns true if the temporal value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 /// </summary>
 public class ContainedIn : BaseDateTimePredicate
 {

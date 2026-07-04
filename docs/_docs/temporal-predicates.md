@@ -63,7 +63,7 @@ Returns `true` if the date passed as the argument doesn't correspond to a Saturd
 
 ###### Overview
 
-Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
+Returns true if the temporal value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 
 ###### Parameter
 * interval: A temporal interval to compare to the argument.
