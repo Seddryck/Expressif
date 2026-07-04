@@ -159,6 +159,48 @@ public class ExpressionFactoryTest
     }
 
     [Test]
+    [TestCase("first-elements(2)", typeof(FirstElements))]
+    [TestCase("first(2)", typeof(FirstElements))]
+    [TestCase("last(2)", typeof(LastElements))]
+    [TestCase("skip-first(2)", typeof(SkipFirstElements))]
+    [TestCase("skip-last(2)", typeof(SkipLastElements))]
+    public void Instantiate_ArraySelectionAliases_Valid(string expression, Type expectedType)
+    {
+        var function = new ExpressionFactory().Instantiate(expression, new Context());
+
+        var selectionFunction = GetSingleFunction(function, expectedType);
+        Assert.That(selectionFunction, Is.Not.Null);
+
+        var countFactory = selectionFunction.GetType().GetProperty("Count")?.GetValue(selectionFunction) as Func<int>
+                                ?? throw new InvalidOperationException($"Could not resolve 'Count' parameter for function type '{expectedType.Name}'.");
+        var count = countFactory.Invoke();
+
+        Assert.That(count, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void Instantiate_SliceElements_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("slice-elements(1,4)", new Context());
+        var sliceElements = GetSingleFunction<SliceElements>(function);
+
+        Assert.That(sliceElements, Is.Not.Null);
+        Assert.That(sliceElements.Start.Invoke(), Is.EqualTo(1));
+        Assert.That(sliceElements.End.Invoke(), Is.EqualTo(4));
+    }
+
+    [Test]
+    public void Instantiate_SliceAlias_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("slice(1,4)", new Context());
+        var sliceElements = GetSingleFunction<SliceElements>(function);
+
+        Assert.That(sliceElements, Is.Not.Null);
+        Assert.That(sliceElements.Start.Invoke(), Is.EqualTo(1));
+        Assert.That(sliceElements.End.Invoke(), Is.EqualTo(4));
+    }
+
+    [Test]
     public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
     {
         var function = new ExpressionFactory().Instantiate("prefix(abc)", new Context());
@@ -178,6 +220,17 @@ public class ExpressionFactoryTest
 
         return functions.Single() as T
             ?? throw new InvalidOperationException($"Could not find function of type '{typeof(T).Name}'.");
+    }
+
+    private static IFunction GetSingleFunction(IFunction function, Type expectedType)
+    {
+        var property = typeof(ChainFunction).GetProperty("Functions", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate ChainFunction.Functions property.");
+        var functions = property.GetValue(function) as IEnumerable<IFunction>
+            ?? throw new InvalidOperationException("Could not read ChainFunction functions.");
+
+        return functions.SingleOrDefault(expectedType.IsInstanceOfType)
+            ?? throw new InvalidOperationException($"Could not find function of type '{expectedType.Name}'.");
     }
 
 }
