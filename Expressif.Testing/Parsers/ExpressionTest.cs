@@ -47,6 +47,8 @@ public class ExpressionTest
     [TestCase("@foo | lower", typeof(ClosedRootExpression))]
     [TestCase("{1,2,3} | sum", typeof(ClosedRootExpression))]
     [TestCase("@arr | count", typeof(ClosedRootExpression))]
+    [TestCase("{10,20,30} | lag", typeof(ClosedRootExpression))]
+    [TestCase("{10,20,30} | lead", typeof(ClosedRootExpression))]
     [TestCase("{1,2,3} | scan(sum)", typeof(ClosedRootExpression))]
     [TestCase("sum | add(3)", typeof(OpenRootExpression))]
     [TestCase("lower(foo) | trim", typeof(OpenRootExpression))]

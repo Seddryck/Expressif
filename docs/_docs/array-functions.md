@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, fold, scan] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, fold, lag, lead, scan] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -26,6 +26,22 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the fold execution.
+
+##### lag
+
+###### Alias: `array-to-lag`
+
+###### Overview
+
+Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
+
+##### lead
+
+###### Alias: `array-to-lead`
+
+###### Overview
+
+Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
 ##### scan
 
