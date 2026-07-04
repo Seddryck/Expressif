@@ -16,6 +16,16 @@
     ]
   },
   {
+    "Name": "first-elements",
+    "IsPublic": true,
+    "Aliases": [
+      "first"
+    ],
+    "Scope": "Array",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
     "Name": "fold",
     "IsPublic": true,
     "Aliases": [
@@ -39,6 +49,16 @@
     ],
     "Scope": "Array",
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
+    "Parameters": []
+  },
+  {
+    "Name": "last-elements",
+    "IsPublic": true,
+    "Aliases": [
+      "last"
+    ],
+    "Scope": "Array",
+    "Summary": "",
     "Parameters": []
   },
   {
@@ -66,6 +86,36 @@
         "Summary": "Factory that creates the accumulator instance used for the scan execution."
       }
     ]
+  },
+  {
+    "Name": "skip-first-elements",
+    "IsPublic": true,
+    "Aliases": [
+      "skip-first"
+    ],
+    "Scope": "Array",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
+    "Name": "skip-last-elements",
+    "IsPublic": true,
+    "Aliases": [
+      "skip-last"
+    ],
+    "Scope": "Array",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
+    "Name": "slice-elements",
+    "IsPublic": true,
+    "Aliases": [
+      "slice"
+    ],
+    "Scope": "Array",
+    "Summary": "",
+    "Parameters": []
   },
   {
     "Name": "creation-datetime",
