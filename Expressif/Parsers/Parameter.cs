@@ -20,6 +20,7 @@ public record class ContextParameter(Func<IContext, object?> Function) : IParame
 public record class ArrayParameter(IParameter[] Values) : IParameter { }
 
 public record class InputExpressionParameter(ClosedExpression Expression) : IParameter { }
+public record class OpenExpressionParameter(OpenExpression Expression) : IParameter { }
 
 public class Parameter
 {

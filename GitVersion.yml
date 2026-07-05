@@ -18,6 +18,7 @@ branches:
   feature:
     label: beta.{BranchName}
     regex: ^(feat(ure)?s?)[/-](?<BranchName>.+)
+    increment: Minor
     source-branches:
     - main
     - feature

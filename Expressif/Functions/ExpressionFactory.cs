@@ -73,6 +73,9 @@ public class ExpressionFactory : BaseExpressionFactory
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
 
+        if (TryInstantiateWithTransformationProvider(type, function, context, out var transformation))
+            return transformation;
+
         return Instantiate<IFunction>(type, function.Parameters, context);
     }
 
@@ -98,6 +101,26 @@ public class ExpressionFactory : BaseExpressionFactory
         var nameProvider = BuildAccumulatorNameProvider(parameter, context);
         return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
     }
+
+    private bool TryInstantiateWithTransformationProvider(Type type, Parsers.Function function, IContext context, out IFunction transformation)
+    {
+        transformation = null!;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length == 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IFunction>));
+        if (ctor is null)
+            return false;
+
+        if (function.Parameters.Length != 1 || function.Parameters[0] is not OpenExpressionParameter openExpression)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        transformation = (IFunction)ctor.Invoke([BuildTransformationProvider(openExpression, context)]);
+        return true;
+    }
+
+    private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
+        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)));
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
     {
