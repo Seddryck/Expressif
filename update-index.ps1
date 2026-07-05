@@ -1,6 +1,7 @@
-﻿$classes = @("Function", "Predicate")
+﻿$classes = @("Function", "Predicate", "Accumulator")
 $destinationFile = ".\docs\_docs\library-index.md"
 
+Set-Location -Path $PSScriptRoot
 Write-Host "Creating new version of $destinationFile ..."
 $elapsed = Measure-Command -Expression {
     foreach ($class in $classes) {
