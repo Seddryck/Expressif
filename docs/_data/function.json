@@ -16,6 +16,16 @@
     ]
   },
   {
+    "Name": "filter",
+    "IsPublic": true,
+    "Aliases": [
+      "filter"
+    ],
+    "Scope": "Array",
+    "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
+    "Parameters": []
+  },
+  {
     "Name": "first-elements",
     "IsPublic": true,
     "Aliases": [
