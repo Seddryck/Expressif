@@ -3,6 +3,7 @@
 $destinationFile = ".\docs\_data\navigation_boxes.yml"
 
 ########### Create a markdown table ##########
+Set-Location -Path $PSScriptRoot
 Write-Host "Creating new version of $destinationFile based on $sourceFile ..."
 $elapsed = Measure-Command -Expression {
     $classes = @("function", "predicate")

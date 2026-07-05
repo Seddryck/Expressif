@@ -7,6 +7,7 @@ $sourceFile = ".\docs\_data\$($class.ToLower()).json"
 $destinationFile = ".\docs\_docs\$($scope.ToLower())-$($class.ToLower())s.md"
 
 ########### Create a markdown table ##########
+Set-Location -Path $PSScriptRoot
 Write-Host "Creating new version of $destinationFile based on $sourceFile ..."
 $elapsed = Measure-Command -Expression {
     $members = Get-Content -Path $sourceFile | ConvertFrom-Json 

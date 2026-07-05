@@ -8,7 +8,7 @@ $destinationFile = "$($class.ToLower()).json"
 
 
 ########### Check if it's useful to make changes to doc or readme #############
-Set-Location ./
+Set-Location -Path $PSScriptRoot
 
 $hash = 0
 If(Test-Path -LiteralPath $destinationPath\$destinationFile -PathType leaf) {

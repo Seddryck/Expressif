@@ -5,6 +5,7 @@ skip_tags: true
 skip_commits:
   files:
     - .github/
+    - .githooks/
     - docs/
     - misc/
     - README.md
