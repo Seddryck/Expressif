@@ -251,6 +251,52 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ArrayPipeMapMultiply_Valid()
+    {
+        var expression = new ClosedExpression("{1,2,3} | map(multiply(2))");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { 2m, 4m, 6m }));
+    }
+
+    [Test]
+    public void Evaluate_ArrayPipeMapAdd_Valid()
+    {
+        var expression = new ClosedExpression("{1,2,3} | map(add(10))");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { 11m, 12m, 13m }));
+    }
+
+    [Test]
+    public void Evaluate_StringArrayPipeMapUpper_Valid()
+    {
+        var expression = new ClosedExpression("{\"alice\",\"bob\"} | map(upper)");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { "ALICE", "BOB" }));
+    }
+
+    [Test]
+    public void Evaluate_Map_PreservesCardinality()
+    {
+        var expression = new ClosedExpression("{1,2,3,4} | map(add(1))");
+        var result = expression.Evaluate() as object?[];
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!, Has.Length.EqualTo(4));
+    }
+
+    [Test]
+    public void Evaluate_EmptyArrayPipeMap_EmptyArray()
+    {
+        var expression = new ClosedExpression("{} | map(add(1))");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(Array.Empty<object?>()));
+    }
+
+    [Test]
     public void Evaluate_EmptyArrayPipeAggregators_Valid()
     {
         using (Assert.EnterMultipleScope())

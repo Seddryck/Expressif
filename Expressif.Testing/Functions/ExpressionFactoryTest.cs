@@ -190,6 +190,21 @@ public class ExpressionFactoryTest
     }
 
     [Test]
+    public void Instantiate_MapWithOpenExpressionParameter_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("map(lower | trim)", new Context());
+        var map = GetSingleFunction<Map>(function);
+        var transformation = map.Transformation.Invoke();
+        var transformationFunctions = GetFunctions(transformation).ToArray();
+
+        Assert.That(map, Is.Not.Null);
+        Assert.That(transformation, Is.TypeOf<ChainFunction>());
+        Assert.That(transformationFunctions, Has.Length.EqualTo(2));
+        Assert.That(transformationFunctions[0], Is.TypeOf<Lower>());
+        Assert.That(transformationFunctions[1], Is.TypeOf<Trim>());
+    }
+
+    [Test]
     public void Instantiate_SliceAlias_Valid()
     {
         var function = new ExpressionFactory().Instantiate("slice(1,4)", new Context());
@@ -224,13 +239,15 @@ public class ExpressionFactoryTest
 
     private static IFunction GetSingleFunction(IFunction function, Type expectedType)
     {
-        var property = typeof(ChainFunction).GetProperty("Functions", BindingFlags.Instance | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException("Could not locate ChainFunction.Functions property.");
-        var functions = property.GetValue(function) as IEnumerable<IFunction>
-            ?? throw new InvalidOperationException("Could not read ChainFunction functions.");
-
-        return functions.SingleOrDefault(expectedType.IsInstanceOfType)
+        return GetFunctions(function).SingleOrDefault(expectedType.IsInstanceOfType)
             ?? throw new InvalidOperationException($"Could not find function of type '{expectedType.Name}'.");
     }
 
+    private static IEnumerable<IFunction> GetFunctions(IFunction function)
+    {
+        var property = typeof(ChainFunction).GetProperty("Functions", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate ChainFunction.Functions property.");
+        return property.GetValue(function) as IEnumerable<IFunction>
+            ?? throw new InvalidOperationException("Could not read ChainFunction functions.");
+    }
 }
