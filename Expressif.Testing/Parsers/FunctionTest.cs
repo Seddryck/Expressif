@@ -40,6 +40,50 @@ public class FunctionTest
     }
 
     [Test]
+    public void Parse_Function_FilterWithOpenExpressionParameter_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.Parse("filter(greater-than(2))");
+
+        Assert.That(function.Name, Is.EqualTo("filter"));
+        Assert.That(function.Parameters, Has.Length.EqualTo(1));
+        Assert.That(function.Parameters[0], Is.TypeOf<PredicationParameter>());
+
+        var parameter = (PredicationParameter)function.Parameters[0];
+        Assert.That(parameter.Predication, Is.TypeOf<SinglePredication>());
+    }
+
+    [Test]
+    public void Parse_Function_FilterWithAndPredicate_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.Parse("filter(greater-than(2) |AND less-than(5))");
+
+        Assert.That(function.Name, Is.EqualTo("filter"));
+        Assert.That(function.Parameters, Has.Length.EqualTo(1));
+        Assert.That(function.Parameters[0], Is.TypeOf<PredicationParameter>());
+
+        var parameter = (PredicationParameter)function.Parameters[0];
+        Assert.That(parameter.Predication.GetType().Name, Is.EqualTo("BinaryPredication"));
+
+        var left = parameter.Predication.GetType().GetProperty("LeftMember")?.GetValue(parameter.Predication);
+        var right = parameter.Predication.GetType().GetProperty("RightMember")?.GetValue(parameter.Predication);
+        var @operator = parameter.Predication.GetType().GetProperty("Operator")?.GetValue(parameter.Predication);
+
+        Assert.That(@operator?.GetType().GetProperty("Name")?.GetValue(@operator)?.ToString(), Is.EqualTo("AND"));
+
+        Assert.That(left, Is.TypeOf<SinglePredication>());
+        var leftFunction = ((SinglePredication)left!).Members.Single();
+        Assert.That(leftFunction.Name, Is.EqualTo("greater-than"));
+        Assert.That(leftFunction.Parameters, Has.Length.EqualTo(1));
+        Assert.That(((LiteralParameter)leftFunction.Parameters[0]).Value, Is.EqualTo("2"));
+
+        Assert.That(right, Is.TypeOf<SinglePredication>());
+        var rightFunction = ((SinglePredication)right!).Members.Single();
+        Assert.That(rightFunction.Name, Is.EqualTo("less-than"));
+        Assert.That(rightFunction.Parameters, Has.Length.EqualTo(1));
+        Assert.That(((LiteralParameter)rightFunction.Parameters[0]).Value, Is.EqualTo("5"));
+    }
+
+    [Test]
     public void Parse_Function_MapWithTwoParametersFunction_Valid()
     {
         var function = Expressif.Parsers.Function.Parser.Parse("map(add(10,2))");
@@ -80,5 +124,12 @@ public class FunctionTest
     [TestCase("map(upper")]
     [TestCase("map(upper,")]
     public void Parse_Function_MapWithMalformedOpenExpression_ThrowsParseException(string value)
+        => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.InstanceOf<ParseException>());
+
+    [Test]
+    [TestCase("filter()")]
+    [TestCase("filter(greater-than(2)")]
+    [TestCase("filter(greater-than(2),")]
+    public void Parse_Function_FilterWithMalformedOpenExpression_ThrowsParseException(string value)
         => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.InstanceOf<ParseException>());
 }

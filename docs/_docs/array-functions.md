@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, first-elements, fold, lag, last-elements, lead, map, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, filter, first-elements, fold, lag, last-elements, lead, map, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -15,6 +15,14 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the broadcast execution.
+
+##### filter
+
+###### Alias: `filter`
+
+###### Overview
+
+Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.
 
 ##### first-elements
 

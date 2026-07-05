@@ -297,6 +297,50 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ArrayPipeFilterGreaterThan_Valid()
+    {
+        var expression = new ClosedExpression("{1,2,3,4} | filter(greater-than(2))");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { "3", "4" }));
+    }
+
+    [Test]
+    public void Evaluate_ArrayPipeFilterEven_Valid()
+    {
+        var expression = new ClosedExpression("{1,2,3,4,5} | filter(even)");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { "2", "4" }));
+    }
+
+    [Test]
+    public void Evaluate_StringArrayPipeFilterStartsWith_Valid()
+    {
+        var expression = new ClosedExpression("{\"alice\",\"bob\",\"anna\"} | filter(starts-with(a))");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { "alice", "anna" }));
+    }
+
+    [Test]
+    public void Evaluate_EmptyArrayPipeFilter_EmptyArray()
+    {
+        var expression = new ClosedExpression("{} | filter(even)");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(Array.Empty<object?>()));
+    }
+
+    [Test]
+    public void Evaluate_FilterWithNonPredicateExpression_Throws()
+    {
+        var expression = new ClosedExpression("{1,2,3} | filter(add(1))");
+
+        Assert.That(() => expression.Evaluate(), Throws.TypeOf<NotImplementedFunctionException>());
+    }
+
+    [Test]
     public void Evaluate_EmptyArrayPipeAggregators_Valid()
     {
         using (Assert.EnterMultipleScope())

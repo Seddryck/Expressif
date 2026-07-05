@@ -55,6 +55,7 @@ public class ExpressionTest
     [TestCase("{1,2,3} | broadcast(sum)", typeof(ClosedRootExpression))]
     [TestCase("{1,2,3} | map(multiply(2))", typeof(ClosedRootExpression))]
     [TestCase("{`alice`,`bob`} | map(upper | first-chars(2))", typeof(ClosedRootExpression))]
+    [TestCase("{1,2,3,4} | filter(greater-than(2))", typeof(ClosedRootExpression))]
     public void Parse_RootExpression_ClosedFirst(string value, Type expectedType)
         => Assert.That(RootExpression.Parser.Parse(value), Is.TypeOf(expectedType));
 }

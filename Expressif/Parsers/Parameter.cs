@@ -21,6 +21,7 @@ public record class ArrayParameter(IParameter[] Values) : IParameter { }
 
 public record class InputExpressionParameter(ClosedExpression Expression) : IParameter { }
 public record class OpenExpressionParameter(OpenExpression Expression) : IParameter { }
+public record class PredicationParameter(IPredication Predication) : IParameter { }
 
 public class Parameter
 {

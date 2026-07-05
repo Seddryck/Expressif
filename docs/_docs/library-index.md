@@ -50,6 +50,7 @@ tags: [predicates, functions]
 * [extension]({{ site.baseurl }}/docs/io-functions/#extension)
 * [filename]({{ site.baseurl }}/docs/io-functions/#filename)
 * [filename-without-extension]({{ site.baseurl }}/docs/io-functions/#filename-without-extension)
+* [filter]({{ site.baseurl }}/docs/array-functions/#filter)
 * [filter-chars]({{ site.baseurl }}/docs/text-functions/#filter-chars)
 * [first-chars]({{ site.baseurl }}/docs/text-functions/#first-chars)
 * [first-elements]({{ site.baseurl }}/docs/array-functions/#first-elements)

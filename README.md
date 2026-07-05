@@ -205,6 +205,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Scope    | Name                                | Aliases                                                                           |
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
 |Array    | broadcast                           | array-to-broadcast                                                                |
+|Array    | filter                              | filter                                                                            |
 |Array    | first-elements                      | first                                                                             |
 |Array    | fold                                | array-to-fold                                                                     |
 |Array    | lag                                 | array-to-lag                                                                      |
