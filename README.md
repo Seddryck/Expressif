@@ -210,6 +210,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | lag                                 | array-to-lag                                                                      |
 |Array    | last-elements                       | last                                                                              |
 |Array    | lead                                | array-to-lead                                                                     |
+|Array    | map                                 | map                                                                               |
 |Array    | scan                                | array-to-scan                                                                     |
 |Array    | skip-first-elements                 | skip-first                                                                        |
 |Array    | skip-last-elements                  | skip-last                                                                         |

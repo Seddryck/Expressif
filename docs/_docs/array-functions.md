@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, first-elements, fold, lag, last-elements, lead, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, first-elements, fold, lag, last-elements, lead, map, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -58,6 +58,14 @@ Returns the previous value for each input element. The first output value is `nu
 ###### Overview
 
 Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
+
+##### map
+
+###### Alias: `map`
+
+###### Overview
+
+Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
 ##### scan
 
