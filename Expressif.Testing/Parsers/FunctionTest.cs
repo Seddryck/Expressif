@@ -74,4 +74,11 @@ public class FunctionTest
         Assert.That(members[2].Name, Is.EqualTo("add"));
         Assert.That(members[2].Parameters.Length, Is.GreaterThanOrEqualTo(2));
     }
+
+    [Test]
+    [TestCase("map()")]
+    [TestCase("map(upper")]
+    [TestCase("map(upper,")]
+    public void Parse_Function_MapWithMalformedOpenExpression_ThrowsParseException(string value)
+        => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.InstanceOf<ParseException>());
 }
