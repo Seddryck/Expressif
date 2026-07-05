@@ -4,6 +4,7 @@ using Expressif.Functions;
 using Expressif.Functions.Array;
 using Expressif.Functions.Numeric;
 using Expressif.Functions.Text;
+using Expressif.Predicates.Numeric;
 using System.Reflection;
 
 namespace Expressif.Testing.Functions;
@@ -202,6 +203,17 @@ public class ExpressionFactoryTest
         Assert.That(transformationFunctions, Has.Length.EqualTo(2));
         Assert.That(transformationFunctions[0], Is.TypeOf<Lower>());
         Assert.That(transformationFunctions[1], Is.TypeOf<Trim>());
+    }
+
+    [Test]
+    public void Instantiate_FilterWithPredicateExpression_Valid()
+    {
+        var function = new ExpressionFactory().Instantiate("filter(greater-than(2))", new Context());
+        var filter = GetSingleFunction<Filter>(function);
+        var predicate = filter.Predicate.Invoke();
+
+        Assert.That(filter, Is.Not.Null);
+        Assert.That(predicate, Is.TypeOf<GreaterThan>());
     }
 
     [Test]

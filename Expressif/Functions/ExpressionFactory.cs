@@ -2,6 +2,7 @@
 using Expressif.Functions.Array;
 using Expressif.Accumulators;
 using Expressif.Accumulators.Introspection;
+using Expressif.Predicates;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -76,6 +77,9 @@ public class ExpressionFactory : BaseExpressionFactory
         if (TryInstantiateWithTransformationProvider(type, function, context, out var transformation))
             return transformation;
 
+        if (TryInstantiateWithPredicateProvider(type, function, context, out var filtering))
+            return filtering;
+
         return Instantiate<IFunction>(type, function.Parameters, context);
     }
 
@@ -126,6 +130,51 @@ public class ExpressionFactory : BaseExpressionFactory
 
     private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
         => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
+
+    private bool TryInstantiateWithPredicateProvider(Type type, Parsers.Function function, IContext context, out IFunction filtering)
+    {
+        filtering = null!;
+
+        var ctor = type.GetConstructors()
+                       .FirstOrDefault(x => x.GetParameters().Length == 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IPredicate>));
+        if (ctor is null)
+            return false;
+
+        if (function.Parameters.Length != 1)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        if (function.Parameters[0] is not PredicationParameter and not OpenExpressionParameter)
+            throw new ArgumentException(
+                $"The function named '{function.Name}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
+                nameof(function));
+
+        filtering = (IFunction)ctor.Invoke([BuildPredicateProvider(function.Parameters[0], context, function.Name)]);
+        return true;
+    }
+
+    private Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
+    {
+        var factory = new PredicationFactory();
+        return parameter switch
+        {
+            PredicationParameter predication => () => factory.Instantiate(predication.Predication, context),
+            OpenExpressionParameter openExpression => BuildSinglePredicateFromOpenExpression(openExpression, factory, context, functionName),
+            _ => throw new ArgumentException(
+                    $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
+                    nameof(parameter))
+        };
+
+        static Func<IPredicate> BuildSinglePredicateFromOpenExpression(OpenExpressionParameter openExpression, PredicationFactory factory, IContext context, string functionName)
+        {
+            var members = openExpression.Expression.Members.ToArray();
+            if (members.Length != 1)
+                throw new MissingOrUnexpectedParametersFunctionException(functionName, members.Length);
+
+            var predication = new SinglePredication(members[0]);
+            return () => factory.Instantiate(predication, context);
+        }
+    }
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
     {
