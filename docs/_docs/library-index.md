@@ -92,6 +92,7 @@ tags: [predicates, functions]
 * [local-to-utc]({{ site.baseurl }}/docs/temporal-functions/#local-to-utc)
 * [lower]({{ site.baseurl }}/docs/text-functions/#lower)
 * [lowest-common-multiple]({{ site.baseurl }}/docs/numeric-functions/#lowest-common-multiple)
+* [map]({{ site.baseurl }}/docs/array-functions/#map)
 * [mask-to-text]({{ site.baseurl }}/docs/text-functions/#mask-to-text)
 * [minute-of-day]({{ site.baseurl }}/docs/temporal-functions/#minute-of-day)
 * [minute-of-hour]({{ site.baseurl }}/docs/temporal-functions/#minute-of-hour)
