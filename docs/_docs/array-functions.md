@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, fold, lag, lead, scan] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, first-elements, fold, lag, last-elements, lead, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -15,6 +15,14 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the broadcast execution.
+
+##### first-elements
+
+###### Alias: `first`
+
+###### Overview
+
+
 
 ##### fold
 
@@ -35,6 +43,14 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
+##### last-elements
+
+###### Alias: `last`
+
+###### Overview
+
+
+
 ##### lead
 
 ###### Alias: `array-to-lead`
@@ -53,5 +69,29 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the scan execution.
+
+##### skip-first-elements
+
+###### Alias: `skip-first`
+
+###### Overview
+
+
+
+##### skip-last-elements
+
+###### Alias: `skip-last`
+
+###### Overview
+
+
+
+##### slice-elements
+
+###### Alias: `slice`
+
+###### Overview
+
+
 
 <!-- END AUTO-GENERATED -->
