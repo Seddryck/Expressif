@@ -112,15 +112,20 @@ public class ExpressionFactory : BaseExpressionFactory
         if (ctor is null)
             return false;
 
-        if (function.Parameters.Length != 1 || function.Parameters[0] is not OpenExpressionParameter openExpression)
+        if (function.Parameters.Length != 1)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        if (function.Parameters[0] is not OpenExpressionParameter openExpression)
+            throw new ArgumentException(
+                $"The function named '{function.Name}' expects a parameter of type '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
+                nameof(function));
 
         transformation = (IFunction)ctor.Invoke([BuildTransformationProvider(openExpression, context)]);
         return true;
     }
 
     private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
-        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)));
+        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
     {
