@@ -82,6 +82,16 @@
     "Parameters": []
   },
   {
+    "Name": "reverse",
+    "IsPublic": true,
+    "Aliases": [
+      "reverse"
+    ],
+    "Scope": "Array",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
     "Name": "scan",
     "IsPublic": true,
     "Aliases": [

@@ -4,7 +4,7 @@ subtitle: Complete list of functions and predicates
 tags: [predicates, functions]
 ---
 <!-- START AUTO-GENERATED -->
-[Functions](#functions) - [Predicates](#predicates) 
+[Functions](#functions) - [Predicates](#predicates) - [Accumulators](#accumulators) 
 
 
 ## Functions
@@ -136,6 +136,7 @@ tags: [predicates, functions]
 * [retain-alpha-numeric]({{ site.baseurl }}/docs/text-functions/#retain-alpha-numeric)
 * [retain-numeric]({{ site.baseurl }}/docs/text-functions/#retain-numeric)
 * [retain-numeric-symbol]({{ site.baseurl }}/docs/text-functions/#retain-numeric-symbol)
+* [reverse]({{ site.baseurl }}/docs/array-functions/#reverse)
 * [root]({{ site.baseurl }}/docs/io-functions/#root)
 * [round]({{ site.baseurl }}/docs/numeric-functions/#round)
 * [scan]({{ site.baseurl }}/docs/array-functions/#scan)
@@ -254,5 +255,15 @@ tags: [predicates, functions]
 * [yesterday]({{ site.baseurl }}/docs/temporal-predicates/#yesterday)
 * [zero]({{ site.baseurl }}/docs/numeric-predicates/#zero)
 * [zero-or-null]({{ site.baseurl }}/docs/numeric-predicates/#zero-or-null)
+
+
+## Accumulators
+
+* [count]({{ site.baseurl }}/docs/array-accumulators/#count)
+* [first]({{ site.baseurl }}/docs/array-accumulators/#first)
+* [last]({{ site.baseurl }}/docs/array-accumulators/#last)
+* [max]({{ site.baseurl }}/docs/array-accumulators/#max)
+* [min]({{ site.baseurl }}/docs/array-accumulators/#min)
+* [sum]({{ site.baseurl }}/docs/array-accumulators/#sum)
 
 
