@@ -36,6 +36,23 @@ public class FirstElements : IFunction
     }
 }
 
+[Function(prefix: "", aliases: ["reverse"])]
+public class Reverse : IFunction
+{
+    public object? Evaluate(object? value)
+    {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
+        var output = new List<object?>();
+        foreach (var item in enumerable!)
+            output.Add(item);
+
+        output.Reverse();
+        return output.ToArray();
+    }
+}
+
 [Function(prefix: "", aliases: ["skip-first"])]
 public class SkipFirstElements : IFunction
 {

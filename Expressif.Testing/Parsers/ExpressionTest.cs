@@ -21,6 +21,9 @@ public class ExpressionTest
     [Test]
     [TestCase("@foo | text-to-func(foo, @bar)", 1)]
     [TestCase("@foo | text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
+    [TestCase("{1,2,3} | reverse", 1)]
+    [TestCase("{} | reverse", 1)]
+    [TestCase("{10} | reverse", 1)]
     [TestCase("foo", 0)]
     public void Parse_ParametrizedExpression_Valid(string value, int count)
         => Assert.That(Expressif.Parsers.ClosedExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
@@ -55,6 +58,7 @@ public class ExpressionTest
     [TestCase("{1,2,3} | broadcast(sum)", typeof(ClosedRootExpression))]
     [TestCase("{1,2,3} | map(multiply(2))", typeof(ClosedRootExpression))]
     [TestCase("{`alice`,`bob`} | map(upper | first-chars(2))", typeof(ClosedRootExpression))]
+    [TestCase("{1,2,3} | reverse", typeof(ClosedRootExpression))]
     public void Parse_RootExpression_ClosedFirst(string value, Type expectedType)
         => Assert.That(RootExpression.Parser.Parse(value), Is.TypeOf(expectedType));
 }

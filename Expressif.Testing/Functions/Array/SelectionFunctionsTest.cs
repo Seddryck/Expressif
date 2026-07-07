@@ -25,6 +25,29 @@ public class SelectionFunctionsTest
         => Assert.That(new SliceElements(() => 1, () => 4).Evaluate(new object[] { 10, 20, 30, 40, 50 }), Is.EqualTo(new object?[] { 20, 30, 40 }));
 
     [Test]
+    public void Evaluate_Reverse_Valid()
+        => Assert.That(new Reverse().Evaluate(new object[] { 10, 20, 30, 40 }), Is.EqualTo(new object?[] { 40, 30, 20, 10 }));
+
+    [Test]
+    public void Evaluate_Reverse_OutputCardinalityEqualsInputCardinality()
+    {
+        var input = new object[] { 10, 20, 30, 40 };
+
+        var result = new Reverse().Evaluate(input) as object?[];
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result!, Has.Length.EqualTo(input.Length));
+    }
+
+    [Test]
+    public void Evaluate_Reverse_EmptyArray_EmptyArray()
+        => Assert.That(new Reverse().Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+
+    [Test]
+    public void Evaluate_Reverse_SingleElementArray_Unchanged()
+        => Assert.That(new Reverse().Evaluate(new object[] { 10 }), Is.EqualTo(new object?[] { 10 }));
+
+    [Test]
     public void Evaluate_EmptyArray_EmptyArray()
     {
         Assert.Multiple(() =>
@@ -34,6 +57,7 @@ public class SelectionFunctionsTest
             Assert.That(new LastElements(() => 3).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
             Assert.That(new SkipLastElements(() => 3).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
             Assert.That(new SliceElements(() => 1, () => 3).Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
+            Assert.That(new Reverse().Evaluate(System.Array.Empty<object>()), Is.EqualTo(System.Array.Empty<object>()));
         });
     }
 
@@ -90,7 +114,20 @@ public class SelectionFunctionsTest
             Assert.That(new LastElements(() => 1).Evaluate(10), Is.Null);
             Assert.That(new SkipLastElements(() => 1).Evaluate(10), Is.Null);
             Assert.That(new SliceElements(() => 0, () => 1).Evaluate(10), Is.Null);
+            Assert.That(new Reverse().Evaluate(10), Is.Null);
         });
+    }
+
+    [Test]
+    public void Evaluate_Reverse_EnumeratesInputOnce()
+    {
+        var source = new SingleEnumerationEnumerable(new object?[] { 10, 20, 30, 40 });
+        var expression = new Reverse();
+
+        var result = expression.Evaluate(source);
+
+        Assert.That(result, Is.EqualTo(new object?[] { 40, 30, 20, 10 }));
+        Assert.That(source.GetEnumeratorCalls, Is.EqualTo(1));
     }
 
     [Test]
