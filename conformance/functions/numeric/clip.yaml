@@ -1,0 +1,74 @@
+suite: numeric
+kind: function
+operator: clip
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - NumericFunctionsTest.cs
+tests:
+  - id: Clip_Interval1010Valid
+    trace:
+      file: Functions/Numeric/NumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.Clip_Interval1010Valid
+    cases:
+      - value: 0
+        expected: 0
+        parameters:
+          - -10
+          - 10
+        line: 104
+      - value: 1
+        expected: 1
+        parameters:
+          - -10
+          - 10
+        line: 105
+      - value: -1
+        expected: -1
+        parameters:
+          - -10
+          - 10
+        line: 106
+      - value: 10
+        expected: 10
+        parameters:
+          - -10
+          - 10
+        line: 107
+      - value: -10
+        expected: -10
+        parameters:
+          - -10
+          - 10
+        line: 108
+      - value: 15
+        expected: 10
+        parameters:
+          - -10
+          - 10
+        line: 109
+      - value: -15
+        expected: -10
+        parameters:
+          - -10
+          - 10
+        line: 110
+      - value: (null)
+        expected: 
+        parameters:
+          - -10
+          - 10
+        line: 111
+      - value: (empty)
+        expected: 
+        parameters:
+          - -10
+          - 10
+        line: 112
+      - value: (blank)
+        expected: 
+        parameters:
+          - -10
+          - 10
+        line: 113

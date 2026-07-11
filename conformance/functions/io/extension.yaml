@@ -1,0 +1,41 @@
+suite: io
+kind: function
+operator: extension
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PathFunctionsTest.cs
+tests:
+  - id: Extension_Valid
+    trace:
+      file: Functions/IO/PathFunctionsTest.cs
+      class: Expressif.Testing.Functions.IO.PathFunctionsTest
+      qualified-method: Expressif.Testing.Functions.IO.PathFunctionsTest.Extension_Valid
+    cases:
+      - value: C:\
+        expected: ''
+        line: 41
+      - value: C:\Dir\
+        expected: ''
+        line: 42
+      - value: C:\Dir\Child\
+        expected: ''
+        line: 43
+      - value: C:\Dir\ChildFile
+        expected: ''
+        line: 44
+      - value: C:\Dir\Child\file.txt
+        expected: .txt
+        line: 45
+      - value: Dir\file.txt
+        expected: .txt
+        line: 46
+      - value: (null)
+        expected: (empty)
+        line: 47
+      - value: (empty)
+        expected: (empty)
+        line: 48
+      - value: (blank)
+        expected: (empty)
+        line: 49

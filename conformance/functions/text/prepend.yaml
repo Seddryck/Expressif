@@ -1,0 +1,39 @@
+suite: text
+kind: function
+operator: prepend
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AppendFunctionsTest.cs
+tests:
+  - id: Prepend_Valid
+    trace:
+      file: Functions/Text/AppendFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.AppendFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.AppendFunctionsTest.Prepend_Valid
+    cases:
+      - value: 123456789
+        expected: abc123456789
+        parameters:
+          - abc
+        line: 31
+      - value: (null)
+        expected: abc
+        parameters:
+          - abc
+        line: 32
+      - value: (null)
+        expected: ''
+        parameters:
+          - (null)
+        line: 33
+      - value: (empty)
+        expected: abc
+        parameters:
+          - abc
+        line: 34
+      - value: (blank)
+        expected: abc
+        parameters:
+          - abc
+        line: 35

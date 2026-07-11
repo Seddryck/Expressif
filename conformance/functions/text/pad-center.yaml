@@ -1,0 +1,68 @@
+suite: text
+kind: function
+operator: pad-center
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PaddingFunctionsTest.cs
+tests:
+  - id: PadCenter_Valid
+    trace:
+      file: Functions/Text/PaddingFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.PaddingFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.PaddingFunctionsTest.PadCenter_Valid
+    cases:
+      - value: 1234
+        expected: 1234
+        parameters:
+          - 4
+          - '*'
+        line: 35
+      - value: 1234
+        expected: 1234*
+        parameters:
+          - 5
+          - '*'
+        line: 36
+      - value: 1234
+        expected: '*1234*'
+        parameters:
+          - 6
+          - '*'
+        line: 37
+      - value: 1234
+        expected: '*1234**'
+        parameters:
+          - 7
+          - '*'
+        line: 38
+      - value: 1234
+        expected: '**1234**'
+        parameters:
+          - 8
+          - '*'
+        line: 39
+      - value: 1234
+        expected: '**1234***'
+        parameters:
+          - 9
+          - '*'
+        line: 40
+      - value: 1234
+        expected: 1234
+        parameters:
+          - 2
+          - '*'
+        line: 41
+      - value: (null)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+        line: 42
+      - value: (empty)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+        line: 43

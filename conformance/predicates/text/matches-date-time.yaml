@@ -1,0 +1,148 @@
+suite: text
+kind: predicate
+operator: matches-date-time
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - MatchingTest.cs
+cases:
+  - value: 25/12/2025 10:01:55
+    expected: false
+    parameters:
+      - en-US
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_AmericanCulture_Fail
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_AmericanCulture_Fail
+      line: 193
+  - value: 25/12/2025 10:01:55
+    expected: true
+    parameters:
+      - fr-FR
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_FrenchCulture_Success
+      line: 198
+  - value: 2022-11-02
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 139
+  - value: 2022-11-02 13:57:00
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 140
+  - value: 2022-11-02 13:57:00.123
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 141
+  - value: 2022-11-02 1:52PM
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 142
+  - value: 1978-09-02
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 143
+  - value: 1978-09-02 13:57:00
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 144
+  - value: 02-11-2022 13:57:00
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 145
+  - value: 02/11/2022 13:57:00
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 146
+  - value: 02.11.2022 13:57:00
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 147
+  - value: 1.21
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 148
+  - value: foobar
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 149
+  - value: (empty)
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 150
+  - value: ''
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 151
+  - value: (null)
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 152
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesDateTime_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesDateTime_InvariantCulture_Success
+      line: 153

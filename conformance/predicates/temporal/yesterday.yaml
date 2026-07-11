@@ -1,0 +1,42 @@
+suite: temporal
+kind: predicate
+operator: yesterday
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundTodayPredicatesTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-12-28
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Yesterday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Yesterday_DateTime_Valid
+      line: 52
+  - value: 2022-12-29
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Yesterday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Yesterday_DateTime_Valid
+      line: 53
+  - value: 2022-12-30
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Yesterday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Yesterday_DateTime_Valid
+      line: 54
+  - value: 1970-05-06
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Yesterday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Yesterday_DateTime_Valid
+      line: 55

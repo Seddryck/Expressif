@@ -1,0 +1,24 @@
+suite: temporal
+kind: function
+operator: null-to-date
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: NullToDate_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.NullToDate_Valid
+    cases:
+      - value: 2018-02-01 07:00:00
+        expected: 2018-02-01 07:00:00
+        parameters:
+          - 2001-01-01
+        line: 207
+      - value: (null)
+        expected: 2001-01-01
+        parameters:
+          - 2001-01-01
+        line: 208

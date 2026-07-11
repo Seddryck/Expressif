@@ -1,0 +1,17 @@
+suite: text
+kind: function
+operator: text-to-html
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: TextToHtml_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.TextToHtml_Valid
+    cases:
+      - value: Cédric
+        expected: C&#233;dric
+        line: 203

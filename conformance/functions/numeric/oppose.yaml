@@ -1,0 +1,41 @@
+suite: numeric
+kind: function
+operator: oppose
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - NumericFunctionsTest.cs
+tests:
+  - id: Oppose_Valid
+    trace:
+      file: Functions/Numeric/NumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.Oppose_Valid
+    cases:
+      - value: 0
+        expected: 0
+        line: 133
+      - value: 1
+        expected: -1
+        line: 134
+      - value: -1
+        expected: 1
+        line: 135
+      - value: 4
+        expected: -4
+        line: 136
+      - value: -4
+        expected: 4
+        line: 137
+      - value: 
+        expected: 
+        line: 138
+      - value: (null)
+        expected: 
+        line: 139
+      - value: (empty)
+        expected: 
+        line: 140
+      - value: (blank)
+        expected: 
+        line: 141

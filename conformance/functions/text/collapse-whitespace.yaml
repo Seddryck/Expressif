@@ -1,0 +1,47 @@
+suite: text
+kind: function
+operator: collapse-whitespace
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CharFunctionsTest.cs
+tests:
+  - id: CollapseWhitespace_Value_Valid
+    trace:
+      file: Functions/Text/CharFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CharFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.CollapseWhitespace_Value_Valid
+    cases:
+      - value: foo
+        expected: foo
+        line: 64
+      - value: foo bar
+        expected: foo bar
+        line: 65
+      - value: foo  bar
+        expected: foo bar
+        line: 66
+      - value: "foo\tbar"
+        expected: "foo\tbar"
+        line: 67
+      - value: "foo\t bar"
+        expected: "foo\tbar"
+        line: 68
+      - value: "foo\r\nbar"
+        expected: "foo\r\nbar"
+        line: 69
+      - value: "\t\t\tfoo\t\tbar\t\t\t"
+        expected: "foo\tbar"
+        line: 70
+      - value: (null)
+        expected: (null)
+        line: 71
+      - value: 
+        expected: (null)
+        line: 72
+      - value: (empty)
+        expected: (empty)
+        line: 73
+      - value: (blank)
+        expected: (empty)
+        line: 74

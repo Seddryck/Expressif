@@ -1,0 +1,38 @@
+suite: text
+kind: function
+operator: retain-numeric
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - RetainFunctionsTest.cs
+tests:
+  - id: RetainNumeric_Valid
+    trace:
+      file: Functions/Text/RetainFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.RetainFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.RetainFunctionsTest.RetainNumeric_Valid
+    cases:
+      - value: abc12345abc6789
+        expected: 123456789
+        line: 13
+      - value: abc12345abc, 6789
+        expected: 123456789
+        line: 14
+      - value: 12345
+        expected: 12345
+        line: 15
+      - value: -12,345.6
+        expected: 123456
+        line: 16
+      - value: abc
+        expected: (empty)
+        line: 17
+      - value: (null)
+        expected: (null)
+        line: 18
+      - value: (empty)
+        expected: (empty)
+        line: 19
+      - value: (blank)
+        expected: (empty)
+        line: 20

@@ -1,0 +1,56 @@
+suite: text
+kind: function
+operator: pad-right
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PaddingFunctionsTest.cs
+tests:
+  - id: PadRight_Valid
+    trace:
+      file: Functions/Text/PaddingFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.PaddingFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.PaddingFunctionsTest.PadRight_Valid
+    cases:
+      - value: 1234
+        expected: 123400000
+        parameters:
+          - 9
+          - 0
+        line: 13
+      - value: 1234
+        expected: 123400000
+        parameters:
+          - 9
+          - 0
+        line: 14
+      - value: 1234
+        expected: 1234*****
+        parameters:
+          - 9
+          - '*'
+        line: 15
+      - value: 1234
+        expected: 1234*****
+        parameters:
+          - 9
+          - '*'
+        line: 16
+      - value: 123456789
+        expected: 123456789
+        parameters:
+          - 3
+          - 0
+        line: 17
+      - value: (null)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+        line: 18
+      - value: (empty)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+        line: 19

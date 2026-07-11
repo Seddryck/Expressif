@@ -1,0 +1,49 @@
+suite: text
+kind: function
+operator: skip-first-chars
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: SkipFirstChars_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.SkipFirstChars_Valid
+    cases:
+      - value: 123456789
+        expected: (empty)
+        parameters:
+          - 9
+        line: 258
+      - value: 123456789
+        expected: (empty)
+        parameters:
+          - 10
+        line: 259
+      - value: 123456789
+        expected: 9
+        parameters:
+          - 8
+        line: 260
+      - value: 123456789
+        expected: 6789
+        parameters:
+          - 5
+        line: 261
+      - value: 123456789
+        expected: 123456789
+        parameters:
+          - 0
+        line: 262
+      - value: (null)
+        expected: (null)
+        parameters:
+          - 3
+        line: 263
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - 3
+        line: 264

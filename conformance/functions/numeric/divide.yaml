@@ -1,0 +1,44 @@
+suite: numeric
+kind: function
+operator: divide
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ArithmeticFunctionsTest.cs
+tests:
+  - id: Divide_4_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Divide_4_Valid
+    cases:
+      - value: 0
+        expected: 0
+        parameters:
+          - 4
+        line: 86
+      - value: 1
+        expected: 0.25
+        parameters:
+          - 4
+        line: 87
+      - value: -1
+        expected: -0.25
+        parameters:
+          - 4
+        line: 88
+      - value: (null)
+        expected:
+        parameters:
+          - 4
+        line: 89
+      - value: (empty)
+        expected:
+        parameters:
+          - 4
+        line: 90
+      - value: (blank)
+        expected:
+        parameters:
+          - 4
+        line: 91

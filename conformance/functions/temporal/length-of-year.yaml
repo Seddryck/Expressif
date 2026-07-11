@@ -1,0 +1,50 @@
+suite: temporal
+kind: function
+operator: length-of-year
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - LengthFunctionsTest.cs
+tests:
+  - id: LengthOfYear_DateTime_Valid
+    trace:
+      file: Functions/Temporal/LengthFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.LengthFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.LengthFunctionsTest.LengthOfYear_DateTime_Valid
+    cases:
+      - value: 1900-05-25
+        expected: 365
+        line: 23
+      - value: 1999-05-25
+        expected: 365
+        line: 24
+      - value: 2000-05-25
+        expected: 366
+        line: 25
+      - value: 2023-05-25
+        expected: 365
+        line: 26
+      - value: 2024-05-25
+        expected: 366
+        line: 27
+  - id: LengthOfYear_Integer_Valid
+    trace:
+      file: Functions/Temporal/LengthFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.LengthFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.LengthFunctionsTest.LengthOfYear_Integer_Valid
+    cases:
+      - value: 1900
+        expected: 365
+        line: 14
+      - value: 1999
+        expected: 365
+        line: 15
+      - value: 2000
+        expected: 366
+        line: 16
+      - value: 2023
+        expected: 365
+        line: 17
+      - value: 2024
+        expected: 366
+        line: 18

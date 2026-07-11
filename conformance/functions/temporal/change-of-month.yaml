@@ -1,0 +1,107 @@
+suite: temporal
+kind: function
+operator: change-of-month
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartChangeFunctionsTest.cs
+tests:
+  - id: ChangeOfMonth_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfMonth_DateTime_Valid
+    cases:
+      - value: 1900-01-01
+        expected: 1900-03-01
+        parameters:
+          - 3
+        line: 38
+      - value: 2000-01-31
+        expected: 2000-03-31
+        parameters:
+          - 3
+        line: 39
+      - value: 2000-01-31
+        expected: 2000-04-30
+        parameters:
+          - 4
+        line: 40
+      - value: 2000-01-31
+        expected: 2000-02-29
+        parameters:
+          - 2
+        line: 41
+      - value: 2001-01-31
+        expected: 2001-02-28
+        parameters:
+          - 2
+        line: 42
+  - id: ChangeOfMonth_DateTime_Invalid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfMonth_DateTime_Invalid
+    cases:
+      - value: 1900-01-01
+        expected: "(null)"
+        parameters:
+          - -1
+        line: 54
+      - value: 1900-01-01
+        expected: "(null)"
+        parameters:
+          - 0
+        line: 55
+      - value: 1900-01-01
+        expected: "(null)"
+        parameters:
+          - 13
+        line: 56
+  - id: ChangeOfMonth_YearMonth_Valid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfMonth_YearMonth_Valid
+    cases:
+      - value: 1900-01
+        expected: 1900-03
+        parameters:
+          - 3
+        line: 54
+      - value: 1900-01
+        expected: 1900-03
+        parameters:
+          - 3
+        line: 55
+      - value: 2000-01
+        expected: 2000-01
+        parameters:
+          - 1
+        line: 56
+      - value: 0800-01
+        expected: 0800-03
+        parameters:
+          - 3
+        line: 57
+  - id: ChangeOfMonth_YearMonth_Invalid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfMonth_YearMonth_Invalid
+    cases:
+      - value: 1900-01
+        expected: "(null)"
+        parameters:
+          - -1
+        line: 54
+      - value: 1900-01
+        expected: "(null)"
+        parameters:
+          - 0
+        line: 55
+      - value: 1900-01
+        expected: "(null)"
+        parameters:
+          - 13
+        line: 56

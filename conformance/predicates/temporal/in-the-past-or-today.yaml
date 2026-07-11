@@ -1,0 +1,50 @@
+suite: temporal
+kind: predicate
+operator: in-the-past-or-today
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundNowPredicatesTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-12-28 14:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InThePastOrToday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePastOrToday_DateTime_Valid
+      line: 139
+  - value: 2022-12-29 14:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InThePastOrToday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePastOrToday_DateTime_Valid
+      line: 140
+  - value: 2022-12-29 15:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InThePastOrToday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePastOrToday_DateTime_Valid
+      line: 141
+  - value: 2022-12-29 16:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InThePastOrToday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePastOrToday_DateTime_Valid
+      line: 142
+  - value: 2022-12-30 16:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InThePastOrToday_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePastOrToday_DateTime_Valid
+      line: 143

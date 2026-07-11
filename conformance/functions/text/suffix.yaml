@@ -1,0 +1,34 @@
+suite: text
+kind: function
+operator: suffix
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AppendFunctionsTest.cs
+tests:
+  - id: Suffix_Valid
+    trace:
+      file: Functions/Text/AppendFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.AppendFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.AppendFunctionsTest.Suffix_Valid
+    cases:
+      - value: 123456789
+        expected: 123456789abc
+        parameters:
+          - abc
+        line: 22
+      - value: (null)
+        expected: (null)
+        parameters:
+          - abc
+        line: 23
+      - value: (empty)
+        expected: abc
+        parameters:
+          - abc
+        line: 24
+      - value: (blank)
+        expected: abc
+        parameters:
+          - abc
+        line: 25

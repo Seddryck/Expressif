@@ -1,0 +1,56 @@
+suite: numeric
+kind: predicate
+operator: zero-or-null
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - SpecialTest.cs
+cases:
+  - value: 0
+    expected: true
+    trace:
+      file: Predicates/Numeric/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Numeric.SpecialTest
+      id: ZeroOrNull_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.SpecialTest.ZeroOrNull_Numeric_Success
+      line: 23
+  - value: 4
+    expected: false
+    trace:
+      file: Predicates/Numeric/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Numeric.SpecialTest
+      id: ZeroOrNull_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.SpecialTest.ZeroOrNull_Numeric_Success
+      line: 24
+  - value: 4.0
+    expected: false
+    trace:
+      file: Predicates/Numeric/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Numeric.SpecialTest
+      id: ZeroOrNull_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.SpecialTest.ZeroOrNull_Numeric_Success
+      line: 25
+  - value: 4.25
+    expected: false
+    trace:
+      file: Predicates/Numeric/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Numeric.SpecialTest
+      id: ZeroOrNull_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.SpecialTest.ZeroOrNull_Numeric_Success
+      line: 26
+  - value: 
+    expected: true
+    trace:
+      file: Predicates/Numeric/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Numeric.SpecialTest
+      id: ZeroOrNull_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.SpecialTest.ZeroOrNull_Numeric_Success
+      line: 27
+  - value: (null)
+    expected: true
+    trace:
+      file: Predicates/Numeric/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Numeric.SpecialTest
+      id: ZeroOrNull_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.SpecialTest.ZeroOrNull_Numeric_Success
+      line: 28

@@ -1,0 +1,38 @@
+suite: text
+kind: function
+operator: retain-alpha
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - RetainFunctionsTest.cs
+tests:
+  - id: RetainAlpha_Valid
+    trace:
+      file: Functions/Text/RetainFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.RetainFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.RetainFunctionsTest.RetainAlpha_Valid
+    cases:
+      - value: abc12345abc6789
+        expected: abcabc
+        line: 37
+      - value: abc12345abc, 6789
+        expected: abcabc
+        line: 38
+      - value: 12345
+        expected: (empty)
+        line: 39
+      - value: -12,345.6
+        expected: (empty)
+        line: 40
+      - value: abc
+        expected: abc
+        line: 41
+      - value: (null)
+        expected: (null)
+        line: 42
+      - value: (empty)
+        expected: (empty)
+        line: 43
+      - value: (blank)
+        expected: (empty)
+        line: 44

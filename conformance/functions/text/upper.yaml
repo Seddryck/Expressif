@@ -1,0 +1,35 @@
+suite: text
+kind: function
+operator: upper
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: Upper_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.Upper_Valid
+    cases:
+      - value: FOO
+        expected: FOO
+        line: 181
+      - value: foo
+        expected: FOO
+        line: 182
+      - value: fOo
+        expected: FOO
+        line: 183
+      - value: ' foO '
+        expected: ' FOO '
+        line: 184
+      - value: (null)
+        expected: (null)
+        line: 185
+      - value: (empty)
+        expected: (empty)
+        line: 186
+      - value: (blank)
+        expected: (blank)
+        line: 187

@@ -1,0 +1,64 @@
+suite: temporal
+kind: predicate
+operator: on-the-hour
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - OnTheInstantTest.cs
+cases:
+  - value: 2022-11-21
+    expected: true
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 29
+  - value: 2022-11-21 00:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 30
+  - value: 2022-11-21 17:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 31
+  - value: 2022-11-21 17:12:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 32
+  - value: 2022-11-21 17:12:25
+    expected: false
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 33
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 34
+  - value: (null)
+    expected: false
+    trace:
+      file: Predicates/Temporal/OnTheInstantTest.cs
+      class: Expressif.Testing.Predicates.Temporal.OnTheInstantTest
+      id: OnTheHour_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.OnTheInstantTest.OnTheHour_DateTime_Expected
+      line: 35

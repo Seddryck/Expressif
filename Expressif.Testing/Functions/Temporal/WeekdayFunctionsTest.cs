@@ -4,12 +4,11 @@ using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Functions.Temporal;
 
+[TestFixture]
 public class WeekdayFunctionsTest
 {
     public WeekdayFunctionsTest()

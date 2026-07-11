@@ -1,0 +1,41 @@
+suite: io
+kind: function
+operator: filename-without-extension
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PathFunctionsTest.cs
+tests:
+  - id: FilenameWithoutExtension_Valid
+    trace:
+      file: Functions/IO/PathFunctionsTest.cs
+      class: Expressif.Testing.Functions.IO.PathFunctionsTest
+      qualified-method: Expressif.Testing.Functions.IO.PathFunctionsTest.FilenameWithoutExtension_Valid
+    cases:
+      - value: C:\
+        expected: ''
+        line: 28
+      - value: C:\Dir\
+        expected: ''
+        line: 29
+      - value: C:\Dir\Child\
+        expected: ''
+        line: 30
+      - value: C:\Dir\ChildFile
+        expected: ChildFile
+        line: 31
+      - value: C:\Dir\Child\file.txt
+        expected: file
+        line: 32
+      - value: Dir\file.txt
+        expected: file
+        line: 33
+      - value: (null)
+        expected: (empty)
+        line: 34
+      - value: (empty)
+        expected: (empty)
+        line: 35
+      - value: (blank)
+        expected: (empty)
+        line: 36

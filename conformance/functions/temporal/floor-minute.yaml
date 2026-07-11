@@ -1,0 +1,26 @@
+suite: temporal
+kind: function
+operator: floor-minute
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: FloorMinute_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.FloorMinute_Valid
+    cases:
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 17:00:00
+        line: 91
+      - value: 2019-03-11 17:20:00
+        expected: 2019-03-11 17:20:00
+        line: 92
+      - value: 2019-03-11 17:20:24.120
+        expected: 2019-03-11 17:20:00
+        line: 93
+      - value: 2019-03-11 17:40:59
+        expected: 2019-03-11 17:40:00
+        line: 94

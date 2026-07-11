@@ -1,0 +1,54 @@
+suite: text
+kind: function
+operator: mask-to-text
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: MaskToText_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.MaskToText_Valid
+    cases:
+      - value: BE-123.456.78
+        expected: 12345678
+        parameters:
+          - BE-***.***.**
+        line: 321
+      - value: BE-123.45*.**
+        expected: 12345
+        parameters:
+          - BE-***.***.**
+        line: 322
+      - value: (null)
+        expected: (null)
+        parameters:
+          - BE-***.***.**
+        line: 323
+      - value: BE-***.***.**
+        expected: ''
+        parameters:
+          - BE-***.***.**
+        line: 324
+      - value: (empty)
+        expected: (null)
+        parameters:
+          - BE-***.***.**
+        line: 325
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - '********'
+        line: 326
+      - value: (blank)
+        expected: (null)
+        parameters:
+          - BE-***.***.**
+        line: 327
+      - value: (blank)
+        expected: (blank)
+        parameters:
+          - '********'
+        line: 328

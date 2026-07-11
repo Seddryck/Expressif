@@ -1,0 +1,40 @@
+suite: numeric
+kind: predicate
+operator: odd
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ModuloTest.cs
+cases:
+  - value: 10
+    expected: false
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Odd_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
+      line: 54
+  - value: 1
+    expected: true
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Odd_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
+      line: 55
+  - value: 0
+    expected: false
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Odd_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
+      line: 56
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Odd_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
+      line: 57

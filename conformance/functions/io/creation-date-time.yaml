@@ -1,0 +1,9 @@
+suite: io
+kind: function
+operator: creation-date-time
+tests:
+  - id: CreationDateTime_Valid
+    cases:
+      - value: C:\Dir\Child\file.txt
+        expected: 2022-11-06T23:07:02
+        

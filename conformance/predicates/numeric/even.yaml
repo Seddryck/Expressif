@@ -1,0 +1,40 @@
+suite: numeric
+kind: predicate
+operator: even
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ModuloTest.cs
+cases:
+  - value: 10
+    expected: true
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Even_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
+      line: 43
+  - value: 1
+    expected: false
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Even_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
+      line: 44
+  - value: 0
+    expected: true
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Even_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
+      line: 45
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Numeric/ModuloTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ModuloTest
+      id: Even_Numeric_Valid
+      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
+      line: 46

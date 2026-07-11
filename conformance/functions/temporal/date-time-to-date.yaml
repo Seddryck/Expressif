@@ -1,0 +1,33 @@
+suite: temporal
+kind: function
+operator: date-time-to-date
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: DateTimeToDate_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.DateTimeToDate_Valid
+    cases:
+      - value: 2018-02-01
+        expected: 2018-02-01
+        line: 189
+      - value: 2018-02-01 00:00:00
+        expected: 2018-02-01
+        line: 190
+      - value: 2018-02-01 07:00:00
+        expected: 2018-02-01
+        line: 191
+  - id: DateTimeToDate_DateOnly_Valid
+    cases:
+      - value: 2018-02-01
+        expected: 2018-02-01
+  - id: DateTimeToDate_DateTimeOffset_Valid
+    cases:
+      - value: 2018-02-01T00:00:00Z
+        expected: 2018-02-01
+      - value: 2018-02-01T00:00:00+01:00
+        expected: 2018-01-31

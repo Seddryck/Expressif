@@ -1,0 +1,44 @@
+suite: numeric
+kind: function
+operator: multiply
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ArithmeticFunctionsTest.cs
+tests:
+  - id: Multiply_3_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Multiply_3_Valid
+    cases:
+      - value: 0
+        expected: 0
+        parameters:
+          - 3
+        line: 75
+      - value: 1
+        expected: 3
+        parameters:
+          - 3
+        line: 76
+      - value: -1
+        expected: -3
+        parameters:
+          - 3
+        line: 77
+      - value: (null)
+        expected: 
+        parameters:
+          - 3
+        line: 78
+      - value: (empty)
+        expected: 
+        parameters:
+          - 3
+        line: 79
+      - value: (blank)
+        expected: 
+        parameters:
+          - 3
+        line: 80

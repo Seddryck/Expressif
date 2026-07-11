@@ -1,0 +1,59 @@
+suite: temporal
+kind: function
+operator: year
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartTextualFunctionsTest.cs
+tests:
+  - id: Year_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.Year_DateTime_Valid
+    cases:
+      - value: 1900-01-01
+        expected: 1900
+        line: 22
+      - value: 2000-01-01
+        expected: 2000
+        line: 23
+      - value: 800-01-01
+        expected: 0800
+        line: 24
+  - id: Year_Integer_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.Year_Integer_Valid
+    cases:
+      - value: 1900
+        expected: 1900
+        line: 13
+      - value: 2000
+        expected: 2000
+        line: 14
+      - value: -45
+        expected: -0045
+        line: 15
+      - value: 800
+        expected: 0800
+        line: 16
+      - value: 12300
+        expected: 12300
+        line: 17
+  - id: Year_YearMonth_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.Year_YearMonth_Valid
+    cases:
+      - value: 1900-01
+        expected: 1900
+        line: 29
+      - value: 2000-01
+        expected: 2000
+        line: 30
+      - value: 0800-01
+        expected: 0800
+        line: 31

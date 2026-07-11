@@ -1,0 +1,50 @@
+suite: numeric
+kind: function
+operator: human-readable-format-decimal-bytes
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - FormatFunctionTest.cs
+tests:
+  - id: HumanReadableFormatDecimalBytes_DefaultPrecision_Valid
+    trace:
+      file: Functions/Numeric/FormatFunctionTest.cs
+      class: Expressif.Testing.Functions.Numeric.FormatFunctionTest
+      qualified-method: Expressif.Testing.Functions.Numeric.FormatFunctionTest.HumanReadableFormatDecimalBytes_DefaultPrecision_Valid
+    cases:
+      - value: 1048576
+        expected: 1.05 MB
+        line: 26
+      - value: 1000
+        expected: 1.00 KB
+        line: 27
+      - value: 999
+        expected: 999 B
+        line: 28
+      - value: 0
+        expected: 0 B
+        line: 29
+      - value: -1048576
+        expected: -1.05 MB
+        line: 30
+  - id: HumanReadableFormatDecimalBytes_Precision_Valid
+    trace:
+      file: Functions/Numeric/FormatFunctionTest.cs
+      class: Expressif.Testing.Functions.Numeric.FormatFunctionTest
+      qualified-method: Expressif.Testing.Functions.Numeric.FormatFunctionTest.HumanReadableFormatDecimalBytes_Precision_Valid
+    cases:
+      - value: 1048576
+        expected: 1 MB
+        parameters:
+          - 0
+        line: 35
+      - value: 1048576
+        expected: 1.049 MB
+        parameters:
+          - 3
+        line: 36
+      - value: 1000
+        expected: 1 KB
+        parameters:
+          - 0
+        line: 37

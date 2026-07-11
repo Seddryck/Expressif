@@ -1,0 +1,35 @@
+suite: text
+kind: function
+operator: length
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CountingFunctionsTest.cs
+tests:
+  - id: Length_Valid
+    trace:
+      file: Functions/Text/CountingFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CountingFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CountingFunctionsTest.Length_Valid
+    cases:
+      - value: foo
+        expected: 3
+        line: 13
+      - value: ' foo '
+        expected: 5
+        line: 14
+      - value: ''
+        expected: 0
+        line: 15
+      - value: (null)
+        expected: 0
+        line: 16
+      - value: 
+        expected: 0
+        line: 17
+      - value: (empty)
+        expected: 0
+        line: 18
+      - value: (blank)
+        expected: 
+        line: 19

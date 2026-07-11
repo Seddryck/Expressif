@@ -1,0 +1,41 @@
+suite: text
+kind: function
+operator: trim
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: Trim_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.Trim_Valid
+    cases:
+      - value: FOO
+        expected: FOO
+        line: 168
+      - value: foo
+        expected: foo
+        line: 169
+      - value: ' foO'
+        expected: foO
+        line: 170
+      - value: '    foO'
+        expected: foO
+        line: 171
+      - value: 'foO '
+        expected: foO
+        line: 172
+      - value: 'foO    '
+        expected: foO
+        line: 173
+      - value: (null)
+        expected: (null)
+        line: 174
+      - value: (empty)
+        expected: (empty)
+        line: 175
+      - value: (blank)
+        expected: (empty)
+        line: 176

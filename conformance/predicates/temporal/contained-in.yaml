@@ -1,0 +1,58 @@
+suite: temporal
+kind: predicate
+operator: contained-in
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - IntervalTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-11-21
+    expected: true
+    trace:
+      file: Predicates/Temporal/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Temporal.IntervalTest
+      id: ContainedIn_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.IntervalTest.ContainedIn_DateTime_Expected
+      line: 14
+  - value: 2022-11-25
+    expected: false
+    trace:
+      file: Predicates/Temporal/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Temporal.IntervalTest
+      id: ContainedIn_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.IntervalTest.ContainedIn_DateTime_Expected
+      line: 15
+  - value: 2022-11-21 17:12:25
+    expected: true
+    trace:
+      file: Predicates/Temporal/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Temporal.IntervalTest
+      id: ContainedIn_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.IntervalTest.ContainedIn_DateTime_Expected
+      line: 16
+  - value: 2022-11-25 17:12:25
+    expected: false
+    trace:
+      file: Predicates/Temporal/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Temporal.IntervalTest
+      id: ContainedIn_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.IntervalTest.ContainedIn_DateTime_Expected
+      line: 17
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Temporal/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Temporal.IntervalTest
+      id: ContainedIn_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.IntervalTest.ContainedIn_DateTime_Expected
+      line: 18
+  - value: (null)
+    expected: false
+    trace:
+      file: Predicates/Temporal/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Temporal.IntervalTest
+      id: ContainedIn_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.IntervalTest.ContainedIn_DateTime_Expected
+      line: 19

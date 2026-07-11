@@ -1,0 +1,248 @@
+suite: boolean
+kind: predicate
+operator: identical-to
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - IdenticalToTest.cs
+cases:
+  - value: true
+    expected: true
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 13
+  - value: false
+    expected: false
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 14
+  - value: 
+    expected: false
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 15
+  - value: (null)
+    expected: false
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 16
+  - value: -1
+    expected: true
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 17
+  - value: 0
+    expected: false
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 18
+  - value: 1
+    expected: true
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 19
+  - value: 104.25
+    expected: true
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 20
+  - value: true
+    expected: true
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 21
+  - value: false
+    expected: false
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 22
+  - value: yes
+    expected: true
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 23
+  - value: no
+    expected: false
+    parameters:
+      - true
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 24
+  - value: true
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 25
+  - value: false
+    expected: true
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 26
+  - value: 
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 27
+  - value: (null)
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 28
+  - value: -1
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 29
+  - value: 0
+    expected: true
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 30
+  - value: 1
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 31
+  - value: 104.25
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 32
+  - value: true
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 33
+  - value: false
+    expected: true
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 34
+  - value: yes
+    expected: false
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 35
+  - value: no
+    expected: true
+    parameters:
+      - false
+    trace:
+      file: Predicates/Boolean/IdenticalToTest.cs
+      class: Expressif.Testing.Predicates.Boolean.IdenticalToTest
+      id: False_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.IdenticalToTest.False_Boolean_Expected
+      line: 36

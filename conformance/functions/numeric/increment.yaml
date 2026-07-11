@@ -1,0 +1,32 @@
+suite: numeric
+kind: function
+operator: increment
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ArithmeticFunctionsTest.cs
+tests:
+  - id: Increment_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Increment_Valid
+    cases:
+      - value: 0
+        expected: 1
+        line: 13
+      - value: 1
+        expected: 2
+        line: 14
+      - value: -1
+        expected: 0
+        line: 15
+      - value: (null)
+        expected: 
+        line: 16
+      - value: (empty)
+        expected: 
+        line: 17
+      - value: (blank)
+        expected: 
+        line: 18

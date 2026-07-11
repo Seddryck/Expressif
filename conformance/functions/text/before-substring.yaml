@@ -1,0 +1,84 @@
+suite: text
+kind: function
+operator: before-substring
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - SubstringFunctionsTest.cs
+tests:
+  - id: BeforeSubstring_Position_Valid
+    trace:
+      file: Functions/Text/SubstringFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.SubstringFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.SubstringFunctionsTest.BeforeSubstring_Position_Valid
+    cases:
+      - value: Foo+Bar+Bez+Quark
+        expected: Foo
+        parameters:
+          - +
+          - 0
+        line: 27
+      - value: Foo+Bar+Bez+Quark
+        expected: Foo+Bar
+        parameters:
+          - +
+          - 1
+        line: 28
+      - value: Foo+Bar+Bez+Quark
+        expected: Foo+Bar+Bez
+        parameters:
+          - +
+          - 2
+        line: 29
+      - value: Foo+Bar+Bez+Quark
+        expected: (null)
+        parameters:
+          - +
+          - 3
+        line: 30
+  - id: BeforeSubstring_Valid
+    trace:
+      file: Functions/Text/SubstringFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.SubstringFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.SubstringFunctionsTest.BeforeSubstring_Valid
+    cases:
+      - value: Foo+ Bar
+        expected: Foo
+        parameters:
+          - '+ '
+        line: 14
+      - value: Foo+ Bar
+        expected: ''
+        parameters:
+          - F
+        line: 15
+      - value: Foo+ Bar
+        expected: 'Foo+ '
+        parameters:
+          - B
+        line: 16
+      - value: Foo+ Bar
+        expected: ''
+        parameters:
+          - XYZ
+        line: 17
+      - value: Foo+ Bar
+        expected: ''
+        parameters:
+          - (null)
+        line: 18
+      - value: Foo+ Bar
+        expected: ''
+        parameters:
+          - (empty)
+        line: 19
+      - value: (null)
+        expected: (null)
+        parameters:
+          - ', '
+        line: 20
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - ', '
+        line: 21

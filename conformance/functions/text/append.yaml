@@ -1,0 +1,39 @@
+suite: text
+kind: function
+operator: append
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AppendFunctionsTest.cs
+tests:
+  - id: Append_Valid
+    trace:
+      file: Functions/Text/AppendFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.AppendFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.AppendFunctionsTest.Append_Valid
+    cases:
+      - value: 123456789
+        expected: 123456789abc
+        parameters:
+          - abc
+        line: 41
+      - value: (null)
+        expected: abc
+        parameters:
+          - abc
+        line: 42
+      - value: (null)
+        expected: ''
+        parameters:
+          - (null)
+        line: 43
+      - value: (empty)
+        expected: abc
+        parameters:
+          - abc
+        line: 44
+      - value: (blank)
+        expected: abc
+        parameters:
+          - abc
+        line: 45

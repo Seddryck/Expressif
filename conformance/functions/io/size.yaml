@@ -1,0 +1,17 @@
+suite: io
+kind: function
+operator: size
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - FileFunctionsTest.cs
+tests:
+  - id: Size_Valid
+    trace:
+      file: Functions/IO/FileFunctionsTest.cs
+      class: Expressif.Testing.Functions.IO.FileFunctionsTest
+      qualified-method: Expressif.Testing.Functions.IO.FileFunctionsTest.Size_Valid
+    cases:
+      - value: C:\Dir\Child\file.txt
+        expected: 4080
+        line: 15

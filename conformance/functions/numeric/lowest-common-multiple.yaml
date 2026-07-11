@@ -1,0 +1,69 @@
+suite: numeric
+kind: function
+operator: lowest-common-multiple
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ArithmeticFunctionsTest.cs
+tests:
+  - id: LowestCommonMultiple_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.LowestCommonMultiple_Valid
+    cases:
+      - value: 8
+        expected: 24
+        parameters:
+          - 12
+        line: 112
+      - value: 12
+        expected: 24
+        parameters:
+          - 8
+        line: 113
+      - value: -8
+        expected: 24
+        parameters:
+          - 12
+        line: 114
+      - value: 8
+        expected: 24
+        parameters:
+          - -12
+        line: 115
+      - value: 0
+        expected: 0
+        parameters:
+          - 12
+        line: 116
+      - value: 12
+        expected: 0
+        parameters:
+          - 0
+        line: 117
+      - value: 0
+        expected: 0
+        parameters:
+          - 0
+        line: 118
+      - value: (null)
+        expected: 
+        parameters:
+          - 12
+        line: 119
+      - value: (empty)
+        expected: 
+        parameters:
+          - 12
+        line: 120
+      - value: (blank)
+        expected: 
+        parameters:
+          - 12
+        line: 121
+      - value: 7.5
+        expected: 
+        parameters:
+          - 12
+        line: 122

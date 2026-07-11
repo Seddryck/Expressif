@@ -1,0 +1,50 @@
+suite: temporal
+kind: predicate
+operator: in-the-future
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundNowPredicatesTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-12-28 14:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFuture_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFuture_DateTime_Valid
+      line: 95
+  - value: 2022-12-29 14:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFuture_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFuture_DateTime_Valid
+      line: 96
+  - value: 2022-12-29 15:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFuture_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFuture_DateTime_Valid
+      line: 97
+  - value: 2022-12-29 16:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFuture_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFuture_DateTime_Valid
+      line: 98
+  - value: 2022-12-30 16:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFuture_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFuture_DateTime_Valid
+      line: 99

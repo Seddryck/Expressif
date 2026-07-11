@@ -1,0 +1,53 @@
+suite: text
+kind: function
+operator: clean-whitespace
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CharFunctionsTest.cs
+tests:
+  - id: CleanWhitespace_Value_Valid
+    trace:
+      file: Functions/Text/CharFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CharFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.CleanWhitespace_Value_Valid
+    cases:
+      - value: foo
+        expected: foo
+        line: 80
+      - value: foo bar
+        expected: foo bar
+        line: 81
+      - value: foo  bar
+        expected: foo  bar
+        line: 82
+      - value: "foo\tbar"
+        expected: foo bar
+        line: 83
+      - value: "foo\t bar"
+        expected: "foo  bar"
+        line: 84
+      - value: "foo\r\nbar"
+        expected: "foo bar"
+        line: 84
+      - value: "foo\rbar\n"
+        expected: "foo bar "
+        line: 84
+      - value: "foo\r\n\r\nbar"
+        expected: "foo  bar"
+        line: 85
+      - value: "\t\t\tfoo\t\tbar\t\t\t"
+        expected: "   foo  bar   "
+        line: 86
+      - value: (null)
+        expected: (null)
+        line: 89
+      - value: 
+        expected: (null)
+        line: 90
+      - value: (empty)
+        expected: (empty)
+        line: 91
+      - value: (blank)
+        expected: (blank)
+        line: 92

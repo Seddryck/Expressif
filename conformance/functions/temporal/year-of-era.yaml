@@ -1,0 +1,59 @@
+suite: temporal
+kind: function
+operator: year-of-era
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartNumericFunctionsTest.cs
+tests:
+  - id: YearOfEra_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartNumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest.YearOfEra_DateTime_Valid
+    cases:
+      - value: 1900-01-01
+        expected: 1900
+        line: 22
+      - value: 2000-01-01
+        expected: 2000
+        line: 23
+      - value: 800-01-01
+        expected: 800
+        line: 24
+  - id: YearOfEra_Integer_Valid
+    trace:
+      file: Functions/Temporal/DatePartNumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest.YearOfEra_Integer_Valid
+    cases:
+      - value: 1900
+        expected: 1900
+        line: 13
+      - value: 2000
+        expected: 2000
+        line: 14
+      - value: -45
+        expected: -45
+        line: 15
+      - value: 800
+        expected: 800
+        line: 16
+      - value: 12300
+        expected: 12300
+        line: 17
+  - id: YearOfEra_YearMonth_Valid
+    trace:
+      file: Functions/Temporal/DatePartNumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest.YearOfEra_YearMonth_Valid
+    cases:
+      - value: 1900-01
+        expected: 1900
+        line: 29
+      - value: 2000-01
+        expected: 2000
+        line: 30
+      - value: 0800-01
+        expected: 800
+        line: 31

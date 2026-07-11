@@ -1,0 +1,54 @@
+suite: text
+kind: function
+operator: remove-chars
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CharFunctionsTest.cs
+tests:
+  - id: RemoveChars_Valid
+    trace:
+      file: Functions/Text/CharFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CharFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.RemoveChars_Valid
+    cases:
+      - value: 123*456*78
+        expected: 12345678
+        parameters:
+          - '*'
+        line: 13
+      - value: '***123***456*78****'
+        expected: 12345678
+        parameters:
+          - '*'
+        line: 14
+      - value: '******'
+        expected: ''
+        parameters:
+          - '*'
+        line: 15
+      - value: (null)
+        expected: (null)
+        parameters:
+          - '*'
+        line: 16
+      - value: 
+        expected: (null)
+        parameters:
+          - '*'
+        line: 17
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - '*'
+        line: 18
+      - value: (blank)
+        expected: (blank)
+        parameters:
+          - '*'
+        line: 19
+      - value: (blank)
+        expected: (empty)
+        parameters:
+          - ' '
+        line: 20

@@ -1,0 +1,32 @@
+suite: temporal
+kind: function
+operator: clamp
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: Clamp_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.Clamp_Valid
+    cases:
+      - value: 2019-03-11
+        expected: 2019-03-11
+        parameters:
+          - 2019-03-01
+          - 2019-03-31
+        line: 18
+      - value: 2019-02-11
+        expected: 2019-03-01
+        parameters:
+          - 2019-03-01
+          - 2019-03-31
+        line: 19
+      - value: 2019-04-11
+        expected: 2019-03-31
+        parameters:
+          - 2019-03-01
+          - 2019-03-31
+        line: 20
