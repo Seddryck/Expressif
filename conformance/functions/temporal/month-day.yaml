@@ -1,0 +1,23 @@
+suite: temporal
+kind: function
+operator: month-day
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartTextualFunctionsTest.cs
+tests:
+  - id: MonthDay_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.MonthDay_DateTime_Valid
+    cases:
+      - value: 1900-01-01
+        expected: 01-01
+        line: 56
+      - value: 2000-10-01
+        expected: 10-01
+        line: 57
+      - value: 800-03-17
+        expected: 03-17
+        line: 58

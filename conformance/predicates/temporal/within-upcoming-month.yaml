@@ -1,0 +1,82 @@
+suite: temporal
+kind: predicate
+operator: within-upcoming-month
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundTodayPredicatesTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-11-30
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 107
+  - value: 2022-12-01
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 108
+  - value: 2022-12-28
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 109
+  - value: 2022-12-29
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 110
+  - value: 2022-12-30
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 111
+  - value: 2023-01-01
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 112
+  - value: 2023-01-31
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 113
+  - value: 2023-02-01
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 114
+  - value: 1970-05-06
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinUpcomingMonth_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinUpcomingMonth_DateTime_Valid
+      line: 115

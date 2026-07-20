@@ -1,0 +1,84 @@
+suite: text
+kind: function
+operator: after-substring
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - SubstringFunctionsTest.cs
+tests:
+  - id: AfterSubstring_Position_Valid
+    trace:
+      file: Functions/Text/SubstringFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.SubstringFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.SubstringFunctionsTest.AfterSubstring_Position_Valid
+    cases:
+      - value: Foo+Bar+Bez+Quark
+        expected: Bar+Bez+Quark
+        parameters:
+          - +
+          - 0
+        line: 49
+      - value: Foo+Bar+Bez+Quark
+        expected: Bez+Quark
+        parameters:
+          - +
+          - 1
+        line: 50
+      - value: Foo+Bar+Bez+Quark
+        expected: Quark
+        parameters:
+          - +
+          - 2
+        line: 51
+      - value: Foo+Bar+Bez+Quark
+        expected: (null)
+        parameters:
+          - +
+          - 3
+        line: 52
+  - id: AfterSubstring_Valid
+    trace:
+      file: Functions/Text/SubstringFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.SubstringFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.SubstringFunctionsTest.AfterSubstring_Valid
+    cases:
+      - value: Foo+ Bar
+        expected: Bar
+        parameters:
+          - '+ '
+        line: 36
+      - value: Foo+ Bar
+        expected: oo+ Bar
+        parameters:
+          - F
+        line: 37
+      - value: Foo+ Bar
+        expected: ar
+        parameters:
+          - B
+        line: 38
+      - value: Foo+ Bar
+        expected: ''
+        parameters:
+          - XYZ
+        line: 39
+      - value: Foo+ Bar
+        expected: Foo+ Bar
+        parameters:
+          - (null)
+        line: 40
+      - value: Foo+ Bar
+        expected: Foo+ Bar
+        parameters:
+          - (empty)
+        line: 41
+      - value: (null)
+        expected: (null)
+        parameters:
+          - ', '
+        line: 42
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - ', '
+        line: 43

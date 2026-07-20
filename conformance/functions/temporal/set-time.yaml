@@ -1,0 +1,24 @@
+suite: temporal
+kind: function
+operator: set-time
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: SetTime_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.SetTime_Valid
+    cases:
+      - value: 2019-03-11 12:00:00
+        expected: 2019-03-11 07:00:00
+        parameters:
+          - 07:00:00
+        line: 68
+      - value: 2019-02-11 08:45:12
+        expected: 2019-02-11 07:13:11
+        parameters:
+          - 07:13:11
+        line: 69

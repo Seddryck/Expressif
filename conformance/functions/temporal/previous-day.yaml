@@ -1,0 +1,26 @@
+suite: temporal
+kind: function
+operator: previous-day
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: PreviousDay_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.PreviousDay_Valid
+    cases:
+      - value: 2019-03-11
+        expected: 2019-03-10
+        line: 46
+      - value: 2019-02-01
+        expected: 2019-01-31
+        line: 47
+      - value: 2020-03-01
+        expected: 2020-02-29
+        line: 48
+      - value: 2020-03-01 17:30:12
+        expected: 2020-02-29 17:30:12
+        line: 49

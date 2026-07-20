@@ -1,0 +1,38 @@
+suite: temporal
+kind: function
+operator: forward
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: Forward_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.Forward_Valid
+    cases:
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 17:00:00
+        parameters:
+          - 04:00:00
+          - 0
+        line: 107
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 21:00:00
+        parameters:
+          - 04:00:00
+          - 1
+        line: 108
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-12 01:00:00
+        parameters:
+          - 04:00:00
+          - 2
+        line: 109
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 13:00:00
+        parameters:
+          - 04:00:00
+          - -1
+        line: 110

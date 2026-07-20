@@ -1,0 +1,48 @@
+suite: numeric
+kind: predicate
+operator: negative-or-zero
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ComparisonShortcutTest.cs
+cases:
+  - value: 0
+    expected: true
+    trace:
+      file: Predicates/Numeric/ComparisonShortcutTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
+      id: NegativeOrZero_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.NegativeOrZero_Numeric_Success
+      line: 58
+  - value: 1
+    expected: false
+    trace:
+      file: Predicates/Numeric/ComparisonShortcutTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
+      id: NegativeOrZero_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.NegativeOrZero_Numeric_Success
+      line: 59
+  - value: 10
+    expected: false
+    trace:
+      file: Predicates/Numeric/ComparisonShortcutTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
+      id: NegativeOrZero_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.NegativeOrZero_Numeric_Success
+      line: 60
+  - value: -10
+    expected: true
+    trace:
+      file: Predicates/Numeric/ComparisonShortcutTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
+      id: NegativeOrZero_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.NegativeOrZero_Numeric_Success
+      line: 61
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Numeric/ComparisonShortcutTest.cs
+      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
+      id: NegativeOrZero_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.NegativeOrZero_Numeric_Success
+      line: 62

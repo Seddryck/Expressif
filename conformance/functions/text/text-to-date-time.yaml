@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: text-to-date-time
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: TextToDateTime_Culture_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.TextToDateTime_Culture_Valid
+    cases:
+      - value: 20190317111223
+        expected: 2019-03-17 11:12:23
+        parameters:
+          - yyyyMMddhhmmss
+          - fr-fr
+        line: 303
+      - value: mercredi 25-sept.-19
+        expected: 2019-09-25
+        parameters:
+          - dddd dd-MMM-yy
+          - fr-fr
+        line: 304

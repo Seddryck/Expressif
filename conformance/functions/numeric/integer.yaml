@@ -1,0 +1,50 @@
+suite: numeric
+kind: function
+operator: integer
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - NumericFunctionsTest.cs
+tests:
+  - id: Integer_Valid
+    trace:
+      file: Functions/Numeric/NumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.Integer_Valid
+    cases:
+      - value: 0
+        expected: 0
+        line: 69
+      - value: 1
+        expected: 1
+        line: 70
+      - value: -1
+        expected: -1
+        line: 71
+      - value: 0.0001
+        expected: 0
+        line: 72
+      - value: 0.5
+        expected: 0
+        line: 73
+      - value: 0.9999
+        expected: 1
+        line: 74
+      - value: -0.0001
+        expected: 0
+        line: 75
+      - value: -0.5
+        expected: 0
+        line: 76
+      - value: -0.9999
+        expected: -1
+        line: 77
+      - value: (null)
+        expected: 
+        line: 78
+      - value: (empty)
+        expected: 
+        line: 79
+      - value: (blank)
+        expected: 
+        line: 80

@@ -1,0 +1,91 @@
+suite: temporal
+kind: predicate
+operator: within-next-days
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundTodayPredicatesTest.cs
+parameters:
+  - 
+  - 3
+cases:
+  - value: 2022-12-25
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 168
+  - value: 2022-12-26
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 169
+  - value: 2022-12-28
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 170
+  - value: 2022-12-29
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 171
+  - value: 2022-12-30
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 172
+  - value: 2023-01-01
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 173
+  - value: 2023-01-02
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 174
+  - value: 2023-01-08
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 175
+  - value: 2023-01-09
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 176
+  - value: 1970-05-06
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: WithinNextDays_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinNextDays_DateTime_Valid
+      line: 177

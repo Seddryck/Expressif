@@ -1,0 +1,50 @@
+suite: temporal
+kind: function
+operator: month
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartTextualFunctionsTest.cs
+tests:
+  - id: Month_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.Month_DateTime_Valid
+    cases:
+      - value: 1900-01-01
+        expected: 01
+        line: 42
+      - value: 2000-10-01
+        expected: 10
+        line: 43
+      - value: 800-03-01
+        expected: 03
+        line: 44
+  - id: Month_YearMonth_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.Month_YearMonth_Valid
+    cases:
+      - value: 1900-01
+        expected: 01
+        line: 49
+      - value: 2000-10
+        expected: 10
+        line: 50
+      - value: 0800-03
+        expected: 03
+        line: 51
+  - id: Month_Integer_Invalid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.Month_Integer_Invalid
+    cases:
+      - value: 1
+        expected: null
+        line: 49
+      - value: 10
+        expected: null
+        line: 50

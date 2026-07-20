@@ -1,0 +1,88 @@
+suite: text
+kind: predicate
+operator: upper-case
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CasingTest.cs
+cases:
+  - value: Foobar
+    expected: false
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 25
+  - value: foobar
+    expected: false
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 26
+  - value: FOOBAR
+    expected: true
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 27
+  - value: Foo Bar
+    expected: false
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 28
+  - value: foo bar
+    expected: false
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 29
+  - value: FOO BAR
+    expected: true
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 30
+  - value: ''
+    expected: true
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 31
+  - value: (empty)
+    expected: true
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 32
+  - value: (null)
+    expected: true
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 33
+  - value: 
+    expected: true
+    trace:
+      file: Predicates/Text/CasingTest.cs
+      class: Expressif.Testing.Predicates.Text.CasingTest
+      id: UpperCase_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.CasingTest.UpperCase_Text_Success
+      line: 34

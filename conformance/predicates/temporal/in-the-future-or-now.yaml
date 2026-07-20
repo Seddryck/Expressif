@@ -1,0 +1,50 @@
+suite: temporal
+kind: predicate
+operator: in-the-future-or-now
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundNowPredicatesTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-12-28 14:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFutureOrNow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFutureOrNow_DateTime_Valid
+      line: 117
+  - value: 2022-12-29 14:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFutureOrNow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFutureOrNow_DateTime_Valid
+      line: 118
+  - value: 2022-12-29 15:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFutureOrNow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFutureOrNow_DateTime_Valid
+      line: 119
+  - value: 2022-12-29 16:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFutureOrNow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFutureOrNow_DateTime_Valid
+      line: 120
+  - value: 2022-12-30 16:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundNowPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
+      id: InTheFutureOrNow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InTheFutureOrNow_DateTime_Valid
+      line: 121

@@ -1,0 +1,44 @@
+suite: text
+kind: function
+operator: pad-left
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PaddingFunctionsTest.cs
+tests:
+  - id: PadLeft_Valid
+    trace:
+      file: Functions/Text/PaddingFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.PaddingFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.PaddingFunctionsTest.PadLeft_Valid
+    cases:
+      - value: 1234
+        expected: 000001234
+        parameters:
+          - 9
+          - 0
+        line: 25
+      - value: 1234
+        expected: '*****1234'
+        parameters:
+          - 9
+          - '*'
+        line: 26
+      - value: 123456789
+        expected: 123456789
+        parameters:
+          - 3
+          - 0
+        line: 27
+      - value: (null)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+        line: 28
+      - value: (empty)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+        line: 29

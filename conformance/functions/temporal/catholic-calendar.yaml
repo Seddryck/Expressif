@@ -1,0 +1,64 @@
+suite: temporal
+kind: function
+operator: catholic-calendar
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: CatholicCalendar_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.CatholicCalendar_Valid
+    cases:
+      - value: 2023
+        expected: 2023-12-25
+        parameters:
+          - Christmas
+        line: 136
+      - value: 2023
+        expected: 2023-04-09
+        parameters:
+          - Easter Sunday
+        line: 137
+      - value: 2023
+        expected: 2023-06-08
+        parameters:
+          - Corpus Christi
+        line: 138
+      - value: 2022
+        expected: 2022-11-27
+        parameters:
+          - First Sunday of Advent
+        line: 139
+      - value: 2023
+        expected: 2023-12-03
+        parameters:
+          - First Sunday of Advent
+        line: 140
+      - value: 2023
+        expected: 2023-02-22
+        parameters:
+          - Ash Wednesday
+        line: 141
+      - value: 2023
+        expected: 2023-05-28
+        parameters:
+          - Whit Sunday
+        line: 142
+      - value: 2023
+        expected: 2023-08-15
+        parameters:
+          - Assumption
+        line: 143
+      - value: 2023
+        expected: 2023-11-01
+        parameters:
+          - All Saints’ Day
+        line: 144
+      - value: 2023-01-01
+        expected: 2023-12-08
+        parameters:
+          - immaculate conception
+        line: 145

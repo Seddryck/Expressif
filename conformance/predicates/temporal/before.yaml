@@ -1,0 +1,68 @@
+suite: temporal
+kind: predicate
+operator: before
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ComparisonTest.cs
+cases:
+  - value: 2022-11-21
+    expected: false
+    parameters:
+      - 2022-11-21
+    trace:
+      file: Predicates/Temporal/ComparisonTest.cs
+      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
+      id: Before_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
+      line: 43
+  - value: 2022-11-21
+    expected: true
+    parameters:
+      - 2022-11-22
+    trace:
+      file: Predicates/Temporal/ComparisonTest.cs
+      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
+      id: Before_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
+      line: 44
+  - value: 2022-11-21 17:12:25
+    expected: false
+    parameters:
+      - 2022-11-21 17:12:25
+    trace:
+      file: Predicates/Temporal/ComparisonTest.cs
+      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
+      id: Before_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
+      line: 45
+  - value: 2022-11-21 17:12:25
+    expected: false
+    parameters:
+      - 2022-11-21 17:12:24
+    trace:
+      file: Predicates/Temporal/ComparisonTest.cs
+      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
+      id: Before_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
+      line: 46
+  - value: 
+    expected: false
+    parameters:
+      - 2022-11-21
+    trace:
+      file: Predicates/Temporal/ComparisonTest.cs
+      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
+      id: Before_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
+      line: 47
+  - value: (null)
+    expected: false
+    parameters:
+      - 2022-11-21
+    trace:
+      file: Predicates/Temporal/ComparisonTest.cs
+      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
+      id: Before_DateTime_Expected
+      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
+      line: 48

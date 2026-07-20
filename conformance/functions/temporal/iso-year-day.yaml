@@ -1,0 +1,26 @@
+suite: temporal
+kind: function
+operator: iso-year-day
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartTextualFunctionsTest.cs
+tests:
+  - id: IsoYearDay_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.IsoYearDay_DateTime_Valid
+    cases:
+      - value: 1999-12-31
+        expected: 1999-362
+        line: 77
+      - value: 2000-01-01
+        expected: 1999-363
+        line: 78
+      - value: 2000-01-02
+        expected: 1999-364
+        line: 79
+      - value: 2000-01-03
+        expected: 2000-001
+        line: 80

@@ -1,0 +1,40 @@
+suite: temporal
+kind: predicate
+operator: weekend
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - WeekdayPredicatesTest.cs
+cases:
+  - value: 2022-12-30 14:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/WeekdayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest
+      id: Weekend_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest.Weekend_DateTime_Valid
+      line: 52
+  - value: 2022-12-31 14:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/WeekdayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest
+      id: Weekend_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest.Weekend_DateTime_Valid
+      line: 53
+  - value: 2023-01-01 14:00:00
+    expected: true
+    trace:
+      file: Predicates/Temporal/WeekdayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest
+      id: Weekend_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest.Weekend_DateTime_Valid
+      line: 54
+  - value: 2023-01-02 14:00:00
+    expected: false
+    trace:
+      file: Predicates/Temporal/WeekdayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest
+      id: Weekend_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.WeekdayPredicatesTest.Weekend_DateTime_Valid
+      line: 55

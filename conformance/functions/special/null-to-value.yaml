@@ -1,0 +1,26 @@
+suite: special
+kind: function
+operator: null-to-value
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - SpecialFunctionsTest.cs
+tests:
+  - id: NullToValue_NotNull_Value
+    trace:
+      file: Functions/Special/SpecialFunctionsTest.cs
+      class: Expressif.Testing.Functions.Special.SpecialFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Special.SpecialFunctionsTest.NullToValue_NotNull_Value
+    cases:
+      - value: foo
+        expected: foo
+        line: 101
+      - value: (empty)
+        expected: (empty)
+        line: 102
+      - value: (blank)
+        expected: (blank)
+        line: 103
+      - value: (value)
+        expected: (value)
+        line: 104

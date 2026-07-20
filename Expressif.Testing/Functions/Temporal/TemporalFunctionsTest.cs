@@ -7,117 +7,70 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Functions.Temporal;
 
 [TestFixture]
 public class TemporalFunctionsTest
 {
-    [Test]
-    [TestCase("2019-03-11", "2019-03-11")]
-    [TestCase("2019-02-11", "2019-03-01")]
-    [TestCase("2019-04-11", "2019-03-31")]
-    public void Clamp_Valid(object value, DateTime expected)
-        => Assert.That(new Clamp(() => new DateTime(2019,03,01), () => new DateTime(2019,03,31))
+    [Conformance]
+    public void Clamp_Valid(object value, DateTime min, DateTime max, DateTime expected)
+        => Assert.That(new Clamp(() => min, () => max)
             .Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11", "2019-03-12")]
-    [TestCase("2019-02-11", "2019-02-12")]
-    [TestCase("2019-03-31", "2019-04-01")]
+    [Conformance]
     public void NextDay_Valid(object value, DateTime expected)
         => Assert.That(new NextDay().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11", "2019-04-11")]
-    [TestCase("2019-03-31", "2019-04-30")]
-    [TestCase("2020-01-31", "2020-02-29")]
+    [Conformance]
     public void NextMonth_Valid(object value, DateTime expected)
         => Assert.That(new NextMonth().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11", "2020-03-11")]
-    [TestCase("2020-02-29", "2021-02-28")]
+    [Conformance]
     public void NextYear_Valid(object value, DateTime expected)
         => Assert.That(new NextYear().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11", "2019-03-10")]
-    [TestCase("2019-02-01", "2019-01-31")]
-    [TestCase("2020-03-01", "2020-02-29")]
-    [TestCase("2020-03-01 17:30:12", "2020-02-29 17:30:12")]
+    [Conformance]
     public void PreviousDay_Valid(object value, DateTime expected)
         => Assert.That(new PreviousDay().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11", "2019-02-11")]
-    [TestCase("2019-03-31", "2019-02-28")]
-    [TestCase("2020-01-31", "2019-12-31")]
-    [TestCase("2020-01-31 17:30:12", "2019-12-31 17:30:12")]
+    [Conformance]
     public void PreviousMonth_Valid(object value, DateTime expected)
         => Assert.That(new PreviousMonth().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11", "2018-03-11")]
-    [TestCase("2020-02-29", "2019-02-28")]
+    [Conformance]
     public void PreviousYear_Valid(object value, DateTime expected)
         => Assert.That(new PreviousYear().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 12:00:00", "07:00:00", "2019-03-11 07:00:00")]
-    [TestCase("2019-02-11 08:45:12", "07:13:11", "2019-02-11 07:13:11")]
+    [Conformance]
     public void SetTime_Valid(object value, string instant, DateTime expected)
         => Assert.That(new SetTime(() => instant).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:20:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:20:24", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:40:00", "2019-03-11 17:00:00")]
+    [Conformance]
     public void FloorHour_Valid(object value, DateTime expected)
         => Assert.That(new FloorHour().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:20:00", "2019-03-11 18:00:00")]
-    [TestCase("2019-03-11 17:20:24", "2019-03-11 18:00:00")]
-    [TestCase("2019-03-11 17:40:00", "2019-03-11 18:00:00")]
+    [Conformance]
     public void CeilingHour_Valid(object value, DateTime expected)
         => Assert.That(new CeilingHour().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:20:00", "2019-03-11 17:20:00")]
-    [TestCase("2019-03-11 17:20:24.120", "2019-03-11 17:20:00")]
-    [TestCase("2019-03-11 17:40:59", "2019-03-11 17:40:00")]
+    [Conformance]
     public void FloorMinute_Valid(object value, DateTime expected)
         => Assert.That(new FloorMinute().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 17:00:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:20:00", "2019-03-11 17:20:00")]
-    [TestCase("2019-03-11 17:20:24.120", "2019-03-11 17:21:00")]
-    [TestCase("2019-03-11 17:59:59", "2019-03-11 18:00:00")]
+    [Conformance]
     public void CeilingMinute_Valid(object value, DateTime expected)
         => Assert.That(new CeilingMinute().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 17:00:00", 0, "04:00:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:00:00", 1, "04:00:00", "2019-03-11 21:00:00")]
-    [TestCase("2019-03-11 17:00:00", 2, "04:00:00", "2019-03-12 01:00:00")]
-    [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 13:00:00")]
-    public void Forward_Valid(object value, int times, string timeSpan, DateTime expected)
+    [Conformance]
+    public void Forward_Valid(object value, string timeSpan, int times, DateTime expected)
         => Assert.That(new Forward(() => timeSpan, () => times)
             .Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2019-03-11 17:00:00", 0, "04:00:00", "2019-03-11 17:00:00")]
-    [TestCase("2019-03-11 17:00:00", 1, "04:00:00", "2019-03-11 13:00:00")]
-    [TestCase("2019-03-11 17:00:00", 5, "04:00:00", "2019-03-10 21:00:00")]
-    [TestCase("2019-03-11 17:00:00", -1, "04:00:00", "2019-03-11 21:00:00")]
-    public void Back_Valid(object value, int times, string timeSpan, DateTime expected)
+    [Conformance]
+    public void Backward_Valid(object value, string timeSpan, int times, DateTime expected)
     => Assert.That(new Backward(() => timeSpan, () => times)
         .Evaluate(value), Is.EqualTo(expected));
 
@@ -132,17 +85,7 @@ public class TemporalFunctionsTest
     public void Age_Null_0(object? value, int expected)
         => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
 
-    [Test]
-    [TestCase(2023, "Christmas", "2023-12-25")]
-    [TestCase(2023, "Easter Sunday", "2023-04-09")]
-    [TestCase(2023, "Corpus Christi", "2023-06-08")]
-    [TestCase(2022, "First Sunday of Advent", "2022-11-27")]
-    [TestCase(2023, "First Sunday of Advent", "2023-12-03")]
-    [TestCase(2023, "Ash Wednesday", "2023-02-22")]
-    [TestCase(2023, "Whit Sunday", "2023-05-28")]
-    [TestCase(2023, "Assumption", "2023-08-15")]
-    [TestCase(2023, "All Saints’ Day", "2023-11-01")]
-    [TestCase("2023-01-01", "immaculate conception", "2023-12-08")]
+    [Conformance]
     public void CatholicCalendar_Valid(object value, string @event, DateTime expected)
         => Assert.That(new CatholicCalendar(() => @event).Evaluate(value), Is.EqualTo(expected));
 
@@ -157,67 +100,46 @@ public class TemporalFunctionsTest
     public void CatholicCalendar_Kind_Valid(DateTimeKind expected)
         => Assert.That(((DateTime)new CatholicCalendar(() => "Christmas", () => expected.ToString()).Evaluate(2023)!).Kind, Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
-    [TestCase("2018-08-01 00:00:00", "2018-08-01 02:00:00")]
-    public void UtcToLocal_RomanceStandardTime_Valid(object value, DateTime expected)
-        => Assert.That(new UtcToLocal(() => "Romance Standard Time").Evaluate(value)
+    [Conformance]
+    public void UtcToLocal_RomanceStandardTime_Valid(object value, string timeZone, DateTime expected)
+        => Assert.That(new UtcToLocal(() => timeZone).Evaluate(value)
         , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01 00:00:00", "2018-02-01 01:00:00")]
-    [TestCase("2018-08-01 00:00:00", "2018-08-01 02:00:00")]
-    public void UtcToLocal_CityName_Valid(object value, DateTime expected)
-        => Assert.That(new UtcToLocal(() => "Brussels").Evaluate(value)
+    [Conformance]
+    public void UtcToLocal_CityName_Valid(object value, string city, DateTime expected)
+        => Assert.That(new UtcToLocal(() => city).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01 03:00:00", "2018-02-01 02:00:00")]
-    [TestCase("2018-08-01 02:00:00", "2018-08-01 00:00:00")]
-    public void LocalToUtc_RomanceStandardTime_Valid(object value, DateTime expected)
-        => Assert.That(new LocalToUtc(() => "Romance Standard Time").Evaluate(value)
+    [Conformance]
+    public void LocalToUtc_RomanceStandardTime_Valid(object value, string timeZone, DateTime expected)
+        => Assert.That(new LocalToUtc(() => timeZone).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01 07:00:00", "2018-02-01 06:00:00")]
-    [TestCase("2018-08-01 01:00:00", "2018-07-31 23:00:00")]
-    public void LocalToUtc_CityName_Valid(object value, DateTime expected)
-        => Assert.That(new LocalToUtc(() => "Brussels").Evaluate(value)
+    [Conformance]
+    public void LocalToUtc_CityName_Valid(object value, string city, DateTime expected)
+        => Assert.That(new LocalToUtc(() => city).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01", "2018-02-01")]
-    [TestCase("2018-02-01 00:00:00", "2018-02-01")]
-    [TestCase("2018-02-01 07:00:00", "2018-02-01")]
+    [Conformance]
     public void DateTimeToDate_Valid(object value, DateTime expected)
         => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01", "2018-02-01")]
-    public void DateTimeToDate_DateOnly_Valid(string value, DateTime expected)
-        => Assert.That(new DateTimeToDate().Evaluate(DateOnly.Parse(value)), Is.EqualTo(expected));
+    [Conformance]
+    public void DateTimeToDate_DateOnly_Valid(DateOnly value, DateTime expected)
+        => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01T00:00:00Z", "2018-02-01")]
-    [TestCase("2018-02-01T00:00:00+01:00", "2018-01-31")]
-    public void DateTimeToDate_DateTimeOffset_Valid(string value, DateTime expected)
-        => Assert.That(new DateTimeToDate().Evaluate(DateTimeOffset.Parse(value)), Is.EqualTo(expected));
+    [Conformance]
+    public void DateTimeToDate_DateTimeOffset_Valid(DateTimeOffset value, DateTime expected)
+        => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01 07:00:00", "2018-02-01 07:00:00")]
-    [TestCase("(null)", "2001-01-01")]
-    public void NullToDate_Valid(object value, DateTime expected)
-        => Assert.That(new NullToDate(() => new DateTime(2001, 1, 1)).Evaluate(value)
+    [Conformance]
+    public void NullToDate_Valid(object value, DateTime defaultValue, DateTime expected)
+        => Assert.That(new NullToDate(() => defaultValue).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("2018-02-01 07:00:00", "2018-02-01 07:00:00")]
-    [TestCase("(empty)", "2001-01-01")]
-    [TestCase("2018-02-31", "2001-01-01")]
-    [TestCase("(null)", null)]
-    [TestCase(null, null)]
-    public void InvalidToDate_Valid(object? value, DateTime? expected)
-        => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(value)
+    [Conformance]
+    public void InvalidToDate_Valid(object? value, DateTime defaultValue, DateTime? expected)
+        => Assert.That(new InvalidToDate(() => defaultValue).Evaluate(value)
             , Is.EqualTo(expected == null ? new Null() : expected));
 
     [Test]

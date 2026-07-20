@@ -1,0 +1,48 @@
+suite: numeric
+kind: function
+operator: human-readable-format-binary-bytes
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - FormatFunctionTest.cs
+tests:
+  - id: HumanReadableFormatBinaryBytes_DefaultPrecision_Valid
+    trace:
+      file: Functions/Numeric/FormatFunctionTest.cs
+      class: Expressif.Testing.Functions.Numeric.FormatFunctionTest
+      qualified-method: Expressif.Testing.Functions.Numeric.FormatFunctionTest.HumanReadableFormatBinaryBytes_DefaultPrecision_Valid
+    cases:
+      - value: 1048576
+        expected: 1.00 MiB
+        line: 42
+      - value: 1024
+        expected: 1.00 KiB
+        line: 43
+      - value: 1000
+        expected: 1000 B
+        line: 44
+      - value: 1536
+        expected: 1.50 KiB
+        line: 45
+      - value: 0
+        expected: 0 B
+        line: 46
+      - value: -1048576
+        expected: -1.00 MiB
+        line: 47
+  - id: HumanReadableFormatBinaryBytes_Precision_Valid
+    trace:
+      file: Functions/Numeric/FormatFunctionTest.cs
+      class: Expressif.Testing.Functions.Numeric.FormatFunctionTest
+      qualified-method: Expressif.Testing.Functions.Numeric.FormatFunctionTest.HumanReadableFormatBinaryBytes_Precision_Valid
+    cases:
+      - value: 1536
+        expected: 2 KiB
+        parameters:
+          - 0
+        line: 52
+      - value: 1048576
+        expected: 1.000 MiB
+        parameters:
+          - 3
+        line: 53

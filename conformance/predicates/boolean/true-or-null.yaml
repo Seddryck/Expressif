@@ -1,0 +1,104 @@
+suite: boolean
+kind: predicate
+operator: true-or-null
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TrueFalseTest.cs
+cases:
+  - value: true
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 29
+  - value: false
+    expected: false
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 30
+  - value: 
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 31
+  - value: (null)
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 32
+  - value: -1
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 33
+  - value: 0
+    expected: false
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 34
+  - value: 1
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 35
+  - value: 104.25
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 36
+  - value: true
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 37
+  - value: false
+    expected: false
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 38
+  - value: yes
+    expected: true
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 39
+  - value: no
+    expected: false
+    trace:
+      file: Predicates/Boolean/TrueFalseTest.cs
+      class: Expressif.Testing.Predicates.Boolean.TrueFalseTest
+      id: TrueOrNull_Boolean_Expected
+      qualified-method: Expressif.Testing.Predicates.Boolean.TrueFalseTest.TrueOrNull_Boolean_Expected
+      line: 40

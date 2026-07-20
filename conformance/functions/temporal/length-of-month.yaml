@@ -1,0 +1,74 @@
+suite: temporal
+kind: function
+operator: length-of-month
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - LengthFunctionsTest.cs
+tests:
+  - id: LengthOfMonth_DateTime_Valid
+    trace:
+      file: Functions/Temporal/LengthFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.LengthFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.LengthFunctionsTest.LengthOfMonth_DateTime_Valid
+    cases:
+      - value: 1900-02-15
+        expected: 28
+        line: 45
+      - value: 1999-02-15
+        expected: 28
+        line: 46
+      - value: 2000-02-15
+        expected: 29
+        line: 47
+      - value: 2023-02-15
+        expected: 28
+        line: 48
+      - value: 2024-02-15
+        expected: 29
+        line: 49
+      - value: 2024-01-15
+        expected: 31
+        line: 50
+      - value: 2024-03-15
+        expected: 31
+        line: 51
+      - value: 2024-04-15
+        expected: 30
+        line: 52
+      - value: 2024-12-15
+        expected: 31
+        line: 53
+  - id: LengthOfMonth_YearMonth_Valid
+    trace:
+      file: Functions/Temporal/LengthFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.LengthFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.LengthFunctionsTest.LengthOfMonth_YearMonth_Valid
+    cases:
+      - value: 1900-02
+        expected: 28
+        line: 32
+      - value: 1999-02
+        expected: 28
+        line: 33
+      - value: 2000-02
+        expected: 29
+        line: 34
+      - value: 2023-02
+        expected: 28
+        line: 35
+      - value: 2024-02
+        expected: 29
+        line: 36
+      - value: 2024-01
+        expected: 31
+        line: 37
+      - value: 2024-03
+        expected: 31
+        line: 38
+      - value: 2024-04
+        expected: 30
+        line: 39
+      - value: 2024-12
+        expected: 31
+        line: 40

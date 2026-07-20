@@ -1,0 +1,23 @@
+suite: temporal
+kind: function
+operator: hour-of-day
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TimePartNumericFunctionsTest.cs
+tests:
+  - id: HourOfDay_DateTime_Valid
+    trace:
+      file: Functions/Temporal/TimePartNumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TimePartNumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TimePartNumericFunctionsTest.HourOfDay_DateTime_Valid
+    cases:
+      - value: 1900-01-01 17:12:26
+        expected: 17
+        line: 13
+      - value: 2000-01-01 05:02:12
+        expected: 5
+        line: 14
+      - value: 800-01-01 12:00:00
+        expected: 12
+        line: 15

@@ -1,0 +1,23 @@
+suite: temporal
+kind: function
+operator: minute-of-hour
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TimePartNumericFunctionsTest.cs
+tests:
+  - id: MinuteOfHour_DateTime_Valid
+    trace:
+      file: Functions/Temporal/TimePartNumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TimePartNumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TimePartNumericFunctionsTest.MinuteOfHour_DateTime_Valid
+    cases:
+      - value: 1900-01-01 17:12:26
+        expected: 12
+        line: 20
+      - value: 2000-01-01 05:02:12
+        expected: 2
+        line: 21
+      - value: 800-01-01 12:00:00
+        expected: 0
+        line: 22

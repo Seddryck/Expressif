@@ -1,0 +1,44 @@
+suite: text
+kind: function
+operator: first-chars
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TextFunctionsTest.cs
+tests:
+  - id: FirstChars_Valid
+    trace:
+      file: Functions/Text/TextFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.TextFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.FirstChars_Valid
+    cases:
+      - value: 123456789
+        expected: 123456789
+        parameters:
+          - 9
+        line: 236
+      - value: 123456789
+        expected: 123456789
+        parameters:
+          - 10
+        line: 237
+      - value: 123456789
+        expected: 12345678
+        parameters:
+          - 8
+        line: 238
+      - value: 123456789
+        expected: ''
+        parameters:
+          - 0
+        line: 239
+      - value: (null)
+        expected: (null)
+        parameters:
+          - 3
+        line: 240
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - 3
+        line: 241

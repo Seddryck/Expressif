@@ -1,0 +1,128 @@
+suite: temporal
+kind: predicate
+operator: leap-year
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - LeapYearPredicatesTest.cs
+cases:
+  - value: 1900-03-15
+    expected: false
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_DateTime_Valid
+      line: 30
+  - value: 1999-03-15
+    expected: false
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_DateTime_Valid
+      line: 31
+  - value: 2000-03-15
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_DateTime_Valid
+      line: 32
+  - value: 2024-03-15
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_DateTime_Valid
+      line: 33
+  - value: 2000-03-15
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Text_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Text_Valid
+      line: 38
+  - value: 2000-03
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Text_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Text_Valid
+      line: 39
+  - value: 2000
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Text_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Text_Valid
+      line: 40
+  - value: 1900-03
+    expected: false
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_YearMonth_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_YearMonth_Valid
+      line: 22
+  - value: 1999-03
+    expected: false
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_YearMonth_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_YearMonth_Valid
+      line: 23
+  - value: 2000-03
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_YearMonth_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_YearMonth_Valid
+      line: 24
+  - value: 2024-03
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_YearMonth_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_YearMonth_Valid
+      line: 25
+  - value: 1900
+    expected: false
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Year_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Year_Valid
+      line: 14
+  - value: 1999
+    expected: false
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Year_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Year_Valid
+      line: 15
+  - value: 2000
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Year_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Year_Valid
+      line: 16
+  - value: 2024
+    expected: true
+    trace:
+      file: Predicates/Temporal/LeapYearPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest
+      id: LeapYear_Year_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.LeapYearPredicatesTest.LeapYear_Year_Valid
+      line: 17

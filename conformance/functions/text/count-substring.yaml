@@ -1,0 +1,114 @@
+suite: text
+kind: function
+operator: count-substring
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CountingFunctionsTest.cs
+tests:
+  - id: CountSubstring_Valid
+    trace:
+      file: Functions/Text/CountingFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CountingFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CountingFunctionsTest.CountSubstring_Valid
+    cases:
+      - value: foo
+        expected: 1
+        parameters:
+          - foo
+        line: 36
+      - value: foobar
+        expected: 1
+        parameters:
+          - foo
+        line: 37
+      - value: barfoobar
+        expected: 1
+        parameters:
+          - foo
+        line: 38
+      - value: barfoo
+        expected: 1
+        parameters:
+          - foo
+        line: 39
+      - value: barfoobarfoobar
+        expected: 2
+        parameters:
+          - foo
+        line: 40
+      - value: barfoobarfoobar
+        expected: 3
+        parameters:
+          - bar
+        line: 41
+      - value: '---*#*#*---'
+        expected: 1
+        parameters:
+          - '*#*'
+        line: 42
+      - value: (null)
+        expected: 0
+        parameters:
+          - foo
+        line: 43
+      - value: (null)
+        expected: 0
+        parameters:
+          - (null)
+        line: 44
+      - value: 
+        expected: 0
+        parameters:
+          - foo
+        line: 45
+      - value: 
+        expected: 0
+        parameters:
+          - (null)
+        line: 46
+      - value: foo
+        expected: 0
+        parameters:
+          - (null)
+        line: 47
+      - value: foo
+        expected: 0
+        parameters:
+          - 
+        line: 48
+      - value: (empty)
+        expected: 0
+        parameters:
+          - foo
+        line: 49
+      - value: foo
+        expected: 0
+        parameters:
+          - (empty)
+        line: 50
+      - value: (empty)
+        expected: 0
+        parameters:
+          - (empty)
+        line: 51
+      - value: (blank)
+        expected: 0
+        parameters:
+          - foo
+        line: 52
+      - value: (blank)
+        expected: 
+        parameters:
+          - ' '
+        line: 53
+      - value: (blank)
+        expected: 
+        parameters:
+          - 
+        line: 54
+      - value: (blank)
+        expected: 
+        parameters:
+          - >2+
+        line: 55

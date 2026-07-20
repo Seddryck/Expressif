@@ -1,0 +1,79 @@
+suite: numeric
+kind: function
+operator: nth-root
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PowerRootFunctionsTest.cs
+tests:
+  - id: NthRoot_Exponent_Valid
+    trace:
+      file: Functions/Numeric/PowerRootFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest.NthRoot_Exponent_Valid
+    cases:
+      - value: 0
+        expected: 
+        parameters:
+          - 0
+        line: 73
+      - value: 1
+        expected: 
+        parameters:
+          - 0
+        line: 74
+      - value: 0
+        expected: 0
+        parameters:
+          - 1
+        line: 75
+      - value: 1
+        expected: 1
+        parameters:
+          - 1
+        line: 76
+      - value: 4
+        expected: 4
+        parameters:
+          - 1
+        line: 77
+      - value: -4
+        expected: -4
+        parameters:
+          - 1
+        line: 78
+      - value: 0
+        expected: 0
+        parameters:
+          - 4
+        line: 79
+      - value: 1
+        expected: 1
+        parameters:
+          - 4
+        line: 80
+      - value: 16
+        expected: 2
+        parameters:
+          - 4
+        line: 81
+      - value: -16
+        expected: 
+        parameters:
+          - 4
+        line: 82
+      - value: 32
+        expected: 2
+        parameters:
+          - 5
+        line: 83
+      - value: -32
+        expected: -2
+        parameters:
+          - 5
+        line: 84
+      - value: 
+        expected: 
+        parameters:
+          - 1
+        line: 85

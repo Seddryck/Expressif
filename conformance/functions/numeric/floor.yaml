@@ -1,0 +1,44 @@
+suite: numeric
+kind: function
+operator: floor
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - NumericFunctionsTest.cs
+tests:
+  - id: Floor_Valid
+    trace:
+      file: Functions/Numeric/NumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.Floor_Valid
+    cases:
+      - value: 0
+        expected: 0
+        line: 41
+      - value: 1
+        expected: 1
+        line: 42
+      - value: -1
+        expected: -1
+        line: 43
+      - value: 0.5
+        expected: 0
+        line: 44
+      - value: 0.9999
+        expected: 0
+        line: 45
+      - value: -0.5
+        expected: -1
+        line: 46
+      - value: -0.9999
+        expected: -1
+        line: 47
+      - value: (null)
+        expected: 
+        line: 48
+      - value: (empty)
+        expected: 
+        line: 49
+      - value: (blank)
+        expected: 
+        line: 50

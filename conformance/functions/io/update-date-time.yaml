@@ -1,0 +1,9 @@
+suite: io
+kind: function
+operator: update-date-time
+tests:
+  - id: UpdateDateTime_Valid
+    cases:
+      - value: C:\Dir\Child\file.txt
+        expected: 2022-11-06T23:07:02
+        

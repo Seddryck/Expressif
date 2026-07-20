@@ -1,0 +1,106 @@
+suite: numeric
+kind: predicate
+operator: within-interval
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - IntervalTest.cs
+parameters:
+  - 
+cases:
+  - value: 10
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinInterval_Numeric_Success
+      line: 14
+  - value: 1
+    expected: false
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinInterval_Numeric_Success
+      line: 15
+  - value: 12
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinInterval_Numeric_Success
+      line: 16
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinInterval_Numeric_Success
+      line: 17
+  - value: 10
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinNegativeInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinNegativeInfiniteInterval_Numeric_Success
+      line: 22
+  - value: 1
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinNegativeInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinNegativeInfiniteInterval_Numeric_Success
+      line: 23
+  - value: 12
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinNegativeInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinNegativeInfiniteInterval_Numeric_Success
+      line: 24
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinNegativeInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinNegativeInfiniteInterval_Numeric_Success
+      line: 25
+  - value: 16
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinPositiveInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinPositiveInfiniteInterval_Numeric_Success
+      line: 30
+  - value: 1
+    expected: false
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinPositiveInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinPositiveInfiniteInterval_Numeric_Success
+      line: 31
+  - value: 12
+    expected: true
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinPositiveInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinPositiveInfiniteInterval_Numeric_Success
+      line: 32
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Numeric/IntervalTest.cs
+      class: Expressif.Testing.Predicates.Numeric.IntervalTest
+      id: WithinPositiveInfiniteInterval_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Numeric.IntervalTest.WithinPositiveInfiniteInterval_Numeric_Success
+      line: 33

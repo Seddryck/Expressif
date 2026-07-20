@@ -1,0 +1,332 @@
+suite: text
+kind: predicate
+operator: matches-numeric
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - MatchingTest.cs
+cases:
+  - value: 121
+    expected: true
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 35
+  - value: 1.21
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 36
+  - value: 1000.21
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 37
+  - value: -1000.21
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 38
+  - value: 52,000.21
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 39
+  - value: 1000,21
+    expected: true
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 40
+  - value: 52.000,21
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 41
+  - value: $20
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 42
+  - value: A.1
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 43
+  - value: A121
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 44
+  - value: 1!
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 45
+  - value: 121A
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 46
+  - value: (empty)
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 47
+  - value: ''
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 48
+  - value: (null)
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 49
+  - value: 
+    expected: false
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 50
+  - value: 125.17
+    expected: true
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 51
+  - value: 125
+    expected: true
+    parameters:
+      - fr-fr
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_FrenchCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_FrenchCulture_Success
+      line: 52
+  - value: 121
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 13
+  - value: 1.21
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 14
+  - value: 1000.21
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 15
+  - value: -1000.21
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 16
+  - value: 52,000.21
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 17
+  - value: 1000,21
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 18
+  - value: 52.000,21
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 19
+  - value: $20
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 20
+  - value: A.1
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 21
+  - value: A121
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 22
+  - value: 1!
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 23
+  - value: 121A
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 24
+  - value: (empty)
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 25
+  - value: ''
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 26
+  - value: (null)
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 27
+  - value: 
+    expected: false
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 28
+  - value: 125.17
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 29
+  - value: 125
+    expected: true
+    trace:
+      file: Predicates/Text/MatchingTest.cs
+      class: Expressif.Testing.Predicates.Text.MatchingTest
+      id: MatchesNumeric_InvariantCulture_Success
+      qualified-method: Expressif.Testing.Predicates.Text.MatchingTest.MatchesNumeric_InvariantCulture_Success
+      line: 30

@@ -1,4 +1,5 @@
 ﻿using Expressif.Functions.Special;
+using Expressif.Testing.Conformance;
 using Expressif.Values.Special;
 using System.Reflection;
 
@@ -97,13 +98,9 @@ public class SpecialFunctionsTest
             type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
             , Is.EqualTo(new Value()));
 
-    [Test]
-    [TestCase("foo")]
-    [TestCase("(empty)")]
-    [TestCase("(blank)")]
-    [TestCase("(value)")]
-    public void NullToValue_NotNull_Value(object value)
-        => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(value));
+    [Conformance]
+    public void NullToValue_NotNull_Value(object value, object expected)
+        => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(expected));
 
     [Test]
     [TestCase(typeof(Empty))]

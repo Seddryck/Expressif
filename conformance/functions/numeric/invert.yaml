@@ -1,0 +1,44 @@
+suite: numeric
+kind: function
+operator: invert
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - NumericFunctionsTest.cs
+tests:
+  - id: Invert_Valid
+    trace:
+      file: Functions/Numeric/NumericFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.Invert_Valid
+    cases:
+      - value: 0
+        expected: 
+        line: 119
+      - value: 1
+        expected: 1
+        line: 120
+      - value: -1
+        expected: -1
+        line: 121
+      - value: 4
+        expected: 0.25
+        line: 122
+      - value: -4
+        expected: -0.25
+        line: 123
+      - value: 0.25
+        expected: 4
+        line: 124
+      - value: -0.25
+        expected: -4
+        line: 125
+      - value: (null)
+        expected: 
+        line: 126
+      - value: (empty)
+        expected: 
+        line: 127
+      - value: (blank)
+        expected: 
+        line: 128

@@ -1,0 +1,20 @@
+suite: temporal
+kind: function
+operator: next-year
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: NextYear_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.NextYear_Valid
+    cases:
+      - value: 2019-03-11
+        expected: 2020-03-11
+        line: 40
+      - value: 2020-02-29
+        expected: 2021-02-28
+        line: 41

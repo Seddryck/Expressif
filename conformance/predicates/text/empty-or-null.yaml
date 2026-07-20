@@ -1,0 +1,56 @@
+suite: text
+kind: predicate
+operator: empty-or-null
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - SpecialTest.cs
+cases:
+  - value: 
+    expected: true
+    trace:
+      file: Predicates/Text/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Text.SpecialTest
+      id: NullOrEmpty_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
+      line: 23
+  - value: (null)
+    expected: true
+    trace:
+      file: Predicates/Text/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Text.SpecialTest
+      id: NullOrEmpty_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
+      line: 24
+  - value: ''
+    expected: true
+    trace:
+      file: Predicates/Text/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Text.SpecialTest
+      id: NullOrEmpty_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
+      line: 25
+  - value: (empty)
+    expected: true
+    trace:
+      file: Predicates/Text/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Text.SpecialTest
+      id: NullOrEmpty_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
+      line: 26
+  - value: (blank)
+    expected: false
+    trace:
+      file: Predicates/Text/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Text.SpecialTest
+      id: NullOrEmpty_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
+      line: 27
+  - value: foo
+    expected: false
+    trace:
+      file: Predicates/Text/SpecialTest.cs
+      class: Expressif.Testing.Predicates.Text.SpecialTest
+      id: NullOrEmpty_Text_Success
+      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
+      line: 28

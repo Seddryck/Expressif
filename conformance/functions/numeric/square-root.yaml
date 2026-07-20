@@ -1,0 +1,29 @@
+suite: numeric
+kind: function
+operator: square-root
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PowerRootFunctionsTest.cs
+tests:
+  - id: SquareRoot_Valid
+    trace:
+      file: Functions/Numeric/PowerRootFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest.SquareRoot_Valid
+    cases:
+      - value: 0
+        expected: 0
+        line: 54
+      - value: 1
+        expected: 1
+        line: 55
+      - value: 4
+        expected: 2
+        line: 56
+      - value: 9
+        expected: 3
+        line: 57
+      - value: 
+        expected: 
+        line: 58

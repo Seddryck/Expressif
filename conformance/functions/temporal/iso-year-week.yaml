@@ -1,0 +1,20 @@
+suite: temporal
+kind: function
+operator: iso-year-week
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartTextualFunctionsTest.cs
+tests:
+  - id: IsoYearWeek_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartTextualFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartTextualFunctionsTest.IsoYearWeek_DateTime_Valid
+    cases:
+      - value: 2000-01-01
+        expected: 1999-W52
+        line: 63
+      - value: 2000-01-08
+        expected: 2000-W01
+        line: 64

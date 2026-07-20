@@ -1,0 +1,40 @@
+suite: temporal
+kind: function
+operator: utc-to-local
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: UtcToLocal_CityName_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.UtcToLocal_CityName_Valid
+    cases:
+      - value: 2018-02-01 00:00:00
+        expected: 2018-02-01 01:00:00
+        parameters:
+          - Brussels
+        line: 168
+      - value: 2018-08-01 00:00:00
+        expected: 2018-08-01 02:00:00
+        parameters:
+          - Brussels
+        line: 169
+  - id: UtcToLocal_RomanceStandardTime_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.UtcToLocal_RomanceStandardTime_Valid
+    cases:
+      - value: 2018-02-01 00:00:00
+        expected: 2018-02-01 01:00:00
+        parameters:
+          - Romance Standard Time
+        line: 161
+      - value: 2018-08-01 00:00:00
+        expected: 2018-08-01 02:00:00
+        parameters:
+          - Romance Standard Time
+        line: 162

@@ -1,0 +1,72 @@
+suite: special
+kind: predicate
+operator: null
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - NullTest.cs
+cases:
+  - value: 
+    expected: true
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 13
+  - value: 0
+    expected: false
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 14
+  - value: 4
+    expected: false
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 15
+  - value: (null)
+    expected: true
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 16
+  - value: ''
+    expected: false
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 17
+  - value: (empty)
+    expected: false
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 18
+  - value: (blank)
+    expected: false
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 19
+  - value: foo
+    expected: false
+    trace:
+      file: Predicates/Special/NullTest.cs
+      class: Expressif.Testing.Predicates.Special.NullTest
+      id: Null_Numeric_Success
+      qualified-method: Expressif.Testing.Predicates.Special.NullTest.Null_Numeric_Success
+      line: 20

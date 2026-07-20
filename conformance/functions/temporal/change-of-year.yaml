@@ -1,0 +1,91 @@
+suite: temporal
+kind: function
+operator: change-of-year
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - DatePartChangeFunctionsTest.cs
+tests:
+  - id: ChangeOfYear_DateTime_Valid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfYear_DateTime_Valid
+    cases:
+      - value: 1900-01-01
+        expected: 1903-01-01
+        parameters:
+          - 1903
+        line: 22
+      - value: 2000-01-01
+        expected: 2000-01-01
+        parameters:
+          - 2000
+        line: 23
+      - value: 800-01-01
+        expected: 2000-01-01
+        parameters:
+          - 2000
+        line: 24
+      - value: 2004-02-29
+        expected: 2008-02-29
+        parameters:
+          - 2008
+        line: 25
+      - value: 2004-02-29
+        expected: 2005-02-28
+        parameters:
+          - 2005
+        line: 26
+  - id: ChangeOfYear_Integer_Valid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfYear_Integer_Valid
+    cases:
+      - value: 1900
+        expected: 1903
+        parameters:
+          - 1903
+        line: 13
+      - value: 2000
+        expected: 2000
+        parameters:
+          - 2000
+        line: 14
+      - value: -45
+        expected: 16
+        parameters:
+          - 16
+        line: 15
+      - value: 800
+        expected: 803
+        parameters:
+          - 803
+        line: 16
+      - value: 12300
+        expected: 2000
+        parameters:
+          - 2000
+        line: 17
+  - id: ChangeOfYear_YearMonth_Valid
+    trace:
+      file: Functions/Temporal/DatePartChangeFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.DatePartChangeFunctionsTest.ChangeOfYear_YearMonth_Valid
+    cases:
+      - value: 1900-01
+        expected: 1903-01
+        parameters:
+          - 1903
+        line: 31
+      - value: 2000-01
+        expected: 2000-01
+        parameters:
+          - 2000
+        line: 32
+      - value: 0800-01
+        expected: 2000-01
+        parameters:
+          - 2000
+        line: 33

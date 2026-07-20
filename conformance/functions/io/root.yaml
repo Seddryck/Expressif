@@ -1,0 +1,41 @@
+suite: io
+kind: function
+operator: root
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PathFunctionsTest.cs
+tests:
+  - id: Root_Valid
+    trace:
+      file: Functions/IO/PathFunctionsTest.cs
+      class: Expressif.Testing.Functions.IO.PathFunctionsTest
+      qualified-method: Expressif.Testing.Functions.IO.PathFunctionsTest.Root_Valid
+    cases:
+      - value: C:\
+        expected: C:\
+        line: 54
+      - value: C:\Dir\
+        expected: C:\
+        line: 55
+      - value: C:\Dir\Child\
+        expected: C:\
+        line: 56
+      - value: C:\Dir\ChildFile
+        expected: C:\
+        line: 57
+      - value: C:\Dir\Child\file.txt
+        expected: C:\
+        line: 58
+      - value: Dir\file.txt
+        expected: ''
+        line: 59
+      - value: (null)
+        expected: (empty)
+        line: 60
+      - value: (empty)
+        expected: (empty)
+        line: 61
+      - value: (blank)
+        expected: (empty)
+        line: 62

@@ -1,0 +1,69 @@
+suite: numeric
+kind: function
+operator: greatest-common-divisor
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ArithmeticFunctionsTest.cs
+tests:
+  - id: GreatestCommonDivisor_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.GreatestCommonDivisor_Valid
+    cases:
+      - value: 8
+        expected: 4
+        parameters:
+          - 12
+        line: 97
+      - value: 12
+        expected: 4
+        parameters:
+          - 8
+        line: 98
+      - value: -8
+        expected: 4
+        parameters:
+          - 12
+        line: 99
+      - value: 8
+        expected: 4
+        parameters:
+          - -12
+        line: 100
+      - value: 0
+        expected: 12
+        parameters:
+          - 12
+        line: 101
+      - value: 12
+        expected: 12
+        parameters:
+          - 0
+        line: 102
+      - value: 0
+        expected: 
+        parameters:
+          - 0
+        line: 103
+      - value: (null)
+        expected: 
+        parameters:
+          - 12
+        line: 104
+      - value: (empty)
+        expected: 
+        parameters:
+          - 12
+        line: 105
+      - value: (blank)
+        expected: 
+        parameters:
+          - 12
+        line: 106
+      - value: 7.5
+        expected: 
+        parameters:
+          - 12
+        line: 107

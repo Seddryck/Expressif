@@ -1,0 +1,26 @@
+suite: temporal
+kind: function
+operator: previous-month
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: PreviousMonth_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.PreviousMonth_Valid
+    cases:
+      - value: 2019-03-11
+        expected: 2019-02-11
+        line: 54
+      - value: 2019-03-31
+        expected: 2019-02-28
+        line: 55
+      - value: 2020-01-31
+        expected: 2019-12-31
+        line: 56
+      - value: 2020-01-31 17:30:12
+        expected: 2019-12-31 17:30:12
+        line: 57

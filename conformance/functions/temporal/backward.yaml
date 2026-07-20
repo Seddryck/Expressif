@@ -1,0 +1,38 @@
+suite: temporal
+kind: function
+operator: backward
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - TemporalFunctionsTest.cs
+tests:
+  - id: Backward_Valid
+    trace:
+      file: Functions/Temporal/TemporalFunctionsTest.cs
+      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.Backward_Valid
+    cases:
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 17:00:00
+        parameters:
+          - 04:00:00
+          - 0
+        line: 116
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 13:00:00
+        parameters:
+          - 04:00:00
+          - 1
+        line: 117
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-10 21:00:00
+        parameters:
+          - 04:00:00
+          - 5
+        line: 118
+      - value: 2019-03-11 17:00:00
+        expected: 2019-03-11 21:00:00
+        parameters:
+          - 04:00:00
+          - -1
+        line: 119

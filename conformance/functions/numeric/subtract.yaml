@@ -1,0 +1,86 @@
+suite: numeric
+kind: function
+operator: subtract
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - ArithmeticFunctionsTest.cs
+tests:
+  - id: Subtract_3Times2_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Subtract_3Times2_Valid
+    cases:
+      - value: 0
+        expected: -6
+        parameters:
+          - 3
+          - 2
+        line: 64
+      - value: 1
+        expected: -5
+        parameters:
+          - 3
+          - 2
+        line: 65
+      - value: -1
+        expected: -7
+        parameters:
+          - 3
+          - 2
+        line: 66
+      - value: (null)
+        expected: 
+        parameters:
+          - 3
+          - 2
+        line: 67
+      - value: (empty)
+        expected: 
+        parameters:
+          - 3
+          - 2
+        line: 68
+      - value: (blank)
+        expected: 
+        parameters:
+          - 3
+          - 2
+        line: 69
+  - id: Subtract_3_Valid
+    trace:
+      file: Functions/Numeric/ArithmeticFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Subtract_3_Valid
+    cases:
+      - value: 0
+        expected: -3
+        parameters:
+          - 3
+        line: 54
+      - value: 1
+        expected: -2
+        parameters:
+          - 3
+        line: 55
+      - value: -1
+        expected: -4
+        parameters:
+          - 3
+        line: 56
+      - value: (null)
+        expected: 
+        parameters:
+          - 3
+        line: 57
+      - value: (empty)
+        expected: 
+        parameters:
+          - 3
+        line: 58
+      - value: (blank)
+        expected: 
+        parameters:
+          - 3
+        line: 59

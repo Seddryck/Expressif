@@ -1,0 +1,32 @@
+suite: numeric
+kind: function
+operator: cube-root
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - PowerRootFunctionsTest.cs
+tests:
+  - id: CubeRoot_Valid
+    trace:
+      file: Functions/Numeric/PowerRootFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest.CubeRoot_Valid
+    cases:
+      - value: 0
+        expected: 0
+        line: 63
+      - value: 1
+        expected: 1
+        line: 64
+      - value: -1
+        expected: -1
+        line: 65
+      - value: 8
+        expected: 2
+        line: 66
+      - value: -8
+        expected: -2
+        line: 67
+      - value: 
+        expected: 
+        line: 68

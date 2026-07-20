@@ -1,0 +1,42 @@
+suite: temporal
+kind: predicate
+operator: tomorrow
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - AroundTodayPredicatesTest.cs
+parameters:
+  - 
+cases:
+  - value: 2022-12-28
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Tomorrow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Tomorrow_DateTime_Valid
+      line: 36
+  - value: 2022-12-29
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Tomorrow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Tomorrow_DateTime_Valid
+      line: 37
+  - value: 2022-12-30
+    expected: true
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Tomorrow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Tomorrow_DateTime_Valid
+      line: 38
+  - value: 1970-05-06
+    expected: false
+    trace:
+      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
+      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
+      id: Tomorrow_DateTime_Valid
+      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Tomorrow_DateTime_Valid
+      line: 39

@@ -1,0 +1,104 @@
+suite: text
+kind: function
+operator: filter-chars
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - CharFunctionsTest.cs
+tests:
+  - id: FilterChars_Chars_Valid
+    trace:
+      file: Functions/Text/CharFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CharFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.FilterChars_Chars_Valid
+    cases:
+      - value: 12345678
+        expected: 248
+        parameters:
+          - 2
+          - 8
+          - 4
+        line: 40
+      - value: 12314561789
+        expected: 12141
+        parameters:
+          - 2
+          - 1
+          - 4
+        line: 41
+      - value: (null)
+        expected: (null)
+        parameters:
+          - 2
+          - 1
+          - 4
+        line: 42
+      - value: 
+        expected: (null)
+        parameters:
+          - 2
+          - 1
+          - 4
+        line: 43
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - 2
+          - 1
+          - 4
+        line: 44
+      - value: (blank)
+        expected: (blank)
+        parameters:
+          - 2
+          - 1
+          - 4
+        line: 45
+      - value: (blank)
+        expected: (blank)
+        parameters:
+          - 2
+          - 1
+          - 4
+        line: 46
+  - id: FilterChars_String_Valid
+    trace:
+      file: Functions/Text/CharFunctionsTest.cs
+      class: Expressif.Testing.Functions.Text.CharFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.FilterChars_String_Valid
+    cases:
+      - value: 12345678
+        expected: 248
+        parameters:
+          - 284
+        line: 52
+      - value: 12314561789
+        expected: 12141
+        parameters:
+          - 214
+        line: 53
+      - value: (null)
+        expected: (null)
+        parameters:
+          - 214
+        line: 54
+      - value: 
+        expected: (null)
+        parameters:
+          - 214
+        line: 55
+      - value: (empty)
+        expected: (empty)
+        parameters:
+          - 214
+        line: 56
+      - value: (blank)
+        expected: (blank)
+        parameters:
+          - 214
+        line: 57
+      - value: (blank)
+        expected: (blank)
+        parameters:
+          - 214
+        line: 58

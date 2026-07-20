@@ -1,0 +1,32 @@
+suite: numeric
+kind: function
+operator: sign
+metadata:
+  generated-by: TestCaseExporter
+  source-files:
+    - SignFunctionsTest.cs
+tests:
+  - id: Sign_Valid
+    trace:
+      file: Functions/Numeric/SignFunctionsTest.cs
+      class: Expressif.Testing.Functions.Numeric.SignFunctionsTest
+      qualified-method: Expressif.Testing.Functions.Numeric.SignFunctionsTest.Sign_Valid
+    cases:
+      - value: 0
+        expected: 0
+        line: 13
+      - value: 1
+        expected: 1
+        line: 14
+      - value: -1
+        expected: -1
+        line: 15
+      - value: 5
+        expected: 1
+        line: 16
+      - value: -5
+        expected: -1
+        line: 17
+      - value: 
+        expected: 
+        line: 18
