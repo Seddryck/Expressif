@@ -53,8 +53,9 @@ public static class ConformanceTestCaseDataSource
             Console.WriteLine($"\tFound conformance YAML file: '{expectedFile}'");
 
         var document = Deserialize(expectedFile);
-        var test = document?.Tests?.Find(x => ToPascalSnakeCase(x.Id) == testName)
-                        ?? throw new InvalidOperationException($"No test with id '{testName}' into the YAML conformance file");
+        var test = document?.Tests?.Find(x => ToPascalSnakeCase(x.Id) == testName);
+        if (test is null)
+            throw new InvalidOperationException($"No test with id '{testName}' into the YAML conformance file");
         Console.WriteLine($"\tFound {document.Tests?.Count ?? 0} tests and {document.Tests?.Sum(x => x.Cases?.Count ?? 0) ?? 0} cases.");
 
         var method = type.GetMethod(testName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
@@ -62,7 +63,7 @@ public static class ConformanceTestCaseDataSource
         var parameters = method.GetParameters();
         var expectedParameterCount = parameters.Length;
 
-        foreach (var @case in (test.Cases ?? throw new InvalidOperationException($"No cases named found for test '{testName}' into the YAML conformance file")))
+        foreach (var @case in (test.Cases ?? throw new InvalidOperationException($"No cases found for test '{testName}' into the YAML conformance file")))
         {
             var caseParameters = @case.Parameters ?? [];
             object?[] caseVariables = @case.Context?.Variables is null
@@ -315,11 +316,33 @@ public static class ConformanceTestCaseDataSource
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
+        static string ToPascalPart(string token)
+            => string.Concat(
+                token
+                    .Split('-', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => char.ToUpperInvariant(word[0]) + word[1..])
+            );
+
+        var segments = value
+            .Split('.', StringSplitOptions.RemoveEmptyEntries)
+            .Select(ToPascalPart)
+            .ToList();
+
+        //if (segments.Count > 2)
+        //{
+        //    var statusIndex = segments.FindIndex(1, segments.Count - 2, segment
+        //        => segment is "Valid" or "Invalid" or "Expected");
+        //    if (statusIndex >= 0)
+        //    {
+        //        var status = segments[statusIndex];
+        //        segments.RemoveAt(statusIndex);
+        //        segments.Add(status);
+        //    }
+        //}
+
         return string.Join(
             "_",
-            value
-                .Split('-', StringSplitOptions.RemoveEmptyEntries)
-                .Select(part => char.ToUpperInvariant(part[0]) + part[1..])
+            segments
         );
     }
 

@@ -1,23 +1,15 @@
 suite: temporal
 kind: function
 operator: day-of-week
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - DatePartNumericFunctionsTest.cs
 tests:
-  - id: DayOfWeek_DateTime_Valid
-    trace:
-      file: Functions/Temporal/DatePartNumericFunctionsTest.cs
-      class: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest.DayOfWeek_DateTime_Valid
+  - id: day-of-week.valid.date-time
     cases:
-      - value: 2000-01-01
+      - id: day-of-week.valid.date-time.temporal.2000-01-01
+        value: 2000-01-01
         expected: 6
-        line: 56
-      - value: 2000-01-02
+      - id: day-of-week.valid.date-time.temporal.2000-01-02
+        value: 2000-01-02
         expected: 7
-        line: 57
-      - value: 2000-01-03
+      - id: day-of-week.valid.date-time.temporal.2000-01-03
+        value: 2000-01-03
         expected: 1
-        line: 58

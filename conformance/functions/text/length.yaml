@@ -1,35 +1,27 @@
 suite: text
 kind: function
 operator: length
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - CountingFunctionsTest.cs
 tests:
-  - id: Length_Valid
-    trace:
-      file: Functions/Text/CountingFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CountingFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CountingFunctionsTest.Length_Valid
+  - id: length.valid
     cases:
-      - value: foo
+      - id: length.valid.text.foo-to-three
+        value: foo
         expected: 3
-        line: 13
-      - value: ' foo '
+      - id: length.valid.text.foo-to-five
+        value: ' foo '
         expected: 5
-        line: 14
-      - value: ''
+      - id: length.valid.text.value
+        value: ''
         expected: 0
-        line: 15
-      - value: (null)
+      - id: length.valid.special.null
+        value: (null)
         expected: 0
-        line: 16
-      - value: 
+      - id: length.valid.special.empty-to-zero-source-line-17
+        value: 
         expected: 0
-        line: 17
-      - value: (empty)
+      - id: length.valid.special.empty-to-zero-source-line-18
+        value: (empty)
         expected: 0
-        line: 18
-      - value: (blank)
+      - id: length.valid.special.blank
+        value: (blank)
         expected: 
-        line: 19

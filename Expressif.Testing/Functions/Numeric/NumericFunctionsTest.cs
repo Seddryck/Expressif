@@ -40,7 +40,7 @@ public class NumericFunctionsTest
         => Assert.That(new Round(() => digits).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Clip_Interval1010Valid(object value, decimal min, decimal max, decimal? expected)
+    public void Clip_Valid(object value, decimal min, decimal max, decimal? expected)
         => Assert.That(new Clip(() => min, () => max)
             .Evaluate(value), Is.EqualTo(expected));
 

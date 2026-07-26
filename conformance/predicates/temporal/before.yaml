@@ -1,68 +1,46 @@
 suite: temporal
 kind: predicate
 operator: before
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ComparisonTest.cs
-cases:
-  - value: 2022-11-21
-    expected: false
-    parameters:
-      - 2022-11-21
-    trace:
-      file: Predicates/Temporal/ComparisonTest.cs
-      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
-      id: Before_DateTime_Expected
-      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
-      line: 43
-  - value: 2022-11-21
-    expected: true
-    parameters:
-      - 2022-11-22
-    trace:
-      file: Predicates/Temporal/ComparisonTest.cs
-      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
-      id: Before_DateTime_Expected
-      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
-      line: 44
-  - value: 2022-11-21 17:12:25
-    expected: false
-    parameters:
-      - 2022-11-21 17:12:25
-    trace:
-      file: Predicates/Temporal/ComparisonTest.cs
-      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
-      id: Before_DateTime_Expected
-      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
-      line: 45
-  - value: 2022-11-21 17:12:25
-    expected: false
-    parameters:
-      - 2022-11-21 17:12:24
-    trace:
-      file: Predicates/Temporal/ComparisonTest.cs
-      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
-      id: Before_DateTime_Expected
-      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
-      line: 46
-  - value: 
-    expected: false
-    parameters:
-      - 2022-11-21
-    trace:
-      file: Predicates/Temporal/ComparisonTest.cs
-      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
-      id: Before_DateTime_Expected
-      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
-      line: 47
-  - value: (null)
-    expected: false
-    parameters:
-      - 2022-11-21
-    trace:
-      file: Predicates/Temporal/ComparisonTest.cs
-      class: Expressif.Testing.Predicates.Temporal.ComparisonTest
-      id: Before_DateTime_Expected
-      qualified-method: Expressif.Testing.Predicates.Temporal.ComparisonTest.Before_DateTime_Expected
-      line: 48
+tests:
+  - id: before.valid.date-time
+    cases:
+      - id: before.valid.date-time.today
+        value: 2022-11-21
+        expected: false
+        parameters:
+          - 2022-11-21
+      - id: before.valid.date-time.yesterday
+        value: 2022-11-20
+        expected: true
+        parameters:
+          - 2022-11-21
+      - id: before.valid.date-time.tomorrow
+        value: 2022-11-22
+        expected: false
+        parameters:
+          - 2022-11-21
+      - id: before.valid.date-time.same-date-time
+        value: 2022-11-21 17:12:24
+        expected: false
+        parameters:
+          - 2022-11-21 17:12:24
+      - id: before.valid.date-time.before-date-time
+        value: 2022-11-21 17:12:23
+        expected: true
+        parameters:
+          - 2022-11-21 17:12:24
+      - id: before.valid.date-time.after-date-time
+        value: 2022-11-21 17:12:25
+        expected: false
+        parameters:
+          - 2022-11-21 17:12:24
+      - id: before.valid.special.empty
+        value:
+        expected: false
+        parameters:
+          - 2022-11-21
+      - id: before.valid.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - 2022-11-21

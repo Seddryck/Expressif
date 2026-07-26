@@ -1,40 +1,21 @@
 suite: numeric
 kind: predicate
 operator: even
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ModuloTest.cs
-cases:
-  - value: 10
-    expected: true
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Even_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
-      line: 43
-  - value: 1
-    expected: false
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Even_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
-      line: 44
-  - value: 0
-    expected: true
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Even_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
-      line: 45
-  - value: 
-    expected: false
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Even_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Even_Numeric_Valid
-      line: 46
+tests:
+  - id: even.valid
+    cases:
+      - id: even.valid.numeric.positive.even
+        value: 10
+        expected: true
+      - id: odd.valid.numeric.positive.odd
+        value: 11
+        expected: false
+      - id: even.valid.numeric.one
+        value: 1
+        expected: false
+      - id: even.valid.numeric.zero
+        value: 0
+        expected: true
+      - id: even.valid.special.empty
+        value: 
+        expected: false

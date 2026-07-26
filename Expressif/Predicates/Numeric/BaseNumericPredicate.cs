@@ -27,8 +27,9 @@ public abstract class BaseNumericPredicate : BasePredicate
             return EvaluateNull();
 
         var caster = new NumericCaster();
-        var numeric = caster.Cast(value);
-        return EvaluateNumeric(numeric);
+        if (caster.TryCast(value, out var numeric))
+            return EvaluateNumeric(numeric);
+        return EvaluateNull();
     }
 
     protected abstract bool EvaluateNumeric(decimal numeric);

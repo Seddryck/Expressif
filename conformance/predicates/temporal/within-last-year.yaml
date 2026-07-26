@@ -1,74 +1,30 @@
 suite: temporal
 kind: predicate
 operator: within-last-year
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - AroundTodayPredicatesTest.cs
-parameters:
-  - 
-cases:
-  - value: 2020-12-31
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 156
-  - value: 2021-01-01
-    expected: true
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 157
-  - value: 2021-12-31
-    expected: true
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 158
-  - value: 2022-01-01
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 159
-  - value: 2022-11-30
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 160
-  - value: 2022-12-01
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 161
-  - value: 2022-12-30
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 162
-  - value: 2023-01-01
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastYear_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastYear_DateTime_Valid
-      line: 163
+tests:
+  - id: within-last-year.valid.date-time
+    cases:
+      - id: within-last-year.valid.date-time.temporal.last-day-of-two-years-ago
+        value: 2020-12-31
+        expected: false
+      - id: within-last-year.valid.date-time.temporal.first-day-of-last-year
+        value: 2021-01-01
+        expected: true
+      - id: within-last-year.valid.date-time.temporal.last-day-of-last-year
+        value: 2021-12-31
+        expected: true
+      - id: within-last-year.valid.date-time.temporal.first-day-of-current-year
+        value: 2022-01-01
+        expected: false
+      - id: within-last-year.valid.date-time.temporal.previous-month-in-current-year
+        value: 2022-11-30
+        expected: false
+      - id: within-last-year.valid.date-time.temporal.current-month-in-current-year
+        value: 2022-12-01
+        expected: false
+      - id: within-last-year.valid.date-time.temporal.yesterday-in-current-year
+        value: 2022-12-30
+        expected: false
+      - id: within-last-year.valid.date-time.temporal.first-day-of-next-year
+        value: 2023-01-01
+        expected: false

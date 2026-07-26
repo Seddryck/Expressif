@@ -7,33 +7,33 @@ namespace Expressif.Testing.Functions.Numeric;
 public class FormatFunctionTest
 {
     [Conformance]
-    public void HumanReadableFormatDecimal_DefaultPrecision_Valid(decimal value, string expected)
+    public void HumanReadableFormatDecimal_Valid_DefaultPrecision(decimal value, string expected)
         => Assert.That(new HumanReadableFormatDecimal().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void HumanReadableFormatDecimal_Precision_Valid(decimal value, int precision, string expected)
+    public void HumanReadableFormatDecimal_Valid_Precision(decimal value, int precision, string expected)
         => Assert.That(new HumanReadableFormatDecimal(() => precision).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void HumanReadableFormatDecimalBytes_DefaultPrecision_Valid(decimal value, string expected)
+    public void HumanReadableFormatDecimalBytes_Valid_DefaultPrecision(decimal value, string expected)
         => Assert.That(new HumanReadableFormatDecimalBytes().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void HumanReadableFormatDecimalBytes_Precision_Valid(decimal value, int precision, string expected)
+    public void HumanReadableFormatDecimalBytes_Valid_Precision(decimal value, int precision, string expected)
         => Assert.That(new HumanReadableFormatDecimalBytes(() => precision).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void HumanReadableFormatBinaryBytes_DefaultPrecision_Valid(decimal value, string expected)
+    public void HumanReadableFormatBinaryBytes_Valid_DefaultPrecision(decimal value, string expected)
         => Assert.That(new HumanReadableFormatBinaryBytes().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void HumanReadableFormatBinaryBytes_Precision_Valid(decimal value, int precision, string expected)
+    public void HumanReadableFormatBinaryBytes_Valid_Precision(decimal value, int precision, string expected)
         => Assert.That(new HumanReadableFormatBinaryBytes(() => precision).Evaluate(value), Is.EqualTo(expected));
 
     [Test]
     [TestCase(-1)]
     [TestCase(4)]
-    public void HumanReadableFormat_InvalidPrecision_ReturnsNull(int precision)
+    public void HumanReadableFormat_ReturnsNull_InvalidPrecision(int precision)
     {
         Assert.That(new HumanReadableFormatDecimal(() => precision).Evaluate(1000), Is.Null);
         Assert.That(new HumanReadableFormatDecimalBytes(() => precision).Evaluate(1000), Is.Null);

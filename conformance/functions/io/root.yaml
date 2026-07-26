@@ -1,41 +1,33 @@
 suite: io
 kind: function
 operator: root
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - PathFunctionsTest.cs
 tests:
-  - id: Root_Valid
-    trace:
-      file: Functions/IO/PathFunctionsTest.cs
-      class: Expressif.Testing.Functions.IO.PathFunctionsTest
-      qualified-method: Expressif.Testing.Functions.IO.PathFunctionsTest.Root_Valid
+  - id: root.valid
     cases:
-      - value: C:\
+      - id: root.valid.io.drive-c
+        value: C:\
         expected: C:\
-        line: 54
-      - value: C:\Dir\
+      - id: root.valid.io.drive-c-dir
+        value: C:\Dir\
         expected: C:\
-        line: 55
-      - value: C:\Dir\Child\
+      - id: root.valid.io.drive-c-dir-child
+        value: C:\Dir\Child\
         expected: C:\
-        line: 56
-      - value: C:\Dir\ChildFile
+      - id: root.valid.io.drive-c-dir-childfile
+        value: C:\Dir\ChildFile
         expected: C:\
-        line: 57
-      - value: C:\Dir\Child\file.txt
+      - id: root.valid.io.drive-c-dir-child-file-txt
+        value: C:\Dir\Child\file.txt
         expected: C:\
-        line: 58
-      - value: Dir\file.txt
+      - id: root.valid.io.dir-file-txt
+        value: Dir\file.txt
         expected: ''
-        line: 59
-      - value: (null)
+      - id: root.valid.special.null
+        value: (null)
         expected: (empty)
-        line: 60
-      - value: (empty)
+      - id: root.valid.special.empty
+        value: (empty)
         expected: (empty)
-        line: 61
-      - value: (blank)
+      - id: root.valid.special.blank
+        value: (blank)
         expected: (empty)
-        line: 62

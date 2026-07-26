@@ -1,35 +1,27 @@
 suite: text
 kind: function
 operator: lower
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TextFunctionsTest.cs
 tests:
-  - id: Lower_Valid
-    trace:
-      file: Functions/Text/TextFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.TextFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.Lower_Valid
+  - id: lower.valid
     cases:
-      - value: FOO
+      - id: lower.valid.text.foo-to-foo-source-line-192
+        value: FOO
         expected: foo
-        line: 192
-      - value: foo
+      - id: lower.valid.text.foo-to-foo-source-line-193
+        value: foo
         expected: foo
-        line: 193
-      - value: fOo
+      - id: lower.valid.text.foo-to-foo-source-line-194
+        value: fOo
         expected: foo
-        line: 194
-      - value: ' foO '
+      - id: lower.valid.text.foo-to-foo-source-line-195
+        value: ' foO '
         expected: ' foo '
-        line: 195
-      - value: (null)
+      - id: lower.valid.special.null
+        value: (null)
         expected: (null)
-        line: 196
-      - value: (empty)
+      - id: lower.valid.special.empty
+        value: (empty)
         expected: (empty)
-        line: 197
-      - value: (blank)
+      - id: lower.valid.special.blank
+        value: (blank)
         expected: (blank)
-        line: 198

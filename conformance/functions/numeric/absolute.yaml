@@ -1,32 +1,24 @@
 suite: numeric
 kind: function
 operator: absolute
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - SignFunctionsTest.cs
 tests:
-  - id: Absolute_Valid
-    trace:
-      file: Functions/Numeric/SignFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.SignFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.SignFunctionsTest.Absolute_Valid
+  - id: absolute.valid
     cases:
-      - value: 0
+      - id: absolute.valid.numeric.zero
+        value: 0
         expected: 0
-        line: 23
-      - value: 1
+      - id: absolute.valid.numeric.one
+        value: 1
         expected: 1
-        line: 24
-      - value: -1
+      - id: absolute.valid.numeric.minus-one
+        value: -1
         expected: 1
-        line: 25
-      - value: 5
+      - id: absolute.valid.numeric.five
+        value: 5
         expected: 5
-        line: 26
-      - value: -5
+      - id: absolute.valid.numeric.minus-five
+        value: -5
         expected: 5
-        line: 27
-      - value: 
+      - id: absolute.valid.special.empty
+        value: 
         expected: 
-        line: 28

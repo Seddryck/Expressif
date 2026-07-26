@@ -12,46 +12,46 @@ namespace Expressif.Testing.Functions.Temporal;
 public class DatePartNumericFunctionsTest
 {
     [Conformance]
-    public void YearOfEra_Integer_Valid(int year, int expected)
+    public void YearOfEra_Valid_Integer(int year, int expected)
         => Assert.That(new YearOfEra().Evaluate(year), Is.EqualTo(expected));
 
     [Conformance]
-    public void YearOfEra_DateTime_Valid(DateTime dt, int expected)
+    public void YearOfEra_Valid_DateTime(DateTime dt, int expected)
         => Assert.That(new YearOfEra().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void YearOfEra_YearMonth_Valid(YearMonth yearMonth, int expected)
+    public void YearOfEra_Valid_YearMonth(YearMonth yearMonth, int expected)
     => Assert.That(new YearOfEra().Evaluate(yearMonth), Is.EqualTo(expected));
 
     [Conformance]
-    public void MonthOfYear_Integer_Invalid(int month, object? expected)
+    public void MonthOfYear_Invalid_Integer(int month, object? expected)
     => Assert.That(new MonthOfYear().Evaluate(month), Is.EqualTo(expected));
 
     [Conformance]
-    public void MonthOfYear_DateTime_Valid(DateTime dt, int expected)
+    public void MonthOfYear_Valid_DateTime(DateTime dt, int expected)
         => Assert.That(new MonthOfYear().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void MonthOfYear_YearMonth_Valid(YearMonth yearMonth, int expected)
+    public void MonthOfYear_Valid_YearMonth(YearMonth yearMonth, int expected)
     => Assert.That(new MonthOfYear().Evaluate(yearMonth), Is.EqualTo(expected));
 
     [Conformance]
-    public void DayOfWeek_DateTime_Valid(DateTime dt, int expected)
+    public void DayOfWeek_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new Expressif.Functions.Temporal.DayOfWeek().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void DayOfMonth_DateTime_Valid(DateTime dt, int expected)
+    public void DayOfMonth_Valid_DateTime(DateTime dt, int expected)
         => Assert.That(new DayOfMonth().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void DayOfYear_DateTime_Valid(DateTime dt, int expected)
+    public void DayOfYear_Valid_DateTime(DateTime dt, int expected)
         => Assert.That(new DayOfYear().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void IsoDayOfYear_DateTime_Valid(DateTime dt, int expected)
+    public void IsoDayOfYear_Valid_DateTime(DateTime dt, int expected)
         => Assert.That(new IsoDayOfYear().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void IsoWeekOfYear_DateTime_Valid(DateTime dt, int expected)
+    public void IsoWeekOfYear_Valid_DateTime(DateTime dt, int expected)
         => Assert.That(new IsoWeekOfYear().Evaluate(dt), Is.EqualTo(expected));
 }

@@ -1,26 +1,18 @@
 suite: temporal
 kind: function
 operator: ceiling-minute
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TemporalFunctionsTest.cs
 tests:
-  - id: CeilingMinute_Valid
-    trace:
-      file: Functions/Temporal/TemporalFunctionsTest.cs
-      class: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Temporal.TemporalFunctionsTest.CeilingMinute_Valid
+  - id: ceiling-minute.valid
     cases:
-      - value: 2019-03-11 17:00:00
+      - id: ceiling-minute.valid.temporal.on-minute
+        value: 2019-03-11 17:00:00
         expected: 2019-03-11 17:00:00
-        line: 99
-      - value: 2019-03-11 17:20:00
+      - id: ceiling-minute.valid.temporal.within-minute-no-seconds
+        value: 2019-03-11 17:20:00
         expected: 2019-03-11 17:20:00
-        line: 100
-      - value: 2019-03-11 17:20:24.120
+      - id: ceiling-minute.valid.temporal.after-minute-seconds-and-milliseconds
+        value: 2019-03-11 17:20:24.120
         expected: 2019-03-11 17:21:00
-        line: 101
-      - value: 2019-03-11 17:59:59
+      - id: ceiling-minute.valid.temporal.before-hour-boundary-rollover
+        value: 2019-03-11 17:59:59
         expected: 2019-03-11 18:00:00
-        line: 102

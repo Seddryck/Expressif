@@ -1,42 +1,32 @@
 suite: temporal
 kind: predicate
 operator: today
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - AroundTodayPredicatesTest.cs
-parameters:
-  - 
-cases:
-  - value: 2022-12-28
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: Today_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Today_DateTime_Valid
-      line: 44
-  - value: 2022-12-29
-    expected: true
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: Today_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Today_DateTime_Valid
-      line: 45
-  - value: 2022-12-30
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: Today_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Today_DateTime_Valid
-      line: 46
-  - value: 1970-05-06
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: Today_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.Today_DateTime_Valid
-      line: 47
+tests:
+  - id: today.valid.date-time
+    cases:
+      - id: today.valid.date-time.temporal.yesterday
+        value: 2022-12-28T14:00:00
+        expected: false
+      - id: today.valid.date-time.temporal.today
+        value: 2022-12-29T14:00:00
+        expected: true
+      - id: today.valid.date-time.temporal.tomorrow
+        value: 2022-12-30T14:00:00
+        expected: false
+      - id: today.valid.date-time.temporal.epoch
+        value: 1970-05-06T00:00:00
+        expected: false
+  - id: today.valid.date
+    cases:
+      - id: today.valid.date.temporal.yesterday
+        value: 2022-12-28
+        expected: false
+      - id: today.valid.date.temporal.today
+        value: 2022-12-29
+        expected: true
+      - id: today.valid.date.temporal.tomorrow
+        value: 2022-12-30
+        expected: false
+      - id: today.valid.date.temporal.epoch
+        value: 1970-05-06
+        expected: false

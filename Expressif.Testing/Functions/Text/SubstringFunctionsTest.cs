@@ -13,7 +13,7 @@ public class SubstringFunctionsTest
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void BeforeSubstring_Position_Valid(string value, string substring, int position, string expected)
+    public void BeforeSubstring_Valid_Position(string value, string substring, int position, string expected)
         => Assert.That(new BeforeSubstring(() => substring, () => position).Evaluate(value)
             , Is.EqualTo(expected));
 
@@ -23,7 +23,7 @@ public class SubstringFunctionsTest
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void AfterSubstring_Position_Valid(string value, string substring, int position, string expected)
+    public void AfterSubstring_Valid_Position(string value, string substring, int position, string expected)
         => Assert.That(new AfterSubstring(() => substring, () => position).Evaluate(value)
             , Is.EqualTo(expected));
 }

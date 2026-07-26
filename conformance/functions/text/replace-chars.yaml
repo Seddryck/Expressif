@@ -1,62 +1,54 @@
 suite: text
 kind: function
 operator: replace-chars
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - CharFunctionsTest.cs
 tests:
-  - id: ReplaceChars_Valid
-    trace:
-      file: Functions/Text/CharFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CharFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.ReplaceChars_Valid
+  - id: replace-chars.valid
     cases:
-      - value: 123*456*78
+      - id: replace-chars.valid.text.123-456-78-to-123-456-78-with-value-and-value-source-line-26
+        value: 123*456*78
         expected: 123-456-78
         parameters:
           - '*'
           - '-'
-        line: 26
-      - value: '***123***456*78****'
+      - id: replace-chars.valid.text.123-456-78-to-123-456-78-with-value-and-value-source-line-27
+        value: '***123***456*78****'
         expected: '---123---456-78----'
         parameters:
           - '*'
           - '-'
-        line: 27
-      - value: '******'
+      - id: replace-chars.valid.text.value
+        value: '******'
         expected: '------'
         parameters:
           - '*'
           - '-'
-        line: 28
-      - value: (null)
+      - id: replace-chars.valid.special.null
+        value: (null)
         expected: (null)
         parameters:
           - '*'
           - '-'
-        line: 29
-      - value: 
+      - id: replace-chars.valid.special.empty-to-null
+        value: 
         expected: (null)
         parameters:
           - '*'
           - '-'
-        line: 30
-      - value: (empty)
+      - id: replace-chars.valid.special.empty-to-empty
+        value: (empty)
         expected: (empty)
         parameters:
           - '*'
           - '-'
-        line: 31
-      - value: (blank)
+      - id: replace-chars.valid.special.blank-to-blank-with-value-and-value-source-line-32
+        value: (blank)
         expected: (blank)
         parameters:
           - '*'
           - '-'
-        line: 32
-      - value: (blank)
+      - id: replace-chars.valid.special.blank-to-blank-with-value-and-value-source-line-33
+        value: (blank)
         expected: (blank)
         parameters:
           - ' '
           - '-'
-        line: 33

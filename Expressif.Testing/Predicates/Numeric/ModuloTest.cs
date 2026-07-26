@@ -1,61 +1,33 @@
 ﻿using Expressif.Predicates.Numeric;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Numeric;
 
+[TestFixture]
 public class ModuloTest
 {
-    [Test]
-    [TestCase(10, 5, 0)]
-    [TestCase(10, 4, 2)]
-    public void Modulo_Numeric_Success(object value, int modulus, int remainder)
+    [Conformance]
+    public void Modulo_Valid(object value, int modulus, int remainder, bool expected)
     {
         var predicate = new Modulo(() => modulus, () => remainder);
         Assert.Multiple(() =>
         {
             Assert.That(predicate.Reference.Invoke(), Is.EqualTo(modulus));
             Assert.That(predicate.Remainder.Invoke(), Is.EqualTo(remainder));
-            Assert.That(predicate.Evaluate(value), Is.True);
+            Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
         });
     }
 
-    [Test]
-    [TestCase(10, 6, 0)]
-    [TestCase(10, 5, 1)]
-    [TestCase(null, 5, 2)]
-    public void Modulo_Numeric_Failure(object? value, int modulus, int remainder)
-    {
-        var predicate = new Modulo(() => modulus, () => remainder);
-        Assert.Multiple(() =>
-        {
-            Assert.That(predicate.Reference.Invoke(), Is.EqualTo(modulus));
-            Assert.That(predicate.Remainder.Invoke(), Is.EqualTo(remainder));
-            Assert.That(predicate.Evaluate(value), Is.False);
-        });
-    }
 
-    [Test]
-    [TestCase(10, true)]
-    [TestCase(1, false)]
-    [TestCase(0, true)]
-    [TestCase(null, false)]
-    public void Even_Numeric_Valid(object? value, bool expected)
+    [Conformance]
+    public void Even_Valid(object? value, bool expected)
     {
         var predicate = new Even();
         Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
     }
 
-    [Test]
-    [TestCase(10, false)]
-    [TestCase(1, true)]
-    [TestCase(0, false)]
-    [TestCase(null, false)]
-    public void Odd_Numeric_Valid(object? value, bool expected)
+    [Conformance]
+    public void Odd_Valid(object? value, bool expected)
     {
         var predicate = new Odd();
         Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));

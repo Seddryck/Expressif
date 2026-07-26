@@ -20,7 +20,7 @@ public class PowerRootFunctionsTest
         => Assert.That(new CubePower().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Power_Exponent_Valid(object? value, decimal exponent, decimal? expected)
+    public void Power_Valid_Exponent(object? value, decimal exponent, decimal? expected)
         => Assert.That(new Power(() => exponent).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
@@ -32,6 +32,6 @@ public class PowerRootFunctionsTest
         => Assert.That(new CubeRoot().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void NthRoot_Exponent_Valid(object? value, decimal exponent, decimal? expected)
+    public void NthRoot_Valid_Exponent(object? value, decimal exponent, decimal? expected)
         => Assert.That(new NthRoot(() => exponent).Evaluate(value), Is.EqualTo(expected));
 }

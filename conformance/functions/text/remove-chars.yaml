@@ -1,54 +1,46 @@
 suite: text
 kind: function
 operator: remove-chars
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - CharFunctionsTest.cs
 tests:
-  - id: RemoveChars_Valid
-    trace:
-      file: Functions/Text/CharFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CharFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.RemoveChars_Valid
+  - id: remove-chars.valid
     cases:
-      - value: 123*456*78
+      - id: remove-chars.valid.text.123-456-78-to-12345678-with-value-source-line-13
+        value: 123*456*78
         expected: 12345678
         parameters:
           - '*'
-        line: 13
-      - value: '***123***456*78****'
+      - id: remove-chars.valid.text.123-456-78-to-12345678-with-value-source-line-14
+        value: '***123***456*78****'
         expected: 12345678
         parameters:
           - '*'
-        line: 14
-      - value: '******'
+      - id: remove-chars.valid.text.value
+        value: '******'
         expected: ''
         parameters:
           - '*'
-        line: 15
-      - value: (null)
+      - id: remove-chars.valid.special.null
+        value: (null)
         expected: (null)
         parameters:
           - '*'
-        line: 16
-      - value: 
+      - id: remove-chars.valid.special.empty-to-null
+        value: 
         expected: (null)
         parameters:
           - '*'
-        line: 17
-      - value: (empty)
+      - id: remove-chars.valid.special.empty-to-empty
+        value: (empty)
         expected: (empty)
         parameters:
           - '*'
-        line: 18
-      - value: (blank)
+      - id: remove-chars.valid.special.blank-to-blank
+        value: (blank)
         expected: (blank)
         parameters:
           - '*'
-        line: 19
-      - value: (blank)
+      - id: remove-chars.valid.special.blank-to-empty
+        value: (blank)
         expected: (empty)
         parameters:
           - ' '
-        line: 20

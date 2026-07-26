@@ -1,49 +1,41 @@
 suite: text
 kind: function
 operator: skip-last-chars
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TextFunctionsTest.cs
 tests:
-  - id: SkipLastChars_Valid
-    trace:
-      file: Functions/Text/TextFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.TextFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.SkipLastChars_Valid
+  - id: skip-last-chars.valid
     cases:
-      - value: 123456789
+      - id: skip-last-chars.valid.text.123456789-to-empty-with-nine
+        value: 123456789
         expected: (empty)
         parameters:
           - 9
-        line: 270
-      - value: 123456789
+      - id: skip-last-chars.valid.text.123456789-to-empty-with-ten
+        value: 123456789
         expected: (empty)
         parameters:
           - 10
-        line: 271
-      - value: 123456789
+      - id: skip-last-chars.valid.text.123456789-to-one
+        value: 123456789
         expected: 1
         parameters:
           - 8
-        line: 272
-      - value: 123456789
+      - id: skip-last-chars.valid.text.123456789-to-1234
+        value: 123456789
         expected: 1234
         parameters:
           - 5
-        line: 273
-      - value: 123456789
+      - id: skip-last-chars.valid.text.123456789-to-123456789
+        value: 123456789
         expected: 123456789
         parameters:
           - 0
-        line: 274
-      - value: (null)
+      - id: skip-last-chars.valid.special.null
+        value: (null)
         expected: (null)
         parameters:
           - 3
-        line: 275
-      - value: (empty)
+      - id: skip-last-chars.valid.special.empty
+        value: (empty)
         expected: (empty)
         parameters:
           - 3
-        line: 276

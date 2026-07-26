@@ -1,41 +1,33 @@
 suite: numeric
 kind: function
 operator: square-power
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - PowerRootFunctionsTest.cs
 tests:
-  - id: SquarePower_Valid
-    trace:
-      file: Functions/Numeric/PowerRootFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest.SquarePower_Valid
+  - id: square-power.valid
     cases:
-      - value: 0
+      - id: square-power.valid.numeric.zero
+        value: 0
         expected: 0
-        line: 13
-      - value: 1
+      - id: square-power.valid.numeric.one
+        value: 1
         expected: 1
-        line: 14
-      - value: -1
+      - id: square-power.valid.numeric.minus-one
+        value: -1
         expected: 1
-        line: 15
-      - value: 2
+      - id: square-power.valid.numeric.two
+        value: 2
         expected: 4
-        line: 16
-      - value: -2
+      - id: square-power.valid.numeric.minus-two
+        value: -2
         expected: 4
-        line: 17
-      - value: 
+      - id: square-power.valid.special.empty-to-empty
+        value: 
         expected: 
-        line: 18
-      - value: (null)
+      - id: square-power.valid.special.null
+        value: (null)
         expected: 
-        line: 19
-      - value: (empty)
+      - id: square-power.valid.special.empty-tag-to-empty
+        value: (empty)
         expected: 
-        line: 20
-      - value: (blank)
+      - id: square-power.valid.special.blank
+        value: (blank)
         expected: 
-        line: 21

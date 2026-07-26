@@ -1,84 +1,76 @@
 suite: numeric
 kind: function
 operator: power
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - PowerRootFunctionsTest.cs
 tests:
-  - id: Power_Exponent_Valid
-    trace:
-      file: Functions/Numeric/PowerRootFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.PowerRootFunctionsTest.Power_Exponent_Valid
+  - id: power.valid.exponent
     cases:
-      - value: 0
+      - id: power.valid.exponent.numeric.zero-to-one
+        value: 0
         expected: 1
         parameters:
           - 0
-        line: 36
-      - value: 1
+      - id: power.valid.exponent.numeric.one-to-one-with-zero
+        value: 1
         expected: 1
         parameters:
           - 0
-        line: 37
-      - value: 0
+      - id: power.valid.exponent.numeric.zero-to-zero-with-one
+        value: 0
         expected: 0
         parameters:
           - 1
-        line: 38
-      - value: 1
+      - id: power.valid.exponent.numeric.one-to-one-with-one
+        value: 1
         expected: 1
         parameters:
           - 1
-        line: 39
-      - value: 4
+      - id: power.valid.exponent.numeric.four
+        value: 4
         expected: 4
         parameters:
           - 1
-        line: 40
-      - value: -4
+      - id: power.valid.exponent.numeric.minus-four
+        value: -4
         expected: -4
         parameters:
           - 1
-        line: 41
-      - value: 0
+      - id: power.valid.exponent.numeric.zero-to-zero-with-four
+        value: 0
         expected: 0
         parameters:
           - 4
-        line: 42
-      - value: 1
+      - id: power.valid.exponent.numeric.one-to-one-with-four
+        value: 1
         expected: 1
         parameters:
           - 4
-        line: 43
-      - value: -1
+      - id: power.valid.exponent.numeric.minus-one
+        value: -1
         expected: 1
         parameters:
           - 4
-        line: 44
-      - value: 2
+      - id: power.valid.exponent.numeric.two-to-sixteen
+        value: 2
         expected: 16
         parameters:
           - 4
-        line: 45
-      - value: -2
+      - id: power.valid.exponent.numeric.minus-two-to-sixteen
+        value: -2
         expected: 16
         parameters:
           - 4
-        line: 46
-      - value: 2
+      - id: power.valid.exponent.numeric.two-to-thirty-two
+        value: 2
         expected: 32
         parameters:
           - 5
-        line: 47
-      - value: -2
+      - id: power.valid.exponent.numeric.minus-two-to-minus-thirty-two
+        value: -2
         expected: -32
         parameters:
           - 5
-        line: 48
-      - value: 
+      - id: power.valid.exponent.special.empty
+        value: 
         expected: 
         parameters:
           - 1
-        line: 49

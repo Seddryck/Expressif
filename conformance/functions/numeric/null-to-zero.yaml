@@ -1,47 +1,27 @@
 suite: numeric
 kind: function
 operator: null-to-zero
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - NumericFunctionsTest.cs
 tests:
-  - id: NullToZero_Valid
-    trace:
-      file: Functions/Numeric/NumericFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.NullToZero_Valid
+  - id: null-to-zero.valid
     cases:
-      - value: 0
+      - id: null-to-zero.valid.numeric.zero-to-zero
+        value: 0
         expected: 0
-        line: 15
-      - value: 1
+      - id: null-to-zero.valid.numeric.one-to-one
+        value: 1
         expected: 1
-        line: 16
-      - value: -1
+      - id: null-to-zero.valid.numeric.minus-one-to-minus-one-source
+        value: -1
         expected: -1
-        line: 17
-      - value: 0.9999
+      - id: null-to-zero.valid.numeric.positive-to-positive
+        value: 0.9999
         expected: 0.9999
-        line: 18
-      - value: (null)
+      - id: null-to-zero.valid.special.null
+        value: (null)
         expected: 0
-        line: 19
-      - value: (empty)
+      - id: null-to-zero.valid.special.empty
+        value: (empty)
         expected: 0
-        line: 20
-      - value: (blank)
+      - id: null-to-zero.valid.special.blank
+        value: (blank)
         expected: 0
-        line: 21
-      - value: 0
-        expected: 0
-        line: 26
-      - value: 1
-        expected: 1
-        line: 27
-      - value: -1
-        expected: -1
-        line: 28
-      - value: 0.9999
-        expected: 0.9999
-        line: 29

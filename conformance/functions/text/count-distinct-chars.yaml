@@ -1,38 +1,30 @@
 suite: text
 kind: function
 operator: count-distinct-chars
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - CountingFunctionsTest.cs
 tests:
-  - id: CountDistinctChars_Valid
-    trace:
-      file: Functions/Text/CountingFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CountingFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CountingFunctionsTest.CountDistinctChars_Valid
+  - id: count-distinct-chars.valid
     cases:
-      - value: foo
+      - id: count-distinct-chars.valid.text.foo
+        value: foo
         expected: 2
-        line: 24
-      - value: foobarfoo
+      - id: count-distinct-chars.valid.text.foobarfoo
+        value: foobarfoo
         expected: 5
-        line: 25
-      - value: barfoobar
+      - id: count-distinct-chars.valid.text.barfoobar
+        value: barfoobar
         expected: 5
-        line: 26
-      - value: FOOfoo
+      - id: count-distinct-chars.valid.text.foofoo
+        value: FOOfoo
         expected: 4
-        line: 27
-      - value: (null)
+      - id: count-distinct-chars.valid.special.null
+        value: (null)
         expected: 0
-        line: 28
-      - value: 
+      - id: count-distinct-chars.valid.special.empty-to-zero-source-line-29
+        value: 
         expected: 0
-        line: 29
-      - value: (empty)
+      - id: count-distinct-chars.valid.special.empty-to-zero-source-line-30
+        value: (empty)
         expected: 0
-        line: 30
-      - value: (blank)
+      - id: count-distinct-chars.valid.special.blank
+        value: (blank)
         expected: 
-        line: 31

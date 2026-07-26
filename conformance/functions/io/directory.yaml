@@ -1,41 +1,33 @@
 suite: io
 kind: function
 operator: directory
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - PathFunctionsTest.cs
 tests:
-  - id: Directory_Valid
-    trace:
-      file: Functions/IO/PathFunctionsTest.cs
-      class: Expressif.Testing.Functions.IO.PathFunctionsTest
-      qualified-method: Expressif.Testing.Functions.IO.PathFunctionsTest.Directory_Valid
+  - id: directory.valid
     cases:
-      - value: C:\
+      - id: directory.valid.io.drive-c
+        value: C:\
         expected: C:\
-        line: 67
-      - value: C:\Dir\
+      - id: directory.valid.io.drive-c-dir
+        value: C:\Dir\
         expected: C:\Dir\
-        line: 68
-      - value: C:\Dir\Child\
+      - id: directory.valid.io.drive-c-dir-child
+        value: C:\Dir\Child\
         expected: C:\Dir\Child\
-        line: 69
-      - value: C:\Dir\ChildFile
+      - id: directory.valid.io.drive-c-dir-childfile
+        value: C:\Dir\ChildFile
         expected: C:\Dir\
-        line: 70
-      - value: C:\Dir\Child\file.txt
+      - id: directory.valid.io.drive-c-dir-child-file-txt
+        value: C:\Dir\Child\file.txt
         expected: C:\Dir\Child\
-        line: 71
-      - value: Dir\file.txt
+      - id: directory.valid.io.dir-file-txt
+        value: Dir\file.txt
         expected: Dir\
-        line: 72
-      - value: (null)
+      - id: directory.valid.special.null
+        value: (null)
         expected: (empty)
-        line: 73
-      - value: (empty)
+      - id: directory.valid.special.empty
+        value: (empty)
         expected: (empty)
-        line: 74
-      - value: (blank)
+      - id: directory.valid.special.blank
+        value: (blank)
         expected: (empty)
-        line: 75

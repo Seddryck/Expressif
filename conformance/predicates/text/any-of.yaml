@@ -1,72 +1,37 @@
 suite: text
 kind: predicate
 operator: any-of
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - AnyOfTest.cs
-cases:
-  - value: foo
-    expected: true
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 13
-  - value: foo
-    expected: false
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 14
-  - value: (empty)
-    expected: true
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 16
-  - value: (empty)
-    expected: true
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 17
-  - value: (empty)
-    expected: false
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 18
-  - value: ''
-    expected: true
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 19
-  - value: ''
-    expected: true
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 20
-  - value: ''
-    expected: false
-    trace:
-      file: Predicates/Text/AnyOfTest.cs
-      class: Expressif.Testing.Predicates.Text.AnyOfTest
-      id: EquivalentTo_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.AnyOfTest.EquivalentTo_Text_Success
-      line: 21
+tests:
+  - id: any-of.valid.text
+    cases:
+      - id: any-of.valid.text.array.foo-bar
+        value: foo
+        expected: true
+        parameters:
+          - [foo, bar]
+      - id: any-of.valid.text.array.foo
+        value: foo
+        expected: false
+        parameters:
+          - [bar]
+      - id: any-of.valid.empty-tag.array.with-empty
+        value: (empty)
+        expected: true
+        parameters:
+          - ["foo", "bar", ""]
+      - id: any-of.valid.empty-tag.array.without-empty
+        value: (empty)
+        expected: false
+        parameters:
+          - ["foo", "bar"]
+      - id: any-of.valid.empty.array.with-empty-tag
+        value: ""
+        expected: true
+        parameters:
+          - [foo, bar, (empty)]
+      - id: any-of.valid.empty.array.without-empty-tag
+        value: ""
+        expected: false
+        parameters:
+          - ["foo", "bar"]
+

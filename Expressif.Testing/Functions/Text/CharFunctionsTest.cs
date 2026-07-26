@@ -23,22 +23,22 @@ public class CharFunctionsTest
 
 
     [Conformance]
-    public void FilterChars_Chars_Valid(string? value, char[] filter, string expected)
+    public void FilterChars_Valid_Chars(string? value, char[] filter, string expected)
         => Assert.That(new FilterChars(() => filter).Evaluate(value)
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void FilterChars_String_Valid(string? value, string filter, string expected)
+    public void FilterChars_Valid_String(string? value, string filter, string expected)
         => Assert.That(new FilterChars(() => filter).Evaluate(value)
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void CollapseWhitespace_Value_Valid(string? value, string expected)
+    public void CollapseWhitespace_Valid(string? value, string expected)
         => Assert.That(new CollapseWhitespace().Evaluate(value)
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void CleanWhitespace_Value_Valid(string? value, string expected)
+    public void CleanWhitespace_Valid(string? value, string expected)
         => Assert.That(new CleanWhitespace().Evaluate(value)
             , Is.EqualTo(expected));
 }

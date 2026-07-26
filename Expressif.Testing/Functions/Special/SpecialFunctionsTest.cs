@@ -99,7 +99,7 @@ public class SpecialFunctionsTest
             , Is.EqualTo(new Value()));
 
     [Conformance]
-    public void NullToValue_NotNull_Value(object value, object expected)
+    public void NullToValue_Value_NotNull(object value, object expected)
         => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(expected));
 
     [Test]

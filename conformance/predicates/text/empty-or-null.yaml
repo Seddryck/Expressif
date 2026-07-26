@@ -1,56 +1,24 @@
 suite: text
 kind: predicate
 operator: empty-or-null
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - SpecialTest.cs
-cases:
-  - value: 
-    expected: true
-    trace:
-      file: Predicates/Text/SpecialTest.cs
-      class: Expressif.Testing.Predicates.Text.SpecialTest
-      id: NullOrEmpty_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
-      line: 23
-  - value: (null)
-    expected: true
-    trace:
-      file: Predicates/Text/SpecialTest.cs
-      class: Expressif.Testing.Predicates.Text.SpecialTest
-      id: NullOrEmpty_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
-      line: 24
-  - value: ''
-    expected: true
-    trace:
-      file: Predicates/Text/SpecialTest.cs
-      class: Expressif.Testing.Predicates.Text.SpecialTest
-      id: NullOrEmpty_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
-      line: 25
-  - value: (empty)
-    expected: true
-    trace:
-      file: Predicates/Text/SpecialTest.cs
-      class: Expressif.Testing.Predicates.Text.SpecialTest
-      id: NullOrEmpty_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
-      line: 26
-  - value: (blank)
-    expected: false
-    trace:
-      file: Predicates/Text/SpecialTest.cs
-      class: Expressif.Testing.Predicates.Text.SpecialTest
-      id: NullOrEmpty_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
-      line: 27
-  - value: foo
-    expected: false
-    trace:
-      file: Predicates/Text/SpecialTest.cs
-      class: Expressif.Testing.Predicates.Text.SpecialTest
-      id: NullOrEmpty_Text_Success
-      qualified-method: Expressif.Testing.Predicates.Text.SpecialTest.NullOrEmpty_Text_Success
-      line: 28
+tests:
+  - id: empty-or-null.valid
+    cases:
+      - id: empty-or-null.valid.special.null
+        value: 
+        expected: true
+      - id: empty-or-null.valid.special.null-tag
+        value: (null)
+        expected: true
+      - id: empty-or-null.valid.text.empty-string
+        value: ""
+        expected: true
+      - id: empty-or-null.valid.special.empty
+        value: (empty)
+        expected: true
+      - id: empty-or-null.valid.special.blank
+        value: (blank)
+        expected: false
+      - id: empty-or-null.valid.text.foo
+        value: foo
+        expected: false

@@ -82,7 +82,7 @@ public class TemporalFunctionsTest
 
     [Test]
     [TestCase(null, 0)]
-    public void Age_Null_0(object? value, int expected)
+    public void Age_Null_Zero(object? value, int expected)
         => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
 
     [Conformance]
@@ -90,33 +90,33 @@ public class TemporalFunctionsTest
         => Assert.That(new CatholicCalendar(() => @event).Evaluate(value), Is.EqualTo(expected));
 
     [Test]
-    public void CatholicCalendar_UnknownEvent_Null()
+    public void CatholicCalendar_Null_UnknownEvent()
         => Assert.That(new CatholicCalendar(() => "unknown").Evaluate(2023), Is.Null);
 
     [Test]
     [TestCase(DateTimeKind.Local)]
     [TestCase(DateTimeKind.Utc)]
     [TestCase(DateTimeKind.Unspecified)]
-    public void CatholicCalendar_Kind_Valid(DateTimeKind expected)
+    public void CatholicCalendar_Valid_Kind(DateTimeKind expected)
         => Assert.That(((DateTime)new CatholicCalendar(() => "Christmas", () => expected.ToString()).Evaluate(2023)!).Kind, Is.EqualTo(expected));
 
     [Conformance]
-    public void UtcToLocal_RomanceStandardTime_Valid(object value, string timeZone, DateTime expected)
+    public void UtcToLocal_Valid_RomanceStandardTime(object value, string timeZone, DateTime expected)
         => Assert.That(new UtcToLocal(() => timeZone).Evaluate(value)
         , Is.EqualTo(expected));
 
     [Conformance]
-    public void UtcToLocal_CityName_Valid(object value, string city, DateTime expected)
+    public void UtcToLocal_Valid_CityName(object value, string city, DateTime expected)
         => Assert.That(new UtcToLocal(() => city).Evaluate(value)
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void LocalToUtc_RomanceStandardTime_Valid(object value, string timeZone, DateTime expected)
+    public void LocalToUtc_Valid_RomanceStandardTime(object value, string timeZone, DateTime expected)
         => Assert.That(new LocalToUtc(() => timeZone).Evaluate(value)
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void LocalToUtc_CityName_Valid(object value, string city, DateTime expected)
+    public void LocalToUtc_Valid_CityName(object value, string city, DateTime expected)
         => Assert.That(new LocalToUtc(() => city).Evaluate(value)
             , Is.EqualTo(expected));
 
@@ -125,11 +125,11 @@ public class TemporalFunctionsTest
         => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void DateTimeToDate_DateOnly_Valid(DateOnly value, DateTime expected)
+    public void DateTimeToDate_Valid_DateOnly(DateOnly value, DateTime expected)
         => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void DateTimeToDate_DateTimeOffset_Valid(DateTimeOffset value, DateTime expected)
+    public void DateTimeToDate_Valid_DateTimeOffset(DateTimeOffset value, DateTime expected)
         => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]

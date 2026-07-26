@@ -1,30 +1,31 @@
 suite: temporal
 kind: function
 operator: null-to-date
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TemporalFunctionsTest.cs
 tests:
-  - id: InvalidToDate_Valid
+  - id: invalid-to-date.valid
     cases:
-      - value: 2018-02-01 07:00:00
+      - id: invalid-to-date.valid.temporal.2018-02-01-07-00-00
+        value: 2018-02-01 07:00:00
         expected: 2018-02-01 07:00:00
         parameters:
           - 2001-01-01
-      - value: (empty)
+      - id: invalid-to-date.valid.special.empty
+        value: (empty)
         expected: 2001-01-01
         parameters:
           - 2001-01-01
-      - value: "2018-02-31"
+      - id: invalid-to-date.valid.temporal.2018-02-31
+        value: "2018-02-31"
         expected: 2001-01-01
         parameters:
           - 2001-01-01
-      - value: "(null)"
+      - id: invalid-to-date.valid.special.null-to-null-with-2001-01-01-source-line-
+        value: "(null)"
         expected: null
         parameters:
           - 2001-01-01
-      - value: null
+      - id: invalid-to-date.valid.special.null-to-null-with-2001-01-01-source-line-
+        value: null
         expected: null
         parameters:
           - 2001-01-01

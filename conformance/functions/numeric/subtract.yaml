@@ -1,86 +1,74 @@
 suite: numeric
 kind: function
 operator: subtract
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ArithmeticFunctionsTest.cs
 tests:
-  - id: Subtract_3Times2_Valid
-    trace:
-      file: Functions/Numeric/ArithmeticFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Subtract_3Times2_Valid
+  - id: subtract.valid.3-times-2
     cases:
-      - value: 0
+      - id: subtract.valid.3-times-2.numeric.zero
+        value: 0
         expected: -6
         parameters:
           - 3
           - 2
-        line: 64
-      - value: 1
+      - id: subtract.valid.3-times-2.numeric.one
+        value: 1
         expected: -5
         parameters:
           - 3
           - 2
-        line: 65
-      - value: -1
+      - id: subtract.valid.3-times-2.numeric.minus-one
+        value: -1
         expected: -7
         parameters:
           - 3
           - 2
-        line: 66
-      - value: (null)
+      - id: subtract.valid.3-times-2.special.null
+        value: (null)
         expected: 
         parameters:
           - 3
           - 2
-        line: 67
-      - value: (empty)
+      - id: subtract.valid.3-times-2.special.empty
+        value: (empty)
         expected: 
         parameters:
           - 3
           - 2
-        line: 68
-      - value: (blank)
+      - id: subtract.valid.3-times-2.special.blank
+        value: (blank)
         expected: 
         parameters:
           - 3
           - 2
-        line: 69
-  - id: Subtract_3_Valid
-    trace:
-      file: Functions/Numeric/ArithmeticFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Subtract_3_Valid
+  - id: subtract.valid.3
     cases:
-      - value: 0
+      - id: subtract.valid.3.numeric.zero
+        value: 0
         expected: -3
         parameters:
           - 3
-        line: 54
-      - value: 1
+      - id: subtract.valid.3.numeric.one
+        value: 1
         expected: -2
         parameters:
           - 3
-        line: 55
-      - value: -1
+      - id: subtract.valid.3.numeric.minus-one
+        value: -1
         expected: -4
         parameters:
           - 3
-        line: 56
-      - value: (null)
+      - id: subtract.valid.3.special.null
+        value: (null)
         expected: 
         parameters:
           - 3
-        line: 57
-      - value: (empty)
+      - id: subtract.valid.3.special.empty
+        value: (empty)
         expected: 
         parameters:
           - 3
-        line: 58
-      - value: (blank)
+      - id: subtract.valid.3.special.blank
+        value: (blank)
         expected: 
         parameters:
           - 3
-        line: 59

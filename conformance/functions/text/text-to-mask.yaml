@@ -1,44 +1,36 @@
 suite: text
 kind: function
 operator: text-to-mask
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TextFunctionsTest.cs
 tests:
-  - id: TextToMask_Valid
-    trace:
-      file: Functions/Text/TextFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.TextFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.TextToMask_Valid
+  - id: text-to-mask.valid
     cases:
-      - value: 12345678
+      - id: text-to-mask.valid.text.12345678
+        value: 12345678
         expected: BE-123.456.78
         parameters:
           - BE-***.***.**
-        line: 310
-      - value: 1234567890
+      - id: text-to-mask.valid.text.1234567890
+        value: 1234567890
         expected: BE-123.456.78
         parameters:
           - BE-***.***.**
-        line: 311
-      - value: 12345
+      - id: text-to-mask.valid.text.12345
+        value: 12345
         expected: BE-123.45*.**
         parameters:
           - BE-***.***.**
-        line: 312
-      - value: (null)
+      - id: text-to-mask.valid.special.null
+        value: (null)
         expected: (null)
         parameters:
           - BE-***.***.**
-        line: 313
-      - value: (empty)
+      - id: text-to-mask.valid.special.empty
+        value: (empty)
         expected: BE-***.***.**
         parameters:
           - BE-***.***.**
-        line: 314
-      - value: (blank)
+      - id: text-to-mask.valid.special.blank
+        value: (blank)
         expected: BE-***.***.**
         parameters:
           - BE-***.***.**
-        line: 315

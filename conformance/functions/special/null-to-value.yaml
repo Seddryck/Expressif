@@ -1,26 +1,18 @@
 suite: special
 kind: function
 operator: null-to-value
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - SpecialFunctionsTest.cs
 tests:
-  - id: NullToValue_NotNull_Value
-    trace:
-      file: Functions/Special/SpecialFunctionsTest.cs
-      class: Expressif.Testing.Functions.Special.SpecialFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Special.SpecialFunctionsTest.NullToValue_NotNull_Value
+  - id: null-to-value.value.not-null
     cases:
-      - value: foo
+      - id: null-to-value.value.not-null.special.foo
+        value: foo
         expected: foo
-        line: 101
-      - value: (empty)
+      - id: null-to-value.value.not-null.special.empty
+        value: (empty)
         expected: (empty)
-        line: 102
-      - value: (blank)
+      - id: null-to-value.value.not-null.special.blank
+        value: (blank)
         expected: (blank)
-        line: 103
-      - value: (value)
+      - id: null-to-value.value.not-null.special.value
+        value: (value)
         expected: (value)
-        line: 104

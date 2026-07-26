@@ -1,35 +1,27 @@
 suite: text
 kind: function
 operator: without-whitespaces
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TextFunctionsTest.cs
 tests:
-  - id: WithoutWhitespaces_Valid
-    trace:
-      file: Functions/Text/TextFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.TextFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.WithoutWhitespaces_Valid
+  - id: without-whitespaces.valid
     cases:
-      - value: My taylor is rich
+      - id: without-whitespaces.valid.text.my-taylor-is-rich
+        value: My taylor is rich
         expected: Mytaylorisrich
-        line: 225
-      - value: ' My Lord ! '
+      - id: without-whitespaces.valid.text.my-lord
+        value: ' My Lord ! '
         expected: MyLord!
-        line: 226
-      - value: >-
+      - id: without-whitespaces.valid.text.value
+        value: >-
         expected: MyLord!Mytaylorisrich
-        line: 227
-      - value: (null)
+      - id: without-whitespaces.valid.special.null
+        value: (null)
         expected: (null)
-        line: 228
-      - value: 
+      - id: without-whitespaces.valid.special.empty-to-null
+        value: 
         expected: (null)
-        line: 229
-      - value: (empty)
+      - id: without-whitespaces.valid.special.empty-to-empty
+        value: (empty)
         expected: (empty)
-        line: 230
-      - value: (blank)
+      - id: without-whitespaces.valid.special.blank
+        value: (blank)
         expected: (empty)
-        line: 231

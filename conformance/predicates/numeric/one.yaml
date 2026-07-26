@@ -1,48 +1,27 @@
 suite: numeric
 kind: predicate
 operator: one
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ComparisonShortcutTest.cs
-cases:
-  - value: 0
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: One_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.One_Numeric_Success
-      line: 22
-  - value: 1
-    expected: true
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: One_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.One_Numeric_Success
-      line: 23
-  - value: 10
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: One_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.One_Numeric_Success
-      line: 24
-  - value: -10
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: One_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.One_Numeric_Success
-      line: 25
-  - value: 
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: One_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.One_Numeric_Success
-      line: 26
+tests:
+  - id: one.valid
+    cases:
+      - id: one.valid.numeric.zero
+        value: 0
+        expected: false
+      - id: one.valid.numeric.one
+        value: 1
+        expected: true
+      - id: one.valid.numeric.ten
+        value: 10
+        expected: false
+      - id: one.valid.numeric.minus-ten
+        value: -10
+        expected: false
+      - id: one.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: one.valid.special.blank
+        value: (blank)
+        expected: false
+      - id: one.valid.special.null
+        value: (null)
+        expected: false

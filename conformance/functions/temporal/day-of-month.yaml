@@ -1,23 +1,15 @@
 suite: temporal
 kind: function
 operator: day-of-month
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - DatePartNumericFunctionsTest.cs
 tests:
-  - id: DayOfMonth_DateTime_Valid
-    trace:
-      file: Functions/Temporal/DatePartNumericFunctionsTest.cs
-      class: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Temporal.DatePartNumericFunctionsTest.DayOfMonth_DateTime_Valid
+  - id: day-of-month.valid.date-time
     cases:
-      - value: 1900-01-01
+      - id: day-of-month.valid.date-time.temporal.1900-01-01
+        value: 1900-01-01
         expected: 1
-        line: 63
-      - value: 2000-10-28
+      - id: day-of-month.valid.date-time.temporal.2000-10-28
+        value: 2000-10-28
         expected: 28
-        line: 64
-      - value: 800-03-17
+      - id: day-of-month.valid.date-time.temporal.800-03-17
+        value: 800-03-17
         expected: 17
-        line: 65

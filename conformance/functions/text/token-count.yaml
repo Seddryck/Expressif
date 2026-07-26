@@ -1,44 +1,36 @@
 suite: text
 kind: function
 operator: token-count
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - CountingFunctionsTest.cs
 tests:
-  - id: TokenCount_Valid
-    trace:
-      file: Functions/Text/CountingFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CountingFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CountingFunctionsTest.TokenCount_Valid
+  - id: token-count.valid
     cases:
-      - value: My taylor is rich
+      - id: token-count.valid.text.my-taylor-is-rich
+        value: My taylor is rich
         expected: 4
-        line: 60
-      - value: ' My Lord ! '
+      - id: token-count.valid.text.my-lord-to-two-source-line-61
+        value: ' My Lord ! '
         expected: 2
-        line: 61
-      - value: '  My     Lord    !   '
+      - id: token-count.valid.text.my-lord-to-two-source-line-62
+        value: '  My     Lord    !   '
         expected: 2
-        line: 62
-      - value: '  My     Lord    !   C-L.'
+      - id: token-count.valid.text.my-lord-c-l
+        value: '  My     Lord    !   C-L.'
         expected: 3
-        line: 63
-      - value: (null)
+      - id: token-count.valid.special.null
+        value: (null)
         expected: 0
-        line: 64
-      - value: 
+      - id: token-count.valid.special.empty-to-zero-source-line-65
+        value: 
         expected: 0
-        line: 65
-      - value: (empty)
+      - id: token-count.valid.special.empty-to-zero-source-line-66
+        value: (empty)
         expected: 0
-        line: 66
-      - value: (blank)
+      - id: token-count.valid.special.blank
+        value: (blank)
         expected: 0
-        line: 67
-      - value: 1 2017-07-06      CUST0001
+      - id: token-count.valid.text.1-2017-07-06-cust0001-to-three-source-line-68
+        value: 1 2017-07-06      CUST0001
         expected: 3
-        line: 68
-      - value: 1 2017-07-06          CUST0001
+      - id: token-count.valid.text.1-2017-07-06-cust0001-to-three-source-line-69
+        value: 1 2017-07-06          CUST0001
         expected: 3
-        line: 69

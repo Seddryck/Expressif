@@ -1,48 +1,33 @@
 suite: numeric
 kind: predicate
 operator: positive
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ComparisonShortcutTest.cs
-cases:
-  - value: 0
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: Positive_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.Positive_Numeric_Success
-      line: 31
-  - value: 1
-    expected: true
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: Positive_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.Positive_Numeric_Success
-      line: 32
-  - value: 10
-    expected: true
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: Positive_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.Positive_Numeric_Success
-      line: 33
-  - value: -10
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: Positive_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.Positive_Numeric_Success
-      line: 34
-  - value: 
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: Positive_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.Positive_Numeric_Success
-      line: 35
+tests:
+  - id: positive.valid
+    cases:
+      - id: positive.valid.integer.zero
+        value: 0
+        expected: false
+      - id: positive.valid.integer.one
+        value: 1
+        expected: true
+      - id: positive.valid.integer.positive
+        value: 10
+        expected: true
+      - id: positive.valid.integer.negative
+        value: -10
+        expected: false
+      - id: positive.valid.numeric.positive-decimal
+        value: 10.001
+        expected: true
+      - id: positive.valid.numeric.negative-decimal
+        value: -10.001
+        expected: false
+      - id: positive.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: positive.valid.special.null
+        value: (null)
+        expected: false
+      - id: positive.valid.special.blank
+        value: (blank)
+        expected: false

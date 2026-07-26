@@ -20,30 +20,30 @@ public class ArithmeticFunctionsTest
         => Assert.That(new Decrement().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Add_3_Valid(object value, decimal param, decimal? expected)
+    public void Add_Valid_3(object value, decimal param, decimal? expected)
         => Assert.That(new Add(() => param).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Add_3Times2_Valid(object value, decimal param, int times, decimal? expected)
+    public void Add_Valid_3Times2(object value, decimal param, int times, decimal? expected)
         => Assert.That(new Add(() => param, () => times)
             .Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Subtract_3_Valid(object value, decimal param, decimal? expected)
+    public void Subtract_Valid_3(object value, decimal param, decimal? expected)
         => Assert.That(new Subtract(() => param).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Subtract_3Times2_Valid(object value, decimal param, int times, decimal? expected)
+    public void Subtract_Valid_3Times2(object value, decimal param, int times, decimal? expected)
         => Assert.That(new Subtract(() => param, () => times)
             .Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Multiply_3_Valid(object value, decimal param, decimal? expected)
+    public void Multiply_Valid_3(object value, decimal param, decimal? expected)
         => Assert.That(new Multiply(() => param)
             .Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Divide_4_Valid(object value, decimal param, decimal? expected)
+    public void Divide_Valid_4(object value, decimal param, decimal? expected)
         => Assert.That(new Divide(() => param)
             .Evaluate(value), Is.EqualTo(expected));
 

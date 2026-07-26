@@ -1,84 +1,72 @@
 suite: text
 kind: function
 operator: before-substring
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - SubstringFunctionsTest.cs
 tests:
-  - id: BeforeSubstring_Position_Valid
-    trace:
-      file: Functions/Text/SubstringFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.SubstringFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.SubstringFunctionsTest.BeforeSubstring_Position_Valid
+  - id: before-substring.valid.position
     cases:
-      - value: Foo+Bar+Bez+Quark
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-foo
+        value: Foo+Bar+Bez+Quark
         expected: Foo
         parameters:
           - +
           - 0
-        line: 27
-      - value: Foo+Bar+Bez+Quark
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-foo-bar
+        value: Foo+Bar+Bez+Quark
         expected: Foo+Bar
         parameters:
           - +
           - 1
-        line: 28
-      - value: Foo+Bar+Bez+Quark
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-foo-bar-bez
+        value: Foo+Bar+Bez+Quark
         expected: Foo+Bar+Bez
         parameters:
           - +
           - 2
-        line: 29
-      - value: Foo+Bar+Bez+Quark
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-null
+        value: Foo+Bar+Bez+Quark
         expected: (null)
         parameters:
           - +
           - 3
-        line: 30
-  - id: BeforeSubstring_Valid
-    trace:
-      file: Functions/Text/SubstringFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.SubstringFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.SubstringFunctionsTest.BeforeSubstring_Valid
+  - id: before-substring.valid
     cases:
-      - value: Foo+ Bar
+      - id: before-substring.valid.text.foo-bar-to-foo-with-value
+        value: Foo+ Bar
         expected: Foo
         parameters:
           - '+ '
-        line: 14
-      - value: Foo+ Bar
+      - id: before-substring.valid.text.foo-bar-to-value-with-f
+        value: Foo+ Bar
         expected: ''
         parameters:
           - F
-        line: 15
-      - value: Foo+ Bar
+      - id: before-substring.valid.text.foo-bar-to-foo-with-b
+        value: Foo+ Bar
         expected: 'Foo+ '
         parameters:
           - B
-        line: 16
-      - value: Foo+ Bar
+      - id: before-substring.valid.text.foo-bar-to-value-with-xyz
+        value: Foo+ Bar
         expected: ''
         parameters:
           - XYZ
-        line: 17
-      - value: Foo+ Bar
+      - id: before-substring.valid.text.foo-bar-to-value-with-null
+        value: Foo+ Bar
         expected: ''
         parameters:
           - (null)
-        line: 18
-      - value: Foo+ Bar
+      - id: before-substring.valid.text.foo-bar-to-value-with-empty
+        value: Foo+ Bar
         expected: ''
         parameters:
           - (empty)
-        line: 19
-      - value: (null)
+      - id: before-substring.valid.special.null
+        value: (null)
         expected: (null)
         parameters:
           - ', '
-        line: 20
-      - value: (empty)
+      - id: before-substring.valid.special.empty
+        value: (empty)
         expected: (empty)
         parameters:
           - ', '
-        line: 21

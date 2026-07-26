@@ -1,66 +1,27 @@
 suite: temporal
 kind: predicate
 operator: within-last-month
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - AroundTodayPredicatesTest.cs
-parameters:
-  - 
-cases:
-  - value: 2022-10-31
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 145
-  - value: 2022-11-01
-    expected: true
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 146
-  - value: 2022-11-30
-    expected: true
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 147
-  - value: 2022-12-01
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 148
-  - value: 2022-12-28
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 149
-  - value: 2022-12-29
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 150
-  - value: 2023-01-01
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundTodayPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest
-      id: WithinLastMonth_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundTodayPredicatesTest.WithinLastMonth_DateTime_Valid
-      line: 151
+tests:
+  - id: within-last-month.valid.date-time
+    cases:
+      - id: within-last-month.valid.date-time.temporal.last-day-of-two-months-ago
+        value: 2022-10-31
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.first-day-of-last-month
+        value: 2022-11-01
+        expected: true
+      - id: within-last-month.valid.date-time.temporal.last-day-of-last-month
+        value: 2022-11-30
+        expected: true
+      - id: within-last-month.valid.date-time.temporal.first-day-of-current-month
+        value: 2022-12-01
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.yesterday-in-current-month
+        value: 2022-12-28
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.today
+        value: 2022-12-29
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.first-day-of-next-month
+        value: 2023-01-01
+        expected: false

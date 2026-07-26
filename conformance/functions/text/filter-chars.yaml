@@ -1,104 +1,92 @@
 suite: text
 kind: function
 operator: filter-chars
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - CharFunctionsTest.cs
 tests:
-  - id: FilterChars_Chars_Valid
-    trace:
-      file: Functions/Text/CharFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CharFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.FilterChars_Chars_Valid
+  - id: filter-chars.valid.chars
     cases:
-      - value: 12345678
+      - id: filter-chars.valid.chars.text.12345678
+        value: 12345678
         expected: 248
         parameters:
           - 2
           - 8
           - 4
-        line: 40
-      - value: 12314561789
+      - id: filter-chars.valid.chars.text.12314561789
+        value: 12314561789
         expected: 12141
         parameters:
           - 2
           - 1
           - 4
-        line: 41
-      - value: (null)
+      - id: filter-chars.valid.chars.special.null
+        value: (null)
         expected: (null)
         parameters:
           - 2
           - 1
           - 4
-        line: 42
-      - value: 
+      - id: filter-chars.valid.chars.special.empty-to-null
+        value: 
         expected: (null)
         parameters:
           - 2
           - 1
           - 4
-        line: 43
-      - value: (empty)
+      - id: filter-chars.valid.chars.special.empty-to-empty
+        value: (empty)
         expected: (empty)
         parameters:
           - 2
           - 1
           - 4
-        line: 44
-      - value: (blank)
+      - id: filter-chars.valid.chars.special.blank-to-blank-with-two-and-one-and-four-source-line-45
+        value: (blank)
         expected: (blank)
         parameters:
           - 2
           - 1
           - 4
-        line: 45
-      - value: (blank)
+      - id: filter-chars.valid.chars.special.blank-to-blank-with-two-and-one-and-four-source-line-46
+        value: (blank)
         expected: (blank)
         parameters:
           - 2
           - 1
           - 4
-        line: 46
-  - id: FilterChars_String_Valid
-    trace:
-      file: Functions/Text/CharFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.CharFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.CharFunctionsTest.FilterChars_String_Valid
+  - id: filter-chars.valid.string
     cases:
-      - value: 12345678
+      - id: filter-chars.valid.string.text.12345678
+        value: 12345678
         expected: 248
         parameters:
           - 284
-        line: 52
-      - value: 12314561789
+      - id: filter-chars.valid.string.text.12314561789
+        value: 12314561789
         expected: 12141
         parameters:
           - 214
-        line: 53
-      - value: (null)
+      - id: filter-chars.valid.string.special.null
+        value: (null)
         expected: (null)
         parameters:
           - 214
-        line: 54
-      - value: 
+      - id: filter-chars.valid.string.special.empty-to-null
+        value: 
         expected: (null)
         parameters:
           - 214
-        line: 55
-      - value: (empty)
+      - id: filter-chars.valid.string.special.empty-to-empty
+        value: (empty)
         expected: (empty)
         parameters:
           - 214
-        line: 56
-      - value: (blank)
+      - id: filter-chars.valid.string.special.blank-to-blank-with-214-source-line-57
+        value: (blank)
         expected: (blank)
         parameters:
           - 214
-        line: 57
-      - value: (blank)
+      - id: filter-chars.valid.string.special.blank-to-blank-with-214-source-line-58
+        value: (blank)
         expected: (blank)
         parameters:
           - 214
-        line: 58

@@ -12,26 +12,26 @@ namespace Expressif.Testing.Functions.Temporal;
 public class TimePartNumericFunctionsTest
 {
     [Conformance]
-    public void HourOfDay_DateTime_Valid(DateTime dt, int expected)
+    public void HourOfDay_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new HourOfDay().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void MinuteOfHour_DateTime_Valid(DateTime dt, int expected)
+    public void MinuteOfHour_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new MinuteOfHour().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void MinuteOfDay_DateTime_Valid(DateTime dt, int expected)
+    public void MinuteOfDay_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new MinuteOfDay().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void SecondOfMinute_DateTime_Valid(DateTime dt, int expected)
+    public void SecondOfMinute_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new SecondOfMinute().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void SecondOfHour_DateTime_Valid(DateTime dt, int expected)
+    public void SecondOfHour_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new SecondOfHour().Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void SecondOfDay_DateTime_Valid(DateTime dt, int expected)
+    public void SecondOfDay_Valid_DateTime(DateTime dt, int expected)
     => Assert.That(new SecondOfDay().Evaluate(dt), Is.EqualTo(expected));
 }

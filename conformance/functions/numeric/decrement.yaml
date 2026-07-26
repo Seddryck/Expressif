@@ -1,32 +1,24 @@
 suite: numeric
 kind: function
 operator: decrement
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ArithmeticFunctionsTest.cs
 tests:
-  - id: Decrement_Valid
-    trace:
-      file: Functions/Numeric/ArithmeticFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.ArithmeticFunctionsTest.Decrement_Valid
+  - id: decrement.valid
     cases:
-      - value: 0
+      - id: decrement.valid.numeric.zero
+        value: 0
         expected: -1
-        line: 23
-      - value: 1
+      - id: decrement.valid.numeric.one
+        value: 1
         expected: 0
-        line: 24
-      - value: -1
+      - id: decrement.valid.numeric.minus-one
+        value: -1
         expected: -2
-        line: 25
-      - value: (null)
+      - id: decrement.valid.special.null
+        value: (null)
         expected: 
-        line: 26
-      - value: (empty)
+      - id: decrement.valid.special.empty
+        value: (empty)
         expected: 
-        line: 27
-      - value: (blank)
+      - id: decrement.valid.special.blank
+        value: (blank)
         expected: 
-        line: 28

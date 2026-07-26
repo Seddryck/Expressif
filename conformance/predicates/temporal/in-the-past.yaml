@@ -1,50 +1,32 @@
 suite: temporal
 kind: predicate
 operator: in-the-past
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - AroundNowPredicatesTest.cs
-parameters:
-  - 
-cases:
-  - value: 2022-12-28 14:00:00
-    expected: true
-    trace:
-      file: Predicates/Temporal/AroundNowPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
-      id: InThePast_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePast_DateTime_Valid
-      line: 128
-  - value: 2022-12-29 14:00:00
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundNowPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
-      id: InThePast_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePast_DateTime_Valid
-      line: 129
-  - value: 2022-12-29 15:00:00
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundNowPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
-      id: InThePast_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePast_DateTime_Valid
-      line: 130
-  - value: 2022-12-29 16:00:00
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundNowPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
-      id: InThePast_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePast_DateTime_Valid
-      line: 131
-  - value: 2022-12-30 16:00:00
-    expected: false
-    trace:
-      file: Predicates/Temporal/AroundNowPredicatesTest.cs
-      class: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest
-      id: InThePast_DateTime_Valid
-      qualified-method: Expressif.Testing.Predicates.Temporal.AroundNowPredicatesTest.InThePast_DateTime_Valid
-      line: 132
+tests:
+  - id: in-the-past.valid.date-time
+    cases:
+      - id: in-the-past.valid.date-time.past
+        value: 2022-12-28 14:00:00
+        expected: true
+      - id: in-the-past.valid.date-time.today-past
+        value: 2022-12-29 14:00:00
+        expected: true
+      - id: in-the-past.valid.date-time.now
+        value: 2022-12-29 15:00:00
+        expected: false
+      - id: in-the-past.valid.date-time.today-future
+        value: 2022-12-29 16:00:00
+        expected: false
+      - id: in-the-past.valid.date-time.future
+        value: 2022-12-30 16:00:00
+        expected: false
+  - id: in-the-past.valid.date-only
+    cases:
+      - id: in-the-past.valid.date-only.past
+        value: 2022-12-28
+        expected: true
+      - id: in-the-past.valid.date-only.today
+        value: 2022-12-29
+        expected: false
+      - id: in-the-past.valid.date-only.future
+        value: 2022-12-30
+        expected: false

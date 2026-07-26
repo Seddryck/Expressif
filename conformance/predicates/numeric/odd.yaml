@@ -1,40 +1,21 @@
 suite: numeric
 kind: predicate
 operator: odd
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ModuloTest.cs
-cases:
-  - value: 10
-    expected: false
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Odd_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
-      line: 54
-  - value: 1
-    expected: true
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Odd_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
-      line: 55
-  - value: 0
-    expected: false
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Odd_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
-      line: 56
-  - value: 
-    expected: false
-    trace:
-      file: Predicates/Numeric/ModuloTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ModuloTest
-      id: Odd_Numeric_Valid
-      qualified-method: Expressif.Testing.Predicates.Numeric.ModuloTest.Odd_Numeric_Valid
-      line: 57
+tests:
+  - id: odd.valid
+    cases:
+      - id: odd.valid.numeric.positive.even
+        value: 10
+        expected: false
+      - id: odd.valid.numeric.positive.odd
+        value: 11
+        expected: true
+      - id: odd.valid.numeric.one
+        value: 1
+        expected: true
+      - id: odd.valid.numeric.zero
+        value: 0
+        expected: false
+      - id: odd.valid.special.empty
+        value: 
+        expected: false

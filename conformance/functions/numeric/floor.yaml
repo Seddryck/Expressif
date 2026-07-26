@@ -1,44 +1,36 @@
 suite: numeric
 kind: function
 operator: floor
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - NumericFunctionsTest.cs
 tests:
-  - id: Floor_Valid
-    trace:
-      file: Functions/Numeric/NumericFunctionsTest.cs
-      class: Expressif.Testing.Functions.Numeric.NumericFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Numeric.NumericFunctionsTest.Floor_Valid
+  - id: floor.valid
     cases:
-      - value: 0
+      - id: floor.valid.numeric.zero
+        value: 0
         expected: 0
-        line: 41
-      - value: 1
+      - id: floor.valid.numeric.one
+        value: 1
         expected: 1
-        line: 42
-      - value: -1
+      - id: floor.valid.numeric.minus-one
+        value: -1
         expected: -1
-        line: 43
-      - value: 0.5
+      - id: floor.valid.numeric.positive-half
+        value: 0.5
         expected: 0
-        line: 44
-      - value: 0.9999
+      - id: floor.valid.numeric.positive-0-9999
+        value: 0.9999
         expected: 0
-        line: 45
-      - value: -0.5
+      - id: floor.valid.numeric.negative-half
+        value: -0.5
         expected: -1
-        line: 46
-      - value: -0.9999
+      - id: floor.valid.numeric.negative-0-9999
+        value: -0.9999
         expected: -1
-        line: 47
-      - value: (null)
+      - id: floor.valid.special.null
+        value: (null)
         expected: 
-        line: 48
-      - value: (empty)
+      - id: floor.valid.special.empty
+        value: (empty)
         expected: 
-        line: 49
-      - value: (blank)
+      - id: floor.valid.special.blank
+        value: (blank)
         expected: 
-        line: 50

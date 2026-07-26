@@ -61,11 +61,14 @@ public class InTheFutureOrNow : BaseTemporalAroundNowPredicate
 /// <summary>
 /// Returns true if the date passed as argument is before today. Returns false otherwise.
 /// </summary>
-public class InThePast : BaseTemporalAroundTodayPredicate
+public class InThePast : BaseTemporalAroundNowPredicate
 {
     protected internal InThePast(DateTime now) : base(now) { }
 
     public InThePast() : base() { }
+
+    protected override bool EvaluateDateTime(DateTime dt)
+        => dt < Now;
 
     protected override bool EvaluateDate(DateOnly date)
         => date < Today;

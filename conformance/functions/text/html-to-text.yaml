@@ -1,20 +1,12 @@
 suite: text
 kind: function
 operator: html-to-text
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - TextFunctionsTest.cs
 tests:
-  - id: HtmlToText_Valid
-    trace:
-      file: Functions/Text/TextFunctionsTest.cs
-      class: Expressif.Testing.Functions.Text.TextFunctionsTest
-      qualified-method: Expressif.Testing.Functions.Text.TextFunctionsTest.HtmlToText_Valid
+  - id: html-to-text.valid
     cases:
-      - value: C&#233;dric
+      - id: html-to-text.valid.text.c-233-dric
+        value: C&#233;dric
         expected: Cédric
-        line: 208
-      - value: C&eacute;dric
+      - id: html-to-text.valid.text.c-eacute-dric
+        value: C&eacute;dric
         expected: Cédric
-        line: 209

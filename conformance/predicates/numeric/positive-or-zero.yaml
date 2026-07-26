@@ -1,48 +1,33 @@
 suite: numeric
 kind: predicate
 operator: positive-or-zero
-metadata:
-  generated-by: TestCaseExporter
-  source-files:
-    - ComparisonShortcutTest.cs
-cases:
-  - value: 0
-    expected: true
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: PositiveOrZero_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.PositiveOrZero_Numeric_Success
-      line: 40
-  - value: 1
-    expected: true
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: PositiveOrZero_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.PositiveOrZero_Numeric_Success
-      line: 41
-  - value: 10
-    expected: true
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: PositiveOrZero_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.PositiveOrZero_Numeric_Success
-      line: 42
-  - value: -10
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: PositiveOrZero_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.PositiveOrZero_Numeric_Success
-      line: 43
-  - value: 
-    expected: false
-    trace:
-      file: Predicates/Numeric/ComparisonShortcutTest.cs
-      class: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest
-      id: PositiveOrZero_Numeric_Success
-      qualified-method: Expressif.Testing.Predicates.Numeric.ComparisonShortcutTest.PositiveOrZero_Numeric_Success
-      line: 44
+tests:
+  - id: positive-or-zero.valid
+    cases:
+      - id: positive-or-zero.valid.integer.zero
+        value: 0
+        expected: true
+      - id: positive-or-zero.valid.integer.one
+        value: 1
+        expected: true
+      - id: positive-or-zero.valid.integer.positive
+        value: 10
+        expected: true
+      - id: positive-or-zero.valid.integer.negative
+        value: -10
+        expected: false
+      - id: positive-or-zero.valid.numeric.positive-decimal
+        value: 10.001
+        expected: true
+      - id: positive-or-zero.valid.numeric.negative-decimal
+        value: -10.001
+        expected: false
+      - id: positive-or-zero.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: positive-or-zero.valid.special.null
+        value: (null)
+        expected: false
+      - id: positive-or-zero.valid.special.blank
+        value: (blank)
+        expected: false
