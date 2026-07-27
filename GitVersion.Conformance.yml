@@ -1,0 +1,30 @@
+workflow: GitHubFlow/v1
+
+tag-prefix: '(?:conformance-)?'
+semantic-version-format: Strict
+
+branches:
+  main:
+    regex: ^main$
+    is-main-branch: true
+    mode: ContinuousDeployment
+    increment: Patch
+    label: ''
+
+  feature:
+    regex: ^(feat(ure)?s?)[/-](?<BranchName>.+)
+    mode: ContinuousDelivery
+    increment: Inherit
+    label: beta.{BranchName}
+
+commit-message-incrementing: MergeMessageOnly
+
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '^(fix|feat|test|chore)\(conformance\):'
+no-bump-message: '\+semver:\s?(none|skip)'
+
+ignore:
+  paths:
+    # Ignore commits whose changes are entirely outside conformance/.
+    - '^(?!conformance/).*'

@@ -78,11 +78,13 @@ test_script:
 
 after_test:
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo
+- pwsh: ./Get-ConformanceVersion.ps1 -Pack -Tag
 
 artifacts:
 - path: '**\*.nupkg'
 - path: '**\*.snupkg'
 - path: '**\*.vsix'
+- path: '**\Expressif.Conformance.*.zip'
 
 deploy:
 - provider: NuGet
@@ -115,6 +117,10 @@ on_success:
                 $context | Upload-Release-Assets `
                     -Tag "v$($env:GitVersion_SemVer)" `
                     -Path "./Expressif.Syntax/bin/"
+
+                $context | Upload-Release-Assets `
+                    -Tag "v$($env:GitVersion_SemVer)" `
+                    -Path "./conformance/bin/"
             }
         } else {
             Write-Host "No release published on GitHub when patch is not set to zero."
