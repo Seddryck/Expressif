@@ -69,7 +69,7 @@ tests:
         expected: "CUST0001"
         parameters:
           - 2
-      - id: token.default-separator.valid.third.invalid-spearator
+      - id: token.default-separator.valid.third.invalid-spearator-2
         value: "1 2017-07-06          CUST0001"
         expected: "CUST0001"
         parameters:

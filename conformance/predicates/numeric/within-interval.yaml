@@ -30,12 +30,12 @@ tests:
        expected: false
   - id: within-interval.valid.positive-infinite
     cases:
-     - id: within-interval.valid.negative-infinite.integer.outside
+     - id: within-interval.valid.positive-infinite.integer.outside
        value: 10
        expected: false
-     - id: within-interval.valid.negative-infinite.on-edge.inside
+     - id: within-interval.valid.positive-infinite.on-edge.inside
        value: 12
        expected: true
-     - id: within-interval.valid.negative-infinite.special.null
+     - id: within-interval.valid.positive-infinite.special.null
        value: 
        expected: false

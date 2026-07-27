@@ -120,8 +120,14 @@ public static class ConformanceTestCaseDataSource
                 string.Join(", ", displayParts)
             };
 
-            yield return new TestCaseData(args)
-                .SetArgDisplayNames(argDisplayNames);
+            var testCaseData = new TestCaseData(args)
+                .SetArgDisplayNames(argDisplayNames)
+                .SetProperty("Test-Identifier", test.Id);
+
+            if (!string.IsNullOrWhiteSpace(@case.Id))
+                testCaseData.SetProperty("Case-Identifier", @case.Id);
+
+            yield return testCaseData;
         }
     }
 
@@ -384,6 +390,7 @@ public static class ConformanceTestCaseDataSource
 
     private sealed class YamlConformanceCase
     {
+        public string? Id { get; set; }
         public object? Value { get; set; }
         public List<object?>? Parameters { get; set; }
         public YamlContext? Context { get; set; }

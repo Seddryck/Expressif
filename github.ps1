@@ -190,43 +190,73 @@ function Get-Latest-Release-Info {
 
 function Upload-Release-Assets {
     [CmdletBinding()]
-	param(
-        [Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0 )]
-        [object] $context,
-		[Parameter(Mandatory=$true)]
-		[string] $tag,
-        [Parameter(Mandatory=$true)]
-		[string] $path,
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
+        [object] $Context,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Tag,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Path,
+
         [Parameter(Mandatory = $false)]
-        [string[]] $extensions = @('zip', 'vsix')
-	)
-    $headers = $context.SecretToken | Get-GitHub-Headers
-	$info = $context | Get-Release-Info -Tag $tag
-    $url = $info | Select-Object -Unique -ExpandProperty 'upload_url'
-    
-    $normalizedExtensions = $extensions |
+        [string[]] $Extensions = @('zip', 'vsix')
+    )
+
+    $headers = $Context.SecretToken | Get-GitHub-Headers
+    $info = $Context | Get-Release-Info -Tag $Tag
+    $url = $info |
+        Select-Object -Unique -ExpandProperty 'upload_url'
+
+    $existingAssetNames = @(
+        $info.assets |
+            ForEach-Object { $_.name.ToLowerInvariant() }
+    )
+
+    $normalizedExtensions = $Extensions |
         ForEach-Object {
-            if ($_.StartsWith('.')) { $_.ToLowerInvariant() }
-            else { ".$($_.ToLowerInvariant())" }
+            if ($_.StartsWith('.')) {
+                $_.ToLowerInvariant()
+            }
+            else {
+                ".$($_.ToLowerInvariant())"
+            }
         }
 
-    $files = Get-ChildItem -Path $path -File |
-        Where-Object { $_.Extension.ToLowerInvariant() -in $normalizedExtensions }
+    $files = @(
+        Get-ChildItem -Path $Path -File |
+            Where-Object {
+                $_.Extension.ToLowerInvariant() -in $normalizedExtensions
+            }
+    )
 
     if ($files.Count -eq 0) {
-        Write-Warning "No file with extension(s) '$($normalizedExtensions -join "', '")' found in '$path'."
+        Write-Warning "No file with extension(s) '$($normalizedExtensions -join "', '")' found in '$Path'."
+        return
     }
 
     foreach ($file in $files) {
+        $assetName = $file.Name.ToLowerInvariant()
+
+        if ($assetName -in $existingAssetNames) {
+            Write-Warning "Asset '$assetName' already exists in release '$Tag'. Skipping."
+            continue
+        }
+
+        Write-Host "Uploading asset '$assetName' ..."
+
         $payload = [System.IO.File]::ReadAllBytes($file.FullName)
 
         Send-GitHub-FileUpload-Request `
             -Payload $payload `
             -Uri $url `
             -Headers $headers `
-            -Name $file.Name.ToLower()
+            -Name $assetName
 
-        Write-Host "Asset '$($file.Name)' uploaded."
+        Write-Host "Asset '$assetName' uploaded."
+
+        $existingAssetNames += $assetName
     }
 }
 
