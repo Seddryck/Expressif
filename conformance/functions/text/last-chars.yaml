@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: last-chars
+tests:
+  - id: last-chars.valid
+    cases:
+      - id: last-chars.valid.text.123456789-to-123456789-with-nine
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 9
+      - id: last-chars.valid.text.123456789-to-123456789-with-ten
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 10
+      - id: last-chars.valid.text.123456789-to-23456789
+        value: 123456789
+        expected: 23456789
+        parameters:
+          - 8
+      - id: last-chars.valid.text.123456789-to-value
+        value: 123456789
+        expected: ''
+        parameters:
+          - 0
+      - id: last-chars.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 3
+      - id: last-chars.valid.special.empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - 3

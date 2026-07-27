@@ -1,4 +1,5 @@
 ﻿using Expressif.Functions.Numeric;
+using Expressif.Testing.Conformance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,25 +8,14 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Functions.Numeric;
 
+[TestFixture]
 public class SignFunctionsTest
 {
-    [Test]
-    [TestCase(0, 0)]
-    [TestCase(1, 1)]
-    [TestCase(-1, -1)]
-    [TestCase(5, 1)]
-    [TestCase(-5, -1)]
-    [TestCase(null, null)]
+    [Conformance]
     public void Sign_Valid(object? value, decimal? expected)
         => Assert.That(new Sign().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase(0, 0)]
-    [TestCase(1, 1)]
-    [TestCase(-1, 1)]
-    [TestCase(5, 5)]
-    [TestCase(-5, 5)]
-    [TestCase(null, null)]
+    [Conformance]
     public void Absolute_Valid(object? value, decimal? expected)
         => Assert.That(new Absolute().Evaluate(value), Is.EqualTo(expected));
 }

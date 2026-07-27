@@ -1,0 +1,9 @@
+suite: io
+kind: function
+operator: size
+tests:
+  - id: size.valid
+    cases:
+      - id: size.valid.io.drive-c-dir-child-file-txt
+        value: C:\Dir\Child\file.txt
+        expected: 4080

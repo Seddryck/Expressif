@@ -1,39 +1,19 @@
 ﻿using Expressif.Functions.Text;
 using Expressif.Values.Special;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Expressif.Testing.Conformance;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expressif.Testing.Functions.Text;
 
 [TestFixture]
 public class TextFunctionsTest
 {
-    [Test]
-    [TestCase(0, "1 2017-07-06      CUST0001", "1")]
-    [TestCase(1, "1 2017-07-06      CUST0001", "2017-07-06")]
-    [TestCase(2, "1 2017-07-06      CUST0001", "CUST0001")]
-    [TestCase(2, "1 2017-07-06  ,    CUST0001", "CUST0001")]
-    [TestCase(2, "1 2017-07-06          CUST0001", "CUST0001")]
-    [TestCase(100, "1 2017-07-06      CUST0001", "(null)")]
-    [TestCase(0, "(null)", "(null)")]
-    [TestCase(0, "(blank)", "(null)")]
-    [TestCase(0, "(empty)", "(null)")]
-    public void Token_DefaultSeparator_Valid(int index, string value, string expected)
+    [Conformance]
+    public void Token_DefaultSeparator_Valid(string value, int index, string expected)
         => Assert.That(new Token(() => (index)).Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase(0, ';', "1;2017-07-06;CUST0001", "1")]
-    [TestCase(1, ',', "1,      2017-07-06 ,CUST0001", "      2017-07-06 ")]
-    [TestCase(2, '|', "1 | 2017-07-06 | CUST0001", " CUST0001")]
-    [TestCase(0, '|', "(null)", "(null)")]
-    [TestCase(0, '|', "(blank)", "(blank)")]
-    [TestCase(0, ' ', "(blank)", "(null)")]
-    [TestCase(0, '|', "(empty)", "(null)")]
-    public void Token_CustomSeparator_Valid(int index, char separator, string value, string expected)
+    [Conformance]
+    public void Token_CustomSeparator_Valid(string value, int index, char separator, string expected)
     => Assert.That(new Token(() => (index), () => (separator))
         .Evaluate(value), Is.EqualTo(expected));
 
@@ -164,38 +144,15 @@ public class TextFunctionsTest
     public void NullToEmpty_NotNull(string value)
         => Assert.That(new NullToEmpty().Evaluate(value), Is.Not.EqualTo(new Null()));
 
-    [Test]
-    [TestCase("FOO", "FOO")]
-    [TestCase("foo", "foo")]
-    [TestCase(" foO", "foO")]
-    [TestCase("    foO", "foO")]
-    [TestCase("foO ", "foO")]
-    [TestCase("foO    ", "foO")]
-    [TestCase("(null)", "(null)")]
-    [TestCase("(empty)", "(empty)")]
-    [TestCase("(blank)", "(empty)")]
+    [Conformance]
     public void Trim_Valid(object value, object expected)
         => Assert.That(new Trim().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("FOO", "FOO")]
-    [TestCase("foo", "FOO")]
-    [TestCase("fOo", "FOO")]
-    [TestCase(" foO ", " FOO ")]
-    [TestCase("(null)", "(null)")]
-    [TestCase("(empty)", "(empty)")]
-    [TestCase("(blank)", "(blank)")]
+    [Conformance]
     public void Upper_Valid(object value, object expected)
         => Assert.That(new Upper().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("FOO", "foo")]
-    [TestCase("foo", "foo")]
-    [TestCase("fOo", "foo")]
-    [TestCase(" foO ", " foo ")]
-    [TestCase("(null)", "(null)")]
-    [TestCase("(empty)", "(empty)")]
-    [TestCase("(blank)", "(blank)")]
+    [Conformance]
     public void Lower_Valid(object value, object expected)
         => Assert.That(new Lower().Evaluate(value), Is.EqualTo(expected));
 

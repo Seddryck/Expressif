@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: length
+tests:
+  - id: length.valid
+    cases:
+      - id: length.valid.text.foo-to-three
+        value: foo
+        expected: 3
+      - id: length.valid.text.foo-to-five
+        value: ' foo '
+        expected: 5
+      - id: length.valid.text.value
+        value: ''
+        expected: 0
+      - id: length.valid.special.null
+        value: (null)
+        expected: 0
+      - id: length.valid.special.empty-to-zero-source-line-17
+        value: 
+        expected: 0
+      - id: length.valid.special.empty-to-zero-source-line-18
+        value: (empty)
+        expected: 0
+      - id: length.valid.special.blank
+        value: (blank)
+        expected: 

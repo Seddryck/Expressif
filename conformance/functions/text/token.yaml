@@ -1,0 +1,96 @@
+suite: text
+kind: function
+operator: token
+tests:
+  - id: token.custom-separator.valid
+    cases:
+      - id: token.custom-separator.valid.semi-column
+        value: 1;2017-07-06;CUST0001
+        expected: 1
+        parameters:
+          - 0
+          - ;
+      - id: token.custom-separator.valid.comma
+        value: 1,      2017-07-06 ,CUST0001
+        expected: '      2017-07-06 '
+        parameters:
+          - 1
+          - ','
+      - id: token.custom-separator.valid.pipe
+        value: 1 | 2017-07-06 | CUST0001
+        expected: ' CUST0001'
+        parameters:
+          - 2
+          - '|'
+      - id: token.custom-separator.valid.pipe.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 0
+          - '|'
+      - id: token.custom-separator.valid.pipe.blank
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - 0
+          - '|'
+      - id: token.custom-separator.valid.space.blank
+        value: (blank)
+        expected: (null)
+        parameters:
+          - 0
+          - ' '
+      - id: token.custom-separator.valid.pipe.empty
+        value: (empty)
+        expected: (null)
+        parameters:
+          - 0
+          - '|'
+        line: 35
+  - id: token.default-separator.valid
+    cases:
+      - id: token.default-separator.valid.first
+        value: "1 2017-07-06      CUST0001"
+        expected: 1
+        parameters:
+          - 0
+      - id: token.default-separator.valid.second
+        value: "1 2017-07-06      CUST0001"
+        expected: "2017-07-06"
+        parameters:
+          - 1
+      - id: token.default-separator.valid.third
+        value: "1 2017-07-06      CUST0001"
+        expected: "CUST0001"
+        parameters:
+          - 2
+      - id: token.default-separator.valid.third.invalid-spearator
+        value: "1 2017-07-06  ,    CUST0001"
+        expected: "CUST0001"
+        parameters:
+          - 2
+      - id: token.default-separator.valid.third.invalid-spearator
+        value: "1 2017-07-06          CUST0001"
+        expected: "CUST0001"
+        parameters:
+          - 2
+      - id: token.default-separator.valid.out-of-bonds
+        value: 1 2017-07-06      CUST0001
+        expected: (null)
+        parameters:
+          - 100
+      - id: token.default-separator.valid.first.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 0
+      - id: token.default-separator.valid.first.blank
+        value: (blank)
+        expected: (null)
+        parameters:
+          - 0
+      - id: token.default-separator.valid.first.empty
+        value: (empty)
+        expected: (null)
+        parameters:
+          - 0

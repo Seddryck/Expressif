@@ -1,0 +1,24 @@
+suite: numeric
+kind: function
+operator: absolute
+tests:
+  - id: absolute.valid
+    cases:
+      - id: absolute.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: absolute.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: absolute.valid.numeric.minus-one
+        value: -1
+        expected: 1
+      - id: absolute.valid.numeric.five
+        value: 5
+        expected: 5
+      - id: absolute.valid.numeric.minus-five
+        value: -5
+        expected: 5
+      - id: absolute.valid.special.empty
+        value: 
+        expected: 

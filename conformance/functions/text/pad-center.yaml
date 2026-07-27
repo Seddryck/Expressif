@@ -1,0 +1,60 @@
+suite: text
+kind: function
+operator: pad-center
+tests:
+  - id: pad-center.valid
+    cases:
+      - id: pad-center.valid.text.1234-to-1234-with-four-and-value
+        value: 1234
+        expected: 1234
+        parameters:
+          - 4
+          - '*'
+      - id: pad-center.valid.text.1234-to-1234-with-five-and-value
+        value: 1234
+        expected: 1234*
+        parameters:
+          - 5
+          - '*'
+      - id: pad-center.valid.text.1234-to-1234-with-six-and-value
+        value: 1234
+        expected: '*1234*'
+        parameters:
+          - 6
+          - '*'
+      - id: pad-center.valid.text.1234-to-1234-with-seven-and-value
+        value: 1234
+        expected: '*1234**'
+        parameters:
+          - 7
+          - '*'
+      - id: pad-center.valid.text.1234-to-1234-with-eight-and-value
+        value: 1234
+        expected: '**1234**'
+        parameters:
+          - 8
+          - '*'
+      - id: pad-center.valid.text.1234-to-1234-with-nine-and-value
+        value: 1234
+        expected: '**1234***'
+        parameters:
+          - 9
+          - '*'
+      - id: pad-center.valid.text.1234-to-1234-with-two-and-value
+        value: 1234
+        expected: 1234
+        parameters:
+          - 2
+          - '*'
+      - id: pad-center.valid.special.null
+        value: (null)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+      - id: pad-center.valid.special.empty
+        value: (empty)
+        expected: 000
+        parameters:
+          - 3
+          - 0

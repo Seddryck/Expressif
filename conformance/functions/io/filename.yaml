@@ -1,0 +1,33 @@
+suite: io
+kind: function
+operator: filename
+tests:
+  - id: filename.valid
+    cases:
+      - id: filename.valid.io.drive-c
+        value: C:\
+        expected: ''
+      - id: filename.valid.io.drive-c-dir
+        value: C:\Dir\
+        expected: ''
+      - id: filename.valid.io.drive-c-dir-child
+        value: C:\Dir\Child\
+        expected: ''
+      - id: filename.valid.io.drive-c-dir-childfile
+        value: C:\Dir\ChildFile
+        expected: ChildFile
+      - id: filename.valid.io.drive-c-dir-child-file-txt
+        value: C:\Dir\Child\file.txt
+        expected: file.txt
+      - id: filename.valid.io.dir-file-txt
+        value: Dir\file.txt
+        expected: file.txt
+      - id: filename.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: filename.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: filename.valid.special.blank
+        value: (blank)
+        expected: (empty)

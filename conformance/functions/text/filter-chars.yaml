@@ -1,0 +1,92 @@
+suite: text
+kind: function
+operator: filter-chars
+tests:
+  - id: filter-chars.valid.chars
+    cases:
+      - id: filter-chars.valid.chars.text.12345678
+        value: 12345678
+        expected: 248
+        parameters:
+          - 2
+          - 8
+          - 4
+      - id: filter-chars.valid.chars.text.12314561789
+        value: 12314561789
+        expected: 12141
+        parameters:
+          - 2
+          - 1
+          - 4
+      - id: filter-chars.valid.chars.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 2
+          - 1
+          - 4
+      - id: filter-chars.valid.chars.special.empty-to-null
+        value: 
+        expected: (null)
+        parameters:
+          - 2
+          - 1
+          - 4
+      - id: filter-chars.valid.chars.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - 2
+          - 1
+          - 4
+      - id: filter-chars.valid.chars.special.blank-to-blank-with-two-and-one-and-four-source-line-45
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - 2
+          - 1
+          - 4
+      - id: filter-chars.valid.chars.special.blank-to-blank-with-two-and-one-and-four-source-line-46
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - 2
+          - 1
+          - 4
+  - id: filter-chars.valid.string
+    cases:
+      - id: filter-chars.valid.string.text.12345678
+        value: 12345678
+        expected: 248
+        parameters:
+          - 284
+      - id: filter-chars.valid.string.text.12314561789
+        value: 12314561789
+        expected: 12141
+        parameters:
+          - 214
+      - id: filter-chars.valid.string.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 214
+      - id: filter-chars.valid.string.special.empty-to-null
+        value: 
+        expected: (null)
+        parameters:
+          - 214
+      - id: filter-chars.valid.string.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - 214
+      - id: filter-chars.valid.string.special.blank-to-blank-with-214-source-line-57
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - 214
+      - id: filter-chars.valid.string.special.blank-to-blank-with-214-source-line-58
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - 214

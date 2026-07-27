@@ -1,0 +1,39 @@
+suite: numeric
+kind: predicate
+operator: integer
+tests:
+  - id: integer.valid
+    cases:
+     - id: integer.valid.numeric.zero
+       value: 0
+       expected: true
+     - id: integer.valid.numeric.four
+       value: 4
+       expected: true
+     - id: integer.valid.numeric.positive
+       value: 4.0
+       expected: true
+     - id: integer.valid.numeric.positive-decimal
+       value: 4.25
+       expected: false
+     - id: integer.valid.numeric.negative
+       value: -4.0
+       expected: true
+     - id: integer.valid.numeric.negative-decimal
+       value: -4.25
+       expected: false
+     - id: integer.valid.special.empty
+       value: 
+       expected: false
+     - id: integer.valid.special.null
+       value: (null)
+       expected: false
+     - id: integer.valid.special.blank
+       value: (blank)
+       expected: false
+     - id: integer.valid.special.empty-tag
+       value: (empty)
+       expected: false
+     - id: integer.valid.special.empty-tag
+       value: (empty)
+       expected: false

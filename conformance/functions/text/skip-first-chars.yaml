@@ -1,0 +1,41 @@
+suite: text
+kind: function
+operator: skip-first-chars
+tests:
+  - id: skip-first-chars.valid
+    cases:
+      - id: skip-first-chars.valid.text.123456789-to-empty-with-nine
+        value: 123456789
+        expected: (empty)
+        parameters:
+          - 9
+      - id: skip-first-chars.valid.text.123456789-to-empty-with-ten
+        value: 123456789
+        expected: (empty)
+        parameters:
+          - 10
+      - id: skip-first-chars.valid.text.123456789-to-nine
+        value: 123456789
+        expected: 9
+        parameters:
+          - 8
+      - id: skip-first-chars.valid.text.123456789-to-6789
+        value: 123456789
+        expected: 6789
+        parameters:
+          - 5
+      - id: skip-first-chars.valid.text.123456789-to-123456789
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 0
+      - id: skip-first-chars.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 3
+      - id: skip-first-chars.valid.special.empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - 3

@@ -1,0 +1,18 @@
+suite: temporal
+kind: function
+operator: ceiling-minute
+tests:
+  - id: ceiling-minute.valid
+    cases:
+      - id: ceiling-minute.valid.temporal.on-minute
+        value: 2019-03-11 17:00:00
+        expected: 2019-03-11 17:00:00
+      - id: ceiling-minute.valid.temporal.within-minute-no-seconds
+        value: 2019-03-11 17:20:00
+        expected: 2019-03-11 17:20:00
+      - id: ceiling-minute.valid.temporal.after-minute-seconds-and-milliseconds
+        value: 2019-03-11 17:20:24.120
+        expected: 2019-03-11 17:21:00
+      - id: ceiling-minute.valid.temporal.before-hour-boundary-rollover
+        value: 2019-03-11 17:59:59
+        expected: 2019-03-11 18:00:00

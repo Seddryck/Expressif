@@ -1,0 +1,33 @@
+suite: text
+kind: function
+operator: trim
+tests:
+  - id: trim.valid
+    cases:
+      - id: trim.valid.text.foo-to-foo-source-line-168
+        value: FOO
+        expected: FOO
+      - id: trim.valid.text.foo-to-foo-source-line-169
+        value: foo
+        expected: foo
+      - id: trim.valid.text.foo-to-foo-source-line-170
+        value: ' foO'
+        expected: foO
+      - id: trim.valid.text.foo-to-foo-source-line-171
+        value: '    foO'
+        expected: foO
+      - id: trim.valid.text.foo-to-foo-source-line-172
+        value: 'foO '
+        expected: foO
+      - id: trim.valid.text.foo-to-foo-source-line-173
+        value: 'foO    '
+        expected: foO
+      - id: trim.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: trim.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: trim.valid.special.blank
+        value: (blank)
+        expected: (empty)

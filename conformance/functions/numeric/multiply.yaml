@@ -1,0 +1,36 @@
+suite: numeric
+kind: function
+operator: multiply
+tests:
+  - id: multiply.valid.3
+    cases:
+      - id: multiply.valid.3.numeric.zero
+        value: 0
+        expected: 0
+        parameters:
+          - 3
+      - id: multiply.valid.3.numeric.one
+        value: 1
+        expected: 3
+        parameters:
+          - 3
+      - id: multiply.valid.3.numeric.minus-one
+        value: -1
+        expected: -3
+        parameters:
+          - 3
+      - id: multiply.valid.3.special.null
+        value: (null)
+        expected: 
+        parameters:
+          - 3
+      - id: multiply.valid.3.special.empty
+        value: (empty)
+        expected: 
+        parameters:
+          - 3
+      - id: multiply.valid.3.special.blank
+        value: (blank)
+        expected: 
+        parameters:
+          - 3

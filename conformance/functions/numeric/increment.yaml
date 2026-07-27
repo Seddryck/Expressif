@@ -1,0 +1,24 @@
+suite: numeric
+kind: function
+operator: increment
+tests:
+  - id: increment.valid
+    cases:
+      - id: increment.valid.numeric.zero
+        value: 0
+        expected: 1
+      - id: increment.valid.numeric.one
+        value: 1
+        expected: 2
+      - id: increment.valid.numeric.minus-one
+        value: -1
+        expected: 0
+      - id: increment.valid.special.null
+        value: (null)
+        expected: 
+      - id: increment.valid.special.empty
+        value: (empty)
+        expected: 
+      - id: increment.valid.special.blank
+        value: (blank)
+        expected: 

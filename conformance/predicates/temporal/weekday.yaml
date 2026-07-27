@@ -1,0 +1,26 @@
+suite: temporal
+kind: predicate
+operator: weekday
+tests:
+  - id: weekday.valid.date
+    cases:
+     - id: weekday.valid.date.wednesday.expected
+       value: 2022-12-28
+       expected: true
+       parameters:
+         - wednesday
+     - id: weekday.valid.date.thursday.unexpected
+       value: 2022-12-28
+       expected: false
+       parameters:
+         - thursday
+     - id: weekday.valid.date.thursday.expected
+       value: 2022-12-29
+       expected: true
+       parameters:
+         - thursday
+     - id: weekday.valid.date.monday.unexpected
+       value: 2022-12-29
+       expected: false
+       parameters:
+         - monday

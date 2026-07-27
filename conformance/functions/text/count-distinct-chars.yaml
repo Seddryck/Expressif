@@ -1,0 +1,30 @@
+suite: text
+kind: function
+operator: count-distinct-chars
+tests:
+  - id: count-distinct-chars.valid
+    cases:
+      - id: count-distinct-chars.valid.text.foo
+        value: foo
+        expected: 2
+      - id: count-distinct-chars.valid.text.foobarfoo
+        value: foobarfoo
+        expected: 5
+      - id: count-distinct-chars.valid.text.barfoobar
+        value: barfoobar
+        expected: 5
+      - id: count-distinct-chars.valid.text.foofoo
+        value: FOOfoo
+        expected: 4
+      - id: count-distinct-chars.valid.special.null
+        value: (null)
+        expected: 0
+      - id: count-distinct-chars.valid.special.empty-to-zero-source-line-29
+        value: 
+        expected: 0
+      - id: count-distinct-chars.valid.special.empty-to-zero-source-line-30
+        value: (empty)
+        expected: 0
+      - id: count-distinct-chars.valid.special.blank
+        value: (blank)
+        expected: 

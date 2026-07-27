@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: without-whitespaces
+tests:
+  - id: without-whitespaces.valid
+    cases:
+      - id: without-whitespaces.valid.text.my-taylor-is-rich
+        value: My taylor is rich
+        expected: Mytaylorisrich
+      - id: without-whitespaces.valid.text.my-lord
+        value: ' My Lord ! '
+        expected: MyLord!
+      - id: without-whitespaces.valid.text.value
+        value: >-
+        expected: MyLord!Mytaylorisrich
+      - id: without-whitespaces.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: without-whitespaces.valid.special.empty-to-null
+        value: 
+        expected: (null)
+      - id: without-whitespaces.valid.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+      - id: without-whitespaces.valid.special.blank
+        value: (blank)
+        expected: (empty)

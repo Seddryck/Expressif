@@ -1,0 +1,28 @@
+suite: temporal
+kind: function
+operator: date-time-to-date
+tests:
+  - id: date-time-to-date.valid
+    cases:
+      - id: date-time-to-date.valid.temporal.2018-02-01
+        value: 2018-02-01
+        expected: 2018-02-01
+      - id: date-time-to-date.valid.temporal.2018-02-01-00-00-00
+        value: 2018-02-01 00:00:00
+        expected: 2018-02-01
+      - id: date-time-to-date.valid.temporal.2018-02-01-07-00-00
+        value: 2018-02-01 07:00:00
+        expected: 2018-02-01
+  - id: date-time-to-date.valid.date-only
+    cases:
+      - id: date-time-to-date.valid.date-only.temporal.2018-02-01
+        value: 2018-02-01
+        expected: 2018-02-01
+  - id: date-time-to-date.valid.date-time-offset
+    cases:
+      - id: date-time-to-date.valid.date-time-offset.temporal.2018-02-01t00-00-00z
+        value: 2018-02-01T00:00:00Z
+        expected: 2018-02-01
+      - id: date-time-to-date.valid.date-time-offset.temporal.2018-02-01t00-00-00-01-00
+        value: 2018-02-01T00:00:00+01:00
+        expected: 2018-01-31

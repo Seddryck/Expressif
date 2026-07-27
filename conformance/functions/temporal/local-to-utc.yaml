@@ -1,0 +1,28 @@
+suite: temporal
+kind: function
+operator: local-to-utc
+tests:
+  - id: local-to-utc.valid.city-name
+    cases:
+      - id: local-to-utc.valid.city-name.temporal.2018-02-01-07-00-00
+        value: 2018-02-01 07:00:00
+        expected: 2018-02-01 06:00:00
+        parameters:
+          - Brussels
+      - id: local-to-utc.valid.city-name.temporal.2018-08-01-01-00-00
+        value: 2018-08-01 01:00:00
+        expected: 2018-07-31 23:00:00
+        parameters:
+          - Brussels
+  - id: local-to-utc.valid.romance-standard-time
+    cases:
+      - id: local-to-utc.valid.romance-standard-time.temporal.2018-02-01-03-00-00
+        value: 2018-02-01 03:00:00
+        expected: 2018-02-01 02:00:00
+        parameters:
+          - Romance Standard Time
+      - id: local-to-utc.valid.romance-standard-time.temporal.2018-08-01-02-00-00
+        value: 2018-08-01 02:00:00
+        expected: 2018-08-01 00:00:00
+        parameters:
+          - Romance Standard Time

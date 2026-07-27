@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: upper
+tests:
+  - id: upper.valid
+    cases:
+      - id: upper.valid.text.foo-to-foo-source-line-181
+        value: FOO
+        expected: FOO
+      - id: upper.valid.text.foo-to-foo-source-line-182
+        value: foo
+        expected: FOO
+      - id: upper.valid.text.foo-to-foo-source-line-183
+        value: fOo
+        expected: FOO
+      - id: upper.valid.text.foo-to-foo-source-line-184
+        value: ' foO '
+        expected: ' FOO '
+      - id: upper.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: upper.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: upper.valid.special.blank
+        value: (blank)
+        expected: (blank)

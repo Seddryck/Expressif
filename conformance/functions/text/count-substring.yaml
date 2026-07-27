@@ -1,0 +1,106 @@
+suite: text
+kind: function
+operator: count-substring
+tests:
+  - id: count-substring.valid
+    cases:
+      - id: count-substring.valid.text.foo-to-one
+        value: foo
+        expected: 1
+        parameters:
+          - foo
+      - id: count-substring.valid.text.foobar
+        value: foobar
+        expected: 1
+        parameters:
+          - foo
+      - id: count-substring.valid.text.barfoobar
+        value: barfoobar
+        expected: 1
+        parameters:
+          - foo
+      - id: count-substring.valid.text.barfoo
+        value: barfoo
+        expected: 1
+        parameters:
+          - foo
+      - id: count-substring.valid.text.barfoobarfoobar-to-two
+        value: barfoobarfoobar
+        expected: 2
+        parameters:
+          - foo
+      - id: count-substring.valid.text.barfoobarfoobar-to-three
+        value: barfoobarfoobar
+        expected: 3
+        parameters:
+          - bar
+      - id: count-substring.valid.text.value
+        value: '---*#*#*---'
+        expected: 1
+        parameters:
+          - '*#*'
+      - id: count-substring.valid.special.null-to-zero-with-foo
+        value: (null)
+        expected: 0
+        parameters:
+          - foo
+      - id: count-substring.valid.special.null-to-zero-with-null
+        value: (null)
+        expected: 0
+        parameters:
+          - (null)
+      - id: count-substring.valid.special.empty-to-zero-with-foo-source-line-45
+        value: 
+        expected: 0
+        parameters:
+          - foo
+      - id: count-substring.valid.special.empty-to-zero-with-null
+        value: 
+        expected: 0
+        parameters:
+          - (null)
+      - id: count-substring.valid.text.foo-to-zero-with-null
+        value: foo
+        expected: 0
+        parameters:
+          - (null)
+      - id: count-substring.valid.text.foo-to-zero
+        value: foo
+        expected: 0
+        parameters:
+          - 
+      - id: count-substring.valid.special.empty-to-zero-with-foo-source-line-49
+        value: (empty)
+        expected: 0
+        parameters:
+          - foo
+      - id: count-substring.valid.text.foo-to-zero-with-empty
+        value: foo
+        expected: 0
+        parameters:
+          - (empty)
+      - id: count-substring.valid.special.empty-to-zero-with-empty
+        value: (empty)
+        expected: 0
+        parameters:
+          - (empty)
+      - id: count-substring.valid.special.blank-to-zero
+        value: (blank)
+        expected: 0
+        parameters:
+          - foo
+      - id: count-substring.valid.special.blank-to-empty-with-value
+        value: (blank)
+        expected: 
+        parameters:
+          - ' '
+      - id: count-substring.valid.special.blank-to-empty
+        value: (blank)
+        expected: 
+        parameters:
+          - 
+      - id: count-substring.valid.special.blank-to-empty-with-2
+        value: (blank)
+        expected: 
+        parameters:
+          - >2+

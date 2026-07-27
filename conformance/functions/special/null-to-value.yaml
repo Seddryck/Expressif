@@ -1,0 +1,18 @@
+suite: special
+kind: function
+operator: null-to-value
+tests:
+  - id: null-to-value.value.not-null
+    cases:
+      - id: null-to-value.value.not-null.special.foo
+        value: foo
+        expected: foo
+      - id: null-to-value.value.not-null.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: null-to-value.value.not-null.special.blank
+        value: (blank)
+        expected: (blank)
+      - id: null-to-value.value.not-null.special.value
+        value: (value)
+        expected: (value)

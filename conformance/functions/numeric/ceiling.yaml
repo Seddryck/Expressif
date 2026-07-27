@@ -1,0 +1,36 @@
+suite: numeric
+kind: function
+operator: ceiling
+tests:
+  - id: ceiling.valid
+    cases:
+      - id: ceiling.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: ceiling.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: ceiling.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: ceiling.valid.numeric.positive-half
+        value: 0.5
+        expected: 1
+      - id: ceiling.valid.numeric.positive-decimal-below-one
+        value: 0.9999
+        expected: 1
+      - id: ceiling.valid.numeric.negative-half
+        value: -0.5
+        expected: 0
+      - id: ceiling.valid.numeric.negative-decimal-above-minus-one
+        value: -0.9999
+        expected: 0
+      - id: ceiling.valid.special.null
+        value: (null)
+        expected: 
+      - id: ceiling.valid.special.empty
+        value: (empty)
+        expected: 
+      - id: ceiling.valid.special.blank
+        value: (blank)
+        expected: 

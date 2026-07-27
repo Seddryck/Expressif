@@ -1,0 +1,36 @@
+suite: numeric
+kind: function
+operator: floor
+tests:
+  - id: floor.valid
+    cases:
+      - id: floor.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: floor.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: floor.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: floor.valid.numeric.positive-half
+        value: 0.5
+        expected: 0
+      - id: floor.valid.numeric.positive-0-9999
+        value: 0.9999
+        expected: 0
+      - id: floor.valid.numeric.negative-half
+        value: -0.5
+        expected: -1
+      - id: floor.valid.numeric.negative-0-9999
+        value: -0.9999
+        expected: -1
+      - id: floor.valid.special.null
+        value: (null)
+        expected: 
+      - id: floor.valid.special.empty
+        value: (empty)
+        expected: 
+      - id: floor.valid.special.blank
+        value: (blank)
+        expected: 

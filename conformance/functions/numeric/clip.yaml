@@ -1,0 +1,66 @@
+suite: numeric
+kind: function
+operator: clip
+tests:
+  - id: clip.valid
+    cases:
+      - id: clip.valid.interval-minus-10-to-10.numeric.zero
+        value: 0
+        expected: 0
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.numeric.one
+        value: 1
+        expected: 1
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.numeric.minus-one
+        value: -1
+        expected: -1
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.numeric.upper-bound
+        value: 10
+        expected: 10
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.numeric.lower-bound
+        value: -10
+        expected: -10
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.numeric.above-upper-bound
+        value: 15
+        expected: 10
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.numeric.below-lower-bound
+        value: -15
+        expected: -10
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.special.null
+        value: (null)
+        expected: 
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.special.empty
+        value: (empty)
+        expected: 
+        parameters:
+          - -10
+          - 10
+      - id: clip.valid.interval-minus-10-to-10.special.blank
+        value: (blank)
+        expected: 
+        parameters:
+          - -10
+          - 10

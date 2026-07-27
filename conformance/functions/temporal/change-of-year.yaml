@@ -1,0 +1,75 @@
+suite: temporal
+kind: function
+operator: change-of-year
+tests:
+  - id: change-of-year.valid.date-time
+    cases:
+      - id: change-of-year.valid.date-time.temporal.change-to-1903
+        value: 1900-01-01
+        expected: 1903-01-01
+        parameters:
+          - 1903
+      - id: change-of-year.valid.date-time.temporal.change-to-same-year
+        value: 2000-01-01
+        expected: 2000-01-01
+        parameters:
+          - 2000
+      - id: change-of-year.valid.date-time.temporal.change-from-800-to-2000
+        value: 800-01-01
+        expected: 2000-01-01
+        parameters:
+          - 2000
+      - id: change-of-year.valid.date-time.temporal.leap-day-to-leap-day
+        value: 2004-02-29
+        expected: 2008-02-29
+        parameters:
+          - 2008
+      - id: change-of-year.valid.date-time.temporal.leap-day-to-common-year
+        value: 2004-02-29
+        expected: 2005-02-28
+        parameters:
+          - 2005
+  - id: change-of-year.valid.integer
+    cases:
+      - id: change-of-year.valid.integer.temporal.change-to-1903
+        value: 1900
+        expected: 1903
+        parameters:
+          - 1903
+      - id: change-of-year.valid.integer.temporal.change-to-same-year
+        value: 2000
+        expected: 2000
+        parameters:
+          - 2000
+      - id: change-of-year.valid.integer.temporal.change-negative-year-to-16
+        value: -45
+        expected: 16
+        parameters:
+          - 16
+      - id: change-of-year.valid.integer.temporal.change-from-800-to-803
+        value: 800
+        expected: 803
+        parameters:
+          - 803
+      - id: change-of-year.valid.integer.temporal.change-from-12300-to-2000
+        value: 12300
+        expected: 2000
+        parameters:
+          - 2000
+  - id: change-of-year.valid.year-month
+    cases:
+      - id: change-of-year.valid.year-month.temporal.change-to-1903
+        value: 1900-01
+        expected: 1903-01
+        parameters:
+          - 1903
+      - id: change-of-year.valid.year-month.temporal.change-to-same-year
+        value: 2000-01
+        expected: 2000-01
+        parameters:
+          - 2000
+      - id: change-of-year.valid.year-month.temporal.change-from-800-to-2000
+        value: 0800-01
+        expected: 2000-01
+        parameters:
+          - 2000

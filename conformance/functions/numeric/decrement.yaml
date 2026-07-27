@@ -1,0 +1,24 @@
+suite: numeric
+kind: function
+operator: decrement
+tests:
+  - id: decrement.valid
+    cases:
+      - id: decrement.valid.numeric.zero
+        value: 0
+        expected: -1
+      - id: decrement.valid.numeric.one
+        value: 1
+        expected: 0
+      - id: decrement.valid.numeric.minus-one
+        value: -1
+        expected: -2
+      - id: decrement.valid.special.null
+        value: (null)
+        expected: 
+      - id: decrement.valid.special.empty
+        value: (empty)
+        expected: 
+      - id: decrement.valid.special.blank
+        value: (blank)
+        expected: 

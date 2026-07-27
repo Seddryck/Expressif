@@ -1,0 +1,62 @@
+suite: temporal
+kind: function
+operator: length-of-month
+tests:
+  - id: length-of-month.valid.date-time
+    cases:
+      - id: length-of-month.valid.date-time.temporal.1900-02-15
+        value: 1900-02-15
+        expected: 28
+      - id: length-of-month.valid.date-time.temporal.1999-02-15
+        value: 1999-02-15
+        expected: 28
+      - id: length-of-month.valid.date-time.temporal.2000-02-15
+        value: 2000-02-15
+        expected: 29
+      - id: length-of-month.valid.date-time.temporal.2023-02-15
+        value: 2023-02-15
+        expected: 28
+      - id: length-of-month.valid.date-time.temporal.2024-02-15
+        value: 2024-02-15
+        expected: 29
+      - id: length-of-month.valid.date-time.temporal.2024-01-15
+        value: 2024-01-15
+        expected: 31
+      - id: length-of-month.valid.date-time.temporal.2024-03-15
+        value: 2024-03-15
+        expected: 31
+      - id: length-of-month.valid.date-time.temporal.2024-04-15
+        value: 2024-04-15
+        expected: 30
+      - id: length-of-month.valid.date-time.temporal.2024-12-15
+        value: 2024-12-15
+        expected: 31
+  - id: length-of-month.valid.year-month
+    cases:
+      - id: length-of-month.valid.year-month.temporal.1900-02
+        value: 1900-02
+        expected: 28
+      - id: length-of-month.valid.year-month.temporal.1999-02
+        value: 1999-02
+        expected: 28
+      - id: length-of-month.valid.year-month.temporal.2000-02
+        value: 2000-02
+        expected: 29
+      - id: length-of-month.valid.year-month.temporal.2023-02
+        value: 2023-02
+        expected: 28
+      - id: length-of-month.valid.year-month.temporal.2024-02
+        value: 2024-02
+        expected: 29
+      - id: length-of-month.valid.year-month.temporal.2024-01
+        value: 2024-01
+        expected: 31
+      - id: length-of-month.valid.year-month.temporal.2024-03
+        value: 2024-03
+        expected: 31
+      - id: length-of-month.valid.year-month.temporal.2024-04
+        value: 2024-04
+        expected: 30
+      - id: length-of-month.valid.year-month.temporal.2024-12
+        value: 2024-12
+        expected: 31

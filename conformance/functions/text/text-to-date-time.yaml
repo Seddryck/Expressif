@@ -1,0 +1,18 @@
+suite: text
+kind: function
+operator: text-to-date-time
+tests:
+  - id: text-to-date-time.valid.culture
+    cases:
+      - id: text-to-date-time.valid.culture.text.20190317111223
+        value: 20190317111223
+        expected: 2019-03-17 11:12:23
+        parameters:
+          - yyyyMMddhhmmss
+          - fr-fr
+      - id: text-to-date-time.valid.culture.text.mercredi-25-sept-19
+        value: mercredi 25-sept.-19
+        expected: 2019-09-25
+        parameters:
+          - dddd dd-MMM-yy
+          - fr-fr

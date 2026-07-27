@@ -1,0 +1,16 @@
+suite: temporal
+kind: function
+operator: null-to-date
+tests:
+  - id: null-to-date.valid
+    cases:
+      - id: null-to-date.valid.temporal.2018-02-01-07-00-00
+        value: 2018-02-01 07:00:00
+        expected: 2018-02-01 07:00:00
+        parameters:
+          - 2001-01-01
+      - id: null-to-date.valid.special.null
+        value: (null)
+        expected: 2001-01-01
+        parameters:
+          - 2001-01-01

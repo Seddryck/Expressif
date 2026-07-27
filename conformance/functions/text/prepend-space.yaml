@@ -1,0 +1,12 @@
+suite: text
+kind: function
+operator: prepend-space
+tests:
+  - id: prepend-space.valid
+    cases:
+      - id: prepend-space.valid.text.123456789
+        value: 123456789
+        expected: ' 123456789'
+      - id: prepend-space.valid.special.null
+        value: (null)
+        expected: ' '

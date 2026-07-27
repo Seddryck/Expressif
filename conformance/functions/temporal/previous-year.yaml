@@ -1,0 +1,12 @@
+suite: temporal
+kind: function
+operator: previous-year
+tests:
+  - id: previous-year.valid
+    cases:
+      - id: previous-year.valid.temporal.2019-03-11
+        value: 2019-03-11
+        expected: 2018-03-11
+      - id: previous-year.valid.temporal.2020-02-29
+        value: 2020-02-29
+        expected: 2019-02-28

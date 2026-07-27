@@ -1,0 +1,68 @@
+suite: text
+kind: predicate
+operator: matches-regex
+tests:
+  - id: matches-regex.valid.ignore-case.text
+    cases:
+      - id: matches-regex.valid.upper-then-lower.ignore-case.text.mixed
+        value: Foobar
+        expected: true
+        parameters:
+          - "^[A-Z][a-z]+$"
+      - id: matches-regex.valid.upper.ignore-case.text.mixed
+        value: Foobar
+        expected: true
+        parameters:
+          - "^[A-Z]+$"
+      - id: matches-regex.valid.upper.ignore-case.text.upper
+        value: FOOBAR
+        expected: true
+        parameters:
+          - "^[A-Z]+$"
+      - id: matches-regex.valid.upper.ignore-case.special.empty
+        value: (empty)
+        expected: false
+        parameters:
+          - "^[A-Z]+$"
+      - id: matches-regex.valid.upper.ignore-case.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - "^[A-Z]+$"
+  - id: matches-regex.valid.case-sensitive.text
+    cases:
+      - id: matches-regex.valid.upper-then-lower.case-sensitive.text.mixed
+        value: Foobar
+        expected: true
+        parameters:
+          - "^[A-Z][a-z]+$"
+      - id: matches-regex.valid.upper-then-lower.case-sensitive.text.upper
+        value: FOOBAR
+        expected: false
+        parameters:
+          - "^[A-Z][a-z]+$"
+      - id: matches-regex.valid.upper-then-lower.case-sensitive.text.lower
+        value: foobar
+        expected: false
+        parameters:
+          - "^[A-Z][a-z]+$"
+      - id: matches-regex.valid.upper.case-sensitive.text.mixed
+        value: FooBar
+        expected: false
+        parameters:
+          - "^[A-Z]+$"
+      - id: matches-regex.valid.upper.case-sensitive.text.upper
+        value: FOOBAR
+        expected: true
+        parameters:
+          - "^[A-Z]+$"
+      - id: matches-regex.valid.upper.case-sensitive.special.empty
+        value: (empty)
+        expected: false
+        parameters:
+          - "^[A-Z]+$"
+      - id: matches-regex.valid.upper.case-sensitive.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - "^[A-Z]+$"

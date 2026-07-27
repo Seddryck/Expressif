@@ -1,0 +1,21 @@
+suite: numeric
+kind: function
+operator: square-root
+tests:
+  - id: square-root.valid
+    cases:
+      - id: square-root.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: square-root.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: square-root.valid.numeric.four
+        value: 4
+        expected: 2
+      - id: square-root.valid.numeric.nine
+        value: 9
+        expected: 3
+      - id: square-root.valid.special.empty
+        value: 
+        expected: 
