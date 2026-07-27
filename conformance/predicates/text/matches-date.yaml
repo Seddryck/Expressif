@@ -1,0 +1,204 @@
+suite: text
+kind: predicate
+operator: matches-date
+cases:
+  - id: matches-date.dutch-culture.success.text.2022-11-02
+    value: 2022-11-02
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.2022-11-2
+    value: 2022-11-2
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.2022-09-02
+    value: 2022-09-02
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.02-11-2022-to-false-source-line-122
+    value: 02-11-2022
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.02-11-2022-to-true
+    value: 02/11/2022
+    expected: true
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.20-09-1978
+    value: 20/09/1978
+    expected: true
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.2-11-2022
+    value: 2/11/2022
+    expected: true
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.02-9-2022
+    value: 02/9/2022
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.2-9-2022
+    value: 2/9/2022
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.02-11-2022-to-false-source-line-128
+    value: 02.11.2022
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.positive-1-21
+    value: 1.21
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.foobar
+    value: foobar
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.special.empty-to-false-source-line-131
+    value: (empty)
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.text.value
+    value: ''
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.special.null
+    value: (null)
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.dutch-culture.success.special.empty-to-false-source-line-134
+    value: 
+    expected: false
+    parameters:
+      - nl-be
+  - id: matches-date.french-culture.success.text.2022-11-02
+    value: 2022-11-02
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.2022-11-2
+    value: 2022-11-2
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.2022-09-02
+    value: 2022-09-02
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.02-11-2022-to-false-source-line-95
+    value: 02-11-2022
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.02-11-2022-to-true
+    value: 02/11/2022
+    expected: true
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.20-09-1978
+    value: 20/09/1978
+    expected: true
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.2-11-2022
+    value: 2/11/2022
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.02-9-2022
+    value: 02/9/2022
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.02-11-2022-to-false-source-line-100
+    value: 02.11.2022
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.positive-1-21
+    value: 1.21
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.foobar
+    value: foobar
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.special.empty-to-false-source-line-103
+    value: (empty)
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.text.value
+    value: ''
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.special.null
+    value: (null)
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.french-culture.success.special.empty-to-false-source-line-106
+    value: 
+    expected: false
+    parameters:
+      - fr-fr
+  - id: matches-date.invariant-culture.success.text.2022-11-02
+    value: 2022-11-02
+    expected: true
+  - id: matches-date.invariant-culture.success.text.2022-11-2
+    value: 2022-11-2
+    expected: false
+  - id: matches-date.invariant-culture.success.text.2022-09-02
+    value: 2022-09-02
+    expected: true
+  - id: matches-date.invariant-culture.success.text.2022-9-02
+    value: 2022-9-02
+    expected: false
+  - id: matches-date.invariant-culture.success.text.22-09-02
+    value: 22-09-02
+    expected: false
+  - id: matches-date.invariant-culture.success.text.1978-09-02
+    value: 1978-09-02
+    expected: true
+  - id: matches-date.invariant-culture.success.text.02-11-2022-to-false-source-line-63
+    value: 02-11-2022
+    expected: false
+  - id: matches-date.invariant-culture.success.text.02-11-2022-to-false-source-line-64
+    value: 02/11/2022
+    expected: false
+  - id: matches-date.invariant-culture.success.text.02-11-2022-to-false-source-line-65
+    value: 02.11.2022
+    expected: false
+  - id: matches-date.invariant-culture.success.text.positive-1-21
+    value: 1.21
+    expected: false
+  - id: matches-date.invariant-culture.success.text.foobar
+    value: foobar
+    expected: false
+  - id: matches-date.invariant-culture.success.special.empty-to-false-source-line-68
+    value: (empty)
+    expected: false
+  - id: matches-date.invariant-culture.success.text.value
+    value: ''
+    expected: false
+  - id: matches-date.invariant-culture.success.special.null
+    value: (null)
+    expected: false
+  - id: matches-date.invariant-culture.success.special.empty-to-false-source-line-71
+    value: 
+    expected: false

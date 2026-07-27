@@ -1,0 +1,12 @@
+suite: temporal
+kind: function
+operator: next-year
+tests:
+  - id: next-year.valid
+    cases:
+      - id: next-year.valid.temporal.2019-03-11
+        value: 2019-03-11
+        expected: 2020-03-11
+      - id: next-year.valid.temporal.2020-02-29
+        value: 2020-02-29
+        expected: 2021-02-28

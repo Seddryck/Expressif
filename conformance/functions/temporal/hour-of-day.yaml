@@ -1,0 +1,15 @@
+suite: temporal
+kind: function
+operator: hour-of-day
+tests:
+  - id: hour-of-day.valid.date-time
+    cases:
+      - id: hour-of-day.valid.date-time.temporal.afternoon
+        value: 1900-01-01 17:12:26
+        expected: 17
+      - id: hour-of-day.valid.date-time.temporal.morning
+        value: 2000-01-01 05:02:12
+        expected: 5
+      - id: hour-of-day.valid.date-time.temporal.noon
+        value: 800-01-01 12:00:00
+        expected: 12

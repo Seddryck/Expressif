@@ -1,0 +1,71 @@
+suite: text
+kind: predicate
+operator: contains
+tests:
+  - id: contains.valid.text
+    cases:
+      - id: contains.valid.text.first-letters
+        value: Foobar
+        expected: true
+        parameters:
+          - Foo
+      - id: contains.valid.text.first-letter
+        value: Foobar
+        expected: true
+        parameters:
+          - F
+      - id: contains.valid.text.last-letters
+        value: Foobar
+        expected: true
+        parameters:
+          - bar
+      - id: contains.valid.text.last-letter
+        value: Foobar
+        expected: true
+        parameters:
+          - r
+      - id: contains.valid.text.middle-letters
+        value: Foobar
+        expected: true
+        parameters:
+          - oba
+      - id: contains.valid.text.random-letters
+        value: Foobar
+        expected: false
+        parameters:
+          - bing
+      - id: contains.valid.text.longer-text
+        value: Foobar
+        expected: false
+        parameters:
+          - Foobarqrz
+      - id: contains.valid.text.full-text
+        value: Foobar
+        expected: true
+        parameters:
+          - Foobar
+      - id: contains.valid.empty.special.empty
+        value: (empty)
+        expected: true
+        parameters:
+          - (empty)
+      - id: contains.valid.text.special.empty
+        value: (empty)
+        expected: false
+        parameters:
+          - Foo
+      - id: contains.valid.empty.text
+        value: Foobar
+        expected: true
+        parameters:
+          - (empty)
+      - id: contains.valid.text.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - Foo
+      - id: contains.valid.null.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - (null)

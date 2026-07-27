@@ -1,0 +1,83 @@
+suite: text
+kind: function
+operator: replace-slice
+tests:
+  - id: replace-slice.valid
+    cases:
+      - id: replace-slice.valid.text.123456789-to-123abc6789
+        value: 123456789
+        expected: 123abc6789
+        parameters:
+          - 3
+          - 2
+          - abc
+      - id: replace-slice.valid.text.123456789-to-123abc9
+        value: 123456789
+        expected: 123abc9
+        parameters:
+          - 3
+          - 5
+          - abc
+      - id: replace-slice.valid.text.123456789-to-123abc
+        value: 123456789
+        expected: 123abc
+        parameters:
+          - 3
+          - 20
+          - abc
+      - id: replace-slice.valid.text.123456789-to-abc3456789
+        value: 123456789
+        expected: abc3456789
+        parameters:
+          - -3
+          - 5
+          - abc
+      - id: replace-slice.valid.text.123456789-to-abc123456789
+        value: 123456789
+        expected: abc123456789
+        parameters:
+          - -3
+          - 2
+          - abc
+      - id: replace-slice.valid.text.123456789-to-123456abc9
+        value: 123456789
+        expected: 123456abc9
+        parameters:
+          - 8
+          - -2
+          - abc
+      - id: replace-slice.valid.text.123456789-to-123456789abc
+        value: 123456789
+        expected: 123456789abc
+        parameters:
+          - 20
+          - -2
+          - abc
+      - id: replace-slice.valid.text.123456789-to-abc6789
+        value: 123456789
+        expected: abc6789
+        parameters:
+          - 5
+          - -20
+          - abc
+      - id: replace-slice.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 3
+          - 2
+          - abc
+      - id: replace-slice.valid.special.empty
+        value: (empty)
+        expected: abc
+        parameters:
+          - 3
+          - 2
+          - abc
+      - id: replace-slice.valid.special.blank
+        value: (blank)
+        expected: abc
+        parameters:
+          - 3
+          - 2
+          - abc

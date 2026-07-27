@@ -1,0 +1,54 @@
+suite: text
+kind: function
+operator: replace-chars
+tests:
+  - id: replace-chars.valid
+    cases:
+      - id: replace-chars.valid.text.123-456-78-to-123-456-78-with-value-and-value-source-line-26
+        value: 123*456*78
+        expected: 123-456-78
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.text.123-456-78-to-123-456-78-with-value-and-value-source-line-27
+        value: '***123***456*78****'
+        expected: '---123---456-78----'
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.text.value
+        value: '******'
+        expected: '------'
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.special.empty-to-null
+        value: 
+        expected: (null)
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.special.blank-to-blank-with-value-and-value-source-line-32
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - '*'
+          - '-'
+      - id: replace-chars.valid.special.blank-to-blank-with-value-and-value-source-line-33
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - ' '
+          - '-'

@@ -1,0 +1,76 @@
+suite: numeric
+kind: function
+operator: power
+tests:
+  - id: power.valid.exponent
+    cases:
+      - id: power.valid.exponent.numeric.zero-to-one
+        value: 0
+        expected: 1
+        parameters:
+          - 0
+      - id: power.valid.exponent.numeric.one-to-one-with-zero
+        value: 1
+        expected: 1
+        parameters:
+          - 0
+      - id: power.valid.exponent.numeric.zero-to-zero-with-one
+        value: 0
+        expected: 0
+        parameters:
+          - 1
+      - id: power.valid.exponent.numeric.one-to-one-with-one
+        value: 1
+        expected: 1
+        parameters:
+          - 1
+      - id: power.valid.exponent.numeric.four
+        value: 4
+        expected: 4
+        parameters:
+          - 1
+      - id: power.valid.exponent.numeric.minus-four
+        value: -4
+        expected: -4
+        parameters:
+          - 1
+      - id: power.valid.exponent.numeric.zero-to-zero-with-four
+        value: 0
+        expected: 0
+        parameters:
+          - 4
+      - id: power.valid.exponent.numeric.one-to-one-with-four
+        value: 1
+        expected: 1
+        parameters:
+          - 4
+      - id: power.valid.exponent.numeric.minus-one
+        value: -1
+        expected: 1
+        parameters:
+          - 4
+      - id: power.valid.exponent.numeric.two-to-sixteen
+        value: 2
+        expected: 16
+        parameters:
+          - 4
+      - id: power.valid.exponent.numeric.minus-two-to-sixteen
+        value: -2
+        expected: 16
+        parameters:
+          - 4
+      - id: power.valid.exponent.numeric.two-to-thirty-two
+        value: 2
+        expected: 32
+        parameters:
+          - 5
+      - id: power.valid.exponent.numeric.minus-two-to-minus-thirty-two
+        value: -2
+        expected: -32
+        parameters:
+          - 5
+      - id: power.valid.exponent.special.empty
+        value: 
+        expected: 
+        parameters:
+          - 1

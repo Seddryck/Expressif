@@ -1,0 +1,74 @@
+suite: numeric
+kind: function
+operator: subtract
+tests:
+  - id: subtract.valid.3-times-2
+    cases:
+      - id: subtract.valid.3-times-2.numeric.zero
+        value: 0
+        expected: -6
+        parameters:
+          - 3
+          - 2
+      - id: subtract.valid.3-times-2.numeric.one
+        value: 1
+        expected: -5
+        parameters:
+          - 3
+          - 2
+      - id: subtract.valid.3-times-2.numeric.minus-one
+        value: -1
+        expected: -7
+        parameters:
+          - 3
+          - 2
+      - id: subtract.valid.3-times-2.special.null
+        value: (null)
+        expected: 
+        parameters:
+          - 3
+          - 2
+      - id: subtract.valid.3-times-2.special.empty
+        value: (empty)
+        expected: 
+        parameters:
+          - 3
+          - 2
+      - id: subtract.valid.3-times-2.special.blank
+        value: (blank)
+        expected: 
+        parameters:
+          - 3
+          - 2
+  - id: subtract.valid.3
+    cases:
+      - id: subtract.valid.3.numeric.zero
+        value: 0
+        expected: -3
+        parameters:
+          - 3
+      - id: subtract.valid.3.numeric.one
+        value: 1
+        expected: -2
+        parameters:
+          - 3
+      - id: subtract.valid.3.numeric.minus-one
+        value: -1
+        expected: -4
+        parameters:
+          - 3
+      - id: subtract.valid.3.special.null
+        value: (null)
+        expected: 
+        parameters:
+          - 3
+      - id: subtract.valid.3.special.empty
+        value: (empty)
+        expected: 
+        parameters:
+          - 3
+      - id: subtract.valid.3.special.blank
+        value: (blank)
+        expected: 
+        parameters:
+          - 3

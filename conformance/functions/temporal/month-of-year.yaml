@@ -1,0 +1,34 @@
+suite: temporal
+kind: function
+operator: month-of-year
+tests:
+  - id: month-of-year.valid.date-time
+    cases:
+      - id: month-of-year.valid.date-time.temporal.1900-01-01
+        value: 1900-01-01
+        expected: 1
+      - id: month-of-year.valid.date-time.temporal.2000-10-01
+        value: 2000-10-01
+        expected: 10
+      - id: month-of-year.valid.date-time.temporal.800-03-01
+        value: 800-03-01
+        expected: 3
+  - id: month-of-year.valid.year-month
+    cases:
+      - id: month-of-year.valid.year-month.temporal.1900-01
+        value: 1900-01
+        expected: 1
+      - id: month-of-year.valid.year-month.temporal.2000-10
+        value: 2000-10
+        expected: 10
+      - id: month-of-year.valid.year-month.temporal.0800-03
+        value: 0800-03
+        expected: 3
+  - id: month-of-year.invalid.integer
+    cases:
+      - id: month-of-year.invalid.integer.temporal.one
+        value: 1
+        expected: null
+      - id: month-of-year.invalid.integer.temporal.ten
+        value: 10
+        expected: null

@@ -1,0 +1,31 @@
+suite: text
+kind: function
+operator: append
+tests:
+  - id: append.valid
+    cases:
+      - id: append.valid.text.123456789
+        value: 123456789
+        expected: 123456789abc
+        parameters:
+          - abc
+      - id: append.valid.special.null-to-abc
+        value: (null)
+        expected: abc
+        parameters:
+          - abc
+      - id: append.valid.special.null-to-value
+        value: (null)
+        expected: ''
+        parameters:
+          - (null)
+      - id: append.valid.special.empty
+        value: (empty)
+        expected: abc
+        parameters:
+          - abc
+      - id: append.valid.special.blank
+        value: (blank)
+        expected: abc
+        parameters:
+          - abc

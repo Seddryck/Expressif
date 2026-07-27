@@ -1,0 +1,35 @@
+suite: temporal
+kind: predicate
+operator: within-upcoming-week
+tests:
+  - id: within-upcoming-week.valid.date-time
+    parameters:
+      - 2022-12-29
+    cases:
+      - id: within-upcoming-week.valid.date-time.temporal.last-week
+        value: 2022-12-25
+        expected: false
+      - id: within-upcoming-week.valid.date-time.temporal.yesterday
+        value: 2022-12-28
+        expected: false
+      - id: within-upcoming-week.valid.date-time.temporal.today
+        value: 2022-12-29
+        expected: false
+      - id: within-upcoming-week.valid.date-time.temporal.tomorrow
+        value: 2022-12-30
+        expected: false
+      - id: within-upcoming-week.valid.date-time.temporal.last-day-of-current-week
+        value: 2023-01-01
+        expected: false
+      - id: within-upcoming-week.valid.date-time.temporal.first-day-of-next-week
+        value: 2023-01-02
+        expected: true
+      - id: within-upcoming-week.valid.date-time.temporal.last-day-of-next-week
+        value: 2023-01-08
+        expected: true
+      - id: within-upcoming-week.valid.date-time.temporal.first-day-after-next-week
+        value: 2023-01-09
+        expected: false
+      - id: within-upcoming-week.valid.date-time.temporal.epoch
+        value: 1970-05-06
+        expected: false

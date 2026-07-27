@@ -1,0 +1,72 @@
+suite: text
+kind: function
+operator: before-substring
+tests:
+  - id: before-substring.valid.position
+    cases:
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-foo
+        value: Foo+Bar+Bez+Quark
+        expected: Foo
+        parameters:
+          - +
+          - 0
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-foo-bar
+        value: Foo+Bar+Bez+Quark
+        expected: Foo+Bar
+        parameters:
+          - +
+          - 1
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-foo-bar-bez
+        value: Foo+Bar+Bez+Quark
+        expected: Foo+Bar+Bez
+        parameters:
+          - +
+          - 2
+      - id: before-substring.valid.position.text.foo-bar-bez-quark-to-null
+        value: Foo+Bar+Bez+Quark
+        expected: (null)
+        parameters:
+          - +
+          - 3
+  - id: before-substring.valid
+    cases:
+      - id: before-substring.valid.text.foo-bar-to-foo-with-value
+        value: Foo+ Bar
+        expected: Foo
+        parameters:
+          - '+ '
+      - id: before-substring.valid.text.foo-bar-to-value-with-f
+        value: Foo+ Bar
+        expected: ''
+        parameters:
+          - F
+      - id: before-substring.valid.text.foo-bar-to-foo-with-b
+        value: Foo+ Bar
+        expected: 'Foo+ '
+        parameters:
+          - B
+      - id: before-substring.valid.text.foo-bar-to-value-with-xyz
+        value: Foo+ Bar
+        expected: ''
+        parameters:
+          - XYZ
+      - id: before-substring.valid.text.foo-bar-to-value-with-null
+        value: Foo+ Bar
+        expected: ''
+        parameters:
+          - (null)
+      - id: before-substring.valid.text.foo-bar-to-value-with-empty
+        value: Foo+ Bar
+        expected: ''
+        parameters:
+          - (empty)
+      - id: before-substring.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - ', '
+      - id: before-substring.valid.special.empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - ', '

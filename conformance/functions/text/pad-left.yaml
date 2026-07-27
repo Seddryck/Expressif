@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: pad-left
+tests:
+  - id: pad-left.valid
+    cases:
+      - id: pad-left.valid.text.1234-to-000001234
+        value: 1234
+        expected: 000001234
+        parameters:
+          - 9
+          - 0
+      - id: pad-left.valid.text.1234-to-1234
+        value: 1234
+        expected: '*****1234'
+        parameters:
+          - 9
+          - '*'
+      - id: pad-left.valid.text.123456789
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 3
+          - 0
+      - id: pad-left.valid.special.null
+        value: (null)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+      - id: pad-left.valid.special.empty
+        value: (empty)
+        expected: 000
+        parameters:
+          - 3
+          - 0

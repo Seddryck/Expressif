@@ -20,11 +20,26 @@ function Send-GitHub-Get-Request {
 		[string] $repository,
 		[Parameter(Mandatory=$true)]
 		[string[]] $segments,
+		[Parameter(Mandatory=$false)]
+		[System.Collections.IDictionary] $query,
 		[Parameter(Mandatory=$true)]
 		[System.Collections.IDictionary] $headers
 	)
+	$uri = "https://api.github.com/repos/$owner/$repository/$($segments -join '/')"
+	if ($query -and $query.Count -gt 0) {
+		$pairs = $query.GetEnumerator() |
+			Where-Object { $null -ne $_.Value -and "$($_.Value)" -ne '' } |
+			ForEach-Object {
+				"$([System.Uri]::EscapeDataString([string]$_.Key))=$([System.Uri]::EscapeDataString([string]$_.Value))"
+			}
+
+		if ($pairs.Count -gt 0) {
+			$uri = "$uri?$($pairs -join '&')"
+		}
+	}
+
 	Invoke-WebRequest `
-		-Uri "https://api.github.com/repos/$owner/$repository/$($segments -join '/')" `
+		-Uri $uri `
 		-Headers $headers
 }
 
@@ -256,6 +271,64 @@ function Publish-Release {
 					-Segments @('releases') `
 					-Headers $($context.SecretToken | Get-GitHub-Headers) `
 					-Body $body
+}
+
+function Get-Latest-Commit-Sha {
+    [CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
+		[object] $context,
+		[string] $branch
+	)
+
+	$query = @{ per_page = '1' }
+	if ($branch) {
+		$query['sha'] = $branch
+	}
+
+	$response = Send-GitHub-Get-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('commits') `
+					-Query $query `
+					-Headers $($context.SecretToken | Get-GitHub-Headers)
+
+	$commit = $response.Content | ConvertFrom-Json | Select-Object -First 1
+	if ($null -eq $commit) {
+		throw "No commit found in repository '$($context.Owner)/$($context.Repository)'."
+	}
+
+	return $commit.sha
+}
+
+function Publish-Commit-Tag {
+    [CmdletBinding()]
+	param(
+		[Parameter(Mandatory=$true, ValueFromPipeline = $true, Position=0)]
+		[object] $context,
+		[Parameter(Mandatory=$true)]
+		[string] $tag,
+		[string] $commitSha,
+		[string] $branch
+	)
+
+	if ($null -eq $commitSha -or $commitSha -eq '') {
+		$commitSha = $context | Get-Latest-Commit-Sha -Branch $branch
+	}
+
+	$body = [PSCustomObject]@{
+		ref = "refs/tags/$tag"
+		sha = $commitSha
+	}
+
+	$response = Send-GitHub-Post-Request `
+					-Owner $context.Owner `
+					-Repository $context.Repository `
+					-Segments @('git', 'refs') `
+					-Headers $($context.SecretToken | Get-GitHub-Headers) `
+					-Body $body
+
+	Write-Host "Tag '$tag' created on commit $commitSha"
 }
 
 function Download-Release-Asset {

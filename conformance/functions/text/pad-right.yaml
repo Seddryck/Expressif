@@ -1,0 +1,48 @@
+suite: text
+kind: function
+operator: pad-right
+tests:
+  - id: pad-right.valid
+    cases:
+      - id: pad-right.valid.text.1234-to-123400000-with-nine-and-zero-source-line-13
+        value: 1234
+        expected: 123400000
+        parameters:
+          - 9
+          - 0
+      - id: pad-right.valid.text.1234-to-123400000-with-nine-and-zero-source-line-14
+        value: 1234
+        expected: 123400000
+        parameters:
+          - 9
+          - 0
+      - id: pad-right.valid.text.1234-to-1234-with-nine-and-value-source-line-15
+        value: 1234
+        expected: 1234*****
+        parameters:
+          - 9
+          - '*'
+      - id: pad-right.valid.text.1234-to-1234-with-nine-and-value-source-line-16
+        value: 1234
+        expected: 1234*****
+        parameters:
+          - 9
+          - '*'
+      - id: pad-right.valid.text.123456789
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 3
+          - 0
+      - id: pad-right.valid.special.null
+        value: (null)
+        expected: 000
+        parameters:
+          - 3
+          - 0
+      - id: pad-right.valid.special.empty
+        value: (empty)
+        expected: 000
+        parameters:
+          - 3
+          - 0

@@ -1,0 +1,56 @@
+suite: temporal
+kind: function
+operator: catholic-calendar
+tests:
+  - id: catholic-calendar.valid
+    cases:
+      - id: catholic-calendar.valid.christmas.temporal.2023
+        value: 2023
+        expected: 2023-12-25
+        parameters:
+          - Christmas
+      - id: catholic-calendar.valid.easter-sunday.temporal.2023
+        value: 2023
+        expected: 2023-04-09
+        parameters:
+          - Easter Sunday
+      - id: catholic-calendar.valid.corpus-christi.temporal.2023
+        value: 2023
+        expected: 2023-06-08
+        parameters:
+          - Corpus Christi
+      - id: catholic-calendar.valid.first-sunday-of-advent.temporal.2022
+        value: 2022
+        expected: 2022-11-27
+        parameters:
+          - First Sunday of Advent
+      - id: catholic-calendar.valid.first-sunday-of-advent.temporal.2023
+        value: 2023
+        expected: 2023-12-03
+        parameters:
+          - First Sunday of Advent
+      - id: catholic-calendar.valid.ash-wednesday.temporal.2023
+        value: 2023
+        expected: 2023-02-22
+        parameters:
+          - Ash Wednesday
+      - id: catholic-calendar.valid.whit-sunday.temporal.2023
+        value: 2023
+        expected: 2023-05-28
+        parameters:
+          - Whit Sunday
+      - id: catholic-calendar.valid.assumption.temporal.2023
+        value: 2023
+        expected: 2023-08-15
+        parameters:
+          - Assumption
+      - id: catholic-calendar.valid.all-saints-day.temporal.2023
+        value: 2023
+        expected: 2023-11-01
+        parameters:
+          - All Saints' Day
+      - id: catholic-calendar.valid.immaculate-conception.temporal.2023
+        value: 2023-01-01
+        expected: 2023-12-08
+        parameters:
+          - immaculate conception

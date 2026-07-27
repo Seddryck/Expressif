@@ -1,0 +1,33 @@
+suite: numeric
+kind: function
+operator: square-power
+tests:
+  - id: square-power.valid
+    cases:
+      - id: square-power.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: square-power.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: square-power.valid.numeric.minus-one
+        value: -1
+        expected: 1
+      - id: square-power.valid.numeric.two
+        value: 2
+        expected: 4
+      - id: square-power.valid.numeric.minus-two
+        value: -2
+        expected: 4
+      - id: square-power.valid.special.empty-to-empty
+        value: 
+        expected: 
+      - id: square-power.valid.special.null
+        value: (null)
+        expected: 
+      - id: square-power.valid.special.empty-tag-to-empty
+        value: (empty)
+        expected: 
+      - id: square-power.valid.special.blank
+        value: (blank)
+        expected: 

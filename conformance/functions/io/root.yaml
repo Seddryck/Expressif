@@ -1,0 +1,33 @@
+suite: io
+kind: function
+operator: root
+tests:
+  - id: root.valid
+    cases:
+      - id: root.valid.io.drive-c
+        value: C:\
+        expected: C:\
+      - id: root.valid.io.drive-c-dir
+        value: C:\Dir\
+        expected: C:\
+      - id: root.valid.io.drive-c-dir-child
+        value: C:\Dir\Child\
+        expected: C:\
+      - id: root.valid.io.drive-c-dir-childfile
+        value: C:\Dir\ChildFile
+        expected: C:\
+      - id: root.valid.io.drive-c-dir-child-file-txt
+        value: C:\Dir\Child\file.txt
+        expected: C:\
+      - id: root.valid.io.dir-file-txt
+        value: Dir\file.txt
+        expected: ''
+      - id: root.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: root.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: root.valid.special.blank
+        value: (blank)
+        expected: (empty)

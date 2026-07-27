@@ -1,0 +1,27 @@
+suite: numeric
+kind: function
+operator: null-to-zero
+tests:
+  - id: null-to-zero.valid
+    cases:
+      - id: null-to-zero.valid.numeric.zero-to-zero
+        value: 0
+        expected: 0
+      - id: null-to-zero.valid.numeric.one-to-one
+        value: 1
+        expected: 1
+      - id: null-to-zero.valid.numeric.minus-one-to-minus-one-source
+        value: -1
+        expected: -1
+      - id: null-to-zero.valid.numeric.positive-to-positive
+        value: 0.9999
+        expected: 0.9999
+      - id: null-to-zero.valid.special.null
+        value: (null)
+        expected: 0
+      - id: null-to-zero.valid.special.empty
+        value: (empty)
+        expected: 0
+      - id: null-to-zero.valid.special.blank
+        value: (blank)
+        expected: 0

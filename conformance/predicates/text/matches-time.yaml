@@ -1,0 +1,124 @@
+suite: text
+kind: predicate
+operator: matches-time
+cases:
+  - id: matches-time.english-culture.success.text.2022-11-02
+    value: 2022-11-02
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.2022-11-02-13-57-00
+    value: 2022-11-02 13:57:00
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.2022-11-02-13-57-00-123
+    value: 2022-11-02 13:57:00.123
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.2022-11-02-1-52pm
+    value: 2022-11-02 1:52PM
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.1978-09-02
+    value: 1978-09-02
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.13-57-00
+    value: 13:57:00
+    expected: true
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.13-57-00-125
+    value: 13:57:00.125
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.1-57pm
+    value: 1:57PM
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.1-57-00pm
+    value: 1:57:00PM
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.positive-1-21
+    value: 1.21
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.foobar
+    value: foobar
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.special.empty-to-false-source-line-215
+    value: (empty)
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.text.value
+    value: ''
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.special.null
+    value: (null)
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.english-culture.success.special.empty-to-false-source-line-218
+    value: 
+    expected: false
+    parameters:
+      - en-gb
+  - id: matches-time.invariant-culture.success.text.2022-11-02
+    value: 2022-11-02
+    expected: false
+  - id: matches-time.invariant-culture.success.text.2022-11-02-13-57-00
+    value: 2022-11-02 13:57:00
+    expected: false
+  - id: matches-time.invariant-culture.success.text.2022-11-02-13-57-00-123
+    value: 2022-11-02 13:57:00.123
+    expected: false
+  - id: matches-time.invariant-culture.success.text.2022-11-02-1-52pm
+    value: 2022-11-02 1:52PM
+    expected: false
+  - id: matches-time.invariant-culture.success.text.1978-09-02
+    value: 1978-09-02
+    expected: false
+  - id: matches-time.invariant-culture.success.text.13-57-00
+    value: 13:57:00
+    expected: true
+  - id: matches-time.invariant-culture.success.text.13-57-00-125
+    value: 13:57:00.125
+    expected: false
+  - id: matches-time.invariant-culture.success.text.1-57pm
+    value: 1:57PM
+    expected: false
+  - id: matches-time.invariant-culture.success.text.1-57-00pm
+    value: 1:57:00PM
+    expected: false
+  - id: matches-time.invariant-culture.success.text.positive-1-21
+    value: 1.21
+    expected: false
+  - id: matches-time.invariant-culture.success.text.foobar
+    value: foobar
+    expected: false
+  - id: matches-time.invariant-culture.success.special.empty-to-false-source-line-185
+    value: (empty)
+    expected: false
+  - id: matches-time.invariant-culture.success.text.value
+    value: ''
+    expected: false
+  - id: matches-time.invariant-culture.success.special.null
+    value: (null)
+    expected: false
+  - id: matches-time.invariant-culture.success.special.empty-to-false-source-line-188
+    value: 
+    expected: false

@@ -78,11 +78,13 @@ test_script:
 
 after_test:
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo
+- pwsh: ./Get-ConformanceVersion.ps1 -Pack
 
 artifacts:
 - path: '**\*.nupkg'
 - path: '**\*.snupkg'
 - path: '**\*.vsix'
+- path: '**\Expressif.Conformance.*.zip'
 
 deploy:
 - provider: NuGet
@@ -115,6 +117,10 @@ on_success:
                 $context | Upload-Release-Assets `
                     -Tag "v$($env:GitVersion_SemVer)" `
                     -Path "./Expressif.Syntax/bin/"
+
+                $context | Upload-Release-Assets `
+                    -Tag "v$($env:GitVersion_SemVer)" `
+                    -Path "./conformance/bin/"
             }
         } else {
             Write-Host "No release published on GitHub when patch is not set to zero."
@@ -122,6 +128,35 @@ on_success:
     } else {
         Write-Host "No release published on GitHub when not on branch main."
     }
+- pwsh: |
+    . "$env:APPVEYOR_BUILD_FOLDER\github.ps1"
+    $semVer = $env:GitHub_Conformance_SemVer
+
+    # Skip if conformance version is not set (e.g., no modification to conformance/)
+    if ([string]::IsNullOrWhiteSpace($semVer)) {
+        Write-Host "Conformance version not set. Conformance tagging skipped."
+        return
+    }
+
+    # Skip pre-release tags
+    if ($semVer -match '-') {
+        Write-Host "Pre-release detected ($semVer). Conformance tagging skipped."
+        return
+    }
+
+    if ([string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_NAME)) {
+        throw "APPVEYOR_REPO_NAME is empty (expected owner/repo)."
+    }
+    $owner, $repository = $env:APPVEYOR_REPO_NAME.Split('/')
+
+    $context = [PSCustomObject]@{
+        Owner       = $owner
+        Repository  = $repository
+        SecretToken = $env:GITHUB_TOKEN
+    }
+
+    # Tag the exact commit currently built by AppVeyor
+    $context | Publish-Commit-Tag -Tag $semVer -CommitSha $env:APPVEYOR_REPO_COMMIT
 - pwsh: |
     if (git status --porcelain) {
       Write-Host "Update of Library index needed"

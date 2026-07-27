@@ -1,0 +1,24 @@
+suite: numeric
+kind: function
+operator: sign
+tests:
+  - id: sign.valid
+    cases:
+      - id: sign.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: sign.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: sign.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: sign.valid.numeric.five
+        value: 5
+        expected: 1
+      - id: sign.valid.numeric.minus-five
+        value: -5
+        expected: -1
+      - id: sign.valid.special.empty
+        value: 
+        expected: 

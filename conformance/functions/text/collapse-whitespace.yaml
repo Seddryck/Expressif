@@ -1,0 +1,39 @@
+suite: text
+kind: function
+operator: collapse-whitespace
+tests:
+  - id: collapse-whitespace.valid
+    cases:
+      - id: collapse-whitespace.valid.text.foo
+        value: foo
+        expected: foo
+      - id: collapse-whitespace.valid.text.foo-bar-to-foo-bar-source-line-65
+        value: foo bar
+        expected: foo bar
+      - id: collapse-whitespace.valid.text.foo-bar-to-foo-bar-source-line-66
+        value: foo  bar
+        expected: foo bar
+      - id: collapse-whitespace.valid.text.foo-tbar
+        value: "foo\tbar"
+        expected: "foo\tbar"
+      - id: collapse-whitespace.valid.text.foo-t-bar
+        value: "foo\t bar"
+        expected: "foo\tbar"
+      - id: collapse-whitespace.valid.text.foo-r-nbar
+        value: "foo\r\nbar"
+        expected: "foo\r\nbar"
+      - id: collapse-whitespace.valid.text.t-t-tfoo-t-tbar-t-t-t
+        value: "\t\t\tfoo\t\tbar\t\t\t"
+        expected: "foo\tbar"
+      - id: collapse-whitespace.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: collapse-whitespace.valid.special.empty-to-null
+        value: 
+        expected: (null)
+      - id: collapse-whitespace.valid.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+      - id: collapse-whitespace.valid.special.blank
+        value: (blank)
+        expected: (empty)

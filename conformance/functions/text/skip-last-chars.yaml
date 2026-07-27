@@ -1,0 +1,41 @@
+suite: text
+kind: function
+operator: skip-last-chars
+tests:
+  - id: skip-last-chars.valid
+    cases:
+      - id: skip-last-chars.valid.text.123456789-to-empty-with-nine
+        value: 123456789
+        expected: (empty)
+        parameters:
+          - 9
+      - id: skip-last-chars.valid.text.123456789-to-empty-with-ten
+        value: 123456789
+        expected: (empty)
+        parameters:
+          - 10
+      - id: skip-last-chars.valid.text.123456789-to-one
+        value: 123456789
+        expected: 1
+        parameters:
+          - 8
+      - id: skip-last-chars.valid.text.123456789-to-1234
+        value: 123456789
+        expected: 1234
+        parameters:
+          - 5
+      - id: skip-last-chars.valid.text.123456789-to-123456789
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 0
+      - id: skip-last-chars.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 3
+      - id: skip-last-chars.valid.special.empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - 3

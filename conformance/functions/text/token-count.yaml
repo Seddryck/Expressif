@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: token-count
+tests:
+  - id: token-count.valid
+    cases:
+      - id: token-count.valid.text.my-taylor-is-rich
+        value: My taylor is rich
+        expected: 4
+      - id: token-count.valid.text.my-lord-to-two-source-line-61
+        value: ' My Lord ! '
+        expected: 2
+      - id: token-count.valid.text.my-lord-to-two-source-line-62
+        value: '  My     Lord    !   '
+        expected: 2
+      - id: token-count.valid.text.my-lord-c-l
+        value: '  My     Lord    !   C-L.'
+        expected: 3
+      - id: token-count.valid.special.null
+        value: (null)
+        expected: 0
+      - id: token-count.valid.special.empty-to-zero-source-line-65
+        value: 
+        expected: 0
+      - id: token-count.valid.special.empty-to-zero-source-line-66
+        value: (empty)
+        expected: 0
+      - id: token-count.valid.special.blank
+        value: (blank)
+        expected: 0
+      - id: token-count.valid.text.1-2017-07-06-cust0001-to-three-source-line-68
+        value: 1 2017-07-06      CUST0001
+        expected: 3
+      - id: token-count.valid.text.1-2017-07-06-cust0001-to-three-source-line-69
+        value: 1 2017-07-06          CUST0001
+        expected: 3

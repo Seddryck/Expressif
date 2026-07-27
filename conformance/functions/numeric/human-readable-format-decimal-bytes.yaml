@@ -1,0 +1,38 @@
+suite: numeric
+kind: function
+operator: human-readable-format-decimal-bytes
+tests:
+  - id: human-readable-format-decimal-bytes.valid.default-precision
+    cases:
+      - id: human-readable-format-decimal-bytes.valid.default-precision.numeric.1048576
+        value: 1048576
+        expected: 1.05 MB
+      - id: human-readable-format-decimal-bytes.valid.default-precision.numeric.1000
+        value: 1000
+        expected: 1.00 KB
+      - id: human-readable-format-decimal-bytes.valid.default-precision.numeric.999
+        value: 999
+        expected: 999 B
+      - id: human-readable-format-decimal-bytes.valid.default-precision.numeric.zero
+        value: 0
+        expected: 0 B
+      - id: human-readable-format-decimal-bytes.valid.default-precision.numeric.minus-1048576
+        value: -1048576
+        expected: -1.05 MB
+  - id: human-readable-format-decimal-bytes.valid.precision
+    cases:
+      - id: human-readable-format-decimal-bytes.valid.precision.numeric.1048576-to-1-mb
+        value: 1048576
+        expected: 1 MB
+        parameters:
+          - 0
+      - id: human-readable-format-decimal-bytes.valid.precision.numeric.1048576-to-1-049-mb
+        value: 1048576
+        expected: 1.049 MB
+        parameters:
+          - 3
+      - id: human-readable-format-decimal-bytes.valid.precision.numeric.1000
+        value: 1000
+        expected: 1 KB
+        parameters:
+          - 0

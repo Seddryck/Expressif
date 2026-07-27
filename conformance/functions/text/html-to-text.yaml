@@ -1,0 +1,12 @@
+suite: text
+kind: function
+operator: html-to-text
+tests:
+  - id: html-to-text.valid
+    cases:
+      - id: html-to-text.valid.text.c-233-dric
+        value: C&#233;dric
+        expected: Cédric
+      - id: html-to-text.valid.text.c-eacute-dric
+        value: C&eacute;dric
+        expected: Cédric

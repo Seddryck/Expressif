@@ -1,0 +1,43 @@
+suite: temporal
+kind: function
+operator: year-of-era
+tests:
+  - id: year-of-era.valid.date-time
+    cases:
+      - id: year-of-era.valid.date-time.temporal.1900-01-01
+        value: 1900-01-01
+        expected: 1900
+      - id: year-of-era.valid.date-time.temporal.2000-01-01
+        value: 2000-01-01
+        expected: 2000
+      - id: year-of-era.valid.date-time.temporal.800-01-01
+        value: 800-01-01
+        expected: 800
+  - id: year-of-era.valid.integer
+    cases:
+      - id: year-of-era.valid.integer.temporal.1900
+        value: 1900
+        expected: 1900
+      - id: year-of-era.valid.integer.temporal.2000
+        value: 2000
+        expected: 2000
+      - id: year-of-era.valid.integer.temporal.minus-forty-five
+        value: -45
+        expected: -45
+      - id: year-of-era.valid.integer.temporal.800
+        value: 800
+        expected: 800
+      - id: year-of-era.valid.integer.temporal.12300
+        value: 12300
+        expected: 12300
+  - id: year-of-era.valid.year-month
+    cases:
+      - id: year-of-era.valid.year-month.temporal.1900-01
+        value: 1900-01
+        expected: 1900
+      - id: year-of-era.valid.year-month.temporal.2000-01
+        value: 2000-01
+        expected: 2000
+      - id: year-of-era.valid.year-month.temporal.0800-01
+        value: 0800-01
+        expected: 800

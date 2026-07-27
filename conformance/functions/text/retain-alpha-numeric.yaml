@@ -1,0 +1,30 @@
+suite: text
+kind: function
+operator: retain-alpha-numeric
+tests:
+  - id: retain-alpha-numeric.valid
+    cases:
+      - id: retain-alpha-numeric.valid.text.abc12345abc6789
+        value: abc12345abc6789
+        expected: abc12345abc6789
+      - id: retain-alpha-numeric.valid.text.abc12345abc-6789
+        value: abc12345abc, 6789
+        expected: abc12345abc6789
+      - id: retain-alpha-numeric.valid.text.12345
+        value: 12345
+        expected: 12345
+      - id: retain-alpha-numeric.valid.text.12-345-6
+        value: -12,345.6
+        expected: 123456
+      - id: retain-alpha-numeric.valid.text.abc
+        value: abc
+        expected: abc
+      - id: retain-alpha-numeric.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: retain-alpha-numeric.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: retain-alpha-numeric.valid.special.blank
+        value: (blank)
+        expected: (empty)

@@ -1,0 +1,12 @@
+suite: text
+kind: function
+operator: suffix-space
+tests:
+  - id: suffix-space.valid
+    cases:
+      - id: suffix-space.valid.text.123456789
+        value: 123456789
+        expected: '123456789 '
+      - id: suffix-space.valid.special.null
+        value: (null)
+        expected: (null)

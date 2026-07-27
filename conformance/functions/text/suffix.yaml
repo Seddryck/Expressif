@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: suffix
+tests:
+  - id: suffix.valid
+    cases:
+      - id: suffix.valid.text.123456789
+        value: 123456789
+        expected: 123456789abc
+        parameters:
+          - abc
+      - id: suffix.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - abc
+      - id: suffix.valid.special.empty
+        value: (empty)
+        expected: abc
+        parameters:
+          - abc
+      - id: suffix.valid.special.blank
+        value: (blank)
+        expected: abc
+        parameters:
+          - abc

@@ -1,0 +1,12 @@
+suite: text
+kind: function
+operator: prefix-space
+tests:
+  - id: prefix-space.valid
+    cases:
+      - id: prefix-space.valid.text.123456789
+        value: 123456789
+        expected: ' 123456789'
+      - id: prefix-space.valid.special.null
+        value: (null)
+        expected: (null)

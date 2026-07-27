@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: without-diacritics
+tests:
+  - id: without-diacritics.valid
+    cases:
+      - id: without-diacritics.valid.text.c-dric-to-cedric-source-line-214
+        value: Cédric
+        expected: Cedric
+      - id: without-diacritics.valid.text.c-dric-to-cedric-source-line-215
+        value: Cèdric
+        expected: Cedric
+      - id: without-diacritics.valid.text.c-dric-to-cedric-source-line-216
+        value: Cêdric
+        expected: Cedric
+      - id: without-diacritics.valid.text.cedr-c-to-cedric-source-line-217
+        value: Cedrîc
+        expected: Cedric
+      - id: without-diacritics.valid.text.cedr-c-to-cedric-source-line-218
+        value: Cedrïc
+        expected: Cedric
+      - id: without-diacritics.valid.text.cedri
+        value: Cedriç
+        expected: Cedric
+      - id: without-diacritics.valid.text.cedr-c-to-cedric-source-line-220
+        value: Cedrìc
+        expected: Cedric

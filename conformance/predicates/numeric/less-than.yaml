@@ -1,0 +1,46 @@
+suite: numeric
+kind: predicate
+operator: less-than
+tests:
+  - id: less-than.valid
+    cases:
+      - id: less-than.valid.numeric.equal
+        value: 10
+        expected: false
+        parameters:
+          - 10
+      - id: less-than.valid.numeric.less-than
+        value: 4
+        expected: true
+        parameters:
+          - 10
+      - id: less-than.valid.numeric.more-than
+        value: 15
+        expected: false
+        parameters:
+          - 10
+      - id: less-than.valid.numeric.less-than-decimal
+        value: 9.999
+        expected: true
+        parameters:
+          - 10
+      - id: less-than.valid.numeric.more-than-decimal
+        value: 10.001
+        expected: false
+        parameters:
+          - 10
+      - id: less-than.valid.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - 10
+      - id: less-than.valid.special.empty-tag
+        value: (empty)
+        expected: false
+        parameters:
+          - 10
+      - id: less-than.valid.special.blank
+        value: (blank)
+        expected: false
+        parameters:
+          - 10

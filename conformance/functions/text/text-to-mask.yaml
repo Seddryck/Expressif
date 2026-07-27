@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: text-to-mask
+tests:
+  - id: text-to-mask.valid
+    cases:
+      - id: text-to-mask.valid.text.12345678
+        value: 12345678
+        expected: BE-123.456.78
+        parameters:
+          - BE-***.***.**
+      - id: text-to-mask.valid.text.1234567890
+        value: 1234567890
+        expected: BE-123.456.78
+        parameters:
+          - BE-***.***.**
+      - id: text-to-mask.valid.text.12345
+        value: 12345
+        expected: BE-123.45*.**
+        parameters:
+          - BE-***.***.**
+      - id: text-to-mask.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - BE-***.***.**
+      - id: text-to-mask.valid.special.empty
+        value: (empty)
+        expected: BE-***.***.**
+        parameters:
+          - BE-***.***.**
+      - id: text-to-mask.valid.special.blank
+        value: (blank)
+        expected: BE-***.***.**
+        parameters:
+          - BE-***.***.**
