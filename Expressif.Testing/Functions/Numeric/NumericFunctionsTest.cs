@@ -32,7 +32,7 @@ public class NumericFunctionsTest
         => Assert.That(new Ceiling().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void Integer_Valid(object value, decimal? expected)
+    public void IntegerFunc_Valid(object value, decimal? expected)
         => Assert.That(new Integer().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]

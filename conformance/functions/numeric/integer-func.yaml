@@ -1,0 +1,42 @@
+suite: numeric
+kind: function
+operator: integer
+tests:
+  - id: integer-func.valid
+    cases:
+      - id: integer-func.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: integer-func.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: integer-func.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: integer-func.valid.numeric.positive-low-value
+        value: 0.0001
+        expected: 0
+      - id: integer-func.valid.numeric.positive-half
+        value: 0.5
+        expected: 0
+      - id: integer-func.valid.numeric.positive-close-to-one
+        value: 0.9999
+        expected: 1
+      - id: integer-func.valid.numeric.negative-low-value
+        value: -0.0001
+        expected: 0
+      - id: integer-func.valid.numeric.negative-half
+        value: -0.5
+        expected: 0
+      - id: integer-func.valid.numeric.negative-close-to-one
+        value: -0.9999
+        expected: -1
+      - id: integer-func.valid.special.null
+        value: (null)
+        expected: 
+      - id: integer-func.valid.special.empty
+        value: (empty)
+        expected: 
+      - id: integer-func.valid.special.blank
+        value: (blank)
+        expected: 

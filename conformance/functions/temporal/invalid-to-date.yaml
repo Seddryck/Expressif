@@ -1,10 +1,10 @@
 suite: temporal
 kind: function
-operator: null-to-date
+operator: invalid-to-date
 tests:
   - id: invalid-to-date.valid
     cases:
-      - id: invalid-to-date.valid.temporal.2018-02-01-07-00-00
+      - id: invalid-to-date.valid.temporal.valid-date-time
         value: 2018-02-01 07:00:00
         expected: 2018-02-01 07:00:00
         parameters:
@@ -14,17 +14,17 @@ tests:
         expected: 2001-01-01
         parameters:
           - 2001-01-01
-      - id: invalid-to-date.valid.temporal.2018-02-31
+      - id: invalid-to-date.valid.temporal.invalid-date
         value: "2018-02-31"
         expected: 2001-01-01
         parameters:
           - 2001-01-01
-      - id: invalid-to-date.valid.special.null-to-null-with-2001-01-01-source-line-
+      - id: invalid-to-date.valid.special.null-tag
         value: "(null)"
         expected: null
         parameters:
           - 2001-01-01
-      - id: invalid-to-date.valid.special.null-to-null-with-2001-01-01-source-line-
+      - id: invalid-to-date.valid.special.null
         value: null
         expected: null
         parameters:
