@@ -174,7 +174,7 @@ Write-Host (
 
 if ($Tag) {
     . "$env:APPVEYOR_BUILD_FOLDER\github.ps1"
-    $semVer = $env:GitHub_Conformance_SemVer
+    $semVer = $env:GitVersion_Conformance_SemVer
 
     # Skip if conformance version is not set (e.g., no modification to conformance/)
     if ([string]::IsNullOrWhiteSpace($semVer)) {
