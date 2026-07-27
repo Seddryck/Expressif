@@ -75,16 +75,23 @@ test_script:
     $ProgressPreference = 'SilentlyContinue'
     Invoke-WebRequest -Uri https://uploader.codecov.io/latest/windows/codecov.exe -Outfile codecov.exe
     .\codecov.exe --dir "./.coverage/"
+- cmd: dotnet test Expressif.Testing -c Release --framework net10.0 --no-build --nologo --filter "TestCategory=conformance" --logger:"nunit;LogFilePath=./../conformance/bin/Expressif.Conformance.DotNet.xml"
 
 after_test:
 - dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo
 - pwsh: . ./Get-ConformanceVersion.ps1 -Pack -Tag
+- pwsh: |
+      ./Export-ConformanceReport-NUnit.ps1 `
+        -ConformancePath "./conformance" `
+        -XmlPath "./conformance/bin/Expressif.Conformance.DotNet.xml" `
+        -OutputYamlPath "./conformance/bin/Expressif.Conformance.DotNet.yaml"
 
 artifacts:
 - path: '**\*.nupkg'
 - path: '**\*.snupkg'
 - path: '**\*.vsix'
 - path: '**\Expressif.Conformance.*.zip'
+- path: '**\Expressif.Conformance.*.yaml'
 
 deploy:
 - provider: NuGet
@@ -121,6 +128,11 @@ on_success:
                 $context | Upload-Release-Assets `
                     -Tag "v$($env:GitVersion_SemVer)" `
                     -Path "./conformance/bin/"
+
+                $context | Upload-Release-Assets `
+                    -Tag "v$($env:GitVersion_SemVer)" `
+                    -Path "./conformance/bin/"
+                    -Extensions "yaml"
             }
         } else {
             Write-Host "No release published on GitHub when patch is not set to zero."
