@@ -1,0 +1,15 @@
+suite: temporal
+kind: function
+operator: next-day
+tests:
+  - id: next-day.valid
+    cases:
+      - id: next-day.valid.temporal.2019-03-11
+        value: 2019-03-11
+        expected: 2019-03-12
+      - id: next-day.valid.temporal.2019-02-11
+        value: 2019-02-11
+        expected: 2019-02-12
+      - id: next-day.valid.temporal.2019-03-31
+        value: 2019-03-31
+        expected: 2019-04-01

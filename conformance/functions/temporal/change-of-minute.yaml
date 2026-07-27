@@ -1,0 +1,21 @@
+suite: temporal
+kind: function
+operator: change-of-minute
+tests:
+  - id: change-of-minute.valid.date-time
+    cases:
+      - id: change-of-minute.valid.date-time.temporal.2001-01-01-17-12-16
+        value: 2001-01-01 17:12:16
+        expected: 2001-01-01 17:44:16
+        parameters:
+          - 44
+      - id: change-of-minute.valid.date-time.temporal.1901-01-01-05-04-26
+        value: 1901-01-01 05:04:26
+        expected: 1901-01-01 05:00:26
+        parameters:
+          - 0
+      - id: change-of-minute.valid.date-time.temporal.0800-01-01-12-00-00
+        value: 0800-01-01 12:00:00
+        expected: 0800-01-01 12:30:00
+        parameters:
+          - 30

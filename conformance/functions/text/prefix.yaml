@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: prefix
+tests:
+  - id: prefix.valid
+    cases:
+      - id: prefix.valid.text.123456789
+        value: 123456789
+        expected: abc123456789
+        parameters:
+          - abc
+      - id: prefix.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - abc
+      - id: prefix.valid.special.empty
+        value: (empty)
+        expected: abc
+        parameters:
+          - abc
+      - id: prefix.valid.special.blank
+        value: (blank)
+        expected: abc
+        parameters:
+          - abc

@@ -1,0 +1,45 @@
+suite: text
+kind: function
+operator: clean-whitespace
+tests:
+  - id: clean-whitespace.valid
+    cases:
+      - id: clean-whitespace.valid.text.foo
+        value: foo
+        expected: foo
+      - id: clean-whitespace.valid.text.foo-bar-to-foo-bar-source-line-81
+        value: foo bar
+        expected: foo bar
+      - id: clean-whitespace.valid.text.foo-bar-to-foo-bar-source-line-82
+        value: foo  bar
+        expected: foo  bar
+      - id: clean-whitespace.valid.text.foo-tbar
+        value: "foo\tbar"
+        expected: foo bar
+      - id: clean-whitespace.valid.text.foo-t-bar
+        value: "foo\t bar"
+        expected: "foo  bar"
+      - id: clean-whitespace.valid.text.foo-r-nbar
+        value: "foo\r\nbar"
+        expected: "foo bar"
+      - id: clean-whitespace.valid.text.foo-rbar-n
+        value: "foo\rbar\n"
+        expected: "foo bar "
+      - id: clean-whitespace.valid.text.foo-r-n-r-nbar
+        value: "foo\r\n\r\nbar"
+        expected: "foo  bar"
+      - id: clean-whitespace.valid.text.t-t-tfoo-t-tbar-t-t-t
+        value: "\t\t\tfoo\t\tbar\t\t\t"
+        expected: "   foo  bar   "
+      - id: clean-whitespace.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: clean-whitespace.valid.special.empty-to-null
+        value: 
+        expected: (null)
+      - id: clean-whitespace.valid.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+      - id: clean-whitespace.valid.special.blank
+        value: (blank)
+        expected: (blank)

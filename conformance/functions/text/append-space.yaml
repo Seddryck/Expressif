@@ -1,0 +1,12 @@
+suite: text
+kind: function
+operator: append-space
+tests:
+  - id: append-space.valid
+    cases:
+      - id: append-space.valid.text.123456789
+        value: 123456789
+        expected: '123456789 '
+      - id: append-space.valid.special.null
+        value: (null)
+        expected: ' '

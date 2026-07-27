@@ -1,0 +1,30 @@
+suite: temporal
+kind: function
+operator: backward
+tests:
+  - id: backward.valid
+    cases:
+      - id: backward.valid.4hours-0times.temporal.any-date
+        value: 2019-03-11 17:00:00
+        expected: 2019-03-11 17:00:00
+        parameters:
+          - 04:00:00
+          - 0
+      - id: backward.valid.4hours-1time.temporal.no-change-date
+        value: 2019-03-11 17:00:00
+        expected: 2019-03-11 13:00:00
+        parameters:
+          - 04:00:00
+          - 1
+      - id: backward.valid.4hours-5times.temporal.change-date
+        value: 2019-03-11 17:00:00
+        expected: 2019-03-10 21:00:00
+        parameters:
+          - 04:00:00
+          - 5
+      - id: backward.valid.4hours-minus-1time.temporal.no-change-date
+        value: 2019-03-11 17:00:00
+        expected: 2019-03-11 21:00:00
+        parameters:
+          - 04:00:00
+          - -1

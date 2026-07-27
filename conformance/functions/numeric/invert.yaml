@@ -1,0 +1,36 @@
+suite: numeric
+kind: function
+operator: invert
+tests:
+  - id: invert.valid
+    cases:
+      - id: invert.valid.numeric.zero
+        value: 0
+        expected: 
+      - id: invert.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: invert.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: invert.valid.numeric.four
+        value: 4
+        expected: 0.25
+      - id: invert.valid.numeric.minus-four
+        value: -4
+        expected: -0.25
+      - id: invert.valid.numeric.positive-quarter
+        value: 0.25
+        expected: 4
+      - id: invert.valid.numeric.negative-quarter
+        value: -0.25
+        expected: -4
+      - id: invert.valid.special.null
+        value: (null)
+        expected: 
+      - id: invert.valid.special.empty
+        value: (empty)
+        expected: 
+      - id: invert.valid.special.blank
+        value: (blank)
+        expected: 

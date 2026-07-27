@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: lower
+tests:
+  - id: lower.valid
+    cases:
+      - id: lower.valid.text.foo-to-foo-source-line-192
+        value: FOO
+        expected: foo
+      - id: lower.valid.text.foo-to-foo-source-line-193
+        value: foo
+        expected: foo
+      - id: lower.valid.text.foo-to-foo-source-line-194
+        value: fOo
+        expected: foo
+      - id: lower.valid.text.foo-to-foo-source-line-195
+        value: ' foO '
+        expected: ' foo '
+      - id: lower.valid.special.null
+        value: (null)
+        expected: (null)
+      - id: lower.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: lower.valid.special.blank
+        value: (blank)
+        expected: (blank)

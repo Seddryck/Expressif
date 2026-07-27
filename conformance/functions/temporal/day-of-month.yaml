@@ -1,0 +1,15 @@
+suite: temporal
+kind: function
+operator: day-of-month
+tests:
+  - id: day-of-month.valid.date-time
+    cases:
+      - id: day-of-month.valid.date-time.temporal.1900-01-01
+        value: 1900-01-01
+        expected: 1
+      - id: day-of-month.valid.date-time.temporal.2000-10-28
+        value: 2000-10-28
+        expected: 28
+      - id: day-of-month.valid.date-time.temporal.800-03-17
+        value: 800-03-17
+        expected: 17

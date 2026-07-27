@@ -1,0 +1,61 @@
+suite: numeric
+kind: function
+operator: lowest-common-multiple
+tests:
+  - id: lowest-common-multiple.valid
+    cases:
+      - id: lowest-common-multiple.valid.numeric.eight-to-twenty-four-with-twelve
+        value: 8
+        expected: 24
+        parameters:
+          - 12
+      - id: lowest-common-multiple.valid.numeric.twelve-to-twenty-four
+        value: 12
+        expected: 24
+        parameters:
+          - 8
+      - id: lowest-common-multiple.valid.numeric.minus-eight
+        value: -8
+        expected: 24
+        parameters:
+          - 12
+      - id: lowest-common-multiple.valid.numeric.eight-to-twenty-four-with-minus-twelve
+        value: 8
+        expected: 24
+        parameters:
+          - -12
+      - id: lowest-common-multiple.valid.numeric.zero-to-zero-with-twelve
+        value: 0
+        expected: 0
+        parameters:
+          - 12
+      - id: lowest-common-multiple.valid.numeric.twelve-to-zero
+        value: 12
+        expected: 0
+        parameters:
+          - 0
+      - id: lowest-common-multiple.valid.numeric.zero-to-zero-with-zero
+        value: 0
+        expected: 0
+        parameters:
+          - 0
+      - id: lowest-common-multiple.valid.special.null
+        value: (null)
+        expected: 
+        parameters:
+          - 12
+      - id: lowest-common-multiple.valid.special.empty
+        value: (empty)
+        expected: 
+        parameters:
+          - 12
+      - id: lowest-common-multiple.valid.special.blank
+        value: (blank)
+        expected: 
+        parameters:
+          - 12
+      - id: lowest-common-multiple.valid.numeric.positive-7-5
+        value: 7.5
+        expected: 
+        parameters:
+          - 12

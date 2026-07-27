@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: first-chars
+tests:
+  - id: first-chars.valid
+    cases:
+      - id: first-chars.valid.text.123456789-to-123456789-with-nine
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 9
+      - id: first-chars.valid.text.123456789-to-123456789-with-ten
+        value: 123456789
+        expected: 123456789
+        parameters:
+          - 10
+      - id: first-chars.valid.text.123456789-to-12345678
+        value: 123456789
+        expected: 12345678
+        parameters:
+          - 8
+      - id: first-chars.valid.text.123456789-to-value
+        value: 123456789
+        expected: ''
+        parameters:
+          - 0
+      - id: first-chars.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - 3
+      - id: first-chars.valid.special.empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - 3

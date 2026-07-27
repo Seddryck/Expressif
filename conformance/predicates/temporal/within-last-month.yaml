@@ -1,0 +1,27 @@
+suite: temporal
+kind: predicate
+operator: within-last-month
+tests:
+  - id: within-last-month.valid.date-time
+    cases:
+      - id: within-last-month.valid.date-time.temporal.last-day-of-two-months-ago
+        value: 2022-10-31
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.first-day-of-last-month
+        value: 2022-11-01
+        expected: true
+      - id: within-last-month.valid.date-time.temporal.last-day-of-last-month
+        value: 2022-11-30
+        expected: true
+      - id: within-last-month.valid.date-time.temporal.first-day-of-current-month
+        value: 2022-12-01
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.yesterday-in-current-month
+        value: 2022-12-28
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.today
+        value: 2022-12-29
+        expected: false
+      - id: within-last-month.valid.date-time.temporal.first-day-of-next-month
+        value: 2023-01-01
+        expected: false

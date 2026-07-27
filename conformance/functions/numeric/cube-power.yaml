@@ -1,0 +1,24 @@
+suite: numeric
+kind: function
+operator: cube-power
+tests:
+  - id: cube-power.valid
+    cases:
+      - id: cube-power.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: cube-power.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: cube-power.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: cube-power.valid.numeric.two
+        value: 2
+        expected: 8
+      - id: cube-power.valid.numeric.minus-two
+        value: -2
+        expected: -8
+      - id: cube-power.valid.special.empty
+        value: 
+        expected: 

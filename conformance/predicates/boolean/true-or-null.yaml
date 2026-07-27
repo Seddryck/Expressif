@@ -1,0 +1,39 @@
+suite: boolean
+kind: predicate
+operator: true-or-null
+tests:
+  - id: true-or-null.valid
+    cases:
+      - id: true-or-null.valid.boolean.true
+        value: true
+        expected: true
+      - id: true-or-null.valid.boolean.false
+        value: false
+        expected: false
+      - id: true-or-null.valid.special.empty
+        value: 
+        expected: true
+      - id: true-or-null.valid.special.null
+        value: (null)
+        expected: true
+      - id: true-or-null.valid.integer.minus-one
+        value: -1
+        expected: true
+      - id: true-or-null.valid.integer.zero
+        value: 0
+        expected: false
+      - id: true-or-null.valid.integer.one
+        value: 1
+        expected: true
+      - id: true-or-null.valid.numeric.positive-decimal
+        value: 104.25
+        expected: true
+      - id: true-or-null.valid.numeric.negative-decimal
+        value: -104.25
+        expected: true
+      - id: true-or-null.valid.boolean.yes
+        value: yes
+        expected: true
+      - id: true-or-null.valid.boolean.no
+        value: no
+        expected: false

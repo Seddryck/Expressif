@@ -1,0 +1,24 @@
+suite: numeric
+kind: function
+operator: cube-root
+tests:
+  - id: cube-root.valid
+    cases:
+      - id: cube-root.valid.numeric.zero
+        value: 0
+        expected: 0
+      - id: cube-root.valid.numeric.one
+        value: 1
+        expected: 1
+      - id: cube-root.valid.numeric.minus-one
+        value: -1
+        expected: -1
+      - id: cube-root.valid.numeric.eight
+        value: 8
+        expected: 2
+      - id: cube-root.valid.numeric.minus-eight
+        value: -8
+        expected: -2
+      - id: cube-root.valid.special.empty
+        value: 
+        expected: 

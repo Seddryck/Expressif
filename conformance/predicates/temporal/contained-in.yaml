@@ -1,0 +1,24 @@
+suite: temporal
+kind: predicate
+operator: contained-in
+parameters:
+  - 
+cases:
+  - id: contained-in.date-time.expected.temporal.2022-11-21
+    value: 2022-11-21
+    expected: true
+  - id: contained-in.date-time.expected.temporal.2022-11-25
+    value: 2022-11-25
+    expected: false
+  - id: contained-in.date-time.expected.temporal.2022-11-21-17-12-25
+    value: 2022-11-21 17:12:25
+    expected: true
+  - id: contained-in.date-time.expected.temporal.2022-11-25-17-12-25
+    value: 2022-11-25 17:12:25
+    expected: false
+  - id: contained-in.date-time.expected.special.empty
+    value: 
+    expected: false
+  - id: contained-in.date-time.expected.special.null
+    value: (null)
+    expected: false

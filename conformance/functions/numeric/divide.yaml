@@ -1,0 +1,36 @@
+suite: numeric
+kind: function
+operator: divide
+tests:
+  - id: divide.valid.4
+    cases:
+      - id: divide.valid.4.numeric.zero
+        value: 0
+        expected: 0
+        parameters:
+          - 4
+      - id: divide.valid.4.numeric.one
+        value: 1
+        expected: 0.25
+        parameters:
+          - 4
+      - id: divide.valid.4.numeric.minus-one
+        value: -1
+        expected: -0.25
+        parameters:
+          - 4
+      - id: divide.valid.4.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 4
+      - id: divide.valid.4.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - 4
+      - id: divide.valid.4.special.blank
+        value: (blank)
+        expected:
+        parameters:
+          - 4

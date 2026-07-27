@@ -1,0 +1,31 @@
+suite: temporal
+kind: predicate
+operator: on-the-minute
+tests:
+  - id: on-the-minute.valid.date
+    cases:
+      - id: on-the-minute.valid.date
+        value: 2022-11-21
+        expected: true
+  - id: on-the-minute.valid.date-time
+    cases:
+      - id: on-the-minute.valid.date-time.midnight
+        value: 2022-11-21 00:00:00
+        expected: true
+      - id: on-the-minute.valid.date-time.on-the-hour
+        value: 2022-11-21 17:00:00
+        expected: true
+      - id: on-the-minute.valid.date-time.on-the-minute
+        value: 2022-11-21 17:12:00
+        expected: true
+      - id: on-the-minute.valid.date-time.random-second
+        value: 2022-11-21 17:12:25
+        expected: false
+  - id: on-the-minute.valid.special
+    cases:
+      - id: on-the-minute.valid.special.empty
+        value:
+        expected: false
+      - id: on-the-minute.valid.special.null
+        value: (null)
+        expected: false

@@ -1,0 +1,33 @@
+suite: io
+kind: function
+operator: extension
+tests:
+  - id: extension.valid
+    cases:
+      - id: extension.valid.io.drive-c
+        value: C:\
+        expected: ''
+      - id: extension.valid.io.drive-c-dir
+        value: C:\Dir\
+        expected: ''
+      - id: extension.valid.io.drive-c-dir-child
+        value: C:\Dir\Child\
+        expected: ''
+      - id: extension.valid.io.drive-c-dir-childfile
+        value: C:\Dir\ChildFile
+        expected: ''
+      - id: extension.valid.io.drive-c-dir-child-file-txt
+        value: C:\Dir\Child\file.txt
+        expected: .txt
+      - id: extension.valid.io.dir-file-txt
+        value: Dir\file.txt
+        expected: .txt
+      - id: extension.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: extension.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: extension.valid.special.blank
+        value: (blank)
+        expected: (empty)

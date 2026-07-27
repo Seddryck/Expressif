@@ -1,0 +1,38 @@
+suite: temporal
+kind: function
+operator: length-of-year
+tests:
+  - id: length-of-year.valid.date-time
+    cases:
+      - id: length-of-year.valid.date-time.temporal.1900-05-25
+        value: 1900-05-25
+        expected: 365
+      - id: length-of-year.valid.date-time.temporal.1999-05-25
+        value: 1999-05-25
+        expected: 365
+      - id: length-of-year.valid.date-time.temporal.2000-05-25
+        value: 2000-05-25
+        expected: 366
+      - id: length-of-year.valid.date-time.temporal.2023-05-25
+        value: 2023-05-25
+        expected: 365
+      - id: length-of-year.valid.date-time.temporal.2024-05-25
+        value: 2024-05-25
+        expected: 366
+  - id: length-of-year.valid.integer
+    cases:
+      - id: length-of-year.valid.integer.temporal.1900
+        value: 1900
+        expected: 365
+      - id: length-of-year.valid.integer.temporal.1999
+        value: 1999
+        expected: 365
+      - id: length-of-year.valid.integer.temporal.2000
+        value: 2000
+        expected: 366
+      - id: length-of-year.valid.integer.temporal.2023
+        value: 2023
+        expected: 365
+      - id: length-of-year.valid.integer.temporal.2024
+        value: 2024
+        expected: 366

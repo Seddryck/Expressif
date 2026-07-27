@@ -1,0 +1,32 @@
+suite: temporal
+kind: predicate
+operator: tomorrow
+tests:
+  - id: tomorrow.valid.date-time
+    cases:
+      - id: tomorrow.valid.date-time.yesterday
+        value: 2022-12-28T14:00:00
+        expected: false
+      - id: tomorrow.valid.date-time.today
+        value: 2022-12-29T14:00:00
+        expected: false
+      - id: tomorrow.valid.date-time.tomorrow
+        value: 2022-12-30T14:00:00
+        expected: true
+      - id: tomorrow.valid.date-time.epoch
+        value: 1970-05-06T00:00:00  
+        expected: false
+  - id: tomorrow.valid.date
+    cases:
+      - id: tomorrow.valid.date.yesterday
+        value: 2022-12-28
+        expected: false
+      - id: tomorrow.valid.date.today
+        value: 2022-12-29
+        expected: false
+      - id: tomorrow.valid.date.tomorrow
+        value: 2022-12-30
+        expected: true
+      - id: tomorrow.valid.date.epoch
+        value: 1970-05-06
+        expected: false

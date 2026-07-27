@@ -1,0 +1,39 @@
+suite: boolean
+kind: predicate
+operator: true
+tests:
+  - id: true.valid
+    cases:
+    - id: true.valid.boolean.true
+      value: true
+      expected: true
+    - id: true.valid.boolean.false
+      value: false
+      expected: false
+    - id: true.valid.special.empty
+      value: 
+      expected: false
+    - id: true.valid.special.null
+      value: (null)
+      expected: false
+    - id: true.valid.integer.minus-one
+      value: -1
+      expected: true
+    - id: true.valid.integer.zero
+      value: 0
+      expected: false
+    - id: true.valid.integer.one
+      value: 1
+      expected: true
+    - id: true.valid.numeric.positive-decimal
+      value: 104.25
+      expected: true
+    - id: true.valid.numeric.negative-decimal
+      value: -104.25
+      expected: true
+    - id: true.valid.boolean.yes
+      value: yes
+      expected: true
+    - id: true.valid.boolean.no
+      value: no
+      expected: false

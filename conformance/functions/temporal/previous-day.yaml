@@ -1,0 +1,18 @@
+suite: temporal
+kind: function
+operator: previous-day
+tests:
+  - id: previous-day.valid
+    cases:
+      - id: previous-day.valid.temporal.2019-03-11
+        value: 2019-03-11
+        expected: 2019-03-10
+      - id: previous-day.valid.temporal.2019-02-01
+        value: 2019-02-01
+        expected: 2019-01-31
+      - id: previous-day.valid.temporal.2020-03-01
+        value: 2020-03-01
+        expected: 2020-02-29
+      - id: previous-day.valid.temporal.2020-03-01-17-30-12
+        value: 2020-03-01 17:30:12
+        expected: 2020-02-29 17:30:12

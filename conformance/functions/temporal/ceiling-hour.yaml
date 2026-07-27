@@ -1,0 +1,18 @@
+suite: temporal
+kind: function
+operator: ceiling-hour
+tests:
+  - id: ceiling-hour.valid
+    cases:
+      - id: ceiling-hour.valid.temporal.on-hour
+        value: 2019-03-11 17:00:00
+        expected: 2019-03-11 17:00:00
+      - id: ceiling-hour.valid.temporal.after-hour-minutes-closer-previous-hour
+        value: 2019-03-11 17:20:00
+        expected: 2019-03-11 18:00:00
+      - id: ceiling-hour.valid.temporal.after-hour-seconds
+        value: 2019-03-11 17:20:24
+        expected: 2019-03-11 18:00:00
+      - id: ceiling-hour.valid.temporal.after-hour-minutes-closer-next-hour
+        value: 2019-03-11 17:40:00
+        expected: 2019-03-11 18:00:00

@@ -1,0 +1,46 @@
+suite: text
+kind: function
+operator: remove-chars
+tests:
+  - id: remove-chars.valid
+    cases:
+      - id: remove-chars.valid.text.123-456-78-to-12345678-with-value-source-line-13
+        value: 123*456*78
+        expected: 12345678
+        parameters:
+          - '*'
+      - id: remove-chars.valid.text.123-456-78-to-12345678-with-value-source-line-14
+        value: '***123***456*78****'
+        expected: 12345678
+        parameters:
+          - '*'
+      - id: remove-chars.valid.text.value
+        value: '******'
+        expected: ''
+        parameters:
+          - '*'
+      - id: remove-chars.valid.special.null
+        value: (null)
+        expected: (null)
+        parameters:
+          - '*'
+      - id: remove-chars.valid.special.empty-to-null
+        value: 
+        expected: (null)
+        parameters:
+          - '*'
+      - id: remove-chars.valid.special.empty-to-empty
+        value: (empty)
+        expected: (empty)
+        parameters:
+          - '*'
+      - id: remove-chars.valid.special.blank-to-blank
+        value: (blank)
+        expected: (blank)
+        parameters:
+          - '*'
+      - id: remove-chars.valid.special.blank-to-empty
+        value: (blank)
+        expected: (empty)
+        parameters:
+          - ' '

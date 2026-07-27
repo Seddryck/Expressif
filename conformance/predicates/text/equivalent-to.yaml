@@ -1,0 +1,36 @@
+suite: text
+kind: predicate
+operator: equivalent-to
+tests:
+  - id: equivalent-to.valid
+    cases:
+      - id: equivalent-to.valid.text.same
+        value: A
+        expected: true
+        parameters:
+          - A
+      - id: equivalent-to.valid.text.before
+        value: A
+        expected: false
+        parameters:
+          - B
+      - id: equivalent-to.valid.text.after
+        value: B
+        expected: false
+        parameters:
+          - A
+      - id: equivalent-to.valid.empty-string.special.empty
+        value: ""
+        expected: true
+        parameters:
+          - (empty)
+      - id: equivalent-to.valid.string.special.empty
+        value: A
+        expected: false
+        parameters:
+          - (empty)
+      - id: equivalent-to.valid.null.special.null
+        value: (null)
+        expected: true
+        parameters:
+          - (null)
