@@ -378,10 +378,10 @@ public static class ConformanceTestCaseDataSource
         if (value is string blank && string.IsNullOrWhiteSpace(blank))
             return "(blank)";
 
-        if (value is object?[] array)
+        if (value is Array array)
             return array.Length == 0
                 ? "{ }"
-                : $"{{ {string.Join(", ", array.Select(FormatArgDisplay))} }}";
+                : $"{{ {string.Join(", ", array.Cast<object?>().Select(FormatArgDisplay))} }}";
 
         return value switch
         {
