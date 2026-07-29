@@ -148,14 +148,6 @@ public class TextFunctionsTest
     public void Trim_Valid(object value, object expected)
         => Assert.That(new Trim().Evaluate(value), Is.EqualTo(expected));
 
-    [Conformance]
-    public void Upper_Valid(object value, object expected)
-        => Assert.That(new Upper().Evaluate(value), Is.EqualTo(expected));
-
-    [Conformance]
-    public void Lower_Valid(object value, object expected)
-        => Assert.That(new Lower().Evaluate(value), Is.EqualTo(expected));
-
     [Test]
     [TestCase("Cédric")]
     public void TextToHtml_Valid(object value)

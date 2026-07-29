@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: pascal-case
+tests:
+  - id: pascal-case.valid
+    cases:
+      - id: pascal-case.valid.text.basic
+        value: customer order
+        expected: CustomerOrder
+      - id: pascal-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: CustomerOrder
+      - id: pascal-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: pascal-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: pascal-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: pascal-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

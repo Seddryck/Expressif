@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: snake-case
+tests:
+  - id: snake-case.valid
+    cases:
+      - id: snake-case.valid.text.basic
+        value: customer order
+        expected: customer_order
+      - id: snake-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: customer_order
+      - id: snake-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: snake-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: snake-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: snake-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

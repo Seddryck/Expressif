@@ -2,11 +2,7 @@
 using Expressif.Values;
 using Expressif.Values.Casters;
 using Expressif.Values.Special;
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text;
+using System.Collections;
 
 namespace Expressif.Functions.Text;
 
@@ -22,6 +18,7 @@ public abstract class BaseTextFunction : IFunction
             DBNull _ => EvaluateNull(),
             Empty _ => EvaluateEmpty(),
             Whitespace _ => EvaluateBlank(),
+            IEnumerable array and not string => EvaluateArray(array),
             string s => EvaluateHighLevelString(s),
             _ => EvaluateUncasted(value),
         };
@@ -55,6 +52,8 @@ public abstract class BaseTextFunction : IFunction
     protected virtual object? EvaluateEmpty() => new Empty().Keyword;
     protected virtual object? EvaluateBlank() => new Whitespace().Keyword;
     protected virtual object? EvaluateSpecial(string value) => value;
+
+    protected virtual object? EvaluateArray(IEnumerable array) => null;
     protected abstract object? EvaluateString(string value);
 }
 

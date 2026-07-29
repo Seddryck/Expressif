@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: swap-case
+tests:
+  - id: swap-case.valid
+    cases:
+      - id: swap-case.valid.text.mixed
+        value: cUsToMeR oRdEr
+        expected: CuStOmEr OrDeR
+      - id: swap-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: CUSTOMER ORDER
+      - id: swap-case.valid.special.null
+        value: (null)
+        expected: null
+      - id: swap-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: swap-case.valid.special.blank
+        value: (blank)
+        expected: (blank)
+      - id: swap-case.valid.special.zero-length-array
+        value: []
+        expected: null

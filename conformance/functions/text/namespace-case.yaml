@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: namespace-case
+tests:
+  - id: namespace-case.valid
+    cases:
+      - id: namespace-case.valid.text.basic
+        value: customer order
+        expected: customer::order
+      - id: namespace-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: customer::order
+      - id: namespace-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: namespace-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: namespace-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: namespace-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)
