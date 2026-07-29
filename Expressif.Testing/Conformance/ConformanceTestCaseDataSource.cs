@@ -56,7 +56,7 @@ public static class ConformanceTestCaseDataSource
         var test = document?.Tests?.Find(x => ToPascalSnakeCase(x.Id) == testName);
         if (test is null)
             throw new InvalidOperationException($"No test with id '{testName}' into the YAML conformance file");
-        Console.WriteLine($"\tFound {document.Tests?.Count ?? 0} tests and {document.Tests?.Sum(x => x.Cases?.Count ?? 0) ?? 0} cases.");
+        Console.WriteLine($"\tFound {document?.Tests?.Count ?? 0} tests and {document?.Tests?.Sum(x => x.Cases?.Count ?? 0) ?? 0} cases.");
 
         var method = type.GetMethod(testName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
             ?? throw new MissingMethodException(fullName, testName);
