@@ -26,3 +26,19 @@ public class ComplementTest
     public void Complement_Valid_Array(object? value, object?[] array, object? expected)
         => Assert.That(new Complement(() => array).Evaluate(value), Is.EqualTo(expected));
 }
+
+[TestFixture]
+public class IntersectionTest
+{
+    [Conformance]
+    public void Intersection_Valid_Array(object? value, object?[] array, object? expected)
+        => Assert.That(new Intersection(() => array).Evaluate(value), Is.EqualTo(expected));
+}
+
+[TestFixture]
+public class UnionTest
+{
+    [Conformance]
+    public void Union_Valid_Array(object? value, object?[] array, object? expected)
+        => Assert.That(new Union(() => array).Evaluate(value), Is.EqualTo(expected));
+}

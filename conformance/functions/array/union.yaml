@@ -1,0 +1,46 @@
+suite: array
+kind: function
+operator: union
+tests:
+  - id: union.valid.array
+    cases:
+      - id: union.valid.array.special.null
+        value: (null)
+        expected:
+        parameters:
+          - [banana, cherry]
+      - id: union.valid.array.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - [banana, cherry]
+      - id: union.valid.array.text.combine-arrays
+        value: [apple, banana]
+        expected: [apple, banana, cherry]
+        parameters:
+          - [banana, cherry]
+      - id: union.valid.array.text.preserve-source-order
+        value: [cherry, apple]
+        expected: [cherry, apple, date, banana]
+        parameters:
+          - [date, apple, banana]
+      - id: union.valid.array.text.remove-duplicates
+        value: [apple, banana, apple]
+        expected: [apple, banana, cherry]
+        parameters:
+          - [cherry]
+      - id: union.valid.array.text.argument-duplicates
+        value: [apple]
+        expected: [apple, banana, cherry]
+        parameters:
+          - [banana, banana, cherry]
+      - id: union.valid.array.text.same-values
+        value: [apple, banana]
+        expected: [apple, banana]
+        parameters:
+          - [banana, apple]
+      - id: union.valid.array.text.zero-length-argument
+        value: [apple, banana]
+        expected: [apple, banana]
+        parameters:
+          - []

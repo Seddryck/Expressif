@@ -1,0 +1,41 @@
+suite: array
+kind: function
+operator: intersection
+tests:
+  - id: intersection.valid.array
+    cases:
+      - id: intersection.valid.array.special.null
+        value: (null)
+        expected:
+        parameters:
+          - [banana, cherry, date]
+      - id: intersection.valid.array.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - [banana, cherry, date]
+      - id: intersection.valid.array.text.common-values
+        value: [apple, banana, cherry]
+        expected: [banana, cherry]
+        parameters:
+          - [banana, cherry, date]
+      - id: intersection.valid.array.text.pipeline-order
+        value: [cherry, apple, banana]
+        expected: [cherry, banana]
+        parameters:
+          - [banana, cherry]
+      - id: intersection.valid.array.text.remove-duplicates
+        value: [apple, banana, apple, cherry]
+        expected: [apple, banana]
+        parameters:
+          - [apple, banana]
+      - id: intersection.valid.array.text.no-common-values
+        value: [apple, banana]
+        expected: []
+        parameters:
+          - [cherry, date]
+      - id: intersection.valid.array.text.zero-length-argument
+        value: [apple, banana]
+        expected: []
+        parameters:
+          - []
