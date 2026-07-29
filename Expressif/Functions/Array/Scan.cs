@@ -1,7 +1,8 @@
-using Expressif.Functions;
-using Expressif.Accumulators;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Expressif.Accumulators;
+using Expressif.Functions;
 
 namespace Expressif.Functions.Array;
 
@@ -13,7 +14,7 @@ namespace Expressif.Functions.Array;
 /// Returns `null` when the input is not an enumerable or is a string.
 /// </summary>
 [Function]
-public class Scan : IFunction
+public class Scan : BaseArrayFunction
 {
     public Func<IAccumulator> Accumulator { get; }
 
@@ -29,11 +30,8 @@ public class Scan : IFunction
     public Scan(string accumulator)
         : this(() => AccumulatorFactory.Instantiate(accumulator)) { }
 
-    public object? Evaluate(object? value)
+    protected override object? EvaluateArray(IEnumerable enumerable)
     {
-        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
-            return null;
-
         var accumulator = Accumulator.Invoke();
         accumulator.Initialize();
 
