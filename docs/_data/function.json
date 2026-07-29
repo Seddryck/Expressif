@@ -16,6 +16,38 @@
     ]
   },
   {
+    "Name": "complement",
+    "IsPublic": true,
+    "Aliases": [
+      "complement"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Optional": false,
+        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
+      }
+    ]
+  },
+  {
+    "Name": "difference",
+    "IsPublic": true,
+    "Aliases": [
+      "difference"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Optional": false,
+        "Summary": "Specifies the array containing values to exclude from the pipeline input."
+      }
+    ]
+  },
+  {
     "Name": "filter",
     "IsPublic": true,
     "Aliases": [
@@ -146,6 +178,22 @@
     "Scope": "Array",
     "Summary": "",
     "Parameters": []
+  },
+  {
+    "Name": "symmetric-difference",
+    "IsPublic": true,
+    "Aliases": [
+      "symmetric-difference"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Optional": false,
+        "Summary": "Specifies the second array to compare against the pipeline input."
+      }
+    ]
   },
   {
     "Name": "creation-datetime",
@@ -2199,53 +2247,5 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
-  },
-  {
-    "Name": "difference",
-    "IsPublic": true,
-    "Aliases": [
-      "difference"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Optional": false,
-        "Summary": "Specifies the array containing values to exclude from the pipeline input."
-      }
-    ]
-  },
-  {
-    "Name": "symmetric-difference",
-    "IsPublic": true,
-    "Aliases": [
-      "symmetric-difference"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Optional": false,
-        "Summary": "Specifies the second array to compare against the pipeline input."
-      }
-    ]
-  },
-  {
-    "Name": "complement",
-    "IsPublic": true,
-    "Aliases": [
-      "complement"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Optional": false,
-        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
-      }
-    ]
   }
 ]
