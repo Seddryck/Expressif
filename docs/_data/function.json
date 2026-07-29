@@ -84,6 +84,22 @@
     ]
   },
   {
+    "Name": "intersection",
+    "IsPublic": true,
+    "Aliases": [
+      "intersection"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Optional": false,
+        "Summary": "Specifies the array to compare with the pipeline input."
+      }
+    ]
+  },
+  {
     "Name": "lag",
     "IsPublic": true,
     "Aliases": [
@@ -192,6 +208,22 @@
         "Name": "array",
         "Optional": false,
         "Summary": "Specifies the second array to compare against the pipeline input."
+      }
+    ]
+  },
+  {
+    "Name": "union",
+    "IsPublic": true,
+    "Aliases": [
+      "union"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Optional": false,
+        "Summary": "Specifies the second array whose values are combined with the pipeline input."
       }
     ]
   },

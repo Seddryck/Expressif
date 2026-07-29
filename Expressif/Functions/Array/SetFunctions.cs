@@ -115,3 +115,66 @@ public class Complement : BaseArraySetFunction
         return DifferenceByOrder(array, enumerable);
     }
 }
+
+/// <summary>
+/// Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
+/// </summary>
+[Function(prefix: "", aliases: ["intersection"])]
+public class Intersection : BaseArraySetFunction
+{
+    public Func<object?[]> Array { get; }
+
+    /// <param name="array">Specifies the array to compare with the pipeline input.</param>
+    public Intersection(Func<object?[]> array)
+        => Array = array;
+
+    protected override object? EvaluateArray(IEnumerable enumerable)
+    {
+        // TODO REVIEW Scaffold
+        var array = Array.Invoke();
+        if (array is null)
+            return null;
+
+        var included = ToSet(array);
+        var values = new List<object?>();
+        var visited = new HashSet<object?>();
+        foreach (var item in enumerable)
+            if (included.Contains(item) && visited.Add(item))
+                values.Add(item);
+
+        return values.ToArray();
+    }
+}
+
+/// <summary>
+/// Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.
+/// </summary>
+[Function(prefix: "", aliases: ["union"])]
+public class Union : BaseArraySetFunction
+{
+    public Func<object?[]> Array { get; }
+
+    /// <param name="array">Specifies the second array whose values are combined with the pipeline input.</param>
+    public Union(Func<object?[]> array)
+        => Array = array;
+
+    protected override object? EvaluateArray(IEnumerable enumerable)
+    {
+        // TODO REVIEW Scaffold
+        var array = Array.Invoke();
+        if (array is null)
+            return null;
+
+        var values = new List<object?>();
+        var visited = new HashSet<object?>();
+        foreach (var item in enumerable)
+            if (visited.Add(item))
+                values.Add(item);
+
+        foreach (var item in array)
+            if (visited.Add(item))
+                values.Add(item);
+
+        return values.ToArray();
+    }
+}
