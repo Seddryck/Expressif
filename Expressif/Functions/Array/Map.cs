@@ -1,6 +1,7 @@
-using Expressif.Functions;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Expressif.Functions;
 
 namespace Expressif.Functions.Array;
 
@@ -10,18 +11,15 @@ namespace Expressif.Functions.Array;
 /// Returns `null` when the input is not an enumerable or is a string.
 /// </summary>
 [Function(prefix: "", aliases: ["map"])]
-public class Map : IFunction
+public class Map : BaseArrayFunction
 {
     public Func<IFunction> Transformation { get; }
 
     public Map(Func<IFunction> transformation)
         => Transformation = transformation;
 
-    public object? Evaluate(object? value)
+    protected override object? EvaluateArray(IEnumerable enumerable)
     {
-        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
-            return null;
-
         var transformation = Transformation.Invoke();
         var output = new List<object?>();
         foreach (var item in enumerable!)

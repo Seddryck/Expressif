@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, filter, first-elements, fold, lag, last-elements, lead, map, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, filter, first-elements, fold, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -74,6 +74,14 @@ Returns the next value for each input element. The last output value is `null` b
 ###### Overview
 
 Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
+
+##### reverse
+
+###### Alias: `reverse`
+
+###### Overview
+
+Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
 ##### scan
 
