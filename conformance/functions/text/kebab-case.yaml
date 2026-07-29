@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: kebab-case
+tests:
+  - id: kebab-case.valid
+    cases:
+      - id: kebab-case.valid.text.basic
+        value: customer order
+        expected: customer-order
+      - id: kebab-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: customer-order
+      - id: kebab-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: kebab-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: kebab-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: kebab-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

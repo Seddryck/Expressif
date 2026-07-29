@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: sentence-case
+tests:
+  - id: sentence-case.valid
+    cases:
+      - id: sentence-case.valid.text.basic
+        value: customer order
+        expected: Customer order
+      - id: sentence-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: Customer order
+      - id: sentence-case.valid.special.null
+        value: (null)
+        expected: null
+      - id: sentence-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: sentence-case.valid.special.blank
+        value: (blank)
+        expected: (blank)
+      - id: sentence-case.valid.special.zero-length-array
+        value: []
+        expected: null

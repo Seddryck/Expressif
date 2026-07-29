@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: flat-case
+tests:
+  - id: flat-case.valid
+    cases:
+      - id: flat-case.valid.text.basic
+        value: customer order
+        expected: customerorder
+      - id: flat-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: customerorder
+      - id: flat-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: flat-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: flat-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: flat-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

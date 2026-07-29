@@ -1,0 +1,28 @@
+suite: text
+kind: function
+operator: title-case
+tests:
+  - id: title-case.valid
+    cases:
+      - id: title-case.valid.text.basic
+        value: war of the worlds
+        expected: War of the Worlds
+      - id: title-case.valid.text.array-words
+        value:
+          - war
+          - of
+          - the
+          - worlds
+        expected: War of the Worlds
+      - id: title-case.valid.special.null
+        value: (null)
+        expected: null
+      - id: title-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: title-case.valid.special.blank
+        value: (blank)
+        expected: (blank)
+      - id: title-case.valid.special.zero-length-array
+        value: []
+        expected: null

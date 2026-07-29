@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: allcaps-case
+tests:
+  - id: allcaps-case.valid
+    cases:
+      - id: allcaps-case.valid.text.basic
+        value: customer order
+        expected: CUSTOMERORDER
+      - id: allcaps-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: CUSTOMERORDER
+      - id: allcaps-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: allcaps-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: allcaps-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: allcaps-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

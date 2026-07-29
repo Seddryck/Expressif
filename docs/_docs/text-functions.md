@@ -2,7 +2,7 @@
 title: Text functions
 subtitle: Functions applicable to text values
 tags: [functions, text]
-keywords: [after-substring, append, append-new-line, append-space, before-substring, clean-whitespace, collapse-whitespace, count-distinct-chars, count-substring, empty-to-null, filter-chars, first-chars, html-to-text, last-chars, length, lower, mask-to-text, null-to-empty, pad-center, pad-left, pad-right, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, retain-alpha, retain-alpha-numeric, retain-numeric, retain-numeric-symbol, skip-first-chars, skip-last-chars, suffix, suffix-new-line, suffix-space, text-to-datetime, text-to-html, text-to-mask, token, token-count, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
+keywords: [after-substring, allcaps-case, append, append-new-line, append-space, before-substring, camel-case, camel-snake-case, clean-whitespace, cobol-case, collapse-whitespace, count-distinct-chars, count-substring, dot-case, empty-to-null, filter-chars, first-chars, flat-case, html-to-text, kebab-case, last-chars, length, lower, mask-to-text, namespace-case, null-to-empty, pad-center, pad-left, pad-right, pascal-case, pascal-snake-case, path-case, prefix, prefix-new-line, prefix-space, prepend, prepend-new-line, prepend-space, remove-chars, replace-chars, replace-slice, retain-alpha, retain-alpha-numeric, retain-numeric, retain-numeric-symbol, screaming-snake-case, sentence-case, skip-first-chars, skip-last-chars, snake-case, suffix, suffix-new-line, suffix-space, swap-case, text-to-datetime, text-to-html, text-to-mask, title-case, token, token-count, train-case, trim, upper, whitespaces-to-empty, whitespaces-to-null, without-diacritics, without-whitespaces] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### after-substring
@@ -16,6 +16,14 @@ Returns the substring of the argument string, containing all the characters imme
 ###### Parameters
 * substring: The string to seek.
 * count (optional) : The number of character positions to examine.
+
+##### allcaps-case
+
+###### Alias: `text-to-allcaps-case`
+
+###### Overview
+
+Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 
 ##### append
 
@@ -56,6 +64,22 @@ Returns the substring of the argument string, containing all the characters imme
 * substring: The string to seek.
 * count (optional) : The number of character positions to examine.
 
+##### camel-case
+
+###### Alias: `text-to-camel-case`
+
+###### Overview
+
+Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
+##### camel-snake-case
+
+###### Alias: `text-to-camel-snake-case`
+
+###### Overview
+
+Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
 ##### clean-whitespace
 
 ###### Alias: `text-to-clean-whitespace`
@@ -63,6 +87,14 @@ Returns the substring of the argument string, containing all the characters imme
 ###### Overview
 
 returns the argument with any whitespace replaced by a space character. `\r\n` is considered as a single character.
+
+##### cobol-case
+
+###### Alias: `text-to-cobol-case`
+
+###### Overview
+
+Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 
 ##### collapse-whitespace
 
@@ -91,6 +123,14 @@ Returns the count of non-overlapping occurrences of a substring, defined as a pa
 ###### Parameter
 * substring: The substring to count in the argument value.
 
+##### dot-case
+
+###### Alias: `text-to-dot-case`
+
+###### Overview
+
+Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
 ##### empty-to-null
 ###### Overview
 
@@ -118,10 +158,26 @@ Returns the first chars of the argument value. The length of the string returned
 ###### Parameter
 * length: An integer value between 0 and +Infinity, defining the length of the substring to return.
 
+##### flat-case
+
+###### Alias: `text-to-flat-case`
+
+###### Overview
+
+Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
 ##### html-to-text
 ###### Overview
 
 Returns the argument value that has previously been HTML-encoded into a decoded string.
+
+##### kebab-case
+
+###### Alias: `text-to-kebab-case`
+
+###### Overview
+
+Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 
 ##### last-chars
 
@@ -148,7 +204,7 @@ Returns the length of the argument value. If the value is `null` or `empty` then
 
 ###### Overview
 
-Returns the argument value converted to lowercase using the casing rules of the invariant culture.
+Returns the input text converted to lowercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 
 ##### mask-to-text
 ###### Overview
@@ -157,6 +213,14 @@ Returns the value that passed to the function TextToMask will return the argumen
 
 ###### Parameter
 * mask: The string representing the mask to be unset from the argument string.
+
+##### namespace-case
+
+###### Alias: `text-to-namespace-case`
+
+###### Overview
+
+Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 
 ##### null-to-empty
 ###### Overview
@@ -198,6 +262,30 @@ Returns a new string that left-aligns the characters in this string by padding t
 ###### Parameters
 * length: An integer value between 0 and +Infinity, defining the minimal length of the string returned
 * character: The padding character
+
+##### pascal-case
+
+###### Alias: `text-to-pascal-case`
+
+###### Overview
+
+Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
+##### pascal-snake-case
+
+###### Alias: `text-to-pascal-snake-case`
+
+###### Overview
+
+Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
+##### path-case
+
+###### Alias: `text-to-path-case`
+
+###### Overview
+
+Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 
 ##### prefix
 
@@ -321,6 +409,22 @@ Returns the input string with all non-numeric characters removed, leaving only d
 
 Returns the input string with all characters removed except for digits (0-9) and the symbols `+`, `-`, `,` and `.` If the argument is `null`, it returns `null`.
 
+##### screaming-snake-case
+
+###### Alias: `text-to-screaming-snake-case`
+
+###### Overview
+
+Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
+##### sentence-case
+
+###### Aliases: `text-to-sentence-case`, `capitalize`
+
+###### Overview
+
+Returns the input text with the first character capitalized and remaining characters preserved. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+
 ##### skip-first-chars
 
 ###### Alias: `text-to-skip-first-chars`
@@ -342,6 +446,14 @@ Returns the first chars of the argument value. The length of the string omitted 
 
 ###### Parameter
 * length: An integer value between 0 and +Infinity, defining the length of the substring to skip.
+
+##### snake-case
+
+###### Alias: `text-to-snake-case`
+
+###### Overview
+
+Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 
 ##### suffix
 
@@ -370,6 +482,14 @@ Returns the argument value followed by a space character. If the argument is `nu
 
 Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
 
+##### swap-case
+
+###### Alias: `text-to-swap-case`
+
+###### Overview
+
+Returns the input text with lowercase characters converted to uppercase and uppercase characters converted to lowercase. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+
 ##### text-to-datetime
 
 ###### Alias: `text-to-dateTime`
@@ -395,6 +515,14 @@ Returns the argument value formatted according to the mask specified as paramete
 ###### Parameter
 * mask: The string representing the mask to apply to the argument string.
 
+##### title-case
+
+###### Alias: `text-to-title-case`
+
+###### Overview
+
+Returns the input text in title case, capitalizing each word while keeping articles and other small words lowercase when not leading. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+
 ##### token
 
 ###### Alias: `text-to-token`
@@ -418,6 +546,14 @@ Returns the count of token within the argument value. By default, the tokenizati
 ###### Parameter
 * separator: A character that delimits the substrings in this instance.
 
+##### train-case
+
+###### Alias: `text-to-train-case`
+
+###### Overview
+
+Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+
 ##### trim
 
 ###### Alias: `text-to-trim`
@@ -432,7 +568,7 @@ Returns the argument value without all leading or trailing white-space character
 
 ###### Overview
 
-Returns the argument value converted to uppercase using the casing rules of the invariant culture.
+Returns the input text converted to uppercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 
 ##### whitespaces-to-empty
 

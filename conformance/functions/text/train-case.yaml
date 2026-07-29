@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: train-case
+tests:
+  - id: train-case.valid
+    cases:
+      - id: train-case.valid.text.basic
+        value: customer order
+        expected: Customer-Order
+      - id: train-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: Customer-Order
+      - id: train-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: train-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: train-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: train-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

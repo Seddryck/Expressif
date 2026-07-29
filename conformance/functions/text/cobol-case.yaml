@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: cobol-case
+tests:
+  - id: cobol-case.valid
+    cases:
+      - id: cobol-case.valid.text.basic
+        value: customer order
+        expected: CUSTOMER-ORDER
+      - id: cobol-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: CUSTOMER-ORDER
+      - id: cobol-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: cobol-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: cobol-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: cobol-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

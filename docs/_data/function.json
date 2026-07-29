@@ -1374,6 +1374,16 @@
     ]
   },
   {
+    "Name": "allcaps-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-allcaps-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
     "Name": "append",
     "IsPublic": true,
     "Aliases": [
@@ -1431,6 +1441,26 @@
     ]
   },
   {
+    "Name": "camel-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-camel-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
+    "Name": "camel-snake-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-camel-snake-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
     "Name": "clean-whitespace",
     "IsPublic": true,
     "Aliases": [
@@ -1438,6 +1468,16 @@
     ],
     "Scope": "Text",
     "Summary": "returns the argument with any whitespace replaced by a space character. `\\r\\n` is considered as a single character.",
+    "Parameters": []
+  },
+  {
+    "Name": "cobol-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-cobol-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
     "Parameters": []
   },
   {
@@ -1475,6 +1515,16 @@
         "Summary": "The substring to count in the argument value."
       }
     ]
+  },
+  {
+    "Name": "dot-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-dot-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
   },
   {
     "Name": "empty-to-null",
@@ -1517,11 +1567,31 @@
     ]
   },
   {
+    "Name": "flat-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-flat-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
     "Name": "html-to-text",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
+    "Parameters": []
+  },
+  {
+    "Name": "kebab-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-kebab-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
     "Parameters": []
   },
   {
@@ -1558,7 +1628,7 @@
       "text-to-lower"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument value converted to lowercase using the casing rules of the invariant culture.",
+    "Summary": "Returns the input text converted to lowercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
     "Parameters": []
   },
   {
@@ -1574,6 +1644,16 @@
         "Summary": "The string representing the mask to be unset from the argument string."
       }
     ]
+  },
+  {
+    "Name": "namespace-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-namespace-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
   },
   {
     "Name": "null-to-empty",
@@ -1645,6 +1725,36 @@
         "Summary": "The padding character"
       }
     ]
+  },
+  {
+    "Name": "pascal-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-pascal-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
+    "Name": "pascal-snake-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-pascal-snake-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
+    "Name": "path-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-path-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
   },
   {
     "Name": "prefix",
@@ -1822,6 +1932,27 @@
     "Parameters": []
   },
   {
+    "Name": "screaming-snake-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-screaming-snake-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
+    "Name": "sentence-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-sentence-case",
+      "capitalize"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text with the first character capitalized and remaining characters preserved. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
     "Name": "skip-first-chars",
     "IsPublic": true,
     "Aliases": [
@@ -1852,6 +1983,16 @@
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
     ]
+  },
+  {
+    "Name": "snake-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-snake-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
   },
   {
     "Name": "suffix",
@@ -1887,6 +2028,16 @@
     ],
     "Scope": "Text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
+    "Parameters": []
+  },
+  {
+    "Name": "swap-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-swap-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text with lowercase characters converted to uppercase and uppercase characters converted to lowercase. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
     "Parameters": []
   },
   {
@@ -1933,6 +2084,16 @@
     ]
   },
   {
+    "Name": "title-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-title-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in title case, capitalizing each word while keeping articles and other small words lowercase when not leading. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
     "Name": "token",
     "IsPublic": true,
     "Aliases": [
@@ -1970,6 +2131,16 @@
     ]
   },
   {
+    "Name": "train-case",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-train-case"
+    ],
+    "Scope": "Text",
+    "Summary": "Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
     "Name": "trim",
     "IsPublic": true,
     "Aliases": [
@@ -1986,7 +2157,7 @@
       "text-to-upper"
     ],
     "Scope": "Text",
-    "Summary": "Returns the argument value converted to uppercase using the casing rules of the invariant culture.",
+    "Summary": "Returns the input text converted to uppercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
     "Parameters": []
   },
   {

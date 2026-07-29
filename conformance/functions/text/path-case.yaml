@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: path-case
+tests:
+  - id: path-case.valid
+    cases:
+      - id: path-case.valid.text.basic
+        value: customer order
+        expected: customer/order
+      - id: path-case.valid.text.array-words
+        value:
+          - customer
+          - order
+        expected: customer/order
+      - id: path-case.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: path-case.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: path-case.valid.special.blank
+        value: (blank)
+        expected: (empty)
+      - id: path-case.valid.special.zero-length-array
+        value: []
+        expected: (empty)

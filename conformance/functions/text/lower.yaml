@@ -18,7 +18,7 @@ tests:
         expected: ' foo '
       - id: lower.valid.special.null
         value: (null)
-        expected: (null)
+        expected: null
       - id: lower.valid.special.empty
         value: (empty)
         expected: (empty)
