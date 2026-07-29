@@ -1,7 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using Expressif.Functions;
 using Expressif.Predicates;
-using System;
-using System.Collections.Generic;
 
 namespace Expressif.Functions.Array;
 
@@ -11,18 +12,15 @@ namespace Expressif.Functions.Array;
 /// Returns `null` when the input is not an enumerable or is a string.
 /// </summary>
 [Function(prefix: "", aliases: ["filter"])]
-public class Filter : IFunction
+public class Filter : BaseArrayFunction
 {
     public Func<IPredicate> Predicate { get; }
 
     public Filter(Func<IPredicate> predicate)
         => Predicate = predicate;
 
-    public object? Evaluate(object? value)
+    protected override object? EvaluateArray(IEnumerable enumerable)
     {
-        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
-            return null;
-
         var predicate = Predicate.Invoke();
         var output = new List<object?>();
         foreach (var item in enumerable!)
