@@ -1,0 +1,41 @@
+suite: array
+kind: function
+operator: symmetric-difference
+tests:
+  - id: symmetric-difference.valid.array
+    cases:
+      - id: symmetric-difference.valid.array.special.null
+        value: (null)
+        expected:
+        parameters:
+          - [banana, date]
+      - id: symmetric-difference.valid.array.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - [banana, date]
+      - id: symmetric-difference.valid.array.text.either-exclusive
+        value: [apple, banana, cherry]
+        expected: [apple, cherry, date]
+        parameters:
+          - [banana, date]
+      - id: symmetric-difference.valid.array.text.preserve-source-order
+        value: [cherry, apple, banana]
+        expected: [cherry, apple, date, fig]
+        parameters:
+          - [date, banana, fig]
+      - id: symmetric-difference.valid.array.text.remove-duplicates
+        value: [apple, banana, apple]
+        expected: [apple, cherry]
+        parameters:
+          - [banana, cherry, cherry]
+      - id: symmetric-difference.valid.array.text.identical-arrays
+        value: [apple, banana]
+        expected: []
+        parameters:
+          - [banana, apple]
+      - id: symmetric-difference.valid.array.text.zero-length-argument
+        value: [apple, banana]
+        expected: [apple, banana]
+        parameters:
+          - []

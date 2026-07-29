@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, filter, first-elements, fold, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, complement, difference, filter, first-elements, fold, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -15,6 +15,28 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the broadcast execution.
+
+##### complement
+
+###### Alias: `complement`
+
+###### Overview
+
+Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* array: Specifies the reference array from which values present in the pipeline input are excluded.
+
+##### difference
+
+###### Alias: `difference`
+
+###### Overview
+
+Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* array: Specifies the array containing values to exclude from the pipeline input.
 
 ##### filter
 
@@ -117,5 +139,16 @@ Executes an accumulator progressively over the input enumerable and returns the 
 ###### Overview
 
 
+
+##### symmetric-difference
+
+###### Alias: `symmetric-difference`
+
+###### Overview
+
+Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* array: Specifies the second array to compare against the pipeline input.
 
 <!-- END AUTO-GENERATED -->
