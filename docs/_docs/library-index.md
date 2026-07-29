@@ -148,6 +148,7 @@ tags: [predicates, functions]
 * [retain-alpha-numeric]({{ site.baseurl }}/docs/text-functions/#retain-alpha-numeric)
 * [retain-numeric]({{ site.baseurl }}/docs/text-functions/#retain-numeric)
 * [retain-numeric-symbol]({{ site.baseurl }}/docs/text-functions/#retain-numeric-symbol)
+* [reverse]({{ site.baseurl }}/docs/array-functions/#reverse)
 * [root]({{ site.baseurl }}/docs/io-functions/#root)
 * [round]({{ site.baseurl }}/docs/numeric-functions/#round)
 * [scan]({{ site.baseurl }}/docs/array-functions/#scan)
