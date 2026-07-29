@@ -1,0 +1,41 @@
+suite: array
+kind: function
+operator: difference
+tests:
+  - id: difference.valid.array
+    cases:
+      - id: difference.valid.array.special.null
+        value: (null)
+        expected:
+        parameters:
+          - [banana, date]
+      - id: difference.valid.array.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - [banana, date]
+      - id: difference.valid.array.text.exclude-matching
+        value: [apple, banana, cherry]
+        expected: [apple, cherry]
+        parameters:
+          - [banana, date]
+      - id: difference.valid.array.text.remove-duplicates
+        value: [apple, banana, apple, cherry]
+        expected: [apple, cherry]
+        parameters:
+          - [banana]
+      - id: difference.valid.array.text.no-matching-values
+        value: [apple, banana]
+        expected: [apple, banana]
+        parameters:
+          - [cherry, date]
+      - id: difference.valid.array.text.exclude-all-values
+        value: [apple, banana]
+        expected: []
+        parameters:
+          - [banana, apple, cherry]
+      - id: difference.valid.array.text.zero-length-argument
+        value: [apple, banana]
+        expected: [apple, banana]
+        parameters:
+          - []

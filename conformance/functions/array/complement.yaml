@@ -1,0 +1,41 @@
+suite: array
+kind: function
+operator: complement
+tests:
+  - id: complement.valid.array
+    cases:
+      - id: complement.valid.array.special.null
+        value: (null)
+        expected:
+        parameters:
+          - [apple, banana, cherry, date]
+      - id: complement.valid.array.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - [apple, banana, cherry, date]
+      - id: complement.valid.array.text.return-missing-values
+        value: [banana, cherry]
+        expected: [apple, date]
+        parameters:
+          - [apple, banana, cherry, date]
+      - id: complement.valid.array.text.preserve-reference-order
+        value: [banana]
+        expected: [date, apple, cherry]
+        parameters:
+          - [date, banana, apple, cherry]
+      - id: complement.valid.array.text.remove-duplicates
+        value: [banana]
+        expected: [apple, cherry]
+        parameters:
+          - [apple, banana, apple, cherry]
+      - id: complement.valid.array.text.pipeline-contains-all-reference-values
+        value: [apple, banana, cherry]
+        expected: []
+        parameters:
+          - [banana, apple]
+      - id: complement.valid.array.text.zero-length-reference
+        value: [apple, banana]
+        expected: []
+        parameters:
+          - []
