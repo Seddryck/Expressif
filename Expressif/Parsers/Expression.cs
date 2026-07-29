@@ -75,7 +75,7 @@ public class Expression : OpenExpression
     public Expression(IEnumerable<Function> members)
         : base(members) { }
 
-    public static readonly Parser<Expression> Parser =
+    public static new readonly Parser<Expression> Parser =
         from expression in OpenExpression.Parser
         select new Expression(expression.Members);
 }
@@ -86,7 +86,7 @@ public class InputExpression : ClosedExpression
     public InputExpression(IParameter parameter, IEnumerable<Function> members)
         : base(parameter, members) { }
 
-    public static readonly Parser<InputExpression> Parser =
+    public static new readonly Parser<InputExpression> Parser =
         from expression in ClosedExpression.Parser
         select new InputExpression(expression.Parameter, expression.Members);
 }
