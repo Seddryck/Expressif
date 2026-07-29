@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using Expressif.Functions;
+using System.Collections.Generic;
 
 namespace Expressif.Functions.Array;
 
@@ -11,10 +10,13 @@ namespace Expressif.Functions.Array;
 /// Returns <see langword="null"/> when the input is not an enumerable or is a string.
 /// </summary>
 [Function]
-public class Lead : BaseArrayFunction
+public class Lead : IFunction
 {
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var output = new List<object?>();
         var hasItems = false;
 

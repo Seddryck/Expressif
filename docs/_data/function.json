@@ -92,16 +92,6 @@
     "Parameters": []
   },
   {
-    "Name": "reverse",
-    "IsPublic": true,
-    "Aliases": [
-      "reverse"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": []
-  },
-  {
     "Name": "scan",
     "IsPublic": true,
     "Aliases": [
@@ -1949,7 +1939,7 @@
       "capitalize"
     ],
     "Scope": "Text",
-    "Summary": "Returns the input text with the first character capitalized and remaining characters preserved. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Summary": "",
     "Parameters": []
   },
   {
@@ -2090,7 +2080,7 @@
       "text-to-title-case"
     ],
     "Scope": "Text",
-    "Summary": "Returns the input text in title case, capitalizing each word while keeping articles and other small words lowercase when not leading. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Summary": "",
     "Parameters": []
   },
   {

@@ -19,6 +19,11 @@ public abstract class BaseTextCasing : BaseTextFunction
             ? string.Empty
             : char.ToUpperInvariant(word[0]) + (word.Length > 1 ? word[1..].ToLowerInvariant() : string.Empty);
 
+    protected static bool ShouldPreserveWordCasing(string word)
+        => word.Contains('.')
+            || word.Contains('&')
+            || word.Skip(1).Any(char.IsUpper);
+
     protected override object? EvaluateArray(IEnumerable? array)
     {
         if (array == null || !array.Cast<object>().Any())
@@ -68,19 +73,38 @@ public class SwapCase : BaseTextCasing
 }
 
 /// <summary>
-/// Returns the input text with the first character capitalized and remaining characters preserved. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+/// Returns the input text in sentence case by capitalizing the first word while preserving the remaining content. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-sentence-case", "capitalize"])]
 public class SentenceCase : BaseTextCasing
 {
     protected override object EvaluateString(string value)
-        => string.IsNullOrEmpty(value)
-            ? string.Empty
-            : char.ToUpperInvariant(value[0]) + (value.Length > 1 ? value[1..] : string.Empty);
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        var firstWordStart = 0;
+        while (firstWordStart < value.Length && char.IsWhiteSpace(value[firstWordStart]))
+            firstWordStart++;
+
+        if (firstWordStart >= value.Length)
+            return value;
+
+        var firstWordEnd = firstWordStart;
+        while (firstWordEnd < value.Length && !char.IsWhiteSpace(value[firstWordEnd]))
+            firstWordEnd++;
+
+        var firstWord = value[firstWordStart..firstWordEnd];
+        if (ShouldPreserveWordCasing(firstWord))
+            return value;
+
+        var capitalized = CapitalizeWord(firstWord);
+        return value[..firstWordStart] + capitalized + value[firstWordEnd..];
+    }
 }
 
 /// <summary>
-/// Returns the input text in title case, capitalizing each word while keeping articles and other small words lowercase when not leading. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+/// Returns the input text in title case, capitalizing words while keeping small words lowercase only when they are neither first nor last and do not follow a colon. The first and last words are always capitalized, and a small word after a colon is capitalized. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `Q&A`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-title-case"])]
 public class TitleCase : BaseTextCasing
@@ -97,11 +121,25 @@ public class TitleCase : BaseTextCasing
     {
         for (var i = 0; i < words.Length; i++)
         {
-            var lower = words[i].ToLowerInvariant();
-            if (i > 0 && Default_Small_Words.Contains(lower, StringComparer.Ordinal))
+            var word = words[i];
+            if (ShouldPreserveWordCasing(word))
+            {
+                yield return word;
+                continue;
+            }
+
+            var lower = word.ToLowerInvariant();
+            var isFirstWord = i == 0;
+            var isLastWord = i == words.Length - 1;
+            var isWordAfterColon = i > 0 && words[i - 1].EndsWith(':');
+
+            if (!isFirstWord
+                && !isLastWord
+                && !isWordAfterColon
+                && Default_Small_Words.Contains(lower, StringComparer.Ordinal))
                 yield return lower;
             else
-                yield return CapitalizeWord(words[i]);
+                yield return CapitalizeWord(word);
         }
     }
 }

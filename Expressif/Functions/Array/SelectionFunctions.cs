@@ -1,20 +1,22 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Expressif.Functions;
+using System;
+using System.Collections.Generic;
 
 namespace Expressif.Functions.Array;
 
 [Function(prefix: "", aliases: ["first"])]
-public class FirstElements : BaseArrayFunction
+public class FirstElements : IFunction
 {
     public Func<int> Count { get; }
 
     public FirstElements(Func<int> count)
         => Count = count;
 
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var count = Count.Invoke();
         if (count < 0)
             return null;
@@ -35,15 +37,18 @@ public class FirstElements : BaseArrayFunction
 }
 
 [Function(prefix: "", aliases: ["skip-first"])]
-public class SkipFirstElements : BaseArrayFunction
+public class SkipFirstElements : IFunction
 {
     public Func<int> Count { get; }
 
     public SkipFirstElements(Func<int> count)
         => Count = count;
 
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var count = Count.Invoke();
         if (count < 0)
             return null;
@@ -63,15 +68,18 @@ public class SkipFirstElements : BaseArrayFunction
 }
 
 [Function(prefix: "", aliases: ["last"])]
-public class LastElements : BaseArrayFunction
+public class LastElements : IFunction
 {
     public Func<int> Count { get; }
 
     public LastElements(Func<int> count)
         => Count = count;
 
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var count = Count.Invoke();
         if (count < 0)
             return null;
@@ -93,15 +101,18 @@ public class LastElements : BaseArrayFunction
 }
 
 [Function(prefix: "", aliases: ["skip-last"])]
-public class SkipLastElements : BaseArrayFunction
+public class SkipLastElements : IFunction
 {
     public Func<int> Count { get; }
 
     public SkipLastElements(Func<int> count)
         => Count = count;
 
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var count = Count.Invoke();
         if (count < 0)
             return null;
@@ -129,7 +140,7 @@ public class SkipLastElements : BaseArrayFunction
 }
 
 [Function(prefix: "", aliases: ["slice"])]
-public class SliceElements : BaseArrayFunction
+public class SliceElements : IFunction
 {
     public Func<int> Start { get; }
     public Func<int> End { get; }
@@ -137,8 +148,11 @@ public class SliceElements : BaseArrayFunction
     public SliceElements(Func<int> start, Func<int> end)
         => (Start, End) = (start, end);
 
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var start = Start.Invoke();
         var end = End.Invoke();
         if (start < 0 || end < 0)

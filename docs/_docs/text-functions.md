@@ -423,7 +423,7 @@ Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining th
 
 ###### Overview
 
-Returns the input text with the first character capitalized and remaining characters preserved. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+
 
 ##### skip-first-chars
 
@@ -521,7 +521,7 @@ Returns the argument value formatted according to the mask specified as paramete
 
 ###### Overview
 
-Returns the input text in title case, capitalizing each word while keeping articles and other small words lowercase when not leading. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+
 
 ##### token
 

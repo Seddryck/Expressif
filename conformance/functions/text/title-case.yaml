@@ -8,12 +8,23 @@ tests:
         value: war of the worlds
         expected: War of the Worlds
       - id: title-case.valid.text.array-words
-        value:
-          - war
-          - of
-          - the
-          - worlds
+        value: [war, of, the, worlds]
         expected: War of the Worlds
+      - id: title-case.valid.text.preserve-mixed-case-word
+        value: 'songs by iTunes and friends'
+        expected: 'Songs by iTunes and Friends'
+      - id: title-case.valid.text.preserve-dotted-words
+        value: 'notes about example.com and del.icio.us updates'
+        expected: 'Notes About example.com and del.icio.us Updates'
+      - id: title-case.valid.text.preserve-ampersand-words
+        value: 'updates from AT&T and Q&A teams'
+        expected: 'Updates From AT&T and Q&A Teams'
+      - id: title-case.valid.text.capitalize-last-small-word
+        value: 'nothing to be afraid of'
+        expected: 'Nothing to Be Afraid Of'
+      - id: title-case.valid.text.capitalize-small-word-after-colon
+        value: [a, tale, of, two, 'cities:', the, sequel]
+        expected: 'A Tale of Two Cities: The Sequel'
       - id: title-case.valid.special.null
         value: (null)
         expected: null
