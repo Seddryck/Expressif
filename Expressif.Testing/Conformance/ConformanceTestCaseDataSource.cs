@@ -369,20 +369,6 @@ public static class ConformanceTestCaseDataSource
         if (value is null)
             return "<null>";
 
-        if (value is string @null && @null=="(null)")
-            return "(null)";
-
-        if (value is string empty && string.IsNullOrEmpty(empty))
-            return "(empty)";
-
-        if (value is string blank && string.IsNullOrWhiteSpace(blank))
-            return "(blank)";
-
-        if (value is Array array)
-            return array.Length == 0
-                ? "{ }"
-                : $"{{ {string.Join(", ", array.Cast<object?>().Select(FormatArgDisplay))} }}";
-
         return value switch
         {
             string s => $"{s}".Replace("(", "{").Replace(")", "}").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t"),

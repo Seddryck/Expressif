@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using Expressif.Functions;
 using Expressif.Accumulators;
-using Expressif.Functions;
+using System;
 
 namespace Expressif.Functions.Array;
 
@@ -11,7 +10,7 @@ namespace Expressif.Functions.Array;
 /// Returns `null` when the input is not an enumerable or is a string.
 /// </summary>
 [Function]
-public class Broadcast : BaseArrayFunction
+public class Broadcast : IFunction
 {
     public Func<IAccumulator> Accumulator { get; }
 
@@ -29,8 +28,11 @@ public class Broadcast : BaseArrayFunction
     public Broadcast(string accumulator)
         : this(() => AccumulatorFactory.Instantiate(accumulator)) { }
 
-    protected override object? EvaluateArray(IEnumerable enumerable)
+    public object? Evaluate(object? value)
     {
+        if (!AggregationEnumerable.TryGetEnumerable(value, out var enumerable))
+            return null;
+
         var accumulator = Accumulator.Invoke();
         accumulator.Initialize();
 
