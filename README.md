@@ -322,26 +322,37 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Temporal | year                                | dateTime-to-year                                                                  |
 |Temporal | year-of-era                         | dateTime-to-year-of-era                                                           |
 |Text     | after-substring                     | text-to-after-substring                                                           |
+|Text     | allcaps-case                        | text-to-allcaps-case                                                              |
 |Text     | append                              | text-to-append                                                                    |
 |Text     | append-new-line                     | text-to-append-new-line                                                           |
 |Text     | append-space                        | text-to-append-space                                                              |
 |Text     | before-substring                    | text-to-before-substring                                                          |
+|Text     | camel-case                          | text-to-camel-case                                                                |
+|Text     | camel-snake-case                    | text-to-camel-snake-case                                                          |
 |Text     | clean-whitespace                    | text-to-clean-whitespace                                                          |
+|Text     | cobol-case                          | text-to-cobol-case                                                                |
 |Text     | collapse-whitespace                 | text-to-collapse-whitespace                                                       |
 |Text     | count-distinct-chars                | text-to-count-distinct-chars                                                      |
 |Text     | count-substring                     | text-to-count-substring                                                           |
+|Text     | dot-case                            | text-to-dot-case                                                                  |
 |Text     | empty-to-null                       |                                                                                   |
 |Text     | filter-chars                        | text-to-filter-chars                                                              |
 |Text     | first-chars                         | text-to-first-chars                                                               |
+|Text     | flat-case                           | text-to-flat-case                                                                 |
 |Text     | html-to-text                        |                                                                                   |
+|Text     | kebab-case                          | text-to-kebab-case                                                                |
 |Text     | last-chars                          | text-to-last-chars                                                                |
 |Text     | length                              | text-to-length, count-chars                                                       |
 |Text     | lower                               | text-to-lower                                                                     |
 |Text     | mask-to-text                        |                                                                                   |
+|Text     | namespace-case                      | text-to-namespace-case                                                            |
 |Text     | null-to-empty                       |                                                                                   |
 |Text     | pad-center                          | text-to-pad-center                                                                |
 |Text     | pad-left                            | text-to-pad-left                                                                  |
 |Text     | pad-right                           | text-to-pad-right                                                                 |
+|Text     | pascal-case                         | text-to-pascal-case                                                               |
+|Text     | pascal-snake-case                   | text-to-pascal-snake-case                                                         |
+|Text     | path-case                           | text-to-path-case                                                                 |
 |Text     | prefix                              | text-to-prefix                                                                    |
 |Text     | prefix-new-line                     | text-to-prefix-new-line                                                           |
 |Text     | prefix-space                        | text-to-prefix-space                                                              |
@@ -355,16 +366,22 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Text     | retain-alpha-numeric                | text-to-retain-alpha-numeric                                                      |
 |Text     | retain-numeric                      | text-to-retain-numeric                                                            |
 |Text     | retain-numeric-symbol               | text-to-retain-numeric-symbol                                                     |
+|Text     | screaming-snake-case                | text-to-screaming-snake-case                                                      |
+|Text     | sentence-case                       | text-to-sentence-case, capitalize                                                 |
 |Text     | skip-first-chars                    | text-to-skip-first-chars                                                          |
 |Text     | skip-last-chars                     | text-to-skip-last-chars                                                           |
+|Text     | snake-case                          | text-to-snake-case                                                                |
 |Text     | suffix                              | text-to-suffix                                                                    |
 |Text     | suffix-new-line                     | text-to-suffix-new-line                                                           |
 |Text     | suffix-space                        | text-to-suffix-space                                                              |
+|Text     | swap-case                           | text-to-swap-case                                                                 |
 |Text     | text-to-datetime                    | text-to-dateTime                                                                  |
 |Text     | text-to-html                        |                                                                                   |
 |Text     | text-to-mask                        |                                                                                   |
+|Text     | title-case                          | text-to-title-case                                                                |
 |Text     | token                               | text-to-token                                                                     |
 |Text     | token-count                         | text-to-token-count                                                               |
+|Text     | train-case                          | text-to-train-case                                                                |
 |Text     | trim                                | text-to-trim                                                                      |
 |Text     | upper                               | text-to-upper                                                                     |
 |Text     | whitespaces-to-empty                | blank-to-empty                                                                    |
