@@ -39,6 +39,24 @@ function Resolve-MainReference {
     return $null
 }
 
+function Install-ConformanceDependencies {
+    [CmdletBinding()]
+    param()
+
+    $moduleName = "powershell-yaml"
+
+    if (-not (Get-Module -ListAvailable -Name $moduleName)) {
+        Write-Host "Installing PowerShell module '$moduleName'..."
+        Install-Module $moduleName -Scope CurrentUser -Force -AllowClobber -ErrorAction Stop
+    }
+
+    if (-not (Get-Module -ListAvailable -Name $moduleName)) {
+        throw "PowerShell module '$moduleName' is not available after installation."
+    }
+
+    Write-Host "PowerShell module '$moduleName' is available."
+}
+
 function Import-YamlSupport {
     [CmdletBinding()]
     param()
@@ -49,6 +67,8 @@ function Import-YamlSupport {
         throw @"
 PowerShell module '$moduleName' is required.
 Install it with:
+Install-ConformanceDependencies
+or:
 Install-Module $moduleName -Scope CurrentUser
 "@
     }
