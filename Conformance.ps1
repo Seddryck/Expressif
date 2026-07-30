@@ -275,6 +275,47 @@ function Write-ConformanceScope {
     }
 }
 
+function Resolve-GitPathSpec {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $ResolvedPath,
+
+        [Parameter(Mandatory)]
+        [string] $InputPath
+    )
+
+    $repositoryRoot = (& git rev-parse --show-toplevel 2>$null)
+
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($repositoryRoot)) {
+        throw "Unable to resolve the Git repository root."
+    }
+
+    $repositoryRoot = [System.IO.Path]::GetFullPath($repositoryRoot.Trim())
+    $resolvedFullPath = [System.IO.Path]::GetFullPath($ResolvedPath)
+
+    $repositoryRootWithSeparator = $repositoryRoot.TrimEnd('\', '/') + [System.IO.Path]::DirectorySeparatorChar
+    $pathComparison = [System.StringComparison]::OrdinalIgnoreCase
+
+    if (
+        -not [string]::Equals($resolvedFullPath, $repositoryRoot, $pathComparison) -and
+        -not $resolvedFullPath.StartsWith($repositoryRootWithSeparator, $pathComparison)
+    ) {
+        throw "Path '$InputPath' resolves outside the Git worktree and cannot be converted to a Git pathspec."
+    }
+
+    $relativePath = [System.IO.Path]::GetRelativePath(
+        $repositoryRoot,
+        $resolvedFullPath
+    ).Replace('\', '/').Trim()
+
+    if ($relativePath -eq '.') {
+        return ''
+    }
+
+    return $relativePath.Trim('/')
+}
+
 <#
 .SYNOPSIS
 Builds a conformance manifest file from discovered YAML test content.
@@ -409,11 +450,17 @@ $probeText
         }
 
         $yamlDocument = ConvertFrom-Yaml -Yaml $yamlText
-        $tests = @($yamlDocument.tests)
+        $tests = @(
+            $yamlDocument.tests |
+            Where-Object { $null -ne $_ }
+        )
         $testCount += $tests.Count
 
         foreach ($test in $tests) {
-            $cases = @($test.cases)
+            $cases = @(
+                $test.cases |
+                Where-Object { $null -ne $_ }
+            )
             $testCaseCount += $cases.Count
         }
     }
@@ -863,9 +910,7 @@ function Get-ConformanceVersion {
     $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
     $effectiveExclude = Get-ConformanceEffectiveExclude -Exclude $Exclude
 
-    $pathSpec = $Path.Replace('\', '/').Trim()
-    $pathSpec = $pathSpec.TrimStart('.')
-    $pathSpec = $pathSpec.Trim('/')
+    $pathSpec = Resolve-GitPathSpec -ResolvedPath $resolvedPath -InputPath $Path
 
     if ([string]::IsNullOrWhiteSpace($pathSpec)) {
         throw "Path '$Path' cannot be converted to a Git pathspec."
@@ -1352,9 +1397,7 @@ function Tag-Conformance {
 
     $effectiveExclude = Get-ConformanceEffectiveExclude -Exclude $Exclude
 
-    $pathSpec = $Path.Replace('\', '/').Trim()
-    $pathSpec = $pathSpec.TrimStart('.')
-    $pathSpec = $pathSpec.Trim('/')
+    $pathSpec = Resolve-GitPathSpec -ResolvedPath $resolvedPath -InputPath $Path
 
     if ([string]::IsNullOrWhiteSpace($pathSpec)) {
         throw "Path '$Path' cannot be converted to a Git pathspec."

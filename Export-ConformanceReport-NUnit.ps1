@@ -63,7 +63,7 @@ function Convert-GlobPatternToRegex {
         [string] $Pattern
     )
 
-    $normalized = $Pattern.Replace('\\', '/').Trim()
+    $normalized = $Pattern.Replace('\', '/').Trim()
 
     if ([string]::IsNullOrWhiteSpace($normalized)) {
         return $null
@@ -78,6 +78,20 @@ function Convert-GlobPatternToRegex {
     return "^$escaped$"
 }
 
+function Test-GlobPatternMatch {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Candidate,
+
+        [Parameter(Mandatory)]
+        [string] $Pattern
+    )
+
+    $regex = Convert-GlobPatternToRegex -Pattern $Pattern
+
+    return $null -ne $regex -and $Candidate -match $regex
+}
+
 function Test-ConformanceExclude {
     param(
         [Parameter(Mandatory)]
@@ -87,7 +101,7 @@ function Test-ConformanceExclude {
         [string[]] $Exclude
     )
 
-    $normalizedPath = $RelativePath.Replace('\\', '/').TrimStart('/')
+    $normalizedPath = $RelativePath.Replace('\', '/').TrimStart('/')
     $fileName = [System.IO.Path]::GetFileName($normalizedPath)
 
     foreach ($rawPattern in $Exclude) {
@@ -95,7 +109,7 @@ function Test-ConformanceExclude {
             continue
         }
 
-        $pattern = $rawPattern.Replace('\\', '/').Trim()
+        $pattern = $rawPattern.Replace('\', '/').Trim()
         $isRootOnly = $pattern.StartsWith('/')
 
         if ($isRootOnly) {
@@ -105,8 +119,7 @@ function Test-ConformanceExclude {
                 continue
             }
 
-            $regex = Convert-GlobPatternToRegex -Pattern $pattern
-            if ($null -ne $regex -and $normalizedPath -match $regex) {
+            if (Test-GlobPatternMatch -Candidate $normalizedPath -Pattern $pattern) {
                 return $true
             }
 
@@ -114,16 +127,14 @@ function Test-ConformanceExclude {
         }
 
         if ($pattern.Contains('/')) {
-            $regex = Convert-GlobPatternToRegex -Pattern $pattern
-            if ($null -ne $regex -and $normalizedPath -match $regex) {
+            if (Test-GlobPatternMatch -Candidate $normalizedPath -Pattern $pattern) {
                 return $true
             }
 
             continue
         }
 
-        $regex = Convert-GlobPatternToRegex -Pattern $pattern
-        if ($null -ne $regex -and $fileName -match $regex) {
+        if (Test-GlobPatternMatch -Candidate $fileName -Pattern $pattern) {
             return $true
         }
     }
