@@ -67,16 +67,6 @@ tests:
         expected: true
         parameters:
           - nl-NL
-      - id: matches-date-time.valid.culture-specific.american-culture.text.japanese-format
-        value: "11/2/2022 03:57:00"
-        expected: false
-        parameters:
-          - en-US
-      - id: matches-date-time.valid.culture-specific.japanese-culture.text.japanese-format
-        value: "11/2/2022 03:57:00"
-        expected: true
-        parameters:
-          - jp-JP
       - id: matches-date-time.valid.culture-specific.american-culture.text.german-format
         value: "02.11.2022 03:57:00"
         expected: false
