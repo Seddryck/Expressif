@@ -22,6 +22,7 @@ param(
     [string] $OutputYamlPath
 )
 
+Write-Host "=== Creating conformance report for .NET ==="
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
