@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://expressif.dev/schemas/conformance.schema.json",
+  "title": "Expressif Conformance YAML",
+  "description": "Schema for conformance YAML files under conformance/functions and conformance/predicates.",
+  "type": "object",
+  "properties": {
+    "suite": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "function",
+        "predicate",
+        "accumulator"
+      ]
+    },
+    "operator": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/test"
+      }
+    }
+  },
+  "required": [
+    "suite",
+    "kind",
+    "operator",
+    "tests"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "test": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parameters": {
+          "$ref": "#/$defs/parameterList"
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/case"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "cases"
+      ],
+      "additionalProperties": false
+    },
+    "case": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "$ref": "#/$defs/anyValue"
+        },
+        "parameters": {
+          "$ref": "#/$defs/parameterList"
+        },
+        "context": {
+          "$ref": "#/$defs/context"
+        },
+        "expected": {
+          "$ref": "#/$defs/anyValue"
+        }
+      },
+      "required": [
+        "id",
+        "value",
+        "expected"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "variables": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/anyValue"
+          }
+        }
+      },
+      "required": [
+        "variables"
+      ],
+      "additionalProperties": false
+    },
+    "parameterList": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/anyValue"
+      }
+    },
+    "anyValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/anyValue"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/anyValue"
+          }
+        }
+      ]
+    }
+  }
+}

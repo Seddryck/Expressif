@@ -29,6 +29,7 @@ install:
 #     Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
 #     & $env:temp\dotnet-install.ps1 -Architecture x64 -Version '10.0.100' -InstallDir "$env:ProgramFiles\dotnet"
 - cmd: npm install -g @vscode/vsce
+- pwsh: . .\Conformance.ps1; Install-ConformanceDependencies
 - pwsh: .\install-gitversion.ps1
 - cmd: RefreshEnv.cmd
 - cmd: dotnet tool restore
@@ -70,6 +71,13 @@ build_script:
     }    
 
 test_script:
+- pwsh: |
+    . ./Conformance.ps1
+    $validationResult = Validate-Conformance -Path "./conformance"
+
+    if ($validationResult -gt 0) {
+        throw "Conformance validation failed with $validationResult violation(s). Test step aborted."
+    }
 - cmd: dotnet test Expressif.Testing -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=../.coverage/coverage.Expressif.xml /p:Threshold=10 /p:ThresholdType=line --test-adapter-path:. --logger:Appveyor --no-build --nologo
 - pwsh: |
     $ProgressPreference = 'SilentlyContinue'
