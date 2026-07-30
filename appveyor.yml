@@ -96,15 +96,15 @@ after_test:
           Tag-Conformance -Version $conformanceVersion -Warn
       }
       else {
-          Write-Host "=== Tagging conformance ==="  
-          Write-Warning "Not on main (or pull request). Conformance tagging skipped."
+          Write-Host "Not on main (or pull request). Conformance tagging skipped."
       }
 
-      ./Export-ConformanceReport-NUnit.ps1 `
-                -Path "./conformance" `
-                -Exclude @("bin/**", "/*.yaml", "/*.yml") `
-        -XmlPath "./conformance/bin/Expressif.Conformance.DotNet.xml" `
-        -OutputYamlPath "./conformance/bin/expressif.conformance.dotnet.$($env:GitVersion_SemVer).yaml"
+      ./Export-ConformanceReport.ps1 `
+          -Path "./conformance" `
+          -ReportPath "./conformance/bin/Expressif.Conformance.DotNet.xml" `
+          -OutputYamlPath "./conformance/bin/expressif.conformance.dotnet.$($env:GitVersion_SemVer).yaml" `
+          -Platform "dotnet" `
+          -NUnit
 
 artifacts:
 - path: '**\*.nupkg'
