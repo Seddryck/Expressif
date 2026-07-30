@@ -46,7 +46,6 @@ tests:
         parameters:
           - 0
           - '|'
-        line: 35
   - id: token.default-separator.valid
     cases:
       - id: token.default-separator.valid.first

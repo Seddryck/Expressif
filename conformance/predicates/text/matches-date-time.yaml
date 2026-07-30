@@ -1,59 +1,89 @@
 suite: text
 kind: predicate
 operator: matches-date-time
-cases:
-  - id: matches-date-time.american-culture.fail.text.25-12-2025-10-01-55
-    value: 25/12/2025 10:01:55
-    expected: false
-    parameters:
-      - en-US
-  - id: matches-date-time.french-culture.success.text.25-12-2025-10-01-55
-    value: 25/12/2025 10:01:55
-    expected: true
-    parameters:
-      - fr-FR
-  - id: matches-date-time.invariant-culture.success.text.2022-11-02
-    value: 2022-11-02
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.2022-11-02-13-57-00
-    value: 2022-11-02 13:57:00
-    expected: true
-  - id: matches-date-time.invariant-culture.success.text.2022-11-02-13-57-00-123
-    value: 2022-11-02 13:57:00.123
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.2022-11-02-1-52pm
-    value: 2022-11-02 1:52PM
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.1978-09-02
-    value: 1978-09-02
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.1978-09-02-13-57-00
-    value: 1978-09-02 13:57:00
-    expected: true
-  - id: matches-date-time.invariant-culture.success.text.02-11-2022-13-57-00-to-false-source-line-145
-    value: 02-11-2022 13:57:00
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.02-11-2022-13-57-00-to-false-source-line-146
-    value: 02/11/2022 13:57:00
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.02-11-2022-13-57-00-to-false-source-line-147
-    value: 02.11.2022 13:57:00
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.positive-1-21
-    value: 1.21
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.foobar
-    value: foobar
-    expected: false
-  - id: matches-date-time.invariant-culture.success.special.empty-to-false-source-line-150
-    value: (empty)
-    expected: false
-  - id: matches-date-time.invariant-culture.success.text.value
-    value: ''
-    expected: false
-  - id: matches-date-time.invariant-culture.success.special.null
-    value: (null)
-    expected: false
-  - id: matches-date-time.invariant-culture.success.special.empty-to-false-source-line-153
-    value: 
-    expected: false
+tests:
+  - id: matches-date-time.valid
+    cases:
+      - id: matches-date-time.valid.text.invariant-format
+        value: "2022-11-02 13:57:00"
+        expected: true
+      - id: matches-date-time.valid.text.invariant-format-with-milliseconds
+        value: "2022-11-02 13:57:00.123"
+        expected: false
+      - id: matches-date-time.valid.text.invariant-format-with-PM
+        value: "2022-11-02 1:52PM"
+        expected: false
+      - id: matches-date-time.valid.text.date-format
+        value: "1978-09-02"
+        expected: false
+      - id: matches-date-time.valid.text.invariant-format-in-1900s
+        value: "1978-09-02 13:57:00"
+        expected: true
+      - id: matches-date-time.valid.text.numeric-decimal
+        value: "1.21"
+        expected: false
+      - id: matches-date-time.valid.numeric
+        value: 1.21
+        expected: false
+      - id: matches-date-time.valid.text
+        value: foobar
+        expected: false
+      - id: matches-date-time.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: matches-date-time.valid.special.empty
+        value: ''
+        expected: false
+      - id: matches-date-time.valid.special.null-tag
+        value: (null)
+        expected: false
+      - id: matches-date-time.valid.special.null
+        value: null
+        expected: false
+  - id: matches-date-time.valid.date-time
+    cases:
+      - id: matches-date-time.valid.date-time
+        value: 2022-11-02T13:57:00
+        expected: true
+  - id: matches-date-time.valid.culture-specific
+    cases:
+      - id: matches-date-time.valid.culture-specific.american-culture.text.french-format
+        value: "25/12/2025 10:01:55"
+        expected: false
+        parameters:
+          - en-US
+      - id: matches-date-time.valid.culture-specific.french-culture.text.french-format
+        value: "25/12/2025 10:01:55"
+        expected: true
+        parameters:
+          - fr-FR
+      - id: matches-date-time.valid.culture-specific.american-culture.text.dutch-format
+        value: "02-11-2022 13:57:00"
+        expected: false
+        parameters:
+          - en-US
+      - id: matches-date-time.valid.culture-specific.dutch-culture.text.dutch-format
+        value: "02-11-2022 13:57:00"
+        expected: true
+        parameters:
+          - nl-NL
+      - id: matches-date-time.valid.culture-specific.american-culture.text.japanese-format
+        value: "11/2/2022 03:57:00"
+        expected: false
+        parameters:
+          - en-US
+      - id: matches-date-time.valid.culture-specific.japanese-culture.text.japanese-format
+        value: "11/2/2022 03:57:00"
+        expected: true
+        parameters:
+          - jp-JP
+      - id: matches-date-time.valid.culture-specific.american-culture.text.german-format
+        value: "02.11.2022 03:57:00"
+        expected: false
+        parameters:
+          - en-US
+      - id: matches-date-time.valid.culture-specific.german-culture.text.german-format
+        value: "02.11.2022 03:57:00"
+        expected: true
+        parameters:
+          - de-DE

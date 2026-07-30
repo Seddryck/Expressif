@@ -1,124 +1,86 @@
 suite: text
 kind: predicate
 operator: matches-time
-cases:
-  - id: matches-time.english-culture.success.text.2022-11-02
-    value: 2022-11-02
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.2022-11-02-13-57-00
-    value: 2022-11-02 13:57:00
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.2022-11-02-13-57-00-123
-    value: 2022-11-02 13:57:00.123
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.2022-11-02-1-52pm
-    value: 2022-11-02 1:52PM
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.1978-09-02
-    value: 1978-09-02
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.13-57-00
-    value: 13:57:00
-    expected: true
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.13-57-00-125
-    value: 13:57:00.125
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.1-57pm
-    value: 1:57PM
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.1-57-00pm
-    value: 1:57:00PM
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.positive-1-21
-    value: 1.21
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.foobar
-    value: foobar
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.special.empty-to-false-source-line-215
-    value: (empty)
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.text.value
-    value: ''
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.special.null
-    value: (null)
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.english-culture.success.special.empty-to-false-source-line-218
-    value: 
-    expected: false
-    parameters:
-      - en-gb
-  - id: matches-time.invariant-culture.success.text.2022-11-02
-    value: 2022-11-02
-    expected: false
-  - id: matches-time.invariant-culture.success.text.2022-11-02-13-57-00
-    value: 2022-11-02 13:57:00
-    expected: false
-  - id: matches-time.invariant-culture.success.text.2022-11-02-13-57-00-123
-    value: 2022-11-02 13:57:00.123
-    expected: false
-  - id: matches-time.invariant-culture.success.text.2022-11-02-1-52pm
-    value: 2022-11-02 1:52PM
-    expected: false
-  - id: matches-time.invariant-culture.success.text.1978-09-02
-    value: 1978-09-02
-    expected: false
-  - id: matches-time.invariant-culture.success.text.13-57-00
-    value: 13:57:00
-    expected: true
-  - id: matches-time.invariant-culture.success.text.13-57-00-125
-    value: 13:57:00.125
-    expected: false
-  - id: matches-time.invariant-culture.success.text.1-57pm
-    value: 1:57PM
-    expected: false
-  - id: matches-time.invariant-culture.success.text.1-57-00pm
-    value: 1:57:00PM
-    expected: false
-  - id: matches-time.invariant-culture.success.text.positive-1-21
-    value: 1.21
-    expected: false
-  - id: matches-time.invariant-culture.success.text.foobar
-    value: foobar
-    expected: false
-  - id: matches-time.invariant-culture.success.special.empty-to-false-source-line-185
-    value: (empty)
-    expected: false
-  - id: matches-time.invariant-culture.success.text.value
-    value: ''
-    expected: false
-  - id: matches-time.invariant-culture.success.special.null
-    value: (null)
-    expected: false
-  - id: matches-time.invariant-culture.success.special.empty-to-false-source-line-188
-    value: 
-    expected: false
+tests:
+  - id: matches-time.valid
+    cases:
+      - id: matches-time.valid.text.invariant-format
+        value: "13:57:00"
+        expected: true
+      - id: matches-time.valid.text.invariant-format-with-date
+        value: "2022-12-16 13:57:00"
+        expected: false
+      - id: matches-time.valid.text.invariant-format-date-only
+        value: "2022-12-16"
+        expected: false
+      - id: matches-time.valid.text.invariant-format-with-milliseconds
+        value: "13:57:00.123"
+        expected: false
+      - id: matches-time.valid.text.invariant-format-with-PM
+        value: "1:52PM"
+        expected: false
+      - id: matches-time.valid.text.invariant-format-in-1900s
+        value: "1978-09-02 13:57:00"
+        expected: false
+      - id: matches-time.valid.text.numeric-decimal
+        value: "1.21"
+        expected: false
+      - id: matches-time.valid.numeric
+        value: 1.21
+        expected: false
+      - id: matches-time.valid.text
+        value: foobar
+        expected: false
+      - id: matches-time.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: matches-time.valid.special.empty
+        value: ''
+        expected: false
+      - id: matches-time.valid.special.null-tag
+        value: (null)
+        expected: false
+      - id: matches-time.valid.special.null
+        value: null
+        expected: false
+  - id: matches-time.valid.time
+    cases:
+      - id: matches-time.valid.time
+        value: "13:57:00"
+        expected: true
+  - id: matches-time.valid.date
+    cases:
+      - id: matches-time.valid.date
+        value: "2025-12-16"
+        expected: false
+  - id: matches-time.valid.date-time
+    cases:
+      - id: matches-time.valid.date-time-date-part
+        value: "2022-12-26"
+        expected: false
+      - id: matches-time.valid.full-date-time
+        value: "2022-12-26T13:57:00"
+        expected: false
+  - id: matches-time.valid.time-span
+    cases:
+      - id: matches-time.valid.time-span.less-than-24-hours
+        value: "15:12:17"
+        expected: true
+      - id: matches-time.valid.time-span.more-than-24-hours
+        value: "42:12:10"
+        expected: false
+      - id: matches-time.valid.time-span.more-than-24-hours-with-days
+        value: "1.18:12:10"
+        expected: false
+  - id: matches-time.valid.culture-specific
+    cases:
+      - id: matches-time.valid.culture-specific.english-culture.invariant-format-with-PM
+        value: "13:12:23PM"
+        expected: false
+        parameters:
+          - en-GB
+      - id: matches-time.valid.culture-specific.english-culture.invariant-format
+        value: "13:12:23"
+        expected: true
+        parameters:
+          - en-GB

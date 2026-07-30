@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: true
+operator: "true"
 tests:
   - id: true.valid
     cases:
@@ -11,7 +11,7 @@ tests:
       value: false
       expected: false
     - id: true.valid.special.empty
-      value: 
+      value: null
       expected: false
     - id: true.valid.special.null
       value: (null)
