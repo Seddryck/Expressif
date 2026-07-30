@@ -1,148 +1,124 @@
 suite: text
 kind: predicate
 operator: matches-numeric
-cases:
-  - id: matches-numeric.french-culture.success.text.121
-    value: 121
-    expected: true
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.positive-1-21
-    value: 1.21
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.positive-1000-21
-    value: 1000.21
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.negative-1000-21
-    value: -1000.21
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.52-000-21-to-false-source-line-39
-    value: 52,000.21
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.1000-21
-    value: 1000,21
-    expected: true
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.52-000-21-to-false-source-line-41
-    value: 52.000,21
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.20
-    value: $20
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.a-1
-    value: A.1
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.a121
-    value: A121
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.1
-    value: 1!
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.121a
-    value: 121A
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.special.empty-to-false-source-line-47
-    value: (empty)
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.value
-    value: ''
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.special.null
-    value: (null)
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.special.empty-to-false-source-line-50
-    value: 
-    expected: false
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.positive-125-17
-    value: 125.17
-    expected: true
-    parameters:
-      - fr-fr
-  - id: matches-numeric.french-culture.success.text.125
-    value: 125
-    expected: true
-    parameters:
-      - fr-fr
-  - id: matches-numeric.invariant-culture.success.text.121
-    value: 121
-    expected: true
-  - id: matches-numeric.invariant-culture.success.text.positive-1-21
-    value: 1.21
-    expected: true
-  - id: matches-numeric.invariant-culture.success.text.positive-1000-21
-    value: 1000.21
-    expected: true
-  - id: matches-numeric.invariant-culture.success.text.negative-1000-21
-    value: -1000.21
-    expected: true
-  - id: matches-numeric.invariant-culture.success.text.52-000-21-to-false-source-line-17
-    value: 52,000.21
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.1000-21
-    value: 1000,21
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.52-000-21-to-false-source-line-19
-    value: 52.000,21
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.20
-    value: $20
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.a-1
-    value: A.1
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.a121
-    value: A121
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.1
-    value: 1!
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.121a
-    value: 121A
-    expected: false
-  - id: matches-numeric.invariant-culture.success.special.empty-to-false-source-line-25
-    value: (empty)
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.value
-    value: ''
-    expected: false
-  - id: matches-numeric.invariant-culture.success.special.null
-    value: (null)
-    expected: false
-  - id: matches-numeric.invariant-culture.success.special.empty-to-false-source-line-28
-    value: 
-    expected: false
-  - id: matches-numeric.invariant-culture.success.text.positive-125-17
-    value: 125.17
-    expected: true
-  - id: matches-numeric.invariant-culture.success.text.125
-    value: 125
-    expected: true
+tests:
+  - id: matches-numeric.valid
+    cases:
+      - id: matches-numeric.valid.text.integer-value
+        value: 121
+        expected: true
+      - id: matches-numeric.valid.text.positive-decimal-value
+        value: 1.21
+        expected: true
+      - id: matches-numeric.valid.text.positive-decimal-value-thousand
+        value: 1000.21
+        expected: true
+      - id: matches-numeric.valid.text.negative-decimal-value-thousand
+        value: -1000.21
+        expected: true
+      - id: matches-numeric.valid.text.positive-decimal-value-thousand-separator
+        value: 52,000.21
+        expected: false
+      - id: matches-numeric.valid.text.positive-decimal-with-comma-as-decimal-separator
+        value: 1000,21
+        expected: false
+      - id: matches-numeric.valid.text.positive-decimal-with-comma-as-decimal-separator-and-dot-as-thousand-separator 
+        value: 52.000,21
+        expected: false
+      - id: matches-numeric.valid.text.currency-value
+        value: $20
+        expected: false
+      - id: matches-numeric.valid.text.starting-with-letter-and-dot
+        value: A.1
+        expected: false
+      - id: matches-numeric.valid.text.starting-with-letter
+        value: A121
+        expected: false
+      - id: matches-numeric.valid.text.ending-with-non-numeric-character
+        value: 1!
+        expected: false
+      - id: matches-numeric.valid.text.ending-with-letter
+        value: 121A
+        expected: false
+  - id: matches-numeric.valid.culture-specific
+    cases:
+      - id: matches-numeric.valid.culture-specific.french.text.positive-integer-value
+        value: "121"
+        expected: true
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.positive-decimal-value-and-dot-as-decimal-separator
+        value: "1.21"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.positive-decimal-value-and-dot-as-decimal-separator-thousand
+        value: "1000.21"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.negative-decimal-value-and-dot-as-decimal-separator-thousand
+        value: "-1000.21"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.positive-decimal-value-and-dot-as-decimal-separator-and-comma-as-thousand-separator
+        value: "52,000.21"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.positive-decimal-value-and-comma-as-decimal-separator
+        value: "1000,21"
+        expected: true
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.positive-decimal-value-and-comma-as-decimal-separator-and-dot-as-thousand-separator
+        value: "52.000,21"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.currency-value
+        value: "$20"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.starting-with-letter-and-dot
+        value: "A.1"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.starting-with-letter
+        value: "A121"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.ending-with-non-numeric-character
+        value: "1!"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.text.ending-with-letter
+        value: "121A"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.special.empty-tag
+        value: "(empty)"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.special.empty
+        value: ''
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.special.null-tag
+        value: "(null)"
+        expected: false
+        parameters:
+          - fr-fr
+      - id: matches-numeric.valid.culture-specific.french.special.null
+        value: null
+        expected: false
+        parameters:
+          - fr-fr

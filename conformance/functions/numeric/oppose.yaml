@@ -19,16 +19,15 @@ tests:
       - id: oppose.valid.numeric.minus-four
         value: -4
         expected: 4
-      - id: oppose.valid.special.empty-tag-to-empty
-        value: 
-        expected: 
-        line: 138
       - id: oppose.valid.special.null
+        value: null
+        expected: null
+      - id: oppose.valid.special.null-tag
         value: (null)
-        expected: 
-      - id: oppose.valid.special.empty-to-empty
+        expected: null
+      - id: oppose.valid.special.empty-tag
         value: (empty)
-        expected: 
-      - id: oppose.valid.special.blank
+        expected: null
+      - id: oppose.valid.special.blank-tag
         value: (blank)
-        expected: 
+        expected: null

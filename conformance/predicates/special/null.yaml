@@ -1,6 +1,6 @@
 suite: special
 kind: predicate
-operator: null
+operator: "null"
 tests:
   - id: null.valid
     cases:
