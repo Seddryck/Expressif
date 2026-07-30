@@ -22,10 +22,10 @@ tests:
       - id: matches-date.valid.text.yyyy-mm-dd-1900
         value: "1978-09-02"
         expected: true
-      - id: matches-date.valid.text.yyyy-slash-mm-slash-dd
+      - id: matches-date.valid.text.dd-slash-mm-slash-yyyy
         value: "02/11/2022"
         expected: false
-      - id: matches-date.valid.text.yyyy-dot-mm-dot-dd
+      - id: matches-date.valid.text.dd-dot-mm-dot-yyyy
         value: "02.11.2022"
         expected: false
       - id: matches-date.valid.numeric-decimal
@@ -38,7 +38,7 @@ tests:
         value: ""
         expected: false
       - id: matches-date.valid.special.empty-tag
-        value: "(empty))"
+        value: "(empty)"
         expected: false
       - id: matches-date.valid.special.null
         value: null
@@ -164,7 +164,7 @@ tests:
         expected: false
         parameters:
           - fr-fr
-      - id: matches-date.valid.culture-specific.french.text.d-dot-m-dot-yyyy
+      - id: matches-date.valid.culture-specific.french.text.decimal-value
         value: 1.21
         expected: false
         parameters:
