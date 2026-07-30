@@ -313,7 +313,7 @@ function Build-ConformanceManifest {
         [string] $Path = "conformance",
         [string[]] $Exclude = @("bin/**", "/*.yaml", "/*.yml"),
         [Alias("OutputPath")]
-        [string] $OutputFilePath = "bin\\conformance.manifest.yaml"
+        [string] $OutputFilePath = "bin/conformance.manifest.yaml"
     )
 
     $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
@@ -850,7 +850,7 @@ function Get-ConformanceVersion {
     $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
     $effectiveExclude = Get-ConformanceEffectiveExclude -Exclude $Exclude
 
-    $pathSpec = $Path.Replace('\\', '/').Trim()
+    $pathSpec = $Path.Replace('\', '/').Trim()
     $pathSpec = $pathSpec.TrimStart('.')
     $pathSpec = $pathSpec.Trim('/')
 
@@ -880,7 +880,7 @@ function Get-ConformanceVersion {
     $selectedChangedConformanceFiles = @(
         $changedConformanceFiles |
         Where-Object {
-            $normalizedPath = $_.Replace('\\', '/').TrimStart('/')
+            $normalizedPath = $_.Replace('\', '/').TrimStart('/')
             $prefix = "$pathSpec/"
 
             if (-not $normalizedPath.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -986,9 +986,10 @@ function Get-ConformanceVersion {
             $script:ConformanceVersionCache = $conformanceVersion
 
             Write-Host (
-                "No files changed under 'conformance/' for commit '{0}'. Reusing latest conformance release version: {1}" -f
+                "No files changed under '{2}/' for commit '{0}'. Reusing latest conformance release version: {1}" -f
                 $versionedCommit,
-                $conformanceVersion
+                $conformanceVersion,
+                $pathSpec
             ) -ForegroundColor DarkYellow
 
             if (-not $NoEnv) {
