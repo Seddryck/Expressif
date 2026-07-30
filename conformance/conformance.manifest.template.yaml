@@ -1,0 +1,25 @@
+schema-version: "1.0"
+
+suite:
+  name: Expressif Conformance
+  version: "{{ model.suite.version }}"
+  description: >
+    Language-independent conformance test cases for Expressif
+    implementations.
+
+source:
+  repository: "{{ model.source.repository }}"
+  revision: "{{ model.source.revision }}"
+  tag: "{{ model.source.tag }}"
+
+contents:
+  format: yaml
+  root: .
+  patterns:
+{{- for pattern in model.contents.patterns }}
+    - "{{ pattern }}"
+{{- end }}
+  counts:
+    files: {{ model.contents.counts.files }}
+    tests: {{ model.contents.counts.tests }}
+    test-cases: {{ model.contents.counts.testCases }}
