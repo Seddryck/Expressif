@@ -7,7 +7,10 @@ param(
         }
         $true
     })]
-    [string] $ConformancePath,
+    [Alias("ConformancePath")]
+    [string] $Path,
+
+    [string[]] $Exclude = @("bin/**", "/*.yaml", "/*.yml"),
 
     [Parameter(Mandatory)]
     [ValidateScript({
@@ -52,6 +55,80 @@ function Import-YamlSupport {
     }
 
     Import-Module $moduleName -Force
+}
+
+function Convert-GlobPatternToRegex {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Pattern
+    )
+
+    $normalized = $Pattern.Replace('\\', '/').Trim()
+
+    if ([string]::IsNullOrWhiteSpace($normalized)) {
+        return $null
+    }
+
+    $escaped = [Regex]::Escape($normalized)
+    $escaped = $escaped.Replace('\*\*', '__DOUBLE_STAR__')
+    $escaped = $escaped.Replace('\*', '[^/]*')
+    $escaped = $escaped.Replace('\?', '[^/]')
+    $escaped = $escaped.Replace('__DOUBLE_STAR__', '.*')
+
+    return "^$escaped$"
+}
+
+function Test-ConformanceExclude {
+    param(
+        [Parameter(Mandatory)]
+        [string] $RelativePath,
+
+        [Parameter(Mandatory)]
+        [string[]] $Exclude
+    )
+
+    $normalizedPath = $RelativePath.Replace('\\', '/').TrimStart('/')
+    $fileName = [System.IO.Path]::GetFileName($normalizedPath)
+
+    foreach ($rawPattern in $Exclude) {
+        if ([string]::IsNullOrWhiteSpace($rawPattern)) {
+            continue
+        }
+
+        $pattern = $rawPattern.Replace('\\', '/').Trim()
+        $isRootOnly = $pattern.StartsWith('/')
+
+        if ($isRootOnly) {
+            $pattern = $pattern.TrimStart('/')
+
+            if ($normalizedPath.Contains('/')) {
+                continue
+            }
+
+            $regex = Convert-GlobPatternToRegex -Pattern $pattern
+            if ($null -ne $regex -and $normalizedPath -match $regex) {
+                return $true
+            }
+
+            continue
+        }
+
+        if ($pattern.Contains('/')) {
+            $regex = Convert-GlobPatternToRegex -Pattern $pattern
+            if ($null -ne $regex -and $normalizedPath -match $regex) {
+                return $true
+            }
+
+            continue
+        }
+
+        $regex = Convert-GlobPatternToRegex -Pattern $pattern
+        if ($null -ne $regex -and $fileName -match $regex) {
+            return $true
+        }
+    }
+
+    return $false
 }
 
 function Get-DictionaryValue {
@@ -271,7 +348,7 @@ function Get-NUnitCaseIndex {
 
 Import-YamlSupport
 
-$conformanceRoot = (Resolve-Path -LiteralPath $ConformancePath).Path
+$conformanceRoot = (Resolve-Path -LiteralPath $Path).Path
 $xmlFile = (Resolve-Path -LiteralPath $XmlPath).Path
 $outputFile = [System.IO.Path]::GetFullPath($OutputYamlPath)
 
@@ -288,6 +365,8 @@ $yamlFiles = Get-ChildItem `
     -File |
     Where-Object {
         $_.Extension -in @(".yaml", ".yml") -and
+        -not (Test-ConformanceExclude -RelativePath ([System.IO.Path]::GetRelativePath($conformanceRoot, $_.FullName).Replace("\", "/")) -Exclude $Exclude) -and
+        $_.Name -notlike "*.template.yaml" -and
         $_.FullName -ne $outputFile -and
         $_.FullName -notmatch "[\\/](bin|obj)[\\/]"
     } |
