@@ -81,6 +81,12 @@ after_test:
 - cmd: dotnet pack Expressif -p:version="%GitVersion_SemVer%" -c Release --include-symbols --no-build --nologo
 - pwsh: |
       . ./Conformance.ps1
+      $validationResult = Validate-Conformance -Path "./conformance"
+
+      if ($validationResult -gt 0) {
+          throw "Conformance validation failed with $validationResult violation(s). Packaging aborted."
+      }
+
       $conformanceVersion = Get-ConformanceVersion -Warn
       Package-Conformance -Version $conformanceVersion
 
