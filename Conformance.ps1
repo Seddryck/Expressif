@@ -6,6 +6,14 @@ $env:DOTNET_CLI_TELEMETRY_OPTOUT = "true"
 
 $script:ConformanceVersionCache = $null
 
+<#
+.SYNOPSIS
+Fetches and refreshes Git tags for the current repository.
+
+.DESCRIPTION
+Fetches tags from origin and automatically handles shallow repositories by
+unshallowing before fetching tags.
+#>
 function Update-ConformanceTags {
     [CmdletBinding()]
     param()
@@ -24,6 +32,14 @@ function Update-ConformanceTags {
     }
 }
 
+<#
+.SYNOPSIS
+Resolves the best available main branch reference.
+
+.DESCRIPTION
+Returns origin/main when available, otherwise main. Returns null when neither
+reference exists.
+#>
 function Resolve-MainReference {
     [CmdletBinding()]
     param()
@@ -39,6 +55,13 @@ function Resolve-MainReference {
     return $null
 }
 
+<#
+.SYNOPSIS
+Installs PowerShell dependencies required by conformance tooling.
+
+.DESCRIPTION
+Ensures the powershell-yaml module is available for the current user.
+#>
 function Install-ConformanceDependencies {
     [CmdletBinding()]
     param()
@@ -57,6 +80,14 @@ function Install-ConformanceDependencies {
     Write-Host "PowerShell module '$moduleName' is available."
 }
 
+<#
+.SYNOPSIS
+Imports YAML support for conformance scripts.
+
+.DESCRIPTION
+Validates that powershell-yaml is installed and imports it into the current
+session.
+#>
 function Import-YamlSupport {
     [CmdletBinding()]
     param()
@@ -76,6 +107,16 @@ Install-Module $moduleName -Scope CurrentUser
     Import-Module $moduleName -ErrorAction Stop
 }
 
+<#
+.SYNOPSIS
+Converts a glob-style pattern to a regular expression.
+
+.PARAMETER Pattern
+Glob pattern to convert. Supports *, **, and ? tokens.
+
+.OUTPUTS
+System.String
+#>
 function Convert-GlobPatternToRegex {
     [CmdletBinding()]
     param(
@@ -97,6 +138,19 @@ function Convert-GlobPatternToRegex {
     return "^$escaped$"
 }
 
+<#
+.SYNOPSIS
+Tests whether a relative file path matches exclusion patterns.
+
+.PARAMETER RelativePath
+Path relative to the conformance root.
+
+.PARAMETER Exclude
+List of glob patterns used to exclude files.
+
+.OUTPUTS
+System.Boolean
+#>
 function Test-ConformanceExclude {
     [CmdletBinding()]
     param(
@@ -151,6 +205,16 @@ function Test-ConformanceExclude {
     return $false
 }
 
+<#
+.SYNOPSIS
+Normalizes exclusion patterns by removing empty entries.
+
+.PARAMETER Exclude
+Raw exclusion patterns.
+
+.OUTPUTS
+System.String[]
+#>
 function Get-ConformanceEffectiveExclude {
     [CmdletBinding()]
     param(
@@ -163,6 +227,22 @@ function Get-ConformanceEffectiveExclude {
     )
 }
 
+<#
+.SYNOPSIS
+Writes scope diagnostics for a conformance operation.
+
+.PARAMETER Title
+Operation title shown in logs.
+
+.PARAMETER InputPath
+Path value received by the function.
+
+.PARAMETER ResolvedPath
+Absolute resolved path used by the function.
+
+.PARAMETER Exclude
+Effective exclusion patterns applied during the operation.
+#>
 function Write-ConformanceScope {
     [CmdletBinding()]
     param(
@@ -195,6 +275,225 @@ function Write-ConformanceScope {
     }
 }
 
+<#
+.SYNOPSIS
+Builds a conformance manifest file from discovered YAML test content.
+
+.DESCRIPTION
+Discovers conformance YAML files, computes manifest metadata, and renders the
+manifest by applying the Scriban template with didot-cli.
+
+.PARAMETER Version
+Conformance version to include in the manifest.
+
+.PARAMETER CommitSha
+Commit SHA used for manifest source revision.
+
+.PARAMETER Path
+Root directory of conformance files.
+
+.PARAMETER Exclude
+Glob patterns used to exclude files from manifest discovery.
+
+.PARAMETER OutputFilePath
+Manifest output file path. Relative values are resolved from Path.
+
+.OUTPUTS
+PSCustomObject
+#>
+function Build-ConformanceManifest {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string] $Version,
+
+        [Parameter(Mandatory)]
+        [string] $CommitSha,
+
+        [string] $Path = "conformance",
+        [string[]] $Exclude = @("bin/**", "/*.yaml", "/*.yml"),
+        [Alias("OutputPath")]
+        [string] $OutputFilePath = "bin\\conformance.manifest.yaml"
+    )
+
+    $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+    $resolvedOutputFilePath = if ([System.IO.Path]::IsPathRooted($OutputFilePath)) {
+        $OutputFilePath
+    }
+    else {
+        Join-Path $resolvedPath $OutputFilePath
+    }
+
+    $effectiveExclude = Get-ConformanceEffectiveExclude -Exclude $Exclude
+
+    $templatePath = Join-Path $resolvedPath "conformance.manifest.template.yaml"
+
+    if (-not (Test-Path -LiteralPath $templatePath -PathType Leaf)) {
+        throw "Conformance manifest template '$templatePath' was not found."
+    }
+
+    $didotInstalled = @(
+        dotnet tool list --local 2>$null |
+        Where-Object { $_ -match '^didot-cli\s' }
+    ).Count -gt 0
+
+    if (-not $didotInstalled) {
+        throw @"
+didot-cli local tool is required to build conformance manifest.
+Install/restore it with:
+dotnet tool restore
+"@
+    }
+
+    $didotProbeOutput = @(& dotnet tool run didot --help 2>&1)
+
+    if ($LASTEXITCODE -ne 0) {
+        $probeText = $didotProbeOutput -join [Environment]::NewLine
+        throw @"
+didot-cli local tool is declared but not runnable.
+Run:
+dotnet tool restore
+
+Output:
+$probeText
+"@
+    }
+
+    Import-YamlSupport
+
+    $allYamlFiles = @(
+        Get-ChildItem `
+            -LiteralPath $resolvedPath `
+            -Recurse `
+            -File |
+        Where-Object {
+            $_.Extension -in @(".yaml", ".yml")
+        }
+    )
+
+    $selectedYamlFiles = @(
+        $allYamlFiles |
+        Where-Object {
+            $relativePath = [System.IO.Path]::GetRelativePath(
+                $resolvedPath,
+                $_.FullName
+            ).Replace('\', '/')
+
+            (-not (Test-ConformanceExclude -RelativePath $relativePath -Exclude $effectiveExclude)) -and
+            $relativePath.Contains('/')
+        }
+    )
+
+    $patternSet = New-Object System.Collections.Generic.HashSet[string] ([System.StringComparer]::OrdinalIgnoreCase)
+    $testCount = 0
+    $testCaseCount = 0
+
+    foreach ($file in $selectedYamlFiles) {
+        $relativePath = [System.IO.Path]::GetRelativePath(
+            $resolvedPath,
+            $file.FullName
+        ).Replace('\', '/')
+
+        if ($relativePath.Contains('/')) {
+            $topFolder = $relativePath.Split('/')[0]
+
+            if (-not [string]::IsNullOrWhiteSpace($topFolder)) {
+                [void]$patternSet.Add("$topFolder/**/*.yaml")
+            }
+        }
+
+        $yamlText = Get-Content -LiteralPath $file.FullName -Raw
+
+        if ([string]::IsNullOrWhiteSpace($yamlText)) {
+            continue
+        }
+
+        $yamlDocument = ConvertFrom-Yaml -Yaml $yamlText
+        $tests = @($yamlDocument.tests)
+        $testCount += $tests.Count
+
+        foreach ($test in $tests) {
+            $cases = @($test.cases)
+            $testCaseCount += $cases.Count
+        }
+    }
+
+    $patterns = @([System.Linq.Enumerable]::ToArray($patternSet) | Sort-Object)
+    $revision = if ([string]::IsNullOrWhiteSpace($CommitSha)) { "<unknown>" } else { $CommitSha.Trim() }
+    $repository = if ([string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_NAME)) {
+        "https://github.com/Seddryck/Expressif"
+    }
+    else {
+        "https://github.com/$($env:APPVEYOR_REPO_NAME.Trim())"
+    }
+
+    $model = [ordered]@{
+        suite = [ordered]@{
+            version = $Version
+        }
+        source = [ordered]@{
+            repository = $repository
+            revision   = $revision
+            tag        = "conformance-$Version"
+        }
+        contents = [ordered]@{
+            patterns = $patterns
+            counts   = [ordered]@{
+                files     = $selectedYamlFiles.Count
+                tests     = $testCount
+                testCases = $testCaseCount
+            }
+        }
+    } | ConvertTo-Json -Depth 20
+
+    $outputDirectory = Split-Path -Path $resolvedOutputFilePath -Parent
+    if (-not [string]::IsNullOrWhiteSpace($outputDirectory)) {
+        New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+    }
+
+    $model | dotnet tool run didot `
+        -t $templatePath `
+        -e scriban `
+        -i `
+        -r json `
+        -o $resolvedOutputFilePath `
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "Didot execution failed while building conformance manifest."
+    }
+
+    return [PSCustomObject]@{
+        ManifestPath = [System.IO.Path]::GetFullPath($resolvedOutputFilePath)
+        Version      = $Version
+        Tag          = "conformance-$Version"
+        Revision     = $revision
+        PatternCount = $patterns.Count
+        FileCount    = $selectedYamlFiles.Count
+        TestCount    = $testCount
+        TestCaseCount = $testCaseCount
+    }
+}
+
+<#
+.SYNOPSIS
+Validates conformance YAML files against schema and uniqueness rules.
+
+.DESCRIPTION
+Runs JSON schema validation using ajv-cli and checks for duplicate test and
+case identifiers across selected YAML files.
+
+.PARAMETER Path
+Root directory of conformance files.
+
+.PARAMETER Exclude
+Glob patterns used to exclude files from validation.
+
+.PARAMETER FailOnError
+Throws when one or more violations are detected.
+
+.OUTPUTS
+System.Int32
+#>
 function Validate-Conformance {
     [CmdletBinding()]
     param(
@@ -486,9 +785,41 @@ function Validate-Conformance {
     return [int]$totalFailureCount
 }
 
+<#
+.SYNOPSIS
+Calculates the conformance version from Git history and tags.
+
+.DESCRIPTION
+Uses GitVersion with conformance-specific configuration and reuses the latest
+conformance release version when no selected conformance files changed.
+
+.PARAMETER Path
+Root directory used to detect conformance file changes.
+
+.PARAMETER Exclude
+Glob patterns used to exclude changed files from version-impact detection.
+
+.PARAMETER Configuration
+GitVersion configuration file path.
+
+.PARAMETER Warn
+Emits additional warnings for tag visibility conditions.
+
+.PARAMETER Refresh
+Bypasses cached value and recalculates the version.
+
+.PARAMETER NoEnv
+Skips writing the GitVersion_Conformance_SemVer environment variable.
+
+.OUTPUTS
+System.String
+#>
 function Get-ConformanceVersion {
     [CmdletBinding()]
     param(
+        [Alias("ConformancePath")]
+        [string] $Path = "conformance",
+        [string[]] $Exclude = @("bin/**"),
         [string] $Configuration = "GitVersion.Conformance.yml",
         [switch] $Warn,
         [switch] $Refresh,
@@ -515,6 +846,80 @@ function Get-ConformanceVersion {
     }
 
     Update-ConformanceTags
+
+    $resolvedPath = (Resolve-Path -LiteralPath $Path -ErrorAction Stop).Path
+    $effectiveExclude = Get-ConformanceEffectiveExclude -Exclude $Exclude
+
+    $pathSpec = $Path.Replace('\\', '/').Trim()
+    $pathSpec = $pathSpec.TrimStart('.')
+    $pathSpec = $pathSpec.Trim('/')
+
+    if ([string]::IsNullOrWhiteSpace($pathSpec)) {
+        throw "Path '$Path' cannot be converted to a Git pathspec."
+    }
+
+    $versionedCommit = if (-not [string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_COMMIT)) {
+        $env:APPVEYOR_REPO_COMMIT.Trim()
+    }
+    else {
+        (& git rev-parse HEAD 2>$null)
+    }
+
+    $versionedCommit =
+        if ($null -eq $versionedCommit) { "" } else { $versionedCommit.Trim() }
+
+    $changedConformanceFiles = @()
+
+    if (-not [string]::IsNullOrWhiteSpace($versionedCommit)) {
+        $changedConformanceFiles = @(
+            git diff-tree --no-commit-id --name-only -r $versionedCommit -- "$pathSpec/" |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+    }
+
+    $selectedChangedConformanceFiles = @(
+        $changedConformanceFiles |
+        Where-Object {
+            $normalizedPath = $_.Replace('\\', '/').TrimStart('/')
+            $prefix = "$pathSpec/"
+
+            if (-not $normalizedPath.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+                return $false
+            }
+
+            $relativePath = $normalizedPath.Substring($prefix.Length)
+            -not (Test-ConformanceExclude -RelativePath $relativePath -Exclude $effectiveExclude)
+        }
+    )
+
+    Write-Host "Conformance changes for version calculation:" -ForegroundColor DarkCyan
+    Write-Host ("  input-path     : '{0}'" -f $Path) -ForegroundColor DarkCyan
+    Write-Host ("  resolved-path  : '{0}'" -f $resolvedPath) -ForegroundColor DarkCyan
+    Write-Host ("  git-pathspec   : '{0}/'" -f $pathSpec) -ForegroundColor DarkCyan
+    if ($effectiveExclude.Count -gt 0) {
+        Write-Host ("  exclusions     : {0} pattern(s)" -f $effectiveExclude.Count) -ForegroundColor DarkCyan
+        foreach ($pattern in $effectiveExclude) {
+            Write-Host ("    - {0}" -f $pattern) -ForegroundColor DarkCyan
+        }
+    }
+    else {
+        Write-Host "  exclusions     : <none>" -ForegroundColor DarkCyan
+    }
+    Write-Host ("  commit-sha     : '{0}'" -f $versionedCommit) -ForegroundColor DarkCyan
+    Write-Host ("  files-found    : {0}" -f $changedConformanceFiles.Count) -ForegroundColor DarkCyan
+    Write-Host ("  files-selected : {0}" -f $selectedChangedConformanceFiles.Count) -ForegroundColor DarkCyan
+    Write-Host ("  files-excluded : {0}" -f ($changedConformanceFiles.Count - $selectedChangedConformanceFiles.Count)) -ForegroundColor DarkCyan
+
+    if ($selectedChangedConformanceFiles.Count -gt 0) {
+        $selectedChangedConformanceFiles |
+            Sort-Object |
+            ForEach-Object {
+                Write-Host ("    - {0}" -f $_) -ForegroundColor DarkCyan
+            }
+    }
+    else {
+        Write-Host "    - <none>" -ForegroundColor DarkCyan
+    }
 
     $currentYear = [int](Get-Date -Format "yyyy")
     $currentMonth = [int](Get-Date -Format "MM")
@@ -574,6 +979,35 @@ function Get-ConformanceVersion {
         } |
         Sort-Object Version -Descending |
         Select-Object -First 1
+
+    if ($selectedChangedConformanceFiles.Count -eq 0) {
+        if ($null -ne $latestRelease) {
+            $conformanceVersion = $latestRelease.Version.ToString()
+            $script:ConformanceVersionCache = $conformanceVersion
+
+            Write-Host (
+                "No files changed under 'conformance/' for commit '{0}'. Reusing latest conformance release version: {1}" -f
+                $versionedCommit,
+                $conformanceVersion
+            ) -ForegroundColor DarkYellow
+
+            if (-not $NoEnv) {
+                $env:GitVersion_Conformance_SemVer = "conformance-$conformanceVersion"
+
+                Write-Host (
+                    "Environment variable GitVersion_Conformance_SemVer: {0}" -f
+                    $env:GitVersion_Conformance_SemVer
+                )
+            }
+
+            return $conformanceVersion
+        }
+
+        Write-Host (
+            "No files changed under 'conformance/' for commit '{0}', but no prior conformance tag was found. Falling back to GitVersion calculation." -f
+            $versionedCommit
+        ) -ForegroundColor DarkYellow
+    }
 
     $startsNewCalendarMonth =
         $null -eq $latestRelease -or
@@ -667,12 +1101,33 @@ $gitVersionJson
     return $conformanceVersion
 }
 
+<#
+.SYNOPSIS
+Packages conformance files into a zip archive.
+
+.DESCRIPTION
+Collects selected files, optionally builds a manifest, stages content in a
+temporary directory, and creates a zip archive with 7-Zip.
+
+.PARAMETER Path
+Root directory of conformance files.
+
+.PARAMETER Exclude
+Glob patterns used to exclude files from packaging.
+
+.PARAMETER Version
+Conformance version used in the archive name and manifest.
+
+.PARAMETER NoManifest
+Skips manifest generation and inclusion when specified.
+#>
 function Package-Conformance {
     [CmdletBinding()]
     param(
         [string] $Path = "conformance",
-        [string[]] $Exclude = @("bin/**"),
-        [string] $Version = "0.0.0"
+        [string[]] $Exclude = @("bin/**", "/*.yaml", "/*.yml"),
+        [string] $Version = "0.0.0",
+        [switch] $NoManifest
     )
 
     Write-Host "=== Packaging conformance ==="
@@ -707,7 +1162,7 @@ function Package-Conformance {
             $relativePath = [System.IO.Path]::GetRelativePath(
                 $resolvedPath,
                 $_.FullName
-            ).Replace('\\', '/')
+            ).Replace('\', '/')
 
             -not (Test-ConformanceExclude -RelativePath $relativePath -Exclude $effectiveExclude)
         }
@@ -736,6 +1191,26 @@ function Package-Conformance {
 
     New-Item -ItemType Directory -Path $stagingDirectory -Force | Out-Null
 
+    $commitSha = if (-not [string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_COMMIT)) {
+        $env:APPVEYOR_REPO_COMMIT.Trim()
+    }
+    else {
+        $head = (& git rev-parse HEAD 2>$null)
+        if ([string]::IsNullOrWhiteSpace($head)) { "<unknown>" } else { $head.Trim() }
+    }
+
+    $manifestInfo = $null
+
+    if (-not $NoManifest) {
+        $manifestOutputPath = Join-Path $archiveDirectory "conformance.manifest.yaml"
+        $manifestInfo = Build-ConformanceManifest `
+            -Version $conformanceVersion `
+            -CommitSha $commitSha `
+            -Path $resolvedPath `
+            -Exclude $effectiveExclude `
+            -OutputFilePath $manifestOutputPath
+    }
+
     try {
         foreach ($file in $filesToPackage) {
             $relativePath = [System.IO.Path]::GetRelativePath(
@@ -751,6 +1226,13 @@ function Package-Conformance {
             }
 
             Copy-Item -LiteralPath $file.FullName -Destination $targetPath -Force
+        }
+
+        if (-not $NoManifest -and $null -ne $manifestInfo) {
+            Copy-Item `
+                -LiteralPath $manifestInfo.ManifestPath `
+                -Destination (Join-Path $stagingDirectory "conformance.manifest.yaml") `
+                -Force
         }
 
         Push-Location $stagingDirectory
@@ -785,9 +1267,50 @@ function Package-Conformance {
     Write-Host ("  files-selected : {0}" -f $filesToPackage.Count) -ForegroundColor DarkCyan
     Write-Host ("  files-excluded : {0}" -f ($allFiles.Count - $filesToPackage.Count)) -ForegroundColor DarkCyan
 
+    if ($NoManifest) {
+        Write-Host "Manifest generation skipped because -NoManifest was specified." -ForegroundColor DarkYellow
+    }
+    else {
+        Write-Host "Manifest details:" -ForegroundColor DarkCyan
+        Write-Host ("  path        : {0}" -f $manifestInfo.ManifestPath) -ForegroundColor DarkCyan
+        Write-Host ("  version     : {0}" -f $manifestInfo.Version) -ForegroundColor DarkCyan
+        Write-Host ("  tag         : {0}" -f $manifestInfo.Tag) -ForegroundColor DarkCyan
+        Write-Host ("  revision    : {0}" -f $manifestInfo.Revision) -ForegroundColor DarkCyan
+        Write-Host ("  patterns    : {0}" -f $manifestInfo.PatternCount) -ForegroundColor DarkCyan
+        Write-Host ("  files       : {0}" -f $manifestInfo.FileCount) -ForegroundColor DarkCyan
+        Write-Host ("  tests       : {0}" -f $manifestInfo.TestCount) -ForegroundColor DarkCyan
+        Write-Host ("  test-cases  : {0}" -f $manifestInfo.TestCaseCount) -ForegroundColor DarkCyan
+    }
+
     Write-Host "Created archive: $archivePath"
 }
 
+<#
+.SYNOPSIS
+Creates or updates the conformance Git tag when eligible.
+
+.DESCRIPTION
+Tags the selected commit with the conformance semantic version when selected
+files changed and branch conditions are met.
+
+.PARAMETER Path
+Root directory used to detect changed conformance files.
+
+.PARAMETER Exclude
+Glob patterns used to exclude changed files from tag impact detection.
+
+.PARAMETER Version
+Conformance version used to build the tag name.
+
+.PARAMETER Warn
+Enables warning output for additional diagnostics.
+
+.PARAMETER Force
+Allows replacing an existing conformance tag.
+
+.PARAMETER DryRun
+Evaluates and reports actions without mutating or publishing tags.
+#>
 function Tag-Conformance {
     [CmdletBinding()]
     param(
@@ -815,7 +1338,7 @@ function Tag-Conformance {
 
     $effectiveExclude = Get-ConformanceEffectiveExclude -Exclude $Exclude
 
-    $pathSpec = $Path.Replace('\\', '/').Trim()
+    $pathSpec = $Path.Replace('\', '/').Trim()
     $pathSpec = $pathSpec.TrimStart('.')
     $pathSpec = $pathSpec.Trim('/')
 
@@ -849,7 +1372,7 @@ function Tag-Conformance {
     $selectedChangedConformanceFiles = @(
         $changedConformanceFiles |
         Where-Object {
-            $normalizedPath = $_.Replace('\\', '/').TrimStart('/')
+            $normalizedPath = $_.Replace('\', '/').TrimStart('/')
             $prefix = "$pathSpec/"
 
             if (-not $normalizedPath.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
