@@ -419,7 +419,20 @@ $probeText
     }
 
     $patterns = @([System.Linq.Enumerable]::ToArray($patternSet) | Sort-Object)
-    $revision = if ([string]::IsNullOrWhiteSpace($CommitSha)) { "<unknown>" } else { $CommitSha.Trim() }
+    $manifestTag = "conformance-$Version"
+    $tagReference = "refs/tags/$manifestTag"
+    $tagRevision = (& git rev-list -n 1 $tagReference 2>$null)
+
+    $revision = if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($tagRevision)) {
+        $tagRevision.Trim()
+    }
+    elseif ([string]::IsNullOrWhiteSpace($CommitSha)) {
+        "<unknown>"
+    }
+    else {
+        $CommitSha.Trim()
+    }
+
     $repository = if ([string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_NAME)) {
         "https://github.com/Seddryck/Expressif"
     }
@@ -434,7 +447,7 @@ $probeText
         source = [ordered]@{
             repository = $repository
             revision   = $revision
-            tag        = "conformance-$Version"
+            tag        = $manifestTag
         }
         contents = [ordered]@{
             patterns = $patterns
@@ -465,7 +478,7 @@ $probeText
     return [PSCustomObject]@{
         ManifestPath = [System.IO.Path]::GetFullPath($resolvedOutputFilePath)
         Version      = $Version
-        Tag          = "conformance-$Version"
+        Tag          = $manifestTag
         Revision     = $revision
         PatternCount = $patterns.Count
         FileCount    = $selectedYamlFiles.Count
