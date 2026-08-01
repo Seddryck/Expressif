@@ -33,6 +33,7 @@ install:
 - pwsh: .\install-gitversion.ps1
 - cmd: RefreshEnv.cmd
 - cmd: dotnet tool restore
+- pwsh: ./distribution/ensure-iscc.ps1
 
 before_build:
 - pwsh: Write-Host "Target branch is '$($env:APPVEYOR_REPO_BRANCH)'"
