@@ -105,6 +105,7 @@ after_test:
                 -Exclude @("bin/**", "/*.yaml", "/*.yml") `
         -XmlPath "./conformance/bin/Expressif.Conformance.DotNet.xml" `
         -OutputYamlPath "./conformance/bin/expressif.conformance.dotnet.$($env:GitVersion_SemVer).yaml"
+- pwsh: distribution/build-distribution.ps1 -Version $env:GitVersion_SemVer -Configuration Release
 
 artifacts:
 - path: '**\*.nupkg'
@@ -112,6 +113,10 @@ artifacts:
 - path: '**\*.vsix'
 - path: '**\Expressif.Conformance.*.zip'
 - path: '**\Expressif.Conformance.*.yaml'
+- path: 'distribution/packages/Expressif-cli.*.nupkg'
+- path: 'distribution/archives/Expressif-*.*'
+- path: 'distribution/installers/Expressif-*-setup.exe*'
+
 
 deploy:
 - provider: NuGet
@@ -154,6 +159,16 @@ on_success:
                 -Tag "v$($env:GitVersion_SemVer)" `
                 -Path "./conformance/bin/" `
                 -Extensions @("yaml")
+
+            $context | Upload-Release-Assets `
+                -Tag "v$($env:GitVersion_SemVer)" `
+                -Path "./distribution/archives/" `
+                -Extensions @("zip", "tar.gz")
+            
+            $context | Upload-Release-Assets `
+                -Tag "v$($env:GitVersion_SemVer)" `
+                -Path "./distribution/installers/" `
+                -Extensions @("exe")
 
         } else {
             Write-Host "No release published on GitHub when patch is not set to zero."
