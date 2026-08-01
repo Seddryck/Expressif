@@ -114,10 +114,9 @@ artifacts:
 - path: '**\*.vsix'
 - path: '**\Expressif.Conformance.*.zip'
 - path: '**\Expressif.Conformance.*.yaml'
-- path: 'distribution/packages/Expressif-cli.*.nupkg'
-- path: 'distribution/archives/Expressif-*.*'
-- path: 'distribution/installers/Expressif-*-setup.exe*'
-
+- path: '**\packages\Expressif-cli.*.nupkg'
+- path: '**\archives\Expressif-*.*'
+- path: '**\installers\Expressif-*-setup.exe*'
 
 deploy:
 - provider: NuGet
