@@ -31,7 +31,7 @@
 #endif
 
 [Setup]
-AppId={{9F6D1A4C-5E73-4A91-BB8F-2F3D7C8E6A42}}
+AppId={{9F6D1A4C-5E73-4A91-BB8F-2F3D7C8E6A55}}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
@@ -219,7 +219,7 @@ begin
     '\sharedfx\Microsoft.NETCore.App';
 
   if not RegGetValueNames(
-    HKEY_LOCAL_MACHINE,
+    HKEY_LOCAL_MACHINE_32,
     RuntimeKey,
     RuntimeVersions
   ) then
