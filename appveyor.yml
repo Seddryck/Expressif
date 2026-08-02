@@ -29,8 +29,9 @@ install:
 #     Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
 #     & $env:temp\dotnet-install.ps1 -Architecture x64 -Version '10.0.100' -InstallDir "$env:ProgramFiles\dotnet"
 - cmd: npm install -g @vscode/vsce
-- pwsh: . .\Conformance.ps1; Install-ConformanceDependencies
-- pwsh: .\install-gitversion.ps1
+- pwsh: . ./conformance.ps1; Install-ConformanceDependencies
+- pwsh: ./install-gitversion.ps1
+- pwsh: ./distribution/install-iscc.ps1
 - cmd: RefreshEnv.cmd
 - cmd: dotnet tool restore
 
@@ -106,12 +107,16 @@ after_test:
           -Platform "dotnet" `
           -NUnit
 
+- pwsh: distribution/build-distribution.ps1 -Version $env:GitVersion_SemVer -Configuration Release
+
 artifacts:
 - path: '**\*.nupkg'
 - path: '**\*.snupkg'
 - path: '**\*.vsix'
 - path: '**\Expressif.Conformance.*.zip'
 - path: '**\Expressif.Conformance.*.yaml'
+- path: '**\bin\archives\Expressif-*.*'
+- path: '**\bin\installers\Expressif-*-setup.exe*'
 
 deploy:
 - provider: NuGet
@@ -154,6 +159,16 @@ on_success:
                 -Tag "v$($env:GitVersion_SemVer)" `
                 -Path "./conformance/bin/" `
                 -Extensions @("yaml")
+
+            $context | Upload-Release-Assets `
+                -Tag "v$($env:GitVersion_SemVer)" `
+                -Path "./distribution/bin/archives/" `
+                -Extensions @("zip", "gz")
+            
+            $context | Upload-Release-Assets `
+                -Tag "v$($env:GitVersion_SemVer)" `
+                -Path "./distribution/bin/installers/" `
+                -Extensions @("exe")
 
         } else {
             Write-Host "No release published on GitHub when patch is not set to zero."
