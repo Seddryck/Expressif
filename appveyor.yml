@@ -114,9 +114,8 @@ artifacts:
 - path: '**\*.vsix'
 - path: '**\Expressif.Conformance.*.zip'
 - path: '**\Expressif.Conformance.*.yaml'
-- path: '**\packages\Expressif-cli.*.nupkg'
-- path: '**\archives\Expressif-*.*'
-- path: '**\installers\Expressif-*-setup.exe*'
+- path: '**\bin\archives\Expressif-*.*'
+- path: '**\bin\installers\Expressif-*-setup.exe*'
 
 deploy:
 - provider: NuGet
@@ -162,12 +161,12 @@ on_success:
 
             $context | Upload-Release-Assets `
                 -Tag "v$($env:GitVersion_SemVer)" `
-                -Path "./distribution/archives/" `
+                -Path "./distribution/bin/archives/" `
                 -Extensions @("zip", "tar.gz")
             
             $context | Upload-Release-Assets `
                 -Tag "v$($env:GitVersion_SemVer)" `
-                -Path "./distribution/installers/" `
+                -Path "./distribution/bin/installers/" `
                 -Extensions @("exe")
 
         } else {

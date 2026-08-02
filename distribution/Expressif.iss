@@ -35,9 +35,9 @@ AppId={{9F6D1A4C-5E73-4A91-BB8F-2F3D7C8E6A55}}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
-AppPublisherURL=https://github.com/Seddryck/{#AppVersion}
-AppSupportURL=https://github.com/Seddryck/{#AppVersion}/issues
-AppUpdatesURL=https://github.com/Seddryck/{#AppVersion}/releases
+AppPublisherURL=https://github.com/Seddryck/{#AppName}
+AppSupportURL=https://github.com/Seddryck/{#AppName}/issues
+AppUpdatesURL=https://github.com/Seddryck/{#AppName}/releases
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 OutputDir={#OutputDirectory}
@@ -51,12 +51,17 @@ ChangesEnvironment=yes
 UninstallDisplayIcon={app}\{#AppExeName}
 
 [Files]
+Source: "{#PublishDirectory}\{#BuildIdentity}.exe"; \
+  DestDir: "{app}"; \
+  DestName: "{#CommandName}.exe"; \
+  Flags: ignoreversion
 Source: "{#PublishDirectory}\*"; \
   DestDir: "{app}"; \
+  Excludes: "{#BuildIdentity}.exe"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\{#AppVersion} Command Prompt"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}"""
+Name: "{group}\{#AppName} Command Prompt"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}"""
 
 [Code]
 
@@ -79,6 +84,7 @@ begin
   NormalizedEntry := Uppercase(NormalizePathEntry(Entry));
 
   StringChangeEx(NormalizedPath, '/', '\', True);
+  StringChangeEx(NormalizedEntry, '/', '\', True);
 
   Result :=
     Pos(
