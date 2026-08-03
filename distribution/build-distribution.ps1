@@ -6,6 +6,7 @@ param(
         "Archive",
         "Bundle",
         "Pack",
+        "Containerize",
         "Distribute"
     )]
     [string] $Mode = "Distribute",
@@ -35,6 +36,11 @@ param(
         "win-arm64",
         "linux-x64",
         "linux-musl-x64"
+    ),
+
+    [string[]] $ContainerVariants = @(
+        "ubuntu",
+        "alpine"
     ),
 
     [string] $Configuration =
@@ -91,6 +97,7 @@ $PublishRoot = Join-Path $OutputRoot "publish"
 $ArchiveRoot = Join-Path $OutputRoot "archives"
 $InstallerRoot = Join-Path $OutputRoot "installers"
 $PackageRoot = Join-Path $OutputRoot "packages"
+$ContainerRoot = Join-Path $OutputRoot "containers"
 $StagingRoot = Join-Path $PSScriptRoot "obj"
 
 # ---------------------------------------------------------------------------
@@ -392,7 +399,7 @@ function Invoke-Archive {
                     $archiveName
             }
 
-            Write-Step "Creating archive $archiveName"
+            Write-Step "Creating archive $([System.IO.Path]::GetFileName($archivePath))"
 
             New-CleanDirectory -Path $stagingDirectory
 
@@ -434,22 +441,17 @@ function Invoke-Archive {
                     -Force `
                     -ErrorAction SilentlyContinue
 
-                # Add the Linux command with executable permissions: rwxr-xr-x.
+                # Add the Linux command
                 Invoke-ExternalCommand `
                     -Command "tar" `
                     -Arguments @(
                         "--create",
                         "--file", $tarPath,
                         "--directory", $stagingDirectory,
-                        #"--mode=755",
                         $commandExecutableName
                     )
 
                 # Add all remaining files.
-                #
-                # u+rwX,go+rX gives:
-                #   regular files: rw-r--r--
-                #   directories:   rwxr-xr-x
                 Invoke-ExternalCommand `
                     -Command "tar" `
                     -Arguments @(
@@ -457,7 +459,6 @@ function Invoke-Archive {
                         "--file", $tarPath,
                         "--directory", $stagingDirectory,
                         "--exclude=$commandExecutableName",
-                        #"--mode=u+rwX,go+rX",
                         "."
                     )
 
@@ -539,7 +540,7 @@ function Invoke-Bundle {
         #
         # The Inno Setup script receives both names:
         #
-        # BuildIdentity = Expressif-cli
+        # BuildIdentity = Expressif.Cli
         # CommandName   = expressif
         #
         # It can therefore install Expressif-cli.exe as expressif.exe
@@ -556,6 +557,7 @@ function Invoke-Bundle {
                 "/DPublishDirectory=$publishDirectory",
                 "/DOutputDirectory=$InstallerRoot",
                 "/DOutputBaseFilename=$installerName",
+                "/Qp",
                 $InstallerScript
             )   
         $installerPath = Join-Path `
@@ -610,6 +612,86 @@ function Invoke-Pack {
         -Description "Generated NuGet package"
 }
 
+
+# ---------------------------------------------------------------------------
+# Render dockerfiles
+# ---------------------------------------------------------------------------
+
+function Invoke-Containerize {
+    Write-Step "Generating container definitions"
+
+    New-CleanDirectory -Path $ContainerRoot
+
+    foreach ($variant in $ContainerVariants) {
+        $sourcePath = Join-Path `
+            $PSScriptRoot `
+            "docker-$variant.yaml"
+
+        $outputDirectory = Join-Path `
+            $ContainerRoot `
+            $variant
+
+        Assert-FileExists `
+            -Path $sourcePath `
+            -Description "Container configuration for '$variant'"
+
+        New-Item `
+            -ItemType Directory `
+            -Path $outputDirectory `
+            -Force |
+            Out-Null
+
+        Invoke-ExternalCommand `
+            -Command "didot" `
+            -Arguments @(
+                "--template", (Join-Path $PSScriptRoot "Dockerfile.sbn"),
+                "--engine", "scriban",
+                "--source", "distribution/docker-$variant.yaml",
+                "--output", (Join-Path $outputDirectory "Dockerfile")
+            )
+    }
+
+    $buildScriptSource = Join-Path `
+        $PSScriptRoot `
+        "build-container.ps1"
+
+    $buildScriptDestination = Join-Path `
+        $ContainerRoot `
+        "build-container.ps1"
+
+    Assert-FileExists `
+        -Path $buildScriptSource `
+        -Description "Container build script"
+
+    Copy-Item `
+        -LiteralPath $buildScriptSource `
+        -Destination $buildScriptDestination `
+        -Force
+
+    $containerArchive = Join-Path `
+        $ArchiveRoot `
+        "$DistributionName-latest-containers.zip"
+
+    Remove-Item `
+        -LiteralPath $containerArchive `
+        -Force `
+        -ErrorAction SilentlyContinue
+
+    Invoke-ExternalCommand `
+        -Command $SevenZip `
+        -Arguments @(
+            "a",
+            "-tzip",
+            "-mx=9",
+            $containerArchive,
+            (Join-Path $ContainerRoot "*")
+        )
+
+    Assert-FileExists `
+        -Path $containerArchive `
+        -Description "Generated container definitions archive"
+}
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -651,12 +733,21 @@ switch ($Mode) {
         Invoke-Pack
     }
 
+    
+    "Containerize" {
+        # A standalone Containerize command builds when needed.
+        #
+        # Creates a ZIP archive of container definitions for all variants.
+        Invoke-Containerize
+    }
+
     "Distribute" {
         # Build once, then reuse those outputs where possible.
         Invoke-Publish
         Invoke-Archive
         Invoke-Bundle
         Invoke-Pack -NoBuild
+        Invoke-Containerize
     }
 
     default {

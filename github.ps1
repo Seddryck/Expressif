@@ -419,36 +419,34 @@ function List-Release-Assets {
 }
 
 function Get-Expected-Labels {
-	[CmdletBinding()]
-	param(
-		[Parameter(Mandatory=$true, ValueFromPipeline = $true)]
-        [string] $title,
-		[System.Collections.IDictionary] $mapping
-	)
-	$labels = @()
-	$tokens = $title -Split ':'
-	if ($tokens.Length -lt 2) {
-		return @()
-	}
-	
-	$conventional = $tokens[0].Trim()
-	if ($conventional.IndexOf('(') -gt 0) {
-		$conventional = $conventional.SubString(0, $conventional.IndexOf('(') - 1).Trim()
-	}
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        [string] $Title,
 
-	if ($conventional.EndsWith('!')) {
-		if($mapping.ContainsKey('!')) {
-			$labels += $mapping['!']
-		}
-	}
+        [Parameter(Mandatory = $true)]
+        [System.Collections.IDictionary] $Mapping
+    )
 
-	$conventional = $conventional.TrimEnd('!').Trim()
-	if(-not $mapping.ContainsKey($conventional)) {
-		return @()
-	} else {
-		$labels += $mapping[$conventional]
-	}
-	return $labels
+    process {
+        if ($Title -notmatch '^\s*(?<type>[a-zA-Z0-9-]+)(?:\([^)]*\))?(?<breaking>!)?\s*:') {
+            return @()
+        }
+
+        $labels = @()
+        $conventional = $Matches['type']
+
+        if ($Matches['breaking'] -eq '!' -and $Mapping.ContainsKey('!')) {
+            $labels += $Mapping['!']
+        }
+
+        if (-not $Mapping.ContainsKey($conventional)) {
+            return @()
+        }
+
+        $labels += $Mapping[$conventional]
+        return $labels
+    }
 }
 
 function Set-Pull-Request-Expected-Labels {
