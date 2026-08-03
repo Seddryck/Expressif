@@ -38,23 +38,20 @@ expressif version --help
 
 ## Evaluating an expression
 
-The evaluate command requires an input value. Use --input, or its short form -i, to provide the value passed to the expression.
+### Evaluate a standalone expression
+
+The evaluate command requires an input value. Use `--input`, or its short form `-i`, to provide the value passed to the expression.
 
 ```console
 expressif evaluate "absolute | add(5)" --input -12
 ```
-
 The result is written directly to standard output:
 
 ```text
-17
+12
 ```
 
-The short form is equivalent:
-
-```console
-expressif evaluate "absolute | add(5)" -i -12
-```
+The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
 
 ### Null results
 
