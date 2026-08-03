@@ -13,6 +13,7 @@ public class CliCommandTests
         EvaluateCommand.BuildExpression = static (code, context) => new Expression(code, context);
         EvaluateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
         EvaluateCommand.EvaluateClosedExpression = static expression => expression.Evaluate();
+        RunCommand.ResetDelegates();
         ValidateCommand.BuildExpression = static (code, context) => new Expression(code, context);
         ValidateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
 
@@ -35,6 +36,19 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("17"));
             Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_MultipleInputOptions_ReturnsClearError()
+    {
+        var result = await InvokeAsync("evaluate", "absolute | add(5)", "--input", "-12", "--input", "-5");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr, Does.Contain("--input"));
+            Assert.That(result.StdErr, Does.Contain("single argument"));
         });
     }
 
@@ -406,6 +420,142 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_BatchEnumerable_EvaluatesEachDirectElementAndReturnsSuccess()
+    {
+        var result = await InvokeAsync("run", "absolute", "--batch", "{1, -2, 3}");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "1", "2", "3" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_BatchNestedEnumerable_EnumeratesOnlyOuterInput()
+    {
+        var result = await InvokeAsync("run", "count", "--batch", "{{1, 2, 3}, {4, 5}}");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "3", "2" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_BatchEmptyEnumerable_ProducesNoOutputAndSuccess()
+    {
+        var result = await InvokeAsync("run", "absolute", "--batch", "{}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_BatchSingleElementEnumerable_ProducesSingleOutput()
+    {
+        var result = await InvokeAsync("run", "absolute", "--batch", "{5}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("5"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_ScalarInput_IsAcceptedAsSingleElementSequence()
+    {
+        var result = await InvokeAsync("run", "add(1)", "--input", "42");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("43"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_MultipleInputOptions_EachOccurrenceDefinesOneRow()
+    {
+        var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "1", "--input", "{2, 3}", "--input", "4");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "1", "0", "1" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_BatchOption_ScalarValue_ReturnsClearEnumerableError()
+    {
+        var result = await InvokeAsync("run", "add(1)", "--batch", "42");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The --batch option requires an enumerable value."));
+        });
+    }
+
+    [Test]
+    public async Task Run_MissingInputOption_ReturnsClearError()
+    {
+        var result = await InvokeAsync("run", "absolute");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The run command requires inputs. Provide at least one --input row or one --batch enumerable value."));
+        });
+    }
+
+    [Test]
+    public async Task Run_ExpressionFile_UsesSameExpressionLoadingRules()
+    {
+        var path = CreateTempFile("absolute");
+
+        var result = await InvokeAsync("run", "--file", path, "--batch", "{1, -2, 3}");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "1", "2", "3" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_EvaluationFailure_StopsEnumerationAndReturnsFailure()
+    {
+        var result = await InvokeAsync("run", "add(1)", "--batch", "{1, unknown, 3}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(result.StdErr, Does.Contain("Expression evaluation failed for input unknown"));
+        });
+    }
+
+    [Test]
     public async Task Validate_ValidExpression_ReturnsSuccessAndMessage()
     {
         var result = await InvokeAsync("validate", "absolute | add(5)");
@@ -599,6 +749,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.Contain("evaluate"));
+            Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
             Assert.That(result.StdOut, Does.Contain("version"));
             Assert.That(result.StdErr, Is.Empty);
