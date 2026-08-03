@@ -103,6 +103,12 @@ Use `run` to evaluate an expression repeatedly over an input sequence.
 - `--input` (repeatable): each occurrence defines exactly one row, whether the value is scalar or enumerable;
 - `--batch` (single value): the value must be enumerable, and each direct element becomes one row.
 
+You can also use `--source` to read rows from a CSV file.
+
+- The first row is the header (column names).
+- Each following row is evaluated once.
+- Use column names in expressions, for example `[name]` or `[age]`.
+
 ```console
 expressif run "count" --input "{1, -2, 3}"
 ```
@@ -158,6 +164,31 @@ expressif run "count" --batch "{{1, 2, 3}, {4, 5}}"
 3
 2
 ```
+
+### Running from a CSV file
+
+Use `--source` to evaluate one row at a time from a CSV file:
+
+```console
+expressif run "[name] | upper" --source people.csv
+```
+
+How CSV input is handled:
+
+- the first row is treated as header;
+- each following row is an input record;
+- empty fields are represented as empty text;
+- duplicate header names are rejected;
+- malformed rows (wrong field count) fail with a clear error;
+- processing is streamed row by row so large files can be processed efficiently.
+
+Example:
+
+```console
+expressif run "[country] | upper" --source customers.csv
+```
+
+`--source` cannot be combined with `--input` or `--batch`.
 
 Expression loading works the same way as with `evaluate`: inline argument or `--file` (`-f`).
 
