@@ -1,12 +1,7 @@
 ---
 title: Using the Expressif CLI
 sub-title: Evaluate and validate Expressif expressions from a terminal or automation script
-tags:
-  - expressif
-  - cli
-  - command-line
-  - evaluation
-  - validation
+tags: [CLI, evaluation, validation]
 ---
 
 The Expressif CLI provides a command-line interface for evaluating and validating Expressif expressions. It can be used interactively from a terminal or integrated into scripts and continuous integration workflows.
@@ -43,42 +38,17 @@ expressif version --help
 
 ## Evaluating an expression
 
-Use `evaluate` to execute an Expressif expression.
-
-```text
-expressif evaluate <expression> [--input <value>]
-```
-
-The expression is a required positional argument. Enclose it in quotes when it contains spaces or characters interpreted by your shell.
-
 ### Evaluate a standalone expression
 
-```console
-expressif evaluate "absolute(-12)"
-```
-
-The result is written directly to standard output:
-
-```text
-12
-```
-
-### Pass an input value
-
-Use `--input`, or its short form `-i`, to pass a value to the expression:
+The evaluate command requires an input value. Use `--input`, or its short form `-i`, to provide the value passed to the expression.
 
 ```console
 expressif evaluate "absolute | add(5)" --input -12
 ```
+The result is written directly to standard output:
 
 ```text
-17
-```
-
-The short form is equivalent:
-
-```console
-expressif evaluate "absolute | add(5)" -i -12
+12
 ```
 
 The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.

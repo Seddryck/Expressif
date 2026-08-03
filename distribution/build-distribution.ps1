@@ -93,6 +93,13 @@ $InstallerRoot = Join-Path $OutputRoot "installers"
 $PackageRoot = Join-Path $OutputRoot "packages"
 $StagingRoot = Join-Path $PSScriptRoot "obj"
 
+Write-Host "=== Distribution Build Script ==="
+Write-Host "Distribution mode: $Mode"
+
+if ($Version -eq "0.0.0-local") {
+    Write-Warning "No version was provided. Using local version '$Version'."
+}
+
 # ---------------------------------------------------------------------------
 # General helpers
 # ---------------------------------------------------------------------------
@@ -271,7 +278,8 @@ function Invoke-Build {
                 "build",
                 $Project,
                 "--configuration", $Configuration,
-                "--framework", $framework
+                "--framework", $framework,
+                "-p:version=$Version"
             )
     }
 }
@@ -302,6 +310,7 @@ function Invoke-Publish {
                 "--framework", $framework,
                 "--runtime", $runtime,
                 "--output", $publishDirectory,
+                "-p:version=$Version",
                 "--no-self-contained"
             )
 
