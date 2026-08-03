@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, complement, difference, filter, first-elements, fold, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, complement, difference, filter, first-elements, fold, intersection, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -64,6 +64,17 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the fold execution.
+
+##### intersection
+
+###### Alias: `intersection`
+
+###### Overview
+
+Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* array: Specifies the array to compare with the pipeline input.
 
 ##### lag
 
@@ -150,5 +161,16 @@ Returns the distinct values that appear in exactly one of the two arrays, listin
 
 ###### Parameter
 * array: Specifies the second array to compare against the pipeline input.
+
+##### union
+
+###### Alias: `union`
+
+###### Overview
+
+Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* array: Specifies the second array whose values are combined with the pipeline input.
 
 <!-- END AUTO-GENERATED -->

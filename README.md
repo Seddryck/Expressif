@@ -210,6 +210,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | filter                              | filter                                                                            |
 |Array    | first-elements                      | first                                                                             |
 |Array    | fold                                | array-to-fold                                                                     |
+|Array    | intersection                        | intersection                                                                      |
 |Array    | lag                                 | array-to-lag                                                                      |
 |Array    | last-elements                       | last                                                                              |
 |Array    | lead                                | array-to-lead                                                                     |
@@ -220,6 +221,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | skip-last-elements                  | skip-last                                                                         |
 |Array    | slice-elements                      | slice                                                                             |
 |Array    | symmetric-difference                | symmetric-difference                                                              |
+|Array    | union                               | union                                                                             |
 |IO       | creation-datetime                   | file-to-creation-datetime, file-to-creation-dateTime                              |
 |IO       | creation-datetime-utc               | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                      |
 |IO       | directory                           | path-to-directory                                                                 |
