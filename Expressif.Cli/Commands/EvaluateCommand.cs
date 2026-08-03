@@ -55,51 +55,81 @@ internal static class EvaluateCommand
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
-            var useClosedEvaluation = !hasInputOption;
+            if (!hasInputOption)
+                return EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
 
-            if (useClosedEvaluation)
-            {
-                ClosedExpression closedExpression;
-                try
-                {
-                    closedExpression = BuildClosedExpression(expressionCode, new Context());
-                }
-                catch (ExpressionRequiresInputException exception)
-                {
-                    Console.Error.WriteLine(exception.Message);
-                    return ExitCodes.InvalidExpressionOrInput;
-                }
-                catch (Exception exception) when (exception is Sprache.ParseException
-                                                  or NotImplementedFunctionException
-                                                  or MissingOrUnexpectedParametersFunctionException)
-                {
-                    return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
-                }
-                catch (Exception exception)
-                {
-                    Console.Error.WriteLine($"Unexpected error: {exception.Message}");
-                    return ExitCodes.UnexpectedInternalError;
-                }
+            return EvaluateOpen(expressionCode, input, hasExpressionFile, expressionFilePath);
+        });
 
-                try
-                {
-                    var result = EvaluateClosedExpression(closedExpression);
-                    Console.Out.WriteLine(result ?? "null");
-                    return ExitCodes.Success;
-                }
-                catch (ExpressionRequiresInputException exception)
-                {
-                    Console.Error.WriteLine(exception.Message);
-                    return ExitCodes.InvalidExpressionOrInput;
-                }
-                catch (Exception exception) when (exception is not OutOfMemoryException)
-                {
-                    Console.Error.WriteLine(exception.Message);
-                    return ExitCodes.EvaluationFailed;
-                }
-            }
+        return command;
+    }
 
-            Expressif.Expression openExpression;
+    private static int EvaluateClosed(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
+    {
+        ClosedExpression closedExpression;
+        try
+        {
+            closedExpression = BuildClosedExpression(expressionCode, new Context());
+        }
+        catch (ExpressionRequiresInputException exception)
+        {
+            var openValidationResult = ValidateAsOpenExpression(expressionCode, hasExpressionFile, expressionFilePath);
+            if (openValidationResult != ExitCodes.Success)
+                return openValidationResult;
+
+            Console.Error.WriteLine("The expression is valid, but it requires an input to be evaluated.");
+            Console.Error.WriteLine(exception.Message);
+            Console.Error.WriteLine("Provide an input with --input. You can load the expression from a file with --file.");
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+        catch (Exception exception) when (exception is Sprache.ParseException
+                                          or NotImplementedFunctionException
+                                          or MissingOrUnexpectedParametersFunctionException)
+        {
+            return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine($"Unexpected error: {exception.Message}");
+            return ExitCodes.UnexpectedInternalError;
+        }
+
+        try
+        {
+            var result = EvaluateClosedExpression(closedExpression);
+            Console.Out.WriteLine(result ?? "null");
+            return ExitCodes.Success;
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            Console.Error.WriteLine(exception.Message);
+            return ExitCodes.EvaluationFailed;
+        }
+    }
+
+    private static int ValidateAsOpenExpression(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
+    {
+        try
+        {
+            _ = BuildExpression(expressionCode, new Context());
+            return ExitCodes.Success;
+        }
+        catch (Exception exception) when (exception is Sprache.ParseException
+                                          or NotImplementedFunctionException
+                                          or MissingOrUnexpectedParametersFunctionException)
+        {
+            return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine($"Unexpected error: {exception.Message}");
+            return ExitCodes.UnexpectedInternalError;
+        }
+    }
+
+    private static int EvaluateOpen(string expressionCode, string? input, bool hasExpressionFile, string? expressionFilePath)
+    {
+        Expressif.Expression openExpression;
             try
             {
                 openExpression = BuildExpression(expressionCode, new Context());
@@ -127,8 +157,5 @@ internal static class EvaluateCommand
                 Console.Error.WriteLine(exception.Message);
                 return ExitCodes.EvaluationFailed;
             }
-        });
-
-        return command;
     }
 }

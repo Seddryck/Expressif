@@ -7,9 +7,6 @@ internal static partial class CommandErrorFormatter
 {
     public static string FormatValidationError(Exception exception)
     {
-        if (exception is ParseException)
-            return exception.Message;
-
         if (exception is NotImplementedFunctionException)
         {
             var name = TryExtractQuotedValue(exception.Message);
@@ -17,9 +14,6 @@ internal static partial class CommandErrorFormatter
                 ? exception.Message
                 : $"Unknown function '{name}'.";
         }
-
-        if (exception is MissingOrUnexpectedParametersFunctionException)
-            return exception.Message;
 
         return exception.Message;
     }

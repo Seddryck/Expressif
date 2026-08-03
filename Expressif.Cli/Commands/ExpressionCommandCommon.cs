@@ -80,7 +80,10 @@ internal static class ExpressionCommandCommon
             Console.Error.WriteLine($"Expression file '{path}' could not be decoded as UTF-8.");
             return false;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        catch (Exception exception) when (exception is IOException
+                                          or UnauthorizedAccessException
+                                          or ArgumentException
+                                          or NotSupportedException)
         {
             Console.Error.WriteLine($"Expression file '{path}' could not be accessed: {exception.Message}");
             return false;

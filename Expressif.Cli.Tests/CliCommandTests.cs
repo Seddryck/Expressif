@@ -101,7 +101,26 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'.\nProvide an input with --input or a source with --source."));
+            Assert.That(result.StdErr, Does.Contain("The expression is valid, but it requires an input to be evaluated."));
+            Assert.That(result.StdErr, Does.Contain("The expression cannot be evaluated without an input because it references 'upper'."));
+            Assert.That(result.StdErr, Does.Contain("Provide an input with --input. You can load the expression from a file with --file."));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_ClosedEvaluationInputRequired_ButInvalidOpenExpression_ReturnsValidationError()
+    {
+        EvaluateCommand.BuildClosedExpression = static (_, _) => throw new ExpressionRequiresInputException("upper");
+        EvaluateCommand.BuildExpression = static (_, _) => throw new NotImplementedFunctionException("unknown");
+
+        var result = await InvokeAsync("evaluate", "upper");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Not.Contain("The expression is valid, but it requires an input to be evaluated."));
+            Assert.That(result.StdErr, Does.Contain("unknown"));
         });
     }
 
@@ -538,7 +557,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'.\nProvide an input with --input or a source with --source."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'."));
         });
     }
 
