@@ -24,7 +24,7 @@ public class ExpressionFactory : BaseExpressionFactory
 
     public IFunction Instantiate(string code, IContext context)
     {
-        var rootExpression = Parser.Parse(code);
+        var rootExpression = ParseRootExpression(code);
         return rootExpression switch
         {
             OpenRootExpression open => BuildOpenExpression(open.Expression, context),
@@ -32,6 +32,20 @@ public class ExpressionFactory : BaseExpressionFactory
             _ => throw new ParseException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
         };
     }
+
+    public IFunction InstantiateClosed(string code, IContext context)
+    {
+        var rootExpression = ParseRootExpression(code);
+        return rootExpression switch
+        {
+            ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),
+            OpenRootExpression open => throw new ExpressionRequiresInputException(open.Expression.Members.FirstOrDefault()?.Name),
+            _ => throw new ParseException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
+        };
+    }
+
+    private IRootExpression ParseRootExpression(string code)
+        => Parser.Parse(code);
 
     public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
         => Instantiate<IFunction>(name, parameters, context);

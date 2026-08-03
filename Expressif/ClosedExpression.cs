@@ -13,7 +13,7 @@ public class ClosedExpression
         : this(code, context, new ExpressionFactory()) { }
 
     public ClosedExpression(string code, IContext context, ExpressionFactory factory)
-        => expression = factory.Instantiate(code, context);
+        => expression = factory.InstantiateClosed(code, context);
 
     public object? Evaluate()
         => expression.Evaluate(null);

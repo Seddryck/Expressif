@@ -11,7 +11,10 @@ public class CliCommandTests
     public void TearDown()
     {
         EvaluateCommand.BuildExpression = static (code, context) => new Expression(code, context);
+        EvaluateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
+        EvaluateCommand.EvaluateClosedExpression = static expression => expression.Evaluate();
         ValidateCommand.BuildExpression = static (code, context) => new Expression(code, context);
+        ValidateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
 
         foreach (var path in tempFilesToDelete)
         {
@@ -36,9 +39,9 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task Evaluate_NullInput_ReturnsExpectedResult()
+    public async Task Evaluate_EmptyStringInput_ReturnsExpectedResult()
     {
-        var result = await InvokeAsync("evaluate", "null-to-empty | count-chars");
+        var result = await InvokeAsync("evaluate", "null-to-empty | count-chars", "--input", string.Empty);
 
         Assert.Multiple(() =>
         {
@@ -57,6 +60,105 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("null"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_ClosedExpressionWithoutInput_EvaluatesOnce()
+    {
+        var result = await InvokeAsync("evaluate", "5 | add(3)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("8"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_ClosedExpressionFromFileWithoutInput_EvaluatesOnce()
+    {
+        var path = CreateTempFile("5\n| add(3)\n| multiply(2)");
+
+        var result = await InvokeAsync("evaluate", "--file", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("16"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_OpenExpressionWithoutInput_ReturnsInputRequiredError()
+    {
+        var result = await InvokeAsync("evaluate", "upper");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'.\nProvide an input with --input or a source with --source."));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_ClosedExpression_UnexpectedCompileException_ReturnsUnexpectedInternalErrorExitCode()
+    {
+        EvaluateCommand.BuildClosedExpression = static (_, _) => throw new InvalidOperationException("boom closed compile");
+
+        var result = await InvokeAsync("evaluate", "5 | add(3)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.UnexpectedInternalError));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unexpected error: boom closed compile"));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_OpenExpression_UnexpectedCompileException_ReturnsUnexpectedInternalErrorExitCode()
+    {
+        EvaluateCommand.BuildExpression = static (_, _) => throw new InvalidOperationException("boom open compile");
+
+        var result = await InvokeAsync("evaluate", "trim | upper", "--input", "abc");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.UnexpectedInternalError));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unexpected error: boom open compile"));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_ClosedExpression_RuntimeFailure_ReturnsEvaluationExitCode()
+    {
+        EvaluateCommand.EvaluateClosedExpression = static _ => throw new InvalidOperationException("boom closed runtime");
+
+        var result = await InvokeAsync("evaluate", "5 | add(3)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("boom closed runtime"));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_ExplicitEmptyInput_UsesInputBasedEvaluation()
+    {
+        var result = await InvokeAsync("evaluate", "trim | upper", "--input", string.Empty);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("(empty)"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -148,21 +250,6 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task Evaluate_RunAlias_LoadsExpressionFile()
-    {
-        var path = CreateTempFile("trim | upper");
-
-        var result = await InvokeAsync("run", "--file", path, "--input", "nikola");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("NIKOLA"));
-            Assert.That(result.StdErr, Is.Empty);
-        });
-    }
-
-    [Test]
     public async Task Evaluate_BothInlineAndExpressionFile_ReturnsClearError()
     {
         var path = CreateTempFile("trim | upper");
@@ -173,7 +260,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be provided both inline and through --expression-file."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be provided both inline and through --file."));
         });
     }
 
@@ -186,7 +273,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline or --expression-file."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline or --file."));
         });
     }
 
@@ -268,6 +355,22 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_ExpressionFile_AccessFailure_ReturnsClearError()
+    {
+        var path = CreateTempFile("trim | upper");
+        using var lockStream = new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+
+        var result = await InvokeAsync("evaluate", "--file", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.StartWith($"Expression file '{path}' could not be accessed:"));
+        });
+    }
+
+    [Test]
     public async Task Evaluate_ExpressionFile_InvalidExpression_ReturnsSourceAwareError()
     {
         var path = CreateTempFile("trim | upper)");
@@ -297,6 +400,62 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Validate_ExpressionFile_ValidExpression_ReturnsSuccessAndMessage()
+    {
+        var path = CreateTempFile("absolute | add(5)");
+
+        var result = await InvokeAsync("validate", "--file", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("Expression is valid."));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Validate_ExpressionFile_ValidExpressionWithShortAlias_ReturnsSuccessAndMessage()
+    {
+        var path = CreateTempFile("absolute | add(5)");
+
+        var result = await InvokeAsync("validate", "-f", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("Expression is valid."));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Validate_OpenExpressionRequiringInput_RemainsValid()
+    {
+        var result = await InvokeAsync("validate", "upper");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("Expression is valid."));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Validate_OpenOption_OpenExpressionRequiringInput_RemainsValid()
+    {
+        var result = await InvokeAsync("validate", "upper", "--open");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("Expression is valid."));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Validate_InvalidExpression_ReturnsValidationExitCode()
     {
         var result = await InvokeAsync("validate", "absolute | unknown(5)");
@@ -306,6 +465,93 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'unknown'."));
+        });
+    }
+
+    [Test]
+    public async Task Validate_ExpressionFile_InvalidExpression_ReturnsSourceAwareError()
+    {
+        var path = CreateTempFile("absolute | unknown(5)");
+
+        var result = await InvokeAsync("validate", "--file", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain($"The expression loaded from '{path}' is invalid:"));
+            Assert.That(result.StdErr, Does.Contain("Unknown function 'unknown'."));
+        });
+    }
+
+    [Test]
+    public async Task Validate_DefaultOpen_IgnoresClosedValidationHook()
+    {
+        ValidateCommand.BuildClosedExpression = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
+
+        var result = await InvokeAsync("validate", "absolute | add(5)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("Expression is valid."));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Validate_ClosedValidationError_WithClosedOption_ReturnsValidationExitCode()
+    {
+        ValidateCommand.BuildClosedExpression = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
+
+        var result = await InvokeAsync("validate", "absolute | add(5)", "--closed");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'close-only-unknown'."));
+        });
+    }
+
+    [Test]
+    public async Task Validate_ClosedValidationUnexpectedException_WithClosedOption_ReturnsUnexpectedInternalErrorExitCode()
+    {
+        ValidateCommand.BuildClosedExpression = static (_, _) => throw new InvalidOperationException("boom validate closed");
+
+        var result = await InvokeAsync("validate", "absolute | add(5)", "--closed");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.UnexpectedInternalError));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unexpected error: boom validate closed"));
+        });
+    }
+
+    [Test]
+    public async Task Validate_ClosedOption_OpenExpression_ReturnsInputRequiredError()
+    {
+        var result = await InvokeAsync("validate", "upper", "--closed");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'.\nProvide an input with --input or a source with --source."));
+        });
+    }
+
+    [Test]
+    public async Task Validate_OpenAndClosedFlagsTogether_ReturnsClearError()
+    {
+        var result = await InvokeAsync("validate", "absolute | add(5)", "--open", "--closed");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Options --open and --closed cannot be used together."));
         });
     }
 
@@ -348,7 +594,37 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
-            Assert.That(result.StdErr, Is.Not.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline or --file."));
+        });
+    }
+
+    [Test]
+    public async Task Validate_BothInlineAndExpressionFile_ReturnsClearError()
+    {
+        var path = CreateTempFile("absolute | add(5)");
+
+        var result = await InvokeAsync("validate", "absolute | add(5)", "--file", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be provided both inline and through --file."));
+        });
+    }
+
+    [Test]
+    public async Task Validate_ExpressionFile_NotFound_ReturnsClearError()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"expressif-validate-missing-{Guid.NewGuid():N}.expr");
+
+        var result = await InvokeAsync("validate", "--file", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo($"Expression file '{path}' was not found."));
         });
     }
 

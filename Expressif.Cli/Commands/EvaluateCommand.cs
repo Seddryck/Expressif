@@ -8,6 +8,12 @@ internal static class EvaluateCommand
     internal static Func<string, Context, Expression> BuildExpression { get; set; }
         = static (code, context) => new Expression(code, context);
 
+    internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
+        = static (code, context) => new ClosedExpression(code, context);
+
+    internal static Func<ClosedExpression, object?> EvaluateClosedExpression { get; set; }
+        = static expression => expression.Evaluate();
+
     public static Command Create()
     {
         var expressionArgument = new Argument<string?>("expression")
@@ -27,10 +33,8 @@ internal static class EvaluateCommand
             Description = "Path to a UTF-8 file containing the expression to evaluate."
         };
         expressionFileOption.Aliases.Add("-f");
-        expressionFileOption.Aliases.Add("--expression-file");
 
         var command = new Command("evaluate", "Evaluate an Expressif expression.");
-        command.Aliases.Add("run");
 
         command.Arguments.Add(expressionArgument);
         command.Options.Add(inputOption);
@@ -41,19 +45,20 @@ internal static class EvaluateCommand
             var expressionCode = parseResult.GetValue(expressionArgument);
             var expressionFilePath = parseResult.GetValue(expressionFileOption);
             var input = parseResult.GetValue(inputOption);
+            var hasInputOption = parseResult.GetResult(inputOption) is not null;
 
             var hasInlineExpression = !string.IsNullOrWhiteSpace(expressionCode);
             var hasExpressionFile = !string.IsNullOrWhiteSpace(expressionFilePath);
 
             if (hasInlineExpression && hasExpressionFile)
             {
-                Console.Error.WriteLine("The expression cannot be provided both inline and through --expression-file.");
+                Console.Error.WriteLine("The expression cannot be provided both inline and through --file.");
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
             if (!hasInlineExpression && !hasExpressionFile)
             {
-                Console.Error.WriteLine("The expression must be supplied through exactly one source: inline or --expression-file.");
+                Console.Error.WriteLine("The expression must be supplied through exactly one source: inline or --file.");
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
@@ -69,10 +74,61 @@ internal static class EvaluateCommand
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
-            Expressif.Expression expression;
+            var useClosedEvaluation = !hasInputOption;
+
+            if (useClosedEvaluation)
+            {
+                ClosedExpression closedExpression;
+                try
+                {
+                    closedExpression = BuildClosedExpression(expressionCode, new Context());
+                }
+                catch (ExpressionRequiresInputException exception)
+                {
+                    Console.Error.WriteLine(exception.Message);
+                    return ExitCodes.InvalidExpressionOrInput;
+                }
+                catch (Exception exception) when (exception is Sprache.ParseException
+                                                  or NotImplementedFunctionException
+                                                  or MissingOrUnexpectedParametersFunctionException)
+                {
+                    if (hasExpressionFile)
+                    {
+                        Console.Error.WriteLine($"The expression loaded from '{expressionFilePath}' is invalid:");
+                        Console.Error.WriteLine(CommandErrorFormatter.FormatValidationError(exception));
+                        return ExitCodes.InvalidExpressionOrInput;
+                    }
+
+                    return CommandErrorFormatter.WriteValidationError(exception);
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine($"Unexpected error: {exception.Message}");
+                    return ExitCodes.UnexpectedInternalError;
+                }
+
+                try
+                {
+                    var result = EvaluateClosedExpression(closedExpression);
+                    Console.Out.WriteLine(result ?? "null");
+                    return ExitCodes.Success;
+                }
+                catch (ExpressionRequiresInputException exception)
+                {
+                    Console.Error.WriteLine(exception.Message);
+                    return ExitCodes.InvalidExpressionOrInput;
+                }
+                catch (Exception exception) when (exception is not OutOfMemoryException)
+                {
+                    Console.Error.WriteLine(exception.Message);
+                    return ExitCodes.EvaluationFailed;
+                }
+            }
+
+            Expressif.Expression openExpression;
             try
             {
-                expression = BuildExpression(expressionCode, new Context());
+                openExpression = BuildExpression(expressionCode, new Context());
             }
             catch (Exception exception) when (exception is Sprache.ParseException
                                               or NotImplementedFunctionException
@@ -95,7 +151,7 @@ internal static class EvaluateCommand
 
             try
             {
-                var result = expression.Evaluate(input);
+                var result = openExpression.Evaluate(input);
                 Console.Out.WriteLine(result ?? "null");
                 return ExitCodes.Success;
             }

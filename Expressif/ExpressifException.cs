@@ -58,3 +58,12 @@ public class NotNameableContextObjectException : ExpressifException
         : base($"The current object of the context of type '{value?.GetType().Name ?? "null"}' is not being accessible with properties' name.")
     { }
 }
+
+public class ExpressionRequiresInputException : ExpressifException
+{
+    public ExpressionRequiresInputException(string? reference)
+        : base(reference is null
+            ? "The expression is valid but requires an input.\nProvide a value with --input or a file with --source."
+            : $"The expression cannot be evaluated without an input because it references '{reference}'.\nProvide an input with --input or a source with --source.")
+    { }
+}
