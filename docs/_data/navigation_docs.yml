@@ -29,6 +29,12 @@
   docs:
   - array-accumulators
 
+- title: Expressif CLI
+  docs:
+  - installing-expressif-cli
+  - using-expressif-cli
+  - using-dockerfile-cli
+
 - title: Alternative usages of Expressif 
   docs:
   - builder-expression

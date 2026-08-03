@@ -45,7 +45,7 @@ Use `evaluate` to execute an expression. The expression can be supplied inline o
 Provide the expression inline as a positional argument:
 
 ```console
-expressif evaluate "absolute | add(5)"
+expressif evaluate "5 | add(3)"
 ```
 
 Or load it from a UTF-8 file with `--file` (alias: `-f`):
@@ -60,26 +60,6 @@ The expression must be provided through exactly one source:
 - `--file` / `-f`.
 
 Providing both sources, or neither source, returns an error.
-
-### Input-based evaluation
-
-Use `--input` (alias: `-i`) when the expression should be evaluated against an explicit input value.
-
-```console
-expressif evaluate "absolute | add(5)" --input -12
-```
-
-The result is written directly to standard output:
-
-```text
-17
-```
-
-The short form is equivalent:
-
-```console
-expressif evaluate "absolute | add(5)" -i -12
-```
 
 ### ClosedExpression evaluation (no input)
 
@@ -96,6 +76,21 @@ expressif evaluate "5 | add(3)"
 This path is intended for expressions fully defined by literals, variables, context parameters, and functions.
 
 If the expression requires an input (for example an open expression like `upper`), evaluation fails with an explicit message instructing you to use `--input`.
+
+### Input-based evaluation
+
+Use `--input` (alias: `-i`) when the expression should be evaluated against an explicit input value.
+
+```console
+expressif evaluate "absolute | add(5)" --input -12
+```
+The result is written directly to standard output:
+
+```text
+12
+```
+
+The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
 
 ### Evaluating from a file
 
