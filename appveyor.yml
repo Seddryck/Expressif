@@ -32,6 +32,7 @@ install:
 - pwsh: . ./conformance.ps1; Install-ConformanceDependencies
 - pwsh: ./install-gitversion.ps1
 - pwsh: ./distribution/install-iscc.ps1
+- pwsh: dotnet tool install --global Didot-cli
 - cmd: RefreshEnv.cmd
 - cmd: dotnet tool restore
 
