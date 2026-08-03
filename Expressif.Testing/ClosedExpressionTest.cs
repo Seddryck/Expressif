@@ -31,4 +31,12 @@ public class ClosedExpressionTest
         var result = expression.Evaluate();
         Assert.That(result, Is.EqualTo(7));
     }
+
+    [Test]
+    public void Evaluate_OpenExpression_ThrowsExpressionRequiresInputException()
+    {
+        var exception = Assert.Throws<ExpressionRequiresInputException>(() => new ClosedExpression("upper"));
+
+        Assert.That(exception!.Message, Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'."));
+    }
 }

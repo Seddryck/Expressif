@@ -5,32 +5,22 @@ namespace Expressif.Cli.Commands;
 
 internal static partial class CommandErrorFormatter
 {
-    public static int WriteValidationError(Exception exception)
+    public static string FormatValidationError(Exception exception)
     {
-        if (exception is ParseException)
-        {
-            Console.Error.WriteLine(exception.Message);
-            return ExitCodes.InvalidExpressionOrInput;
-        }
-
         if (exception is NotImplementedFunctionException)
         {
             var name = TryExtractQuotedValue(exception.Message);
-            if (string.IsNullOrEmpty(name))
-                Console.Error.WriteLine(exception.Message);
-            else
-                Console.Error.WriteLine($"Unknown function '{name}'.");
-
-            return ExitCodes.InvalidExpressionOrInput;
+            return string.IsNullOrEmpty(name)
+                ? exception.Message
+                : $"Unknown function '{name}'.";
         }
 
-        if (exception is MissingOrUnexpectedParametersFunctionException)
-        {
-            Console.Error.WriteLine(exception.Message);
-            return ExitCodes.InvalidExpressionOrInput;
-        }
+        return exception.Message;
+    }
 
-        Console.Error.WriteLine(exception.Message);
+    public static int WriteValidationError(Exception exception)
+    {
+        Console.Error.WriteLine(FormatValidationError(exception));
         return ExitCodes.InvalidExpressionOrInput;
     }
 

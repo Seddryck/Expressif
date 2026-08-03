@@ -49,11 +49,8 @@ public class ClosedExpression : IExpression
     public Function? GetImplicitFoldAccumulator()
         => IsImplicitFoldAggregation ? Members.First() : null;
 
-    private static readonly Parser<IParameter> NonLiteralRootParameterParser =
-        Parsers.Parameter.Parser.Where(x => x is not LiteralParameter);
-
-    private static readonly Parser<ClosedExpression> NonLiteralRootParser =
-        from parameter in NonLiteralRootParameterParser.Token()
+    private static readonly Parser<ClosedExpression> AnyRootParser =
+        from parameter in Parsers.Parameter.Parser.Token()
         from remaining in (
             from _ in Parse.Char('|').Token()
             from expression in OpenExpression.Parser
@@ -61,12 +58,8 @@ public class ClosedExpression : IExpression
         ).Optional()
         select new ClosedExpression(parameter, remaining.GetOrElse(Enumerable.Empty<Function>()));
 
-    private static readonly Parser<ClosedExpression> LiteralRootOnlyParser =
-        from parameter in Parsers.Parameter.Parser.Where(x => x is LiteralParameter).Token()
-        select new ClosedExpression(parameter, Enumerable.Empty<Function>());
-
     public static readonly Parser<ClosedExpression> Parser =
-        NonLiteralRootParser.Or(LiteralRootOnlyParser);
+        AnyRootParser;
 }
 
 [Obsolete("Use OpenExpression instead.")]

@@ -38,9 +38,48 @@ expressif version --help
 
 ## Evaluating an expression
 
-### Evaluate a standalone expression
+Use `evaluate` to execute an expression. The expression can be supplied inline or loaded from a file.
 
-The evaluate command requires an input value. Use `--input`, or its short form `-i`, to provide the value passed to the expression.
+### Supplying the expression
+
+Provide the expression inline as a positional argument:
+
+```console
+expressif evaluate "5 | add(3)"
+```
+
+Or load it from a UTF-8 file with `--file` (alias: `-f`):
+
+```console
+expressif evaluate --file ./expressions/transform.expr
+```
+
+The expression must be provided through exactly one source:
+
+- inline argument; or
+- `--file` / `-f`.
+
+Providing both sources, or neither source, returns an error.
+
+### ClosedExpression evaluation (no input)
+
+When `--input` is not provided, the expression is evaluated as a `ClosedExpression` and executed exactly once.
+
+```console
+expressif evaluate "5 | add(3)"
+```
+
+```text
+8
+```
+
+This path is intended for expressions fully defined by literals, variables, context parameters, and functions.
+
+If the expression requires an input (for example an open expression like `upper`), evaluation fails with an explicit message instructing you to use `--input`.
+
+### Input-based evaluation
+
+Use `--input` (alias: `-i`) when the expression should be evaluated against an explicit input value.
 
 ```console
 expressif evaluate "absolute | add(5)" --input -12
@@ -52,6 +91,26 @@ The result is written directly to standard output:
 ```
 
 The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
+
+### Evaluating from a file
+
+Expression files are read as UTF-8 and may contain multiline expressions.
+
+```text
+5
+| add(3)
+| multiply(2)
+```
+
+```console
+expressif evaluate --file calculation.expr
+```
+
+```text
+16
+```
+
+Relative paths are resolved from the current working directory. Absolute paths are also supported.
 
 ### Null results
 
@@ -65,12 +124,64 @@ null
 
 If the expression is valid but fails during evaluation, the error message is written to standard error and the command returns exit code `3`.
 
+### Expression file errors
+
+Expression-file loading returns clear diagnostics when:
+
+- the file does not exist;
+- the path points to a directory;
+- the file cannot be accessed;
+- the file is empty or whitespace only;
+- the file content is not valid UTF-8;
+- the loaded expression is invalid.
+
 ## Validating an expression
 
 Use `validate` to check whether an expression can be parsed and constructed without evaluating it.
 
+As with `evaluate`, the expression can be provided inline or loaded from a file.
+
+By default, `validate` checks the expression as an open expression.
+
+You can provide `--open` explicitly, but this is the default behavior.
+
+Use `--closed` to validate the expression strictly as a closed expression.
+
+`--open` and `--closed` are mutually exclusive.
+
 ```text
 expressif validate <expression>
+```
+
+You can also load a UTF-8 expression file:
+
+```console
+expressif validate --file ./expressions/transform.expr
+```
+
+The short form is equivalent:
+
+```console
+expressif validate -f ./expressions/transform.expr
+```
+
+For `validate`, the expression must be supplied through exactly one source:
+
+- inline argument; or
+- `--file` / `-f`.
+
+Examples:
+
+```console
+expressif validate "upper"
+```
+
+```console
+expressif validate "upper" --open
+```
+
+```console
+expressif validate "5 | add(3)" --closed
 ```
 
 For example:

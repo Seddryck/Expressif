@@ -7,38 +7,88 @@ internal static class ValidateCommand
     internal static Func<string, Context, Expression> BuildExpression { get; set; }
         = static (code, context) => new Expression(code, context);
 
+    internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
+        = static (code, context) => new ClosedExpression(code, context);
+
     public static Command Create()
     {
-        var expressionArgument = new Argument<string>("expression")
+        var expressionArgument = new Argument<string?>("expression")
         {
+            Arity = ArgumentArity.ZeroOrOne,
             Description = "Expression to validate."
+        };
+
+        var expressionFileOption = new Option<string?>("--file")
+        {
+            Description = "Path to a UTF-8 file containing the expression to validate."
+        };
+        expressionFileOption.Aliases.Add("-f");
+
+        var openOption = new Option<bool>("--open")
+        {
+            Description = "Validate the expression as an open expression (default behavior)."
+        };
+
+        var closedOption = new Option<bool>("--closed")
+        {
+            Description = "Validate the expression as a closed expression."
         };
 
         var command = new Command("validate", "Validate an Expressif expression.");
 
         command.Arguments.Add(expressionArgument);
+        command.Options.Add(expressionFileOption);
+        command.Options.Add(openOption);
+        command.Options.Add(closedOption);
 
         command.SetAction(parseResult =>
         {
-            var expressionCode = parseResult.GetValue(expressionArgument);
+            var inlineExpression = parseResult.GetValue(expressionArgument);
+            var expressionFilePath = parseResult.GetValue(expressionFileOption);
+            var asOpenExpression = parseResult.GetValue(openOption);
+            var asClosedExpression = parseResult.GetValue(closedOption);
 
-            if (string.IsNullOrWhiteSpace(expressionCode))
+            if (asOpenExpression && asClosedExpression)
             {
-                Console.Error.WriteLine("Expression is required.");
+                Console.Error.WriteLine("Options --open and --closed cannot be used together.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
+
+            var useClosedValidation = asClosedExpression;
+
+            if (!ExpressionCommandCommon.TryResolveExpressionCode(
+                    inlineExpression,
+                    expressionFilePath,
+                    out var expressionCode,
+                    out var hasExpressionFile))
+            {
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
             try
             {
-                _ = BuildExpression(expressionCode, new Context());
+                if (useClosedValidation)
+                {
+                    _ = BuildClosedExpression(expressionCode, new Context());
+                }
+                else
+                {
+                    _ = BuildExpression(expressionCode, new Context());
+                }
+
                 Console.Out.WriteLine("Expression is valid.");
                 return ExitCodes.Success;
+            }
+            catch (ExpressionRequiresInputException exception)
+            {
+                Console.Error.WriteLine(exception.Message);
+                return ExitCodes.InvalidExpressionOrInput;
             }
             catch (Exception exception) when (exception is Sprache.ParseException
                                               or NotImplementedFunctionException
                                               or MissingOrUnexpectedParametersFunctionException)
             {
-                return CommandErrorFormatter.WriteValidationError(exception);
+                return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
             }
             catch (Exception exception)
             {
