@@ -45,6 +45,13 @@ internal static class EvaluateCommand
             var expressionFilePath = parseResult.GetValue(expressionFileOption);
             var input = parseResult.GetValue(inputOption);
             var hasInputOption = parseResult.GetResult(inputOption) is not null;
+            var inputOptionOccurrences = parseResult.Tokens.Count(token => token.Value is "--input" or "-i");
+
+            if (inputOptionOccurrences > 1)
+            {
+                Console.Error.WriteLine("The --input option can only be specified once for evaluate.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
 
             if (!ExpressionCommandCommon.TryResolveExpressionCode(
                     inlineExpression,

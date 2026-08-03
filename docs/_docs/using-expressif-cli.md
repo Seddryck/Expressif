@@ -19,6 +19,7 @@ The CLI provides three commands:
 | Command | Purpose |
 |---|---|
 | `evaluate` | Evaluate an Expressif expression |
+| `run` | Evaluate an expression once per element of an input sequence |
 | `validate` | Validate an expression without evaluating it |
 | `version` | Display the installed CLI and library versions |
 
@@ -32,6 +33,7 @@ Help is also available for each command:
 
 ```console
 expressif evaluate --help
+expressif run --help
 expressif validate --help
 expressif version --help
 ```
@@ -91,6 +93,73 @@ The result is written directly to standard output:
 ```
 
 The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
+
+## Running an expression over a sequence
+
+Use `run` to evaluate an expression repeatedly over an input sequence.
+
+`run` accepts two complementary input options:
+
+- `--input` (repeatable): each occurrence defines exactly one row, whether the value is scalar or enumerable;
+- `--batch` (single value): the value must be enumerable, and each direct element becomes one row.
+
+```console
+expressif run "count" --input "{1, -2, 3}"
+```
+
+```text
+3
+```
+
+In this example, there is one row (the array value `{1, -2, 3}`), not three rows.
+
+The `run` command differs from `evaluate`:
+
+- `evaluate` executes once for a single input value;
+- `run` executes once per generated row.
+
+You can pass `--input` multiple times. Each occurrence contributes one row.
+
+```console
+expressif run "add(1)" --input 1 --input "{2, 3}" --input 4
+```
+
+This command produces three rows: `1`, `{2, 3}`, and `4`.
+
+To evaluate once per element of an enumerable value, use `--batch`.
+
+```console
+expressif run "add(1)" --batch "{1, 2, 3}"
+```
+
+```text
+2
+3
+4
+```
+
+`--batch` requires an enumerable value.
+
+```console
+expressif run "add(1)" --input 42
+```
+
+```text
+43
+```
+
+Nested enumerable elements are preserved and not flattened when using `--batch`.
+
+```console
+expressif run "count" --batch "{{1, 2, 3}, {4, 5}}"
+```
+
+```text
+3
+2
+```
+
+Expression loading works the same way as with `evaluate`: inline argument or `--file` (`-f`).
 
 ### Evaluating from a file
 
