@@ -8,8 +8,7 @@ param(
 
 $model = [ordered]@{
         version = $Version
-    }
-    | ConvertTo-Json -Depth 20
+    } | ConvertTo-Json -Depth 20
 
 Write-Host "Model sets version to value '$Version'."
 
