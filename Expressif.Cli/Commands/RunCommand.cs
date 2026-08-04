@@ -316,9 +316,9 @@ internal static class RunCommand
 
     private static IEnumerable<object?> EnumerateReaderRows(IDataReader reader, string sourcePath)
     {
-        var isCsvSource = Path.GetExtension(sourcePath).Equals(".csv", StringComparison.OrdinalIgnoreCase);
+        var hasHeaderRecord = reader is DisposableDataReader wrappedReader && wrappedReader.HasHeaderRecord;
 
-        if (isCsvSource)
+        if (hasHeaderRecord)
         {
             foreach (var row in EnumerateCsvRows(reader, sourcePath))
                 yield return row;
@@ -491,7 +491,7 @@ internal static class RunCommand
             stream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var csvReader = new CsvReader(CsvProfile.CommaDoubleQuote);
             var csvDataReader = csvReader.ToDataReader(stream);
-            return new DisposableDataReader(csvDataReader, stream);
+            return new DisposableDataReader(csvDataReader, stream, hasHeaderRecord: true);
         }
         catch
         {
@@ -696,7 +696,9 @@ internal static class RunCommand
             => ordinals.ContainsKey(columnName);
 
         public object? this[string columnName]
-            => ordinals.TryGetValue(columnName, out var index) ? values[index] : throw new ArgumentOutOfRangeException(columnName);
+            => ordinals.TryGetValue(columnName, out var index)
+                ? values[index]
+                : throw new ArgumentOutOfRangeException(nameof(columnName), columnName, $"Column '{columnName}' does not exist.");
 
         public object? this[int index]
             => values[index];
@@ -707,11 +709,14 @@ internal static class RunCommand
         private readonly IDataReader inner;
         private readonly IDisposable owner;
 
-        public DisposableDataReader(IDataReader inner, IDisposable owner)
+        public DisposableDataReader(IDataReader inner, IDisposable owner, bool hasHeaderRecord = false)
         {
             this.inner = inner;
             this.owner = owner;
+            HasHeaderRecord = hasHeaderRecord;
         }
+
+        public bool HasHeaderRecord { get; }
 
         public int Depth => inner.Depth;
         public bool IsClosed => inner.IsClosed;
@@ -720,14 +725,30 @@ internal static class RunCommand
         public object this[int i] => inner[i];
         public object this[string name] => inner[name]!;
 
-        public void Close() => inner.Close();
+        public void Close()
+        {
+            try
+            {
+                inner.Close();
+            }
+            finally
+            {
+                owner.Dispose();
+            }
+        }
         public DataTable GetSchemaTable() => inner.GetSchemaTable()!;
         public bool NextResult() => inner.NextResult();
         public bool Read() => inner.Read();
         public void Dispose()
         {
-            inner.Dispose();
-            owner.Dispose();
+            try
+            {
+                inner.Dispose();
+            }
+            finally
+            {
+                owner.Dispose();
+            }
         }
 
         public bool GetBoolean(int i) => inner.GetBoolean(i);

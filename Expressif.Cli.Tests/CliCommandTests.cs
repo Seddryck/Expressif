@@ -662,6 +662,29 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_SourceCsvPathWithGenericDataReader_DoesNotSkipFirstRow()
+    {
+        RunCommand.ResolveSourceValue = static _ =>
+        {
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("name", typeof(string));
+            dataTable.Rows.Add("Alice");
+            dataTable.Rows.Add("Bob");
+            return dataTable.CreateDataReader();
+        };
+
+        var result = await InvokeAsync("run", "[name] | upper", "--source", "customers.csv");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Run_SourceAndInputOptionsTogether_ReturnsClearError()
     {
         var sourcePath = CreateTempFile("{1,2,3}");
