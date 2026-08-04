@@ -98,10 +98,21 @@ The input is passed to the expression as text. The expression is responsible for
 
 Use `run` to evaluate an expression repeatedly over an input sequence.
 
-`run` accepts two complementary input options:
+`run` accepts three complementary input options:
 
 - `--input` (repeatable): each occurrence defines exactly one row, whether the value is scalar or enumerable;
-- `--batch` (single value): the value must be enumerable, and each direct element becomes one row.
+- `--batch` (single value): the value must be enumerable, and each direct element becomes one row;
+- `--source` (single file path): load rows from a source file.
+
+How `--source` works:
+
+- CSV files (`.csv`) use a header-and-rows pattern.
+- In CSV files, the first row is treated as the header (column names).
+- In CSV files, each following row is evaluated once.
+- In CSV files, use column names in expressions, for example `[name]` or `[age]`.
+- Non-CSV files (for example `.expr`) are evaluated as closed expressions.
+- A non-CSV source expression must return an enumerable.
+- Each direct element returned by a non-CSV source expression is evaluated once.
 
 ```console
 expressif run "count" --input "{1, -2, 3}"
@@ -158,6 +169,37 @@ expressif run "count" --batch "{{1, 2, 3}, {4, 5}}"
 3
 2
 ```
+
+### Running from a source file
+
+Use `--source` to evaluate one row at a time from a source file.
+
+```console
+expressif run "[name] | upper" --source people.csv
+```
+
+For CSV input:
+
+- the first row is treated as header;
+- each following row is an input record;
+- empty fields are represented as empty text;
+- duplicate header names are rejected;
+- malformed rows (wrong field count) fail with a clear error;
+- processing is streamed row by row so large files can be processed efficiently.
+
+For non-CSV source files, the source expression is evaluated first and must return an enumerable sequence.
+
+Examples:
+
+```console
+expressif run "[country] | upper" --source customers.csv
+```
+
+```console
+expressif run "absolute | add(1)" --source values.expr
+```
+
+`--source` cannot be combined with `--input` or `--batch`.
 
 Expression loading works the same way as with `evaluate`: inline argument or `--file` (`-f`).
 

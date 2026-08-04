@@ -27,8 +27,7 @@ $model = [ordered]@{
                     regex = [regex]::Escape($_.Name)
                 }
             }
-    }
-    | ConvertTo-Json -Depth 20
+    } | ConvertTo-Json -Depth 20
 
 Write-Host "Running Didot via local installation..."
 $model | dotnet tool run didot `
@@ -36,7 +35,7 @@ $model | dotnet tool run didot `
     -e scriban `
     -i `
     -r json `
-    -o $OutputPath `
+    -o $OutputPath
 
 if ($LASTEXITCODE -ne 0) {
     throw "Didot execution failed"
