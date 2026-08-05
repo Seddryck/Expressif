@@ -84,6 +84,10 @@ public class Parameter
     protected static readonly Parser<IParameter> RecordLiteralParameter =
         from _ in Parse.Char('{').Token()
         from fields in (
+            from marker in Parse.Char(':').Token()
+            from close in Parse.Char('}').Token()
+            select Array.Empty<RecordLiteralField>()
+        ).Or(
             from first in Parse.Ref(() => RecordLiteralFieldParser).Token().Once()
             from others in (
                 from __ in Parse.Char(',').Token()

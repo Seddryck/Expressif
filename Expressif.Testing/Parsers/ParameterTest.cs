@@ -16,6 +16,7 @@ public class ParameterTest
     [TestCase("[foo]", typeof(ObjectPropertyParameter))]
     [TestCase("#52", typeof(ObjectIndexParameter))]
     [TestCase("{}", typeof(ArrayParameter))]
+    [TestCase("{:}", typeof(RecordLiteralParameter))]
     [TestCase("{1,2,3}", typeof(ArrayParameter))]
     [TestCase("{name := Alice}", typeof(RecordLiteralParameter))]
     [TestCase("{`first name` := \"Alice Smith\", active := true}", typeof(RecordLiteralParameter))]
@@ -52,6 +53,18 @@ public class ParameterTest
             Assert.That(outer.Values, Has.Length.EqualTo(2));
             Assert.That(outer.Values[0], Is.TypeOf<ArrayParameter>());
             Assert.That(outer.Values[1], Is.TypeOf<ArrayParameter>());
+        });
+    }
+
+    [Test]
+    public void Parse_Parameter_EmptyRecordLiteral_ParsesNoFields()
+    {
+        var parsed = Parameter.Parser.End().Parse("{:}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parsed, Is.TypeOf<RecordLiteralParameter>());
+            Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
         });
     }
 }

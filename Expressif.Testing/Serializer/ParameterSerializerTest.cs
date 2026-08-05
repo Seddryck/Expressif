@@ -61,4 +61,28 @@ public class ParameterSerializerTest
     [TestCase(10)]
     public void Serialize_ObjectIndexParameter_Brakets(int value)
         => Assert.That(new ParameterSerializer().Serialize(new ObjectIndexParameter(value)), Is.EqualTo($"#{value}"));
+
+    [Test]
+    public void Serialize_RecordLiteralParameter_EmptyRecord_UsesRecordMarker()
+    {
+        var serializer = new ParameterSerializer();
+        var parameter = new RecordLiteralParameter(Array.Empty<RecordLiteralField>());
+
+        Assert.That(serializer.Serialize(parameter), Is.EqualTo("{:}"));
+    }
+
+    [Test]
+    public void Serialize_RecordLiteralParameter_EmptyRecord_RoundTrip()
+    {
+        var serializer = new ParameterSerializer();
+        var serialized = serializer.Serialize(new RecordLiteralParameter(Array.Empty<RecordLiteralField>()));
+        var parsed = Parameter.Parser.End().Parse(serialized);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(serialized, Is.EqualTo("{:}"));
+            Assert.That(parsed, Is.TypeOf<RecordLiteralParameter>());
+            Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
+        });
+    }
 }

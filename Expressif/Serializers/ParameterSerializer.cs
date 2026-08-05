@@ -19,6 +19,7 @@ public class ParameterSerializer
         return parameter switch
         {
             ArrayParameter a => $"{{{string.Join(", ", a.Values.Select(Serialize))}}}",
+            RecordLiteralParameter r when r.Fields.Length == 0 => "{:}",
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
