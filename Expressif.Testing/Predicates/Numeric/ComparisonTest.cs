@@ -17,7 +17,6 @@ public class ComparisonTest
         });
     }
 
-
     [Conformance]
     public void GreaterThan_Valid(object? value, decimal reference, bool expected)
     {
@@ -28,7 +27,6 @@ public class ComparisonTest
             Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
         });
     }
-
 
     [Conformance]
     public void GreaterThanOrEqual_Valid(object? value, decimal reference, bool expected)

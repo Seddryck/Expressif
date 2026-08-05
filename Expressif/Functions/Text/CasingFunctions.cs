@@ -41,7 +41,6 @@ public abstract class BaseTextCasing : BaseTextFunction
     }
 
     protected override object? EvaluateNull() => null;
-
 }
 
 /// <summary>
@@ -174,7 +173,6 @@ public abstract class BaseTextWordCasing : BaseTextCasing
     protected abstract string EvaluateArrayString(IEnumerable<string> words);
 }
 
-
 /// <summary>
 /// Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 /// </summary>
@@ -192,7 +190,7 @@ public class PascalCase : BaseTextWordCasing
 public class CamelCase : BaseTextWordCasing
 {
     protected override string EvaluateArrayString(IEnumerable<string> words)
-    { 
+    {
         var first = words.First().ToLowerInvariant();
         var rest = words.Skip(1).Select(CapitalizeWord);
         return first + string.Concat(rest);

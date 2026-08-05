@@ -37,7 +37,6 @@ public class ExpressionFactoryTest
     public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)
         => Assert.That(() => new ExpressionFactory().GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
-
     [Test]
     public void Instantiate_RoundLiteralParameter_Valid()
     {
@@ -68,7 +67,6 @@ public class ExpressionFactoryTest
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(3));
     }
-
 
     [Test]
     public void Instantiate_RoundObjectIndexParameter_Valid()

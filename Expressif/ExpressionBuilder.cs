@@ -15,7 +15,6 @@ namespace Expressif;
 
 public class ExpressionBuilder
 {
-    
     private IContext Context { get; }
     private ExpressionFactory Factory { get; }
     private ExpressionSerializer Serializer { get; }

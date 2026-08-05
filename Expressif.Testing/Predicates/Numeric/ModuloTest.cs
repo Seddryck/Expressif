@@ -18,7 +18,6 @@ public class ModuloTest
         });
     }
 
-
     [Conformance]
     public void Even_Valid(object? value, bool expected)
     {

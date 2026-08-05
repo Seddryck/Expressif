@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Expressif.Testing.Values.Converters;
 
-
 public class DateOnlyConverterTest
 {
     public DateOnlyConverterTest()

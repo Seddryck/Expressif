@@ -83,7 +83,6 @@ public class CasingFunctionsTests
         });
     }
 
-
     [Conformance]
     public void Upper_Valid(object value, object expected)
         => Assert.That(new Upper().Evaluate(value), Is.EqualTo(expected));
