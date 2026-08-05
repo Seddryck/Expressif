@@ -488,6 +488,45 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_ScalarInput_WithWhitespaceWordSequence_IsAcceptedWithoutManualQuoting()
+    {
+        var result = await InvokeAsync("run", "upper", "--input", "nikola tesla");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("NIKOLA TESLA"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_ScalarInput_WithBacktickAndWhitespace_IsAcceptedWithoutManualQuoting()
+    {
+        var result = await InvokeAsync("run", "count-chars", "--input", "nik`ola tesla");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("13"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_ScalarNullToken_RemainsTypedNull()
+    {
+        var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "null");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("0"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Run_MultipleInputOptions_EachOccurrenceDefinesOneRow()
     {
         var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "1", "--input", "{2, 3}", "--input", "4");

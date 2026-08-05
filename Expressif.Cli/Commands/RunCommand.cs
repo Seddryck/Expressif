@@ -6,6 +6,9 @@ using System.Reflection;
 using System.Text;
 using PocketCsvReader;
 using Expressif.Values;
+using Expressif.Parsers;
+using Expressif.Serializers;
+using Sprache;
 
 namespace Expressif.Cli.Commands;
 
@@ -530,239 +533,97 @@ internal static class RunCommand
 
     internal static class InputValueParser
     {
+        private static readonly ParameterSerializer ParameterSerializer = new();
+
         public static object? Parse(string text)
         {
-            var parser = new Parser(text);
-            var value = parser.ParseValue();
-            parser.SkipWhitespace();
-            if (!parser.IsAtEnd)
-                throw new FormatException($"Unexpected token '{parser.Current}' at position {parser.Position + 1}.");
+            if (string.IsNullOrWhiteSpace(text))
+                return string.Empty;
 
-            return value;
+            try
+            {
+                var parameter = Parameter.Parser.End().Parse(text);
+                return ConvertToRuntimeValue(parameter);
+            }
+            catch (ParseException exception)
+            {
+                if (TryParseAutoQuotedScalar(text, out var autoQuotedValue))
+                    return autoQuotedValue;
+
+                throw new FormatException(exception.Message, exception);
+            }
         }
 
-        private sealed class Parser
+        private static bool TryParseAutoQuotedScalar(string text, out object? value)
         {
-            private readonly string text;
-            private int position;
+            value = null;
 
-            public Parser(string text)
-                => this.text = text ?? string.Empty;
+            if (!ShouldAutoQuoteScalar(text))
+                return false;
 
-            public bool IsAtEnd => position >= text.Length;
-            public int Position => position;
-            public char Current => text[position];
+            var normalized = text.Trim();
+            var candidate = BuildQuotedScalar(normalized);
 
-            public void SkipWhitespace()
+            try
             {
-                while (!IsAtEnd && char.IsWhiteSpace(Current))
-                    position++;
-            }
-
-            public object? ParseValue()
-            {
-                SkipWhitespace();
-                if (IsAtEnd)
-                    return string.Empty;
-
-                if (Current == '{')
-                    return ParseBraceLiteral();
-
-                if (Current == '"' || Current == '`')
-                    return ParseQuoted();
-
-                return ParseScalar();
-            }
-
-            private object ParseBraceLiteral()
-            {
-                position++; // '{'
-                SkipWhitespace();
-
-                if (!IsAtEnd && Current == '}')
-                {
-                    position++;
-                    return Array.Empty<object?>();
-                }
-
-                var checkpoint = position;
-                if (TryParseRecordFieldName(out var _))
-                {
-                    SkipWhitespace();
-                    if (!IsAtEnd && Current == ':' && Peek(1) == '=')
-                    {
-                        position = checkpoint;
-                        return ParseRecordBody();
-                    }
-
-                    position = checkpoint;
-                }
-
-                return ParseArrayBody();
-            }
-
-            private object?[] ParseArrayBody()
-            {
-                var values = new List<object?>();
-
-                while (true)
-                {
-                    values.Add(ParseValue());
-                    SkipWhitespace();
-
-                    if (IsAtEnd)
-                        throw new FormatException("Unterminated array literal.");
-
-                    if (Current == ',')
-                    {
-                        position++;
-                        continue;
-                    }
-
-                    if (Current == '}')
-                    {
-                        position++;
-                        break;
-                    }
-
-                    throw new FormatException($"Unexpected token '{Current}' at position {position + 1}. Expected ',' or '}}'.");
-                }
-
-                return values.ToArray();
-            }
-
-            private RecordValue ParseRecordBody()
-            {
-                var record = new RecordValue();
-                while (true)
-                {
-                    if (!TryParseRecordFieldName(out var fieldName))
-                        throw new FormatException($"Expected a record field name at position {position + 1}.");
-
-                    SkipWhitespace();
-                    if (IsAtEnd || Current != ':' || Peek(1) != '=')
-                        throw new FormatException($"Expected ':=' after record field '{fieldName}'.");
-
-                    position += 2;
-                    var value = ParseValue();
-                    record.Set(fieldName!, value);
-
-                    SkipWhitespace();
-                    if (IsAtEnd)
-                        throw new FormatException("Unterminated record literal.");
-
-                    if (Current == ',')
-                    {
-                        position++;
-                        SkipWhitespace();
-                        if (!IsAtEnd && Current == '}')
-                        {
-                            position++;
-                            break;
-                        }
-
-                        continue;
-                    }
-
-                    if (Current == '}')
-                    {
-                        position++;
-                        break;
-                    }
-
-                    throw new FormatException($"Unexpected token '{Current}' at position {position + 1}. Expected ',' or '}}'.");
-                }
-
-                return record;
-            }
-
-            private string ParseQuoted()
-            {
-                var quote = Current;
-                position++;
-
-                var builder = new StringBuilder();
-                while (!IsAtEnd)
-                {
-                    if (Current == quote)
-                        break;
-
-                    if (quote == '"' && Current == '\\' && !IsAtEnd && position + 1 < text.Length)
-                    {
-                        builder.Append('\\');
-                        position++;
-                        builder.Append(Current);
-                        position++;
-                        continue;
-                    }
-
-                    builder.Append(Current);
-                    position++;
-                }
-
-                if (IsAtEnd)
-                    throw new FormatException("Unterminated quoted input value.");
-
-                position++; // closing quote
-                return quote == '"'
-                    ? RecordSyntax.UnescapeDoubleQuoted(builder.ToString())
-                    : builder.ToString();
-            }
-
-            private object ParseScalar()
-            {
-                var start = position;
-                while (!IsAtEnd && Current != ',' && Current != '}')
-                    position++;
-
-                var token = text[start..position].Trim();
-                if (token.Length == 0)
-                    throw new FormatException($"Expected a value at position {start + 1}.");
-
-                if (int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out var integer))
-                    return integer;
-
-                if (decimal.TryParse(token, NumberStyles.Number, CultureInfo.InvariantCulture, out var numeric))
-                    return numeric;
-
-                if (bool.TryParse(token, out var boolean))
-                    return boolean;
-
-                if (string.Equals(token, "null", StringComparison.OrdinalIgnoreCase))
-                    return null!;
-
-                return token;
-            }
-
-            private bool TryParseRecordFieldName(out string? name)
-            {
-                name = null;
-                SkipWhitespace();
-                if (IsAtEnd)
-                    return false;
-
-                if (Current == '"' || Current == '`')
-                {
-                    name = ParseQuoted();
-                    return true;
-                }
-
-                var start = position;
-                while (!IsAtEnd && (char.IsLetterOrDigit(Current) || Current == '_' || Current == '-' || Current == '+'))
-                    position++;
-
-                if (position == start)
-                    return false;
-
-                name = text[start..position];
+                var parameter = Parameter.Parser.End().Parse(candidate);
+                value = ConvertToRuntimeValue(parameter);
                 return true;
             }
-
-            private char Peek(int offset)
+            catch (ParseException)
             {
-                var index = position + offset;
-                return index < text.Length ? text[index] : '\0';
+                return false;
             }
+        }
+
+        private static bool ShouldAutoQuoteScalar(string text)
+        {
+            var normalized = text.Trim();
+            if (normalized.Length == 0)
+                return false;
+
+            // Only quote plain scalars with internal whitespace; avoid changing typed/structured inputs.
+            if (!HasInternalWhitespace(normalized))
+                return false;
+
+            return normalized.IndexOfAny(['{', '}', '[', ']', '@', '#', '|', ',', ':']) < 0;
+        }
+
+        private static bool HasInternalWhitespace(string text)
+        {
+            for (var i = 1; i < text.Length - 1; i++)
+                if (char.IsWhiteSpace(text[i]))
+                    return true;
+
+            return false;
+        }
+
+        private static string BuildQuotedScalar(string text)
+            => text.Contains('`')
+                ? $"\"{RecordSyntax.EscapeDoubleQuoted(text)}\""
+                : $"`{text}`";
+
+        private static object? ConvertToRuntimeValue(IParameter parameter)
+        {
+            return parameter switch
+            {
+                LiteralParameter literal => RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
+                    ? typed
+                    : literal.Value,
+                QuotedLiteralParameter quoted => quoted.Value,
+                ArrayParameter array => array.Values.Select(ConvertToRuntimeValue).ToArray(),
+                RecordLiteralParameter record => ConvertRecord(record),
+                _ => ParameterSerializer.Serialize(parameter),
+            };
+        }
+
+        private static RecordValue ConvertRecord(RecordLiteralParameter record)
+        {
+            var value = new RecordValue();
+            foreach (var field in record.Fields)
+                value.Set(field.Name, ConvertToRuntimeValue(field.Value));
+
+            return value;
         }
     }
 

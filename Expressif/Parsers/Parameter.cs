@@ -108,6 +108,7 @@ public class Parameter
     protected static readonly Parser<IParameter> RecordValueParameter =
         IncomingParameter
         .Or(Parse.Ref(() => RecordLiteralParameter))
+        .Or(Parse.Ref(() => ArrayLiteralParameter))
         .Or(Parse.Ref(() => VariableParameter))
         .Or(Parse.Ref(() => IntervalParameter))
         .Or(Parse.Ref(() => IndexParameter))
