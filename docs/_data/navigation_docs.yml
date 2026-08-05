@@ -11,6 +11,7 @@
 - title: Functions library
   docs:
   - flow-library-syntax
+  - shorthands
   - special-functions
   - text-functions
   - numeric-functions

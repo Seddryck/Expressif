@@ -9,7 +9,8 @@ namespace Expressif.Parsers;
 public enum FunctionSyntax
 {
     Standard,
-    MapShorthand
+    MapShorthand,
+    FieldShorthand
 }
 
 public class Function : IExpression
@@ -46,16 +47,28 @@ public class Function : IExpression
             ? Array.Empty<IParameter>()
             : [new RecordDefinitionParameter(entries)];
 
-    public static readonly Parser<Function> Parser =
+    private static readonly Parser<Function> FieldShorthandParser =
+        from _ in Parse.Char('.')
+        from name in Parse.Regex("[A-Za-z_][A-Za-z0-9_+\\-]*").Text()
+        select new Function("field", [new LiteralParameter(name)], FunctionSyntax.FieldShorthand);
+
+    private static readonly Parser<IParameter[]> FieldShorthandParametersParser =
+        from function in FieldShorthandParser.Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
+        select new IParameter[] { new OpenExpressionParameter(new OpenExpression([function])) };
+
+    private static readonly Parser<Function> StandardParser =
         from functionName in Grammar.FunctionName
         from parameters in (functionName.Equals("filter", StringComparison.OrdinalIgnoreCase)
-                                ? PredicationParametersParser.Optional()
+                                ? FieldShorthandParametersParser.Or(PredicationParametersParser).Optional()
                                 : functionName.Equals("map", StringComparison.OrdinalIgnoreCase)
                                 ? OpenExpressionParametersParser.Optional()
                                 : functionName.Equals("record", StringComparison.OrdinalIgnoreCase)
                                 ? RecordParametersParser.Optional()
                                 : Parsers.Parameters.Parser.Optional())
         select new Function(functionName, parameters.GetOrElse(Array.Empty<IParameter>()));
+
+    public static readonly Parser<Function> Parser =
+        FieldShorthandParser.Or(StandardParser);
 
     public string Name { get; }
     public IParameter[] Parameters { get; }

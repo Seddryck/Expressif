@@ -1,5 +1,6 @@
 ﻿using Expressif.Parsers;
 using Expressif.Serializers;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,21 @@ namespace Expressif.Testing.Serializers;
 
 public class FunctionSerializerTest
 {
+    [Test]
+    public void Serialize_FieldShorthand_PreservesShorthand()
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse(".name");
+
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(".name"));
+    }
+
+    [Test]
+    public void Serialize_DynamicFieldName_PreservesLongForm()
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse("field([requested-field])");
+
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field([requested-field])"));
+    }
     [Test]
     public void Serialize_NoParameter_NoParenthesis()
     {

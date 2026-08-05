@@ -279,12 +279,27 @@ public class ExpressionFactory : BaseExpressionFactory
         static Func<IPredicate> BuildSinglePredicateFromOpenExpression(OpenExpressionParameter openExpression, PredicationFactory factory, IContext context, string functionName)
         {
             var members = openExpression.Expression.Members.ToArray();
+            if (members.Any(x => x.Syntax == FunctionSyntax.FieldShorthand))
+            {
+                var functions = members.Select(member => new ExpressionFactory().Instantiate(member.Name, member.Parameters, context)).ToArray();
+                return () => new BooleanExpressionPredicate(new ChainFunction(functions));
+            }
+
             if (members.Length != 1)
                 throw new MissingOrUnexpectedParametersFunctionException(functionName, members.Length);
 
-            var predication = new SinglePredication(members[0]);
+            var predication = new SinglePredication(members.Single());
             return () => factory.Instantiate(predication, context);
         }
+    }
+
+    private sealed class BooleanExpressionPredicate(IFunction expression) : IPredicate
+    {
+        public bool Evaluate(object? value)
+            => expression.Evaluate(value) is true;
+
+        object? IFunction.Evaluate(object? value)
+            => Evaluate(value);
     }
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)

@@ -12,7 +12,7 @@ The flow library and syntax define how data moves through a pipeline and how val
 The following constructs are complementary:
 
 * `[name]`: reads a field from the persistent current object.
-* `field(name)`: reads a field from the value entering the current stage.
+* `.name`: reads a field from the value entering the current stage (`field(name)` is the long form).
 * `record(...)`: constructs a new ordered record value.
 * `...`: represents the full incoming value.
 
@@ -20,21 +20,21 @@ The following constructs are complementary:
 
 `[name]` always reads from the current object associated with the execution context.
 
-`field(name)` always reads from the value entering the current pipeline stage.
+`.name` always reads from the value entering the current pipeline stage.
 
 Example:
 
 ```text
 [customer]
 | record(
-    customerName := field(name),
+    customerName := .name,
     requestedBy := [name]
 )
 ```
 
 In this expression:
 
-* `field(name)` reads from `[customer]` (the incoming stage value).
+* `.name` reads from `[customer]` (the incoming stage value).
 * `[name]` reads from the current object.
 
 ## The incoming-value expression: ...
@@ -90,6 +90,6 @@ Properties:
 
 ## field function
 
-`field(name)` retrieves a field from the incoming pipeline value.
+`.name` retrieves a field from the incoming pipeline value. It is shorthand for `field(name)`.
 
 It is useful inside `record(...)` to transform fields from the current stage input without relying on the current object.
