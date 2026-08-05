@@ -15,12 +15,20 @@ public class OpenExpression : IExpression
     public OpenExpression(IEnumerable<Function> members)
         => (Members) = (members);
 
+    private static readonly Parser<Function> MapShorthandParser =
+        from _ in Parse.String("|>").Token()
+        from expression in Parse.Ref(() => Parser).Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
+        select new Function("map", [new OpenExpressionParameter(expression)], FunctionSyntax.MapShorthand);
+
+    internal static readonly Parser<Function> ContinuationParser =
+        MapShorthandParser.Or(
+            from _ in Parse.Char('|').Token()
+            from function in Function.Parser.Token()
+            select function);
+
     public static readonly Parser<OpenExpression> Parser =
         from first in Function.Parser.Once()
-        from others in (
-            from _ in Parse.Char('|').Token()
-            from p in Function.Parser.Token()
-            select p).Many()
+        from others in ContinuationParser.Many()
         select new OpenExpression(first.Concat(others));
 }
 
@@ -51,12 +59,8 @@ public class ClosedExpression : IExpression
 
     private static readonly Parser<ClosedExpression> AnyRootParser =
         from parameter in Parsers.Parameter.Parser.Token()
-        from remaining in (
-            from _ in Parse.Char('|').Token()
-            from expression in OpenExpression.Parser
-            select expression.Members
-        ).Optional()
-        select new ClosedExpression(parameter, remaining.GetOrElse(Enumerable.Empty<Function>()));
+        from remaining in OpenExpression.ContinuationParser.Many()
+        select new ClosedExpression(parameter, remaining);
 
     public static readonly Parser<ClosedExpression> Parser =
         AnyRootParser;

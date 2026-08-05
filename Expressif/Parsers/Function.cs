@@ -6,6 +6,12 @@ using System.Text;
 
 namespace Expressif.Parsers;
 
+public enum FunctionSyntax
+{
+    Standard,
+    MapShorthand
+}
+
 public class Function : IExpression
 {
     private static readonly Parser<IParameter[]> OpenExpressionParametersParser =
@@ -53,7 +59,8 @@ public class Function : IExpression
 
     public string Name { get; }
     public IParameter[] Parameters { get; }
+    public FunctionSyntax Syntax { get; }
 
-    public Function(string name, IParameter[] parameters)
-        => (Name, Parameters) = (name, parameters);
+    public Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard)
+        => (Name, Parameters, Syntax) = (name, parameters, syntax);
 }

@@ -58,4 +58,24 @@ public class ExpressionTest
     [TestCase("{1,2,3,4} | filter(greater-than(2))", typeof(ClosedRootExpression))]
     public void Parse_RootExpression_ClosedFirst(string value, Type expectedType)
         => Assert.That(RootExpression.Parser.Parse(value), Is.TypeOf(expectedType));
+
+    [Test]
+    public void Parse_MapShorthand_LowersToMapFunction()
+    {
+        var expression = Expressif.Parsers.ClosedExpression.Parser.End()
+            .Parse("{1,2,3} |> (absolute | add(5)) | reverse");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "reverse" }));
+            Assert.That(expression.Members.First().Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
+            Assert.That(((OpenExpressionParameter)expression.Members.First().Parameters.Single()).Expression.Members.Count(), Is.EqualTo(2));
+        });
+    }
+
+    [TestCase("{1,2,3} |> absolute")]
+    [TestCase("{1,2,3} |> ()")]
+    [TestCase("{1,2,3} |> (absolute")]
+    public void Parse_MapShorthandWithoutParenthesizedExpression_Invalid(string value)
+        => Assert.That(() => Expressif.Parsers.ClosedExpression.Parser.End().Parse(value), Throws.TypeOf<ParseException>());
 }

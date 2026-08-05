@@ -196,3 +196,13 @@ Returns the distinct values appearing in either the pipeline input or the specif
 * array: Specifies the second array whose values are combined with the pipeline input.
 
 <!-- END AUTO-GENERATED -->
+
+## Map shorthand
+
+Use `|> (...)` to apply a parenthesized expression to every item of an array. It is equivalent to `| map(...)`:
+
+```text
+{-1, 2, -3} |> (absolute | add(5)) | reverse
+```
+
+The parentheses are mandatory. The ordinary `|` after the closing parenthesis continues the pipeline with the complete mapped array, so the example applies `reverse` after mapping.

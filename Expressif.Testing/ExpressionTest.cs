@@ -270,6 +270,15 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ArrayMapShorthandPipeline_Valid()
+    {
+        var expression = new ClosedExpression("{-1,2,-3} |> (absolute | add(5)) | reverse");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { 8m, 7m, 6m }));
+    }
+
+    [Test]
     public void Evaluate_StringArrayPipeMapUpper_Valid()
     {
         var expression = new ClosedExpression("{\"alice\",\"bob\"} | map(upper)");
