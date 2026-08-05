@@ -259,6 +259,8 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Numeric  | square-power                        | numeric-to-square-power                                                           |
 |Numeric  | square-root                         | numeric-to-square-root                                                            |
 |Numeric  | subtract                            | numeric-to-subtract                                                               |
+|Record   | field                               |                                                                                   |
+|Record   | record                              |                                                                                   |
 |Special  | any-to-any                          |                                                                                   |
 |Special  | neutral                             | Special-to-neutral                                                                |
 |Special  | null-to-value                       |                                                                                   |
