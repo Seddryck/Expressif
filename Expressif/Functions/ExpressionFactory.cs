@@ -145,40 +145,54 @@ public class ExpressionFactory : BaseExpressionFactory
         if (parameter is QuotedLiteralParameter quoted)
             return _ => quoted.Value;
 
-        if (parameter is LiteralParameter literal && RecordSyntax.TryParseTypedToken(literal.Value, out var typed))
-            return _ => typed;
-
-        if (parameter is LiteralParameter textLiteral)
-            return _ => textLiteral.Value;
+        if (parameter is LiteralParameter literal)
+            return RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
+                ? _ => typed
+                : _ => literal.Value;
 
         if (parameter is OpenExpressionParameter open)
-        {
-            if (open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0)
-            {
-                var literalToken = open.Expression.Members.First().Name;
-                if (RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped))
-                    return _ => literalTyped;
-            }
-
-            try
-            {
-                var functions = open.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
-                var chain = new ChainFunction(functions);
-                return input => chain.Evaluate(input);
-            }
-            catch (NotImplementedFunctionException) when (open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0)
-            {
-                var literalToken = open.Expression.Members.First().Name;
-                if (RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped))
-                    return _ => literalTyped;
-
-                return _ => literalToken;
-            }
-        }
+            return BuildOpenExpressionRecordEvaluator(open, context);
 
         var provider = CreateParameter(parameter, typeof(object), context);
         return _ => provider.DynamicInvoke();
     }
+
+    private Func<object?, object?> BuildOpenExpressionRecordEvaluator(OpenExpressionParameter open, IContext context)
+    {
+        if (TryBuildSingleTokenEvaluator(open, out var evaluator))
+            return evaluator;
+
+        try
+        {
+            var functions = open.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
+            var chain = new ChainFunction(functions);
+            return input => chain.Evaluate(input);
+        }
+        catch (NotImplementedFunctionException) when (IsSingleTokenExpression(open))
+        {
+            var literalToken = open.Expression.Members.First().Name;
+            return RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped)
+                ? _ => literalTyped
+                : _ => literalToken;
+        }
+    }
+
+    private static bool TryBuildSingleTokenEvaluator(OpenExpressionParameter open, out Func<object?, object?> evaluator)
+    {
+        evaluator = null!;
+        if (!IsSingleTokenExpression(open))
+            return false;
+
+        var literalToken = open.Expression.Members.First().Name;
+        if (!RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped))
+            return false;
+
+        evaluator = _ => literalTyped;
+        return true;
+    }
+
+    private static bool IsSingleTokenExpression(OpenExpressionParameter open)
+        => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0;
 
     private bool TryInstantiateWithAccumulatorProvider(Type type, Parsers.Function function, IContext context, out IFunction aggregation)
     {

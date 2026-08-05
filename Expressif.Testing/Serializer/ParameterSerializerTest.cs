@@ -1,5 +1,6 @@
 ﻿using Expressif.Serializers;
 using Expressif.Parsers;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,23 @@ public class ParameterSerializerTest
     [TestCase("123,125")]
     public void Serialize_LiteralParameter_Quoted(string value)
         => Assert.That(new ParameterSerializer().Serialize(new LiteralParameter(value)), Is.EqualTo($"\"{value}\""));
+
+    [Test]
+    public void Serialize_LiteralParameter_WithEmbeddedDoubleQuotes_RoundTrip()
+    {
+        var serializer = new ParameterSerializer();
+        var parameter = new LiteralParameter("Alice said \"hello\"");
+
+        var serialized = serializer.Serialize(parameter);
+        var parsed = Parameter.Parser.Parse(serialized);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(serialized, Is.EqualTo("\"Alice said \\\"hello\\\"\""));
+            Assert.That(parsed, Is.TypeOf<LiteralParameter>());
+            Assert.That(((LiteralParameter)parsed).Value, Is.EqualTo("Alice said \"hello\""));
+        });
+    }
 
     [Test]
     [TestCase("foo")]

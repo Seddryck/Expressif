@@ -1,4 +1,5 @@
 using Expressif.Values;
+using System;
 
 namespace Expressif.Testing.Values;
 
@@ -45,4 +46,8 @@ public class ValueFormatterTest
 
         Assert.That(result, Is.EqualTo("{__NONAME_0 := Alice, active := true}"));
     }
+
+    [Test]
+    public void Format_DbNull_ReturnsNullLiteral()
+        => Assert.That(ValueFormatter.Format(DBNull.Value), Is.EqualTo("null"));
 }

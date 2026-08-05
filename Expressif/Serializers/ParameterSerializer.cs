@@ -28,7 +28,7 @@ public class ParameterSerializer
                 x => Grammar.AlongQuotedChars
                         .Union(Grammar.OpeningQuotedChars)
                         .Union(Grammar.ClosingQuotedChars).Contains(x))
-                    ? $"\"{l.Value}\""
+                    ? $"\"{RecordSyntax.EscapeDoubleQuoted(l.Value)}\""
                     : l.Value,
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",

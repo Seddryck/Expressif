@@ -7,7 +7,11 @@ namespace Expressif.Values;
 
 public static class RecordSyntax
 {
-    private static readonly Regex BareTokenRegex = new("^[A-Za-z0-9_+\\-]+$", RegexOptions.Compiled);
+    private static readonly Regex BareTokenRegex = new(
+        "^[A-Za-z0-9_+\\-]+$",
+        RegexOptions.Compiled,
+        TimeSpan.FromMilliseconds(100)
+    );
 
     public static bool IsBareToken(string value)
         => value.Length > 0 && BareTokenRegex.IsMatch(value);

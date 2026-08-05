@@ -14,31 +14,35 @@ public static class ValueFormatter
 
     private static string Format(object? value, bool forRecordValue)
     {
-        if (value == null)
+        if (IsNullLike(value))
             return "null";
 
-        if (TryFormatNamedCollection(value, out var named))
+        if (TryFormatNamedCollection(value!, out var named))
             return named;
 
-        if (value is bool boolean)
-            return boolean ? "true" : "false";
+        return FormatScalarOrEnumerable(value, forRecordValue);
+    }
 
-        if (value is string text)
-            return forRecordValue ? RecordSyntax.FormatString(text) : text;
+    private static bool IsNullLike(object? value)
+        => value is null || value == DBNull.Value;
 
-        if (value is DateOnly date)
-            return date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-
-        if (value is IEnumerable enumerable && value is not string)
+    private static string FormatScalarOrEnumerable(object value, bool forRecordValue)
+        => value switch
         {
-            var values = new List<string>();
-            foreach (var item in enumerable)
-                values.Add(Format(item, forRecordValue));
+            bool boolean => boolean ? "true" : "false",
+            string text => forRecordValue ? RecordSyntax.FormatString(text) : text,
+            DateOnly date => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+            IEnumerable enumerable when value is not string => FormatEnumerable(enumerable, forRecordValue),
+            _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? value.ToString() ?? "null",
+        };
 
-            return $"{{{string.Join(", ", values)}}}";
-        }
+    private static string FormatEnumerable(IEnumerable enumerable, bool forRecordValue)
+    {
+        var values = new List<string>();
+        foreach (var item in enumerable)
+            values.Add(Format(item, forRecordValue));
 
-        return Convert.ToString(value, CultureInfo.InvariantCulture) ?? value.ToString() ?? "null";
+        return $"{{{string.Join(", ", values)}}}";
     }
 
     private static bool TryFormatNamedCollection(object value, out string formatted)
