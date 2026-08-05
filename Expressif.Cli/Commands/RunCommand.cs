@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using PocketCsvReader;
+using Expressif.Values;
 
 namespace Expressif.Cli.Commands;
 
@@ -148,7 +149,7 @@ internal static class RunCommand
             try
             {
                 foreach (var result in RunExpression(openExpression, context, sequenceInput))
-                    Console.Out.WriteLine(result ?? "null");
+                    Console.Out.WriteLine(ValueFormatter.Format(result));
 
                 return ExitCodes.Success;
             }
@@ -525,24 +526,7 @@ internal static class RunCommand
     }
 
     private static string FormatValue(object? value)
-    {
-        if (value is null)
-            return "null";
-
-        if (value is string text)
-            return text;
-
-        if (value is IEnumerable enumerable)
-        {
-            var values = new List<string>();
-            foreach (var item in enumerable)
-                values.Add(FormatValue(item));
-
-            return $"{{{string.Join(", ", values)}}}";
-        }
-
-        return Convert.ToString(value, CultureInfo.InvariantCulture) ?? value.ToString() ?? "null";
-    }
+        => ValueFormatter.Format(value);
 
     internal static class InputValueParser
     {
@@ -582,7 +566,7 @@ internal static class RunCommand
                     return string.Empty;
 
                 if (Current == '{')
-                    return ParseArray();
+                    return ParseBraceLiteral();
 
                 if (Current == '"' || Current == '`')
                     return ParseQuoted();
@@ -590,17 +574,36 @@ internal static class RunCommand
                 return ParseScalar();
             }
 
-            private object?[] ParseArray()
+            private object ParseBraceLiteral()
             {
                 position++; // '{'
                 SkipWhitespace();
 
-                var values = new List<object?>();
                 if (!IsAtEnd && Current == '}')
                 {
                     position++;
-                    return values.ToArray();
+                    return Array.Empty<object?>();
                 }
+
+                var checkpoint = position;
+                if (TryParseRecordFieldName(out var _))
+                {
+                    SkipWhitespace();
+                    if (!IsAtEnd && Current == ':' && Peek(1) == '=')
+                    {
+                        position = checkpoint;
+                        return ParseRecordBody();
+                    }
+
+                    position = checkpoint;
+                }
+
+                return ParseArrayBody();
+            }
+
+            private object?[] ParseArrayBody()
+            {
+                var values = new List<object?>();
 
                 while (true)
                 {
@@ -628,14 +631,71 @@ internal static class RunCommand
                 return values.ToArray();
             }
 
+            private RecordValue ParseRecordBody()
+            {
+                var record = new RecordValue();
+                while (true)
+                {
+                    if (!TryParseRecordFieldName(out var fieldName))
+                        throw new FormatException($"Expected a record field name at position {position + 1}.");
+
+                    SkipWhitespace();
+                    if (IsAtEnd || Current != ':' || Peek(1) != '=')
+                        throw new FormatException($"Expected ':=' after record field '{fieldName}'.");
+
+                    position += 2;
+                    var value = ParseValue();
+                    record.Set(fieldName!, value);
+
+                    SkipWhitespace();
+                    if (IsAtEnd)
+                        throw new FormatException("Unterminated record literal.");
+
+                    if (Current == ',')
+                    {
+                        position++;
+                        SkipWhitespace();
+                        if (!IsAtEnd && Current == '}')
+                        {
+                            position++;
+                            break;
+                        }
+
+                        continue;
+                    }
+
+                    if (Current == '}')
+                    {
+                        position++;
+                        break;
+                    }
+
+                    throw new FormatException($"Unexpected token '{Current}' at position {position + 1}. Expected ',' or '}}'.");
+                }
+
+                return record;
+            }
+
             private string ParseQuoted()
             {
                 var quote = Current;
                 position++;
 
                 var builder = new StringBuilder();
-                while (!IsAtEnd && Current != quote)
+                while (!IsAtEnd)
                 {
+                    if (Current == quote)
+                        break;
+
+                    if (quote == '"' && Current == '\\' && !IsAtEnd && position + 1 < text.Length)
+                    {
+                        builder.Append('\\');
+                        position++;
+                        builder.Append(Current);
+                        position++;
+                        continue;
+                    }
+
                     builder.Append(Current);
                     position++;
                 }
@@ -644,7 +704,9 @@ internal static class RunCommand
                     throw new FormatException("Unterminated quoted input value.");
 
                 position++; // closing quote
-                return builder.ToString();
+                return quote == '"'
+                    ? RecordSyntax.UnescapeDoubleQuoted(builder.ToString())
+                    : builder.ToString();
             }
 
             private object ParseScalar()
@@ -671,6 +733,36 @@ internal static class RunCommand
 
                 return token;
             }
+
+            private bool TryParseRecordFieldName(out string? name)
+            {
+                name = null;
+                SkipWhitespace();
+                if (IsAtEnd)
+                    return false;
+
+                if (Current == '"' || Current == '`')
+                {
+                    name = ParseQuoted();
+                    return true;
+                }
+
+                var start = position;
+                while (!IsAtEnd && (char.IsLetterOrDigit(Current) || Current == '_' || Current == '-' || Current == '+'))
+                    position++;
+
+                if (position == start)
+                    return false;
+
+                name = text[start..position];
+                return true;
+            }
+
+            private char Peek(int offset)
+            {
+                var index = position + offset;
+                return index < text.Length ? text[index] : '\0';
+            }
         }
     }
 
@@ -691,6 +783,8 @@ internal static class RunCommand
         }
 
         public int ColumnCount => values.Length;
+
+        public IReadOnlyList<string> ColumnNames => names;
 
         public bool ContainsColumn(string columnName)
             => ordinals.ContainsKey(columnName);

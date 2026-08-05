@@ -9,6 +9,7 @@ namespace Expressif.Values;
 public interface ILiteDataRow
 {
     int ColumnCount { get; }
+    IReadOnlyList<string> ColumnNames { get; }
     bool ContainsColumn(string columnName);
     object? this[string columnName] { get; }
     object? this[int index] { get; }

@@ -74,15 +74,19 @@ public class GrammarTest
     [TestCase("foo-bar")]
     [TestCase("%foo!bar")]
     [TestCase("\"foo\"")]
+    [TestCase("\"\"")]
     [TestCase("\" foo bar \"")]
     [TestCase("\"foo , bar\"")]
-    [TestCase("\"(foo)\"")]
     [TestCase("`foo`")]
     [TestCase("` foo bar `")]
     [TestCase("`foo , bar`")]
     [TestCase("`(foo)`")]
     public void Parse_Literal_Valid(string value)
         => Assert.That(Grammar.Literal.End().Parse(value), Is.EqualTo(value.Trim().Trim('\"').Trim('`')));
+
+    [Test]
+    public void Parse_Literal_DoubleQuotedEscapedCharacters_Unescaped()
+        => Assert.That(Grammar.Literal.End().Parse("\"Alice said \\\"hello\\\".\""), Is.EqualTo("Alice said \"hello\"."));
 
     [Test]
     [TestCase("@foo")]

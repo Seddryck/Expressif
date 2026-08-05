@@ -3,6 +3,7 @@ using Expressif.Values.Special;
 using Sprache;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Expressif.Parsers;
@@ -30,13 +31,19 @@ public class Grammar
         select string.Concat(firstChar.ToString().Concat(otherChars.GetOrElse(string.Empty)));
 
     protected static readonly Parser<string> DoubleQuotedLiteral =
-        Parse.CharExcept("\"").AtLeastOnce().Text().Contained(Parse.Char('\"'), Parse.Char('\"')).Token();
+        Parse.Regex("\"(?:\\\\.|[^\"\\\\])*\"").Token()
+            .Select(x => RecordSyntax.UnescapeDoubleQuoted(x[1..^1]));
 
     protected static readonly Parser<string> BacktickQuotedLiteral =
-        Parse.CharExcept("`").AtLeastOnce().Text().Contained(Parse.Char('`'), Parse.Char('`')).Token();
+        Parse.CharExcept("`").Many().Text().Contained(Parse.Char('`'), Parse.Char('`')).Token();
 
     protected static readonly Parser<string> QuotedLiteral =
         DoubleQuotedLiteral.Or(BacktickQuotedLiteral);
+
+    public static readonly Parser<string> Quoted = QuotedLiteral;
+
+    public static readonly Parser<string> BareToken =
+        Parse.Regex("[A-Za-z0-9_+\\-]+").Token();
 
     public static readonly Parser<string> Literal = UnquotedLiteral.Or(QuotedLiteral);
 }

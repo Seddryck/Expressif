@@ -17,6 +17,8 @@ public class ParameterTest
     [TestCase("#52", typeof(ObjectIndexParameter))]
     [TestCase("{}", typeof(ArrayParameter))]
     [TestCase("{1,2,3}", typeof(ArrayParameter))]
+    [TestCase("{name := Alice}", typeof(RecordLiteralParameter))]
+    [TestCase("{`first name` := \"Alice Smith\", active := true}", typeof(RecordLiteralParameter))]
     [TestCase("{@foo}", typeof(ArrayParameter))]
     [TestCase("{ @foo, #1, [bar] }", typeof(ArrayParameter))]
     [TestCase("{ @foo | text-to-func(bar) }", typeof(InputExpressionParameter))]

@@ -1,4 +1,5 @@
 ﻿using Expressif.Parsers;
+using Expressif.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,20 @@ namespace Expressif.Serializers;
 
 public class ParameterSerializer
 {
+    private FunctionSerializer? functionSerializer;
+
+    private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
+
     public virtual string Serialize(IParameter parameter)
     {
         return parameter switch
         {
             ArrayParameter a => $"{{{string.Join(", ", a.Values.Select(Serialize))}}}",
+            RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
+            RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
+            OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
+            IncomingValueParameter => "...",
+            QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
             LiteralParameter l => l.Value.Any(
                 x => Grammar.AlongQuotedChars
                         .Union(Grammar.OpeningQuotedChars)
@@ -26,4 +36,17 @@ public class ParameterSerializer
             _ => throw new NotSupportedException()
         };
     }
+
+    private string SerializeRecordEntry(IRecordDefinitionEntry entry)
+        => entry switch
+        {
+            RecordSpreadEntry => "...",
+            RecordNamedEntry named => $"{SerializeFieldName(named.Name)} := {Serialize(named.Value)}",
+            _ => throw new NotSupportedException(),
+        };
+
+    private static string SerializeFieldName(string name)
+        => RecordSyntax.IsBareToken(name)
+            ? name
+            : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
 }

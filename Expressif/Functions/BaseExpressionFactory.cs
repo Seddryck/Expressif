@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Functions;
 
@@ -55,8 +56,10 @@ public abstract class BaseExpressionFactory
         return parameter switch
         {
             ArrayParameter array => CreateFunctionCast(() => BuildArray(array, context), scalarType),
+            RecordLiteralParameter record => CreateFunctionCast(() => BuildRecord(record, context), scalarType),
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
+            QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
@@ -75,6 +78,33 @@ public abstract class BaseExpressionFactory
             }
 
             return values;
+        }
+
+        ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)
+        {
+            var value = new ValueRecord();
+            foreach (var field in record.Fields)
+            {
+                if (value.ContainsKey(field.Name))
+                    throw new ArgumentException($"Duplicate field '{field.Name}' in record literal.");
+
+                if (field.Value is QuotedLiteralParameter quoted)
+                {
+                    value.Set(field.Name, quoted.Value);
+                    continue;
+                }
+
+                if (field.Value is LiteralParameter literal && RecordSyntax.TryParseTypedToken(literal.Value, out var typed))
+                {
+                    value.Set(field.Name, typed);
+                    continue;
+                }
+
+                var elementFactory = CreateParameter(field.Value, typeof(object), currentContext);
+                value.Set(field.Name, elementFactory.DynamicInvoke());
+            }
+
+            return value;
         }
 
         static IInterval buildInterval(Interval value)
