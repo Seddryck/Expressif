@@ -46,4 +46,8 @@ public class FoldTest
     [Test]
     public void Evaluate_NonEnumerableInput_Null()
         => Assert.That(new Fold(() => new SumAccumulator()).Evaluate(10), Is.Null);
+
+    [Test]
+    public void Evaluate_StringArrayLiteralInput_Valid()
+        => Assert.That(new Fold(() => new SumAccumulator()).Evaluate("{1,2,2}"), Is.EqualTo(5m));
 }

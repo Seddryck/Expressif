@@ -87,6 +87,10 @@ public class CasterTest
         });
 
     [Test]
+    public void Cast_TypedCasterToArray_Correct()
+        => Assert.That(new Caster().Cast<object[]>("{1,2,3}"), Is.EqualTo(new object?[] { 1, 2, 3 }));
+
+    [Test]
     public void Cast_NotCasterableToTimeSpan_Throws()
         => Assert.Multiple(() =>
         {

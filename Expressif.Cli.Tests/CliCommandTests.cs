@@ -67,6 +67,19 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_ImplicitSum_WithStringArrayLiteralInput_ReturnsAggregatedResult()
+    {
+        var result = await InvokeAsync("evaluate", "sum", "--input", "{1,2,2}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("5"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Evaluate_NullResult_WritesLiteralNull()
     {
         var result = await InvokeAsync("evaluate", "{} | first");
