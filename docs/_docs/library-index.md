@@ -33,6 +33,7 @@ tags: [predicates, functions]
 * [change-of-month]({{ site.baseurl }}/docs/temporal-functions/#change-of-month)
 * [change-of-second]({{ site.baseurl }}/docs/temporal-functions/#change-of-second)
 * [change-of-year]({{ site.baseurl }}/docs/temporal-functions/#change-of-year)
+* [chunk]({{ site.baseurl }}/docs/array-functions/#chunk)
 * [clamp]({{ site.baseurl }}/docs/temporal-functions/#clamp)
 * [clean-whitespace]({{ site.baseurl }}/docs/text-functions/#clean-whitespace)
 * [clip]({{ site.baseurl }}/docs/numeric-functions/#clip)
