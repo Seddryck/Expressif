@@ -2440,5 +2440,21 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "percent-change",
+    "IsPublic": true,
+    "Aliases": [
+      "percent-change"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
+    "Parameters": [
+      {
+        "Name": "previous",
+        "Optional": false,
+        "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
+      }
+    ]
   }
 ]
