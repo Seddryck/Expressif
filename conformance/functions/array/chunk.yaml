@@ -1,0 +1,41 @@
+suite: array
+kind: function
+operator: chunk
+tests:
+  - id: chunk.valid.size
+    cases:
+      - id: chunk.valid.size.numeric.partial
+        value: [1, 2, 3, 4, 5]
+        expected: [[1, 2], [3, 4], [5]]
+        parameters:
+          - 2
+      - id: chunk.valid.size.numeric.exact
+        value: [1, 2, 3, 4]
+        expected: [[1, 2], [3, 4]]
+        parameters:
+          - 2
+      - id: chunk.valid.size.numeric.larger-than-input
+        value: [1, 2, 3]
+        expected: [[1, 2, 3]]
+        parameters:
+          - 10
+      - id: chunk.valid.size.numeric.singleton
+        value: [1, 2, 3]
+        expected: [[1], [2], [3]]
+        parameters:
+          - 1
+      - id: chunk.valid.size.special.empty-array
+        value: []
+        expected: []
+        parameters:
+          - 2
+      - id: chunk.valid.size.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 2
+      - id: chunk.valid.size.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - 2
