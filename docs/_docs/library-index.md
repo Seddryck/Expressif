@@ -136,6 +136,7 @@ tags: [predicates, functions]
 * [pascal-case]({{ site.baseurl }}/docs/text-functions/#pascal-case)
 * [pascal-snake-case]({{ site.baseurl }}/docs/text-functions/#pascal-snake-case)
 * [path-case]({{ site.baseurl }}/docs/text-functions/#path-case)
+* [percent-change]({{ site.baseurl }}/docs/numeric-functions/#percent-change)
 * [power]({{ site.baseurl }}/docs/numeric-functions/#power)
 * [prefix]({{ site.baseurl }}/docs/text-functions/#prefix)
 * [prefix-new-line]({{ site.baseurl }}/docs/text-functions/#prefix-new-line)

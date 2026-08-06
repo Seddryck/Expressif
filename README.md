@@ -256,6 +256,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Numeric  | nth-root                            | numeric-to-nth-root                                                               |
 |Numeric  | null-to-zero                        |                                                                                   |
 |Numeric  | oppose                              | numeric-to-oppose                                                                 |
+|Numeric  | percent-change                      | numeric-to-percent-change                                                         |
 |Numeric  | power                               | numeric-to-power                                                                  |
 |Numeric  | round                               | numeric-to-round                                                                  |
 |Numeric  | sign                                | numeric-to-sign                                                                   |
