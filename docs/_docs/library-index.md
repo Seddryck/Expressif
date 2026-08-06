@@ -54,6 +54,7 @@ tags: [predicates, functions]
 * [distinct]({{ site.baseurl }}/docs/array-functions/#distinct)
 * [divide]({{ site.baseurl }}/docs/numeric-functions/#divide)
 * [dot-case]({{ site.baseurl }}/docs/text-functions/#dot-case)
+* [duration-between]({{ site.baseurl }}/docs/temporal-functions/#duration-between)
 * [empty-to-null]({{ site.baseurl }}/docs/text-functions/#empty-to-null)
 * [extension]({{ site.baseurl }}/docs/io-functions/#extension)
 * [field]({{ site.baseurl }}/docs/record-functions/#field)

@@ -2,7 +2,7 @@
 title: Temporal functions
 subtitle: Functions applicable to temporal values
 tags: [functions, temporal]
-keywords: [age, backward, catholic-calendar, ceiling-hour, ceiling-minute, change-of-hour, change-of-minute, change-of-month, change-of-second, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, hour, hour-minute, hour-minute-second, hour-of-day, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, minute-of-day, minute-of-hour, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, second-of-day, second-of-hour, second-of-minute, set-time, set-to-local, set-to-utc, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
+keywords: [age, backward, catholic-calendar, ceiling-hour, ceiling-minute, change-of-hour, change-of-minute, change-of-month, change-of-second, change-of-year, clamp, datetime-to-date, day-of-month, day-of-week, day-of-year, duration-between, first-in-month, first-of-month, first-of-year, floor-hour, floor-minute, forward, hour, hour-minute, hour-minute-second, hour-of-day, invalid-to-date, iso-day-of-year, iso-week-of-year, iso-year-day, iso-year-week, iso-year-week-day, last-in-month, last-of-month, last-of-year, length-of-month, length-of-year, local-to-utc, minute-of-day, minute-of-hour, month, month-day, month-of-year, next-business-days, next-day, next-month, next-weekday, next-weekday-or-same, next-year, null-to-date, previous-business-days, previous-day, previous-month, previous-weekday, previous-weekday-or-same, previous-year, second-of-day, second-of-hour, second-of-minute, set-time, set-to-local, set-to-utc, utc-to-local, year, year-of-era] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### age
@@ -132,6 +132,14 @@ returns a numeric value representing the day of the week (1 being Monday and 7 b
 ###### Overview
 
 returns a numeric value representing the day position within the year of the date passed as the argument
+
+##### duration-between
+###### Overview
+
+Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.
+
+###### Parameter
+* previous: The previous temporal value to subtract from the current input.
 
 ##### first-in-month
 
