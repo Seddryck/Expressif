@@ -14,7 +14,7 @@ keywords: [any, count, every, first, last, max, min, sum] # AUTO-GENERATED KEYWO
 
 ###### Overview
 
-Returns `true` when at least one accumulated boolean value is `true`. Returns `null` when an input cannot be evaluated.
+Returns `true` when at least one accumulated boolean value is `true`.
 
 ##### count
 
@@ -30,7 +30,7 @@ Counts the number of accumulated items, including `null` values.
 
 ###### Overview
 
-Returns `true` only when every accumulated boolean value is `true`. Returns `null` when an input cannot be evaluated.
+Returns `true` only when every accumulated boolean value is `true`.
 
 ##### first
 
