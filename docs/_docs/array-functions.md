@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, complement, difference, filter, first-elements, fold, intersection, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
+keywords: [broadcast, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### broadcast
@@ -37,6 +37,14 @@ Returns the distinct values from the pipeline input that do not appear in the sp
 
 ###### Parameter
 * array: Specifies the array containing values to exclude from the pipeline input.
+
+##### distinct
+
+###### Alias: `distinct`
+
+###### Overview
+
+Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.
 
 ##### filter
 
