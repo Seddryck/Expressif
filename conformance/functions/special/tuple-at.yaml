@@ -1,0 +1,22 @@
+suite: special
+kind: function
+operator: tuple-at
+tests:
+  - id: tuple-at.valid.position
+    cases:
+      - id: tuple-at.valid.position.special.null
+        value: (null)
+        expected:
+        parameters: [0]
+      - id: tuple-at.valid.position.special.empty
+        value: (empty)
+        expected:
+        parameters: [0]
+      - id: tuple-at.valid.position.tuple.first
+        value: T(10, 20)
+        expected: 10
+        parameters: [0]
+      - id: tuple-at.valid.position.tuple.out-of-range
+        value: T(10, 20)
+        expected:
+        parameters: [2]

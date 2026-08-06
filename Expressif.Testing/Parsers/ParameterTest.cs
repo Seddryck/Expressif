@@ -1,4 +1,5 @@
 using Expressif.Parsers;
+using Expressif.Values;
 using Sprache;
 
 namespace Expressif.Testing.Parsers;
@@ -23,6 +24,8 @@ public class ParameterTest
     [TestCase("{@foo}", typeof(ArrayParameter))]
     [TestCase("{ @foo, #1, [bar] }", typeof(ArrayParameter))]
     [TestCase("{ @foo | text-to-func(bar) }", typeof(InputExpressionParameter))]
+    [TestCase("T(10, 20)", typeof(TupleParameter))]
+    [TestCase("T(1, T(2, 3))", typeof(TupleParameter))]
     public void Parse_Parameter_Valid(string value, Type type)
         => Assert.That(Parameter.Parser.Parse(value), Is.TypeOf(type));
 
@@ -66,5 +69,18 @@ public class ParameterTest
             Assert.That(parsed, Is.TypeOf<RecordLiteralParameter>());
             Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
         });
+    }
+
+    [TestCase("T()")]
+    [TestCase("T(10)")]
+    public void Parse_TupleWithFewerThanTwoFields_Invalid(string value)
+        => Assert.Throws<ParseException>(() => Parameter.Parser.End().Parse(value));
+
+    [Test]
+    public void Parse_TupleLiteral_RoundTripsThroughClosedExpression()
+    {
+        var value = new ClosedExpression("T(1, T(2, 3))").Evaluate();
+
+        Assert.That(ValueFormatter.Format(value), Is.EqualTo("T(1, T(2, 3))"));
     }
 }

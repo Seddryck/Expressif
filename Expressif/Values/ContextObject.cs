@@ -25,6 +25,7 @@ public class ContextObject
         {
             DataRow row => index < row.Table.Columns.Count,
             ILiteDataRow row => index < row.ColumnCount,
+            TupleValue tuple => index >= 0 && index < tuple.Count,
             IList list => index < list.Count,
             _ => throw new NotIndexableContextObjectException(Value)
         };
@@ -37,6 +38,7 @@ public class ContextObject
             {
                 DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
                 ILiteDataRow row => index < row.ColumnCount ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
+                TupleValue tuple => index >= 0 && index < tuple.Count ? tuple[index] : null,
                 IList list => list[index],
                 _ => throw new NotIndexableContextObjectException(Value)
             };

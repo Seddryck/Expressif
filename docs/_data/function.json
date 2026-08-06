@@ -2378,5 +2378,67 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "adjacent",
+    "IsPublic": true,
+    "Aliases": [
+      "adjacent"
+    ],
+    "Scope": "Array",
+    "Summary": "Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "operation",
+        "Optional": false,
+        "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
+      }
+    ]
+  },
+  {
+    "Name": "pairwise",
+    "IsPublic": true,
+    "Aliases": [
+      "pairwise"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.",
+    "Parameters": []
+  },
+  {
+    "Name": "tuple-at",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-at"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.",
+    "Parameters": [
+      {
+        "Name": "position",
+        "Optional": false,
+        "Summary": "Specifies the zero-based position of the tuple field to return."
+      }
+    ]
+  },
+  {
+    "Name": "tuple-first",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-first"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the first field of a tuple. Returns `null` when the input is not a tuple.",
+    "Parameters": []
+  },
+  {
+    "Name": "tuple-second",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-second"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the second field of a tuple. Returns `null` when the input is not a tuple.",
+    "Parameters": []
   }
 ]

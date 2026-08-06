@@ -19,6 +19,7 @@ public class ParameterSerializer
         return parameter switch
         {
             ArrayParameter a => $"{{{string.Join(", ", a.Values.Select(Serialize))}}}",
+            TupleParameter t => $"T({string.Join(", ", t.Values.Select(Serialize))})",
             RecordLiteralParameter r when r.Fields.Length == 0 => "{:}",
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
@@ -34,6 +35,7 @@ public class ParameterSerializer
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",
             ObjectIndexParameter oi => $"#{oi.Index}",
+            TupleProjectionParameter tp => $"${tp.Index}",
             _ => throw new NotSupportedException()
         };
     }
