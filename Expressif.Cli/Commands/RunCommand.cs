@@ -80,12 +80,18 @@ internal static class RunCommand
         };
         sourceOption.Aliases.Add("-s");
 
+        var scalarOption = new Option<bool>("--scalar")
+        {
+            Description = "Treat each source row as a single value. The source must contain exactly one column."
+        };
+
         var command = new Command("run", "Evaluate an Expressif expression for each element of an input sequence.");
 
         command.Arguments.Add(expressionArgument);
         command.Options.Add(inputOption);
         command.Options.Add(batchOption);
         command.Options.Add(sourceOption);
+        command.Options.Add(scalarOption);
         command.Options.Add(expressionFileOption);
 
         command.SetAction(parseResult =>
@@ -93,11 +99,18 @@ internal static class RunCommand
             var inlineExpression = parseResult.GetValue(expressionArgument);
             var expressionFilePath = parseResult.GetValue(expressionFileOption);
             var sourcePath = parseResult.GetValue(sourceOption);
+            var scalar = parseResult.GetValue(scalarOption);
             var inputRows = parseResult.GetValue(inputOption) ?? [];
             var batchInput = parseResult.GetValue(batchOption);
             var hasInputOption = parseResult.GetResult(inputOption) is not null;
             var hasBatchOption = parseResult.GetResult(batchOption) is not null;
             var hasSourceOption = parseResult.GetResult(sourceOption) is not null;
+
+            if (scalar && !hasSourceOption)
+            {
+                Console.Error.WriteLine("The --scalar option requires --source.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
 
             var batchOptionOccurrences = parseResult.Tokens.Count(token => token.Value is "--batch");
             if (batchOptionOccurrences > 1)
@@ -128,7 +141,7 @@ internal static class RunCommand
             }
 
             var sequenceInput = hasSourceOption
-                ? BuildSourceRows(sourcePath)
+                ? BuildSourceRows(sourcePath, scalar)
                 : BuildInputSequence(inputRows, hasBatchOption, batchInput);
 
             var context = new Context();
@@ -272,7 +285,7 @@ internal static class RunCommand
         }
     }
 
-    private static IEnumerable<object?> BuildSourceRows(string? sourcePath)
+    internal static IEnumerable<object?> BuildSourceRows(string? sourcePath, bool scalar = false)
     {
         object? sourceValue;
         try
@@ -293,7 +306,7 @@ internal static class RunCommand
 
         if (sourceValue is IDataReader reader)
         {
-            foreach (var row in EnumerateReaderRows(reader, sourcePath ?? string.Empty))
+            foreach (var row in EnumerateReaderRows(reader, sourcePath ?? string.Empty, scalar))
                 yield return row;
 
             yield break;
@@ -301,6 +314,9 @@ internal static class RunCommand
 
         if (sourceValue is IEnumerable enumerable and not string)
         {
+            if (scalar)
+                throw new FormatException("The --scalar option requires a tabular source exposing exactly one column.");
+
             var enumerator = enumerable.GetEnumerator();
             try
             {
@@ -318,26 +334,27 @@ internal static class RunCommand
         throw new FormatException("The source supplied to 'run' returned a scalar value. Expected an IEnumerable or IDataReader.");
     }
 
-    private static IEnumerable<object?> EnumerateReaderRows(IDataReader reader, string sourcePath)
+    private static IEnumerable<object?> EnumerateReaderRows(IDataReader reader, string sourcePath, bool scalar)
     {
         var hasHeaderRecord = reader is DisposableDataReader wrappedReader && wrappedReader.HasHeaderRecord;
 
         if (hasHeaderRecord)
         {
-            foreach (var row in EnumerateCsvRows(reader, sourcePath))
+            foreach (var row in EnumerateCsvRows(reader, sourcePath, scalar))
                 yield return row;
 
             yield break;
         }
 
-        foreach (var row in EnumerateGenericReaderRows(reader, sourcePath))
+        foreach (var row in EnumerateGenericReaderRows(reader, sourcePath, scalar))
             yield return row;
     }
 
-    private static IEnumerable<object?> EnumerateGenericReaderRows(IDataReader reader, string sourcePath)
+    private static IEnumerable<object?> EnumerateGenericReaderRows(IDataReader reader, string sourcePath, bool scalar)
     {
         try
         {
+            ValidateScalarColumnCount(reader.FieldCount, sourcePath, scalar);
             while (true)
             {
                 bool hasRow;
@@ -353,7 +370,7 @@ internal static class RunCommand
                 if (!hasRow)
                     yield break;
 
-                yield return BuildLiteDataRow(reader);
+                yield return scalar ? GetValue(reader, 0) : BuildLiteDataRow(reader);
             }
         }
         finally
@@ -362,7 +379,7 @@ internal static class RunCommand
         }
     }
 
-    private static IEnumerable<object?> EnumerateCsvRows(IDataReader reader, string sourcePath)
+    private static IEnumerable<object?> EnumerateCsvRows(IDataReader reader, string sourcePath, bool scalar)
     {
         try
         {
@@ -382,6 +399,8 @@ internal static class RunCommand
             var expectedFields = reader.FieldCount;
             if (expectedFields == 0)
                 throw new FormatException($"CSV source '{sourcePath}' is empty. A header row is required.");
+
+            ValidateScalarColumnCount(expectedFields, sourcePath, scalar);
 
             var headers = new string[expectedFields];
             var headerSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -424,7 +443,7 @@ internal static class RunCommand
                     values[i] = value is DBNull ? null : value;
                 }
 
-                yield return new LiteDataRow(headers, values);
+                yield return scalar ? values[0] : new LiteDataRow(headers, values);
                 recordNumber++;
             }
         }
@@ -432,6 +451,18 @@ internal static class RunCommand
         {
             reader.Dispose();
         }
+    }
+
+    private static void ValidateScalarColumnCount(int fieldCount, string sourcePath, bool scalar)
+    {
+        if (scalar && fieldCount != 1)
+            throw new FormatException($"The --scalar option requires source '{sourcePath}' to contain exactly one column; found {fieldCount}.");
+    }
+
+    private static object? GetValue(IDataRecord record, int index)
+    {
+        var value = record.GetValue(index);
+        return value is DBNull ? null : value;
     }
 
     private static LiteDataRow BuildLiteDataRow(IDataReader reader)

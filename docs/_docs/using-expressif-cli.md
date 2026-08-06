@@ -94,6 +94,22 @@ The result is written directly to standard output:
 
 The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
 
+### Evaluating a complete CSV source
+
+Use `--source` (alias: `-s`) to evaluate once against an array containing every CSV row. By default, rows are records whose field names come from the header:
+
+```console
+expressif evaluate "count" --source people.csv
+```
+
+For a single-column CSV, `--scalar` creates an array of scalar values instead:
+
+```console
+expressif evaluate "map(upper)" --source names.csv --scalar
+```
+
+A header-only CSV supplies an empty array and is still evaluated once. `--source` cannot be combined with `--input`, and `--scalar` requires exactly one source column.
+
 ## Running an expression over a sequence
 
 Use `run` to evaluate an expression repeatedly over an input sequence.
@@ -110,6 +126,7 @@ How `--source` works:
 - In CSV files, the first row is treated as the header (column names).
 - In CSV files, each following row is evaluated once.
 - In CSV files, use column names in expressions, for example `[name]` or `[age]`.
+- With `--scalar`, a source with exactly one column supplies each row as its scalar value instead of a record.
 - Non-CSV files (for example `.expr`) are evaluated as closed expressions.
 - A non-CSV source expression must return an enumerable.
 - Each direct element returned by a non-CSV source expression is evaluated once.
@@ -127,6 +144,7 @@ In this example, there is one row (the array value `{1, -2, 3}`), not three rows
 The `run` command differs from `evaluate`:
 
 - `evaluate` executes once for a single input value;
+- `evaluate --source` executes once for an array containing all source rows;
 - `run` executes once per generated row.
 
 You can pass `--input` multiple times. Each occurrence contributes one row.
@@ -194,6 +212,14 @@ Examples:
 ```console
 expressif run "[country] | upper" --source customers.csv
 ```
+
+For a single-column source, use `--scalar` to unwrap each row while preserving one evaluation per row:
+
+```console
+expressif run "upper" --source names.csv --scalar
+```
+
+`--scalar` rejects sources with zero or multiple columns.
 
 ```console
 expressif run "absolute | add(1)" --source values.expr
