@@ -62,9 +62,4 @@ public class PredicationFactory : BaseExpressionFactory
         var right = Instantiate(binary.RightMember, context);
         return BinaryOperatorFactory.Instantiate(binary.Operator.Name, left, right);
     }
-
-    protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
-        => scalarType == typeof(IPredicate) && parameter is PredicationParameter predication
-            ? new Func<IPredicate>(() => Instantiate(predication.Predication, context))
-            : base.CreateParameter(parameter, scalarType, context);
 }

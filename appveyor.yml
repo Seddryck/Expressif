@@ -197,7 +197,6 @@ on_success:
       & .\update-docs.ps1 predicate numeric
       & .\update-docs.ps1 predicate temporal
       & .\update-docs.ps1 predicate boolean
-      & .\update-docs.ps1 predicate array
       & .\update-examples.ps1 builder expression
       & .\update-examples.ps1 builder predication
       & .\update-examples.ps1 serializers

@@ -15,17 +15,6 @@ public enum FunctionSyntax
 
 public class Function : IExpression
 {
-    private static readonly HashSet<string> PredicateParameterFunctions = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "filter",
-        "none",
-        "all",
-        "some",
-        "single",
-        "any",
-        "every",
-    };
-
     private static readonly Parser<IParameter[]> OpenExpressionParametersParser =
         from _ in Parse.Char('(').Token()
         from expression in OpenExpression.Parser.Token()
@@ -74,7 +63,7 @@ public class Function : IExpression
 
     private static readonly Parser<Function> StandardParser =
         from functionName in Grammar.FunctionName
-        from parameters in (PredicateParameterFunctions.Contains(functionName)
+        from parameters in (functionName.Equals("filter", StringComparison.OrdinalIgnoreCase)
                                 ? FieldShorthandParametersParser.Or(PredicationParametersParser).Optional()
                                 : functionName.Equals("map", StringComparison.OrdinalIgnoreCase)
                                   || functionName.Equals("adjacent", StringComparison.OrdinalIgnoreCase)

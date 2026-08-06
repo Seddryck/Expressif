@@ -204,6 +204,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 <!-- START FUNCTION TABLE -->
 |Scope    | Name                                | Aliases                                                                           |
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
+|Array    | adjacent                            | adjacent                                                                          |
 |Array    | broadcast                           | array-to-broadcast                                                                |
 |Array    | complement                          | complement                                                                        |
 |Array    | difference                          | difference                                                                        |
@@ -216,6 +217,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | last-elements                       | last                                                                              |
 |Array    | lead                                | array-to-lead                                                                     |
 |Array    | map                                 | map                                                                               |
+|Array    | pairwise                            | pairwise                                                                          |
 |Array    | reverse                             | reverse                                                                           |
 |Array    | scan                                | array-to-scan                                                                     |
 |Array    | skip-first-elements                 | skip-first                                                                        |
@@ -265,6 +267,9 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Special  | any-to-any                          |                                                                                   |
 |Special  | neutral                             | Special-to-neutral                                                                |
 |Special  | null-to-value                       |                                                                                   |
+|Special  | tuple-at                            | tuple-at                                                                          |
+|Special  | tuple-first                         | tuple-first                                                                       |
+|Special  | tuple-second                        | tuple-second                                                                      |
 |Special  | value-to-value                      |                                                                                   |
 |Temporal | age                                 | date-to-age                                                                       |
 |Temporal | backward                            | dateTime-to-backward, dateTime-to-subtract                                        |
@@ -404,10 +409,6 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 <!-- START PREDICATE TABLE -->
 |Scope    | Name                           | Aliases                               |
 |-------- | ------------------------------ | --------------------------------------|
-|Array    | all                            | array-is-all, every                   |
-|Array    | none                           | array-is-none                         |
-|Array    | single                         | array-is-single                       |
-|Array    | some                           | array-is-some, any                    |
 |Boolean  | false                          | boolean-is-false                      |
 |Boolean  | false-or-null                  | boolean-is-false-or-null              |
 |Boolean  | identical-to                   | boolean-is-identical-to               |

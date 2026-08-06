@@ -2,9 +2,20 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
+keywords: [adjacent, broadcast, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, pairwise, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
+##### adjacent
+
+###### Alias: `adjacent`
+
+###### Overview
+
+Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* operation: Specifies the callable or open expression evaluated against each consecutive pair.
+
 ##### broadcast
 
 ###### Alias: `array-to-broadcast`
@@ -127,6 +138,14 @@ Applies a transformation expression to each input item and returns the transform
 
 ###### Parameter
 * transformation: Expression creating the transformation applied to each input item.
+
+##### pairwise
+
+###### Alias: `pairwise`
+
+###### Overview
+
+Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.
 
 ##### reverse
 
