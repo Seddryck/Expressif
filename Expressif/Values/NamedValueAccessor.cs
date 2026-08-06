@@ -14,6 +14,7 @@ public static class NamedValueAccessor
         => value switch
         {
             DataRow row => row.Table.Columns.Contains(name),
+            IReadOnlyDictionary<string, object?> readOnly => readOnly.ContainsKey(name),
             ILiteDataRow row => row.ContainsColumn(name),
             IDictionary dico => dico.Contains(name),
             IList => throw new NotNameableContextObjectException(value),
@@ -25,6 +26,7 @@ public static class NamedValueAccessor
         return value switch
         {
             DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
+            IReadOnlyDictionary<string, object?> readOnly => readOnly.ContainsKey(name) ? readOnly[name] : throw new ArgumentOutOfRangeException(name),
             ILiteDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
             IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
             IList => throw new NotNameableContextObjectException(value),

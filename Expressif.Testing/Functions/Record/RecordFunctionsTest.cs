@@ -19,6 +19,18 @@ public class RecordFunctionsTest
     }
 
     [Test]
+    public void Field_Evaluate_RecordValue_ReturnsExpectedValue()
+    {
+        var function = new Field(() => "value");
+        var input = new ValueRecord();
+        input.Set("value", 2);
+
+        var result = function.Evaluate(input);
+
+        Assert.That(result, Is.EqualTo(2));
+    }
+
+    [Test]
     public void Field_Evaluate_MissingField_ThrowsArgumentOutOfRangeException()
     {
         var function = new Field(() => "missing");

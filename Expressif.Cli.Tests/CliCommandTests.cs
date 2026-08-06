@@ -80,6 +80,23 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_MapFieldAddSum_RecordArrayLiteralInput_ReturnsExpectedValue()
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "map(field(value) | add(1)) | sum",
+            "--input",
+            "{{value:=1}, {value:=2}, {value:=3}}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("9"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Evaluate_NullResult_WritesLiteralNull()
     {
         var result = await InvokeAsync("evaluate", "{} | first");

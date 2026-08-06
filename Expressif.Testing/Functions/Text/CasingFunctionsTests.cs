@@ -96,7 +96,7 @@ public class CasingFunctionsTests
 
     [TestCase("`{alice, bob}`")]
     public void TextCasing_BacktickWrappedArrayLikeString_UsesStringSemantics(string value)
-        => Assert.That(new Upper().Evaluate(), Is.EqualTo("`{ALICE, BOB}`"));
+        => Assert.That(new Upper().Evaluate(value), Is.EqualTo("`{ALICE, BOB}`"));
 
     [Test]
     public void WordCasing_BacktickWrappedArrayLikeString_UsesStringSemantics()
