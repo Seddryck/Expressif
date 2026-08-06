@@ -1,4 +1,5 @@
 ﻿using Expressif.Functions.Special;
+using Expressif.Functions;
 using Expressif.Testing.Conformance;
 using Expressif.Values.Special;
 using System.Reflection;
@@ -8,6 +9,78 @@ namespace Expressif.Testing.Functions.Special;
 [TestFixture]
 public class SpecialFunctionsTest
 {
+    [Conformance]
+    public void Coalesce_Valid_Expressions(object? value, string[] expressions, object? expected)
+    {
+        var context = new Context();
+        context.CurrentObject.Set(value);
+        var function = new ExpressionFactory().Instantiate($"coalesce({string.Join(", ", expressions)})", context);
+
+        Assert.That(function.Evaluate(value), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Coalesce_FirstExpressionReturnsValue_RemainingExpressionsAreNotEvaluated()
+    {
+        var evaluated = false;
+        var function = new Coalesce([
+            _ => "Alice",
+            _ => { evaluated = true; return "Bob"; }
+        ]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function.Evaluate(new object()), Is.EqualTo("Alice"));
+            Assert.That(evaluated, Is.False);
+        });
+    }
+
+    [Test]
+    public void Coalesce_AllExpressionsReceiveSameInput()
+    {
+        var input = new object();
+        var received = new List<object?>();
+        var function = new Coalesce([
+            value => { received.Add(value); return null; },
+            value => { received.Add(value); return "fallback"; }
+        ]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function.Evaluate(input), Is.EqualTo("fallback"));
+            Assert.That(received, Is.EqualTo(new[] { input, input }));
+        });
+    }
+
+    [Test]
+    public void Coalesce_OneExpression_ThrowsBindingError()
+        => Assert.That(
+            () => new Coalesce([_ => null]),
+            Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
+
+    [Test]
+    public void Coalesce_OneParsedExpression_ThrowsBindingError()
+        => Assert.That(
+            () => new ExpressionFactory().Instantiate("coalesce([name])", new Context()),
+            Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
+
+    [Test]
+    public void Coalesce_SelectedValue_ContinuesThroughPipeline()
+    {
+        var value = new Dictionary<string, object?>
+        {
+            ["nickname"] = null,
+            ["name"] = "Alice"
+        };
+        var context = new Context();
+        context.CurrentObject.Set(value);
+        var function = new ExpressionFactory().Instantiate(
+            "coalesce([nickname], [name], \"Anonymous\") | upper",
+            context);
+
+        Assert.That(function.Evaluate(value), Is.EqualTo("ALICE"));
+    }
+
     [Test]
     [TestCase("foo")]
     [TestCase("(any)")]

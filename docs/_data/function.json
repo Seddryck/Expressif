@@ -2378,5 +2378,21 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "coalesce",
+    "IsPublic": true,
+    "Aliases": [
+      "coalesce"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.",
+    "Parameters": [
+      {
+        "Name": "expressions",
+        "Optional": false,
+        "Summary": "The candidate expressions, with at least two required."
+      }
+    ]
   }
 ]
