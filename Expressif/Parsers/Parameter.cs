@@ -31,6 +31,9 @@ public record class InputExpressionParameter(ClosedExpression Expression) : IPar
 public record class OpenExpressionParameter(OpenExpression Expression) : IParameter { }
 public record class PredicationParameter(IPredication Predication) : IParameter { }
 
+public record class GenerateNamedEntry(string Name, IParameter Value);
+public record class GenerateDefinitionParameter(GenerateNamedEntry[] Entries) : IParameter { }
+
 public class Parameter
 {
     protected static readonly Parser<IParameter> VariableParameter =

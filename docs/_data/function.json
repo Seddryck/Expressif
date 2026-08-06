@@ -2378,5 +2378,31 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "generate",
+    "IsPublic": true,
+    "Aliases": [
+      "generate"
+    ],
+    "Scope": "Array",
+    "Summary": "Generates an array by repeatedly transforming a seed while a condition is satisfied.",
+    "Parameters": [
+      {
+        "Name": "while",
+        "Optional": false,
+        "Summary": "Specifies the predicate that determines whether the current seed is included."
+      },
+      {
+        "Name": "next",
+        "Optional": false,
+        "Summary": "Specifies the expression that produces the next seed."
+      },
+      {
+        "Name": "result",
+        "Optional": true,
+        "Summary": "Specifies the expression that produces the value appended for the current seed."
+      }
+    ]
   }
 ]

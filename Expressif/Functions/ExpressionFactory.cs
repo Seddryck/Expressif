@@ -86,6 +86,9 @@ public class ExpressionFactory : BaseExpressionFactory
         if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
             return BuildRecordFunction(function, context);
 
+        if (name.Equals("generate", StringComparison.OrdinalIgnoreCase))
+            return BuildGenerateFunction(function, context);
+
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
@@ -101,6 +104,34 @@ public class ExpressionFactory : BaseExpressionFactory
             return filtering;
 
         return Instantiate<IFunction>(type, function.Parameters, context);
+    }
+
+    private IFunction BuildGenerateFunction(Parsers.Function function, IContext context)
+    {
+        if (function.Parameters.Length != 1 || function.Parameters[0] is not GenerateDefinitionParameter definition)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var entries = new Dictionary<string, IParameter>(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in definition.Entries)
+            if (!entries.TryAdd(entry.Name, entry.Value))
+                throw new ParseException($"Duplicate parameter '{entry.Name}' in generate(...).");
+
+        if (!entries.TryGetValue("while", out var whileParameter)
+            || !entries.TryGetValue("next", out var nextParameter))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, definition.Entries.Length);
+
+        var whileProvider = BuildPredicateProvider(whileParameter, context, function.Name);
+        if (nextParameter is not OpenExpressionParameter nextExpression)
+            throw new ArgumentException("The 'next' parameter of generate expects an open expression.", nameof(function));
+
+        var nextProvider = BuildTransformationProvider(nextExpression, context);
+        if (!entries.TryGetValue("result", out var resultParameter))
+            return new Generate(whileProvider, nextProvider);
+
+        if (resultParameter is not OpenExpressionParameter resultExpression)
+            throw new ArgumentException("The 'result' parameter of generate expects an open expression.", nameof(function));
+
+        return new Generate(whileProvider, nextProvider, BuildTransformationProvider(resultExpression, context));
     }
 
     private IFunction BuildRecordFunction(Parsers.Function function, IContext context)
