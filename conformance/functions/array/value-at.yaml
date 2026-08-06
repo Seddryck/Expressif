@@ -1,0 +1,46 @@
+suite: array
+kind: function
+operator: value-at
+tests:
+  - id: value-at.valid.position
+    cases:
+      - id: value-at.valid.position.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 0
+      - id: value-at.valid.position.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - 0
+      - id: value-at.valid.position.array.empty
+        value: []
+        expected:
+        parameters:
+          - 0
+      - id: value-at.valid.position.text.first
+        value: [a, b, c]
+        expected: a
+        parameters:
+          - 0
+      - id: value-at.valid.position.text.middle
+        value: [a, b, c]
+        expected: b
+        parameters:
+          - 1
+      - id: value-at.valid.position.special.null-value
+        value: [a, null, c]
+        expected:
+        parameters:
+          - 1
+      - id: value-at.valid.position.numeric.negative
+        value: [a, b, c]
+        expected:
+        parameters:
+          - -1
+      - id: value-at.valid.position.numeric.out-of-range
+        value: [a, b, c]
+        expected:
+        parameters:
+          - 10
