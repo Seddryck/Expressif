@@ -1,0 +1,43 @@
+suite: array
+kind: function
+operator: generate
+tests:
+  - id: generate.valid.while.next.optional-result
+    cases:
+      - id: generate.valid.while.next.optional-result.numeric.increasing
+        value: 1
+        expected: [1, 2, 3, 4, 5]
+        parameters:
+          - less-than-or-equal(5)
+          - add(1)
+      - id: generate.valid.while.next.optional-result.numeric.steps
+        value: 10
+        expected: [10, 20, 30, 40]
+        parameters:
+          - less-than(50)
+          - add(10)
+      - id: generate.valid.while.next.optional-result.numeric.empty
+        value: 10
+        expected: []
+        parameters:
+          - less-than(5)
+          - add(1)
+      - id: generate.valid.while.next.optional-result.numeric.projected
+        value: 1
+        expected: [2, 4, 6]
+        parameters:
+          - less-than-or-equal(3)
+          - add(1)
+          - multiply(2)
+      - id: generate.valid.while.next.optional-result.special.null
+        value: (null)
+        expected: []
+        parameters:
+          - "!null"
+          - add(1)
+      - id: generate.valid.while.next.optional-result.special.empty
+        value: (empty)
+        expected: []
+        parameters:
+          - "!empty"
+          - add(1)
