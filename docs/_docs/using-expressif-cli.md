@@ -94,6 +94,22 @@ The result is written directly to standard output:
 
 The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
 
+### Evaluating a complete CSV source
+
+Use `--source` (alias: `-s`) to evaluate once against an array containing every CSV row. By default, rows are records whose field names come from the header:
+
+```console
+expressif evaluate "count" --source people.csv
+```
+
+For a single-column CSV, `--scalar` creates an array of scalar values instead:
+
+```console
+expressif evaluate "map(upper)" --source names.csv --scalar
+```
+
+A header-only CSV supplies an empty array and is still evaluated once. `--source` cannot be combined with `--input`, and `--scalar` requires exactly one source column.
+
 ## Running an expression over a sequence
 
 Use `run` to evaluate an expression repeatedly over an input sequence.
@@ -128,6 +144,7 @@ In this example, there is one row (the array value `{1, -2, 3}`), not three rows
 The `run` command differs from `evaluate`:
 
 - `evaluate` executes once for a single input value;
+- `evaluate --source` executes once for an array containing all source rows;
 - `run` executes once per generated row.
 
 You can pass `--input` multiple times. Each occurrence contributes one row.
