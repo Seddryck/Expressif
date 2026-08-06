@@ -227,6 +227,9 @@ public class FunctionFactory : BaseExpressionFactory
         if (function.Arguments.Any(x => x.Name is not null) && name == "adjacent")
             function = new Bindings.Function(name, ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters);
 
+        if (function.Arguments.Any(x => x.Name is not null) && name == "generate")
+            function = new Bindings.Function(name, ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters);
+
         if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
             return BuildRecordFunction(function, context);
         if (name.Equals("with", StringComparison.OrdinalIgnoreCase))
@@ -240,6 +243,8 @@ public class FunctionFactory : BaseExpressionFactory
             return BuildCoalesceFunction(function, context);
         if (name.Equals("adjacent", StringComparison.OrdinalIgnoreCase))
             return BuildAdjacentFunction(function, context);
+        if (name.Equals("generate", StringComparison.OrdinalIgnoreCase))
+            return BuildGenerateFunction(function, context);
 
         if (name.Equals("extend", StringComparison.OrdinalIgnoreCase))
         {
@@ -477,6 +482,34 @@ public class FunctionFactory : BaseExpressionFactory
         }
 
         return new Adjacent(() => new LexicallyBoundTupleFunction(operation));
+    }
+
+    private IFunction BuildGenerateFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters.Length is < 2 or > 3)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var condition = BuildPredicateProvider(function.Parameters[0], context, function.Name);
+        if (!TryGetOpenExpression(function.Parameters[1], out var next))
+        {
+            throw new ArgumentException(
+                $"The function named '{function.Name}' expects parameter 'next' to be an open expression.",
+                nameof(function));
+        }
+
+        Func<IFunction>? result = null;
+        if (function.Parameters.Length == 3)
+        {
+            if (!TryGetOpenExpression(function.Parameters[2], out var projection))
+            {
+                throw new ArgumentException(
+                    $"The function named '{function.Name}' expects parameter 'result' to be an open expression.",
+                    nameof(function));
+            }
+            result = BuildTransformationProvider(projection, context);
+        }
+
+        return new Generate(condition, BuildTransformationProvider(next, context), result);
     }
 
     private bool TryBuildBinaryCallable(string name, IContext context, [NotNullWhen(true)] out IFunction? callable)

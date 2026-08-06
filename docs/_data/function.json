@@ -3894,5 +3894,39 @@
     "Examples": [
       "\"Crème brûlée recipe\" | slug → \"creme-brulee-recipe\""
     ]
+  },
+  {
+    "Name": "generate",
+    "IsPublic": true,
+    "Aliases": [
+      "generate"
+    ],
+    "Scope": "array",
+    "Input": "any",
+    "Output": "array",
+    "Summary": "Generates an array by repeatedly transforming a seed while a condition is satisfied.",
+    "Parameters": [
+      {
+        "Name": "while",
+        "Type": "predicate",
+        "Optional": false,
+        "Summary": "Specifies the predicate that determines whether the current seed is included."
+      },
+      {
+        "Name": "next",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Specifies the expression that produces the next seed."
+      },
+      {
+        "Name": "result",
+        "Type": "expression",
+        "Optional": true,
+        "Summary": "Specifies the expression that produces the value appended for the current seed."
+      }
+    ],
+    "Examples": [
+      "1 | generate(while := less-than-or-equal(3), next := add(1)) → {1, 2, 3}"
+    ]
   }
 ]
