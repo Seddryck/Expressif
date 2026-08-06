@@ -1,0 +1,21 @@
+suite: array
+kind: function
+operator: with-position
+tests:
+  - id: with-position.valid
+    cases:
+      - id: with-position.valid.special.null
+        value: (null)
+        expected:
+      - id: with-position.valid.special.empty
+        value: (empty)
+        expected:
+      - id: with-position.valid.array.empty
+        value: []
+        expected: []
+      - id: with-position.valid.array.values
+        value: [a, b, c]
+        expected: [[0, a], [1, b], [2, c]]
+      - id: with-position.valid.array.null-value
+        value: [a, null, c]
+        expected: [[0, a], [1, null], [2, c]]

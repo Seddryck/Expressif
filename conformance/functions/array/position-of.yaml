@@ -1,0 +1,41 @@
+suite: array
+kind: function
+operator: position-of
+tests:
+  - id: position-of.valid.value
+    cases:
+      - id: position-of.valid.value.special.null
+        value: (null)
+        expected:
+        parameters:
+          - b
+      - id: position-of.valid.value.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - b
+      - id: position-of.valid.value.array.empty
+        value: []
+        expected:
+        parameters:
+          - b
+      - id: position-of.valid.value.text.match
+        value: [a, b, c]
+        expected: 1
+        parameters:
+          - b
+      - id: position-of.valid.value.text.duplicate
+        value: [a, b, a]
+        expected: 0
+        parameters:
+          - a
+      - id: position-of.valid.value.text.non-match
+        value: [a, b, c]
+        expected:
+        parameters:
+          - z
+      - id: position-of.valid.value.special.null-match
+        value: [a, null, c]
+        expected: 1
+        parameters:
+          - null

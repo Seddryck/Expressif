@@ -288,6 +288,65 @@
     ]
   },
   {
+    "Name": "with-position",
+    "IsPublic": true,
+    "Aliases": [
+      "with-position"
+    ],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [],
+    "Examples": [
+      "{\"a\", \"b\", \"c\"} | with-position | value-at(2) | tuple-first → 2"
+    ]
+  },
+  {
+    "Name": "position-of",
+    "IsPublic": true,
+    "Aliases": [
+      "position-of"
+    ],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "integer",
+    "Summary": "Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "Specifies the value to locate."
+      }
+    ],
+    "Examples": [
+      "{\"a\", \"b\", \"c\"} | position-of(\"b\") → 1"
+    ]
+  },
+  {
+    "Name": "value-at",
+    "IsPublic": true,
+    "Aliases": [
+      "value-at"
+    ],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "position",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "Specifies the zero-based position of the item to return."
+      }
+    ],
+    "Examples": [
+      "{\"a\", \"b\", \"c\"} | value-at(1) → \"b\""
+    ]
+  },
+  {
     "Name": "walk",
     "IsPublic": true,
     "Aliases": [
