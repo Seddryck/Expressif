@@ -626,6 +626,47 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_SourceCsvScalar_EvaluatesEachValue()
+    {
+        var sourcePath = CreateTempFile($"name{Environment.NewLine}Alice{Environment.NewLine}Bob", ".csv");
+        var result = await InvokeAsync("run", "upper", "--source", sourcePath, "--scalar");
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsvScalarWithMultipleColumns_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile($"name,age{Environment.NewLine}Alice,32", ".csv");
+        var result = await InvokeAsync("run", "upper", "--source", sourcePath, "--scalar");
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr, Does.Contain("exactly one column; found 2"));
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsvScalarHeaderOnly_IsValid()
+    {
+        var sourcePath = CreateTempFile("name", ".csv");
+        var result = await InvokeAsync("run", "upper", "--source", sourcePath, "--scalar");
+        Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+    }
+
+    [Test]
+    public async Task Run_ScalarWithoutSource_ReturnsClearError()
+    {
+        var result = await InvokeAsync("run", "upper", "--input", "Alice", "--scalar");
+        Assert.That(result.StdErr.Trim(), Is.EqualTo("The --scalar option requires --source."));
+    }
+
+    [Test]
     public async Task Run_SourceCsv_EvaluatesEachRecord()
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41,France{Environment.NewLine}Charlie,27,Germany", ".csv");
