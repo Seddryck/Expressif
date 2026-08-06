@@ -2,6 +2,7 @@ using Expressif.Functions;
 using Expressif.Parsers;
 using Expressif.Values;
 using Expressif.Values.Special;
+using Sprache;
 using System.Data;
 using System.Diagnostics;
 
@@ -321,6 +322,105 @@ public class ExpressionTest
         var result = expression.Evaluate();
 
         Assert.That(result, Is.EqualTo(new object?[] { "alice", "anna" }));
+    }
+
+    [Test]
+    public void Evaluate_Record_FieldAndCurrentObject_UseDifferentSources()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new
+        {
+            name = "Cedric",
+            customer = new Dictionary<string, object?>
+            {
+                ["name"] = "Alice",
+                ["grz"] = "hello"
+            }
+        });
+
+        var expression = new ClosedExpression("[customer] | record(customerName := field(name), requestedBy := [name])", context);
+        var result = (RecordValue)expression.Evaluate()!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "customerName", "requestedBy" }));
+            Assert.That(result["customerName"], Is.EqualTo("Alice"));
+            Assert.That(result["requestedBy"], Is.EqualTo("Cedric"));
+        });
+    }
+
+    [Test]
+    public void Evaluate_Record_WithSpreadAndOverride_PreservesOrderAndOverridesLast()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["name"] = "Alice",
+            ["country"] = "Belgium"
+        };
+
+        var expression = new Expression("record(..., name := field(name) | upper, age := 36)");
+        var result = (RecordValue)expression.Evaluate(input)!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "name", "country", "age" }));
+            Assert.That(result["name"], Is.EqualTo("ALICE"));
+            Assert.That(result["country"], Is.EqualTo("Belgium"));
+            Assert.That(result["age"], Is.EqualTo(36));
+        });
+    }
+
+    [Test]
+    public void Evaluate_Record_SpreadNonRecord_GeneratesUniqueUnnamedField()
+    {
+        var expression = new Expression("record(__NONAME_0 := reserved, ...)");
+        var result = (RecordValue)expression.Evaluate("Alice")!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0", "__NONAME_1" }));
+            Assert.That(result["__NONAME_0"], Is.EqualTo("reserved"));
+            Assert.That(result["__NONAME_1"], Is.EqualTo("Alice"));
+        });
+    }
+
+    [Test]
+    public void Evaluate_Record_DuplicateExplicitField_ThrowsParseException()
+    {
+        Assert.That(
+            () => new Expression("record(name := field(name), name := field(preferred-name))"),
+            Throws.TypeOf<ParseException>());
+    }
+
+    [Test]
+    public void Evaluate_Record_EmbeddingIncomingValue_DoesNotExpand()
+    {
+        var expression = new Expression("record(original := ..., normalized := upper)");
+        var result = (RecordValue)expression.Evaluate("Alice")!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "original", "normalized" }));
+            Assert.That(result["original"], Is.EqualTo("Alice"));
+            Assert.That(result["normalized"], Is.EqualTo("ALICE"));
+        });
+    }
+
+    [Test]
+    public void Evaluate_RecordLiteral_ParsesTypedValues()
+    {
+        var expression = new ClosedExpression("{name := Alice, active := true, retries := 3, ratio := 1.5, missing := null}");
+        var result = (RecordValue)expression.Evaluate()!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "name", "active", "retries", "ratio", "missing" }));
+            Assert.That(result["name"], Is.EqualTo("Alice"));
+            Assert.That(result["active"], Is.EqualTo(true));
+            Assert.That(result["retries"], Is.EqualTo(3));
+            Assert.That(result["ratio"], Is.EqualTo(1.5m));
+            Assert.That(result["missing"], Is.Null);
+        });
     }
 
     [Test]

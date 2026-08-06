@@ -665,6 +665,22 @@
     ]
   },
   {
+    "Name": "field",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Record",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
+    "Name": "record",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Record",
+    "Summary": "",
+    "Parameters": []
+  },
+  {
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],

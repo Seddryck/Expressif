@@ -1,4 +1,5 @@
 using System.CommandLine;
+using Expressif.Values;
 
 namespace Expressif.Cli.Commands;
 
@@ -104,7 +105,7 @@ internal static class EvaluateCommand
         try
         {
             var result = EvaluateClosedExpression(closedExpression);
-            Console.Out.WriteLine(result ?? "null");
+            Console.Out.WriteLine(ValueFormatter.Format(result));
             return ExitCodes.Success;
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
@@ -156,7 +157,7 @@ internal static class EvaluateCommand
             try
             {
                 var result = openExpression.Evaluate(input);
-                Console.Out.WriteLine(result ?? "null");
+                Console.Out.WriteLine(ValueFormatter.Format(result));
                 return ExitCodes.Success;
             }
             catch (Exception exception) when (exception is not OutOfMemoryException)

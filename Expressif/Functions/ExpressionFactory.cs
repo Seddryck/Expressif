@@ -3,6 +3,9 @@ using Expressif.Functions.Array;
 using Expressif.Accumulators;
 using Expressif.Accumulators.Introspection;
 using Expressif.Predicates;
+using Expressif.Values;
+using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
+using RecordFunction = Expressif.Functions.Record.Record;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -80,6 +83,9 @@ public class ExpressionFactory : BaseExpressionFactory
     {
         var name = function.Name.ToKebabCase();
 
+        if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
+            return BuildRecordFunction(function, context);
+
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
@@ -96,6 +102,97 @@ public class ExpressionFactory : BaseExpressionFactory
 
         return Instantiate<IFunction>(type, function.Parameters, context);
     }
+
+    private IFunction BuildRecordFunction(Parsers.Function function, IContext context)
+    {
+        if (function.Parameters.Length == 0)
+            return new RecordFunction();
+
+        if (function.Parameters.Length != 1 || function.Parameters[0] is not RecordDefinitionParameter definition)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var explicitNames = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var entry in definition.Entries.OfType<RecordNamedEntry>())
+        {
+            if (!explicitNames.Add(entry.Name))
+                throw new ParseException($"Duplicate explicit field '{entry.Name}' in record(...).");
+        }
+
+        var evaluators = new List<RecordEntryEvaluator>();
+        foreach (var entry in definition.Entries)
+        {
+            switch (entry)
+            {
+                case RecordSpreadEntry:
+                    evaluators.Add(RecordEntryEvaluator.Spread());
+                    break;
+                case RecordNamedEntry named:
+                    evaluators.Add(RecordEntryEvaluator.Named(named.Name, BuildRecordNamedValueEvaluator(named.Value, context)));
+                    break;
+                default:
+                    throw new ParseException($"Unsupported entry type '{entry.GetType().Name}' in record(...).");
+            }
+        }
+
+        return new RecordFunction(() => [.. evaluators]);
+    }
+
+    private Func<object?, object?> BuildRecordNamedValueEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is IncomingValueParameter)
+            return input => input;
+
+        if (parameter is QuotedLiteralParameter quoted)
+            return _ => quoted.Value;
+
+        if (parameter is LiteralParameter literal)
+            return RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
+                ? _ => typed
+                : _ => literal.Value;
+
+        if (parameter is OpenExpressionParameter open)
+            return BuildOpenExpressionRecordEvaluator(open, context);
+
+        var provider = CreateParameter(parameter, typeof(object), context);
+        return _ => provider.DynamicInvoke();
+    }
+
+    private Func<object?, object?> BuildOpenExpressionRecordEvaluator(OpenExpressionParameter open, IContext context)
+    {
+        if (TryBuildSingleTokenEvaluator(open, out var evaluator))
+            return evaluator;
+
+        try
+        {
+            var functions = open.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
+            var chain = new ChainFunction(functions);
+            return input => chain.Evaluate(input);
+        }
+        catch (NotImplementedFunctionException) when (IsSingleTokenExpression(open))
+        {
+            var literalToken = open.Expression.Members.First().Name;
+            return RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped)
+                ? _ => literalTyped
+                : _ => literalToken;
+        }
+    }
+
+    private static bool TryBuildSingleTokenEvaluator(OpenExpressionParameter open, out Func<object?, object?> evaluator)
+    {
+        evaluator = null!;
+        if (!IsSingleTokenExpression(open))
+            return false;
+
+        var literalToken = open.Expression.Members.First().Name;
+        if (!RecordSyntax.TryParseTypedToken(literalToken, out var literalTyped))
+            return false;
+
+        evaluator = _ => literalTyped;
+        return true;
+    }
+
+    private static bool IsSingleTokenExpression(OpenExpressionParameter open)
+        => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0;
 
     private bool TryInstantiateWithAccumulatorProvider(Type type, Parsers.Function function, IContext context, out IFunction aggregation)
     {

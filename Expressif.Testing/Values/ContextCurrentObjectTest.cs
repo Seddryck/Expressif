@@ -314,6 +314,8 @@ public class ContextCurrentObjectTest
     {
         private DataRow Row { get; } = row;
 
+        public IReadOnlyList<string> ColumnNames => Row.Table.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToArray();
+
         public object? this[string columnName] => Row[columnName];
 
         public object? this[int index] => Row[index];

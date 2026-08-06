@@ -10,6 +10,7 @@
 
 - title: Functions library
   docs:
+  - flow-library-syntax
   - special-functions
   - text-functions
   - numeric-functions

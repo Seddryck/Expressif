@@ -39,7 +39,6 @@ public class AroundTodayPredicatesTest
                 .ConvertFromInvariantString(text)!
             ), Is.EqualTo(expected));
 
-
     [Conformance]
     public void Yesterday_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new Yesterday(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));

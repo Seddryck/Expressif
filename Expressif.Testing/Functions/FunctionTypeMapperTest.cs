@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Expressif.Functions;
 using Expressif.Functions.IO;
 using Expressif.Functions.Numeric;
+using Expressif.Functions.Record;
 using Expressif.Functions.Special;
 using Expressif.Functions.Temporal;
 using Expressif.Functions.Text;
+using RecordFunction = Expressif.Functions.Record.Record;
 
 namespace Expressif.Testing.Functions;
 public class PredicateTypeMapperTest
@@ -26,6 +28,8 @@ public class PredicateTypeMapperTest
     [TestCase("filename-without-extension", typeof(FilenameWithoutExtension))]
     [TestCase("whitespaces-to-empty", typeof(WhitespacesToEmpty))]
     [TestCase("blank-to-empty", typeof(WhitespacesToEmpty))]
+    [TestCase("field", typeof(Field))]
+    [TestCase("record", typeof(RecordFunction))]
     public void Execute_FunctionName_Valid(string value, Type expected)
             => Assert.That(new FunctionTypeMapper().Execute(value), Is.EqualTo(expected));
 

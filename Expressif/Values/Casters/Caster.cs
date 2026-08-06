@@ -19,6 +19,7 @@ public class Caster
 
         var @switch = new Dictionary<Type, Func<object>>
         {
+            { typeof(object[]), () => new ArrayCaster().Cast(value) },
             { typeof(bool), () => new BooleanCaster().Cast(value) },
             { typeof(DateTime), () => new DateTimeCaster().Cast(value) },
             { typeof(int), () => new IntegerCaster().Cast(value) },

@@ -15,7 +15,6 @@ public class AroundNowPredicatesTest
         );
     }
 
-
     [Conformance]
     public void InTheFuture_Valid_DateOnly(string text, bool expected)
         => Assert.That(new InTheFuture(new DateTime(2022, 12, 29, 15, 0, 0))

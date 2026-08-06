@@ -19,19 +19,49 @@ public static class ConformanceTestCaseDataSource
     public static IEnumerable<TestCaseData> GetCases(Type type, string testName)
     {
         Console.WriteLine($"Loading test case: for operator '{type.FullName}' and method '{testName}'");
+        var fullName = ValidateAndGetFullName(type);
+        var conformanceRoot = GetConformanceRootOrThrow();
+        var expectedFile = ResolveExpectedFile(conformanceRoot, fullName, testName);
+        var document = Deserialize(expectedFile);
+        var test = GetTestOrThrow(document, testName);
+
+        Console.WriteLine($"\tFound {document?.Tests?.Count ?? 0} tests and {document?.Tests?.Sum(x => x.Cases?.Count ?? 0) ?? 0} cases.");
+
+        var method = type.GetMethod(testName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+            ?? throw new MissingMethodException(fullName, testName);
+        var parameters = method.GetParameters();
+        var expectedParameterCount = parameters.Length;
+        var cases = test.Cases ?? throw new InvalidOperationException($"No cases found for test '{testName}' into the YAML conformance file");
+
+        foreach (var @case in cases)
+        {
+            yield return BuildTestCaseData(@case, parameters, expectedParameterCount, fullName, testName, expectedFile, test.Id);
+        }
+    }
+
+    private static string ValidateAndGetFullName(Type type)
+    {
         ArgumentNullException.ThrowIfNull(type);
 
         var fullName = type.FullName;
         if (string.IsNullOrWhiteSpace(fullName) || !fullName.StartsWith("Expressif.Testing.", StringComparison.Ordinal))
-            throw new InvalidOperationException($"fullName must start with 'Expressif.Testing.'");
+            throw new InvalidOperationException("fullName must start with 'Expressif.Testing.'");
 
+        return fullName;
+    }
 
+    private static string GetConformanceRootOrThrow()
+    {
         var conformanceRoot = FindConformanceRoot();
         if (string.IsNullOrWhiteSpace(conformanceRoot))
-            throw new InvalidOperationException($"Conformance root directory not found.");
-        else
-            Console.WriteLine($"\tFound conformance root directory: '{conformanceRoot}'");
+            throw new InvalidOperationException("Conformance root directory not found.");
 
+        Console.WriteLine($"\tFound conformance root directory: '{conformanceRoot}'");
+        return conformanceRoot;
+    }
+
+    private static string ResolveExpectedFile(string conformanceRoot, string fullName, string testName)
+    {
         var relativeNamespace = fullName["Expressif.Testing.".Length..];
         var namespaceSegments = relativeNamespace.Split('.', StringSplitOptions.RemoveEmptyEntries);
         if (namespaceSegments.Length < 2)
@@ -42,93 +72,96 @@ public static class ConformanceTestCaseDataSource
         var directory = Path.Combine(conformanceRoot, suiteDirectory, categoryDirectory);
         if (!Directory.Exists(directory))
             throw new InvalidOperationException($"Conformance directory '{directory}' not found.");
-        else
-            Console.WriteLine($"\tFound sub-directory: '{directory}'");
+
+        Console.WriteLine($"\tFound sub-directory: '{directory}'");
 
         var fileToken = testName.Split('_', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? testName;
         var expectedFile = Path.Combine(directory, ToKebabCase(fileToken) + ".yaml");
         if (!File.Exists(expectedFile))
             throw new FileNotFoundException($"Conformance YAML file '{expectedFile}' was not found for type '{fullName}'.", expectedFile);
-        else
-            Console.WriteLine($"\tFound conformance YAML file: '{expectedFile}'");
 
-        var document = Deserialize(expectedFile);
-        var test = document?.Tests?.Find(x => ToPascalSnakeCase(x.Id) == testName);
-        if (test is null)
-            throw new InvalidOperationException($"No test with id '{testName}' into the YAML conformance file");
-        Console.WriteLine($"\tFound {document?.Tests?.Count ?? 0} tests and {document?.Tests?.Sum(x => x.Cases?.Count ?? 0) ?? 0} cases.");
+        Console.WriteLine($"\tFound conformance YAML file: '{expectedFile}'");
+        return expectedFile;
+    }
 
-        var method = type.GetMethod(testName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-            ?? throw new MissingMethodException(fullName, testName);
-        var parameters = method.GetParameters();
-        var expectedParameterCount = parameters.Length;
+    private static YamlConformanceTest GetTestOrThrow(YamlConformanceDocument? document, string testName)
+        => document?.Tests?.Find(x => ToPascalSnakeCase(x.Id) == testName)
+            ?? throw new InvalidOperationException($"No test with id '{testName}' into the YAML conformance file");
 
-        foreach (var @case in (test.Cases ?? throw new InvalidOperationException($"No cases found for test '{testName}' into the YAML conformance file")))
+    private static TestCaseData BuildTestCaseData(
+        YamlConformanceCase @case,
+        ParameterInfo[] parameters,
+        int expectedParameterCount,
+        string fullName,
+        string testName,
+        string expectedFile,
+        string testId)
+    {
+        var caseParameters = @case.Parameters ?? [];
+        object?[] caseVariables = @case.Context?.Variables is null
+            ? []
+            : @case.Context.Variables.OrderBy(x => x.Key, StringComparer.Ordinal).Select(x => x.Value).ToArray();
+
+        var parameterArgCount = caseParameters.Count;
+        var rawArgs = new List<object?> { @case.Value };
+        if (ShouldPackParametersIntoSingleArray(parameters, caseParameters, caseVariables))
         {
-            var caseParameters = @case.Parameters ?? [];
-            object?[] caseVariables = @case.Context?.Variables is null
-                ? []
-                : @case.Context.Variables.OrderBy(x => x.Key, StringComparer.Ordinal).Select(x => x.Value).ToArray();
-
-            var parameterArgCount = caseParameters.Count;
-            var rawArgs = new List<object?> { @case.Value };
-            if (ShouldPackParametersIntoSingleArray(parameters, caseParameters, caseVariables))
-            {
-                rawArgs.Add(caseParameters.ToArray());
-                parameterArgCount = 1;
-            }
-            else
-            {
-                rawArgs.AddRange(caseParameters);
-            }
-
-            rawArgs.AddRange(caseVariables);
-
-            rawArgs.Add(@case.Expected);
-            if (rawArgs.Count != expectedParameterCount)
-            {
-                throw new InvalidOperationException(
-                    $"TestCaseSource argument count mismatch for '{fullName}.{testName}'. " +
-                    $"Method expects {expectedParameterCount} parameter(s), but YAML produced {rawArgs.Count}. " +
-                    $"YAML file: '{expectedFile}'.");
-            }
-
-            var args = rawArgs
-                .Select((x, i) => Normalize(x, parameters[i].ParameterType))
-                .ToArray();
-
-            var parameterCount = parameterArgCount;
-            var variableCount = caseVariables.Length;
-
-            var input = args[0];
-            var output = args[^1];
-            var parameterValues = args.Skip(1).Take(parameterCount).ToArray();
-            var variableValues = args.Skip(1 + parameterCount).Take(variableCount).ToArray();
-
-            var displayParts = new List<string>
-            {
-                $"in: {FormatArgDisplay(input)}",
-                $"out: {FormatArgDisplay(output)}"
-            };
-            if (parameterValues.Length > 0)
-                displayParts.Add($"params: [{string.Join(", ", parameterValues.Select(FormatArgDisplay))}]");
-            if (variableValues.Length > 0)
-                displayParts.Add($"variables: [{string.Join(", ", variableValues.Select(FormatArgDisplay))}]");
-
-            var argDisplayNames = new[]
-            {
-                string.Join(", ", displayParts)
-            };
-
-            var testCaseData = new TestCaseData(args)
-                .SetArgDisplayNames(argDisplayNames)
-                .SetProperty("Test-Identifier", test.Id);
-
-            if (!string.IsNullOrWhiteSpace(@case.Id))
-                testCaseData.SetProperty("Case-Identifier", @case.Id);
-
-            yield return testCaseData;
+            rawArgs.Add(caseParameters.ToArray());
+            parameterArgCount = 1;
         }
+        else
+        {
+            rawArgs.AddRange(caseParameters);
+        }
+
+        rawArgs.AddRange(caseVariables);
+        rawArgs.Add(@case.Expected);
+
+        ValidateArgumentCount(rawArgs.Count, expectedParameterCount, fullName, testName, expectedFile);
+
+        var args = rawArgs
+            .Select((x, i) => Normalize(x, parameters[i].ParameterType))
+            .ToArray();
+
+        var parameterValues = args.Skip(1).Take(parameterArgCount).ToArray();
+        var variableValues = args.Skip(1 + parameterArgCount).Take(caseVariables.Length).ToArray();
+        var argDisplayNames = new[] { BuildDisplayName(args[0], args[^1], parameterValues, variableValues) };
+
+        var testCaseData = new TestCaseData(args)
+            .SetArgDisplayNames(argDisplayNames)
+            .SetProperty("Test-Identifier", testId);
+
+        if (!string.IsNullOrWhiteSpace(@case.Id))
+            testCaseData.SetProperty("Case-Identifier", @case.Id);
+
+        return testCaseData;
+    }
+
+    private static void ValidateArgumentCount(int actual, int expected, string fullName, string testName, string expectedFile)
+    {
+        if (actual == expected)
+            return;
+
+        throw new InvalidOperationException(
+            $"TestCaseSource argument count mismatch for '{fullName}.{testName}'. " +
+            $"Method expects {expected} parameter(s), but YAML produced {actual}. " +
+            $"YAML file: '{expectedFile}'.");
+    }
+
+    private static string BuildDisplayName(object? input, object? output, object?[] parameterValues, object?[] variableValues)
+    {
+        var displayParts = new List<string>
+        {
+            $"in: {FormatArgDisplay(input)}",
+            $"out: {FormatArgDisplay(output)}"
+        };
+
+        if (parameterValues.Length > 0)
+            displayParts.Add($"params: [{string.Join(", ", parameterValues.Select(FormatArgDisplay))}]");
+        if (variableValues.Length > 0)
+            displayParts.Add($"variables: [{string.Join(", ", variableValues.Select(FormatArgDisplay))}]");
+
+        return string.Join(", ", displayParts);
     }
 
     private static bool ShouldPackParametersIntoSingleArray(ParameterInfo[] methodParameters, IReadOnlyList<object?> caseParameters, IReadOnlyList<object?> caseVariables)
@@ -201,62 +234,18 @@ public static class ConformanceTestCaseDataSource
         try
         {
             if (targetType.IsArray)
-            {
-                var elementType = targetType.GetElementType()
-                    ?? throw new InvalidOperationException($"Cannot resolve element type for array '{targetType.FullName}'.");
-
-                if (normalized is not IEnumerable enumerable || normalized is string)
-                    throw new InvalidOperationException($"Value '{FormatArg(normalized)}' cannot be converted to array type '{targetType.FullName}'.");
-
-                var rawItems = enumerable.Cast<object?>().ToArray();
-                var array = Array.CreateInstance(elementType, rawItems.Length);
-                for (var i = 0; i < rawItems.Length; i++)
-                {
-                    var converted = Normalize(rawItems[i], elementType);
-                    array.SetValue(converted, i);
-                }
-
-                return array;
-            }
+                return NormalizeArray(normalized, targetType);
 
             if (targetType.IsEnum)
-            {
-                if (normalized is string enumText)
-                    return Enum.Parse(targetType, enumText, true);
-
-                var enumValue = Convert.ChangeType(normalized, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture);
-                return Enum.ToObject(targetType, enumValue!);
-            }
+                return NormalizeEnum(normalized, targetType);
 
             if (targetType == typeof(char))
-            {
-                if (normalized is char c)
-                    return c;
-                if (normalized is string text && text.Length == 1)
-                    return text[0];
-                if (normalized is IConvertible)
-                    return Convert.ToChar(normalized, CultureInfo.InvariantCulture);
+                return NormalizeChar(normalized);
 
-                throw new InvalidOperationException($"Value '{FormatArg(normalized)}' cannot be converted to char.");
-            }
+            if (TryNormalizeSpecialType(normalized, targetType, out var specialValue))
+                return specialValue;
 
-            if (targetType == typeof(Guid) && normalized is string guidText)
-                return Guid.Parse(guidText);
-
-            if (targetType == typeof(DateOnly) && normalized is string dateOnlyText)
-                return DateOnly.Parse(dateOnlyText, CultureInfo.InvariantCulture);
-
-            if (targetType == typeof(TimeOnly) && normalized is string timeOnlyText)
-                return TimeOnly.Parse(timeOnlyText, CultureInfo.InvariantCulture);
-
-            var converter = TypeDescriptor.GetConverter(targetType);
-            if (normalized is string stringValue && converter.CanConvertFrom(typeof(string)))
-                return converter.ConvertFromInvariantString(stringValue);
-
-            if (converter.CanConvertFrom(normalized.GetType()))
-                return converter.ConvertFrom(null, CultureInfo.InvariantCulture, normalized);
-
-            return Convert.ChangeType(normalized, targetType, CultureInfo.InvariantCulture);
+            return NormalizeWithTypeConverter(normalized, targetType);
         }
         catch (Exception ex)
         {
@@ -264,6 +253,82 @@ public static class ConformanceTestCaseDataSource
                 $"Cannot convert value '{FormatArg(normalized)}' ({normalized.GetType().FullName}) to expected type '{expectedType.FullName}'.",
                 ex);
         }
+    }
+
+    private static object NormalizeArray(object normalized, Type targetType)
+    {
+        var elementType = targetType.GetElementType()
+            ?? throw new InvalidOperationException($"Cannot resolve element type for array '{targetType.FullName}'.");
+
+        if (normalized is not IEnumerable enumerable || normalized is string)
+            throw new InvalidOperationException($"Value '{FormatArg(normalized)}' cannot be converted to array type '{targetType.FullName}'.");
+
+        var rawItems = enumerable.Cast<object?>().ToArray();
+        var array = Array.CreateInstance(elementType, rawItems.Length);
+        for (var i = 0; i < rawItems.Length; i++)
+        {
+            var converted = Normalize(rawItems[i], elementType);
+            array.SetValue(converted, i);
+        }
+
+        return array;
+    }
+
+    private static object NormalizeEnum(object normalized, Type targetType)
+    {
+        if (normalized is string enumText)
+            return Enum.Parse(targetType, enumText, true);
+
+        var enumValue = Convert.ChangeType(normalized, Enum.GetUnderlyingType(targetType), CultureInfo.InvariantCulture);
+        return Enum.ToObject(targetType, enumValue!);
+    }
+
+    private static object NormalizeChar(object normalized)
+    {
+        if (normalized is char c)
+            return c;
+        if (normalized is string text && text.Length == 1)
+            return text[0];
+        if (normalized is IConvertible)
+            return Convert.ToChar(normalized, CultureInfo.InvariantCulture);
+
+        throw new InvalidOperationException($"Value '{FormatArg(normalized)}' cannot be converted to char.");
+    }
+
+    private static bool TryNormalizeSpecialType(object normalized, Type targetType, out object? result)
+    {
+        if (targetType == typeof(Guid) && normalized is string guidText)
+        {
+            result = Guid.Parse(guidText);
+            return true;
+        }
+
+        if (targetType == typeof(DateOnly) && normalized is string dateOnlyText)
+        {
+            result = DateOnly.Parse(dateOnlyText, CultureInfo.InvariantCulture);
+            return true;
+        }
+
+        if (targetType == typeof(TimeOnly) && normalized is string timeOnlyText)
+        {
+            result = TimeOnly.Parse(timeOnlyText, CultureInfo.InvariantCulture);
+            return true;
+        }
+
+        result = null;
+        return false;
+    }
+
+    private static object? NormalizeWithTypeConverter(object normalized, Type targetType)
+    {
+        var converter = TypeDescriptor.GetConverter(targetType);
+        if (normalized is string stringValue && converter.CanConvertFrom(typeof(string)))
+            return converter.ConvertFromInvariantString(stringValue);
+
+        if (converter.CanConvertFrom(normalized.GetType()))
+            return converter.ConvertFrom(null, CultureInfo.InvariantCulture, normalized);
+
+        return Convert.ChangeType(normalized, targetType, CultureInfo.InvariantCulture);
     }
 
     private static object? Normalize(object? value)
@@ -369,7 +434,7 @@ public static class ConformanceTestCaseDataSource
         if (value is null)
             return "<null>";
 
-        if (value is string @null && @null=="(null)")
+        if (value is string @null && @null == "(null)")
             return "(null)";
 
         if (value is string empty && string.IsNullOrEmpty(empty))
@@ -379,16 +444,24 @@ public static class ConformanceTestCaseDataSource
             return "(blank)";
 
         if (value is Array array)
-            return array.Length == 0
-                ? "{ }"
-                : $"{{ {string.Join(", ", array.Cast<object?>().Select(FormatArgDisplay))} }}";
+            return FormatArrayDisplay(array);
 
-        return value switch
-        {
-            string s => $"{s}".Replace("(", "{").Replace(")", "}").Replace("\r", "\\r").Replace("\n", "\\n").Replace("\t", "\\t"),
-            _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? value.ToString() ?? "<unknown>",
-        };
+        return value is string s
+            ? FormatStringDisplay(s)
+            : Convert.ToString(value, CultureInfo.InvariantCulture) ?? value.ToString() ?? "<unknown>";
     }
+
+    private static string FormatArrayDisplay(Array array)
+        => array.Length == 0
+            ? "{ }"
+            : $"{{ {string.Join(", ", array.Cast<object?>().Select(FormatArgDisplay))} }}";
+
+    private static string FormatStringDisplay(string value)
+        => value.Replace("(", "{")
+            .Replace(")", "}")
+            .Replace("\r", "\\r")
+            .Replace("\n", "\\n")
+            .Replace("\t", "\\t");
 
     private sealed class YamlConformanceDocument
     {

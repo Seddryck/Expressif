@@ -9,6 +9,8 @@ namespace Expressif.Functions.Text;
 /// </summary>
 public abstract class BaseTextCasing : BaseTextFunction
 {
+    private static readonly ArrayCaster ArrayCaster = new();
+
     protected static string[] SplitWordsBySpace(string value)
         => string.IsNullOrWhiteSpace(value)
             ? []
@@ -23,6 +25,11 @@ public abstract class BaseTextCasing : BaseTextFunction
         => word.Contains('.')
             || word.Contains('&')
             || word.Skip(1).Any(char.IsUpper);
+
+    protected override object? EvaluateHighLevelString(string value)
+        => ArrayCaster.TryParse(value, out var array)
+            ? EvaluateArray(array)
+            : base.EvaluateHighLevelString(value);
 
     protected override object? EvaluateArray(IEnumerable? array)
     {
@@ -41,7 +48,6 @@ public abstract class BaseTextCasing : BaseTextFunction
     }
 
     protected override object? EvaluateNull() => null;
-
 }
 
 /// <summary>
@@ -174,7 +180,6 @@ public abstract class BaseTextWordCasing : BaseTextCasing
     protected abstract string EvaluateArrayString(IEnumerable<string> words);
 }
 
-
 /// <summary>
 /// Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
 /// </summary>
@@ -192,7 +197,7 @@ public class PascalCase : BaseTextWordCasing
 public class CamelCase : BaseTextWordCasing
 {
     protected override string EvaluateArrayString(IEnumerable<string> words)
-    { 
+    {
         var first = words.First().ToLowerInvariant();
         var rest = words.Skip(1).Select(CapitalizeWord);
         return first + string.Concat(rest);

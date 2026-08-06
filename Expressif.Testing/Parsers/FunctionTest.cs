@@ -132,4 +132,31 @@ public class FunctionTest
     [TestCase("filter(greater-than(2),")]
     public void Parse_Function_FilterWithMalformedOpenExpression_ThrowsParseException(string value)
         => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.InstanceOf<ParseException>());
+
+    [Test]
+    public void Parse_Function_RecordWithEntries_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.Parse("record(..., name := field(name) | upper, original := ..., active := true)");
+
+        Assert.That(function.Name, Is.EqualTo("record"));
+        Assert.That(function.Parameters, Has.Length.EqualTo(1));
+        Assert.That(function.Parameters[0], Is.TypeOf<RecordDefinitionParameter>());
+
+        var parameter = (RecordDefinitionParameter)function.Parameters[0];
+        Assert.That(parameter.Entries, Has.Length.EqualTo(4));
+        Assert.That(parameter.Entries[0], Is.TypeOf<RecordSpreadEntry>());
+        Assert.That(parameter.Entries[1], Is.TypeOf<RecordNamedEntry>());
+        Assert.That(parameter.Entries[2], Is.TypeOf<RecordNamedEntry>());
+        Assert.That(parameter.Entries[3], Is.TypeOf<RecordNamedEntry>());
+    }
+
+    [Test]
+    public void Parse_Function_RecordWithTrailingComma_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.Parse("record(name := Alice,)");
+
+        Assert.That(function.Name, Is.EqualTo("record"));
+        Assert.That(function.Parameters, Has.Length.EqualTo(1));
+        Assert.That(function.Parameters[0], Is.TypeOf<RecordDefinitionParameter>());
+    }
 }

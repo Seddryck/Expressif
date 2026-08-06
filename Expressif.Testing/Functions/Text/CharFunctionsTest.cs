@@ -21,7 +21,6 @@ public class CharFunctionsTest
         => Assert.That(new ReplaceChars(() => charToReplace, () => replacingChar).Evaluate(value)
             , Is.EqualTo(expected));
 
-
     [Conformance]
     public void FilterChars_Valid_Chars(string? value, char[] filter, string expected)
         => Assert.That(new FilterChars(() => filter).Evaluate(value)

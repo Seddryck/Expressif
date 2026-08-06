@@ -16,7 +16,10 @@ public class ParameterTest
     [TestCase("[foo]", typeof(ObjectPropertyParameter))]
     [TestCase("#52", typeof(ObjectIndexParameter))]
     [TestCase("{}", typeof(ArrayParameter))]
+    [TestCase("{:}", typeof(RecordLiteralParameter))]
     [TestCase("{1,2,3}", typeof(ArrayParameter))]
+    [TestCase("{name := Alice}", typeof(RecordLiteralParameter))]
+    [TestCase("{`first name` := \"Alice Smith\", active := true}", typeof(RecordLiteralParameter))]
     [TestCase("{@foo}", typeof(ArrayParameter))]
     [TestCase("{ @foo, #1, [bar] }", typeof(ArrayParameter))]
     [TestCase("{ @foo | text-to-func(bar) }", typeof(InputExpressionParameter))]
@@ -34,4 +37,34 @@ public class ParameterTest
     [TestCase("(@foo , { @foo | text-to-func(bar, { @fool | numeric-to-func(#3, [bez]) }) })")]
     public void Parse_Parameters_Valid(string value)
         => Assert.That(Parameters.Parser.Parse(value).Count, Is.EqualTo(2));
+
+    [Test]
+    [TestCase("{{1, 2, 3}, {4, 5}}")]
+    [TestCase("{{\"a\", \"b\"}, {\"c\"}}")]
+    [TestCase("{{true, false}, {null, 3}}")]
+    public void Parse_Parameter_NestedArrays_Valid(string value)
+    {
+        var parsed = Parameter.Parser.End().Parse(value);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parsed, Is.TypeOf<ArrayParameter>());
+            var outer = (ArrayParameter)parsed;
+            Assert.That(outer.Values, Has.Length.EqualTo(2));
+            Assert.That(outer.Values[0], Is.TypeOf<ArrayParameter>());
+            Assert.That(outer.Values[1], Is.TypeOf<ArrayParameter>());
+        });
+    }
+
+    [Test]
+    public void Parse_Parameter_EmptyRecordLiteral_ParsesNoFields()
+    {
+        var parsed = Parameter.Parser.End().Parse("{:}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parsed, Is.TypeOf<RecordLiteralParameter>());
+            Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
+        });
+    }
 }

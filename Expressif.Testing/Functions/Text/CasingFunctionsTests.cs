@@ -84,6 +84,24 @@ public class CasingFunctionsTests
     }
 
 
+    [TestCase("{alice, bob}")]
+    [TestCase("{`alice`,`bob`}")]
+    public void TextCasing_StringArrayLikeInput_UsesArraySemantics(string value)
+        => Assert.That(new Upper().Evaluate(value), Is.EqualTo("ALICE BOB"));
+
+    [TestCase("{alice, bob}")]
+    [TestCase("{`alice`,`bob`}")]
+    public void WordCasing_StringArrayLikeInput_UsesArraySemantics(string value)
+        => Assert.That(new PascalCase().Evaluate(value), Is.EqualTo("AliceBob"));
+
+    [TestCase("`{alice, bob}`")]
+    public void TextCasing_BacktickWrappedArrayLikeString_UsesStringSemantics(string value)
+        => Assert.That(new Upper().Evaluate(value), Is.EqualTo("`{ALICE, BOB}`"));
+
+    [Test]
+    public void WordCasing_BacktickWrappedArrayLikeString_UsesStringSemantics()
+        => Assert.That(new PascalCase().Evaluate("`{alice, bob}`"), Is.EqualTo("`{alice,Bob}`"));
+
     [Conformance]
     public void Upper_Valid(object value, object expected)
         => Assert.That(new Upper().Evaluate(value), Is.EqualTo(expected));
