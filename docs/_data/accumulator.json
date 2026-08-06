@@ -58,5 +58,25 @@
     "Scope": "Array",
     "Summary": "Computes the sum of all accumulated numeric values.",
     "Parameters": []
+  },
+  {
+    "Name": "every",
+    "IsPublic": true,
+    "Aliases": [
+      "every"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns `true` only when every accumulated boolean value is `true`. Returns `null` when an input cannot be evaluated.",
+    "Parameters": []
+  },
+  {
+    "Name": "any",
+    "IsPublic": true,
+    "Aliases": [
+      "any"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns `true` when at least one accumulated boolean value is `true`. Returns `null` when an input cannot be evaluated.",
+    "Parameters": []
   }
 ]
