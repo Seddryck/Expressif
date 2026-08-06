@@ -56,12 +56,14 @@ public abstract class BaseExpressionFactory
         return parameter switch
         {
             ArrayParameter array => CreateFunctionCast(() => BuildArray(array, context), scalarType),
+            TupleParameter tuple => CreateFunctionCast(() => BuildTuple(tuple, context), scalarType),
             RecordLiteralParameter record => CreateFunctionCast(() => BuildRecord(record, context), scalarType),
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
+            TupleProjectionParameter projection => CreateFunctionCast(() => context.CurrentObject.Value is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
             VariableParameter variable => CreateFunctionCast(() => context.Variables[variable.Name], scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
@@ -78,6 +80,18 @@ public abstract class BaseExpressionFactory
             }
 
             return values;
+        }
+
+        Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)
+        {
+            var values = new object?[tuple.Values.Length];
+            for (var i = 0; i < tuple.Values.Length; i++)
+            {
+                var elementFactory = CreateParameter(tuple.Values[i], typeof(object), currentContext);
+                values[i] = elementFactory.DynamicInvoke();
+            }
+
+            return new Expressif.Values.Tuple(values);
         }
 
         ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)
