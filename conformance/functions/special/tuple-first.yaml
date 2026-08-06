@@ -1,0 +1,18 @@
+suite: special
+kind: function
+operator: tuple-first
+tests:
+  - id: tuple-first.valid
+    cases:
+      - id: tuple-first.valid.special.null
+        value: (null)
+        expected:
+      - id: tuple-first.valid.special.empty
+        value: (empty)
+        expected:
+      - id: tuple-first.valid.tuple.numeric
+        value: T(10, 20)
+        expected: 10
+      - id: tuple-first.valid.tuple.text
+        value: T(one, two)
+        expected: one

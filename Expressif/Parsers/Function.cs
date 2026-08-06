@@ -74,6 +74,11 @@ public class Function : IExpression
         from name in Parse.Regex("[A-Za-z_][A-Za-z0-9_+\\-]*").Text()
         select new Function("field", [new LiteralParameter(name)], FunctionSyntax.FieldShorthand);
 
+    private static readonly Parser<Function> TupleProjectionShorthandParser =
+        from _ in Parse.Char('$')
+        from index in Parse.Number
+        select new Function("tuple-at", [new LiteralParameter(index)]);
+
     private static readonly Parser<IParameter[]> FieldShorthandParametersParser =
         from function in FieldShorthandParser.Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
         select new IParameter[] { new OpenExpressionParameter(new OpenExpression([function])) };
@@ -83,6 +88,7 @@ public class Function : IExpression
         from parameters in (functionName.Equals("filter", StringComparison.OrdinalIgnoreCase)
                                 ? FieldShorthandParametersParser.Or(PredicationParametersParser).Optional()
                                 : functionName.Equals("map", StringComparison.OrdinalIgnoreCase)
+                                  || functionName.Equals("adjacent", StringComparison.OrdinalIgnoreCase)
                                 ? OpenExpressionParametersParser.Optional()
                                 : functionName.Equals("record", StringComparison.OrdinalIgnoreCase)
                                 ? RecordParametersParser.Optional()
@@ -92,7 +98,7 @@ public class Function : IExpression
         select new Function(functionName, parameters.GetOrElse(Array.Empty<IParameter>()));
 
     public static readonly Parser<Function> Parser =
-        FieldShorthandParser.Or(StandardParser);
+        TupleProjectionShorthandParser.Or(FieldShorthandParser).Or(StandardParser);
 
     public string Name { get; }
     public IParameter[] Parameters { get; }

@@ -14,8 +14,10 @@ public record class IntervalParameter(Interval Value) : IParameter { }
 public record class VariableParameter(string Name) : IParameter { }
 public record class ObjectPropertyParameter(string Name) : IParameter { }
 public record class ObjectIndexParameter(int Index) : IParameter { }
+public record class TupleProjectionParameter(int Index) : IParameter { }
 public record class ContextParameter(Func<IContext, object?> Function) : IParameter { }
 public record class ArrayParameter(IParameter[] Values) : IParameter { }
+public record class TupleParameter(IParameter[] Values) : IParameter { }
 public record class QuotedLiteralParameter(string Value) : IParameter { }
 public record class IncomingValueParameter() : IParameter { }
 
@@ -51,6 +53,11 @@ public class Parameter
         from index in Parse.Number
         select new ObjectIndexParameter(int.Parse(index));
 
+    protected static readonly Parser<IParameter> TupleProjectionParameter =
+        from _ in Parse.Char('$')
+        from index in Parse.Number
+        select new TupleProjectionParameter(int.Parse(index));
+
     protected static readonly Parser<IParameter> IncomingParameter =
         from _ in Parse.String("...").Token()
         select new IncomingValueParameter();
@@ -84,6 +91,19 @@ public class Parameter
         )
         select new ArrayParameter(values);
 
+    public static readonly Parser<IParameter> TupleLiteralParser =
+        from _ in Parse.String("T(").Token()
+        from first in Parse.Ref(() => RecordValueParameter).Token()
+        from __ in Parse.Char(',').Token()
+        from second in Parse.Ref(() => RecordValueParameter).Token()
+        from others in (
+            from comma in Parse.Char(',').Token()
+            from value in Parse.Ref(() => RecordValueParameter).Token()
+            select value
+        ).Many()
+        from close in Parse.Char(')').Token()
+        select new TupleParameter(new[] { first, second }.Concat(others).ToArray());
+
     protected static readonly Parser<IParameter> RecordLiteralParameter =
         from _ in Parse.Char('{').Token()
         from fields in (
@@ -115,9 +135,11 @@ public class Parameter
     protected static readonly Parser<IParameter> RecordValueParameter =
         IncomingParameter
         .Or(Parse.Ref(() => RecordLiteralParameter))
+        .Or(Parse.Ref(() => TupleLiteralParser))
         .Or(Parse.Ref(() => ArrayLiteralParameter))
         .Or(Parse.Ref(() => VariableParameter))
         .Or(Parse.Ref(() => IntervalParameter))
+        .Or(TupleProjectionParameter)
         .Or(Parse.Ref(() => IndexParameter))
         .Or(Parse.Ref(() => ItemParameter))
         .Or(QuotedLiteralParameter)
@@ -154,8 +176,10 @@ public class Parameter
     public static readonly Parser<IParameter> Parser = 
         VariableParameter
         .Or(IntervalParameter)
+        .Or(TupleProjectionParameter)
         .Or(IndexParameter)
         .Or(ItemParameter)
+        .Or(TupleLiteralParser)
         .Or(RecordLiteralParameter)
         .Or(ArrayLiteralParameter)
         .Or(ParametrizedExpressionParameter)

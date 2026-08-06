@@ -20,7 +20,10 @@ public static class ValueFormatter
         if (TryFormatNamedCollection(value!, out var named))
             return named;
 
-        return FormatScalarOrEnumerable(value, forRecordValue);
+        if (value is TupleValue tuple)
+            return $"T({string.Join(", ", tuple.Select(x => Format(x, forRecordValue)))})";
+
+        return FormatScalarOrEnumerable(value!, forRecordValue);
     }
 
     private static bool IsNullLike(object? value)
