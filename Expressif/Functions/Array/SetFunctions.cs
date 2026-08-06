@@ -44,6 +44,27 @@ public abstract class BaseArraySetFunction : BaseArrayFunction
 }
 
 /// <summary>
+/// Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.
+/// </summary>
+[Function(prefix: "", aliases: ["distinct"])]
+public class Distinct : BaseArrayFunction
+{
+    public Distinct() { }
+
+    protected override object? EvaluateArray(IEnumerable enumerable)
+    {
+        var values = new List<object?>();
+        var visited = new HashSet<object?>();
+
+        foreach (var item in enumerable)
+            if (visited.Add(item))
+                values.Add(item);
+
+        return values.ToArray();
+    }
+}
+
+/// <summary>
 /// Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
 /// </summary>
 [Function(prefix: "", aliases: ["difference"])]

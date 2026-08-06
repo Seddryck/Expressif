@@ -2354,5 +2354,15 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "distinct",
+    "IsPublic": true,
+    "Aliases": [
+      "distinct"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.",
+    "Parameters": []
   }
 ]

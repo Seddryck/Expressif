@@ -4,6 +4,14 @@ using Expressif.Testing.Conformance;
 namespace Expressif.Testing.Functions.Array;
 
 [TestFixture]
+public class DistinctTest
+{
+    [Conformance]
+    public void Distinct_Valid(object? value, object? expected)
+        => Assert.That(new Distinct().Evaluate(value), Is.EqualTo(expected));
+}
+
+[TestFixture]
 public class DifferenceTest
 {
     [Conformance]
