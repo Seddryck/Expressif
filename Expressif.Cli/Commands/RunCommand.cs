@@ -255,7 +255,7 @@ internal static class RunCommand
             throw new FormatException($"Invalid input syntax for --batch '{batchInput}': {exception.Message}", exception);
         }
 
-        if (parsedBatchInput is not IEnumerable enumerable || parsedBatchInput is string)
+        if (parsedBatchInput is not IEnumerable enumerable || parsedBatchInput is string or RecordValue)
             throw new FormatException("The --batch option requires an enumerable value.");
 
         var enumerator = enumerable.GetEnumerator();
@@ -621,7 +621,12 @@ internal static class RunCommand
         {
             var value = new RecordValue();
             foreach (var field in record.Fields)
+            {
+                if (value.ContainsKey(field.Name))
+                    throw new ArgumentException($"Duplicate field '{field.Name}' in record literal.");
+
                 value.Set(field.Name, ConvertToRuntimeValue(field.Value));
+            }
 
             return value;
         }
