@@ -187,6 +187,39 @@ For CSV input:
 - malformed rows (wrong field count) fail with a clear error;
 - processing is streamed row by row so large files can be processed efficiently.
 
+CSV parsing can be configured by repeating `--source-option <name>=<value>`. Options apply only to the file supplied by `--source`.
+
+```console
+expressif run "[name] | upper" --source people.csv \
+  --source-option 'delimiter=";"' \
+  --source-option 'header=true' \
+  --source-option 'quote-char="\""'
+```
+
+Supported CSV source options are:
+
+| Option | Value |
+| --- | --- |
+| `delimiter` | Single field-separator character |
+| `line-terminator` | Record-separator text |
+| `quote-char` | Single character, or `null` to disable quoting |
+| `double-quote` | Boolean controlling doubled-quote escaping |
+| `escape-char` | Single character, or `null` to disable explicit escaping |
+| `header` | Boolean indicating whether header rows are present |
+| `header-rows` | Array of one-based physical row indexes, such as `{1, 2}` |
+| `header-join` | Text joining values from multiple header rows |
+| `header-repeat` | Boolean controlling repeated empty header cells |
+| `comment-char` | Single character identifying comment rows, or `null` |
+| `comment-rows` | Array of one-based physical row indexes to ignore |
+| `null-sequence` | Text interpreted as null |
+| `missing-cell` | Text used for a missing trailing cell |
+| `skip-initial-space` | Boolean controlling whitespace after delimiters |
+| `array-delimiter` | Single embedded-array separator character, or `null` |
+| `array-prefix` | Single embedded-array opening character, or `null` |
+| `array-suffix` | Single embedded-array closing character, or `null` |
+
+Values use Expressif literal syntax: `true` and `false` for booleans, `null`, quoted text, and arrays such as `{1, 3}`. Unknown properties, invalid values, and incompatible profiles are rejected. CSV behavior is unchanged when no source options are supplied.
+
 For non-CSV source files, the source expression is evaluated first and must return an enumerable sequence.
 
 Examples:
