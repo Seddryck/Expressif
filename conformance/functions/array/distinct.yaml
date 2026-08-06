@@ -1,0 +1,30 @@
+suite: array
+kind: function
+operator: distinct
+tests:
+  - id: distinct.valid
+    cases:
+      - id: distinct.valid.text.removes-duplicates
+        value: [apple, banana, apple, cherry, banana]
+        expected: [apple, banana, cherry]
+      - id: distinct.valid.text.preserves-first-occurrence-order
+        value: [cherry, apple, banana, apple, cherry]
+        expected: [cherry, apple, banana]
+      - id: distinct.valid.text.already-unique
+        value: [apple, banana, cherry]
+        expected: [apple, banana, cherry]
+      - id: distinct.valid.text.single-repeated-value
+        value: [apple, apple, apple]
+        expected: [apple]
+      - id: distinct.valid.text.single-element
+        value: [apple]
+        expected: [apple]
+      - id: distinct.valid.special.zero-length-array
+        value: []
+        expected: []
+      - id: distinct.valid.special.null
+        value: (null)
+        expected:
+      - id: distinct.valid.special.empty
+        value: (empty)
+        expected:

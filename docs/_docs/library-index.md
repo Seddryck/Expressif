@@ -51,6 +51,7 @@ tags: [predicates, functions]
 * [decrement]({{ site.baseurl }}/docs/numeric-functions/#decrement)
 * [difference]({{ site.baseurl }}/docs/array-functions/#difference)
 * [directory]({{ site.baseurl }}/docs/io-functions/#directory)
+* [distinct]({{ site.baseurl }}/docs/array-functions/#distinct)
 * [divide]({{ site.baseurl }}/docs/numeric-functions/#divide)
 * [dot-case]({{ site.baseurl }}/docs/text-functions/#dot-case)
 * [empty-to-null]({{ site.baseurl }}/docs/text-functions/#empty-to-null)

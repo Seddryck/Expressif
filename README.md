@@ -207,6 +207,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | broadcast                           | array-to-broadcast                                                                |
 |Array    | complement                          | complement                                                                        |
 |Array    | difference                          | difference                                                                        |
+|Array    | distinct                            | distinct                                                                          |
 |Array    | filter                              | filter                                                                            |
 |Array    | first-elements                      | first                                                                             |
 |Array    | fold                                | array-to-fold                                                                     |
