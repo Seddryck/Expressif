@@ -200,6 +200,22 @@
     "Parameters": []
   },
   {
+    "Name": "position-of",
+    "IsPublic": true,
+    "Aliases": [
+      "position-of"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Optional": false,
+        "Summary": "Specifies the value to locate."
+      }
+    ]
+  },
+  {
     "Name": "reverse",
     "IsPublic": true,
     "Aliases": [
@@ -309,6 +325,32 @@
         "Summary": "Specifies the second array whose values are combined with the pipeline input."
       }
     ]
+  },
+  {
+    "Name": "value-at",
+    "IsPublic": true,
+    "Aliases": [
+      "value-at"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "position",
+        "Optional": false,
+        "Summary": "Specifies the zero-based position of the item to return."
+      }
+    ]
+  },
+  {
+    "Name": "with-position",
+    "IsPublic": true,
+    "Aliases": [
+      "with-position"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.",
+    "Parameters": []
   },
   {
     "Name": "creation-datetime",
@@ -2440,47 +2482,5 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
-  },
-  {
-    "Name": "with-position",
-    "IsPublic": true,
-    "Aliases": [
-      "with-position"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.",
-    "Parameters": []
-  },
-  {
-    "Name": "position-of",
-    "IsPublic": true,
-    "Aliases": [
-      "position-of"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Optional": false,
-        "Summary": "Specifies the value to locate."
-      }
-    ]
-  },
-  {
-    "Name": "value-at",
-    "IsPublic": true,
-    "Aliases": [
-      "value-at"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "position",
-        "Optional": false,
-        "Summary": "Specifies the zero-based position of the item to return."
-      }
-    ]
   }
 ]

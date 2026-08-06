@@ -218,6 +218,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | lead                                | array-to-lead                                                                     |
 |Array    | map                                 | map                                                                               |
 |Array    | pairwise                            | pairwise                                                                          |
+|Array    | position-of                         | position-of                                                                       |
 |Array    | reverse                             | reverse                                                                           |
 |Array    | scan                                | array-to-scan                                                                     |
 |Array    | skip-first-elements                 | skip-first                                                                        |
@@ -225,6 +226,8 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | slice-elements                      | slice                                                                             |
 |Array    | symmetric-difference                | symmetric-difference                                                              |
 |Array    | union                               | union                                                                             |
+|Array    | value-at                            | value-at                                                                          |
+|Array    | with-position                       | with-position                                                                     |
 |IO       | creation-datetime                   | file-to-creation-datetime, file-to-creation-dateTime                              |
 |IO       | creation-datetime-utc               | file-to-creation-datetime-utc, file-to-creation-dateTime-utc                      |
 |IO       | directory                           | path-to-directory                                                                 |
