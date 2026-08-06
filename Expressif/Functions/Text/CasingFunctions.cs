@@ -9,6 +9,8 @@ namespace Expressif.Functions.Text;
 /// </summary>
 public abstract class BaseTextCasing : BaseTextFunction
 {
+    private static readonly ArrayCaster ArrayCaster = new();
+
     protected static string[] SplitWordsBySpace(string value)
         => string.IsNullOrWhiteSpace(value)
             ? []
@@ -23,6 +25,11 @@ public abstract class BaseTextCasing : BaseTextFunction
         => word.Contains('.')
             || word.Contains('&')
             || word.Skip(1).Any(char.IsUpper);
+
+    protected override object? EvaluateHighLevelString(string value)
+        => ArrayCaster.TryParse(value, out var array)
+            ? EvaluateArray(array)
+            : base.EvaluateHighLevelString(value);
 
     protected override object? EvaluateArray(IEnumerable? array)
     {
