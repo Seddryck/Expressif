@@ -958,6 +958,20 @@
     "Parameters": []
   },
   {
+    "Name": "duration-between",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Temporal",
+    "Summary": "Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.",
+    "Parameters": [
+      {
+        "Name": "previous",
+        "Optional": false,
+        "Summary": "The previous temporal value to subtract from the current input."
+      }
+    ]
+  },
+  {
     "Name": "first-in-month",
     "IsPublic": true,
     "Aliases": [

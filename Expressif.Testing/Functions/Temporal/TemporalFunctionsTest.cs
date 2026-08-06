@@ -15,6 +15,10 @@ namespace Expressif.Testing.Functions.Temporal;
 public class TemporalFunctionsTest
 {
     [Conformance]
+    public void DurationBetween_Valid_Previous(object input, object previous, TimeSpan? expected)
+        => Assert.That(new DurationBetween(() => previous).Evaluate(input), Is.EqualTo(expected));
+
+    [Conformance]
     public void Clamp_Valid(object value, DateTime min, DateTime max, DateTime expected)
         => Assert.That(new Clamp(() => min, () => max)
             .Evaluate(value), Is.EqualTo(expected));

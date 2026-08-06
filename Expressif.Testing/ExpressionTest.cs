@@ -129,6 +129,21 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_DurationBetween_Valid()
+    {
+        var expression = new Expression("duration-between(2026-08-06T10:30:00)", new Context());
+        var result = expression.Evaluate("2026-08-06T12:00:00");
+        Assert.That(result, Is.EqualTo(TimeSpan.FromMinutes(90)));
+    }
+
+    [Test]
+    public void Evaluate_DurationBetweenIncompatiblePrevious_Null()
+    {
+        var expression = new Expression("duration-between(invalid)", new Context());
+        Assert.That(expression.Evaluate("2026-08-06T12:00:00"), Is.Null);
+    }
+
+    [Test]
     public void Evaluate_CalendarCatholic_Valid()
     {
         var expression = new Expression("calendar-catholic(\"eAsTeR sUnDaY\")", new Context());

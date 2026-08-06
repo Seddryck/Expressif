@@ -246,6 +246,32 @@ public class Clamp : BaseTemporalFunction
 }
 
 /// <summary>
+/// Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.
+/// </summary>
+[Function(prefix: "")]
+public class DurationBetween : BaseTemporalFunction
+{
+    public Func<object?> Previous { get; }
+
+    /// <param name="previous">The previous temporal value to subtract from the current input.</param>
+    public DurationBetween(Func<object?> previous)
+        => Previous = previous;
+
+    protected override object? EvaluateUncasted(object value)
+        => new DateTimeCaster().TryCast(value, out var dateTime)
+            ? EvaluateDateTime(dateTime)
+            : null;
+
+    protected override object EvaluateDateTime(DateTime value)
+    {
+        var previous = Previous.Invoke();
+        return previous is not null && new DateTimeCaster().TryCast(previous, out var dateTime)
+            ? value - dateTime
+            : null!;
+    }
+}
+
+/// <summary>
 /// Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.
 /// </summary>
 public class SetTime : BaseTemporalFunction

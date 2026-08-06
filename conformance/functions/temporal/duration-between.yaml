@@ -1,0 +1,56 @@
+suite: temporal
+kind: function
+operator: duration-between
+tests:
+  - id: duration-between.valid.previous
+    cases:
+      - id: duration-between.valid.previous.date.later
+        value: 2026-08-06
+        expected: 1.00:00:00
+        parameters:
+          - 2026-08-05
+      - id: duration-between.valid.previous.date.earlier
+        value: 2026-08-05
+        expected: -1.00:00:00
+        parameters:
+          - 2026-08-06
+      - id: duration-between.valid.previous.date.equal
+        value: 2026-08-06
+        expected: 00:00:00
+        parameters:
+          - 2026-08-06
+      - id: duration-between.valid.previous.date-time.later
+        value: 2026-08-06T12:00:00
+        expected: 01:30:00
+        parameters:
+          - 2026-08-06T10:30:00
+      - id: duration-between.valid.previous.date-time.earlier
+        value: 2026-08-06T09:00:00
+        expected: -01:30:00
+        parameters:
+          - 2026-08-06T10:30:00
+      - id: duration-between.valid.previous.date-time.equal
+        value: 2026-08-06T10:30:00
+        expected: 00:00:00
+        parameters:
+          - 2026-08-06T10:30:00
+      - id: duration-between.valid.previous.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 2026-08-06T10:30:00
+      - id: duration-between.valid.previous.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - 2026-08-06T10:30:00
+      - id: duration-between.valid.previous.text.incompatible-current
+        value: invalid
+        expected:
+        parameters:
+          - 2026-08-06T10:30:00
+      - id: duration-between.valid.previous.text.incompatible-previous
+        value: 2026-08-06T10:30:00
+        expected:
+        parameters:
+          - invalid

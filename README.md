@@ -281,6 +281,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Temporal | day-of-month                        | dateTime-to-day-of-month                                                          |
 |Temporal | day-of-week                         | dateTime-to-day-of-week                                                           |
 |Temporal | day-of-year                         | dateTime-to-day-of-year                                                           |
+|Temporal | duration-between                    |                                                                                   |
 |Temporal | first-in-month                      | dateTime-to-first-in-month                                                        |
 |Temporal | first-of-month                      | dateTime-to-first-of-month                                                        |
 |Temporal | first-of-year                       | dateTime-to-first-of-year                                                         |
