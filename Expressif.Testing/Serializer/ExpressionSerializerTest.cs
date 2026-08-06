@@ -1,5 +1,6 @@
 ﻿using Expressif.Parsers;
 using Expressif.Serializers;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,6 +61,16 @@ public class ExpressionSerializerTest
         var expression = new Expressif.Parsers.ClosedExpression(new VariableParameter("arr"), [new Function("count", [])]);
 
         Assert.That(new ExpressionSerializer().Serialize(expression), Is.EqualTo("@arr | count"));
+    }
+
+    [Test]
+    public void Serialize_MapShorthand_PreservesShorthand()
+    {
+        var expression = Expressif.Parsers.ClosedExpression.Parser.End()
+            .Parse("{1,2,3} |> (absolute | add(5)) | reverse");
+
+        Assert.That(new ExpressionSerializer().Serialize(expression),
+            Is.EqualTo("{1, 2, 3} |> (absolute | add(5)) | reverse"));
     }
 
     [Test]

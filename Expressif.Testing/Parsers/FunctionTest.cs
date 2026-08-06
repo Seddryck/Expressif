@@ -7,6 +7,29 @@ namespace Expressif.Testing.Parsers;
 
 public class FunctionTest
 {
+    [TestCase(".name", "name")]
+    [TestCase(".birth-date", "birth-date")]
+    [TestCase(".amount+tax", "amount+tax")]
+    public void Parse_FieldShorthand_LowersToFieldFunction(string value, string expectedName)
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse(value);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function.Name, Is.EqualTo("field"));
+            Assert.That(function.Syntax, Is.EqualTo(FunctionSyntax.FieldShorthand));
+            Assert.That(((LiteralParameter)function.Parameters.Single()).Value, Is.EqualTo(expectedName));
+        });
+    }
+
+    [TestCase(".")]
+    [TestCase(". name")]
+    [TestCase(".5")]
+    [TestCase(".\"name\"")]
+    [TestCase(".`name`")]
+    public void Parse_InvalidFieldShorthand_ThrowsParseException(string value)
+        => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.TypeOf<ParseException>());
+
     [SetUp]
     public void Setup()
     { }

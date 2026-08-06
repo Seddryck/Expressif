@@ -41,21 +41,35 @@ public class ExpressionSerializer
     public virtual void Serialize(Parsers.ClosedExpression expression, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(ParameterSerializer.Serialize(expression.Parameter));
-        if (!expression.Members.Any())
-            return;
-
-        stringBuilder.Append(" | ");
-        Serialize([.. expression.Members], ref stringBuilder);
+        SerializeContinuations(expression.Members, ref stringBuilder);
     }
 
     public virtual void Serialize(IExpression[] expressions, ref StringBuilder stringBuilder)
     {
-        foreach (var expression in expressions)
+        if (expressions.Length == 0)
+            return;
+
+        Serialize(expressions[0], ref stringBuilder);
+        SerializeContinuations(expressions.Skip(1).OfType<Function>(), ref stringBuilder);
+    }
+
+    private void SerializeContinuations(IEnumerable<Function> functions, ref StringBuilder stringBuilder)
+    {
+        foreach (var function in functions)
         {
-            Serialize(expression, ref stringBuilder);
-            stringBuilder.Append(" | ");
+            if (function.Syntax == FunctionSyntax.MapShorthand)
+            {
+                stringBuilder.Append(" |> (");
+                var expression = (OpenExpressionParameter)function.Parameters.Single();
+                Serialize(expression.Expression, ref stringBuilder);
+                stringBuilder.Append(')');
+            }
+            else
+            {
+                stringBuilder.Append(" | ");
+                Serialize(function, ref stringBuilder);
+            }
         }
-        stringBuilder.Remove(stringBuilder.Length - 3, 3);
     }
 
     public virtual string Serialize(IExpression expression)

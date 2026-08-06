@@ -270,6 +270,15 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ArrayMapShorthandPipeline_Valid()
+    {
+        var expression = new ClosedExpression("{-1,2,-3} |> (absolute | add(5)) | reverse");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { 8m, 7m, 6m }));
+    }
+
+    [Test]
     public void Evaluate_StringArrayPipeMapUpper_Valid()
     {
         var expression = new ClosedExpression("{\"alice\",\"bob\"} | map(upper)");
@@ -347,6 +356,81 @@ public class ExpressionTest
             Assert.That(result["customerName"], Is.EqualTo("Alice"));
             Assert.That(result["requestedBy"], Is.EqualTo("Cedric"));
         });
+    }
+
+    [Test]
+    public void Evaluate_FieldShorthand_IsEquivalentToFieldFunction()
+    {
+        var input = new Dictionary<string, object?> { ["name"] = "Alice" };
+
+        Assert.That(new Expression(".name").Evaluate(input),
+            Is.EqualTo(new Expression("field(name)").Evaluate(input)));
+    }
+
+    [Test]
+    public void Evaluate_FieldShorthand_NestedPipeline_ReadsNestedField()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["address"] = new Dictionary<string, object?> { ["city"] = "Brussels" }
+        };
+
+        Assert.That(new Expression(".address | .city").Evaluate(input), Is.EqualTo("Brussels"));
+    }
+
+    [Test]
+    public void Evaluate_FieldShorthand_MapAndFilter_UsesEachItemAsInput()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new
+        {
+            customers = new object?[]
+            {
+                new Dictionary<string, object?> { ["name"] = "Alice", ["active"] = true },
+                new Dictionary<string, object?> { ["name"] = "Bob", ["active"] = false }
+            }
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(new ClosedExpression("[customers] |> (.name)", context).Evaluate(),
+                Is.EqualTo(new object?[] { "Alice", "Bob" }));
+            Assert.That(new ClosedExpression("[customers] | filter(.active) |> (.name)", context).Evaluate(),
+                Is.EqualTo(new object?[] { "Alice" }));
+        });
+    }
+
+    [Test]
+    public void Evaluate_FieldShorthand_RecordConstruction_UsesIncomingRecord()
+    {
+        var input = new Dictionary<string, object?> { ["name"] = "Alice" };
+        var result = (RecordValue)new Expression("record(customer-name := .name)").Evaluate(input)!;
+
+        Assert.That(result["customer-name"], Is.EqualTo("Alice"));
+    }
+
+    [Test]
+    public void Evaluate_FieldShorthand_NullField_ReturnsNull()
+    {
+        var input = new Dictionary<string, object?> { ["name"] = null };
+
+        Assert.That(new Expression(".name").Evaluate(input), Is.Null);
+    }
+
+    [TestCaseSource(nameof(FieldShorthandEdgeCases))]
+    public void Evaluate_FieldShorthand_EdgeCasesMatchLongForm(object? input)
+    {
+        var longForm = Assert.Catch(() => new Expression("field(name)").Evaluate(input));
+        var shorthand = Assert.Catch(() => new Expression(".name").Evaluate(input));
+
+        Assert.That(shorthand, Is.TypeOf(longForm!.GetType()));
+    }
+
+    private static IEnumerable<TestCaseData> FieldShorthandEdgeCases()
+    {
+        yield return new TestCaseData(new Dictionary<string, object?>()).SetName("Missing field");
+        yield return new TestCaseData("not a record").SetName("Non-record input");
+        yield return new TestCaseData(null).SetName("Null input");
     }
 
     [Test]

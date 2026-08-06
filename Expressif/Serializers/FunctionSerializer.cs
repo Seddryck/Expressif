@@ -27,6 +27,12 @@ public class FunctionSerializer
 
     public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
     {
+        if (function.Syntax == FunctionSyntax.FieldShorthand)
+        {
+            stringBuilder.Append('.').Append(((LiteralParameter)function.Parameters.Single()).Value);
+            return;
+        }
+
         stringBuilder.Append(function.Name.ToKebabCase());
         if (function.Parameters.Any())
         {
