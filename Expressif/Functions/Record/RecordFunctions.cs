@@ -5,11 +5,16 @@ using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Functions.Record;
 
+/// <summary>
+/// Returns the value of the named field from the input record or object.
+/// Returns <see langword="null"/> when the field does not exist or the input does not expose named values.
+/// </summary>
 [Function(prefix: "")]
 public class Field : IFunction
 {
     private Func<string> Name { get; }
 
+    /// <param name="name">Name of the field to retrieve from the input.</param>
     public Field(Func<string> name)
         => Name = name;
 
@@ -17,6 +22,10 @@ public class Field : IFunction
         => NamedValueAccessor.Get(value, Name.Invoke());
 }
 
+/// <summary>
+/// Creates a record by evaluating its named and spread entries against the input value.
+/// Later entries overwrite fields with the same name created by earlier entries.
+/// </summary>
 [Function(prefix: "")]
 public class Record : IFunction
 {
@@ -25,6 +34,7 @@ public class Record : IFunction
     public Record()
         : this(() => []) { }
 
+    /// <param name="entries">Factory that creates the named and spread entries used to build the record.</param>
     public Record(Func<RecordEntryEvaluator[]> entries)
         => Entries = entries;
 

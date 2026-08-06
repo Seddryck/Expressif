@@ -5,11 +5,16 @@ using Expressif.Functions;
 
 namespace Expressif.Functions.Array;
 
+/// <summary>
+/// Returns up to the requested number of elements from the start of the input enumerable.
+/// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
+/// </summary>
 [Function(prefix: "", aliases: ["first"])]
 public class FirstElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
 
+    /// <param name="count">Number of elements to return from the start of the input.</param>
     public FirstElements(Func<int> count)
         => Count = count;
 
@@ -34,11 +39,16 @@ public class FirstElements : BaseArrayFunction
     }
 }
 
+/// <summary>
+/// Omits the requested number of elements from the start of the input enumerable and returns the remainder.
+/// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
+/// </summary>
 [Function(prefix: "", aliases: ["skip-first"])]
 public class SkipFirstElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
 
+    /// <param name="count">Number of elements to omit from the start of the input.</param>
     public SkipFirstElements(Func<int> count)
         => Count = count;
 
@@ -62,11 +72,16 @@ public class SkipFirstElements : BaseArrayFunction
     }
 }
 
+/// <summary>
+/// Returns up to the requested number of elements from the end of the input enumerable, preserving their order.
+/// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
+/// </summary>
 [Function(prefix: "", aliases: ["last"])]
 public class LastElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
 
+    /// <param name="count">Number of elements to return from the end of the input.</param>
     public LastElements(Func<int> count)
         => Count = count;
 
@@ -92,11 +107,16 @@ public class LastElements : BaseArrayFunction
     }
 }
 
+/// <summary>
+/// Omits the requested number of elements from the end of the input enumerable and returns the remainder.
+/// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
+/// </summary>
 [Function(prefix: "", aliases: ["skip-last"])]
 public class SkipLastElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
 
+    /// <param name="count">Number of elements to omit from the end of the input.</param>
     public SkipLastElements(Func<int> count)
         => Count = count;
 
@@ -128,12 +148,18 @@ public class SkipLastElements : BaseArrayFunction
     }
 }
 
+/// <summary>
+/// Returns the elements in the zero-based half-open range from <c>start</c>, inclusive, to <c>end</c>, exclusive.
+/// Returns <see langword="null"/> when the input is not an enumerable, is a string, or either bound is negative.
+/// </summary>
 [Function(prefix: "", aliases: ["slice"])]
 public class SliceElements : BaseArrayFunction
 {
     public Func<int> Start { get; }
     public Func<int> End { get; }
 
+    /// <param name="start">Zero-based index of the first element to return.</param>
+    /// <param name="end">Zero-based exclusive index at which to stop returning elements.</param>
     public SliceElements(Func<int> start, Func<int> end)
         => (Start, End) = (start, end);
 

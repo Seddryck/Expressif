@@ -16,6 +16,7 @@ public class Filter : BaseArrayFunction
 {
     public Func<IPredicate> Predicate { get; }
 
+    /// <param name="predicate">Factory that creates the predicate applied to each input item.</param>
     public Filter(Func<IPredicate> predicate)
         => Predicate = predicate;
 
