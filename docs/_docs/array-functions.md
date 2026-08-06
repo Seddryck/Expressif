@@ -46,13 +46,19 @@ Returns the distinct values from the pipeline input that do not appear in the sp
 
 Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.
 
+###### Parameter
+* predicate: Expression defining the predicate applied to each input item.
+
 ##### first-elements
 
 ###### Alias: `first`
 
 ###### Overview
 
+Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
 
+###### Parameter
+* count: Number of elements to return from the start of the input.
 
 ##### fold
 
@@ -90,7 +96,10 @@ Returns the previous value for each input element. The first output value is `nu
 
 ###### Overview
 
+Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
 
+###### Parameter
+* count: Number of elements to return from the end of the input.
 
 ##### lead
 
@@ -107,6 +116,9 @@ Returns the next value for each input element. The last output value is `null` b
 ###### Overview
 
 Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
+
+###### Parameter
+* transformation: Expression creating the transformation applied to each input item.
 
 ##### reverse
 
@@ -133,7 +145,10 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 ###### Overview
 
+Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
 
+###### Parameter
+* count: Number of elements to omit from the start of the input.
 
 ##### skip-last-elements
 
@@ -141,7 +156,10 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 ###### Overview
 
+Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
 
+###### Parameter
+* count: Number of elements to omit from the end of the input.
 
 ##### slice-elements
 
@@ -149,7 +167,11 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 ###### Overview
 
+Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.
 
+###### Parameters
+* start: Zero-based index of the first element to return.
+* end: Zero-based exclusive index at which to stop returning elements.
 
 ##### symmetric-difference
 

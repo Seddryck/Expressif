@@ -55,7 +55,13 @@
     ],
     "Scope": "Array",
     "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": []
+    "Parameters": [
+      {
+        "Name": "predicate",
+        "Optional": false,
+        "Summary": "Expression defining the predicate applied to each input item."
+      }
+    ]
   },
   {
     "Name": "first-elements",
@@ -64,8 +70,14 @@
       "first"
     ],
     "Scope": "Array",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Optional": false,
+        "Summary": "Number of elements to return from the start of the input."
+      }
+    ]
   },
   {
     "Name": "fold",
@@ -116,8 +128,14 @@
       "last"
     ],
     "Scope": "Array",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Optional": false,
+        "Summary": "Number of elements to return from the end of the input."
+      }
+    ]
   },
   {
     "Name": "lead",
@@ -137,7 +155,13 @@
     ],
     "Scope": "Array",
     "Summary": "Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": []
+    "Parameters": [
+      {
+        "Name": "transformation",
+        "Optional": false,
+        "Summary": "Expression creating the transformation applied to each input item."
+      }
+    ]
   },
   {
     "Name": "reverse",
@@ -172,8 +196,14 @@
       "skip-first"
     ],
     "Scope": "Array",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Optional": false,
+        "Summary": "Number of elements to omit from the start of the input."
+      }
+    ]
   },
   {
     "Name": "skip-last-elements",
@@ -182,8 +212,14 @@
       "skip-last"
     ],
     "Scope": "Array",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Optional": false,
+        "Summary": "Number of elements to omit from the end of the input."
+      }
+    ]
   },
   {
     "Name": "slice-elements",
@@ -192,8 +228,19 @@
       "slice"
     ],
     "Scope": "Array",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.",
+    "Parameters": [
+      {
+        "Name": "start",
+        "Optional": false,
+        "Summary": "Zero-based index of the first element to return."
+      },
+      {
+        "Name": "end",
+        "Optional": false,
+        "Summary": "Zero-based exclusive index at which to stop returning elements."
+      }
+    ]
   },
   {
     "Name": "symmetric-difference",
@@ -669,16 +716,28 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Record",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values.",
+    "Parameters": [
+      {
+        "Name": "name",
+        "Optional": false,
+        "Summary": "Name of the field to retrieve from the input."
+      }
+    ]
   },
   {
     "Name": "record",
     "IsPublic": true,
     "Aliases": [],
     "Scope": "Record",
-    "Summary": "",
-    "Parameters": []
+    "Summary": "Creates a record by evaluating its named and spread entries against the input value. Later entries overwrite fields with the same name created by earlier entries.",
+    "Parameters": [
+      {
+        "Name": "entries",
+        "Optional": false,
+        "Summary": "Factory that creates the named and spread entries used to build the record."
+      }
+    ]
   },
   {
     "Name": "any-to-any",
