@@ -571,6 +571,19 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_InputRecordWithDuplicateFields_ReturnsClearError()
+    {
+        var result = await InvokeAsync("run", "count", "--input", "{name := alice, name := bob}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Duplicate field 'name' in record literal."));
+        });
+    }
+
+    [Test]
     public async Task Run_BatchOption_ScalarValue_ReturnsClearEnumerableError()
     {
         var result = await InvokeAsync("run", "add(1)", "--batch", "42");
