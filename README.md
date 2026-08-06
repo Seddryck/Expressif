@@ -404,6 +404,10 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 <!-- START PREDICATE TABLE -->
 |Scope    | Name                           | Aliases                               |
 |-------- | ------------------------------ | --------------------------------------|
+|Array    | all                            | array-is-all, every                   |
+|Array    | none                           | array-is-none                         |
+|Array    | single                         | array-is-single                       |
+|Array    | some                           | array-is-some, any                    |
 |Boolean  | false                          | boolean-is-false                      |
 |Boolean  | false-or-null                  | boolean-is-false-or-null              |
 |Boolean  | identical-to                   | boolean-is-identical-to               |
