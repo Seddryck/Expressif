@@ -1,0 +1,36 @@
+suite: array
+kind: predicate
+operator: none
+tests:
+  - id: none.valid.predicate
+    cases:
+      - id: none.valid.predicate.array.no-match
+        value: "{1,2,3}"
+        expected: true
+        parameters:
+          - greater-than(5)
+      - id: none.valid.predicate.array.one-match
+        value: "{1,2,3}"
+        expected: false
+        parameters:
+          - equal-to(2)
+      - id: none.valid.predicate.array.several-matches
+        value: "{1,2,3,4}"
+        expected: false
+        parameters:
+          - even
+      - id: none.valid.predicate.array.empty
+        value: "{}"
+        expected: true
+        parameters:
+          - even
+      - id: none.valid.predicate.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - even
+      - id: none.valid.predicate.special.empty
+        value: (empty)
+        expected: false
+        parameters:
+          - even
