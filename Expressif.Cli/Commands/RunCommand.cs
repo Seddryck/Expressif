@@ -255,7 +255,7 @@ internal static class RunCommand
             throw new FormatException($"Invalid input syntax for --batch '{batchInput}': {exception.Message}", exception);
         }
 
-        if (parsedBatchInput is not IEnumerable enumerable || parsedBatchInput is string)
+        if (parsedBatchInput is not IEnumerable enumerable || parsedBatchInput is string or RecordValue)
             throw new FormatException("The --batch option requires an enumerable value.");
 
         var enumerator = enumerable.GetEnumerator();

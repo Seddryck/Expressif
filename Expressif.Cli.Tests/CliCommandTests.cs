@@ -584,6 +584,19 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_BatchOption_RecordValue_ReturnsClearEnumerableError()
+    {
+        var result = await InvokeAsync("run", "count", "--batch", "{name := alice, age := 32}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The --batch option requires an enumerable value."));
+        });
+    }
+
+    [Test]
     public async Task Run_SourceEnumerableExpression_EvaluatesEachRow()
     {
         var sourcePath = CreateTempFile("{1, -2, 3}");
