@@ -1,4 +1,4 @@
-﻿using Expressif.Parsers;
+using Expressif.Parsers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +49,6 @@ public class PredicationSerializer
                 break;
             default:
                 throw new NotImplementedException();
-        };
+        }
     }
 }
