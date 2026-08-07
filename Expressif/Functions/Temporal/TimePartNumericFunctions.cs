@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -33,7 +33,7 @@ public class MinuteOfHour : BaseDatePartNumericFunction
 /// </summary>
 public class MinuteOfDay : BaseDatePartNumericFunction
 {
-    protected override object EvaluateDateTime(DateTime value) => value.Hour * 60 + value.Minute;
+    protected override object EvaluateDateTime(DateTime value) => (value.Hour * 60) + value.Minute;
 }
 
 /// <summary>
@@ -49,7 +49,7 @@ public class SecondOfMinute : BaseDatePartNumericFunction
 /// </summary>
 public class SecondOfHour : BaseDatePartNumericFunction
 {
-    protected override object EvaluateDateTime(DateTime value) => value.Minute * 60 + value.Second;
+    protected override object EvaluateDateTime(DateTime value) => (value.Minute * 60) + value.Second;
 }
 
 /// <summary>
@@ -57,5 +57,5 @@ public class SecondOfHour : BaseDatePartNumericFunction
 /// </summary>
 public class SecondOfDay : BaseDatePartNumericFunction
 {
-    protected override object EvaluateDateTime(DateTime value) => (value.Hour * 60 + value.Minute) * 60 + value.Second;
+    protected override object EvaluateDateTime(DateTime value) => (((value.Hour * 60) + value.Minute) * 60) + value.Second;
 }
