@@ -1,4 +1,4 @@
-﻿using Expressif.Values;
+using Expressif.Values;
 using System;
 using System.Linq;
 
@@ -30,7 +30,6 @@ public abstract class BaseTimeZoneParameteredFunction : BaseTimeZoneFunction
 
         return zone ?? throw new ArgumentOutOfRangeException($"TimeZone '{label}' is not existing on this computer.");
     }
-
 }
 
 /// <summary>
