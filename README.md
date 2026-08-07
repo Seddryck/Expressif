@@ -206,6 +206,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
 |Array    | adjacent                            | adjacent                                                                          |
 |Array    | broadcast                           | array-to-broadcast                                                                |
+|Array    | chunk                               | chunk                                                                             |
 |Array    | complement                          | complement                                                                        |
 |Array    | difference                          | difference                                                                        |
 |Array    | distinct                            | distinct                                                                          |
