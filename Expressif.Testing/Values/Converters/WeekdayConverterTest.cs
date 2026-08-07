@@ -1,4 +1,4 @@
-﻿using Expressif.Values;
+using Expressif.Values;
 using Expressif.Values.Converters;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Expressif.Testing.Values.Converters;
-
 
 public class WeekdayConverterTest
 {

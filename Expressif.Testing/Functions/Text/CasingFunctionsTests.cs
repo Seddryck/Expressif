@@ -83,7 +83,6 @@ public class CasingFunctionsTests
         });
     }
 
-
     [TestCase("{alice, bob}")]
     [TestCase("{`alice`,`bob`}")]
     public void TextCasing_StringArrayLikeInput_UsesArraySemantics(string value)
