@@ -1,4 +1,4 @@
-﻿using Expressif.Functions.IO;
+using Expressif.Functions.IO;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Functions.IO;
@@ -50,7 +50,7 @@ public class FileFunctionsTest
             fileInfo.SetupGet(x => x.Exists).Returns(true);
             fileInfo.SetupGet(x => x.CreationTimeUtc).Returns(expected);
             return fileInfo.Object;
-        };
+        }
         function.SetFileInfoInitializer(Init);
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
