@@ -1,4 +1,4 @@
-﻿using Sprache;
+using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,6 @@ namespace Expressif.Parsers;
 
 public class Interval
 {
-    
     public string LowerBound { get; }
     public string UpperBound { get; }
     public char LowerBoundType { get; }

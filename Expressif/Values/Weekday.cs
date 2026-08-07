@@ -1,4 +1,4 @@
-﻿using Expressif.Values.Casters;
+using Expressif.Values.Casters;
 using Expressif.Values.Converters;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,6 @@ public record Weekday(int Index, string Name)
     : IParsable<Weekday>
 #endif
 {
-
     protected static readonly NumberStyles Style = NumberStyles.None;
     protected static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;
 
