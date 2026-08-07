@@ -28,6 +28,21 @@ Every issue MUST have exactly one change-type label:
 
 The label is determined by the nature of the issue.
 
+## Skills
+
+Repository-specific workflows are defined under `.github/skills/`.
+
+When a task matches an existing skill, read and follow that skill before making changes.
+
+In particular:
+
+* Use `/scaffold` when introducing a new function, predicate, or accumulator definition, including documentation metadata and conformance cases.
+* Use `/implement` when implementing an operator for which documentation metadata and conformance cases already exist.
+
+For a new operator that requires both steps, run `/scaffold` before `/implement`.
+
+Skills define task-specific procedures. `AGENTS.md` defines repository-wide rules and takes precedence if a skill contains conflicting Git, worktree, branch, issue, commit, or pull-request instructions.
+
 ## Pull requests
 
 For every completed implementation:
@@ -37,7 +52,7 @@ For every completed implementation:
 3. Use a Conventional Commit-style PR title.
 4. Include a concise description of the change.
 5. Include the relevant tests or validation performed.
-6. Link the pull request to the corresponding issue when one exists.
+6. Link the pull request to the corresponding issue when one exists (use wording `close`).
 
 Do NOT use `bug`, `new-feature`, or `enhancement` labels on the pull request unless explicitly requested.
 
