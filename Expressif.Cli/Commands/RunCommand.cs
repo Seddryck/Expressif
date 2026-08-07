@@ -310,10 +310,10 @@ internal static class RunCommand
     private static IEnumerable<object?> CreateSourceRows(object? sourceValue, string sourcePath, bool scalar)
         => sourceValue switch
         {
-            null => throw new FormatException("The source supplied to 'run' returned null. Expected an IEnumerable or IDataReader."),
+            null => throw new FormatException("The source returned null. Expected an IEnumerable or IDataReader."),
             IDataReader reader => EnumerateReaderRows(reader, sourcePath, scalar),
             IEnumerable enumerable when sourceValue is not string => EnumerateSourceValues(enumerable, scalar),
-            _ => throw new FormatException("The source supplied to 'run' returned a scalar value. Expected an IEnumerable or IDataReader.")
+            _ => throw new FormatException("The source returned a scalar value. Expected an IEnumerable or IDataReader.")
         };
 
     private static object? ResolveSourceRowsValue(string sourcePath, IReadOnlyList<string> sourceOptions)
