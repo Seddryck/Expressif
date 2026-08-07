@@ -1,5 +1,15 @@
 [
   {
+    "Name": "any",
+    "IsPublic": true,
+    "Aliases": [
+      "any"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns `true` when at least one accumulated boolean value is `true`.",
+    "Parameters": []
+  },
+  {
     "Name": "count",
     "IsPublic": true,
     "Aliases": [
@@ -7,6 +17,16 @@
     ],
     "Scope": "Array",
     "Summary": "Counts the number of accumulated items, including `null` values.",
+    "Parameters": []
+  },
+  {
+    "Name": "every",
+    "IsPublic": true,
+    "Aliases": [
+      "every"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns `true` only when every accumulated boolean value is `true`.",
     "Parameters": []
   },
   {

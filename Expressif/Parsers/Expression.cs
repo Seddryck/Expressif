@@ -41,7 +41,9 @@ public class ClosedExpression : IExpression
         "min",
         "max",
         "first",
-        "last"
+        "last",
+        "every",
+        "any"
     ];
 
     public IEnumerable<Function> Members { get; }

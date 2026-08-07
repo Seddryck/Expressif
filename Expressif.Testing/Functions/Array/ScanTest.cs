@@ -10,6 +10,14 @@ public class ScanTest
         => Assert.That(new Scan(() => new SumAccumulator()).Evaluate(new object[] { 1, 2, 3 }), Is.EqualTo(new object?[] { 1m, 3m, 6m }));
 
     [Test]
+    public void Evaluate_EveryAccumulator_Valid()
+        => Assert.That(new Scan(() => new EveryAccumulator()).Evaluate(new object[] { true, true, false, true }), Is.EqualTo(new object[] { true, true, false, false }));
+
+    [Test]
+    public void Evaluate_AnyAccumulator_Valid()
+        => Assert.That(new Scan(() => new AnyAccumulator()).Evaluate(new object[] { false, false, true, false }), Is.EqualTo(new object[] { false, false, true, true }));
+
+    [Test]
     public void Evaluate_OutputCardinalityEqualsInputCardinality()
     {
         var input = new object[] { 1, "2", true, 4m };
