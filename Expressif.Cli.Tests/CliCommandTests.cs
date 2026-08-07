@@ -579,7 +579,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("Duplicate field 'name' in record literal."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Input enumeration failed at position 0: Duplicate field 'name' in record literal."));
         });
     }
 

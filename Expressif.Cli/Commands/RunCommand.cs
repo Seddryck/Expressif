@@ -213,7 +213,7 @@ internal static class RunCommand
 
                     input = enumerator.Current;
                 }
-                catch (Exception exception) when (exception is not OutOfMemoryException and not FormatException and not ArgumentException)
+                catch (Exception exception) when (exception is not OutOfMemoryException and not FormatException)
                 {
                     throw new InvalidOperationException(
                         $"Input enumeration failed at position {index}: {exception.Message}",
