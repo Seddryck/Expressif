@@ -1,4 +1,4 @@
-﻿using Expressif.Functions.Text;
+using Expressif.Functions.Text;
 using Expressif.Testing.Conformance;
 using Expressif.Values.Special;
 
@@ -82,7 +82,6 @@ public class CasingFunctionsTests
             Assert.That(new NamespaceCase().Evaluate("   "), Is.EqualTo(expected));
         });
     }
-
 
     [TestCase("{alice, bob}")]
     [TestCase("{`alice`,`bob`}")]
