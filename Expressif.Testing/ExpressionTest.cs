@@ -266,6 +266,15 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(6m));
     }
 
+    [TestCase("{true,true,true} | every", true)]
+    [TestCase("{true,false,true} | every", false)]
+    [TestCase("{false,true,false} | any", true)]
+    [TestCase("{false,false,false} | any", false)]
+    [TestCase("{} | every", true)]
+    [TestCase("{} | any", false)]
+    public void Evaluate_DirectBooleanAccumulatorSyntax_Valid(string code, bool expected)
+        => Assert.That(new ClosedExpression(code).Evaluate(), Is.EqualTo(expected));
+
     [Test]
     public void Evaluate_ArrayPipeMapMultiply_Valid()
     {
@@ -291,6 +300,14 @@ public class ExpressionTest
         var result = expression.Evaluate();
 
         Assert.That(result, Is.EqualTo(new object?[] { 8m, 7m, 6m }));
+    }
+
+    [Test]
+    public void Evaluate_LeadingMapPipeline_UsesImplicitInput()
+    {
+        var result = new Expression("|> add(1)").Evaluate(new object?[] { 10, 20 });
+
+        Assert.That(result, Is.EqualTo(new object?[] { 11m, 21m }));
     }
 
     [Test]

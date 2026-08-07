@@ -748,6 +748,19 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_SourceCsv_PassesRecordValueToExpression()
+    {
+        var sourcePath = CreateTempFile($"name,age{Environment.NewLine}Alice,32", ".csv");
+
+        var result = await InvokeAsync("run", "record(...)", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := Alice, age := \"32\"}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
     public async Task Run_SourceCsv_WithRepeatedSourceOptions_UsesConfiguredProfile()
     {
         var sourcePath = CreateTempFile($"name;country{Environment.NewLine} Alice;Belgium{Environment.NewLine} Bob;France", ".csv");
@@ -762,21 +775,6 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
-            Assert.That(result.StdErr, Is.Empty);
-        });
-    }
-
-    [Test]
-    public async Task Run_SourceCsv_PassesRecordValueToExpression()
-    {
-        var sourcePath = CreateTempFile($"name,age{Environment.NewLine}Alice,32", ".csv");
-
-        var result = await InvokeAsync("run", "record(...)", "--source", sourcePath);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := Alice, age := \"32\"}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

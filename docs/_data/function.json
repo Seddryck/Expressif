@@ -32,6 +32,22 @@
     ]
   },
   {
+    "Name": "chunk",
+    "IsPublic": true,
+    "Aliases": [
+      "chunk"
+    ],
+    "Scope": "Array",
+    "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "size",
+        "Optional": false,
+        "Summary": "The strictly positive number of items in each chunk."
+      }
+    ]
+  },
+  {
     "Name": "complement",
     "IsPublic": true,
     "Aliases": [
@@ -671,6 +687,22 @@
     "Parameters": []
   },
   {
+    "Name": "percent-change",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-percent-change"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
+    "Parameters": [
+      {
+        "Name": "previous",
+        "Optional": false,
+        "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
+      }
+    ]
+  },
+  {
     "Name": "power",
     "IsPublic": true,
     "Aliases": [
@@ -782,6 +814,20 @@
     "Scope": "Special",
     "Summary": "Returns `any`.",
     "Parameters": []
+  },
+  {
+    "Name": "coalesce",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Summary": "Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.",
+    "Parameters": [
+      {
+        "Name": "expressions",
+        "Optional": false,
+        "Summary": "The candidate expressions, with at least two required."
+      }
+    ]
   },
   {
     "Name": "neutral",

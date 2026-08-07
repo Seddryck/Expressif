@@ -30,6 +30,8 @@ public class ExpressionTest
     [TestCase("@foo | count")]
     [TestCase("[foo] | min")]
     [TestCase("#1 | last")]
+    [TestCase("{true,true} | every")]
+    [TestCase("{false,true} | any")]
     public void Parse_InputExpression_ImplicitFoldAggregation_Valid(string value)
         => Assert.That(Expressif.Parsers.ClosedExpression.Parser.Parse(value).IsImplicitFoldAggregation, Is.True);
 
@@ -70,6 +72,24 @@ public class ExpressionTest
             Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "reverse" }));
             Assert.That(expression.Members.First().Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
             Assert.That(((OpenExpressionParameter)expression.Members.First().Parameters.Single()).Expression.Members.Count(), Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Parse_LeadingMapPipeline_LowersEntirePipelineToMapFunction()
+    {
+        var root = RootExpression.Parser.Parse("|> add(1) | sum");
+
+        Assert.That(root, Is.TypeOf<OpenRootExpression>());
+        var expression = ((OpenRootExpression)root).Expression;
+        var map = expression.Members.Single();
+        var mappedExpression = ((OpenExpressionParameter)map.Parameters.Single()).Expression;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Name, Is.EqualTo("map"));
+            Assert.That(map.Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
+            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "add", "sum" }));
         });
     }
 

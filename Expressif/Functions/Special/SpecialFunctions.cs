@@ -2,6 +2,7 @@
 using Expressif.Values.Casters;
 using Expressif.Values.Special;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -100,4 +101,33 @@ public class ValueToValue : BaseSpecialFunction
     protected override object EvaluateAny() => new Value().Keyword;
     protected override object EvaluateValue() => new Value().Keyword;
     protected override object EvaluateString(string value) => new Value().Keyword;
+}
+
+/// <summary>
+/// Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns <see langword="null"/> when every expression evaluates to <see langword="null"/>.
+/// </summary>
+[Function(prefix: "")]
+public class Coalesce : IFunction
+{
+    public IReadOnlyList<Func<object?, object?>> Expressions { get; }
+
+    /// <param name="expressions">The candidate expressions, with at least two required.</param>
+    public Coalesce(IEnumerable<Func<object?, object?>> expressions)
+    {
+        Expressions = expressions.ToArray();
+        if (Expressions.Count < 2)
+            throw new MissingOrUnexpectedParametersFunctionException(nameof(Coalesce), Expressions.Count);
+    }
+
+    public object? Evaluate(object? value)
+    {
+        foreach (var expression in Expressions)
+        {
+            var result = expression.Invoke(value);
+            if (result is not null && !new Null().Equals(result))
+                return result;
+        }
+
+        return null;
+    }
 }

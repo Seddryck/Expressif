@@ -59,62 +59,85 @@ internal static class EvaluateCommand
         command.Options.Add(sourceProfileOption);
         command.Options.Add(expressionFileOption);
 
-        command.SetAction(parseResult =>
-        {
-            var inlineExpression = parseResult.GetValue(expressionArgument);
-            var expressionFilePath = parseResult.GetValue(expressionFileOption);
-            var input = parseResult.GetValue(inputOption);
-            var sourcePath = parseResult.GetValue(sourceOption);
-            var scalar = parseResult.GetValue(scalarOption);
-            var sourceProfileOptions = parseResult.GetValue(sourceProfileOption) ?? [];
-            var hasInputOption = parseResult.GetResult(inputOption) is not null;
-            var hasSourceOption = parseResult.GetResult(sourceOption) is not null;
-            var hasSourceProfileOption = parseResult.GetResult(sourceProfileOption) is not null;
-            var inputOptionOccurrences = parseResult.Tokens.Count(token => token.Value is "--input" or "-i");
-
-            if (inputOptionOccurrences > 1)
-            {
-                Console.Error.WriteLine("The --input option can only be specified once for evaluate.");
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            if (hasInputOption && hasSourceOption)
-            {
-                Console.Error.WriteLine("The --source option cannot be combined with --input.");
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            if (scalar && !hasSourceOption)
-            {
-                Console.Error.WriteLine("The --scalar option requires --source.");
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            if (hasSourceProfileOption && !hasSourceOption)
-            {
-                Console.Error.WriteLine("The --source-option option requires --source.");
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            if (!ExpressionCommandCommon.TryResolveExpressionCode(
-                    inlineExpression,
-                    expressionFilePath,
-                    out var expressionCode,
-                    out var hasExpressionFile))
-            {
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            if (hasSourceOption)
-                return EvaluateSource(expressionCode, sourcePath, scalar, sourceProfileOptions, hasExpressionFile, expressionFilePath);
-
-            if (!hasInputOption)
-                return EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
-
-            return EvaluateOpen(expressionCode, input, hasExpressionFile, expressionFilePath);
-        });
+        command.SetAction(parseResult => Execute(
+            parseResult,
+            expressionArgument,
+            inputOption,
+            sourceOption,
+            scalarOption,
+            sourceProfileOption,
+            expressionFileOption));
 
         return command;
+    }
+
+    private static int Execute(
+        ParseResult parseResult,
+        Argument<string?> expressionArgument,
+        Option<string?> inputOption,
+        Option<string?> sourceOption,
+        Option<bool> scalarOption,
+        Option<string[]> sourceProfileOption,
+        Option<string?> expressionFileOption)
+    {
+        var hasInputOption = parseResult.GetResult(inputOption) is not null;
+        var hasSourceOption = parseResult.GetResult(sourceOption) is not null;
+        var scalar = parseResult.GetValue(scalarOption);
+        var hasSourceProfileOption = parseResult.GetResult(sourceProfileOption) is not null;
+
+        var optionValidationResult = ValidateOptions(
+            parseResult, hasInputOption, hasSourceOption, scalar, hasSourceProfileOption);
+        if (optionValidationResult != ExitCodes.Success)
+            return optionValidationResult;
+
+        var inlineExpression = parseResult.GetValue(expressionArgument);
+        var expressionFilePath = parseResult.GetValue(expressionFileOption);
+        if (!ExpressionCommandCommon.TryResolveExpressionCode(
+                inlineExpression,
+                expressionFilePath,
+                out var expressionCode,
+                out var hasExpressionFile))
+        {
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+
+        if (hasSourceOption)
+        {
+            var sourcePath = parseResult.GetValue(sourceOption);
+            var sourceProfileOptions = parseResult.GetValue(sourceProfileOption) ?? [];
+            return EvaluateSource(expressionCode, sourcePath, scalar, sourceProfileOptions, hasExpressionFile, expressionFilePath);
+        }
+
+        return hasInputOption
+            ? EvaluateOpen(expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
+            : EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
+    }
+
+    private static int ValidateOptions(
+        ParseResult parseResult,
+        bool hasInputOption,
+        bool hasSourceOption,
+        bool scalar,
+        bool hasSourceProfileOption)
+    {
+        if (parseResult.Tokens.Count(token => token.Value is "--input" or "-i") > 1)
+            return WriteOptionError("The --input option can only be specified once for evaluate.");
+
+        if (hasInputOption && hasSourceOption)
+            return WriteOptionError("The --source option cannot be combined with --input.");
+
+        if (scalar && !hasSourceOption)
+            return WriteOptionError("The --scalar option requires --source.");
+
+        return hasSourceProfileOption && !hasSourceOption
+            ? WriteOptionError("The --source-option option requires --source.")
+            : ExitCodes.Success;
+    }
+
+    private static int WriteOptionError(string message)
+    {
+        Console.Error.WriteLine(message);
+        return ExitCodes.InvalidExpressionOrInput;
     }
 
     private static int EvaluateSource(

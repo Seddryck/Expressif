@@ -89,7 +89,6 @@ internal static class RunCommand
         {
             Description = "Treat each source row as a single value. The source must contain exactly one column."
         };
-
         var command = new Command("run", "Evaluate an Expressif expression for each element of an input sequence.");
 
         command.Arguments.Add(expressionArgument);
@@ -301,13 +300,29 @@ internal static class RunCommand
 
     internal static IEnumerable<object?> BuildSourceRows(string? sourcePath, IReadOnlyList<string> sourceOptions, bool scalar = false)
     {
-        object? sourceValue;
+        var path = sourcePath ?? string.Empty;
+        var sourceValue = ResolveSourceRowsValue(path, sourceOptions);
+
+        foreach (var row in CreateSourceRows(sourceValue, path, scalar))
+            yield return row;
+    }
+
+    private static IEnumerable<object?> CreateSourceRows(object? sourceValue, string sourcePath, bool scalar)
+        => sourceValue switch
+        {
+            null => throw new FormatException("The source supplied to 'run' returned null. Expected an IEnumerable or IDataReader."),
+            IDataReader reader => EnumerateReaderRows(reader, sourcePath, scalar),
+            IEnumerable enumerable when sourceValue is not string => EnumerateSourceValues(enumerable, scalar),
+            _ => throw new FormatException("The source supplied to 'run' returned a scalar value. Expected an IEnumerable or IDataReader.")
+        };
+
+    private static object? ResolveSourceRowsValue(string sourcePath, IReadOnlyList<string> sourceOptions)
+    {
         try
         {
-            var path = sourcePath ?? string.Empty;
-            sourceValue = sourceOptions.Count == 0
-                ? ResolveSourceValue(path)
-                : ResolveSourceValueCore(path, sourceOptions);
+            return sourceOptions.Count == 0
+                ? ResolveSourceValue(sourcePath)
+                : ResolveSourceValueCore(sourcePath, sourceOptions);
         }
         catch (FormatException)
         {
@@ -317,38 +332,23 @@ internal static class RunCommand
         {
             throw new FormatException($"The source '{sourcePath}' could not be resolved: {exception.Message}", exception);
         }
+    }
 
-        if (sourceValue is null)
-            throw new FormatException("The source supplied to 'run' returned null. Expected an IEnumerable or IDataReader.");
+    private static IEnumerable<object?> EnumerateSourceValues(IEnumerable sourceValue, bool scalar)
+    {
+        if (scalar)
+            throw new FormatException("The --scalar option requires a tabular source exposing exactly one column.");
 
-        if (sourceValue is IDataReader reader)
+        var enumerator = sourceValue.GetEnumerator();
+        try
         {
-            foreach (var row in EnumerateReaderRows(reader, sourcePath ?? string.Empty, scalar))
-                yield return row;
-
-            yield break;
+            while (enumerator.MoveNext())
+                yield return enumerator.Current;
         }
-
-        if (sourceValue is IEnumerable enumerable and not string)
+        finally
         {
-            if (scalar)
-                throw new FormatException("The --scalar option requires a tabular source exposing exactly one column.");
-
-            var enumerator = enumerable.GetEnumerator();
-            try
-            {
-                while (enumerator.MoveNext())
-                    yield return enumerator.Current;
-            }
-            finally
-            {
-                (enumerator as IDisposable)?.Dispose();
-            }
-
-            yield break;
+            (enumerator as IDisposable)?.Dispose();
         }
-
-        throw new FormatException("The source supplied to 'run' returned a scalar value. Expected an IEnumerable or IDataReader.");
     }
 
     private static IEnumerable<object?> EnumerateReaderRows(IDataReader reader, string sourcePath, bool scalar)
@@ -400,65 +400,16 @@ internal static class RunCommand
     {
         try
         {
-            bool hasHeader;
-            try
-            {
-                hasHeader = reader.Read();
-            }
-            catch (Exception exception) when (exception is not OutOfMemoryException)
-            {
-                throw new FormatException($"Invalid CSV syntax in '{sourcePath}': {exception.Message}", exception);
-            }
-
-            if (!hasHeader)
-                throw new FormatException($"CSV source '{sourcePath}' is empty. A header row is required.");
-
-            var expectedFields = reader.FieldCount;
-            if (expectedFields == 0)
-                throw new FormatException($"CSV source '{sourcePath}' is empty. A header row is required.");
-
+            var headers = ReadCsvHeaders(reader, sourcePath);
+            var expectedFields = headers.Length;
             ValidateScalarColumnCount(expectedFields, sourcePath, scalar);
-
-            var headers = new string[expectedFields];
-            var headerSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            for (var i = 0; i < expectedFields; i++)
-            {
-                var header = Convert.ToString(reader.GetValue(i), CultureInfo.InvariantCulture) ?? string.Empty;
-                if (string.IsNullOrEmpty(header))
-                    throw new FormatException($"CSV header in '{sourcePath}' is invalid: field {i + 1} is empty.");
-
-                if (!headerSet.Add(header))
-                    throw new FormatException($"CSV header in '{sourcePath}' contains duplicate column name '{header}'.");
-
-                headers[i] = header;
-            }
 
             var recordNumber = 2;
             while (true)
             {
-                bool hasRow;
-                try
-                {
-                    hasRow = reader.Read();
-                }
-                catch (Exception exception) when (exception is not OutOfMemoryException)
-                {
-                    throw new FormatException($"Invalid CSV syntax in '{sourcePath}': {exception.Message}", exception);
-                }
-
-                if (!hasRow)
+                var values = ReadCsvValues(reader, sourcePath, recordNumber, expectedFields);
+                if (values is null)
                     yield break;
-
-                var actualFields = reader.FieldCount;
-                if (actualFields != expectedFields)
-                    throw new FormatException($"CSV record {recordNumber} in '{sourcePath}' contains {actualFields} fields, but {expectedFields} fields were expected.");
-
-                var values = new object?[expectedFields];
-                for (var i = 0; i < expectedFields; i++)
-                {
-                    var value = reader.GetValue(i);
-                    values[i] = value is DBNull ? null : value;
-                }
 
                 yield return scalar ? values[0] : BuildRecordValue(headers, values);
                 recordNumber++;
@@ -467,6 +418,56 @@ internal static class RunCommand
         finally
         {
             reader.Dispose();
+        }
+    }
+
+    private static string[] ReadCsvHeaders(IDataReader reader, string sourcePath)
+    {
+        if (!ReadCsvRecord(reader, sourcePath) || reader.FieldCount == 0)
+            throw new FormatException($"CSV source '{sourcePath}' is empty. A header row is required.");
+
+        var headers = new string[reader.FieldCount];
+        var headerSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < headers.Length; i++)
+        {
+            var header = Convert.ToString(reader.GetValue(i), CultureInfo.InvariantCulture) ?? string.Empty;
+            if (string.IsNullOrEmpty(header))
+                throw new FormatException($"CSV header in '{sourcePath}' is invalid: field {i + 1} is empty.");
+
+            if (!headerSet.Add(header))
+                throw new FormatException($"CSV header in '{sourcePath}' contains duplicate column name '{header}'.");
+
+            headers[i] = header;
+        }
+
+        return headers;
+    }
+
+    private static object?[]? ReadCsvValues(IDataReader reader, string sourcePath, int recordNumber, int expectedFields)
+    {
+        if (!ReadCsvRecord(reader, sourcePath))
+            return null;
+
+        var actualFields = reader.FieldCount;
+        if (actualFields != expectedFields)
+            throw new FormatException($"CSV record {recordNumber} in '{sourcePath}' contains {actualFields} fields, but {expectedFields} fields were expected.");
+
+        var values = new object?[expectedFields];
+        for (var i = 0; i < expectedFields; i++)
+            values[i] = GetValue(reader, i);
+
+        return values;
+    }
+
+    private static bool ReadCsvRecord(IDataReader reader, string sourcePath)
+    {
+        try
+        {
+            return reader.Read();
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            throw new FormatException($"Invalid CSV syntax in '{sourcePath}': {exception.Message}", exception);
         }
     }
 
@@ -481,7 +482,6 @@ internal static class RunCommand
         var value = record.GetValue(index);
         return value is DBNull ? null : value;
     }
-
     private static RecordValue BuildRecordValue(IDataReader reader)
     {
         var fields = reader.FieldCount;
