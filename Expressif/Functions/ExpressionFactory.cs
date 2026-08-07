@@ -17,6 +17,7 @@ namespace Expressif.Functions;
 public class ExpressionFactory : BaseExpressionFactory
 {
     private Parser<IRootExpression> Parser { get; } = RootExpression.Parser;
+    private static readonly PredicateTypeMapper PredicateTypeMapper = new();
     private static readonly HashSet<string> ImplicitFoldAccumulators = new(
         new AccumulatorIntrospector().Locate().Select(x => x.Name),
         StringComparer.OrdinalIgnoreCase
@@ -338,7 +339,15 @@ public class ExpressionFactory : BaseExpressionFactory
     }
 
     private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
-        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
+        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateTransformationMember(member, context)).ToArray());
+
+    private IFunction InstantiateTransformationMember(Parsers.Function member, IContext context)
+    {
+        if (!TypeMapper.TryExecute(member.Name, out _) && PredicateTypeMapper.TryExecute(member.Name, out _))
+            return new PredicationFactory().Instantiate(new SinglePredication(member), context);
+
+        return InstantiateOrWrapAggregation(member, context);
+    }
 
     private bool TryInstantiateWithPredicateProvider(Type type, Parsers.Function function, IContext context, out IFunction filtering)
     {
