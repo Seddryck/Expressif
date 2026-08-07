@@ -1,0 +1,18 @@
+suite: array
+kind: accumulator
+operator: any
+tests:
+  - id: any.valid
+    cases:
+      - id: any.valid.array.contains-true
+        value: "{false, true, false}"
+        expected: true
+      - id: any.valid.array.all-false
+        value: "{false, false, false}"
+        expected: false
+      - id: any.valid.special.empty
+        value: (empty)
+        expected: false
+      - id: any.valid.special.null
+        value: (null)
+        expected:

@@ -29,6 +29,18 @@ public class FoldTest
     public void Evaluate_LastAccumulator_Valid()
         => Assert.That(new Fold(() => new LastAccumulator()).Evaluate(new object[] { 3, 2, 1 }), Is.EqualTo(1));
 
+    [TestCaseSource(nameof(BooleanAccumulatorCases))]
+    public void Evaluate_BooleanAccumulator_Valid(IAccumulator accumulator, object[] input, bool expected)
+        => Assert.That(new Fold(() => accumulator).Evaluate(input), Is.EqualTo(expected));
+
+    private static readonly object[] BooleanAccumulatorCases =
+    [
+        new object[] { new EveryAccumulator(), new object[] { true, true, true }, true },
+        new object[] { new EveryAccumulator(), new object[] { true, false, true }, false },
+        new object[] { new AnyAccumulator(), new object[] { false, true, false }, true },
+        new object[] { new AnyAccumulator(), new object[] { false, false, false }, false }
+    ];
+
     [Test]
     public void Evaluate_EmptyArray_ExpectedDefaults()
     {
@@ -40,8 +52,20 @@ public class FoldTest
             Assert.That(new Fold(() => new MaxAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
             Assert.That(new Fold(() => new FirstAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
             Assert.That(new Fold(() => new LastAccumulator()).Evaluate(System.Array.Empty<object>()), Is.Null);
+            Assert.That(new Fold(() => new EveryAccumulator()).Evaluate(System.Array.Empty<object>()), Is.True);
+            Assert.That(new Fold(() => new AnyAccumulator()).Evaluate(System.Array.Empty<object>()), Is.False);
         });
     }
+
+    [TestCaseSource(nameof(BooleanAccumulators))]
+    public void Evaluate_BooleanAccumulatorWithNull_ThrowsInvalidCastException(IAccumulator accumulator)
+        => Assert.Throws<InvalidCastException>(() => new Fold(() => accumulator).Evaluate(new object?[] { null }));
+
+    [TestCaseSource(nameof(BooleanAccumulators))]
+    public void Evaluate_BooleanAccumulatorWithInvalidValue_ThrowsInvalidCastException(IAccumulator accumulator)
+        => Assert.Throws<InvalidCastException>(() => new Fold(() => accumulator).Evaluate(new object[] { "not-a-boolean" }));
+
+    private static readonly IAccumulator[] BooleanAccumulators = [new EveryAccumulator(), new AnyAccumulator()];
 
     [Test]
     public void Evaluate_NonEnumerableInput_Null()
