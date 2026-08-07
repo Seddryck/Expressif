@@ -1,0 +1,45 @@
+suite: special
+kind: function
+operator: coalesce
+tests:
+  - id: coalesce.valid.expressions
+    cases:
+      - id: coalesce.valid.expressions.special.null
+        value: (null)
+        expected:
+        parameters:
+          - '"(null)"'
+          - '"(null)"'
+      - id: coalesce.valid.expressions.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - '"(null)"'
+          - '"(null)"'
+      - id: coalesce.valid.expressions.text.first-non-null
+        value: { preferred-name: "Ally", name: "Alice" }
+        expected: Ally
+        parameters:
+          - '[preferred-name]'
+          - '[name]'
+          - '"Anonymous"'
+      - id: coalesce.valid.expressions.text.second-non-null
+        value: { preferred-name: null, name: "Alice" }
+        expected: Alice
+        parameters:
+          - '[preferred-name]'
+          - '[name]'
+          - '"Anonymous"'
+      - id: coalesce.valid.expressions.text.fallback
+        value: { preferred-name: null, name: null }
+        expected: Anonymous
+        parameters:
+          - '[preferred-name]'
+          - '[name]'
+          - '"Anonymous"'
+      - id: coalesce.valid.expressions.special.all-null
+        value: { preferred-name: null, name: null }
+        expected:
+        parameters:
+          - '[preferred-name]'
+          - '[name]'

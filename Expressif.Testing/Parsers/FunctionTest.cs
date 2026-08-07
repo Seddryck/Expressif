@@ -63,6 +63,16 @@ public class FunctionTest
     }
 
     [Test]
+    public void Parse_Function_MapWithPredicateParameter_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse("map(even)");
+
+        Assert.That(function.Parameters, Has.Length.EqualTo(1));
+        Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
+        Assert.That(((OpenExpressionParameter)function.Parameters[0]).Expression.Members.Single().Name, Is.EqualTo("even"));
+    }
+
+    [Test]
     public void Parse_Function_FilterWithOpenExpressionParameter_Valid()
     {
         var function = Expressif.Parsers.Function.Parser.Parse("filter(greater-than(2))");

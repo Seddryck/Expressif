@@ -17,6 +17,7 @@ namespace Expressif.Functions;
 public class ExpressionFactory : BaseExpressionFactory
 {
     private Parser<IRootExpression> Parser { get; } = RootExpression.Parser;
+    private static readonly PredicateTypeMapper PredicateTypeMapper = new();
     private static readonly HashSet<string> ImplicitFoldAccumulators = new(
         new AccumulatorIntrospector().Locate().Select(x => x.Name),
         StringComparer.OrdinalIgnoreCase
@@ -88,6 +89,8 @@ public class ExpressionFactory : BaseExpressionFactory
 
         if (name.Equals("generate", StringComparison.OrdinalIgnoreCase))
             return BuildGenerateFunction(function, context);
+        if (name.Equals("coalesce", StringComparison.OrdinalIgnoreCase))
+            return BuildCoalesceFunction(function, context);
         if (name.Equals("adjacent", StringComparison.OrdinalIgnoreCase))
             return BuildAdjacentFunction(function, context);
 
@@ -134,6 +137,27 @@ public class ExpressionFactory : BaseExpressionFactory
             throw new ArgumentException("The 'result' parameter of generate expects an open expression.", nameof(function));
 
         return new Generate(whileProvider, nextProvider, BuildTransformationProvider(resultExpression, context));
+    }
+    
+    private IFunction BuildCoalesceFunction(Parsers.Function function, IContext context)
+    {
+        if (function.Parameters.Length < 2)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var expressions = function.Parameters.Select(parameter => BuildCoalesceExpressionEvaluator(parameter, context));
+        return new Special.Coalesce(expressions);
+    }
+
+    private Func<object?, object?> BuildCoalesceExpressionEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is IncomingValueParameter)
+            return input => input;
+
+        if (parameter is OpenExpressionParameter open)
+            return BuildOpenExpressionRecordEvaluator(open, context);
+
+        var provider = CreateParameter(parameter, typeof(object), context);
+        return _ => provider.DynamicInvoke();
     }
     
     private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
@@ -345,7 +369,15 @@ public class ExpressionFactory : BaseExpressionFactory
     }
 
     private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
-        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
+        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateTransformationMember(member, context)).ToArray());
+
+    private IFunction InstantiateTransformationMember(Parsers.Function member, IContext context)
+    {
+        if (!TypeMapper.TryExecute(member.Name, out _) && PredicateTypeMapper.TryExecute(member.Name, out _))
+            return new PredicationFactory().Instantiate(new SinglePredication(member), context);
+
+        return InstantiateOrWrapAggregation(member, context);
+    }
 
     private bool TryInstantiateWithPredicateProvider(Type type, Parsers.Function function, IContext context, out IFunction filtering)
     {

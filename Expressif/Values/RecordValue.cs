@@ -24,6 +24,8 @@ public class RecordValue : IReadOnlyDictionary<string, object?>
 
     public object? this[string key] => fields[key];
 
+    public object? this[int index] => fields[order[index]];
+
     public bool ContainsKey(string key)
         => fields.ContainsKey(key);
 

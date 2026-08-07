@@ -579,7 +579,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("Duplicate field 'name' in record literal."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Input enumeration failed at position 0: Duplicate field 'name' in record literal."));
         });
     }
 
@@ -626,6 +626,112 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_SourceCsv_EvaluatesCompleteRecordArrayOnce()
+    {
+        var sourcePath = CreateTempFile($"name,age{Environment.NewLine}Alice,32{Environment.NewLine}Bob,41", ".csv");
+        var result = await InvokeAsync("evaluate", "count", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_SourceCsvScalar_EvaluatesCompleteValueArrayOnce()
+    {
+        var sourcePath = CreateTempFile($"value{Environment.NewLine}10{Environment.NewLine}20{Environment.NewLine}30", ".csv");
+        var result = await InvokeAsync("evaluate", "sum", "--source", sourcePath, "--scalar");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("60"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_SourceCsv_WithSourceOptions_UsesConfiguredProfile()
+    {
+        var sourcePath = CreateTempFile($"value;ignored{Environment.NewLine}10;x{Environment.NewLine}20;y", ".csv");
+        var result = await InvokeAsync(
+            "evaluate", "count", "--source", sourcePath,
+            "--source-option", "delimiter=\";\"");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("name,age", false)]
+    [TestCase("name", true)]
+    public async Task Evaluate_SourceCsvHeaderOnly_EvaluatesEmptyArray(string header, bool scalar)
+    {
+        var sourcePath = CreateTempFile(header, ".csv");
+        var arguments = scalar
+            ? new[] { "evaluate", "count", "--source", sourcePath, "--scalar" }
+            : new[] { "evaluate", "count", "--source", sourcePath };
+        var result = await InvokeAsync(arguments);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("0"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_SourceAndInputTogether_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile("name", ".csv");
+        var result = await InvokeAsync("evaluate", "count", "--source", sourcePath, "--input", "value");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The --source option cannot be combined with --input."));
+        });
+    }
+
+    [TestCase("--scalar", "The --scalar option requires --source.")]
+    [TestCase("--source-option", "The --source-option option requires --source.")]
+    public async Task Evaluate_SourceDependentOptionWithoutSource_ReturnsClearError(string option, string expectedError)
+    {
+        var arguments = option == "--source-option"
+            ? new[] { "evaluate", "count", option, "header=true" }
+            : new[] { "evaluate", "count", option };
+        var result = await InvokeAsync(arguments);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(expectedError));
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsvScalar_EvaluatesEachValue()
+    {
+        var sourcePath = CreateTempFile($"name{Environment.NewLine}Alice{Environment.NewLine}Bob", ".csv");
+        var result = await InvokeAsync("run", "upper", "--source", sourcePath, "--scalar");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Run_SourceCsv_EvaluatesEachRecord()
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41,France{Environment.NewLine}Charlie,27,Germany", ".csv");
@@ -642,6 +748,19 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_SourceCsv_PassesRecordValueToExpression()
+    {
+        var sourcePath = CreateTempFile($"name,age{Environment.NewLine}Alice,32", ".csv");
+
+        var result = await InvokeAsync("run", "record(...)", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := Alice, age := \"32\"}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
     public async Task Run_SourceCsv_WithRepeatedSourceOptions_UsesConfiguredProfile()
     {
         var sourcePath = CreateTempFile($"name;country{Environment.NewLine} Alice;Belgium{Environment.NewLine} Bob;France", ".csv");
@@ -817,6 +936,27 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceDataReader_PassesRecordValueToExpression()
+    {
+        RunCommand.ResolveSourceValue = static _ =>
+        {
+            var dataTable = new DataTable();
+            dataTable.Columns.Add("name", typeof(string));
+            dataTable.Rows.Add("Alice");
+            return dataTable.CreateDataReader();
+        };
+
+        var result = await InvokeAsync("run", "record(...)", "--source", "customers.sql");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := Alice}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
