@@ -75,6 +75,24 @@ public class ExpressionTest
         });
     }
 
+    [Test]
+    public void Parse_LeadingMapPipeline_LowersEntirePipelineToMapFunction()
+    {
+        var root = RootExpression.Parser.Parse("|> add(1) | sum");
+
+        Assert.That(root, Is.TypeOf<OpenRootExpression>());
+        var expression = ((OpenRootExpression)root).Expression;
+        var map = expression.Members.Single();
+        var mappedExpression = ((OpenExpressionParameter)map.Parameters.Single()).Expression;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(map.Name, Is.EqualTo("map"));
+            Assert.That(map.Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
+            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "add", "sum" }));
+        });
+    }
+
     [TestCase("{1,2,3} |> absolute")]
     [TestCase("{1,2,3} |> ()")]
     [TestCase("{1,2,3} |> (absolute")]

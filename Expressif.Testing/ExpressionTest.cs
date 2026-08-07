@@ -303,6 +303,14 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_LeadingMapPipeline_UsesImplicitInput()
+    {
+        var result = new Expression("|> add(1)").Evaluate(new object?[] { 10, 20 });
+
+        Assert.That(result, Is.EqualTo(new object?[] { 11m, 21m }));
+    }
+
+    [Test]
     public void Evaluate_StringArrayPipeMapUpper_Valid()
     {
         var expression = new ClosedExpression("{\"alice\",\"bob\"} | map(upper)");
