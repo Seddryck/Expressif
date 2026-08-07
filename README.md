@@ -204,7 +204,9 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 <!-- START FUNCTION TABLE -->
 |Scope    | Name                                | Aliases                                                                           |
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
+|Array    | adjacent                            | adjacent                                                                          |
 |Array    | broadcast                           | array-to-broadcast                                                                |
+|Array    | chunk                               | chunk                                                                             |
 |Array    | complement                          | complement                                                                        |
 |Array    | difference                          | difference                                                                        |
 |Array    | distinct                            | distinct                                                                          |
@@ -216,6 +218,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Array    | last-elements                       | last                                                                              |
 |Array    | lead                                | array-to-lead                                                                     |
 |Array    | map                                 | map                                                                               |
+|Array    | pairwise                            | pairwise                                                                          |
 |Array    | reverse                             | reverse                                                                           |
 |Array    | scan                                | array-to-scan                                                                     |
 |Array    | skip-first-elements                 | skip-first                                                                        |
@@ -254,6 +257,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Numeric  | nth-root                            | numeric-to-nth-root                                                               |
 |Numeric  | null-to-zero                        |                                                                                   |
 |Numeric  | oppose                              | numeric-to-oppose                                                                 |
+|Numeric  | percent-change                      | numeric-to-percent-change                                                         |
 |Numeric  | power                               | numeric-to-power                                                                  |
 |Numeric  | round                               | numeric-to-round                                                                  |
 |Numeric  | sign                                | numeric-to-sign                                                                   |
@@ -265,6 +269,9 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Special  | any-to-any                          |                                                                                   |
 |Special  | neutral                             | Special-to-neutral                                                                |
 |Special  | null-to-value                       |                                                                                   |
+|Special  | tuple-at                            | tuple-at                                                                          |
+|Special  | tuple-first                         | tuple-first                                                                       |
+|Special  | tuple-second                        | tuple-second                                                                      |
 |Special  | value-to-value                      |                                                                                   |
 |Temporal | age                                 | date-to-age                                                                       |
 |Temporal | backward                            | dateTime-to-backward, dateTime-to-subtract                                        |

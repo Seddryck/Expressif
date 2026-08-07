@@ -88,6 +88,8 @@ public class ExpressionFactory : BaseExpressionFactory
 
         if (name.Equals("coalesce", StringComparison.OrdinalIgnoreCase))
             return BuildCoalesceFunction(function, context);
+        if (name.Equals("adjacent", StringComparison.OrdinalIgnoreCase))
+            return BuildAdjacentFunction(function, context);
 
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
@@ -125,6 +127,78 @@ public class ExpressionFactory : BaseExpressionFactory
 
         var provider = CreateParameter(parameter, typeof(object), context);
         return _ => provider.DynamicInvoke();
+    }
+    
+    private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
+    {
+        if (function.Parameters.Length != 1 || function.Parameters[0] is not OpenExpressionParameter open)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var members = open.Expression.Members.ToArray();
+        IFunction operation;
+        if (members.Length == 1 && members[0].Parameters.Length == 0 && TryBuildBinaryCallable(members[0].Name, context, out var callable))
+        {
+            operation = new ChainFunction([
+                InstantiateOrWrapAggregation(new Parsers.Function("tuple-at", [new LiteralParameter("1")]), context),
+                callable
+            ]);
+        }
+        else
+            operation = BuildOpenExpression(open.Expression, context);
+
+        return new Adjacent(() => new LexicallyBoundTupleFunction(operation, context));
+    }
+
+    private bool TryBuildBinaryCallable(string name, IContext context, out IFunction callable)
+    {
+        var parameterized = new Parsers.Function(name, [new TupleProjectionParameter(0)]);
+        try
+        {
+            var functionType = TypeMapper.Execute(name);
+            if (!functionType.GetConstructors().Any(x => x.GetParameters().Length == 1))
+            {
+                callable = null!;
+                return false;
+            }
+            callable = InstantiateOrWrapAggregation(parameterized, context);
+            return true;
+        }
+        catch (NotImplementedFunctionException)
+        {
+            try
+            {
+                var predicateType = new PredicateTypeMapper().Execute(name);
+                if (!predicateType.GetConstructors().Any(x => x.GetParameters().Length == 1))
+                {
+                    callable = null!;
+                    return false;
+                }
+                callable = new PredicationFactory().Instantiate(new SinglePredication(parameterized), context);
+                return true;
+            }
+            catch (NotImplementedFunctionException)
+            {
+                callable = null!;
+                return false;
+            }
+        }
+    }
+
+    private sealed class LexicallyBoundTupleFunction(IFunction expression, IContext context) : IFunction
+    {
+        public object? Evaluate(object? value)
+        {
+            var previous = context.CurrentObject.Value;
+            context.CurrentObject.Set(value);
+            try
+            {
+                return expression.Evaluate(value);
+            }
+            finally
+            {
+                context.CurrentObject.Set(previous);
+            }
+        }
     }
 
     private IFunction BuildRecordFunction(Parsers.Function function, IContext context)

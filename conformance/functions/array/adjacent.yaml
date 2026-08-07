@@ -1,0 +1,22 @@
+suite: array
+kind: function
+operator: adjacent
+tests:
+  - id: adjacent.valid.operation
+    cases:
+      - id: adjacent.valid.operation.special.null
+        value: (null)
+        expected:
+        parameters: [subtract]
+      - id: adjacent.valid.operation.special.empty
+        value: (empty)
+        expected:
+        parameters: [subtract]
+      - id: adjacent.valid.operation.array.empty
+        value: []
+        expected: []
+        parameters: [subtract]
+      - id: adjacent.valid.operation.array.values
+        value: [100, 105, 120]
+        expected: [5, 15]
+        parameters: [subtract]

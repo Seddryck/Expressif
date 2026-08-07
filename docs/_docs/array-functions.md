@@ -2,9 +2,20 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [broadcast, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
+keywords: [adjacent, broadcast, chunk, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, pairwise, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
+##### adjacent
+
+###### Alias: `adjacent`
+
+###### Overview
+
+Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* operation: Specifies the callable or open expression evaluated against each consecutive pair.
+
 ##### broadcast
 
 ###### Alias: `array-to-broadcast`
@@ -15,6 +26,17 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 ###### Parameter
 * accumulator: Factory that creates the accumulator instance used for the broadcast execution.
+
+##### chunk
+
+###### Alias: `chunk`
+
+###### Overview
+
+Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.
+
+###### Parameter
+* size: The strictly positive number of items in each chunk.
 
 ##### complement
 
@@ -127,6 +149,14 @@ Applies a transformation expression to each input item and returns the transform
 
 ###### Parameter
 * transformation: Expression creating the transformation applied to each input item.
+
+##### pairwise
+
+###### Alias: `pairwise`
+
+###### Overview
+
+Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.
 
 ##### reverse
 

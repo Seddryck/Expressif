@@ -1,5 +1,21 @@
 [
   {
+    "Name": "adjacent",
+    "IsPublic": true,
+    "Aliases": [
+      "adjacent"
+    ],
+    "Scope": "Array",
+    "Summary": "Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "operation",
+        "Optional": false,
+        "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
+      }
+    ]
+  },
+  {
     "Name": "broadcast",
     "IsPublic": true,
     "Aliases": [
@@ -12,6 +28,22 @@
         "Name": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
+      }
+    ]
+  },
+  {
+    "Name": "chunk",
+    "IsPublic": true,
+    "Aliases": [
+      "chunk"
+    ],
+    "Scope": "Array",
+    "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "size",
+        "Optional": false,
+        "Summary": "The strictly positive number of items in each chunk."
       }
     ]
   },
@@ -172,6 +204,16 @@
         "Summary": "Expression creating the transformation applied to each input item."
       }
     ]
+  },
+  {
+    "Name": "pairwise",
+    "IsPublic": true,
+    "Aliases": [
+      "pairwise"
+    ],
+    "Scope": "Array",
+    "Summary": "Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.",
+    "Parameters": []
   },
   {
     "Name": "reverse",
@@ -645,6 +687,22 @@
     "Parameters": []
   },
   {
+    "Name": "percent-change",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-percent-change"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
+    "Parameters": [
+      {
+        "Name": "previous",
+        "Optional": false,
+        "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
+      }
+    ]
+  },
+  {
     "Name": "power",
     "IsPublic": true,
     "Aliases": [
@@ -773,6 +831,42 @@
     "Aliases": [],
     "Scope": "Special",
     "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
+    "Parameters": []
+  },
+  {
+    "Name": "tuple-at",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-at"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.",
+    "Parameters": [
+      {
+        "Name": "position",
+        "Optional": false,
+        "Summary": "Specifies the zero-based position of the tuple field to return."
+      }
+    ]
+  },
+  {
+    "Name": "tuple-first",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-first"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the first field of a tuple. Returns `null` when the input is not a tuple.",
+    "Parameters": []
+  },
+  {
+    "Name": "tuple-second",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-second"
+    ],
+    "Scope": "Special",
+    "Summary": "Returns the second field of a tuple. Returns `null` when the input is not a tuple.",
     "Parameters": []
   },
   {

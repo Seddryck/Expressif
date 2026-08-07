@@ -80,12 +80,18 @@ internal static class RunCommand
         };
         sourceOption.Aliases.Add("-s");
 
+        var sourceProfileOption = new Option<string[]>("--source-option")
+        {
+            Description = "Source-specific setting in <name>=<value> form. Repeat to add settings."
+        };
+
         var command = new Command("run", "Evaluate an Expressif expression for each element of an input sequence.");
 
         command.Arguments.Add(expressionArgument);
         command.Options.Add(inputOption);
         command.Options.Add(batchOption);
         command.Options.Add(sourceOption);
+        command.Options.Add(sourceProfileOption);
         command.Options.Add(expressionFileOption);
 
         command.SetAction(parseResult =>
@@ -93,11 +99,13 @@ internal static class RunCommand
             var inlineExpression = parseResult.GetValue(expressionArgument);
             var expressionFilePath = parseResult.GetValue(expressionFileOption);
             var sourcePath = parseResult.GetValue(sourceOption);
+            var sourceProfileOptions = parseResult.GetValue(sourceProfileOption) ?? [];
             var inputRows = parseResult.GetValue(inputOption) ?? [];
             var batchInput = parseResult.GetValue(batchOption);
             var hasInputOption = parseResult.GetResult(inputOption) is not null;
             var hasBatchOption = parseResult.GetResult(batchOption) is not null;
             var hasSourceOption = parseResult.GetResult(sourceOption) is not null;
+            var hasSourceProfileOption = parseResult.GetResult(sourceProfileOption) is not null;
 
             var batchOptionOccurrences = parseResult.Tokens.Count(token => token.Value is "--batch");
             if (batchOptionOccurrences > 1)
@@ -127,8 +135,14 @@ internal static class RunCommand
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
+            if (hasSourceProfileOption && !hasSourceOption)
+            {
+                Console.Error.WriteLine("The --source-option option requires --source.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
+
             var sequenceInput = hasSourceOption
-                ? BuildSourceRows(sourcePath)
+                ? BuildSourceRows(sourcePath, sourceProfileOptions)
                 : BuildInputSequence(inputRows, hasBatchOption, batchInput);
 
             var context = new Context();
@@ -272,12 +286,15 @@ internal static class RunCommand
         }
     }
 
-    private static IEnumerable<object?> BuildSourceRows(string? sourcePath)
+    private static IEnumerable<object?> BuildSourceRows(string? sourcePath, IReadOnlyList<string> sourceOptions)
     {
         object? sourceValue;
         try
         {
-            sourceValue = ResolveSourceValue(sourcePath ?? string.Empty);
+            var path = sourcePath ?? string.Empty;
+            sourceValue = sourceOptions.Count == 0
+                ? ResolveSourceValue(path)
+                : ResolveSourceValueCore(path, sourceOptions);
         }
         catch (FormatException)
         {
@@ -450,6 +467,9 @@ internal static class RunCommand
     }
 
     private static object? ResolveSourceValueCore(string sourcePath)
+        => ResolveSourceValueCore(sourcePath, []);
+
+    private static object? ResolveSourceValueCore(string sourcePath, IReadOnlyList<string> sourceOptions)
     {
         if (string.IsNullOrWhiteSpace(sourcePath))
             throw new FormatException("Source path is required.");
@@ -460,8 +480,12 @@ internal static class RunCommand
         if (!File.Exists(sourcePath))
             throw new FormatException($"Source '{sourcePath}' was not found.");
 
-        if (Path.GetExtension(sourcePath).Equals(".csv", StringComparison.OrdinalIgnoreCase))
-            return OpenCsvDataReader(sourcePath);
+        var isCsv = Path.GetExtension(sourcePath).Equals(".csv", StringComparison.OrdinalIgnoreCase);
+        if (sourceOptions.Count > 0 && !isCsv)
+            throw new FormatException($"Source options are not supported for source '{sourcePath}'.");
+
+        if (isCsv)
+            return OpenCsvDataReader(sourcePath, sourceOptions);
 
         var sourceCode = ReadUtf8File(sourcePath);
         ClosedExpression closedExpression;
@@ -487,21 +511,161 @@ internal static class RunCommand
         }
     }
 
-    private static IDataReader OpenCsvDataReader(string sourcePath)
+    private static IDataReader OpenCsvDataReader(string sourcePath, IReadOnlyList<string> sourceOptions)
     {
         FileStream? stream = null;
         try
         {
             stream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var csvReader = new CsvReader(CsvProfile.CommaDoubleQuote);
+            var (profile, hasHeaderRecord) = BuildCsvProfile(sourceOptions);
+            // Expressif builds dynamic row records from the CSV header. PocketCsvReader's
+            // schema-driven header mode requires a named schema, so keep header rows visible
+            // to the row adapter while retaining the configured profile for validation.
+            var readerProfile = profile.Dialect.Header ? WithoutCsvHeaderConsumption(profile) : profile;
+            var csvReader = new CsvReader(readerProfile);
             var csvDataReader = csvReader.ToDataReader(stream);
-            return new DisposableDataReader(csvDataReader, stream, hasHeaderRecord: true);
+            return new DisposableDataReader(csvDataReader, stream, hasHeaderRecord);
         }
         catch
         {
             stream?.Dispose();
             throw;
         }
+    }
+
+    internal static (CsvProfile Profile, bool HasHeaderRecord) BuildCsvProfile(IReadOnlyList<string> options)
+    {
+        var baseline = CsvProfile.CommaDoubleQuote;
+        var defaults = baseline.Dialect;
+        var header = defaults.Header;
+        var headerRows = defaults.HeaderRows;
+        var headerJoin = defaults.HeaderJoin;
+        var headerRepeat = defaults.HeaderRepeat;
+        var commentRows = defaults.CommentRows;
+        var commentChar = defaults.CommentChar;
+        var delimiter = defaults.Delimiter;
+        var lineTerminator = defaults.LineTerminator;
+        var quoteChar = defaults.QuoteChar;
+        var doubleQuote = defaults.DoubleQuote;
+        var escapeChar = defaults.EscapeChar;
+        var nullSequence = defaults.NullSequence;
+        var missingCell = defaults.MissingCell;
+        var skipInitialSpace = defaults.SkipInitialSpace;
+        var arrayDelimiter = defaults.ArrayDelimiter;
+        var arrayPrefix = defaults.ArrayPrefix;
+        var arraySuffix = defaults.ArraySuffix;
+        var hasHeaderRecord = true;
+
+        foreach (var option in options)
+        {
+            var separator = option.IndexOf('=');
+            if (separator <= 0)
+                throw new FormatException($"Invalid source option '{option}'. Expected <name>=<value>.");
+
+            var name = option[..separator].Trim();
+            var suppliedValue = option[(separator + 1)..];
+            object? value;
+            try
+            {
+                value = InputValueParser.ParseSourceOptionValue(suppliedValue);
+            }
+            catch (FormatException exception)
+            {
+                throw InvalidSourceOption(name, suppliedValue, exception.Message);
+            }
+
+            try
+            {
+                switch (name)
+                {
+                    case "delimiter": delimiter = RequiredChar(value, name); break;
+                    case "line-terminator": lineTerminator = RequiredText(value, name); break;
+                    case "quote-char": quoteChar = OptionalChar(value, name); break;
+                    case "double-quote": doubleQuote = RequiredBoolean(value, name); break;
+                    case "escape-char": escapeChar = OptionalChar(value, name); break;
+                    case "header": header = hasHeaderRecord = RequiredBoolean(value, name); break;
+                    case "header-rows": headerRows = RequiredRows(value, name); break;
+                    case "header-join": headerJoin = RequiredText(value, name); break;
+                    case "header-repeat": headerRepeat = RequiredBoolean(value, name); break;
+                    case "comment-char": commentChar = OptionalChar(value, name); break;
+                    case "comment-rows": commentRows = RequiredRows(value, name); break;
+                    case "null-sequence": nullSequence = RequiredText(value, name); break;
+                    case "missing-cell": missingCell = RequiredText(value, name); break;
+                    case "skip-initial-space": skipInitialSpace = RequiredBoolean(value, name); break;
+                    case "array-delimiter": arrayDelimiter = OptionalChar(value, name); break;
+                    case "array-prefix": arrayPrefix = OptionalChar(value, name); break;
+                    case "array-suffix": arraySuffix = OptionalChar(value, name); break;
+                    default: throw new FormatException($"Unknown CSV source option '{name}' with value '{suppliedValue}'.");
+                }
+            }
+            catch (FormatException exception) when (!exception.Message.Contains("with value", StringComparison.Ordinal))
+            {
+                throw InvalidSourceOption(name, suppliedValue, exception.Message);
+            }
+        }
+
+        CsvProfile profile;
+        try
+        {
+            var dialect = new DialectDescriptor(
+                header, headerRows, headerJoin, headerRepeat, commentRows, commentChar,
+                delimiter, lineTerminator, quoteChar, doubleQuote, escapeChar, nullSequence,
+                missingCell, skipInitialSpace, arrayDelimiter, arrayPrefix, arraySuffix);
+            profile = new CsvProfile(dialect, baseline.Schema, baseline.Resource, baseline.Parsers);
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            throw new FormatException($"Invalid CSV source-option combination: {exception.Message}", exception);
+        }
+
+        return (profile, hasHeaderRecord);
+    }
+
+    private static CsvProfile WithoutCsvHeaderConsumption(CsvProfile profile)
+    {
+        var dialect = profile.Dialect;
+        var readerDialect = new DialectDescriptor(
+            false, [], dialect.HeaderJoin, dialect.HeaderRepeat, dialect.CommentRows, dialect.CommentChar,
+            dialect.Delimiter, dialect.LineTerminator, dialect.QuoteChar, dialect.DoubleQuote,
+            dialect.EscapeChar, dialect.NullSequence, dialect.MissingCell, dialect.SkipInitialSpace,
+            dialect.ArrayDelimiter, dialect.ArrayPrefix, dialect.ArraySuffix);
+        return new CsvProfile(readerDialect, profile.Schema, profile.Resource, profile.Parsers);
+    }
+
+    private static FormatException InvalidSourceOption(string name, string value, string reason)
+        => new($"Invalid CSV source option '{name}' with value '{value}': {reason}");
+
+    private static bool RequiredBoolean(object? value, string name)
+        => value is bool result ? result : throw new FormatException($"'{name}' requires a boolean.");
+
+    private static string RequiredText(object? value, string name)
+        => value is string result ? result : throw new FormatException($"'{name}' requires text.");
+
+    private static char RequiredChar(object? value, string name)
+        => OptionalChar(value, name) ?? throw new FormatException($"'{name}' cannot be null.");
+
+    private static char? OptionalChar(object? value, string name)
+    {
+        if (value is null)
+            return null;
+        if (value is string { Length: 1 } text)
+            return text[0];
+        throw new FormatException($"'{name}' requires a single character or null.");
+    }
+
+    private static int[] RequiredRows(object? value, string name)
+    {
+        if (value is not object?[] values || values.Length == 0)
+            throw new FormatException($"'{name}' requires a non-empty array of one-based row indexes.");
+
+        var rows = new int[values.Length];
+        for (var i = 0; i < values.Length; i++)
+        {
+            if (values[i] is not int row || row < 1)
+                throw new FormatException($"'{name}' requires a non-empty array of one-based row indexes.");
+            rows[i] = row;
+        }
+        return rows;
     }
 
     private static string ReadUtf8File(string sourcePath)
@@ -550,6 +714,30 @@ internal static class RunCommand
                 if (TryParseAutoQuotedScalar(text, out var autoQuotedValue))
                     return autoQuotedValue;
 
+                throw new FormatException(exception.Message, exception);
+            }
+        }
+
+        public static object? ParseSourceOptionValue(string text)
+        {
+            var normalized = text.Trim();
+            try
+            {
+                var parameter = Parameter.Parser.End().Parse(text);
+                if (normalized.Length >= 2 && normalized[0] is '"' or '`')
+                {
+                    return parameter switch
+                    {
+                        LiteralParameter literal => literal.Value,
+                        QuotedLiteralParameter quoted => quoted.Value,
+                        _ => ConvertToRuntimeValue(parameter)
+                    };
+                }
+
+                return ConvertToRuntimeValue(parameter);
+            }
+            catch (ParseException exception)
+            {
                 throw new FormatException(exception.Message, exception);
             }
         }

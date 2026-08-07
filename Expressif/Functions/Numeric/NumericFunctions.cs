@@ -21,7 +21,7 @@ public abstract class BaseNumericFunction : IFunction
         };
     }
 
-    private object? EvaluateUncasted(object value)
+    protected virtual object? EvaluateUncasted(object value)
     {
         if (new Null().Equals(value) || new Empty().Equals(value) || new Whitespace().Equals(value))
             return EvaluateNull();

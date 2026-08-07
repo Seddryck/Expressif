@@ -1,0 +1,18 @@
+suite: array
+kind: function
+operator: pairwise
+tests:
+  - id: pairwise.valid
+    cases:
+      - id: pairwise.valid.special.null
+        value: (null)
+        expected:
+      - id: pairwise.valid.special.empty
+        value: (empty)
+        expected:
+      - id: pairwise.valid.array.empty
+        value: []
+        expected: []
+      - id: pairwise.valid.array.values
+        value: [100, 105, 120]
+        expected: [[100, 105], [105, 120]]
