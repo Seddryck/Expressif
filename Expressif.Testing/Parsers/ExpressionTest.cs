@@ -30,6 +30,8 @@ public class ExpressionTest
     [TestCase("@foo | count")]
     [TestCase("[foo] | min")]
     [TestCase("#1 | last")]
+    [TestCase("{true,true} | every")]
+    [TestCase("{false,true} | any")]
     public void Parse_InputExpression_ImplicitFoldAggregation_Valid(string value)
         => Assert.That(Expressif.Parsers.ClosedExpression.Parser.Parse(value).IsImplicitFoldAggregation, Is.True);
 
