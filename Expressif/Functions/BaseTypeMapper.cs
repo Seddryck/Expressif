@@ -13,11 +13,23 @@ public abstract class BaseTypeMapper
 
     public Type Execute(string functionName)
     {
-        var name = functionName.ToKebabCase();
-        name = name.Replace("date-time", "dateTime");
-        if (!Mapping.TryGetValue(name, out var value))
+        if (!TryExecute(functionName, out var value))
             throw new NotImplementedFunctionException(functionName);
         return value;
+    }
+
+    public bool TryExecute(string functionName, out Type type)
+    {
+        var name = functionName.ToKebabCase();
+        name = name.Replace("date-time", "dateTime");
+        if (Mapping.TryGetValue(name, out var value))
+        {
+            type = value;
+            return true;
+        }
+
+        type = null!;
+        return false;
     }
 
     protected abstract IDictionary<string, Type> Initialize();
