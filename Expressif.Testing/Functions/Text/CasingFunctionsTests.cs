@@ -1,4 +1,4 @@
-﻿using Expressif.Functions.Text;
+using Expressif.Functions.Text;
 using Expressif.Testing.Conformance;
 using Expressif.Values.Special;
 
@@ -177,5 +177,4 @@ public class CasingFunctionsTests
     [Conformance]
     public void NamespaceCase_Valid(object? value, string expected)
         => Assert.That(new NamespaceCase().Evaluate(value), Is.EqualTo(expected));
-
 }

@@ -1,4 +1,4 @@
-﻿using Expressif.Values.Casters;
+using Expressif.Values.Casters;
 using Expressif.Values.Converters;
 using System;
 using System.Collections.Generic;
@@ -78,5 +78,4 @@ public static class Weekdays
     public static Weekday Friday { get => weekdays[4]; }
     public static Weekday Saturday { get => weekdays[5]; }
     public static Weekday Sunday { get => weekdays[6]; }
-
 }

@@ -53,5 +53,4 @@ public class PredicationTest
     [TestCase("{is-func}")]
     public void Parse_SubPredication_Valid(string value)
         => Assert.That(SubPredication.Parser.Parse(value), Is.Not.Null);
-
 }
