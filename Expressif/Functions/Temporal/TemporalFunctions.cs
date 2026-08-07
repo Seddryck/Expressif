@@ -1,4 +1,4 @@
-﻿using Expressif.Values;
+using Expressif.Values;
 using Expressif.Values.Casters;
 using Expressif.Values.Special;
 using System;
@@ -135,8 +135,8 @@ public class CatholicCalendar : BaseDatePartChangeFunction
     {
         int a = year % 19;
         int b = year / 100;
-        int c = (b - (b / 4) - ((8 * b + 13) / 25) + (19 * a) + 15) % 30;
-        int d = c - (c / 28) * (1 - (c / 28) * (29 / (c + 1)) * ((21 - a) / 11));
+        int c = (b - (b / 4) - (((8 * b) + 13) / 25) + (19 * a) + 15) % 30;
+        int d = c - ((c / 28) * (1 - ((c / 28) * (29 / (c + 1)) * ((21 - a) / 11))));
         int e = d - ((year + (year / 4) + d + 2 - b + (b / 4)) % 7);
         int month = 3 + ((e + 40) / 44);
         int day = e + 28 - (31 * (month / 4));

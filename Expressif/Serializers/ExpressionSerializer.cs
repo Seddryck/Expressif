@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +32,7 @@ public class ExpressionSerializer
                 break;
             default:
                 throw new NotSupportedException();
-        };
+        }
     }
 
     public virtual void Serialize(OpenExpression expression, ref StringBuilder stringBuilder)

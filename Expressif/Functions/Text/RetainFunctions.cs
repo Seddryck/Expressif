@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -13,7 +13,6 @@ public abstract class BaseTextRetain : BaseTextFunction
     protected override object? EvaluateBlank() => new Empty().Keyword;
 
     protected override object? EvaluateString(string value)
-
     {
         Span<char> span = value.ToCharArray();
         Span<char> result = stackalloc char[value.Length];
