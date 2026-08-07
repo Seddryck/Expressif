@@ -94,6 +94,22 @@ The result is written directly to standard output:
 
 The input is passed to the expression as text. The expression is responsible for interpreting or converting it as needed.
 
+### Evaluating a complete source
+
+Use `--source` (alias: `-s`) to load all source rows into one array and evaluate the expression once. For a one-column CSV named `numeric.csv`:
+
+```console
+expressif evaluate "sum" --source numeric.csv --scalar
+```
+
+```text
+60
+```
+
+Without `--scalar`, CSV rows are records. With `--scalar`, the source must expose exactly one column and each row contributes that column's value. `evaluate` accepts the same repeatable `--source-option <name>=<value>` CSV settings documented below for `run`.
+
+`--source` cannot be combined with `--input`. Both `--scalar` and `--source-option` require `--source`.
+
 ## Running an expression over a sequence
 
 Use `run` to evaluate an expression repeatedly over an input sequence.
@@ -188,6 +204,8 @@ For CSV input:
 - processing is streamed row by row so large files can be processed efficiently.
 
 CSV parsing can be configured by repeating `--source-option <name>=<value>`. Options apply only to the file supplied by `--source`.
+
+Use `--scalar` for a tabular source with exactly one column when each row should be passed directly as that column's value instead of as a record.
 
 ```console
 expressif run "[name] | upper" --source people.csv \

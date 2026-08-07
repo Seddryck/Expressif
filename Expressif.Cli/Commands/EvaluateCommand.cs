@@ -28,6 +28,22 @@ internal static class EvaluateCommand
         };
         inputOption.Aliases.Add("-i");
 
+        var sourceOption = new Option<string?>("--source")
+        {
+            Description = "Path to a source whose complete row set is passed as one array."
+        };
+        sourceOption.Aliases.Add("-s");
+
+        var scalarOption = new Option<bool>("--scalar")
+        {
+            Description = "Treat each source row as a single value. The source must contain exactly one column."
+        };
+
+        var sourceProfileOption = new Option<string[]>("--source-option")
+        {
+            Description = "Source-specific setting in <name>=<value> form. Repeat to add settings."
+        };
+
         var expressionFileOption = new Option<string?>("--file")
         {
             Description = "Path to a UTF-8 file containing the expression to evaluate."
@@ -38,6 +54,9 @@ internal static class EvaluateCommand
 
         command.Arguments.Add(expressionArgument);
         command.Options.Add(inputOption);
+        command.Options.Add(sourceOption);
+        command.Options.Add(scalarOption);
+        command.Options.Add(sourceProfileOption);
         command.Options.Add(expressionFileOption);
 
         command.SetAction(parseResult =>
@@ -45,12 +64,35 @@ internal static class EvaluateCommand
             var inlineExpression = parseResult.GetValue(expressionArgument);
             var expressionFilePath = parseResult.GetValue(expressionFileOption);
             var input = parseResult.GetValue(inputOption);
+            var sourcePath = parseResult.GetValue(sourceOption);
+            var scalar = parseResult.GetValue(scalarOption);
+            var sourceProfileOptions = parseResult.GetValue(sourceProfileOption) ?? [];
             var hasInputOption = parseResult.GetResult(inputOption) is not null;
+            var hasSourceOption = parseResult.GetResult(sourceOption) is not null;
+            var hasSourceProfileOption = parseResult.GetResult(sourceProfileOption) is not null;
             var inputOptionOccurrences = parseResult.Tokens.Count(token => token.Value is "--input" or "-i");
 
             if (inputOptionOccurrences > 1)
             {
                 Console.Error.WriteLine("The --input option can only be specified once for evaluate.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
+
+            if (hasInputOption && hasSourceOption)
+            {
+                Console.Error.WriteLine("The --source option cannot be combined with --input.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
+
+            if (scalar && !hasSourceOption)
+            {
+                Console.Error.WriteLine("The --scalar option requires --source.");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
+
+            if (hasSourceProfileOption && !hasSourceOption)
+            {
+                Console.Error.WriteLine("The --source-option option requires --source.");
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
@@ -63,6 +105,9 @@ internal static class EvaluateCommand
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
+            if (hasSourceOption)
+                return EvaluateSource(expressionCode, sourcePath, scalar, sourceProfileOptions, hasExpressionFile, expressionFilePath);
+
             if (!hasInputOption)
                 return EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
 
@@ -70,6 +115,28 @@ internal static class EvaluateCommand
         });
 
         return command;
+    }
+
+    private static int EvaluateSource(
+        string expressionCode,
+        string? sourcePath,
+        bool scalar,
+        IReadOnlyList<string> sourceOptions,
+        bool hasExpressionFile,
+        string? expressionFilePath)
+    {
+        object?[] sourceRows;
+        try
+        {
+            sourceRows = RunCommand.BuildSourceRows(sourcePath, sourceOptions, scalar).ToArray();
+        }
+        catch (FormatException exception)
+        {
+            Console.Error.WriteLine(exception.Message);
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+
+        return EvaluateOpen(expressionCode, sourceRows, hasExpressionFile, expressionFilePath);
     }
 
     private static int EvaluateClosed(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
@@ -135,7 +202,7 @@ internal static class EvaluateCommand
         }
     }
 
-    private static int EvaluateOpen(string expressionCode, string? input, bool hasExpressionFile, string? expressionFilePath)
+    private static int EvaluateOpen(string expressionCode, object? input, bool hasExpressionFile, string? expressionFilePath)
     {
         Expressif.Expression openExpression;
             try
