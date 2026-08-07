@@ -31,6 +31,14 @@ public class BroadcastTest
         => Assert.That(new Broadcast(() => new LastAccumulator()).Evaluate(new object[] { 3, 2, 1 }), Is.EqualTo(Enumerable.Repeat(1, 3)));
 
     [Test]
+    public void Evaluate_EveryAccumulator_Valid()
+        => Assert.That(new Broadcast(() => new EveryAccumulator()).Evaluate(new object[] { true, true, false }), Is.EqualTo(Enumerable.Repeat(false, 3)));
+
+    [Test]
+    public void Evaluate_AnyAccumulator_Valid()
+        => Assert.That(new Broadcast(() => new AnyAccumulator()).Evaluate(new object[] { false, true, false }), Is.EqualTo(Enumerable.Repeat(true, 3)));
+
+    [Test]
     public void Evaluate_EmptyArray_ExpectedDefaults()
     {
         Assert.Multiple(() =>

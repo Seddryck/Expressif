@@ -206,6 +206,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |-------- | ----------------------------------- | ----------------------------------------------------------------------------------|
 |Array    | adjacent                            | adjacent                                                                          |
 |Array    | broadcast                           | array-to-broadcast                                                                |
+|Array    | chunk                               | chunk                                                                             |
 |Array    | complement                          | complement                                                                        |
 |Array    | difference                          | difference                                                                        |
 |Array    | distinct                            | distinct                                                                          |
@@ -256,6 +257,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Numeric  | nth-root                            | numeric-to-nth-root                                                               |
 |Numeric  | null-to-zero                        |                                                                                   |
 |Numeric  | oppose                              | numeric-to-oppose                                                                 |
+|Numeric  | percent-change                      | numeric-to-percent-change                                                         |
 |Numeric  | power                               | numeric-to-power                                                                  |
 |Numeric  | round                               | numeric-to-round                                                                  |
 |Numeric  | sign                                | numeric-to-sign                                                                   |
@@ -265,6 +267,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Record   | field                               |                                                                                   |
 |Record   | record                              |                                                                                   |
 |Special  | any-to-any                          |                                                                                   |
+|Special  | coalesce                            |                                                                                   |
 |Special  | neutral                             | Special-to-neutral                                                                |
 |Special  | null-to-value                       |                                                                                   |
 |Special  | tuple-at                            | tuple-at                                                                          |

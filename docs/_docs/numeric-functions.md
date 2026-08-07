@@ -2,7 +2,7 @@
 title: Numeric functions
 subtitle: Functions applicable to numeric values
 tags: [functions, numeric]
-keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, greatest-common-divisor, human-readable-format-binary-bytes, human-readable-format-decimal, human-readable-format-decimal-bytes, increment, integer, invert, lowest-common-multiple, multiply, nth-root, null-to-zero, oppose, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
+keywords: [absolute, add, ceiling, clip, cube-power, cube-root, decrement, divide, floor, greatest-common-divisor, human-readable-format-binary-bytes, human-readable-format-decimal, human-readable-format-decimal-bytes, increment, integer, invert, lowest-common-multiple, multiply, nth-root, null-to-zero, oppose, percent-change, power, round, sign, square-power, square-root, subtract] # AUTO-GENERATED KEYWORDS
 ---
 
 For all numeric functions, unless otherwise specified, if the argument value is `null`, `empty` or `whitespace`, the function returns `null`.
@@ -192,6 +192,17 @@ Returns the unmodified argument value except if the argument value is `null`, `e
 ###### Overview
 
 Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.
+
+##### percent-change
+
+###### Alias: `numeric-to-percent-change`
+
+###### Overview
+
+Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.
+
+###### Parameter
+* previous: Specifies the previous numeric value used as the percentage-change baseline.
 
 ##### power
 

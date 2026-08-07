@@ -2,9 +2,20 @@
 title: Array accumulators
 subtitle: Accumulators applicable to arrays
 tags: [accumulators, array]
-keywords: [count, first, last, max, min, sum] # AUTO-GENERATED KEYWORDS
+keywords: [any, count, every, first, last, max, min, sum] # AUTO-GENERATED KEYWORDS
 ---
+
+`every` and `any` accumulate boolean values directly and take no predicate parameter. They are distinct from the `all(...)` and `none(...)` array predicates, which evaluate a supplied predicate against array elements.
+
 <!-- START AUTO-GENERATED -->
+##### any
+
+###### Alias: `any`
+
+###### Overview
+
+Returns `true` when at least one accumulated boolean value is `true`.
+
 ##### count
 
 ###### Alias: `count`
@@ -12,6 +23,14 @@ keywords: [count, first, last, max, min, sum] # AUTO-GENERATED KEYWORDS
 ###### Overview
 
 Counts the number of accumulated items, including `null` values.
+
+##### every
+
+###### Alias: `every`
+
+###### Overview
+
+Returns `true` only when every accumulated boolean value is `true`.
 
 ##### first
 

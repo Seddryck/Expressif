@@ -77,6 +77,8 @@ public class AccumulatorIntrospectorTest
             Assert.That(Infos.Any(x => x.Name == "max"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "first"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "last"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "every"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "any"), Is.True);
         }
     }
 }

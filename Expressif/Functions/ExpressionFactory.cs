@@ -86,6 +86,8 @@ public class ExpressionFactory : BaseExpressionFactory
         if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
             return BuildRecordFunction(function, context);
 
+        if (name.Equals("coalesce", StringComparison.OrdinalIgnoreCase))
+            return BuildCoalesceFunction(function, context);
         if (name.Equals("adjacent", StringComparison.OrdinalIgnoreCase))
             return BuildAdjacentFunction(function, context);
 
@@ -106,6 +108,27 @@ public class ExpressionFactory : BaseExpressionFactory
         return Instantiate<IFunction>(type, function.Parameters, context);
     }
 
+    private IFunction BuildCoalesceFunction(Parsers.Function function, IContext context)
+    {
+        if (function.Parameters.Length < 2)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var expressions = function.Parameters.Select(parameter => BuildCoalesceExpressionEvaluator(parameter, context));
+        return new Special.Coalesce(expressions);
+    }
+
+    private Func<object?, object?> BuildCoalesceExpressionEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is IncomingValueParameter)
+            return input => input;
+
+        if (parameter is OpenExpressionParameter open)
+            return BuildOpenExpressionRecordEvaluator(open, context);
+
+        var provider = CreateParameter(parameter, typeof(object), context);
+        return _ => provider.DynamicInvoke();
+    }
+    
     private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
     {
         if (function.Parameters.Length != 1 || function.Parameters[0] is not OpenExpressionParameter open)

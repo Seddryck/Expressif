@@ -656,6 +656,70 @@ public class CliCommandTests
         });
     }
 
+    public async Task Run_SourceCsv_WithRepeatedSourceOptions_UsesConfiguredProfile()
+    {
+        var sourcePath = CreateTempFile($"name;country{Environment.NewLine} Alice;Belgium{Environment.NewLine} Bob;France", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "[name] | upper", "--source", sourcePath,
+            "--source-option", "delimiter=\";\"",
+            "--source-option", "skip-initial-space=true");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_WithExplicitHeader_UsesPocketCsvHeaderNames()
+    {
+        var sourcePath = CreateTempFile($"name,country{Environment.NewLine}Alice,Belgium{Environment.NewLine}Bob,France", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "[name] | upper", "--source", sourcePath,
+            "--source-option", "header=true");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceOption_WithoutSource_ReturnsClearError()
+    {
+        var result = await InvokeAsync("run", "absolute", "--input", "1", "--source-option", "header=true");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The --source-option option requires --source."));
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_InvalidSourceOption_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile("name,age", ".csv");
+
+        var result = await InvokeAsync("run", "[name]", "--source", sourcePath, "--source-option", "delimiter=\"long\"");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("Invalid CSV source option 'delimiter' with value '\"long\"'"));
+        });
+    }
+
     [Test]
     public async Task Run_SourceCsvHeaderOnly_ProducesNoOutputAndSuccess()
     {

@@ -152,3 +152,49 @@ public class LastAccumulator : BaseAccumulator
     public override object? GetValue()
         => hasValue ? last : null;
 }
+
+/// <summary>
+/// Returns <see langword="true"/> only when every accumulated boolean value is <see langword="true"/>.
+/// </summary>
+/// <remarks>
+/// The neutral value is <see langword="true"/>. Each item is converted using <see cref="BooleanCaster"/>.
+/// A <see cref="InvalidCastException"/> is thrown when a <see langword="null"/> value is accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["every"])]
+public class EveryAccumulator : BaseAccumulator
+{
+    private bool every;
+    private BooleanCaster Caster { get; } = new();
+
+    public override void Initialize()
+        => every = true;
+
+    public override void Accumulate(object? item)
+        => every &= Caster.Cast(item ?? throw new InvalidCastException("Cannot cast null value to boolean for every aggregation."));
+
+    public override object GetValue()
+        => every;
+}
+
+/// <summary>
+/// Returns <see langword="true"/> when at least one accumulated boolean value is <see langword="true"/>.
+/// </summary>
+/// <remarks>
+/// The neutral value is <see langword="false"/>. Each item is converted using <see cref="BooleanCaster"/>.
+/// A <see cref="InvalidCastException"/> is thrown when a <see langword="null"/> value is accumulated.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["any"])]
+public class AnyAccumulator : BaseAccumulator
+{
+    private bool any;
+    private BooleanCaster Caster { get; } = new();
+
+    public override void Initialize()
+        => any = false;
+
+    public override void Accumulate(object? item)
+        => any |= Caster.Cast(item ?? throw new InvalidCastException("Cannot cast null value to boolean for any aggregation."));
+
+    public override object GetValue()
+        => any;
+}

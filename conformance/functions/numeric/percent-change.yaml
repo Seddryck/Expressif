@@ -1,0 +1,51 @@
+suite: numeric
+kind: function
+operator: percent-change
+tests:
+  - id: percent-change.valid.previous
+    cases:
+      - id: percent-change.valid.previous.numeric.increase
+        value: 105
+        expected: 5
+        parameters:
+          - 100
+      - id: percent-change.valid.previous.numeric.decrease
+        value: 80
+        expected: -20
+        parameters:
+          - 100
+      - id: percent-change.valid.previous.numeric.equal
+        value: 100
+        expected: 0
+        parameters:
+          - 100
+      - id: percent-change.valid.previous.numeric.current-zero
+        value: 0
+        expected: -100
+        parameters:
+          - 100
+      - id: percent-change.valid.previous.numeric.previous-zero
+        value: 100
+        expected:
+        parameters:
+          - 0
+      - id: percent-change.valid.previous.numeric.non-evaluable-input
+        value: abc
+        expected:
+        parameters:
+          - 100
+      - id: percent-change.valid.previous.numeric.non-evaluable-previous
+        value: 100
+        expected:
+        parameters:
+          - abc
+      - id: percent-change.valid.previous.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 100
+      - id: percent-change.valid.previous.special.empty
+        value: (empty)
+        expected:
+        parameters:
+          - 100
