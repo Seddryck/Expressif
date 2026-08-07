@@ -320,6 +320,15 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ArrayPipeMapPredicate_Valid()
+    {
+        var expression = new ClosedExpression("{10,15} | map(even)");
+        var result = expression.Evaluate();
+
+        Assert.That(result, Is.EqualTo(new object?[] { true, false }));
+    }
+
+    [Test]
     public void Evaluate_Map_PreservesCardinality()
     {
         var expression = new ClosedExpression("{1,2,3,4} | map(add(1))");

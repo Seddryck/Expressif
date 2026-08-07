@@ -47,4 +47,17 @@ public class PredicateTypeMapperTest
     [TestCase("foo - to - bar")]
     public void Execute_FunctionName_Invalid(string value)
         => Assert.That(() => new FunctionTypeMapper().Execute(value), Throws.TypeOf<NotImplementedFunctionException>());
+
+    [Test]
+    public void TryExecute_FunctionName_ReturnsWhetherFunctionExists()
+    {
+        var mapper = new FunctionTypeMapper();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(mapper.TryExecute("ceiling", out var type), Is.True);
+            Assert.That(type, Is.EqualTo(typeof(Ceiling)));
+            Assert.That(mapper.TryExecute("foo", out _), Is.False);
+        });
+    }
 }
