@@ -370,7 +370,7 @@ internal static class RunCommand
                 if (!hasRow)
                     yield break;
 
-                yield return BuildLiteDataRow(reader);
+                yield return BuildRecordValue(reader);
             }
         }
         finally
@@ -441,7 +441,7 @@ internal static class RunCommand
                     values[i] = value is DBNull ? null : value;
                 }
 
-                yield return new LiteDataRow(headers, values);
+                yield return BuildRecordValue(headers, values);
                 recordNumber++;
             }
         }
@@ -451,7 +451,7 @@ internal static class RunCommand
         }
     }
 
-    private static LiteDataRow BuildLiteDataRow(IDataReader reader)
+    private static RecordValue BuildRecordValue(IDataReader reader)
     {
         var fields = reader.FieldCount;
         var names = new string[fields];
@@ -463,7 +463,16 @@ internal static class RunCommand
             values[i] = value is DBNull ? null : value;
         }
 
-        return new LiteDataRow(names, values);
+        return BuildRecordValue(names, values);
+    }
+
+    private static RecordValue BuildRecordValue(IReadOnlyList<string> names, IReadOnlyList<object?> values)
+    {
+        var record = new RecordValue();
+        for (var i = 0; i < names.Count; i++)
+            record.Set(names[i], values[i]);
+
+        return record;
     }
 
     private static object? ResolveSourceValueCore(string sourcePath)
@@ -818,38 +827,6 @@ internal static class RunCommand
 
             return value;
         }
-    }
-
-    private sealed class LiteDataRow : Expressif.Values.ILiteDataRow
-    {
-        private readonly string[] names;
-        private readonly object?[] values;
-        private readonly Dictionary<string, int> ordinals;
-
-        public LiteDataRow(string[] names, object?[] values)
-        {
-            this.names = names;
-            this.values = values;
-            ordinals = new Dictionary<string, int>(names.Length, StringComparer.OrdinalIgnoreCase);
-            for (var i = 0; i < names.Length; i++)
-                if (!ordinals.ContainsKey(names[i]))
-                    ordinals[names[i]] = i;
-        }
-
-        public int ColumnCount => values.Length;
-
-        public IReadOnlyList<string> ColumnNames => names;
-
-        public bool ContainsColumn(string columnName)
-            => ordinals.ContainsKey(columnName);
-
-        public object? this[string columnName]
-            => ordinals.TryGetValue(columnName, out var index)
-                ? values[index]
-                : throw new ArgumentOutOfRangeException(nameof(columnName), columnName, $"Column '{columnName}' does not exist.");
-
-        public object? this[int index]
-            => values[index];
     }
 
     private sealed class DisposableDataReader : IDataReader
