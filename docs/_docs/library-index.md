@@ -37,6 +37,7 @@ tags: [predicates, functions]
 * [clamp]({{ site.baseurl }}/docs/temporal-functions/#clamp)
 * [clean-whitespace]({{ site.baseurl }}/docs/text-functions/#clean-whitespace)
 * [clip]({{ site.baseurl }}/docs/numeric-functions/#clip)
+* [coalesce]({{ site.baseurl }}/docs/special-functions/#coalesce)
 * [cobol-case]({{ site.baseurl }}/docs/text-functions/#cobol-case)
 * [collapse-whitespace]({{ site.baseurl }}/docs/text-functions/#collapse-whitespace)
 * [complement]({{ site.baseurl }}/docs/array-functions/#complement)

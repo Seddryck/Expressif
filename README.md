@@ -267,6 +267,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 |Record   | field                               |                                                                                   |
 |Record   | record                              |                                                                                   |
 |Special  | any-to-any                          |                                                                                   |
+|Special  | coalesce                            |                                                                                   |
 |Special  | neutral                             | Special-to-neutral                                                                |
 |Special  | null-to-value                       |                                                                                   |
 |Special  | tuple-at                            | tuple-at                                                                          |
