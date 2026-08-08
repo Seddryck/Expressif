@@ -132,7 +132,7 @@ public class ExpressionFactory : BaseExpressionFactory
     
     private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
     {
-        if (function.Parameters.Length != 1 || function.Parameters[0] is not OpenExpressionParameter open)
+        if (function.Parameters.Length != 1 || !TryGetOpenExpression(function.Parameters[0], out var open))
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         var members = open.Expression.Members.ToArray();
@@ -329,7 +329,7 @@ public class ExpressionFactory : BaseExpressionFactory
         if (function.Parameters.Length != 1)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
-        if (function.Parameters[0] is not OpenExpressionParameter openExpression)
+        if (!TryGetOpenExpression(function.Parameters[0], out var openExpression))
             throw new ArgumentException(
                 $"The function named '{function.Name}' expects a parameter of type '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
                 nameof(function));
@@ -362,7 +362,7 @@ public class ExpressionFactory : BaseExpressionFactory
         if (function.Parameters.Length != 1)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
-        if (function.Parameters[0] is not PredicationParameter and not OpenExpressionParameter)
+        if (function.Parameters[0] is not PredicationParameter && !TryGetOpenExpression(function.Parameters[0], out _))
             throw new ArgumentException(
                 $"The function named '{function.Name}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
                 nameof(function));
@@ -374,10 +374,12 @@ public class ExpressionFactory : BaseExpressionFactory
     private Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
     {
         var factory = new PredicationFactory();
+        if (TryGetOpenExpression(parameter, out var openExpression))
+            return BuildSinglePredicateFromOpenExpression(openExpression, factory, context, functionName);
+
         return parameter switch
         {
             PredicationParameter predication => () => factory.Instantiate(predication.Predication, context),
-            OpenExpressionParameter openExpression => BuildSinglePredicateFromOpenExpression(openExpression, factory, context, functionName),
             _ => throw new ArgumentException(
                     $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
                     nameof(parameter))
@@ -398,6 +400,18 @@ public class ExpressionFactory : BaseExpressionFactory
             var predication = new SinglePredication(members.Single());
             return () => factory.Instantiate(predication, context);
         }
+    }
+
+    private static bool TryGetOpenExpression(IParameter parameter, out OpenExpressionParameter expression)
+    {
+        expression = parameter switch
+        {
+            OpenExpressionParameter open => open,
+            LiteralParameter literal => new OpenExpressionParameter(
+                new OpenExpression([new Parsers.Function(literal.Value, [])])),
+            _ => null!
+        };
+        return expression is not null;
     }
 
     private sealed class BooleanExpressionPredicate(IFunction expression) : IPredicate

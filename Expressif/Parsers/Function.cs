@@ -10,22 +10,20 @@ public enum FunctionSyntax
 {
     Standard,
     MapShorthand,
-    FieldShorthand
+    FieldShorthand,
+    TupleProjectionShorthand
 }
 
 public class Function : IExpression
 {
-    private static readonly Parser<IParameter[]> OpenExpressionParametersParser =
+    // A bare token is structurally indistinguishable from a literal. Preserve the
+    // established map(function) shorthand while generic parameters handle every
+    // expression whose syntax is unambiguous.
+    private static readonly Parser<IParameter[]> MapParametersParser =
         from _ in Parse.Char('(').Token()
         from expression in OpenExpression.Parser.Token()
         from _1 in Parse.Char(')').Token()
         select new IParameter[] { new OpenExpressionParameter(expression) };
-
-    private static readonly Parser<IParameter[]> PredicationParametersParser =
-        from _ in Parse.Char('(').Token()
-        from predication in Predication.Parser.Token()
-        from _1 in Parse.Char(')').Token()
-        select new IParameter[] { new PredicationParameter(predication) };
 
     private static readonly Parser<IParameter[]> RecordParametersParser =
         from _ in Parse.Char('(').Token()
@@ -55,19 +53,12 @@ public class Function : IExpression
     private static readonly Parser<Function> TupleProjectionShorthandParser =
         from _ in Parse.Char('$')
         from index in Parse.Number
-        select new Function("tuple-at", [new LiteralParameter(index)]);
-
-    private static readonly Parser<IParameter[]> FieldShorthandParametersParser =
-        from function in FieldShorthandParser.Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
-        select new IParameter[] { new OpenExpressionParameter(new OpenExpression([function])) };
+        select new Function("tuple-at", [new LiteralParameter(index)], FunctionSyntax.TupleProjectionShorthand);
 
     private static readonly Parser<Function> StandardParser =
         from functionName in Grammar.FunctionName
-        from parameters in (functionName.Equals("filter", StringComparison.OrdinalIgnoreCase)
-                                ? FieldShorthandParametersParser.Or(PredicationParametersParser).Optional()
-                                : functionName.Equals("map", StringComparison.OrdinalIgnoreCase)
-                                  || functionName.Equals("adjacent", StringComparison.OrdinalIgnoreCase)
-                                ? OpenExpressionParametersParser.Optional()
+        from parameters in (functionName.Equals("map", StringComparison.OrdinalIgnoreCase)
+                                ? MapParametersParser.Optional()
                                 : functionName.Equals("record", StringComparison.OrdinalIgnoreCase)
                                 ? RecordParametersParser.Optional()
                                 : Parsers.Parameters.Parser.Optional())
