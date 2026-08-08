@@ -76,26 +76,46 @@ public class ExpressionTest
     }
 
     [Test]
-    public void Parse_LeadingMapPipeline_LowersEntirePipelineToMapFunction()
+    [TestCase("|> add(1) | sum", new[] { "add" })]
+    [TestCase("|> (add(1)) | sum", new[] { "add" })]
+    [TestCase("|> (absolute | add(1)) | sum", new[] { "absolute", "add" })]
+    public void Parse_LeadingMapPipeline_ResumesParentPipelineAfterMappedExpression(
+        string value, string[] expectedMappedFunctions)
     {
-        var root = RootExpression.Parser.Parse("|> add(1) | sum");
+        var root = RootExpression.Parser.Parse(value);
 
         Assert.That(root, Is.TypeOf<OpenRootExpression>());
         var expression = ((OpenRootExpression)root).Expression;
-        var map = expression.Members.Single();
+        var map = expression.Members.First();
         var mappedExpression = ((OpenExpressionParameter)map.Parameters.Single()).Expression;
 
         Assert.Multiple(() =>
         {
+            Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "sum" }));
             Assert.That(map.Name, Is.EqualTo("map"));
             Assert.That(map.Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
-            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "add", "sum" }));
+            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(expectedMappedFunctions));
         });
     }
 
-    [TestCase("{1,2,3} |> absolute")]
     [TestCase("{1,2,3} |> ()")]
     [TestCase("{1,2,3} |> (absolute")]
-    public void Parse_MapShorthandWithoutParenthesizedExpression_Invalid(string value)
+    public void Parse_MapShorthandWithInvalidExpression_Invalid(string value)
         => Assert.That(() => Expressif.Parsers.ClosedExpression.Parser.End().Parse(value), Throws.TypeOf<ParseException>());
+
+    [Test]
+    public void Parse_UnparenthesizedMapShorthand_ConsumesSingleFunction()
+    {
+        var expression = Expressif.Parsers.ClosedExpression.Parser.End()
+            .Parse("{1,2,3} |> absolute | add(1) | sum");
+
+        var map = expression.Members.First();
+        var mappedExpression = ((OpenExpressionParameter)map.Parameters.Single()).Expression;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "add", "sum" }));
+            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "absolute" }));
+        });
+    }
 }

@@ -302,12 +302,39 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(new object?[] { 8m, 7m, 6m }));
     }
 
+    [TestCase("{1,12,5,42,17} |> add(1) | sum")]
+    [TestCase("{1,12,5,42,17} |> (add(1)) | sum")]
+    public void Evaluate_ArrayMapShorthand_ResumesParentPipeline(string code)
+    {
+        var result = new ClosedExpression(code).Evaluate();
+
+        Assert.That(result, Is.EqualTo(82m));
+    }
+
     [Test]
     public void Evaluate_LeadingMapPipeline_UsesImplicitInput()
     {
         var result = new Expression("|> add(1)").Evaluate(new object?[] { 10, 20 });
 
         Assert.That(result, Is.EqualTo(new object?[] { 11m, 21m }));
+    }
+
+    [TestCase("|> add(1) | sum")]
+    [TestCase("|> (add(1)) | sum")]
+    public void Evaluate_LeadingMapShorthand_ResumesParentPipeline(string code)
+    {
+        var result = new Expression(code).Evaluate(new object?[] { 1, 12, 5, 42, 17 });
+
+        Assert.That(result, Is.EqualTo(82m));
+    }
+
+    [Test]
+    public void Evaluate_ParenthesizedMapShorthand_ContainsInnerPipeline()
+    {
+        var result = new Expression("|> (absolute | add(1)) | sum")
+            .Evaluate(new object?[] { -1, 12, -5, 42, -17 });
+
+        Assert.That(result, Is.EqualTo(82m));
     }
 
     [Test]
