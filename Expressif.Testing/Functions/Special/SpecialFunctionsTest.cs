@@ -98,6 +98,38 @@ public class SpecialFunctionsTest
         Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
     }
 
+    [TestCase("coalesce(.nickname, .name)", "Alice")]
+    [TestCase("coalesce(field(nickname), field(name))", "Alice")]
+    [TestCase("coalesce(field(\"nickname\"), field(\"name\"))", "Alice")]
+    [TestCase("coalesce(.nickname, field(name))", "Alice")]
+    [TestCase("coalesce(.nickname | upper, .name | upper)", "ALICE")]
+    [TestCase("coalesce(.nickname, .display-name, .name)", "Alice")]
+    [TestCase("coalesce(.nickname, .display-name)", null)]
+    public void Coalesce_MissingField_ContinuesWithNextCandidate(string expression, object? expected)
+    {
+        var value = new Dictionary<string, object?> { ["name"] = "Alice" };
+        var context = new Context();
+        context.CurrentObject.Set(value);
+        var function = new ExpressionFactory().Instantiate(expression, context);
+
+        Assert.That(function.Evaluate(value), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Coalesce_ExplicitNullField_ContinuesWithNextCandidate()
+    {
+        var value = new Dictionary<string, object?>
+        {
+            ["nickname"] = null,
+            ["name"] = "Alice"
+        };
+        var context = new Context();
+        context.CurrentObject.Set(value);
+        var function = new ExpressionFactory().Instantiate("coalesce(.nickname, .name)", context);
+
+        Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
+    }
+
     [Test]
     [TestCase("foo")]
     [TestCase("(any)")]
