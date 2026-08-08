@@ -124,10 +124,32 @@ public class ExpressionFactory : BaseExpressionFactory
             return input => input;
 
         if (parameter is OpenExpressionParameter open)
-            return BuildOpenExpressionRecordEvaluator(open, context);
+            return TryBuildCoalesceFieldEvaluator(open, context, out var evaluator)
+                ? evaluator
+                : BuildOpenExpressionRecordEvaluator(open, context);
 
         var provider = CreateParameter(parameter, typeof(object), context);
         return _ => provider.DynamicInvoke();
+    }
+
+    private bool TryBuildCoalesceFieldEvaluator(
+        OpenExpressionParameter open,
+        IContext context,
+        out Func<object?, object?> evaluator)
+    {
+        evaluator = null!;
+        var members = open.Expression.Members.ToArray();
+        if (members.Length == 0
+            || !members[0].Name.Equals("field", StringComparison.OrdinalIgnoreCase)
+            || members[0].Parameters is not [LiteralParameter fieldName])
+            return false;
+
+        var remainder = new ChainFunction(
+            members.Skip(1).Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
+        evaluator = input => NamedValueAccessor.TryGetValue(input, fieldName.Value, out var fieldValue)
+            ? remainder.Evaluate(fieldValue)
+            : null;
+        return true;
     }
     
     private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
