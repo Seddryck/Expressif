@@ -158,6 +158,21 @@ public class ExpressionFactoryTest
     }
 
     [Test]
+    public void Instantiate_PositionFunctions_Valid()
+    {
+        var withPosition = new ExpressionFactory().Instantiate("with-position", new Context());
+        var positionOf = new ExpressionFactory().Instantiate("position-of(b)", new Context());
+        var valueAt = new ExpressionFactory().Instantiate("value-at(1)", new Context());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(GetSingleFunction<WithPosition>(withPosition), Is.Not.Null);
+            Assert.That(GetSingleFunction<PositionOf>(positionOf).Value.Invoke(), Is.EqualTo("b"));
+            Assert.That(GetSingleFunction<ValueAt>(valueAt).Position.Invoke(), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
     [TestCase("first-elements(2)", typeof(FirstElements))]
     [TestCase("first(2)", typeof(FirstElements))]
     [TestCase("last(2)", typeof(LastElements))]
