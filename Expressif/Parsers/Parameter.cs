@@ -1,4 +1,4 @@
-﻿using Expressif.Values;
+using Expressif.Values;
 using Sprache;
 using System;
 using System.Collections.Generic;
@@ -82,7 +82,7 @@ public class Parameter
         where !members[0].Name.Equals("T", StringComparison.OrdinalIgnoreCase)
             && (members.Length > 1
                 || members.Any(x => x.Syntax == FunctionSyntax.FieldShorthand
-                    || x.Syntax == FunctionSyntax.Standard && x.Parameters.Length > 0))
+                    || (x.Syntax == FunctionSyntax.Standard && x.Parameters.Length > 0)))
         select new OpenExpressionParameter(expression);
 
     protected static readonly Parser<IParameter> ArrayLiteralParameter =
