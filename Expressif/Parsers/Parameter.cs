@@ -71,6 +71,20 @@ public class Parameter
         from _1 in Parse.Char('}').Token()
         select new InputExpressionParameter(new ClosedExpression(parameter, expression.Members));
 
+    protected static readonly Parser<IParameter> PredicationParameter =
+        from predication in Parse.Ref(() => Predication.Parser)
+        where predication is not SinglePredication
+        select new PredicationParameter(predication);
+
+    protected static readonly Parser<IParameter> OpenExpressionParameter =
+        from expression in Parse.Ref(() => OpenExpression.Parser)
+        let members = expression.Members.ToArray()
+        where !members[0].Name.Equals("T", StringComparison.OrdinalIgnoreCase)
+            && (members.Length > 1
+                || members.Any(x => x.Syntax == FunctionSyntax.FieldShorthand
+                    || x.Syntax == FunctionSyntax.Standard && x.Parameters.Length > 0))
+        select new OpenExpressionParameter(expression);
+
     protected static readonly Parser<IParameter> ArrayLiteralParameter =
         from _ in Parse.Char('{').Token()
         from values in (
@@ -173,13 +187,15 @@ public class Parameter
     public static readonly Parser<IParameter> Parser = 
         VariableParameter
         .Or(IntervalParameter)
-        .Or(TupleProjectionParameter)
         .Or(IndexParameter)
         .Or(ItemParameter)
         .Or(TupleLiteralParser)
         .Or(RecordLiteralParameter)
         .Or(ArrayLiteralParameter)
         .Or(ParametrizedExpressionParameter)
+        .Or(PredicationParameter)
+        .Or(OpenExpressionParameter)
+        .Or(TupleProjectionParameter)
         .Or(LiteralParameter)
         ;
 }

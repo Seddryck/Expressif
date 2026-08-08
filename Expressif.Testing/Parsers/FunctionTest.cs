@@ -73,16 +73,16 @@ public class FunctionTest
     }
 
     [Test]
-    public void Parse_Function_FilterWithOpenExpressionParameter_Valid()
+    public void Parse_Function_FilterWithExpressionParameter_Valid()
     {
         var function = Expressif.Parsers.Function.Parser.Parse("filter(greater-than(2))");
 
         Assert.That(function.Name, Is.EqualTo("filter"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
-        Assert.That(function.Parameters[0], Is.TypeOf<PredicationParameter>());
+        Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
 
-        var parameter = (PredicationParameter)function.Parameters[0];
-        Assert.That(parameter.Predication, Is.TypeOf<SinglePredication>());
+        var parameter = (OpenExpressionParameter)function.Parameters[0];
+        Assert.That(parameter.Expression.Members.Single().Name, Is.EqualTo("greater-than"));
     }
 
     [Test]
@@ -150,6 +150,51 @@ public class FunctionTest
         Assert.That(members[1].Parameters, Has.Length.EqualTo(1));
         Assert.That(members[2].Name, Is.EqualTo("add"));
         Assert.That(members[2].Parameters.Length, Is.GreaterThanOrEqualTo(2));
+    }
+
+    [TestCase("some(less-than(5))")]
+    [TestCase("some(.active)")]
+    [TestCase("some(.age | less-than(18))")]
+    [TestCase("map(.name | upper)")]
+    public void Parse_Function_WithExpressionParameter_Valid(string value)
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse(value);
+
+        Assert.That(function.Parameters, Has.Length.EqualTo(1));
+        Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
+    }
+
+    [Test]
+    public void Parse_Function_WithMultipleExpressionParameters_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse(
+            "coalesce(.nickname, field(name), .display-name | upper)");
+
+        Assert.That(function.Parameters, Has.Length.EqualTo(3));
+        Assert.That(function.Parameters, Has.All.TypeOf<OpenExpressionParameter>());
+    }
+
+    [Test]
+    public void Parse_Function_WithNestedLongFormExpressionParameters_Valid()
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse(
+            "coalesce(field(nickname), field(name))");
+
+        var expressions = function.Parameters.Cast<OpenExpressionParameter>().ToArray();
+        Assert.That(expressions, Has.Length.EqualTo(2));
+        Assert.That(expressions.Select(x => x.Expression.Members.Single().Name),
+            Is.EqualTo(new[] { "field", "field" }));
+    }
+
+    [TestCase("value", typeof(LiteralParameter))]
+    [TestCase("\"name\"", typeof(LiteralParameter))]
+    [TestCase("@foo", typeof(VariableParameter))]
+    [TestCase("[name]", typeof(ObjectPropertyParameter))]
+    public void Parse_Function_WithScalarParameter_PreservesParameterType(string value, Type expectedType)
+    {
+        var function = Expressif.Parsers.Function.Parser.End().Parse($"example({value})");
+
+        Assert.That(function.Parameters.Single(), Is.TypeOf(expectedType));
     }
 
     [Test]

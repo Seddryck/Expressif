@@ -82,6 +82,23 @@ public class SpecialFunctionsTest
     }
 
     [Test]
+    public void Coalesce_NestedExpressions_EvaluatesEachArgument()
+    {
+        var value = new Dictionary<string, object?>
+        {
+            ["nickname"] = null,
+            ["name"] = "Alice"
+        };
+        var context = new Context();
+        context.CurrentObject.Set(value);
+        var function = new ExpressionFactory().Instantiate(
+            "coalesce(field(nickname), .name)",
+            context);
+
+        Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
+    }
+
+    [Test]
     [TestCase("foo")]
     [TestCase("(any)")]
     [TestCase("(empty)")]
