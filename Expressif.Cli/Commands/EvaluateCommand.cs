@@ -5,6 +5,8 @@ namespace Expressif.Cli.Commands;
 
 internal static class EvaluateCommand
 {
+    private static readonly Func<string, object?> DefaultParseInput = static input => RunCommand.InputValueParser.Parse(input);
+
     internal static Func<string, Context, Expression> BuildExpression { get; set; }
         = static (code, context) => new Expression(code, context);
 
@@ -13,6 +15,17 @@ internal static class EvaluateCommand
 
     internal static Func<ClosedExpression, object?> EvaluateClosedExpression { get; set; }
         = static expression => expression.Evaluate();
+
+    internal static Func<string, object?> ParseInput { get; set; }
+        = DefaultParseInput;
+
+    internal static void ResetDelegates()
+    {
+        BuildExpression = static (code, context) => new Expression(code, context);
+        BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
+        EvaluateClosedExpression = static expression => expression.Evaluate();
+        ParseInput = DefaultParseInput;
+    }
 
     public static Command Create()
     {
@@ -244,9 +257,20 @@ internal static class EvaluateCommand
                 return ExitCodes.UnexpectedInternalError;
             }
 
+            object? parsedInput;
             try
             {
-                var result = openExpression.Evaluate(input);
+                parsedInput = ParseInput(input ?? string.Empty);
+            }
+            catch (FormatException exception)
+            {
+                Console.Error.WriteLine($"Invalid input syntax for --input '{input}': {exception.Message}");
+                return ExitCodes.InvalidExpressionOrInput;
+            }
+
+            try
+            {
+                var result = openExpression.Evaluate(parsedInput);
                 Console.Out.WriteLine(ValueFormatter.Format(result));
                 return ExitCodes.Success;
             }

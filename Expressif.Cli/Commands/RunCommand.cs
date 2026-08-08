@@ -840,6 +840,7 @@ internal static class RunCommand
                     : literal.Value,
                 QuotedLiteralParameter quoted => quoted.Value,
                 ArrayParameter array => array.Values.Select(ConvertToRuntimeValue).ToArray(),
+                TupleParameter tuple => new Expressif.Values.Tuple(tuple.Values.Select(ConvertToRuntimeValue).ToArray()),
                 RecordLiteralParameter record => ConvertRecord(record),
                 _ => ParameterSerializer.Serialize(parameter),
             };
