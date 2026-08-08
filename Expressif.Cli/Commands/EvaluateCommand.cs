@@ -5,6 +5,8 @@ namespace Expressif.Cli.Commands;
 
 internal static class EvaluateCommand
 {
+    private static readonly Func<string, object?> DefaultParseInput = static input => RunCommand.InputValueParser.Parse(input);
+
     internal static Func<string, Context, Expression> BuildExpression { get; set; }
         = static (code, context) => new Expression(code, context);
 
@@ -13,6 +15,17 @@ internal static class EvaluateCommand
 
     internal static Func<ClosedExpression, object?> EvaluateClosedExpression { get; set; }
         = static expression => expression.Evaluate();
+
+    internal static Func<string, object?> ParseInput { get; set; }
+        = DefaultParseInput;
+
+    internal static void ResetDelegates()
+    {
+        BuildExpression = static (code, context) => new Expression(code, context);
+        BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
+        EvaluateClosedExpression = static expression => expression.Evaluate();
+        ParseInput = DefaultParseInput;
+    }
 
     public static Command Create()
     {
@@ -109,7 +122,7 @@ internal static class EvaluateCommand
         }
 
         return hasInputOption
-            ? EvaluateOpen(expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
+            ? EvaluateInput(expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
             : EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
     }
 
@@ -203,6 +216,26 @@ internal static class EvaluateCommand
             Console.Error.WriteLine(exception.Message);
             return ExitCodes.EvaluationFailed;
         }
+    }
+
+    private static int EvaluateInput(
+        string expressionCode,
+        string? input,
+        bool hasExpressionFile,
+        string? expressionFilePath)
+    {
+        object? parsedInput;
+        try
+        {
+            parsedInput = ParseInput(input ?? string.Empty);
+        }
+        catch (FormatException exception)
+        {
+            Console.Error.WriteLine($"Invalid input syntax for --input '{input}': {exception.Message}");
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+
+        return EvaluateOpen(expressionCode, parsedInput, hasExpressionFile, expressionFilePath);
     }
 
     private static int ValidateAsOpenExpression(string expressionCode, bool hasExpressionFile, string? expressionFilePath)

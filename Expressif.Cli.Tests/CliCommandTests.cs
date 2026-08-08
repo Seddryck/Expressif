@@ -11,9 +11,7 @@ public class CliCommandTests
     [TearDown]
     public void TearDown()
     {
-        EvaluateCommand.BuildExpression = static (code, context) => new Expression(code, context);
-        EvaluateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
-        EvaluateCommand.EvaluateClosedExpression = static expression => expression.Evaluate();
+        EvaluateCommand.ResetDelegates();
         RunCommand.ResetDelegates();
         ValidateCommand.BuildExpression = static (code, context) => new Expression(code, context);
         ValidateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
@@ -67,7 +65,7 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task Evaluate_ImplicitSum_WithStringArrayLiteralInput_ReturnsAggregatedResult()
+    public async Task Evaluate_ArrayLiteralInput_ReturnsAggregatedResult()
     {
         var result = await InvokeAsync("evaluate", "sum", "--input", "{1,2,2}");
 
@@ -75,6 +73,32 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("5"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_RecordLiteralInput_ReturnsFieldValue()
+    {
+        var result = await InvokeAsync("evaluate", ".loc", "--input", "{loc:=mons, temp:=17.5}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("mons"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_TupleLiteralInput_ReturnsTupleField()
+    {
+        var result = await InvokeAsync("evaluate", "tuple-second", "--input", "T(mons, 17.5)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("17.5"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
