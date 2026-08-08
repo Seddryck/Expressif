@@ -15,9 +15,11 @@ public class OpenExpression : IExpression
     public OpenExpression(IEnumerable<Function> members)
         => (Members) = (members);
 
-    private static readonly Parser<Function> MapShorthandParser =
+    internal static readonly Parser<Function> MapShorthandParser =
         from _ in Parse.String("|>").Token()
-        from expression in Parse.Ref(() => Parser).Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
+        from expression in Parse.Ref(() => Parser)
+            .Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
+            .Or(Function.Parser.Token().Select(function => new OpenExpression([function])))
         select new Function("map", [new OpenExpressionParameter(expression)], FunctionSyntax.MapShorthand);
 
     internal static readonly Parser<Function> ContinuationParser =

@@ -12,13 +12,9 @@ public record class ClosedRootExpression(ClosedExpression Expression) : IRootExp
 public static class RootExpression
 {
     private static readonly Parser<IRootExpression> LeadingMapPipelineParser =
-        from _ in Parse.String("|>").Token()
-        from expression in OpenExpression.Parser
-        let map = new Function(
-            "map",
-            [new OpenExpressionParameter(expression)],
-            FunctionSyntax.MapShorthand)
-        select (IRootExpression)new OpenRootExpression(new OpenExpression([map]));
+        from map in OpenExpression.MapShorthandParser
+        from others in OpenExpression.ContinuationParser.Many()
+        select (IRootExpression)new OpenRootExpression(new OpenExpression([map, .. others]));
 
     private static readonly Parser<IRootExpression> TupleLiteralParser =
         from tuple in Parameter.TupleLiteralParser
