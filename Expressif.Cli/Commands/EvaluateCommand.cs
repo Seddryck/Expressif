@@ -122,7 +122,7 @@ internal static class EvaluateCommand
         }
 
         return hasInputOption
-            ? EvaluateOpen(expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
+            ? EvaluateInput(expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
             : EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
     }
 
@@ -218,6 +218,26 @@ internal static class EvaluateCommand
         }
     }
 
+    private static int EvaluateInput(
+        string expressionCode,
+        string? input,
+        bool hasExpressionFile,
+        string? expressionFilePath)
+    {
+        object? parsedInput;
+        try
+        {
+            parsedInput = ParseInput(input ?? string.Empty);
+        }
+        catch (FormatException exception)
+        {
+            Console.Error.WriteLine($"Invalid input syntax for --input '{input}': {exception.Message}");
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+
+        return EvaluateOpen(expressionCode, parsedInput, hasExpressionFile, expressionFilePath);
+    }
+
     private static int ValidateAsOpenExpression(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
     {
         try
@@ -257,20 +277,9 @@ internal static class EvaluateCommand
                 return ExitCodes.UnexpectedInternalError;
             }
 
-            object? parsedInput;
             try
             {
-                parsedInput = ParseInput(input ?? string.Empty);
-            }
-            catch (FormatException exception)
-            {
-                Console.Error.WriteLine($"Invalid input syntax for --input '{input}': {exception.Message}");
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            try
-            {
-                var result = openExpression.Evaluate(parsedInput);
+                var result = openExpression.Evaluate(input);
                 Console.Out.WriteLine(ValueFormatter.Format(result));
                 return ExitCodes.Success;
             }
