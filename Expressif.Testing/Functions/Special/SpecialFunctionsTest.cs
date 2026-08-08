@@ -100,6 +100,7 @@ public class SpecialFunctionsTest
 
     [TestCase("coalesce(.nickname, .name)", "Alice")]
     [TestCase("coalesce(field(nickname), field(name))", "Alice")]
+    [TestCase("coalesce(field(\"nickname\"), field(\"name\"))", "Alice")]
     [TestCase("coalesce(.nickname, field(name))", "Alice")]
     [TestCase("coalesce(.nickname | upper, .name | upper)", "ALICE")]
     [TestCase("coalesce(.nickname, .display-name, .name)", "Alice")]

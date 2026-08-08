@@ -141,15 +141,26 @@ public class ExpressionFactory : BaseExpressionFactory
         var members = open.Expression.Members.ToArray();
         if (members.Length == 0
             || !members[0].Name.Equals("field", StringComparison.OrdinalIgnoreCase)
-            || members[0].Parameters is not [LiteralParameter fieldName])
+            || !TryGetFieldName(members[0].Parameters, out var fieldName))
             return false;
 
         var remainder = new ChainFunction(
             members.Skip(1).Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
-        evaluator = input => NamedValueAccessor.TryGetValue(input, fieldName.Value, out var fieldValue)
+        evaluator = input => NamedValueAccessor.TryGetValue(input, fieldName, out var fieldValue)
             ? remainder.Evaluate(fieldValue)
             : null;
         return true;
+    }
+
+    private static bool TryGetFieldName(IParameter[] parameters, out string fieldName)
+    {
+        fieldName = parameters switch
+        {
+            [LiteralParameter literal] => literal.Value,
+            [QuotedLiteralParameter quoted] => quoted.Value,
+            _ => string.Empty
+        };
+        return parameters is [LiteralParameter] or [QuotedLiteralParameter];
     }
     
     private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
