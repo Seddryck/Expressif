@@ -5,7 +5,7 @@ strategies:
   - Mainline
 
 major-version-bump-message: "^(feat|fix|perf|revert)(\\([\\w\\s-]*\\))?(!:|:.*\\n\\n((.+\\n)+\\n)?BREAKING CHANGE:\\s.+)"
-minor-version-bump-message: "^(feat)(\\([\\w\\s-]*\\))?:"
+minor-version-bump-message: "^(feat)(\\([\\w\\s-]*\\))?:|\\+semver:\\s?(feature|minor)"
 patch-version-bump-message: "^(chore|fix|perf|refactor|revert|build|ci|style)(\\([\\w\\s-]*\\))?:"
 no-bump-message: "\\+semver:\\s?(none|skip)"
 commit-message-incrementing: Enabled
