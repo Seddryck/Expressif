@@ -1,10 +1,29 @@
 # Expressif
-Expressif is the variable substitution syntax, initially designed for [NBi.io](https://www.nbi.io).
+Expressif is a compact, composable language for transforming and validating values. Originally designed for [NBi.io](https://www.nbi.io) as a variable-substitution syntax, it has grown into a language for expressing increasingly rich data transformations.
 
-Expressif allows you to define variables and transformation of these variables (functions), in plain text, which can then be interpreted by the engine. The syntax for the definition of the expression transforming the variable is similar to:
+A simple transformation can remain very readable:
 
 ```
 @myVariable | text-to-lower | text-to-pad-right(@myCount, *)
+```
+
+But the same syntax scales to structured data and collections:
+
+```
+filter(.temperature | greater-than(20))
+|> record(
+    city := .city,
+    temperature := .temperature | round(1)
+)
+```
+
+Or to transformations that depend on neighbouring values:
+
+```
+{10, 14, 12, 18, 20, 17}
+| neighbours($n > $n-1 and $n > $n+1)
+
+=> {true, false, false, true}
 ```
 
 ![Logo](https://raw.githubusercontent.com/Seddryck/Expressif/main/misc/icon/expressif-icon-256.png)
