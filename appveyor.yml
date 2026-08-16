@@ -114,6 +114,7 @@ artifacts:
 - path: '**\*.nupkg'
 - path: '**\*.snupkg'
 - path: '**\*.vsix'
+- path: '**\Expressif.Syntax\bin\*.xml'
 - path: '**\Expressif.Conformance.*.zip'
 - path: '**\Expressif.Conformance.*.yaml'
 - path: '**\bin\archives\Expressif-*.*'
@@ -150,7 +151,8 @@ on_success:
 
             $context | Upload-Release-Assets `
                 -Tag "v$($env:GitVersion_SemVer)" `
-                -Path "./Expressif.Syntax/bin/"
+                -Path "./Expressif.Syntax/bin/" `
+                -Extensions @("vsix", "xml")
 
             $context | Upload-Release-Assets `
                 -Tag "v$($env:GitVersion_SemVer)" `
