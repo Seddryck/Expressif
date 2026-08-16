@@ -87,7 +87,12 @@ public sealed class ExpressifBinder
         if (!syntax.IsOriginalInput || syntax.Fields.Count != 1)
             throw new BindingException($"Record access '{syntax.Text}' cannot be used as a scalar parameter in this iteration.");
         var field = syntax.Fields.Single();
-        return field.IsNamed ? new ObjectPropertyParameter(field.Name!) : new ObjectIndexParameter(field.Index!.Value);
+        return field switch
+        {
+            { Name: string name } => new ObjectPropertyParameter(name),
+            { Index: int index } => new ObjectIndexParameter(index),
+            _ => throw InvalidRecordFieldSelector(syntax),
+        };
     }
 
     private static Function BindRecordAccessFunction(RecordAccessSyntax syntax)
@@ -95,10 +100,18 @@ public sealed class ExpressifBinder
         if (syntax.Fields.Count != 1)
             throw new BindingException($"Nested record access '{syntax.Text}' is not bound in this iteration.");
         var field = syntax.Fields.Single();
-        return new Function("field", [new LiteralParameter(field.IsNamed ? field.Name! : field.Index!.Value.ToString())], FunctionSyntax.FieldShorthand);
+        var value = field switch
+        {
+            { Name: string name } => name,
+            { Index: int index } => index.ToString(),
+            _ => throw InvalidRecordFieldSelector(syntax),
+        };
+        return new Function("field", [new LiteralParameter(value)], FunctionSyntax.FieldShorthand);
     }
 
     private static string Unquote(string text) => text.Length >= 2 ? text[1..^1] : text;
+    private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)
+        => new($"Record access '{syntax.Text}' contains neither a named nor positional field selector.");
     private static BindingException Unsupported(SyntaxNode syntax)
         => new($"Syntax kind '{syntax.Kind}' is not bound in this iteration (source: '{syntax.Text}').");
 }
