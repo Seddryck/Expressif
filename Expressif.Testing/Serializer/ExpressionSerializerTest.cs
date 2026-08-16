@@ -1,6 +1,5 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Serializers;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +57,7 @@ public class ExpressionSerializerTest
     [Test]
     public void Serialize_ClosedExpression_WithRootAndMembers()
     {
-        var expression = new Expressif.Parsers.ClosedExpression(new VariableParameter("arr"), [new Function("count", [])]);
+        var expression = new Expressif.Bindings.ClosedExpression(new VariableParameter("arr"), [new Function("count", [])]);
 
         Assert.That(new ExpressionSerializer().Serialize(expression), Is.EqualTo("@arr | count"));
     }
@@ -66,8 +65,7 @@ public class ExpressionSerializerTest
     [Test]
     public void Serialize_MapShorthand_PreservesShorthand()
     {
-        var expression = Expressif.Parsers.ClosedExpression.Parser.End()
-            .Parse("{1,2,3} |> (absolute | add(5)) | reverse");
+        var expression = BindingTestAdapter.Closed("{1,2,3} |> (absolute | add(5)) | reverse");
 
         Assert.That(new ExpressionSerializer().Serialize(expression),
             Is.EqualTo("{1, 2, 3} |> (absolute | add(5)) | reverse"));
@@ -82,9 +80,9 @@ public class ExpressionSerializerTest
         var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         var upperExpression = new Function("Upper", []);
 
-        //var subExpression = new Expressif.Parsers.ClosedExpression([firstCharsExpression, PadRightExpression]);
+        //var subExpression = new Expressif.Bindings.ClosedExpression([firstCharsExpression, PadRightExpression]);
 
-        //var expression = new Expressif.Parsers.Expression([lowerExpression, subExpression, upperExpression]);
+        //var expression = new Expressif.Bindings.Expression([lowerExpression, subExpression, upperExpression]);
 
         //Assert.That(new ExpressionSerializer().Serialize(expression)
         //    , Is.EqualTo("lower | { first-chars(5) | pad-right(7, *) } | upper"));

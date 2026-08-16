@@ -1,6 +1,5 @@
-using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
-using Sprache;
 
 namespace Expressif.Testing.Parsers;
 
@@ -27,7 +26,7 @@ public class ParameterTest
     [TestCase("T(10, 20)", typeof(TupleParameter))]
     [TestCase("T(1, T(2, 3))", typeof(TupleParameter))]
     public void Parse_Parameter_Valid(string value, Type type)
-        => Assert.That(Parameter.Parser.Parse(value), Is.TypeOf(type));
+        => Assert.That(BindingTestAdapter.Parameter(value), Is.TypeOf(type));
 
     [Test]
     [TestCase("(foo, bar)")]
@@ -39,7 +38,7 @@ public class ParameterTest
     [TestCase("(@foo , { @foo | text-to-func(bar, @foo) })")]
     [TestCase("(@foo , { @foo | text-to-func(bar, { @fool | numeric-to-func(#3, [bez]) }) })")]
     public void Parse_Parameters_Valid(string value)
-        => Assert.That(Parameters.Parser.Parse(value).Count, Is.EqualTo(2));
+        => Assert.That(BindingTestAdapter.Parameters(value).Count, Is.EqualTo(2));
 
     [Test]
     [TestCase("{{1, 2, 3}, {4, 5}}")]
@@ -47,7 +46,7 @@ public class ParameterTest
     [TestCase("{{true, false}, {null, 3}}")]
     public void Parse_Parameter_NestedArrays_Valid(string value)
     {
-        var parsed = Parameter.Parser.End().Parse(value);
+        var parsed = BindingTestAdapter.Parameter(value);
 
         Assert.Multiple(() =>
         {
@@ -62,7 +61,7 @@ public class ParameterTest
     [Test]
     public void Parse_Parameter_EmptyRecordLiteral_ParsesNoFields()
     {
-        var parsed = Parameter.Parser.End().Parse("{:}");
+        var parsed = BindingTestAdapter.Parameter("{:}");
 
         Assert.Multiple(() =>
         {
@@ -74,7 +73,7 @@ public class ParameterTest
     [TestCase("T()")]
     [TestCase("T(10)")]
     public void Parse_TupleWithFewerThanTwoFields_Invalid(string value)
-        => Assert.Throws<ParseException>(() => Parameter.Parser.End().Parse(value));
+        => Assert.Throws<ExpressifSyntaxException>(() => BindingTestAdapter.Parameter(value));
 
     [Test]
     public void Parse_TupleLiteral_RoundTripsThroughClosedExpression()

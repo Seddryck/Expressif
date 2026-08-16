@@ -1,4 +1,4 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;
@@ -26,12 +26,9 @@ public class ParameterSerializer
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
-            LiteralParameter l => l.Value.Any(
-                x => Grammar.AlongQuotedChars
-                        .Union(Grammar.OpeningQuotedChars)
-                        .Union(Grammar.ClosingQuotedChars).Contains(x))
-                    ? $"\"{RecordSyntax.EscapeDoubleQuoted(l.Value)}\""
-                    : l.Value,
+            LiteralParameter l => RecordSyntax.IsBareToken(l.Value)
+                ? l.Value
+                : $"\"{RecordSyntax.EscapeDoubleQuoted(l.Value)}\"",
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",
             ObjectIndexParameter oi => $"#{oi.Index}",

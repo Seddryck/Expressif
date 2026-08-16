@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Expressif.Values.Special;
-using Sprache;
 
 namespace Expressif.Functions.Text;
 public abstract class BaseTextRetain : BaseTextFunction

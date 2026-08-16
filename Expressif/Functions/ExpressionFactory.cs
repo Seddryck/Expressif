@@ -1,4 +1,4 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Functions.Array;
 using Expressif.Accumulators;
 using Expressif.Accumulators.Introspection;
@@ -6,7 +6,6 @@ using Expressif.Predicates;
 using Expressif.Values;
 using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
 using RecordFunction = Expressif.Functions.Record.Record;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace Expressif.Functions;
 
 public class ExpressionFactory : BaseExpressionFactory
 {
-    private Parser<IRootExpression> Parser { get; } = RootExpression.Parser;
+    private ExpressifBinder Binder { get; } = new();
     private static readonly PredicateTypeMapper PredicateTypeMapper = new();
     private static readonly HashSet<string> ImplicitFoldAccumulators = new(
         new AccumulatorIntrospector().Locate().Select(x => x.Name),
@@ -33,7 +32,7 @@ public class ExpressionFactory : BaseExpressionFactory
         {
             OpenRootExpression open => BuildOpenExpression(open.Expression, context),
             ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),
-            _ => throw new ParseException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
+            _ => throw new BindingException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
         };
     }
 
@@ -44,12 +43,12 @@ public class ExpressionFactory : BaseExpressionFactory
         {
             ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),
             OpenRootExpression open => throw new ExpressionRequiresInputException(open.Expression.Members.FirstOrDefault()?.Name),
-            _ => throw new ParseException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
+            _ => throw new BindingException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
         };
     }
 
     private IRootExpression ParseRootExpression(string code)
-        => Parser.Parse(code);
+        => Binder.Bind(code);
 
     public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
         => Instantiate<IFunction>(name, parameters, context);
@@ -66,7 +65,7 @@ public class ExpressionFactory : BaseExpressionFactory
         return new ChainFunction(functions);
     }
 
-    private IFunction BuildClosedExpression(Parsers.ClosedExpression expression, IContext context)
+    private IFunction BuildClosedExpression(Bindings.ClosedExpression expression, IContext context)
     {
         var sourceParameter = CreateParameter(expression.Parameter, typeof(object), context);
         var functions = new List<IFunction>();
@@ -80,7 +79,7 @@ public class ExpressionFactory : BaseExpressionFactory
         });
     }
 
-    private IFunction InstantiateOrWrapAggregation(Parsers.Function function, IContext context)
+    private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
     {
         var name = function.Name.ToKebabCase();
 
@@ -109,7 +108,7 @@ public class ExpressionFactory : BaseExpressionFactory
         return Instantiate<IFunction>(type, function.Parameters, context);
     }
 
-    private IFunction BuildCoalesceFunction(Parsers.Function function, IContext context)
+    private IFunction BuildCoalesceFunction(Bindings.Function function, IContext context)
     {
         if (function.Parameters.Length < 2)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
@@ -163,7 +162,7 @@ public class ExpressionFactory : BaseExpressionFactory
         return parameters is [LiteralParameter] or [QuotedLiteralParameter];
     }
     
-    private IFunction BuildAdjacentFunction(Parsers.Function function, IContext context)
+    private IFunction BuildAdjacentFunction(Bindings.Function function, IContext context)
     {
         if (function.Parameters.Length != 1 || !TryGetOpenExpression(function.Parameters[0], out var open))
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
@@ -173,7 +172,7 @@ public class ExpressionFactory : BaseExpressionFactory
         if (members.Length == 1 && members[0].Parameters.Length == 0 && TryBuildBinaryCallable(members[0].Name, context, out var callable))
         {
             operation = new ChainFunction([
-                InstantiateOrWrapAggregation(new Parsers.Function("tuple-at", [new LiteralParameter("1")]), context),
+                InstantiateOrWrapAggregation(new Bindings.Function("tuple-at", [new LiteralParameter("1")]), context),
                 callable
             ]);
         }
@@ -185,7 +184,7 @@ public class ExpressionFactory : BaseExpressionFactory
 
     private bool TryBuildBinaryCallable(string name, IContext context, out IFunction callable)
     {
-        var parameterized = new Parsers.Function(name, [new TupleProjectionParameter(0)]);
+        var parameterized = new Bindings.Function(name, [new TupleProjectionParameter(0)]);
         try
         {
             var functionType = TypeMapper.Execute(name);
@@ -235,7 +234,7 @@ public class ExpressionFactory : BaseExpressionFactory
         }
     }
 
-    private IFunction BuildRecordFunction(Parsers.Function function, IContext context)
+    private IFunction BuildRecordFunction(Bindings.Function function, IContext context)
     {
         if (function.Parameters.Length == 0)
             return new RecordFunction();
@@ -247,7 +246,7 @@ public class ExpressionFactory : BaseExpressionFactory
         foreach (var entry in definition.Entries.OfType<RecordNamedEntry>())
         {
             if (!explicitNames.Add(entry.Name))
-                throw new ParseException($"Duplicate explicit field '{entry.Name}' in record(...).");
+                throw new BindingException($"Duplicate explicit field '{entry.Name}' in record(...).");
         }
 
         var evaluators = new List<RecordEntryEvaluator>();
@@ -262,7 +261,7 @@ public class ExpressionFactory : BaseExpressionFactory
                     evaluators.Add(RecordEntryEvaluator.Named(named.Name, BuildRecordNamedValueEvaluator(named.Value, context)));
                     break;
                 default:
-                    throw new ParseException($"Unsupported entry type '{entry.GetType().Name}' in record(...).");
+                    throw new BindingException($"Unsupported entry type '{entry.GetType().Name}' in record(...).");
             }
         }
 
@@ -326,7 +325,7 @@ public class ExpressionFactory : BaseExpressionFactory
     private static bool IsSingleTokenExpression(OpenExpressionParameter open)
         => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0;
 
-    private bool TryInstantiateWithAccumulatorProvider(Type type, Parsers.Function function, IContext context, out IFunction aggregation)
+    private bool TryInstantiateWithAccumulatorProvider(Type type, Bindings.Function function, IContext context, out IFunction aggregation)
     {
         aggregation = null!;
 
@@ -349,7 +348,7 @@ public class ExpressionFactory : BaseExpressionFactory
         return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
     }
 
-    private bool TryInstantiateWithTransformationProvider(Type type, Parsers.Function function, IContext context, out IFunction transformation)
+    private bool TryInstantiateWithTransformationProvider(Type type, Bindings.Function function, IContext context, out IFunction transformation)
     {
         transformation = null!;
 
@@ -374,7 +373,7 @@ public class ExpressionFactory : BaseExpressionFactory
     private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
         => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateTransformationMember(member, context)).ToArray());
 
-    private IFunction InstantiateTransformationMember(Parsers.Function member, IContext context)
+    private IFunction InstantiateTransformationMember(Bindings.Function member, IContext context)
     {
         if (!TypeMapper.TryExecute(member.Name, out _) && PredicateTypeMapper.TryExecute(member.Name, out _))
             return new PredicationFactory().Instantiate(new SinglePredication(member), context);
@@ -382,7 +381,7 @@ public class ExpressionFactory : BaseExpressionFactory
         return InstantiateOrWrapAggregation(member, context);
     }
 
-    private bool TryInstantiateWithPredicateProvider(Type type, Parsers.Function function, IContext context, out IFunction filtering)
+    private bool TryInstantiateWithPredicateProvider(Type type, Bindings.Function function, IContext context, out IFunction filtering)
     {
         filtering = null!;
 
@@ -441,7 +440,7 @@ public class ExpressionFactory : BaseExpressionFactory
         {
             OpenExpressionParameter open => open,
             LiteralParameter literal => new OpenExpressionParameter(
-                new OpenExpression([new Parsers.Function(literal.Value, [])])),
+                new OpenExpression([new Bindings.Function(literal.Value, [])])),
             _ => null!
         };
         return expression is not null;

@@ -1,5 +1,4 @@
-using Expressif.Parsers;
-using Sprache;
+using Expressif.Bindings;
 using System.Diagnostics;
 
 namespace Expressif.Testing.Parsers;
@@ -16,14 +15,14 @@ public class ExpressionTest
     [TestCase("text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
     [TestCase("text-to-func(foo) | numeric-to-func(foo, @bar) | boolean-to-func", 3)]
     public void Parse_Expression_Valid(string value, int count)
-        => Assert.That(OpenExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
+        => Assert.That(BindingTestAdapter.Open(value).Members.Count, Is.EqualTo(count));
 
     [Test]
     [TestCase("@foo | text-to-func(foo, @bar)", 1)]
     [TestCase("@foo | text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
     [TestCase("foo", 0)]
     public void Parse_ParametrizedExpression_Valid(string value, int count)
-        => Assert.That(Expressif.Parsers.ClosedExpression.Parser.Parse(value).Members.Count, Is.EqualTo(count));
+        => Assert.That(BindingTestAdapter.Closed(value).Members.Count, Is.EqualTo(count));
 
     [Test]
     [TestCase("{1,2,3} | sum")]
@@ -33,12 +32,12 @@ public class ExpressionTest
     [TestCase("{true,true} | every")]
     [TestCase("{false,true} | any")]
     public void Parse_InputExpression_ImplicitFoldAggregation_Valid(string value)
-        => Assert.That(Expressif.Parsers.ClosedExpression.Parser.Parse(value).IsImplicitFoldAggregation, Is.True);
+        => Assert.That(BindingTestAdapter.Closed(value).IsImplicitFoldAggregation, Is.True);
 
     [Test]
     public void Parse_ClosedExpression_SumDetectedAsImplicitFoldAccumulator()
     {
-        var expression = Expressif.Parsers.ClosedExpression.Parser.Parse("{1,2,3} | sum");
+        var expression = BindingTestAdapter.Closed("{1,2,3} | sum");
 
         Assert.That(expression.IsImplicitFoldAggregation, Is.True);
         Assert.That(expression.GetImplicitFoldAccumulator(), Is.Not.Null);
@@ -59,13 +58,12 @@ public class ExpressionTest
     [TestCase("{`alice`,`bob`} | map(upper | first-chars(2))", typeof(ClosedRootExpression))]
     [TestCase("{1,2,3,4} | filter(greater-than(2))", typeof(ClosedRootExpression))]
     public void Parse_RootExpression_ClosedFirst(string value, Type expectedType)
-        => Assert.That(RootExpression.Parser.Parse(value), Is.TypeOf(expectedType));
+        => Assert.That(BindingTestAdapter.Root(value), Is.TypeOf(expectedType));
 
     [Test]
     public void Parse_MapShorthand_LowersToMapFunction()
     {
-        var expression = Expressif.Parsers.ClosedExpression.Parser.End()
-            .Parse("{1,2,3} |> (absolute | add(5)) | reverse");
+        var expression = BindingTestAdapter.Closed("{1,2,3} |> (absolute | add(5)) | reverse");
 
         Assert.Multiple(() =>
         {
@@ -82,7 +80,7 @@ public class ExpressionTest
     public void Parse_LeadingMapPipeline_ResumesParentPipelineAfterMappedExpression(
         string value, string[] expectedMappedFunctions)
     {
-        var root = RootExpression.Parser.Parse(value);
+        var root = BindingTestAdapter.Root(value);
 
         Assert.That(root, Is.TypeOf<OpenRootExpression>());
         var expression = ((OpenRootExpression)root).Expression;
@@ -101,13 +99,12 @@ public class ExpressionTest
     [TestCase("{1,2,3} |> ()")]
     [TestCase("{1,2,3} |> (absolute")]
     public void Parse_MapShorthandWithInvalidExpression_Invalid(string value)
-        => Assert.That(() => Expressif.Parsers.ClosedExpression.Parser.End().Parse(value), Throws.TypeOf<ParseException>());
+        => Assert.That(() => BindingTestAdapter.Closed(value), Throws.TypeOf<ExpressifSyntaxException>());
 
     [Test]
     public void Parse_UnparenthesizedMapShorthand_ConsumesSingleFunction()
     {
-        var expression = Expressif.Parsers.ClosedExpression.Parser.End()
-            .Parse("{1,2,3} |> absolute | add(1) | sum");
+        var expression = BindingTestAdapter.Closed("{1,2,3} |> absolute | add(1) | sum");
 
         var map = expression.Members.First();
         var mappedExpression = ((OpenExpressionParameter)map.Parameters.Single()).Expression;

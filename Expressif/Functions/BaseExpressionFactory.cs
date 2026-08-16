@@ -1,4 +1,4 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using System;
@@ -67,7 +67,7 @@ public abstract class BaseExpressionFactory
             ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
             VariableParameter variable => CreateFunctionCast(() => context.Variables[variable.Name], scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
-            _ => throw new NotImplementedException($"Cannot handle the parameter type '{parameter.GetType().Name}'")
+            _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
 
         object?[] BuildArray(ArrayParameter array, IContext currentContext)
@@ -121,7 +121,7 @@ public abstract class BaseExpressionFactory
             return value;
         }
 
-        static IInterval buildInterval(Interval value)
+        static IInterval buildInterval(IntervalBinding value)
             => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
     }
 

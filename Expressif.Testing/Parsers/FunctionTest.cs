@@ -1,5 +1,4 @@
-using Expressif.Parsers;
-using Sprache;
+using Expressif.Bindings;
 using System.Diagnostics;
 using System.Linq;
 
@@ -12,7 +11,7 @@ public class FunctionTest
     [TestCase(".amount+tax", "amount+tax")]
     public void Parse_FieldShorthand_LowersToFieldFunction(string value, string expectedName)
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse(value);
+        var function = BindingTestAdapter.Function(value);
 
         Assert.Multiple(() =>
         {
@@ -27,8 +26,8 @@ public class FunctionTest
     [TestCase(".5")]
     [TestCase(".\"name\"")]
     [TestCase(".`name`")]
-    public void Parse_InvalidFieldShorthand_ThrowsParseException(string value)
-        => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.TypeOf<ParseException>());
+    public void Parse_InvalidFieldShorthand_ThrowsExpressifSyntaxException(string value)
+        => Assert.That(() => BindingTestAdapter.Function(value), Throws.TypeOf<ExpressifSyntaxException>());
 
     [SetUp]
     public void Setup()
@@ -41,7 +40,7 @@ public class FunctionTest
     [TestCase("text-to-func(foo, @bar)", 2)]
     public void Parse_Function_Valid(string value, int count)
     {
-        var function = Expressif.Parsers.Function.Parser.Parse(value);
+        var function = BindingTestAdapter.Function(value);
         Assert.Multiple(() =>
         {
             Assert.That(function.Name, Is.EqualTo("text-to-func"));
@@ -52,7 +51,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_MapWithOpenExpressionParameter_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("map(upper | first-chars(2))");
+        var function = BindingTestAdapter.Function("map(upper | first-chars(2))");
 
         Assert.That(function.Name, Is.EqualTo("map"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -65,7 +64,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_MapWithPredicateParameter_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse("map(even)");
+        var function = BindingTestAdapter.Function("map(even)");
 
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
         Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
@@ -75,7 +74,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_FilterWithExpressionParameter_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("filter(greater-than(2))");
+        var function = BindingTestAdapter.Function("filter(greater-than(2))");
 
         Assert.That(function.Name, Is.EqualTo("filter"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -88,7 +87,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_FilterWithAndPredicate_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("filter(greater-than(2) |AND less-than(5))");
+        var function = BindingTestAdapter.Function("filter(greater-than(2) |AND less-than(5))");
 
         Assert.That(function.Name, Is.EqualTo("filter"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -119,7 +118,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_MapWithTwoParametersFunction_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("map(add(10,2))");
+        var function = BindingTestAdapter.Function("map(add(10,2))");
 
         Assert.That(function.Name, Is.EqualTo("map"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -134,7 +133,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_MapWithThreeFunctionsMixedArity_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("map(increment | add(10) | add(10,2))");
+        var function = BindingTestAdapter.Function("map(increment | add(10) | add(10,2))");
 
         Assert.That(function.Name, Is.EqualTo("map"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -158,7 +157,7 @@ public class FunctionTest
     [TestCase("map(.name | upper)")]
     public void Parse_Function_WithExpressionParameter_Valid(string value)
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse(value);
+        var function = BindingTestAdapter.Function(value);
 
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
         Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
@@ -167,7 +166,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_WithMultipleExpressionParameters_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse(
+        var function = BindingTestAdapter.Function(
             "coalesce(.nickname, field(name), .display-name | upper)");
 
         Assert.That(function.Parameters, Has.Length.EqualTo(3));
@@ -177,7 +176,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_WithNestedLongFormExpressionParameters_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse(
+        var function = BindingTestAdapter.Function(
             "coalesce(field(nickname), field(name))");
 
         var expressions = function.Parameters.Cast<OpenExpressionParameter>().ToArray();
@@ -192,7 +191,7 @@ public class FunctionTest
     [TestCase("[name]", typeof(ObjectPropertyParameter))]
     public void Parse_Function_WithScalarParameter_PreservesParameterType(string value, Type expectedType)
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse($"example({value})");
+        var function = BindingTestAdapter.Function($"example({value})");
 
         Assert.That(function.Parameters.Single(), Is.TypeOf(expectedType));
     }
@@ -201,20 +200,20 @@ public class FunctionTest
     [TestCase("map()")]
     [TestCase("map(upper")]
     [TestCase("map(upper,")]
-    public void Parse_Function_MapWithMalformedOpenExpression_ThrowsParseException(string value)
-        => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.InstanceOf<ParseException>());
+    public void Parse_Function_MapWithMalformedOpenExpression_ThrowsExpressifSyntaxException(string value)
+        => Assert.That(() => BindingTestAdapter.Function(value), Throws.InstanceOf<ExpressifSyntaxException>());
 
     [Test]
     [TestCase("filter()")]
     [TestCase("filter(greater-than(2)")]
     [TestCase("filter(greater-than(2),")]
-    public void Parse_Function_FilterWithMalformedOpenExpression_ThrowsParseException(string value)
-        => Assert.That(() => Expressif.Parsers.Function.Parser.End().Parse(value), Throws.InstanceOf<ParseException>());
+    public void Parse_Function_FilterWithMalformedOpenExpression_ThrowsExpressifSyntaxException(string value)
+        => Assert.That(() => BindingTestAdapter.Function(value), Throws.InstanceOf<ExpressifSyntaxException>());
 
     [Test]
     public void Parse_Function_RecordWithEntries_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("record(..., name := field(name) | upper, original := ..., active := true)");
+        var function = BindingTestAdapter.Function("record(..., name := field(name) | upper, original := ..., active := true)");
 
         Assert.That(function.Name, Is.EqualTo("record"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -231,7 +230,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_RecordWithTrailingComma_Valid()
     {
-        var function = Expressif.Parsers.Function.Parser.Parse("record(name := Alice,)");
+        var function = BindingTestAdapter.Function("record(name := Alice,)");
 
         Assert.That(function.Name, Is.EqualTo("record"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));

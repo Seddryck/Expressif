@@ -193,7 +193,8 @@ internal static class EvaluateCommand
             Console.Error.WriteLine("Provide an input with --input. You can load the expression from a file with --file.");
             return ExitCodes.InvalidExpressionOrInput;
         }
-        catch (Exception exception) when (exception is Sprache.ParseException
+        catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
+                                          or Expressif.Bindings.BindingException
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
@@ -245,7 +246,8 @@ internal static class EvaluateCommand
             _ = BuildExpression(expressionCode, new Context());
             return ExitCodes.Success;
         }
-        catch (Exception exception) when (exception is Sprache.ParseException
+        catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
+                                          or Expressif.Bindings.BindingException
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
@@ -265,7 +267,8 @@ internal static class EvaluateCommand
             {
                 openExpression = BuildExpression(expressionCode, new Context());
             }
-            catch (Exception exception) when (exception is Sprache.ParseException
+            catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
+                                              or Expressif.Bindings.BindingException
                                               or NotImplementedFunctionException
                                               or MissingOrUnexpectedParametersFunctionException)
             {

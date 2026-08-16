@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Text;
 using PocketCsvReader;
 using Expressif.Values;
-using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Serializers;
-using Sprache;
+using Expressif.Syntax;
 
 namespace Expressif.Cli.Commands;
 
@@ -163,7 +163,8 @@ internal static class RunCommand
             {
                 openExpression = BuildExpression(expressionCode, context);
             }
-            catch (Exception exception) when (exception is Sprache.ParseException
+            catch (Exception exception) when (exception is ExpressifSyntaxException
+                                              or BindingException
                                               or NotImplementedFunctionException
                                               or MissingOrUnexpectedParametersFunctionException)
             {
@@ -533,7 +534,8 @@ internal static class RunCommand
         {
             closedExpression = BuildClosedExpression(sourceCode, new Context());
         }
-        catch (Exception exception) when (exception is Sprache.ParseException
+        catch (Exception exception) when (exception is ExpressifSyntaxException
+                                          or BindingException
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException
                                           or ExpressionRequiresInputException)
@@ -746,10 +748,10 @@ internal static class RunCommand
 
             try
             {
-                var parameter = Parameter.Parser.End().Parse(text);
+                var parameter = new ExpressifBinder().BindParameter(text);
                 return ConvertToRuntimeValue(parameter);
             }
-            catch (ParseException exception)
+            catch (Exception exception) when (exception is ExpressifSyntaxException or BindingException)
             {
                 if (TryParseAutoQuotedScalar(text, out var autoQuotedValue))
                     return autoQuotedValue;
@@ -763,7 +765,7 @@ internal static class RunCommand
             var normalized = text.Trim();
             try
             {
-                var parameter = Parameter.Parser.End().Parse(text);
+                var parameter = new ExpressifBinder().BindParameter(text);
                 if (normalized.Length >= 2 && normalized[0] is '"' or '`')
                 {
                     return parameter switch
@@ -776,7 +778,7 @@ internal static class RunCommand
 
                 return ConvertToRuntimeValue(parameter);
             }
-            catch (ParseException exception)
+            catch (Exception exception) when (exception is ExpressifSyntaxException or BindingException)
             {
                 throw new FormatException(exception.Message, exception);
             }
@@ -794,11 +796,11 @@ internal static class RunCommand
 
             try
             {
-                var parameter = Parameter.Parser.End().Parse(candidate);
+                var parameter = new ExpressifBinder().BindParameter(candidate);
                 value = ConvertToRuntimeValue(parameter);
                 return true;
             }
-            catch (ParseException)
+            catch (Exception exception) when (exception is ExpressifSyntaxException or BindingException)
             {
                 return false;
             }

@@ -1,8 +1,7 @@
 using Expressif.Functions;
-using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
 using Expressif.Values.Special;
-using Sprache;
 using System.Data;
 using System.Diagnostics;
 
@@ -541,7 +540,7 @@ public class ExpressionTest
     {
         Assert.That(
             () => new Expression("record(name := field(name), name := field(preferred-name))"),
-            Throws.TypeOf<ParseException>());
+            Throws.TypeOf<BindingException>());
     }
 
     [Test]

@@ -1,6 +1,5 @@
-﻿using Expressif.Serializers;
-using Expressif.Parsers;
-using Sprache;
+using Expressif.Serializers;
+using Expressif.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +33,7 @@ public class ParameterSerializerTest
         var parameter = new LiteralParameter("Alice said \"hello\"");
 
         var serialized = serializer.Serialize(parameter);
-        var parsed = Parameter.Parser.Parse(serialized);
+        var parsed = BindingTestAdapter.Parameter(serialized);
 
         Assert.Multiple(() =>
         {
@@ -76,7 +75,7 @@ public class ParameterSerializerTest
     {
         var serializer = new ParameterSerializer();
         var serialized = serializer.Serialize(new RecordLiteralParameter(Array.Empty<RecordLiteralField>()));
-        var parsed = Parameter.Parser.End().Parse(serialized);
+        var parsed = BindingTestAdapter.Parameter(serialized);
 
         Assert.Multiple(() =>
         {

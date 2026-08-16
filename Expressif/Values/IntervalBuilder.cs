@@ -1,8 +1,7 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Predicates.Text;
 using Expressif.Values;
 using Expressif.Values.Casters;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,11 +35,8 @@ public class IntervalBuilder
     }
 
     public virtual IInterval Create(string value)
-    {
-        var interval = Interval.Parser.Parse(value);
-        return Create(interval);
-    }
+        => throw new BindingException($"Interval syntax '{value}' is not represented by Expressif.Syntax 0.10.0.");
 
-    public virtual IInterval Create(Interval interval)
+    public virtual IInterval Create(IntervalBinding interval)
         => Create(interval.LowerBoundType, interval.LowerBound, interval.UpperBound, interval.UpperBoundType);
 }
