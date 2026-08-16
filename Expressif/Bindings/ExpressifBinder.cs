@@ -46,7 +46,7 @@ public sealed class ExpressifBinder
     private Function BindPipelineMember(ExpressionSyntax syntax) => syntax switch
     {
         FunctionCallSyntax call => BindFunction(call),
-        PositionalElementAccessSyntax projection => new Function("tuple-at", [new LiteralParameter(projection.Index.ToString())], FunctionSyntax.TupleProjectionShorthand),
+        TupleProjectionSyntax projection => new Function("tuple-at", [new LiteralParameter(projection.Index.ToString())], FunctionSyntax.TupleProjectionShorthand),
         RecordAccessSyntax access when !access.IsOriginalInput => BindRecordAccessFunction(access),
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
@@ -62,13 +62,15 @@ public sealed class ExpressifBinder
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),
         ClosedExpressionSyntax closed => new InputExpressionParameter(BindClosed(closed)),
+        TupleProjectionSyntax projection => new TupleProjectionParameter(
+            projection.Index,
+            projection.Direction is TupleProjectionDirection.FromEnd),
         _ => throw Unsupported(syntax),
     };
 
     private IParameter BindValue(ValueSyntax syntax) => syntax switch
     {
         VariableSyntax variable => new VariableParameter(variable.Name),
-        PositionalElementAccessSyntax projection => new TupleProjectionParameter(projection.Index, projection.FromEnd),
         RecordAccessSyntax access => BindRecordAccessParameter(access),
         NumericLiteralSyntax numeric => new LiteralParameter(numeric.Text),
         BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Text),
