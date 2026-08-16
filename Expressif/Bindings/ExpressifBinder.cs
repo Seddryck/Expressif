@@ -6,6 +6,13 @@ public sealed class ExpressifBinder
 {
     public IRootExpression Bind(string source) => Bind(ExpressifSyntax.Parse(source));
 
+    public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
+    {
+        OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
+        ClosedExpressionSyntax closed => new ClosedRootExpression(BindClosed(closed)),
+        _ => throw Unsupported(syntax),
+    };
+
     public Function BindFunction(string source)
     {
         var root = Bind(source);
@@ -29,13 +36,6 @@ public sealed class ExpressifBinder
             ? new SinglePredication(open.Expression.Members.Single())
             : throw new BindingException($"Predication '{source}' is not represented by Expressif.Syntax 0.10.0.");
     }
-
-    public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
-    {
-        OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
-        ClosedExpressionSyntax closed => new ClosedRootExpression(BindClosed(closed)),
-        _ => throw Unsupported(syntax),
-    };
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
         => new(syntax.Pipeline.Select(BindPipelineMember));
