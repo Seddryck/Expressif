@@ -34,10 +34,10 @@ public class FunctionTest
     { }
 
     [Test]
-    [TestCase("text-to-func(foo)", 1)]
+    [TestCase("text-to-func(\"foo\")", 1)]
     [TestCase("text-to-func()", 0)]
     [TestCase("text-to-func", 0)]
-    [TestCase("text-to-func(foo, @bar)", 2)]
+    [TestCase("text-to-func(\"foo\", @bar)", 2)]
     public void Parse_Function_Valid(string value, int count)
     {
         var function = BindingTestAdapter.Function(value);
@@ -185,10 +185,10 @@ public class FunctionTest
             Is.EqualTo(new[] { "field", "field" }));
     }
 
-    [TestCase("value", typeof(LiteralParameter))]
-    [TestCase("\"name\"", typeof(LiteralParameter))]
+    [TestCase("\"value\"", typeof(QuotedLiteralParameter))]
+    [TestCase("\"name\"", typeof(QuotedLiteralParameter))]
     [TestCase("@foo", typeof(VariableParameter))]
-    [TestCase("[name]", typeof(ObjectPropertyParameter))]
+    [TestCase("^.name", typeof(ObjectPropertyParameter))]
     public void Parse_Function_WithScalarParameter_PreservesParameterType(string value, Type expectedType)
     {
         var function = BindingTestAdapter.Function($"example({value})");
@@ -213,7 +213,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_RecordWithEntries_Valid()
     {
-        var function = BindingTestAdapter.Function("record(..., name := field(name) | upper, original := ..., active := true)");
+        var function = BindingTestAdapter.Function("record(..., name := field(name) | upper, original := ..., active := #true)");
 
         Assert.That(function.Name, Is.EqualTo("record"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
@@ -230,7 +230,7 @@ public class FunctionTest
     [Test]
     public void Parse_Function_RecordWithTrailingComma_Valid()
     {
-        var function = BindingTestAdapter.Function("record(name := Alice,)");
+        var function = BindingTestAdapter.Function("record(name := \"Alice\",)");
 
         Assert.That(function.Name, Is.EqualTo("record"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));

@@ -10,16 +10,16 @@ public class ExpressionTest
     { }
 
     [Test]
-    [TestCase("text-to-func(foo, @bar)", 1)]
+    [TestCase("text-to-func(\"foo\", @bar)", 1)]
     [TestCase("text-to-func", 1)]
-    [TestCase("text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
-    [TestCase("text-to-func(foo) | numeric-to-func(foo, @bar) | boolean-to-func", 3)]
+    [TestCase("text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar)", 2)]
+    [TestCase("text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar) | boolean-to-func", 3)]
     public void Parse_Expression_Valid(string value, int count)
         => Assert.That(BindingTestAdapter.Open(value).Members.Count, Is.EqualTo(count));
 
     [Test]
-    [TestCase("@foo | text-to-func(foo, @bar)", 1)]
-    [TestCase("@foo | text-to-func(foo) | numeric-to-func(foo, @bar)", 2)]
+    [TestCase("@foo | text-to-func(\"foo\", @bar)", 1)]
+    [TestCase("@foo | text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar)", 2)]
     [TestCase("foo", 0)]
     public void Parse_ParametrizedExpression_Valid(string value, int count)
         => Assert.That(BindingTestAdapter.Closed(value).Members.Count, Is.EqualTo(count));
@@ -27,10 +27,10 @@ public class ExpressionTest
     [Test]
     [TestCase("{1,2,3} | sum")]
     [TestCase("@foo | count")]
-    [TestCase("[foo] | min")]
-    [TestCase("#1 | last")]
-    [TestCase("{true,true} | every")]
-    [TestCase("{false,true} | any")]
+    [TestCase("^.foo | min")]
+    [TestCase("^.1 | last")]
+    [TestCase("{#true,#true} | every")]
+    [TestCase("{#false,#true} | any")]
     public void Parse_InputExpression_ImplicitFoldAggregation_Valid(string value)
         => Assert.That(BindingTestAdapter.Closed(value).IsImplicitFoldAggregation, Is.True);
 

@@ -5,10 +5,10 @@ tests:
   - id: every.valid
     cases:
       - id: every.valid.array.all-true
-        value: "{true, true, true}"
+        value: "{#true, #true, #true}"
         expected: true
       - id: every.valid.array.contains-false
-        value: "{true, false, true}"
+        value: "{#true, #false, #true}"
         expected: false
       - id: every.valid.special.empty
         value: (empty)

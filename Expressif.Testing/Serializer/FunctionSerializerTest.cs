@@ -21,9 +21,9 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_DynamicFieldName_PreservesLongForm()
     {
-        var function = BindingTestAdapter.Function("field([requested-field])");
+        var function = BindingTestAdapter.Function("field(\"requested-field\")");
 
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field([requested-field])"));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field(\"requested-field\")"));
     }
     [Test]
     public void Serialize_NoParameter_NoParenthesis()

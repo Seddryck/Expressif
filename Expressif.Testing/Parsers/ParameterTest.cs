@@ -10,40 +10,40 @@ public class ParameterTest
     { }
 
     [Test]
-    [TestCase("foo", typeof(LiteralParameter))]
-    [TestCase("\"foo\"", typeof(LiteralParameter))]
+    [TestCase("`foo`", typeof(QuotedLiteralParameter))]
+    [TestCase("\"foo\"", typeof(QuotedLiteralParameter))]
     [TestCase("@foo", typeof(VariableParameter))]
-    [TestCase("[foo]", typeof(ObjectPropertyParameter))]
-    [TestCase("#52", typeof(ObjectIndexParameter))]
+    [TestCase("^.foo", typeof(ObjectPropertyParameter))]
+    [TestCase("^.52", typeof(ObjectIndexParameter))]
     [TestCase("{}", typeof(ArrayParameter))]
     [TestCase("{:}", typeof(RecordLiteralParameter))]
     [TestCase("{1,2,3}", typeof(ArrayParameter))]
-    [TestCase("{name := Alice}", typeof(RecordLiteralParameter))]
-    [TestCase("{`first name` := \"Alice Smith\", active := true}", typeof(RecordLiteralParameter))]
+    [TestCase("{name := \"Alice\"}", typeof(RecordLiteralParameter))]
+    [TestCase("{`first name` := \"Alice Smith\", active := #true}", typeof(RecordLiteralParameter))]
     [TestCase("{@foo}", typeof(ArrayParameter))]
-    [TestCase("{ @foo, #1, [bar] }", typeof(ArrayParameter))]
-    [TestCase("{ @foo | text-to-func(bar) }", typeof(InputExpressionParameter))]
+    [TestCase("{ @foo, ^.1, ^.bar }", typeof(ArrayParameter))]
+    [TestCase("{ @foo | text-to-func(\"bar\") }", typeof(InputExpressionParameter))]
     [TestCase("T(10, 20)", typeof(TupleParameter))]
     [TestCase("T(1, T(2, 3))", typeof(TupleParameter))]
     public void Parse_Parameter_Valid(string value, Type type)
         => Assert.That(BindingTestAdapter.Parameter(value), Is.TypeOf(type));
 
     [Test]
-    [TestCase("(foo, bar)")]
-    [TestCase("( \"foo\", bar ) ")]
-    [TestCase("(@foo , bar)")]
-    [TestCase("([foo] , #1)")]
-    [TestCase("([10;45] , #1)")]
-    [TestCase("([10;45[ , [foo])")]
-    [TestCase("(@foo , { @foo | text-to-func(bar, @foo) })")]
-    [TestCase("(@foo , { @foo | text-to-func(bar, { @fool | numeric-to-func(#3, [bez]) }) })")]
+    [TestCase("(\"foo\", \"bar\")")]
+    [TestCase("( \"foo\", \"bar\" ) ")]
+    [TestCase("(@foo , \"bar\")")]
+    [TestCase("(^.foo , ^.1)")]
+    [TestCase("([10;45] , ^.1)")]
+    [TestCase("([10;45[ , ^.foo)")]
+    [TestCase("(@foo , { @foo | text-to-func(\"bar\", @foo) })")]
+    [TestCase("(@foo , { @foo | text-to-func(\"bar\", { @fool | numeric-to-func(^.3, ^.bez) }) })")]
     public void Parse_Parameters_Valid(string value)
         => Assert.That(BindingTestAdapter.Parameters(value).Count, Is.EqualTo(2));
 
     [Test]
     [TestCase("{{1, 2, 3}, {4, 5}}")]
     [TestCase("{{\"a\", \"b\"}, {\"c\"}}")]
-    [TestCase("{{true, false}, {null, 3}}")]
+    [TestCase("{{#true, #false}, {null, 3}}")]
     public void Parse_Parameter_NestedArrays_Valid(string value)
     {
         var parsed = BindingTestAdapter.Parameter(value);

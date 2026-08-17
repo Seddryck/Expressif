@@ -138,7 +138,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_DurationBetweenIncompatiblePrevious_Null()
     {
-        var expression = new Expression("duration-between(invalid)", new Context());
+        var expression = new Expression("duration-between(\"invalid\")", new Context());
         Assert.That(expression.Evaluate("2026-08-06T12:00:00"), Is.Null);
     }
 
@@ -265,10 +265,10 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(6m));
     }
 
-    [TestCase("{true,true,true} | every", true)]
-    [TestCase("{true,false,true} | every", false)]
-    [TestCase("{false,true,false} | any", true)]
-    [TestCase("{false,false,false} | any", false)]
+    [TestCase("{#true,#true,#true} | every", true)]
+    [TestCase("{#true,#false,#true} | every", false)]
+    [TestCase("{#false,#true,#false} | any", true)]
+    [TestCase("{#false,#false,#false} | any", false)]
     [TestCase("{} | every", true)]
     [TestCase("{} | any", false)]
     public void Evaluate_DirectBooleanAccumulatorSyntax_Valid(string code, bool expected)
@@ -414,7 +414,7 @@ public class ExpressionTest
             }
         });
 
-        var expression = new ClosedExpression("^.customer | record(customerName := field(name), requestedBy := [name])", context);
+        var expression = new ClosedExpression("^.customer | record(customerName := field(name), requestedBy := ^.name)", context);
         var result = (RecordValue)expression.Evaluate()!;
 
         Assert.Multiple(() =>
@@ -460,9 +460,9 @@ public class ExpressionTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(new ClosedExpression("[customers] |> (.name)", context).Evaluate(),
+            Assert.That(new ClosedExpression("^.customers |> (.name)", context).Evaluate(),
                 Is.EqualTo(new object?[] { "Alice", "Bob" }));
-            Assert.That(new ClosedExpression("[customers] | filter(.active) |> (.name)", context).Evaluate(),
+            Assert.That(new ClosedExpression("^.customers | filter(.active) |> (.name)", context).Evaluate(),
                 Is.EqualTo(new object?[] { "Alice" }));
         });
     }
@@ -560,7 +560,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_RecordLiteral_ParsesTypedValues()
     {
-        var expression = new ClosedExpression("{name := Alice, active := true, retries := 3, ratio := 1.5, missing := null}");
+        var expression = new ClosedExpression("{name := \"Alice\", active := #true, retries := 3, ratio := 1.5, missing := null}");
         var result = (RecordValue)expression.Evaluate()!;
 
         Assert.Multiple(() =>
