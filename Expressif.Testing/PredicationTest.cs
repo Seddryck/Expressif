@@ -31,7 +31,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_IntervalAsParameter_Valid()
     {
-        var predication = new Predication("within-interval([0;20[)");
+        var predication = new Predication("within-interval(I[0, 20[)");
         var result = predication.Evaluate(15);
         Assert.That(result, Is.True);
     }

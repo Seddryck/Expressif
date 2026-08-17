@@ -48,8 +48,8 @@ public class ParameterBinderTest
     [TestCase("( \"foo\", \"bar\" ) ")]
     [TestCase("(@foo , \"bar\")")]
     [TestCase("(^.foo , ^.1)")]
-    [TestCase("([10;45] , ^.1)")]
-    [TestCase("([10;45[ , ^.foo)")]
+    [TestCase("(I[10, 45] , ^.1)")]
+    [TestCase("(I[10, 45[ , ^.foo)")]
     [TestCase("(@foo , { @foo | text-to-func(\"bar\", @foo) })")]
     [TestCase("(@foo , { @foo | text-to-func(\"bar\", { @fool | numeric-to-func(^.3, ^.bez) }) })")]
     public void Parse_Parameters_Valid(string value)

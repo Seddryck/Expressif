@@ -10,11 +10,14 @@ namespace Expressif.Testing.Bindings;
 public class IntervalBinderTest
 {
     [Test]
-    [TestCase("[25;40]", '[', "25", "40", ']')]
-    [TestCase("]25;40]", ']', "25", "40", ']')]
-    [TestCase("]25;40[", ']', "25", "40", '[')]
-    [TestCase("[25;40[", '[', "25", "40", '[')]
-    [TestCase("[-25.1221;40.125]", '[', "-25.1221", "40.125", ']')]
+    [TestCase("I[25, 40]", '[', "25", "40", ']')]
+    [TestCase("I(25, 40]", ']', "25", "40", ']')]
+    [TestCase("I(25, 40)", ']', "25", "40", '[')]
+    [TestCase("I[25, 40)", '[', "25", "40", '[')]
+    [TestCase("I]25, 40]", ']', "25", "40", ']')]
+    [TestCase("I]25, 40[", ']', "25", "40", '[')]
+    [TestCase("I[25, 40[", '[', "25", "40", '[')]
+    [TestCase("I[-25.1221, 40.125]", '[', "-25.1221", "40.125", ']')]
     public void Parse_IntervalDecimal_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
         var interval = BindingTestAdapter.Interval(value);
@@ -29,8 +32,9 @@ public class IntervalBinderTest
     }
 
     [Test]
-    [TestCase("[25;+INF]", '[', "25", "+INF", ']')]
-    [TestCase("[-INF;40[", '[', "-INF", "40", '[')]
+    [TestCase("I[25, +INF]", '[', "25", "+INF", ']')]
+    [TestCase("I]25, +INF]", ']', "25", "+INF", ']')]
+    [TestCase("I[-INF, 40[", '[', "-INF", "40", '[')]
     public void Parse_IntervalInfinite_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
         var interval = BindingTestAdapter.Interval(value);
@@ -45,10 +49,10 @@ public class IntervalBinderTest
     }
 
     [Test]
-    [TestCase("(+)", ']', "0", "+INF", ']')]
-    [TestCase("(-)", '[', "-INF", "0", '[')]
-    [TestCase("(0+)", '[', "0", "+INF", ']')]
-    [TestCase("(0-)", '[', "-INF", "0", ']')]
+    [TestCase("I(+)", ']', "0", "+INF", ']')]
+    [TestCase("I(-)", '[', "-INF", "0", '[')]
+    [TestCase("I(0+)", '[', "0", "+INF", ']')]
+    [TestCase("I(0-)", '[', "-INF", "0", ']')]
     public void Parse_IntervalZeroBasedShorthand_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
         var interval = BindingTestAdapter.Interval(value);
@@ -63,10 +67,10 @@ public class IntervalBinderTest
     }
 
     [Test]
-    [TestCase("(absolutely-positive)", ']', "0", "+INF", ']')]
-    [TestCase("(absolutely-negative)", '[', "-INF", "0", '[')]
-    [TestCase("(positive)", '[', "0", "+INF", ']')]
-    [TestCase("(negative)", '[', "-INF", "0", ']')]
+    [TestCase("I(absolutely-positive)", ']', "0", "+INF", ']')]
+    [TestCase("I(absolutely-negative)", '[', "-INF", "0", '[')]
+    [TestCase("I(positive)", '[', "0", "+INF", ']')]
+    [TestCase("I(negative)", '[', "-INF", "0", ']')]
     public void Parse_IntervalZeroBasedLonghand_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
         var interval = BindingTestAdapter.Interval(value);
@@ -81,10 +85,10 @@ public class IntervalBinderTest
     }
 
     [Test]
-    [TestCase("(>40)", ']', "40", "+INF", ']')]
-    [TestCase("(<40)", '[', "-INF", "40", '[')]
-    [TestCase("(>=40)", '[', "40", "+INF", ']')]
-    [TestCase("(<=40)", '[', "-INF", "40", ']')]
+    [TestCase("I(>40)", ']', "40", "+INF", ']')]
+    [TestCase("I(<40)", '[', "-INF", "40", '[')]
+    [TestCase("I(>=40)", '[', "40", "+INF", ']')]
+    [TestCase("I(<=40)", '[', "-INF", "40", ']')]
     public void Parse_IntervalNonZeroBasedShorthand_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
         var interval = BindingTestAdapter.Interval(value);
@@ -99,11 +103,11 @@ public class IntervalBinderTest
     }
 
     [Test]
-    [TestCase("[2022-10-01;2022-12-01]", '[', "2022-10-01", "2022-12-01", ']')]
-    [TestCase("]2022-10-01;2022-12-01]", ']', "2022-10-01", "2022-12-01", ']')]
-    [TestCase("]2022-10-01;2022-12-01[", ']', "2022-10-01", "2022-12-01", '[')]
-    [TestCase("[2022-10-01;2022-12-01[", '[', "2022-10-01", "2022-12-01", '[')]
-    [TestCase("[2022-10-01 16:45:12;2022-12-17 12:24:20]", '[', "2022-10-01 16:45:12", "2022-12-17 12:24:20", ']')]
+    [TestCase("I[#\"2022-10-01\", #\"2022-12-01\"]", '[', "2022-10-01", "2022-12-01", ']')]
+    [TestCase("I]#\"2022-10-01\", #\"2022-12-01\"]", ']', "2022-10-01", "2022-12-01", ']')]
+    [TestCase("I]#\"2022-10-01\", #\"2022-12-01\"[", ']', "2022-10-01", "2022-12-01", '[')]
+    [TestCase("I[#\"2022-10-01\", #\"2022-12-01\"[", '[', "2022-10-01", "2022-12-01", '[')]
+    [TestCase("I[#\"2022-10-01T16:45:12\", #\"2022-12-17T12:24:20\"]", '[', "2022-10-01 16:45:12", "2022-12-17 12:24:20", ']')]
     public void Parse_IntervalDateTime_Valid(string value, char lowerBoundIntervalType, string lowerBound, string upperBound, char upperBoundIntervalType)
     {
         var interval = BindingTestAdapter.Interval(value);

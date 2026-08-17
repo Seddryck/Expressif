@@ -28,8 +28,8 @@ public class IntervalBuilderTest
         => Assert.That(() => new IntervalBuilder().Create(']', lowerBound, upperBound, '['), Throws.InvalidOperationException);
 
     [Test]
-    [TestCase("[2022-10-12 12:16:10;2023-10-11 00:00:00]")]
-    [TestCase("[2022-10-12;2023-10-11]")]
+    [TestCase("I[#\"2022-10-12T12:16:10\", #\"2023-10-11T00:00:00\"]")]
+    [TestCase("I[#\"2022-10-12\", #\"2023-10-11\"]")]
     public void CreateDateTime_FromString_valid(string value)
         => Assert.Multiple(() =>
         {
@@ -38,8 +38,8 @@ public class IntervalBuilderTest
         });
 
     [Test]
-    [TestCase("[5;15]")]
-    [TestCase("[-5.05;10.256]")]
+    [TestCase("I[5, 15]")]
+    [TestCase("I[-5.05, 10.256]")]
     public void CreateNumeric_FromString_valid(string value)
         => Assert.Multiple(() =>
         {
@@ -50,7 +50,7 @@ public class IntervalBuilderTest
     [Test]
     public void CreateNumericWithPositiveInfinite_FromString_valid()
     {
-        var interval = new IntervalBuilder().Create("(0+)");
+        var interval = new IntervalBuilder().Create("I(0+)");
         Assert.Multiple(() =>
         {
             Assert.That(interval, Is.Not.Null);
@@ -68,7 +68,7 @@ public class IntervalBuilderTest
     [Test]
     public void CreateNumericWithNegativeInfinite_FromString_valid()
     {
-        var interval = new IntervalBuilder().Create("[-INF;45]");
+        var interval = new IntervalBuilder().Create("I[-INF, 45]");
         Assert.Multiple(() =>
         {
             Assert.That(interval, Is.Not.Null);
