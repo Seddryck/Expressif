@@ -155,7 +155,7 @@ public class ExpressionFactory : BaseExpressionFactory
     {
         fieldName = parameters switch
         {
-            [LiteralParameter literal] => literal.Value,
+            [LiteralParameter { Value: string value }] => value,
             [QuotedLiteralParameter quoted] => quoted.Value,
             _ => string.Empty
         };
@@ -277,9 +277,7 @@ public class ExpressionFactory : BaseExpressionFactory
             return _ => quoted.Value;
 
         if (parameter is LiteralParameter literal)
-            return RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
-                ? _ => typed
-                : _ => literal.Value;
+            return _ => literal.Value;
 
         if (parameter is OpenExpressionParameter open)
             return BuildOpenExpressionRecordEvaluator(open, context);
@@ -439,8 +437,8 @@ public class ExpressionFactory : BaseExpressionFactory
         expression = parameter switch
         {
             OpenExpressionParameter open => open,
-            LiteralParameter literal => new OpenExpressionParameter(
-                new OpenExpression([new Bindings.Function(literal.Value, [])])),
+            LiteralParameter { Value: string value } => new OpenExpressionParameter(
+                new OpenExpression([new Bindings.Function(value, [])])),
             _ => null!
         };
         return expression is not null;

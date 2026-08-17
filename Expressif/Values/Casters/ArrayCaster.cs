@@ -50,9 +50,7 @@ public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
     {
         return parameter switch
         {
-            LiteralParameter literal => RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
-                ? typed
-                : literal.Value,
+            LiteralParameter literal => literal.Value,
             QuotedLiteralParameter quoted => quoted.Value,
             ArrayParameter array => array.Values.Select(ConvertToRuntimeValue).ToArray(),
             RecordLiteralParameter record => ConvertRecord(record),

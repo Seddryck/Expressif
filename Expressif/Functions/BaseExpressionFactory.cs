@@ -108,9 +108,9 @@ public abstract class BaseExpressionFactory
                     continue;
                 }
 
-                if (field.Value is LiteralParameter literal && RecordSyntax.TryParseTypedToken(literal.Value, out var typed))
+                if (field.Value is LiteralParameter literal)
                 {
-                    value.Set(field.Name, typed);
+                    value.Set(field.Name, literal.Value);
                     continue;
                 }
 

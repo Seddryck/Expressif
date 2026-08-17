@@ -123,7 +123,7 @@ public class ExpressionTest
     public void Evaluate_AliasesDateTime_Valid()
     {
         var expression = new Expression("dateTime-to-add(#\"04:00:00\", 4)", new Context());
-        var result = expression.Evaluate("#\"2023-12-28 02:00:00\"");
+        var result = expression.Evaluate(DateTime.Parse("2023-12-28 02:00:00"));
         Assert.That(result, Is.EqualTo(DateTime.Parse("2023-12-28 18:00:00")));
     }
 
@@ -131,7 +131,7 @@ public class ExpressionTest
     public void Evaluate_DurationBetween_Valid()
     {
         var expression = new Expression("duration-between(2026-08-06T10:30:00)", new Context());
-        var result = expression.Evaluate("2026-08-06T12:00:00");
+        var result = expression.Evaluate(DateTime.Parse("2026-08-06T12:00:00"));
         Assert.That(result, Is.EqualTo(TimeSpan.FromMinutes(90)));
     }
 
@@ -139,7 +139,7 @@ public class ExpressionTest
     public void Evaluate_DurationBetweenIncompatiblePrevious_Null()
     {
         var expression = new Expression("duration-between(\"invalid\")", new Context());
-        Assert.That(expression.Evaluate("2026-08-06T12:00:00"), Is.Null);
+        Assert.That(expression.Evaluate(DateTime.Parse("2026-08-06T12:00:00")), Is.Null);
     }
 
     [Test]
@@ -379,7 +379,7 @@ public class ExpressionTest
         var expression = new ClosedExpression("{1,2,3,4} | filter(greater-than(2))");
         var result = expression.Evaluate();
 
-        Assert.That(result, Is.EqualTo(new object?[] { "3", "4" }));
+        Assert.That(result, Is.EqualTo(new object?[] { 3m, 4m }));
     }
 
     [Test]
@@ -388,7 +388,7 @@ public class ExpressionTest
         var expression = new ClosedExpression("{1,2,3,4,5} | filter(even)");
         var result = expression.Evaluate();
 
-        Assert.That(result, Is.EqualTo(new object?[] { "2", "4" }));
+        Assert.That(result, Is.EqualTo(new object?[] { 2m, 4m }));
     }
 
     [Test]

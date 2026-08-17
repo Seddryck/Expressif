@@ -34,7 +34,7 @@ public sealed class ExpressifBinder
         var root = Bind(source);
         return root is OpenRootExpression open && open.Expression.Members.Count() == 1
             ? new SinglePredication(open.Expression.Members.Single())
-            : throw new BindingException($"Predication '{source}' is not represented by Expressif.Syntax 0.10.0.");
+            : throw new BindingException($"Predication '{source}' is not bound in this iteration.");
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
@@ -72,12 +72,12 @@ public sealed class ExpressifBinder
     {
         VariableSyntax variable => new VariableParameter(variable.Name),
         RecordAccessSyntax access => BindRecordAccessParameter(access),
-        NumericLiteralSyntax numeric => new LiteralParameter(numeric.Text),
-        BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Text),
-        QuotedLiteralSyntax quoted => new QuotedLiteralParameter(Unquote(quoted.Text)),
-        DateLiteralSyntax date => new LiteralParameter(date.Text),
-        DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Text),
-        TimeLiteralSyntax time => new LiteralParameter(time.Text),
+        NumericLiteralSyntax numeric => new LiteralParameter(numeric.Value),
+        BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Value),
+        QuotedLiteralSyntax quoted => new QuotedLiteralParameter(quoted.Value),
+        DateLiteralSyntax date => new LiteralParameter(date.Value),
+        DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),
+        TimeLiteralSyntax time => new LiteralParameter(time.Value),
         ArrayLiteralSyntax array => new ArrayParameter(array.Values.Select(BindValue).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Values.Select(BindValue).ToArray()),
         RecordLiteralSyntax record => new RecordLiteralParameter(record.Fields.Select(field => new RecordLiteralField(field.Name, BindValue(field.Value))).ToArray()),
@@ -111,7 +111,6 @@ public sealed class ExpressifBinder
         return new Function("field", [new LiteralParameter(value)], FunctionSyntax.FieldShorthand);
     }
 
-    private static string Unquote(string text) => text.Length >= 2 ? text[1..^1] : text;
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)
         => new($"Record access '{syntax.Text}' contains neither a named nor positional field selector.");
     private static BindingException Unsupported(SyntaxNode syntax)

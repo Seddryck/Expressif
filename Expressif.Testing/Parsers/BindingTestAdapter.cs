@@ -17,7 +17,7 @@ internal static class BindingTestAdapter
         => ((ClosedRootExpression)Binder.Bind(source)).Expression;
 
     public static IntervalBinding Interval(string source)
-        => throw new BindingException($"Interval syntax '{source}' is not represented by Expressif.Syntax 0.10.0.");
+        => throw new BindingException($"Interval syntax '{source}' is not bound in this iteration.");
 
     public static string FunctionName(string source) => Function(source).Name;
 
@@ -29,7 +29,7 @@ internal static class BindingTestAdapter
 
     public static string Variable(string source) => ((VariableParameter)Parameter(source)).Name;
 
-    public static string Literal(string source) => Parameter(source) switch
+    public static object Literal(string source) => Parameter(source) switch
     {
         LiteralParameter literal => literal.Value,
         QuotedLiteralParameter quoted => quoted.Value,

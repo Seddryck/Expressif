@@ -35,7 +35,7 @@ public class IntervalBuilder
     }
 
     public virtual IInterval Create(string value)
-        => throw new BindingException($"Interval syntax '{value}' is not represented by Expressif.Syntax 0.10.0.");
+        => throw new BindingException($"Interval syntax '{value}' is not bound in this iteration.");
 
     public virtual IInterval Create(IntervalBinding interval)
         => Create(interval.LowerBoundType, interval.LowerBound, interval.UpperBound, interval.UpperBoundType);

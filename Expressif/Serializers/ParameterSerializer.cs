@@ -2,6 +2,7 @@ using Expressif.Bindings;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,9 +27,7 @@ public class ParameterSerializer
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
-            LiteralParameter l => RecordSyntax.IsBareToken(l.Value)
-                ? l.Value
-                : $"\"{RecordSyntax.EscapeDoubleQuoted(l.Value)}\"",
+            LiteralParameter l => SerializeLiteral(l.Value),
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",
             ObjectIndexParameter oi => $"#{oi.Index}",
@@ -49,4 +48,17 @@ public class ParameterSerializer
         => RecordSyntax.IsBareToken(name)
             ? name
             : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
+
+    private static string SerializeLiteral(object value)
+        => value switch
+        {
+            bool boolean => boolean ? "#true" : "#false",
+            decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",
+            DateTime dateTime => $"#\"{dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)}\"",
+            TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",
+            string text when RecordSyntax.IsBareToken(text) => text,
+            string text => $"\"{RecordSyntax.EscapeDoubleQuoted(text)}\"",
+            _ => throw new NotSupportedException($"Literal value type '{value.GetType().Name}' cannot be serialized."),
+        };
 }

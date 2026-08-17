@@ -106,13 +106,13 @@ public class FunctionTest
         var leftFunction = ((SinglePredication)left!).Members.Single();
         Assert.That(leftFunction.Name, Is.EqualTo("greater-than"));
         Assert.That(leftFunction.Parameters, Has.Length.EqualTo(1));
-        Assert.That(((LiteralParameter)leftFunction.Parameters[0]).Value, Is.EqualTo("2"));
+        Assert.That(((LiteralParameter)leftFunction.Parameters[0]).Value, Is.EqualTo(2m));
 
         Assert.That(right, Is.TypeOf<SinglePredication>());
         var rightFunction = ((SinglePredication)right!).Members.Single();
         Assert.That(rightFunction.Name, Is.EqualTo("less-than"));
         Assert.That(rightFunction.Parameters, Has.Length.EqualTo(1));
-        Assert.That(((LiteralParameter)rightFunction.Parameters[0]).Value, Is.EqualTo("5"));
+        Assert.That(((LiteralParameter)rightFunction.Parameters[0]).Value, Is.EqualTo(5m));
     }
 
     [Test]

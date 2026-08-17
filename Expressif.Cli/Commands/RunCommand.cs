@@ -837,9 +837,7 @@ internal static class RunCommand
         {
             return parameter switch
             {
-                LiteralParameter literal => RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
-                    ? typed
-                    : literal.Value,
+                LiteralParameter literal => literal.Value,
                 QuotedLiteralParameter quoted => quoted.Value,
                 ArrayParameter array => array.Values.Select(ConvertToRuntimeValue).ToArray(),
                 TupleParameter tuple => new Expressif.Values.Tuple(tuple.Values.Select(ConvertToRuntimeValue).ToArray()),

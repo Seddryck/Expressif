@@ -10,6 +10,20 @@ public class ParameterTest
     { }
 
     [Test]
+    public void Bind_LiteralSyntax_PreservesTypedValues()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("42")).Value, Is.EqualTo(42m).And.TypeOf<decimal>());
+            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#true")).Value, Is.EqualTo(true).And.TypeOf<bool>());
+            Assert.That(((QuotedLiteralParameter)BindingTestAdapter.Parameter("\"Alice\"")).Value, Is.EqualTo("Alice").And.TypeOf<string>());
+            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#\"2026-08-17\"")).Value, Is.EqualTo(new DateOnly(2026, 8, 17)).And.TypeOf<DateOnly>());
+            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#\"2026-08-17T14:30:00\"")).Value, Is.EqualTo(new DateTime(2026, 8, 17, 14, 30, 0)).And.TypeOf<DateTime>());
+            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#\"14:30:00\"")).Value, Is.EqualTo(new TimeOnly(14, 30, 0)).And.TypeOf<TimeOnly>());
+        });
+    }
+
+    [Test]
     [TestCase("`foo`", typeof(QuotedLiteralParameter))]
     [TestCase("\"foo\"", typeof(QuotedLiteralParameter))]
     [TestCase("@foo", typeof(VariableParameter))]
