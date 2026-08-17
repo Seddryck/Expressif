@@ -9,6 +9,8 @@ public sealed class ExpressifBinder
     public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
     {
         OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
+        ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed when IsRelativeRecordAccess(access)
+            => new OpenRootExpression(BindRelativeRecordAccess(closed, access)),
         ClosedExpressionSyntax closed => new ClosedRootExpression(BindClosed(closed)),
         _ => throw Unsupported(syntax),
     };
@@ -47,6 +49,13 @@ public sealed class ExpressifBinder
         => syntax switch
         {
             ParenthesizedExpressionSyntax { Expression: OpenExpressionSyntax open } => BindOpen(open).Members,
+            ParenthesizedExpressionSyntax
+            {
+                Expression: ClosedExpressionSyntax
+                {
+                    Value: RecordAccessSyntax access,
+                } closed,
+            } when IsRelativeRecordAccess(access) => BindRelativeRecordAccess(closed, access).Members,
             _ => [BindPipelineMember(syntax)],
         };
 
@@ -61,10 +70,50 @@ public sealed class ExpressifBinder
     };
 
     private Function BindFunction(FunctionCallSyntax syntax)
-        => new(syntax.Name, syntax.Arguments.Select(argument => BindArgument(argument.Value)).ToArray());
+        => syntax.Name.ToLowerInvariant() switch
+        {
+            "field" => BindFieldFunction(syntax),
+            "record" => BindRecordFunction(syntax),
+            _ => new(syntax.Name, syntax.Arguments.Select(argument => BindArgument(argument.Value)).ToArray()),
+        };
+
+    private Function BindFieldFunction(FunctionCallSyntax syntax)
+    {
+        if (syntax.Arguments is [PositionalArgumentSyntax positional]
+            && TryGetBareFunctionName(positional.Value, out var fieldName))
+            return new Function(syntax.Name, [new LiteralParameter(fieldName)]);
+
+        return new Function(syntax.Name, syntax.Arguments.Select(argument => BindArgument(argument.Value)).ToArray());
+    }
+
+    private static bool TryGetBareFunctionName(ExpressionSyntax syntax, out string name)
+    {
+        var function = syntax switch
+        {
+            FunctionCallSyntax { Arguments.Count: 0 } call => call,
+            OpenExpressionSyntax { Pipeline: [FunctionCallSyntax { Arguments.Count: 0 } call] } => call,
+            _ => null,
+        };
+        name = function?.Name ?? string.Empty;
+        return function is not null;
+    }
+
+    private Function BindRecordFunction(FunctionCallSyntax syntax)
+        => syntax.Arguments.Count == 0
+            ? new Function(syntax.Name, [])
+            : new Function(syntax.Name, [new RecordDefinitionParameter(syntax.Arguments.Select(BindRecordEntry).ToArray())]);
+
+    private IRecordDefinitionEntry BindRecordEntry(ArgumentSyntax syntax) => syntax switch
+    {
+        NamedArgumentSyntax named => new RecordNamedEntry(named.Name, BindArgument(named.Value)),
+        PositionalArgumentSyntax { Value: IncomingValueSyntax } => new RecordSpreadEntry(),
+        _ => throw Unsupported(syntax),
+    };
 
     private IParameter BindArgument(ExpressionSyntax syntax) => syntax switch
     {
+        RecordAccessSyntax access when IsRelativeRecordAccess(access)
+            => new OpenExpressionParameter(new OpenExpression([BindRecordAccessFunction(access)])),
         ValueSyntax value => BindValue(value),
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
@@ -76,9 +125,13 @@ public sealed class ExpressifBinder
         _ => throw Unsupported(syntax),
     };
 
+    private OpenExpression BindRelativeRecordAccess(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
+        => new([BindRecordAccessFunction(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);
+
     private IParameter BindValue(ValueSyntax syntax) => syntax switch
     {
         VariableSyntax variable => new VariableParameter(variable.Name),
+        IncomingValueSyntax => new IncomingValueParameter(),
         RecordAccessSyntax access => BindRecordAccessParameter(access),
         NumericLiteralSyntax numeric => new LiteralParameter(numeric.Value),
         BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Value),
@@ -121,6 +174,8 @@ public sealed class ExpressifBinder
 
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)
         => new($"Record access '{syntax.Text}' contains neither a named nor positional field selector.");
+    private static bool IsRelativeRecordAccess(RecordAccessSyntax syntax)
+        => !syntax.IsOriginalInput && syntax.Text.StartsWith('.');
     private static BindingException Unsupported(SyntaxNode syntax)
         => new($"Syntax kind '{syntax.Kind}' is not bound in this iteration (source: '{syntax.Text}').");
 }
