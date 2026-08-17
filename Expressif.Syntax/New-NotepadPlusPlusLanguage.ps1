@@ -10,7 +10,8 @@ $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\Get-SyntaxModel.ps1"
 
 $model = Get-SyntaxModel -InputFolder $InputFolder
-$outputDirectory = Split-Path -Parent $OutputPath
+$resolvedOutputPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($OutputPath)
+$outputDirectory = Split-Path -Parent $resolvedOutputPath
 if ($outputDirectory) {
     New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 }
@@ -21,7 +22,7 @@ $settings.Indent = $true
 $settings.NewLineChars = "`n"
 $settings.NewLineHandling = [System.Xml.NewLineHandling]::Replace
 
-$writer = [System.Xml.XmlWriter]::Create($OutputPath, $settings)
+$writer = [System.Xml.XmlWriter]::Create($resolvedOutputPath, $settings)
 try {
     $writer.WriteStartDocument()
     $writer.WriteStartElement('NotepadPlus')
