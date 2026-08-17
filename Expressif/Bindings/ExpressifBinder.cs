@@ -38,16 +38,24 @@ public sealed class ExpressifBinder
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
-        => new(syntax.Pipeline.Select(BindPipelineMember));
+        => new(syntax.Pipeline.SelectMany(BindPipelineMembers));
 
     private ClosedExpression BindClosed(ClosedExpressionSyntax syntax)
-        => new(BindValue(syntax.Value), syntax.Pipeline.Select(BindPipelineMember));
+        => new(BindValue(syntax.Value), syntax.Pipeline.SelectMany(BindPipelineMembers));
+
+    private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)
+        => syntax switch
+        {
+            ParenthesizedExpressionSyntax { Expression: OpenExpressionSyntax open } => BindOpen(open).Members,
+            _ => [BindPipelineMember(syntax)],
+        };
 
     private Function BindPipelineMember(ExpressionSyntax syntax) => syntax switch
     {
         FunctionCallSyntax call => BindFunction(call),
         TupleProjectionSyntax projection => new Function("tuple-at", [new LiteralParameter(projection.Index.ToString())], FunctionSyntax.TupleProjectionShorthand),
         RecordAccessSyntax access when !access.IsOriginalInput => BindRecordAccessFunction(access),
+        MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
     };
