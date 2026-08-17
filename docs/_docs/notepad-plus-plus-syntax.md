@@ -9,7 +9,7 @@ Expressif releases include a generated Notepad++ User Defined Language (UDL) fil
 
 ## Install the language
 
-1. Download `expressif-syntax-<version>.xml` from the [Expressif releases page](https://github.com/Seddryck/Expressif/releases).
+1. Download `expressif-<version>-notepadpp-udl.xml` from the [Expressif releases page](https://github.com/Seddryck/Expressif/releases).
 2. In Notepad++, select **Language > User Defined Language > Define your language**.
 3. Select **Import**, choose the downloaded XML file, and confirm the import.
 4. Restart Notepad++.

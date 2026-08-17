@@ -83,7 +83,7 @@ Write-Host "== Generate tmLanguage =="
 Write-Host "== Generate Notepad++ UDL =="
 .\New-NotepadPlusPlusLanguage.ps1 `
     -InputFolder "..\docs\_data\" `
-    -OutputPath ".\bin\$Bundle-$Version.xml"
+    -OutputPath ".\bin\expressif-$Version-notepadpp-udl.xml"
 
 Write-Host "== Generate package.json =="
 .\New-PackageJson.ps1 `
