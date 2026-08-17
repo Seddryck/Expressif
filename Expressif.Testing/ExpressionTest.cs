@@ -130,7 +130,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_DurationBetween_Valid()
     {
-        var expression = new Expression("duration-between(2026-08-06T10:30:00)", new Context());
+        var expression = new Expression("duration-between(#\"2026-08-06T10:30:00\")", new Context());
         var result = expression.Evaluate(DateTime.Parse("2026-08-06T12:00:00"));
         Assert.That(result, Is.EqualTo(TimeSpan.FromMinutes(90)));
     }
