@@ -44,7 +44,6 @@ public class ParameterSerializerTest
     [TestCase("foo")]
     [TestCase("foo_bar")]
     [TestCase("123")]
-    [TestCase("123.125")]
     public void Serialize_LiteralParameter_Unquoted(string value)
         => Assert.That(new ParameterSerializer().Serialize(new LiteralParameter(value)), Is.EqualTo(value));
 
@@ -53,6 +52,7 @@ public class ParameterSerializerTest
     [TestCase("{foo_bar}")]
     [TestCase("(123)")]
     [TestCase("123,125")]
+    [TestCase("123.125")]
     public void Serialize_LiteralParameter_Quoted(string value)
         => Assert.That(new ParameterSerializer().Serialize(new LiteralParameter(value)), Is.EqualTo($"\"{value}\""));
 
@@ -68,8 +68,8 @@ public class ParameterSerializerTest
         Assert.Multiple(() =>
         {
             Assert.That(serialized, Is.EqualTo("\"Alice said \\\"hello\\\"\""));
-            Assert.That(parsed, Is.TypeOf<LiteralParameter>());
-            Assert.That(((LiteralParameter)parsed).Value, Is.EqualTo("Alice said \"hello\""));
+            Assert.That(parsed, Is.TypeOf<QuotedLiteralParameter>());
+            Assert.That(((QuotedLiteralParameter)parsed).Value, Is.EqualTo("Alice said \"hello\""));
         });
     }
 

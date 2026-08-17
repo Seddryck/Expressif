@@ -36,7 +36,7 @@ public class ExpressionSerializerTest
         var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
         var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         Assert.That(new ExpressionSerializer().Serialize([lowerExpression, firstCharsExpression, PadRightExpression])
-            , Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
+            , Is.EqualTo("lower | first-chars(5) | pad-right(7, \"*\")"));
     }
 
     [Test]

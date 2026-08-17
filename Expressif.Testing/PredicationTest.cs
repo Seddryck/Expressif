@@ -23,7 +23,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_SinglePredicateWithOneParameter_Valid()
     {
-        var predication = new Predication("starts-with(Nik)");
+        var predication = new Predication("starts-with(\"Nik\")");
         var result = predication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.True);
     }
@@ -39,7 +39,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_CultureAsParameter_Valid()
     {
-        var predication = new Predication("matches-date(fr-fr)");
+        var predication = new Predication("matches-date(\"fr-fr\")");
         var result = predication.Evaluate("28/12/1978");
         Assert.That(result, Is.True);
     }

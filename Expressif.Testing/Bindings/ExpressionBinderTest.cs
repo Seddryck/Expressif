@@ -20,7 +20,7 @@ public class ExpressionBinderTest
     [Test]
     [TestCase("@foo | text-to-func(\"foo\", @bar)", 1)]
     [TestCase("@foo | text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar)", 2)]
-    [TestCase("foo", 0)]
+    [TestCase("\"foo\"", 0)]
     public void Parse_ParametrizedExpression_Valid(string value, int count)
         => Assert.That(BindingTestAdapter.Closed(value).Members.Count, Is.EqualTo(count));
 

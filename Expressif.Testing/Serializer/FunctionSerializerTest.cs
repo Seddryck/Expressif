@@ -69,7 +69,7 @@ public class FunctionSerializerTest
     public void Serialize_MultipleParameter_ParenthesisAndComas()
     {
         var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, *)"));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, \"*\")"));
     }
 
     [Test]
