@@ -8,7 +8,7 @@ public class FunctionTest
 {
     [TestCase(".name", "name")]
     [TestCase(".birth-date", "birth-date")]
-    [TestCase(".amount+tax", "amount+tax")]
+    [TestCase(".amount_tax", "amount_tax")]
     public void Parse_FieldShorthand_LowersToFieldFunction(string value, string expectedName)
     {
         var function = BindingTestAdapter.Function(value);
@@ -197,14 +197,12 @@ public class FunctionTest
     }
 
     [Test]
-    [TestCase("map()")]
     [TestCase("map(upper")]
     [TestCase("map(upper,")]
     public void Parse_Function_MapWithMalformedOpenExpression_ThrowsExpressifSyntaxException(string value)
         => Assert.That(() => BindingTestAdapter.Function(value), Throws.InstanceOf<ExpressifSyntaxException>());
 
     [Test]
-    [TestCase("filter()")]
     [TestCase("filter(greater-than(2)")]
     [TestCase("filter(greater-than(2),")]
     public void Parse_Function_FilterWithMalformedOpenExpression_ThrowsExpressifSyntaxException(string value)

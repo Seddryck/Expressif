@@ -560,7 +560,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_RecordLiteral_ParsesTypedValues()
     {
-        var expression = new ClosedExpression("{name := \"Alice\", active := #true, retries := 3, ratio := 1.5, missing := null}");
+        var expression = new ClosedExpression("{name := \"Alice\", active := #true, retries := 3, ratio := 1.5, missing := #null}");
         var result = (RecordValue)expression.Evaluate()!;
 
         Assert.Multiple(() =>
