@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [adjacent, broadcast, chunk, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, pairwise, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
+keywords: [adjacent, broadcast, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, pairwise, position-of, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union, value-at, with-position] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### adjacent
@@ -158,6 +158,17 @@ Applies a transformation expression to each input item and returns the transform
 
 Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.
 
+##### position-of
+
+###### Alias: `position-of`
+
+###### Overview
+
+Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.
+
+###### Parameter
+* value: Specifies the value to locate.
+
 ##### reverse
 
 ###### Alias: `reverse`
@@ -232,6 +243,25 @@ Returns the distinct values appearing in either the pipeline input or the specif
 
 ###### Parameter
 * array: Specifies the second array whose values are combined with the pipeline input.
+
+##### value-at
+
+###### Alias: `value-at`
+
+###### Overview
+
+Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.
+
+###### Parameter
+* position: Specifies the zero-based position of the item to return.
+
+##### with-position
+
+###### Alias: `with-position`
+
+###### Overview
+
+Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.
 
 <!-- END AUTO-GENERATED -->
 
