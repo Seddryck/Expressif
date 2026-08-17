@@ -219,7 +219,7 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 
 ## Notepad++ Syntax Highlighting
 
-Each release also provides `expressif-syntax-<version>.xml`, a generated Notepad++ User Defined Language file. Download it from the [Releases page](https://github.com/Seddryck/Expressif/releases), then open **Language > User Defined Language > Define your language** in Notepad++, select **Import**, and restart Notepad++.
+Each release also provides `expressif-<version>-notepadpp-udl.xml`, a generated Notepad++ User Defined Language file. Download it from the [Releases page](https://github.com/Seddryck/Expressif/releases), then open **Language > User Defined Language > Define your language** in Notepad++, select **Import**, and restart Notepad++.
 
 The UDL recognizes `.expr` and `.expressif` files. Its library keywords are generated from Expressif introspection, alongside the Visual Studio Code grammar, so the released editor definitions stay aligned with the library.
 
