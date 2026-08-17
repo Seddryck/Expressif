@@ -205,7 +205,7 @@ Expressif provides a Visual Studio Code extension (VSIX) for syntax highlighting
 
 ### Download
 
-You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-*.vsix`.
+You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-highlighting-*.vsix`.
 
 ### Installation
 

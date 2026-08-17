@@ -17,7 +17,7 @@ Install [Visual Studio Code](https://code.visualstudio.com)
 
 Extension is currently not available on the VSCode Marketplace but you can download it from GitHub.
 
-You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-*.vsix`.
+You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-highlighting-*.vsix`.
 
 
 ## Install VS Code Extension
