@@ -61,6 +61,7 @@ public abstract class BaseExpressionFactory
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
+            LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
             TupleProjectionParameter projection => CreateFunctionCast(() => context.CurrentObject.Value is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),

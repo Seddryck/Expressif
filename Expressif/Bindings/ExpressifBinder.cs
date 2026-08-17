@@ -137,6 +137,7 @@ public sealed class ExpressifBinder
         RecordAccessSyntax access => BindRecordAccessParameter(access),
         NumericLiteralSyntax numeric => new LiteralParameter(numeric.Value),
         BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Value),
+        NullLiteralSyntax => new LiteralParameter(null),
         QuotedLiteralSyntax quoted => new QuotedLiteralParameter(quoted.Value),
         DateLiteralSyntax date => new LiteralParameter(date.Value),
         DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),

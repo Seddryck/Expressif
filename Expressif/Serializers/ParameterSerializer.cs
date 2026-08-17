@@ -49,9 +49,10 @@ public class ParameterSerializer
             ? name
             : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
 
-    private static string SerializeLiteral(object value)
+    private static string SerializeLiteral(object? value)
         => value switch
         {
+            null => "#null",
             bool boolean => boolean ? "#true" : "#false",
             decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
             DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",

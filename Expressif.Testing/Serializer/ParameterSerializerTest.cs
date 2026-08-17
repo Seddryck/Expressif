@@ -19,6 +19,7 @@ public class ParameterSerializerTest
         {
             Assert.That(serializer.Serialize(new LiteralParameter(42m)), Is.EqualTo("42"));
             Assert.That(serializer.Serialize(new LiteralParameter(true)), Is.EqualTo("#true"));
+            Assert.That(serializer.Serialize(new LiteralParameter(null)), Is.EqualTo("#null"));
             Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new DateTime(2026, 8, 17, 14, 30, 0))), Is.EqualTo("#\"2026-08-17T14:30:00\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new TimeOnly(14, 30, 0))), Is.EqualTo("#\"14:30:00\""));

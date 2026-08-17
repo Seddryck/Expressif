@@ -32,7 +32,7 @@ public class ClosedExpression(IParameter parameter, IEnumerable<Function> member
 }
 
 public interface IParameter { }
-public sealed record LiteralParameter(object Value) : IParameter;
+public sealed record LiteralParameter(object? Value) : IParameter;
 public sealed record IntervalParameter(IntervalBinding Value) : IParameter;
 public sealed record VariableParameter(string Name) : IParameter;
 public sealed record ObjectPropertyParameter(string Name) : IParameter;
