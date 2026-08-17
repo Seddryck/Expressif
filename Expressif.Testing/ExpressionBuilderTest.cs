@@ -126,7 +126,7 @@ public class ExpressionBuilderTest
             .Chain<FirstChars>(5)
             .Chain<PadRight>(7, '*');
         var str = builder.Serialize();
-        Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
+        Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, \"*\")"));
     }
 
     [Test]

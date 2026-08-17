@@ -228,7 +228,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
     {
-        var function = new ExpressionFactory().Instantiate("prefix(abc)", new Context());
+        var function = new ExpressionFactory().Instantiate("prefix(`abc`)", new Context());
         var prefix = GetSingleFunction<Prefix>(function);
 
         Assert.That(prefix, Is.Not.Null);
