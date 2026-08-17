@@ -1,7 +1,5 @@
 using Expressif.Bindings;
-using Expressif.Syntax;
-
-namespace Expressif.Testing.Parsers;
+namespace Expressif.Testing.Bindings;
 
 internal static class BindingTestAdapter
 {
@@ -18,21 +16,4 @@ internal static class BindingTestAdapter
 
     public static IntervalBinding Interval(string source)
         => throw new BindingException($"Interval syntax '{source}' is not bound in this iteration.");
-
-    public static string FunctionName(string source) => Function(source).Name;
-
-    public static char Delimiter(string source)
-    {
-        _ = ExpressifSyntax.Parse($"left {source} right");
-        return source.Trim().Single();
-    }
-
-    public static string Variable(string source) => ((VariableParameter)Parameter(source)).Name;
-
-    public static object Literal(string source) => Parameter(source) switch
-    {
-        LiteralParameter literal => literal.Value,
-        QuotedLiteralParameter quoted => quoted.Value,
-        _ => throw new BindingException($"Source '{source}' is not a literal."),
-    };
 }

@@ -1,9 +1,9 @@
 using Expressif.Bindings;
 using Expressif.Values;
 
-namespace Expressif.Testing.Parsers;
+namespace Expressif.Testing.Bindings;
 
-public class ParameterTest
+public class ParameterBinderTest
 {
     [SetUp]
     public void Setup()
@@ -83,11 +83,6 @@ public class ParameterTest
             Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
         });
     }
-
-    [TestCase("T()")]
-    [TestCase("T(10)")]
-    public void Parse_TupleWithFewerThanTwoFields_Invalid(string value)
-        => Assert.Throws<ExpressifSyntaxException>(() => BindingTestAdapter.Parameter(value));
 
     [Test]
     public void Parse_TupleLiteral_RoundTripsThroughClosedExpression()

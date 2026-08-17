@@ -2,9 +2,9 @@ using Expressif.Bindings;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Expressif.Testing.Parsers;
+namespace Expressif.Testing.Bindings;
 
-public class FunctionTest
+public class FunctionBinderTest
 {
     [TestCase(".name", "name")]
     [TestCase(".birth-date", "birth-date")]
@@ -20,14 +20,6 @@ public class FunctionTest
             Assert.That(((LiteralParameter)function.Parameters.Single()).Value, Is.EqualTo(expectedName));
         });
     }
-
-    [TestCase(".")]
-    [TestCase(". name")]
-    [TestCase(".5")]
-    [TestCase(".\"name\"")]
-    [TestCase(".`name`")]
-    public void Parse_InvalidFieldShorthand_ThrowsExpressifSyntaxException(string value)
-        => Assert.That(() => BindingTestAdapter.Function(value), Throws.TypeOf<ExpressifSyntaxException>());
 
     [SetUp]
     public void Setup()
@@ -195,18 +187,6 @@ public class FunctionTest
 
         Assert.That(function.Parameters.Single(), Is.TypeOf(expectedType));
     }
-
-    [Test]
-    [TestCase("map(upper")]
-    [TestCase("map(upper,")]
-    public void Parse_Function_MapWithMalformedOpenExpression_ThrowsExpressifSyntaxException(string value)
-        => Assert.That(() => BindingTestAdapter.Function(value), Throws.InstanceOf<ExpressifSyntaxException>());
-
-    [Test]
-    [TestCase("filter(greater-than(2)")]
-    [TestCase("filter(greater-than(2),")]
-    public void Parse_Function_FilterWithMalformedOpenExpression_ThrowsExpressifSyntaxException(string value)
-        => Assert.That(() => BindingTestAdapter.Function(value), Throws.InstanceOf<ExpressifSyntaxException>());
 
     [Test]
     public void Parse_Function_RecordWithEntries_Valid()

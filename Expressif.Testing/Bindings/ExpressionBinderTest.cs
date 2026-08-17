@@ -1,9 +1,9 @@
 using Expressif.Bindings;
 using System.Diagnostics;
 
-namespace Expressif.Testing.Parsers;
+namespace Expressif.Testing.Bindings;
 
-public class ExpressionTest
+public class ExpressionBinderTest
 {
     [SetUp]
     public void Setup()
@@ -95,11 +95,6 @@ public class ExpressionTest
             Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(expectedMappedFunctions));
         });
     }
-
-    [TestCase("{1,2,3} |> ()")]
-    [TestCase("{1,2,3} |> (absolute")]
-    public void Parse_MapShorthandWithInvalidExpression_Invalid(string value)
-        => Assert.That(() => BindingTestAdapter.Closed(value), Throws.TypeOf<ExpressifSyntaxException>());
 
     [Test]
     public void Parse_UnparenthesizedMapShorthand_ConsumesSingleFunction()

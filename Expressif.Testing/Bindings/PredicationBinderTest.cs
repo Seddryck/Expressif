@@ -1,9 +1,9 @@
 using Expressif.Bindings;
 using System.Diagnostics;
 
-namespace Expressif.Testing.Parsers;
+namespace Expressif.Testing.Bindings;
 
-public class PredicationTest
+public class PredicationBinderTest
 {
     [SetUp]
     public void Setup()

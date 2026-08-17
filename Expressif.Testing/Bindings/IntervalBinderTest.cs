@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Expressif.Testing.Parsers;
+namespace Expressif.Testing.Bindings;
 
-public class IntervalTest
+public class IntervalBinderTest
 {
     [Test]
     [TestCase("[25;40]", '[', "25", "40", ']')]
