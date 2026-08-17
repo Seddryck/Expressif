@@ -118,6 +118,8 @@ public sealed class ExpressifBinder
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),
+        ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed when IsRelativeRecordAccess(access)
+            => new OpenExpressionParameter(BindRelativeRecordAccess(closed, access)),
         ClosedExpressionSyntax closed => new InputExpressionParameter(BindClosed(closed)),
         TupleProjectionSyntax projection => new TupleProjectionParameter(
             projection.Index,
