@@ -3,7 +3,7 @@
   <UserLang name="Expressif" ext="expr expressif" udlVersion="2.1">
     <Settings>
       <Global caseIgnored="yes" allowFoldOfComments="no" foldCompact="no" forcePureLC="0" decimalSeparator="0" />
-      <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="no" Keywords6="no" Keywords7="no" Keywords8="no" />
+      <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="yes" Keywords6="no" Keywords7="no" Keywords8="no" />
     </Settings>
     <KeywordLists>
       <Keywords name="Comments"></Keywords>
@@ -29,7 +29,7 @@
       <Keywords name="Keywords2">{{ model.predicates }}</Keywords>
       <Keywords name="Keywords3">{{ model.accumulators }}</Keywords>
       <Keywords name="Keywords4">{{ model.constants }}</Keywords>
-      <Keywords name="Keywords5"></Keywords>
+      <Keywords name="Keywords5">. ^. $</Keywords>
       <Keywords name="Keywords6"></Keywords>
       <Keywords name="Keywords7"></Keywords>
       <Keywords name="Keywords8"></Keywords>
@@ -45,7 +45,7 @@
       <WordsStyle name="KEYWORDS2" fgColor="8000FF" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="6" />
       <WordsStyle name="KEYWORDS3" fgColor="0080C0" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="7" />
       <WordsStyle name="KEYWORDS4" fgColor="A31515" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="8" />
-      <WordsStyle name="KEYWORDS5" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="9" />
+      <WordsStyle name="KEYWORDS5" fgColor="800080" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="9" />
       <WordsStyle name="KEYWORDS6" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="10" />
       <WordsStyle name="KEYWORDS7" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="11" />
       <WordsStyle name="KEYWORDS8" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" styleID="12" />
