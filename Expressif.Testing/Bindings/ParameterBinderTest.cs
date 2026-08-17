@@ -58,7 +58,7 @@ public class ParameterBinderTest
     [Test]
     [TestCase("{{1, 2, 3}, {4, 5}}")]
     [TestCase("{{\"a\", \"b\"}, {\"c\"}}")]
-    [TestCase("{{#true, #false}, {null, 3}}")]
+    [TestCase("{{#true, #false}, {#null, 3}}")]
     public void Parse_Parameter_NestedArrays_Valid(string value)
     {
         var parsed = BindingTestAdapter.Parameter(value);
