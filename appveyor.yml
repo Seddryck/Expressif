@@ -67,7 +67,7 @@ build_script:
 - pwsh: |
     Push-Location ".\Expressif.Syntax"
     try {
-        .\New-tmBundle.ps1 -Bundle "expressif-syntax" -Version $env:GitVersion_SemVer
+        .\New-tmBundle.ps1 -Bundle "expressif-syntax-highlighting" -Version $env:GitVersion_SemVer
     }
     finally {
         Pop-Location
