@@ -142,9 +142,37 @@ public sealed class ExpressifBinder
         DateLiteralSyntax date => new LiteralParameter(date.Value),
         DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),
         TimeLiteralSyntax time => new LiteralParameter(time.Value),
+        IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Values.Select(BindValue).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Values.Select(BindValue).ToArray()),
         RecordLiteralSyntax record => new RecordLiteralParameter(record.Fields.Select(field => new RecordLiteralField(field.Name, BindValue(field.Value))).ToArray()),
+        _ => throw Unsupported(syntax),
+    };
+
+    private static IntervalBinding BindInterval(IntervalLiteralSyntax syntax)
+        => new(
+            BindIntervalBound(syntax.LowerBound),
+            BindIntervalBound(syntax.UpperBound),
+            syntax.IsLowerInclusive,
+            syntax.IsUpperInclusive);
+
+    private static IntervalBoundBinding BindIntervalBound(IntervalBound bound)
+        => bound.Kind switch
+        {
+            IntervalBoundKind.NegativeInfinity => new(IntervalBoundBindingKind.NegativeInfinity),
+            IntervalBoundKind.PositiveInfinity => new(IntervalBoundBindingKind.PositiveInfinity),
+            IntervalBoundKind.Finite when bound.Value is { } value
+                => new(IntervalBoundBindingKind.Finite, BindIntervalBoundValue(value)),
+            IntervalBoundKind.Finite => throw new BindingException("A finite interval bound must have a value."),
+            _ => throw new BindingException($"Unsupported interval bound kind '{bound.Kind}'."),
+        };
+
+    private static object BindIntervalBoundValue(ValueSyntax syntax) => syntax switch
+    {
+        NumericLiteralSyntax numeric => numeric.Value,
+        DateLiteralSyntax date => date.Value,
+        DateTimeLiteralSyntax dateTime => dateTime.Value,
+        TimeLiteralSyntax time => time.Value,
         _ => throw Unsupported(syntax),
     };
 

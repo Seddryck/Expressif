@@ -52,7 +52,22 @@ public sealed record RecordDefinitionParameter(IRecordDefinitionEntry[] Entries)
 public sealed record InputExpressionParameter(ClosedExpression Expression) : IParameter;
 public sealed record OpenExpressionParameter(OpenExpression Expression) : IParameter;
 public sealed record PredicationParameter(IPredication Predication) : IParameter;
-public sealed record IntervalBinding(char LowerBoundType, string LowerBound, string UpperBound, char UpperBoundType);
+public enum IntervalBoundBindingKind
+{
+    Finite,
+    NegativeInfinity,
+    PositiveInfinity,
+}
+public sealed record IntervalBoundBinding(IntervalBoundBindingKind Kind, object? Value = null);
+public sealed record IntervalBinding(
+    IntervalBoundBinding LowerBound,
+    IntervalBoundBinding UpperBound,
+    bool IsLowerInclusive,
+    bool IsUpperInclusive)
+{
+    public char LowerBoundType => IsLowerInclusive ? '[' : ']';
+    public char UpperBoundType => IsUpperInclusive ? ']' : '[';
+}
 
 public interface IPredication { }
 public sealed class SinglePredication(params Function[] members) : IPredication

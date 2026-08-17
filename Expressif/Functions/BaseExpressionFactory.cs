@@ -123,7 +123,7 @@ public abstract class BaseExpressionFactory
         }
 
         static IInterval buildInterval(IntervalBinding value)
-            => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
+            => new IntervalBuilder().Create(value);
     }
 
     private MethodInfo? cacheCastInfo;

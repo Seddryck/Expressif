@@ -27,6 +27,20 @@ public class ParameterSerializerTest
     }
 
     [Test]
+    [TestCase("I[1, 10]", "I[1, 10]")]
+    [TestCase("I[1, 10[", "I[1, 10)")]
+    [TestCase("I]1, 10]", "I(1, 10]")]
+    [TestCase("I]1, 10[", "I(1, 10)")]
+    [TestCase("I[-INF, +INF]", "I[-INF, +INF]")]
+    [TestCase("I[#\"2022-12-10\", #\"2022-12-31\"[", "I[#\"2022-12-10\", #\"2022-12-31\")")]
+    public void Serialize_IntervalParameter_NormalizesAliases(string source, string expected)
+    {
+        var parameter = BindingTestAdapter.Parameter(source);
+
+        Assert.That(new ParameterSerializer().Serialize(parameter), Is.EqualTo(expected));
+    }
+
+    [Test]
     [TestCase("foo")]
     [TestCase("foo_bar")]
     [TestCase("123")]

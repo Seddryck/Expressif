@@ -1,6 +1,7 @@
 using Expressif.Bindings;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,8 +27,8 @@ public class IntervalBinderTest
         {
             Assert.That(interval.LowerBoundType, Is.EqualTo(lowerBoundIntervalType));
             Assert.That(interval.UpperBoundType, Is.EqualTo(upperBoundIntervalType));
-            Assert.That(interval.LowerBound, Is.EqualTo(lowerBound));
-            Assert.That(interval.UpperBound, Is.EqualTo(upperBound));
+            AssertBound(interval.LowerBound, lowerBound);
+            AssertBound(interval.UpperBound, upperBound);
         });
     }
 
@@ -43,8 +44,8 @@ public class IntervalBinderTest
         {
             Assert.That(interval.LowerBoundType, Is.EqualTo(lowerBoundIntervalType));
             Assert.That(interval.UpperBoundType, Is.EqualTo(upperBoundIntervalType));
-            Assert.That(interval.LowerBound, Is.EqualTo(lowerBound));
-            Assert.That(interval.UpperBound, Is.EqualTo(upperBound));
+            AssertBound(interval.LowerBound, lowerBound);
+            AssertBound(interval.UpperBound, upperBound);
         });
     }
 
@@ -61,8 +62,8 @@ public class IntervalBinderTest
         {
             Assert.That(interval.LowerBoundType, Is.EqualTo(lowerBoundIntervalType));
             Assert.That(interval.UpperBoundType, Is.EqualTo(upperBoundIntervalType));
-            Assert.That(interval.LowerBound, Is.EqualTo(lowerBound));
-            Assert.That(interval.UpperBound, Is.EqualTo(upperBound));
+            AssertBound(interval.LowerBound, lowerBound);
+            AssertBound(interval.UpperBound, upperBound);
         });
     }
 
@@ -79,8 +80,8 @@ public class IntervalBinderTest
         {
             Assert.That(interval.LowerBoundType, Is.EqualTo(lowerBoundIntervalType));
             Assert.That(interval.UpperBoundType, Is.EqualTo(upperBoundIntervalType));
-            Assert.That(interval.LowerBound, Is.EqualTo(lowerBound));
-            Assert.That(interval.UpperBound, Is.EqualTo(upperBound));
+            AssertBound(interval.LowerBound, lowerBound);
+            AssertBound(interval.UpperBound, upperBound);
         });
     }
 
@@ -97,8 +98,8 @@ public class IntervalBinderTest
         {
             Assert.That(interval.LowerBoundType, Is.EqualTo(lowerBoundIntervalType));
             Assert.That(interval.UpperBoundType, Is.EqualTo(upperBoundIntervalType));
-            Assert.That(interval.LowerBound, Is.EqualTo(lowerBound));
-            Assert.That(interval.UpperBound, Is.EqualTo(upperBound));
+            AssertBound(interval.LowerBound, lowerBound);
+            AssertBound(interval.UpperBound, upperBound);
         });
     }
 
@@ -116,8 +117,32 @@ public class IntervalBinderTest
         {
             Assert.That(interval.LowerBoundType, Is.EqualTo(lowerBoundIntervalType));
             Assert.That(interval.UpperBoundType, Is.EqualTo(upperBoundIntervalType));
-            Assert.That(interval.LowerBound, Is.EqualTo(lowerBound));
-            Assert.That(interval.UpperBound, Is.EqualTo(upperBound));
+            AssertBound(interval.LowerBound, lowerBound);
+            AssertBound(interval.UpperBound, upperBound);
         });
+    }
+
+    private static void AssertBound(IntervalBoundBinding actual, string expected)
+    {
+        var expectedKind = expected switch
+        {
+            "-INF" => IntervalBoundBindingKind.NegativeInfinity,
+            "+INF" => IntervalBoundBindingKind.PositiveInfinity,
+            _ => IntervalBoundBindingKind.Finite,
+        };
+        Assert.That(actual.Kind, Is.EqualTo(expectedKind));
+
+        if (expectedKind is not IntervalBoundBindingKind.Finite)
+        {
+            Assert.That(actual.Value, Is.Null);
+            return;
+        }
+
+        object expectedValue = expected.Contains(':', StringComparison.Ordinal)
+            ? (object)DateTime.Parse(expected, CultureInfo.InvariantCulture)
+            : DateOnly.TryParse(expected, CultureInfo.InvariantCulture, out var date)
+                ? (object)date
+                : (object)decimal.Parse(expected, CultureInfo.InvariantCulture);
+        Assert.That(actual.Value, Is.EqualTo(expectedValue));
     }
 }

@@ -15,5 +15,5 @@ internal static class BindingTestAdapter
         => ((ClosedRootExpression)Binder.Bind(source)).Expression;
 
     public static IntervalBinding Interval(string source)
-        => throw new BindingException($"Interval syntax '{source}' is not bound in this iteration.");
+        => ((IntervalParameter)Binder.BindParameter(source)).Value;
 }

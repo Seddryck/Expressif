@@ -32,6 +32,7 @@ public class ParameterSerializer
             ObjectPropertyParameter op => $"[{op.Name}]",
             ObjectIndexParameter oi => $"#{oi.Index}",
             TupleProjectionParameter tp => $"${tp.Index}",
+            IntervalParameter interval => SerializeInterval(interval.Value),
             _ => throw new NotSupportedException()
         };
     }
@@ -62,4 +63,15 @@ public class ParameterSerializer
             string text => $"\"{RecordSyntax.EscapeDoubleQuoted(text)}\"",
             _ => throw new NotSupportedException($"Literal value type '{value.GetType().Name}' cannot be serialized."),
         };
+
+    private static string SerializeInterval(IntervalBinding interval)
+        => $"I{(interval.IsLowerInclusive ? '[' : '(')}{SerializeBound(interval.LowerBound)}, {SerializeBound(interval.UpperBound)}{(interval.IsUpperInclusive ? ']' : ')')}";
+
+    private static string SerializeBound(IntervalBoundBinding bound) => bound.Kind switch
+    {
+        IntervalBoundBindingKind.NegativeInfinity => "-INF",
+        IntervalBoundBindingKind.PositiveInfinity => "+INF",
+        IntervalBoundBindingKind.Finite => SerializeLiteral(bound.Value),
+        _ => throw new NotSupportedException($"Interval bound kind '{bound.Kind}' cannot be serialized."),
+    };
 }
