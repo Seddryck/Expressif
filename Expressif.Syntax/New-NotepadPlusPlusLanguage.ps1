@@ -15,6 +15,7 @@ if ($outputDirectory) {
     New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 }
 
+$udlOperators = @($syntax.operators | Where-Object { $_ -notin @('-', '.', '$') }) + @('(', ')', ',')
 $model = [ordered]@{
         functions = [System.Security.SecurityElement]::Escape(
             (($syntax.functions | ForEach-Object { $_.name }) -join ' '))
@@ -23,7 +24,7 @@ $model = [ordered]@{
         accumulators = [System.Security.SecurityElement]::Escape(
             (($syntax.accumulators | ForEach-Object { $_.name }) -join ' '))
         constants = [System.Security.SecurityElement]::Escape(($syntax.constants -join ' '))
-        operators = [System.Security.SecurityElement]::Escape(($syntax.operators -join ' '))
+        operators = [System.Security.SecurityElement]::Escape(($udlOperators -join ' '))
     } | ConvertTo-Json -Depth 20
 
 Write-Host "Running Didot via local installation..."
