@@ -1,0 +1,66 @@
+suite: boolean
+kind: predicate
+operator: and
+tests:
+  - id: and.valid.expression
+    cases:
+      - id: and.valid.expression.boolean.false-false
+        value: false
+        expected: false
+        parameters:
+          - false
+      - id: and.valid.expression.boolean.false-true
+        value: false
+        expected: false
+        parameters:
+          - true
+      - id: and.valid.expression.boolean.true-false
+        value: true
+        expected: false
+        parameters:
+          - false
+      - id: and.valid.expression.boolean.true-true
+        value: true
+        expected: true
+        parameters:
+          - true
+      - id: and.valid.expression.boolean.false-null
+        value: false
+        expected: false
+        parameters:
+          - null
+      - id: and.valid.expression.boolean.true-null
+        value: true
+        expected: false
+        parameters:
+          - null
+      - id: and.valid.expression.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - true
+      - id: and.valid.expression.special.empty
+        value: (empty)
+        expected: false
+        parameters:
+          - true
+      - id: and.valid.expression.parameter-integer.zero
+        value: true
+        expected: false
+        parameters:
+          - 0
+      - id: and.valid.expression.parameter-integer.nonzero
+        value: true
+        expected: true
+        parameters:
+          - 2
+      - id: and.valid.expression.text.yes
+        value: yes
+        expected: true
+        parameters:
+          - true
+      - id: and.valid.expression.text.unconvertible
+        value: foo
+        expected: false
+        parameters:
+          - true

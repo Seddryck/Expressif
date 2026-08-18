@@ -1,0 +1,66 @@
+suite: boolean
+kind: predicate
+operator: xor
+tests:
+  - id: xor.valid.expression
+    cases:
+      - id: xor.valid.expression.boolean.false-false
+        value: false
+        expected: false
+        parameters:
+          - false
+      - id: xor.valid.expression.boolean.false-true
+        value: false
+        expected: true
+        parameters:
+          - true
+      - id: xor.valid.expression.boolean.true-false
+        value: true
+        expected: true
+        parameters:
+          - false
+      - id: xor.valid.expression.boolean.true-true
+        value: true
+        expected: false
+        parameters:
+          - true
+      - id: xor.valid.expression.boolean.false-null
+        value: false
+        expected: false
+        parameters:
+          - null
+      - id: xor.valid.expression.boolean.true-null
+        value: true
+        expected: true
+        parameters:
+          - null
+      - id: xor.valid.expression.special.null
+        value: (null)
+        expected: true
+        parameters:
+          - true
+      - id: xor.valid.expression.special.empty
+        value: (empty)
+        expected: true
+        parameters:
+          - true
+      - id: xor.valid.expression.parameter-integer.zero
+        value: false
+        expected: false
+        parameters:
+          - 0
+      - id: xor.valid.expression.parameter-integer.nonzero
+        value: false
+        expected: true
+        parameters:
+          - 2
+      - id: xor.valid.expression.text.yes
+        value: yes
+        expected: true
+        parameters:
+          - false
+      - id: xor.valid.expression.text.unconvertible
+        value: foo
+        expected: true
+        parameters:
+          - true
