@@ -86,7 +86,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_CombinationsGroup_Valid()
     {
-        var predication = new Predication("{starts-with(Nik) |AND ends-with(sla)} |OR {starts-with(ola) |AND ends-with(Tes)}");
+        var predication = new Predication("(starts-with(Nik) |AND ends-with(sla)) |OR (starts-with(ola) |AND ends-with(Tes))");
         var result = predication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.True);
 
