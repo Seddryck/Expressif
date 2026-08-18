@@ -44,16 +44,16 @@ tests:
         expected: false
         parameters:
           - true
-      - id: and.valid.expression.integer.zero
-        value: 0
+      - id: and.valid.expression.parameter-integer.zero
+        value: true
         expected: false
         parameters:
-          - true
-      - id: and.valid.expression.integer.nonzero
-        value: 1
+          - 0
+      - id: and.valid.expression.parameter-integer.nonzero
+        value: true
         expected: true
         parameters:
-          - true
+          - 2
       - id: and.valid.expression.text.yes
         value: yes
         expected: true

@@ -5,11 +5,18 @@ namespace Expressif.Predicates.Boolean;
 internal static class BooleanConversion
 {
     private static readonly BooleanCaster Caster = new();
+    private static readonly NumericCaster NumericCaster = new();
 
     public static bool ToBoolean(object? value)
-        => value is not null
-            && Caster.TryCast(value, out var boolean)
-            && boolean;
+    {
+        if (value is null)
+            return false;
+
+        if (Caster.TryCast(value, out var boolean))
+            return boolean;
+
+        return NumericCaster.TryCast(value, out var numeric) && numeric != 0;
+    }
 }
 
 /// <summary>

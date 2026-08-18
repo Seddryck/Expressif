@@ -44,16 +44,16 @@ tests:
         expected: true
         parameters:
           - true
-      - id: xor.valid.expression.integer.zero
-        value: 0
-        expected: true
-        parameters:
-          - true
-      - id: xor.valid.expression.integer.nonzero
-        value: 1
+      - id: xor.valid.expression.parameter-integer.zero
+        value: false
         expected: false
         parameters:
-          - true
+          - 0
+      - id: xor.valid.expression.parameter-integer.nonzero
+        value: false
+        expected: true
+        parameters:
+          - 2
       - id: xor.valid.expression.text.yes
         value: yes
         expected: true

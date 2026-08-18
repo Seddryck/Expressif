@@ -44,16 +44,16 @@ tests:
         expected: true
         parameters:
           - true
-      - id: or.valid.expression.integer.zero
-        value: 0
+      - id: or.valid.expression.parameter-integer.zero
+        value: false
+        expected: false
+        parameters:
+          - 0
+      - id: or.valid.expression.parameter-integer.nonzero
+        value: false
         expected: true
         parameters:
-          - true
-      - id: or.valid.expression.integer.nonzero
-        value: 1
-        expected: true
-        parameters:
-          - false
+          - 2
       - id: or.valid.expression.text.yes
         value: yes
         expected: true
