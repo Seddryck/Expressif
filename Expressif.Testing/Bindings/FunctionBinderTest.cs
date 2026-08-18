@@ -83,25 +83,18 @@ public class FunctionBinderTest
 
         Assert.That(function.Name, Is.EqualTo("filter"));
         Assert.That(function.Parameters, Has.Length.EqualTo(1));
-        Assert.That(function.Parameters[0], Is.TypeOf<PredicationParameter>());
+        Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
 
-        var parameter = (PredicationParameter)function.Parameters[0];
-        Assert.That(parameter.Predication.GetType().Name, Is.EqualTo("BinaryPredication"));
-
-        var left = parameter.Predication.GetType().GetProperty("LeftMember")?.GetValue(parameter.Predication);
-        var right = parameter.Predication.GetType().GetProperty("RightMember")?.GetValue(parameter.Predication);
-        var @operator = parameter.Predication.GetType().GetProperty("Operator")?.GetValue(parameter.Predication);
-
-        Assert.That(@operator?.GetType().GetProperty("Name")?.GetValue(@operator)?.ToString(), Is.EqualTo("AND"));
-
-        Assert.That(left, Is.TypeOf<SinglePredication>());
-        var leftFunction = ((SinglePredication)left!).Members.Single();
+        var parameter = (OpenExpressionParameter)function.Parameters[0];
+        var leftFunction = parameter.Expression.Members.First();
         Assert.That(leftFunction.Name, Is.EqualTo("greater-than"));
         Assert.That(leftFunction.Parameters, Has.Length.EqualTo(1));
         Assert.That(((LiteralParameter)leftFunction.Parameters[0]).Value, Is.EqualTo(2m));
 
-        Assert.That(right, Is.TypeOf<SinglePredication>());
-        var rightFunction = ((SinglePredication)right!).Members.Single();
+        var combinator = parameter.Expression.Members.Last();
+        Assert.That(combinator.Name, Is.EqualTo("and"));
+        Assert.That(combinator.Parameters.Single(), Is.TypeOf<OpenExpressionParameter>());
+        var rightFunction = ((OpenExpressionParameter)combinator.Parameters.Single()).Expression.Members.Single();
         Assert.That(rightFunction.Name, Is.EqualTo("less-than"));
         Assert.That(rightFunction.Parameters, Has.Length.EqualTo(1));
         Assert.That(((LiteralParameter)rightFunction.Parameters[0]).Value, Is.EqualTo(5m));

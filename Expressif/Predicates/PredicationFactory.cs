@@ -46,7 +46,36 @@ public class PredicationFactory : BaseExpressionFactory
         var predicates = new List<IPredicate>();
         foreach (var predicate in basic.Members)
             predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
-        return predicates[0];
+        return predicates.Count == 1
+            ? predicates[0]
+            : new ContextualPredicate(new ChainFunction(predicates), context);
+    }
+
+    protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
+        => parameter is OpenExpressionParameter open
+            ? CreateFunctionCast(
+                () => Instantiate(new SinglePredication(open.Expression.Members.ToArray()), context)
+                    .Evaluate(context.CurrentObject.Value),
+                scalarType)
+            : base.CreateParameter(parameter, scalarType, context);
+
+    private sealed class ContextualPredicate(IFunction expression, IContext context) : IPredicate
+    {
+        public bool Evaluate(object? value)
+        {
+            var previous = context.CurrentObject.Value;
+            context.CurrentObject.Set(value);
+            try
+            {
+                return Boolean.BooleanConversion.ToBoolean(expression.Evaluate(value));
+            }
+            finally
+            {
+                context.CurrentObject.Set(previous);
+            }
+        }
+
+        object? IFunction.Evaluate(object? value) => Evaluate(value);
     }
 
     internal IPredicate Instantiate(UnaryPredication unary, IContext context)

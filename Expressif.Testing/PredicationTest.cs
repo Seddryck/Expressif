@@ -76,6 +76,13 @@ public class PredicationTest
         Assert.That(result, Is.True);
     }
 
+    [TestCase("!greater-than(2)", 3, false)]
+    [TestCase("greater-than(2) |AND less-than(5)", 3, true)]
+    [TestCase("greater-than(2) |OR less-than(0)", 3, true)]
+    [TestCase("greater-than(2) |XOR less-than(5)", 3, false)]
+    public void Evaluate_BooleanShorthand_Valid(string code, object value, bool expected)
+        => Assert.That(new Predication(code).Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void Evaluate_CombinationsGroup_Valid()
     {

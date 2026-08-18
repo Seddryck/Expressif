@@ -34,8 +34,8 @@ public sealed class ExpressifBinder
     public IPredication BindPredication(string source)
     {
         var root = Bind(source);
-        return root is OpenRootExpression open && open.Expression.Members.Count() == 1
-            ? new SinglePredication(open.Expression.Members.Single())
+        return root is OpenRootExpression open
+            ? new SinglePredication(open.Expression.Members.ToArray())
             : throw new BindingException($"Predication '{source}' is not bound in this iteration.");
     }
 
@@ -48,6 +48,8 @@ public sealed class ExpressifBinder
     private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)
         => syntax switch
         {
+            UnaryExpressionSyntax unary => BindUnaryExpression(unary).Members,
+            BinaryExpressionSyntax binary => BindBinaryExpression(binary).Members,
             ParenthesizedExpressionSyntax { Expression: OpenExpressionSyntax open } => BindOpen(open).Members,
             ParenthesizedExpressionSyntax
             {
@@ -56,7 +58,50 @@ public sealed class ExpressifBinder
                     Value: RecordAccessSyntax access,
                 } closed,
             } when IsRelativeRecordAccess(access) => BindRelativeRecordAccess(closed, access).Members,
+            ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression).Members,
             _ => [BindPipelineMember(syntax)],
+        };
+
+    private OpenExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
+        => new([.. BindExpression(syntax.Operand).Members, new Function(BindUnaryOperator(syntax.Operator), [])]);
+
+    private OpenExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
+        => new([
+            .. BindExpression(syntax.Left).Members,
+            new Function(
+                BindBinaryOperator(syntax.Operator),
+                [new OpenExpressionParameter(BindExpression(syntax.Right))])
+        ]);
+
+    private OpenExpression BindExpression(ExpressionSyntax syntax) => syntax switch
+    {
+        OpenExpressionSyntax open => BindOpen(open),
+        UnaryExpressionSyntax unary => BindUnaryExpression(unary),
+        BinaryExpressionSyntax binary => BindBinaryExpression(binary),
+        ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression),
+        _ => new OpenExpression([BindPipelineMember(syntax)]),
+    };
+
+    private OpenExpression BindOpenRoot(RootExpressionSyntax syntax) => syntax switch
+    {
+        OpenExpressionSyntax open => BindOpen(open),
+        _ => throw Unsupported(syntax),
+    };
+
+    private static string BindUnaryOperator(UnaryOperatorSyntax syntax)
+        => syntax.Text switch
+        {
+            "!" => "not",
+            _ => throw Unsupported(syntax),
+        };
+
+    private static string BindBinaryOperator(BinaryOperatorSyntax syntax)
+        => syntax.Text.ToUpperInvariant() switch
+        {
+            "|AND" => "and",
+            "|OR" => "or",
+            "|XOR" => "xor",
+            _ => throw Unsupported(syntax),
         };
 
     private Function BindPipelineMember(ExpressionSyntax syntax) => syntax switch
@@ -116,6 +161,9 @@ public sealed class ExpressifBinder
             => new OpenExpressionParameter(new OpenExpression([BindRecordAccessFunction(access)])),
         ValueSyntax value => BindValue(value),
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
+        UnaryExpressionSyntax unary => new OpenExpressionParameter(BindUnaryExpression(unary)),
+        BinaryExpressionSyntax binary => new OpenExpressionParameter(BindBinaryExpression(binary)),
+        ParenthesizedExpressionSyntax parenthesized => new OpenExpressionParameter(BindOpenRoot(parenthesized.Expression)),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),
         ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed when IsRelativeRecordAccess(access)

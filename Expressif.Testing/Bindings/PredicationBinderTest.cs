@@ -48,6 +48,17 @@ public class PredicationBinderTest
     public void Parse_BinaryPredication_Valid(string value)
         => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
 
+    [TestCase("!even", "not")]
+    [TestCase("even |AND odd", "and")]
+    [TestCase("even |OR odd", "or")]
+    [TestCase("even |XOR odd", "xor")]
+    public void Parse_BooleanShorthand_LowersToCombinator(string value, string expected)
+    {
+        var predication = (SinglePredication)BindingTestAdapter.Predication(value);
+
+        Assert.That(predication.Members.Last().Name, Is.EqualTo(expected));
+    }
+
     [Test]
     [TestCase("{is-func}")]
     public void Parse_SubPredication_Valid(string value)
