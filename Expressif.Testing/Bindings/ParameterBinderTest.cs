@@ -37,7 +37,7 @@ public class ParameterBinderTest
     [TestCase("{`first name` := \"Alice Smith\", active := #true}", typeof(RecordLiteralParameter))]
     [TestCase("{@foo}", typeof(ArrayParameter))]
     [TestCase("{ @foo, ^.1, ^.bar }", typeof(ArrayParameter))]
-    [TestCase("{ @foo | text-to-func(\"bar\") }", typeof(InputExpressionParameter))]
+    [TestCase("( @foo | text-to-func(\"bar\") )", typeof(InputExpressionParameter))]
     [TestCase("T(10, 20)", typeof(TupleParameter))]
     [TestCase("T(1, T(2, 3))", typeof(TupleParameter))]
     public void Parse_Parameter_Valid(string value, Type type)
