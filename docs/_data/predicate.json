@@ -1,5 +1,21 @@
 [
   {
+    "Name": "and",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-and"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Optional": false,
+        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `true`."
+      }
+    ]
+  },
+  {
     "Name": "false",
     "IsPublic": true,
     "Aliases": [
@@ -36,6 +52,32 @@
     ]
   },
   {
+    "Name": "not",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-not"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.",
+    "Parameters": []
+  },
+  {
+    "Name": "or",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-or"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Optional": false,
+        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `false`."
+      }
+    ]
+  },
+  {
     "Name": "true",
     "IsPublic": true,
     "Aliases": [
@@ -54,6 +96,22 @@
     "Scope": "Boolean",
     "Summary": "Returns `true` if the argument is effectively `true` or `null` else return `false`.",
     "Parameters": []
+  },
+  {
+    "Name": "xor",
+    "IsPublic": true,
+    "Aliases": [
+      "boolean-is-xor"
+    ],
+    "Scope": "Boolean",
+    "Summary": "Returns `true` when exactly one of the Boolean-converted input and a secondary predicate expression evaluates to `true`. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Always evaluates the secondary expression.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Optional": false,
+        "Summary": "Specifies the secondary predicate expression evaluated after the input."
+      }
+    ]
   },
   {
     "Name": "equal-to",
