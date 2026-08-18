@@ -431,11 +431,15 @@ Once installed, Expressif files and code blocks will be highlighted automaticall
 <!-- START PREDICATE TABLE -->
 |Scope    | Name                           | Aliases                               |
 |-------- | ------------------------------ | --------------------------------------|
+|Boolean  | and                            | boolean-is-and                        |
 |Boolean  | false                          | boolean-is-false                      |
 |Boolean  | false-or-null                  | boolean-is-false-or-null              |
 |Boolean  | identical-to                   | boolean-is-identical-to               |
+|Boolean  | not                            | boolean-is-not                        |
+|Boolean  | or                             | boolean-is-or                         |
 |Boolean  | true                           | boolean-is-true                       |
 |Boolean  | true-or-null                   | boolean-is-true-or-null               |
+|Boolean  | xor                            | boolean-is-xor                        |
 |Numeric  | equal-to                       | numeric-is-equal-to                   |
 |Numeric  | even                           | numeric-is-even                       |
 |Numeric  | greater-than                   | numeric-is-greater-than               |
