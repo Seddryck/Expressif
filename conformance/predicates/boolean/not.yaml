@@ -1,0 +1,30 @@
+suite: boolean
+kind: predicate
+operator: not
+tests:
+  - id: not.valid
+    cases:
+      - id: not.valid.boolean.false
+        value: false
+        expected: true
+      - id: not.valid.boolean.true
+        value: true
+        expected: false
+      - id: not.valid.special.null
+        value: (null)
+        expected: true
+      - id: not.valid.special.empty
+        value: (empty)
+        expected: true
+      - id: not.valid.integer.zero
+        value: 0
+        expected: true
+      - id: not.valid.integer.nonzero
+        value: 1
+        expected: false
+      - id: not.valid.text.yes
+        value: yes
+        expected: false
+      - id: not.valid.text.unconvertible
+        value: foo
+        expected: true
