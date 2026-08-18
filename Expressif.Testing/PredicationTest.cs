@@ -47,7 +47,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_Negation_Valid()
     {
-        var predication = new Predication("!starts-with(Nik)");
+        var predication = new Predication("!starts-with(\"Nik\")");
         var result = predication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.False);
     }
@@ -55,7 +55,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_Negation_CheckParam()
     {
-        var predication = new Predication("!starts-with(True)");
+        var predication = new Predication("!starts-with(\"True\")");
         var result = predication.Evaluate("Truesla");
         Assert.That(result, Is.False);
     }
@@ -63,7 +63,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_CombinationAnd_Valid()
     {
-        var predication = new Predication("starts-with(Nik) |AND ends-with(sla)");
+        var predication = new Predication("starts-with(\"Nik\") |AND ends-with(\"sla\")");
         var result = predication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.True);
     }
@@ -71,7 +71,7 @@ public class PredicationTest
     [Test]
     public void Evaluate_CombinationOr_Valid()
     {
-        var predication = new Predication("starts-with(ola) |OR ends-with(sla)");
+        var predication = new Predication("starts-with(\"ola\") |OR ends-with(\"sla\")");
         var result = predication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.True);
     }
@@ -86,11 +86,11 @@ public class PredicationTest
     [Test]
     public void Evaluate_CombinationsGroup_Valid()
     {
-        var predication = new Predication("(starts-with(Nik) |AND ends-with(sla)) |OR (starts-with(ola) |AND ends-with(Tes))");
+        var predication = new Predication("(starts-with(\"Nik\") |AND ends-with(\"sla\")) |OR (starts-with(\"ola\") |AND ends-with(\"Tes\"))");
         var result = predication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.True);
 
-        var withoutGroupsPredication = new Predication("starts-with(Nik) |AND ends-with(sla) |OR starts-with(ola) |AND ends-with(Tes)");
+        var withoutGroupsPredication = new Predication("starts-with(\"Nik\") |AND ends-with(\"sla\") |OR starts-with(\"ola\") |AND ends-with(\"Tes\")");
         var secondResult = withoutGroupsPredication.Evaluate("Nikola Tesla");
         Assert.That(result, Is.Not.EqualTo(secondResult));
     }
