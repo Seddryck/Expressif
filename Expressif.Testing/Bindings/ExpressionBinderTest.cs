@@ -110,4 +110,21 @@ public class ExpressionBinderTest
             Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "absolute" }));
         });
     }
+
+    [Test]
+    public void Parse_AdjacentOpenComposition_PreservesTupleProjections()
+    {
+        var adjacent = BindingTestAdapter.Function("adjacent($1 | subtract($0) | multiply($1))");
+        var expression = ((OpenExpressionParameter)adjacent.Parameters.Single()).Expression;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expression.Members.Select(x => x.Name),
+                Is.EqualTo(new[] { "tuple-at", "subtract", "multiply" }));
+            Assert.That(((LiteralParameter)expression.Members.First().Parameters.Single()).Value,
+                Is.EqualTo("1"));
+            Assert.That(expression.Members.Skip(1).Select(x => ((TupleProjectionParameter)x.Parameters.Single()).Index),
+                Is.EqualTo(new[] { 0, 1 }));
+        });
+    }
 }

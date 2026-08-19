@@ -40,7 +40,10 @@ public sealed class ExpressifBinder
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
-        => new(syntax.Pipeline.SelectMany(BindPipelineMembers));
+        => new([
+            .. syntax.Source is null ? [] : BindPipelineMembers(syntax.Source),
+            .. syntax.Pipeline.SelectMany(BindPipelineMembers),
+        ]);
 
     private ClosedExpression BindClosed(ClosedExpressionSyntax syntax)
         => new(BindValue(syntax.Value), syntax.Pipeline.SelectMany(BindPipelineMembers));
