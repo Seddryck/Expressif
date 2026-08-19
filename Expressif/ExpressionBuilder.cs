@@ -1,8 +1,4 @@
 ﻿
-using Expressif.Functions;
-using Expressif.Parsers;
-using Expressif.Serializers;
-using Expressif.Values.Special;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +6,10 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
+using Expressif.Parsers;
+using Expressif.Serializers;
+using Expressif.Values.Special;
 
 namespace Expressif;
 
@@ -26,13 +26,16 @@ public class ExpressionBuilder
 
     private Queue<IExpression> Pile { get; } = new();
 
-    public ExpressionBuilder Chain<T>() where T : IFunction
+    public ExpressionBuilder Chain<T>()
+        where T : IFunction
         => Chain(typeof(T), []);
 
-    public ExpressionBuilder Chain<T>(params object?[] parameters) where T : IFunction
+    public ExpressionBuilder Chain<T>(params object?[] parameters)
+        where T : IFunction
         => Chain(typeof(T), parameters);
 
-    public ExpressionBuilder Chain<T>(params Expression<Func<IContext, object?>>[] parameters) where T : IFunction
+    public ExpressionBuilder Chain<T>(params Expression<Func<IContext, object?>>[] parameters)
+        where T : IFunction
         => Chain(typeof(T), parameters);
 
     public ExpressionBuilder Chain(Type type, params object?[] parameters)

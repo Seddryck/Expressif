@@ -8,7 +8,7 @@ public class BroadcastTest
 {
     [Test]
     public void Evaluate_CountAccumulator_Valid()
-        => Assert.That(new Broadcast(() => new CountAccumulator()).Evaluate(new object?[] { 1, "2", null }), Is.EqualTo(Enumerable.Repeat(3,3)));
+        => Assert.That(new Broadcast(() => new CountAccumulator()).Evaluate(new object?[] { 1, "2", null }), Is.EqualTo(Enumerable.Repeat(3, 3)));
 
     [Test]
     public void Evaluate_SumAccumulator_WithCastableValues_Valid()
@@ -54,7 +54,7 @@ public class BroadcastTest
 
     [Test]
     public void Evaluate_NonEnumerableInput_Null()
-        => Assert.That(new Broadcast(() => new SumAccumulator()).Evaluate(10), Is.Null );
+        => Assert.That(new Broadcast(() => new SumAccumulator()).Evaluate(10), Is.Null);
 
     [Test]
     public void Evaluate_Broadcast_EnumeratesInputOnce()

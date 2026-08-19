@@ -1,5 +1,5 @@
-using Sprache;
 using System.Text.RegularExpressions;
+using Sprache;
 
 namespace Expressif.Cli.Commands;
 

@@ -1,7 +1,7 @@
 using Expressif.Functions.Record;
 using Expressif.Values;
-using ValueRecord = Expressif.Values.RecordValue;
 using RecordFunction = Expressif.Functions.Record.Record;
+using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Testing.Functions.Record;
 

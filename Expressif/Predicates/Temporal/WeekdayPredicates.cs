@@ -1,9 +1,9 @@
-﻿using Expressif.Values;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
 
 namespace Expressif.Predicates.Temporal;
 
@@ -19,7 +19,7 @@ public abstract class BaseTemporalWeekdayPredicate : BaseDateTimePredicate
 public class Weekday : BaseTemporalWeekdayPredicate
 {
     public Func<Values.Weekday> DayOfWeek { get; }
-    
+
     /// <param name="weekday">The day of week to compare to the argument.</param>
     public Weekday(Func<Values.Weekday> weekday)
         : base() { DayOfWeek = weekday; }
@@ -33,7 +33,8 @@ public class Weekday : BaseTemporalWeekdayPredicate
 /// </summary>
 public class Weekend : BaseTemporalWeekdayPredicate
 {
-    public Weekend() : base() { }
+    public Weekend()
+        : base() { }
 
     protected override bool EvaluateDate(DateOnly date)
         => date.ToWeekday() == Weekdays.Saturday || date.ToWeekday() == Weekdays.Sunday;
@@ -44,7 +45,8 @@ public class Weekend : BaseTemporalWeekdayPredicate
 /// </summary>
 public class BusinessDay : BaseTemporalWeekdayPredicate
 {
-    public BusinessDay() : base() { }
+    public BusinessDay()
+        : base() { }
 
     protected override bool EvaluateDate(DateOnly date)
         => date.ToWeekday() != Weekdays.Saturday && date.ToWeekday() != Weekdays.Sunday;

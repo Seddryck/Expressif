@@ -1,6 +1,6 @@
-﻿using Expressif.Predicates.Temporal;
+﻿using System.ComponentModel;
+using Expressif.Predicates.Temporal;
 using Expressif.Testing.Conformance;
-using System.ComponentModel;
 
 namespace Expressif.Testing.Predicates.Temporal;
 
@@ -26,7 +26,7 @@ public class AroundTodayPredicatesTest
 
     [Conformance]
     public void Tomorrow_Valid_DateTime(DateTime dt, bool expected)
-        => Assert.That(new Tomorrow(new DateTime(2022,12,29)).Evaluate(dt), Is.EqualTo(expected));
+        => Assert.That(new Tomorrow(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
     public void Today_Valid_DateTime(DateTime dt, bool expected)

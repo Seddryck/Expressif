@@ -1,11 +1,11 @@
-﻿using Expressif.Predicates.Special;
-using Expressif.Values;
-using Expressif.Values.Casters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Predicates.Special;
+using Expressif.Values;
+using Expressif.Values.Casters;
 
 namespace Expressif.Functions.Temporal;
 
@@ -47,8 +47,8 @@ public class LengthOfYear : BaseTemporalLengthFunction
 }
 
 /// <summary>
-/// returns the count of days within the month of the dateTime value passed as the argument. 
-/// If the argument is not a dateTime but a text at format "YYYY-MM", it returns count of days of the month represented by this value. 
+/// returns the count of days within the month of the dateTime value passed as the argument.
+/// If the argument is not a dateTime but a text at format "YYYY-MM", it returns count of days of the month represented by this value.
 /// It returns a value between 28 and 31 (depending of leap year and month).
 /// </summary>
 public class LengthOfMonth : BaseTemporalLengthFunction

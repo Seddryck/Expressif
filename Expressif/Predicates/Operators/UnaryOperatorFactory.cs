@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Expressif.Functions;
 
 namespace Expressif.Predicates.Operators;
+
 public class UnaryOperatorFactory : BaseExpressionFactory
 {
     public UnaryOperatorFactory()

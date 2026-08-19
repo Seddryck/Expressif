@@ -1,10 +1,10 @@
+using System.Data;
+using System.Diagnostics;
 using Expressif.Functions;
 using Expressif.Parsers;
 using Expressif.Values;
 using Expressif.Values.Special;
 using Sprache;
-using System.Data;
-using System.Diagnostics;
 
 namespace Expressif.Testing;
 

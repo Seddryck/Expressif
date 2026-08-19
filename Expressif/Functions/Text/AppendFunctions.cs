@@ -1,9 +1,9 @@
-﻿using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
@@ -174,23 +174,23 @@ public class ReplaceSlice : BaseTextAppend
         var start = Start.Invoke();
         var length = Length.Invoke();
 
-        if (length<0)
+        if (length < 0)
         {
             start += length;
             length = Math.Abs(length);
         }
 
-        if (start>= value.Length)
+        if (start >= value.Length)
             return $"{value}{Append.Invoke()}";
-        if (start + length <=0)
+        if (start + length <= 0)
             return $"{Append.Invoke()}{value}";
 
         var text = new StringBuilder();
         if (start >= 0)
             text.Append(value[..start]);
         text.Append(Append.Invoke());
-        if (start+length<=value.Length)
-            text.Append(value[(start + length) ..]);
+        if (start + length <= value.Length)
+            text.Append(value[(start + length)..]);
 
         return text.ToString();
     }

@@ -1,5 +1,5 @@
-using Expressif.Functions.Array;
 using Expressif.Accumulators;
+using Expressif.Functions.Array;
 
 namespace Expressif.Testing.Functions.Array;
 

@@ -25,8 +25,10 @@ public class Filter : BaseArrayFunction
         var predicate = Predicate.Invoke();
         var output = new List<object?>();
         foreach (var item in enumerable!)
+        {
             if (predicate.Evaluate(item))
                 output.Add(item);
+        }
 
         return output.ToArray();
     }

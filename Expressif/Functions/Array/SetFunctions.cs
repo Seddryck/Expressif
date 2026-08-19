@@ -12,8 +12,10 @@ public abstract class BaseArraySetFunction : BaseArrayFunction
         var values = new List<object?>();
         var visited = new HashSet<object?>();
         foreach (var item in source)
+        {
             if (visited.Add(item))
                 values.Add(item);
+        }
 
         return values.ToArray();
     }
@@ -27,8 +29,10 @@ public abstract class BaseArraySetFunction : BaseArrayFunction
         var values = new List<object?>();
         var visited = new HashSet<object?>();
         foreach (var item in source)
+        {
             if (!excluded.Contains(item) && visited.Add(item))
                 values.Add(item);
+        }
 
         return values.ToArray();
     }
@@ -57,8 +61,10 @@ public class Distinct : BaseArrayFunction
         var visited = new HashSet<object?>();
 
         foreach (var item in enumerable)
+        {
             if (visited.Add(item))
                 values.Add(item);
+        }
 
         return values.ToArray();
     }
@@ -160,8 +166,10 @@ public class Intersection : BaseArraySetFunction
         var values = new List<object?>();
         var visited = new HashSet<object?>();
         foreach (var item in enumerable)
+        {
             if (included.Contains(item) && visited.Add(item))
                 values.Add(item);
+        }
 
         return values.ToArray();
     }
@@ -189,12 +197,16 @@ public class Union : BaseArraySetFunction
         var values = new List<object?>();
         var visited = new HashSet<object?>();
         foreach (var item in enumerable)
+        {
             if (visited.Add(item))
                 values.Add(item);
+        }
 
         foreach (var item in array)
+        {
             if (visited.Add(item))
                 values.Add(item);
+        }
 
         return values.ToArray();
     }

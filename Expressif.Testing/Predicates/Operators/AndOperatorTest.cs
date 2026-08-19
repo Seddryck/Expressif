@@ -1,11 +1,11 @@
-﻿using Expressif.Functions;
-using Expressif.Predicates;
-using Expressif.Predicates.Operators;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
+using Expressif.Predicates;
+using Expressif.Predicates.Operators;
 
 namespace Expressif.Testing.Predicates.Operators;
 

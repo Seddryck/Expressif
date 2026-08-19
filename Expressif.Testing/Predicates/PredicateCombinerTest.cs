@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Predicates.Text;
 using Expressif.Predicates;
+using Expressif.Predicates.Text;
 
 namespace Expressif.Testing.Predicates;
+
 public class PredicateCombinerTest
 {
     [Test]

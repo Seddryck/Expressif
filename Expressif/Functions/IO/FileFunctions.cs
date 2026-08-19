@@ -1,7 +1,6 @@
-﻿using Expressif.Functions.Text;
+﻿using System.IO;
+using Expressif.Functions.Text;
 using Expressif.Values.Special;
-using System.IO;
-
 
 namespace Expressif.Functions.IO;
 

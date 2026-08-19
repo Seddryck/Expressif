@@ -1,9 +1,9 @@
-﻿using Expressif.Predicates.Numeric;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Predicates.Numeric;
 
 namespace Expressif.Predicates.Special;
 

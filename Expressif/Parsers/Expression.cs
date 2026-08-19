@@ -1,8 +1,8 @@
-﻿using Expressif.Functions;
-using Sprache;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Expressif.Functions;
+using Sprache;
 
 namespace Expressif.Parsers;
 
@@ -16,7 +16,7 @@ public class OpenExpression : IExpression
         => (Members) = (members);
 
     internal static readonly Parser<Function> MapShorthandParser =
-        from _ in Parse.String("|>").Token()
+        from pipeOperator in Parse.String("|>").Token()
         from expression in Parse.Ref(() => Parser)
             .Contained(Parse.Char('(').Token(), Parse.Char(')').Token())
             .Or(Function.Parser.Token().Select(function => new OpenExpression([function])))
@@ -24,7 +24,7 @@ public class OpenExpression : IExpression
 
     internal static readonly Parser<Function> ContinuationParser =
         MapShorthandParser.Or(
-            from _ in Parse.Char('|').Token()
+            from pipeSeparator in Parse.Char('|').Token()
             from function in Function.Parser.Token()
             select function);
 

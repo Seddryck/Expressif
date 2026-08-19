@@ -55,7 +55,7 @@ public class ContextVariables
     public bool TryGetValue(string name, [NotNullWhen(true)] out object? value)
     {
         var response = Variables.TryGetValue(name.StartsWith('@') ? name[1..] : name, out var result);
-        value = response ? Evaluate(result) : null;       
+        value = response ? Evaluate(result) : null;
         return response;
     }
 

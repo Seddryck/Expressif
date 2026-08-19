@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Expressif.Functions.Temporal;
 
 namespace Expressif.Testing.Functions.Temporal;
+
 public class TimeZoneFunctionsTest
 {
     [Test]

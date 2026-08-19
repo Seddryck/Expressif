@@ -1,12 +1,12 @@
-﻿using Expressif.Values;
-using Expressif.Values.Casters;
-using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
+using Expressif.Values.Casters;
+using Expressif.Values.Special;
 
 namespace Expressif.Predicates.Text;
 
@@ -47,7 +47,7 @@ public abstract class BaseTextPredicateWithoutReference : BaseTextPredicate
 
         if (new Values.Special.Empty().Equals(value))
             return EvaluateText(string.Empty);
-        
+
         return EvaluateText(value);
     }
     protected abstract bool EvaluateText(string value);
@@ -59,7 +59,7 @@ public abstract class BaseTextPredicateReference : BaseTextPredicate
 
     public BaseTextPredicateReference(Func<string?> reference)
         => Reference = reference;
-    
+
     protected override bool EvaluateBaseText(string value)
     {
         if (new Null().Equals(value) || new Null().Equals(Reference.Invoke()))

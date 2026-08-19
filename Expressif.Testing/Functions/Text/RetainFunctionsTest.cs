@@ -1,9 +1,9 @@
-﻿using Expressif.Functions.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions.Text;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Functions.Text;

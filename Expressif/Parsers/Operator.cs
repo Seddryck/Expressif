@@ -1,20 +1,20 @@
-using Expressif.Functions;
-using Expressif.Functions.Special;
-using Expressif.Predicates.Boolean;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
+using Expressif.Functions.Special;
+using Expressif.Predicates.Boolean;
+using Sprache;
 
 namespace Expressif.Parsers;
 
 internal class UnaryOperator : IPredication
 {
     public string Name { get; }
-    
+
     public UnaryOperator(string name)
         => (Name) = (name);
 

@@ -1,7 +1,7 @@
-﻿using Expressif.Functions.Text;
-using Expressif.Values.Special;
+﻿using System.Reflection;
+using Expressif.Functions.Text;
 using Expressif.Testing.Conformance;
-using System.Reflection;
+using Expressif.Values.Special;
 
 namespace Expressif.Testing.Functions.Text;
 
@@ -35,8 +35,8 @@ public class TextFunctionsTest
             Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(new Null()));
         }
 
-        var Token = new Token(() => (tokenCount));
-        Assert.That(Token.Evaluate(value), Is.EqualTo(new Null()));
+        var token = new Token(() => (tokenCount));
+        Assert.That(token.Evaluate(value), Is.EqualTo(new Null()));
     }
 
     [Test]
@@ -57,8 +57,8 @@ public class TextFunctionsTest
             Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(new Null()));
         }
 
-        var Token = new Token(() => (tokenCount), () => ('-'));
-        Assert.That(Token.Evaluate(value), Is.EqualTo(new Null()));
+        var token = new Token(() => (tokenCount), () => ('-'));
+        Assert.That(token.Evaluate(value), Is.EqualTo(new Null()));
     }
 
     [Test]

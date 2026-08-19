@@ -1,5 +1,5 @@
-using Expressif.Parsers;
 using System.Diagnostics;
+using Expressif.Parsers;
 using Expressif.Predicates;
 using Expressif.Predicates.Numeric;
 using Expressif.Predicates.Text;
@@ -12,7 +12,6 @@ public class PredicationFactoryTest
     public void Setup()
     { }
 
-    
     [Test]
     [TestCase(typeof(Even), 0)]
     [TestCase(typeof(EqualTo), 1)]

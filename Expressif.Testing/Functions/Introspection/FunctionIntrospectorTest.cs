@@ -1,11 +1,11 @@
-﻿using Expressif.Functions.Introspection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions.Introspection;
 
 namespace Expressif.Testing.Functions.Introspection;
 
@@ -30,7 +30,7 @@ public class FunctionIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NameEqualClass()
     {
-        foreach(var info in Infos)
+        foreach (var info in Infos)
         {
             Debug.WriteLine(info.Name);
             Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
@@ -62,7 +62,7 @@ public class FunctionIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_DateToAgeIsSynonymOfAge()
     {
-        var info = Infos.Single(x => x.Name=="age");
+        var info = Infos.Single(x => x.Name == "age");
         Assert.That(info.Aliases, Has.Length.EqualTo(1));
         Assert.That(info.Aliases, Does.Contain("date-to-age"));
     }

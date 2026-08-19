@@ -1,8 +1,8 @@
-﻿using Sprache;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sprache;
 
 namespace Expressif.Parsers;
 
@@ -20,20 +20,20 @@ public class Function : IExpression
     // established map(function) shorthand while generic parameters handle every
     // expression whose syntax is unambiguous.
     private static readonly Parser<IParameter[]> MapParametersParser =
-        from _ in Parse.Char('(').Token()
+        from openingParenthesis in Parse.Char('(').Token()
         from expression in OpenExpression.Parser.Token()
-        from _1 in Parse.Char(')').Token()
+        from closingParenthesis in Parse.Char(')').Token()
         select new IParameter[] { new OpenExpressionParameter(expression) };
 
     private static readonly Parser<IParameter[]> RecordParametersParser =
-        from _ in Parse.Char('(').Token()
+        from openingParenthesis in Parse.Char('(').Token()
         from entries in (
             from close in Parse.Char(')').Token()
             select Array.Empty<IRecordDefinitionEntry>()
         ).Or(
             from first in Parameter.RecordFunctionEntryParser.Token().Once()
             from others in (
-                from __ in Parse.Char(',').Token()
+                from comma in Parse.Char(',').Token()
                 from entry in Parameter.RecordFunctionEntryParser.Token()
                 select entry
             ).Many()
@@ -46,12 +46,12 @@ public class Function : IExpression
             : [new RecordDefinitionParameter(entries)];
 
     private static readonly Parser<Function> FieldShorthandParser =
-        from _ in Parse.Char('.')
+        from dot in Parse.Char('.')
         from name in Parse.Regex("[A-Za-z_][A-Za-z0-9_+\\-]*").Text()
         select new Function("field", [new LiteralParameter(name)], FunctionSyntax.FieldShorthand);
 
     private static readonly Parser<Function> TupleProjectionShorthandParser =
-        from _ in Parse.Char('$')
+        from dollarSign in Parse.Char('$')
         from index in Parse.Number
         select new Function("tuple-at", [new LiteralParameter(index)], FunctionSyntax.TupleProjectionShorthand);
 

@@ -12,9 +12,9 @@ public class FunctionAttribute : Attribute
     public string[] Aliases { get; }
     public string? Prefix { get; }
 
-    public FunctionAttribute() 
+    public FunctionAttribute()
         : this(null, System.Array.Empty<string>()) { }
 
-    public FunctionAttribute(string? prefix = null, string[]? aliases=null) 
+    public FunctionAttribute(string? prefix = null, string[]? aliases = null)
         => (Prefix, Aliases) = (prefix, aliases ?? System.Array.Empty<string>());
 }

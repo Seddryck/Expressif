@@ -1,12 +1,12 @@
-﻿using Expressif.Values;
-using Expressif.Values.Casters;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
+using Expressif.Values.Casters;
 
 namespace Expressif.Predicates.Text;
 
@@ -33,7 +33,7 @@ public abstract class BaseTextPredicateMatching : BaseTextPredicate
 }
 
 /// <summary>
-/// Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise. 
+/// Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise.
 /// </summary>
 public class MatchesNumeric : BaseTextPredicateMatching
 {
@@ -43,7 +43,7 @@ public class MatchesNumeric : BaseTextPredicateMatching
         : base(culture) { }
 
     protected override bool EvaluateUncasted(object value)
-        => TypeChecker.IsNumericType(value) ||  base.EvaluateUncasted(value);
+        => TypeChecker.IsNumericType(value) || base.EvaluateUncasted(value);
 
     protected override bool EvaluateBaseText(string value)
         => decimal.TryParse(value, NumberStyles.Number & ~NumberStyles.AllowThousands, CultureInfo.NumberFormat, out var _)
@@ -51,7 +51,7 @@ public class MatchesNumeric : BaseTextPredicateMatching
 }
 
 /// <summary>
-/// Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise. 
+/// Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise.
 /// </summary>
 public class MatchesDate : BaseTextPredicateMatching
 {
@@ -77,7 +77,7 @@ public class MatchesDate : BaseTextPredicateMatching
 }
 
 /// <summary>
-/// Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise. 
+/// Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise.
 /// </summary>
 public class MatchesDateTime : BaseTextPredicateMatching
 {
@@ -102,7 +102,7 @@ public class MatchesDateTime : BaseTextPredicateMatching
 }
 
 /// <summary>
-/// Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise. 
+/// Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.
 /// </summary>
 public class MatchesTime : BaseTextPredicateMatching
 {

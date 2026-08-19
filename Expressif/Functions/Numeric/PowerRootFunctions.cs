@@ -21,9 +21,9 @@ public abstract class BaseNumericPowerRootFunction : BaseNumericFunction
 public class Power : BaseNumericPowerRootFunction
 {
     public Power(Func<decimal> exponent)
-        : base(exponent) {}
+        : base(exponent) { }
 
-    protected override decimal? EvaluateNumeric(decimal numeric) 
+    protected override decimal? EvaluateNumeric(decimal numeric)
         => Convert.ToDecimal(Math.Pow(Convert.ToDouble(numeric), Convert.ToDouble(Exponent.Invoke())));
 }
 
@@ -79,7 +79,7 @@ public class SquareRoot : BaseNumericPowerRootFunction
     public SquareRoot()
         : base(() => 2) { }
 
-    protected override decimal? EvaluateNumeric(decimal numeric) 
+    protected override decimal? EvaluateNumeric(decimal numeric)
         => Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(numeric)));
 }
 
@@ -91,6 +91,6 @@ public class CubeRoot : BaseNumericPowerRootFunction
     public CubeRoot()
         : base(() => 3) { }
 
-    protected override decimal? EvaluateNumeric(decimal numeric) 
+    protected override decimal? EvaluateNumeric(decimal numeric)
         => Convert.ToDecimal(Math.Cbrt(Convert.ToDouble(numeric)));
 }

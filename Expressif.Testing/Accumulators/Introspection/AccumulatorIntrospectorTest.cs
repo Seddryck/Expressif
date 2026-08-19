@@ -1,7 +1,7 @@
-using Expressif.Accumulators.Introspection;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Expressif.Accumulators.Introspection;
 
 namespace Expressif.Testing.Accumulators.Introspection;
 

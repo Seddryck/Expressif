@@ -16,7 +16,7 @@ public abstract class BaseSpecial
 
     public static bool operator ==(BaseSpecial left, object? right)
         => left.Equals(right);
-    
+
     public static bool operator !=(BaseSpecial left, object? right)
         => !left.Equals(right);
 
