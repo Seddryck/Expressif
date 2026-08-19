@@ -1,4 +1,3 @@
-using Sprache;
 using System.Text.RegularExpressions;
 
 namespace Expressif.Cli.Commands;

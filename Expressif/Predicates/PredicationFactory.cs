@@ -1,7 +1,6 @@
-﻿using Expressif.Functions;
-using Expressif.Parsers;
+using Expressif.Functions;
+using Expressif.Bindings;
 using Expressif.Predicates.Operators;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,7 +13,7 @@ namespace Expressif.Predicates;
 
 public class PredicationFactory : BaseExpressionFactory
 {
-    private Parser<IPredication> Parser { get; } = Parsers.Predication.Parser;
+    private ExpressifBinder Binder { get; } = new();
 
     protected UnaryOperatorFactory UnaryOperatorFactory { get; }
     protected BinaryOperatorFactory BinaryOperatorFactory { get; }
@@ -28,7 +27,7 @@ public class PredicationFactory : BaseExpressionFactory
 
     public virtual IPredicate Instantiate(string code, IContext context)
     {
-        var predication = Parser.Parse(code);
+        var predication = Binder.BindPredication(code);
         var predicate = Instantiate(predication, context);
         return predicate;
     }
@@ -39,7 +38,7 @@ public class PredicationFactory : BaseExpressionFactory
         SinglePredication single => Instantiate(single, context),
         UnaryPredication unary => Instantiate(unary, context),
         BinaryPredication binary => Instantiate(binary, context),
-        _ => throw new NotImplementedException()
+        _ => throw new BindingException($"Unsupported predication model '{predication.GetType().Name}'.")
     };
 
     internal IPredicate Instantiate(SinglePredication basic, IContext context)
@@ -47,7 +46,36 @@ public class PredicationFactory : BaseExpressionFactory
         var predicates = new List<IPredicate>();
         foreach (var predicate in basic.Members)
             predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
-        return predicates[0];
+        return predicates.Count == 1
+            ? predicates[0]
+            : new ContextualPredicate(new ChainFunction(predicates), context);
+    }
+
+    protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
+        => parameter is OpenExpressionParameter open
+            ? CreateFunctionCast(
+                () => Instantiate(new SinglePredication(open.Expression.Members.ToArray()), context)
+                    .Evaluate(context.CurrentObject.Value),
+                scalarType)
+            : base.CreateParameter(parameter, scalarType, context);
+
+    private sealed class ContextualPredicate(IFunction expression, IContext context) : IPredicate
+    {
+        public bool Evaluate(object? value)
+        {
+            var previous = context.CurrentObject.Value;
+            context.CurrentObject.Set(value);
+            try
+            {
+                return Boolean.BooleanConversion.ToBoolean(expression.Evaluate(value));
+            }
+            finally
+            {
+                context.CurrentObject.Set(previous);
+            }
+        }
+
+        object? IFunction.Evaluate(object? value) => Evaluate(value);
     }
 
     internal IPredicate Instantiate(UnaryPredication unary, IContext context)

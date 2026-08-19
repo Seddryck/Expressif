@@ -18,7 +18,7 @@ public class PercentChangeFunctionTest
     [TestCase("105 | percent-change(100)", 5)]
     [TestCase("80 | percent-change(100)", -20)]
     [TestCase("100 | percent-change(0)", null)]
-    [TestCase("100 | percent-change(abc)", null)]
+    [TestCase("100 | percent-change(\"abc\")", null)]
     public void Instantiate_Expression_Valid(string expression, decimal? expected)
         => Assert.That(
             new ExpressionFactory().InstantiateClosed(expression, new Context()).Evaluate(null),

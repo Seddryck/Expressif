@@ -1,6 +1,6 @@
-using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Serializers;
-using Sprache;
+using Expressif.Syntax;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -30,14 +30,14 @@ public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
 
         try
         {
-            var parameter = Parameter.Parser.End().Parse(text);
+            var parameter = new ExpressifBinder().BindParameter(text);
             if (parameter is not ArrayParameter array)
                 return false;
 
             value = array.Values.Select(ConvertToRuntimeValue).ToArray();
             return true;
         }
-        catch (ParseException)
+        catch (Exception exception) when (exception is ExpressifSyntaxException or BindingException)
         {
             return false;
         }
@@ -50,9 +50,7 @@ public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
     {
         return parameter switch
         {
-            LiteralParameter literal => RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
-                ? typed
-                : literal.Value,
+            LiteralParameter literal => literal.Value,
             QuotedLiteralParameter quoted => quoted.Value,
             ArrayParameter array => array.Values.Select(ConvertToRuntimeValue).ToArray(),
             RecordLiteralParameter record => ConvertRecord(record),
