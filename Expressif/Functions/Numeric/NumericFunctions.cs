@@ -5,10 +5,13 @@ using System;
 namespace Expressif.Functions.Numeric;
 
 [Function]
-public abstract class BaseNumericFunction : IFunction
+public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
 {
     public BaseNumericFunction()
     { }
+
+    public decimal? Evaluate(decimal? value)
+        => value.HasValue ? EvaluateNumeric(value.Value) : EvaluateNull();
 
     public object? Evaluate(object? value)
     {
@@ -31,7 +34,7 @@ public abstract class BaseNumericFunction : IFunction
         return EvaluateNumeric(numeric);
     }
 
-    protected virtual object? EvaluateNull() => null;
+    protected virtual decimal? EvaluateNull() => null;
     protected abstract decimal? EvaluateNumeric(decimal numeric);
 }
 
@@ -41,7 +44,7 @@ public abstract class BaseNumericFunction : IFunction
 [Function(prefix: "")]
 public class NullToZero : BaseNumericFunction
 {
-    protected override object EvaluateNull() => 0;
+    protected override decimal? EvaluateNull() => 0;
     protected override decimal? EvaluateNumeric(decimal numeric) => numeric;
 }
 
