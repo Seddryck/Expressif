@@ -120,6 +120,7 @@ public class ExpressionTest
     }
 
     [Test]
+    [SetCulture("en-US")]
     public void Evaluate_AliasesDateTime_Valid()
     {
         var expression = new Expression("dateTime-to-add(#\"04:00:00\", 4)", new Context());
