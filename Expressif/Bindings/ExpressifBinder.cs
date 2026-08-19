@@ -206,7 +206,7 @@ public sealed class ExpressifBinder
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Values.Select(BindArgument).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Values.Select(BindValue).ToArray()),
-        RecordLiteralSyntax record => new RecordLiteralParameter(record.Fields.Select(field => new RecordLiteralField(field.Name, BindValue(field.Value))).ToArray()),
+        RecordLiteralSyntax record => new RecordLiteralParameter(record.Fields.Select(field => new RecordLiteralField(field.Name.Value, BindValue(field.Value))).ToArray()),
         _ => throw Unsupported(syntax),
     };
 
