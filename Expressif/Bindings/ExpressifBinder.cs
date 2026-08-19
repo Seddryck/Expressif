@@ -42,9 +42,13 @@ public sealed class ExpressifBinder
     public IPredication BindPredication(string source)
     {
         var root = Bind(source);
-        return root is OpenRootExpression open
-            ? new SinglePredication(open.Expression.Members.ToArray())
-            : throw new BindingException($"Predication '{source}' is not bound in this iteration.");
+        return root switch
+        {
+            OpenRootExpression open => new SinglePredication(open.Expression.Members.ToArray()),
+            ClosedRootExpression closed when closed.Expression.Members.Any()
+                => new SinglePredication(closed.Expression.Members.ToArray()),
+            _ => throw new BindingException($"Predication '{source}' is not bound in this iteration."),
+        };
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
