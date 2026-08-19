@@ -106,8 +106,8 @@ public class RecordFunctionsTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0" }));
-            Assert.That(result["__NONAME_0"], Is.EqualTo("Alice"));
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "_NONAME0" }));
+            Assert.That(result["_NONAME0"], Is.EqualTo("Alice"));
         });
     }
 
@@ -116,7 +116,7 @@ public class RecordFunctionsTest
     {
         var function = new RecordFunction(() => new[]
         {
-            RecordEntryEvaluator.Named("__NONAME_0", _ => "reserved"),
+            RecordEntryEvaluator.Named("_NONAME0", _ => "reserved"),
             RecordEntryEvaluator.Spread()
         });
 
@@ -124,9 +124,9 @@ public class RecordFunctionsTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0", "__NONAME_1" }));
-            Assert.That(result["__NONAME_0"], Is.EqualTo("reserved"));
-            Assert.That(result["__NONAME_1"], Is.EqualTo("Alice"));
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "_NONAME0", "_NONAME1" }));
+            Assert.That(result["_NONAME0"], Is.EqualTo("reserved"));
+            Assert.That(result["_NONAME1"], Is.EqualTo("Alice"));
         });
     }
 

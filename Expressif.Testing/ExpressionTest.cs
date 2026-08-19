@@ -524,14 +524,14 @@ public class ExpressionTest
     [Test]
     public void Evaluate_Record_SpreadNonRecord_GeneratesUniqueUnnamedField()
     {
-        var expression = new Expression("record(__NONAME_0 := reserved, ...)");
+        var expression = new Expression("record(_NONAME0 := reserved, ...)");
         var result = (RecordValue)expression.Evaluate("Alice")!;
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0", "__NONAME_1" }));
-            Assert.That(result["__NONAME_0"], Is.EqualTo("reserved"));
-            Assert.That(result["__NONAME_1"], Is.EqualTo("Alice"));
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "_NONAME0", "_NONAME1" }));
+            Assert.That(result["_NONAME0"], Is.EqualTo("reserved"));
+            Assert.That(result["_NONAME1"], Is.EqualTo("Alice"));
         });
     }
 
