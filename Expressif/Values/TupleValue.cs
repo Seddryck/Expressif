@@ -38,7 +38,7 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>
 
     public override int GetHashCode()
     {
-        var hash = new HashCode();
+        var hash = default(HashCode);
         foreach (var value in values)
             hash.Add(value);
         return hash.ToHashCode();
@@ -53,5 +53,6 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>
 /// </summary>
 public sealed class Tuple : TupleValue
 {
-    public Tuple(params object?[] values) : base(values) { }
+    public Tuple(params object?[] values)
+        : base(values) { }
 }

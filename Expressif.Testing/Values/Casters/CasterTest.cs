@@ -7,6 +7,7 @@ using Expressif.Values;
 using Expressif.Values.Casters;
 
 namespace Expressif.Testing.Values.Casters;
+
 public class CasterTest
 {
     [Test]
@@ -43,7 +44,7 @@ public class CasterTest
 
     [Test]
     public void Cast_ImplicitConvert_Correct()
-        => Assert.That(new Caster().Cast<DateTime>("2023-01-01"), Is.EqualTo(new DateTime(2023,1,1)));
+        => Assert.That(new Caster().Cast<DateTime>("2023-01-01"), Is.EqualTo(new DateTime(2023, 1, 1)));
 
     [Test]
     public void Cast_TypedCasterToNumeric_Correct()

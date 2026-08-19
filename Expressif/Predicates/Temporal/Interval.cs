@@ -1,10 +1,10 @@
-﻿using Expressif.Predicates.Numeric;
-using Expressif.Values;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Predicates.Numeric;
+using Expressif.Values;
 
 namespace Expressif.Predicates.Temporal;
 

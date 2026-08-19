@@ -8,6 +8,7 @@ using Expressif.Values.Special;
 using Sprache;
 
 namespace Expressif.Functions.Text;
+
 public abstract class BaseTextRetain : BaseTextFunction
 {
     protected override object? EvaluateBlank() => new Empty().Keyword;
@@ -19,8 +20,10 @@ public abstract class BaseTextRetain : BaseTextFunction
         int index = 0;
 
         foreach (var c in span)
+        {
             if (IsRetainable(c))
                 result[index++] = c;
+        }
 
         if (index == 0)
             return new Empty().Keyword;
@@ -57,7 +60,6 @@ public class RetainAlpha : BaseTextRetain
     protected override bool IsRetainable(char c)
         => char.IsLetter(c);
 }
-
 
 /// <summary>
 /// Returns the input string with all characters removed except for letters (A-Z, a-z) and digits (0-9). If the argument is `null`, it returns `null`.

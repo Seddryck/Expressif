@@ -1,7 +1,7 @@
+using System.Data;
 using Expressif.Values;
 using Expressif.Values.Special;
 using NUnit.Framework.Constraints;
-using System.Data;
 
 namespace Expressif.Testing.Values;
 

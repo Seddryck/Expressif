@@ -101,7 +101,7 @@ public static class DocumentationExtensions
     {
         var ctorNodes = XmlFromPattern(type, 'M', "#ctor");
 
-        if (ctorNodes == null || ctorNodes.Length==0)
+        if (ctorNodes == null || ctorNodes.Length == 0)
             return [];
 
         var ctorInfos = new List<CtorInfo>();
@@ -114,10 +114,10 @@ public static class DocumentationExtensions
             ctorInfos.Add(new CtorInfo(paramInfos.ToArray()));
         }
         return ctorInfos.ToArray();
-    }      
+    }
 
     /// <summary>
-    /// Obtains the XML Element that describes a reflection element by searching the 
+    /// Obtains the XML Element that describes a reflection element by searching the
     /// members for a member that has a name that describes the element.
     /// </summary>
     /// <param name="type">The type or parent type, used to fetch the assembly.</param>
@@ -172,7 +172,7 @@ public static class DocumentationExtensions
     /// </summary>
     /// <param name="assembly">The assembly to find the XML document for.</param>
     /// <returns>The XML document.</returns>
-    /// <remarks>This version uses a cache to preserve the assemblies, so that 
+    /// <remarks>This version uses a cache to preserve the assemblies, so that
     /// the XML file is not loaded and parsed on every single lookup.</remarks>
     public static XmlDocument XmlFromAssembly(this Assembly assembly)
     {

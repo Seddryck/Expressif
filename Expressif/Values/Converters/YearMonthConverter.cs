@@ -1,14 +1,13 @@
-﻿using Expressif.Values.Casters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Casters;
 
 namespace Expressif.Values.Converters;
-
 
 public class YearMonthConverter : TypeConverter
 {
@@ -43,8 +42,8 @@ public class YearMonthConverter : TypeConverter
 
     public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
-        if (CanConvertTo(destinationType)&& value is YearMonth yearMonth)
-                return yearMonth.ToString();
+        if (CanConvertTo(destinationType) && value is YearMonth yearMonth)
+            return yearMonth.ToString();
         return base.ConvertTo(context, culture, value, destinationType);
     }
 }

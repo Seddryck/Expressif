@@ -1,14 +1,13 @@
-﻿using Expressif.Values;
-using Expressif.Values.Casters;
-using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
+using Expressif.Values.Casters;
+using Expressif.Values.Special;
 
 namespace Expressif.Predicates.Text;
-
 
 /// <summary>
 /// Compare the text value passed as argument and the text value passed as parameter and returns `true` if they are equal. By default the comparison is agnostic of the culture and case-insensitive.
@@ -51,7 +50,7 @@ public class SortedAfter : EquivalentTo
         => false;
 
     protected override bool EvaluateText(string value, string reference)
-        => Comparer.Compare(value, reference) >0;
+        => Comparer.Compare(value, reference) > 0;
 }
 
 /// <summary>

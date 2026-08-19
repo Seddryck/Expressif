@@ -4,10 +4,10 @@ using System.Data;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using PocketCsvReader;
-using Expressif.Values;
 using Expressif.Parsers;
 using Expressif.Serializers;
+using Expressif.Values;
+using PocketCsvReader;
 using Sprache;
 
 namespace Expressif.Cli.Commands;
@@ -820,8 +820,10 @@ internal static class RunCommand
         private static bool HasInternalWhitespace(string text)
         {
             for (var i = 1; i < text.Length - 1; i++)
+            {
                 if (char.IsWhiteSpace(text[i]))
                     return true;
+            }
 
             return false;
         }

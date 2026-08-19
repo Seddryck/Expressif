@@ -1,11 +1,11 @@
-﻿using Expressif.Parsers;
-using Expressif.Serializers;
-using Sprache;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Parsers;
+using Expressif.Serializers;
+using Sprache;
 
 namespace Expressif.Testing.Serializers;
 
@@ -35,8 +35,8 @@ public class ExpressionSerializerTest
     {
         var lowerExpression = new Function("Lower", []);
         var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
-        var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
-        Assert.That(new ExpressionSerializer().Serialize([lowerExpression, firstCharsExpression, PadRightExpression])
+        var padRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+        Assert.That(new ExpressionSerializer().Serialize([lowerExpression, firstCharsExpression, padRightExpression])
             , Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
     }
 
@@ -48,9 +48,9 @@ public class ExpressionSerializerTest
 
         var lowerExpression = new Function("Lower", []);
         var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
-        var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+        var padRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         var serializer = new ExpressionSerializer(internalSerializer.Object);
-        serializer.Serialize([lowerExpression, firstCharsExpression, PadRightExpression]);
+        serializer.Serialize([lowerExpression, firstCharsExpression, padRightExpression]);
 
         internalSerializer.Verify(x => x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
     }
@@ -79,7 +79,7 @@ public class ExpressionSerializerTest
     {
         var lowerExpression = new Function("Lower", []);
         var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
-        var PadRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
+        var padRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         var upperExpression = new Function("Upper", []);
 
         //var subExpression = new Expressif.Parsers.ClosedExpression([firstCharsExpression, PadRightExpression]);

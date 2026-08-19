@@ -1,15 +1,15 @@
-using Expressif.Values;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Expressif.Values;
+using Sprache;
 
 namespace Expressif.Parsers;
 
 public interface IParameter
 { }
 
-public record class LiteralParameter (string Value) : IParameter { }
+public record class LiteralParameter(string Value) : IParameter { }
 public record class IntervalParameter(Interval Value) : IParameter { }
 public record class VariableParameter(string Name) : IParameter { }
 public record class ObjectPropertyParameter(string Name) : IParameter { }
@@ -40,23 +40,23 @@ public class Parameter
         select new VariableParameter(name);
 
     protected static readonly Parser<IParameter> ItemParameter =
-        from _ in Parse.Char('[').Token()
+        from openingBracket in Parse.Char('[').Token()
         from name in Grammar.Literal
-        from _1 in Parse.Char(']').Token()
+        from closingBracket in Parse.Char(']').Token()
         select new ObjectPropertyParameter(name);
 
     protected static readonly Parser<IParameter> IndexParameter =
-        from _ in Parse.Char('#')
+        from hashSign in Parse.Char('#')
         from index in Parse.Number
         select new ObjectIndexParameter(int.Parse(index));
 
     protected static readonly Parser<IParameter> TupleProjectionParameter =
-        from _ in Parse.Char('$')
+        from dollarSign in Parse.Char('$')
         from index in Parse.Number
         select new TupleProjectionParameter(int.Parse(index));
 
     protected static readonly Parser<IParameter> IncomingParameter =
-        from _ in Parse.String("...").Token()
+        from ellipsis in Parse.String("...").Token()
         select new IncomingValueParameter();
 
     protected static readonly Parser<IParameter> QuotedLiteralParameter =
@@ -64,11 +64,11 @@ public class Parameter
         select new QuotedLiteralParameter(value);
 
     protected static readonly Parser<IParameter> ParametrizedExpressionParameter =
-        from _ in Parse.Char('{').Token()
+        from openingBrace in Parse.Char('{').Token()
         from parameter in VariableParameter.Or(IndexParameter).Or(ItemParameter).Or(LiteralParameter).Token()
-        from _0 in Parse.Char('|').Token()
+        from pipeSeparator in Parse.Char('|').Token()
         from expression in Parsers.OpenExpression.Parser
-        from _1 in Parse.Char('}').Token()
+        from closingBrace in Parse.Char('}').Token()
         select new InputExpressionParameter(new ClosedExpression(parameter, expression.Members));
 
     protected static readonly Parser<IParameter> PredicationParameter =
@@ -86,14 +86,14 @@ public class Parameter
         select new OpenExpressionParameter(expression);
 
     protected static readonly Parser<IParameter> ArrayLiteralParameter =
-        from _ in Parse.Char('{').Token()
+        from openingBrace in Parse.Char('{').Token()
         from values in (
             from close in Parse.Char('}').Token()
             select Array.Empty<IParameter>()
         ).Or(
             from first in Parse.Ref(() => RecordValueParameter).Token().Once()
             from others in (
-                from __ in Parse.Char(',').Token()
+                from comma in Parse.Char(',').Token()
                 from p in Parse.Ref(() => RecordValueParameter).Token()
                 select p
             ).Many()
@@ -103,9 +103,9 @@ public class Parameter
         select new ArrayParameter(values);
 
     public static readonly Parser<IParameter> TupleLiteralParser =
-        from _ in Parse.String("T(").Token()
+        from tupleOpening in Parse.String("T(").Token()
         from first in Parse.Ref(() => RecordValueParameter).Token()
-        from __ in Parse.Char(',').Token()
+        from comma in Parse.Char(',').Token()
         from second in Parse.Ref(() => RecordValueParameter).Token()
         from others in (
             from comma in Parse.Char(',').Token()
@@ -116,7 +116,7 @@ public class Parameter
         select new TupleParameter(new[] { first, second }.Concat(others).ToArray());
 
     protected static readonly Parser<IParameter> RecordLiteralParameter =
-        from _ in Parse.Char('{').Token()
+        from openingBrace in Parse.Char('{').Token()
         from fields in (
             from marker in Parse.Char(':').Token()
             from close in Parse.Char('}').Token()
@@ -124,7 +124,7 @@ public class Parameter
         ).Or(
             from first in Parse.Ref(() => RecordLiteralFieldParser).Token().Once()
             from others in (
-                from __ in Parse.Char(',').Token()
+                from comma in Parse.Char(',').Token()
                 from field in Parse.Ref(() => RecordLiteralFieldParser).Token()
                 select field
             ).Many()
@@ -136,7 +136,7 @@ public class Parameter
 
     protected static readonly Parser<RecordLiteralField> RecordLiteralFieldParser =
         from name in Parse.Ref(() => RecordFieldNameParser)
-        from _ in Parse.String(":=").Token()
+        from assignmentOperator in Parse.String(":=").Token()
         from value in Parse.Ref(() => RecordValueParameter).Token()
         select new RecordLiteralField(name, value);
 
@@ -158,12 +158,12 @@ public class Parameter
         ;
 
     protected static readonly Parser<IRecordDefinitionEntry> RecordSpreadEntry =
-        from _ in Parse.String("...").Token()
+        from ellipsis in Parse.String("...").Token()
         select new RecordSpreadEntry();
 
     protected static readonly Parser<IRecordDefinitionEntry> RecordNamedEntry =
         from name in RecordFieldNameParser
-        from _ in Parse.String(":=").Token()
+        from assignmentOperator in Parse.String(":=").Token()
         from value in RecordAssignedValueParser.Token()
         select new RecordNamedEntry(name, value);
 
@@ -184,7 +184,7 @@ public class Parameter
         from interval in Interval.Parser
         select new IntervalParameter(interval);
 
-    public static readonly Parser<IParameter> Parser = 
+    public static readonly Parser<IParameter> Parser =
         VariableParameter
         .Or(IntervalParameter)
         .Or(IndexParameter)
@@ -203,12 +203,12 @@ public class Parameter
 public class Parameters
 {
     public static readonly Parser<IParameter[]> Parser =
-        from _ in Parse.Char('(').Token()
+        from openingParenthesis in Parse.Char('(').Token()
         from first in Parameter.Parser.Once()
         from others in (
-            from _ in Parse.Char(',').Token()
+            from comma in Parse.Char(',').Token()
             from p in Parameter.Parser.Token()
             select p).Many()
-        from _1 in Parse.Char(')').Token()
+        from closingParenthesis in Parse.Char(')').Token()
         select first.Concat(others).ToArray();
 }

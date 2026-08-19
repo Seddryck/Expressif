@@ -1,6 +1,6 @@
 ﻿using Expressif.Functions.Text;
-using NUnit.Framework.Internal;
 using Expressif.Testing.Conformance;
+using NUnit.Framework.Internal;
 
 namespace Expressif.Testing.Functions.Text;
 

@@ -1,14 +1,14 @@
-﻿using Expressif.Parsers;
-using Expressif.Predicates.Text;
-using Expressif.Values;
-using Expressif.Values.Casters;
-using Sprache;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Parsers;
+using Expressif.Predicates.Text;
+using Expressif.Values;
+using Expressif.Values.Casters;
+using Sprache;
 
 namespace Expressif.Values;
 
@@ -24,7 +24,7 @@ public class IntervalBuilder
             var caster = new NumericCaster();
             return new Interval<decimal>(caster.Cast(lowerBound), caster.Cast(upperBound), lowerBoundType, upperBoundType);
         }
-        else if(
+        else if (
             (new MatchesDateTime().Evaluate(lowerBound) && new MatchesDateTime().Evaluate(upperBound))
             || (new MatchesDate().Evaluate(lowerBound) && new MatchesDate().Evaluate(upperBound))
         )

@@ -1,6 +1,6 @@
+using System.Diagnostics;
 using Expressif.Parsers;
 using Sprache;
-using System.Diagnostics;
 
 namespace Expressif.Testing.Parsers;
 

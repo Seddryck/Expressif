@@ -1,6 +1,6 @@
-﻿using Expressif.Values.Casters;
+﻿using System;
+using Expressif.Values.Casters;
 using Expressif.Values.Special;
-using System;
 
 namespace Expressif.Functions.Numeric;
 
@@ -65,7 +65,7 @@ public class Floor : BaseNumericRounding
 }
 
 /// <summary>
-/// Returns the value of an argument number rounded to the nearest integer. 
+/// Returns the value of an argument number rounded to the nearest integer.
 /// </summary>
 public class Integer : BaseNumericRounding
 {
@@ -99,7 +99,7 @@ public class Clip : BaseNumericFunction
     public Clip(Func<decimal> min, Func<decimal> max)
         => (Min, Max) = (min, max);
 
-    protected override decimal? EvaluateNumeric(decimal numeric) 
+    protected override decimal? EvaluateNumeric(decimal numeric)
         => (numeric < Min.Invoke()) ? Min.Invoke() : (numeric > Max.Invoke()) ? Max.Invoke() : numeric;
 }
 

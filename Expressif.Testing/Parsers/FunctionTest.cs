@@ -1,7 +1,7 @@
-using Expressif.Parsers;
-using Sprache;
 using System.Diagnostics;
 using System.Linq;
+using Expressif.Parsers;
+using Sprache;
 
 namespace Expressif.Testing.Parsers;
 

@@ -1,11 +1,11 @@
-﻿using Expressif.Values;
-using Expressif.Values.Casters;
-using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
+using Expressif.Values.Casters;
+using Expressif.Values.Special;
 
 namespace Expressif.Predicates.Numeric;
 
@@ -32,7 +32,7 @@ public class GreaterThan : BaseNumericPredicateReference
         : base(reference) { }
 
     protected override bool EvaluateNumeric(decimal value)
-        =>  value > Reference.Invoke();
+        => value > Reference.Invoke();
 }
 
 /// <summary>
@@ -70,7 +70,7 @@ public class LessThanOrEqual : EqualTo
     public LessThanOrEqual(Func<decimal> reference)
         : base(reference) { }
 
-    protected override bool EvaluateNumeric(decimal value) 
+    protected override bool EvaluateNumeric(decimal value)
         => value <= Reference.Invoke();
 }
 

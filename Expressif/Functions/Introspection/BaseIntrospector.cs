@@ -18,7 +18,8 @@ public abstract class BaseIntrospector
     protected BaseIntrospector(ITypesProbe probe)
         => Probe = probe;
 
-    protected IEnumerable<AttributeInfo<T>> LocateAttribute<T>() where T : Attribute
+    protected IEnumerable<AttributeInfo<T>> LocateAttribute<T>()
+        where T : Attribute
     {
         var types = Types.Where(x => x.GetCustomAttributes(typeof(T), true).Length > 0);
         return types.Select(x => (Type: x, Attribute: x.GetCustomAttribute<T>() ?? throw new InvalidOperationException()))

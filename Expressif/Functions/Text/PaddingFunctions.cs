@@ -19,7 +19,7 @@ public abstract class BasePaddingFunction : BaseTextLength
 }
 
 /// <summary>
-/// Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
+/// Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.
 /// </summary>
 public class PadRight : BasePaddingFunction
 {
@@ -33,7 +33,7 @@ public class PadRight : BasePaddingFunction
 }
 
 /// <summary>
-/// Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
+/// Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.
 /// </summary>
 public class PadLeft : BasePaddingFunction
 {
@@ -47,7 +47,7 @@ public class PadLeft : BasePaddingFunction
 }
 
 /// <summary>
-/// Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified. 
+/// Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.
 /// </summary>
 public class PadCenter : BasePaddingFunction
 {

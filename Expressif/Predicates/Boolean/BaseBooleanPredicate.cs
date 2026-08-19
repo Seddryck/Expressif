@@ -31,7 +31,9 @@ public abstract class BaseBooleanPredicate : BasePredicate
 
         var caster = new BooleanCaster();
         if (caster.TryCast(value, out var boolean))
+        {
             return EvaluateBoolean(boolean);
+        }
         else
         {
             var numericCaster = new NumericCaster();

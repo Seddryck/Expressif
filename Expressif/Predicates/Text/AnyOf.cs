@@ -1,10 +1,10 @@
-﻿using Expressif.Values;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
 
 namespace Expressif.Predicates.Text;
 
@@ -19,7 +19,7 @@ public class AnyOf : BaseTextPredicate
     /// <param name="references">An array of text values.</param>
     public AnyOf(Func<IEnumerable<string>> references)
         : this(references, StringComparer.InvariantCultureIgnoreCase) { }
-    
+
     /// <param name="references"></param>
     /// <param name="comparer"></param>
     public AnyOf(Func<IEnumerable<string>> references, StringComparer comparer)

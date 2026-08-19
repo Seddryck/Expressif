@@ -1,6 +1,6 @@
-﻿using Expressif.Predicates.Temporal;
+﻿using System.ComponentModel;
+using Expressif.Predicates.Temporal;
 using Expressif.Testing.Conformance;
-using System.ComponentModel;
 
 namespace Expressif.Testing.Predicates.Temporal;
 

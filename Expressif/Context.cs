@@ -1,9 +1,9 @@
-﻿using Expressif.Values;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
 
 namespace Expressif;
 
@@ -18,8 +18,8 @@ public class Context : IContext
     private Context(ContextVariables variables, ContextObject currentObject)
         => (Variables, CurrentObject) = (variables, currentObject);
 
-    public ContextVariables Variables { get; } = new ();
-    public ContextObject CurrentObject { get; } = new ();
+    public ContextVariables Variables { get; } = new();
+    public ContextObject CurrentObject { get; } = new();
 }
 
 public interface IContext

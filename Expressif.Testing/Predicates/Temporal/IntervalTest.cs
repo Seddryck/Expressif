@@ -1,6 +1,6 @@
 ﻿using Expressif.Predicates.Temporal;
-using Expressif.Values;
 using Expressif.Testing.Conformance;
+using Expressif.Values;
 
 namespace Expressif.Testing.Predicates.Temporal;
 

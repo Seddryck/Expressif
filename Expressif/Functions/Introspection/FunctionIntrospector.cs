@@ -22,7 +22,8 @@ public class FunctionIntrospector : BaseIntrospector
     public IEnumerable<FunctionInfo> Describe()
         => Locate<FunctionAttribute>(false);
 
-    protected IEnumerable<FunctionInfo> Locate<T>(bool fast) where T : FunctionAttribute
+    protected IEnumerable<FunctionInfo> Locate<T>(bool fast)
+        where T : FunctionAttribute
     {
         var functions = LocateAttribute<FunctionAttribute>();
 

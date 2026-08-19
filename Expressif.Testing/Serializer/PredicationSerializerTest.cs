@@ -1,10 +1,10 @@
-﻿using Expressif.Parsers;
-using Expressif.Serializers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Parsers;
+using Expressif.Serializers;
 
 namespace Expressif.Testing.Serializers;
 
@@ -49,7 +49,7 @@ public class PredicationSerializerTest
         var sb = new StringBuilder();
         var internalSerializer = new Mock<SinglePredicationSerializer>();
 
-        var Predication = new PredicationBuilder();
+        var predication = new PredicationBuilder();
         var evenPredication = new SinglePredication(new Function("even", []));
         var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
         var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));
@@ -66,7 +66,7 @@ public class PredicationSerializerTest
     [Test]
     public void Serialize_WithSubPredication_WithPipe()
     {
-        var Predication = new PredicationBuilder();
+        var predication = new PredicationBuilder();
         var evenPredication = new SinglePredication(new Function("even", []));
         var greaterThanPredication = new SinglePredication(new Function("GreaterThan", [new LiteralParameter("5")]));
         var moduloPredication = new SinglePredication(new Function("Modulo", [new LiteralParameter("7"), new LiteralParameter("3")]));

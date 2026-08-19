@@ -1,10 +1,10 @@
-﻿using Expressif.Functions.Introspection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions.Introspection;
 
 namespace Expressif.Predicates.Introspection;
 
@@ -23,7 +23,8 @@ public class PredicateIntrospector : BaseIntrospector
     public IEnumerable<PredicateInfo> Describe()
         => Locate<PredicateAttribute>(false);
 
-    protected IEnumerable<PredicateInfo> Locate<T>(bool fast = true) where T : PredicateAttribute
+    protected IEnumerable<PredicateInfo> Locate<T>(bool fast = true)
+        where T : PredicateAttribute
     {
         var predicates = LocateAttribute<PredicateAttribute>();
 

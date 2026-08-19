@@ -9,6 +9,7 @@ using Expressif.Values.Casters;
 using Expressif.Values.Special;
 
 namespace Expressif.Functions.Temporal;
+
 public abstract class BaseDatePartTextualFunction : BaseTemporalFunction
 {
     protected override object? EvaluateUncasted(object value)
@@ -75,7 +76,7 @@ public class IsoYearWeek : BaseDatePartTextualFunction
 public class IsoYearWeekDay : BaseDatePartTextualFunction
 {
     protected override object EvaluateDateTime(DateTime value)
-        => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}-{(value.DayOfWeek==0 ? 7 : (int)value.DayOfWeek)}";
+        => $"{ISOWeek.GetYear(value):D4}-W{ISOWeek.GetWeekOfYear(value):D2}-{(value.DayOfWeek == 0 ? 7 : (int)value.DayOfWeek)}";
 }
 
 /// <summary>

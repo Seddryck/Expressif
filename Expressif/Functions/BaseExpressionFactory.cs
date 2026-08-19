@@ -1,12 +1,12 @@
-﻿using Expressif.Parsers;
-using Expressif.Values;
-using Expressif.Values.Casters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Expressif.Parsers;
+using Expressif.Values;
+using Expressif.Values.Casters;
 using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Functions;
@@ -41,7 +41,9 @@ public abstract class BaseExpressionFactory
                 typedFunctionParameters.Add(@delegate);
             }
             else
+            {
                 typedFunctionParameters.Add(() => param.Value);
+            }
         }
 
         return (T)ctor.Invoke(typedFunctionParameters.ToArray());

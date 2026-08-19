@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Expressif.Values;
+
 public interface ILiteDataRow
 {
     int ColumnCount { get; }

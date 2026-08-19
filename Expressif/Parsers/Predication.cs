@@ -1,13 +1,13 @@
-using Expressif.Functions;
-using Expressif.Functions.Special;
-using Expressif.Predicates.Boolean;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
+using Expressif.Functions.Special;
+using Expressif.Predicates.Boolean;
+using Sprache;
 
 namespace Expressif.Parsers;
 
@@ -25,7 +25,7 @@ public class Predication : IPredication
 public class SinglePredication : IPredication
 {
     public Function[] Members { get; }
-    
+
     public SinglePredication(Function[] members)
         => (Members) = (members);
 
@@ -84,7 +84,7 @@ public class InputPredication
 
     public static readonly Parser<InputPredication> Parser =
         from parameter in Parsers.Parameter.Parser.Token()
-        from _ in Parse.IgnoreCase("|?").Token()
+        from filterOperator in Parse.IgnoreCase("|?").Token()
         from predication in Parsers.Predication.Parser.Token()
         select new InputPredication(parameter, predication);
 }
