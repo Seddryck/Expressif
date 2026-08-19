@@ -455,6 +455,12 @@ public class ExpressionFactory : BaseExpressionFactory
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
     {
+        if (parameter is OpenExpressionParameter open && IsSingleTokenExpression(open))
+        {
+            var accumulator = open.Expression.Members.Single();
+            return () => accumulator.Name;
+        }
+
         var provider = CreateParameter(parameter, typeof(string), context);
         return () => provider.DynamicInvoke()?.ToString() ?? string.Empty;
     }
