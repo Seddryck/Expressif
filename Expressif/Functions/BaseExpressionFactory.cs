@@ -41,7 +41,9 @@ public abstract class BaseExpressionFactory
                 typedFunctionParameters.Add(@delegate);
             }
             else
+            {
                 typedFunctionParameters.Add(() => param.Value);
+            }
         }
 
         return (T)ctor.Invoke(typedFunctionParameters.ToArray());

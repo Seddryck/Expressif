@@ -822,8 +822,10 @@ internal static class RunCommand
         private static bool HasInternalWhitespace(string text)
         {
             for (var i = 1; i < text.Length - 1; i++)
+            {
                 if (char.IsWhiteSpace(text[i]))
                     return true;
+            }
 
             return false;
         }

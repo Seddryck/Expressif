@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Expressif.Predicates.Operators;
 
 namespace Expressif.Predicates;
+
 public class PredicateCombiner
 {
     protected UnaryOperatorFactory UnaryFactory { get; }
@@ -14,7 +15,7 @@ public class PredicateCombiner
     public PredicateCombiner()
         : this(new(), new()) { }
 
-    public PredicateCombiner(UnaryOperatorFactory unaryFactory , BinaryOperatorFactory binaryFactory)
+    public PredicateCombiner(UnaryOperatorFactory unaryFactory, BinaryOperatorFactory binaryFactory)
         => (UnaryFactory, BinaryFactory) = (unaryFactory, binaryFactory);
 
     public PredicateRightCombiner With(IPredicate left)

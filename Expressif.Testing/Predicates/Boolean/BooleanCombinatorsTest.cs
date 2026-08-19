@@ -40,7 +40,6 @@ public class BooleanCombinatorsTest
             () => new Xor(() => throw new InvalidOperationException()).Evaluate(false),
             Throws.TypeOf<InvalidOperationException>());
 
-
     [TestCase("and(#true)", true, true)]
     [TestCase("or(#false)", false, false)]
     [TestCase("xor(#true)", false, true)]

@@ -111,7 +111,9 @@ public class ExpressionFactory : BaseExpressionFactory
     private IFunction BuildCoalesceFunction(Bindings.Function function, IContext context)
     {
         if (function.Parameters.Length < 2)
+        {
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        }
 
         var expressions = function.Parameters.Select(parameter => BuildCoalesceExpressionEvaluator(parameter, context));
         return new Special.Coalesce(expressions);
@@ -120,12 +122,16 @@ public class ExpressionFactory : BaseExpressionFactory
     private Func<object?, object?> BuildCoalesceExpressionEvaluator(IParameter parameter, IContext context)
     {
         if (parameter is IncomingValueParameter)
+        {
             return input => input;
+        }
 
         if (parameter is OpenExpressionParameter open)
+        {
             return TryBuildCoalesceFieldEvaluator(open, context, out var evaluator)
                 ? evaluator
                 : BuildOpenExpressionRecordEvaluator(open, context);
+        }
 
         var provider = CreateParameter(parameter, typeof(object), context);
         return _ => provider.DynamicInvoke();
@@ -141,7 +147,9 @@ public class ExpressionFactory : BaseExpressionFactory
         if (members.Length == 0
             || !members[0].Name.Equals("field", StringComparison.OrdinalIgnoreCase)
             || !TryGetFieldName(members[0].Parameters, out var fieldName))
+        {
             return false;
+        }
 
         var remainder = new ChainFunction(
             members.Skip(1).Select(member => InstantiateOrWrapAggregation(member, context)).ToArray());
@@ -161,7 +169,7 @@ public class ExpressionFactory : BaseExpressionFactory
         };
         return parameters is [LiteralParameter] or [QuotedLiteralParameter];
     }
-    
+
     private IFunction BuildAdjacentFunction(Bindings.Function function, IContext context)
     {
         if (function.Parameters.Length != 1 || !TryGetOpenExpression(function.Parameters[0], out var open))
@@ -177,7 +185,9 @@ public class ExpressionFactory : BaseExpressionFactory
             ]);
         }
         else
+        {
             operation = BuildOpenExpression(open.Expression, context);
+        }
 
         return new Adjacent(() => new LexicallyBoundTupleFunction(operation, context));
     }
@@ -331,10 +341,14 @@ public class ExpressionFactory : BaseExpressionFactory
                        .FirstOrDefault(x => x.GetParameters().Length == 1
                                          && x.GetParameters()[0].ParameterType == typeof(Func<IAccumulator>));
         if (ctor is null)
+        {
             return false;
+        }
 
         if (function.Parameters.Length != 1)
+        {
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        }
 
         aggregation = (IFunction)ctor.Invoke([BuildAccumulatorProvider(function.Parameters[0], context)]);
         return true;
@@ -360,9 +374,11 @@ public class ExpressionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         if (!TryGetOpenExpression(function.Parameters[0], out var openExpression))
+        {
             throw new ArgumentException(
                 $"The function named '{function.Name}' expects a parameter of type '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
                 nameof(function));
+        }
 
         transformation = (IFunction)ctor.Invoke([BuildTransformationProvider(openExpression, context)]);
         return true;
@@ -387,15 +403,21 @@ public class ExpressionFactory : BaseExpressionFactory
                        .FirstOrDefault(x => x.GetParameters().Length == 1
                                          && x.GetParameters()[0].ParameterType == typeof(Func<IPredicate>));
         if (ctor is null)
+        {
             return false;
+        }
 
         if (function.Parameters.Length != 1)
+        {
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        }
 
         if (function.Parameters[0] is not PredicationParameter && !TryGetOpenExpression(function.Parameters[0], out _))
+        {
             throw new ArgumentException(
                 $"The function named '{function.Name}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
                 nameof(function));
+        }
 
         filtering = (IFunction)ctor.Invoke([BuildPredicateProvider(function.Parameters[0], context, function.Name)]);
         return true;

@@ -30,7 +30,8 @@ public class TupleAt : IFunction
 [Function(prefix: "", aliases: ["tuple-first"])]
 public class TupleFirst : TupleAt
 {
-    public TupleFirst() : base(() => 0) { }
+    public TupleFirst()
+        : base(() => 0) { }
 }
 
 /// <summary>
@@ -39,5 +40,6 @@ public class TupleFirst : TupleAt
 [Function(prefix: "", aliases: ["tuple-second"])]
 public class TupleSecond : TupleAt
 {
-    public TupleSecond() : base(() => 1) { }
+    public TupleSecond()
+        : base(() => 1) { }
 }

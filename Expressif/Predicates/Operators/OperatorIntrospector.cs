@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Expressif.Functions.Introspection;
 
 namespace Expressif.Predicates.Operators;
+
 internal class OperatorIntrospector : BaseIntrospector
 {
     public OperatorIntrospector()

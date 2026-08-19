@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Expressif.Predicates.Operators;
+
 public record OperatorInfo
 (
     string Name,

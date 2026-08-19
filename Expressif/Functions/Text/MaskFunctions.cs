@@ -1,9 +1,9 @@
-﻿using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
@@ -26,10 +26,13 @@ public class TextToMask : BaseTextFunction
         var stringBuilder = new StringBuilder();
         var index = 0;
         foreach (var c in mask)
+        {
             if (c.Equals(maskChar))
                 stringBuilder.Append(index < value.Length ? value[index++] : maskChar);
             else
                 stringBuilder.Append(c);
+        }
+
         return stringBuilder.ToString();
     }
 
@@ -60,10 +63,13 @@ public class MaskToText : BaseTextFunction
             return new Null().Keyword;
 
         for (int i = 0; i < mask.Length; i++)
+        {
             if (mask[i].Equals(maskChar) && !value[i].Equals(maskChar))
                 stringBuilder.Append(value[i]);
             else if (!mask[i].Equals(value[i]))
                 return new Null().Keyword;
+        }
+
         return stringBuilder.ToString();
     }
 

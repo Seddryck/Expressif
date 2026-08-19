@@ -1,5 +1,5 @@
-using Expressif.Cli.Commands;
 using System.Data;
+using Expressif.Cli.Commands;
 
 namespace Expressif.Cli.Tests;
 

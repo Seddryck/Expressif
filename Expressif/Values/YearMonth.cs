@@ -1,6 +1,4 @@
-﻿using Expressif.Values.Casters;
-using Expressif.Values.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -8,6 +6,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Casters;
+using Expressif.Values.Converters;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Expressif.Values;
@@ -19,7 +19,7 @@ public record YearMonth(int Year, int Month)
 #endif
 {
     public override string ToString() => $"{Year:####}-{Month:0#}";
-    public override int GetHashCode() => Year.GetHashCode()^97 * Month.GetHashCode();
+    public override int GetHashCode() => Year.GetHashCode() ^ 97 * Month.GetHashCode();
 
     public virtual bool Equals(YearMonth? other)
     {
@@ -39,7 +39,7 @@ public record YearMonth(int Year, int Month)
 
     public static bool TryParse(string? value, IFormatProvider? provider, [NotNullWhen(true)] out YearMonth? result)
     {
-        if (string.IsNullOrEmpty(value) 
+        if (string.IsNullOrEmpty(value)
                 || value.Length != 7
                 || value[4] != '-'
                 || !int.TryParse(value[..4], Style, Format, out var year)

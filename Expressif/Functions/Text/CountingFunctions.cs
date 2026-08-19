@@ -17,7 +17,7 @@ public abstract class BaseTextCountingFunction : BaseTextFunction
 }
 
 /// <summary>
-/// Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`. 
+/// Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.
 /// </summary>
 [Function(aliases: ["count-chars"])]
 public class Length : BaseTextCountingFunction
@@ -26,7 +26,7 @@ public class Length : BaseTextCountingFunction
 }
 
 /// <summary>
-/// Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`. 
+/// Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.
 /// </summary>
 public class CountDistinctChars : BaseTextCountingFunction
 {
@@ -34,8 +34,11 @@ public class CountDistinctChars : BaseTextCountingFunction
     {
         var chars = new List<char>(value.Length);
         for (int i = 0; i < value.Length; i++)
+        {
             if (!chars.Contains(value[i]))
                 chars.Add(value[i]);
+        }
+
         return chars.Count;
     }
 }

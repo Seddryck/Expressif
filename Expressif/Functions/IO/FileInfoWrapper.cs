@@ -9,7 +9,7 @@ namespace Expressif.Functions.IO;
 
 internal class FileInfoWrapper : IFileInfo
 {
-    private FileInfo FileInfo { get;  }
+    private FileInfo FileInfo { get; }
 
     public FileInfoWrapper(string value) => FileInfo = new FileInfo(value);
 

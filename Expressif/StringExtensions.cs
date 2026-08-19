@@ -1,11 +1,11 @@
-﻿using Expressif.Functions.Temporal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions.Temporal;
 
 namespace Expressif;
 
@@ -33,7 +33,7 @@ static class StringExtensions
         char previous = value.First();
         foreach (var c in value.Skip(1))
         {
-            if (char.IsUpper(c) && previous!='-' && !char.IsUpper(previous))
+            if (char.IsUpper(c) && previous != '-' && !char.IsUpper(previous))
                 builder.Append('-');
             builder.Append(char.ToLower(c));
             previous = c;
@@ -46,7 +46,7 @@ static class StringExtensions
         => string.Join('-', array);
 
     public static string[] ToToken(this string value, char separator = '-')
-     => string.IsNullOrEmpty(value) 
+     => string.IsNullOrEmpty(value)
             ? []
             : value.Split(separator);
 }

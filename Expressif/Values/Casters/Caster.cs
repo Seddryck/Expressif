@@ -29,12 +29,16 @@ public class Caster
         };
 
         if (@switch.TryGetValue(typeof(T), out var cast))
+        {
             return (T?)cast.Invoke();
+        }
         else
+        {
             try
             { return ConvertTo<T>(value); }
             catch (Exception)
             { throw new ArgumentException($"Cannot convert the value '{value}' from a type '{value.GetType().Name}' to a '{typeof(T).Name}'"); }
+        }
     }
 
     protected virtual T? ConvertTo<T>(object value)

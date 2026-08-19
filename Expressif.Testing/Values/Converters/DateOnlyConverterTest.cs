@@ -1,11 +1,11 @@
-﻿using Expressif.Values;
-using Expressif.Values.Converters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values;
+using Expressif.Values.Converters;
 
 namespace Expressif.Testing.Values.Converters;
 
@@ -69,6 +69,6 @@ public class DateOnlyConverterTest
     [Test]
     public void ConvertToInvariantString_Valid()
         => Assert.That(
-            TypeDescriptor.GetConverter(typeof(DateOnly)).ConvertToInvariantString(new DateOnly(2022,12,29))
+            TypeDescriptor.GetConverter(typeof(DateOnly)).ConvertToInvariantString(new DateOnly(2022, 12, 29))
             , Is.EqualTo("2022-12-29"));
 }

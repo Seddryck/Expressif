@@ -1,9 +1,9 @@
-﻿using Expressif.Functions.Introspection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions.Introspection;
 
 namespace Expressif.Predicates.Introspection;
 

@@ -21,9 +21,11 @@ public abstract class BaseTemporalAroundNowPredicate : BaseTemporalAroundTodayPr
 /// </summary>
 public class InTheFuture : BaseTemporalAroundTodayPredicate
 {
-    protected internal InTheFuture(DateTime now) : base(now) { }
+    protected internal InTheFuture(DateTime now)
+        : base(now) { }
 
-    public InTheFuture() : base() { }
+    public InTheFuture()
+        : base() { }
 
     protected override bool EvaluateDate(DateOnly date)
         => date >= Today.AddDays(1);
@@ -34,9 +36,11 @@ public class InTheFuture : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class InTheFutureOrToday : BaseTemporalAroundTodayPredicate
 {
-    protected internal InTheFutureOrToday(DateTime now) : base(now) { }
+    protected internal InTheFutureOrToday(DateTime now)
+        : base(now) { }
 
-    public InTheFutureOrToday() : base() { }
+    public InTheFutureOrToday()
+        : base() { }
 
     protected override bool EvaluateDate(DateOnly date)
         => date >= Today;
@@ -47,9 +51,11 @@ public class InTheFutureOrToday : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class InTheFutureOrNow : BaseTemporalAroundNowPredicate
 {
-    protected internal InTheFutureOrNow(DateTime now) : base(now) { }
+    protected internal InTheFutureOrNow(DateTime now)
+        : base(now) { }
 
-    public InTheFutureOrNow() : base() { }
+    public InTheFutureOrNow()
+        : base() { }
 
     protected override bool EvaluateDateTime(DateTime dt)
         => dt >= Now;
@@ -63,9 +69,11 @@ public class InTheFutureOrNow : BaseTemporalAroundNowPredicate
 /// </summary>
 public class InThePast : BaseTemporalAroundNowPredicate
 {
-    protected internal InThePast(DateTime now) : base(now) { }
+    protected internal InThePast(DateTime now)
+        : base(now) { }
 
-    public InThePast() : base() { }
+    public InThePast()
+        : base() { }
 
     protected override bool EvaluateDateTime(DateTime dt)
         => dt < Now;
@@ -79,9 +87,11 @@ public class InThePast : BaseTemporalAroundNowPredicate
 /// </summary>
 public class InThePastOrToday : BaseTemporalAroundTodayPredicate
 {
-    protected internal InThePastOrToday(DateTime now) : base(now) { }
+    protected internal InThePastOrToday(DateTime now)
+        : base(now) { }
 
-    public InThePastOrToday() : base() { }
+    public InThePastOrToday()
+        : base() { }
 
     protected override bool EvaluateDate(DateOnly date)
         => date <= Today;
@@ -92,9 +102,11 @@ public class InThePastOrToday : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class InThePastOrNow : BaseTemporalAroundNowPredicate
 {
-    protected internal InThePastOrNow(DateTime now) : base(now) { }
+    protected internal InThePastOrNow(DateTime now)
+        : base(now) { }
 
-    public InThePastOrNow() : base() { }
+    public InThePastOrNow()
+        : base() { }
 
     protected override bool EvaluateDateTime(DateTime dt)
         => dt <= Now;
