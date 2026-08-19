@@ -1,0 +1,21 @@
+suite: special
+kind: function
+operator: coerce-datetime
+tests:
+  - id: coerce-datetime.valid
+    cases:
+      - id: coerce-datetime.valid.special.null
+        value: (null)
+        expected:
+      - id: coerce-datetime.valid.special.empty
+        value: (empty)
+        expected:
+      - id: coerce-datetime.valid.text.date
+        value: "2026-08-19"
+        expected: "2026-08-19 00:00:00"
+      - id: coerce-datetime.valid.text.date-time
+        value: "2026-08-19 12:30:00"
+        expected: "2026-08-19 12:30:00"
+      - id: coerce-datetime.valid.text.invalid
+        value: invalid
+        expected:

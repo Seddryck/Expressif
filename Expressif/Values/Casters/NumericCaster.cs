@@ -16,8 +16,16 @@ public abstract class BaseNumericCaster<T>
     protected abstract T One { get; }
     public virtual bool TryCast(object obj, [NotNullWhen(true)] out T value)
     {
-        if (TryNumericCast(obj, out value))
-            return true;
+        try
+        {
+            if (TryNumericCast(obj, out value))
+                return true;
+        }
+        catch (Exception exception) when (exception is OverflowException or FormatException or InvalidCastException)
+        {
+            value = default!;
+            return false;
+        }
 
         return obj switch
         {
