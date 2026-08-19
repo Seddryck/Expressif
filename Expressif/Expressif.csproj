@@ -9,6 +9,6 @@
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Expressif.Syntax" Version="0.20.0" />
+		<PackageReference Include="Expressif.Syntax" Version="0.21.0" />
 	</ItemGroup>
 </Project>
