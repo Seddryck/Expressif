@@ -39,12 +39,12 @@ public class ValueFormatterTest
     public void Format_Record_UsesBareGeneratedFieldName()
     {
         var record = new RecordValue();
-        record.Set("_NONAME0", "Alice");
+        record.Set("__NONAME_0", "Alice");
         record.Set("active", true);
 
         var result = ValueFormatter.Format(record);
 
-        Assert.That(result, Is.EqualTo("{_NONAME0 := Alice, active := true}"));
+        Assert.That(result, Is.EqualTo("{__NONAME_0 := Alice, active := true}"));
     }
 
     [Test]

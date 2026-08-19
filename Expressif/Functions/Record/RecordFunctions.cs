@@ -91,9 +91,9 @@ public class RecordEntryEvaluator
     private static string GenerateUnnamedFieldName(ValueRecord target)
     {
         var index = 0;
-        while (target.ContainsKey($"_NONAME{index}"))
+        while (target.ContainsKey($"__NONAME_{index}"))
             index++;
 
-        return $"_NONAME{index}";
+        return $"__NONAME_{index}";
     }
 }
