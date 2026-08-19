@@ -23,11 +23,11 @@ public class PredicationBinderTest
         => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
 
     [Test]
-    [TestCase("123 |? !equal-to(125)")]
-    [TestCase("123 |? ! equal-to(125) ")]
-    [TestCase("123 |? !equal-to(125) |OR even ")]
-    [TestCase("123 |? ( ! equal-to(125) ) ")]
-    [TestCase("123 |? ( ! equal-to(125) |OR even ) |AND !null ")]
+    [TestCase("123 | !equal-to(125)")]
+    [TestCase("123 | ! equal-to(125) ")]
+    [TestCase("123 | !equal-to(125) |OR even ")]
+    [TestCase("123 | ( ! equal-to(125) ) ")]
+    [TestCase("123 | ( ! equal-to(125) |OR even ) |AND !null ")]
     public void Parse_ParametrizedPredication_Valid(string value)
         => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
 
