@@ -25,7 +25,15 @@ public sealed class ExpressifBinder
 
     public IParameter BindParameter(string source)
     {
-        var root = Bind(source);
+        var syntax = ExpressifSyntax.Parse(source);
+        if (syntax is OpenExpressionSyntax
+            {
+                Source: null,
+                Pipeline: [ParenthesizedExpressionSyntax parenthesized],
+            })
+            return BindArgument(parenthesized);
+
+        var root = Bind(syntax);
         return root is ClosedRootExpression closed && !closed.Expression.Members.Any()
             ? closed.Expression.Parameter
             : throw new BindingException($"Source '{source}' is not a standalone parameter.");
@@ -166,6 +174,8 @@ public sealed class ExpressifBinder
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         UnaryExpressionSyntax unary => new OpenExpressionParameter(BindUnaryExpression(unary)),
         BinaryExpressionSyntax binary => new OpenExpressionParameter(BindBinaryExpression(binary)),
+        ParenthesizedExpressionSyntax { Expression: ClosedExpressionSyntax closed }
+            => new InputExpressionParameter(BindClosed(closed)),
         ParenthesizedExpressionSyntax parenthesized => new OpenExpressionParameter(BindOpenRoot(parenthesized.Expression)),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),

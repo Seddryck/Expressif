@@ -44,6 +44,18 @@ public class ParameterBinderTest
         => Assert.That(BindingTestAdapter.Parameter(value), Is.TypeOf(type));
 
     [Test]
+    public void Parse_ParenthesizedClosedExpression_PreservesSourceAndPipeline()
+    {
+        var parameter = (InputExpressionParameter)BindingTestAdapter.Parameter("( @foo | text-to-func(\"bar\") )");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameter.Expression.Parameter, Is.EqualTo(new VariableParameter("foo")));
+            Assert.That(parameter.Expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "text-to-func" }));
+        });
+    }
+
+    [Test]
     [TestCase("(\"foo\", \"bar\")")]
     [TestCase("( \"foo\", \"bar\" ) ")]
     [TestCase("(@foo , \"bar\")")]
