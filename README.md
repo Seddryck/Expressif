@@ -205,7 +205,7 @@ Expressif provides a Visual Studio Code extension (VSIX) for syntax highlighting
 
 ### Download
 
-You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-*.vsix`.
+You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-highlighting-*.vsix`.
 
 ### Installation
 
@@ -216,6 +216,12 @@ You can download the latest `.vsix` release from the [Releases page](https://git
 5. Reload VSCode if prompted.
 
 Once installed, Expressif files and code blocks will be highlighted automatically.
+
+## Notepad++ Syntax Highlighting
+
+Each release also provides `expressif-<version>-notepadpp-udl.xml`, a generated Notepad++ User Defined Language file. Download it from the [Releases page](https://github.com/Seddryck/Expressif/releases), then open **Language > User Defined Language > Define your language** in Notepad++, select **Import**, and restart Notepad++.
+
+The UDL recognizes `.expr` and `.expressif` files. Its library keywords are generated from Expressif introspection, alongside the Visual Studio Code grammar, so the released editor definitions stay aligned with the library.
 
 ## Supported functions and predicates
 

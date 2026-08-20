@@ -20,7 +20,7 @@
 {{~ if model.predicates.size > 0 ~}},{{~ end ~}}
     {
         "name": "constant.language.null.expressif",
-        "match": "\\b(null|empty|blank|any|value)\\b"
+        "match": "\\b({{ model.constantRegex }})\\b"
     },
     {
         "name": "constant.numeric.expressif",
@@ -49,8 +49,8 @@
       ]
     },
     {
-      "name": "keyword.operator.pipe.expressif",
-      "match": "\\|"
+      "name": "keyword.operator.expressif",
+      "match": "{{ model.operatorRegex }}"
     }
   ]
 }

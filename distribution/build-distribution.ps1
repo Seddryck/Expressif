@@ -114,6 +114,45 @@ function Write-Step {
     Write-Host "==> $Message" -ForegroundColor Cyan
 }
 
+function Remove-DirectoryWithRetry {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path,
+
+        [int] $MaxAttempts = 5,
+
+        [int] $DelayMilliseconds = 250
+    )
+
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        try {
+            Remove-Item `
+                -LiteralPath $Path `
+                -Recurse `
+                -Force `
+                -ErrorAction Stop
+
+            return
+        }
+        catch {
+            if (-not (Test-Path -LiteralPath $Path)) {
+                return
+            }
+
+            if ($attempt -eq $MaxAttempts) {
+                throw
+            }
+
+            Write-Warning (
+                "Could not remove staging directory '$Path' " +
+                "on attempt $attempt of $MaxAttempts. Retrying."
+            )
+            Start-Sleep `
+                -Milliseconds ($DelayMilliseconds * $attempt)
+        }
+    }
+}
+
 function Invoke-ExternalCommand {
     param(
         [Parameter(Mandatory)]
@@ -674,10 +713,7 @@ switch ($Mode) {
 }
 
 if (Test-Path -LiteralPath $StagingRoot) {
-    Remove-Item `
-        -LiteralPath $StagingRoot `
-        -Recurse `
-        -Force
+    Remove-DirectoryWithRetry -Path $StagingRoot
 }
 
 Write-Host
