@@ -2,6 +2,8 @@ using Expressif.Functions;
 using Expressif.Functions.Special;
 using Expressif.Testing.Conformance;
 using Expressif.Values.Casters;
+using Expressif.Values;
+using System.Numerics;
 
 namespace Expressif.Testing.Functions.Special;
 
@@ -79,4 +81,94 @@ public class CoerceFunctionsTest
     [Test]
     public void CoerceInt_Overflow_ReturnsNull()
         => Assert.That(new CoerceInt().Evaluate(long.MaxValue), Is.Null);
+
+    [Test]
+    public void NumericCoercions_UseGenericMathForEverySupportedClrNumber()
+    {
+        AssertNumeric((byte)42, 42m);
+        AssertNumeric((sbyte)-42, -42m);
+        AssertNumeric((short)-42, -42m);
+        AssertNumeric((ushort)42, 42m);
+        AssertNumeric(42, 42m);
+        AssertNumeric(42U, 42m);
+        AssertNumeric(42L, 42m);
+        AssertNumeric(42UL, 42m);
+        AssertNumeric(42F, 42m);
+        AssertNumeric(42D, 42m);
+        AssertNumeric(42M, 42m);
+    }
+
+    [Test]
+    public void IntegerCoercions_RequireLosslessGenericMathConversion()
+    {
+        AssertInteger((short)-42, -42);
+        AssertInteger(42U, 42);
+        AssertInteger(42L, 42);
+        AssertInteger(42F, 42);
+        AssertInteger(42D, 42);
+        AssertInteger(42M, 42);
+        AssertInteger(42.5D, null);
+        AssertInteger(long.MaxValue, null);
+    }
+
+    [Test]
+    public void BooleanAndTextCoercions_UseGenericMath()
+    {
+        AssertBoolean(0, false);
+        AssertBoolean(-1L, true);
+        AssertBoolean(0M, false);
+        AssertBoolean(0.5D, true);
+        AssertText((byte)42, "42");
+        AssertText(-42L, "-42");
+        AssertText(42.5M, "42.5");
+    }
+
+    [Test]
+    public void TemporalTypedContracts_MatchObjectFallback()
+    {
+        AssertTyped<DateTime, DateOnly?>(new CoerceDate(), new DateTime(2026, 8, 19, 12, 30, 0));
+        AssertTyped<YearMonth, DateOnly?>(new CoerceDate(), new YearMonth(2026, 8));
+        AssertTyped<DateOnly, DateTime?>(new CoerceDateTime(), new DateOnly(2026, 8, 19));
+        AssertTyped<YearMonth, DateTime?>(new CoerceDateTime(), new YearMonth(2026, 8));
+        AssertTyped<DateTime, TimeOnly?>(new CoerceTime(), new DateTime(2026, 8, 19, 12, 30, 0));
+        AssertTyped<DateOnly, string?>(new CoerceText(), new DateOnly(2026, 8, 19));
+    }
+
+    private static void AssertNumeric<T>(T value, decimal? expected)
+        where T : INumber<T>
+    {
+        IFunction<T, decimal?> typed = new CoerceNumeric<T>();
+        Assert.That(typed.Evaluate(value), Is.EqualTo(expected));
+        Assert.That(new CoerceNumeric().Evaluate(value), Is.EqualTo(expected));
+    }
+
+    private static void AssertInteger<T>(T value, int? expected)
+        where T : INumber<T>
+    {
+        IFunction<T, int?> typed = new CoerceInt<T>();
+        Assert.That(typed.Evaluate(value), Is.EqualTo(expected));
+        Assert.That(new CoerceInt().Evaluate(value), Is.EqualTo(expected));
+    }
+
+    private static void AssertBoolean<T>(T value, bool? expected)
+        where T : INumber<T>
+    {
+        IFunction<T, bool?> typed = new CoerceBoolean<T>();
+        Assert.That(typed.Evaluate(value), Is.EqualTo(expected));
+        Assert.That(new CoerceBoolean().Evaluate(value), Is.EqualTo(expected));
+    }
+
+    private static void AssertText<T>(T value, string? expected)
+        where T : INumber<T>
+    {
+        IFunction<T, string?> typed = new CoerceText<T>();
+        Assert.That(typed.Evaluate(value), Is.EqualTo(expected));
+        Assert.That(new CoerceText().Evaluate(value), Is.EqualTo(expected));
+    }
+
+    private static void AssertTyped<TIn, TOut>(IFunction<TIn, TOut> typed, TIn value)
+    {
+        var fallback = (IFunction<object?, TOut>)(object)typed;
+        Assert.That(typed.Evaluate(value), Is.EqualTo(fallback.Evaluate(value)));
+    }
 }

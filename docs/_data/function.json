@@ -2534,7 +2534,7 @@
       "coerce-date"
     ],
     "Scope": "Special",
-    "Summary": "Attempts to convert the input to a date value. Returns `null` when the input cannot be converted without loss.",
+    "Summary": "Attempts to convert the input to a date value. Returns `null` when the input cannot be converted.",
     "Parameters": []
   },
   {
