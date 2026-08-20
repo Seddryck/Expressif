@@ -45,6 +45,28 @@ public class Function : IExpression
             ? Array.Empty<IParameter>()
             : [new RecordDefinitionParameter(entries)];
 
+    private static readonly Parser<GenerateNamedEntry> GenerateWhileEntryParser =
+        from name in Parse.String("while").Text().Token()
+        from _ in Parse.String(":=").Token()
+        from predication in Predication.Parser.Token()
+        select new GenerateNamedEntry(name, new PredicationParameter(predication));
+
+    private static readonly Parser<GenerateNamedEntry> GenerateExpressionEntryParser =
+        from name in Parse.String("next").Text().Or(Parse.String("result").Text()).Token()
+        from _ in Parse.String(":=").Token()
+        from expression in OpenExpression.Parser.Token()
+        select new GenerateNamedEntry(name, new OpenExpressionParameter(expression));
+
+    private static readonly Parser<IParameter[]> GenerateParametersParser =
+        from _ in Parse.Char('(').Token()
+        from first in GenerateWhileEntryParser.Or(GenerateExpressionEntryParser).Once()
+        from others in (
+            from __ in Parse.Char(',').Token()
+            from entry in GenerateWhileEntryParser.Or(GenerateExpressionEntryParser)
+            select entry).Many()
+        from _1 in Parse.Char(')').Token()
+        select new IParameter[] { new GenerateDefinitionParameter(first.Concat(others).ToArray()) };
+
     private static readonly Parser<Function> FieldShorthandParser =
         from dot in Parse.Char('.')
         from name in Parse.Regex("[A-Za-z_][A-Za-z0-9_+\\-]*").Text()
@@ -61,6 +83,8 @@ public class Function : IExpression
                                 ? MapParametersParser.Optional()
                                 : functionName.Equals("record", StringComparison.OrdinalIgnoreCase)
                                 ? RecordParametersParser.Optional()
+                                : functionName.Equals("generate", StringComparison.OrdinalIgnoreCase)
+                                ? GenerateParametersParser.Optional()
                                 : Parsers.Parameters.Parser.Optional())
         select new Function(functionName, parameters.GetOrElse(Array.Empty<IParameter>()));
 
