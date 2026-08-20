@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using System.Numerics;
 
 namespace Expressif.Values.Casters;
 
@@ -50,9 +51,40 @@ public class NumericCaster : BaseNumericCaster<decimal>, ICaster<decimal>, IPars
     protected override decimal One { get => 1m; }
 
     protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out decimal value)
-        => TypeChecker.IsNumericType(obj)
-            ? (value = CastNumeric(obj)) == value
-            : (value = default) != value;
+    {
+        switch (obj)
+        {
+            case byte number: return TryCastNumber(number, out value);
+            case sbyte number: return TryCastNumber(number, out value);
+            case short number: return TryCastNumber(number, out value);
+            case ushort number: return TryCastNumber(number, out value);
+            case int number: return TryCastNumber(number, out value);
+            case uint number: return TryCastNumber(number, out value);
+            case long number: return TryCastNumber(number, out value);
+            case ulong number: return TryCastNumber(number, out value);
+            case float number: return TryCastNumber(number, out value);
+            case double number: return TryCastNumber(number, out value);
+            case decimal number: return TryCastNumber(number, out value);
+            default:
+                value = default;
+                return false;
+        }
+    }
+
+    public virtual bool TryCastNumber<T>(T obj, [NotNullWhen(true)] out decimal value)
+        where T : INumber<T>
+    {
+        try
+        {
+            value = decimal.CreateChecked(obj);
+            return true;
+        }
+        catch (OverflowException)
+        {
+            value = default;
+            return false;
+        }
+    }
 
     protected override decimal CastNumeric(object numeric)
         => Convert.ToDecimal(numeric, CultureInfo.InvariantCulture.NumberFormat);

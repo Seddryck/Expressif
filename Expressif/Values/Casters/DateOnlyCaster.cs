@@ -9,8 +9,8 @@ public class DateOnlyCaster : ICaster<DateOnly>, IParser<DateOnly>
         => obj switch
         {
             DateOnly date => (value = date) == value,
-            DateTime dateTime when dateTime.TimeOfDay == TimeSpan.Zero
-                => (value = DateOnly.FromDateTime(dateTime)) == value,
+            DateTime dateTime => (value = DateOnly.FromDateTime(dateTime)) == value,
+            YearMonth yearMonth => (value = new DateOnly(yearMonth.Year, yearMonth.Month, 1)) == value,
             string text => TryParse(text, out value),
             _ => (value = default) != value,
         };
@@ -18,16 +18,21 @@ public class DateOnlyCaster : ICaster<DateOnly>, IParser<DateOnly>
     public virtual DateOnly Cast(object obj)
         => TryCast(obj, out var value)
             ? value
-            : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to type {nameof(DateOnly)} without loss.");
+            : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to type {nameof(DateOnly)}.");
 
     public virtual bool TryParse(string text, [NotNullWhen(true)] out DateOnly value)
     {
         if (DateOnly.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out value))
             return true;
 
-        return DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var dateTime)
-            && dateTime.TimeOfDay == TimeSpan.Zero
-            && (value = DateOnly.FromDateTime(dateTime)) == value;
+        if (DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out var dateTime)
+            && dateTime.TimeOfDay == TimeSpan.Zero)
+        {
+            value = DateOnly.FromDateTime(dateTime);
+            return true;
+        }
+
+        return false;
     }
 
     public virtual DateOnly Parse(string text)
