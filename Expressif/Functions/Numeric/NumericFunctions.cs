@@ -11,7 +11,7 @@ public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
     { }
 
     public decimal? Evaluate(decimal? value)
-        => value.HasValue ? EvaluateNumeric(value.Value) : EvaluateNull();
+        => value.HasValue ? EvaluateNumeric(value.Value) : EvaluateTypedNull();
 
     public object? Evaluate(object? value)
     {
@@ -34,7 +34,12 @@ public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
         return EvaluateNumeric(numeric);
     }
 
-    protected virtual decimal? EvaluateNull() => null;
+    protected virtual object? EvaluateNull() => null;
+    private decimal? EvaluateTypedNull()
+        => EvaluateNull() is object value && new NumericCaster().TryCast(value, out var numeric)
+            ? numeric
+            : null;
+
     protected abstract decimal? EvaluateNumeric(decimal numeric);
 }
 
@@ -44,7 +49,7 @@ public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
 [Function(prefix: "")]
 public class NullToZero : BaseNumericFunction
 {
-    protected override decimal? EvaluateNull() => 0;
+    protected override object EvaluateNull() => 0;
     protected override decimal? EvaluateNumeric(decimal numeric) => numeric;
 }
 
