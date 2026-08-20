@@ -37,7 +37,9 @@ public sealed class CoerceNumeric<T> : Function<T, decimal?>
     private NumericCaster Caster { get; } = new();
 
     public override decimal? Evaluate(T value)
-        => Caster.TryCastNumber(value, out var result) ? result : null;
+        => typeof(T) == typeof(decimal)
+            ? decimal.CreateChecked(value)
+            : Caster.TryCastNumber(value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -58,7 +60,9 @@ public sealed class CoerceInt<T> : Function<T, int?>
     private IntegerCaster Caster { get; } = new();
 
     public override int? Evaluate(T value)
-        => Caster.TryCastNumber(value, out var result) ? result : null;
+        => typeof(T) == typeof(int)
+            ? int.CreateChecked(value)
+            : Caster.TryCastNumber(value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -81,7 +85,7 @@ public sealed class CoerceText : IFunction<object?, string?>,
         => Caster.TryCast<string>(value, out var result) ? result : null;
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
-    string? IFunction<string, string?>.Evaluate(string value) => EvaluateTyped(value);
+    string? IFunction<string, string?>.Evaluate(string value) => value;
     string? IFunction<bool, string?>.Evaluate(bool value) => EvaluateTyped(value);
     string? IFunction<DateOnly, string?>.Evaluate(DateOnly value) => EvaluateTyped(value);
     string? IFunction<DateTime, string?>.Evaluate(DateTime value) => EvaluateTyped(value);
@@ -105,7 +109,7 @@ public sealed class CoerceBoolean : BaseCoerceValueFunction<bool>,
     IFunction<bool, bool?>,
     IFunction<string, bool?>
 {
-    bool? IFunction<bool, bool?>.Evaluate(bool value) => EvaluateTyped(value);
+    bool? IFunction<bool, bool?>.Evaluate(bool value) => value;
     bool? IFunction<string, bool?>.Evaluate(string value) => EvaluateTyped(value);
 }
 
@@ -128,7 +132,7 @@ public sealed class CoerceDate : BaseCoerceValueFunction<DateOnly>,
     IFunction<YearMonth, DateOnly?>,
     IFunction<string, DateOnly?>
 {
-    DateOnly? IFunction<DateOnly, DateOnly?>.Evaluate(DateOnly value) => EvaluateTyped(value);
+    DateOnly? IFunction<DateOnly, DateOnly?>.Evaluate(DateOnly value) => value;
     DateOnly? IFunction<DateTime, DateOnly?>.Evaluate(DateTime value) => EvaluateTyped(value);
     DateOnly? IFunction<YearMonth, DateOnly?>.Evaluate(YearMonth value) => EvaluateTyped(value);
     DateOnly? IFunction<string, DateOnly?>.Evaluate(string value) => EvaluateTyped(value);
@@ -143,7 +147,7 @@ public sealed class CoerceTime : BaseCoerceValueFunction<TimeOnly>,
     IFunction<DateTime, TimeOnly?>,
     IFunction<string, TimeOnly?>
 {
-    TimeOnly? IFunction<TimeOnly, TimeOnly?>.Evaluate(TimeOnly value) => EvaluateTyped(value);
+    TimeOnly? IFunction<TimeOnly, TimeOnly?>.Evaluate(TimeOnly value) => value;
     TimeOnly? IFunction<DateTime, TimeOnly?>.Evaluate(DateTime value) => EvaluateTyped(value);
     TimeOnly? IFunction<string, TimeOnly?>.Evaluate(string value) => EvaluateTyped(value);
 }
@@ -158,7 +162,7 @@ public sealed class CoerceDateTime : BaseCoerceValueFunction<DateTime>,
     IFunction<YearMonth, DateTime?>,
     IFunction<string, DateTime?>
 {
-    DateTime? IFunction<DateTime, DateTime?>.Evaluate(DateTime value) => EvaluateTyped(value);
+    DateTime? IFunction<DateTime, DateTime?>.Evaluate(DateTime value) => value;
     DateTime? IFunction<DateOnly, DateTime?>.Evaluate(DateOnly value) => EvaluateTyped(value);
     DateTime? IFunction<YearMonth, DateTime?>.Evaluate(YearMonth value) => EvaluateTyped(value);
     DateTime? IFunction<string, DateTime?>.Evaluate(string value) => EvaluateTyped(value);
