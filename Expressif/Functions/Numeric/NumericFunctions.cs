@@ -5,10 +5,13 @@ using System;
 namespace Expressif.Functions.Numeric;
 
 [Function]
-public abstract class BaseNumericFunction : IFunction
+public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
 {
     public BaseNumericFunction()
     { }
+
+    public decimal? Evaluate(decimal? value)
+        => value.HasValue ? EvaluateNumeric(value.Value) : EvaluateTypedNull();
 
     public object? Evaluate(object? value)
     {
@@ -32,6 +35,11 @@ public abstract class BaseNumericFunction : IFunction
     }
 
     protected virtual object? EvaluateNull() => null;
+    private decimal? EvaluateTypedNull()
+        => EvaluateNull() is object value && new NumericCaster().TryCast(value, out var numeric)
+            ? numeric
+            : null;
+
     protected abstract decimal? EvaluateNumeric(decimal numeric);
 }
 

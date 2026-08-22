@@ -11,8 +11,10 @@ public class TextCaster : ICaster<string>, IParser<string>
 
     public virtual bool TryCast(object obj, [NotNullWhen(true)] out string? value)
     {
+        value = null;
         if (TypeChecker.IsNumericType(obj))
-            return (value = Convert.ToDecimal(obj).ToString(NumberFormat)) == value;
+            return new NumericCaster().TryCast(obj, out var numeric)
+                && (value = numeric.ToString(NumberFormat)) is not null;
 
         return obj switch
         {

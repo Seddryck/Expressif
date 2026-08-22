@@ -2486,5 +2486,75 @@
     "Scope": "Text",
     "Summary": "Returns the argument string without white-space characters.",
     "Parameters": []
+  },
+  {
+    "Name": "coerce-numeric",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-numeric"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted.",
+    "Parameters": []
+  },
+  {
+    "Name": "coerce-int",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-int"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to an integer value. Returns `null` when the input cannot be converted without loss.",
+    "Parameters": []
+  },
+  {
+    "Name": "coerce-text",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-text"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to a text value. Returns `null` when the input cannot be converted.",
+    "Parameters": []
+  },
+  {
+    "Name": "coerce-boolean",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-boolean"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to a boolean value. Returns `null` when the input cannot be converted.",
+    "Parameters": []
+  },
+  {
+    "Name": "coerce-date",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-date"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to a date value. Returns `null` when the input cannot be converted.",
+    "Parameters": []
+  },
+  {
+    "Name": "coerce-time",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-time"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to a time value. Returns `null` when the input cannot be converted.",
+    "Parameters": []
+  },
+  {
+    "Name": "coerce-datetime",
+    "IsPublic": true,
+    "Aliases": [
+      "coerce-datetime"
+    ],
+    "Scope": "Special",
+    "Summary": "Attempts to convert the input to a date-time value. Returns `null` when the input cannot be converted.",
+    "Parameters": []
   }
 ]

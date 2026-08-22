@@ -1,0 +1,24 @@
+suite: special
+kind: function
+operator: coerce-int
+tests:
+  - id: coerce-int.valid
+    cases:
+      - id: coerce-int.valid.special.null
+        value: (null)
+        expected:
+      - id: coerce-int.valid.special.empty
+        value: (empty)
+        expected:
+      - id: coerce-int.valid.numeric.integer
+        value: 42
+        expected: 42
+      - id: coerce-int.valid.numeric.lossless-decimal
+        value: 42.0
+        expected: 42
+      - id: coerce-int.valid.numeric.lossy-decimal
+        value: 42.7
+        expected:
+      - id: coerce-int.valid.text.invalid
+        value: abc
+        expected:

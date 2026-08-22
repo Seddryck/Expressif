@@ -36,7 +36,23 @@ public class BooleanCaster : BaseNumericCaster<bool>, ICaster<bool>, IParser<boo
     }
 
     protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out bool value)
-        => TypeChecker.IsNumericType(obj)
-            ? (value = CastNumeric(obj)) == value
-            : (value = default) != value;
+    {
+        switch (obj)
+        {
+            case byte number: return NumericCoercion.TryToBoolean(number, out value);
+            case sbyte number: return NumericCoercion.TryToBoolean(number, out value);
+            case short number: return NumericCoercion.TryToBoolean(number, out value);
+            case ushort number: return NumericCoercion.TryToBoolean(number, out value);
+            case int number: return NumericCoercion.TryToBoolean(number, out value);
+            case uint number: return NumericCoercion.TryToBoolean(number, out value);
+            case long number: return NumericCoercion.TryToBoolean(number, out value);
+            case ulong number: return NumericCoercion.TryToBoolean(number, out value);
+            case float number: return NumericCoercion.TryToBoolean(number, out value);
+            case double number: return NumericCoercion.TryToBoolean(number, out value);
+            case decimal number: return NumericCoercion.TryToBoolean(number, out value);
+            default:
+                value = default;
+                return false;
+        }
+    }
 }
