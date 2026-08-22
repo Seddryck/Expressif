@@ -165,7 +165,7 @@ public sealed class ExpressifBinder
 
     private IRecordDefinitionEntry BindRecordEntry(ArgumentSyntax syntax) => syntax switch
     {
-        NamedArgumentSyntax named => new RecordNamedEntry(named.Name, BindArgument(named.Value)),
+        NamedArgumentSyntax named => new RecordNamedEntry(named.Name.Value, BindArgument(named.Value)),
         PositionalArgumentSyntax { Value: IncomingValueSyntax } => new RecordSpreadEntry(),
         _ => throw Unsupported(syntax),
     };
