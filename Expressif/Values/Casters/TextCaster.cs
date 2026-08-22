@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Numerics;
 
 namespace Expressif.Values.Casters;
 
@@ -32,14 +31,6 @@ public class TextCaster : ICaster<string>, IParser<string>
         => TryCast(obj, out var yearMonth)
             ? yearMonth
             : throw new InvalidCastException($"Cannot cast an object of type '{obj.GetType().FullName}' to virtual type 'Text'. The type 'Text' can only be casted from types DateTime, DateOnly, Underlying numeric types, boolean and YearMonth.");
-
-    public virtual bool TryCastNumber<T>(T obj, [NotNullWhen(true)] out string? value)
-        where T : INumber<T>
-    {
-        value = null;
-        return new NumericCaster().TryCastNumber(obj, out var numeric)
-            && (value = numeric.ToString(NumberFormat)) is not null;
-    }
 
     public virtual bool TryParse(string text, [NotNullWhen(true)] out string? value)
         => (value = text) == value;

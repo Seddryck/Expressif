@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Numerics;
 
 namespace Expressif.Values.Casters;
 
@@ -40,24 +39,20 @@ public class BooleanCaster : BaseNumericCaster<bool>, ICaster<bool>, IParser<boo
     {
         switch (obj)
         {
-            case byte number: return TryCastNumber(number, out value);
-            case sbyte number: return TryCastNumber(number, out value);
-            case short number: return TryCastNumber(number, out value);
-            case ushort number: return TryCastNumber(number, out value);
-            case int number: return TryCastNumber(number, out value);
-            case uint number: return TryCastNumber(number, out value);
-            case long number: return TryCastNumber(number, out value);
-            case ulong number: return TryCastNumber(number, out value);
-            case float number: return TryCastNumber(number, out value);
-            case double number: return TryCastNumber(number, out value);
-            case decimal number: return TryCastNumber(number, out value);
+            case byte number: return NumericCoercion.TryToBoolean(number, out value);
+            case sbyte number: return NumericCoercion.TryToBoolean(number, out value);
+            case short number: return NumericCoercion.TryToBoolean(number, out value);
+            case ushort number: return NumericCoercion.TryToBoolean(number, out value);
+            case int number: return NumericCoercion.TryToBoolean(number, out value);
+            case uint number: return NumericCoercion.TryToBoolean(number, out value);
+            case long number: return NumericCoercion.TryToBoolean(number, out value);
+            case ulong number: return NumericCoercion.TryToBoolean(number, out value);
+            case float number: return NumericCoercion.TryToBoolean(number, out value);
+            case double number: return NumericCoercion.TryToBoolean(number, out value);
+            case decimal number: return NumericCoercion.TryToBoolean(number, out value);
             default:
                 value = default;
                 return false;
         }
     }
-
-    public virtual bool TryCastNumber<T>(T obj, [NotNullWhen(true)] out bool value)
-        where T : INumber<T>
-        => (value = obj != T.Zero) == value;
 }

@@ -10,7 +10,7 @@ public abstract class BaseCoerceValueFunction<T> : IFunction<object?, T?>
 {
     private Caster Caster { get; } = new();
 
-    public T? Evaluate(object? value)
+    public virtual T? Evaluate(object? value)
         => EvaluateTyped(value);
 
     protected T? EvaluateTyped<TIn>(TIn value)
@@ -20,13 +20,16 @@ public abstract class BaseCoerceValueFunction<T> : IFunction<object?, T?>
 }
 
 /// <summary>
-/// Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted without loss.
+/// Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted.
 /// </summary>
 [Function]
 public sealed class CoerceNumeric : BaseCoerceValueFunction<decimal>,
     IFunction<bool, decimal?>,
     IFunction<string, decimal?>
 {
+    public override decimal? Evaluate(object? value)
+        => NumericCoercion.TryToDecimal(value, out var result) ? result : null;
+
     decimal? IFunction<bool, decimal?>.Evaluate(bool value) => EvaluateTyped(value);
     decimal? IFunction<string, decimal?>.Evaluate(string value) => EvaluateTyped(value);
 }
@@ -34,12 +37,8 @@ public sealed class CoerceNumeric : BaseCoerceValueFunction<decimal>,
 public sealed class CoerceNumeric<T> : Function<T, decimal?>
     where T : INumber<T>
 {
-    private NumericCaster Caster { get; } = new();
-
     public override decimal? Evaluate(T value)
-        => typeof(T) == typeof(decimal)
-            ? decimal.CreateChecked(value)
-            : Caster.TryCastNumber(value, out var result) ? result : null;
+        => NumericCoercion.TryToDecimal(value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -50,6 +49,9 @@ public sealed class CoerceInt : BaseCoerceValueFunction<int>,
     IFunction<bool, int?>,
     IFunction<string, int?>
 {
+    public override int? Evaluate(object? value)
+        => NumericCoercion.TryToInt(value, out var result) ? result : null;
+
     int? IFunction<bool, int?>.Evaluate(bool value) => EvaluateTyped(value);
     int? IFunction<string, int?>.Evaluate(string value) => EvaluateTyped(value);
 }
@@ -57,12 +59,8 @@ public sealed class CoerceInt : BaseCoerceValueFunction<int>,
 public sealed class CoerceInt<T> : Function<T, int?>
     where T : INumber<T>
 {
-    private IntegerCaster Caster { get; } = new();
-
     public override int? Evaluate(T value)
-        => typeof(T) == typeof(int)
-            ? int.CreateChecked(value)
-            : Caster.TryCastNumber(value, out var result) ? result : null;
+        => NumericCoercion.TryToInt(value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -79,7 +77,7 @@ public sealed class CoerceText : IFunction<object?, string?>,
     private Caster Caster { get; } = new();
 
     public string? Evaluate(object? value)
-        => EvaluateTyped(value);
+        => NumericCoercion.TryToText(value, out var result) ? result : null;
 
     private string? EvaluateTyped<TIn>(TIn value)
         => Caster.TryCast<string>(value, out var result) ? result : null;
@@ -95,10 +93,8 @@ public sealed class CoerceText : IFunction<object?, string?>,
 public sealed class CoerceText<T> : Function<T, string?>
     where T : INumber<T>
 {
-    private TextCaster Caster { get; } = new();
-
     public override string? Evaluate(T value)
-        => Caster.TryCastNumber(value, out var result) ? result : null;
+        => NumericCoercion.TryToText(value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -109,6 +105,9 @@ public sealed class CoerceBoolean : BaseCoerceValueFunction<bool>,
     IFunction<bool, bool?>,
     IFunction<string, bool?>
 {
+    public override bool? Evaluate(object? value)
+        => NumericCoercion.TryToBoolean(value, out var result) ? result : null;
+
     bool? IFunction<bool, bool?>.Evaluate(bool value) => value;
     bool? IFunction<string, bool?>.Evaluate(string value) => EvaluateTyped(value);
 }
@@ -116,10 +115,8 @@ public sealed class CoerceBoolean : BaseCoerceValueFunction<bool>,
 public sealed class CoerceBoolean<T> : Function<T, bool?>
     where T : INumber<T>
 {
-    private BooleanCaster Caster { get; } = new();
-
     public override bool? Evaluate(T value)
-        => Caster.TryCastNumber(value, out var result) ? result : null;
+        => NumericCoercion.TryToBoolean(value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -139,7 +136,7 @@ public sealed class CoerceDate : BaseCoerceValueFunction<DateOnly>,
 }
 
 /// <summary>
-/// Attempts to convert the input to a time value. Returns `null` when the input cannot be converted without loss.
+/// Attempts to convert the input to a time value. Returns `null` when the input cannot be converted.
 /// </summary>
 [Function]
 public sealed class CoerceTime : BaseCoerceValueFunction<TimeOnly>,
