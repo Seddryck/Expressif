@@ -114,7 +114,12 @@ public class CoercionRegistryTest
     [TestCase("")]
     [TestCase("   ")]
     public void TextStringContract_SpecialValuesMatchObjectFallback(string value)
-        => AssertPair<string, string?>(new CoerceText(), value);
+    {
+        IFunction<string, string?> typed = new CoerceText();
+        IFunction<object?, string?> fallback = new CoerceText();
+
+        Assert.That(typed.Evaluate(value), Is.EqualTo(fallback.Evaluate(value)));
+    }
 
     [Test]
     public void NumericBoundaries_HaveTypedAndFallbackParity()
