@@ -1,7 +1,8 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,16 +27,12 @@ public class ParameterSerializer
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
-            LiteralParameter l => l.Value.Any(
-                x => Grammar.AlongQuotedChars
-                        .Union(Grammar.OpeningQuotedChars)
-                        .Union(Grammar.ClosingQuotedChars).Contains(x))
-                    ? $"\"{RecordSyntax.EscapeDoubleQuoted(l.Value)}\""
-                    : l.Value,
+            LiteralParameter l => SerializeLiteral(l.Value),
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",
             ObjectIndexParameter oi => $"#{oi.Index}",
             TupleProjectionParameter tp => $"${tp.Index}",
+            IntervalParameter interval => SerializeInterval(interval.Value),
             _ => throw new NotSupportedException()
         };
     }
@@ -52,4 +49,29 @@ public class ParameterSerializer
         => RecordSyntax.IsBareToken(name)
             ? name
             : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
+
+    private static string SerializeLiteral(object? value)
+        => value switch
+        {
+            null => "#null",
+            bool boolean => boolean ? "#true" : "#false",
+            decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",
+            DateTime dateTime => $"#\"{dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)}\"",
+            TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",
+            string text when RecordSyntax.IsBareToken(text) => text,
+            string text => $"\"{RecordSyntax.EscapeDoubleQuoted(text)}\"",
+            _ => throw new NotSupportedException($"Literal value type '{value.GetType().Name}' cannot be serialized."),
+        };
+
+    private static string SerializeInterval(IntervalBinding interval)
+        => $"I{(interval.IsLowerInclusive ? '[' : '(')}{SerializeBound(interval.LowerBound)}, {SerializeBound(interval.UpperBound)}{(interval.IsUpperInclusive ? ']' : ')')}";
+
+    private static string SerializeBound(IntervalBoundBinding bound) => bound.Kind switch
+    {
+        IntervalBoundBindingKind.NegativeInfinity => "-INF",
+        IntervalBoundBindingKind.PositiveInfinity => "+INF",
+        IntervalBoundBindingKind.Finite => SerializeLiteral(bound.Value),
+        _ => throw new NotSupportedException($"Interval bound kind '{bound.Kind}' cannot be serialized."),
+    };
 }

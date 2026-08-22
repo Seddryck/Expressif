@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Parsers;
+using Expressif.Bindings;
 
 namespace Expressif.Serializers;
 
@@ -27,7 +27,7 @@ public class ExpressionSerializer
             case OpenExpression exp:
                 Serialize(exp, ref stringBuilder);
                 break;
-            case Parsers.ClosedExpression exp:
+            case Bindings.ClosedExpression exp:
                 Serialize(exp, ref stringBuilder);
                 break;
             default:
@@ -38,7 +38,7 @@ public class ExpressionSerializer
     public virtual void Serialize(OpenExpression expression, ref StringBuilder stringBuilder)
         => Serialize([.. expression.Members], ref stringBuilder);
 
-    public virtual void Serialize(Parsers.ClosedExpression expression, ref StringBuilder stringBuilder)
+    public virtual void Serialize(Bindings.ClosedExpression expression, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(ParameterSerializer.Serialize(expression.Parameter));
         SerializeContinuations(expression.Members, ref stringBuilder);

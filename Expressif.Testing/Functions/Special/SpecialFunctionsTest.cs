@@ -61,7 +61,7 @@ public class SpecialFunctionsTest
     [Test]
     public void Coalesce_OneParsedExpression_ThrowsBindingError()
         => Assert.That(
-            () => new ExpressionFactory().Instantiate("coalesce([name])", new Context()),
+            () => new ExpressionFactory().Instantiate("coalesce(^.name)", new Context()),
             Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
     [Test]
@@ -75,7 +75,7 @@ public class SpecialFunctionsTest
         var context = new Context();
         context.CurrentObject.Set(value);
         var function = new ExpressionFactory().Instantiate(
-            "coalesce([nickname], [name], \"Anonymous\") | upper",
+            "coalesce(^.nickname, ^.name, \"Anonymous\") | upper",
             context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo("ALICE"));

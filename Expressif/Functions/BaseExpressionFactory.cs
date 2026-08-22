@@ -1,4 +1,4 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using System;
@@ -61,13 +61,14 @@ public abstract class BaseExpressionFactory
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
+            LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
             TupleProjectionParameter projection => CreateFunctionCast(() => context.CurrentObject.Value is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
             VariableParameter variable => CreateFunctionCast(() => context.Variables[variable.Name], scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
-            _ => throw new NotImplementedException($"Cannot handle the parameter type '{parameter.GetType().Name}'")
+            _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
 
         object?[] BuildArray(ArrayParameter array, IContext currentContext)
@@ -108,9 +109,9 @@ public abstract class BaseExpressionFactory
                     continue;
                 }
 
-                if (field.Value is LiteralParameter literal && RecordSyntax.TryParseTypedToken(literal.Value, out var typed))
+                if (field.Value is LiteralParameter literal)
                 {
-                    value.Set(field.Name, typed);
+                    value.Set(field.Name, literal.Value);
                     continue;
                 }
 
@@ -121,8 +122,8 @@ public abstract class BaseExpressionFactory
             return value;
         }
 
-        static IInterval buildInterval(Interval value)
-            => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
+        static IInterval buildInterval(IntervalBinding value)
+            => new IntervalBuilder().Create(value);
     }
 
     private MethodInfo? cacheCastInfo;
