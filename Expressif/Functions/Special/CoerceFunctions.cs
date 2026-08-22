@@ -83,7 +83,7 @@ public sealed class CoerceText : IFunction<object?, string?>,
         => Caster.TryCast<string>(value, out var result) ? result : null;
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
-    string? IFunction<string, string?>.Evaluate(string value) => value;
+    string? IFunction<string, string?>.Evaluate(string value) => EvaluateTyped(value);
     string? IFunction<bool, string?>.Evaluate(bool value) => EvaluateTyped(value);
     string? IFunction<DateOnly, string?>.Evaluate(DateOnly value) => EvaluateTyped(value);
     string? IFunction<DateTime, string?>.Evaluate(DateTime value) => EvaluateTyped(value);

@@ -110,6 +110,12 @@ public class CoercionRegistryTest
         AssertPair<string, DateTime?>(new CoerceDateTime(), "2026-08-22 12:30:00");
     }
 
+    [TestCase("(null)")]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void TextStringContract_SpecialValuesMatchObjectFallback(string value)
+        => AssertPair<string, string?>(new CoerceText(), value);
+
     [Test]
     public void NumericBoundaries_HaveTypedAndFallbackParity()
     {
