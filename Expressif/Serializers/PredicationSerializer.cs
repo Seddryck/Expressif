@@ -1,4 +1,4 @@
-using Expressif.Parsers;
+using Expressif.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +48,7 @@ public class PredicationSerializer
                 stringBuilder.Append('}');
                 break;
             default:
-                throw new NotImplementedException();
+                throw new BindingException($"Unsupported predication model '{predication.GetType().Name}'.");
         }
     }
 }

@@ -1,6 +1,5 @@
-﻿using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Serializers;
-using Sprache;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_FieldShorthand_PreservesShorthand()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse(".name");
+        var function = BindingTestAdapter.Function(".name");
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(".name"));
     }
@@ -22,9 +21,9 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_DynamicFieldName_PreservesLongForm()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse("field([requested-field])");
+        var function = BindingTestAdapter.Function("field(\"requested-field\")");
 
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field([requested-field])"));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field(\"requested-field\")"));
     }
     [Test]
     public void Serialize_NoParameter_NoParenthesis()
@@ -70,7 +69,7 @@ public class FunctionSerializerTest
     public void Serialize_MultipleParameter_ParenthesisAndComas()
     {
         var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, *)"));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, \"*\")"));
     }
 
     [Test]

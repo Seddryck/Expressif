@@ -1,8 +1,7 @@
 using Expressif.Functions;
-using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Values;
 using Expressif.Values.Special;
-using Sprache;
 using System.Data;
 using System.Diagnostics;
 
@@ -25,7 +24,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_SingleFunctionWithOneParameter_Valid()
     {
-        var expression = new Expression("remove-chars(a)");
+        var expression = new Expression("remove-chars(`a`)");
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("Nikol Tesl"));
     }
@@ -33,7 +32,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_TwoFunctions_Valid()
     {
-        var expression = new Expression("lower | remove-chars(a)");
+        var expression = new Expression("lower | remove-chars(\"a\")");
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikol tesl"));
     }
@@ -67,7 +66,7 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new { CharToBeRemoved = 't' });
 
-        var expression = new Expression("lower | remove-chars([CharToBeRemoved])", context);
+        var expression = new Expression("lower | remove-chars(^.CharToBeRemoved)", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola esla"));
     }
@@ -76,7 +75,7 @@ public class ExpressionTest
     public void Evaluate_ObjectPropertyAsParameterDoublePass_Valid()
     {
         var context = new Context();
-        var expression = new Expression("lower | remove-chars([CharToBeRemoved])", context);
+        var expression = new Expression("lower | remove-chars(^.CharToBeRemoved)", context);
 
         context.CurrentObject.Set(new { CharToBeRemoved = 't' });
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola esla"));
@@ -91,7 +90,7 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new List<char>() { 'e', 's' });
 
-        var expression = new Expression("lower | remove-chars(#1)", context);
+        var expression = new Expression("lower | remove-chars(^.1)", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola tela"));
     }
@@ -100,7 +99,7 @@ public class ExpressionTest
     public void Evaluate_ObjectIndexAsParameterDoublePass_Valid()
     {
         var context = new Context();
-        var expression = new Expression("lower | remove-chars(#1)", context);
+        var expression = new Expression("lower | remove-chars(^.1)", context);
 
         context.CurrentObject.Set(new List<char>() { 'e', 's' });
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tela"));
@@ -115,32 +114,33 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new List<char>() { 'e', 's' });
 
-        var expression = new Expression("text-to-lower | text-to-remove-chars(#1)", context);
+        var expression = new Expression("text-to-lower | text-to-remove-chars(^.1)", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola tela"));
     }
 
     [Test]
+    [SetCulture("en-US")]
     public void Evaluate_AliasesDateTime_Valid()
     {
-        var expression = new Expression("dateTime-to-add(04:00:00, 4)", new Context());
-        var result = expression.Evaluate("2023-12-28 02:00:00");
+        var expression = new Expression("dateTime-to-add(#\"04:00:00\", 4)", new Context());
+        var result = expression.Evaluate(DateTime.Parse("2023-12-28 02:00:00"));
         Assert.That(result, Is.EqualTo(DateTime.Parse("2023-12-28 18:00:00")));
     }
 
     [Test]
     public void Evaluate_DurationBetween_Valid()
     {
-        var expression = new Expression("duration-between(2026-08-06T10:30:00)", new Context());
-        var result = expression.Evaluate("2026-08-06T12:00:00");
+        var expression = new Expression("duration-between(#\"2026-08-06T10:30:00\")", new Context());
+        var result = expression.Evaluate(DateTime.Parse("2026-08-06T12:00:00"));
         Assert.That(result, Is.EqualTo(TimeSpan.FromMinutes(90)));
     }
 
     [Test]
     public void Evaluate_DurationBetweenIncompatiblePrevious_Null()
     {
-        var expression = new Expression("duration-between(invalid)", new Context());
-        Assert.That(expression.Evaluate("2026-08-06T12:00:00"), Is.Null);
+        var expression = new Expression("duration-between(\"invalid\")", new Context());
+        Assert.That(expression.Evaluate(DateTime.Parse("2026-08-06T12:00:00")), Is.Null);
     }
 
     [Test]
@@ -181,7 +181,7 @@ public class ExpressionTest
         context.Variables.Add<int>("myVar", 6);
         context.CurrentObject.Set(new List<decimal>() { 15, 8, 3 });
 
-        var expression = new Expression("lower | skip-last-chars( {@myVar | subtract(#2) })", context);
+        var expression = new Expression("lower | skip-last-chars( {@myVar | subtract(^.2) })", context);
         var result = expression.Evaluate("Nikola Tesla");
         Assert.That(result, Is.EqualTo("nikola te"));
     }
@@ -192,7 +192,7 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new List<int>() { 2, 3 });
 
-        var expression = new Expression("numeric-to-multiply(#1)", context);
+        var expression = new Expression("numeric-to-multiply(^.1)", context);
         var result = expression.Evaluate(10);
         Assert.That(result, Is.EqualTo(30));
     }
@@ -203,7 +203,7 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new List<string>() { "2020-01-01", "2021-12-31" });
 
-        var expression = new Expression("dateTime-to-clip(#0, #1)", context);
+        var expression = new Expression("dateTime-to-clip(^.0, ^.1)", context);
         var result = expression.Evaluate("2018-01-01");
         Assert.That(result, Is.EqualTo(new DateTime(2020, 01, 01)));
     }
@@ -233,7 +233,7 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new { Values = new object[] { "1", 2, true } });
 
-        var expression = new ClosedExpression("[Values] | sum", context);
+        var expression = new ClosedExpression("^.Values | sum", context);
         var result = expression.Evaluate();
         Assert.That(result, Is.EqualTo(4m));
     }
@@ -244,7 +244,7 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new List<object> { new[] { 1, 9, 4 } });
 
-        var expression = new ClosedExpression("#0 | max", context);
+        var expression = new ClosedExpression("^.0 | max", context);
         var result = expression.Evaluate();
         Assert.That(result, Is.EqualTo(9m));
     }
@@ -266,10 +266,10 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(6m));
     }
 
-    [TestCase("{true,true,true} | every", true)]
-    [TestCase("{true,false,true} | every", false)]
-    [TestCase("{false,true,false} | any", true)]
-    [TestCase("{false,false,false} | any", false)]
+    [TestCase("{#true,#true,#true} | every", true)]
+    [TestCase("{#true,#false,#true} | every", false)]
+    [TestCase("{#false,#true,#false} | any", true)]
+    [TestCase("{#false,#false,#false} | any", false)]
     [TestCase("{} | every", true)]
     [TestCase("{} | any", false)]
     public void Evaluate_DirectBooleanAccumulatorSyntax_Valid(string code, bool expected)
@@ -380,7 +380,7 @@ public class ExpressionTest
         var expression = new ClosedExpression("{1,2,3,4} | filter(greater-than(2))");
         var result = expression.Evaluate();
 
-        Assert.That(result, Is.EqualTo(new object?[] { "3", "4" }));
+        Assert.That(result, Is.EqualTo(new object?[] { 3m, 4m }));
     }
 
     [Test]
@@ -389,13 +389,13 @@ public class ExpressionTest
         var expression = new ClosedExpression("{1,2,3,4,5} | filter(even)");
         var result = expression.Evaluate();
 
-        Assert.That(result, Is.EqualTo(new object?[] { "2", "4" }));
+        Assert.That(result, Is.EqualTo(new object?[] { 2m, 4m }));
     }
 
     [Test]
     public void Evaluate_StringArrayPipeFilterStartsWith_Valid()
     {
-        var expression = new ClosedExpression("{\"alice\",\"bob\",\"anna\"} | filter(starts-with(a))");
+        var expression = new ClosedExpression("{\"alice\",\"bob\",\"anna\"} | filter(starts-with(\"a\"))");
         var result = expression.Evaluate();
 
         Assert.That(result, Is.EqualTo(new object?[] { "alice", "anna" }));
@@ -415,12 +415,12 @@ public class ExpressionTest
             }
         });
 
-        var expression = new ClosedExpression("[customer] | record(customerName := field(name), requestedBy := [name])", context);
+        var expression = new ClosedExpression("^.customer | record(customerName := field(name), requestedBy := ^.name)", context);
         var result = (RecordValue)expression.Evaluate()!;
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "customerName", "requestedBy" }));
+            Assert.That(result.Keys.ToArray(), Is.EqualTo(["customerName", "requestedBy"]));
             Assert.That(result["customerName"], Is.EqualTo("Alice"));
             Assert.That(result["requestedBy"], Is.EqualTo("Cedric"));
         });
@@ -461,9 +461,9 @@ public class ExpressionTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(new ClosedExpression("[customers] |> (.name)", context).Evaluate(),
+            Assert.That(new ClosedExpression("^.customers |> (.name)", context).Evaluate(),
                 Is.EqualTo(new object?[] { "Alice", "Bob" }));
-            Assert.That(new ClosedExpression("[customers] | filter(.active) |> (.name)", context).Evaluate(),
+            Assert.That(new ClosedExpression("^.customers | filter(.active) |> (.name)", context).Evaluate(),
                 Is.EqualTo(new object?[] { "Alice" }));
         });
     }
@@ -541,7 +541,7 @@ public class ExpressionTest
     {
         Assert.That(
             () => new Expression("record(name := field(name), name := field(preferred-name))"),
-            Throws.TypeOf<ParseException>());
+            Throws.TypeOf<BindingException>());
     }
 
     [Test]
@@ -561,14 +561,14 @@ public class ExpressionTest
     [Test]
     public void Evaluate_RecordLiteral_ParsesTypedValues()
     {
-        var expression = new ClosedExpression("{name := Alice, active := true, retries := 3, ratio := 1.5, missing := null}");
+        var expression = new ClosedExpression("{name := \"Alice\", active := #true, retries := 3, ratio := 1.5, missing := #null}");
         var result = (RecordValue)expression.Evaluate()!;
 
         Assert.Multiple(() =>
         {
             Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "name", "active", "retries", "ratio", "missing" }));
             Assert.That(result["name"], Is.EqualTo("Alice"));
-            Assert.That(result["active"], Is.EqualTo(true));
+            Assert.That(result["active"], Is.True);
             Assert.That(result["retries"], Is.EqualTo(3));
             Assert.That(result["ratio"], Is.EqualTo(1.5m));
             Assert.That(result["missing"], Is.Null);

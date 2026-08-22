@@ -374,19 +374,19 @@ public class CeilingMinute : BaseTemporalFunction
 public class Forward : BaseTemporalFunction
 {
     public Func<int> Times { get; }
-    public Func<string> TimeSpan { get; }
+    public Func<TimeOnly> Time { get; }
 
-    /// <param name="timeSpan">The value to be added to the argument value</param>
+    /// <param name="time">The value to be added to the argument value</param>
     /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the addition</param>
-    public Forward(Func<string> timeSpan, Func<int> times)
-        => (TimeSpan, Times) = (timeSpan, times);
+    public Forward(Func<TimeOnly> time, Func<int> times)
+        => (Time, Times) = (time, times);
 
-    /// <param name="timeSpan">The value to be added to the argument value</param>
-    public Forward(Func<string> timeSpan)
-        : this(timeSpan, () => 1) { }
+    /// <param name="time">The value to be added to the argument value</param>
+    public Forward(Func<TimeOnly> time)
+        : this(time, () => 1) { }
 
     protected override object EvaluateDateTime(DateTime value)
-        => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Invoke()!).Ticks * Times.Invoke());
+        => value.AddTicks(Time.Invoke().ToTimeSpan().Ticks * Times.Invoke());
 }
 
 /// <summary>
@@ -395,15 +395,15 @@ public class Forward : BaseTemporalFunction
 [Function(prefix: "dateTime", aliases: ["dateTime-to-subtract"])]
 public class Backward : Forward
 {
-    /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
+    /// <param name="time">The value to be subtracted to the argument value.</param>
     /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
-    public Backward(Func<string> timeSpan, Func<int> times)
-        : base(timeSpan, times) { }
+    public Backward(Func<TimeOnly> time, Func<int> times)
+        : base(time, times) { }
 
-    /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
-    public Backward(Func<string> timeSpan)
-        : base(timeSpan) { }
+    /// <param name="time">The value to be subtracted to the argument value.</param>
+    public Backward(Func<TimeOnly> time)
+        : base(time) { }
 
     protected override object EvaluateDateTime(DateTime value)
-        => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Invoke()!).Ticks * Times.Invoke() * -1);
+        => value.AddTicks(Time.Invoke().ToTimeSpan().Ticks * Times.Invoke() * -1);
 }

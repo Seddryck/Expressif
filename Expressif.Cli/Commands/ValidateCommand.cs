@@ -84,7 +84,8 @@ internal static class ValidateCommand
                 Console.Error.WriteLine(exception.Message);
                 return ExitCodes.InvalidExpressionOrInput;
             }
-            catch (Exception exception) when (exception is Sprache.ParseException
+            catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
+                                              or Expressif.Bindings.BindingException
                                               or NotImplementedFunctionException
                                               or MissingOrUnexpectedParametersFunctionException)
             {

@@ -83,12 +83,12 @@ public class CasingFunctionsTests
         });
     }
 
-    [TestCase("{alice, bob}")]
+    [TestCase("{\"alice\", \"bob\"}")]
     [TestCase("{`alice`,`bob`}")]
     public void TextCasing_StringArrayLikeInput_UsesArraySemantics(string value)
         => Assert.That(new Upper().Evaluate(value), Is.EqualTo("ALICE BOB"));
 
-    [TestCase("{alice, bob}")]
+    [TestCase("{\"alice\", \"bob\"}")]
     [TestCase("{`alice`,`bob`}")]
     public void WordCasing_StringArrayLikeInput_UsesArraySemantics(string value)
         => Assert.That(new PascalCase().Evaluate(value), Is.EqualTo("AliceBob"));
