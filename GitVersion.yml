@@ -15,6 +15,11 @@ branches:
     is-main-branch: true
     increment: Patch
     mode: ContinuousDeployment
+  next-major:
+    regex: ^(?<BranchName>next-major)$
+    increment: Major
+    source-branches:
+    - main
   feature:
     label: beta.{BranchName}
     regex: ^(feat(ure)?s?)[/-](?<BranchName>.+)
