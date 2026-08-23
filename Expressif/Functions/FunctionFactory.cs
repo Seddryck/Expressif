@@ -15,7 +15,6 @@ namespace Expressif.Functions;
 
 public class FunctionFactory : BaseExpressionFactory
 {
-    private ExpressifBinder Binder { get; } = new();
     private static readonly PredicateTypeMapper PredicateTypeMapper = new();
     private static readonly HashSet<string> ImplicitFoldAccumulators = new(
         new AccumulatorIntrospector().Locate().Select(x => x.Name),
@@ -25,13 +24,7 @@ public class FunctionFactory : BaseExpressionFactory
     public FunctionFactory()
         : base(new FunctionTypeMapper()) { }
 
-    public IFunction Instantiate(string code, IContext context)
-    {
-        var rootExpression = Binder.Bind(code);
-        return Instantiate(rootExpression, context);
-    }
-
-    internal IFunction Instantiate(IRootExpression rootExpression, IContext context)
+    public IFunction Instantiate(IRootExpression rootExpression, IContext context)
     {
         return rootExpression switch
         {
@@ -41,9 +34,8 @@ public class FunctionFactory : BaseExpressionFactory
         };
     }
 
-    public IFunction InstantiateClosed(string code, IContext context)
+    public IFunction InstantiateClosed(IRootExpression rootExpression, IContext context)
     {
-        var rootExpression = Binder.Bind(code);
         return rootExpression switch
         {
             ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),

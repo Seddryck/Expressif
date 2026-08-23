@@ -60,7 +60,7 @@ public class CoerceFunctionsTest
     [TestCase("coerce-datetime", "2026-08-19 14:30:00", typeof(DateTime))]
     public void CoerceFunctions_AreAvailableToExpressionFactory(string name, object value, Type expectedType)
     {
-        var function = new FunctionFactory().Instantiate(name, new Context());
+        var function = BindingTestAdapter.Executable(name, new Context());
 
         Assert.That(function.Evaluate(value), Is.TypeOf(expectedType));
     }

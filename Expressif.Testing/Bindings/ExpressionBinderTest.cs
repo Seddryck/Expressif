@@ -10,6 +10,15 @@ public class ExpressionBinderTest
     { }
 
     [Test]
+    public void Bind_ParsedSyntax_ReturnsExecutableExpression()
+    {
+        var syntax = ExpressionParser.Parse("upper");
+        var expression = ExpressionBinder.Bind(syntax);
+
+        Assert.That(expression.Evaluate("foo"), Is.EqualTo("FOO"));
+    }
+
+    [Test]
     [TestCase("text-to-func(\"foo\", @bar)", 1)]
     [TestCase("text-to-func", 1)]
     [TestCase("text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar)", 2)]

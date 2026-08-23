@@ -1,4 +1,6 @@
 using Expressif.Functions;
+using Expressif.Bindings;
+using Expressif.Syntax;
 
 namespace Expressif;
 
@@ -6,14 +8,19 @@ public class ClosedExpression
 {
     private readonly IFunction expression;
 
-    public ClosedExpression(string code)
-        : this(code, new Context()) { }
+    public static ClosedExpression Create(string text)
+        => Create(text, new Context());
 
-    public ClosedExpression(string code, IContext context)
-        : this(code, context, new Functions.FunctionFactory()) { }
+    public static ClosedExpression Create(string text, IContext context)
+    {
+        var syntax = ExpressionParser.Parse(text);
+        var boundExpression = new ExpressifBinder().Bind(syntax);
+        var expression = new Functions.FunctionFactory().InstantiateClosed(boundExpression, context);
+        return new ClosedExpression(expression);
+    }
 
-    public ClosedExpression(string code, IContext context, Functions.FunctionFactory factory)
-        => expression = factory.InstantiateClosed(code, context);
+    private ClosedExpression(IFunction expression)
+        => this.expression = expression;
 
     public object? Evaluate()
         => expression.Evaluate(null);

@@ -8,7 +8,7 @@ internal static class ValidateCommand
         = static (code, context) => Expression.Create(code, context);
 
     internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
-        = static (code, context) => new ClosedExpression(code, context);
+        = static (code, context) => ClosedExpression.Create(code, context);
 
     public static Command Create()
     {

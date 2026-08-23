@@ -2,6 +2,7 @@ using Expressif.Bindings;
 using Expressif.Predicates.Text;
 using Expressif.Values;
 using Expressif.Values.Casters;
+using Expressif.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ public class IntervalBuilder
     }
 
     public virtual IInterval Create(string value)
-        => new ExpressifBinder().BindParameter(value) is IntervalParameter interval
+        => new ExpressifBinder().BindParameter(ExpressionParser.Parse(value)) is IntervalParameter interval
             ? Create(interval.Value)
             : throw new BindingException($"Source '{value}' is not an interval.");
 

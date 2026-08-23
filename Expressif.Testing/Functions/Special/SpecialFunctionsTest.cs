@@ -14,7 +14,7 @@ public class SpecialFunctionsTest
     {
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new FunctionFactory().Instantiate($"coalesce({string.Join(", ", expressions)})", context);
+        var function = BindingTestAdapter.Executable($"coalesce({string.Join(", ", expressions)})", context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
@@ -61,7 +61,7 @@ public class SpecialFunctionsTest
     [Test]
     public void Coalesce_OneParsedExpression_ThrowsBindingError()
         => Assert.That(
-            () => new FunctionFactory().Instantiate("coalesce(^.name)", new Context()),
+            () => BindingTestAdapter.Executable("coalesce(^.name)", new Context()),
             Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
     [Test]
@@ -74,7 +74,7 @@ public class SpecialFunctionsTest
         };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new FunctionFactory().Instantiate(
+        var function = BindingTestAdapter.Executable(
             "coalesce(^.nickname, ^.name, \"Anonymous\") | upper",
             context);
 
@@ -91,7 +91,7 @@ public class SpecialFunctionsTest
         };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new FunctionFactory().Instantiate(
+        var function = BindingTestAdapter.Executable(
             "coalesce(field(nickname), .name)",
             context);
 
@@ -110,7 +110,7 @@ public class SpecialFunctionsTest
         var value = new Dictionary<string, object?> { ["name"] = "Alice" };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new FunctionFactory().Instantiate(expression, context);
+        var function = BindingTestAdapter.Executable(expression, context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
@@ -125,7 +125,7 @@ public class SpecialFunctionsTest
         };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new FunctionFactory().Instantiate("coalesce(.nickname, .name)", context);
+        var function = BindingTestAdapter.Executable("coalesce(.nickname, .name)", context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
     }

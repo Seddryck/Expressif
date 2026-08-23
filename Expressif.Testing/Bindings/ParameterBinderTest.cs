@@ -100,7 +100,7 @@ public class ParameterBinderTest
     [Test]
     public void Parse_TupleLiteral_RoundTripsThroughClosedExpression()
     {
-        var value = new ClosedExpression("T(1, T(2, 3))").Evaluate();
+        var value = ClosedExpression.Create("T(1, T(2, 3))").Evaluate();
 
         Assert.That(ValueFormatter.Format(value), Is.EqualTo("T(1, T(2, 3))"));
     }

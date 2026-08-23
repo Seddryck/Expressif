@@ -15,7 +15,7 @@ namespace Expressif.Cli.Commands;
 internal static class RunCommand
 {
     private static readonly Func<string, Context, IExpression> DefaultBuildExpression = static (code, context) => Expression.Create(code, context);
-    private static readonly Func<string, Context, ClosedExpression> DefaultBuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
+    private static readonly Func<string, Context, ClosedExpression> DefaultBuildClosedExpression = static (code, context) => ClosedExpression.Create(code, context);
     private static readonly Func<ClosedExpression, object?> DefaultEvaluateClosedExpression = static expression => expression.Evaluate();
     private static readonly Func<string, object?> DefaultParseInput = static input => InputValueParser.Parse(input);
     private static readonly Func<string, object?> DefaultResolveSourceValue = ResolveSourceValueCore;
@@ -748,7 +748,7 @@ internal static class RunCommand
 
             try
             {
-                var parameter = new ExpressifBinder().BindParameter(text);
+                var parameter = new ExpressifBinder().BindParameter(ExpressionParser.Parse(text));
                 return ConvertToRuntimeValue(parameter);
             }
             catch (Exception exception) when (exception is ExpressifSyntaxException or BindingException)
@@ -765,7 +765,7 @@ internal static class RunCommand
             var normalized = text.Trim();
             try
             {
-                var parameter = new ExpressifBinder().BindParameter(text);
+                var parameter = new ExpressifBinder().BindParameter(ExpressionParser.Parse(text));
                 if (normalized.Length >= 2 && normalized[0] is '"' or '`')
                 {
                     return parameter switch
@@ -796,7 +796,7 @@ internal static class RunCommand
 
             try
             {
-                var parameter = new ExpressifBinder().BindParameter(candidate);
+                var parameter = new ExpressifBinder().BindParameter(ExpressionParser.Parse(candidate));
                 value = ConvertToRuntimeValue(parameter);
                 return true;
             }

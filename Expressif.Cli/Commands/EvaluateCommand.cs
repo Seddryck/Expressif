@@ -11,7 +11,7 @@ internal static class EvaluateCommand
         = static (code, context) => Expression.Create(code, context);
 
     internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
-        = static (code, context) => new ClosedExpression(code, context);
+        = static (code, context) => ClosedExpression.Create(code, context);
 
     internal static Func<ClosedExpression, object?> EvaluateClosedExpression { get; set; }
         = static expression => expression.Evaluate();
@@ -22,7 +22,7 @@ internal static class EvaluateCommand
     internal static void ResetDelegates()
     {
         BuildExpression = static (code, context) => Expression.Create(code, context);
-        BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
+        BuildClosedExpression = static (code, context) => ClosedExpression.Create(code, context);
         EvaluateClosedExpression = static expression => expression.Evaluate();
         ParseInput = DefaultParseInput;
     }
