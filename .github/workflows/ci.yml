@@ -208,6 +208,19 @@ jobs:
           --filter TestCategory=conformance
           --logger "nunit;LogFilePath=../conformance/bin/Expressif.Conformance.DotNet.xml"
 
+      - name: Collect conformance test report
+        shell: pwsh
+        run: |
+          $target = Join-Path $env:GITHUB_WORKSPACE 'conformance/bin/Expressif.Conformance.DotNet.xml'
+          if (-not (Test-Path -LiteralPath $target)) {
+            $report = Get-ChildItem -Path $env:GITHUB_WORKSPACE -Recurse -File -Filter Expressif.Conformance.DotNet.xml |
+              Select-Object -First 1
+            if ($null -eq $report) {
+              throw 'The NUnit conformance report was not generated.'
+            }
+            Copy-Item -LiteralPath $report.FullName -Destination $target
+          }
+
       - name: Upload conformance test report
         uses: actions/upload-artifact@v7
         with:
