@@ -1,40 +1,27 @@
 #!/usr/bin/env bash
 set -e
 
+repo_root="$(git rev-parse --show-toplevel)"
 branch="$(git rev-parse --abbrev-ref HEAD)"
 
-case "$branch" in
-  feat/*|feature/*)
-    echo "Running update-doc.ps1 on branch: $branch"
-    ;;
-  *)
-    echo "Skipping update-doc.ps1 on branch: $branch"
-    exit 0
-    ;;
-esac
+cd "$repo_root"
 
-pwsh -ExecutionPolicy Bypass -File "../generate-info.ps1" -class "function"
-pwsh -ExecutionPolicy Bypass -File "../generate-info.ps1" -class "function" predicate
-pwsh -ExecutionPolicy Bypass -File "../generate-info.ps1" -class "function" accumulator
-
-#!/usr/bin/env bash
-set -e
-
-branch="$(git rev-parse --abbrev-ref HEAD)"
+echo "Checking C# files with StyleCop"
+dotnet format Expressif.sln analyzers --verify-no-changes --no-restore
 
 case "$branch" in
   feat/*|feature/*)
     ;;
   *)
-    echo "Skipping pre-push check about documentation on branch: $branch"
+    echo "Skipping generated documentation check on branch: $branch"
     exit 0
     ;;
 esac
 
 echo "Updating language indexes for $branch"
-pwsh -ExecutionPolicy Bypass -File "../generate-info.ps1" -Class "function"
-pwsh -ExecutionPolicy Bypass -File "../generate-info.ps1" -Class "predicate"
-pwsh -ExecutionPolicy Bypass -File "../generate-info.ps1" -Class "accumulator"
+pwsh -ExecutionPolicy Bypass -File "./generate-info.ps1" -Class "function"
+pwsh -ExecutionPolicy Bypass -File "./generate-info.ps1" -Class "predicate"
+pwsh -ExecutionPolicy Bypass -File "./generate-info.ps1" -Class "accumulator"
 
 if [ -n "$(git status --porcelain)" ]; then
   echo "Generated documentation changes detected"
@@ -49,6 +36,7 @@ if [ -n "$(git status --porcelain)" ]; then
   pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" function temporal
   pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" function io
   pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" function array
+  pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" function record
   pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" accumulator array
   pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" predicate special
   pwsh -ExecutionPolicy Bypass -File "./update-docs.ps1" predicate text
