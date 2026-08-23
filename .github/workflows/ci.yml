@@ -89,7 +89,7 @@ jobs:
           }
 
   tests:
-    name: tests (${{ matrix.name }})
+    name: build and tests (${{ matrix.name }})
     needs:
       - prepare
       - validate-conformance
@@ -196,10 +196,27 @@ jobs:
           use_oidc: true
 
   package:
+    name: package (${{ matrix.name }})
     needs:
       - prepare
       - tests
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: NuGet
+            kind: nuget
+            artifact: nuget-packages
+            paths: |
+              **/*.nupkg
+              **/*.snupkg
+          - name: conformance
+            kind: conformance
+            artifact: conformance-packages
+            paths: |
+              conformance/bin/Expressif.Conformance.*.zip
+              conformance/bin/expressif.conformance.dotnet.*.yaml
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -212,19 +229,23 @@ jobs:
           dotnet-version: 10.0.x
 
       - name: Download conformance test report
+        if: matrix.kind == 'conformance'
         uses: actions/download-artifact@v8
         with:
           name: conformance-test-report
           path: conformance/bin
 
       - name: Restore local .NET tools
+        if: matrix.kind == 'conformance'
         run: dotnet tool restore
 
       - name: Install conformance dependencies
+        if: matrix.kind == 'conformance'
         shell: pwsh
         run: . ./Conformance.ps1; Install-ConformanceDependencies
 
       - name: Pack NuGet packages
+        if: matrix.kind == 'nuget'
         run: >-
           dotnet pack Expressif
           --configuration Release
@@ -234,6 +255,7 @@ jobs:
           -p:ContinuousIntegrationBuild=true
 
       - name: Package conformance assets
+        if: matrix.kind == 'conformance'
         shell: pwsh
         env:
           GitVersion_SemVer: ${{ needs.prepare.outputs.semver }}
@@ -253,13 +275,9 @@ jobs:
       - name: Upload package artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: packages-and-conformance
+          name: ${{ matrix.artifact }}
           if-no-files-found: error
-          path: |
-            **/*.nupkg
-            **/*.snupkg
-            conformance/bin/Expressif.Conformance.*.zip
-            conformance/bin/expressif.conformance.dotnet.*.yaml
+          path: ${{ matrix.paths }}
 
   syntax-assets:
     needs: prepare
