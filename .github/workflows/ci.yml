@@ -1,0 +1,366 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - next-major
+    tags-ignore:
+      - '**'
+    paths-ignore:
+      - '.githooks/**'
+      - 'docs/**'
+      - 'misc/**'
+      - 'README.md'
+      - 'LICENSE'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+  pull_request:
+    paths-ignore:
+      - '.githooks/**'
+      - 'docs/**'
+      - 'misc/**'
+      - 'README.md'
+      - 'LICENSE'
+      - 'CODE_OF_CONDUCT.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NO_WORKLOAD_UPDATE_NOTIFICATION: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
+jobs:
+  prepare:
+    runs-on: windows-latest
+    outputs:
+      semver: ${{ steps.version.outputs.semver }}
+      patch: ${{ steps.version.outputs.patch }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Install GitVersion
+        shell: pwsh
+        run: ./install-gitversion.ps1
+
+      - name: Calculate version
+        id: version
+        shell: pwsh
+        run: |
+          $version = gitversion /output json | ConvertFrom-Json
+          "semver=$($version.SemVer)" >> $env:GITHUB_OUTPUT
+          "patch=$($version.Patch)" >> $env:GITHUB_OUTPUT
+          Write-Host "Building Expressif version $($version.SemVer)"
+
+      - name: Restore local .NET tools
+        run: dotnet tool restore
+
+  validate-conformance:
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install conformance dependencies
+        shell: pwsh
+        run: . ./Conformance.ps1; Install-ConformanceDependencies
+
+      - name: Validate conformance definitions
+        shell: pwsh
+        run: |
+          . ./Conformance.ps1
+          $violations = Validate-Conformance -Path ./conformance
+          if ($violations -gt 0) {
+            throw "Conformance validation failed with $violations violation(s)."
+          }
+
+  tests:
+    name: build and tests (${{ matrix.name }})
+    needs:
+      - prepare
+      - validate-conformance
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: library, net8.0
+            project: Expressif.Testing/Expressif.Testing.csproj
+            framework: net8.0
+            coverage: expressif-net8.0
+          - name: library, net9.0
+            project: Expressif.Testing/Expressif.Testing.csproj
+            framework: net9.0
+            coverage: expressif-net9.0
+          - name: library, net10.0
+            project: Expressif.Testing/Expressif.Testing.csproj
+            framework: net10.0
+            coverage: expressif-net10.0
+          - name: CLI, net10.0
+            project: Expressif.Cli.Tests/Expressif.Cli.Tests.csproj
+            framework: net10.0
+            coverage: expressif-cli-net10.0
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Restore test dependencies
+        run: dotnet restore ${{ matrix.project }} --locked-mode
+
+      - name: Build test project
+        run: >-
+          dotnet build ${{ matrix.project }}
+          --configuration Release
+          --framework ${{ matrix.framework }}
+          --no-restore
+          --nologo
+          -p:Version=${{ needs.prepare.outputs.semver }}
+          -p:ContinuousIntegrationBuild=true
+
+      - name: Run tests with coverage
+        shell: pwsh
+        run: |
+          $results = '.coverage/results'
+          dotnet test '${{ matrix.project }}' `
+            --configuration Release `
+            --framework '${{ matrix.framework }}' `
+            --no-build `
+            --no-restore `
+            --nologo `
+            --collect 'XPlat Code Coverage;Format=opencover' `
+            --results-directory $results
+
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Tests failed for ${{ matrix.name }}.'
+          }
+
+          $report = Get-ChildItem -Path $results -Recurse -File -Filter coverage.opencover.xml |
+            Select-Object -First 1
+          if ($null -eq $report) {
+            throw 'Coverage report was not generated for ${{ matrix.name }}.'
+          }
+          Copy-Item $report.FullName '.coverage/${{ matrix.coverage }}.xml'
+
+      - name: Create conformance report directory
+        if: matrix.coverage == 'expressif-net10.0'
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
+
+      - name: Run .NET conformance tests
+        if: matrix.coverage == 'expressif-net10.0'
+        run: >-
+          dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
+          --TestCaseFilter:TestCategory=conformance
+          --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
+
+      - name: Upload conformance test report
+        if: matrix.coverage == 'expressif-net10.0'
+        uses: actions/upload-artifact@v7
+        with:
+          name: conformance-test-report
+          if-no-files-found: error
+          retention-days: 7
+          path: conformance/bin/Expressif.Conformance.DotNet.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
+        with:
+          files: ./.coverage/${{ matrix.coverage }}.xml
+          flags: ${{ matrix.coverage }}
+          name: ${{ matrix.coverage }}
+          fail_ci_if_error: true
+          disable_search: true
+          use_oidc: true
+
+  package:
+    name: package (${{ matrix.name }})
+    needs:
+      - prepare
+      - tests
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Expressif NuGet
+            kind: nuget
+            project: Expressif/Expressif.csproj
+            pack_arguments: --include-symbols
+            artifact: expressif-nuget-package
+            paths: |
+              Expressif/bin/Release/*.nupkg
+              Expressif/bin/Release/*.snupkg
+          - name: CLI NuGet
+            kind: nuget
+            project: Expressif.Cli/Expressif.Cli.csproj
+            pack_arguments: ''
+            artifact: expressif-cli-nuget-package
+            paths: |
+              Expressif.Cli/bin/Release/*.nupkg
+              Expressif.Cli/bin/Release/*.snupkg
+          - name: conformance
+            kind: conformance
+            artifact: conformance-packages
+            paths: |
+              conformance/bin/Expressif.Conformance.*.zip
+              conformance/bin/expressif.conformance.dotnet.*.yaml
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Restore package dependencies
+        if: matrix.kind == 'nuget'
+        run: dotnet restore ${{ matrix.project }} --locked-mode
+
+      - name: Download conformance test report
+        if: matrix.kind == 'conformance'
+        uses: actions/download-artifact@v8
+        with:
+          name: conformance-test-report
+          path: conformance/bin
+
+      - name: Restore local .NET tools
+        if: matrix.kind == 'conformance'
+        run: dotnet tool restore
+
+      - name: Install conformance dependencies
+        if: matrix.kind == 'conformance'
+        shell: pwsh
+        run: . ./Conformance.ps1; Install-ConformanceDependencies
+
+      - name: Pack NuGet packages
+        if: matrix.kind == 'nuget'
+        run: >-
+          dotnet pack ${{ matrix.project }}
+          --configuration Release
+          ${{ matrix.pack_arguments }}
+          --no-restore
+          --nologo
+          -p:Version=${{ needs.prepare.outputs.semver }}
+          -p:ContinuousIntegrationBuild=true
+
+      - name: Package conformance assets
+        if: matrix.kind == 'conformance'
+        shell: pwsh
+        env:
+          GitVersion_SemVer: ${{ needs.prepare.outputs.semver }}
+        run: |
+          . ./Conformance.ps1
+          $conformanceVersion = Get-ConformanceVersion -Warn
+          Package-Conformance -Version $conformanceVersion
+          ./Export-ConformanceReport.ps1 `
+            -Path ./conformance `
+            -ReportPath ./conformance/bin/Expressif.Conformance.DotNet.xml `
+            -OutputYamlPath ./conformance/bin/expressif.conformance.dotnet.${{ needs.prepare.outputs.semver }}.yaml `
+            -Platform dotnet `
+            -PlatformVersion ${{ needs.prepare.outputs.semver }} `
+            -ConformanceVersion $env:GitVersion_Conformance_SemVer `
+            -NUnit
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact }}
+          if-no-files-found: error
+          path: ${{ matrix.paths }}
+
+  syntax-assets:
+    needs: prepare
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Restore local .NET tools
+        run: dotnet tool restore
+
+      - name: Generate syntax assets
+        shell: pwsh
+        working-directory: Expressif.Syntax
+        run: ./New-tmBundle.ps1 -Bundle expressif-syntax -Version ${{ needs.prepare.outputs.semver }}
+
+      - name: Upload syntax assets
+        uses: actions/upload-artifact@v7
+        with:
+          name: syntax-assets
+          if-no-files-found: error
+          path: Expressif.Syntax/bin/**
+
+  distribution:
+    needs:
+      - prepare
+      - package
+      - syntax-assets
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: ./distribution/Install-Iscc.ps1
+
+      - name: Build distribution
+        shell: pwsh
+        run: >-
+          ./distribution/build-distribution.ps1
+          -Version ${{ needs.prepare.outputs.semver }}
+          -Configuration Release
+
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: distribution
+          if-no-files-found: error
+          path: |
+            distribution/bin/archives/Expressif-*.*
+            distribution/bin/installers/Expressif-*-setup.exe*
