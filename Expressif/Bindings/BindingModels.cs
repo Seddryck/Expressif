@@ -1,6 +1,6 @@
 namespace Expressif.Bindings;
 
-public interface IExpression { }
+public interface IBoundExpression { }
 public interface IRootExpression { }
 public sealed record OpenRootExpression(OpenExpression Expression) : IRootExpression;
 public sealed record ClosedRootExpression(ClosedExpression Expression) : IRootExpression;
@@ -13,19 +13,19 @@ public enum FunctionSyntax
     TupleProjectionShorthand,
 }
 
-public sealed class Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard) : IExpression
+public sealed class Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard) : IBoundExpression
 {
     public string Name { get; } = name;
     public IParameter[] Parameters { get; } = parameters;
     public FunctionSyntax Syntax { get; } = syntax;
 }
 
-public class OpenExpression(IEnumerable<Function> members) : IExpression
+public class OpenExpression(IEnumerable<Function> members) : IBoundExpression
 {
     public IEnumerable<Function> Members { get; } = members;
 }
 
-public class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IExpression
+public class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IBoundExpression
 {
     private static readonly HashSet<string> ImplicitFoldAccumulators =
         ["count", "sum", "min", "max", "first", "last", "every", "any"];

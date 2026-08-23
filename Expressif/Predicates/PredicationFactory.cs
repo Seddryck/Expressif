@@ -1,6 +1,7 @@
 using Expressif.Functions;
 using Expressif.Bindings;
 using Expressif.Predicates.Operators;
+using Expressif.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,7 +28,7 @@ public class PredicationFactory : BaseExpressionFactory
 
     public virtual IPredicate Instantiate(string code, IContext context)
     {
-        var predication = Binder.BindPredication(code);
+        var predication = Binder.BindPredication(ExpressionParser.Parse(code));
         var predicate = Instantiate(predication, context);
         return predicate;
     }

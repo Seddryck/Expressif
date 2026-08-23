@@ -30,7 +30,7 @@ public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
 
         try
         {
-            var parameter = new ExpressifBinder().BindParameter(text);
+            var parameter = new ExpressifBinder().BindParameter(ExpressionParser.Parse(text));
             if (parameter is not ArrayParameter array)
                 return false;
 

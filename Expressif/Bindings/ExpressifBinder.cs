@@ -4,8 +4,6 @@ namespace Expressif.Bindings;
 
 public sealed class ExpressifBinder
 {
-    public IRootExpression Bind(string source) => Bind(ExpressifSyntax.Parse(source));
-
     public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
     {
         OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
@@ -15,17 +13,16 @@ public sealed class ExpressifBinder
         _ => throw Unsupported(syntax),
     };
 
-    public Function BindFunction(string source)
+    public Function BindFunction(RootExpressionSyntax syntax)
     {
-        var root = Bind(source);
+        var root = Bind(syntax);
         return root is OpenRootExpression open && open.Expression.Members.Count() == 1
             ? open.Expression.Members.Single()
-            : throw new BindingException($"Source '{source}' is not a single function.");
+            : throw new BindingException($"Source '{syntax.Text}' is not a single function.");
     }
 
-    public IParameter BindParameter(string source)
+    public IParameter BindParameter(RootExpressionSyntax syntax)
     {
-        var syntax = ExpressifSyntax.Parse(source);
         if (syntax is OpenExpressionSyntax
             {
                 Source: null,
@@ -36,18 +33,18 @@ public sealed class ExpressifBinder
         var root = Bind(syntax);
         return root is ClosedRootExpression closed && !closed.Expression.Members.Any()
             ? closed.Expression.Parameter
-            : throw new BindingException($"Source '{source}' is not a standalone parameter.");
+            : throw new BindingException($"Source '{syntax.Text}' is not a standalone parameter.");
     }
 
-    public IPredication BindPredication(string source)
+    public IPredication BindPredication(RootExpressionSyntax syntax)
     {
-        var root = Bind(source);
+        var root = Bind(syntax);
         return root switch
         {
             OpenRootExpression open => new SinglePredication(open.Expression.Members.ToArray()),
             ClosedRootExpression closed when closed.Expression.Members.Any()
                 => new SinglePredication(closed.Expression.Members.ToArray()),
-            _ => throw new BindingException($"Predication '{source}' is not bound in this iteration."),
+            _ => throw new BindingException($"Predication '{syntax.Text}' is not bound in this iteration."),
         };
     }
 
