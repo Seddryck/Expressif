@@ -8,6 +8,22 @@ public class CliCommandTests
 {
     private readonly List<string> tempFilesToDelete = [];
 
+    [Test]
+    public void DiagnosticWriter_Colorize_UsesAnsiRedOnlyWhenEnabled()
+    {
+        const string message = "Syntax error [EXPR1001]";
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                CommandDiagnosticWriter.Colorize(message, useColor: true),
+                Is.EqualTo("\u001b[31mSyntax error [EXPR1001]\u001b[0m"));
+            Assert.That(
+                CommandDiagnosticWriter.Colorize(message, useColor: false),
+                Is.EqualTo(message));
+        });
+    }
+
     [TearDown]
     public void TearDown()
     {

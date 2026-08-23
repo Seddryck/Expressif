@@ -190,7 +190,7 @@ internal static class RunCommand
             }
             catch (Exception exception) when (exception is not OutOfMemoryException)
             {
-                Console.Error.WriteLine(exception.Message);
+                CommandDiagnosticWriter.WriteLine(exception.Message);
                 return ExitCodes.EvaluationFailed;
             }
         });
