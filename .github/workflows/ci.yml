@@ -8,7 +8,6 @@ on:
     tags-ignore:
       - '**'
     paths-ignore:
-      - '.github/**'
       - '.githooks/**'
       - 'docs/**'
       - 'misc/**'
@@ -19,7 +18,6 @@ on:
       - 'SECURITY.md'
   pull_request:
     paths-ignore:
-      - '.github/**'
       - '.githooks/**'
       - 'docs/**'
       - 'misc/**'
@@ -45,12 +43,12 @@ jobs:
       patch: ${{ steps.version.outputs.patch }}
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
@@ -75,10 +73,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
@@ -95,7 +93,7 @@ jobs:
           -p:ContinuousIntegrationBuild=true
 
       - name: Upload compiled outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-build
           if-no-files-found: error
@@ -108,7 +106,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install conformance dependencies
         shell: pwsh
@@ -128,15 +126,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
       - name: Download compiled outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-build
           path: .
@@ -150,7 +148,7 @@ jobs:
           --filter TestCategory!=conformance
           -p:CollectCoverage=true
           -p:CoverletOutputFormat=opencover
-          -p:CoverletOutput=../.coverage/coverage.Expressif.xml
+          -p:CoverletOutput="$env:GITHUB_WORKSPACE/.coverage/coverage.Expressif.xml"
           -p:Threshold=10
           -p:ThresholdType=line
 
@@ -168,15 +166,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
       - name: Download compiled outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-build
           path: .
@@ -189,10 +187,10 @@ jobs:
           --no-build
           --nologo
           --filter TestCategory=conformance
-          --logger "nunit;LogFilePath=./../conformance/bin/Expressif.Conformance.DotNet.xml"
+          --logger "nunit;LogFilePath=$env:GITHUB_WORKSPACE/conformance/bin/Expressif.Conformance.DotNet.xml"
 
       - name: Upload conformance test report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: conformance-test-report
           if-no-files-found: error
@@ -208,23 +206,23 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
       - name: Download compiled outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-build
           path: .
 
       - name: Download conformance test report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: conformance-test-report
           path: conformance/bin
@@ -263,7 +261,7 @@ jobs:
             -NUnit
 
       - name: Upload package artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: packages-and-conformance
           if-no-files-found: error
@@ -278,7 +276,15 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore local .NET tools
+        run: dotnet tool restore
 
       - name: Generate syntax assets
         shell: pwsh
@@ -286,7 +292,7 @@ jobs:
         run: ./New-tmBundle.ps1 -Bundle expressif-syntax -Version ${{ needs.prepare.outputs.semver }}
 
       - name: Upload syntax assets
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: syntax-assets
           if-no-files-found: error
@@ -300,10 +306,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
 
@@ -319,7 +325,7 @@ jobs:
           -Configuration Release
 
       - name: Upload distribution artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: distribution
           if-no-files-found: error
