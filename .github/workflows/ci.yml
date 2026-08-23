@@ -212,6 +212,7 @@ jobs:
           - name: Expressif NuGet
             kind: nuget
             project: Expressif/Expressif.csproj
+            pack_arguments: --include-symbols
             artifact: expressif-nuget-package
             paths: |
               Expressif/bin/Release/*.nupkg
@@ -219,6 +220,7 @@ jobs:
           - name: CLI NuGet
             kind: nuget
             project: Expressif.Cli/Expressif.Cli.csproj
+            pack_arguments: ''
             artifact: expressif-cli-nuget-package
             paths: |
               Expressif.Cli/bin/Release/*.nupkg
@@ -267,7 +269,7 @@ jobs:
         run: >-
           dotnet pack ${{ matrix.project }}
           --configuration Release
-          --include-symbols
+          ${{ matrix.pack_arguments }}
           --no-restore
           --nologo
           -p:Version=${{ needs.prepare.outputs.semver }}
