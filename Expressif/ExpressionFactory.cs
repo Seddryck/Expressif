@@ -14,8 +14,8 @@ public sealed class ExpressionFactory
     public ExpressionFactory(IExpressionParser? parser = null, IExpressionBinder? binder = null)
         => (Parser, Binder) = (parser ?? new ExpressionParser(), binder ?? new ExpressionBinder());
 
-    public IExpressionParser Parser { get; }
-    public IExpressionBinder Binder { get; }
+    private IExpressionParser Parser { get; }
+    private IExpressionBinder Binder { get; }
 
     public IExpression Create(string text)
         => Create(Parser.Parse(text));
