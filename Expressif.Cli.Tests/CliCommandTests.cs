@@ -80,7 +80,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_RecordLiteralInput_ReturnsFieldValue()
     {
-        var result = await InvokeAsync("evaluate", ".loc", "--input", "{loc:=mons, temp:=17.5}");
+        var result = await InvokeAsync("evaluate", ".loc", "--input", "{loc:=\"mons\", temp:=17.5}");
 
         Assert.Multiple(() =>
         {
@@ -93,7 +93,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_TupleLiteralInput_ReturnsTupleField()
     {
-        var result = await InvokeAsync("evaluate", "tuple-second", "--input", "T(mons, 17.5)");
+        var result = await InvokeAsync("evaluate", "tuple-second", "--input", "T(\"mons\", 17.5)");
 
         Assert.Multiple(() =>
         {
@@ -568,9 +568,9 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task Run_ScalarNullToken_RemainsTypedNull()
+    public async Task Run_ExplicitNullToken_RemainsTypedNull()
     {
-        var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "null");
+        var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "#null");
 
         Assert.Multiple(() =>
         {
@@ -597,7 +597,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_InputRecordWithDuplicateFields_ReturnsClearError()
     {
-        var result = await InvokeAsync("run", "count", "--input", "{name := alice, name := bob}");
+        var result = await InvokeAsync("run", "count", "--input", "{name := \"alice\", name := \"bob\"}");
 
         Assert.Multiple(() =>
         {
@@ -623,7 +623,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_BatchOption_RecordValue_ReturnsClearEnumerableError()
     {
-        var result = await InvokeAsync("run", "count", "--batch", "{name := alice, age := 32}");
+        var result = await InvokeAsync("run", "count", "--batch", "{name := \"alice\", age := 32}");
 
         Assert.Multiple(() =>
         {
@@ -729,7 +729,7 @@ public class CliCommandTests
     public async Task Evaluate_SourceDependentOptionWithoutSource_ReturnsClearError(string option, string expectedError)
     {
         var arguments = option == "--source-option"
-            ? new[] { "evaluate", "count", option, "header=true" }
+            ? new[] { "evaluate", "count", option, "header=#true" }
             : new[] { "evaluate", "count", option };
         var result = await InvokeAsync(arguments);
 
@@ -760,7 +760,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41,France{Environment.NewLine}Charlie,27,Germany", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -790,9 +790,9 @@ public class CliCommandTests
         var sourcePath = CreateTempFile($"name;country{Environment.NewLine} Alice;Belgium{Environment.NewLine} Bob;France", ".csv");
 
         var result = await InvokeAsync(
-            "run", "[name] | upper", "--source", sourcePath,
+            "run", ".name | upper", "--source", sourcePath,
             "--source-option", "delimiter=\";\"",
-            "--source-option", "skip-initial-space=true");
+            "--source-option", "skip-initial-space=#true");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -809,8 +809,8 @@ public class CliCommandTests
         var sourcePath = CreateTempFile($"name,country{Environment.NewLine}Alice,Belgium{Environment.NewLine}Bob,France", ".csv");
 
         var result = await InvokeAsync(
-            "run", "[name] | upper", "--source", sourcePath,
-            "--source-option", "header=true");
+            "run", ".name | upper", "--source", sourcePath,
+            "--source-option", "header=#true");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -824,7 +824,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceOption_WithoutSource_ReturnsClearError()
     {
-        var result = await InvokeAsync("run", "absolute", "--input", "1", "--source-option", "header=true");
+        var result = await InvokeAsync("run", "absolute", "--input", "1", "--source-option", "header=#true");
 
         Assert.Multiple(() =>
         {
@@ -839,7 +839,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile("name,age", ".csv");
 
-        var result = await InvokeAsync("run", "[name]", "--source", sourcePath, "--source-option", "delimiter=\"long\"");
+        var result = await InvokeAsync("run", ".name", "--source", sourcePath, "--source-option", "delimiter=\"long\"");
 
         Assert.Multiple(() =>
         {
@@ -854,7 +854,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile("name,age,country", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -869,7 +869,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile(string.Empty, ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -884,7 +884,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile($"name,name,country{Environment.NewLine}Alice,32,Belgium", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -899,7 +899,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -953,7 +953,7 @@ public class CliCommandTests
             return dataTable.CreateDataReader();
         };
 
-        var result = await InvokeAsync("run", "#0 | upper", "--source", "customers.sql");
+        var result = await InvokeAsync("run", ".name | upper", "--source", "customers.sql");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -997,7 +997,7 @@ public class CliCommandTests
             return dataTable.CreateDataReader();
         };
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", "customers.csv");
+        var result = await InvokeAsync("run", ".name | upper", "--source", "customers.csv");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -1055,7 +1055,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_EvaluationFailure_StopsEnumerationAndReturnsFailure()
     {
-        var result = await InvokeAsync("run", "add(1)", "--batch", "{1, unknown, 3}");
+        var result = await InvokeAsync("run", "add(1)", "--batch", "{1, \"unknown\", 3}");
 
         Assert.Multiple(() =>
         {

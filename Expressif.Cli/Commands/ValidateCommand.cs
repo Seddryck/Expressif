@@ -89,7 +89,7 @@ internal static class ValidateCommand
                                               or NotImplementedFunctionException
                                               or MissingOrUnexpectedParametersFunctionException)
             {
-                return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+                return ExpressionCommandCommon.WriteValidationError(exception, expressionCode, hasExpressionFile, expressionFilePath);
             }
             catch (Exception exception)
             {

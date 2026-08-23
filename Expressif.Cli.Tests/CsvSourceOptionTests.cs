@@ -5,15 +5,52 @@ namespace Expressif.Cli.Tests;
 public class CsvSourceOptionTests
 {
     [Test]
+    public void Parse_PlainScalar_FallsBackToTrimmedText()
+        => Assert.That(RunCommand.InputValueParser.Parse("  nikola  "), Is.EqualTo("nikola"));
+
+    [Test]
+    public void Parse_UnprefixedPrimitiveName_FallsBackToText()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(RunCommand.InputValueParser.Parse("null"), Is.EqualTo("null"));
+            Assert.That(RunCommand.InputValueParser.Parse("true"), Is.EqualTo("true"));
+            Assert.That(RunCommand.InputValueParser.Parse("false"), Is.EqualTo("false"));
+        });
+    }
+
+    [Test]
+    public void Parse_IsoDate_PreservesDateType()
+        => Assert.That(
+            RunCommand.InputValueParser.Parse("  2026-08-23  "),
+            Is.EqualTo(new DateOnly(2026, 8, 23)).And.TypeOf<DateOnly>());
+
+    [Test]
+    public void Parse_ExplicitPrimitives_PreserveTypes()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(RunCommand.InputValueParser.Parse("#null"), Is.Null);
+            Assert.That(RunCommand.InputValueParser.Parse("#true"), Is.True);
+            Assert.That(RunCommand.InputValueParser.Parse("#false"), Is.False);
+        });
+    }
+
+    [TestCase("  {1, 2")]
+    [TestCase("  T(1, 2")]
+    public void Parse_MalformedStructuredInput_DoesNotFallBackToText(string value)
+        => Assert.Throws<FormatException>(() => RunCommand.InputValueParser.Parse(value));
+
+    [Test]
     public void BuildCsvProfile_AllSupportedOptions_AreTranslated()
     {
         var (profile, hasHeader) = RunCommand.BuildCsvProfile(
         [
-            "delimiter=\";\"", "line-terminator=\"|\"", "quote-char=null",
-            "double-quote=false", "escape-char=\"\\\\\"", "header=false",
-            "header-rows={1, 3}", "header-join=\".\"", "header-repeat=false",
+            "delimiter=\";\"", "line-terminator=\"|\"", "quote-char=#null",
+            "double-quote=#false", "escape-char=\"\\\\\"", "header=#false",
+            "header-rows={1, 3}", "header-join=\".\"", "header-repeat=#false",
             "comment-char=\"#\"", "comment-rows={2, 4}", "null-sequence=\"NULL\"",
-            "missing-cell=\"missing\"", "skip-initial-space=true",
+            "missing-cell=\"missing\"", "skip-initial-space=#true",
             "array-delimiter=\";\"", "array-prefix=\"[\"", "array-suffix=\"]\""
         ]);
 

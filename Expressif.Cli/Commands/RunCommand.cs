@@ -168,7 +168,7 @@ internal static class RunCommand
                                               or NotImplementedFunctionException
                                               or MissingOrUnexpectedParametersFunctionException)
             {
-                return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+                return ExpressionCommandCommon.WriteValidationError(exception, expressionCode, hasExpressionFile, expressionFilePath);
             }
             catch (Exception exception)
             {
@@ -703,7 +703,15 @@ internal static class RunCommand
         var rows = new int[values.Length];
         for (var i = 0; i < values.Length; i++)
         {
-            if (values[i] is not int row || row < 1)
+            var row = values[i] switch
+            {
+                int integer => integer,
+                decimal numeric when numeric == decimal.Truncate(numeric)
+                                     && numeric <= int.MaxValue
+                                     && numeric >= int.MinValue => (int)numeric,
+                _ => 0,
+            };
+            if (row < 1)
                 throw new FormatException($"'{name}' requires a non-empty array of one-based row indexes.");
             rows[i] = row;
         }
@@ -792,6 +800,24 @@ internal static class RunCommand
                 return false;
 
             var normalized = text.Trim();
+            if (DateOnly.TryParseExact(
+                    normalized,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var date))
+            {
+                value = date;
+                return true;
+            }
+
+            if (RecordSyntax.TryParseTypedToken(normalized, out var typedValue)
+                && typedValue is not null and not bool)
+            {
+                value = typedValue;
+                return true;
+            }
+
             var candidate = BuildQuotedScalar(normalized);
 
             try
@@ -812,22 +838,11 @@ internal static class RunCommand
             if (normalized.Length == 0)
                 return false;
 
-            // Only quote plain scalars with internal whitespace; avoid changing typed/structured inputs.
-            if (!HasInternalWhitespace(normalized))
+            if (normalized.StartsWith('{')
+                || normalized.StartsWith("T(", StringComparison.Ordinal))
                 return false;
 
             return normalized.IndexOfAny(['{', '}', '[', ']', '@', '#', '|', ',', ':']) < 0;
-        }
-
-        private static bool HasInternalWhitespace(string text)
-        {
-            for (var i = 1; i < text.Length - 1; i++)
-            {
-                if (char.IsWhiteSpace(text[i]))
-                    return true;
-            }
-
-            return false;
         }
 
         private static string BuildQuotedScalar(string text)
