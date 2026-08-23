@@ -10,9 +10,9 @@ public class ClosedExpression
         : this(code, new Context()) { }
 
     public ClosedExpression(string code, IContext context)
-        : this(code, context, new ExpressionFactory()) { }
+        : this(code, context, new Functions.FunctionFactory()) { }
 
-    public ClosedExpression(string code, IContext context, ExpressionFactory factory)
+    public ClosedExpression(string code, IContext context, Functions.FunctionFactory factory)
         => expression = factory.InstantiateClosed(code, context);
 
     public object? Evaluate()

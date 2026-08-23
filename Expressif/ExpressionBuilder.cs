@@ -16,15 +16,15 @@ namespace Expressif;
 public class ExpressionBuilder
 {
     private IContext Context { get; }
-    private ExpressionFactory Factory { get; }
+    private Functions.FunctionFactory Factory { get; }
     private ExpressionSerializer Serializer { get; }
 
     public ExpressionBuilder()
         : this(new Context()) { }
-    public ExpressionBuilder(IContext? context = null, ExpressionFactory? factory = null, ExpressionSerializer? serializer = null)
-        => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new ExpressionFactory(), serializer ?? new ExpressionSerializer());
+    public ExpressionBuilder(IContext? context = null, Functions.FunctionFactory? factory = null, ExpressionSerializer? serializer = null)
+        => (Context, Factory, Serializer) = (context ?? new Context(), factory ?? new Functions.FunctionFactory(), serializer ?? new ExpressionSerializer());
 
-    private Queue<IExpression> Pile { get; } = new();
+    private Queue<IBoundExpression> Pile { get; } = new();
 
     public ExpressionBuilder Chain<T>()
         where T : IFunction

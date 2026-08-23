@@ -13,7 +13,7 @@ using System.Linq.Expressions;
 
 namespace Expressif.Functions;
 
-public class ExpressionFactory : BaseExpressionFactory
+public class FunctionFactory : BaseExpressionFactory
 {
     private ExpressifBinder Binder { get; } = new();
     private static readonly PredicateTypeMapper PredicateTypeMapper = new();
@@ -22,12 +22,17 @@ public class ExpressionFactory : BaseExpressionFactory
         StringComparer.OrdinalIgnoreCase
     );
 
-    public ExpressionFactory()
+    public FunctionFactory()
         : base(new FunctionTypeMapper()) { }
 
     public IFunction Instantiate(string code, IContext context)
     {
-        var rootExpression = ParseRootExpression(code);
+        var rootExpression = Binder.Bind(code);
+        return Instantiate(rootExpression, context);
+    }
+
+    internal IFunction Instantiate(IRootExpression rootExpression, IContext context)
+    {
         return rootExpression switch
         {
             OpenRootExpression open => BuildOpenExpression(open.Expression, context),
@@ -38,7 +43,7 @@ public class ExpressionFactory : BaseExpressionFactory
 
     public IFunction InstantiateClosed(string code, IContext context)
     {
-        var rootExpression = ParseRootExpression(code);
+        var rootExpression = Binder.Bind(code);
         return rootExpression switch
         {
             ClosedRootExpression closed => BuildClosedExpression(closed.Expression, context),
@@ -46,9 +51,6 @@ public class ExpressionFactory : BaseExpressionFactory
             _ => throw new BindingException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
         };
     }
-
-    private IRootExpression ParseRootExpression(string code)
-        => Binder.Bind(code);
 
     public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
         => Instantiate<IFunction>(name, parameters, context);
@@ -442,7 +444,7 @@ public class ExpressionFactory : BaseExpressionFactory
             var members = openExpression.Expression.Members.ToArray();
             if (members.Any(x => x.Syntax == FunctionSyntax.FieldShorthand))
             {
-                var functions = members.Select(member => new ExpressionFactory().Instantiate(member.Name, member.Parameters, context)).ToArray();
+                var functions = members.Select(member => new FunctionFactory().Instantiate(member.Name, member.Parameters, context)).ToArray();
                 return () => new BooleanExpressionPredicate(new ChainFunction(functions));
             }
 

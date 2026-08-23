@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Expressif.Functions;
 using Expressif.Functions.Special;
 using Expressif.Testing.Conformance;
@@ -14,7 +14,7 @@ public class SpecialFunctionsTest
     {
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new ExpressionFactory().Instantiate($"coalesce({string.Join(", ", expressions)})", context);
+        var function = new FunctionFactory().Instantiate($"coalesce({string.Join(", ", expressions)})", context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
@@ -61,7 +61,7 @@ public class SpecialFunctionsTest
     [Test]
     public void Coalesce_OneParsedExpression_ThrowsBindingError()
         => Assert.That(
-            () => new ExpressionFactory().Instantiate("coalesce(^.name)", new Context()),
+            () => new FunctionFactory().Instantiate("coalesce(^.name)", new Context()),
             Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
     [Test]
@@ -74,7 +74,7 @@ public class SpecialFunctionsTest
         };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new ExpressionFactory().Instantiate(
+        var function = new FunctionFactory().Instantiate(
             "coalesce(^.nickname, ^.name, \"Anonymous\") | upper",
             context);
 
@@ -91,7 +91,7 @@ public class SpecialFunctionsTest
         };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new ExpressionFactory().Instantiate(
+        var function = new FunctionFactory().Instantiate(
             "coalesce(field(nickname), .name)",
             context);
 
@@ -110,7 +110,7 @@ public class SpecialFunctionsTest
         var value = new Dictionary<string, object?> { ["name"] = "Alice" };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new ExpressionFactory().Instantiate(expression, context);
+        var function = new FunctionFactory().Instantiate(expression, context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
@@ -125,7 +125,7 @@ public class SpecialFunctionsTest
         };
         var context = new Context();
         context.CurrentObject.Set(value);
-        var function = new ExpressionFactory().Instantiate("coalesce(.nickname, .name)", context);
+        var function = new FunctionFactory().Instantiate("coalesce(.nickname, .name)", context);
 
         Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
     }

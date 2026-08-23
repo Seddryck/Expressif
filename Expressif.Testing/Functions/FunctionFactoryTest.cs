@@ -9,7 +9,7 @@ using System.Reflection;
 
 namespace Expressif.Testing.Functions;
 
-public class ExpressionFactoryTest
+public class FunctionFactoryTest
 {
     [SetUp]
     public void Setup()
@@ -23,7 +23,7 @@ public class ExpressionFactoryTest
     [TestCase(typeof(Token), 2)]
     public void GetMatchingConstructor_TypeAndParams_Valid(Type type, int paramCount)
     {
-        var ctor = new ExpressionFactory().GetMatchingConstructor(type, paramCount);
+        var ctor = new FunctionFactory().GetMatchingConstructor(type, paramCount);
         Assert.That(ctor, Is.Not.Null);
         Assert.That(ctor.GetParameters(), Has.Length.EqualTo(paramCount));
     }
@@ -35,12 +35,12 @@ public class ExpressionFactoryTest
     [TestCase(typeof(Token), 0)]
     [TestCase(typeof(Token), 3)]
     public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)
-        => Assert.That(() => new ExpressionFactory().GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
+        => Assert.That(() => new FunctionFactory().GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
     [Test]
     public void Instantiate_RoundLiteralParameter_Valid()
     {
-        var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new LiteralParameter("1") }, new Context());
+        var function = new FunctionFactory().Instantiate(typeof(Round), new[] { new LiteralParameter("1") }, new Context());
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(1));
@@ -51,7 +51,7 @@ public class ExpressionFactoryTest
     {
         var context = new Context();
         context.Variables.Add<int>("myVar", 2);
-        var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
+        var function = new FunctionFactory().Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(2));
@@ -62,7 +62,7 @@ public class ExpressionFactoryTest
     {
         var context = new Context();
         context.CurrentObject.Set(new { Digits = 3 });
-        var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
+        var function = new FunctionFactory().Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(3));
@@ -72,7 +72,7 @@ public class ExpressionFactoryTest
     public void Instantiate_RoundObjectIndexParameter_Valid()
     {
         var context = new Context();
-        var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
+        var function = new FunctionFactory().Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
         context.CurrentObject.Set(new List<int> { 0, 4 });
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
@@ -84,7 +84,7 @@ public class ExpressionFactoryTest
     {
         var context = new Context();
         var subFunction = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", []) }));
-        var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction }, context);
+        var function = new FunctionFactory().Instantiate(typeof(Round), new[] { subFunction }, context);
         context.Variables.Add<int>("myVar", 4);
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
@@ -98,7 +98,7 @@ public class ExpressionFactoryTest
         var subFunction1 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", []) }));
         var subFunction2 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", []) }));
         var subFunction3 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", [subFunction1]), new Function("numeric-to-multiply", [subFunction2]) }));
-        var function = new ExpressionFactory().Instantiate(typeof(Round), new[] { subFunction3 }, context);
+        var function = new FunctionFactory().Instantiate(typeof(Round), new[] { subFunction3 }, context);
         context.Variables.Add<int>("myVar1", 4);
         context.Variables.Add<int>("myVar2", 5);
         Assert.That(function, Is.Not.Null);
@@ -109,7 +109,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_FoldWithAccumulatorName_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("fold(sum)", new Context());
+        var function = new FunctionFactory().Instantiate("fold(sum)", new Context());
         var fold = GetSingleFunction<Fold>(function);
         var accumulator = fold.Accumulator.Invoke();
 
@@ -120,7 +120,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_BroadcastWithAccumulatorName_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("broadcast(sum)", new Context());
+        var function = new FunctionFactory().Instantiate("broadcast(sum)", new Context());
         var broadcast = GetSingleFunction<Broadcast>(function);
         var accumulator = broadcast.Accumulator.Invoke();
 
@@ -131,7 +131,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_ScanWithAccumulatorName_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("scan(sum)", new Context());
+        var function = new FunctionFactory().Instantiate("scan(sum)", new Context());
         var scan = GetSingleFunction<Scan>(function);
         var accumulator = scan.Accumulator.Invoke();
 
@@ -142,7 +142,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_Lag_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("lag", new Context());
+        var function = new FunctionFactory().Instantiate("lag", new Context());
         var lag = GetSingleFunction<Lag>(function);
 
         Assert.That(lag, Is.Not.Null);
@@ -151,7 +151,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_Lead_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("lead", new Context());
+        var function = new FunctionFactory().Instantiate("lead", new Context());
         var lead = GetSingleFunction<Lead>(function);
 
         Assert.That(lead, Is.Not.Null);
@@ -165,7 +165,7 @@ public class ExpressionFactoryTest
     [TestCase("skip-last(2)", typeof(SkipLastElements))]
     public void Instantiate_ArraySelectionAliases_Valid(string expression, Type expectedType)
     {
-        var function = new ExpressionFactory().Instantiate(expression, new Context());
+        var function = new FunctionFactory().Instantiate(expression, new Context());
 
         var selectionFunction = GetSingleFunction(function, expectedType);
         Assert.That(selectionFunction, Is.Not.Null);
@@ -180,7 +180,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_SliceElements_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("slice-elements(1,4)", new Context());
+        var function = new FunctionFactory().Instantiate("slice-elements(1,4)", new Context());
         var sliceElements = GetSingleFunction<SliceElements>(function);
 
         Assert.That(sliceElements, Is.Not.Null);
@@ -191,7 +191,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_MapWithOpenExpressionParameter_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("map(lower | trim)", new Context());
+        var function = new FunctionFactory().Instantiate("map(lower | trim)", new Context());
         var map = GetSingleFunction<Map>(function);
         var transformation = map.Transformation.Invoke();
         var transformationFunctions = GetFunctions(transformation).ToArray();
@@ -206,7 +206,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_FilterWithPredicateExpression_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("filter(greater-than(2))", new Context());
+        var function = new FunctionFactory().Instantiate("filter(greater-than(2))", new Context());
         var filter = GetSingleFunction<Filter>(function);
         var predicate = filter.Predicate.Invoke();
 
@@ -217,7 +217,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_SliceAlias_Valid()
     {
-        var function = new ExpressionFactory().Instantiate("slice(1,4)", new Context());
+        var function = new FunctionFactory().Instantiate("slice(1,4)", new Context());
         var sliceElements = GetSingleFunction<SliceElements>(function);
 
         Assert.That(sliceElements, Is.Not.Null);
@@ -228,7 +228,7 @@ public class ExpressionFactoryTest
     [Test]
     public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
     {
-        var function = new ExpressionFactory().Instantiate("prefix(`abc`)", new Context());
+        var function = new FunctionFactory().Instantiate("prefix(`abc`)", new Context());
         var prefix = GetSingleFunction<Prefix>(function);
 
         Assert.That(prefix, Is.Not.Null);

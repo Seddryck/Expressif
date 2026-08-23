@@ -17,7 +17,7 @@ public class ExpressionSerializer
     public ExpressionSerializer(FunctionSerializer? functionSerializer = null)
         => (FunctionSerializer, ParameterSerializer) = (functionSerializer ?? new FunctionSerializer(), new ParameterSerializer());
 
-    public virtual void Serialize(IExpression expression, ref StringBuilder stringBuilder)
+    public virtual void Serialize(IBoundExpression expression, ref StringBuilder stringBuilder)
     {
         switch (expression)
         {
@@ -44,7 +44,7 @@ public class ExpressionSerializer
         SerializeContinuations(expression.Members, ref stringBuilder);
     }
 
-    public virtual void Serialize(IExpression[] expressions, ref StringBuilder stringBuilder)
+    public virtual void Serialize(IBoundExpression[] expressions, ref StringBuilder stringBuilder)
     {
         if (expressions.Length == 0)
             return;
@@ -72,10 +72,10 @@ public class ExpressionSerializer
         }
     }
 
-    public virtual string Serialize(IExpression expression)
+    public virtual string Serialize(IBoundExpression expression)
         => Serialize([expression]);
 
-    public virtual string Serialize(IExpression[] expressions)
+    public virtual string Serialize(IBoundExpression[] expressions)
     {
         var sb = new StringBuilder();
         Serialize(expressions, ref sb);
