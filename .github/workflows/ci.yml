@@ -145,23 +145,32 @@ jobs:
         run: New-Item -ItemType Directory -Path .coverage -Force | Out-Null
 
       - name: Run tests with coverage
-        run: >-
-          dotnet test Expressif.Testing
-          --configuration Release
-          --no-build
-          --nologo
-          --filter TestCategory!=conformance
-          -p:CollectCoverage=true
-          -p:CoverletOutputFormat=opencover
-          -p:CoverletOutput="$env:GITHUB_WORKSPACE/.coverage/coverage.Expressif.xml"
-          -p:Threshold=10
-          -p:ThresholdType=line
+        shell: pwsh
+        run: |
+          foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
+            dotnet test Expressif.Testing `
+              --configuration Release `
+              --framework $framework `
+              --no-build `
+              --nologo `
+              --filter 'TestCategory!=conformance' `
+              -p:CollectCoverage=true `
+              -p:CoverletOutputFormat=opencover `
+              -p:CoverletOutput="$env:GITHUB_WORKSPACE/.coverage/coverage.Expressif.$framework.xml" `
+              -p:Threshold=10 `
+              -p:ThresholdType=line
+
+            if ($LASTEXITCODE -ne 0) {
+              throw "Tests failed for $framework."
+            }
+          }
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
         with:
-          files: ./.coverage/coverage.Expressif.xml
+          files: ./.coverage/coverage.Expressif.net8.0.xml,./.coverage/coverage.Expressif.net9.0.xml,./.coverage/coverage.Expressif.net10.0.xml
           fail_ci_if_error: true
+          disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
   conformance-tests:
