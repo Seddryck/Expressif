@@ -6,27 +6,25 @@ param(
     [string] $OutputPath = ".\obj\syntaxes\expressif.tmLanguage.json"
 )
 
+. "$PSScriptRoot\Get-SyntaxModel.ps1"
+
+$syntax = Get-SyntaxModel -InputFolder $InputFolder
+$outputDirectory = Split-Path -Parent $OutputPath
+if ($outputDirectory) {
+    New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+}
+
 $model = [ordered]@{
-        functions =  Get-Content $InputFolder\function.json -Raw |
-            ConvertFrom-Json |
-            Where-Object { $_.IsPublic -eq $true } |
-            ForEach-Object {
-                [ordered]@{
-                    name = $_.Name
-                    scope = $_.Scope
-                    regex = [regex]::Escape($_.Name)
-                }
-            } 
-        predicates =  Get-Content $InputFolder\predicate.json -Raw |
-            ConvertFrom-Json |
-            Where-Object { $_.IsPublic -eq $true } |
-            ForEach-Object {
-                [ordered]@{
-                    name = $_.Name
-                    scope = $_.Scope
-                    regex = [regex]::Escape($_.Name)
-                }
-            }
+        functions = $syntax.functions | ForEach-Object {
+            [ordered]@{ name = $_.name; scope = $_.scope; regex = [regex]::Escape($_.name) }
+        }
+        predicates = $syntax.predicates | ForEach-Object {
+            [ordered]@{ name = $_.name; scope = $_.scope; regex = [regex]::Escape($_.name) }
+        }
+        constantRegex = ($syntax.constants | ForEach-Object { [regex]::Escape($_) }) -join '|'
+        operatorRegex = ($syntax.operators | ForEach-Object {
+            ([regex]::Escape($_)).Replace('\', '\\')
+        }) -join '|'
     } | ConvertTo-Json -Depth 20
 
 Write-Host "Running Didot via local installation..."

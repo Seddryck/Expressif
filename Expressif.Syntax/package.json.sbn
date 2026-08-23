@@ -1,6 +1,6 @@
 {
-    "name": "expressif-syntax",
-    "displayName": "Expressif Syntax",
+    "name": "expressif-syntax-highlighting",
+    "displayName": "Expressif Syntax Highlighting",
     "description": "Syntax highlighting for Expressif expressions in Visual Studio Code.",
     "categories": [ "Programming Languages" ],
     "version": "{{model.version}}",
