@@ -104,13 +104,25 @@ public static class DocumentationExtensions
         if (ctorNodes == null || ctorNodes.Length == 0)
             return [];
 
+        var constructors = type.GetConstructors().OrderBy(x => x.MetadataToken).ToList();
         var ctorInfos = new List<CtorInfo>();
         foreach (var ctorNode in ctorNodes)
         {
+            var paramNodes = ctorNode.SelectNodes("param")!.Cast<XmlElement>().ToArray();
+            var names = paramNodes.Select(x => x.GetAttribute("name")).ToArray();
+            var constructor = constructors.FirstOrDefault(candidate =>
+                candidate.GetParameters().Select(x => x.Name).SequenceEqual(names));
+            if (constructor is null)
+                continue;
+
+            constructors.Remove(constructor);
+            var parameters = constructor.GetParameters();
             var paramInfos = new List<ParamInfo>();
-            var paramNodes = ctorNode.SelectNodes("param");
-            foreach (XmlElement paramNode in paramNodes!)
-                paramInfos.Add(new ParamInfo(paramNode.GetAttribute("name"), "Undefined", paramNode.InnerText.Trim()));
+            for (var i = 0; i < paramNodes.Length; i++)
+                paramInfos.Add(new ParamInfo(
+                    names[i],
+                    ExpressifTypeMapper.ToExpressifType(parameters[i].ParameterType, unwrapProvider: true),
+                    paramNodes[i].InnerText.Trim()));
             ctorInfos.Add(new CtorInfo(paramInfos.ToArray()));
         }
         return ctorInfos.ToArray();

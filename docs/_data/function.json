@@ -12,6 +12,7 @@
     "Parameters": [
       {
         "Name": "operation",
+        "Type": "expression",
         "Optional": false,
         "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
       }
@@ -30,6 +31,7 @@
     "Parameters": [
       {
         "Name": "accumulator",
+        "Type": "accumulator | text",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
       }
@@ -48,6 +50,7 @@
     "Parameters": [
       {
         "Name": "size",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The strictly positive number of items in each chunk."
       }
@@ -66,6 +69,7 @@
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
       }
@@ -84,6 +88,7 @@
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the array containing values to exclude from the pipeline input."
       }
@@ -114,6 +119,7 @@
     "Parameters": [
       {
         "Name": "predicate",
+        "Type": "predicate",
         "Optional": false,
         "Summary": "Expression defining the predicate applied to each input item."
       }
@@ -132,6 +138,7 @@
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to return from the start of the input."
       }
@@ -150,6 +157,7 @@
     "Parameters": [
       {
         "Name": "accumulator",
+        "Type": "accumulator | text",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the fold execution."
       }
@@ -168,6 +176,7 @@
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the array to compare with the pipeline input."
       }
@@ -198,6 +207,7 @@
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to return from the end of the input."
       }
@@ -228,6 +238,7 @@
     "Parameters": [
       {
         "Name": "transformation",
+        "Type": "expression",
         "Optional": false,
         "Summary": "Expression creating the transformation applied to each input item."
       }
@@ -270,6 +281,7 @@
     "Parameters": [
       {
         "Name": "accumulator",
+        "Type": "accumulator | text",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the scan execution."
       }
@@ -288,6 +300,7 @@
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to omit from the start of the input."
       }
@@ -306,6 +319,7 @@
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to omit from the end of the input."
       }
@@ -324,11 +338,13 @@
     "Parameters": [
       {
         "Name": "start",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Zero-based index of the first element to return."
       },
       {
         "Name": "end",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Zero-based exclusive index at which to stop returning elements."
       }
@@ -347,6 +363,7 @@
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the second array to compare against the pipeline input."
       }
@@ -365,6 +382,7 @@
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the second array whose values are combined with the pipeline input."
       }
@@ -519,11 +537,13 @@
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be added to the argument value."
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
       }
@@ -554,11 +574,13 @@
     "Parameters": [
       {
         "Name": "min",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "value returned in case the argument value is smaller than it."
       },
       {
         "Name": "max",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "value returned in case the argument value is greater than it."
       }
@@ -613,6 +635,7 @@
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to divide the argument value."
       }
@@ -643,6 +666,7 @@
     "Parameters": [
       {
         "Name": "value",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the greatest common divisor with the argument value."
       }
@@ -735,6 +759,7 @@
     "Parameters": [
       {
         "Name": "value",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the lowest common multiple with the argument value."
       }
@@ -753,6 +778,7 @@
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be multiplied by the argument value."
       }
@@ -805,6 +831,7 @@
     "Parameters": [
       {
         "Name": "previous",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
       }
@@ -835,6 +862,7 @@
     "Parameters": [
       {
         "Name": "digits",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
       }
@@ -889,11 +917,13 @@
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
       }
@@ -910,6 +940,7 @@
     "Parameters": [
       {
         "Name": "name",
+        "Type": "text",
         "Optional": false,
         "Summary": "Name of the field to retrieve from the input."
       }
@@ -926,6 +957,7 @@
     "Parameters": [
       {
         "Name": "entries",
+        "Type": "array",
         "Optional": false,
         "Summary": "Factory that creates the named and spread entries used to build the record."
       }
@@ -952,6 +984,7 @@
     "Parameters": [
       {
         "Name": "expressions",
+        "Type": "array",
         "Optional": false,
         "Summary": "The candidate expressions, with at least two required."
       }
@@ -1076,6 +1109,7 @@
     "Parameters": [
       {
         "Name": "position",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Specifies the zero-based position of the tuple field to return."
       }
@@ -1141,11 +1175,13 @@
     "Parameters": [
       {
         "Name": "time",
+        "Type": "time",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": true,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
       }
@@ -1261,11 +1297,13 @@
     "Parameters": [
       {
         "Name": "min",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "value returned in case the argument value is before than it"
       },
       {
         "Name": "max",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "value returned in case the argument value is after than it"
       }
@@ -1330,6 +1368,7 @@
     "Parameters": [
       {
         "Name": "previous",
+        "Type": "any",
         "Optional": false,
         "Summary": "The previous temporal value to subtract from the current input."
       }
@@ -1348,6 +1387,7 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "any",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1415,11 +1455,13 @@
     "Parameters": [
       {
         "Name": "time",
+        "Type": "time",
         "Optional": false,
         "Summary": "The value to be added to the argument value"
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": true,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
       }
@@ -1484,6 +1526,7 @@
     "Parameters": [
       {
         "Name": "default",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
       }
@@ -1562,6 +1605,7 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "any",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1700,6 +1744,7 @@
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The count of business days to move forward."
       }
@@ -1742,6 +1787,7 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "any",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1760,6 +1806,7 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "any",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1788,6 +1835,7 @@
     "Parameters": [
       {
         "Name": "default",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "The dateTime to be returned if the argument is `null`."
       }
@@ -1808,6 +1856,7 @@
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The count of business days to move forward."
       }
@@ -1850,6 +1899,7 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "any",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1868,6 +1918,7 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "any",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1934,6 +1985,7 @@
     "Parameters": [
       {
         "Name": "instant",
+        "Type": "text",
         "Optional": false,
         "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
       }
@@ -2006,11 +2058,13 @@
     "Parameters": [
       {
         "Name": "substring",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string to seek."
       },
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": true,
         "Summary": "The number of character positions to examine."
       }
@@ -2041,6 +2095,7 @@
     "Parameters": [
       {
         "Name": "text",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
       }
@@ -2083,11 +2138,13 @@
     "Parameters": [
       {
         "Name": "substring",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string to seek."
       },
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": true,
         "Summary": "The number of character positions to examine."
       }
@@ -2178,6 +2235,7 @@
     "Parameters": [
       {
         "Name": "substring",
+        "Type": "text",
         "Optional": false,
         "Summary": "The substring to count in the argument value."
       }
@@ -2218,6 +2276,7 @@
     "Parameters": [
       {
         "Name": "filter",
+        "Type": "array | text",
         "Optional": false,
         "Summary": "The chars to filter from the argument string."
       }
@@ -2236,6 +2295,7 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
       }
@@ -2288,6 +2348,7 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
       }
@@ -2329,6 +2390,7 @@
     "Parameters": [
       {
         "Name": "mask",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string representing the mask to be unset from the argument string."
       }
@@ -2369,11 +2431,13 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
       }
@@ -2392,11 +2456,13 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
       }
@@ -2415,11 +2481,13 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
       }
@@ -2474,6 +2542,7 @@
     "Parameters": [
       {
         "Name": "prefix",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
       }
@@ -2516,6 +2585,7 @@
     "Parameters": [
       {
         "Name": "text",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to prepend"
       }
@@ -2558,6 +2628,7 @@
     "Parameters": [
       {
         "Name": "charToRemove",
+        "Type": "text",
         "Optional": false,
         "Summary": "The char to be removed from the argument string."
       }
@@ -2576,11 +2647,13 @@
     "Parameters": [
       {
         "Name": "charToReplace",
+        "Type": "text",
         "Optional": false,
         "Summary": "The char to be replaced from the argument string."
       },
       {
         "Name": "charReplacing",
+        "Type": "text",
         "Optional": false,
         "Summary": "The replacing char from the argument string."
       }
@@ -2599,16 +2672,19 @@
     "Parameters": [
       {
         "Name": "start",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The position to start to replace"
       },
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The length to replace"
       },
       {
         "Name": "append",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append when the slice has been removed"
       }
@@ -2700,6 +2776,7 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
@@ -2718,6 +2795,7 @@
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
@@ -2748,6 +2826,7 @@
     "Parameters": [
       {
         "Name": "suffix",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
       }
@@ -2802,11 +2881,13 @@
     "Parameters": [
       {
         "Name": "format",
+        "Type": "text",
         "Optional": false,
         "Summary": "A string representing the required format."
       },
       {
         "Name": "culture",
+        "Type": "text",
         "Optional": true,
         "Summary": "A string representing a pre-defined culture."
       }
@@ -2833,6 +2914,7 @@
     "Parameters": [
       {
         "Name": "mask",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string representing the mask to apply to the argument string."
       }
@@ -2863,11 +2945,13 @@
     "Parameters": [
       {
         "Name": "index",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
       },
       {
         "Name": "separator",
+        "Type": "text",
         "Optional": true,
         "Summary": "A character that delimits the substrings in this instance."
       }
@@ -2886,6 +2970,7 @@
     "Parameters": [
       {
         "Name": "separator",
+        "Type": "text",
         "Optional": false,
         "Summary": "A character that delimits the substrings in this instance."
       }

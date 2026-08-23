@@ -139,6 +139,23 @@ public class FunctionIntrospectorTest
             Infos.Where(x => !x.Converted).Select(x => x.Name),
             Is.EquivalentTo(new[] { "coalesce", "field", "neutral" }));
 
+    [TestCase("after-substring", "substring", "text")]
+    [TestCase("first-chars", "length", "integer")]
+    [TestCase("clamp", "min", "date-time")]
+    [TestCase("filter", "predicate", "predicate")]
+    [TestCase("adjacent", "operation", "expression")]
+    [TestCase("fold", "accumulator", "accumulator | text")]
+    public void Describe_Parameter_ExposesExpressifType(string function, string parameter, string type)
+        => Assert.That(
+            Infos.Single(x => x.Name == function).Parameters.Single(x => x.Name == parameter).Type,
+            Is.EqualTo(type));
+
+    [Test]
+    public void Describe_AllParametersExposeExpressifTypes()
+        => Assert.That(
+            Infos.SelectMany(x => x.Parameters).Select(x => x.Type),
+            Is.All.Not.Null.And.Not.Empty);
+
     [Test]
     public void Locate_ExpressifAssembly_ArrayFunctionsExposeWrappersAndShiftsOnly()
     {

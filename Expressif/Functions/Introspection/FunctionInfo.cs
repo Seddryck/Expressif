@@ -24,6 +24,7 @@ public record FunctionInfo
 public record ParameterInfo
 (
     string Name,
+    string Type,
     bool Optional,
     string Summary
 );
