@@ -198,7 +198,7 @@ internal static class EvaluateCommand
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
-            return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+            return ExpressionCommandCommon.WriteValidationError(exception, expressionCode, hasExpressionFile, expressionFilePath);
         }
         catch (Exception exception)
         {
@@ -251,7 +251,7 @@ internal static class EvaluateCommand
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
-            return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+            return ExpressionCommandCommon.WriteValidationError(exception, expressionCode, hasExpressionFile, expressionFilePath);
         }
         catch (Exception exception)
         {
@@ -272,7 +272,7 @@ internal static class EvaluateCommand
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
-            return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+            return ExpressionCommandCommon.WriteValidationError(exception, expressionCode, hasExpressionFile, expressionFilePath);
         }
         catch (Exception exception)
         {

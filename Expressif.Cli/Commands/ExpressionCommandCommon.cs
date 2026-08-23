@@ -41,16 +41,22 @@ internal static class ExpressionCommandCommon
         return true;
     }
 
-    internal static int WriteValidationError(Exception exception, bool hasExpressionFile, string? expressionFilePath)
+    internal static int WriteValidationError(
+        Exception exception,
+        string expressionCode,
+        bool hasExpressionFile,
+        string? expressionFilePath)
     {
+        var message = CommandErrorFormatter.FormatValidationError(exception, expressionCode);
         if (hasExpressionFile)
         {
             Console.Error.WriteLine($"The expression loaded from '{expressionFilePath}' is invalid:");
-            Console.Error.WriteLine(CommandErrorFormatter.FormatValidationError(exception));
+            Console.Error.WriteLine(message);
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        return CommandErrorFormatter.WriteValidationError(exception);
+        Console.Error.WriteLine(message);
+        return ExitCodes.InvalidExpressionOrInput;
     }
 
     private static bool TryReadExpressionFile(string path, out string expressionCode)
