@@ -1,0 +1,21 @@
+suite: special
+kind: function
+operator: coerce-time
+tests:
+  - id: coerce-time.valid
+    cases:
+      - id: coerce-time.valid.special.null
+        value: (null)
+        expected:
+      - id: coerce-time.valid.special.empty
+        value: (empty)
+        expected:
+      - id: coerce-time.valid.text.canonical
+        value: "14:30:00"
+        expected: "14:30:00"
+      - id: coerce-time.valid.text.midnight
+        value: "00:00:00"
+        expected: "00:00:00"
+      - id: coerce-time.valid.text.invalid
+        value: invalid
+        expected:

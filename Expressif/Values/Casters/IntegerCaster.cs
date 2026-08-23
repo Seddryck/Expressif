@@ -24,7 +24,23 @@ public class IntegerCaster : BaseNumericCaster<int>, ICaster<int>, IParser<int>
         => int.TryParse(text, Style, Format, out value);
 
     protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out int value)
-        => (TypeChecker.IsNumericType(obj) && Convert.ToDouble(obj) % 1 == 0)
-            ? (value = CastNumeric(obj)) == value
-            : (value = default) != default;
+    {
+        switch (obj)
+        {
+            case byte number: return NumericCoercion.TryToInt(number, out value);
+            case sbyte number: return NumericCoercion.TryToInt(number, out value);
+            case short number: return NumericCoercion.TryToInt(number, out value);
+            case ushort number: return NumericCoercion.TryToInt(number, out value);
+            case int number: return NumericCoercion.TryToInt(number, out value);
+            case uint number: return NumericCoercion.TryToInt(number, out value);
+            case long number: return NumericCoercion.TryToInt(number, out value);
+            case ulong number: return NumericCoercion.TryToInt(number, out value);
+            case float number: return NumericCoercion.TryToInt(number, out value);
+            case double number: return NumericCoercion.TryToInt(number, out value);
+            case decimal number: return NumericCoercion.TryToInt(number, out value);
+            default:
+                value = default;
+                return false;
+        }
+    }
 }

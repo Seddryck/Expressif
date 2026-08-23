@@ -1,0 +1,21 @@
+suite: special
+kind: function
+operator: coerce-text
+tests:
+  - id: coerce-text.valid
+    cases:
+      - id: coerce-text.valid.special.null
+        value: (null)
+        expected:
+      - id: coerce-text.valid.special.empty
+        value: (empty)
+        expected:
+      - id: coerce-text.valid.text.canonical
+        value: hello
+        expected: hello
+      - id: coerce-text.valid.numeric.integer
+        value: 42
+        expected: "42"
+      - id: coerce-text.valid.numeric.decimal
+        value: 42.7
+        expected: "42.7"

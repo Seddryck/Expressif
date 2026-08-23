@@ -16,8 +16,16 @@ public abstract class BaseNumericCaster<T>
     protected abstract T One { get; }
     public virtual bool TryCast(object obj, [NotNullWhen(true)] out T value)
     {
-        if (TryNumericCast(obj, out value))
-            return true;
+        try
+        {
+            if (TryNumericCast(obj, out value))
+                return true;
+        }
+        catch (Exception exception) when (exception is OverflowException or FormatException or InvalidCastException)
+        {
+            value = default!;
+            return false;
+        }
 
         return obj switch
         {
@@ -42,9 +50,25 @@ public class NumericCaster : BaseNumericCaster<decimal>, ICaster<decimal>, IPars
     protected override decimal One { get => 1m; }
 
     protected override bool TryNumericCast(object obj, [NotNullWhen(true)] out decimal value)
-        => TypeChecker.IsNumericType(obj)
-            ? (value = CastNumeric(obj)) == value
-            : (value = default) != value;
+    {
+        switch (obj)
+        {
+            case byte number: return NumericCoercion.TryToDecimal(number, out value);
+            case sbyte number: return NumericCoercion.TryToDecimal(number, out value);
+            case short number: return NumericCoercion.TryToDecimal(number, out value);
+            case ushort number: return NumericCoercion.TryToDecimal(number, out value);
+            case int number: return NumericCoercion.TryToDecimal(number, out value);
+            case uint number: return NumericCoercion.TryToDecimal(number, out value);
+            case long number: return NumericCoercion.TryToDecimal(number, out value);
+            case ulong number: return NumericCoercion.TryToDecimal(number, out value);
+            case float number: return NumericCoercion.TryToDecimal(number, out value);
+            case double number: return NumericCoercion.TryToDecimal(number, out value);
+            case decimal number: return NumericCoercion.TryToDecimal(number, out value);
+            default:
+                value = default;
+                return false;
+        }
+    }
 
     protected override decimal CastNumeric(object numeric)
         => Convert.ToDecimal(numeric, CultureInfo.InvariantCulture.NumberFormat);

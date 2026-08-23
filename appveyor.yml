@@ -61,10 +61,6 @@ before_build:
 build_script:
 - dotnet build Expressif.sln -p:version="%GitVersion_SemVer%" -c Release /p:ContinuousIntegrationBuild=true --nologo
 - pwsh: |
-    & .\generate-info.ps1 function
-    & .\generate-info.ps1 predicate
-    & .\generate-info.ps1 accumulator
-- pwsh: |
     Push-Location ".\Expressif.Syntax"
     try {
         .\New-tmBundle.ps1 -Bundle "expressif-syntax" -Version $env:GitVersion_SemVer
@@ -177,39 +173,4 @@ on_success:
         }
     } else {
         Write-Host "No release published on GitHub when not on branch main."
-    }
-
-- pwsh: |
-    if (git status --porcelain) {
-      Write-Host "Update of Library index needed"
-      & .\update-index.ps1
-      Write-Host "Update of docs needed"
-      & .\update-homepage.ps1
-      & .\update-docs.ps1 function special
-      & .\update-docs.ps1 function text
-      & .\update-docs.ps1 function numeric
-      & .\update-docs.ps1 function temporal
-      & .\update-docs.ps1 function io
-      & .\update-docs.ps1 function array
-      & .\update-docs.ps1 function record
-      & .\update-docs.ps1 accumulator array
-      & .\update-docs.ps1 predicate special
-      & .\update-docs.ps1 predicate text
-      & .\update-docs.ps1 predicate numeric
-      & .\update-docs.ps1 predicate temporal
-      & .\update-docs.ps1 predicate boolean
-      & .\update-examples.ps1 builder expression
-      & .\update-examples.ps1 builder predication
-      & .\update-examples.ps1 serializers
-      Write-Host "Update of README.md needed"
-      & .\update-readme.ps1 function
-      & .\update-readme.ps1 predicate
-      & git config --global credential.helper store
-      Set-Content -Path "$HOME\.git-credentials" -Value "https://$($env:github_access_token):x-oauth-basic@github.com`n" -NoNewline
-      & git config --global user.email "no-reply@nbiguity.io"
-      & git config --global user.name "AppVeyor bot"
-      & git add --all
-      & git status
-      & git commit -m "docs: update the automatically generated documentation"
-      & git push origin
     }

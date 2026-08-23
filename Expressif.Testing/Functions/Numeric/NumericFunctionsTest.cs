@@ -4,14 +4,74 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
 using Expressif.Functions.Numeric;
 using Expressif.Testing.Conformance;
+using Expressif.Values.Special;
 
 namespace Expressif.Testing.Functions.Numeric;
 
 [TestFixture]
 public class NumericFunctionsTest
 {
+    [Test]
+    public void Floor_TypedAndUntypedEntryPoints_AreEquivalent()
+    {
+        IFunction<decimal?, decimal?> typed = new Floor();
+        IFunction untyped = typed;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(typed.Evaluate(1.9m), Is.EqualTo(1m));
+            Assert.That(untyped.Evaluate(1.9m), Is.EqualTo(typed.Evaluate(1.9m)));
+            Assert.That(typed.Evaluate(null), Is.EqualTo(untyped.Evaluate(null)));
+        });
+    }
+
+    [Test]
+    public void Floor_UntypedEntryPoint_PreservesCoercionAndSpecialValues()
+    {
+        IFunction function = new Floor();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function.Evaluate("1.9"), Is.EqualTo(1m));
+            Assert.That(function.Evaluate(DBNull.Value), Is.Null);
+        });
+    }
+
+    [Test]
+    public void Floor_RemainsCompatibleWithExpressionChains()
+    {
+        var chain = new ChainFunction([new Floor(), new Increment()]);
+
+        Assert.That(chain.Evaluate(1.9m), Is.EqualTo(2m));
+    }
+
+    [Test]
+    public void NullToZero_TypedAndUntypedEntryPoints_PreserveTheirResultTypes()
+    {
+        IFunction<decimal?, decimal?> typed = new NullToZero();
+        IFunction untyped = typed;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(typed.Evaluate(null), Is.EqualTo(0m).And.TypeOf<decimal>());
+            Assert.That(untyped.Evaluate(null), Is.EqualTo(0).And.TypeOf<int>());
+        });
+    }
+
+    [TestCase(typeof(Null))]
+    [TestCase(typeof(Empty))]
+    [TestCase(typeof(Whitespace))]
+    public void Floor_UntypedEntryPoint_PreservesSpecialValueBehavior(Type specialType)
+    {
+        IFunction function = new Floor();
+        var value = Activator.CreateInstance(specialType);
+
+        Assert.That(function.Evaluate(value), Is.Null);
+    }
+
     [Conformance]
     public void NullToZero_Valid(object value, decimal? expected)
         => Assert.That(new NullToZero().Evaluate(value), Is.EqualTo(expected));

@@ -7,7 +7,7 @@ using Expressif.Values;
 
 namespace Expressif.Functions.Temporal;
 
-public abstract class BaseTemporalWeekdayFunction : BaseTemporalFunction
+public abstract class BaseTemporalWeekdayFunction : BaseTemporalFunction<DateOnly?>
 {
     protected override object EvaluateDateTime(DateTime dt)
         => EvaluateDate(DateOnly.FromDateTime(dt));

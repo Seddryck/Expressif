@@ -6,8 +6,11 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Temporal;
 
 [Function(prefix: "dateTime")]
-public abstract class BaseTemporalFunction : IFunction
+public abstract class BaseTemporalFunction<TOut> : IFunction<DateTime?, TOut?>
 {
+    TOut? IFunction<DateTime?, TOut?>.Evaluate(DateTime? value)
+        => Evaluate((object?)value) is TOut result ? result : default;
+
     public object? Evaluate(object? value)
     {
         return value switch
@@ -35,6 +38,9 @@ public abstract class BaseTemporalFunction : IFunction
     protected abstract object EvaluateDateTime(DateTime value);
 }
 
+public abstract class BaseTemporalFunction : BaseTemporalFunction<DateTime?>
+{ }
+
 /// <summary>
 /// Returns the date at midnight of the argument dateTime.
 /// </summary>
@@ -48,7 +54,7 @@ public class DateTimeToDate : BaseTemporalFunction
 /// Returns how many years separate the argument dateTime and now.
 /// </summary>
 [Function(prefix: "", aliases: ["date-to-age"])]
-public class Age : BaseTemporalFunction
+public class Age : BaseTemporalFunction<int?>
 {
     protected override object EvaluateNull() => 0;
     protected override object EvaluateDateTime(DateTime value)
@@ -249,7 +255,7 @@ public class Clamp : BaseTemporalFunction
 /// Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.
 /// </summary>
 [Function(prefix: "")]
-public class DurationBetween : BaseTemporalFunction
+public class DurationBetween : BaseTemporalFunction<TimeSpan?>
 {
     public Func<object?> Previous { get; }
 

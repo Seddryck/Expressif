@@ -12,6 +12,10 @@ public record FunctionInfo
     bool IsPublic,
     string[] Aliases,
     string Scope,
+    string Input,
+    string Output,
+    bool Converted,
+    string Reason,
     Type ImplementationType,
     string Summary,
     ParameterInfo[] Parameters
@@ -20,6 +24,7 @@ public record FunctionInfo
 public record ParameterInfo
 (
     string Name,
+    string Type,
     bool Optional,
     string Summary
 );

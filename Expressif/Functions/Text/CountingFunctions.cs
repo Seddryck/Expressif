@@ -8,7 +8,7 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
-public abstract class BaseTextCountingFunction : BaseTextFunction
+public abstract class BaseTextCountingFunction : BaseTextFunction<int?>
 {
     protected override object? EvaluateSpecial(string value) => null;
     protected override object? EvaluateBlank() => null;

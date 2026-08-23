@@ -1,0 +1,24 @@
+suite: special
+kind: function
+operator: coerce-boolean
+tests:
+  - id: coerce-boolean.valid
+    cases:
+      - id: coerce-boolean.valid.special.null
+        value: (null)
+        expected:
+      - id: coerce-boolean.valid.special.empty
+        value: (empty)
+        expected:
+      - id: coerce-boolean.valid.text.yes
+        value: yes
+        expected: true
+      - id: coerce-boolean.valid.text.invalid
+        value: abc
+        expected:
+      - id: coerce-boolean.valid.numeric.zero
+        value: 0
+        expected: false
+      - id: coerce-boolean.valid.text.no
+        value: no
+        expected: false

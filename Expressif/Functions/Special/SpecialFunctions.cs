@@ -11,7 +11,7 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Special;
 
 [Function(prefix: "")]
-public abstract class BaseSpecialFunction : IFunction
+public abstract class BaseSpecialFunction : IFunction<object?, string>
 {
     public object? Evaluate(object? value)
     {
@@ -29,14 +29,16 @@ public abstract class BaseSpecialFunction : IFunction
         };
     }
 
-    private object EvaluateUncasted(object value)
+    string IFunction<object?, string>.Evaluate(object? value) => (string)Evaluate(value)!;
+
+    private string EvaluateUncasted(object value)
     {
         var caster = new TextCaster();
         var str = caster.Cast(value);
         return EvaluateHighLevelString(str);
     }
 
-    protected virtual object EvaluateHighLevelString(string value)
+    protected virtual string EvaluateHighLevelString(string value)
     {
         if (new Empty().Equals(value))
             return EvaluateEmpty();
@@ -56,12 +58,12 @@ public abstract class BaseSpecialFunction : IFunction
         return EvaluateString(value);
     }
 
-    protected abstract object EvaluateNull();
-    protected abstract object EvaluateEmpty();
-    protected abstract object EvaluateBlank();
-    protected abstract object EvaluateAny();
-    protected abstract object EvaluateValue();
-    protected abstract object EvaluateString(string value);
+    protected abstract string EvaluateNull();
+    protected abstract string EvaluateEmpty();
+    protected abstract string EvaluateBlank();
+    protected abstract string EvaluateAny();
+    protected abstract string EvaluateValue();
+    protected abstract string EvaluateString(string value);
 }
 
 /// <summary>
@@ -69,12 +71,12 @@ public abstract class BaseSpecialFunction : IFunction
 /// </summary>
 public class NullToValue : BaseSpecialFunction
 {
-    protected override object EvaluateNull() => new Value().Keyword;
-    protected override object EvaluateEmpty() => new Empty().Keyword;
-    protected override object EvaluateBlank() => new Whitespace().Keyword;
-    protected override object EvaluateAny() => new Value().Keyword;
-    protected override object EvaluateValue() => new Value().Keyword;
-    protected override object EvaluateString(string value) => value;
+    protected override string EvaluateNull() => new Value().Keyword;
+    protected override string EvaluateEmpty() => new Empty().Keyword;
+    protected override string EvaluateBlank() => new Whitespace().Keyword;
+    protected override string EvaluateAny() => new Value().Keyword;
+    protected override string EvaluateValue() => new Value().Keyword;
+    protected override string EvaluateString(string value) => value;
 }
 
 /// <summary>
@@ -82,12 +84,12 @@ public class NullToValue : BaseSpecialFunction
 /// </summary>
 public class AnyToAny : BaseSpecialFunction
 {
-    protected override object EvaluateNull() => new Any().Keyword;
-    protected override object EvaluateEmpty() => new Any().Keyword;
-    protected override object EvaluateBlank() => new Any().Keyword;
-    protected override object EvaluateAny() => new Any().Keyword;
-    protected override object EvaluateValue() => new Any().Keyword;
-    protected override object EvaluateString(string value) => new Any().Keyword;
+    protected override string EvaluateNull() => new Any().Keyword;
+    protected override string EvaluateEmpty() => new Any().Keyword;
+    protected override string EvaluateBlank() => new Any().Keyword;
+    protected override string EvaluateAny() => new Any().Keyword;
+    protected override string EvaluateValue() => new Any().Keyword;
+    protected override string EvaluateString(string value) => new Any().Keyword;
 }
 
 /// <summary>
@@ -95,12 +97,12 @@ public class AnyToAny : BaseSpecialFunction
 /// </summary>
 public class ValueToValue : BaseSpecialFunction
 {
-    protected override object EvaluateNull() => new Null().Keyword;
-    protected override object EvaluateEmpty() => new Value().Keyword;
-    protected override object EvaluateBlank() => new Value().Keyword;
-    protected override object EvaluateAny() => new Value().Keyword;
-    protected override object EvaluateValue() => new Value().Keyword;
-    protected override object EvaluateString(string value) => new Value().Keyword;
+    protected override string EvaluateNull() => new Null().Keyword;
+    protected override string EvaluateEmpty() => new Value().Keyword;
+    protected override string EvaluateBlank() => new Value().Keyword;
+    protected override string EvaluateAny() => new Value().Keyword;
+    protected override string EvaluateValue() => new Value().Keyword;
+    protected override string EvaluateString(string value) => new Value().Keyword;
 }
 
 /// <summary>
