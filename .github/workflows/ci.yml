@@ -153,7 +153,6 @@ jobs:
             --no-build `
             --no-restore `
             --nologo `
-            --filter 'TestCategory!=conformance' `
             --collect 'XPlat Code Coverage;Format=opencover' `
             --results-directory $results
 
