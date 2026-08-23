@@ -201,8 +201,7 @@ jobs:
         run: >-
           dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
           --TestCaseFilter:TestCategory=conformance
-          --ResultsDirectory:conformance/bin
-          --Logger:"nunit;LogFilePath=Expressif.Conformance.DotNet.xml"
+          --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
 
       - name: Upload conformance test report
         uses: actions/upload-artifact@v7
