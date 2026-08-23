@@ -93,7 +93,7 @@ Repository hooks are stored in `.githooks/`. Enable them after cloning the repos
 git config core.hooksPath .githooks
 ```
 
-The hooks require `commitlint`, PowerShell (`pwsh`), and the .NET SDK to be available on `PATH`. Restore .NET dependencies before pushing because the StyleCop check runs with `--no-restore`.
+On Windows, the hooks run with the Bash bundled in Git for Windows. On all platforms, they require `commitlint`, PowerShell (`pwsh`), and the .NET SDK to be available on `PATH`. Restore .NET dependencies before pushing because the StyleCop check runs with `--no-restore`.
 
 The `commit-msg` hook validates every commit message against `commitlint.config.cjs`. Commit messages MUST use an allowed Conventional Commit type and satisfy the configured header and line-length limits.
 
