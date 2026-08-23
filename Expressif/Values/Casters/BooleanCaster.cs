@@ -27,7 +27,7 @@ public class BooleanCaster : BaseNumericCaster<bool>, ICaster<bool>, IParser<boo
 
         return text.Trim().ToLowerInvariant() switch
         {
-            "1" => (value = true) == value ,
+            "1" => (value = true) == value,
             "yes" => (value = true) == value,
             "0" => (value = false) == value,
             "no" => (value = false) == value,

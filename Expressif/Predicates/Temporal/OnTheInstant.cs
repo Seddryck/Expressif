@@ -16,7 +16,7 @@ public abstract class OnTheInstant : BaseDateTimePredicate
 /// </summary>
 public class OnTheDay : OnTheInstant
 {
-    protected override bool EvaluateDateTime(DateTime value) 
+    protected override bool EvaluateDateTime(DateTime value)
         => value.TimeOfDay.Ticks == 0;
 }
 

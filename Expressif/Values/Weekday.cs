@@ -1,5 +1,3 @@
-using Expressif.Values.Casters;
-using Expressif.Values.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Casters;
+using Expressif.Values.Converters;
 
 namespace Expressif.Values;
 
@@ -41,8 +41,8 @@ public static class Weekdays
     internal static Weekday GetByIndex(DayOfWeek dayOfWeek)
         => TryGetByIndex(((int)dayOfWeek + 6) % 7, out var value) ? value : throw new ArgumentOutOfRangeException(nameof(dayOfWeek));
     internal static bool TryGetByIndex(int index, [NotNullWhen(true)] out Weekday? value)
-        => (index >= 0 && index <= 6) 
-            ? (value = weekdays[index]) is not null 
+        => (index >= 0 && index <= 6)
+            ? (value = weekdays[index]) is not null
             : (value = null) is not null;
 
     internal static bool TryGetByName(string weekdayName, [NotNullWhen(true)] out Weekday? value)
@@ -55,7 +55,7 @@ public static class Weekdays
     static Weekdays()
     {
         var dayNames = CultureInfo.InvariantCulture.DateTimeFormat.DayNames;
-        weekdays= new List<Weekday>(dayNames.Length);
+        weekdays = new List<Weekday>(dayNames.Length);
         foreach (DayOfWeek dayOfWeek in Enum.GetValues(typeof(DayOfWeek)))
         {
             weekdays.Add(new Weekday(

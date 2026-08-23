@@ -1,7 +1,7 @@
-using Expressif.Values.Casters;
-using Expressif.Values.Special;
 using System;
 using System.Globalization;
+using Expressif.Values.Casters;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Numeric;
 
@@ -61,9 +61,13 @@ internal static class HumanReadableFormatter
             (number, rounded, unitIndex) = FormatBaseUnitNumber(rounded, precision, @base, units, unitIndex);
         }
         else if (precision == 0)
+        {
             number = rounded.ToString("0", CultureInfo.InvariantCulture);
+        }
         else
+        {
             number = rounded.ToString($"F{precision}", CultureInfo.InvariantCulture);
+        }
 
         if (isNegative && number != "0")
             number = $"-{number}";
@@ -72,7 +76,7 @@ internal static class HumanReadableFormatter
         return string.IsNullOrEmpty(unit) ? number : $"{number} {unit}";
     }
 
-    private static (string number, decimal rounded, int unitIndex) FormatBaseUnitNumber(decimal rounded, int precision, int @base, string[] units, int unitIndex)
+    private static (string Number, decimal Rounded, int UnitIndex) FormatBaseUnitNumber(decimal rounded, int precision, int @base, string[] units, int unitIndex)
     {
         var roundedBase = Math.Round(rounded, 0, MidpointRounding.AwayFromZero);
         if (roundedBase >= @base && unitIndex < units.Length - 1)

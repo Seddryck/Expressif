@@ -7,6 +7,7 @@ using Expressif.Functions.Temporal;
 using Expressif.Values;
 
 namespace Expressif.Testing.Functions.Temporal;
+
 public class TimePartTextualFunctionsTest
 {
     [Test]

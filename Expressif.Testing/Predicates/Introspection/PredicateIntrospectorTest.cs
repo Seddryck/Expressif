@@ -1,11 +1,11 @@
-﻿using Expressif.Predicates.Introspection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Predicates.Introspection;
 
 namespace Expressif.Testing.Predicates.Introspection;
 
@@ -30,7 +30,7 @@ public class PredicateIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NameEqualClass()
     {
-        foreach(var info in Infos)
+        foreach (var info in Infos)
         {
             Debug.WriteLine(info.Name);
             Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
@@ -45,7 +45,7 @@ public class PredicateIntrospectorTest
 
         foreach (var info in Infos)
         {
-            Debug.WriteLine($"{info.Name}: {(info.Aliases.Length!=0 ? info.Aliases.ElementAt(0) : string.Empty)}");
+            Debug.WriteLine($"{info.Name}: {(info.Aliases.Length != 0 ? info.Aliases.ElementAt(0) : string.Empty)}");
             foreach (var alias in info.Aliases)
                 Assert.That(info.Aliases.ElementAt(0), Is.Not.Null.And.Not.Empty);
         }
@@ -54,7 +54,7 @@ public class PredicateIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NoDuplicateAlias()
     {
-        var infos = Infos.Where(x => x.Aliases.Length!=0);
+        var infos = Infos.Where(x => x.Aliases.Length != 0);
 
         foreach (var info in infos)
             Assert.That(infos.Count(x => x.Aliases.Contains(info.Aliases.ElementAt(0))), Is.EqualTo(1));

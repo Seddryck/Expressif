@@ -1,7 +1,7 @@
+using System;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using Expressif.Values.Special;
-using System;
 
 namespace Expressif.Functions.Temporal;
 
@@ -230,7 +230,7 @@ public class PreviousYear : BaseTemporalFunction
 /// <summary>
 /// Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).
 /// </summary>
-[Function(prefix: "dateTime", aliases:["dateTime-to-clip"])]
+[Function(prefix: "dateTime", aliases: ["dateTime-to-clip"])]
 public class Clamp : BaseTemporalFunction
 {
     public Func<DateTime> Min { get; }
@@ -325,8 +325,8 @@ public class InvalidToDate : BaseTemporalFunction
             return EvaluateNull();
 
         var caster = new DateTimeCaster();
-        
-        try { return caster.Cast(value);} 
+
+        try { return caster.Cast(value); }
         catch { return Default.Invoke(); }
     }
 }

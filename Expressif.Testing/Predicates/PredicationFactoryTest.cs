@@ -12,7 +12,6 @@ public class PredicationFactoryTest
     public void Setup()
     { }
 
-    
     [Test]
     [TestCase(typeof(Even), 0)]
     [TestCase(typeof(EqualTo), 1)]

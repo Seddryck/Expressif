@@ -1,9 +1,9 @@
-﻿using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
@@ -22,8 +22,11 @@ public class RemoveChars : BaseTextFunction
     {
         var stringBuilder = new StringBuilder();
         foreach (var c in value)
+        {
             if (!c.Equals(CharToRemove.Invoke()))
                 stringBuilder.Append(c);
+        }
+
         return stringBuilder.ToString();
     }
 
@@ -56,17 +59,19 @@ public class ReplaceChars : BaseTextFunction
 
         var stringBuilder = new StringBuilder();
         foreach (var c in value)
+        {
             if (!c.Equals(charToReplace))
                 stringBuilder.Append(c);
             else
                 stringBuilder.Append(charReplacing);
+        }
+
         return stringBuilder.ToString();
     }
 
     protected override object? EvaluateBlank()
         => new Whitespace().Keyword;
 }
-
 
 /// <summary>
 /// Returns only those characters specified in the parameter, in the order, they were originally entered in the input value.
@@ -92,8 +97,11 @@ public class FilterChars : BaseTextFunction
 
         var stringBuilder = new StringBuilder();
         foreach (var c in value)
+        {
             if (filter.Contains(c))
                 stringBuilder.Append(c);
+        }
+
         return stringBuilder.ToString();
     }
 
@@ -140,7 +148,7 @@ public class CleanWhitespace : BaseTextFunction
                 stringBuilder.Append(char.IsWhiteSpace(c) ? ' ' : c);
             previousWithespace = char.IsWhiteSpace(c) ? c : null;
         }
-            
+
         return stringBuilder.ToString();
     }
     protected override object? EvaluateBlank()

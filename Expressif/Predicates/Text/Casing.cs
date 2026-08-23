@@ -17,7 +17,7 @@ public class LowerCase : BaseTextPredicateWithoutReference
 }
 
 /// <summary>
-/// Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise. 
+/// Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
 /// </summary>
 public class UpperCase : BaseTextPredicateWithoutReference
 {

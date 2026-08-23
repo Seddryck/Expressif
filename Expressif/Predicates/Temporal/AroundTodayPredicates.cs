@@ -27,7 +27,7 @@ public abstract class BaseTemporalAroundTodayPredicate : BaseDateTimePredicate
 /// Returns true if the date passed as argument is representing the next date compared to the current date. Returns false otherwise.
 /// </summary>
 public class Tomorrow : BaseTemporalAroundTodayPredicate
-{ 
+{
     public Tomorrow()
         : base() { }
 
@@ -43,7 +43,8 @@ public class Tomorrow : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class Today : BaseTemporalAroundTodayPredicate
 {
-    public Today(): base() { }
+    public Today()
+        : base() { }
 
     internal Today(DateTime now)
         : base(now) { }
@@ -57,7 +58,8 @@ public class Today : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class Yesterday : BaseTemporalAroundTodayPredicate
 {
-    public Yesterday() : base() { }
+    public Yesterday()
+        : base() { }
     internal Yesterday(DateTime now)
         : base(now) { }
 
@@ -70,7 +72,8 @@ public class Yesterday : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinCurrentWeek : BaseTemporalAroundTodayPredicate
 {
-    public WithinCurrentWeek() : base() { }
+    public WithinCurrentWeek()
+        : base() { }
     internal WithinCurrentWeek(DateTime now)
         : base(now) { }
 
@@ -83,7 +86,8 @@ public class WithinCurrentWeek : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinCurrentMonth : BaseTemporalAroundTodayPredicate
 {
-    public WithinCurrentMonth() : base() { }
+    public WithinCurrentMonth()
+        : base() { }
     internal WithinCurrentMonth(DateTime now)
         : base(now) { }
 
@@ -96,7 +100,8 @@ public class WithinCurrentMonth : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinCurrentYear : BaseTemporalAroundTodayPredicate
 {
-    public WithinCurrentYear() : base() { }
+    public WithinCurrentYear()
+        : base() { }
     internal WithinCurrentYear(DateTime now)
         : base(now) { }
 
@@ -109,7 +114,8 @@ public class WithinCurrentYear : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinUpcomingWeek : BaseTemporalAroundTodayPredicate
 {
-    public WithinUpcomingWeek() : base() { }
+    public WithinUpcomingWeek()
+        : base() { }
     internal WithinUpcomingWeek(DateTime now)
         : base(now) { }
 
@@ -122,7 +128,8 @@ public class WithinUpcomingWeek : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinUpcomingMonth : BaseTemporalAroundTodayPredicate
 {
-    public WithinUpcomingMonth() : base() { }
+    public WithinUpcomingMonth()
+        : base() { }
     internal WithinUpcomingMonth(DateTime now)
         : base(now) { }
 
@@ -135,7 +142,8 @@ public class WithinUpcomingMonth : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinUpcomingYear : BaseTemporalAroundTodayPredicate
 {
-    public WithinUpcomingYear() : base() { }
+    public WithinUpcomingYear()
+        : base() { }
     internal WithinUpcomingYear(DateTime now)
         : base(now) { }
 
@@ -148,7 +156,8 @@ public class WithinUpcomingYear : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinLastWeek : BaseTemporalAroundTodayPredicate
 {
-    public WithinLastWeek() : base() { }
+    public WithinLastWeek()
+        : base() { }
     internal WithinLastWeek(DateTime now)
         : base(now) { }
 
@@ -161,7 +170,8 @@ public class WithinLastWeek : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinLastMonth : BaseTemporalAroundTodayPredicate
 {
-    public WithinLastMonth() : base() { }
+    public WithinLastMonth()
+        : base() { }
     internal WithinLastMonth(DateTime now)
         : base(now) { }
 
@@ -174,7 +184,8 @@ public class WithinLastMonth : BaseTemporalAroundTodayPredicate
 /// </summary>
 public class WithinLastYear : BaseTemporalAroundTodayPredicate
 {
-    public WithinLastYear() : base() { }
+    public WithinLastYear()
+        : base() { }
     internal WithinLastYear(DateTime now)
         : base(now) { }
 

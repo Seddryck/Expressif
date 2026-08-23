@@ -912,7 +912,7 @@
     "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
-        "Name": "timeSpan",
+        "Name": "time",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
@@ -1146,7 +1146,7 @@
     "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
-        "Name": "timeSpan",
+        "Name": "time",
         "Optional": false,
         "Summary": "The value to be added to the argument value"
       },

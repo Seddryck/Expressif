@@ -1,12 +1,11 @@
-﻿using Expressif.Values.Special;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
-
 
 public abstract class BaseTextLength : BaseTextFunction
 {
@@ -43,7 +42,7 @@ public class LastChars : BaseTextLength
 }
 
 /// <summary>
-/// Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`. 
+/// Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.
 /// </summary>
 public class SkipFirstChars : BaseTextLength
 {
@@ -56,7 +55,7 @@ public class SkipFirstChars : BaseTextLength
 }
 
 /// <summary>
-/// Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`. 
+/// Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.
 /// </summary>
 public class SkipLastChars : BaseTextLength
 {

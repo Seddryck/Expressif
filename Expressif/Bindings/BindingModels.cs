@@ -5,7 +5,13 @@ public interface IRootExpression { }
 public sealed record OpenRootExpression(OpenExpression Expression) : IRootExpression;
 public sealed record ClosedRootExpression(ClosedExpression Expression) : IRootExpression;
 
-public enum FunctionSyntax { Standard, MapShorthand, FieldShorthand, TupleProjectionShorthand }
+public enum FunctionSyntax
+{
+    Standard,
+    MapShorthand,
+    FieldShorthand,
+    TupleProjectionShorthand,
+}
 
 public sealed class Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard) : IExpression
 {

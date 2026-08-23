@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Expressif.Values;
+
 public interface IReadOnlyDataRow
 {
     int ColumnsCount { get; }

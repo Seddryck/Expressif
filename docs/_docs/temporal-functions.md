@@ -22,7 +22,7 @@ Returns how many years separate the argument dateTime and now.
 Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
 
 ###### Parameters
-* timeSpan: The value to be subtracted to the argument value.
+* time: The value to be subtracted to the argument value.
 * times (optional) : An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction
 
 ##### catholic-calendar
@@ -193,7 +193,7 @@ Returns the dateTime passed as argument value with the seconds and milliseconds 
 Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
 
 ###### Parameters
-* timeSpan: The value to be added to the argument value
+* time: The value to be added to the argument value
 * times (optional) : An integer between 0 and +Infinity, indicating the number of times to repeat the addition
 
 ##### hour

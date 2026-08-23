@@ -19,10 +19,12 @@ public class PredicateTypeMapper : BaseTypeMapper
         {
             mapping.Add(info.Name, info.ImplementationType);
             foreach (var alias in info.Aliases)
+            {
                 if (mapping.TryGetValue(alias, out var existing))
                     throw new InvalidOperationException($"The predicate name '{alias}' has already been added for the implementation '{existing.FullName}'. You cannot add a second time this alias for the implementation '{info.ImplementationType.FullName}'");
                 else
                     mapping.Add(alias, info.ImplementationType);
+            }
         }
         return mapping;
     }

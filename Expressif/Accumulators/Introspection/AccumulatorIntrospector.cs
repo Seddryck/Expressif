@@ -1,8 +1,8 @@
-using Expressif.Accumulators;
-using Expressif.Functions.Introspection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Expressif.Accumulators;
+using Expressif.Functions.Introspection;
 
 namespace Expressif.Accumulators.Introspection;
 
@@ -21,7 +21,8 @@ public class AccumulatorIntrospector : BaseIntrospector
     public IEnumerable<AccumulatorInfo> Describe()
         => Locate<AccumulatorAttribute>(false);
 
-    protected IEnumerable<AccumulatorInfo> Locate<T>(bool fast) where T : AccumulatorAttribute
+    protected IEnumerable<AccumulatorInfo> Locate<T>(bool fast)
+        where T : AccumulatorAttribute
     {
         var accumulators = LocateAttribute<AccumulatorAttribute>();
 

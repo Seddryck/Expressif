@@ -37,6 +37,8 @@ public class WithoutDiacritics : BaseTextFunction
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
         else
+        {
             return value;
+        }
     }
 }

@@ -8,6 +8,7 @@ using Expressif.Predicates.Numeric;
 using Expressif.Predicates.Text;
 
 namespace Expressif.Testing.Predicates;
+
 public class PredicateTypeMapperTest
 {
     [Test]

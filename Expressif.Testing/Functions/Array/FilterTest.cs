@@ -1,8 +1,8 @@
+using Expressif;
 using Expressif.Functions.Array;
 using Expressif.Predicates;
 using Expressif.Predicates.Numeric;
 using Expressif.Predicates.Text;
-using Expressif;
 
 namespace Expressif.Testing.Functions.Array;
 

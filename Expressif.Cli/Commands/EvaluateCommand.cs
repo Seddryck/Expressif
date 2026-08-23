@@ -263,33 +263,33 @@ internal static class EvaluateCommand
     private static int EvaluateOpen(string expressionCode, object? input, bool hasExpressionFile, string? expressionFilePath)
     {
         Expressif.Expression openExpression;
-            try
-            {
-                openExpression = BuildExpression(expressionCode, new Context());
-            }
-            catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
-                                              or Expressif.Bindings.BindingException
-                                              or NotImplementedFunctionException
-                                              or MissingOrUnexpectedParametersFunctionException)
-            {
-                return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
-            }
-            catch (Exception exception)
-            {
-                Console.Error.WriteLine($"Unexpected error: {exception.Message}");
-                return ExitCodes.UnexpectedInternalError;
-            }
+        try
+        {
+            openExpression = BuildExpression(expressionCode, new Context());
+        }
+        catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
+                                          or Expressif.Bindings.BindingException
+                                          or NotImplementedFunctionException
+                                          or MissingOrUnexpectedParametersFunctionException)
+        {
+            return ExpressionCommandCommon.WriteValidationError(exception, hasExpressionFile, expressionFilePath);
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine($"Unexpected error: {exception.Message}");
+            return ExitCodes.UnexpectedInternalError;
+        }
 
-            try
-            {
-                var result = openExpression.Evaluate(input);
-                Console.Out.WriteLine(ValueFormatter.Format(result));
-                return ExitCodes.Success;
-            }
-            catch (Exception exception) when (exception is not OutOfMemoryException)
-            {
-                Console.Error.WriteLine(exception.Message);
-                return ExitCodes.EvaluationFailed;
-            }
+        try
+        {
+            var result = openExpression.Evaluate(input);
+            Console.Out.WriteLine(ValueFormatter.Format(result));
+            return ExitCodes.Success;
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            Console.Error.WriteLine(exception.Message);
+            return ExitCodes.EvaluationFailed;
+        }
     }
 }

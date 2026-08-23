@@ -1,6 +1,6 @@
-using Expressif.Values;
 using System;
 using System.Linq;
+using Expressif.Values;
 
 namespace Expressif.Functions.Temporal;
 

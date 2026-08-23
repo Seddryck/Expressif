@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Expressif.Functions;
 
 namespace Expressif.Predicates.Operators;
+
 internal class OperatorTypeMapper<T> : BaseTypeMapper
 {
     protected override IDictionary<string, Type> Initialize()
@@ -16,10 +17,12 @@ internal class OperatorTypeMapper<T> : BaseTypeMapper
         foreach (var info in infos)
         {
             foreach (var alias in new[] { info.Name.Replace("-operator", "") }.Union(info.Aliases))
+            {
                 if (mapping.TryGetValue(alias, out var existing))
                     throw new InvalidOperationException($"The operator name '{alias}' has already been added for the implementation '{existing.FullName}'. You cannot add a second times this alias for the implementation '{info.ImplementationType.FullName}'");
                 else
                     mapping.Add(alias, info.ImplementationType);
+            }
         }
         return mapping;
     }

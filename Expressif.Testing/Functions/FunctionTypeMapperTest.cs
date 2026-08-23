@@ -13,6 +13,7 @@ using Expressif.Functions.Text;
 using RecordFunction = Expressif.Functions.Record.Record;
 
 namespace Expressif.Testing.Functions;
+
 public class PredicateTypeMapperTest
 {
     [Test]
