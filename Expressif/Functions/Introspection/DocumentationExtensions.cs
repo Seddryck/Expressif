@@ -121,7 +121,11 @@ public static class DocumentationExtensions
             for (var i = 0; i < paramNodes.Length; i++)
                 paramInfos.Add(new ParamInfo(
                     names[i],
-                    ExpressifTypeMapper.ToExpressifType(parameters[i].ParameterType, unwrapProvider: true),
+                    ExpressifTypeMapper.ToExpressifType(
+                        parameters[i].ParameterType,
+                        unwrapProvider: true,
+                        declaringType: type,
+                        parameterName: names[i]),
                     paramNodes[i].InnerText.Trim()));
             ctorInfos.Add(new CtorInfo(paramInfos.ToArray()));
         }

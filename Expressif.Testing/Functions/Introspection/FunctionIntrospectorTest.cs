@@ -144,7 +144,9 @@ public class FunctionIntrospectorTest
     [TestCase("clamp", "min", "date-time")]
     [TestCase("filter", "predicate", "predicate")]
     [TestCase("adjacent", "operation", "expression")]
-    [TestCase("fold", "accumulator", "accumulator | text")]
+    [TestCase("fold", "accumulator", "accumulator")]
+    [TestCase("next-weekday", "weekday", "weekday")]
+    [TestCase("duration-between", "previous", "date | date-time | year-month")]
     public void Describe_Parameter_ExposesExpressifType(string function, string parameter, string type)
         => Assert.That(
             Infos.Single(x => x.Name == function).Parameters.Single(x => x.Name == parameter).Type,

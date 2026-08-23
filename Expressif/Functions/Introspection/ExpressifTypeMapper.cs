@@ -7,8 +7,25 @@ namespace Expressif.Functions.Introspection;
 
 internal static class ExpressifTypeMapper
 {
-    public static string ToExpressifType(Type type, bool unwrapProvider = false)
+    private static readonly IReadOnlyDictionary<(string Function, string Parameter), string> ParameterOverrides =
+        new Dictionary<(string, string), string>
+        {
+            [("Broadcast", "accumulator")] = "accumulator",
+            [("Fold", "accumulator")] = "accumulator",
+            [("Scan", "accumulator")] = "accumulator",
+            [("DurationBetween", "previous")] = "date | date-time | year-month",
+        };
+
+    public static string ToExpressifType(
+        Type type,
+        bool unwrapProvider = false,
+        Type? declaringType = null,
+        string? parameterName = null)
     {
+        if (declaringType is not null && parameterName is not null
+            && ParameterOverrides.TryGetValue((declaringType.Name, parameterName), out var parameterType))
+            return parameterType;
+
         type = Nullable.GetUnderlyingType(type) ?? type;
         if (unwrapProvider && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Func<>))
             type = Nullable.GetUnderlyingType(type.GetGenericArguments()[0]) ?? type.GetGenericArguments()[0];
@@ -39,6 +56,8 @@ internal static class ExpressifTypeMapper
             return "duration";
         if (type == typeof(YearMonth))
             return "year-month";
+        if (type == typeof(Weekday))
+            return "weekday";
         if (type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
         if (type == typeof(RecordValue))

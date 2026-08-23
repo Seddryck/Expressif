@@ -31,7 +31,7 @@
     "Parameters": [
       {
         "Name": "accumulator",
-        "Type": "accumulator | text",
+        "Type": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
       }
@@ -157,7 +157,7 @@
     "Parameters": [
       {
         "Name": "accumulator",
-        "Type": "accumulator | text",
+        "Type": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the fold execution."
       }
@@ -281,7 +281,7 @@
     "Parameters": [
       {
         "Name": "accumulator",
-        "Type": "accumulator | text",
+        "Type": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the scan execution."
       }
@@ -1368,7 +1368,7 @@
     "Parameters": [
       {
         "Name": "previous",
-        "Type": "any",
+        "Type": "date | date-time | year-month",
         "Optional": false,
         "Summary": "The previous temporal value to subtract from the current input."
       }
@@ -1387,7 +1387,7 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Type": "any",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1605,7 +1605,7 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Type": "any",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1787,7 +1787,7 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Type": "any",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1806,7 +1806,7 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Type": "any",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1899,7 +1899,7 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Type": "any",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -1918,7 +1918,7 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Type": "any",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
