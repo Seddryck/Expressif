@@ -69,40 +69,6 @@ jobs:
       - name: Restore local .NET tools
         run: dotnet tool restore
 
-  build:
-    needs: prepare
-    runs-on: windows-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
-
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Restore dependencies
-        run: dotnet restore Expressif.sln
-
-      - name: Build solution
-        run: >-
-          dotnet build Expressif.sln
-          --configuration Release
-          --no-restore
-          --nologo
-          -p:Version=${{ needs.prepare.outputs.semver }}
-          -p:ContinuousIntegrationBuild=true
-
-      - name: Upload compiled outputs
-        uses: actions/upload-artifact@v7
-        with:
-          name: release-build
-          if-no-files-found: error
-          retention-days: 7
-          path: |
-            **/bin/Release/**
-            **/obj/**
-
   validate-conformance:
     runs-on: windows-latest
     steps:
@@ -124,6 +90,9 @@ jobs:
 
   tests:
     name: tests (${{ matrix.name }})
+    needs:
+      - prepare
+      - validate-conformance
     runs-on: windows-latest
     permissions:
       contents: read
@@ -167,6 +136,8 @@ jobs:
           --framework ${{ matrix.framework }}
           --no-restore
           --nologo
+          -p:Version=${{ needs.prepare.outputs.semver }}
+          -p:ContinuousIntegrationBuild=true
 
       - name: Run tests with coverage
         shell: pwsh
@@ -193,6 +164,27 @@ jobs:
           }
           Copy-Item $report.FullName '.coverage/${{ matrix.coverage }}.xml'
 
+      - name: Create conformance report directory
+        if: matrix.coverage == 'expressif-net10.0'
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
+
+      - name: Run .NET conformance tests
+        if: matrix.coverage == 'expressif-net10.0'
+        run: >-
+          dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
+          --TestCaseFilter:TestCategory=conformance
+          --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
+
+      - name: Upload conformance test report
+        if: matrix.coverage == 'expressif-net10.0'
+        uses: actions/upload-artifact@v7
+        with:
+          name: conformance-test-report
+          if-no-files-found: error
+          retention-days: 7
+          path: conformance/bin/Expressif.Conformance.DotNet.xml
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
         with:
@@ -203,50 +195,10 @@ jobs:
           disable_search: true
           use_oidc: true
 
-  conformance-tests:
-    needs:
-      - build
-      - validate-conformance
-    runs-on: windows-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v7
-
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: 10.0.x
-
-      - name: Download compiled outputs
-        uses: actions/download-artifact@v8
-        with:
-          name: release-build
-          path: .
-
-      - name: Create conformance report directory
-        shell: pwsh
-        run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
-
-      - name: Run .NET conformance tests
-        run: >-
-          dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
-          --TestCaseFilter:TestCategory=conformance
-          --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
-
-      - name: Upload conformance test report
-        uses: actions/upload-artifact@v7
-        with:
-          name: conformance-test-report
-          if-no-files-found: error
-          retention-days: 7
-          path: conformance/bin/Expressif.Conformance.DotNet.xml
-
   package:
     needs:
       - prepare
-      - build
       - tests
-      - conformance-tests
     runs-on: windows-latest
     steps:
       - name: Check out repository
@@ -258,12 +210,6 @@ jobs:
         uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
-
-      - name: Download compiled outputs
-        uses: actions/download-artifact@v8
-        with:
-          name: release-build
-          path: .
 
       - name: Download conformance test report
         uses: actions/download-artifact@v8
@@ -283,9 +229,9 @@ jobs:
           dotnet pack Expressif
           --configuration Release
           --include-symbols
-          --no-build
           --nologo
           -p:Version=${{ needs.prepare.outputs.semver }}
+          -p:ContinuousIntegrationBuild=true
 
       - name: Package conformance assets
         shell: pwsh
