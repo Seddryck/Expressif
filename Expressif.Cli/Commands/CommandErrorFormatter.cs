@@ -73,7 +73,10 @@ internal static partial class CommandErrorFormatter
         var offset = Math.Clamp(start - lineStart, 0, sourceLine.Length);
         var availableLength = Math.Max(1, sourceLine.Length - offset);
         var markerLength = Math.Clamp(error.Span.Length, 1, availableLength);
-        var marker = new string(' ', offset) + new string('^', markerLength);
+        var markerPrefix = new string(sourceLine[..offset]
+            .Select(character => character == '\t' ? '\t' : ' ')
+            .ToArray());
+        var marker = markerPrefix + new string('^', markerLength);
         var description = error.IsMissing
             ? $"Missing {DescribeNode(error)}."
             : $"Unexpected {DescribeNode(error)}.";

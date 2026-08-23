@@ -7,8 +7,9 @@ internal static class CliRootCommandFactory
 {
     public static RootCommand Create()
     {
-        var rootCommand = new RootCommand("Evaluate, run and validate Expressif expressions.");
+        var rootCommand = new RootCommand("Parse, evaluate, run and validate Expressif expressions.");
 
+        rootCommand.Subcommands.Add(ParseCommand.Create());
         rootCommand.Subcommands.Add(EvaluateCommand.Create());
         rootCommand.Subcommands.Add(RunCommand.Create());
         rootCommand.Subcommands.Add(ValidateCommand.Create());
