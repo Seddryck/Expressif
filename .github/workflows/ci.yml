@@ -125,6 +125,9 @@ jobs:
   tests:
     needs: build
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -148,21 +151,22 @@ jobs:
         shell: pwsh
         run: |
           foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
-            dotnet test Expressif.Testing `
-              --configuration Release `
-              --framework $framework `
-              --no-build `
-              --nologo `
-              --filter 'TestCategory!=conformance' `
-              -p:CollectCoverage=true `
-              -p:CoverletOutputFormat=opencover `
-              -p:CoverletOutput="$env:GITHUB_WORKSPACE/.coverage/coverage.Expressif.$framework.xml" `
-              -p:Threshold=10 `
-              -p:ThresholdType=line
+            $results = ".coverage/$framework"
+            dotnet vstest "Expressif.Testing/bin/Release/$framework/Expressif.Testing.dll" `
+              "--TestCaseFilter:TestCategory!=conformance" `
+              "--Collect:XPlat Code Coverage;Format=opencover" `
+              "--ResultsDirectory:$results"
 
             if ($LASTEXITCODE -ne 0) {
               throw "Tests failed for $framework."
             }
+
+            $report = Get-ChildItem -Path $results -Recurse -File -Filter coverage.opencover.xml |
+              Select-Object -First 1
+            if ($null -eq $report) {
+              throw "Coverage report was not generated for $framework."
+            }
+            Copy-Item $report.FullName ".coverage/coverage.Expressif.$framework.xml"
           }
 
       - name: Upload coverage to Codecov
@@ -171,7 +175,7 @@ jobs:
           files: ./.coverage/coverage.Expressif.net8.0.xml,./.coverage/coverage.Expressif.net9.0.xml,./.coverage/coverage.Expressif.net10.0.xml
           fail_ci_if_error: true
           disable_search: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
 
   conformance-tests:
     needs:
