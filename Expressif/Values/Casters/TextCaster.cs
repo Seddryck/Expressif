@@ -13,8 +13,10 @@ public class TextCaster : ICaster<string>, IParser<string>
     {
         value = null;
         if (TypeChecker.IsNumericType(obj))
+        {
             return new NumericCaster().TryCast(obj, out var numeric)
                 && (value = numeric.ToString(NumberFormat)) is not null;
+        }
 
         return obj switch
         {

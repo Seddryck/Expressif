@@ -119,6 +119,7 @@ public static class DocumentationExtensions
             var parameters = constructor.GetParameters();
             var paramInfos = new List<ParamInfo>();
             for (var i = 0; i < paramNodes.Length; i++)
+            {
                 paramInfos.Add(new ParamInfo(
                     names[i],
                     ExpressifTypeMapper.ToExpressifType(
@@ -127,6 +128,8 @@ public static class DocumentationExtensions
                         declaringType: type,
                         parameterName: names[i]),
                     paramNodes[i].InnerText.Trim()));
+            }
+
             ctorInfos.Add(new CtorInfo(paramInfos.ToArray()));
         }
         return ctorInfos.ToArray();
