@@ -103,6 +103,43 @@ public class FunctionIntrospectorTest
     }
 
     [Test]
+    public void Describe_AllFunctionsExposeExpressifInputAndOutputTypes()
+    {
+        foreach (var info in Infos)
+        {
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(info.Input, Is.Not.Null.And.Not.Empty, info.Name);
+                Assert.That(info.Output, Is.Not.Null.And.Not.Empty, info.Name);
+            }
+        }
+    }
+
+    [TestCase("round", "numeric", "numeric")]
+    [TestCase("length", "text", "integer")]
+    [TestCase("datetime-to-date", "date-time", "date")]
+    [TestCase("next-weekday", "date-time", "date")]
+    [TestCase("reverse", "array", "array")]
+    [TestCase("record", "any", "record")]
+    public void Describe_TypedFunction_ExposesExpressifContract(string name, string input, string output)
+    {
+        var info = Infos.Single(x => x.Name == name);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(info.Converted, Is.True);
+            Assert.That(info.Input, Is.EqualTo(input));
+            Assert.That(info.Output, Is.EqualTo(output));
+        }
+    }
+
+    [Test]
+    public void Describe_UnconvertedFunctions_AreExplicitlyReported()
+        => Assert.That(
+            Infos.Where(x => !x.Converted).Select(x => x.Name),
+            Is.EquivalentTo(new[] { "coalesce", "field", "neutral" }));
+
+    [Test]
     public void Locate_ExpressifAssembly_ArrayFunctionsExposeWrappersAndShiftsOnly()
     {
         using (Assert.EnterMultipleScope())

@@ -27,7 +27,7 @@ public class Field : IFunction
 /// Later entries overwrite fields with the same name created by earlier entries.
 /// </summary>
 [Function(prefix: "")]
-public class Record : IFunction
+public class Record : IFunction<object?, ValueRecord>
 {
     private Func<RecordEntryEvaluator[]> Entries { get; }
 
@@ -46,6 +46,8 @@ public class Record : IFunction
 
         return record;
     }
+
+    ValueRecord IFunction<object?, ValueRecord>.Evaluate(object? value) => (ValueRecord)Evaluate(value)!;
 }
 
 public class RecordEntryEvaluator

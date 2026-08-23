@@ -5,7 +5,7 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.IO;
 
 [Function(prefix: "file")]
-public abstract class BaseFileFunction : BaseTextFunction, IBasePathFunction
+public abstract class BaseFileFunction<TOut> : BaseTextFunction<TOut>, IBasePathFunction
 {
     private Func<string, IFileInfo> FileInfoInitializer { get; set; }
     public BaseFileFunction() => FileInfoInitializer = x => new FileInfoWrapper(x);
@@ -30,7 +30,7 @@ public abstract class BaseFileFunction : BaseTextFunction, IBasePathFunction
 /// <summary>
 /// Returns the size of the file provided as argument in bytes.
 /// </summary>
-public class Size : BaseFileFunction
+public class Size : BaseFileFunction<long?>
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.Length;
 }
@@ -39,7 +39,7 @@ public class Size : BaseFileFunction
 /// Returns the creation time of the file provided as argument in local time.
 /// </summary>
 [Function(prefix: "file", aliases: ["file-to-creation-dateTime"])]
-public class CreationDateTime : BaseFileFunction
+public class CreationDateTime : BaseFileFunction<DateTime?>
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTime;
 }
@@ -48,7 +48,7 @@ public class CreationDateTime : BaseFileFunction
 /// Returns the creation time of the file provided as argument in UTC.
 /// </summary>
 [Function(prefix: "file", aliases: ["file-to-creation-dateTime-utc"])]
-public class CreationDateTimeUtc : BaseFileFunction
+public class CreationDateTimeUtc : BaseFileFunction<DateTime?>
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.CreationTimeUtc;
 }
@@ -57,7 +57,7 @@ public class CreationDateTimeUtc : BaseFileFunction
 /// Returns the last update time of the file provided as argument in local time.
 /// </summary>
 [Function(prefix: "file", aliases: ["file-to-update-dateTime"])]
-public class UpdateDateTime : BaseFileFunction
+public class UpdateDateTime : BaseFileFunction<DateTime?>
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTime;
 }
@@ -66,7 +66,7 @@ public class UpdateDateTime : BaseFileFunction
 /// Returns the last update time of the file provided as argument in UTC.
 /// </summary>
 [Function(prefix: "file", aliases: ["file-to-update-dateTime-utc"])]
-public class UpdateDateTimeUtc : BaseFileFunction
+public class UpdateDateTimeUtc : BaseFileFunction<DateTime?>
 {
     protected override object EvaluateFileInfo(IFileInfo value) => value.LastWriteTimeUtc;
 }

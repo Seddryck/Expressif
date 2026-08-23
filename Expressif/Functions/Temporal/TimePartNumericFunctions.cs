@@ -9,8 +9,7 @@ using Expressif.Values.Casters;
 using Expressif.Values.Special;
 
 namespace Expressif.Functions.Temporal;
-
-public abstract class BaseTimePartNumericFunction : BaseTemporalFunction
+public abstract class BaseTimePartNumericFunction : BaseTemporalFunction<int?>
 { }
 
 /// <summary>

@@ -1,0 +1,1674 @@
+[
+  {
+    "Name": "adjacent",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "broadcast",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "chunk",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "complement",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "difference",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "distinct",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "filter",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-elements",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "fold",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "any",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "intersection",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "lag",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-elements",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "lead",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "map",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "pairwise",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "reverse",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "scan",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "skip-first-elements",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "skip-last-elements",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "slice-elements",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "symmetric-difference",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "union",
+    "Scope": "Array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "creation-datetime",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "creation-datetime-utc",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "directory",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "extension",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "filename",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "filename-without-extension",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "root",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "size",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "update-datetime",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "update-datetime-utc",
+    "Scope": "IO",
+    "Converted": true,
+    "Input": "text",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "absolute",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "add",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "ceiling",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "clip",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "cube-power",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "cube-root",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "decrement",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "divide",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "floor",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "greatest-common-divisor",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "human-readable-format-binary-bytes",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "human-readable-format-decimal",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "increment",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "integer",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "invert",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "lowest-common-multiple",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "multiply",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "nth-root",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "null-to-zero",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "oppose",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "percent-change",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "power",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "round",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "sign",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "square-power",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "square-root",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "subtract",
+    "Scope": "Numeric",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "field",
+    "Scope": "Record",
+    "Converted": false,
+    "Input": "any",
+    "Output": "any",
+    "Reason": "Output depends on the selected field in the runtime record shape."
+  },
+  {
+    "Name": "record",
+    "Scope": "Record",
+    "Converted": true,
+    "Input": "any",
+    "Output": "record",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "any-to-any",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "any",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "coalesce",
+    "Scope": "Special",
+    "Converted": false,
+    "Input": "any",
+    "Output": "any",
+    "Reason": "Output depends on the first non-null expression result at runtime."
+  },
+  {
+    "Name": "coerce-boolean",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "boolean | integer | numeric | text",
+    "Output": "boolean",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "coerce-date",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "date | date-time | text | year-month",
+    "Output": "date",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "coerce-datetime",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "date | date-time | text | year-month",
+    "Output": "date-time",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "coerce-int",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "boolean | integer | numeric | text",
+    "Output": "integer",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "coerce-numeric",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "boolean | integer | numeric | text",
+    "Output": "numeric",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "coerce-text",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "boolean | date | date-time | integer | numeric | text | year-month",
+    "Output": "text",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "coerce-time",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "date-time | text | time",
+    "Output": "time",
+    "Reason": "Exposes direct typed coercion contracts through the coercion registry."
+  },
+  {
+    "Name": "neutral",
+    "Scope": "Special",
+    "Converted": false,
+    "Input": "any",
+    "Output": "any",
+    "Reason": "Identity semantics require an open TIn -> TIn contract rather than one closed contract."
+  },
+  {
+    "Name": "null-to-value",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "any",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "tuple-at",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "tuple",
+    "Output": "any",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "tuple-first",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "tuple",
+    "Output": "any",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "tuple-second",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "tuple",
+    "Output": "any",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "value-to-value",
+    "Scope": "Special",
+    "Converted": true,
+    "Input": "any",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "age",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "backward",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "catholic-calendar",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "ceiling-hour",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "ceiling-minute",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "change-of-hour",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "change-of-minute",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "change-of-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "change-of-second",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "change-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "clamp",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "datetime-to-date",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "day-of-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "day-of-week",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "day-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "duration-between",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "duration",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-in-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-of-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "floor-hour",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "floor-minute",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "forward",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "hour",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "hour-minute",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "hour-minute-second",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "hour-of-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "invalid-to-date",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "iso-day-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "iso-week-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "iso-year-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "iso-year-week",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "iso-year-week-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-in-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-of-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "length-of-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "length-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "local-to-utc",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "minute-of-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "minute-of-hour",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "month-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "month-of-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "next-business-days",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "next-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "next-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "next-weekday",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "next-weekday-or-same",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "next-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "null-to-date",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "previous-business-days",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "previous-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "previous-month",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "previous-weekday",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "previous-weekday-or-same",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "previous-year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "second-of-day",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "second-of-hour",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "second-of-minute",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "set-time",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "set-to-local",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "set-to-utc",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "utc-to-local",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "year",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "year-of-era",
+    "Scope": "Temporal",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "after-substring",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "allcaps-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "append",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "append-new-line",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "append-space",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "before-substring",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "camel-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "camel-snake-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "clean-whitespace",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "cobol-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "collapse-whitespace",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "count-distinct-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "count-substring",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "dot-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "empty-to-null",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "filter-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "flat-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "html-to-text",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "kebab-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "length",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "lower",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "mask-to-text",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "namespace-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "null-to-empty",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "pad-center",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "pad-left",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "pad-right",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "pascal-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "pascal-snake-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "path-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "prefix",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "prefix-new-line",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "prefix-space",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "prepend",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "prepend-new-line",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "prepend-space",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "remove-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "replace-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "replace-slice",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "retain-alpha",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "retain-alpha-numeric",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "retain-numeric",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "retain-numeric-symbol",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "screaming-snake-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "sentence-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "skip-first-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "skip-last-chars",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "snake-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "suffix",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "suffix-new-line",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "suffix-space",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "swap-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "text-to-datetime",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "text-to-html",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "text-to-mask",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "title-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "token",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "token-count",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "train-case",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "trim",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "upper",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "whitespaces-to-empty",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "whitespaces-to-null",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "without-diacritics",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "without-whitespaces",
+    "Scope": "Text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  }
+]

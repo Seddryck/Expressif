@@ -7,8 +7,11 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Text;
 
 [Function]
-public abstract class BaseTextFunction : IFunction
+public abstract class BaseTextFunction<TOut> : IFunction<string?, TOut?>
 {
+    TOut? IFunction<string?, TOut?>.Evaluate(string? value)
+        => Evaluate((object?)value) is TOut result ? result : default;
+
     public object? Evaluate(object? value)
     {
         return value switch
@@ -56,6 +59,9 @@ public abstract class BaseTextFunction : IFunction
     protected virtual object? EvaluateArray(IEnumerable array) => null;
     protected abstract object? EvaluateString(string value);
 }
+
+public abstract class BaseTextFunction : BaseTextFunction<string>
+{ }
 
 /// <summary>
 /// Returns the argument value except if this value only contains white-space characters then it returns `empty`.
