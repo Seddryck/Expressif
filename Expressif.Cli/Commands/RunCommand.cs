@@ -190,7 +190,7 @@ internal static class RunCommand
             }
             catch (Exception exception) when (exception is not OutOfMemoryException)
             {
-                Console.Error.WriteLine(exception.Message);
+                CommandDiagnosticWriter.WriteLine(exception.Message);
                 return ExitCodes.EvaluationFailed;
             }
         });
@@ -217,7 +217,7 @@ internal static class RunCommand
                 catch (Exception exception) when (exception is not OutOfMemoryException and not FormatException)
                 {
                     throw new InvalidOperationException(
-                        $"Input enumeration failed at position {index}: {exception.Message}",
+                        CommandErrorFormatter.FormatRuntimeError(exception, index + 1),
                         exception);
                 }
 
@@ -234,7 +234,7 @@ internal static class RunCommand
                         : exception;
 
                     throw new InvalidOperationException(
-                        $"Expression evaluation failed for input {FormatValue(input)}: {rootCause.Message}",
+                        CommandErrorFormatter.FormatEvaluationError(rootCause, index + 1),
                         rootCause);
                 }
 

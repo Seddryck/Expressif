@@ -8,6 +8,22 @@ public class CliCommandTests
 {
     private readonly List<string> tempFilesToDelete = [];
 
+    [Test]
+    public void DiagnosticWriter_Colorize_UsesAnsiRedOnlyWhenEnabled()
+    {
+        const string message = "Syntax error [EXPR1001]";
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                CommandDiagnosticWriter.Colorize(message, useColor: true),
+                Is.EqualTo("\u001b[31mSyntax error [EXPR1001]\u001b[0m"));
+            Assert.That(
+                CommandDiagnosticWriter.Colorize(message, useColor: false),
+                Is.EqualTo(message));
+        });
+    }
+
     [TearDown]
     public void TearDown()
     {
@@ -234,7 +250,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("boom closed runtime"));
+            Assert.That(result.StdErr, Does.StartWith("Evaluation error [EXPR3001]:"));
+            Assert.That(result.StdErr, Does.Contain("boom closed runtime"));
         });
     }
 
@@ -603,7 +620,9 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("Input enumeration failed at position 0: Duplicate field 'name' in record literal."));
+            Assert.That(result.StdErr, Does.StartWith("Runtime error [EXPR4001]:"));
+            Assert.That(result.StdErr, Does.Contain("Duplicate field 'name' in record literal."));
+            Assert.That(result.StdErr, Does.Contain("Input row: 1"));
         });
     }
 
@@ -1061,7 +1080,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
-            Assert.That(result.StdErr, Does.Contain("Expression evaluation failed for input unknown"));
+            Assert.That(result.StdErr, Does.Contain("Evaluation error [EXPR3001]:"));
+            Assert.That(result.StdErr, Does.Contain("Input row: 2"));
         });
     }
 
@@ -1144,6 +1164,28 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'unknown'."));
+        });
+    }
+
+    [Test]
+    public async Task ValidateEvaluateAndRun_InvalidSyntax_RenderEquivalentDiagnostics()
+    {
+        const string expression = "lower | add(,)";
+
+        var validateResult = await InvokeAsync("validate", expression);
+        var evaluateResult = await InvokeAsync("evaluate", expression, "--input", "value");
+        var runResult = await InvokeAsync("run", expression, "--input", "value");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(validateResult.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(evaluateResult.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(runResult.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(validateResult.StdErr, Is.EqualTo(evaluateResult.StdErr));
+            Assert.That(validateResult.StdErr, Is.EqualTo(runResult.StdErr));
+            Assert.That(validateResult.StdErr, Does.Contain("Syntax error [EXPR1001] at line 1, column"));
+            Assert.That(validateResult.StdErr, Does.Contain(expression));
+            Assert.That(validateResult.StdErr, Does.Contain("^"));
         });
     }
 

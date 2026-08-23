@@ -51,11 +51,11 @@ internal static class ExpressionCommandCommon
         if (hasExpressionFile)
         {
             Console.Error.WriteLine($"The expression loaded from '{expressionFilePath}' is invalid:");
-            Console.Error.WriteLine(message);
+            CommandDiagnosticWriter.WriteLine(message);
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        Console.Error.WriteLine(message);
+        CommandDiagnosticWriter.WriteLine(message);
         return ExitCodes.InvalidExpressionOrInput;
     }
 

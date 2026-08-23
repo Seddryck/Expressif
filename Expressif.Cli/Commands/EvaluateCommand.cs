@@ -214,7 +214,7 @@ internal static class EvaluateCommand
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
-            Console.Error.WriteLine(exception.Message);
+            CommandDiagnosticWriter.WriteLine(CommandErrorFormatter.FormatEvaluationError(exception));
             return ExitCodes.EvaluationFailed;
         }
     }
@@ -288,7 +288,7 @@ internal static class EvaluateCommand
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
-            Console.Error.WriteLine(exception.Message);
+            CommandDiagnosticWriter.WriteLine(CommandErrorFormatter.FormatEvaluationError(exception));
             return ExitCodes.EvaluationFailed;
         }
     }
