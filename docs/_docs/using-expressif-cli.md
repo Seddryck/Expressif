@@ -63,9 +63,9 @@ The expression must be provided through exactly one source:
 
 Providing both sources, or neither source, returns an error.
 
-### ClosedExpression evaluation (no input)
+### Closed expression evaluation (no input)
 
-When `--input` is not provided, the expression is evaluated as a `ClosedExpression` and executed exactly once.
+When `--input` is not provided, the expression is validated as closed and executed exactly once.
 
 ```console
 expressif evaluate "5 | add(3)"

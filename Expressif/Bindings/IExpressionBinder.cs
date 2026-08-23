@@ -9,4 +9,5 @@ namespace Expressif.Bindings;
 public interface IExpressionBinder
 {
     RuntimeExpression Bind(RootExpressionSyntax syntax);
+    RuntimeExpression BindClosed(RootExpressionSyntax syntax);
 }

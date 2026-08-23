@@ -68,6 +68,23 @@ public class ExpressionFactoryTest
         });
     }
 
+    [Test]
+    public void CreateClosed_WithConfiguredComponents_UsesParserThenClosedBinder()
+    {
+        var parser = new TrackingParser();
+        var binder = new TrackingBinder();
+        var factory = new Expressif.ExpressionFactory(parser, binder);
+        var expression = factory.CreateClosed("ignored");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parser.CallCount, Is.EqualTo(1));
+            Assert.That(binder.ClosedCallCount, Is.EqualTo(1));
+            Assert.That(binder.LastSyntax, Is.SameAs(parser.Syntax));
+            Assert.That(expression, Is.SameAs(binder.Expression));
+        });
+    }
+
     private sealed class TrackingParser : IExpressionParser
     {
         public RootExpressionSyntax Syntax { get; } = ExpressionParser.Parse("upper");
@@ -84,11 +101,19 @@ public class ExpressionFactoryTest
     {
         public IExpression Expression { get; } = new StubExpression();
         public int CallCount { get; private set; }
+        public int ClosedCallCount { get; private set; }
         public RootExpressionSyntax? LastSyntax { get; private set; }
 
         public IExpression Bind(RootExpressionSyntax syntax)
         {
             CallCount++;
+            LastSyntax = syntax;
+            return Expression;
+        }
+
+        public IExpression BindClosed(RootExpressionSyntax syntax)
+        {
+            ClosedCallCount++;
             LastSyntax = syntax;
             return Expression;
         }

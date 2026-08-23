@@ -15,8 +15,8 @@ namespace Expressif.Cli.Commands;
 internal static class RunCommand
 {
     private static readonly Func<string, Context, IExpression> DefaultBuildExpression = static (code, context) => Expression.Create(code, context);
-    private static readonly Func<string, Context, ClosedExpression> DefaultBuildClosedExpression = static (code, context) => ClosedExpression.Create(code, context);
-    private static readonly Func<ClosedExpression, object?> DefaultEvaluateClosedExpression = static expression => expression.Evaluate();
+    private static readonly Func<string, Context, IExpression> DefaultBuildClosedExpression = static (code, context) => Expression.CreateClosed(code, context);
+    private static readonly Func<IExpression, object?> DefaultEvaluateClosedExpression = static expression => expression.Evaluate(null);
     private static readonly Func<string, object?> DefaultParseInput = static input => InputValueParser.Parse(input);
     private static readonly Func<string, object?> DefaultResolveSourceValue = ResolveSourceValueCore;
     private static readonly Func<IExpression, Context, IEnumerable, IEnumerable<object?>> DefaultRunExpression = static (expression, context, inputs) => EvaluateEach(expression, context, inputs);
@@ -24,10 +24,10 @@ internal static class RunCommand
     internal static Func<string, Context, IExpression> BuildExpression { get; set; }
         = DefaultBuildExpression;
 
-    internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
+    internal static Func<string, Context, IExpression> BuildClosedExpression { get; set; }
         = DefaultBuildClosedExpression;
 
-    internal static Func<ClosedExpression, object?> EvaluateClosedExpression { get; set; }
+    internal static Func<IExpression, object?> EvaluateClosedExpression { get; set; }
         = DefaultEvaluateClosedExpression;
 
     internal static Func<string, object?> ParseInput { get; set; }
@@ -529,7 +529,7 @@ internal static class RunCommand
             return OpenCsvDataReader(sourcePath, sourceOptions);
 
         var sourceCode = ReadUtf8File(sourcePath);
-        ClosedExpression closedExpression;
+        IExpression closedExpression;
         try
         {
             closedExpression = BuildClosedExpression(sourceCode, new Context());

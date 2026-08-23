@@ -7,8 +7,8 @@ internal static class ValidateCommand
     internal static Func<string, Context, IExpression> BuildExpression { get; set; }
         = static (code, context) => Expression.Create(code, context);
 
-    internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
-        = static (code, context) => ClosedExpression.Create(code, context);
+    internal static Func<string, Context, IExpression> BuildClosedExpression { get; set; }
+        = static (code, context) => Expression.CreateClosed(code, context);
 
     public static Command Create()
     {

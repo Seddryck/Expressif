@@ -9,6 +9,24 @@ namespace Expressif.Testing;
 
 public class ExpressionTest
 {
+    [Test]
+    public void CreateClosed_OpenExpression_ThrowsExpressionRequiresInputException()
+    {
+        var exception = Assert.Throws<ExpressionRequiresInputException>(() => Expression.CreateClosed("upper"));
+
+        Assert.That(exception!.Message, Is.EqualTo("The expression cannot be evaluated without an input because it references 'upper'."));
+    }
+
+    [Test]
+    public void CreateClosed_ExpressionWithoutMembers_ReturnsRootValue()
+    {
+        var context = new Context();
+        context.Variables.Add<int>("n", 7);
+
+        var expression = Expression.CreateClosed("@n", context);
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(7));
+    }
     [SetUp]
     public void Setup()
     { }
@@ -226,8 +244,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_ArrayLiteralPipeSum_Valid()
     {
-        var expression = ClosedExpression.Create("{1,2,3} | sum");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{1,2,3} | sum");
+        var result = expression.Evaluate(null);
         Assert.That(result, Is.EqualTo(6m));
     }
 
@@ -237,8 +255,8 @@ public class ExpressionTest
         var context = new Context();
         context.Variables.Add<int[]>("arr", new[] { 1, 2, 3, 4 });
 
-        var expression = ClosedExpression.Create("@arr | count", context);
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("@arr | count", context);
+        var result = expression.Evaluate(null);
         Assert.That(result, Is.EqualTo(4));
     }
 
@@ -248,8 +266,8 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new { Values = new object[] { "1", 2, true } });
 
-        var expression = ClosedExpression.Create("^.Values | sum", context);
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("^.Values | sum", context);
+        var result = expression.Evaluate(null);
         Assert.That(result, Is.EqualTo(4m));
     }
 
@@ -259,8 +277,8 @@ public class ExpressionTest
         var context = new Context();
         context.CurrentObject.Set(new List<object> { new[] { 1, 9, 4 } });
 
-        var expression = ClosedExpression.Create("^.0 | max", context);
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("^.0 | max", context);
+        var result = expression.Evaluate(null);
         Assert.That(result, Is.EqualTo(9m));
     }
 
@@ -275,8 +293,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_DirectAccumulatorSyntax_StillScalar()
     {
-        var expression = ClosedExpression.Create("{1,2,3} | sum");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{1,2,3} | sum");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(6m));
     }
@@ -288,13 +306,13 @@ public class ExpressionTest
     [TestCase("{} | every", true)]
     [TestCase("{} | any", false)]
     public void Evaluate_DirectBooleanAccumulatorSyntax_Valid(string code, bool expected)
-        => Assert.That(ClosedExpression.Create(code).Evaluate(), Is.EqualTo(expected));
+        => Assert.That(Expression.CreateClosed(code).Evaluate(null), Is.EqualTo(expected));
 
     [Test]
     public void Evaluate_ArrayPipeMapMultiply_Valid()
     {
-        var expression = ClosedExpression.Create("{1,2,3} | map(multiply(2))");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{1,2,3} | map(multiply(2))");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { 2m, 4m, 6m }));
     }
@@ -302,8 +320,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_ArrayPipeMapAdd_Valid()
     {
-        var expression = ClosedExpression.Create("{1,2,3} | map(add(10))");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{1,2,3} | map(add(10))");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { 11m, 12m, 13m }));
     }
@@ -311,8 +329,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_ArrayMapShorthandPipeline_Valid()
     {
-        var expression = ClosedExpression.Create("{-1,2,-3} |> (absolute | add(5)) | reverse");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{-1,2,-3} |> (absolute | add(5)) | reverse");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { 8m, 7m, 6m }));
     }
@@ -321,7 +339,7 @@ public class ExpressionTest
     [TestCase("{1,12,5,42,17} |> (add(1)) | sum")]
     public void Evaluate_ArrayMapShorthand_ResumesParentPipeline(string code)
     {
-        var result = ClosedExpression.Create(code).Evaluate();
+        var result = Expression.CreateClosed(code).Evaluate(null);
 
         Assert.That(result, Is.EqualTo(82m));
     }
@@ -355,8 +373,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_StringArrayPipeMapUpper_Valid()
     {
-        var expression = ClosedExpression.Create("{\"alice\",\"bob\"} | map(upper)");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{\"alice\",\"bob\"} | map(upper)");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { "ALICE", "BOB" }));
     }
@@ -364,8 +382,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_ArrayPipeMapPredicate_Valid()
     {
-        var expression = ClosedExpression.Create("{10,15} | map(even)");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{10,15} | map(even)");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { true, false }));
     }
@@ -373,8 +391,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_Map_PreservesCardinality()
     {
-        var expression = ClosedExpression.Create("{1,2,3,4} | map(add(1))");
-        var result = expression.Evaluate() as object?[];
+        var expression = Expression.CreateClosed("{1,2,3,4} | map(add(1))");
+        var result = expression.Evaluate(null) as object?[];
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result!, Has.Length.EqualTo(4));
@@ -383,8 +401,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_EmptyArrayPipeMap_EmptyArray()
     {
-        var expression = ClosedExpression.Create("{} | map(add(1))");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{} | map(add(1))");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(Array.Empty<object?>()));
     }
@@ -392,8 +410,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_ArrayPipeFilterGreaterThan_Valid()
     {
-        var expression = ClosedExpression.Create("{1,2,3,4} | filter(greater-than(2))");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{1,2,3,4} | filter(greater-than(2))");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { 3m, 4m }));
     }
@@ -401,8 +419,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_ArrayPipeFilterEven_Valid()
     {
-        var expression = ClosedExpression.Create("{1,2,3,4,5} | filter(even)");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{1,2,3,4,5} | filter(even)");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { 2m, 4m }));
     }
@@ -410,8 +428,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_StringArrayPipeFilterStartsWith_Valid()
     {
-        var expression = ClosedExpression.Create("{\"alice\",\"bob\",\"anna\"} | filter(starts-with(\"a\"))");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{\"alice\",\"bob\",\"anna\"} | filter(starts-with(\"a\"))");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(new object?[] { "alice", "anna" }));
     }
@@ -430,8 +448,8 @@ public class ExpressionTest
             }
         });
 
-        var expression = ClosedExpression.Create("^.customer | record(customerName := field(name), requestedBy := ^.name)", context);
-        var result = (RecordValue)expression.Evaluate()!;
+        var expression = Expression.CreateClosed("^.customer | record(customerName := field(name), requestedBy := ^.name)", context);
+        var result = (RecordValue)expression.Evaluate(null)!;
 
         Assert.Multiple(() =>
         {
@@ -476,9 +494,9 @@ public class ExpressionTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(ClosedExpression.Create("^.customers |> (.name)", context).Evaluate(),
+            Assert.That(Expression.CreateClosed("^.customers |> (.name)", context).Evaluate(null),
                 Is.EqualTo(new object?[] { "Alice", "Bob" }));
-            Assert.That(ClosedExpression.Create("^.customers | filter(.active) |> (.name)", context).Evaluate(),
+            Assert.That(Expression.CreateClosed("^.customers | filter(.active) |> (.name)", context).Evaluate(null),
                 Is.EqualTo(new object?[] { "Alice" }));
         });
     }
@@ -576,8 +594,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_RecordLiteral_ParsesTypedValues()
     {
-        var expression = ClosedExpression.Create("{name := \"Alice\", active := #true, retries := 3, ratio := 1.5, missing := #null}");
-        var result = (RecordValue)expression.Evaluate()!;
+        var expression = Expression.CreateClosed("{name := \"Alice\", active := #true, retries := 3, ratio := 1.5, missing := #null}");
+        var result = (RecordValue)expression.Evaluate(null)!;
 
         Assert.Multiple(() =>
         {
@@ -593,8 +611,8 @@ public class ExpressionTest
     [Test]
     public void Evaluate_EmptyArrayPipeFilter_EmptyArray()
     {
-        var expression = ClosedExpression.Create("{} | filter(even)");
-        var result = expression.Evaluate();
+        var expression = Expression.CreateClosed("{} | filter(even)");
+        var result = expression.Evaluate(null);
 
         Assert.That(result, Is.EqualTo(Array.Empty<object?>()));
     }
@@ -602,9 +620,9 @@ public class ExpressionTest
     [Test]
     public void Evaluate_FilterWithNonPredicateExpression_Throws()
     {
-        var expression = ClosedExpression.Create("{1,2,3} | filter(add(1))");
+        var expression = Expression.CreateClosed("{1,2,3} | filter(add(1))");
 
-        Assert.That(() => expression.Evaluate(), Throws.TypeOf<NotImplementedFunctionException>());
+        Assert.That(() => expression.Evaluate(null), Throws.TypeOf<NotImplementedFunctionException>());
     }
 
     [Test]
@@ -612,12 +630,12 @@ public class ExpressionTest
     {
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(ClosedExpression.Create("{} | count").Evaluate(), Is.Zero);
-            Assert.That(ClosedExpression.Create("{} | sum").Evaluate(), Is.Zero);
-            Assert.That(ClosedExpression.Create("{} | min").Evaluate(), Is.Null);
-            Assert.That(ClosedExpression.Create("{} | max").Evaluate(), Is.Null);
-            Assert.That(ClosedExpression.Create("{} | first").Evaluate(), Is.Null);
-            Assert.That(ClosedExpression.Create("{} | last").Evaluate(), Is.Null);
+            Assert.That(Expression.CreateClosed("{} | count").Evaluate(null), Is.Zero);
+            Assert.That(Expression.CreateClosed("{} | sum").Evaluate(null), Is.Zero);
+            Assert.That(Expression.CreateClosed("{} | min").Evaluate(null), Is.Null);
+            Assert.That(Expression.CreateClosed("{} | max").Evaluate(null), Is.Null);
+            Assert.That(Expression.CreateClosed("{} | first").Evaluate(null), Is.Null);
+            Assert.That(Expression.CreateClosed("{} | last").Evaluate(null), Is.Null);
         }
     }
 }

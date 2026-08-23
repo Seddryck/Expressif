@@ -10,11 +10,11 @@ internal static class EvaluateCommand
     internal static Func<string, Context, IExpression> BuildExpression { get; set; }
         = static (code, context) => Expression.Create(code, context);
 
-    internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
-        = static (code, context) => ClosedExpression.Create(code, context);
+    internal static Func<string, Context, IExpression> BuildClosedExpression { get; set; }
+        = static (code, context) => Expression.CreateClosed(code, context);
 
-    internal static Func<ClosedExpression, object?> EvaluateClosedExpression { get; set; }
-        = static expression => expression.Evaluate();
+    internal static Func<IExpression, object?> EvaluateClosedExpression { get; set; }
+        = static expression => expression.Evaluate(null);
 
     internal static Func<string, object?> ParseInput { get; set; }
         = DefaultParseInput;
@@ -22,8 +22,8 @@ internal static class EvaluateCommand
     internal static void ResetDelegates()
     {
         BuildExpression = static (code, context) => Expression.Create(code, context);
-        BuildClosedExpression = static (code, context) => ClosedExpression.Create(code, context);
-        EvaluateClosedExpression = static expression => expression.Evaluate();
+        BuildClosedExpression = static (code, context) => Expression.CreateClosed(code, context);
+        EvaluateClosedExpression = static expression => expression.Evaluate(null);
         ParseInput = DefaultParseInput;
     }
 
@@ -177,7 +177,7 @@ internal static class EvaluateCommand
 
     private static int EvaluateClosed(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
     {
-        ClosedExpression closedExpression;
+        IExpression closedExpression;
         try
         {
             closedExpression = BuildClosedExpression(expressionCode, new Context());

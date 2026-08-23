@@ -22,4 +22,10 @@ public sealed class ExpressionFactory
 
     public IExpression Create(RootExpressionSyntax syntax)
         => Binder.Bind(syntax);
+
+    public IExpression CreateClosed(string text)
+        => CreateClosed(Parser.Parse(text));
+
+    public IExpression CreateClosed(RootExpressionSyntax syntax)
+        => Binder.BindClosed(syntax);
 }

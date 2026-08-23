@@ -13,6 +13,12 @@ public class Expression : IExpression
     public static IExpression Create(string text, IContext context)
         => new ExpressionFactory(binder: new ExpressionBinder(context)).Create(text);
 
+    public static IExpression CreateClosed(string text)
+        => new ExpressionFactory().CreateClosed(text);
+
+    public static IExpression CreateClosed(string text, IContext context)
+        => new ExpressionFactory(binder: new ExpressionBinder(context)).CreateClosed(text);
+
     internal Expression(IFunction expression)
         => this.expression = expression;
 

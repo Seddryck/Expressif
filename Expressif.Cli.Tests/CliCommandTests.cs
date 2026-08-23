@@ -14,7 +14,7 @@ public class CliCommandTests
         EvaluateCommand.ResetDelegates();
         RunCommand.ResetDelegates();
         ValidateCommand.BuildExpression = static (code, context) => Expression.Create(code, context);
-        ValidateCommand.BuildClosedExpression = static (code, context) => ClosedExpression.Create(code, context);
+        ValidateCommand.BuildClosedExpression = static (code, context) => Expression.CreateClosed(code, context);
 
         foreach (var path in tempFilesToDelete)
         {
