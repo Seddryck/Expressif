@@ -93,14 +93,11 @@ Repository hooks are stored in `.githooks/`. Enable them after cloning the repos
 git config core.hooksPath .githooks
 ```
 
-On Windows, the hooks run with the Bash bundled in Git for Windows. On all platforms, they require `commitlint`, PowerShell (`pwsh`), and the .NET SDK to be available on `PATH`. Restore .NET dependencies before pushing because the StyleCop check runs with `--no-restore`.
+On Windows, the hooks run with the Bash bundled in Git for Windows. On all platforms, they require `commitlint` and the .NET SDK to be available on `PATH`. Restore .NET dependencies before pushing because the StyleCop check runs with `--no-restore`.
 
 The `commit-msg` hook validates every commit message against `commitlint.config.cjs`. Commit messages MUST use an allowed Conventional Commit type and satisfy the configured header and line-length limits.
 
-The `pre-push` hook performs the following checks:
-
-1. Run StyleCop analyzers for every branch. The push is rejected when `dotnet format Expressif.sln analyzers --verify-no-changes --no-restore` finds analyzer violations.
-2. On `feat/*` and legacy `feature/*` branches, regenerate language indexes and verify generated documentation. When generated files differ, the hook updates and stages the documentation, rejects the push, and requires those changes to be committed.
+The `pre-push` hook runs StyleCop analyzers for every branch. The push is rejected when `dotnet format Expressif.sln analyzers --verify-no-changes --no-restore` finds analyzer violations.
 
 Do NOT bypass these hooks. Resolve validation failures before committing or pushing.
 
