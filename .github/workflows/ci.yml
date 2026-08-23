@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - '**'
+      - main
+      - next-major
     tags-ignore:
       - '**'
     paths-ignore:
@@ -139,6 +140,10 @@ jobs:
           name: release-build
           path: .
 
+      - name: Create coverage directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path .coverage -Force | Out-Null
+
       - name: Run tests with coverage
         run: >-
           dotnet test Expressif.Testing
@@ -178,6 +183,10 @@ jobs:
         with:
           name: release-build
           path: .
+
+      - name: Create conformance report directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
 
       - name: Run .NET conformance tests
         run: >-
