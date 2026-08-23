@@ -86,6 +86,17 @@ public class ExpressionApiTest
     public void ExpressionCreate_UsesDefaultFactory()
         => Assert.That(Expression.Create("upper").Evaluate("foo"), Is.EqualTo("FOO"));
 
+    [Test]
+    public void ExpressionCreate_WithContext_UsesContextForBinding()
+    {
+        var context = new Context();
+        context.Variables.Add<string>("name", "foo");
+
+        var expression = Expression.Create("@name | upper", context);
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo("FOO"));
+    }
+
     private sealed class TrackingParser : IExpressionParser
     {
         public RootExpressionSyntax Syntax { get; } = ExpressionParser.Parse("upper");

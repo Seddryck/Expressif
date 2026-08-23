@@ -14,14 +14,14 @@ namespace Expressif.Cli.Commands;
 
 internal static class RunCommand
 {
-    private static readonly Func<string, Context, Expression> DefaultBuildExpression = static (code, context) => new Expression(code, context);
+    private static readonly Func<string, Context, IExpression> DefaultBuildExpression = static (code, context) => Expression.Create(code, context);
     private static readonly Func<string, Context, ClosedExpression> DefaultBuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
     private static readonly Func<ClosedExpression, object?> DefaultEvaluateClosedExpression = static expression => expression.Evaluate();
     private static readonly Func<string, object?> DefaultParseInput = static input => InputValueParser.Parse(input);
     private static readonly Func<string, object?> DefaultResolveSourceValue = ResolveSourceValueCore;
-    private static readonly Func<Expression, Context, IEnumerable, IEnumerable<object?>> DefaultRunExpression = static (expression, context, inputs) => EvaluateEach(expression, context, inputs);
+    private static readonly Func<IExpression, Context, IEnumerable, IEnumerable<object?>> DefaultRunExpression = static (expression, context, inputs) => EvaluateEach(expression, context, inputs);
 
-    internal static Func<string, Context, Expression> BuildExpression { get; set; }
+    internal static Func<string, Context, IExpression> BuildExpression { get; set; }
         = DefaultBuildExpression;
 
     internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
@@ -36,7 +36,7 @@ internal static class RunCommand
     internal static Func<string, object?> ResolveSourceValue { get; set; }
         = DefaultResolveSourceValue;
 
-    internal static Func<Expression, Context, IEnumerable, IEnumerable<object?>> RunExpression { get; set; }
+    internal static Func<IExpression, Context, IEnumerable, IEnumerable<object?>> RunExpression { get; set; }
         = DefaultRunExpression;
 
     internal static void ResetDelegates()
@@ -158,7 +158,7 @@ internal static class RunCommand
                 : BuildInputSequence(inputRows, hasBatchOption, batchInput);
 
             var context = new Context();
-            Expression openExpression;
+            IExpression openExpression;
             try
             {
                 openExpression = BuildExpression(expressionCode, context);
@@ -198,7 +198,7 @@ internal static class RunCommand
         return command;
     }
 
-    private static IEnumerable<object?> EvaluateEach(Expression expression, Context context, IEnumerable inputs)
+    private static IEnumerable<object?> EvaluateEach(IExpression expression, Context context, IEnumerable inputs)
     {
         var enumerator = inputs.GetEnumerator();
         var index = 0;

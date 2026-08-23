@@ -4,8 +4,8 @@ namespace Expressif.Cli.Commands;
 
 internal static class ValidateCommand
 {
-    internal static Func<string, Context, Expression> BuildExpression { get; set; }
-        = static (code, context) => new Expression(code, context);
+    internal static Func<string, Context, IExpression> BuildExpression { get; set; }
+        = static (code, context) => Expression.Create(code, context);
 
     internal static Func<string, Context, ClosedExpression> BuildClosedExpression { get; set; }
         = static (code, context) => new ClosedExpression(code, context);

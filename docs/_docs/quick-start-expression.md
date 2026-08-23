@@ -4,11 +4,11 @@ subtitle: How to quickly define an expression and evaluate it.
 tags: [quick-start]
 ---
 
-Expressif provides a class named *Expression* to define a chain of functions applied to a value. The class is expecting the textual representation of the chained functions in its constructor.
+Expressif provides an *Expression* API to define a chain of functions applied to a value. Pass the textual representation of the chained functions to `Expression.Create`.
 
 <!-- START INCLUDE "ExpressionTest.cs/Evaluate_SingleFunctionWithoutParameter_Valid" -->
 ```csharp
-var expression = new Expression("lower");
+var expression = Expression.Create("lower");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola tesla"));
 ```
@@ -18,7 +18,7 @@ Some functions require parameters, you can specify them between the parenthesis 
 
 <!-- START INCLUDE "ExpressionTest.cs/Evaluate_SingleFunctionWithOneParameter_Valid" -->
 ```csharp
-var expression = new Expression("remove-chars(a)");
+var expression = Expression.Create("remove-chars(a)");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("Nikol Tesl"));
 ```
@@ -28,7 +28,7 @@ You can chain the functions with the operator pipe (`|`). The functions are exec
 
 <!-- START INCLUDE "ExpressionTest.cs/Evaluate_TwoFunctions_Valid" -->
 ```csharp
-var expression = new Expression("lower | remove-chars(a)");
+var expression = Expression.Create("lower | remove-chars(a)");
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikol tesl"));
 ```
@@ -41,7 +41,7 @@ It's possible to use variables as function parameters. The name of the variables
 var context = new Context();
 context.Variables.Add<char>("myChar", 'k');
 
-var expression = new Expression("lower | remove-chars(@myChar)", context);
+var expression = Expression.Create("lower | remove-chars(@myChar)", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("niola tesla"));
 ```
@@ -54,7 +54,7 @@ In addition to the variables that must be scalar values (text, numeric, dateTime
 var context = new Context();
 context.CurrentObject.Set(new { CharToBeRemoved = 't' });
 
-var expression = new Expression("lower | remove-chars([CharToBeRemoved])", context);
+var expression = Expression.Create("lower | remove-chars([CharToBeRemoved])", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola esla"));
 ```
@@ -67,7 +67,7 @@ or based on its position with the syntax `#index` (where index is positive numbe
 var context = new Context();
 context.CurrentObject.Set(new List<char>() { 'e', 's' });
 
-var expression = new Expression("lower | remove-chars(#1)", context);
+var expression = Expression.Create("lower | remove-chars(#1)", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola tela"));
 ```
@@ -81,7 +81,7 @@ var context = new Context();
 context.Variables.Add<int>("myVar", 6);
 context.CurrentObject.Set(new List<int>() { 15, 8, 3 });
 
-var expression = new Expression("lower | skip-last-chars( {@myVar | subtract(#2) })", context);
+var expression = Expression.Create("lower | skip-last-chars( {@myVar | subtract(#2) })", context);
 var result = expression.Evaluate("Nikola Tesla");
 Assert.That(result, Is.EqualTo("nikola te"));
 ```
