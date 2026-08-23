@@ -85,6 +85,22 @@ For a new operator that requires both steps, run `/scaffold` before `/implement`
 
 Skills define task-specific procedures. `AGENTS.md` defines repository-wide rules and takes precedence if a skill contains conflicting Git, worktree, branch, issue, commit, or pull-request instructions.
 
+## Git hooks
+
+Repository hooks are stored in `.githooks/`. Enable them after cloning the repository:
+
+```text
+git config core.hooksPath .githooks
+```
+
+On Windows, the hooks run with the Bash bundled in Git for Windows. On all platforms, they require `commitlint` and the .NET SDK to be available on `PATH`. Restore .NET dependencies before pushing because the StyleCop check runs with `--no-restore`.
+
+The `commit-msg` hook validates every commit message against `commitlint.config.cjs`. Commit messages MUST use an allowed Conventional Commit type and satisfy the configured header and line-length limits.
+
+The `pre-push` hook runs StyleCop analyzers for every branch. The push is rejected when `dotnet format Expressif.sln analyzers --verify-no-changes --no-restore` finds analyzer violations.
+
+Do NOT bypass these hooks. Resolve validation failures before committing or pushing.
+
 ## Pull requests
 
 For every completed implementation:

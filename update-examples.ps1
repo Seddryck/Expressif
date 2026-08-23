@@ -38,7 +38,7 @@ if ($class -eq '') {
     $docFile = ".\docs\_docs\$($page.ToLower())-$($class.ToLower()).md"
 }
 
-
+Set-Location -Path $PSScriptRoot
 Write-Host "Creating new version of $docFile ..."
 $elapsed = Measure-Command -Expression {
     ########### Update the sub-part of the docs file ##########
