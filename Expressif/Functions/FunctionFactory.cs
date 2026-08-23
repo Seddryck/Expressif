@@ -8,6 +8,7 @@ using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
 using RecordFunction = Expressif.Functions.Record.Record;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -34,6 +35,12 @@ public class FunctionFactory : BaseExpressionFactory
         };
     }
 
+    public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
+        => Instantiate<IFunction>(name, parameters, context);
+
+    public IFunction Instantiate(Type type, IParameter[] parameters, IContext context)
+        => Instantiate<IFunction>(type, parameters, context);
+
     public IFunction InstantiateClosed(IRootExpression rootExpression, IContext context)
     {
         return rootExpression switch
@@ -43,12 +50,6 @@ public class FunctionFactory : BaseExpressionFactory
             _ => throw new BindingException($"Unsupported expression root '{rootExpression.GetType().Name}'.")
         };
     }
-
-    public IFunction Instantiate(string name, IParameter[] parameters, IContext context)
-        => Instantiate<IFunction>(name, parameters, context);
-
-    public IFunction Instantiate(Type type, IParameter[] parameters, IContext context)
-        => Instantiate<IFunction>(type, parameters, context);
 
     private IFunction BuildOpenExpression(OpenExpression expression, IContext context)
     {
@@ -134,9 +135,9 @@ public class FunctionFactory : BaseExpressionFactory
     private bool TryBuildCoalesceFieldEvaluator(
         OpenExpressionParameter open,
         IContext context,
-        out Func<object?, object?> evaluator)
+        [NotNullWhen(true)] out Func<object?, object?>? evaluator)
     {
-        evaluator = null!;
+        evaluator = null;
         var members = open.Expression.Members.ToArray();
         if (members.Length == 0
             || !members[0].Name.Equals("field", StringComparison.OrdinalIgnoreCase)
@@ -186,7 +187,7 @@ public class FunctionFactory : BaseExpressionFactory
         return new Adjacent(() => new LexicallyBoundTupleFunction(operation, context));
     }
 
-    private bool TryBuildBinaryCallable(string name, IContext context, out IFunction callable)
+    private bool TryBuildBinaryCallable(string name, IContext context, [NotNullWhen(true)] out IFunction? callable)
     {
         var parameterized = new Bindings.Function(name, [new TupleProjectionParameter(0)]);
         try
@@ -194,7 +195,7 @@ public class FunctionFactory : BaseExpressionFactory
             var functionType = TypeMapper.Execute(name);
             if (!functionType.GetConstructors().Any(x => x.GetParameters().Length == 1))
             {
-                callable = null!;
+                callable = null;
                 return false;
             }
             callable = InstantiateOrWrapAggregation(parameterized, context);
@@ -207,7 +208,7 @@ public class FunctionFactory : BaseExpressionFactory
                 var predicateType = new PredicateTypeMapper().Execute(name);
                 if (!predicateType.GetConstructors().Any(x => x.GetParameters().Length == 1))
                 {
-                    callable = null!;
+                    callable = null;
                     return false;
                 }
                 callable = new PredicationFactory().Instantiate(new SinglePredication(parameterized), context);
@@ -215,7 +216,7 @@ public class FunctionFactory : BaseExpressionFactory
             }
             catch (NotImplementedFunctionException)
             {
-                callable = null!;
+                callable = null;
                 return false;
             }
         }
@@ -247,11 +248,11 @@ public class FunctionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         var explicitNames = new HashSet<string>(StringComparer.Ordinal);
-        foreach (var entry in definition.Entries.OfType<RecordNamedEntry>())
-        {
-            if (!explicitNames.Add(entry.Name))
-                throw new BindingException($"Duplicate explicit field '{entry.Name}' in record(...).");
-        }
+        var duplicateEntry = definition.Entries
+            .OfType<RecordNamedEntry>()
+            .FirstOrDefault(entry => !explicitNames.Add(entry.Name));
+        if (duplicateEntry is not null)
+            throw new BindingException($"Duplicate explicit field '{duplicateEntry.Name}' in record(...).");
 
         var evaluators = new List<RecordEntryEvaluator>();
         foreach (var entry in definition.Entries)
@@ -310,9 +311,11 @@ public class FunctionFactory : BaseExpressionFactory
         }
     }
 
-    private static bool TryBuildSingleTokenEvaluator(OpenExpressionParameter open, out Func<object?, object?> evaluator)
+    private static bool TryBuildSingleTokenEvaluator(
+        OpenExpressionParameter open,
+        [NotNullWhen(true)] out Func<object?, object?>? evaluator)
     {
-        evaluator = null!;
+        evaluator = null;
         if (!IsSingleTokenExpression(open))
             return false;
 
@@ -327,9 +330,13 @@ public class FunctionFactory : BaseExpressionFactory
     private static bool IsSingleTokenExpression(OpenExpressionParameter open)
         => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0;
 
-    private bool TryInstantiateWithAccumulatorProvider(Type type, Bindings.Function function, IContext context, out IFunction aggregation)
+    private bool TryInstantiateWithAccumulatorProvider(
+        Type type,
+        Bindings.Function function,
+        IContext context,
+        [NotNullWhen(true)] out IFunction? aggregation)
     {
-        aggregation = null!;
+        aggregation = null;
 
         var ctor = type.GetConstructors()
                        .FirstOrDefault(x => x.GetParameters().Length == 1
@@ -354,9 +361,13 @@ public class FunctionFactory : BaseExpressionFactory
         return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
     }
 
-    private bool TryInstantiateWithTransformationProvider(Type type, Bindings.Function function, IContext context, out IFunction transformation)
+    private bool TryInstantiateWithTransformationProvider(
+        Type type,
+        Bindings.Function function,
+        IContext context,
+        [NotNullWhen(true)] out IFunction? transformation)
     {
-        transformation = null!;
+        transformation = null;
 
         var ctor = type.GetConstructors()
                        .FirstOrDefault(x => x.GetParameters().Length == 1
@@ -389,9 +400,13 @@ public class FunctionFactory : BaseExpressionFactory
         return InstantiateOrWrapAggregation(member, context);
     }
 
-    private bool TryInstantiateWithPredicateProvider(Type type, Bindings.Function function, IContext context, out IFunction filtering)
+    private bool TryInstantiateWithPredicateProvider(
+        Type type,
+        Bindings.Function function,
+        IContext context,
+        [NotNullWhen(true)] out IFunction? filtering)
     {
-        filtering = null!;
+        filtering = null;
 
         var ctor = type.GetConstructors()
                        .FirstOrDefault(x => x.GetParameters().Length == 1
@@ -417,7 +432,7 @@ public class FunctionFactory : BaseExpressionFactory
         return true;
     }
 
-    private Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
+    private static Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
     {
         var factory = new PredicationFactory();
         if (TryGetOpenExpression(parameter, out var openExpression))
@@ -448,14 +463,16 @@ public class FunctionFactory : BaseExpressionFactory
         }
     }
 
-    private static bool TryGetOpenExpression(IParameter parameter, out OpenExpressionParameter expression)
+    private static bool TryGetOpenExpression(
+        IParameter parameter,
+        [NotNullWhen(true)] out OpenExpressionParameter? expression)
     {
         expression = parameter switch
         {
             OpenExpressionParameter open => open,
             LiteralParameter { Value: string value } => new OpenExpressionParameter(
                 new OpenExpression([new Bindings.Function(value, [])])),
-            _ => null!
+            _ => null
         };
         return expression is not null;
     }

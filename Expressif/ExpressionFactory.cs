@@ -8,9 +8,6 @@ namespace Expressif;
 /// </summary>
 public sealed class ExpressionFactory
 {
-    public ExpressionFactory()
-        : this(new ExpressionParser(), new ExpressionBinder()) { }
-
     public ExpressionFactory(IExpressionParser? parser = null, IExpressionBinder? binder = null)
         => (Parser, Binder) = (parser ?? new ExpressionParser(), binder ?? new ExpressionBinder());
 
