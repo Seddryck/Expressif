@@ -137,11 +137,8 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Download compiled outputs
-        uses: actions/download-artifact@v8
-        with:
-          name: release-build
-          path: .
+      - name: Restore test dependencies
+        run: dotnet restore Expressif.Testing/Expressif.Testing.csproj
 
       - name: Create coverage directory
         shell: pwsh
@@ -151,22 +148,21 @@ jobs:
         shell: pwsh
         run: |
           foreach ($framework in @('net8.0', 'net9.0', 'net10.0')) {
-            $results = ".coverage/$framework"
-            dotnet vstest "Expressif.Testing/bin/Release/$framework/Expressif.Testing.dll" `
-              "--TestCaseFilter:TestCategory!=conformance" `
-              "--Collect:XPlat Code Coverage;Format=opencover" `
-              "--ResultsDirectory:$results"
+            dotnet test Expressif.Testing/Expressif.Testing.csproj `
+              --configuration Release `
+              --framework $framework `
+              --no-restore `
+              --nologo `
+              --filter 'TestCategory!=conformance' `
+              -p:CollectCoverage=true `
+              -p:CoverletOutputFormat=opencover `
+              -p:CoverletOutput="$env:GITHUB_WORKSPACE/.coverage/coverage.Expressif.$framework.xml" `
+              -p:Threshold=10 `
+              -p:ThresholdType=line
 
             if ($LASTEXITCODE -ne 0) {
               throw "Tests failed for $framework."
             }
-
-            $report = Get-ChildItem -Path $results -Recurse -File -Filter coverage.opencover.xml |
-              Select-Object -First 1
-            if ($null -eq $report) {
-              throw "Coverage report was not generated for $framework."
-            }
-            Copy-Item $report.FullName ".coverage/coverage.Expressif.$framework.xml"
           }
 
       - name: Upload coverage to Codecov
