@@ -1303,8 +1303,125 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("evaluate"));
             Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
+            Assert.That(result.StdOut, Does.Contain("help"));
             Assert.That(result.StdOut, Does.Contain("version"));
             Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_CanonicalName_DisplaysFunctionDocumentation()
+    {
+        var result = await InvokeAsync("help", "reverse");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith("reverse() → array"));
+            Assert.That(result.StdOut, Does.Contain("Input:   array"));
+            Assert.That(result.StdOut, Does.Contain("Scope:   Array"));
+            Assert.That(result.StdOut, Does.Contain("Aliases: reverse"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_Alias_DisplaysCanonicalFunctionAndAlias()
+    {
+        var result = await InvokeAsync("help", "array-to-broadcast");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith("broadcast(accumulator: accumulator) → array"));
+            Assert.That(result.StdOut, Does.Contain("Aliases: array-to-broadcast"));
+            Assert.That(result.StdOut, Does.Contain("Parameters:"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_OptionalParameter_MarksParameterAsOptional()
+    {
+        var result = await InvokeAsync("help", "after-substring");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith("after-substring(substring: text, count?: integer) → text"));
+            Assert.That(result.StdOut, Does.Contain("count?"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_DynamicFunction_DisplaysAnyContract()
+    {
+        var result = await InvokeAsync("help", "field");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith("field(name: text) → any"));
+            Assert.That(result.StdOut, Does.Contain("Input:   any"));
+        });
+    }
+
+    [Test]
+    public async Task Help_UnknownName_DisplaysCloseMatchAndInvalidInputExitCode()
+    {
+        var result = await InvokeAsync("help", "revers");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("Unknown function 'revers'."));
+            Assert.That(result.StdErr, Does.Contain("Did you mean: reverse?"));
+        });
+    }
+
+    [Test]
+    public async Task Help_List_DisplaysFunctionsFromSeveralScopes()
+    {
+        var result = await InvokeAsync("help", "--list");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Array:"));
+            Assert.That(result.StdOut, Does.Contain("Numeric:"));
+            Assert.That(result.StdOut, Does.Contain("Record:"));
+            Assert.That(result.StdOut, Does.Contain("Temporal:"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_ScopeCaseInsensitive_DisplaysOnlyRequestedScope()
+    {
+        var result = await InvokeAsync("help", "--scope", "record");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith("Record:"));
+            Assert.That(result.StdOut, Does.Contain("  field"));
+            Assert.That(result.StdOut, Does.Not.Contain("Array:"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_ConflictingModes_ReturnsInvalidInputExitCode()
+    {
+        var result = await InvokeAsync("help", "reverse", "--list");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Specify exactly one function name, --list, or --scope."));
         });
     }
 
