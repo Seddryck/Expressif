@@ -7,15 +7,6 @@ namespace Expressif.Cli.Commands;
 
 internal static class BindCommand
 {
-    internal static Func<string, RootExpressionSyntax> ParseExpression { get; set; }
-        = ExpressionParser.Parse;
-
-    internal static Func<RootExpressionSyntax, IRootExpression> BindExpression { get; set; }
-        = static syntax => new ExpressifBinder().Bind(syntax);
-
-    internal static Action<IRootExpression> ValidateExpression { get; set; }
-        = static expression => _ = new FunctionFactory().Instantiate(expression, new Context());
-
     public static Command Create()
     {
         var expressionArgument = new Argument<string>("expression")
@@ -45,8 +36,8 @@ internal static class BindCommand
 
             try
             {
-                var bound = BindExpression(ParseExpression(expression));
-                ValidateExpression(bound);
+                var bound = new ExpressifBinder().Bind(ExpressionParser.Parse(expression));
+                _ = new FunctionFactory().Instantiate(bound, new Context());
                 Console.Out.WriteLine(BoundTreeFormatter.Format(bound, output));
                 return ExitCodes.Success;
             }
@@ -69,12 +60,5 @@ internal static class BindCommand
         });
 
         return command;
-    }
-
-    internal static void ResetDelegates()
-    {
-        ParseExpression = ExpressionParser.Parse;
-        BindExpression = static syntax => new ExpressifBinder().Bind(syntax);
-        ValidateExpression = static expression => _ = new FunctionFactory().Instantiate(expression, new Context());
     }
 }

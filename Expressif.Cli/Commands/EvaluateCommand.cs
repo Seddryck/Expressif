@@ -1,33 +1,12 @@
 using System.CommandLine;
 using Expressif.Values;
+using Expressif.Cli.Application;
 
 namespace Expressif.Cli.Commands;
 
 internal static class EvaluateCommand
 {
-    private static readonly Func<string, object?> DefaultParseInput = static input => RunCommand.InputValueParser.Parse(input);
-
-    internal static Func<string, Context, IExpression> BuildExpression { get; set; }
-        = static (code, context) => Expression.Create(code, context);
-
-    internal static Func<string, Context, IExpression> BuildClosedExpression { get; set; }
-        = static (code, context) => Expression.CreateClosed(code, context);
-
-    internal static Func<IExpression, object?> EvaluateClosedExpression { get; set; }
-        = static expression => expression.Evaluate(null);
-
-    internal static Func<string, object?> ParseInput { get; set; }
-        = DefaultParseInput;
-
-    internal static void ResetDelegates()
-    {
-        BuildExpression = static (code, context) => Expression.Create(code, context);
-        BuildClosedExpression = static (code, context) => Expression.CreateClosed(code, context);
-        EvaluateClosedExpression = static expression => expression.Evaluate(null);
-        ParseInput = DefaultParseInput;
-    }
-
-    public static Command Create()
+    public static Command Create(CliServices services)
     {
         var expressionArgument = new Argument<string?>("expression")
         {
@@ -74,6 +53,7 @@ internal static class EvaluateCommand
 
         command.SetAction(parseResult => Execute(
             parseResult,
+            services,
             expressionArgument,
             inputOption,
             sourceOption,
@@ -86,6 +66,7 @@ internal static class EvaluateCommand
 
     private static int Execute(
         ParseResult parseResult,
+        CliServices services,
         Argument<string?> expressionArgument,
         Option<string?> inputOption,
         Option<string?> sourceOption,
@@ -108,6 +89,7 @@ internal static class EvaluateCommand
         if (!ExpressionCommandCommon.TryResolveExpressionCode(
                 inlineExpression,
                 expressionFilePath,
+                services.TextFiles,
                 out var expressionCode,
                 out var hasExpressionFile))
         {
@@ -118,12 +100,12 @@ internal static class EvaluateCommand
         {
             var sourcePath = parseResult.GetValue(sourceOption);
             var sourceProfileOptions = parseResult.GetValue(sourceProfileOption) ?? [];
-            return EvaluateSource(expressionCode, sourcePath, scalar, sourceProfileOptions, hasExpressionFile, expressionFilePath);
+            return EvaluateSource(services, expressionCode, sourcePath, scalar, sourceProfileOptions, hasExpressionFile, expressionFilePath);
         }
 
         return hasInputOption
-            ? EvaluateInput(expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
-            : EvaluateClosed(expressionCode, hasExpressionFile, expressionFilePath);
+            ? EvaluateInput(services, expressionCode, parseResult.GetValue(inputOption), hasExpressionFile, expressionFilePath)
+            : EvaluateClosed(services, expressionCode, hasExpressionFile, expressionFilePath);
     }
 
     private static int ValidateOptions(
@@ -153,7 +135,7 @@ internal static class EvaluateCommand
         return ExitCodes.InvalidExpressionOrInput;
     }
 
-    private static int EvaluateSource(
+    private static int EvaluateSource(CliServices services,
         string expressionCode,
         string? sourcePath,
         bool scalar,
@@ -164,7 +146,7 @@ internal static class EvaluateCommand
         object?[] sourceRows;
         try
         {
-            sourceRows = RunCommand.BuildSourceRows(sourcePath, sourceOptions, scalar).ToArray();
+            sourceRows = new RunHandler(services).BuildSourceRows(sourcePath, sourceOptions, scalar).ToArray();
         }
         catch (FormatException exception)
         {
@@ -172,19 +154,19 @@ internal static class EvaluateCommand
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        return EvaluateOpen(expressionCode, sourceRows, hasExpressionFile, expressionFilePath);
+        return EvaluateOpen(services, expressionCode, sourceRows, hasExpressionFile, expressionFilePath);
     }
 
-    private static int EvaluateClosed(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
+    private static int EvaluateClosed(CliServices services, string expressionCode, bool hasExpressionFile, string? expressionFilePath)
     {
         IExpression closedExpression;
         try
         {
-            closedExpression = BuildClosedExpression(expressionCode, new Context());
+            closedExpression = services.Expressions.CompileClosed(expressionCode, new Context());
         }
         catch (ExpressionRequiresInputException exception)
         {
-            var openValidationResult = ValidateAsOpenExpression(expressionCode, hasExpressionFile, expressionFilePath);
+            var openValidationResult = ValidateAsOpenExpression(services, expressionCode, hasExpressionFile, expressionFilePath);
             if (openValidationResult != ExitCodes.Success)
                 return openValidationResult;
 
@@ -208,7 +190,7 @@ internal static class EvaluateCommand
 
         try
         {
-            var result = EvaluateClosedExpression(closedExpression);
+            var result = services.Expressions.Evaluate(closedExpression, null);
             Console.Out.WriteLine(ValueFormatter.Format(result));
             return ExitCodes.Success;
         }
@@ -219,7 +201,7 @@ internal static class EvaluateCommand
         }
     }
 
-    private static int EvaluateInput(
+    private static int EvaluateInput(CliServices services,
         string expressionCode,
         string? input,
         bool hasExpressionFile,
@@ -228,7 +210,7 @@ internal static class EvaluateCommand
         object? parsedInput;
         try
         {
-            parsedInput = ParseInput(input ?? string.Empty);
+            parsedInput = services.Values.Parse(input ?? string.Empty);
         }
         catch (FormatException exception)
         {
@@ -236,14 +218,14 @@ internal static class EvaluateCommand
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        return EvaluateOpen(expressionCode, parsedInput, hasExpressionFile, expressionFilePath);
+        return EvaluateOpen(services, expressionCode, parsedInput, hasExpressionFile, expressionFilePath);
     }
 
-    private static int ValidateAsOpenExpression(string expressionCode, bool hasExpressionFile, string? expressionFilePath)
+    private static int ValidateAsOpenExpression(CliServices services, string expressionCode, bool hasExpressionFile, string? expressionFilePath)
     {
         try
         {
-            _ = BuildExpression(expressionCode, new Context());
+            _ = services.Expressions.CompileOpen(expressionCode, new Context());
             return ExitCodes.Success;
         }
         catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
@@ -260,12 +242,12 @@ internal static class EvaluateCommand
         }
     }
 
-    private static int EvaluateOpen(string expressionCode, object? input, bool hasExpressionFile, string? expressionFilePath)
+    private static int EvaluateOpen(CliServices services, string expressionCode, object? input, bool hasExpressionFile, string? expressionFilePath)
     {
         Expressif.IExpression openExpression;
         try
         {
-            openExpression = BuildExpression(expressionCode, new Context());
+            openExpression = services.Expressions.CompileOpen(expressionCode, new Context());
         }
         catch (Exception exception) when (exception is Expressif.Syntax.ExpressifSyntaxException
                                           or Expressif.Bindings.BindingException
@@ -282,7 +264,7 @@ internal static class EvaluateCommand
 
         try
         {
-            var result = openExpression.Evaluate(input);
+            var result = services.Expressions.Evaluate(openExpression, input);
             Console.Out.WriteLine(ValueFormatter.Format(result));
             return ExitCodes.Success;
         }

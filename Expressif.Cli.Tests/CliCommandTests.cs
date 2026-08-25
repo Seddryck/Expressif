@@ -1,5 +1,9 @@
 using System.Data;
+using Expressif.Cli.Application;
 using Expressif.Cli.Commands;
+using Expressif.Cli.Expressions;
+using Expressif.Cli.Infrastructure;
+using Expressif.Cli.Inputs;
 
 namespace Expressif.Cli.Tests;
 
@@ -7,6 +11,15 @@ namespace Expressif.Cli.Tests;
 public class CliCommandTests
 {
     private readonly List<string> tempFilesToDelete = [];
+    private FakeExpressionService expressions = null!;
+    private Func<string, object?>? sourceResolver;
+
+    [SetUp]
+    public void SetUp()
+    {
+        expressions = new FakeExpressionService();
+        sourceResolver = null;
+    }
 
     [Test]
     public void DiagnosticWriter_Colorize_UsesAnsiRedOnlyWhenEnabled()
@@ -27,11 +40,6 @@ public class CliCommandTests
     [TearDown]
     public void TearDown()
     {
-        EvaluateCommand.ResetDelegates();
-        RunCommand.ResetDelegates();
-        ValidateCommand.BuildExpression = static (code, context) => Expression.Create(code, context);
-        ValidateCommand.BuildClosedExpression = static (code, context) => Expression.CreateClosed(code, context);
-
         foreach (var path in tempFilesToDelete)
         {
             if (File.Exists(path))
@@ -195,8 +203,8 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_ClosedEvaluationInputRequired_ButInvalidOpenExpression_ReturnsValidationError()
     {
-        EvaluateCommand.BuildClosedExpression = static (_, _) => throw new ExpressionRequiresInputException("upper");
-        EvaluateCommand.BuildExpression = static (_, _) => throw new NotImplementedFunctionException("unknown");
+        expressions.CompileClosedHandler = static (_, _) => throw new ExpressionRequiresInputException("upper");
+        expressions.CompileOpenHandler = static (_, _) => throw new NotImplementedFunctionException("unknown");
 
         var result = await InvokeAsync("evaluate", "upper");
 
@@ -212,7 +220,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_ClosedExpression_UnexpectedCompileException_ReturnsUnexpectedInternalErrorExitCode()
     {
-        EvaluateCommand.BuildClosedExpression = static (_, _) => throw new InvalidOperationException("boom closed compile");
+        expressions.CompileClosedHandler = static (_, _) => throw new InvalidOperationException("boom closed compile");
 
         var result = await InvokeAsync("evaluate", "5 | add(3)");
 
@@ -227,7 +235,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_OpenExpression_UnexpectedCompileException_ReturnsUnexpectedInternalErrorExitCode()
     {
-        EvaluateCommand.BuildExpression = static (_, _) => throw new InvalidOperationException("boom open compile");
+        expressions.CompileOpenHandler = static (_, _) => throw new InvalidOperationException("boom open compile");
 
         var result = await InvokeAsync("evaluate", "trim | upper", "--input", "abc");
 
@@ -242,7 +250,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_ClosedExpression_RuntimeFailure_ReturnsEvaluationExitCode()
     {
-        EvaluateCommand.EvaluateClosedExpression = static _ => throw new InvalidOperationException("boom closed runtime");
+        expressions.EvaluateHandler = static (_, _) => throw new InvalidOperationException("boom closed runtime");
 
         var result = await InvokeAsync("evaluate", "5 | add(3)");
 
@@ -947,7 +955,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceNull_ReturnsClearError()
     {
-        RunCommand.ResolveSourceValue = static _ => null;
+        sourceResolver = static _ => null;
 
         var result = await InvokeAsync("run", "add(1)", "--source", "source.expr");
 
@@ -963,7 +971,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceDataReader_EvaluatesEachRecord()
     {
-        RunCommand.ResolveSourceValue = static _ =>
+        sourceResolver = static _ =>
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("name", typeof(string));
@@ -986,7 +994,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceDataReader_PassesRecordValueToExpression()
     {
-        RunCommand.ResolveSourceValue = static _ =>
+        sourceResolver = static _ =>
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("name", typeof(string));
@@ -1007,7 +1015,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceCsvPathWithGenericDataReader_DoesNotSkipFirstRow()
     {
-        RunCommand.ResolveSourceValue = static _ =>
+        sourceResolver = static _ =>
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("name", typeof(string));
@@ -1208,7 +1216,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_DefaultOpen_IgnoresClosedValidationHook()
     {
-        ValidateCommand.BuildClosedExpression = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
+        expressions.CompileClosedHandler = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
 
         var result = await InvokeAsync("validate", "absolute | add(5)");
 
@@ -1223,7 +1231,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_ClosedValidationError_WithClosedOption_ReturnsValidationExitCode()
     {
-        ValidateCommand.BuildClosedExpression = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
+        expressions.CompileClosedHandler = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
 
         var result = await InvokeAsync("validate", "absolute | add(5)", "--closed");
 
@@ -1238,7 +1246,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_ClosedValidationUnexpectedException_WithClosedOption_ReturnsUnexpectedInternalErrorExitCode()
     {
-        ValidateCommand.BuildClosedExpression = static (_, _) => throw new InvalidOperationException("boom validate closed");
+        expressions.CompileClosedHandler = static (_, _) => throw new InvalidOperationException("boom validate closed");
 
         var result = await InvokeAsync("validate", "absolute | add(5)", "--closed");
 
@@ -1505,7 +1513,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_UnexpectedException_ReturnsUnexpectedInternalErrorExitCode()
     {
-        ValidateCommand.BuildExpression = static (_, _) => throw new InvalidOperationException("boom");
+        expressions.CompileOpenHandler = static (_, _) => throw new InvalidOperationException("boom");
 
         var result = await InvokeAsync("validate", "absolute");
 
@@ -1517,7 +1525,7 @@ public class CliCommandTests
         });
     }
 
-    private static async Task<InvocationResult> InvokeAsync(params string[] args)
+    private async Task<InvocationResult> InvokeAsync(params string[] args)
     {
         var originalOut = Console.Out;
         var originalError = Console.Error;
@@ -1530,7 +1538,8 @@ public class CliCommandTests
 
         try
         {
-            var exitCode = await CliInvoker.InvokeAsync(args);
+            var services = new CliServices(expressions, new CliInputValueParser(), new StrictUtf8TextReader(), sourceResolver);
+            var exitCode = await CliInvoker.InvokeAsync(args, services);
             return new InvocationResult(exitCode, stdout.ToString(), stderr.ToString());
         }
         finally
@@ -1549,4 +1558,20 @@ public class CliCommandTests
     }
 
     private sealed record InvocationResult(int ExitCode, string StdOut, string StdErr);
+
+    private sealed class FakeExpressionService : IExpressionService
+    {
+        public Func<string, Context, IExpression> CompileOpenHandler { get; set; }
+            = static (code, context) => Expression.Create(code, context);
+
+        public Func<string, Context, IExpression> CompileClosedHandler { get; set; }
+            = static (code, context) => Expression.CreateClosed(code, context);
+
+        public Func<IExpression, object?, object?> EvaluateHandler { get; set; }
+            = static (expression, input) => expression.Evaluate(input);
+
+        public IExpression CompileOpen(string code, Context context) => CompileOpenHandler(code, context);
+        public IExpression CompileClosed(string code, Context context) => CompileClosedHandler(code, context);
+        public object? Evaluate(IExpression expression, object? input) => EvaluateHandler(expression, input);
+    }
 }

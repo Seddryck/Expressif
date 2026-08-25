@@ -5,9 +5,6 @@ namespace Expressif.Cli.Commands;
 
 internal static class ParseCommand
 {
-    internal static Func<string, RootExpressionSyntax> ParseExpression { get; set; }
-        = ExpressionParser.Parse;
-
     public static Command Create()
     {
         var expressionArgument = new Argument<string>("expression")
@@ -37,7 +34,7 @@ internal static class ParseCommand
 
             try
             {
-                var syntax = ParseExpression(expression);
+                var syntax = ExpressionParser.Parse(expression);
                 Console.Out.WriteLine(SyntaxTreeFormatter.Format(syntax, output));
                 return ExitCodes.Success;
             }
@@ -58,7 +55,4 @@ internal static class ParseCommand
 
         return command;
     }
-
-    internal static void ResetDelegates()
-        => ParseExpression = ExpressionParser.Parse;
 }

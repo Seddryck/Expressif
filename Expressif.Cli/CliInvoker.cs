@@ -1,12 +1,16 @@
 using System.CommandLine;
+using Expressif.Cli.Application;
 
 namespace Expressif.Cli;
 
 internal static class CliInvoker
 {
     public static async Task<int> InvokeAsync(string[] args)
+        => await InvokeAsync(args, CliServices.CreateDefault());
+
+    internal static async Task<int> InvokeAsync(string[] args, CliServices services)
     {
-        var rootCommand = CliRootCommandFactory.Create();
+        var rootCommand = CliRootCommandFactory.Create(services);
         var parseResult = rootCommand.Parse(args);
         return await InvokeAsync(parseResult);
     }

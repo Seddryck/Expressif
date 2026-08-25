@@ -1,16 +1,11 @@
 using System.CommandLine;
+using Expressif.Cli.Application;
 
 namespace Expressif.Cli.Commands;
 
 internal static class ValidateCommand
 {
-    internal static Func<string, Context, IExpression> BuildExpression { get; set; }
-        = static (code, context) => Expression.Create(code, context);
-
-    internal static Func<string, Context, IExpression> BuildClosedExpression { get; set; }
-        = static (code, context) => Expression.CreateClosed(code, context);
-
-    public static Command Create()
+    public static Command Create(CliServices services)
     {
         var expressionArgument = new Argument<string?>("expression")
         {
@@ -59,6 +54,7 @@ internal static class ValidateCommand
             if (!ExpressionCommandCommon.TryResolveExpressionCode(
                     inlineExpression,
                     expressionFilePath,
+                    services.TextFiles,
                     out var expressionCode,
                     out var hasExpressionFile))
             {
@@ -69,11 +65,11 @@ internal static class ValidateCommand
             {
                 if (useClosedValidation)
                 {
-                    _ = BuildClosedExpression(expressionCode, new Context());
+                    _ = services.Expressions.CompileClosed(expressionCode, new Context());
                 }
                 else
                 {
-                    _ = BuildExpression(expressionCode, new Context());
+                    _ = services.Expressions.CompileOpen(expressionCode, new Context());
                 }
 
                 Console.Out.WriteLine("Expression is valid.");
