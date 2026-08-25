@@ -38,6 +38,21 @@ public class BindCommandTests
     }
 
     [Test]
+    public async Task Bind_BinaryPredicate_PreservesBothOperands()
+    {
+        var result = await InvokeAsync("bind", "even |AND greater-than(5)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Function: and"));
+            Assert.That(result.StdOut, Does.Contain("Arg[0]: OpenExpression"));
+            Assert.That(result.StdOut, Does.Contain("Arg[1]: OpenExpression"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Bind_FieldShorthand_ShowsBinderGeneratedFunction()
     {
         var result = await InvokeAsync("bind", ".name");

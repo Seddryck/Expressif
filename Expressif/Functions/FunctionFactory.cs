@@ -54,6 +54,9 @@ public class FunctionFactory : BaseExpressionFactory
     private IFunction BuildOpenExpression(OpenExpression expression, IContext context)
     {
         var members = expression.Members.ToArray();
+        if (TryBuildBinaryPredication(members, out var predication))
+            return new PredicationFactory().Instantiate(predication, context);
+
         if (members.All(member => PredicateTypeMapper.TryExecute(member.Name, out _)))
             return new PredicationFactory().Instantiate(new SinglePredication(members), context);
 
@@ -62,6 +65,29 @@ public class FunctionFactory : BaseExpressionFactory
             functions.Add(InstantiateOrWrapAggregation(member, context));
 
         return new ChainFunction(functions);
+    }
+
+    private static bool TryBuildBinaryPredication(Function[] members, [NotNullWhen(true)] out IPredication? predication)
+    {
+        predication = null;
+        if (members is not [var combinator]
+            || combinator.Name is not ("and" or "or" or "xor")
+            || combinator.Parameters is not [OpenExpressionParameter left, OpenExpressionParameter right])
+            return false;
+
+        predication = new BinaryPredication(
+            new BinaryOperator(combinator.Name),
+            BuildPredication(left.Expression),
+            BuildPredication(right.Expression));
+        return true;
+    }
+
+    private static IPredication BuildPredication(OpenExpression expression)
+    {
+        var members = expression.Members.ToArray();
+        return TryBuildBinaryPredication(members, out var predication)
+            ? predication
+            : new SinglePredication(members);
     }
 
     private IFunction BuildClosedExpression(Bindings.ClosedExpression expression, IContext context)

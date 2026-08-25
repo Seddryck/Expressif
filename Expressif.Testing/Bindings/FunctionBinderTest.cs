@@ -107,15 +107,16 @@ public class FunctionBinderTest
         Assert.That(function.Parameters[0], Is.TypeOf<OpenExpressionParameter>());
 
         var parameter = (OpenExpressionParameter)function.Parameters[0];
-        var leftFunction = parameter.Expression.Members.First();
+        var combinator = parameter.Expression.Members.Single();
+        Assert.That(combinator.Name, Is.EqualTo("and"));
+        Assert.That(combinator.Parameters, Has.Length.EqualTo(2));
+
+        var leftFunction = ((OpenExpressionParameter)combinator.Parameters[0]).Expression.Members.Single();
         Assert.That(leftFunction.Name, Is.EqualTo("greater-than"));
         Assert.That(leftFunction.Parameters, Has.Length.EqualTo(1));
         Assert.That(((LiteralParameter)leftFunction.Parameters[0]).Value, Is.EqualTo(2m));
 
-        var combinator = parameter.Expression.Members.Last();
-        Assert.That(combinator.Name, Is.EqualTo("and"));
-        Assert.That(combinator.Parameters.Single(), Is.TypeOf<OpenExpressionParameter>());
-        var rightFunction = ((OpenExpressionParameter)combinator.Parameters.Single()).Expression.Members.Single();
+        var rightFunction = ((OpenExpressionParameter)combinator.Parameters[1]).Expression.Members.Single();
         Assert.That(rightFunction.Name, Is.EqualTo("less-than"));
         Assert.That(rightFunction.Parameters, Has.Length.EqualTo(1));
         Assert.That(((LiteralParameter)rightFunction.Parameters[0]).Value, Is.EqualTo(5m));
