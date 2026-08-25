@@ -104,6 +104,26 @@ public class CliCommandTests
         });
     }
 
+    [TestCase("-3", "true")]
+    [TestCase("-2", "false")]
+    [TestCase("6", "true")]
+    [TestCase("7", "false")]
+    public async Task Evaluate_TwoNestedPredicateBranches_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "(odd |and less-than(0)) |or (even |and greater-than(5))",
+            "--input",
+            input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
     [Test]
     public async Task Evaluate_MultipleInputOptions_ReturnsClearError()
     {

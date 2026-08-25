@@ -57,4 +57,7 @@ public class Odd : Modulo
 {
     public Odd()
         : base(() => 2, () => 1) { }
+
+    protected override bool EvaluateNumeric(decimal value)
+        => value % Modulus.Invoke() != 0;
 }
