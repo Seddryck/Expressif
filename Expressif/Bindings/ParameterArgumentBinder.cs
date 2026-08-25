@@ -17,8 +17,12 @@ internal static class ParameterArgumentBinder
             throw new TooManyPositionalArgumentsException(functionName);
 
         var allParameters = constructors.SelectMany(x => x.GetParameters()).ToArray();
+        var suppliedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var argument in named)
         {
+            if (!suppliedNames.Add(argument.Name!))
+                throw new DuplicateNamedArgumentException(argument.Name!);
+
             if (!allParameters.Any(x => x.Name!.Equals(argument.Name, StringComparison.OrdinalIgnoreCase)))
                 throw new UnknownParameterNameException(functionName, argument.Name!);
 
@@ -35,9 +39,8 @@ internal static class ParameterArgumentBinder
             throw new AmbiguousParameterBindingException(functionName);
 
         var candidate = constructors.Where(x => x.GetParameters().Length >= positionalCount)
-            .OrderByDescending(x => x.GetParameters().Length).FirstOrDefault();
-        var suppliedNames = named.Select(x => x.Name!).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var missing = candidate?.GetParameters().Skip(positionalCount)
+            .OrderByDescending(x => x.GetParameters().Length).First();
+        var missing = candidate.GetParameters().Skip(positionalCount)
             .FirstOrDefault(x => !x.IsOptional && !suppliedNames.Contains(x.Name!));
         if (missing is not null)
             throw new MissingRequiredParameterException(missing.Name!);
@@ -56,9 +59,7 @@ internal static class ParameterArgumentBinder
         foreach (var argument in arguments.Skip(positionalCount))
         {
             var index = Array.FindIndex(metadata, x => x.Name!.Equals(argument.Name, StringComparison.OrdinalIgnoreCase));
-            if (index < positionalCount)
-                return null;
-            if (index < 0 || values[index] is not null)
+            if (index < 0)
                 return null;
             values[index] = argument.Value;
         }
