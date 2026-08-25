@@ -95,7 +95,14 @@ public class PredicationFactoryTest
     [TestCase(63, true)]
     public void Instantiate_ClosedFunctionParameter_ResolvesThroughFunctionRegistry(object value, bool expected)
     {
-        var predicate = new PredicationFactory().Instantiate("greater-than(45 | add(17))", new Context());
+        var reference = new InputExpressionParameter(
+            new Expressif.Bindings.ClosedExpression(
+                new LiteralParameter(45m),
+                [new Function("add", [new LiteralParameter(17m)])]));
+        var predication = new SinglePredication(
+            new Function("greater-than", [reference]));
+
+        var predicate = new PredicationFactory().Instantiate(predication, new Context());
 
         Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
     }
