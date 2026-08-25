@@ -53,6 +53,20 @@ public class BindCommandTests
     }
 
     [Test]
+    public async Task Bind_ClosedFunctionPredicateArgument_ResolvesNestedFunction()
+    {
+        var result = await InvokeAsync("bind", "even |or greater-than(45 | add(17))");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Arg[0]: InputExpression"));
+            Assert.That(result.StdOut, Does.Contain("Function: add"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Bind_FieldShorthand_ShowsBinderGeneratedFunction()
     {
         var result = await InvokeAsync("bind", ".name");
