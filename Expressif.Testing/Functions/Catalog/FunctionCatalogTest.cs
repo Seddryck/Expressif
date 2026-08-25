@@ -4,6 +4,7 @@ using Expressif.Functions.Introspection;
 namespace Expressif.Testing.Functions.Catalog;
 
 [TestFixture]
+[Category("MetadataConsistency")]
 public class FunctionCatalogTest
 {
     [Test]
