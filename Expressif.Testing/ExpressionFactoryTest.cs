@@ -122,5 +122,6 @@ public class ExpressionFactoryTest
     private sealed class StubExpression : IExpression
     {
         public object? Evaluate(object? value) => value;
+        public IExpression WithContext(EvaluationContext context) => this;
     }
 }
