@@ -90,4 +90,13 @@ public class PredicationFactoryTest
             Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(4));
         });
     }
+
+    [TestCase(62, false)]
+    [TestCase(63, true)]
+    public void Instantiate_ClosedFunctionParameter_ResolvesThroughFunctionRegistry(object value, bool expected)
+    {
+        var predicate = new PredicationFactory().Instantiate("greater-than(45 | add(17))", new Context());
+
+        Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+    }
 }

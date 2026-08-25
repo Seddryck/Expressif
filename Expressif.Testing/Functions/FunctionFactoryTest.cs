@@ -251,6 +251,14 @@ public class FunctionFactoryTest
     }
 
     [Test]
+    public void Instantiate_FilterWithClosedPredicateParameter_ResolvesNestedFunction()
+    {
+        var function = BindingTestAdapter.Executable("filter(greater-than(17 | add(17)))", new Context());
+
+        Assert.That(function.Evaluate(new object[] { 10, 12, 13 }), Is.Empty);
+    }
+
+    [Test]
     public void Instantiate_SliceAlias_Valid()
     {
         var function = BindingTestAdapter.Executable("slice(1,4)", new Context());
