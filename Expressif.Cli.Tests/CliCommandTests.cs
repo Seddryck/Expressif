@@ -54,6 +54,21 @@ public class CliCommandTests
         });
     }
 
+    [TestCase("even", "4", "true")]
+    [TestCase("even", "5", "false")]
+    [TestCase("is-even", "4", "true")]
+    public async Task Evaluate_PredicateOnlyExpression_ReturnsBoolean(string expression, string input, string expected)
+    {
+        var result = await InvokeAsync("evaluate", expression, "--input", input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
     [Test]
     public async Task Evaluate_MultipleInputOptions_ReturnsClearError()
     {

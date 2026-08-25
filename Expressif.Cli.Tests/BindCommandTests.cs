@@ -25,6 +25,19 @@ public class BindCommandTests
     }
 
     [Test]
+    public async Task Bind_PredicateOnlyExpression_IsValid()
+    {
+        var result = await InvokeAsync("bind", "even");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Function: even"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Bind_FieldShorthand_ShowsBinderGeneratedFunction()
     {
         var result = await InvokeAsync("bind", ".name");

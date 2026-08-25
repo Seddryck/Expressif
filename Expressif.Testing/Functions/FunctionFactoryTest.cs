@@ -11,6 +11,12 @@ namespace Expressif.Testing.Functions;
 
 public class FunctionFactoryTest
 {
+    [TestCase("even", 4, true)]
+    [TestCase("even", 5, false)]
+    [TestCase("is-even", 4, true)]
+    public void Instantiate_PredicateOnlyExpression_EvaluatesBoolean(string source, object value, bool expected)
+        => Assert.That(BindingTestAdapter.Executable(source).Evaluate(value), Is.EqualTo(expected));
+
     [TestCase("replace-slice(2, 4, \"abc\")")]
     [TestCase("replace-slice(start := 2, length := 4, append := \"abc\")")]
     [TestCase("replace-slice(2, append := \"abc\", length := 4)")]

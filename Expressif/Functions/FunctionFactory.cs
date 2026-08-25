@@ -96,7 +96,13 @@ public class FunctionFactory : BaseExpressionFactory
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
-        var type = TypeMapper.Execute(function.Name);
+        if (!TypeMapper.TryExecute(function.Name, out var type))
+        {
+            if (PredicateTypeMapper.TryExecute(function.Name, out _))
+                return new PredicationFactory().Instantiate(new SinglePredication(function), context);
+
+            throw new NotImplementedFunctionException(function.Name);
+        }
 
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
