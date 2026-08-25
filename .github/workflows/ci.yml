@@ -143,6 +143,17 @@ jobs:
           -p:Version=${{ needs.prepare.outputs.semver }}
           -p:ContinuousIntegrationBuild=true
 
+      - name: Validate metadata consistency
+        if: matrix.coverage == 'expressif-net10.0'
+        run: >-
+          dotnet test ${{ matrix.project }}
+          --configuration Release
+          --framework ${{ matrix.framework }}
+          --no-build
+          --no-restore
+          --nologo
+          --filter TestCategory=MetadataConsistency
+
       - name: Run tests with coverage
         shell: pwsh
         run: |
@@ -153,6 +164,7 @@ jobs:
             --no-build `
             --no-restore `
             --nologo `
+            --filter 'TestCategory!=MetadataConsistency' `
             --collect 'XPlat Code Coverage;Format=opencover' `
             --results-directory $results
 
