@@ -32,6 +32,14 @@ internal static class BoundTreeFormatter
             },
             function.Parameters.Select((parameter, index) => NamedParameter($"Arg[{index}]", parameter)));
 
+    private static TreeDocument ToDocument(IRecordDefinitionEntry entry)
+        => entry switch
+        {
+            RecordNamedEntry named => NamedParameter($"Field: {named.Name}", named.Value),
+            RecordSpreadEntry => Node("Spread: IncomingValue"),
+            _ => Node(entry.GetType().Name)
+        };
+
     private static TreeDocument NamedParameter(string name, IParameter parameter)
     {
         var value = ScalarValue(parameter);
@@ -67,14 +75,6 @@ internal static class BoundTreeFormatter
             ],
             PredicationParameter predication => PredicationChildren(predication.Predication),
             _ => []
-        };
-
-    private static TreeDocument ToDocument(IRecordDefinitionEntry entry)
-        => entry switch
-        {
-            RecordNamedEntry named => NamedParameter($"Field: {named.Name}", named.Value),
-            RecordSpreadEntry => Node("Spread: IncomingValue"),
-            _ => Node(entry.GetType().Name)
         };
 
     private static IEnumerable<TreeDocument> PredicationChildren(IPredication predication)

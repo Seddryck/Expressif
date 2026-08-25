@@ -32,9 +32,17 @@ internal static class TreeDocumentFormatter
             builder.Append(indent).Append(isLast ? "└─ " : "├─ ");
 
         builder.AppendLine(node.Label);
-        var childIndent = isRoot ? string.Empty : indent + (isLast ? "   " : "│  ");
+        var childIndent = GetChildIndent(indent, isLast, isRoot);
         for (var index = 0; index < node.Children.Count; index++)
             AppendTree(builder, node.Children[index], childIndent, index == node.Children.Count - 1, isRoot: false);
+    }
+
+    private static string GetChildIndent(string indent, bool isLast, bool isRoot)
+    {
+        if (isRoot)
+            return string.Empty;
+
+        return indent + (isLast ? "   " : "│  ");
     }
 
     private static string FormatYaml(TreeDocument root)
