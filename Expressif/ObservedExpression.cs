@@ -13,7 +13,10 @@ internal sealed class ObservedExpression : IExpression
     public object? Evaluate(object? value)
     {
         using var observation = observer.Begin(ExpressionObservationStage.Evaluate);
-        var frame = new EvaluationFrame(value, observation);
-        return expression.Evaluate(frame.Input);
+        var frame = new EvaluationFrame(value, value, observation);
+        return expression.Evaluate(frame.Current);
     }
+
+    public IExpression WithContext(EvaluationContext context)
+        => new ObservedExpression(expression.WithContext(context), observer);
 }

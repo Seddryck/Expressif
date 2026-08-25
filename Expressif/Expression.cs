@@ -6,6 +6,7 @@ namespace Expressif;
 public class Expression : IExpression
 {
     private readonly IFunction expression;
+    private readonly EvaluationContext context;
 
     public static IExpression Create(string text)
         => new ExpressionFactory().Create(text);
@@ -20,7 +21,17 @@ public class Expression : IExpression
         => new ExpressionFactory(binder: new ExpressionBinder(context)).CreateClosed(text);
 
     internal Expression(IFunction expression)
-        => this.expression = expression;
+        : this(expression, EvaluationContext.Empty) { }
 
-    public object? Evaluate(object? value) => expression.Evaluate(value);
+    private Expression(IFunction expression, EvaluationContext context)
+        => (this.expression, this.context) = (expression, context);
+
+    public object? Evaluate(object? value)
+    {
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(value, value), context);
+        return expression.Evaluate(value);
+    }
+
+    public IExpression WithContext(EvaluationContext context)
+        => new Expression(expression, context ?? throw new ArgumentNullException(nameof(context)));
 }

@@ -638,4 +638,50 @@ public class ExpressionTest
             Assert.That(Expression.CreateClosed("{} | last").Evaluate(null), Is.Null);
         }
     }
+
+    [Test]
+    public void Evaluate_WithoutDistinctAmbient_UsesInputAsAmbient()
+    {
+        var input = new Dictionary<string, object?> { ["name"] = "Alice" };
+
+        Assert.That(Expression.Create("^.name").Evaluate(input), Is.EqualTo("Alice"));
+    }
+
+    [Test]
+    public void Evaluate_ConcurrentCallsKeepTheirOwnAmbient()
+    {
+        var expression = Expression.Create(".value | append(^.suffix)");
+
+        var results = ParallelEnumerable.Range(0, 100)
+            .Select(index => expression.Evaluate(new Dictionary<string, object?>
+            {
+                ["value"] = index.ToString(),
+                ["suffix"] = $"-{index}"
+            }))
+            .ToArray();
+
+        Assert.That(results, Is.EquivalentTo(Enumerable.Range(0, 100).Select(index => $"{index}-{index}")));
+    }
+
+    [Test]
+    public void Evaluate_RecordPipelinesPreserveOriginalAmbient()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["lastName"] = "Charlier",
+            ["firstName"] = "Cédric",
+            ["birthDate"] = new DateTime(1978, 12, 28)
+        };
+        var expression = Expression.Create(
+            "record(name:= .lastName | append(\", \") | append(^.firstName), age:=.birthDate | age)");
+
+        var result = (RecordValue)expression.Evaluate(input)!;
+        var expectedAge = DateTime.Today.Year - 1978;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result["name"], Is.EqualTo("Charlier, Cédric"));
+            Assert.That(result["age"], Is.EqualTo(expectedAge));
+        });
+    }
 }
