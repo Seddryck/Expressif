@@ -1,0 +1,27 @@
+suite: numeric
+kind: predicate
+operator: is-zero-or-null
+tests:
+  - id: is-zero-or-null.valid
+    cases:
+      - id: is-zero-or-null.valid.numeric.zero
+        value: 0
+        expected: true
+      - id: is-zero-or-null.valid.numeric.one
+        value: 1
+        expected: false
+      - id: is-zero-or-null.valid.numeric.positive
+        value: 4
+        expected: false
+      - id: is-zero-or-null.valid.numeric.negative
+        value: -4
+        expected: false
+      - id: is-zero-or-null.valid.special.empty
+        value:
+        expected: true
+      - id: is-zero-or-null.valid.special.null
+        value: (null)
+        expected: true
+      - id: is-zero-or-null.valid.special.blank
+        value: (blank)
+        expected: true

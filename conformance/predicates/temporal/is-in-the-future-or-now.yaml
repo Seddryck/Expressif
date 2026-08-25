@@ -1,0 +1,32 @@
+suite: temporal
+kind: predicate
+operator: is-in-the-future-or-now
+tests:
+  - id: is-in-the-future-or-now.valid.date-time
+    cases:
+      - id: is-in-the-future-or-now.valid.date-time.past
+        value: 2022-12-28 14:00:00
+        expected: false
+      - id: is-in-the-future-or-now.valid.date-time.today-past
+        value: 2022-12-29 14:00:00
+        expected: false
+      - id: is-in-the-future-or-now.valid.date-time.now
+        value: 2022-12-29 15:00:00
+        expected: true
+      - id: is-in-the-future-or-now.valid.date-time.today-future
+        value: 2022-12-29 16:00:00
+        expected: true
+      - id: is-in-the-future-or-now.valid.date-time.future
+        value: 2022-12-30 16:00:00
+        expected: true
+  - id: is-in-the-future-or-now.valid.date-only
+    cases:
+      - id: is-in-the-future-or-now.valid.date-only.past
+        value: 2022-12-28
+        expected: false
+      - id: is-in-the-future-or-now.valid.date-only.today
+        value: 2022-12-29
+        expected: true
+      - id: is-in-the-future-or-now.valid.date-only.future
+        value: 2022-12-30
+        expected: true

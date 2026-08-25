@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Expressif.Predicates.Temporal;
 using Expressif.Testing.Conformance;
 
@@ -16,7 +16,7 @@ public class WeekdayPredicatesTest
     }
 
     [Conformance]
-    public void Weekday_Valid_Date(string text, string dayOfWeek, bool expected)
+    public void IsWeekday_Valid_Date(string text, string dayOfWeek, bool expected)
         => Assert.That(new Weekday(() => (Expressif.Values.Weekday)
                     TypeDescriptor.GetConverter(typeof(Expressif.Values.Weekday))
                     .ConvertFromInvariantString(dayOfWeek)!
@@ -28,7 +28,7 @@ public class WeekdayPredicatesTest
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void Weekend_Valid_Date(string text, bool expected)
+    public void IsWeekend_Valid_Date(string text, bool expected)
         => Assert.That(new Weekend()
                 .Evaluate(
                     TypeDescriptor.GetConverter(typeof(DateOnly))
@@ -37,12 +37,12 @@ public class WeekdayPredicatesTest
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void Weekend_Valid_DateTime(DateTime dateTime, bool expected)
+    public void IsWeekend_Valid_DateTime(DateTime dateTime, bool expected)
         => Assert.That(new Weekend().Evaluate(dateTime)
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void BusinessDay_Valid_Date(string text, bool expected)
+    public void IsBusinessDay_Valid_Date(string text, bool expected)
         => Assert.That(new BusinessDay()
                 .Evaluate(
                     TypeDescriptor.GetConverter(typeof(DateOnly))
@@ -51,7 +51,7 @@ public class WeekdayPredicatesTest
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void BusinessDay_Valid_DateTime(DateTime dateTime, bool expected)
+    public void IsBusinessDay_Valid_DateTime(DateTime dateTime, bool expected)
         => Assert.That(new BusinessDay().Evaluate(dateTime)
             , Is.EqualTo(expected));
 }

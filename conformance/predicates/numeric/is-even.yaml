@@ -1,0 +1,21 @@
+suite: numeric
+kind: predicate
+operator: is-even
+tests:
+  - id: is-even.valid
+    cases:
+      - id: is-even.valid.numeric.positive.even
+        value: 10
+        expected: true
+      - id: is-even.valid.numeric.positive.odd
+        value: 11
+        expected: false
+      - id: is-even.valid.numeric.one
+        value: 1
+        expected: false
+      - id: is-even.valid.numeric.zero
+        value: 0
+        expected: true
+      - id: is-even.valid.special.empty
+        value:
+        expected: false
