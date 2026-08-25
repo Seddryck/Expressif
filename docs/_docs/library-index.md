@@ -224,6 +224,7 @@ tags: [predicates, functions]
 * [is-business-day]({{ site.baseurl }}/docs/temporal-predicates/#is-business-day)
 * [is-contained-in]({{ site.baseurl }}/docs/temporal-predicates/#is-contained-in)
 * [contains]({{ site.baseurl }}/docs/text-predicates/#contains)
+* [is-divisible-by]({{ site.baseurl }}/docs/numeric-predicates/#is-divisible-by)
 * [is-empty]({{ site.baseurl }}/docs/text-predicates/#is-empty)
 * [is-empty-or-null]({{ site.baseurl }}/docs/text-predicates/#is-empty-or-null)
 * [ends-with]({{ site.baseurl }}/docs/text-predicates/#ends-with)

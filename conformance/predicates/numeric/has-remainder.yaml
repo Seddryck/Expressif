@@ -29,7 +29,13 @@ tests:
           - 4
           - 3
       - id: has-remainder.valid.special.null
-        value: null
+        value: (null)
+        expected: false
+        parameters:
+          - 4
+          - 3
+      - id: has-remainder.valid.special.empty
+        value: (empty)
         expected: false
         parameters:
           - 4

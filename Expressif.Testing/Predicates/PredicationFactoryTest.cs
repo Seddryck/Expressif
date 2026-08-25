@@ -15,7 +15,7 @@ public class PredicationFactoryTest
     [Test]
     [TestCase(typeof(Even), 0)]
     [TestCase(typeof(EqualTo), 1)]
-    [TestCase(typeof(Modulo), 1)]
+    [TestCase(typeof(IsDivisibleBy), 1)]
     [TestCase(typeof(Modulo), 2)]
     [TestCase(typeof(EquivalentTo), 1)]
     [TestCase(typeof(EquivalentTo), 2)]
@@ -31,6 +31,7 @@ public class PredicationFactoryTest
     [TestCase(typeof(EqualTo), 0)]
     [TestCase(typeof(Modulo), 3)]
     [TestCase(typeof(Modulo), 0)]
+    [TestCase(typeof(Modulo), 1)]
     [TestCase(typeof(EquivalentTo), 0)]
     [TestCase(typeof(EquivalentTo), 3)]
     public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)

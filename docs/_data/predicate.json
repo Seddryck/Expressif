@@ -128,6 +128,22 @@
     ]
   },
   {
+    "Name": "is-divisible-by",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-is-divisible-by"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "divisor",
+        "Optional": false,
+        "Summary": "An integer value used as the divisor."
+      }
+    ]
+  },
+  {
     "Name": "is-even",
     "IsPublic": true,
     "Aliases": [
@@ -225,7 +241,7 @@
       "numeric-is-modulo"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the remainder provided as a second parameter. If no remainder is provided then 0 is expected. Returns `false` otherwise.",
+    "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "modulus",
@@ -234,7 +250,7 @@
       },
       {
         "Name": "remainder",
-        "Optional": true,
+        "Optional": false,
         "Summary": "An integer value defined as the expected reminder."
       }
     ]

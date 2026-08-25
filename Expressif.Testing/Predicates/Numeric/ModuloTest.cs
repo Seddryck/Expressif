@@ -19,6 +19,18 @@ public class ModuloTest
     }
 
     [Conformance]
+    public void IsDivisibleBy_Valid(object? value, int divisor, bool expected)
+    {
+        var predicate = new IsDivisibleBy(() => divisor);
+        Assert.Multiple(() =>
+        {
+            Assert.That(predicate.Divisor.Invoke(), Is.EqualTo(divisor));
+            Assert.That(predicate.Remainder.Invoke(), Is.Zero);
+            Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+        });
+    }
+
+    [Conformance]
     public void IsEven_Valid(object? value, bool expected)
     {
         var predicate = new Even();

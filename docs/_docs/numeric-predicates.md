@@ -2,7 +2,7 @@
 title: Numeric predicates
 subtitle: Predicates applicable to numeric values
 tags: [predicates, numeric]
-keywords: [is-equal-to, is-even, is-greater-than, is-greater-than-or-equal, is-integer, is-less-than, is-less-than-or-equal, has-remainder, is-negative, is-negative-or-zero, is-odd, is-one, is-opposite, is-positive, is-positive-or-zero, is-within-interval, is-zero, is-zero-or-null] # AUTO-GENERATED KEYWORDS
+keywords: [is-equal-to, is-divisible-by, is-even, is-greater-than, is-greater-than-or-equal, is-integer, is-less-than, is-less-than-or-equal, has-remainder, is-negative, is-negative-or-zero, is-odd, is-one, is-opposite, is-positive, is-positive-or-zero, is-within-interval, is-zero, is-zero-or-null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### is-equal-to
@@ -15,6 +15,17 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 
 ###### Parameter
 * reference: A numeric value to compare to the argument.
+
+##### is-divisible-by
+
+###### Alias: `numeric-is-divisible-by`
+
+###### Overview
+
+Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.
+
+###### Parameter
+* divisor: An integer value used as the divisor.
 
 ##### is-even
 
@@ -82,11 +93,11 @@ Returns true if the numeric value passed as argument is less than or equal to th
 
 ###### Overview
 
-Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the remainder provided as a second parameter. If no remainder is provided then 0 is expected. Returns `false` otherwise.
+Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.
 
 ###### Parameters
 * modulus: An integer value used as the modulus.
-* remainder (optional) : An integer value defined as the expected reminder.
+* remainder: An integer value defined as the expected reminder.
 
 ##### is-negative
 
