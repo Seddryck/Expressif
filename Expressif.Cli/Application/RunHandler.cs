@@ -1,6 +1,8 @@
 using Expressif.Bindings;
 using Expressif.Cli.Commands;
+using Expressif.Cli.Expressions;
 using Expressif.Cli.Inputs;
+using Expressif.Cli.Infrastructure;
 using Expressif.Syntax;
 using Expressif.Values;
 
@@ -20,10 +22,12 @@ internal sealed record RunRequest(
     bool HasSourceOptions,
     int BatchOccurrences);
 
-internal sealed class RunHandler(CliServices services)
+internal sealed class RunHandler(
+    IExpressionService expressions,
+    IInputValueParser values,
+    IStrictUtf8TextReader textFiles,
+    SourcePipeline sources)
 {
-    private readonly SourcePipeline sources = new(services);
-
     public int Execute(RunRequest request)
     {
         var requestError = RunRequestValidator.Validate(request);
@@ -36,7 +40,7 @@ internal sealed class RunHandler(CliServices services)
         if (!ExpressionCommandCommon.TryResolveExpressionCode(
                 request.InlineExpression,
                 request.ExpressionFilePath,
-                services.TextFiles,
+                textFiles,
                 out var expressionCode,
                 out var hasExpressionFile))
         {
@@ -50,7 +54,7 @@ internal sealed class RunHandler(CliServices services)
         IExpression expression;
         try
         {
-            expression = services.Expressions.CompileOpen(expressionCode, context);
+            expression = expressions.CompileOpen(expressionCode, context);
         }
         catch (Exception exception) when (exception is ExpressifSyntaxException
                                           or BindingException
@@ -92,9 +96,9 @@ internal sealed class RunHandler(CliServices services)
 
     private IRunInputSource BuildInputSource(RunRequest request)
     {
-        var repeated = new RepeatedInputSource(request.InputRows, services.Values);
+        var repeated = new RepeatedInputSource(request.InputRows, values);
         return request.HasBatch
-            ? new CompositeInputSource(repeated, new BatchInputSource(request.BatchInput, services.Values))
+            ? new CompositeInputSource(repeated, new BatchInputSource(request.BatchInput, values))
             : repeated;
     }
 }

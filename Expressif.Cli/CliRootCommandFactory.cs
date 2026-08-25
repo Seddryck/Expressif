@@ -6,17 +6,17 @@ namespace Expressif.Cli;
 
 internal static class CliRootCommandFactory
 {
-    public static RootCommand Create(CliServices? services = null)
+    public static RootCommand Create(CliComposition? composition = null)
     {
-        services ??= CliServices.CreateDefault();
+        composition ??= CliComposition.CreateDefault();
         var rootCommand = new RootCommand("Parse, bind, evaluate, run and validate Expressif expressions.");
 
-        rootCommand.Subcommands.Add(ParseCommand.Create(services));
-        rootCommand.Subcommands.Add(BindCommand.Create(services));
-        rootCommand.Subcommands.Add(EvaluateCommand.Create(services));
-        rootCommand.Subcommands.Add(RunCommand.Create(services));
-        rootCommand.Subcommands.Add(ValidateCommand.Create(services));
-        rootCommand.Subcommands.Add(HelpCommand.Create(services));
+        rootCommand.Subcommands.Add(ParseCommand.Create(composition.Parse));
+        rootCommand.Subcommands.Add(BindCommand.Create(composition.Bind));
+        rootCommand.Subcommands.Add(EvaluateCommand.Create(composition.Evaluate, composition.TextFiles));
+        rootCommand.Subcommands.Add(RunCommand.Create(composition.Run));
+        rootCommand.Subcommands.Add(ValidateCommand.Create(composition.Validate, composition.TextFiles));
+        rootCommand.Subcommands.Add(HelpCommand.Create(composition.Help));
         rootCommand.Subcommands.Add(VersionCommand.Create());
 
         return rootCommand;

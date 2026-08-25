@@ -8,7 +8,7 @@ namespace Expressif.Cli.Commands;
 
 internal static class BindCommand
 {
-    public static Command Create(CliServices services)
+    public static Command Create(BindHandler handler)
     {
         var expressionArgument = new Argument<string>("expression")
         {
@@ -24,7 +24,6 @@ internal static class BindCommand
         var command = new Command("bind", "Bind an Expressif expression and display its bound expression tree.");
         command.Arguments.Add(expressionArgument);
         command.Options.Add(outputOption);
-        var handler = new BindHandler(services.Syntax);
         command.SetAction(parseResult =>
         {
             var expression = parseResult.GetValue(expressionArgument)!;

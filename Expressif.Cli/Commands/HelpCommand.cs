@@ -5,7 +5,7 @@ namespace Expressif.Cli.Commands;
 
 internal static class HelpCommand
 {
-    public static Command Create(CliServices services)
+    public static Command Create(HelpHandler handler)
     {
         var functionArgument = new Argument<string?>("function")
         {
@@ -25,7 +25,6 @@ internal static class HelpCommand
         command.Arguments.Add(functionArgument);
         command.Options.Add(listOption);
         command.Options.Add(scopeOption);
-        var handler = new HelpHandler(services.FunctionCatalog);
         command.SetAction(parseResult =>
         {
             var function = parseResult.GetValue(functionArgument);

@@ -7,31 +7,18 @@ using Expressif.Bindings;
 using Expressif.Syntax;
 
 using Expressif.Cli.Commands;
-using Expressif.Cli.Application;
-using Expressif.Cli.Infrastructure;
-namespace Expressif.Cli.Inputs;
+using Expressif.Cli.Expressions;
+using Expressif.Cli.Inputs;
+namespace Expressif.Cli.Infrastructure;
 
-internal sealed class SourcePipeline
+internal sealed class SourceInfrastructure(
+    IExpressionService expressions,
+    IInputValueParser values,
+    IStrictUtf8TextReader textFiles)
 {
-    private readonly CliServices services;
-    private readonly IReadOnlyList<IFileSourceProvider> sourceProviders;
-
-    public SourcePipeline(CliServices services)
+    public IEnumerable<object?> Normalize(object? sourceValue, string sourcePath, bool scalar = false)
     {
-        this.services = services;
-        sourceProviders = services.SourceProviders ??
-        [
-            new FileSourceProvider(IsCsv, (path, options) => OpenCsvDataReader(path, options)),
-            new FileSourceProvider(static _ => true, OpenExpressionSource),
-        ];
-    }
-
-    public IEnumerable<object?> Read(string? sourcePath, IReadOnlyList<string> sourceOptions, bool scalar = false)
-    {
-        var path = sourcePath ?? string.Empty;
-        var sourceValue = ResolveSourceRowsValue(path, sourceOptions);
-
-        foreach (var row in CreateSourceRows(sourceValue, path, scalar))
+        foreach (var row in CreateSourceRows(sourceValue, sourcePath, scalar))
             yield return row;
     }
 
@@ -43,24 +30,6 @@ internal sealed class SourcePipeline
             IEnumerable enumerable when sourceValue is not string => EnumerateSourceValues(enumerable, scalar),
             _ => throw new FormatException("The source returned a scalar value. Expected an IEnumerable or IDataReader.")
         };
-
-    private object? ResolveSourceRowsValue(string sourcePath, IReadOnlyList<string> sourceOptions)
-    {
-        try
-        {
-            if (services.SourceResolver is not null && sourceOptions.Count == 0)
-                return services.SourceResolver(sourcePath);
-            return ResolveSourceValueCore(sourcePath, sourceOptions);
-        }
-        catch (FormatException)
-        {
-            throw;
-        }
-        catch (Exception exception) when (exception is not OutOfMemoryException)
-        {
-            throw new FormatException($"The source '{sourcePath}' could not be resolved: {exception.Message}", exception);
-        }
-    }
 
     private static IEnumerable<object?> EnumerateSourceValues(IEnumerable sourceValue, bool scalar)
     {
@@ -234,23 +203,7 @@ internal sealed class SourcePipeline
         return record;
     }
 
-    private object? ResolveSourceValueCore(string sourcePath, IReadOnlyList<string> sourceOptions)
-    {
-        if (string.IsNullOrWhiteSpace(sourcePath))
-            throw new FormatException("Source path is required.");
-
-        if (Directory.Exists(sourcePath))
-            throw new FormatException($"Source '{sourcePath}' is a directory.");
-
-        if (!File.Exists(sourcePath))
-            throw new FormatException($"Source '{sourcePath}' was not found.");
-
-        var provider = sourceProviders.FirstOrDefault(candidate => candidate.CanOpen(sourcePath))
-            ?? throw new FormatException($"No source provider can open '{sourcePath}'.");
-        return provider.Open(sourcePath, sourceOptions);
-    }
-
-    private object? OpenExpressionSource(string sourcePath, IReadOnlyList<string> sourceOptions)
+    internal object? OpenExpressionSource(string sourcePath, IReadOnlyList<string> sourceOptions)
     {
         if (sourceOptions.Count > 0)
             throw new FormatException($"Source options are not supported for source '{sourcePath}'.");
@@ -258,7 +211,7 @@ internal sealed class SourcePipeline
         IExpression closedExpression;
         try
         {
-            closedExpression = services.Expressions.CompileClosed(sourceCode, new Context());
+            closedExpression = expressions.CompileClosed(sourceCode, new Context());
         }
         catch (Exception exception) when (exception is ExpressifSyntaxException
                                           or BindingException
@@ -271,7 +224,7 @@ internal sealed class SourcePipeline
 
         try
         {
-            return services.Expressions.Evaluate(closedExpression, null);
+            return expressions.Evaluate(closedExpression, null);
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
@@ -279,10 +232,7 @@ internal sealed class SourcePipeline
         }
     }
 
-    private static bool IsCsv(string path)
-        => Path.GetExtension(path).Equals(".csv", StringComparison.OrdinalIgnoreCase);
-
-    private IDataReader OpenCsvDataReader(string sourcePath, IReadOnlyList<string> sourceOptions)
+    internal IDataReader OpenCsvDataReader(string sourcePath, IReadOnlyList<string> sourceOptions)
     {
         FileStream? stream = null;
         try
@@ -338,7 +288,7 @@ internal sealed class SourcePipeline
             object? value;
             try
             {
-                value = services.Values.ParseStrict(suppliedValue);
+                value = values.ParseStrict(suppliedValue);
             }
             catch (FormatException exception)
             {
@@ -451,7 +401,7 @@ internal sealed class SourcePipeline
     {
         try
         {
-            return services.TextFiles.Read(sourcePath, requireContent: false);
+            return textFiles.Read(sourcePath, requireContent: false);
         }
         catch (TextFileReadException exception) when (exception.Kind == TextFileFailureKind.InvalidUtf8)
         {

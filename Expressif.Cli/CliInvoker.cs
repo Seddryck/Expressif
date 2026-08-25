@@ -6,11 +6,11 @@ namespace Expressif.Cli;
 internal static class CliInvoker
 {
     public static async Task<int> InvokeAsync(string[] args)
-        => await InvokeAsync(args, CliServices.CreateDefault());
+        => await InvokeAsync(args, CliComposition.CreateDefault());
 
-    internal static async Task<int> InvokeAsync(string[] args, CliServices services)
+    internal static async Task<int> InvokeAsync(string[] args, CliComposition composition)
     {
-        var rootCommand = CliRootCommandFactory.Create(services);
+        var rootCommand = CliRootCommandFactory.Create(composition);
         var parseResult = rootCommand.Parse(args);
         return await InvokeAsync(parseResult);
     }

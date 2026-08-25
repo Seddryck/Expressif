@@ -4,6 +4,7 @@ using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
+using Expressif.Functions.Catalog;
 
 namespace Expressif.Cli.Tests;
 
@@ -1538,15 +1539,22 @@ public class CliCommandTests
 
         try
         {
-            var defaults = CliServices.CreateDefault();
-            var services = new CliServices(
-                expressions,
-                defaults.Syntax,
-                new CliInputValueParser(),
-                new StrictUtf8TextReader(),
-                defaults.FunctionCatalog,
-                sourceResolver);
-            var exitCode = await CliInvoker.InvokeAsync(args, services);
+            var values = new CliInputValueParser();
+            var textFiles = new StrictUtf8TextReader();
+            var infrastructure = new SourceInfrastructure(expressions, values, textFiles);
+            IFileSourceProvider[] providers = sourceResolver is null
+                ? [new CsvFileSourceProvider(infrastructure), new ExpressionFileSourceProvider(infrastructure)]
+                : [new FakeFileSourceProvider(sourceResolver)];
+            var sources = new SourcePipeline(providers, infrastructure);
+            var composition = new CliComposition(
+                new ParseHandler(new SyntaxService()),
+                new BindHandler(new SyntaxService()),
+                new EvaluateHandler(expressions, values, sources),
+                new RunHandler(expressions, values, textFiles, sources),
+                new ValidateHandler(expressions),
+                new HelpHandler(new FunctionCatalogService(FunctionCatalog.Default)),
+                textFiles);
+            var exitCode = await CliInvoker.InvokeAsync(args, composition);
             return new InvocationResult(exitCode, stdout.ToString(), stderr.ToString());
         }
         finally
@@ -1565,6 +1573,13 @@ public class CliCommandTests
     }
 
     private sealed record InvocationResult(int ExitCode, string StdOut, string StdErr);
+
+    private sealed class FakeFileSourceProvider(Func<string, object?> resolve) : IFileSourceProvider
+    {
+        public bool CanOpen(string path) => true;
+
+        public object? Open(string path, IReadOnlyList<string> options) => resolve(path);
+    }
 
     private sealed class FakeExpressionService : IExpressionService
     {

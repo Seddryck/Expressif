@@ -5,7 +5,7 @@ namespace Expressif.Cli.Commands;
 
 internal static class RunCommand
 {
-    public static Command Create(CliServices services)
+    public static Command Create(RunHandler handler)
     {
         var expression = new Argument<string?>("expression") { Arity = ArgumentArity.ZeroOrOne, Description = "Expression to evaluate." };
         var input = new Option<string[]>("--input") { Description = "Input row passed to the expression. Repeat --input to add rows." };
@@ -25,7 +25,6 @@ internal static class RunCommand
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
-        var handler = new RunHandler(services);
         command.SetAction(result => handler.Execute(new RunRequest(
             result.GetValue(expression), result.GetValue(file), result.GetValue(input) ?? [], result.GetValue(batch),
             result.GetValue(source), result.GetValue(sourceOptions) ?? [], result.GetValue(scalar),

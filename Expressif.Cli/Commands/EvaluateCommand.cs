@@ -1,5 +1,6 @@
 using System.CommandLine;
 using Expressif.Cli.Application;
+using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
 using Expressif.Values;
 
@@ -7,7 +8,7 @@ namespace Expressif.Cli.Commands;
 
 internal static class EvaluateCommand
 {
-    public static Command Create(CliServices services)
+    public static Command Create(EvaluateHandler handler, IStrictUtf8TextReader textFiles)
     {
         var expression = new Argument<string?>("expression") { Arity = ArgumentArity.ZeroOrOne, Description = "Expression to evaluate." };
         var input = new Option<string?>("--input") { Description = "Input value passed to the expression." };
@@ -18,7 +19,6 @@ internal static class EvaluateCommand
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var file = new Option<string?>("--file") { Description = "Path to a UTF-8 file containing the expression to evaluate." };
         file.Aliases.Add("-f");
-        var handler = new EvaluateHandler(services.Expressions, services.Values, new SourcePipeline(services));
         var command = new Command("evaluate", "Evaluate an Expressif expression.");
         command.Arguments.Add(expression);
         command.Options.Add(input);
@@ -26,11 +26,11 @@ internal static class EvaluateCommand
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
-        command.SetAction(result => Execute(result, handler, services, expression, input, source, scalar, sourceOptions, file));
+        command.SetAction(result => Execute(result, handler, textFiles, expression, input, source, scalar, sourceOptions, file));
         return command;
     }
 
-    private static int Execute(ParseResult result, EvaluateHandler handler, CliServices services,
+    private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles,
         Argument<string?> expression, Option<string?> input, Option<string?> source,
         Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file)
     {
@@ -45,7 +45,7 @@ internal static class EvaluateCommand
 
         var filePath = result.GetValue(file);
         if (!ExpressionCommandCommon.TryResolveExpressionCode(
-                result.GetValue(expression), filePath, services.TextFiles, out var code, out var fromFile))
+                result.GetValue(expression), filePath, textFiles, out var code, out var fromFile))
             return ExitCodes.InvalidExpressionOrInput;
 
         var kind = hasSource ? EvaluateInputKind.Source : hasInput ? EvaluateInputKind.Value : EvaluateInputKind.Closed;

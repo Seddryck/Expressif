@@ -1,12 +1,17 @@
 using Expressif.Cli.Application;
 using Expressif.Cli.Inputs;
+using Expressif.Cli.Expressions;
+using Expressif.Cli.Infrastructure;
 
 namespace Expressif.Cli.Tests;
 
 public class CsvSourceOptionTests
 {
     private readonly CliInputValueParser parser = new();
-    private readonly SourcePipeline sourcePipeline = new(CliServices.CreateDefault());
+    private readonly SourceInfrastructure sourceInfrastructure = new(
+        new ExpressionService(),
+        new CliInputValueParser(),
+        new StrictUtf8TextReader());
 
     [Test]
     public void Parse_PlainScalar_FallsBackToTrimmedText()
@@ -48,7 +53,7 @@ public class CsvSourceOptionTests
     [Test]
     public void BuildCsvProfile_AllSupportedOptions_AreTranslated()
     {
-        var (profile, hasHeader) = sourcePipeline.BuildCsvProfile(
+        var (profile, hasHeader) = sourceInfrastructure.BuildCsvProfile(
         [
             "delimiter=\";\"", "line-terminator=\"|\"", "quote-char=#null",
             "double-quote=#false", "escape-char=\"\\\\\"", "header=#false",
@@ -88,7 +93,7 @@ public class CsvSourceOptionTests
     [TestCase("header-rows={0}", "Invalid CSV source option 'header-rows' with value '{0}'")]
     public void BuildCsvProfile_InvalidOption_IdentifiesNameAndValue(string option, string expected)
     {
-        var exception = Assert.Throws<FormatException>(() => sourcePipeline.BuildCsvProfile([option]));
+        var exception = Assert.Throws<FormatException>(() => sourceInfrastructure.BuildCsvProfile([option]));
         Assert.That(exception!.Message, Does.StartWith(expected));
     }
 }
