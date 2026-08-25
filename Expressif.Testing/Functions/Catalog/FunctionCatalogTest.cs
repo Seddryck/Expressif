@@ -4,10 +4,10 @@ using Expressif.Functions.Introspection;
 namespace Expressif.Testing.Functions.Catalog;
 
 [TestFixture]
-[Category("MetadataConsistency")]
 public class FunctionCatalogTest
 {
     [Test]
+    [Category("MetadataConsistency")]
     public void Default_ExpressifAssembly_ContainsEmbeddedCatalog()
     {
         var assembly = typeof(FunctionCatalog).Assembly;
@@ -17,6 +17,7 @@ public class FunctionCatalogTest
     }
 
     [Test]
+    [Category("MetadataConsistency")]
     public void Default_PublicFunctions_MatchIntrospectionMetadata()
     {
         var documented = FunctionCatalog.Default.Functions.ToDictionary(x => x.Name);
