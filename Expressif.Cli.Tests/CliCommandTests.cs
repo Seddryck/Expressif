@@ -84,6 +84,26 @@ public class CliCommandTests
         });
     }
 
+    [TestCase("-1", "true")]
+    [TestCase("6", "true")]
+    [TestCase("3", "false")]
+    [TestCase("5", "false")]
+    public async Task Evaluate_NestedLowercasePredicateExpression_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "(even |and greater-than(5)) |or less-than(0)",
+            "--input",
+            input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
     [Test]
     public async Task Evaluate_MultipleInputOptions_ReturnsClearError()
     {
