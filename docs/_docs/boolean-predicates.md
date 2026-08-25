@@ -7,8 +7,6 @@ keywords: [and, is-false, is-false-or-null, is-identical-to, not, or, is-true, i
 <!-- START AUTO-GENERATED -->
 ##### and
 
-###### Alias: `boolean-is-and`
-
 ###### Overview
 
 Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.
@@ -45,15 +43,11 @@ Returns `true` if the boolean passed as argument has the same value than the boo
 
 ##### not
 
-###### Alias: `boolean-is-not`
-
 ###### Overview
 
 Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.
 
 ##### or
-
-###### Alias: `boolean-is-or`
 
 ###### Overview
 
@@ -79,8 +73,6 @@ Returns `true` if the argument is effectively `true` else return `false`.
 Returns `true` if the argument is effectively `true` or `null` else return `false`.
 
 ##### xor
-
-###### Alias: `boolean-is-xor`
 
 ###### Overview
 

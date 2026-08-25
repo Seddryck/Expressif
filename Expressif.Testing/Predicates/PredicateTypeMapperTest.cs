@@ -33,6 +33,10 @@ public class PredicateTypeMapperTest
     [TestCase("foo")]
     [TestCase("foo-to-bar")]
     [TestCase("foo - to - bar")]
+    [TestCase("boolean-is-and")]
+    [TestCase("boolean-is-not")]
+    [TestCase("boolean-is-or")]
+    [TestCase("boolean-is-xor")]
     public void Execute_PredicateName_Invalid(string value)
         => Assert.That(() => new PredicateTypeMapper().Execute(value), Throws.TypeOf<NotImplementedFunctionException>());
 
