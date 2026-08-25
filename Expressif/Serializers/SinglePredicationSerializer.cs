@@ -34,9 +34,11 @@ public class SinglePredicationSerializer
         if (predicate.Parameters.Length != 0)
         {
             stringBuilder.Append('(');
-            foreach (var parameter in predicate.Parameters)
+            foreach (var argument in predicate.Arguments)
             {
-                stringBuilder.Append(ParameterSerializer.Serialize(parameter));
+                if (argument.Name is not null)
+                    stringBuilder.Append(argument.Name).Append(" := ");
+                stringBuilder.Append(ParameterSerializer.Serialize(argument.Value));
                 stringBuilder.Append(", ");
             }
             stringBuilder.Remove(stringBuilder.Length - 2, 2);

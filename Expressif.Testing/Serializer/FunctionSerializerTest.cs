@@ -84,4 +84,13 @@ public class FunctionSerializerTest
 
         internalSerializer.Verify(x => x.Serialize(It.IsAny<LiteralParameter>()), Times.Exactly(2));
     }
+
+    [Test]
+    public void Serialize_NamedArguments_PreservesNames()
+    {
+        var function = BindingTestAdapter.Function("replace-slice(2, append := \"abc\", length := 4)");
+
+        Assert.That(new FunctionSerializer().Serialize(function),
+            Is.EqualTo("replace-slice(2, append := \"abc\", length := 4)"));
+    }
 }

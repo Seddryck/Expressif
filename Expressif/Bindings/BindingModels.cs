@@ -13,11 +13,23 @@ public enum FunctionSyntax
     TupleProjectionShorthand,
 }
 
-public sealed class Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard) : IBoundExpression
+public sealed record FunctionArgument(string? Name, IParameter Value);
+
+public sealed class Function : IBoundExpression
 {
-    public string Name { get; } = name;
-    public IParameter[] Parameters { get; } = parameters;
-    public FunctionSyntax Syntax { get; } = syntax;
+    public Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard)
+        : this(name, parameters.Select(x => new FunctionArgument(null, x)).ToArray(), syntax) { }
+
+    private Function(string name, FunctionArgument[] arguments, FunctionSyntax syntax)
+        => (Name, Arguments, Syntax) = (name, arguments, syntax);
+
+    internal static Function FromArguments(string name, FunctionArgument[] arguments)
+        => new(name, arguments, FunctionSyntax.Standard);
+
+    public string Name { get; }
+    public FunctionArgument[] Arguments { get; }
+    public IParameter[] Parameters => Arguments.Select(x => x.Value).ToArray();
+    public FunctionSyntax Syntax { get; }
 }
 
 public class OpenExpression(IEnumerable<Function> members) : IBoundExpression
