@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: within-current-year
+operator: is-within-current-year
 tests:
   - id: within-current-year.valid.date-time
     cases:

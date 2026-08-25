@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: equal-to
+operator: is-equal-to
 tests:
   - id: equal-to.valid
     cases:

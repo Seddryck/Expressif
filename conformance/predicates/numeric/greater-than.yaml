@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: greater-than
+operator: is-greater-than
 tests:
   - id: greater-than.valid
     cases:

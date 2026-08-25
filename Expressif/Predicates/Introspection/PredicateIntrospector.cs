@@ -36,14 +36,21 @@ public class PredicateIntrospector : BaseIntrospector
                                         ? predicate.Type.Namespace!.Split('.').Last().ToKebabCase()
                                         : predicate.Attribute.Prefix;
 
-            var suffix = predicate.Attribute.AppendIs ? $"is" : string.Empty;
-
-            var array = new[] { prefix, suffix, predicate.Type.Name.ToKebabCase() }.Where(x => !string.IsNullOrEmpty(x));
+            var typeName = predicate.Type.Name.ToKebabCase();
+            var suffix = predicate.Attribute.AppendIs ? "is" : string.Empty;
+            var canonicalName = string.Join('-', new[] { suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
+            var prefixedName = string.Join('-', new[] { prefix, suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
+            var aliases = predicate.Attribute.Aliases
+                .Append(typeName)
+                .Append(prefixedName)
+                .Where(x => !string.Equals(x, canonicalName, StringComparison.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
             yield return new PredicateInfo(
-                    predicate.Type.Name.ToKebabCase()
+                    canonicalName
                     , predicate.Type.IsPublic
-                    , predicate.Attribute.Aliases.AsQueryable().Prepend(string.Join('-', array)).ToArray()
+                    , aliases
                     , predicate.Type.Namespace!.ToToken('.').Last()
                     , predicate.Type
                     , fast ? "" : predicate.Type.GetSummary()

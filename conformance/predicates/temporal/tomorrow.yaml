@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: tomorrow
+operator: is-tomorrow
 tests:
   - id: tomorrow.valid.date-time
     cases:

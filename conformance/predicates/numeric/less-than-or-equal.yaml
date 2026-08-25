@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: less-than-or-equal
+operator: is-less-than-or-equal
 tests:
   - id: less-than-or-equal.valid
     cases:

@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: any-of
+operator: is-any-of
 tests:
   - id: any-of.valid.text
     cases:

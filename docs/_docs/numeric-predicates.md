@@ -5,9 +5,9 @@ tags: [predicates, numeric]
 keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-than, less-than-or-equal, modulo, negative, negative-or-zero, odd, one, opposite, positive, positive-or-zero, within-interval, zero, zero-or-null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
-##### equal-to
-
-###### Alias: `numeric-is-equal-to`
+##### is-equal-to
+keywords: [is-equal-to, is-even, is-greater-than, is-greater-than-or-equal, is-integer, is-less-than, is-less-than-or-equal, is-modulo, is-negative, is-negative-or-zero, is-odd, is-one, is-opposite, is-positive, is-positive-or-zero, is-within-interval, is-zero, is-zero-or-null] # AUTO-GENERATED KEYWORDS
+###### Aliases: `equal-to`, `numeric-is-equal-to`
 
 ###### Overview
 
@@ -16,17 +16,17 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### even
+##### is-even
 
-###### Alias: `numeric-is-even`
+###### Aliases: `even`, `numeric-is-even`
 
 ###### Overview
 
 Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise.
 
-##### greater-than
+##### is-greater-than
 
-###### Alias: `numeric-is-greater-than`
+###### Aliases: `greater-than`, `numeric-is-greater-than`
 
 ###### Overview
 
@@ -35,9 +35,9 @@ Returns true if the numeric value passed as argument is greater than the numeric
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### greater-than-or-equal
+##### is-greater-than-or-equal
 
-###### Alias: `numeric-is-greater-than-or-equal`
+###### Aliases: `greater-than-or-equal`, `numeric-is-greater-than-or-equal`
 
 ###### Overview
 
@@ -46,17 +46,17 @@ Returns true if the numeric value passed as argument is greater than or equal to
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### integer
+##### is-integer
 
-###### Alias: `numeric-is-integer`
+###### Aliases: `integer`, `numeric-is-integer`
 
 ###### Overview
 
 Returns true if the numeric value passed as argument is an integer value. Returns `false` otherwise.
 
-##### less-than
+##### is-less-than
 
-###### Alias: `numeric-is-less-than`
+###### Aliases: `less-than`, `numeric-is-less-than`
 
 ###### Overview
 
@@ -65,9 +65,9 @@ Returns true if the numeric value passed as argument is less than the numeric va
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### less-than-or-equal
+##### is-less-than-or-equal
 
-###### Alias: `numeric-is-less-than-or-equal`
+###### Aliases: `less-than-or-equal`, `numeric-is-less-than-or-equal`
 
 ###### Overview
 
@@ -76,9 +76,9 @@ Returns true if the numeric value passed as argument is less than or equal to th
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### modulo
+##### is-modulo
 
-###### Alias: `numeric-is-modulo`
+###### Aliases: `modulo`, `numeric-is-modulo`
 
 ###### Overview
 
@@ -88,41 +88,41 @@ Returns `true` if the division of the numeric value passed as argument by the mo
 * modulus: An integer value used as the modulus.
 * remainder (optional) : An integer value defined as the expected reminder.
 
-##### negative
+##### is-negative
 
-###### Alias: `numeric-is-negative`
+###### Aliases: `negative`, `numeric-is-negative`
 
 ###### Overview
 
 Returns true if the numeric argument is less than 0.
 
-##### negative-or-zero
+##### is-negative-or-zero
 
-###### Alias: `numeric-is-negative-or-zero`
+###### Aliases: `negative-or-zero`, `numeric-is-negative-or-zero`
 
 ###### Overview
 
 Returns true if the numeric argument is less or equal to 0.
 
-##### odd
+##### is-odd
 
-###### Alias: `numeric-is-odd`
+###### Aliases: `odd`, `numeric-is-odd`
 
 ###### Overview
 
 Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.
 
-##### one
+##### is-one
 
-###### Alias: `numeric-is-one`
+###### Aliases: `one`, `numeric-is-one`
 
 ###### Overview
 
 Returns true if the numeric argument is equal to 1.
 
-##### opposite
+##### is-opposite
 
-###### Alias: `numeric-is-opposite`
+###### Aliases: `opposite`, `numeric-is-opposite`
 
 ###### Overview
 
@@ -131,25 +131,25 @@ Returns true if the numeric value passed as argument additive inverse of the num
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### positive
+##### is-positive
 
-###### Alias: `numeric-is-positive`
+###### Aliases: `positive`, `numeric-is-positive`
 
 ###### Overview
 
 Returns true if the numeric argument is greater than 0.
 
-##### positive-or-zero
+##### is-positive-or-zero
 
-###### Alias: `numeric-is-positive-or-zero`
+###### Aliases: `positive-or-zero`, `numeric-is-positive-or-zero`
 
 ###### Overview
 
 Returns true if the numeric argument is greater or equal to 0.
 
-##### within-interval
+##### is-within-interval
 
-###### Alias: `numeric-is-within-interval`
+###### Aliases: `within-interval`, `numeric-is-within-interval`
 
 ###### Overview
 
@@ -158,17 +158,17 @@ Returns true if the numeric value passed as argument is between the lower bound 
 ###### Parameter
 * interval: A numeric interval to compare to the argument.
 
-##### zero
+##### is-zero
 
-###### Alias: `numeric-is-zero`
+###### Aliases: `zero`, `numeric-is-zero`
 
 ###### Overview
 
 Returns true if the numeric argument is equal to 0.
 
-##### zero-or-null
+##### is-zero-or-null
 
-###### Alias: `numeric-is-zero-or-null`
+###### Aliases: `zero-or-null`, `numeric-is-zero-or-null`
 
 ###### Overview
 

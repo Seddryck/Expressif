@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: even
+operator: is-even
 tests:
   - id: even.valid
     cases:

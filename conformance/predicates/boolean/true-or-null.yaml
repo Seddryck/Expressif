@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: true-or-null
+operator: is-true-or-null
 tests:
   - id: true-or-null.valid
     cases:

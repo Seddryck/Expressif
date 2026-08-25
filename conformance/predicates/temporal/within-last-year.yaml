@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: within-last-year
+operator: is-within-last-year
 tests:
   - id: within-last-year.valid.date-time
     cases:

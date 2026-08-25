@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: positive-or-zero
+operator: is-positive-or-zero
 tests:
   - id: positive-or-zero.valid
     cases:

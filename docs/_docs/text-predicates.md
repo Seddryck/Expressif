@@ -5,9 +5,9 @@ tags: [predicates, text]
 keywords: [any-of, contains, empty, empty-or-null, ends-with, equivalent-to, lower-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, sorted-after, sorted-after-or-equivalent-to, sorted-before, sorted-before-or-equivalent-to, starts-with, upper-case] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
-##### any-of
-
-###### Alias: `text-is-any-of`
+##### is-any-of
+keywords: [is-any-of, contains, is-empty, is-empty-or-null, ends-with, is-equivalent-to, is-lower-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, is-sorted-after, is-sorted-after-or-equivalent-to, is-sorted-before, is-sorted-before-or-equivalent-to, starts-with, is-upper-case] # AUTO-GENERATED KEYWORDS
+###### Aliases: `any-of`, `text-is-any-of`
 
 ###### Overview
 
@@ -29,17 +29,17 @@ Returns `true` if the value passed as argument contains, anywhere in the string,
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
-##### empty
+##### is-empty
 
-###### Alias: `text-is-empty`
+###### Aliases: `empty`, `text-is-empty`
 
 ###### Overview
 
 Returns `true` if argument value has a length of `0`. Return `false` otherwise.
 
-##### empty-or-null
+##### is-empty-or-null
 
-###### Alias: `text-is-empty-or-null`
+###### Aliases: `empty-or-null`, `text-is-empty-or-null`
 
 ###### Overview
 
@@ -57,9 +57,9 @@ Returns `true` if the value passed as argument ends with the text value passed a
 * reference: A string to be compared to the argument value..
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
-##### equivalent-to
+##### is-equivalent-to
 
-###### Alias: `text-is-equivalent-to`
+###### Aliases: `equivalent-to`, `text-is-equivalent-to`
 
 ###### Overview
 
@@ -69,9 +69,9 @@ Compare the text value passed as argument and the text value passed as parameter
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)..
 
-##### lower-case
+##### is-lower-case
 
-###### Alias: `text-is-lower-case`
+###### Aliases: `lower-case`, `text-is-lower-case`
 
 ###### Overview
 
@@ -121,9 +121,9 @@ Returns `true` if the value passed as argument validate the regex passed as para
 
 Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.
 
-##### sorted-after
+##### is-sorted-after
 
-###### Alias: `text-is-sorted-after`
+###### Aliases: `sorted-after`, `text-is-sorted-after`
 
 ###### Overview
 
@@ -133,9 +133,9 @@ Compare the text value passed as argument and the text value passed as parameter
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
-##### sorted-after-or-equivalent-to
+##### is-sorted-after-or-equivalent-to
 
-###### Alias: `text-is-sorted-after-or-equivalent-to`
+###### Aliases: `sorted-after-or-equivalent-to`, `text-is-sorted-after-or-equivalent-to`
 
 ###### Overview
 
@@ -145,9 +145,9 @@ Compare the text value passed as argument and the text value passed as parameter
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
-##### sorted-before
+##### is-sorted-before
 
-###### Alias: `text-is-sorted-before`
+###### Aliases: `sorted-before`, `text-is-sorted-before`
 
 ###### Overview
 
@@ -157,9 +157,9 @@ Compare the text value passed as argument and the text value passed as parameter
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
-##### sorted-before-or-equivalent-to
+##### is-sorted-before-or-equivalent-to
 
-###### Alias: `text-is-sorted-before-or-equivalent-to`
+###### Aliases: `sorted-before-or-equivalent-to`, `text-is-sorted-before-or-equivalent-to`
 
 ###### Overview
 
@@ -181,9 +181,9 @@ Returns `true` if the value passed as argument starts with the text value passed
 * reference: A string to be compared to the argument value..
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
-##### upper-case
+##### is-upper-case
 
-###### Alias: `text-is-upper-case`
+###### Aliases: `upper-case`, `text-is-upper-case`
 
 ###### Overview
 

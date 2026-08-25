@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: upper-case
+operator: is-upper-case
 tests:
   - id: upper-case.valid.text
     cases:

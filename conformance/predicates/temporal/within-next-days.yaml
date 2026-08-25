@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: within-next-days
+operator: is-within-next-days
 tests:
   - id: within-next-days.valid.date-time
     parameters:

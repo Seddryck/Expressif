@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: within-interval
+operator: is-within-interval
 tests:
   - id: within-interval.valid.open-closed
     cases:

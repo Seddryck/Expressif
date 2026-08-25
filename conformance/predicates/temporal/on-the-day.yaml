@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: on-the-day
+operator: is-on-the-day
 tests:
   - id: on-the-day.valid.date
     cases:

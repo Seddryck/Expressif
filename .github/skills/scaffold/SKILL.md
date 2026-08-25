@@ -44,6 +44,8 @@ Where:
 
 Run all checks before proposing a record:
 - `name` is non-empty, lowercase kebab-case (`^[a-z0-9]+(?:-[a-z0-9]+)*$`).
+- Predicate names read naturally as boolean questions: use a third-person singular verb (for example, `contains`, `starts-with`, `ends-with`, `matches`, or `exists`) when the name is verbal; otherwise prefix the name with `is-` or `has-` as appropriate.
+- Reject predicate names that use an infinitive/base verb form (for example, `contain`, `start-with`, `end-with`, `match`, or `exist`) or a non-verbal name without an `is-`/`has-` prefix.
 - `scope` is exactly one of: `Text`, `Numeric`, `Temporal`, `Special`, `Array`.
 - `summary` is non-empty after normalization.
 - Parameter names are unique and kebab-case.

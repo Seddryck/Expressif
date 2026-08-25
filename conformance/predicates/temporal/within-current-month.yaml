@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: within-current-month
+operator: is-within-current-month
 tests:
   - id: within-current-month.valid.date-time
     cases:

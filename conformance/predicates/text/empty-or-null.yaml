@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: empty-or-null
+operator: is-empty-or-null
 tests:
   - id: empty-or-null.valid
     cases:

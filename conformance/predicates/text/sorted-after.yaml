@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: sorted-after
+operator: is-sorted-after
 tests:
   - id: sorted-after.valid
     cases:

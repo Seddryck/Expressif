@@ -5,9 +5,9 @@ tags: [predicates]
 keywords: [null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
-##### null
-
-###### Alias: `is-null`
+##### is-null
+keywords: [is-null] # AUTO-GENERATED KEYWORDS
+###### Alias: `null`
 
 ###### Overview
 

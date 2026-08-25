@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: in-the-past
+operator: is-in-the-past
 tests:
   - id: in-the-past.valid.date-time
     cases:

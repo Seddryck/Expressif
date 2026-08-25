@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: sorted-before-or-equivalent-to
+operator: is-sorted-before-or-equivalent-to
 tests:
   - id: sorted-before-or-equivalent-to.valid
     cases:

@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: weekday
+operator: is-weekday
 tests:
   - id: weekday.valid.date
     cases:

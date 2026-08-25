@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: opposite
+operator: is-opposite
 tests:
   - id: opposite.valid
     cases:

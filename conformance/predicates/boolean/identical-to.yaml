@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: identical-to
+operator: is-identical-to
 tests:
   - id: identical-to.valid
     cases:

@@ -28,4 +28,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Expressif\Expressif.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\predicates-rename.json" Link="predicates-rename.json" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 </Project>

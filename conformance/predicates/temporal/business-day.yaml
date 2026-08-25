@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: business-day
+operator: is-business-day
 tests:
   - id: business-day.valid.date-time
     cases:

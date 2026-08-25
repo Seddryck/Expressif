@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Expressif.Predicates;
 using Expressif.Predicates.Numeric;
@@ -34,4 +35,21 @@ public class PredicateTypeMapperTest
     [TestCase("foo - to - bar")]
     public void Execute_PredicateName_Invalid(string value)
         => Assert.That(() => new PredicateTypeMapper().Execute(value), Throws.TypeOf<NotImplementedFunctionException>());
+
+    [Test]
+    public void Execute_RenamedPredicateAndLegacyAlias_ResolveToSameImplementation()
+    {
+        var manifestPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "predicates-rename.json");
+        var renames = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(manifestPath))!;
+        var mapper = new PredicateTypeMapper();
+
+        Assert.Multiple(() =>
+        {
+            foreach (var (legacyName, canonicalName) in renames)
+                Assert.That(
+                    mapper.Execute(legacyName),
+                    Is.EqualTo(mapper.Execute(canonicalName)),
+                    $"Legacy predicate '{legacyName}' should alias '{canonicalName}'.");
+        });
+    }
 }

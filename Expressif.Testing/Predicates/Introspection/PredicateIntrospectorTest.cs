@@ -28,13 +28,19 @@ public class PredicateIntrospectorTest
     }
 
     [Test]
-    public void Locate_ExpressifAssembly_NameEqualClass()
+    public void Locate_ExpressifAssembly_NameFollowsPredicateConvention()
     {
         foreach (var info in Infos)
         {
             Debug.WriteLine(info.Name);
             Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Name.ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
+            Assert.That(
+                info.Name.StartsWith("is-", StringComparison.Ordinal)
+                    || info.Name.StartsWith("has-", StringComparison.Ordinal)
+                    || info.Name is "contains" or "starts-with" or "ends-with"
+                    || info.Name.StartsWith("matches-", StringComparison.Ordinal),
+                Is.True,
+                $"Predicate '{info.Name}' does not follow the naming convention.");
         }
     }
 

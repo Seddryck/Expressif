@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: weekend
+operator: is-weekend
 tests:
   - id: weekend.valid.date-time
     cases:

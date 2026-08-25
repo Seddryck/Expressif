@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: within-upcoming-week
+operator: is-within-upcoming-week
 tests:
   - id: within-upcoming-week.valid.date-time
     parameters:

@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: in-the-future
+operator: is-in-the-future
 tests:
   - id: in-the-future.valid.date-time
     cases:

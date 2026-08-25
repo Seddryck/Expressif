@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: on-the-hour
+operator: is-on-the-hour
 tests:
   - id: on-the-hour.valid.date
     cases:

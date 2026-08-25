@@ -1,6 +1,6 @@
 suite: temporal
 kind: predicate
-operator: today
+operator: is-today
 tests:
   - id: today.valid.date-time
     cases:

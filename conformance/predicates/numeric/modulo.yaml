@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: modulo
+operator: is-modulo
 tests:
   - id: modulo.valid
     cases:

@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: equivalent-to
+operator: is-equivalent-to
 tests:
   - id: equivalent-to.valid
     cases:

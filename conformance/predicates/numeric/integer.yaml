@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: integer
+operator: is-integer
 tests:
   - id: integer.valid
     cases:
@@ -34,4 +34,3 @@ tests:
      - id: integer.valid.special.empty-tag
        value: (empty)
        expected: false
-       

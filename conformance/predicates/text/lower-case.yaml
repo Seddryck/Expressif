@@ -1,6 +1,6 @@
 suite: text
 kind: predicate
-operator: lower-case
+operator: is-lower-case
 tests:
   - id: lower-case.valid.text
     cases:

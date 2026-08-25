@@ -1,6 +1,6 @@
 suite: numeric
 kind: predicate
-operator: odd
+operator: is-odd
 tests:
   - id: odd.valid
     cases:
