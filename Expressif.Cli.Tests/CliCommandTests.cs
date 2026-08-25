@@ -1317,8 +1317,7 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.StartWith("reverse() → array"));
-            Assert.That(result.StdOut, Does.Contain("Input:   array"));
+            Assert.That(result.StdOut, Does.StartWith($"array →{Environment.NewLine}reverse() → array"));
             Assert.That(result.StdOut, Does.Contain("Scope:   Array"));
             Assert.That(result.StdOut, Does.Contain("Aliases: reverse"));
             Assert.That(result.StdErr, Is.Empty);
@@ -1333,7 +1332,8 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.StartWith("broadcast(accumulator: accumulator) → array"));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"array →{Environment.NewLine}broadcast({Environment.NewLine}    accumulator: accumulator{Environment.NewLine}) → array"));
             Assert.That(result.StdOut, Does.Contain("Aliases: array-to-broadcast"));
             Assert.That(result.StdOut, Does.Contain("Parameters:"));
             Assert.That(result.StdErr, Is.Empty);
@@ -1348,7 +1348,8 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.StartWith("after-substring(substring: text, count?: integer) → text"));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count?: integer{Environment.NewLine}) → text"));
             Assert.That(result.StdOut, Does.Contain("count?"));
             Assert.That(result.StdErr, Is.Empty);
         });
@@ -1362,8 +1363,30 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.StartWith("field(name: text) → any"));
-            Assert.That(result.StdOut, Does.Contain("Input:   any"));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"any →{Environment.NewLine}field({Environment.NewLine}    name: text{Environment.NewLine}) → any"));
+        });
+    }
+
+    [Test]
+    public async Task Help_FunctionWithExamples_DisplaysExamplesBeforeAliasesAndScope()
+    {
+        var result = await InvokeAsync("help", "add");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times?: integer{Environment.NewLine}) → numeric"));
+            Assert.That(result.StdOut, Does.Contain("Returns the sum of the input value and the parameter value."));
+            Assert.That(result.StdOut, Does.Contain("times  integer (optional)"));
+            Assert.That(result.StdOut, Does.Contain("  10 | add(5)      → 15"));
+            Assert.That(result.StdOut, Does.Contain("  10 | add(5, 2)   → 20"));
+            Assert.That(result.StdOut.IndexOf("Examples:", StringComparison.Ordinal),
+                Is.LessThan(result.StdOut.IndexOf("Aliases:", StringComparison.Ordinal)));
+            Assert.That(result.StdOut.IndexOf("Aliases:", StringComparison.Ordinal),
+                Is.LessThan(result.StdOut.IndexOf("Scope:", StringComparison.Ordinal)));
+            Assert.That(result.StdErr, Is.Empty);
         });
     }
 

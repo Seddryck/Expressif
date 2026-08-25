@@ -57,4 +57,10 @@ public class FunctionCatalogTest
     [Test]
     public void Suggest_CloseName_ReturnsExpectedFunctionFirst()
         => Assert.That(FunctionCatalog.Default.Suggest("revers").First().Name, Is.EqualTo("reverse"));
+
+    [Test]
+    public void Default_FunctionWithExamples_DeserializesExamples()
+        => Assert.That(
+            FunctionCatalog.Default.Find("add")?.Examples,
+            Is.EqualTo(new[] { "10 | add(5)      → 15", "10 | add(5, 2)   → 20" }));
 }

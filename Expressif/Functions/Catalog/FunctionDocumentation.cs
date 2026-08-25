@@ -8,7 +8,8 @@ public sealed record FunctionDocumentation(
     string Input,
     string Output,
     string Summary,
-    FunctionParameterDocumentation[] Parameters);
+    FunctionParameterDocumentation[] Parameters,
+    string[]? Examples = null);
 
 public sealed record FunctionParameterDocumentation(
     string Name,
