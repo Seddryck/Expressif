@@ -11,12 +11,12 @@ internal static class CliRootCommandFactory
         services ??= CliServices.CreateDefault();
         var rootCommand = new RootCommand("Parse, bind, evaluate, run and validate Expressif expressions.");
 
-        rootCommand.Subcommands.Add(ParseCommand.Create());
-        rootCommand.Subcommands.Add(BindCommand.Create());
+        rootCommand.Subcommands.Add(ParseCommand.Create(services));
+        rootCommand.Subcommands.Add(BindCommand.Create(services));
         rootCommand.Subcommands.Add(EvaluateCommand.Create(services));
         rootCommand.Subcommands.Add(RunCommand.Create(services));
         rootCommand.Subcommands.Add(ValidateCommand.Create(services));
-        rootCommand.Subcommands.Add(HelpCommand.Create());
+        rootCommand.Subcommands.Add(HelpCommand.Create(services));
         rootCommand.Subcommands.Add(VersionCommand.Create());
 
         return rootCommand;

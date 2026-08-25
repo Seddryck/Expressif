@@ -1538,7 +1538,14 @@ public class CliCommandTests
 
         try
         {
-            var services = new CliServices(expressions, new CliInputValueParser(), new StrictUtf8TextReader(), sourceResolver);
+            var defaults = CliServices.CreateDefault();
+            var services = new CliServices(
+                expressions,
+                defaults.Syntax,
+                new CliInputValueParser(),
+                new StrictUtf8TextReader(),
+                defaults.FunctionCatalog,
+                sourceResolver);
             var exitCode = await CliInvoker.InvokeAsync(args, services);
             return new InvocationResult(exitCode, stdout.ToString(), stderr.ToString());
         }
