@@ -53,8 +53,12 @@ public class FunctionFactory : BaseExpressionFactory
 
     private IFunction BuildOpenExpression(OpenExpression expression, IContext context)
     {
+        var members = expression.Members.ToArray();
+        if (members.All(member => PredicateTypeMapper.TryExecute(member.Name, out _)))
+            return new PredicationFactory().Instantiate(new SinglePredication(members), context);
+
         var functions = new List<IFunction>();
-        foreach (var member in expression.Members)
+        foreach (var member in members)
             functions.Add(InstantiateOrWrapAggregation(member, context));
 
         return new ChainFunction(functions);
