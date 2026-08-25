@@ -70,6 +70,19 @@ public class ExpressionBinderTest
         => Assert.That(BindingTestAdapter.Root(value), Is.TypeOf(expectedType));
 
     [Test]
+    public void Parse_ContextualRecordAccessAsPipelineStage_ThrowsActionableBindingException()
+    {
+        const string source = "record(name:=.lastName | append(\", \") | ^.firstName)";
+
+        Assert.That(
+            () => BindingTestAdapter.Root(source),
+            Throws.TypeOf<BindingException>()
+                .With.Message.EqualTo(
+                    "Contextual record access '^.firstName' cannot be used directly as a pipeline stage. " +
+                    "Use it inside another expression, such as a function argument (for example, 'append(^.firstName)')."));
+    }
+
+    [Test]
     public void Parse_MapShorthand_LowersToMapFunction()
     {
         var expression = BindingTestAdapter.Closed("{1,2,3} |> (absolute | add(5)) | reverse");
