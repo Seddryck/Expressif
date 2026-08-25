@@ -121,6 +121,7 @@ public sealed class ExpressifBinder
         FunctionCallSyntax call => BindFunction(call),
         TupleProjectionSyntax projection => new Function("tuple-at", [new LiteralParameter(projection.Index.ToString())], FunctionSyntax.TupleProjectionShorthand),
         RecordAccessSyntax access when !access.IsOriginalInput => BindRecordAccessFunction(access),
+        RecordAccessSyntax access => throw InvalidContextualRecordAccessPipelineStage(access),
         MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
@@ -291,6 +292,9 @@ public sealed class ExpressifBinder
 
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)
         => new($"Record access '{syntax.Text}' contains neither a named nor positional field selector.");
+    private static BindingException InvalidContextualRecordAccessPipelineStage(RecordAccessSyntax syntax)
+        => new($"Contextual record access '{syntax.Text}' cannot be used directly as a pipeline stage. " +
+            $"Use it inside another expression, such as a function argument (for example, 'append({syntax.Text})').");
     private static bool IsRelativeRecordAccess(RecordAccessSyntax syntax)
         => !syntax.IsOriginalInput && syntax.Text.StartsWith('.');
     private static BindingException Unsupported(SyntaxNode syntax)
