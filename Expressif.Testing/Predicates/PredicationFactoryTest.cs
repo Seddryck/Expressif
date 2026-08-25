@@ -90,4 +90,20 @@ public class PredicationFactoryTest
             Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(4));
         });
     }
+
+    [TestCase(62, false)]
+    [TestCase(63, true)]
+    public void Instantiate_ClosedFunctionParameter_ResolvesThroughFunctionRegistry(object value, bool expected)
+    {
+        var reference = new InputExpressionParameter(
+            new Expressif.Bindings.ClosedExpression(
+                new LiteralParameter(45m),
+                [new Function("add", [new LiteralParameter(17m)])]));
+        var predication = new SinglePredication(
+            new Function("greater-than", [reference]));
+
+        var predicate = new PredicationFactory().Instantiate(predication, new Context());
+
+        Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+    }
 }

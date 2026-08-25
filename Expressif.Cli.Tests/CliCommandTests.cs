@@ -125,6 +125,23 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_PredicateClosedInputExpression_ResolvesNestedFunction()
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "filter(greater-than(17 | add(17)))",
+            "--input",
+            "{10,12,13}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Evaluate_MultipleInputOptions_ReturnsClearError()
     {
         var result = await InvokeAsync("evaluate", "absolute | add(5)", "--input", "-12", "--input", "-5");

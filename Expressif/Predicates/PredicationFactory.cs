@@ -63,6 +63,12 @@ public class PredicationFactory : BaseExpressionFactory
                 scalarType)
             : base.CreateParameter(parameter, scalarType, context);
 
+    protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
+    {
+        var expression = new FunctionFactory().Instantiate(new ClosedRootExpression(input.Expression), context);
+        return CreateFunctionCast(() => expression.Evaluate(null), type);
+    }
+
     private sealed class ContextualPredicate(IFunction expression, IContext context) : IPredicate
     {
         public bool Evaluate(object? value)
