@@ -21,7 +21,7 @@ public class ModuloTest
     [Conformance]
     public void IsDivisibleBy_Valid(object? value, int divisor, bool expected)
     {
-        var predicate = new IsDivisibleBy(() => divisor);
+        var predicate = new DivisibleBy(() => divisor);
         Assert.Multiple(() =>
         {
             Assert.That(predicate.Divisor.Invoke(), Is.EqualTo(divisor));

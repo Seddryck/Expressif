@@ -29,13 +29,13 @@ public class Modulo : BaseNumericPredicateReference
 /// <summary>
 /// Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.
 /// </summary>
-[Predicate(false, name: "is-divisible-by")]
-public class IsDivisibleBy : Modulo
+[Predicate]
+public class DivisibleBy : Modulo
 {
     public Func<decimal> Divisor { get => Modulus; }
 
     /// <param name="divisor">An integer value used as the divisor.</param>
-    public IsDivisibleBy(Func<decimal> divisor)
+    public DivisibleBy(Func<decimal> divisor)
         : base(divisor, () => 0) { }
 }
 

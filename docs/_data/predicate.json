@@ -131,6 +131,7 @@
     "Name": "is-divisible-by",
     "IsPublic": true,
     "Aliases": [
+      "divisible-by",
       "numeric-is-divisible-by"
     ],
     "Scope": "Numeric",

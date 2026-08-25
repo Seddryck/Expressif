@@ -15,7 +15,7 @@ public class PredicationFactoryTest
     [Test]
     [TestCase(typeof(Even), 0)]
     [TestCase(typeof(EqualTo), 1)]
-    [TestCase(typeof(IsDivisibleBy), 1)]
+    [TestCase(typeof(DivisibleBy), 1)]
     [TestCase(typeof(Modulo), 2)]
     [TestCase(typeof(EquivalentTo), 1)]
     [TestCase(typeof(EquivalentTo), 2)]

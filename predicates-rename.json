@@ -6,6 +6,7 @@
   "true-or-null": "is-true-or-null",
   "equal-to": "is-equal-to",
   "even": "is-even",
+  "divisible-by": "is-divisible-by",
   "greater-than": "is-greater-than",
   "greater-than-or-equal": "is-greater-than-or-equal",
   "integer": "is-integer",
