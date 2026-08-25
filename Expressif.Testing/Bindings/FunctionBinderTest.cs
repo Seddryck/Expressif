@@ -41,6 +41,27 @@ public class FunctionBinderTest
     }
 
     [Test]
+    public void Parse_Function_NamedArguments_PreservesNamesAndOrder()
+    {
+        var function = BindingTestAdapter.Function("replace-slice(append := \"abc\", start := 2, length := 4)");
+
+        Assert.That(function.Arguments.Select(x => x.Name),
+            Is.EqualTo(new[] { "append", "start", "length" }));
+    }
+
+    [Test]
+    public void Parse_Function_PositionalAfterNamed_ThrowsSpecificException()
+        => Assert.That(
+            () => BindingTestAdapter.Function("replace-slice(start := 2, 4, append := \"abc\")"),
+            Throws.TypeOf<PositionalArgumentAfterNamedArgumentException>());
+
+    [Test]
+    public void Parse_Function_DuplicateNamedArgument_ThrowsSpecificException()
+        => Assert.That(
+            () => BindingTestAdapter.Function("replace-slice(start := 2, start := 4, append := \"abc\")"),
+            Throws.TypeOf<DuplicateNamedArgumentException>());
+
+    [Test]
     public void Parse_Function_MapWithOpenExpressionParameter_Valid()
     {
         var function = BindingTestAdapter.Function("map(upper | first-chars(2))");

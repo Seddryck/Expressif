@@ -131,8 +131,32 @@ public sealed class ExpressifBinder
         {
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
-            _ => new(syntax.Name, syntax.Arguments.Select(argument => BindArgument(argument.Value)).ToArray()),
+            _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private FunctionArgument[] BindFunctionArguments(FunctionCallSyntax syntax)
+    {
+        var arguments = new List<FunctionArgument>();
+        var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var hasNamedArgument = false;
+        foreach (var argument in syntax.Arguments)
+        {
+            if (argument is NamedArgumentSyntax named)
+            {
+                hasNamedArgument = true;
+                if (!names.Add(named.Name.Value))
+                    throw new DuplicateNamedArgumentException(named.Name.Value);
+                arguments.Add(new FunctionArgument(named.Name.Value, BindArgument(named.Value)));
+            }
+            else
+            {
+                if (hasNamedArgument)
+                    throw new PositionalArgumentAfterNamedArgumentException(syntax.Name);
+                arguments.Add(new FunctionArgument(null, BindArgument(argument.Value)));
+            }
+        }
+        return arguments.ToArray();
+    }
 
     private Function BindFieldFunction(FunctionCallSyntax syntax)
     {

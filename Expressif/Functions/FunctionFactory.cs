@@ -78,6 +78,13 @@ public class FunctionFactory : BaseExpressionFactory
     {
         var name = function.Name.ToKebabCase();
 
+        if (function.Arguments.Any(x => x.Name is not null)
+            && name is "record" or "coalesce")
+            throw new UnknownParameterNameException(name, function.Arguments.First(x => x.Name is not null).Name!);
+
+        if (function.Arguments.Any(x => x.Name is not null) && name == "adjacent")
+            function = new Bindings.Function(name, ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters);
+
         if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
             return BuildRecordFunction(function, context);
 
@@ -100,7 +107,7 @@ public class FunctionFactory : BaseExpressionFactory
         if (TryInstantiateWithPredicateProvider(type, function, context, out var filtering))
             return filtering;
 
-        return Instantiate<IFunction>(type, function.Parameters, context);
+        return Instantiate<IFunction>(type, function.Arguments, context);
     }
 
     private IFunction BuildCoalesceFunction(Bindings.Function function, IContext context)

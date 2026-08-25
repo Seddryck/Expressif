@@ -49,6 +49,31 @@ public abstract class BaseExpressionFactory
         return (T)ctor.Invoke(typedFunctionParameters.ToArray());
     }
 
+    protected T Instantiate<T>(Type type, FunctionArgument[] arguments, IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, arguments);
+        return Instantiate<T>(binding.Constructor, binding.Parameters, context);
+    }
+
+    private T Instantiate<T>(ConstructorInfo ctor, IParameter[] parameters, IContext context)
+    {
+        var zip = ctor.GetParameters().Zip(parameters, (x, y) => new { x.ParameterType, Value = y });
+        var typedFunctionParameters = new List<Delegate>();
+        foreach (var param in zip)
+        {
+            if (param.ParameterType.IsGenericType && param.ParameterType.GetGenericTypeDefinition() == typeof(Func<>))
+            {
+                var scalarType = param.ParameterType.GenericTypeArguments[0];
+                typedFunctionParameters.Add(CreateParameter(param.Value, scalarType, context));
+            }
+            else
+            {
+                typedFunctionParameters.Add(() => param.Value);
+            }
+        }
+        return (T)ctor.Invoke(typedFunctionParameters.ToArray());
+    }
+
     protected internal virtual ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
         => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
             ?? throw new MissingOrUnexpectedParametersFunctionException(type.Name, paramCount);

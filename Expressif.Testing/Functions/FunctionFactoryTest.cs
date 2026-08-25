@@ -11,6 +11,30 @@ namespace Expressif.Testing.Functions;
 
 public class FunctionFactoryTest
 {
+    [TestCase("replace-slice(2, 4, \"abc\")")]
+    [TestCase("replace-slice(start := 2, length := 4, append := \"abc\")")]
+    [TestCase("replace-slice(2, append := \"abc\", length := 4)")]
+    [TestCase("replace-slice(append := \"abc\", start := 2, length := 4)")]
+    public void Instantiate_ReplaceSliceArgumentForms_Equivalent(string source)
+    {
+        var function = BindingTestAdapter.Function(source);
+        var root = new OpenRootExpression(new OpenExpression([function]));
+        var runtime = new FunctionFactory().Instantiate(root, new Context());
+
+        Assert.That(runtime.Evaluate("01234567"), Is.EqualTo("01abc67"));
+    }
+
+    [TestCase("replace-slice(value := 2, length := 4, append := \"abc\")", typeof(UnknownParameterNameException))]
+    [TestCase("replace-slice(2, start := 4, append := \"abc\")", typeof(PositionallySuppliedParameterException))]
+    [TestCase("replace-slice(start := 2, append := \"abc\")", typeof(MissingRequiredParameterException))]
+    [TestCase("replace-slice(1, 2, \"x\", 4)", typeof(TooManyPositionalArgumentsException))]
+    public void Instantiate_InvalidNamedArguments_ThrowsSpecificException(string source, Type exceptionType)
+    {
+        var function = BindingTestAdapter.Function(source);
+        var root = new OpenRootExpression(new OpenExpression([function]));
+
+        Assert.That(() => new FunctionFactory().Instantiate(root, new Context()), Throws.TypeOf(exceptionType));
+    }
     [SetUp]
     public void Setup()
     { }

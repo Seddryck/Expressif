@@ -46,7 +46,10 @@ public class PredicationFactory : BaseExpressionFactory
     {
         var predicates = new List<IPredicate>();
         foreach (var predicate in basic.Members)
-            predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
+        {
+            var type = TypeMapper.Execute(predicate.Name);
+            predicates.Add(Instantiate<IPredicate>(type, predicate.Arguments, context));
+        }
         return predicates.Count == 1
             ? predicates[0]
             : new ContextualPredicate(new ChainFunction(predicates), context);
