@@ -253,7 +253,17 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_FilterWithClosedPredicateParameter_ResolvesNestedFunction()
     {
-        var function = BindingTestAdapter.Executable("filter(greater-than(17 | add(17)))", new Context());
+        var reference = new InputExpressionParameter(
+            new Expressif.Bindings.ClosedExpression(
+                new LiteralParameter(17m),
+                [new Function("add", [new LiteralParameter(17m)])]));
+        var predicate = new Function("greater-than", [reference]);
+        var filter = new Function(
+            "filter",
+            [new OpenExpressionParameter(new OpenExpression([predicate]))]);
+        var root = new OpenRootExpression(new OpenExpression([filter]));
+
+        var function = new FunctionFactory().Instantiate(root, new Context());
 
         Assert.That(function.Evaluate(new object[] { 10, 12, 13 }), Is.Empty);
     }
