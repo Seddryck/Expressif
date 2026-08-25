@@ -2,11 +2,11 @@
 title: Text predicates
 subtitle: Predicates applicable to text values
 tags: [predicates, text]
-keywords: [any-of, contains, empty, empty-or-null, ends-with, equivalent-to, lower-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, sorted-after, sorted-after-or-equivalent-to, sorted-before, sorted-before-or-equivalent-to, starts-with, upper-case] # AUTO-GENERATED KEYWORDS
+keywords: [is-any-of, contains, is-empty, is-empty-or-null, ends-with, is-equivalent-to, is-lower-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, is-sorted-after, is-sorted-after-or-equivalent-to, is-sorted-before, is-sorted-before-or-equivalent-to, starts-with, is-upper-case] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### is-any-of
-keywords: [is-any-of, contains, is-empty, is-empty-or-null, ends-with, is-equivalent-to, is-lower-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, is-sorted-after, is-sorted-after-or-equivalent-to, is-sorted-before, is-sorted-before-or-equivalent-to, starts-with, is-upper-case] # AUTO-GENERATED KEYWORDS
+
 ###### Aliases: `any-of`, `text-is-any-of`
 
 ###### Overview

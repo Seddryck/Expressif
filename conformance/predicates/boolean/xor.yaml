@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: is-xor
+operator: xor
 tests:
   - id: xor.valid.expression
     cases:

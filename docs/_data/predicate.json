@@ -1,9 +1,8 @@
 [
   {
-    "Name": "is-and",
+    "Name": "and",
     "IsPublic": true,
     "Aliases": [
-      "and",
       "boolean-is-and"
     ],
     "Scope": "Boolean",
@@ -56,10 +55,9 @@
     ]
   },
   {
-    "Name": "is-not",
+    "Name": "not",
     "IsPublic": true,
     "Aliases": [
-      "not",
       "boolean-is-not"
     ],
     "Scope": "Boolean",
@@ -67,10 +65,9 @@
     "Parameters": []
   },
   {
-    "Name": "is-or",
+    "Name": "or",
     "IsPublic": true,
     "Aliases": [
-      "or",
       "boolean-is-or"
     ],
     "Scope": "Boolean",
@@ -106,10 +103,9 @@
     "Parameters": []
   },
   {
-    "Name": "is-xor",
+    "Name": "xor",
     "IsPublic": true,
     "Aliases": [
-      "xor",
       "boolean-is-xor"
     ],
     "Scope": "Boolean",
@@ -230,7 +226,7 @@
     ]
   },
   {
-    "Name": "is-modulo",
+    "Name": "has-remainder",
     "IsPublic": true,
     "Aliases": [
       "modulo",

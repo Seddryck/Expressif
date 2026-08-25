@@ -11,6 +11,7 @@ public class PredicateAttribute : Attribute
 {
     public bool AppendIs { get; }
     public string[] Aliases { get; }
+    public string? Name { get; }
     public string? Prefix { get; }
 
     public PredicateAttribute()
@@ -22,6 +23,6 @@ public class PredicateAttribute : Attribute
     public PredicateAttribute(string[] aliases)
         : this(true, null, aliases) { }
 
-    public PredicateAttribute(bool appendIs = true, string? prefix = null, string[]? aliases = null)
-        => (AppendIs, Prefix, Aliases) = (appendIs, prefix, aliases ?? []);
+    public PredicateAttribute(bool appendIs = true, string? prefix = null, string[]? aliases = null, string? name = null)
+        => (AppendIs, Prefix, Aliases, Name) = (appendIs, prefix, aliases ?? [], name);
 }

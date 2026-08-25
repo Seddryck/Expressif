@@ -37,6 +37,7 @@ public class PredicateIntrospectorTest
             Assert.That(
                 info.Name.StartsWith("is-", StringComparison.Ordinal)
                     || info.Name.StartsWith("has-", StringComparison.Ordinal)
+                    || info.Name is "and" or "or" or "xor" or "not"
                     || info.Name is "contains" or "starts-with" or "ends-with"
                     || info.Name.StartsWith("matches-", StringComparison.Ordinal),
                 Is.True,

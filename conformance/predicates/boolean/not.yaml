@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: is-not
+operator: not
 tests:
   - id: not.valid
     cases:

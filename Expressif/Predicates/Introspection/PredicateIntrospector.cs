@@ -38,7 +38,8 @@ public class PredicateIntrospector : BaseIntrospector
 
             var typeName = predicate.Type.Name.ToKebabCase();
             var suffix = predicate.Attribute.AppendIs ? "is" : string.Empty;
-            var canonicalName = string.Join('-', new[] { suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
+            var canonicalName = predicate.Attribute.Name
+                ?? string.Join('-', new[] { suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
             var prefixedName = string.Join('-', new[] { prefix, suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
             var aliases = predicate.Attribute.Aliases
                 .Append(typeName)

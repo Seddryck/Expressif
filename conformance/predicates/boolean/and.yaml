@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: is-and
+operator: and
 tests:
   - id: and.valid.expression
     cases:

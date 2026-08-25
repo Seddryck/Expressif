@@ -1,6 +1,6 @@
 suite: boolean
 kind: predicate
-operator: is-or
+operator: or
 tests:
   - id: or.valid.expression
     cases:

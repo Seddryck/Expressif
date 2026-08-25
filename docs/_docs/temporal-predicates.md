@@ -2,11 +2,11 @@
 title: Temporal predicates
 subtitle: Predicates applicable to temporal values
 tags: [predicates, temporal]
-keywords: [after, after-or-same-instant, before, before-or-same-instant, business-day, contained-in, in-the-future, in-the-future-or-now, in-the-future-or-today, in-the-past, in-the-past-or-now, in-the-past-or-today, leap-year, on-the-day, on-the-hour, on-the-minute, same-instant, today, tomorrow, weekday, weekend, within-current-month, within-current-week, within-current-year, within-last-month, within-last-week, within-last-year, within-next-days, within-previous-days, within-upcoming-month, within-upcoming-week, within-upcoming-year, yesterday] # AUTO-GENERATED KEYWORDS
+keywords: [is-after, is-after-or-same-instant, is-before, is-before-or-same-instant, is-business-day, is-contained-in, is-in-the-future, is-in-the-future-or-now, is-in-the-future-or-today, is-in-the-past, is-in-the-past-or-now, is-in-the-past-or-today, is-leap-year, is-on-the-day, is-on-the-hour, is-on-the-minute, is-same-instant, is-today, is-tomorrow, is-weekday, is-weekend, is-within-current-month, is-within-current-week, is-within-current-year, is-within-last-month, is-within-last-week, is-within-last-year, is-within-next-days, is-within-previous-days, is-within-upcoming-month, is-within-upcoming-week, is-within-upcoming-year, is-yesterday] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### is-after
-keywords: [is-after, is-after-or-same-instant, is-before, is-before-or-same-instant, is-business-day, is-contained-in, is-in-the-future, is-in-the-future-or-now, is-in-the-future-or-today, is-in-the-past, is-in-the-past-or-now, is-in-the-past-or-today, is-leap-year, is-on-the-day, is-on-the-hour, is-on-the-minute, is-same-instant, is-today, is-tomorrow, is-weekday, is-weekend, is-within-current-month, is-within-current-week, is-within-current-year, is-within-last-month, is-within-last-week, is-within-last-year, is-within-next-days, is-within-previous-days, is-within-upcoming-month, is-within-upcoming-week, is-within-upcoming-year, is-yesterday] # AUTO-GENERATED KEYWORDS
+
 ###### Aliases: `after`, `dateTime-is-after`
 
 ###### Overview

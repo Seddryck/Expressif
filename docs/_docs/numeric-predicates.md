@@ -2,11 +2,11 @@
 title: Numeric predicates
 subtitle: Predicates applicable to numeric values
 tags: [predicates, numeric]
-keywords: [equal-to, even, greater-than, greater-than-or-equal, integer, less-than, less-than-or-equal, modulo, negative, negative-or-zero, odd, one, opposite, positive, positive-or-zero, within-interval, zero, zero-or-null] # AUTO-GENERATED KEYWORDS
+keywords: [is-equal-to, is-even, is-greater-than, is-greater-than-or-equal, is-integer, is-less-than, is-less-than-or-equal, has-remainder, is-negative, is-negative-or-zero, is-odd, is-one, is-opposite, is-positive, is-positive-or-zero, is-within-interval, is-zero, is-zero-or-null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### is-equal-to
-keywords: [is-equal-to, is-even, is-greater-than, is-greater-than-or-equal, is-integer, is-less-than, is-less-than-or-equal, is-modulo, is-negative, is-negative-or-zero, is-odd, is-one, is-opposite, is-positive, is-positive-or-zero, is-within-interval, is-zero, is-zero-or-null] # AUTO-GENERATED KEYWORDS
+
 ###### Aliases: `equal-to`, `numeric-is-equal-to`
 
 ###### Overview
@@ -76,7 +76,7 @@ Returns true if the numeric value passed as argument is less than or equal to th
 ###### Parameter
 * reference: A numeric value to compare to the argument.
 
-##### is-modulo
+##### has-remainder
 
 ###### Aliases: `modulo`, `numeric-is-modulo`
 
