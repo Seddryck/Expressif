@@ -6,6 +6,7 @@ using Expressif.Predicates;
 using Expressif.Values;
 using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
 using RecordFunction = Expressif.Functions.Record.Record;
+using ArrayFunction = Expressif.Functions.Array.Array;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -92,16 +93,28 @@ public class FunctionFactory : BaseExpressionFactory
 
     private IFunction BuildClosedExpression(Bindings.ClosedExpression expression, IContext context)
     {
-        var sourceParameter = CreateParameter(expression.Parameter, typeof(object), context);
+        var sourceEvaluator = BuildSourceEvaluator(expression.Parameter, context);
         var functions = new List<IFunction>();
         foreach (var member in expression.Members)
             functions.Add(InstantiateOrWrapAggregation(member, context));
 
-        return new DelegatedFunction(_ =>
+        return new DelegatedFunction(input =>
         {
-            var source = sourceParameter.DynamicInvoke();
+            var source = sourceEvaluator.Invoke(input);
             return functions.Aggregate(source, (current, function) => function.Evaluate(current));
         });
+    }
+
+    private Func<object?, object?> BuildSourceEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is IncomingValueParameter
+            or ArrayParameter
+            or RecordLiteralParameter
+            or InputExpressionParameter)
+            return BuildValueEvaluator(parameter, context);
+
+        var provider = CreateParameter(parameter, typeof(object), context);
+        return _ => provider.DynamicInvoke();
     }
 
     private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
@@ -117,6 +130,8 @@ public class FunctionFactory : BaseExpressionFactory
 
         if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
             return BuildRecordFunction(function, context);
+        if (name.Equals("array", StringComparison.OrdinalIgnoreCase))
+            return BuildArrayFunction(function, context);
 
         if (name.Equals("coalesce", StringComparison.OrdinalIgnoreCase))
             return BuildCoalesceFunction(function, context);
@@ -144,6 +159,86 @@ public class FunctionFactory : BaseExpressionFactory
             return filtering;
 
         return Instantiate<IFunction>(type, function.Arguments, context);
+    }
+
+    private IFunction BuildArrayFunction(Bindings.Function function, IContext context)
+    {
+        var values = function.Arguments
+            .Select(argument => new ArrayArgumentEvaluator(
+                BuildValueEvaluator(argument.Value, context),
+                argument.IsSpread))
+            .ToArray();
+        return new ArrayFunction(() => values);
+    }
+
+    private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is IncomingValueParameter)
+            return input => input;
+
+        if (parameter is OpenExpressionParameter open)
+        {
+            var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
+            return input => WithCurrentObject(context, input, () => evaluator.Invoke(input));
+        }
+
+        if (parameter is InputExpressionParameter inputExpression)
+        {
+            var source = BuildValueEvaluator(inputExpression.Expression.Parameter, context);
+            var chain = new ChainFunction(inputExpression.Expression.Members
+                .Select(member => InstantiateOrWrapAggregation(member, context))
+                .ToArray());
+            return input => WithCurrentObject(
+                context,
+                input,
+                () => chain.Evaluate(source.Invoke(input)));
+        }
+
+        if (parameter is ArrayParameter array)
+        {
+            var elements = array.Elements
+                .Select(element => new ArrayArgumentEvaluator(
+                    BuildValueEvaluator(element.Value, context),
+                    element.IsSpread))
+                .ToArray();
+            var function = new ArrayFunction(() => elements);
+            return function.Evaluate;
+        }
+
+        if (parameter is RecordLiteralParameter record)
+        {
+            var fields = record.Fields
+                .Select(field => new
+                {
+                    field.Name,
+                    Evaluator = BuildValueEvaluator(field.Value, context),
+                })
+                .ToArray();
+            return input =>
+            {
+                var value = new RecordValue();
+                foreach (var field in fields)
+                    value.Set(field.Name, field.Evaluator.Invoke(input));
+                return value;
+            };
+        }
+
+        var provider = CreateParameter(parameter, typeof(object), context);
+        return input => WithCurrentObject(context, input, () => provider.DynamicInvoke());
+    }
+
+    private static object? WithCurrentObject(IContext context, object? input, Func<object?> evaluator)
+    {
+        var previous = context.CurrentObject.Value;
+        context.CurrentObject.Set(input);
+        try
+        {
+            return evaluator.Invoke();
+        }
+        finally
+        {
+            context.CurrentObject.Set(previous);
+        }
     }
 
     private IFunction BuildCoalesceFunction(Bindings.Function function, IContext context)

@@ -15,13 +15,13 @@ public class FunctionFactoryTest
     [TestCase("even", 5, false)]
     [TestCase("is-even", 4, true)]
     public void Instantiate_PredicateOnlyExpression_EvaluatesBoolean(string source, object value, bool expected)
-        => Assert.That(BindingTestAdapter.Executable(source).Evaluate(value), Is.EqualTo(expected));
+        => Assert.That(Instantiate(source, new Context()).Evaluate(value), Is.EqualTo(expected));
 
     [TestCase(4, false)]
     [TestCase(6, true)]
     [TestCase(7, false)]
     public void Instantiate_ComposedPredicateOnlyExpression_EvaluatesAgainstOriginalInput(object value, bool expected)
-        => Assert.That(BindingTestAdapter.Executable("even |AND greater-than(5)").Evaluate(value), Is.EqualTo(expected));
+        => Assert.That(Instantiate("even |AND greater-than(5)", new Context()).Evaluate(value), Is.EqualTo(expected));
 
     [TestCase("replace-slice(2, 4, \"abc\")")]
     [TestCase("replace-slice(start := 2, length := 4, append := \"abc\")")]
@@ -29,7 +29,7 @@ public class FunctionFactoryTest
     [TestCase("replace-slice(append := \"abc\", start := 2, length := 4)")]
     public void Instantiate_ReplaceSliceArgumentForms_Equivalent(string source)
     {
-        var function = BindingTestAdapter.Function(source);
+        var function = new ExpressifBinder().BindFunction(ExpressifSyntax.Parse(source));
         var root = new OpenRootExpression(new OpenExpression([function]));
         var runtime = new FunctionFactory().Instantiate(root, new Context());
 
@@ -42,7 +42,7 @@ public class FunctionFactoryTest
     [TestCase("replace-slice(1, 2, \"x\", 4)", typeof(TooManyPositionalArgumentsException))]
     public void Instantiate_InvalidNamedArguments_ThrowsSpecificException(string source, Type exceptionType)
     {
-        var function = BindingTestAdapter.Function(source);
+        var function = new ExpressifBinder().BindFunction(ExpressifSyntax.Parse(source));
         var root = new OpenRootExpression(new OpenExpression([function]));
 
         Assert.That(() => new FunctionFactory().Instantiate(root, new Context()), Throws.TypeOf(exceptionType));
@@ -145,7 +145,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_FoldWithAccumulatorName_Valid()
     {
-        var function = BindingTestAdapter.Executable("fold(sum)", new Context());
+        var function = Instantiate("fold(sum)", new Context());
         var fold = GetSingleFunction<Fold>(function);
         var accumulator = fold.Accumulator.Invoke();
 
@@ -156,7 +156,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_BroadcastWithAccumulatorName_Valid()
     {
-        var function = BindingTestAdapter.Executable("broadcast(sum)", new Context());
+        var function = Instantiate("broadcast(sum)", new Context());
         var broadcast = GetSingleFunction<Broadcast>(function);
         var accumulator = broadcast.Accumulator.Invoke();
 
@@ -167,7 +167,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_ScanWithAccumulatorName_Valid()
     {
-        var function = BindingTestAdapter.Executable("scan(sum)", new Context());
+        var function = Instantiate("scan(sum)", new Context());
         var scan = GetSingleFunction<Scan>(function);
         var accumulator = scan.Accumulator.Invoke();
 
@@ -178,7 +178,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_Lag_Valid()
     {
-        var function = BindingTestAdapter.Executable("lag", new Context());
+        var function = Instantiate("lag", new Context());
         var lag = GetSingleFunction<Lag>(function);
 
         Assert.That(lag, Is.Not.Null);
@@ -187,7 +187,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_Lead_Valid()
     {
-        var function = BindingTestAdapter.Executable("lead", new Context());
+        var function = Instantiate("lead", new Context());
         var lead = GetSingleFunction<Lead>(function);
 
         Assert.That(lead, Is.Not.Null);
@@ -201,7 +201,7 @@ public class FunctionFactoryTest
     [TestCase("skip-last(2)", typeof(SkipLastElements))]
     public void Instantiate_ArraySelectionAliases_Valid(string expression, Type expectedType)
     {
-        var function = BindingTestAdapter.Executable(expression, new Context());
+        var function = Instantiate(expression, new Context());
 
         var selectionFunction = GetSingleFunction(function, expectedType);
         Assert.That(selectionFunction, Is.Not.Null);
@@ -216,7 +216,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_SliceElements_Valid()
     {
-        var function = BindingTestAdapter.Executable("slice-elements(1,4)", new Context());
+        var function = Instantiate("slice-elements(1,4)", new Context());
         var sliceElements = GetSingleFunction<SliceElements>(function);
 
         Assert.That(sliceElements, Is.Not.Null);
@@ -227,7 +227,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_MapWithOpenExpressionParameter_Valid()
     {
-        var function = BindingTestAdapter.Executable("map(lower | trim)", new Context());
+        var function = Instantiate("map(lower | trim)", new Context());
         var map = GetSingleFunction<Map>(function);
         var transformation = map.Transformation.Invoke();
         var transformationFunctions = GetFunctions(transformation).ToArray();
@@ -242,7 +242,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_FilterWithPredicateExpression_Valid()
     {
-        var function = BindingTestAdapter.Executable("filter(greater-than(2))", new Context());
+        var function = Instantiate("filter(greater-than(2))", new Context());
         var filter = GetSingleFunction<Filter>(function);
         var predicate = filter.Predicate.Invoke();
 
@@ -271,7 +271,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_SliceAlias_Valid()
     {
-        var function = BindingTestAdapter.Executable("slice(1,4)", new Context());
+        var function = Instantiate("slice(1,4)", new Context());
         var sliceElements = GetSingleFunction<SliceElements>(function);
 
         Assert.That(sliceElements, Is.Not.Null);
@@ -282,7 +282,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_FunctionWithFuncStringConstructor_NotTreatedAsAggregation()
     {
-        var function = BindingTestAdapter.Executable("prefix(`abc`)", new Context());
+        var function = Instantiate("prefix(`abc`)", new Context());
         var prefix = GetSingleFunction<Prefix>(function);
 
         Assert.That(prefix, Is.Not.Null);
@@ -300,6 +300,11 @@ public class FunctionFactoryTest
         return functions.Single() as T
             ?? throw new InvalidOperationException($"Could not find function of type '{typeof(T).Name}'.");
     }
+
+    private static IFunction Instantiate(string source, IContext context)
+        => new FunctionFactory().Instantiate(
+            new ExpressifBinder().Bind(ExpressifSyntax.Parse(source)),
+            context);
 
     private static IFunction GetSingleFunction(IFunction function, Type expectedType)
     {

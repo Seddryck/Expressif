@@ -21,6 +21,6 @@ public class PercentChangeFunctionTest
     [TestCase("100 | percent-change(\"abc\")", null)]
     public void Instantiate_Expression_Valid(string expression, decimal? expected)
         => Assert.That(
-            BindingTestAdapter.ExecutableClosed(expression, new Context()).Evaluate(null),
+            Expression.CreateClosed(expression, new Context()).Evaluate(null),
             Is.EqualTo(expected));
 }

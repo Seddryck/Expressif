@@ -1,0 +1,38 @@
+suite: array
+kind: function
+operator: array
+tests:
+  - id: array.valid.variadic-values
+    cases:
+      - id: array.valid.variadic-values.special.null
+        value: (null)
+        parameters: [array()]
+        expected: '[]'
+      - id: array.valid.variadic-values.special.empty
+        value: (empty)
+        parameters: [array(@_)]
+        expected: '["(empty)"]'
+      - id: array.valid.variadic-values.array.single
+        value: []
+        parameters: [array(1)]
+        expected: '[1]'
+      - id: array.valid.variadic-values.array.multiple
+        value: []
+        parameters: ["array(1, 2, 3)"]
+        expected: '[1,2,3]'
+      - id: array.valid.variadic-values.array.heterogeneous
+        value: []
+        parameters: ['array(1, "a", #true)']
+        expected: '[1,"a",true]'
+      - id: array.valid.variadic-values.array.expression
+        value: 10
+        parameters: ["array(add(1, 2))"]
+        expected: '[12]'
+      - id: array.valid.variadic-values.array.spread
+        value: []
+        parameters: ['array(1, ...{2, 3}, 4)']
+        expected: '[1,2,3,4]'
+      - id: array.valid.variadic-values.array.record
+        value: []
+        parameters: ["array(record(year:=2024, total:=100))"]
+        expected: '[{"year":2024,"total":100}]'

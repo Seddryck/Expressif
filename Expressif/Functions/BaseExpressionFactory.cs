@@ -100,14 +100,18 @@ public abstract class BaseExpressionFactory
 
         object?[] BuildArray(ArrayParameter array, IContext currentContext)
         {
-            var values = new object?[array.Values.Length];
-            for (var i = 0; i < array.Values.Length; i++)
+            var values = new List<object?>();
+            foreach (var element in array.Elements)
             {
-                var elementFactory = CreateParameter(array.Values[i], typeof(object), currentContext);
-                values[i] = elementFactory.DynamicInvoke();
+                var elementFactory = CreateParameter(element.Value, typeof(object), currentContext);
+                var evaluated = elementFactory.DynamicInvoke();
+                if (element.IsSpread)
+                    Functions.Array.SpreadValues.Append(evaluated, values);
+                else
+                    values.Add(evaluated);
             }
 
-            return values;
+            return values.ToArray();
         }
 
         Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)

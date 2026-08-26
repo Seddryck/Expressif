@@ -19,6 +19,26 @@
     ]
   },
   {
+    "Name": "array",
+    "IsPublic": true,
+    "Aliases": [
+      "array"
+    ],
+    "Scope": "Array",
+    "Input": "any",
+    "Output": "array",
+    "Summary": "Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.",
+    "Parameters": [
+      {
+        "Name": "values",
+        "Type": "array",
+        "Optional": true,
+        "Variadic": true,
+        "Summary": "Specifies zero or more positional expressions whose evaluated values become array elements."
+      }
+    ]
+  },
+  {
     "Name": "broadcast",
     "IsPublic": true,
     "Aliases": [

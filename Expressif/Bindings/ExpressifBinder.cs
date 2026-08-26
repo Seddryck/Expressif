@@ -150,8 +150,28 @@ public sealed class ExpressifBinder
         {
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
+            "array" => Function.FromArguments(syntax.Name, BindArrayFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private FunctionArgument[] BindArrayFunctionArguments(FunctionCallSyntax syntax)
+    {
+        var arguments = new List<FunctionArgument>();
+        foreach (var argument in syntax.Arguments)
+        {
+            if (argument is NamedArgumentSyntax)
+                throw new BindingException("Function 'array' does not support named arguments.");
+
+            arguments.Add(new FunctionArgument(
+                null,
+                argument is SpreadArgumentSyntax { IsImplicitSpread: true }
+                    ? new IncomingValueParameter()
+                    : BindArgument(argument.Value
+                        ?? throw new BindingException("An explicit spread argument must include an expression.")),
+                argument is SpreadArgumentSyntax));
+        }
+        return arguments.ToArray();
+    }
 
     private FunctionArgument[] BindFunctionArguments(FunctionCallSyntax syntax)
     {
@@ -160,6 +180,9 @@ public sealed class ExpressifBinder
         var hasNamedArgument = false;
         foreach (var argument in syntax.Arguments)
         {
+            if (argument is SpreadArgumentSyntax)
+                throw new BindingException($"Function '{syntax.Name}' does not support spread arguments.");
+
             if (argument is NamedArgumentSyntax named)
             {
                 hasNamedArgument = true;
@@ -171,7 +194,7 @@ public sealed class ExpressifBinder
             {
                 if (hasNamedArgument)
                     throw new PositionalArgumentAfterNamedArgumentException(syntax.Name);
-                arguments.Add(new FunctionArgument(null, BindArgument(argument.Value)));
+                arguments.Add(new FunctionArgument(null, BindArgument(RequireArgumentValue(argument))));
             }
         }
         return arguments.ToArray();
@@ -183,8 +206,11 @@ public sealed class ExpressifBinder
             && TryGetBareFunctionName(positional.Value, out var fieldName))
             return new Function(syntax.Name, [new LiteralParameter(fieldName)]);
 
-        return new Function(syntax.Name, syntax.Arguments.Select(argument => BindArgument(argument.Value)).ToArray());
+        return new Function(syntax.Name, syntax.Arguments.Select(argument => BindArgument(RequireArgumentValue(argument))).ToArray());
     }
+
+    private static ExpressionSyntax RequireArgumentValue(ArgumentSyntax argument)
+        => argument.Value ?? throw new BindingException("A non-spread argument must include an expression.");
 
     private static bool TryGetBareFunctionName(ExpressionSyntax syntax, out string name)
     {
@@ -206,6 +232,7 @@ public sealed class ExpressifBinder
     private IRecordDefinitionEntry BindRecordEntry(ArgumentSyntax syntax) => syntax switch
     {
         NamedArgumentSyntax named => new RecordNamedEntry(named.Name.Value, BindArgument(named.Value)),
+        SpreadArgumentSyntax => new RecordSpreadEntry(),
         PositionalArgumentSyntax { Value: IncomingValueSyntax } => new RecordSpreadEntry(),
         _ => throw Unsupported(syntax),
     };
@@ -248,11 +275,39 @@ public sealed class ExpressifBinder
         DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),
         TimeLiteralSyntax time => new LiteralParameter(time.Value),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
-        ArrayLiteralSyntax array => new ArrayParameter(array.Values.Select(BindArgument).ToArray()),
+        ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Values.Select(BindValue).ToArray()),
-        RecordLiteralSyntax record => new RecordLiteralParameter(record.Fields.Select(field => new RecordLiteralField(field.Name.Value, BindValue(field.Value))).ToArray()),
+        RecordLiteralSyntax record => BindRecordLiteral(record),
         _ => throw Unsupported(syntax),
     };
+
+    private ArrayElementParameter BindArrayElement(ArrayElementSyntax element)
+        => new(
+            element.IsImplicitSpread
+                ? new IncomingValueParameter()
+                : BindArgument(element.Expression
+                    ?? throw new BindingException("An explicit array spread must include an expression.")),
+            element.IsSpread);
+
+    private RecordLiteralParameter BindRecordLiteral(RecordLiteralSyntax record)
+    {
+        if (record.Entries.Count != record.Fields.Count)
+            throw new BindingException("Record literal spread entries must specify a field name.");
+
+        var fields = new List<RecordLiteralField>();
+        foreach (var field in record.Fields)
+        {
+            if (field.IsSpread)
+                throw new BindingException($"Record literal field '{field.Name.Value}' does not support spread values.");
+
+            fields.Add(new RecordLiteralField(
+                field.Name.Value,
+                field.Value is ValueSyntax value
+                    ? BindValue(value)
+                    : throw new BindingException($"Record literal field '{field.Name.Value}' must contain a value.")));
+        }
+        return new RecordLiteralParameter(fields.ToArray());
+    }
 
     private static IntervalBinding BindInterval(IntervalLiteralSyntax syntax)
         => new(

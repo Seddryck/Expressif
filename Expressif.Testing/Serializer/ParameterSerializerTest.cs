@@ -35,7 +35,7 @@ public class ParameterSerializerTest
     [TestCase("I[#\"2022-12-10\", #\"2022-12-31\"[", "I[#\"2022-12-10\", #\"2022-12-31\")")]
     public void Serialize_IntervalParameter_NormalizesAliases(string source, string expected)
     {
-        var parameter = BindingTestAdapter.Parameter(source);
+        var parameter = new ExpressifBinder().BindParameter(ExpressifSyntax.Parse(source));
 
         Assert.That(new ParameterSerializer().Serialize(parameter), Is.EqualTo(expected));
     }
@@ -63,7 +63,7 @@ public class ParameterSerializerTest
         var parameter = new LiteralParameter("Alice said \"hello\"");
 
         var serialized = serializer.Serialize(parameter);
-        var parsed = BindingTestAdapter.Parameter(serialized);
+        var parsed = new ExpressifBinder().BindParameter(ExpressifSyntax.Parse(serialized));
 
         Assert.Multiple(() =>
         {
@@ -105,7 +105,7 @@ public class ParameterSerializerTest
     {
         var serializer = new ParameterSerializer();
         var serialized = serializer.Serialize(new RecordLiteralParameter(Array.Empty<RecordLiteralField>()));
-        var parsed = BindingTestAdapter.Parameter(serialized);
+        var parsed = new ExpressifBinder().BindParameter(ExpressifSyntax.Parse(serialized));
 
         Assert.Multiple(() =>
         {

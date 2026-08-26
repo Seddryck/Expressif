@@ -31,8 +31,8 @@
       },
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -50,15 +50,15 @@
       "expressif": {
         "type": "Project",
         "dependencies": {
-          "Expressif.Syntax": "[0.21.0, )"
+          "Expressif.Syntax": "[0.28.0, )"
         }
       }
     },
     "net10.0/linux-musl-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -72,8 +72,8 @@
     "net10.0/linux-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -87,8 +87,8 @@
     "net10.0/win-arm64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -102,8 +102,8 @@
     "net10.0/win-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -144,8 +144,8 @@
       },
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -163,15 +163,15 @@
       "expressif": {
         "type": "Project",
         "dependencies": {
-          "Expressif.Syntax": "[0.21.0, )"
+          "Expressif.Syntax": "[0.28.0, )"
         }
       }
     },
     "net8.0/linux-musl-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -185,8 +185,8 @@
     "net8.0/linux-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -200,8 +200,8 @@
     "net8.0/win-arm64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -215,8 +215,8 @@
     "net8.0/win-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -257,8 +257,8 @@
       },
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -276,15 +276,15 @@
       "expressif": {
         "type": "Project",
         "dependencies": {
-          "Expressif.Syntax": "[0.21.0, )"
+          "Expressif.Syntax": "[0.28.0, )"
         }
       }
     },
     "net9.0/linux-musl-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -298,8 +298,8 @@
     "net9.0/linux-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -313,8 +313,8 @@
     "net9.0/win-arm64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -328,8 +328,8 @@
     "net9.0/win-x64": {
       "Expressif.Syntax": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }

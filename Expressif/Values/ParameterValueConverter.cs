@@ -19,11 +19,25 @@ public sealed class ParameterValueConverter
         {
             LiteralParameter literal => literal.Value,
             QuotedLiteralParameter quoted => quoted.Value,
-            ArrayParameter array => array.Values.Select(Convert).ToArray(),
+            ArrayParameter array => ConvertArray(array),
             TupleParameter tuple => new Tuple(tuple.Values.Select(Convert).ToArray()),
             RecordLiteralParameter record => ConvertRecord(record),
             _ => serializer.Serialize(parameter),
         };
+
+    private object?[] ConvertArray(ArrayParameter array)
+    {
+        var values = new List<object?>();
+        foreach (var element in array.Elements)
+        {
+            var value = Convert(element.Value);
+            if (element.IsSpread)
+                Functions.Array.SpreadValues.Append(value, values);
+            else
+                values.Add(value);
+        }
+        return values.ToArray();
+    }
 
     private RecordValue ConvertRecord(RecordLiteralParameter record)
     {

@@ -10,9 +10,9 @@
       },
       "Expressif.Syntax": {
         "type": "Direct",
-        "requested": "[0.21.0, )",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "requested": "[0.28.0, )",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -46,9 +46,9 @@
       },
       "Expressif.Syntax": {
         "type": "Direct",
-        "requested": "[0.21.0, )",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "requested": "[0.28.0, )",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
@@ -82,9 +82,9 @@
       },
       "Expressif.Syntax": {
         "type": "Direct",
-        "requested": "[0.21.0, )",
-        "resolved": "0.21.0",
-        "contentHash": "k2V64huHLI+6167sxMlzTOmMIVCTzEGu2j/UhP/sRFgx7qxtoLGQ8/wbxotgli/dY35mlt4K5Ulqv7WBw9gbIw==",
+        "requested": "[0.28.0, )",
+        "resolved": "0.28.0",
+        "contentHash": "WHKuIeBbGvFp1cnW4+z1SFFDFfnqDLRF2XBemidJ7or/R+SWvykobfFLfrEwcJSsiFu6iync2ty0Wc/yH9A+6A==",
         "dependencies": {
           "TreeSitter.DotNet": "1.3.0"
         }
