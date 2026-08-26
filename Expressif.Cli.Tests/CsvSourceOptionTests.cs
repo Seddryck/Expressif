@@ -87,7 +87,7 @@ public class CsvSourceOptionTests
         });
     }
 
-    [TestCase("unknown=1", "Unknown CSV source option 'unknown' with value '1'.")]
+    [TestCase("unknown=1", "Unknown CSV source option 'unknown' with value '1'. Valid source options: delimiter, line-terminator, quote-char, double-quote, escape-char, header, header-rows, header-join, header-repeat, comment-char, comment-rows, null-sequence, missing-cell, skip-initial-space, array-delimiter, array-prefix, array-suffix.")]
     [TestCase("delimiter=\"long\"", "Invalid CSV source option 'delimiter' with value '\"long\"'")]
     [TestCase("header=\"true\"", "Invalid CSV source option 'header' with value '\"true\"'")]
     [TestCase("header-rows={0}", "Invalid CSV source option 'header-rows' with value '{0}'")]

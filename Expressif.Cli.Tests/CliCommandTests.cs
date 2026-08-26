@@ -784,6 +784,56 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_HeaderlessSourceCsvScalar_EvaluatesFirstAndFollowingValues()
+    {
+        var sourcePath = CreateTempFile($"12{Environment.NewLine}5{Environment.NewLine}42{Environment.NewLine}17", ".csv");
+        var result = await InvokeAsync(
+            "run", "add(5)", "--source", sourcePath, "--scalar",
+            "--source-option", "header=#false");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "17", "10", "47", "22" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_HeaderlessSourceCsv_UsesGeneratedColumnNames()
+    {
+        var sourcePath = CreateTempFile($"Alice,32{Environment.NewLine}Bob,41", ".csv");
+        var result = await InvokeAsync(
+            "run", ".column1 | upper", "--source", sourcePath,
+            "--source-option", "header=#false");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_HeaderlessSourceCsvInconsistentFields_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile($"Alice,32{Environment.NewLine}Bob", ".csv");
+        var result = await InvokeAsync(
+            "run", ".column1 | upper", "--source", sourcePath,
+            "--source-option", "header=#false");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("ALICE"));
+            Assert.That(result.StdErr, Does.Contain("CSV record 2").And.Contain("contains 1 fields, but 2 fields were expected"));
+        });
+    }
+
+    [Test]
     public async Task Run_SourceCsv_EvaluatesEachRecord()
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41,France{Environment.NewLine}Charlie,27,Germany", ".csv");
@@ -874,6 +924,25 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr, Does.Contain("Invalid CSV source option 'delimiter' with value '\"long\"'"));
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_UnknownSourceOption_ListsValidOptions()
+    {
+        var sourcePath = CreateTempFile("12", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "add(5)", "--source", sourcePath, "--scalar",
+            "--source-option", "headers=#false");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("Unknown CSV source option 'headers' with value '#false'."));
+            Assert.That(result.StdErr, Does.Contain("Valid source options: delimiter, line-terminator"));
+            Assert.That(result.StdErr, Does.Contain("array-prefix, array-suffix."));
         });
     }
 

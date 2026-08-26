@@ -29,6 +29,8 @@ internal sealed class CsvSourceProfileBuilder(IInputValueParser values)
             ["array-suffix"] = static (settings, value, name) => settings.ArraySuffix = OptionalChar(value, name),
         };
 
+    private static readonly string ValidOptions = string.Join(", ", OptionDefinitions.Keys);
+
     public (CsvProfile Profile, bool HeadersAreRows) Build(IReadOnlyList<string> options)
     {
         var settings = CsvDialectSettings.CreateDefault();
@@ -40,7 +42,11 @@ internal sealed class CsvSourceProfileBuilder(IInputValueParser values)
     private static void Apply(CsvDialectSettings settings, CsvSourceOption option)
     {
         if (!OptionDefinitions.TryGetValue(option.Name, out var apply))
-            throw new FormatException($"Unknown CSV source option '{option.Name}' with value '{option.SuppliedValue}'.");
+        {
+            throw new FormatException(
+                $"Unknown CSV source option '{option.Name}' with value '{option.SuppliedValue}'. " +
+                $"Valid source options: {ValidOptions}.");
+        }
 
         try
         {

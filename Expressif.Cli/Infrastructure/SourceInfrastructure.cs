@@ -50,11 +50,12 @@ internal sealed class SourceInfrastructure(
 
     private static IEnumerable<object?> EnumerateReaderRows(IDataReader reader, string sourcePath, bool scalar)
     {
-        var headersAreRows = reader is IHeaderDataReader { HeadersAreRows: true };
-
-        if (headersAreRows)
+        if (reader is IHeaderDataReader headerReader)
         {
-            foreach (var row in EnumerateCsvRows(reader, sourcePath, scalar))
+            var rows = headerReader.HeadersAreRows
+                ? EnumerateCsvRows(reader, sourcePath, scalar)
+                : EnumerateHeaderlessCsvRows(reader, sourcePath, scalar);
+            foreach (var row in rows)
                 yield return row;
 
             yield break;
@@ -85,6 +86,35 @@ internal sealed class SourceInfrastructure(
                     yield break;
 
                 yield return scalar ? GetValue(reader, 0) : BuildRecordValue(reader);
+            }
+        }
+        finally
+        {
+            reader.Dispose();
+        }
+    }
+
+    private static IEnumerable<object?> EnumerateHeaderlessCsvRows(IDataReader reader, string sourcePath, bool scalar)
+    {
+        try
+        {
+            var expectedFields = 0;
+            var recordNumber = 1;
+            while (ReadCsvRecord(reader, sourcePath))
+            {
+                var actualFields = reader.FieldCount;
+                if (recordNumber == 1)
+                {
+                    expectedFields = actualFields;
+                    ValidateScalarColumnCount(expectedFields, sourcePath, scalar);
+                }
+                else if (actualFields != expectedFields)
+                {
+                    throw new FormatException($"CSV record {recordNumber} in '{sourcePath}' contains {actualFields} fields, but {expectedFields} fields were expected.");
+                }
+
+                yield return scalar ? GetValue(reader, 0) : BuildHeaderlessRecordValue(reader);
+                recordNumber++;
             }
         }
         finally
@@ -189,6 +219,20 @@ internal sealed class SourceInfrastructure(
             names[i] = reader.GetName(i);
             var value = reader.GetValue(i);
             values[i] = value is DBNull ? null : value;
+        }
+
+        return BuildRecordValue(names, values);
+    }
+
+    private static RecordValue BuildHeaderlessRecordValue(IDataReader reader)
+    {
+        var fields = reader.FieldCount;
+        var names = new string[fields];
+        var values = new object?[fields];
+        for (var i = 0; i < fields; i++)
+        {
+            names[i] = $"column{i + 1}";
+            values[i] = GetValue(reader, i);
         }
 
         return BuildRecordValue(names, values);
