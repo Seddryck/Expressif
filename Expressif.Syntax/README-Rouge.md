@@ -12,18 +12,16 @@ This package provides syntax highlighting for Expressif through [Rouge](https://
 
 Download the Rouge package from the matching Expressif release and extract it.
 
-The lexer is distributed as a standalone Rouge lexer and must be loaded by the Ruby application that uses Rouge.
-
-For example:
+The package contains a standalone lexer that loads Rouge when the lexer file is required. Load it from the Ruby application that performs syntax highlighting:
 
 ```ruby
 require_relative "expressif-rouge"
 ```
 
-The lexer loads Rouge and can then be resolved using the `expressif` tag:
+Rouge can then find and instantiate the lexer using its `expressif` tag:
 
 ```ruby
-lexer = Rouge::Lexer.find("expressif")
+lexer = Rouge::Lexer.find("expressif").new
 ```
 
 It also declares support for Expressif files using the `*.expr` and `*.expressif` extensions.
