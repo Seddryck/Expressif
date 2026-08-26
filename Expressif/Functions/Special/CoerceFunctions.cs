@@ -35,10 +35,9 @@ public sealed class CoerceNumeric : BaseCoerceValueFunction<decimal>,
 }
 
 public sealed class CoerceNumeric<T> : Function<T, decimal?>
-    where T : INumber<T>
 {
     public override decimal? Evaluate(T value)
-        => NumericCoercion.TryToDecimal(value, out var result) ? result : null;
+        => NumericCoercion.TryToDecimal((object?)value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -57,10 +56,9 @@ public sealed class CoerceInt : BaseCoerceValueFunction<int>,
 }
 
 public sealed class CoerceInt<T> : Function<T, int?>
-    where T : INumber<T>
 {
     public override int? Evaluate(T value)
-        => NumericCoercion.TryToInt(value, out var result) ? result : null;
+        => NumericCoercion.TryToInt((object?)value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -91,10 +89,9 @@ public sealed class CoerceText : IFunction<object?, string?>,
 }
 
 public sealed class CoerceText<T> : Function<T, string?>
-    where T : INumber<T>
 {
     public override string? Evaluate(T value)
-        => NumericCoercion.TryToText(value, out var result) ? result : null;
+        => NumericCoercion.TryToText((object?)value, out var result) ? result : null;
 }
 
 /// <summary>
@@ -113,10 +110,9 @@ public sealed class CoerceBoolean : BaseCoerceValueFunction<bool>,
 }
 
 public sealed class CoerceBoolean<T> : Function<T, bool?>
-    where T : INumber<T>
 {
     public override bool? Evaluate(T value)
-        => NumericCoercion.TryToBoolean(value, out var result) ? result : null;
+        => NumericCoercion.TryToBoolean((object?)value, out var result) ? result : null;
 }
 
 /// <summary>

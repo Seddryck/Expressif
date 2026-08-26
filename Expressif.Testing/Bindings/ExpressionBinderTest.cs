@@ -32,6 +32,52 @@ public class ExpressionBinderTest
     }
 
     [Test]
+    public void Bind_TypedPipeline_InsertsImplicitCoercionsByDefault()
+    {
+        var syntax = SyntaxFactory.Open(
+            null,
+            SyntaxFactory.Function("trim"),
+            SyntaxFactory.Function("multiply", SyntaxFactory.Argument(SyntaxFactory.Number(1.21m))),
+            SyntaxFactory.Function("round", SyntaxFactory.Argument(SyntaxFactory.Number(2))),
+            SyntaxFactory.Function("prepend", SyntaxFactory.Argument(SyntaxFactory.Text("€"))));
+        var root = new ExpressifBinder().Bind(syntax);
+        var expression = ((OpenRootExpression)root).Expression;
+
+        Assert.That(
+            expression.Members.Select(member => member.Name),
+            Is.EqualTo(new[]
+            {
+                "trim",
+                "coerce-numeric",
+                "multiply",
+                "round",
+                "coerce-text",
+                "prepend",
+            }));
+    }
+
+    [Test]
+    public void Bind_TypedPipelineWithCoercionDisabled_PreservesOriginalMembers()
+    {
+        var syntax = SyntaxFactory.Open(
+            null,
+            SyntaxFactory.Function("trim"),
+            SyntaxFactory.Function("multiply", SyntaxFactory.Argument(SyntaxFactory.Number(1.21m))),
+            SyntaxFactory.Function("round", SyntaxFactory.Argument(SyntaxFactory.Number(2))),
+            SyntaxFactory.Function("prepend", SyntaxFactory.Argument(SyntaxFactory.Text("€"))));
+        var root = new ExpressifBinder(applyCoercion: false).Bind(syntax);
+        var expression = ((OpenRootExpression)root).Expression;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(new ExpressifBinder(applyCoercion: false).ApplyCoercion, Is.False);
+            Assert.That(
+                expression.Members.Select(member => member.Name),
+                Is.EqualTo(new[] { "trim", "multiply", "round", "prepend" }));
+        });
+    }
+
+    [Test]
     public void Bind_ClosedExpression_PreservesSourceAndPipeline()
     {
         var syntax = SyntaxFactory.Closed(

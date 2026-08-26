@@ -17,6 +17,59 @@ public class FunctionFactoryTest
     public void Instantiate_PredicateOnlyExpression_EvaluatesBoolean(string source, object value, bool expected)
         => Assert.That(Instantiate(source, new Context()).Evaluate(value), Is.EqualTo(expected));
 
+    [Test]
+    public void Instantiate_CoercingTypedPipeline_EvaluatesInsertedConversions()
+    {
+        var function = Instantiate("trim | multiply(1.21) | round(2) | prepend(\"€\")", new Context());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function.GetType().IsGenericType, Is.True);
+            Assert.That(function.GetType().GetGenericTypeDefinition(), Is.EqualTo(typeof(ChainFunction<,>)));
+            Assert.That(((IFunction<string?, string?>)function).Evaluate(" 12.345 "), Is.EqualTo("€14.94"));
+        });
+    }
+
+    [Test]
+    public void Instantiate_NonCoercingPipeline_UsesDynamicChainFallback()
+    {
+        var root = new ExpressifBinder(applyCoercion: false).Bind(
+            ExpressifSyntax.Parse("trim | multiply(1.21) | round(2) | prepend(\"€\")"));
+        var function = new FunctionFactory().Instantiate(root, new Context());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function, Is.TypeOf<ChainFunction>());
+            Assert.That(function.Evaluate(" 12.345 "), Is.EqualTo("€14.94"));
+        });
+    }
+
+    [Test]
+    public void BuildTypedChain_InvokesTypedContractsInsteadOfObjectFallbacks()
+    {
+        var first = new TypedCallProbe("first");
+        var second = new TypedCallProbe("second");
+        var functions = new List<IFunction> { first, second };
+        var members = new[]
+        {
+            new Expressif.Bindings.Function("first", []),
+            new Expressif.Bindings.Function("second", []),
+        };
+
+        var success = FunctionFactory.TryBuildTypedChain(members, functions, out var chain);
+        var result = ((IFunction<string, string>)chain!).Evaluate("value");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(success, Is.True);
+            Assert.That(result, Is.EqualTo("value-first-second"));
+            Assert.That(first.TypedCalls, Is.EqualTo(1));
+            Assert.That(first.ObjectCalls, Is.Zero);
+            Assert.That(second.TypedCalls, Is.EqualTo(1));
+            Assert.That(second.ObjectCalls, Is.Zero);
+        });
+    }
+
     [TestCase(4, false)]
     [TestCase(6, true)]
     [TestCase(7, false)]
@@ -318,5 +371,23 @@ public class FunctionFactoryTest
             ?? throw new InvalidOperationException("Could not locate ChainFunction.Functions property.");
         return property.GetValue(function) as IEnumerable<IFunction>
             ?? throw new InvalidOperationException("Could not read ChainFunction functions.");
+    }
+
+    private sealed class TypedCallProbe(string suffix) : IFunction<string, string>
+    {
+        public int TypedCalls { get; private set; }
+        public int ObjectCalls { get; private set; }
+
+        public string Evaluate(string value)
+        {
+            TypedCalls++;
+            return $"{value}-{suffix}";
+        }
+
+        object? IFunction.Evaluate(object? value)
+        {
+            ObjectCalls++;
+            return $"{value}-object";
+        }
     }
 }

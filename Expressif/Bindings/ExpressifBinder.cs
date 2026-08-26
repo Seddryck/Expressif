@@ -1,9 +1,19 @@
 using Expressif.Syntax;
+using Expressif.Functions;
+using Expressif.Functions.Coercions;
 
 namespace Expressif.Bindings;
 
 public sealed class ExpressifBinder
 {
+    private readonly FunctionTypeMapper functionTypeMapper = new();
+    private readonly CoercionRegistry coercionRegistry = new();
+
+    public bool ApplyCoercion { get; }
+
+    public ExpressifBinder(bool applyCoercion = true)
+        => ApplyCoercion = applyCoercion;
+
     public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
     {
         OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
@@ -65,13 +75,64 @@ public sealed class ExpressifBinder
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
-        => new([
+        => new(ApplyCoercions([
             .. syntax.Source is null ? [] : BindPipelineMembers(syntax.Source),
             .. syntax.Pipeline.SelectMany(BindPipelineMembers),
-        ]);
+        ]));
 
     private ClosedExpression BindClosed(ClosedExpressionSyntax syntax)
-        => new(BindValue(syntax.Value), syntax.Pipeline.SelectMany(BindPipelineMembers));
+        => new(BindValue(syntax.Value), ApplyCoercions(syntax.Pipeline.SelectMany(BindPipelineMembers)));
+
+    private IEnumerable<Function> ApplyCoercions(IEnumerable<Function> functions)
+    {
+        var members = functions.ToArray();
+        if (!ApplyCoercion || members.Length < 2)
+            return members;
+
+        var rewritten = new List<Function> { members[0] };
+        for (var index = 1; index < members.Length; index++)
+        {
+            var previous = members[index - 1];
+            var current = members[index];
+            if (TryGetContract(previous, out _, out var sourceType)
+                && TryGetContract(current, out var targetType, out _)
+                && !targetType.IsAssignableFrom(sourceType))
+            {
+                var coercionSourceType = Nullable.GetUnderlyingType(sourceType) ?? sourceType;
+                var descriptor = coercionRegistry.Descriptors.SingleOrDefault(
+                    candidate => candidate.Supports(coercionSourceType, targetType));
+                if (descriptor is not null)
+                {
+                    rewritten.Add(new Function(descriptor.Name, []));
+                }
+            }
+
+            rewritten.Add(current);
+        }
+
+        return rewritten;
+    }
+
+    private bool TryGetContract(Function function, out Type inputType, out Type outputType)
+    {
+        inputType = null!;
+        outputType = null!;
+        if (!functionTypeMapper.TryExecute(function.Name, out var implementationType))
+            return false;
+
+        var contracts = implementationType.GetInterfaces()
+            .Where(candidate => candidate.IsGenericType
+                && candidate.GetGenericTypeDefinition() == typeof(IFunction<,>))
+            .Select(candidate => candidate.GetGenericArguments())
+            .DistinctBy(candidate => (candidate[0], candidate[1]))
+            .ToArray();
+        if (contracts.Length != 1)
+            return false;
+
+        inputType = contracts[0][0];
+        outputType = contracts[0][1];
+        return true;
+    }
 
     private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)
         => syntax switch
