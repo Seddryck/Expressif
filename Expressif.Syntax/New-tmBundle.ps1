@@ -85,6 +85,13 @@ Write-Host "== Generate Notepad++ UDL =="
     -InputFolder "..\docs\_data\" `
     -OutputPath ".\bin\expressif-$Version-notepadpp-udl.xml"
 
+Write-Host "== Package Rouge lexer =="
+.\New-RougePackage.ps1 `
+    -Version $Version `
+    -InputFolder "..\docs\_data\" `
+    -OutputFolder ".\bin" `
+    -StagingFolder ".\obj"
+
 Write-Host "== Generate package.json =="
 .\New-PackageJson.ps1 `
    -Version $Version `
