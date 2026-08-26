@@ -4,19 +4,21 @@ namespace Expressif.Benchmark.Tests;
 public class ExpressionAdapterTests
 {
     private const string ComplexTextExpression =
-        "trim | lower | replace(\" \", \"-\") | substring(0, 10) | upper";
+        "trim | lower | replace-chars(\" \", \"-\") | first-chars(10) | upper";
     private const string CoercionExpression =
         "trim | multiply(1.21) | round(2) | prepend(\"€\")";
 
     [Test]
-    public void V1ComplexPipeline_ParsingSucceedsButBindingRejectsReplace()
+    public void V1ComplexPipeline_ParsingBindingAndEvaluationSucceed()
     {
         var version = GetVersion(AdapterKind.V1);
         var adapter = ExpressionAdapter.Load(version.Directory);
 
         Assert.That(() => adapter.Parse(ComplexTextExpression), Throws.Nothing);
-        var exception = Assert.Catch<Exception>(() => adapter.Create(ComplexTextExpression));
-        Assert.That(exception!.ToString(), Does.Contain("function named 'replace'"));
+        Assert.That(() => adapter.Create(ComplexTextExpression), Throws.Nothing);
+
+        var result = adapter.CreateEvaluator(ComplexTextExpression)("  Benchmark Input Value  ");
+        Assert.That(result, Is.EqualTo("BENCHMARK-"));
     }
 
     [TestCase("V1")]

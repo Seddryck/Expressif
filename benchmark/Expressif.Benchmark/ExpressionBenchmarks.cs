@@ -5,7 +5,7 @@ namespace Expressif.Benchmark;
 public class ExpressionBenchmarks
 {
     private const string ComplexTextExpression =
-        "trim | lower | replace(\" \", \"-\") | substring(0, 10) | upper";
+        "trim | lower | replace-chars(\" \", \"-\") | first-chars(10) | upper";
     private const string CoercionExpression =
         "trim | multiply(1.21) | round(2) | prepend(\"€\")";
 
