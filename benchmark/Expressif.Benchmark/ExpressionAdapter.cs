@@ -6,13 +6,18 @@ namespace Expressif.Benchmark;
 
 internal sealed class ExpressionAdapter
 {
+    private readonly Func<string, object> parseExpression;
     private readonly Func<string, object> createExpression;
     private readonly Func<object, object?, object?> evaluateExpression;
 
     private ExpressionAdapter(
+        Func<string, object> parseExpression,
         Func<string, object> createExpression,
         Func<object, object?, object?> evaluateExpression)
-        => (this.createExpression, this.evaluateExpression) = (createExpression, evaluateExpression);
+        => (this.parseExpression, this.createExpression, this.evaluateExpression) = (
+            parseExpression,
+            createExpression,
+            evaluateExpression);
 
     public static ExpressionAdapter Load(string versionDirectory)
     {
@@ -45,6 +50,8 @@ internal sealed class ExpressionAdapter
 
     public object Create(string source) => createExpression(source);
 
+    public object Parse(string source) => parseExpression(source);
+
     public Func<object?, object?> CreateEvaluator(string source)
     {
         var expression = createExpression(source);
@@ -56,7 +63,10 @@ internal sealed class ExpressionAdapter
         var expressionType = RequireType(assembly, "Expressif.Expression");
         var constructor = expressionType.GetConstructor([typeof(string)])
             ?? throw new MissingMethodException(expressionType.FullName, ".ctor(string)");
-        return new ExpressionAdapter(CompileConstructor(constructor), CompileEvaluate(expressionType));
+        return new ExpressionAdapter(
+            CompileV1Parser(assembly),
+            CompileConstructor(constructor),
+            CompileEvaluate(expressionType));
     }
 
     private static ExpressionAdapter CreateV2(Assembly assembly)
@@ -68,7 +78,16 @@ internal sealed class ExpressionAdapter
             [typeof(string)])
             ?? throw new MissingMethodException(implementationType.FullName, "Create(string)");
         var functionType = RequireType(assembly, "Expressif.Functions.IFunction");
-        return new ExpressionAdapter(CompileStaticCall(create), CompileEvaluate(functionType));
+        var parserType = RequireType(assembly, "Expressif.Syntax.ExpressionParser");
+        var parse = parserType.GetMethod(
+            "Parse",
+            BindingFlags.Public | BindingFlags.Static,
+            [typeof(string)])
+            ?? throw new MissingMethodException(parserType.FullName, "Parse(string)");
+        return new ExpressionAdapter(
+            CompileStaticCall(parse),
+            CompileStaticCall(create),
+            CompileEvaluate(functionType));
     }
 
     private static Type RequireType(Assembly assembly, string typeName)
@@ -78,6 +97,26 @@ internal sealed class ExpressionAdapter
     {
         var source = Expression.Parameter(typeof(string), "source");
         var body = Expression.Convert(Expression.New(constructor, source), typeof(object));
+        return Expression.Lambda<Func<string, object>>(body, source).Compile();
+    }
+
+    private static Func<string, object> CompileV1Parser(Assembly assembly)
+    {
+        var rootExpressionType = RequireType(assembly, "Expressif.Parsers.RootExpression");
+        var parser = rootExpressionType.GetField("Parser", BindingFlags.Public | BindingFlags.Static)?.GetValue(null)
+            ?? throw new MissingFieldException(rootExpressionType.FullName, "Parser");
+        var parserType = parser.GetType();
+        var parserExtensions = RequireType(parserType.Assembly, "Sprache.ParserExtensions");
+        var parse = parserExtensions.GetMethods(BindingFlags.Public | BindingFlags.Static)
+            .Single(method => method.Name == "Parse"
+                && method.IsGenericMethodDefinition
+                && method.GetParameters() is [_, { ParameterType: var parameterType }]
+                && parameterType == typeof(string))
+            .MakeGenericMethod(parserType.GetGenericArguments()[0]);
+        var source = Expression.Parameter(typeof(string), "source");
+        var body = Expression.Convert(
+            Expression.Call(parse, Expression.Constant(parser, parserType), source),
+            typeof(object));
         return Expression.Lambda<Func<string, object>>(body, source).Compile();
     }
 

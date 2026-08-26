@@ -34,3 +34,16 @@ Pass normal BenchmarkDotNet arguments after `--`, for example `-- --filter *Eval
 Reflection, assembly loading, expression construction, and delegate creation happen in
 global setup for evaluation benchmarks. The construction benchmark measures only the
 version's native parse-and-bind call.
+
+## Test the supplied binaries
+
+With version folders populated as above, run:
+
+```powershell
+dotnet test benchmark/Expressif.Benchmark.sln -c Release
+```
+
+The adapter tests verify the coercion pipeline on each available API generation. They
+also characterize the prescribed complex v1 workload specifically: parsing succeeds,
+then binding rejects the currently unavailable `replace` function. Tests are skipped
+with a setup explanation when their required manually supplied version is absent.
