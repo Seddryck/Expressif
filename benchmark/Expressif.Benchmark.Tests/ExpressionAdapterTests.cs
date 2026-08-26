@@ -32,6 +32,8 @@ public class ExpressionAdapterTests
         {
             Assert.That(() => adapter.Parse(ComplexTextExpression), Throws.Nothing);
             Assert.That(() => adapter.Parse(CoercionExpression), Throws.Nothing);
+            Assert.That(() => adapter.Create(ComplexTextExpression), Throws.Nothing);
+            Assert.That(() => adapter.Create(CoercionExpression), Throws.Nothing);
         });
     }
 

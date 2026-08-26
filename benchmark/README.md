@@ -50,4 +50,5 @@ is absent.
 
 The suite reports native parsing separately for the complex text and implicit-coercion
 sources. These parse-only benchmarks reuse parser delegates prepared during setup, so
-they exclude binding and expression construction.
+they exclude binding and expression construction. Each source also has a parse-and-bind
+benchmark using the version's native public expression-construction path.

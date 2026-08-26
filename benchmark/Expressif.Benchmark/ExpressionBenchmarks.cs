@@ -23,6 +23,9 @@ public class ExpressionBenchmarks
     [GlobalSetup(Target = nameof(ParseAndBindComplexPipeline))]
     public void SetupConstruction() => SetupAdapter();
 
+    [GlobalSetup(Target = nameof(ParseAndBindCoercionPipeline))]
+    public void SetupCoercionConstruction() => SetupAdapter();
+
     private void SetupAdapter()
     {
         var versionDirectory = Environment.GetEnvironmentVariable(
@@ -60,6 +63,9 @@ public class ExpressionBenchmarks
 
     [Benchmark(Description = "Parse and bind complex pipeline")]
     public object ParseAndBindComplexPipeline() => adapter.Create(ComplexTextExpression);
+
+    [Benchmark(Description = "Parse and bind implicit-coercion pipeline")]
+    public object ParseAndBindCoercionPipeline() => adapter.Create(CoercionExpression);
 
     [Benchmark(Description = "Evaluate add(5)")]
     public object? EvaluateSimple() => simpleEvaluator(1234.56m);
