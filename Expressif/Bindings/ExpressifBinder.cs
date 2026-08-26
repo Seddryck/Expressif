@@ -71,7 +71,11 @@ public sealed class ExpressifBinder
                 BindPredication(right.Expression));
         }
 
-        return new SinglePredication(members);
+        return members switch
+        {
+            [var member] => new SinglePredication(member),
+            _ => new PipelinePredication(expression),
+        };
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)

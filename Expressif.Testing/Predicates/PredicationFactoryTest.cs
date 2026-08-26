@@ -40,7 +40,7 @@ public class PredicationFactoryTest
     [Test]
     public void Instantiate_NumericEqualToLiteralParameter_Valid()
     {
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication([new Function("EqualTo", new[] { new LiteralParameter("1") })]), new Context());
+        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new LiteralParameter("1") })), new Context());
         Assert.That(predicate, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -54,7 +54,7 @@ public class PredicationFactoryTest
     {
         var context = new Context();
         context.Variables.Add<int>("myVar", 2m);
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication([new Function("EqualTo", new[] { new VariableParameter("myVar") })]), context);
+        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new VariableParameter("myVar") })), context);
         Assert.That(predicate, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -68,7 +68,7 @@ public class PredicationFactoryTest
     {
         var context = new Context();
         context.CurrentObject.Set(new { Digits = 3m });
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication([new Function("EqualTo", new[] { new ObjectPropertyParameter("Digits") })]), context);
+        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new ObjectPropertyParameter("Digits") })), context);
         Assert.That(predicate, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -82,7 +82,7 @@ public class PredicationFactoryTest
     {
         var context = new Context();
         context.CurrentObject.Set(new List<decimal> { 0, 4 });
-        var predicate = new PredicationFactory().Instantiate(new SinglePredication([new Function("EqualTo", new[] { new ObjectIndexParameter(1) })]), context);
+        var predicate = new PredicationFactory().Instantiate(new SinglePredication(new Function("EqualTo", new[] { new ObjectIndexParameter(1) })), context);
         Assert.That(predicate, Is.Not.Null);
         Assert.Multiple(() =>
         {

@@ -95,10 +95,8 @@ public sealed record IntervalBinding(
 }
 
 public interface IPredication { }
-public sealed class SinglePredication(params Function[] members) : IPredication
-{
-    public Function[] Members { get; } = members;
-}
+public sealed record SinglePredication(Function Member) : IPredication;
+public sealed record PipelinePredication(OpenExpression Expression) : IPredication;
 
 internal sealed class UnaryOperator(string name) { public string Name { get; } = name; }
 internal sealed class BinaryOperator(string name)

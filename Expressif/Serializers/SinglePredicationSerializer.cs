@@ -26,7 +26,7 @@ public class SinglePredicationSerializer
     }
 
     public virtual void Serialize(SinglePredication predication, ref StringBuilder stringBuilder)
-        => Serialize(predication.Members[0], ref stringBuilder);
+        => Serialize(predication.Member, ref stringBuilder);
 
     protected virtual void Serialize(Function predicate, ref StringBuilder stringBuilder)
     {

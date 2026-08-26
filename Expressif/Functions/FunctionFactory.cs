@@ -56,17 +56,20 @@ public class FunctionFactory : BaseExpressionFactory
     }
 
     private IFunction BuildOpenExpression(OpenExpression expression, IContext context)
+        => BuildPipeline(expression, context);
+
+    internal IFunction Instantiate(OpenExpression expression, IContext context)
+        => BuildOpenExpression(expression, context);
+
+    private IFunction BuildPipeline(OpenExpression expression, IContext context)
     {
         var members = expression.Members.ToArray();
-        if (TryBuildBinaryPredication(members, out var predication))
-            return new PredicationFactory().Instantiate(predication, context);
+        var functions = members
+            .Select(member => InstantiateOrWrapAggregation(member, context))
+            .ToList();
 
-        if (members.All(member => PredicateTypeMapper.TryExecute(member.Name, out _)))
-            return new PredicationFactory().Instantiate(new SinglePredication(members), context);
-
-        var functions = new List<IFunction>();
-        foreach (var member in members)
-            functions.Add(InstantiateOrWrapAggregation(member, context));
+        if (functions is [IPredicate predicate])
+            return predicate;
 
         return TryBuildTypedChain(members, functions, out var chain)
             ? chain
@@ -170,29 +173,6 @@ public class FunctionFactory : BaseExpressionFactory
                 candidate))
             .Distinct()
             .ToArray();
-
-    private static bool TryBuildBinaryPredication(Function[] members, [NotNullWhen(true)] out IPredication? predication)
-    {
-        predication = null;
-        if (members is not [var combinator]
-            || combinator.Name is not ("and" or "or" or "xor")
-            || combinator.Parameters is not [OpenExpressionParameter left, OpenExpressionParameter right])
-            return false;
-
-        predication = new BinaryPredication(
-            new BinaryOperator(combinator.Name),
-            BuildPredication(left.Expression),
-            BuildPredication(right.Expression));
-        return true;
-    }
-
-    private static IPredication BuildPredication(OpenExpression expression)
-    {
-        var members = expression.Members.ToArray();
-        return TryBuildBinaryPredication(members, out var predication)
-            ? predication
-            : new SinglePredication(members);
-    }
 
     private IFunction BuildClosedExpression(Bindings.ClosedExpression expression, IContext context)
     {
@@ -431,9 +411,8 @@ public class FunctionFactory : BaseExpressionFactory
     private bool TryBuildBinaryCallable(string name, IContext context, [NotNullWhen(true)] out IFunction? callable)
     {
         var parameterized = new Bindings.Function(name, [new TupleProjectionParameter(0)]);
-        try
+        if (TypeMapper.TryExecute(name, out var functionType))
         {
-            var functionType = TypeMapper.Execute(name);
             if (!functionType.GetConstructors().Any(x => x.GetParameters().Length == 1))
             {
                 callable = null;
@@ -442,25 +421,20 @@ public class FunctionFactory : BaseExpressionFactory
             callable = InstantiateOrWrapAggregation(parameterized, context);
             return true;
         }
-        catch (NotImplementedFunctionException)
+
+        if (PredicateTypeMapper.TryExecute(name, out var predicateType))
         {
-            try
-            {
-                var predicateType = new PredicateTypeMapper().Execute(name);
-                if (!predicateType.GetConstructors().Any(x => x.GetParameters().Length == 1))
-                {
-                    callable = null;
-                    return false;
-                }
-                callable = new PredicationFactory().Instantiate(new SinglePredication(parameterized), context);
-                return true;
-            }
-            catch (NotImplementedFunctionException)
+            if (!predicateType.GetConstructors().Any(x => x.GetParameters().Length == 1))
             {
                 callable = null;
                 return false;
             }
+            callable = InstantiateOrWrapAggregation(parameterized, context);
+            return true;
         }
+
+        callable = null;
+        return false;
     }
 
     private sealed class LexicallyBoundTupleFunction(IFunction expression) : IFunction
@@ -623,15 +597,7 @@ public class FunctionFactory : BaseExpressionFactory
     }
 
     private Func<IFunction> BuildTransformationProvider(OpenExpressionParameter parameter, IContext context)
-        => () => new ChainFunction(parameter.Expression.Members.Select(member => InstantiateTransformationMember(member, context)).ToArray());
-
-    private IFunction InstantiateTransformationMember(Bindings.Function member, IContext context)
-    {
-        if (!TypeMapper.TryExecute(member.Name, out _) && PredicateTypeMapper.TryExecute(member.Name, out _))
-            return new PredicationFactory().Instantiate(new SinglePredication(member), context);
-
-        return InstantiateOrWrapAggregation(member, context);
-    }
+        => () => BuildPipeline(parameter.Expression, context);
 
     private bool TryInstantiateWithPredicateProvider(
         Type type,
@@ -665,11 +631,11 @@ public class FunctionFactory : BaseExpressionFactory
         return true;
     }
 
-    private static Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
+    private Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
     {
         var factory = new PredicationFactory();
         if (TryGetOpenExpression(parameter, out var openExpression))
-            return BuildSinglePredicateFromOpenExpression(openExpression, factory, context, functionName);
+            return () => BuildBooleanPredicate(openExpression.Expression, context);
 
         return parameter switch
         {
@@ -678,22 +644,12 @@ public class FunctionFactory : BaseExpressionFactory
                     $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
                     nameof(parameter))
         };
+    }
 
-        static Func<IPredicate> BuildSinglePredicateFromOpenExpression(OpenExpressionParameter openExpression, PredicationFactory factory, IContext context, string functionName)
-        {
-            var members = openExpression.Expression.Members.ToArray();
-            if (members.Any(x => x.Syntax == FunctionSyntax.FieldShorthand))
-            {
-                var functions = members.Select(member => new FunctionFactory().Instantiate(member.Name, member.Parameters, context)).ToArray();
-                return () => new BooleanExpressionPredicate(new ChainFunction(functions));
-            }
-
-            if (members.Length != 1)
-                throw new MissingOrUnexpectedParametersFunctionException(functionName, members.Length);
-
-            var predication = new SinglePredication(members.Single());
-            return () => factory.Instantiate(predication, context);
-        }
+    private IPredicate BuildBooleanPredicate(OpenExpression expression, IContext context)
+    {
+        var function = BuildOpenExpression(expression, context);
+        return function as IPredicate ?? new BooleanFunctionPredicate(function);
     }
 
     private static bool TryGetOpenExpression(
@@ -710,13 +666,10 @@ public class FunctionFactory : BaseExpressionFactory
         return expression is not null;
     }
 
-    private sealed class BooleanExpressionPredicate(IFunction expression) : IPredicate
+    protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {
-        public bool Evaluate(object? value)
-            => expression.Evaluate(value) is true;
-
-        object? IFunction.Evaluate(object? value)
-            => Evaluate(value);
+        var expression = Instantiate(new ClosedRootExpression(input.Expression), context);
+        return CreateFunctionCast(() => expression.Evaluate(null), type);
     }
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
