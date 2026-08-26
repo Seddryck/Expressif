@@ -17,7 +17,7 @@ module Rouge
         rule %r/@(?:_|[A-Za-z_][\w-]*)/, Name::Variable
         rule %r/\^?\.(?:[A-Za-z_][\w-]*|\d+)/, Name::Property
         rule %r/\[(?:[A-Za-z_][\w-]*|\d+)\]/, Name::Property
-        rule %r/\b(?:{{ model.functionRegex }})\b/i, Name::Function
+        rule %r/\b(?:{{ model.functionRegexes | array.join "|" }})\b/i, Name::Function
         rule %r/[+-]?(?:\d+(?:\.\d+)?|\.\d+)\b/, Num
         rule %r/\.\.\.|:=|\|(?:AND|OR|XOR)\b|\|[>?]?|&&|\|\||<=|>=|!=|==|[!#$&*+\-<>.,]/i, Operator
         rule %r/[(){}\[\]]/, Punctuation

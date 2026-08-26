@@ -23,7 +23,7 @@ $catalogNames = $catalogEntries |
         @{ Expression = { $_ }; Descending = $false }
 
 $model = [ordered]@{
-        functionRegex = ($catalogNames | ForEach-Object { [regex]::Escape($_) }) -join '|'
+        functionRegexes = @($catalogNames | ForEach-Object { [regex]::Escape($_) })
     } | ConvertTo-Json -Depth 20
 
 Write-Host "Running Didot via local installation..."
