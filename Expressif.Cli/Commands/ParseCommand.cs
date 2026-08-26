@@ -1,14 +1,12 @@
 using System.CommandLine;
+using Expressif.Cli.Application;
 using Expressif.Syntax;
 
 namespace Expressif.Cli.Commands;
 
 internal static class ParseCommand
 {
-    internal static Func<string, RootExpressionSyntax> ParseExpression { get; set; }
-        = ExpressionParser.Parse;
-
-    public static Command Create()
+    public static Command Create(ParseHandler handler)
     {
         var expressionArgument = new Argument<string>("expression")
         {
@@ -29,7 +27,7 @@ internal static class ParseCommand
             var expression = parseResult.GetValue(expressionArgument)!;
             var output = parseResult.GetValue(outputOption)!;
 
-            if (!SyntaxTreeFormatter.IsSupported(output))
+            if (!TreeOutputFormatParser.TryParse(output, out var outputFormat))
             {
                 Console.Error.WriteLine("Option --output must be one of: tree, json, yaml.");
                 return ExitCodes.InvalidExpressionOrInput;
@@ -37,8 +35,9 @@ internal static class ParseCommand
 
             try
             {
-                var syntax = ParseExpression(expression);
-                Console.Out.WriteLine(SyntaxTreeFormatter.Format(syntax, output));
+                var request = new ParseRequest(expression, outputFormat);
+                var syntax = handler.Execute(request);
+                Console.Out.WriteLine(SyntaxTreeFormatter.Format(syntax, TreeOutputFormatParser.ToToken(request.Output)));
                 return ExitCodes.Success;
             }
             catch (ExpressifSyntaxException exception)
@@ -58,7 +57,4 @@ internal static class ParseCommand
 
         return command;
     }
-
-    internal static void ResetDelegates()
-        => ParseExpression = ExpressionParser.Parse;
 }

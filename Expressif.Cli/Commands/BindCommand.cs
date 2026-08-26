@@ -1,4 +1,5 @@
 using System.CommandLine;
+using Expressif.Cli.Application;
 using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Syntax;
@@ -7,16 +8,7 @@ namespace Expressif.Cli.Commands;
 
 internal static class BindCommand
 {
-    internal static Func<string, RootExpressionSyntax> ParseExpression { get; set; }
-        = ExpressionParser.Parse;
-
-    internal static Func<RootExpressionSyntax, IRootExpression> BindExpression { get; set; }
-        = static syntax => new ExpressifBinder().Bind(syntax);
-
-    internal static Action<IRootExpression> ValidateExpression { get; set; }
-        = static expression => _ = new FunctionFactory().Instantiate(expression, new Context());
-
-    public static Command Create()
+    public static Command Create(BindHandler handler)
     {
         var expressionArgument = new Argument<string>("expression")
         {
@@ -37,7 +29,7 @@ internal static class BindCommand
             var expression = parseResult.GetValue(expressionArgument)!;
             var output = parseResult.GetValue(outputOption)!;
 
-            if (!TreeDocumentFormatter.IsSupported(output))
+            if (!TreeOutputFormatParser.TryParse(output, out var outputFormat))
             {
                 Console.Error.WriteLine("Option --output must be one of: tree, json, yaml.");
                 return ExitCodes.InvalidExpressionOrInput;
@@ -45,15 +37,14 @@ internal static class BindCommand
 
             try
             {
-                var bound = BindExpression(ParseExpression(expression));
-                ValidateExpression(bound);
-                Console.Out.WriteLine(BoundTreeFormatter.Format(bound, output));
+                var request = new BindRequest(expression, outputFormat);
+                var bound = handler.Execute(request);
+                Console.Out.WriteLine(BoundTreeFormatter.Format(bound, TreeOutputFormatParser.ToToken(request.Output)));
                 return ExitCodes.Success;
             }
             catch (Exception exception) when (exception is ExpressifSyntaxException
                                               or BindingException
-                                              or NotImplementedFunctionException
-                                              or ArgumentException)
+                                              or NotImplementedFunctionException)
             {
                 return ExpressionCommandCommon.WriteValidationError(
                     exception,
@@ -69,12 +60,5 @@ internal static class BindCommand
         });
 
         return command;
-    }
-
-    internal static void ResetDelegates()
-    {
-        ParseExpression = ExpressionParser.Parse;
-        BindExpression = static syntax => new ExpressifBinder().Bind(syntax);
-        ValidateExpression = static expression => _ = new FunctionFactory().Instantiate(expression, new Context());
     }
 }

@@ -7,9 +7,6 @@ namespace Expressif.Cli.Tests;
 [NonParallelizable]
 public class ParseCommandTests
 {
-    [TearDown]
-    public void TearDown() => ParseCommand.ResetDelegates();
-
     [Test]
     public async Task Parse_ValidExpression_DefaultsToHumanReadableTree()
     {

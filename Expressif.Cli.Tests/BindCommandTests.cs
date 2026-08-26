@@ -6,9 +6,6 @@ namespace Expressif.Cli.Tests;
 [NonParallelizable]
 public class BindCommandTests
 {
-    [TearDown]
-    public void TearDown() => BindCommand.ResetDelegates();
-
     [Test]
     public async Task Bind_ValidExpression_DefaultsToHumanReadableTree()
     {

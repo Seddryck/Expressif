@@ -1,11 +1,11 @@
 using System.CommandLine;
-using Expressif.Functions.Catalog;
+using Expressif.Cli.Application;
 
 namespace Expressif.Cli.Commands;
 
 internal static class HelpCommand
 {
-    public static Command Create()
+    public static Command Create(HelpHandler handler)
     {
         var functionArgument = new Argument<string?>("function")
         {
@@ -30,49 +30,46 @@ internal static class HelpCommand
             var function = parseResult.GetValue(functionArgument);
             var list = parseResult.GetValue(listOption);
             var scope = parseResult.GetValue(scopeOption);
-            var selectedModes = (function is null ? 0 : 1) + (list ? 1 : 0) + (scope is null ? 0 : 1);
-
-            if (selectedModes != 1)
+            if (!HelpRequest.TryCreate(function, list, scope, out var request))
             {
                 Console.Error.WriteLine("Specify exactly one function name, --list, or --scope.");
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
-            var catalog = FunctionCatalog.Default;
-            if (list)
+            try
             {
-                Console.Out.WriteLine(FunctionHelpFormatter.FormatList(catalog.Functions));
-                return ExitCodes.Success;
+                return WriteResult(handler.Execute(request!));
             }
-
-            if (scope is not null)
+            catch (Exception exception)
             {
-                var functions = catalog.ForScope(scope).ToArray();
-                if (functions.Length == 0)
-                {
-                    Console.Error.WriteLine($"Unknown or empty function scope '{scope}'.");
-                    return ExitCodes.InvalidExpressionOrInput;
-                }
-
-                Console.Out.WriteLine(FunctionHelpFormatter.FormatList(functions));
-                return ExitCodes.Success;
+                Console.Error.WriteLine($"Unexpected error: {exception.Message}");
+                return ExitCodes.UnexpectedInternalError;
             }
-
-            var match = catalog.Find(function!);
-            if (match is not null)
-            {
-                Console.Out.WriteLine(FunctionHelpFormatter.Format(match));
-                return ExitCodes.Success;
-            }
-
-            Console.Error.WriteLine($"Unknown function '{function}'.");
-            var suggestions = catalog.Suggest(function!).Select(x => x.Name).ToArray();
-            if (suggestions.Length > 0)
-                Console.Error.WriteLine($"Did you mean: {string.Join(", ", suggestions)}?");
-
-            return ExitCodes.InvalidExpressionOrInput;
         });
 
         return command;
+    }
+
+    private static int WriteResult(HelpResult result)
+    {
+        switch (result)
+        {
+            case FunctionHelpResult function:
+                Console.Out.WriteLine(FunctionHelpFormatter.Format(function.Function));
+                return ExitCodes.Success;
+            case FunctionListHelpResult list:
+                Console.Out.WriteLine(FunctionHelpFormatter.FormatList(list.Functions));
+                return ExitCodes.Success;
+            case UnknownScopeHelpResult scope:
+                Console.Error.WriteLine($"Unknown or empty function scope '{scope.Scope}'.");
+                return ExitCodes.InvalidExpressionOrInput;
+            case UnknownFunctionHelpResult function:
+                Console.Error.WriteLine($"Unknown function '{function.Name}'.");
+                if (function.Suggestions.Count > 0)
+                    Console.Error.WriteLine($"Did you mean: {string.Join(", ", function.Suggestions)}?");
+                return ExitCodes.InvalidExpressionOrInput;
+            default:
+                throw new InvalidOperationException($"Unknown help result '{result.GetType().Name}'.");
+        }
     }
 }
