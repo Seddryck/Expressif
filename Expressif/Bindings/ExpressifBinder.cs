@@ -310,6 +310,14 @@ public sealed class ExpressifBinder
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         UnaryExpressionSyntax unary => new OpenExpressionParameter(BindUnaryExpression(unary)),
         BinaryExpressionSyntax binary => new OpenExpressionParameter(BindBinaryExpression(binary)),
+        ParenthesizedExpressionSyntax
+        {
+            Expression: ClosedExpressionSyntax
+            {
+                Value: RecordAccessSyntax access,
+            } closed,
+        } when IsRelativeRecordAccess(access)
+            => new OpenExpressionParameter(BindRelativeRecordAccess(closed, access)),
         ParenthesizedExpressionSyntax { Expression: ClosedExpressionSyntax closed }
             => new InputExpressionParameter(BindClosed(closed)),
         ParenthesizedExpressionSyntax parenthesized => new OpenExpressionParameter(BindOpenRoot(parenthesized.Expression)),

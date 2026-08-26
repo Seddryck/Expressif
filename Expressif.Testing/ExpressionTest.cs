@@ -344,6 +344,52 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(new object?[] { true, false }));
     }
 
+    [Test]
+    public void Evaluate_ParenthesizedMapShorthandInRecordArguments_PreservesRecordContext()
+    {
+        var expression = Expression.CreateClosed(
+            """
+            {
+                {name:="Alice", active:=#true, orders:={
+                    {date:=#"2024-02-15", amount:=42.5},
+                    {date:=#"2025-01-20", amount:=60},
+                    {date:=#"2026-03-11", amount:=75}
+                }},
+                {name:="Bob", active:=#false, orders:={
+                    {date:=#"2024-03-10", amount:=100},
+                    {date:=#"2025-04-08", amount:=125},
+                    {date:=#"2026-05-17", amount:=140}
+                }}
+            }
+            | filter(.active)
+            |> record(
+                customer:=.name | upper,
+                total-2026:=(.orders
+                    | filter(.date | year | equal-to(2026))
+                    |> (.amount)
+                    | sum),
+                yoy:=(array(
+                    record(year:=2024, total:=(.orders | filter(.date | year | equal-to(2024)) |> (.amount) | sum)),
+                    record(year:=2025, total:=(.orders | filter(.date | year | equal-to(2025)) |> (.amount) | sum)),
+                    record(year:=2026, total:=(.orders | filter(.date | year | equal-to(2026)) |> (.amount) | sum))
+                )
+                |> (.total)
+                | adjacent(percent-change)
+                |> round(2))
+            )
+            """);
+
+        var result = (object?[])expression.Evaluate(null)!;
+        var customer = (RecordValue)result.Single()!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(customer["customer"], Is.EqualTo("ALICE"));
+            Assert.That(customer["total-2026"], Is.EqualTo(75m));
+            Assert.That(customer["yoy"], Is.EqualTo(new object?[] { 41.18m, 25m }));
+        });
+    }
+
     [TestCase("{1,12,5,42,17} |> add(1) | sum")]
     [TestCase("{1,12,5,42,17} |> (add(1)) | sum")]
     public void Evaluate_ArrayMapShorthand_ResumesParentPipeline(string code)
