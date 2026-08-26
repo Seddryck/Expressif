@@ -16,7 +16,7 @@ require "rouge"
         rule %r/#"(?:\\.|[^"\\])*"/, Literal::Date
         rule %r/"(?:\\.|[^"\\])*"/, Str
         rule %r/`(?:\\.|[^`\\])*`/, Str
-        rule %r/#(?:true|false|null)\b/i, Keyword::Constant
+        rule %r/#(?:true|false|null|empty|blank)\b/i, Keyword::Constant
         rule %r/@(?:_|[A-Za-z_][\w-]*)/, Name::Variable
         rule %r/\^?\.(?:[A-Za-z_][\w-]*|\d+)/, Name::Property
         rule %r/\[(?:[A-Za-z_][\w-]*|\d+)\]/, Name::Property
