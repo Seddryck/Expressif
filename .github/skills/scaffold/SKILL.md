@@ -1,226 +1,170 @@
 ---
 name: scaffold
-description: "Use when adding a new function, predicate, or accumulator definition; validates input, normalizes summaries and parameters, prepares branch/commit-message metadata, updates docs/_data JSON, and creates conformance YAML tests/cases without committing."
+description: "Scaffold documentation metadata and conformance cases for a new post-v2 Expressif function, predicate, or accumulator before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
 ---
 
 # /scaffold
 
-Create a normalized documentation record for a function, predicate, or accumulator, then append it to the correct JSON catalog.
+Define the public contract for a new operator and create the catalog record and conformance YAML consumed by `/implement`.
 
-Also generate a conformance YAML file with normalized tests and cases for the new operator.
+This skill targets the architecture after the `next-major` development line. Do not preserve legacy metadata or parser conventions from `main`.
 
-## Inputs Expected
+Supported kinds are function, predicate, and accumulator.
 
-Collect these values from the user (ask follow-up questions when missing):
-- `kind`: `function` | `predicate` | `accumulator`
-- `name`: canonical API name (kebab-case)
-- `scope`: one of `Text`, `Numeric`, `Temporal`, `Special`, `Array`
-- `summary`: behavior summary for the entry
-- `parameters`: zero or more parameter definitions with
-  - `name`
-  - `optional` (`true` or `false`)
-  - `summary`
-- `aliases` (optional): if omitted, default to a single alias equal to `name`
-- `isPublic` (optional): defaults to `true`
-- `commitMessage` (optional): if omitted, generate one
+Follow `AGENTS.md` for issue, branch, worktree, commit, push, and pull-request execution. Scaffolding may propose a commit message, but it does not independently authorize or forbid those Git operations.
 
-## Output Target
+## Gather the contract
 
-Map `kind` to one JSON file:
-- `function` -> `docs/_data/function.json`
-- `predicate` -> `docs/_data/predicate.json`
-- `accumulator` -> `docs/_data/accumulator.json`
+Collect enough information to make behavior and typing unambiguous:
 
-Map conformance file path as:
-- `function` -> `conformance/functions/<scope-lower>/<name>.yaml`
-- `predicate` -> `conformance/predicates/<scope-lower>/<name>.yaml`
-- `accumulator` -> `conformance/accumulators/<scope-lower>/<name>.yaml`
+* kind, canonical kebab-case name, aliases, visibility, and semantic scope;
+* concise summary and special-value behavior;
+* semantic input and output contracts;
+* parameters in canonical order, including name, semantic type, summary, optionality, omission/default semantics, and variadic status;
+* cardinality, evaluation order, materialization, short-circuit, or stateful behavior when relevant;
+* representative examples and expected results.
 
-Where:
-- `<scope-lower>` is lowercase scope (`text`, `numeric`, `temporal`, `special`, `array`).
-- If the `<scope-lower>` folder does not exist, create it.
+Use the semantic type vocabulary and catalog shape currently established on the post-v2 development line. Inspect the current catalogs, conformance schema, and a nearby operator before proposing fields or values. Do not use a hard-coded scope list when the catalog supports additional scopes such as Boolean, Record, or IO.
 
-## Validation Checks
+## Semantic contract kinds
 
-Run all checks before proposing a record:
-- `name` is non-empty, lowercase kebab-case (`^[a-z0-9]+(?:-[a-z0-9]+)*$`).
-- Predicate names read naturally as boolean questions: use a third-person singular verb (for example, `contains`, `starts-with`, `ends-with`, `matches`, or `exists`) when the name is verbal; otherwise prefix the name with `is-` or `has-` as appropriate.
-- Reject predicate names that use an infinitive/base verb form (for example, `contain`, `start-with`, `end-with`, `match`, or `exist`) or a non-verbal name without an `is-`/`has-` prefix.
-- Logical combinator names (`and`, `or`, `xor`, and `not`) are operator-style exceptions and must not receive an `is-` prefix.
-- `scope` is exactly one of: `Text`, `Numeric`, `Temporal`, `Special`, `Array`.
-- `summary` is non-empty after normalization.
-- Parameter names are unique and kebab-case.
-- Parameter summaries are non-empty after normalization.
-- `aliases` are unique, kebab-case, and include `name` at least once.
-- No duplicate entry in the target file for either:
-  - same `Name`
-  - any overlapping alias in `Aliases`
-- Conformance target file does not already exist for the same `kind/scope/name` unless user explicitly requests overwrite.
+Classify the operator before writing metadata.
 
-If any check fails, explain the exact issue and ask for correction instead of editing files.
+### Closed contract
 
-## Normalization Rules
+Use concrete semantic input and output types when they are known at binding time. Record every intentionally supported input contract when an operator, especially a coercion, accepts multiple input types.
 
-Normalize text into a documentation-ready style:
-- Keep `Name` and alias tokens unchanged except trim/normalize whitespace.
-- Convert `scope` to PascalCase exactly as allowed values.
-- Normalize summary:
-  - Start with a clear present-tense verb phrase (for example: `Returns`, `Computes`, `Checks`, `Applies`).
-  - Use a concise, objective sentence style.
-  - End with a period.
-  - Include graceful-failure behavior as a final sentence when relevant: `Returns \`null\` when the input cannot be evaluated.`
-- Normalize parameter summaries:
-  - One sentence each, concise and specific.
-  - End with a period.
-  - Describe the parameter role, not implementation details.
-- Do not document exceptions; these APIs fail gracefully to `null`.
+### Dynamic or polymorphic contract
 
-Normalize conformance assets:
-- YAML header fields are ordered as:
-  - `suite: <scope-lower>`
-  - `kind: <kind>`
-  - `operator: <name>`
-  - `tests:`
-- Keep `kind` lowercase (`function`, `predicate`, `accumulator`).
-- Keep IDs lowercase kebab-case with dot-separated segments.
+When output cannot be described by one fixed type, record the relationship represented by the repository's current semantic contract model, for example:
 
-Repository findings to apply directly (do not rediscover):
-- Conformance case values for special inputs use `(null)` for null and `(empty)` for empty; use `(blank)` only when the scenario explicitly targets blank text.
-- For non-evaluable outputs that should be null, emit YAML null as an empty value on `expected:`.
-- Existing `conformance/functions` scope folders may not include every scope. If a required scope folder (for example `array`) is missing, create it as part of the edit.
+* output preserves the input type;
+* output depends on a selected field;
+* output depends on child-expression outputs;
+* output is the inferred common type of variadic arguments.
 
-Search prohibition when rules are already defined:
-- If this skill already defines a rule or convention, treat it as authoritative and do not run exploratory repository-wide search or regex to rediscover it.
-- Prohibited for rediscovery: broad `grep`, `file_search`, or semantic scans for formatting, naming, or YAML style already specified by this skill.
-- Allowed searches are limited to required validation checks only: duplicate `Name` or alias in the target JSON file, and whether the target conformance YAML already exists.
-- If required behavior is still ambiguous after applying this skill, stop and ask the user instead of searching broadly.
+Do not replace a known relationship with unexplained `any` metadata.
 
-## Defaulting Rules
+### Predicate contract
 
-When omitted:
-- `IsPublic` -> `true`
-- `Aliases` -> `[name]`
-- `Parameters` -> `[]`
+Predicates are Boolean-returning callable functions. Record their semantic input and Boolean output and follow the repository's canonical question-style naming convention. Compatibility spellings belong in aliases, not in the canonical name.
 
-Emit JSON using this shape:
+### Accumulator contract
 
-```json
-{
-  "Name": "<name>",
-  "IsPublic": true,
-  "Aliases": ["<alias-1>"],
-  "Scope": "<Scope>",
-  "Summary": "<normalized summary>",
-  "Parameters": [
-    {
-      "Name": "<parameter-name>",
-      "Optional": false,
-      "Summary": "<normalized parameter summary>"
-    }
-  ]
-}
-```
+Describe the accumulated item type, result type, initial/empty result, null handling, and order sensitivity. Do not force function-style failure or cardinality semantics onto accumulators.
 
-Emit conformance YAML using this shape:
+## Names and collisions
 
-```yaml
-suite: <scope-lower>
-kind: <kind>
-operator: <name>
-tests:
-  - id: <test-id>
-    cases:
-      - id: <case-id>
-        value: <input>
-        expected: <expected-output>
-        parameters:
-          - <p1>
-          - <p2>
-```
+Canonical names, aliases, and parameter names use lowercase kebab-case unless the current language model explicitly permits another form.
 
-If a test has no parameters, omit `parameters` from cases.
+Keep canonical name separate from aliases. Do not require aliases to repeat the canonical name and default to an empty alias list when no compatibility or shorthand alias is intended.
 
-## Conformance Test Rules
+Reject duplicate canonical names or aliases according to the shared post-v2 callable-resolution policy. Check across function and predicate catalogs when both participate in the same public callable namespace. Also reject duplicate parameter names.
 
-Generate tests and cases in addition to the JSON record.
+Named arguments bind against canonical metadata names. Preserve parameter order for positional calls even when named arguments can be reordered at the call site.
 
-Test IDs:
-- Base pattern: `name-of-function.valid`.
-- If the operator has parameters, test ID must include parameter markers in order:
-  - `name-of-function.valid.parameter-one`
-  - `name-of-function.valid.parameter-one.parameter-two`
-  - Optional parameters must be marked with `(optional)` in the test ID proposal shown to the user, then normalized in YAML ID as `optional-<parameter-name>`.
+## Parameters
 
-Case IDs:
-- Start with the full test ID.
-- Append input type segment and scenario segment:
-  - `<test-id>.<input-type>.<scenario>`
-- Input type segments:
-  - `text`, `numeric`, `special`
-  - temporal-specific when needed: `date`, `date-time`
+Every parameter record includes the fields required by the current catalog schema, including semantic `Type`, `Optional`, and documentation summary.
 
-Case coverage and count:
-- Each generated test must contain between 4 and 12 cases.
-- Always include at least:
-  - `<test-id>.special.null`
-  - `<test-id>.special.empty`
-- Add representative domain cases based on scope and behavior. Typical scenario labels include:
-  - numeric: `negative`, `zero`, `positive`, `integer`, boundaries
-  - temporal: `before`, `equal`, `after`, date/date-time variants
-  - text: `match`, `non-match`, `case-variant`, `blank`
+For an optional parameter, record its default value when the schema represents one. Otherwise document the defined omission behavior; do not invent a CLR default.
 
-Expected output policy:
-- Compute `expected` from the operator semantics in the normalized summary and parameter definitions.
-- If expected outputs cannot be derived unambiguously from provided semantics, stop and ask the user for explicit expected outputs or concrete behavior examples before generating YAML cases.
-- For functions/accumulators that fail gracefully, use YAML null for null/empty failures (`expected:` empty value).
-- For predicates, use boolean outputs and generally `false` for non-evaluable null/empty inputs unless semantics explicitly state otherwise.
-- Use deterministic values only; avoid random or clock-dependent expectations unless explicitly parameterized.
+For a variadic parameter:
 
-## Confirmation Gate
+* mark it with the catalog's variadic field;
+* record its element/expression semantic type;
+* define minimum cardinality and empty invocation behavior;
+* state whether spread is accepted and how it preserves argument order;
+* define output inference for homogeneous, heterogeneous, and empty arguments.
 
-Before writing:
-1. Show a visible, human-readable summary of the function/predicate/accumulator first (name, scope, behavior, cardinality, graceful failure behavior, and parameters).
-2. Report checks as a single status line when all checks pass: `All checks are green.`
-3. Only if checks fail, show the detailed failed checks and required corrections.
-4. Show the fully normalized JSON record.
-5. Show the fully normalized conformance YAML proposal.
-6. Show both target files (JSON + YAML).
-7. Ask for explicit confirmation (for example: `Confirm add? (yes/no)`).
+Only the final positional parameter may be variadic unless the language model explicitly supports another shape.
 
-Only continue on explicit confirmation.
+## Documentation
 
-## Git Workflow Rules
+Write summaries as concise present-tense descriptions of observable behavior. Parameter summaries describe the public role of the parameter rather than CLR or binder mechanics.
 
-Before editing the JSON file, enforce branch policy:
-- Check current branch with `git branch --show-current`.
-- If current branch is `main`, create and switch to `feature/<name>`.
-- If current branch is not `main`, keep current branch.
+Document null, empty, blank, invalid-input, and binding behavior only as semantics require. Do not normalize every failure to null:
 
-Commit message policy:
-- If user already provided a commit message in this conversation, keep it.
-- Otherwise generate and present: `docs(data): add <kind> definition for <name>`.
-- Treat this as the selected commit message for later use.
+* predicates have explicit Boolean behavior;
+* functions may preserve, transform, materialize, or reject special values;
+* unsupported calls may fail during binding with a diagnostic;
+* accumulators define their own empty and null lifecycle behavior.
 
-Important:
-- Never create a commit in this workflow.
-- Never stage unrelated files.
+End prose sentences with punctuation and preserve stable terminology used by adjacent catalog entries.
 
-## File Edit Rules
+## Catalog output
 
-When confirmed and branch policy satisfied:
-- Append the new record to the mapped JSON array.
-- Preserve existing JSON formatting style in the file.
-- Do not reorder existing entries unless user explicitly asks.
-- Create the conformance YAML file at the mapped path.
-- Ensure each test has 4 to 12 cases and includes `special.null` and `special.empty`.
+Map kind to:
 
-## Final Response Checklist
+* function: `docs/_data/function.json`;
+* predicate: `docs/_data/predicate.json`;
+* accumulator: `docs/_data/accumulator.json`.
 
-After successful update, report:
-- Branch used/created.
-- Confirmation checks status (use `All checks are green.` when applicable).
-- JSON file updated.
-- Conformance YAML file created.
-- Added `Name` and `Scope`.
-- Commit message selected.
-- Explicitly state that no commit was created.
+Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, and typed `Parameters`. Emit contract-dependency, default, or variadic fields when applicable.
+
+Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
+
+## Conformance output
+
+Create `conformance/<kind-plural>/<scope-lower>/<name>.yaml` and validate it against `conformance/conformance.schema.json`.
+
+Use the schema fields `suite`, `kind`, `operator`, and `tests`. Each test has an ID and one or more cases. Each case contains the schema-required input and expected value plus parameters or context when needed.
+
+Use lowercase dot-separated test and case IDs whose segments describe behavior or invocation form. Do not require parameter names in every test ID. Case IDs extend the test ID with a meaningful input/type and scenario suffix.
+
+Select cases from semantic partitions rather than a fixed count. Cover applicable behavior such as:
+
+* ordinary representative values and boundaries;
+* each optional/defaulted invocation form;
+* named and positional equivalence when it is part of the operator contract;
+* empty, single, multiple, heterogeneous, nested, and spread forms for variadic operators;
+* every supported typed input contract for coercions;
+* short-circuit or declaration-order behavior;
+* accumulator empty, null, repeated, and order-sensitive behavior;
+* null, empty, and blank only when meaningful for the declared input and semantics.
+
+Use `(null)`, `(empty)`, and `(blank)` for the corresponding Expressif special input values. YAML null is an empty `expected:` value. Quote strings when YAML could reinterpret language syntax, arrays, records, Booleans, or special tokens.
+
+The conformance loader supplies method arguments in this order: input, case parameters (or one packed parameter array), context variables ordered by key, then expected. Structure cases so `/implement` can create a compatible anchor.
+
+Evaluation conformance records observable results. Parser or binder diagnostics that the conformance schema cannot represent belong in focused implementation tests, but scaffold documentation must still state the invalid form and expected diagnostic behavior.
+
+If expected results cannot be derived unambiguously, ask for concrete examples before writing. Never invent semantics from an operator name alone.
+
+## Commit message proposal
+
+After the contract is settled, propose a Conventional Commit message describing the eventual completed change. Treat it as a handoff suggestion that `/implement` or the final workflow may retain or refine after implementation.
+
+Prefer the change's nature over the fact that metadata was scaffolded:
+
+* new operator: `feat(<scope>): add <behavior>`;
+* correction to an existing operator definition: `fix(<scope>): <corrected behavior>`;
+* metadata-only correction: `docs(data): <description>`;
+* conformance-only correction: `test(conformance): <description>`.
+
+Do not run `git commit`, create a branch, or alter the repository workflow solely because a message was proposed. Follow the user's requested scope and `AGENTS.md`.
+
+## Validation before writing
+
+Confirm that:
+
+1. catalog and conformance targets do not already exist unless an update was requested;
+2. names and aliases satisfy canonical naming and collision rules;
+3. semantic input, output, and parameter types are complete;
+4. dynamic relationships, optional defaults, and variadic behavior are explicit where applicable;
+5. summaries and expected results agree;
+6. YAML conforms to the schema and can map to a conformance test method;
+7. the proposed commit message describes the eventual completed change.
+
+Show a preview when the user requests one or when unresolved choices require confirmation. Otherwise apply the scoped metadata and conformance edits without an unconditional confirmation gate.
+
+## Completion report
+
+Report:
+
+* operator kind, name, and semantic contract;
+* catalog and conformance files changed;
+* optional, dynamic, or variadic semantics recorded;
+* validation performed;
+* proposed commit message;
+* whether any Git commit was actually created.
