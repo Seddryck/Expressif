@@ -749,6 +749,22 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_BatchOption_RepeatedEqualsSyntax_ReturnsDuplicateError()
+    {
+        var result = await InvokeAsync("run", "trim", "--batch=a", "--batch=b");
+
+        Assert.That(result.StdErr, Does.Contain("The --batch option can only be specified once."));
+    }
+
+    [Test]
+    public async Task Run_BatchOption_RepeatedBareTokens_DoesNotReturnDuplicateError()
+    {
+        var result = await InvokeAsync("run", "trim", "--batch", "--batch");
+
+        Assert.That(result.StdErr, Does.Not.Contain("The --batch option can only be specified once."));
+    }
+
+    [Test]
     public async Task Run_SourceEnumerableExpression_EvaluatesEachRow()
     {
         var sourcePath = CreateTempFile("{1, -2, 3}");
