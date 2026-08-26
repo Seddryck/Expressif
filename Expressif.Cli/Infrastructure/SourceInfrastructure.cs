@@ -214,9 +214,13 @@ internal sealed class SourceInfrastructure(
         var fields = reader.FieldCount;
         var names = new string[fields];
         var values = new object?[fields];
+        var nameSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < fields; i++)
         {
             names[i] = reader.GetName(i);
+            if (!nameSet.Add(names[i]))
+                throw new FormatException($"The source contains duplicate column name '{names[i]}'.");
+
             var value = reader.GetValue(i);
             values[i] = value is DBNull ? null : value;
         }
