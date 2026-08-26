@@ -416,6 +416,41 @@ public class CliCommandTests
         }
     }
 
+    [TestCase("utf-16-le")]
+    [TestCase("utf-16-be")]
+    [TestCase("utf-32-le")]
+    [TestCase("utf-32-be")]
+    public async Task Evaluate_ExpressionFile_WithNonUtf8Bom_ReturnsClearError(string encodingName)
+    {
+        var encoding = encodingName switch
+        {
+            "utf-16-le" => System.Text.Encoding.Unicode,
+            "utf-16-be" => System.Text.Encoding.BigEndianUnicode,
+            "utf-32-le" => new System.Text.UTF32Encoding(bigEndian: false, byteOrderMark: true),
+            "utf-32-be" => new System.Text.UTF32Encoding(bigEndian: true, byteOrderMark: true),
+            _ => throw new ArgumentOutOfRangeException(nameof(encodingName)),
+        };
+        var path = Path.Combine(Path.GetTempPath(), $"expressif-bom-{Guid.NewGuid():N}.expr");
+        File.WriteAllText(path, "trim | upper", encoding);
+
+        try
+        {
+            var result = await InvokeAsync("evaluate", "--file", path, "--input", "nikola");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+                Assert.That(result.StdOut, Is.Empty);
+                Assert.That(result.StdErr.Trim(), Is.EqualTo($"Expression file '{path}' could not be decoded as UTF-8."));
+            });
+        }
+        finally
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+    }
+
     [Test]
     public async Task Evaluate_ExpressionFile_RelativePath_IsResolvedFromCurrentDirectory()
     {
@@ -749,6 +784,22 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_BatchOption_RepeatedEqualsSyntax_ReturnsDuplicateError()
+    {
+        var result = await InvokeAsync("run", "trim", "--batch=a", "--batch=b");
+
+        Assert.That(result.StdErr, Does.Contain("The --batch option can only be specified once."));
+    }
+
+    [Test]
+    public async Task Run_BatchOption_RepeatedBareTokens_DoesNotReturnDuplicateError()
+    {
+        var result = await InvokeAsync("run", "trim", "--batch", "--batch");
+
+        Assert.That(result.StdErr, Does.Not.Contain("The --batch option can only be specified once."));
+    }
+
+    [Test]
     public async Task Run_SourceEnumerableExpression_EvaluatesEachRow()
     {
         var sourcePath = CreateTempFile("{1, -2, 3}");
@@ -976,6 +1027,42 @@ public class CliCommandTests
         var result = await InvokeAsync(
             "run", ".name | upper", "--source", sourcePath,
             "--source-option", "header=#true");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_WithMultipleHeaderRows_DoesNotEmitAdditionalHeaders()
+    {
+        var sourcePath = CreateTempFile($"person{Environment.NewLine}name{Environment.NewLine}Alice{Environment.NewLine}Bob", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "upper", "--source", sourcePath, "--scalar",
+            "--source-option", "header-rows={1, 2}");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_WithRepeatedHeaders_DoesNotEmitRepeatedHeader()
+    {
+        var sourcePath = CreateTempFile($"name{Environment.NewLine}Alice{Environment.NewLine}name{Environment.NewLine}Bob", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "upper", "--source", sourcePath, "--scalar",
+            "--source-option", "header-repeat=#true");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>

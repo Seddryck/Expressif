@@ -36,6 +36,12 @@ internal sealed class StrictUtf8TextReader : IStrictUtf8TextReader
         try
         {
             using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            Span<byte> prefix = stackalloc byte[4];
+            var prefixLength = stream.Read(prefix);
+            stream.Position = 0;
+            if (HasUnsupportedByteOrderMark(prefix[..prefixLength]))
+                throw new DecoderFallbackException("The file uses a non-UTF-8 byte order mark.");
+
             using var reader = new StreamReader(stream, new UTF8Encoding(false, true), true);
             text = reader.ReadToEnd();
         }
@@ -52,4 +58,10 @@ internal sealed class StrictUtf8TextReader : IStrictUtf8TextReader
             throw new TextFileReadException(path, TextFileFailureKind.Empty);
         return text;
     }
+
+    private static bool HasUnsupportedByteOrderMark(ReadOnlySpan<byte> prefix)
+        => prefix.StartsWith(new byte[] { 0xFF, 0xFE, 0x00, 0x00 })
+            || prefix.StartsWith(new byte[] { 0x00, 0x00, 0xFE, 0xFF })
+            || prefix.StartsWith(new byte[] { 0xFF, 0xFE })
+            || prefix.StartsWith(new byte[] { 0xFE, 0xFF });
 }
