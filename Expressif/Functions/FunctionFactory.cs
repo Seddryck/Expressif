@@ -4,6 +4,7 @@ using Expressif.Accumulators;
 using Expressif.Accumulators.Introspection;
 using Expressif.Predicates;
 using Expressif.Values;
+using Expressif.Functions.Coercions;
 using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
 using RecordFunction = Expressif.Functions.Record.Record;
 using ArrayFunction = Expressif.Functions.Array.Array;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
+using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Expressif.Functions;
 
@@ -22,6 +24,7 @@ public class FunctionFactory : BaseExpressionFactory
         new AccumulatorIntrospector().Locate().Select(x => x.Name),
         StringComparer.OrdinalIgnoreCase
     );
+    private static readonly CoercionRegistry CoercionRegistry = new();
 
     public FunctionFactory()
         : base(new FunctionTypeMapper()) { }
@@ -65,8 +68,108 @@ public class FunctionFactory : BaseExpressionFactory
         foreach (var member in members)
             functions.Add(InstantiateOrWrapAggregation(member, context));
 
-        return new ChainFunction(functions);
+        return TryBuildTypedChain(members, functions, out var chain)
+            ? chain
+            : new ChainFunction(functions);
     }
+
+    internal static bool TryBuildTypedChain(
+        IReadOnlyList<Bindings.Function> members,
+        List<IFunction> functions,
+        [NotNullWhen(true)] out IFunction? chain)
+    {
+        chain = null;
+        if (functions.Count == 0 || !TrySelectInitialContract(functions[0], out var initial))
+            return false;
+
+        var contracts = new List<(Type Input, Type Output, Type Contract)> { initial };
+        var outputType = initial.Output;
+        for (var index = 1; index < functions.Count; index++)
+        {
+            var descriptor = CoercionRegistry.Descriptors.SingleOrDefault(
+                candidate => candidate.Name.Equals(members[index].Name, StringComparison.OrdinalIgnoreCase));
+            if (descriptor is not null
+                && CoercionRegistry.TryCreate(outputType, descriptor.TargetType, out var coercion))
+            {
+                functions[index] = coercion;
+            }
+
+            if (!TrySelectFollowingContract(functions[index], outputType, out var contract))
+                return false;
+
+            contracts.Add(contract);
+            outputType = contract.Output;
+        }
+
+        var inputType = initial.Input;
+        var parameter = LinqExpression.Parameter(inputType, "value");
+        LinqExpression body = parameter;
+        for (var index = 0; index < functions.Count; index++)
+        {
+            var contract = contracts[index];
+            var argument = body.Type == contract.Input
+                ? body
+                : LinqExpression.Convert(body, contract.Input);
+            body = LinqExpression.Call(
+                LinqExpression.Convert(LinqExpression.Constant(functions[index]), contract.Contract),
+                contract.Contract.GetMethod(nameof(IFunction.Evaluate))!,
+                argument);
+        }
+
+        var delegateType = typeof(Func<,>).MakeGenericType(inputType, outputType);
+        var pipeline = LinqExpression.Lambda(delegateType, body, parameter).Compile();
+        var chainType = typeof(ChainFunction<,>).MakeGenericType(inputType, outputType);
+        chain = (IFunction)Activator.CreateInstance(chainType, functions, pipeline)!;
+        return true;
+    }
+
+    private static bool TrySelectInitialContract(
+        IFunction function,
+        out (Type Input, Type Output, Type Contract) contract)
+    {
+        var candidates = GetContracts(function)
+            .Where(candidate => candidate.Input != typeof(object))
+            .ToArray();
+        if (candidates.Length != 1)
+        {
+            contract = default;
+            return false;
+        }
+
+        contract = candidates[0];
+        return true;
+    }
+
+    private static bool TrySelectFollowingContract(
+        IFunction function,
+        Type outputType,
+        out (Type Input, Type Output, Type Contract) contract)
+    {
+        var candidates = GetContracts(function);
+        var exact = candidates.Where(candidate => candidate.Input == outputType).ToArray();
+        var compatible = exact.Length > 0
+            ? exact
+            : candidates.Where(candidate => candidate.Input.IsAssignableFrom(outputType)).ToArray();
+        if (compatible.Length != 1)
+        {
+            contract = default;
+            return false;
+        }
+
+        contract = compatible[0];
+        return true;
+    }
+
+    private static (Type Input, Type Output, Type Contract)[] GetContracts(IFunction function)
+        => function.GetType().GetInterfaces()
+            .Where(candidate => candidate.IsGenericType
+                && candidate.GetGenericTypeDefinition() == typeof(IFunction<,>))
+            .Select(candidate => (
+                candidate.GetGenericArguments()[0],
+                candidate.GetGenericArguments()[1],
+                candidate))
+            .Distinct()
+            .ToArray();
 
     private static bool TryBuildBinaryPredication(Function[] members, [NotNullWhen(true)] out IPredication? predication)
     {

@@ -6,11 +6,15 @@ namespace Expressif.Functions.Coercions;
 
 public sealed class CoercionRegistry
 {
+    private static readonly Type[] NumericSourceTypes = NumericCoercion.SupportedSourceTypes
+        .SelectMany(sourceType => new[] { sourceType, typeof(Nullable<>).MakeGenericType(sourceType) })
+        .ToArray();
+
     private static readonly Type[] NumericAndBooleanTextSources =
-        NumericCoercion.SupportedSourceTypes.Concat([typeof(bool), typeof(string)]).ToArray();
+        NumericSourceTypes.Concat([typeof(bool), typeof(string)]).ToArray();
 
     private static readonly Type[] TextSources =
-        NumericCoercion.SupportedSourceTypes
+        NumericSourceTypes
             .Concat([typeof(string), typeof(bool), typeof(DateOnly), typeof(DateTime), typeof(YearMonth)])
             .ToArray();
 
@@ -90,7 +94,7 @@ public sealed class CoercionRegistry
         Type genericFunctionType,
         Type sourceType,
         Func<IFunction> fallbackFactory)
-        => NumericCoercion.IsSupported(sourceType)
+        => NumericCoercion.IsSupported(Nullable.GetUnderlyingType(sourceType) ?? sourceType)
             ? (IFunction)Activator.CreateInstance(genericFunctionType.MakeGenericType(sourceType))!
             : fallbackFactory.Invoke();
 }
