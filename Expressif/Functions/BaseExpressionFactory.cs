@@ -90,10 +90,10 @@ public abstract class BaseExpressionFactory
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
             LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
-            ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
-            TupleProjectionParameter projection => CreateFunctionCast(() => context.CurrentObject.Value is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
-            ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
-            VariableParameter variable => CreateFunctionCast(() => context.Variables[variable.Name], scalarType),
+            ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
+            TupleProjectionParameter projection => CreateFunctionCast(() => GetCurrent(context) is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
+            ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
+            VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
             _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
@@ -151,6 +151,28 @@ public abstract class BaseExpressionFactory
 
         static IInterval buildInterval(IntervalBinding value)
             => new IntervalBuilder().Create(value);
+    }
+
+    private static object? GetAmbient(IContext context)
+        => context.CurrentObject.Value ?? EvaluationRuntime.Frame?.Ambient;
+
+    private static object? GetCurrent(IContext context)
+        => EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
+
+    private static object? GetVariable(IContext context, string name)
+        => EvaluationRuntime.Context is { } evaluationContext
+            && evaluationContext.TryGetVariable(name, out var value)
+                ? value
+                : context.Variables[name];
+
+    private static object? GetAmbientValue(IContext context, string name)
+        => NamedValueAccessor.Get(GetAmbient(context), name);
+
+    private static object? GetAmbientValue(IContext context, int index)
+    {
+        var ambient = new ContextObject();
+        ambient.Set(GetAmbient(context));
+        return ambient[index];
     }
 
     private MethodInfo? cacheCastInfo;

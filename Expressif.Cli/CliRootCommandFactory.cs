@@ -14,6 +14,7 @@ internal static class CliRootCommandFactory
         rootCommand.Subcommands.Add(EvaluateCommand.Create());
         rootCommand.Subcommands.Add(RunCommand.Create());
         rootCommand.Subcommands.Add(ValidateCommand.Create());
+        rootCommand.Subcommands.Add(HelpCommand.Create());
         rootCommand.Subcommands.Add(VersionCommand.Create());
 
         return rootCommand;

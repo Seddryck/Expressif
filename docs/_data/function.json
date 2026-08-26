@@ -533,20 +533,24 @@
     "Scope": "Numeric",
     "Input": "numeric",
     "Output": "numeric",
-    "Summary": "Returns the sum of an argument number and the parameter value.",
+    "Summary": "Returns the sum of the input value and the parameter value.",
     "Parameters": [
       {
         "Name": "value",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "The value to be added to the argument value."
+        "Summary": "The value to add to the input value."
       },
       {
         "Name": "times",
         "Type": "integer",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
+        "Optional": true,
+        "Summary": "Number of times the addition is applied."
       }
+    ],
+    "Examples": [
+      "10 | add(5)      → 15",
+      "10 | add(5, 2)   → 20"
     ]
   },
   {

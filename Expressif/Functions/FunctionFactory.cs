@@ -227,7 +227,7 @@ public class FunctionFactory : BaseExpressionFactory
             operation = BuildOpenExpression(open.Expression, context);
         }
 
-        return new Adjacent(() => new LexicallyBoundTupleFunction(operation, context));
+        return new Adjacent(() => new LexicallyBoundTupleFunction(operation));
     }
 
     private bool TryBuildBinaryCallable(string name, IContext context, [NotNullWhen(true)] out IFunction? callable)
@@ -265,20 +265,12 @@ public class FunctionFactory : BaseExpressionFactory
         }
     }
 
-    private sealed class LexicallyBoundTupleFunction(IFunction expression, IContext context) : IFunction
+    private sealed class LexicallyBoundTupleFunction(IFunction expression) : IFunction
     {
         public object? Evaluate(object? value)
         {
-            var previous = context.CurrentObject.Value;
-            context.CurrentObject.Set(value);
-            try
-            {
-                return expression.Evaluate(value);
-            }
-            finally
-            {
-                context.CurrentObject.Set(previous);
-            }
+            using var scope = EvaluationRuntime.Derive(value);
+            return expression.Evaluate(value);
         }
     }
 

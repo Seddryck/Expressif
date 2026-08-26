@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,14 +51,14 @@ public class PredicationFactory : BaseExpressionFactory
         }
         return predicates.Count == 1
             ? predicates[0]
-            : new ContextualPredicate(new ChainFunction(predicates), context);
+            : new ContextualPredicate(new ChainFunction(predicates));
     }
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
         => parameter is OpenExpressionParameter open
             ? CreateFunctionCast(
                 () => Instantiate(new SinglePredication(open.Expression.Members.ToArray()), context)
-                    .Evaluate(context.CurrentObject.Value),
+                    .Evaluate(EvaluationRuntime.Frame?.Ambient ?? context.CurrentObject.Value),
                 scalarType)
             : base.CreateParameter(parameter, scalarType, context);
 
@@ -69,20 +68,12 @@ public class PredicationFactory : BaseExpressionFactory
         return CreateFunctionCast(() => expression.Evaluate(null), type);
     }
 
-    private sealed class ContextualPredicate(IFunction expression, IContext context) : IPredicate
+    private sealed class ContextualPredicate(IFunction expression) : IPredicate
     {
         public bool Evaluate(object? value)
         {
-            var previous = context.CurrentObject.Value;
-            context.CurrentObject.Set(value);
-            try
-            {
-                return Boolean.BooleanConversion.ToBoolean(expression.Evaluate(value));
-            }
-            finally
-            {
-                context.CurrentObject.Set(previous);
-            }
+            using var scope = EvaluationRuntime.Derive(value);
+            return Boolean.BooleanConversion.ToBoolean(expression.Evaluate(value));
         }
 
         object? IFunction.Evaluate(object? value) => Evaluate(value);

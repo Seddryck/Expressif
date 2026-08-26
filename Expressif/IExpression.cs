@@ -5,4 +5,7 @@ namespace Expressif;
 /// <summary>
 /// Represents an executable Expressif expression.
 /// </summary>
-public interface IExpression : IFunction { }
+public interface IExpression : IFunction
+{
+    IExpression WithContext(EvaluationContext context);
+}
