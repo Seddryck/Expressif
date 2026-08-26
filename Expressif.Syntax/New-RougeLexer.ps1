@@ -3,7 +3,10 @@ param(
     [string] $InputFolder,
 
     [Parameter(Mandatory = $false)]
-    [string] $OutputPath = ".\bin\expressif.rb"
+    [string] $OutputPath = ".\bin\expressif.rb",
+
+    [Parameter(Mandatory = $false)]
+    [bool] $Standalone = $true
 )
 
 $ErrorActionPreference = 'Stop'
@@ -24,6 +27,7 @@ $catalogNames = $catalogEntries |
 
 $model = [ordered]@{
         functionRegexes = @($catalogNames | ForEach-Object { [regex]::Escape($_) })
+        standalone = $Standalone
     } | ConvertTo-Json -Depth 20
 
 Write-Host "Running Didot via local installation..."

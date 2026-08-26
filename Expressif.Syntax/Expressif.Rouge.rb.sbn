@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-module Rouge
+{{ if model.standalone ~}}
+require "rouge"
+
+{{ end }}module Rouge
   module Lexers
     class Expressif < RegexLexer
       title "Expressif"
