@@ -416,6 +416,41 @@ public class CliCommandTests
         }
     }
 
+    [TestCase("utf-16-le")]
+    [TestCase("utf-16-be")]
+    [TestCase("utf-32-le")]
+    [TestCase("utf-32-be")]
+    public async Task Evaluate_ExpressionFile_WithNonUtf8Bom_ReturnsClearError(string encodingName)
+    {
+        var encoding = encodingName switch
+        {
+            "utf-16-le" => System.Text.Encoding.Unicode,
+            "utf-16-be" => System.Text.Encoding.BigEndianUnicode,
+            "utf-32-le" => new System.Text.UTF32Encoding(bigEndian: false, byteOrderMark: true),
+            "utf-32-be" => new System.Text.UTF32Encoding(bigEndian: true, byteOrderMark: true),
+            _ => throw new ArgumentOutOfRangeException(nameof(encodingName)),
+        };
+        var path = Path.Combine(Path.GetTempPath(), $"expressif-bom-{Guid.NewGuid():N}.expr");
+        File.WriteAllText(path, "trim | upper", encoding);
+
+        try
+        {
+            var result = await InvokeAsync("evaluate", "--file", path, "--input", "nikola");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+                Assert.That(result.StdOut, Is.Empty);
+                Assert.That(result.StdErr.Trim(), Is.EqualTo($"Expression file '{path}' could not be decoded as UTF-8."));
+            });
+        }
+        finally
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+    }
+
     [Test]
     public async Task Evaluate_ExpressionFile_RelativePath_IsResolvedFromCurrentDirectory()
     {
