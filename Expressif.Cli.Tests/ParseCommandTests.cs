@@ -23,6 +23,19 @@ public class ParseCommandTests
     }
 
     [Test]
+    public async Task Parse_BinaryPredicate_DisplaysNormalizedOperator()
+    {
+        var result = await InvokeAsync("parse", "even |AND greater-than(5)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("BinaryOperator: AND"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Parse_JsonOutput_IsMachineReadable()
     {
         var result = await InvokeAsync("parse", "add(2)", "--output", "json");

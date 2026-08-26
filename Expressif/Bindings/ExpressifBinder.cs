@@ -41,11 +41,27 @@ public sealed class ExpressifBinder
         var root = Bind(syntax);
         return root switch
         {
-            OpenRootExpression open => new SinglePredication(open.Expression.Members.ToArray()),
+            OpenRootExpression open => BindPredication(open.Expression),
             ClosedRootExpression closed when closed.Expression.Members.Any()
-                => new SinglePredication(closed.Expression.Members.ToArray()),
+                => BindPredication(new OpenExpression(closed.Expression.Members)),
             _ => throw new BindingException($"Predication '{syntax.Text}' is not bound in this iteration."),
         };
+    }
+
+    private static IPredication BindPredication(OpenExpression expression)
+    {
+        var members = expression.Members.ToArray();
+        if (members is [var combinator]
+            && combinator.Name is "and" or "or" or "xor"
+            && combinator.Parameters is [OpenExpressionParameter left, OpenExpressionParameter right])
+        {
+            return new BinaryPredication(
+                new BinaryOperator(combinator.Name),
+                BindPredication(left.Expression),
+                BindPredication(right.Expression));
+        }
+
+        return new SinglePredication(members);
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
@@ -79,10 +95,12 @@ public sealed class ExpressifBinder
 
     private OpenExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
         => new([
-            .. BindExpression(syntax.Left).Members,
             new Function(
                 BindBinaryOperator(syntax.Operator),
-                [new OpenExpressionParameter(BindExpression(syntax.Right))])
+                [
+                    new OpenExpressionParameter(BindExpression(syntax.Left)),
+                    new OpenExpressionParameter(BindExpression(syntax.Right))
+                ])
         ]);
 
     private OpenExpression BindExpression(ExpressionSyntax syntax) => syntax switch

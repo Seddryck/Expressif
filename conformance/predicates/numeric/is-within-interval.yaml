@@ -1,0 +1,41 @@
+suite: numeric
+kind: predicate
+operator: is-within-interval
+tests:
+  - id: is-within-interval.valid.open-closed
+    cases:
+     - id: is-within-interval.valid.open-closed.integer.inside
+       value: 10
+       expected: true
+     - id: is-within-interval.valid.open-closed.integer.on-edge.outside
+       value: 1
+       expected: false
+     - id: is-within-interval.valid.open-closed.integer.on-edge.inside
+       value: 12
+       expected: true
+     - id: is-within-interval.valid.open-closed.valid.special.null
+       value:
+
+       expected: false
+  - id: is-within-interval.valid.negative-infinite
+    cases:
+     - id: is-within-interval.valid.negative-infinite.integer.inside
+       value: 10
+       expected: true
+     - id: is-within-interval.valid.negative-infinite.on-edge.inside
+       value: 12
+       expected: true
+     - id: is-within-interval.valid.negative-infinite.special.null
+       value:
+       expected: false
+  - id: is-within-interval.valid.positive-infinite
+    cases:
+     - id: is-within-interval.valid.positive-infinite.integer.outside
+       value: 10
+       expected: false
+     - id: is-within-interval.valid.positive-infinite.on-edge.inside
+       value: 12
+       expected: true
+     - id: is-within-interval.valid.positive-infinite.special.null
+       value:
+       expected: false

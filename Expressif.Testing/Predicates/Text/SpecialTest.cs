@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.Text;
+using Expressif.Predicates.Text;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Text;
@@ -7,10 +7,10 @@ namespace Expressif.Testing.Predicates.Text;
 public class SpecialTest
 {
     [Conformance]
-    public void Empty_Valid(object? value, bool expected)
+    public void IsEmpty_Valid(object? value, bool expected)
         => Assert.That(new Empty().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
-    public void EmptyOrNull_Valid(object? value, bool expected)
+    public void IsEmptyOrNull_Valid(object? value, bool expected)
         => Assert.That(new EmptyOrNull().Evaluate(value), Is.EqualTo(expected));
 }

@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,6 +61,12 @@ public class PredicationFactory : BaseExpressionFactory
                     .Evaluate(EvaluationRuntime.Frame?.Ambient ?? context.CurrentObject.Value),
                 scalarType)
             : base.CreateParameter(parameter, scalarType, context);
+
+    protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
+    {
+        var expression = new FunctionFactory().Instantiate(new ClosedRootExpression(input.Expression), context);
+        return CreateFunctionCast(() => expression.Evaluate(null), type);
+    }
 
     private sealed class ContextualPredicate(IFunction expression) : IPredicate
     {

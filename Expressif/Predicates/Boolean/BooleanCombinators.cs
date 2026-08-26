@@ -22,6 +22,7 @@ internal static class BooleanConversion
 /// <summary>
 /// Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.
 /// </summary>
+[Predicate(false, prefix: "")]
 public class And : BaseBooleanPredicate
 {
     public Func<object?> Expression { get; }
@@ -37,6 +38,7 @@ public class And : BaseBooleanPredicate
 /// <summary>
 /// Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.
 /// </summary>
+[Predicate(false, prefix: "")]
 public class Or : BaseBooleanPredicate
 {
     public Func<object?> Expression { get; }
@@ -55,6 +57,7 @@ public class Or : BaseBooleanPredicate
 /// <summary>
 /// Returns `true` when exactly one of the Boolean-converted input and a secondary predicate expression evaluates to `true`. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Always evaluates the secondary expression.
 /// </summary>
+[Predicate(false, prefix: "")]
 public class Xor : BaseBooleanPredicate
 {
     public Func<object?> Expression { get; }
@@ -73,6 +76,7 @@ public class Xor : BaseBooleanPredicate
 /// <summary>
 /// Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.
 /// </summary>
+[Predicate(false, prefix: "")]
 public class Not : BaseBooleanPredicate
 {
     protected override bool EvaluateBoolean(bool boolean)

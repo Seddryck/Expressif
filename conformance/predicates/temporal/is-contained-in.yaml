@@ -1,0 +1,26 @@
+suite: temporal
+kind: predicate
+operator: is-contained-in
+tests:
+  - id: is-contained-in.valid.date
+    cases:
+      - id: is-contained-in.valid.date.2022-11-21
+        value: 2022-11-21
+        expected: true
+      - id: is-contained-in.valid.date.2022-11-25
+        value: 2022-11-25
+        expected: false
+  - id: is-contained-in.valid.date-time
+    cases:
+      - id: is-contained-in.valid.date-time.in
+        value: 2022-11-21 17:12:25
+        expected: true
+      - id: is-contained-in.valid.date-time.out
+        value: 2022-11-25 17:12:25
+        expected: false
+      - id: is-contained-in.valid.special.empty
+        value: (empty)
+        expected: false
+      - id: is-contained-in.valid.special.null
+        value: (null)
+        expected: false

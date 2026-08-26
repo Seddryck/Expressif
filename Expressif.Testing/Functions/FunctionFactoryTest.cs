@@ -11,6 +11,18 @@ namespace Expressif.Testing.Functions;
 
 public class FunctionFactoryTest
 {
+    [TestCase("even", 4, true)]
+    [TestCase("even", 5, false)]
+    [TestCase("is-even", 4, true)]
+    public void Instantiate_PredicateOnlyExpression_EvaluatesBoolean(string source, object value, bool expected)
+        => Assert.That(BindingTestAdapter.Executable(source).Evaluate(value), Is.EqualTo(expected));
+
+    [TestCase(4, false)]
+    [TestCase(6, true)]
+    [TestCase(7, false)]
+    public void Instantiate_ComposedPredicateOnlyExpression_EvaluatesAgainstOriginalInput(object value, bool expected)
+        => Assert.That(BindingTestAdapter.Executable("even |AND greater-than(5)").Evaluate(value), Is.EqualTo(expected));
+
     [TestCase("replace-slice(2, 4, \"abc\")")]
     [TestCase("replace-slice(start := 2, length := 4, append := \"abc\")")]
     [TestCase("replace-slice(2, append := \"abc\", length := 4)")]
@@ -236,6 +248,24 @@ public class FunctionFactoryTest
 
         Assert.That(filter, Is.Not.Null);
         Assert.That(predicate, Is.TypeOf<GreaterThan>());
+    }
+
+    [Test]
+    public void Instantiate_FilterWithClosedPredicateParameter_ResolvesNestedFunction()
+    {
+        var reference = new InputExpressionParameter(
+            new Expressif.Bindings.ClosedExpression(
+                new LiteralParameter(17m),
+                [new Function("add", [new LiteralParameter(17m)])]));
+        var predicate = new Function("greater-than", [reference]);
+        var filter = new Function(
+            "filter",
+            [new OpenExpressionParameter(new OpenExpression([predicate]))]);
+        var root = new OpenRootExpression(new OpenExpression([filter]));
+
+        var function = new FunctionFactory().Instantiate(root, new Context());
+
+        Assert.That(function.Evaluate(new object[] { 10, 12, 13 }), Is.Empty);
     }
 
     [Test]

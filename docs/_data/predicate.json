@@ -2,9 +2,7 @@
   {
     "Name": "and",
     "IsPublic": true,
-    "Aliases": [
-      "boolean-is-and"
-    ],
+    "Aliases": [],
     "Scope": "Boolean",
     "Summary": "Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.",
     "Parameters": [
@@ -16,9 +14,10 @@
     ]
   },
   {
-    "Name": "false",
+    "Name": "is-false",
     "IsPublic": true,
     "Aliases": [
+      "false",
       "boolean-is-false"
     ],
     "Scope": "Boolean",
@@ -26,9 +25,10 @@
     "Parameters": []
   },
   {
-    "Name": "false-or-null",
+    "Name": "is-false-or-null",
     "IsPublic": true,
     "Aliases": [
+      "false-or-null",
       "boolean-is-false-or-null"
     ],
     "Scope": "Boolean",
@@ -36,9 +36,10 @@
     "Parameters": []
   },
   {
-    "Name": "identical-to",
+    "Name": "is-identical-to",
     "IsPublic": true,
     "Aliases": [
+      "identical-to",
       "boolean-is-identical-to"
     ],
     "Scope": "Boolean",
@@ -54,9 +55,7 @@
   {
     "Name": "not",
     "IsPublic": true,
-    "Aliases": [
-      "boolean-is-not"
-    ],
+    "Aliases": [],
     "Scope": "Boolean",
     "Summary": "Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.",
     "Parameters": []
@@ -64,9 +63,7 @@
   {
     "Name": "or",
     "IsPublic": true,
-    "Aliases": [
-      "boolean-is-or"
-    ],
+    "Aliases": [],
     "Scope": "Boolean",
     "Summary": "Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.",
     "Parameters": [
@@ -78,9 +75,10 @@
     ]
   },
   {
-    "Name": "true",
+    "Name": "is-true",
     "IsPublic": true,
     "Aliases": [
+      "true",
       "boolean-is-true"
     ],
     "Scope": "Boolean",
@@ -88,9 +86,10 @@
     "Parameters": []
   },
   {
-    "Name": "true-or-null",
+    "Name": "is-true-or-null",
     "IsPublic": true,
     "Aliases": [
+      "true-or-null",
       "boolean-is-true-or-null"
     ],
     "Scope": "Boolean",
@@ -100,9 +99,7 @@
   {
     "Name": "xor",
     "IsPublic": true,
-    "Aliases": [
-      "boolean-is-xor"
-    ],
+    "Aliases": [],
     "Scope": "Boolean",
     "Summary": "Returns `true` when exactly one of the Boolean-converted input and a secondary predicate expression evaluates to `true`. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Always evaluates the secondary expression.",
     "Parameters": [
@@ -114,9 +111,10 @@
     ]
   },
   {
-    "Name": "equal-to",
+    "Name": "is-equal-to",
     "IsPublic": true,
     "Aliases": [
+      "equal-to",
       "numeric-is-equal-to"
     ],
     "Scope": "Numeric",
@@ -130,9 +128,27 @@
     ]
   },
   {
-    "Name": "even",
+    "Name": "is-divisible-by",
     "IsPublic": true,
     "Aliases": [
+      "divisible-by",
+      "numeric-is-divisible-by"
+    ],
+    "Scope": "Numeric",
+    "Summary": "Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "divisor",
+        "Optional": false,
+        "Summary": "An integer value used as the divisor."
+      }
+    ]
+  },
+  {
+    "Name": "is-even",
+    "IsPublic": true,
+    "Aliases": [
+      "even",
       "numeric-is-even"
     ],
     "Scope": "Numeric",
@@ -140,9 +156,10 @@
     "Parameters": []
   },
   {
-    "Name": "greater-than",
+    "Name": "is-greater-than",
     "IsPublic": true,
     "Aliases": [
+      "greater-than",
       "numeric-is-greater-than"
     ],
     "Scope": "Numeric",
@@ -156,9 +173,10 @@
     ]
   },
   {
-    "Name": "greater-than-or-equal",
+    "Name": "is-greater-than-or-equal",
     "IsPublic": true,
     "Aliases": [
+      "greater-than-or-equal",
       "numeric-is-greater-than-or-equal"
     ],
     "Scope": "Numeric",
@@ -172,9 +190,10 @@
     ]
   },
   {
-    "Name": "integer",
+    "Name": "is-integer",
     "IsPublic": true,
     "Aliases": [
+      "integer",
       "numeric-is-integer"
     ],
     "Scope": "Numeric",
@@ -182,9 +201,10 @@
     "Parameters": []
   },
   {
-    "Name": "less-than",
+    "Name": "is-less-than",
     "IsPublic": true,
     "Aliases": [
+      "less-than",
       "numeric-is-less-than"
     ],
     "Scope": "Numeric",
@@ -198,9 +218,10 @@
     ]
   },
   {
-    "Name": "less-than-or-equal",
+    "Name": "is-less-than-or-equal",
     "IsPublic": true,
     "Aliases": [
+      "less-than-or-equal",
       "numeric-is-less-than-or-equal"
     ],
     "Scope": "Numeric",
@@ -214,13 +235,14 @@
     ]
   },
   {
-    "Name": "modulo",
+    "Name": "has-remainder",
     "IsPublic": true,
     "Aliases": [
+      "modulo",
       "numeric-is-modulo"
     ],
     "Scope": "Numeric",
-    "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the remainder provided as a second parameter. If no remainder is provided then 0 is expected. Returns `false` otherwise.",
+    "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "modulus",
@@ -229,15 +251,16 @@
       },
       {
         "Name": "remainder",
-        "Optional": true,
+        "Optional": false,
         "Summary": "An integer value defined as the expected reminder."
       }
     ]
   },
   {
-    "Name": "negative",
+    "Name": "is-negative",
     "IsPublic": true,
     "Aliases": [
+      "negative",
       "numeric-is-negative"
     ],
     "Scope": "Numeric",
@@ -245,9 +268,10 @@
     "Parameters": []
   },
   {
-    "Name": "negative-or-zero",
+    "Name": "is-negative-or-zero",
     "IsPublic": true,
     "Aliases": [
+      "negative-or-zero",
       "numeric-is-negative-or-zero"
     ],
     "Scope": "Numeric",
@@ -255,9 +279,10 @@
     "Parameters": []
   },
   {
-    "Name": "odd",
+    "Name": "is-odd",
     "IsPublic": true,
     "Aliases": [
+      "odd",
       "numeric-is-odd"
     ],
     "Scope": "Numeric",
@@ -265,9 +290,10 @@
     "Parameters": []
   },
   {
-    "Name": "one",
+    "Name": "is-one",
     "IsPublic": true,
     "Aliases": [
+      "one",
       "numeric-is-one"
     ],
     "Scope": "Numeric",
@@ -275,9 +301,10 @@
     "Parameters": []
   },
   {
-    "Name": "opposite",
+    "Name": "is-opposite",
     "IsPublic": true,
     "Aliases": [
+      "opposite",
       "numeric-is-opposite"
     ],
     "Scope": "Numeric",
@@ -291,9 +318,10 @@
     ]
   },
   {
-    "Name": "positive",
+    "Name": "is-positive",
     "IsPublic": true,
     "Aliases": [
+      "positive",
       "numeric-is-positive"
     ],
     "Scope": "Numeric",
@@ -301,9 +329,10 @@
     "Parameters": []
   },
   {
-    "Name": "positive-or-zero",
+    "Name": "is-positive-or-zero",
     "IsPublic": true,
     "Aliases": [
+      "positive-or-zero",
       "numeric-is-positive-or-zero"
     ],
     "Scope": "Numeric",
@@ -311,9 +340,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-interval",
+    "Name": "is-within-interval",
     "IsPublic": true,
     "Aliases": [
+      "within-interval",
       "numeric-is-within-interval"
     ],
     "Scope": "Numeric",
@@ -327,9 +357,10 @@
     ]
   },
   {
-    "Name": "zero",
+    "Name": "is-zero",
     "IsPublic": true,
     "Aliases": [
+      "zero",
       "numeric-is-zero"
     ],
     "Scope": "Numeric",
@@ -337,9 +368,10 @@
     "Parameters": []
   },
   {
-    "Name": "zero-or-null",
+    "Name": "is-zero-or-null",
     "IsPublic": true,
     "Aliases": [
+      "zero-or-null",
       "numeric-is-zero-or-null"
     ],
     "Scope": "Numeric",
@@ -347,19 +379,20 @@
     "Parameters": []
   },
   {
-    "Name": "null",
+    "Name": "is-null",
     "IsPublic": true,
     "Aliases": [
-      "is-null"
+      "null"
     ],
     "Scope": "Special",
     "Summary": "Returns `true` if the argument is effectively `null` else return `false`.",
     "Parameters": []
   },
   {
-    "Name": "after",
+    "Name": "is-after",
     "IsPublic": true,
     "Aliases": [
+      "after",
       "dateTime-is-after"
     ],
     "Scope": "Temporal",
@@ -373,9 +406,10 @@
     ]
   },
   {
-    "Name": "after-or-same-instant",
+    "Name": "is-after-or-same-instant",
     "IsPublic": true,
     "Aliases": [
+      "after-or-same-instant",
       "dateTime-is-after-or-same-instant"
     ],
     "Scope": "Temporal",
@@ -389,9 +423,10 @@
     ]
   },
   {
-    "Name": "before",
+    "Name": "is-before",
     "IsPublic": true,
     "Aliases": [
+      "before",
       "dateTime-is-before"
     ],
     "Scope": "Temporal",
@@ -405,9 +440,10 @@
     ]
   },
   {
-    "Name": "before-or-same-instant",
+    "Name": "is-before-or-same-instant",
     "IsPublic": true,
     "Aliases": [
+      "before-or-same-instant",
       "dateTime-is-before-or-same-instant"
     ],
     "Scope": "Temporal",
@@ -421,9 +457,10 @@
     ]
   },
   {
-    "Name": "business-day",
+    "Name": "is-business-day",
     "IsPublic": true,
     "Aliases": [
+      "business-day",
       "dateTime-is-business-day"
     ],
     "Scope": "Temporal",
@@ -431,9 +468,10 @@
     "Parameters": []
   },
   {
-    "Name": "contained-in",
+    "Name": "is-contained-in",
     "IsPublic": true,
     "Aliases": [
+      "contained-in",
       "dateTime-is-contained-in"
     ],
     "Scope": "Temporal",
@@ -447,9 +485,10 @@
     ]
   },
   {
-    "Name": "in-the-future",
+    "Name": "is-in-the-future",
     "IsPublic": true,
     "Aliases": [
+      "in-the-future",
       "dateTime-is-in-the-future"
     ],
     "Scope": "Temporal",
@@ -457,9 +496,10 @@
     "Parameters": []
   },
   {
-    "Name": "in-the-future-or-now",
+    "Name": "is-in-the-future-or-now",
     "IsPublic": true,
     "Aliases": [
+      "in-the-future-or-now",
       "dateTime-is-in-the-future-or-now"
     ],
     "Scope": "Temporal",
@@ -467,9 +507,10 @@
     "Parameters": []
   },
   {
-    "Name": "in-the-future-or-today",
+    "Name": "is-in-the-future-or-today",
     "IsPublic": true,
     "Aliases": [
+      "in-the-future-or-today",
       "dateTime-is-in-the-future-or-today"
     ],
     "Scope": "Temporal",
@@ -477,9 +518,10 @@
     "Parameters": []
   },
   {
-    "Name": "in-the-past",
+    "Name": "is-in-the-past",
     "IsPublic": true,
     "Aliases": [
+      "in-the-past",
       "dateTime-is-in-the-past"
     ],
     "Scope": "Temporal",
@@ -487,9 +529,10 @@
     "Parameters": []
   },
   {
-    "Name": "in-the-past-or-now",
+    "Name": "is-in-the-past-or-now",
     "IsPublic": true,
     "Aliases": [
+      "in-the-past-or-now",
       "dateTime-is-in-the-past-or-now"
     ],
     "Scope": "Temporal",
@@ -497,9 +540,10 @@
     "Parameters": []
   },
   {
-    "Name": "in-the-past-or-today",
+    "Name": "is-in-the-past-or-today",
     "IsPublic": true,
     "Aliases": [
+      "in-the-past-or-today",
       "dateTime-is-in-the-past-or-today"
     ],
     "Scope": "Temporal",
@@ -507,9 +551,10 @@
     "Parameters": []
   },
   {
-    "Name": "leap-year",
+    "Name": "is-leap-year",
     "IsPublic": true,
     "Aliases": [
+      "leap-year",
       "dateTime-is-leap-year"
     ],
     "Scope": "Temporal",
@@ -517,9 +562,10 @@
     "Parameters": []
   },
   {
-    "Name": "on-the-day",
+    "Name": "is-on-the-day",
     "IsPublic": true,
     "Aliases": [
+      "on-the-day",
       "dateTime-is-on-the-day"
     ],
     "Scope": "Temporal",
@@ -527,9 +573,10 @@
     "Parameters": []
   },
   {
-    "Name": "on-the-hour",
+    "Name": "is-on-the-hour",
     "IsPublic": true,
     "Aliases": [
+      "on-the-hour",
       "dateTime-is-on-the-hour"
     ],
     "Scope": "Temporal",
@@ -537,9 +584,10 @@
     "Parameters": []
   },
   {
-    "Name": "on-the-minute",
+    "Name": "is-on-the-minute",
     "IsPublic": true,
     "Aliases": [
+      "on-the-minute",
       "dateTime-is-on-the-minute"
     ],
     "Scope": "Temporal",
@@ -547,9 +595,10 @@
     "Parameters": []
   },
   {
-    "Name": "same-instant",
+    "Name": "is-same-instant",
     "IsPublic": true,
     "Aliases": [
+      "same-instant",
       "dateTime-is-same-instant"
     ],
     "Scope": "Temporal",
@@ -563,9 +612,10 @@
     ]
   },
   {
-    "Name": "today",
+    "Name": "is-today",
     "IsPublic": true,
     "Aliases": [
+      "today",
       "dateTime-is-today"
     ],
     "Scope": "Temporal",
@@ -573,9 +623,10 @@
     "Parameters": []
   },
   {
-    "Name": "tomorrow",
+    "Name": "is-tomorrow",
     "IsPublic": true,
     "Aliases": [
+      "tomorrow",
       "dateTime-is-tomorrow"
     ],
     "Scope": "Temporal",
@@ -583,9 +634,10 @@
     "Parameters": []
   },
   {
-    "Name": "weekday",
+    "Name": "is-weekday",
     "IsPublic": true,
     "Aliases": [
+      "weekday",
       "dateTime-is-weekday"
     ],
     "Scope": "Temporal",
@@ -599,9 +651,10 @@
     ]
   },
   {
-    "Name": "weekend",
+    "Name": "is-weekend",
     "IsPublic": true,
     "Aliases": [
+      "weekend",
       "dateTime-is-weekend"
     ],
     "Scope": "Temporal",
@@ -609,9 +662,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-current-month",
+    "Name": "is-within-current-month",
     "IsPublic": true,
     "Aliases": [
+      "within-current-month",
       "dateTime-is-within-current-month"
     ],
     "Scope": "Temporal",
@@ -619,9 +673,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-current-week",
+    "Name": "is-within-current-week",
     "IsPublic": true,
     "Aliases": [
+      "within-current-week",
       "dateTime-is-within-current-week"
     ],
     "Scope": "Temporal",
@@ -629,9 +684,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-current-year",
+    "Name": "is-within-current-year",
     "IsPublic": true,
     "Aliases": [
+      "within-current-year",
       "dateTime-is-within-current-year"
     ],
     "Scope": "Temporal",
@@ -639,9 +695,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-last-month",
+    "Name": "is-within-last-month",
     "IsPublic": true,
     "Aliases": [
+      "within-last-month",
       "dateTime-is-within-last-month"
     ],
     "Scope": "Temporal",
@@ -649,9 +706,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-last-week",
+    "Name": "is-within-last-week",
     "IsPublic": true,
     "Aliases": [
+      "within-last-week",
       "dateTime-is-within-last-week"
     ],
     "Scope": "Temporal",
@@ -659,9 +717,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-last-year",
+    "Name": "is-within-last-year",
     "IsPublic": true,
     "Aliases": [
+      "within-last-year",
       "dateTime-is-within-last-year"
     ],
     "Scope": "Temporal",
@@ -669,9 +728,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-next-days",
+    "Name": "is-within-next-days",
     "IsPublic": true,
     "Aliases": [
+      "within-next-days",
       "dateTime-is-within-next-days"
     ],
     "Scope": "Temporal",
@@ -685,9 +745,10 @@
     ]
   },
   {
-    "Name": "within-previous-days",
+    "Name": "is-within-previous-days",
     "IsPublic": true,
     "Aliases": [
+      "within-previous-days",
       "dateTime-is-within-previous-days"
     ],
     "Scope": "Temporal",
@@ -701,9 +762,10 @@
     ]
   },
   {
-    "Name": "within-upcoming-month",
+    "Name": "is-within-upcoming-month",
     "IsPublic": true,
     "Aliases": [
+      "within-upcoming-month",
       "dateTime-is-within-upcoming-month"
     ],
     "Scope": "Temporal",
@@ -711,9 +773,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-upcoming-week",
+    "Name": "is-within-upcoming-week",
     "IsPublic": true,
     "Aliases": [
+      "within-upcoming-week",
       "dateTime-is-within-upcoming-week"
     ],
     "Scope": "Temporal",
@@ -721,9 +784,10 @@
     "Parameters": []
   },
   {
-    "Name": "within-upcoming-year",
+    "Name": "is-within-upcoming-year",
     "IsPublic": true,
     "Aliases": [
+      "within-upcoming-year",
       "dateTime-is-within-upcoming-year"
     ],
     "Scope": "Temporal",
@@ -731,9 +795,10 @@
     "Parameters": []
   },
   {
-    "Name": "yesterday",
+    "Name": "is-yesterday",
     "IsPublic": true,
     "Aliases": [
+      "yesterday",
       "dateTime-is-yesterday"
     ],
     "Scope": "Temporal",
@@ -741,9 +806,10 @@
     "Parameters": []
   },
   {
-    "Name": "any-of",
+    "Name": "is-any-of",
     "IsPublic": true,
     "Aliases": [
+      "any-of",
       "text-is-any-of"
     ],
     "Scope": "Text",
@@ -783,9 +849,10 @@
     ]
   },
   {
-    "Name": "empty",
+    "Name": "is-empty",
     "IsPublic": true,
     "Aliases": [
+      "empty",
       "text-is-empty"
     ],
     "Scope": "Text",
@@ -793,9 +860,10 @@
     "Parameters": []
   },
   {
-    "Name": "empty-or-null",
+    "Name": "is-empty-or-null",
     "IsPublic": true,
     "Aliases": [
+      "empty-or-null",
       "text-is-empty-or-null"
     ],
     "Scope": "Text",
@@ -824,9 +892,10 @@
     ]
   },
   {
-    "Name": "equivalent-to",
+    "Name": "is-equivalent-to",
     "IsPublic": true,
     "Aliases": [
+      "equivalent-to",
       "text-is-equivalent-to"
     ],
     "Scope": "Text",
@@ -845,9 +914,10 @@
     ]
   },
   {
-    "Name": "lower-case",
+    "Name": "is-lower-case",
     "IsPublic": true,
     "Aliases": [
+      "lower-case",
       "text-is-lower-case"
     ],
     "Scope": "Text",
@@ -916,9 +986,10 @@
     "Parameters": []
   },
   {
-    "Name": "sorted-after",
+    "Name": "is-sorted-after",
     "IsPublic": true,
     "Aliases": [
+      "sorted-after",
       "text-is-sorted-after"
     ],
     "Scope": "Text",
@@ -937,9 +1008,10 @@
     ]
   },
   {
-    "Name": "sorted-after-or-equivalent-to",
+    "Name": "is-sorted-after-or-equivalent-to",
     "IsPublic": true,
     "Aliases": [
+      "sorted-after-or-equivalent-to",
       "text-is-sorted-after-or-equivalent-to"
     ],
     "Scope": "Text",
@@ -958,9 +1030,10 @@
     ]
   },
   {
-    "Name": "sorted-before",
+    "Name": "is-sorted-before",
     "IsPublic": true,
     "Aliases": [
+      "sorted-before",
       "text-is-sorted-before"
     ],
     "Scope": "Text",
@@ -979,9 +1052,10 @@
     ]
   },
   {
-    "Name": "sorted-before-or-equivalent-to",
+    "Name": "is-sorted-before-or-equivalent-to",
     "IsPublic": true,
     "Aliases": [
+      "sorted-before-or-equivalent-to",
       "text-is-sorted-before-or-equivalent-to"
     ],
     "Scope": "Text",
@@ -1021,9 +1095,10 @@
     ]
   },
   {
-    "Name": "upper-case",
+    "Name": "is-upper-case",
     "IsPublic": true,
     "Aliases": [
+      "upper-case",
       "text-is-upper-case"
     ],
     "Scope": "Text",

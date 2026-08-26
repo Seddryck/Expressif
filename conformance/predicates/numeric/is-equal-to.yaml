@@ -1,0 +1,46 @@
+suite: numeric
+kind: predicate
+operator: is-equal-to
+tests:
+  - id: is-equal-to.valid
+    cases:
+      - id: is-equal-to.valid.numeric.equal
+        value: 10
+        expected: true
+        parameters:
+          - 10
+      - id: is-equal-to.valid.numeric.less-than
+        value: 4
+        expected: false
+        parameters:
+          - 10
+      - id: is-equal-to.valid.numeric.more-than
+        value: 15
+        expected: false
+        parameters:
+          - 10
+      - id: is-equal-to.valid.numeric.less-than-decimal
+        value: 9.999
+        expected: false
+        parameters:
+          - 10
+      - id: is-equal-to.valid.numeric.more-than-decimal
+        value: 10.001
+        expected: false
+        parameters:
+          - 10
+      - id: is-equal-to.valid.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - 10
+      - id: is-equal-to.valid.special.empty-tag
+        value: (empty)
+        expected: false
+        parameters:
+          - 10
+      - id: is-equal-to.valid.special.blank
+        value: (blank)
+        expected: false
+        parameters:
+          - 10

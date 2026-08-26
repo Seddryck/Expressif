@@ -2,12 +2,10 @@
 title: Boolean predicates
 subtitle: Predicates applicable to boolean values
 tags: [predicates, boolean]
-keywords: [and, false, false-or-null, identical-to, not, or, true, true-or-null, xor] # AUTO-GENERATED KEYWORDS
+keywords: [and, is-false, is-false-or-null, is-identical-to, not, or, is-true, is-true-or-null, xor] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### and
-
-###### Alias: `boolean-is-and`
 
 ###### Overview
 
@@ -16,25 +14,25 @@ Returns the logical conjunction of the Boolean-converted input and a secondary p
 ###### Parameter
 * expression: Specifies the secondary predicate expression evaluated when the converted input is `true`.
 
-##### false
+##### is-false
 
-###### Alias: `boolean-is-false`
+###### Aliases: `false`, `boolean-is-false`
 
 ###### Overview
 
 Returns `true` if the argument is effectively `false` else return `false`.
 
-##### false-or-null
+##### is-false-or-null
 
-###### Alias: `boolean-is-false-or-null`
+###### Aliases: `false-or-null`, `boolean-is-false-or-null`
 
 ###### Overview
 
 Returns `true` if the argument is effectively `false` or `null` else return `false`.
 
-##### identical-to
+##### is-identical-to
 
-###### Alias: `boolean-is-identical-to`
+###### Aliases: `identical-to`, `boolean-is-identical-to`
 
 ###### Overview
 
@@ -45,15 +43,11 @@ Returns `true` if the boolean passed as argument has the same value than the boo
 
 ##### not
 
-###### Alias: `boolean-is-not`
-
 ###### Overview
 
 Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.
 
 ##### or
-
-###### Alias: `boolean-is-or`
 
 ###### Overview
 
@@ -62,25 +56,23 @@ Returns the logical disjunction of the Boolean-converted input and a secondary p
 ###### Parameter
 * expression: Specifies the secondary predicate expression evaluated when the converted input is `false`.
 
-##### true
+##### is-true
 
-###### Alias: `boolean-is-true`
+###### Aliases: `true`, `boolean-is-true`
 
 ###### Overview
 
 Returns `true` if the argument is effectively `true` else return `false`.
 
-##### true-or-null
+##### is-true-or-null
 
-###### Alias: `boolean-is-true-or-null`
+###### Aliases: `true-or-null`, `boolean-is-true-or-null`
 
 ###### Overview
 
 Returns `true` if the argument is effectively `true` or `null` else return `false`.
 
 ##### xor
-
-###### Alias: `boolean-is-xor`
 
 ###### Overview
 

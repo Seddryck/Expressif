@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.Text;
+using Expressif.Predicates.Text;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Text;
@@ -7,7 +7,7 @@ namespace Expressif.Testing.Predicates.Text;
 public class AnyOfTest
 {
     [Conformance]
-    public void AnyOf_Valid_Text(object value, string[] references, bool expected)
+    public void IsAnyOf_Valid_Text(object value, string[] references, bool expected)
     {
         var scalars = new Func<List<string>>(() => references.ToList());
         var predicate = new AnyOf(scalars);

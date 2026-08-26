@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.Text;
+using Expressif.Predicates.Text;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Text;
@@ -7,7 +7,7 @@ namespace Expressif.Testing.Predicates.Text;
 public class SortingTest
 {
     [Conformance]
-    public void EquivalentTo_Valid(object? value, string? reference, bool expected)
+    public void IsEquivalentTo_Valid(object? value, string? reference, bool expected)
     {
         var predicate = new EquivalentTo(() => reference);
         Assert.Multiple(() =>
@@ -18,7 +18,7 @@ public class SortingTest
     }
 
     [Conformance]
-    public void SortedAfter_Valid(object? value, string? reference, bool expected)
+    public void IsSortedAfter_Valid(object? value, string? reference, bool expected)
     {
         var predicate = new SortedAfter(() => reference);
         Assert.Multiple(() =>
@@ -29,7 +29,7 @@ public class SortingTest
     }
 
     [Conformance]
-    public void SortedAfterOrEquivalentTo_Valid(object? value, string? reference, bool expected)
+    public void IsSortedAfterOrEquivalentTo_Valid(object? value, string? reference, bool expected)
     {
         var predicate = new SortedAfterOrEquivalentTo(() => reference);
         Assert.Multiple(() =>
@@ -40,7 +40,7 @@ public class SortingTest
     }
 
     [Conformance]
-    public void SortedBefore_Valid(object? value, string? reference, bool expected)
+    public void IsSortedBefore_Valid(object? value, string? reference, bool expected)
     {
         var predicate = new SortedBefore(() => reference);
         Assert.Multiple(() =>
@@ -51,7 +51,7 @@ public class SortingTest
     }
 
     [Conformance]
-    public void SortedBeforeOrEquivalentTo_Valid(object? value, string? reference, bool expected)
+    public void IsSortedBeforeOrEquivalentTo_Valid(object? value, string? reference, bool expected)
     {
         var predicate = new SortedBeforeOrEquivalentTo(() => reference);
         Assert.Multiple(() =>

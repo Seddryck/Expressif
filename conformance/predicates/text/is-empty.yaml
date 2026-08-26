@@ -1,0 +1,24 @@
+suite: text
+kind: predicate
+operator: is-empty
+tests:
+  - id: is-empty.valid
+    cases:
+      - id: is-empty.valid.special.null
+        value:
+        expected: false
+      - id: is-empty.valid.special.null-tag
+        value: (null)
+        expected: false
+      - id: is-empty.valid.text.empty-string
+        value: ""
+        expected: true
+      - id: is-empty.valid.special.empty
+        value: (empty)
+        expected: true
+      - id: is-empty.valid.special.blank
+        value: (blank)
+        expected: false
+      - id: is-empty.valid.text.foo
+        value: foo
+        expected: false

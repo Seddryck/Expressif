@@ -15,7 +15,7 @@ public class PredicationFactoryTest
     [Test]
     [TestCase(typeof(Even), 0)]
     [TestCase(typeof(EqualTo), 1)]
-    [TestCase(typeof(Modulo), 1)]
+    [TestCase(typeof(DivisibleBy), 1)]
     [TestCase(typeof(Modulo), 2)]
     [TestCase(typeof(EquivalentTo), 1)]
     [TestCase(typeof(EquivalentTo), 2)]
@@ -31,6 +31,7 @@ public class PredicationFactoryTest
     [TestCase(typeof(EqualTo), 0)]
     [TestCase(typeof(Modulo), 3)]
     [TestCase(typeof(Modulo), 0)]
+    [TestCase(typeof(Modulo), 1)]
     [TestCase(typeof(EquivalentTo), 0)]
     [TestCase(typeof(EquivalentTo), 3)]
     public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)
@@ -88,5 +89,21 @@ public class PredicationFactoryTest
             Assert.That(predicate, Is.TypeOf<EqualTo>());
             Assert.That((predicate as EqualTo)!.Reference.Invoke(), Is.EqualTo(4));
         });
+    }
+
+    [TestCase(62, false)]
+    [TestCase(63, true)]
+    public void Instantiate_ClosedFunctionParameter_ResolvesThroughFunctionRegistry(object value, bool expected)
+    {
+        var reference = new InputExpressionParameter(
+            new Expressif.Bindings.ClosedExpression(
+                new LiteralParameter(45m),
+                [new Function("add", [new LiteralParameter(17m)])]));
+        var predication = new SinglePredication(
+            new Function("greater-than", [reference]));
+
+        var predicate = new PredicationFactory().Instantiate(predication, new Context());
+
+        Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
     }
 }

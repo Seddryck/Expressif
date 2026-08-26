@@ -1,0 +1,36 @@
+suite: text
+kind: predicate
+operator: is-sorted-before
+tests:
+  - id: is-sorted-before.valid
+    cases:
+      - id: is-sorted-before.valid.text.same
+        value: A
+        expected: false
+        parameters:
+          - A
+      - id: is-sorted-before.valid.text.before
+        value: A
+        expected: true
+        parameters:
+          - B
+      - id: is-sorted-before.valid.text.after
+        value: B
+        expected: false
+        parameters:
+          - A
+      - id: is-sorted-before.valid.empty-string.special.empty
+        value: ""
+        expected: false
+        parameters:
+          - (empty)
+      - id: is-sorted-before.valid.string.special.empty
+        value: A
+        expected: false
+        parameters:
+          - (empty)
+      - id: is-sorted-before.valid.null.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - (null)

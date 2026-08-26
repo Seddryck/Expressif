@@ -1,0 +1,32 @@
+suite: temporal
+kind: predicate
+operator: is-weekend
+tests:
+  - id: is-weekend.valid.date-time
+    cases:
+     - id: is-weekend.valid.date-time.friday
+       value: 2022-12-30 14:00:00
+       expected: false
+     - id: is-weekend.valid.date-time.saturday
+       value: 2022-12-31 14:00:00
+       expected: true
+     - id: is-weekend.valid.date-time.sunday
+       value: 2023-01-01 14:00:00
+       expected: true
+     - id: is-weekend.valid.date-time.monday
+       value: 2023-01-02 14:00:00
+       expected: false
+  - id: is-weekend.valid.date
+    cases:
+     - id: is-weekend.valid.date.friday
+       value: 2022-12-30
+       expected: false
+     - id: is-weekend.valid.date.saturday
+       value: 2022-12-31
+       expected: true
+     - id: is-weekend.valid.date.sunday
+       value: 2023-01-01
+       expected: true
+     - id: is-weekend.valid.date.monday
+       value: 2023-01-02
+       expected: false

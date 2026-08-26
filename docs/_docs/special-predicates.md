@@ -2,12 +2,12 @@
 title: Special predicates
 subtitle: Predicates applicable to special values
 tags: [predicates]
-keywords: [null] # AUTO-GENERATED KEYWORDS
+keywords: [is-null] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
-##### null
+##### is-null
 
-###### Alias: `is-null`
+###### Alias: `null`
 
 ###### Overview
 

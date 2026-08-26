@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.Numeric;
+using Expressif.Predicates.Numeric;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Numeric;
@@ -7,7 +7,7 @@ namespace Expressif.Testing.Predicates.Numeric;
 public class ModuloTest
 {
     [Conformance]
-    public void Modulo_Valid(object value, int modulus, int remainder, bool expected)
+    public void HasRemainder_Valid(object value, int modulus, int remainder, bool expected)
     {
         var predicate = new Modulo(() => modulus, () => remainder);
         Assert.Multiple(() =>
@@ -19,14 +19,26 @@ public class ModuloTest
     }
 
     [Conformance]
-    public void Even_Valid(object? value, bool expected)
+    public void IsDivisibleBy_Valid(object? value, int divisor, bool expected)
+    {
+        var predicate = new DivisibleBy(() => divisor);
+        Assert.Multiple(() =>
+        {
+            Assert.That(predicate.Divisor.Invoke(), Is.EqualTo(divisor));
+            Assert.That(predicate.Remainder.Invoke(), Is.Zero);
+            Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
+        });
+    }
+
+    [Conformance]
+    public void IsEven_Valid(object? value, bool expected)
     {
         var predicate = new Even();
         Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));
     }
 
     [Conformance]
-    public void Odd_Valid(object? value, bool expected)
+    public void IsOdd_Valid(object? value, bool expected)
     {
         var predicate = new Odd();
         Assert.That(predicate.Evaluate(value), Is.EqualTo(expected));

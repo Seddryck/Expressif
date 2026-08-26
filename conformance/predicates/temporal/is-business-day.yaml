@@ -1,0 +1,32 @@
+suite: temporal
+kind: predicate
+operator: is-business-day
+tests:
+  - id: is-business-day.valid.date-time
+    cases:
+     - id: is-business-day.valid.date-time.friday
+       value: 2022-12-30 14:00:00
+       expected: true
+     - id: is-business-day.valid.date-time.saturday
+       value: 2022-12-31 14:00:00
+       expected: false
+     - id: is-business-day.valid.date-time.sunday
+       value: 2023-01-01 14:00:00
+       expected: false
+     - id: is-business-day.valid.date-time.monday
+       value: 2023-01-02 14:00:00
+       expected: true
+  - id: is-business-day.valid.date
+    cases:
+     - id: is-business-day.valid.date.friday
+       value: 2022-12-30
+       expected: true
+     - id: is-business-day.valid.date.saturday
+       value: 2022-12-31
+       expected: false
+     - id: is-business-day.valid.date.sunday
+       value: 2023-01-01
+       expected: false
+     - id: is-business-day.valid.date.monday
+       value: 2023-01-02
+       expected: true

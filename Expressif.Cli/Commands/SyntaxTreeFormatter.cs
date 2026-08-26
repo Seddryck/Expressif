@@ -16,6 +16,7 @@ internal static class SyntaxTreeFormatter
         var value = node switch
         {
             FunctionCallSyntax function => function.Name,
+            BinaryOperatorSyntax binary => binary.Text.TrimStart('|').ToUpperInvariant(),
             NumericLiteralSyntax numeric => numeric.Value.ToString(CultureInfo.InvariantCulture),
             BooleanLiteralSyntax boolean => boolean.Value.ToString().ToLowerInvariant(),
             NullLiteralSyntax => "null",

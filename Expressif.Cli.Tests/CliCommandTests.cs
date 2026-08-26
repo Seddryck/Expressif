@@ -63,6 +63,93 @@ public class CliCommandTests
         });
     }
 
+    [TestCase("even", "4", "true")]
+    [TestCase("even", "5", "false")]
+    [TestCase("is-even", "4", "true")]
+    public async Task Evaluate_PredicateOnlyExpression_ReturnsBoolean(string expression, string input, string expected)
+    {
+        var result = await InvokeAsync("evaluate", expression, "--input", input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("4", "false")]
+    [TestCase("6", "true")]
+    [TestCase("7", "false")]
+    public async Task Evaluate_ComposedPredicateOnlyExpression_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync("evaluate", "even |AND greater-than(5)", "--input", input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("-1", "true")]
+    [TestCase("6", "true")]
+    [TestCase("3", "false")]
+    [TestCase("5", "false")]
+    public async Task Evaluate_NestedLowercasePredicateExpression_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "(even |and greater-than(5)) |or less-than(0)",
+            "--input",
+            input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("-3", "true")]
+    [TestCase("-2", "false")]
+    [TestCase("6", "true")]
+    [TestCase("7", "false")]
+    public async Task Evaluate_TwoNestedPredicateBranches_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "(odd |and less-than(0)) |or (even |and greater-than(5))",
+            "--input",
+            input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_PredicateClosedInputExpression_ResolvesNestedFunction()
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "filter(greater-than(17 | add(17)))",
+            "--input",
+            "{10,12,13}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
     [Test]
     public async Task Evaluate_MultipleInputOptions_ReturnsClearError()
     {

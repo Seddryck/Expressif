@@ -1,0 +1,51 @@
+suite: numeric
+kind: predicate
+operator: is-opposite
+tests:
+  - id: is-opposite.valid
+    cases:
+      - id: is-opposite.valid.numeric.success.positive
+        value: 10
+        expected: true
+        parameters:
+          - -10
+      - id: is-opposite.valid.numeric.success.negative
+        value: -10
+        expected: true
+        parameters:
+          - 10
+      - id: is-opposite.valid.numeric.failure.positive
+        value: 4
+        expected: false
+        parameters:
+          - -11
+      - id: is-opposite.valid.numeric.failure.negative
+        value: -4
+        expected: false
+        parameters:
+          - 11
+      - id: is-opposite.valid.numeric.zero
+        value: 0
+        expected: true
+        parameters:
+          - 0
+      - id: is-opposite.valid.numeric.equal
+        value: 10
+        expected: false
+        parameters:
+          - 10
+      - id: is-opposite.valid.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - 10
+      - id: is-opposite.valid.special.empty-tag
+        value: (empty)
+        expected: false
+        parameters:
+          - 10
+      - id: is-opposite.valid.special.blank
+        value: (blank)
+        expected: false
+        parameters:
+          - 10
