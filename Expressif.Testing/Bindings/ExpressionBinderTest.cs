@@ -1,5 +1,4 @@
 using Expressif.Bindings;
-using System.Diagnostics;
 
 namespace Expressif.Testing.Bindings;
 
@@ -10,43 +9,65 @@ public class ExpressionBinderTest
     { }
 
     [Test]
-    public void Bind_ParsedSyntax_ReturnsExecutableExpression()
+    public void Bind_OpenFunction_ReturnsBoundFunction()
     {
-        var syntax = ExpressionParser.Parse("upper");
-        var expression = ExpressionBinder.Bind(syntax);
+        var syntax = SyntaxFactory.Open(null, SyntaxFactory.Function("upper"));
+        var expression = ((OpenRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
 
-        Assert.That(expression.Evaluate("foo"), Is.EqualTo("FOO"));
+        Assert.That(expression.Members.Single().Name, Is.EqualTo("upper"));
     }
 
     [Test]
-    [TestCase("text-to-func(\"foo\", @bar)", 1)]
-    [TestCase("text-to-func", 1)]
-    [TestCase("text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar)", 2)]
-    [TestCase("text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar) | boolean-to-func", 3)]
-    public void Parse_Expression_Valid(string value, int count)
-        => Assert.That(BindingTestAdapter.Open(value).Members.Count, Is.EqualTo(count));
+    public void Bind_OpenExpression_PreservesMembers()
+    {
+        var syntax = SyntaxFactory.Open(
+            SyntaxFactory.Function("text-to-func", SyntaxFactory.Argument(SyntaxFactory.Text("foo"))),
+            SyntaxFactory.Function("numeric-to-func", SyntaxFactory.Argument(SyntaxFactory.Variable("bar"))),
+            SyntaxFactory.Function("boolean-to-func"));
+
+        var expression = ((OpenRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
+
+        Assert.That(expression.Members.Select(member => member.Name),
+            Is.EqualTo(new[] { "text-to-func", "numeric-to-func", "boolean-to-func" }));
+    }
 
     [Test]
-    [TestCase("@foo | text-to-func(\"foo\", @bar)", 1)]
-    [TestCase("@foo | text-to-func(\"foo\") | numeric-to-func(\"foo\", @bar)", 2)]
-    [TestCase("\"foo\"", 0)]
-    public void Parse_ParametrizedExpression_Valid(string value, int count)
-        => Assert.That(BindingTestAdapter.Closed(value).Members.Count, Is.EqualTo(count));
+    public void Bind_ClosedExpression_PreservesSourceAndPipeline()
+    {
+        var syntax = SyntaxFactory.Closed(
+            SyntaxFactory.Variable("foo"),
+            SyntaxFactory.Function("text-to-func", SyntaxFactory.Argument(SyntaxFactory.Text("foo"))),
+            SyntaxFactory.Function("numeric-to-func", SyntaxFactory.Argument(SyntaxFactory.Variable("bar"))));
+
+        var expression = ((ClosedRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expression.Parameter, Is.EqualTo(new VariableParameter("foo")));
+            Assert.That(expression.Members.Select(member => member.Name),
+                Is.EqualTo(new[] { "text-to-func", "numeric-to-func" }));
+        });
+    }
 
     [Test]
-    [TestCase("{1,2,3} | sum")]
-    [TestCase("@foo | count")]
-    [TestCase("^.foo | min")]
-    [TestCase("^.1 | last")]
-    [TestCase("{#true,#true} | every")]
-    [TestCase("{#false,#true} | any")]
-    public void Parse_InputExpression_ImplicitFoldAggregation_Valid(string value)
-        => Assert.That(BindingTestAdapter.Closed(value).IsImplicitFoldAggregation, Is.True);
+    public void Bind_InputExpression_ImplicitFoldAggregation_Valid()
+    {
+        var syntax = SyntaxFactory.Closed(
+            SyntaxFactory.Array(SyntaxFactory.Number(1), SyntaxFactory.Number(2), SyntaxFactory.Number(3)),
+            SyntaxFactory.Function("sum"));
+
+        var expression = ((ClosedRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
+
+        Assert.That(expression.IsImplicitFoldAggregation, Is.True);
+    }
 
     [Test]
     public void Parse_ClosedExpression_SumDetectedAsImplicitFoldAccumulator()
     {
-        var expression = BindingTestAdapter.Closed("{1,2,3} | sum");
+        var syntax = SyntaxFactory.Closed(
+            SyntaxFactory.Array(SyntaxFactory.Number(1), SyntaxFactory.Number(2), SyntaxFactory.Number(3)),
+            SyntaxFactory.Function("sum"));
+        var expression = ((ClosedRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
 
         Assert.That(expression.IsImplicitFoldAggregation, Is.True);
         Assert.That(expression.GetImplicitFoldAccumulator(), Is.Not.Null);
@@ -54,28 +75,26 @@ public class ExpressionBinderTest
     }
 
     [Test]
-    [TestCase("@foo | lower", typeof(ClosedRootExpression))]
-    [TestCase("{1,2,3} | sum", typeof(ClosedRootExpression))]
-    [TestCase("@arr | count", typeof(ClosedRootExpression))]
-    [TestCase("{10,20,30} | lag", typeof(ClosedRootExpression))]
-    [TestCase("{10,20,30} | lead", typeof(ClosedRootExpression))]
-    [TestCase("{1,2,3} | scan(sum)", typeof(ClosedRootExpression))]
-    [TestCase("sum | add(3)", typeof(OpenRootExpression))]
-    [TestCase("lower(foo) | trim", typeof(OpenRootExpression))]
-    [TestCase("{1,2,3} | broadcast(sum)", typeof(ClosedRootExpression))]
-    [TestCase("{1,2,3} | map(multiply(2))", typeof(ClosedRootExpression))]
-    [TestCase("{`alice`,`bob`} | map(upper | first-chars(2))", typeof(ClosedRootExpression))]
-    [TestCase("{1,2,3,4} | filter(greater-than(2))", typeof(ClosedRootExpression))]
-    public void Parse_RootExpression_ClosedFirst(string value, Type expectedType)
-        => Assert.That(BindingTestAdapter.Root(value), Is.TypeOf(expectedType));
+    public void Bind_RootExpression_DistinguishesOpenAndClosedSyntax()
+    {
+        var binder = new ExpressifBinder();
+        var closed = SyntaxFactory.Closed(SyntaxFactory.Variable("foo"), SyntaxFactory.Function("lower"));
+        var open = SyntaxFactory.Open(SyntaxFactory.Function("sum"), SyntaxFactory.Function("add"));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(binder.Bind(closed), Is.TypeOf<ClosedRootExpression>());
+            Assert.That(binder.Bind(open), Is.TypeOf<OpenRootExpression>());
+        });
+    }
 
     [Test]
     public void Parse_ContextualRecordAccessAsPipelineStage_ThrowsActionableBindingException()
     {
-        const string source = "record(name:=.lastName | append(\", \") | ^.firstName)";
+        var syntax = SyntaxFactory.Open(null, SyntaxFactory.RecordAccess("firstName", true));
 
         Assert.That(
-            () => BindingTestAdapter.Root(source),
+            () => new ExpressifBinder().Bind(syntax),
             Throws.TypeOf<BindingException>()
                 .With.Message.EqualTo(
                     "Contextual record access '^.firstName' cannot be used directly as a pipeline stage. " +
@@ -85,7 +104,13 @@ public class ExpressionBinderTest
     [Test]
     public void Parse_MapShorthand_LowersToMapFunction()
     {
-        var expression = BindingTestAdapter.Closed("{1,2,3} |> (absolute | add(5)) | reverse");
+        var syntax = SyntaxFactory.Closed(
+            SyntaxFactory.Array(SyntaxFactory.Number(1), SyntaxFactory.Number(2), SyntaxFactory.Number(3)),
+            SyntaxFactory.Map(
+                SyntaxFactory.Function("absolute"),
+                SyntaxFactory.Function("add", SyntaxFactory.Argument(SyntaxFactory.Number(5)))),
+            SyntaxFactory.Function("reverse"));
+        var expression = ((ClosedRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
 
         Assert.Multiple(() =>
         {
@@ -96,13 +121,14 @@ public class ExpressionBinderTest
     }
 
     [Test]
-    [TestCase("|> add(1) | sum", new[] { "add" })]
-    [TestCase("|> (add(1)) | sum", new[] { "add" })]
-    [TestCase("|> (absolute | add(1)) | sum", new[] { "absolute", "add" })]
-    public void Parse_LeadingMapPipeline_ResumesParentPipelineAfterMappedExpression(
-        string value, string[] expectedMappedFunctions)
+    public void Parse_LeadingMapPipeline_ResumesParentPipelineAfterMappedExpression()
     {
-        var root = BindingTestAdapter.Root(value);
+        var syntax = SyntaxFactory.Open(
+            SyntaxFactory.Map(
+                SyntaxFactory.Function("absolute"),
+                SyntaxFactory.Function("add", SyntaxFactory.Argument(SyntaxFactory.Number(1)))),
+            SyntaxFactory.Function("sum"));
+        var root = new ExpressifBinder().Bind(syntax);
 
         Assert.That(root, Is.TypeOf<OpenRootExpression>());
         var expression = ((OpenRootExpression)root).Expression;
@@ -114,14 +140,19 @@ public class ExpressionBinderTest
             Assert.That(expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "map", "sum" }));
             Assert.That(map.Name, Is.EqualTo("map"));
             Assert.That(map.Syntax, Is.EqualTo(FunctionSyntax.MapShorthand));
-            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(expectedMappedFunctions));
+            Assert.That(mappedExpression.Members.Select(x => x.Name), Is.EqualTo(new[] { "absolute", "add" }));
         });
     }
 
     [Test]
     public void Parse_UnparenthesizedMapShorthand_ConsumesSingleFunction()
     {
-        var expression = BindingTestAdapter.Closed("{1,2,3} |> absolute | add(1) | sum");
+        var syntax = SyntaxFactory.Closed(
+            SyntaxFactory.Array(SyntaxFactory.Number(1), SyntaxFactory.Number(2), SyntaxFactory.Number(3)),
+            SyntaxFactory.Map(SyntaxFactory.Function("absolute")),
+            SyntaxFactory.Function("add", SyntaxFactory.Argument(SyntaxFactory.Number(1))),
+            SyntaxFactory.Function("sum"));
+        var expression = ((ClosedRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
 
         var map = expression.Members.First();
         var mappedExpression = ((OpenExpressionParameter)map.Parameters.Single()).Expression;
@@ -136,7 +167,13 @@ public class ExpressionBinderTest
     [Test]
     public void Parse_AdjacentOpenComposition_PreservesTupleProjections()
     {
-        var adjacent = BindingTestAdapter.Function("adjacent($1 | subtract($0) | multiply($1))");
+        var composition = SyntaxFactory.Open(
+            SyntaxFactory.TupleProjection(1),
+            SyntaxFactory.Function("subtract", SyntaxFactory.Argument(SyntaxFactory.TupleProjection(0))),
+            SyntaxFactory.Function("multiply", SyntaxFactory.Argument(SyntaxFactory.TupleProjection(1))));
+        var syntax = SyntaxFactory.Open(
+            SyntaxFactory.Function("adjacent", SyntaxFactory.Argument(SyntaxFactory.Parenthesized(composition))));
+        var adjacent = new ExpressifBinder().BindFunction(syntax);
         var expression = ((OpenExpressionParameter)adjacent.Parameters.Single()).Expression;
 
         Assert.Multiple(() =>

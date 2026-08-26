@@ -19,7 +19,7 @@ public class ParameterSerializer
     {
         return parameter switch
         {
-            ArrayParameter a => $"{{{string.Join(", ", a.Values.Select(Serialize))}}}",
+            ArrayParameter a => $"{{{string.Join(", ", a.Elements.Select(SerializeArrayElement))}}}",
             TupleParameter t => $"T({string.Join(", ", t.Values.Select(Serialize))})",
             RecordLiteralParameter r when r.Fields.Length == 0 => "{:}",
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
@@ -36,6 +36,9 @@ public class ParameterSerializer
             _ => throw new NotSupportedException()
         };
     }
+
+    private string SerializeArrayElement(ArrayElementParameter element)
+        => $"{(element.IsSpread ? "..." : string.Empty)}{Serialize(element.Value)}";
 
     private string SerializeRecordEntry(IRecordDefinitionEntry entry)
         => entry switch

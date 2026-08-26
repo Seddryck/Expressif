@@ -580,7 +580,7 @@ public class ExpressionTest
     [Test]
     public void Evaluate_Record_EmbeddingIncomingValue_DoesNotExpand()
     {
-        var expression = Expression.Create("record(original := ..., normalized := upper)");
+        var expression = Expression.Create("record(original := @_, normalized := upper)");
         var result = (RecordValue)expression.Evaluate("Alice")!;
 
         Assert.Multiple(() =>

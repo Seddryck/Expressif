@@ -41,6 +41,8 @@ public class FunctionSerializer
             {
                 if (argument.Name is not null)
                     stringBuilder.Append(argument.Name).Append(" := ");
+                if (argument.IsSpread)
+                    stringBuilder.Append("...");
                 stringBuilder.Append(ParameterSerializer.Serialize(argument.Value switch
                 {
                     IParameter p => p,

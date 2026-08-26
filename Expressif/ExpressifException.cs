@@ -67,3 +67,5 @@ public class ExpressionRequiresInputException : ExpressifException
             : $"The expression cannot be evaluated without an input because it references '{reference}'.")
     { }
 }
+
+public sealed class SpreadArgumentException(string message) : ExpressifException(message);

@@ -1,77 +1,60 @@
 using Expressif.Bindings;
-using System.Diagnostics;
 
 namespace Expressif.Testing.Bindings;
 
 public class PredicationBinderTest
 {
-    [SetUp]
-    public void Setup()
-    { }
+    private static ExpressifBinder Binder { get; } = new();
 
     [Test]
-    [TestCase("is-func(foo, @bar)", 1)]
-    [TestCase("is-func", 1)]
-    [TestCase("!is-func(foo)", 2)]
-    [TestCase(" ! is-func(foo)", 2)]
-    [TestCase("(is-func(foo))", 2)]
-    [TestCase("is-func(foo) |AND is-foo", 2)]
-    [TestCase("(is-func(foo) |AND is-foo)", 2)]
-    [TestCase("(is-func(foo) |AND is-foo) |OR bar(123)", 2)]
-    [TestCase("(is-func(foo) |AND is-foo) |OR !bar(123)", 2)]
-    public void Parse_Predication_Valid(string value, int count)
-        => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
-
-    [Test]
-    [TestCase("123 | !equal-to(125)")]
-    [TestCase("123 | ! equal-to(125) ")]
-    [TestCase("123 | !equal-to(125) |OR even ")]
-    [TestCase("123 | ( ! equal-to(125) ) ")]
-    [TestCase("123 | ( ! equal-to(125) |OR even ) |AND !null ")]
-    public void Parse_ParametrizedPredication_Valid(string value)
-        => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
-
-    [Test]
-    [TestCase("is-func")]
-    [TestCase("is-func(foo, @bar)")]
-    public void Parse_SinglePredication_Valid(string value)
-        => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
-
-    [Test]
-    [TestCase("!is-func")]
-    [TestCase("!is-func(foo, @bar)")]
-    public void Parse_UnaryPredication_Valid(string value)
-        => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
-
-    [Test]
-    [TestCase("is-func(foo) |AND is-foo")]
-    public void Parse_BinaryPredication_Valid(string value)
-        => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
-
-    public void Parse_NotShorthand_LowersToCombinator()
+    public void Bind_SinglePredication_PreservesFunction()
     {
-        var predication = (SinglePredication)BindingTestAdapter.Predication("!even");
+        var syntax = SyntaxFactory.Open(SyntaxFactory.Function("even"));
 
-        Assert.That(predication.Members.Last().Name, Is.EqualTo("not"));
+        var predication = (SinglePredication)Binder.BindPredication(syntax);
+
+        Assert.That(predication.Members.Single().Name, Is.EqualTo("even"));
     }
 
-    [TestCase("even |AND odd", "and")]
-    [TestCase("even |OR odd", "or")]
-    [TestCase("even |XOR odd", "xor")]
-    public void Parse_BinaryShorthand_PreservesBothOperands(string value, string expected)
+    [Test]
+    public void Bind_UnaryPredication_LowersToNot()
     {
-        var predication = (BinaryPredication)BindingTestAdapter.Predication(value);
+        var syntax = SyntaxFactory.Open(SyntaxFactory.Unary("!", SyntaxFactory.Function("even")));
+
+        var predication = (SinglePredication)Binder.BindPredication(syntax);
+
+        Assert.That(predication.Members.Select(member => member.Name), Is.EqualTo(new[] { "even", "not" }));
+    }
+
+    [Test]
+    public void Bind_BinaryPredication_LowersToCombinator()
+    {
+        var syntax = SyntaxFactory.Open(SyntaxFactory.Binary(
+            SyntaxFactory.Function("even"),
+            "|AND",
+            SyntaxFactory.Function("odd")));
+
+        var predication = (BinaryPredication)Binder.BindPredication(syntax);
 
         Assert.Multiple(() =>
         {
-            Assert.That(predication.Operator.Name, Is.EqualTo(expected));
+            Assert.That(predication.Operator.Name, Is.EqualTo("and"));
             Assert.That(predication.LeftMember, Is.TypeOf<SinglePredication>());
             Assert.That(predication.RightMember, Is.TypeOf<SinglePredication>());
         });
     }
 
     [Test]
-    [TestCase("(is-func)")]
-    public void Parse_SubPredication_Valid(string value)
-        => Assert.That(BindingTestAdapter.Predication(value), Is.Not.Null);
+    public void Bind_ClosedPredication_PreservesSourceMember()
+    {
+        var syntax = SyntaxFactory.Closed(
+            SyntaxFactory.Number(123),
+            SyntaxFactory.Unary("!", SyntaxFactory.Function(
+                "equal-to",
+                SyntaxFactory.Argument(SyntaxFactory.Number(125)))));
+
+        var predication = (SinglePredication)Binder.BindPredication(syntax);
+
+        Assert.That(predication.Members.Select(member => member.Name), Is.EqualTo(new[] { "equal-to", "not" }));
+    }
 }

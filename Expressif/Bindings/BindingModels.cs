@@ -13,7 +13,7 @@ public enum FunctionSyntax
     TupleProjectionShorthand,
 }
 
-public sealed record FunctionArgument(string? Name, IParameter Value);
+public sealed record FunctionArgument(string? Name, IParameter Value, bool IsSpread = false);
 
 public sealed class Function : IBoundExpression
 {
@@ -57,7 +57,14 @@ public sealed record ObjectPropertyParameter(string Name) : IParameter;
 public sealed record ObjectIndexParameter(int Index) : IParameter;
 public sealed record TupleProjectionParameter(int Index, bool FromEnd = false) : IParameter;
 public sealed record ContextParameter(Func<IContext, object?> Function) : IParameter;
-public sealed record ArrayParameter(IParameter[] Values) : IParameter;
+public sealed record ArrayElementParameter(IParameter Value, bool IsSpread = false);
+public sealed record ArrayParameter(ArrayElementParameter[] Elements) : IParameter
+{
+    public ArrayParameter(IParameter[] values)
+        : this(values.Select(value => new ArrayElementParameter(value)).ToArray()) { }
+
+    public IParameter[] Values => Elements.Select(element => element.Value).ToArray();
+}
 public sealed record TupleParameter(IParameter[] Values) : IParameter;
 public sealed record QuotedLiteralParameter(string Value) : IParameter;
 public sealed record IncomingValueParameter() : IParameter;

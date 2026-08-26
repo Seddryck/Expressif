@@ -15,4 +15,5 @@ public sealed record FunctionParameterDocumentation(
     string Name,
     string Type,
     bool Optional,
-    string Summary);
+    string Summary,
+    bool Variadic = false);

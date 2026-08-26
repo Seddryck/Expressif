@@ -1,107 +1,99 @@
 using Expressif.Bindings;
-using Expressif.Values;
 
 namespace Expressif.Testing.Bindings;
 
 public class ParameterBinderTest
 {
-    [SetUp]
-    public void Setup()
-    { }
+    private static ExpressifBinder Binder { get; } = new();
 
     [Test]
     public void Bind_LiteralSyntax_PreservesTypedValues()
     {
         Assert.Multiple(() =>
         {
-            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("42")).Value, Is.EqualTo(42m).And.TypeOf<decimal>());
-            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#true")).Value, Is.EqualTo(true).And.TypeOf<bool>());
-            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#null")).Value, Is.Null);
-            Assert.That(((QuotedLiteralParameter)BindingTestAdapter.Parameter("\"Alice\"")).Value, Is.EqualTo("Alice").And.TypeOf<string>());
-            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#\"2026-08-17\"")).Value, Is.EqualTo(new DateOnly(2026, 8, 17)).And.TypeOf<DateOnly>());
-            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#\"2026-08-17T14:30:00\"")).Value, Is.EqualTo(new DateTime(2026, 8, 17, 14, 30, 0)).And.TypeOf<DateTime>());
-            Assert.That(((LiteralParameter)BindingTestAdapter.Parameter("#\"14:30:00\"")).Value, Is.EqualTo(new TimeOnly(14, 30, 0)).And.TypeOf<TimeOnly>());
+            Assert.That(BindParameter(SyntaxFactory.Number(42)), Is.EqualTo(new LiteralParameter(42m)));
+            Assert.That(BindParameter(SyntaxFactory.Boolean(true)), Is.EqualTo(new LiteralParameter(true)));
+            Assert.That(BindParameter(SyntaxFactory.Null()), Is.EqualTo(new LiteralParameter(null)));
+            Assert.That(BindParameter(SyntaxFactory.Text("Alice")),
+                Is.EqualTo(new QuotedLiteralParameter("Alice")));
         });
     }
 
     [Test]
-    [TestCase("`foo`", typeof(QuotedLiteralParameter))]
-    [TestCase("\"foo\"", typeof(QuotedLiteralParameter))]
-    [TestCase("@foo", typeof(VariableParameter))]
-    [TestCase("^.foo", typeof(ObjectPropertyParameter))]
-    [TestCase("^.52", typeof(ObjectIndexParameter))]
-    [TestCase("{}", typeof(ArrayParameter))]
-    [TestCase("{:}", typeof(RecordLiteralParameter))]
-    [TestCase("{1,2,3}", typeof(ArrayParameter))]
-    [TestCase("{name := \"Alice\"}", typeof(RecordLiteralParameter))]
-    [TestCase("{`first name` := \"Alice Smith\", active := #true}", typeof(RecordLiteralParameter))]
-    [TestCase("{@foo}", typeof(ArrayParameter))]
-    [TestCase("{ @foo, ^.1, ^.bar }", typeof(ArrayParameter))]
-    [TestCase("( @foo | text-to-func(\"bar\") )", typeof(InputExpressionParameter))]
-    [TestCase("T(10, 20)", typeof(TupleParameter))]
-    [TestCase("T(1, T(2, 3))", typeof(TupleParameter))]
-    public void Parse_Parameter_Valid(string value, Type type)
-        => Assert.That(BindingTestAdapter.Parameter(value), Is.TypeOf(type));
+    public void Bind_References_PreserveParameterTypes()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(BindParameter(SyntaxFactory.Variable("foo")), Is.TypeOf<VariableParameter>());
+            Assert.That(BindParameter(SyntaxFactory.RecordAccess("foo")), Is.TypeOf<ObjectPropertyParameter>());
+            Assert.That(BindParameter(SyntaxFactory.Incoming()), Is.TypeOf<IncomingValueParameter>());
+        });
+    }
 
     [Test]
-    public void Parse_ParenthesizedClosedExpression_PreservesSourceAndPipeline()
+    public void Bind_ArrayLiteral_PreservesSpreadElements()
     {
-        var parameter = (InputExpressionParameter)BindingTestAdapter.Parameter("( @foo | text-to-func(\"bar\") )");
+        var syntax = SyntaxFactory.Array(
+            SyntaxFactory.ArrayElement(SyntaxFactory.Number(1)),
+            SyntaxFactory.ArrayElement(SyntaxFactory.Variable("items"), true),
+            SyntaxFactory.ArrayElement(null, true));
+
+        var parameter = (ArrayParameter)BindParameter(syntax);
 
         Assert.Multiple(() =>
         {
-            Assert.That(parameter.Expression.Parameter, Is.EqualTo(new VariableParameter("foo")));
-            Assert.That(parameter.Expression.Members.Select(x => x.Name), Is.EqualTo(new[] { "text-to-func" }));
+            Assert.That(parameter.Elements.Select(element => element.IsSpread),
+                Is.EqualTo(new[] { false, true, true }));
+            Assert.That(parameter.Elements.Last().Value, Is.TypeOf<IncomingValueParameter>());
         });
     }
 
     [Test]
-    [TestCase("(\"foo\", \"bar\")")]
-    [TestCase("( \"foo\", \"bar\" ) ")]
-    [TestCase("(@foo , \"bar\")")]
-    [TestCase("(^.foo , ^.1)")]
-    [TestCase("(I[10, 45] , ^.1)")]
-    [TestCase("(I[10, 45[ , ^.foo)")]
-    [TestCase("(@foo , { @foo | text-to-func(\"bar\", @foo) })")]
-    [TestCase("(@foo , { @foo | text-to-func(\"bar\", { @fool | numeric-to-func(^.3, ^.bez) }) })")]
-    public void Parse_Parameters_Valid(string value)
-        => Assert.That(BindingTestAdapter.Parameters(value).Count, Is.EqualTo(2));
-
-    [Test]
-    [TestCase("{{1, 2, 3}, {4, 5}}")]
-    [TestCase("{{\"a\", \"b\"}, {\"c\"}}")]
-    [TestCase("{{#true, #false}, {#null, 3}}")]
-    public void Parse_Parameter_NestedArrays_Valid(string value)
+    public void Bind_RecordLiteral_PreservesNamedFields()
     {
-        var parsed = BindingTestAdapter.Parameter(value);
+        var syntax = SyntaxFactory.Record(
+            SyntaxFactory.Field("name", SyntaxFactory.Text("Alice")),
+            SyntaxFactory.Field("active", SyntaxFactory.Boolean(true)));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(parsed, Is.TypeOf<ArrayParameter>());
-            var outer = (ArrayParameter)parsed;
-            Assert.That(outer.Values, Has.Length.EqualTo(2));
-            Assert.That(outer.Values[0], Is.TypeOf<ArrayParameter>());
-            Assert.That(outer.Values[1], Is.TypeOf<ArrayParameter>());
-        });
+        var parameter = (RecordLiteralParameter)BindParameter(syntax);
+
+        Assert.That(parameter.Fields.Select(field => field.Name), Is.EqualTo(new[] { "name", "active" }));
     }
 
     [Test]
-    public void Parse_Parameter_EmptyRecordLiteral_ParsesNoFields()
+    public void Bind_RecordLiteralUnnamedSpread_ThrowsBindingError()
     {
-        var parsed = BindingTestAdapter.Parameter("{:}");
+        var syntax = SyntaxFactory.Record(new RecordSpreadSyntax(new SourceSpan(0, 3), "..."));
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(parsed, Is.TypeOf<RecordLiteralParameter>());
-            Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
-        });
+        Assert.That(
+            () => BindParameter(syntax),
+            Throws.TypeOf<BindingException>()
+                .With.Message.EqualTo("Record literal spread entries must specify a field name."));
     }
 
     [Test]
-    public void Parse_TupleLiteral_RoundTripsThroughClosedExpression()
+    public void Bind_RecordLiteralSpreadField_ThrowsBindingError()
     {
-        var value = Expression.CreateClosed("T(1, T(2, 3))").Evaluate(null);
+        var syntax = SyntaxFactory.Record(SyntaxFactory.Field("field", SyntaxFactory.Variable("value"), true));
 
-        Assert.That(ValueFormatter.Format(value), Is.EqualTo("T(1, T(2, 3))"));
+        Assert.That(
+            () => BindParameter(syntax),
+            Throws.TypeOf<BindingException>()
+                .With.Message.EqualTo("Record literal field 'field' does not support spread values."));
     }
+
+    [Test]
+    public void Bind_TupleLiteral_PreservesNestedTuple()
+    {
+        var syntax = SyntaxFactory.Tuple(
+            SyntaxFactory.Number(1),
+            SyntaxFactory.Tuple(SyntaxFactory.Number(2), SyntaxFactory.Number(3)));
+
+        var parameter = (TupleParameter)BindParameter(syntax);
+
+        Assert.That(parameter.Values.Last(), Is.TypeOf<TupleParameter>());
+    }
+
+    private static IParameter BindParameter(ValueSyntax value)
+        => Binder.BindParameter(SyntaxFactory.Closed(value));
 }

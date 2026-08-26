@@ -65,7 +65,9 @@ public class ExpressionSerializerTest
     [Test]
     public void Serialize_MapShorthand_PreservesShorthand()
     {
-        var expression = BindingTestAdapter.Closed("{1,2,3} |> (absolute | add(5)) | reverse");
+        var root = new ExpressifBinder().Bind(
+            ExpressifSyntax.Parse("{1,2,3} |> (absolute | add(5)) | reverse"));
+        var expression = ((ClosedRootExpression)root).Expression;
 
         Assert.That(new ExpressionSerializer().Serialize(expression),
             Is.EqualTo("{1, 2, 3} |> (absolute | add(5)) | reverse"));
