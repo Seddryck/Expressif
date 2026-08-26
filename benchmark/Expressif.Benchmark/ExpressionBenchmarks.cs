@@ -14,6 +14,12 @@ public class ExpressionBenchmarks
     private Func<object?, object?> textEvaluator = null!;
     private Func<object?, object?> coercionEvaluator = null!;
 
+    [GlobalSetup(Target = nameof(ParseComplexPipeline))]
+    public void SetupComplexParsing() => SetupAdapter();
+
+    [GlobalSetup(Target = nameof(ParseCoercionPipeline))]
+    public void SetupCoercionParsing() => SetupAdapter();
+
     [GlobalSetup(Target = nameof(ParseAndBindComplexPipeline))]
     public void SetupConstruction() => SetupAdapter();
 
@@ -45,6 +51,12 @@ public class ExpressionBenchmarks
         SetupAdapter();
         coercionEvaluator = adapter.CreateEvaluator(CoercionExpression);
     }
+
+    [Benchmark(Description = "Parse complex text pipeline")]
+    public object ParseComplexPipeline() => adapter.Parse(ComplexTextExpression);
+
+    [Benchmark(Description = "Parse implicit-coercion pipeline")]
+    public object ParseCoercionPipeline() => adapter.Parse(CoercionExpression);
 
     [Benchmark(Description = "Parse and bind complex pipeline")]
     public object ParseAndBindComplexPipeline() => adapter.Create(ComplexTextExpression);

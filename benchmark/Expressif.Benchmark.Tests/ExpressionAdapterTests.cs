@@ -23,6 +23,20 @@ public class ExpressionAdapterTests
 
     [TestCase("V1")]
     [TestCase("V2")]
+    public void WorkloadSources_ParseSuccessfully(string adapterName)
+    {
+        var kind = Enum.Parse<AdapterKind>(adapterName);
+        var adapter = ExpressionAdapter.Load(GetVersion(kind).Directory);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => adapter.Parse(ComplexTextExpression), Throws.Nothing);
+            Assert.That(() => adapter.Parse(CoercionExpression), Throws.Nothing);
+        });
+    }
+
+    [TestCase("V1")]
+    [TestCase("V2")]
     public void CoercionPipeline_NumericStringReturnsFormattedText(string adapterName)
     {
         var kind = Enum.Parse<AdapterKind>(adapterName);

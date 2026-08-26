@@ -47,3 +47,7 @@ The adapter tests verify the coercion pipeline on each available API generation.
 also verify that the complex v1 workload parses, binds, and evaluates successfully.
 Tests are skipped with a setup explanation when their required manually supplied version
 is absent.
+
+The suite reports native parsing separately for the complex text and implicit-coercion
+sources. These parse-only benchmarks reuse parser delegates prepared during setup, so
+they exclude binding and expression construction.
