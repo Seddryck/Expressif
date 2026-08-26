@@ -10,7 +10,8 @@ internal interface IHeaderDataReader : IDataReader
 internal sealed class OwnedDataReader(
     IDataReader inner,
     IDisposable owner,
-    bool headersAreRows = false) : IHeaderDataReader
+    bool headersAreRows = false,
+    bool skipRepeatedHeaders = false) : IHeaderDataReader
 {
     public bool HeadersAreRows { get; } = headersAreRows;
 
@@ -35,7 +36,27 @@ internal sealed class OwnedDataReader(
 
     public DataTable GetSchemaTable() => inner.GetSchemaTable()!;
     public bool NextResult() => inner.NextResult();
-    public bool Read() => inner.Read();
+    public bool Read()
+    {
+        while (inner.Read())
+        {
+            if (!skipRepeatedHeaders || !IsHeaderRow())
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool IsHeaderRow()
+    {
+        for (var i = 0; i < FieldCount; i++)
+        {
+            if (!string.Equals(Convert.ToString(inner.GetValue(i)), inner.GetName(i), StringComparison.OrdinalIgnoreCase))
+                return false;
+        }
+
+        return true;
+    }
 
     public void Dispose()
     {

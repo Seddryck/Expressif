@@ -1003,6 +1003,42 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_SourceCsv_WithMultipleHeaderRows_DoesNotEmitAdditionalHeaders()
+    {
+        var sourcePath = CreateTempFile($"person{Environment.NewLine}name{Environment.NewLine}Alice{Environment.NewLine}Bob", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "upper", "--source", sourcePath, "--scalar",
+            "--source-option", "header-rows={1, 2}");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_WithRepeatedHeaders_DoesNotEmitRepeatedHeader()
+    {
+        var sourcePath = CreateTempFile($"name{Environment.NewLine}Alice{Environment.NewLine}name{Environment.NewLine}Bob", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "upper", "--source", sourcePath, "--scalar",
+            "--source-option", "header-repeat=#true");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Run_SourceOption_WithoutSource_ReturnsClearError()
     {
         var result = await InvokeAsync("run", "absolute", "--input", "1", "--source-option", "header=#true");

@@ -287,13 +287,19 @@ internal sealed class SourceInfrastructure(
         {
             stream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var (profile, headersAreRows) = BuildCsvProfile(sourceOptions);
-            // Expressif builds dynamic row records from the CSV header. PocketCsvReader's
-            // schema-driven header mode requires a named schema, so keep header rows visible
-            // to the row adapter while retaining the configured profile for validation.
-            var readerProfile = profile.Dialect.Header ? WithoutCsvHeaderConsumption(profile) : profile;
+            var useConfiguredHeaderProcessing = sourceOptions.Any(IsHeaderProcessingOption);
+            // Expressif normally builds dynamic records from a visible first header row.
+            // Configured multi-row or repeating headers must instead be consumed by PocketCsvReader.
+            var readerProfile = useConfiguredHeaderProcessing
+                ? WithCsvHeaderConsumption(profile)
+                : profile.Dialect.Header ? WithoutCsvHeaderConsumption(profile) : profile;
             var csvReader = new CsvReader(readerProfile);
             var csvDataReader = csvReader.ToDataReader(stream);
-            return new OwnedDataReader(csvDataReader, stream, headersAreRows);
+            return new OwnedDataReader(
+                csvDataReader,
+                stream,
+                headersAreRows && !useConfiguredHeaderProcessing,
+                skipRepeatedHeaders: useConfiguredHeaderProcessing && profile.Dialect.HeaderRepeat);
         }
         catch
         {
@@ -304,6 +310,25 @@ internal sealed class SourceInfrastructure(
 
     internal (CsvProfile Profile, bool HeadersAreRows) BuildCsvProfile(IReadOnlyList<string> options)
         => new CsvSourceProfileBuilder(values).Build(options);
+
+    private static bool IsHeaderProcessingOption(string option)
+    {
+        var separator = option.IndexOf('=');
+        var name = separator < 0 ? option : option[..separator];
+        return name.Trim() is "header-rows" or "header-repeat";
+    }
+
+    private static CsvProfile WithCsvHeaderConsumption(CsvProfile profile)
+    {
+        var dialect = profile.Dialect;
+        var headerRows = dialect.HeaderRows.Length == 0 ? new[] { 1 } : dialect.HeaderRows;
+        var readerDialect = new DialectDescriptor(
+            true, headerRows, dialect.HeaderJoin, dialect.HeaderRepeat, dialect.CommentRows, dialect.CommentChar,
+            dialect.Delimiter, dialect.LineTerminator, dialect.QuoteChar, dialect.DoubleQuote,
+            dialect.EscapeChar, dialect.NullSequence, dialect.MissingCell, dialect.SkipInitialSpace,
+            dialect.ArrayDelimiter, dialect.ArrayPrefix, dialect.ArraySuffix);
+        return new CsvProfile(readerDialect, profile.Schema, profile.Resource, profile.Parsers);
+    }
 
     private static CsvProfile WithoutCsvHeaderConsumption(CsvProfile profile)
     {
