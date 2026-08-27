@@ -1,0 +1,35 @@
+---
+layout: docs
+title: "value-to-value"
+parent: "Special functions"
+grand_parent: "Functions library"
+nav_order: 150
+has_toc: false
+permalink: /functions/special/value-to-value/
+tags:
+  - functions
+  - special
+generated: true
+---
+
+```
+any →
+value-to-value() → text
+```
+
+Returns `value` except if the argument value is `null` then it returns `null`.
+
+## Parameters
+
+
+
+This function has no parameters.
+
+
+
+
+
+**Kind:** Function  
+**Scope:** `special`  
+**Aliases:** None
+{: .member-reference }

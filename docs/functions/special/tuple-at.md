@@ -1,0 +1,39 @@
+---
+layout: docs
+title: "tuple-at"
+parent: "Special functions"
+grand_parent: "Functions library"
+nav_order: 120
+has_toc: false
+permalink: /functions/special/tuple-at/
+tags:
+  - functions
+  - special
+generated: true
+---
+
+```
+tuple →
+tuple-at(
+    position: integer
+) → any
+```
+
+Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
+
+## Parameters
+
+
+
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `position` | `integer` | Yes | Specifies the zero-based position of the tuple field to return. |
+
+
+
+
+
+**Kind:** Function  
+**Scope:** `special`  
+**Aliases:** `tuple-at`
+{: .member-reference }

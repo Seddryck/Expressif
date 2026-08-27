@@ -1,0 +1,12 @@
+{% for example in include.examples %}
+
+{% include function-signature.html 
+    input=example.input
+    function=include.function 
+%}
+<div class="function-result">
+<strong>Result:>&nbsp;</strong>
+{{ example.output }}
+</div>
+
+{% endfor %}

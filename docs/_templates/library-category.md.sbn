@@ -1,0 +1,21 @@
+---
+layout: docs
+title: "{{ model.title }}"
+parent: "{{ model.parent_title }}"
+{{ model.grand_parent_line }}
+nav_order: {{ model.nav_order }}
+has_children: true
+has_toc: false
+permalink: /{{ model.kind_plural }}/{{ model.scope_path }}/
+tags:
+  - {{ model.kind_plural }}
+  - {{ model.root_scope }}
+{{ model.category_tag_line }}
+generated: true
+---
+
+Reference documentation for Expressif {{ model.kind_plural }} in the `{{ model.display_scope }}` scope.
+
+| Name | Overview |
+|:-----|:---------|
+{{ model.member_rows }}

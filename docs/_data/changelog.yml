@@ -1,5 +1,29 @@
 # Changelog page source
 
+- title: Release 2.0
+  label:
+  featured: true
+  date: Aug 28, 2026
+  list:
+  - Parser and binder refactored into separate stages, with Expressif.Syntax providing the parser
+  - Typed function contracts, implicit coercions, named arguments and hierarchical function scopes
+  - Predicates unified with boolean functions and standardized naming conventions
+  - Richer array, record and tuple processing, including set, mapping and aggregation operations
+  - Expanded CLI with run, parse and bind commands, improved diagnostics and embedded function help
+  - New documentation website with reorganized language, SDK, CLI and library references
+
+- title: First Expressif Language Server release
+  label:
+  date: Aug 14, 2026
+  list:
+  - First public release of the standalone Language Server Protocol implementation for Expressif
+
+- title: First Expressif.Syntax release
+  label:
+  date: Aug 9, 2026
+  list:
+  - First public release of Expressif's parser as an independent package
+
 - title: Release 1.14
   label:
   date: May 14, 2026
@@ -8,6 +32,7 @@
 
 - title: Release 1.0
   label:
+  featured: true
   date: Dec 22, 2023
   list:
   - Parity, in terms of predicates and functions, with the native language of NBi.io

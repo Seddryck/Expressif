@@ -1,0 +1,46 @@
+{% assign pages = site.html_pages
+  | where_exp: "item", "item.parent == page.parent"
+  | where_exp: "item", "item.nav_order != nil"
+  | sort: "nav_order" %}
+
+{% assign previous_page = nil %}
+{% assign next_page = nil %}
+{% assign current_index = nil %}
+
+{% for p in pages %}
+  {% if p.url == page.url %}
+    {% assign current_index = forloop.index0 %}
+  {% endif %}
+{% endfor %}
+
+{% if current_index != nil %}
+  {% if current_index > 0 %}
+    {% assign previous_index = current_index | minus: 1 %}
+    {% assign previous_page = pages[previous_index] %}
+  {% endif %}
+
+  {% assign next_index = current_index | plus: 1 %}
+  {% if next_index < pages.size %}
+    {% assign next_page = pages[next_index] %}
+  {% endif %}
+{% endif %}
+
+{% if previous_page or next_page %}
+  <nav class="page-nav" aria-label="Documentation pagination">
+    {% if previous_page %}
+      <a class="page-nav__link page-nav__link--previous" href="{{ previous_page.url | relative_url }}" rel="prev">
+        <span class="page-nav__direction">← Previous</span>
+        <span class="page-nav__title">{{ previous_page.title }}</span>
+      </a>
+    {% else %}
+      <span class="page-nav__spacer" aria-hidden="true"></span>
+    {% endif %}
+
+    {% if next_page %}
+      <a class="page-nav__link page-nav__link--next" href="{{ next_page.url | relative_url }}" rel="next">
+        <span class="page-nav__direction">Next →</span>
+        <span class="page-nav__title">{{ next_page.title }}</span>
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}

@@ -9,115 +9,135 @@ title:              Expressif
 description:        Documentation of Expressif, a variable substitution engine with a rich library of functions and predicates
 lang:               en
 
+# Theme settings
+theme:              just-the-docs
+
+# Customizations for Just the Docs theme
+logo: "/assets/images/expressif-logo-reversed.png"
+favicon_ico: "/assets/images/favicon.ico"
+color_scheme: expressif
+
+just_the_docs:
+  custom_css:
+    - custom
+
+defaults:
+  -
+    scope:
+      path: "language"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "getting-started"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "functions"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "predicates"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "accumulators"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "cli"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "dotnet-sdk"
+    values:
+      layout: docs
+  -
+    scope:
+      path: "tooling"
+    values:
+      layout: docs
+
+# Aux links for the upper right navigation
+aux_links:
+  "Issue tracking":
+    - "https://github.com/Seddryck/Expressif/issues"
+  "View on GitHub":
+    - "https://github.com/Seddryck/Expressif"
+
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: true
+
+
+sass:
+  quiet_deps: true
+
 # Site subpath, e.g. /blog
-baseurl:            "/Expressif"
+baseurl: "/Expressif"
+url: "http://127.0.0.1:4000"
 
 # Permalink URLs structure, for permalink style options see: https://jekyllrb.com/docs/permalinks/
 permalink:          /:title/
 
-# Site base hostname & protocol, e.g. http://example.com
-url:                ""
 
-# Site logo # e.g. logo.png, upload logo image file to /uploads/ folder
-logo: expressif-icon-64.png
+# Enable or disable the site search
+# Supports true (default) or false
+search_enabled: true
 
-navbar:
-    sticky:         false
-    search:         true
+search:
+  # Split pages into sections that can be searched individually
+  # Supports 1 - 6, default: 2
+  heading_level: 2
+  # Maximum amount of previews per search result
+  # Default: 3
+  previews: 2
+  # Maximum amount of words to display before a matched word in the preview
+  # Default: 5
+  preview_words_before: 5
+  # Maximum amount of words to display after a matched word in the preview
+  # Default: 10
+  preview_words_after: 10
+  # Set the search token separator
+  # Default: /[\s\-/]+/
+  # Example: enable support for hyphenated search words
+  tokenizer_separator: /[\s/]+/
+  # Display the relative url in search results
+  # Supports true (default) or false
+  rel_url: true
+  # Enable or disable the search button that appears in the bottom right corner of every page
+  # Supports true or false (default)
+  button: false
+  # Focus the search input by pressing `ctrl + focus_shortcut_key` (or `cmd + focus_shortcut_key` on macOS)
+  focus_shortcut_key: 'k'
 
-# Default author settings
-author:
-    name:           Cédric L. Charlier
-    title:          Original Author
-    avatar:         avatar-seddryck.png
+mermaid:
+  # Version of mermaid library
+  # Pick an available version from https://cdn.jsdelivr.net/npm/mermaid/
+  version: "9.1.3"
 
-# Author settings, displayed on post and doc pages if front matter references author name e.g. author: peter
-authors:
-    hanoi:
-      name:         Hanoi
-      title:        Support
-      avatar:       avatar-hanoi.png
+# Enable or disable the side/mobile menu globally
+# Nav menu can also be selectively enabled or disabled using page variables or the minimal layout
+nav_enabled: true
 
+# Heading anchor links appear on hover over h1-h6 tags in page content
+# allowing users to deep link to a particular heading on a page.
+#
+# Supports true (default) or false
+heading_anchors: true
 
-# Social icons displayed in footer
-social:
-    email:
-    website:
-    facebook:
-    flickr:
-    dribbble:
-    github:         https://github.com/Seddryck/Expressif
-    googleplus:
-    instagram:
-    linkedin:       https://linkedin.com/in/cedriccharlier/
-    pinterest:
-    twitter:        https://twitter.com/Seddryck
-    vimeo:
-    youtube:
-
-# Share button
-share:
-    post:           false # Display share buttons on a post page
-    doc:            true # Display share buttons on a doc page
-    twitter:        Seddryck # Enable by adding Twitter handle 
-    facebook:       false # Enable by setting true (Facebook handle not required)
-
-# Default footer image settings
-footer:
-    copyright:      Made by <a href="https://linkedin.com/in/cedriccharlier/">Cédric L. Charlier</a> in Hennuyères (Belgium).
-
-# Disqus comments shortname, requires Disqus account https://disqus.com/
-disqus:
-    shortname:      # 1234
-
-# Google analytics code, get your code here https://www.google.com/analytics/
-google_analytics:
-
-# Number of posts displayed on blog page
-paginate:           10
-
-# Blog path
-paginate_path:      "/blog/:num/"
-
-# Path to post content assets directory i.e post images, pdfs etc
-uploads:            /uploads/
-
-# Build settings
-markdown:           kramdown
-highlighter:        rouge
-
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-  - jekyll-gist
-  - jekyll-avatar
-exclude:
-  - Gemfile
-  - Gemfile.lock
-  - node_modules
-
-sass:
-  style:            compressed
-
-collections:
-  docs:
-    output:         true
-  faqs:
-    output:         false
-  changelogs:
-    output:         false
-
-# Defaults
-defaults:
-  # _posts
-  - scope:
-      path:         ""
-      type:         posts
-    values:
-      layout:       post
-  # _docs
-  - scope:
-      path:         ""
-      type:         docs
-    values:
-      layout:       doc
+# To use this feature, you need to configure a color and (optionally) title for each kind of callout
+# you want to use in your documentation. Then, you can use the callouts in your markdown files like this:
+# {: .warning }
+# A paragraph...
+callouts:
+  warning:
+    title: Warning
+    color: red
+  note:
+    title: Recommended
+    color: coffee
