@@ -1177,6 +1177,10 @@ Glob patterns used to exclude files from packaging.
 .PARAMETER Version
 Conformance version used in the archive name and manifest.
 
+.PARAMETER CommitSha
+Source commit SHA written to the generated manifest. When omitted, the
+current AppVeyor or Git worktree revision is used for backward compatibility.
+
 .PARAMETER NoManifest
 Skips manifest generation and inclusion when specified.
 #>
@@ -1186,6 +1190,7 @@ function Package-Conformance {
         [string] $Path = "conformance",
         [string[]] $Exclude = @("bin/**", "/*.yaml", "/*.yml"),
         [string] $Version = "0.0.0",
+        [string] $CommitSha,
         [switch] $NoManifest
     )
 
@@ -1250,7 +1255,10 @@ function Package-Conformance {
 
     New-Item -ItemType Directory -Path $stagingDirectory -Force | Out-Null
 
-    $commitSha = if (-not [string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_COMMIT)) {
+    $resolvedCommitSha = if (-not [string]::IsNullOrWhiteSpace($CommitSha)) {
+        $CommitSha.Trim()
+    }
+    elseif (-not [string]::IsNullOrWhiteSpace($env:APPVEYOR_REPO_COMMIT)) {
         $env:APPVEYOR_REPO_COMMIT.Trim()
     }
     else {
@@ -1264,7 +1272,7 @@ function Package-Conformance {
         $manifestOutputPath = Join-Path $archiveDirectory "conformance.manifest.yaml"
         $manifestInfo = Build-ConformanceManifest `
             -Version $conformanceVersion `
-            -CommitSha $commitSha `
+            -CommitSha $resolvedCommitSha `
             -Path $resolvedPath `
             -Exclude $effectiveExclude `
             -OutputFilePath $manifestOutputPath
