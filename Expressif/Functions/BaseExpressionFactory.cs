@@ -91,7 +91,7 @@ public abstract class BaseExpressionFactory
             LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
-            TupleProjectionParameter projection => CreateFunctionCast(() => GetCurrent(context) is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
+            TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
             VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
@@ -155,6 +155,15 @@ public abstract class BaseExpressionFactory
 
         static IInterval buildInterval(IntervalBinding value)
             => new IntervalBuilder().Create(value);
+    }
+
+    private static object? ResolveTupleProjection(object? value, TupleProjectionParameter projection)
+    {
+        if (value is not TupleValue tuple)
+            return null;
+
+        var index = projection.FromEnd ? tuple.Count - projection.Index : projection.Index;
+        return index >= 0 && index < tuple.Count ? tuple[index] : null;
     }
 
     private static object? GetAmbient(IContext context)
