@@ -106,10 +106,12 @@ public class FunctionIntrospectorTest
     public void Locate_ExpressifAssembly_ArithmeticFunctionsExposeNumericSubcategory()
         => Assert.That(
             Infos.Where(x => x.Scope == "numeric/arithmetic").Select(x => x.Name),
-            Is.EquivalentTo(new[] { "add", "subtract", "increment", "decrement", "multiply", "divide", "greatest-common-divisor", "lowest-common-multiple" }));
+            Is.EquivalentTo(new[] { "absolute", "add", "cube-power", "cube-root", "decrement", "divide", "greatest-common-divisor", "increment", "invert", "lowest-common-multiple", "multiply", "nth-root", "oppose", "percent-change", "power", "sign", "square-power", "square-root", "subtract" }));
 
     [TestCase("array/set", new[] { "complement", "difference", "distinct", "intersection", "symmetric-difference", "union" })]
     [TestCase("numeric/rounding", new[] { "ceiling", "clip", "floor", "integer", "round" })]
+    [TestCase("numeric/conversion", new[] { "null-to-zero" })]
+    [TestCase("numeric/formatting", new[] { "human-readable-format-binary-bytes", "human-readable-format-decimal", "human-readable-format-decimal-bytes" })]
     [TestCase("temporal/calendar", new[] { "catholic-calendar", "first-in-month", "first-of-month", "first-of-year", "last-in-month", "last-of-month", "last-of-year", "length-of-month", "length-of-year" })]
     [TestCase("temporal/conversion", new[] { "datetime-to-date", "invalid-to-date", "null-to-date" })]
     [TestCase("text/conversion", new[] { "text-to-datetime" })]

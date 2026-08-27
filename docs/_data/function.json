@@ -538,183 +538,10 @@
     "Aliases": [
       "numeric-to-absolute"
     ],
-    "Scope": "numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the absolute value of the argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "cube-power",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-cube-power"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the the numeric argument value raised to the cube power.",
-    "Parameters": []
-  },
-  {
-    "Name": "cube-root",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-cube-root"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns cube root of the numeric argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-binary-bytes",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-binary-bytes"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "text",
-    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-decimal",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-decimal"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "text",
-    "Summary": "Formats a numeric value using decimal SI prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-decimal-bytes",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-decimal-bytes"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "text",
-    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "invert",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-invert"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
-    "Parameters": []
-  },
-  {
-    "Name": "nth-root",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-nth-root"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the root specified by the parameter value of the numeric argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "null-to-zero",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
-    "Parameters": []
-  },
-  {
-    "Name": "oppose",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-oppose"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
-    "Parameters": []
-  },
-  {
-    "Name": "percent-change",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-percent-change"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
-    "Parameters": [
-      {
-        "Name": "previous",
-        "Type": "numeric",
-        "Optional": false,
-        "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
-      }
-    ]
-  },
-  {
-    "Name": "power",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-power"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the the numeric argument value raised to the power specified by the parameter value.",
-    "Parameters": []
-  },
-  {
-    "Name": "sign",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-sign"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
-    "Parameters": []
-  },
-  {
-    "Name": "square-power",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-square-power"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the the numeric argument value raised to the square power.",
-    "Parameters": []
-  },
-  {
-    "Name": "square-root",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-square-root"
-    ],
-    "Scope": "numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns square root of the numeric argument value.",
     "Parameters": []
   },
   {
@@ -745,6 +572,30 @@
       "10 | add(5)      → 15",
       "10 | add(5, 2)   → 20"
     ]
+  },
+  {
+    "Name": "cube-power",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-cube-power"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the the numeric argument value raised to the cube power.",
+    "Parameters": []
+  },
+  {
+    "Name": "cube-root",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-cube-root"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns cube root of the numeric argument value.",
+    "Parameters": []
   },
   {
     "Name": "decrement",
@@ -809,6 +660,18 @@
     "Parameters": []
   },
   {
+    "Name": "invert",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-invert"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
+    "Parameters": []
+  },
+  {
     "Name": "lowest-common-multiple",
     "IsPublic": true,
     "Aliases": [
@@ -849,6 +712,97 @@
     ]
   },
   {
+    "Name": "nth-root",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-nth-root"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the root specified by the parameter value of the numeric argument value.",
+    "Parameters": []
+  },
+  {
+    "Name": "oppose",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-oppose"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
+    "Parameters": []
+  },
+  {
+    "Name": "percent-change",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-percent-change"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
+    "Parameters": [
+      {
+        "Name": "previous",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
+      }
+    ]
+  },
+  {
+    "Name": "power",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-power"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the the numeric argument value raised to the power specified by the parameter value.",
+    "Parameters": []
+  },
+  {
+    "Name": "sign",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-sign"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
+    "Parameters": []
+  },
+  {
+    "Name": "square-power",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-square-power"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the the numeric argument value raised to the square power.",
+    "Parameters": []
+  },
+  {
+    "Name": "square-root",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-square-root"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns square root of the numeric argument value.",
+    "Parameters": []
+  },
+  {
     "Name": "subtract",
     "IsPublic": true,
     "Aliases": [
@@ -872,6 +826,52 @@
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
       }
     ]
+  },
+  {
+    "Name": "null-to-zero",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "numeric/conversion",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-binary-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-binary-bytes"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-decimal",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value using decimal SI prefixes.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal-bytes"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
+    "Parameters": []
   },
   {
     "Name": "ceiling",

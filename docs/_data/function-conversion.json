@@ -257,119 +257,7 @@
   },
   {
     "Name": "absolute",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "cube-power",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "cube-root",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "human-readable-format-binary-bytes",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "text",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "human-readable-format-decimal",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "text",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "human-readable-format-decimal-bytes",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "text",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "invert",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "nth-root",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "null-to-zero",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "oppose",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "percent-change",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "power",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "sign",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "square-power",
-    "Scope": "numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "square-root",
-    "Scope": "numeric",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -377,6 +265,22 @@
   },
   {
     "Name": "add",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "cube-power",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "cube-root",
     "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
@@ -416,6 +320,14 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
+    "Name": "invert",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
     "Name": "lowest-common-multiple",
     "Scope": "numeric/arithmetic",
     "Converted": true,
@@ -432,11 +344,99 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
+    "Name": "nth-root",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "oppose",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "percent-change",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "power",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "sign",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "square-power",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "square-root",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
     "Name": "subtract",
     "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "null-to-zero",
+    "Scope": "numeric/conversion",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "human-readable-format-binary-bytes",
+    "Scope": "numeric/formatting",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "human-readable-format-decimal",
+    "Scope": "numeric/formatting",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "Scope": "numeric/formatting",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "text",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {

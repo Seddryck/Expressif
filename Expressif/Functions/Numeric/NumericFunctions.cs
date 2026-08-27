@@ -47,6 +47,7 @@ public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
 /// Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.
 /// </summary>
 [Function(prefix: "")]
+[Scope("numeric/conversion")]
 public class NullToZero : BaseNumericFunction
 {
     protected override object EvaluateNull() => 0;
@@ -116,6 +117,7 @@ public class Clip : BaseNumericFunction
 /// <summary>
 /// Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class Invert : BaseNumericFunction
 {
     public Invert()
@@ -127,6 +129,7 @@ public class Invert : BaseNumericFunction
 /// <summary>
 /// Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class Oppose : BaseNumericFunction
 {
     public Oppose()
