@@ -35,7 +35,7 @@ permalink: /
 <i>5</i>  <b>|&gt;</b> record(
 <i>6</i>      id: .id,
 <i>7</i>      name: .name <b>|</b> upper,
-<i>8</i>      total: .orders <b>|</b> sum(.amount)
+<i>8</i>      total := .orders <b>|&gt;</b> .amount <b>|</b> sum
 <i>9</i>    )
 <i>10</i> <b>|</b> first-elements(10)</code></pre>
       </div>
