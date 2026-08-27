@@ -13,7 +13,7 @@ public class PredicationBinderTest
 
         var predication = (SinglePredication)Binder.BindPredication(syntax);
 
-        Assert.That(predication.Members.Single().Name, Is.EqualTo("even"));
+        Assert.That(predication.Member.Name, Is.EqualTo("even"));
     }
 
     [Test]
@@ -21,9 +21,9 @@ public class PredicationBinderTest
     {
         var syntax = SyntaxFactory.Open(SyntaxFactory.Unary("!", SyntaxFactory.Function("even")));
 
-        var predication = (SinglePredication)Binder.BindPredication(syntax);
+        var predication = (PipelinePredication)Binder.BindPredication(syntax);
 
-        Assert.That(predication.Members.Select(member => member.Name), Is.EqualTo(new[] { "even", "not" }));
+        Assert.That(predication.Expression.Members.Select(member => member.Name), Is.EqualTo(new[] { "even", "not" }));
     }
 
     [Test]
@@ -53,8 +53,8 @@ public class PredicationBinderTest
                 "equal-to",
                 SyntaxFactory.Argument(SyntaxFactory.Number(125)))));
 
-        var predication = (SinglePredication)Binder.BindPredication(syntax);
+        var predication = (PipelinePredication)Binder.BindPredication(syntax);
 
-        Assert.That(predication.Members.Select(member => member.Name), Is.EqualTo(new[] { "equal-to", "not" }));
+        Assert.That(predication.Expression.Members.Select(member => member.Name), Is.EqualTo(new[] { "equal-to", "not" }));
     }
 }

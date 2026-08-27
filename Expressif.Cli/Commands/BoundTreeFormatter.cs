@@ -80,7 +80,8 @@ internal static class BoundTreeFormatter
     private static IEnumerable<TreeDocument> PredicationChildren(IPredication predication)
         => predication switch
         {
-            SinglePredication single => single.Members.Select(ToDocument),
+            SinglePredication single => [ToDocument(single.Member)],
+            PipelinePredication pipeline => pipeline.Expression.Members.Select(ToDocument),
             _ => [Node(predication.GetType().Name)]
         };
 

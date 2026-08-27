@@ -286,7 +286,7 @@ public class FunctionFactoryTest
         var transformationFunctions = GetFunctions(transformation).ToArray();
 
         Assert.That(map, Is.Not.Null);
-        Assert.That(transformation, Is.TypeOf<ChainFunction>());
+        Assert.That(transformation, Is.InstanceOf<ChainFunction>());
         Assert.That(transformationFunctions, Has.Length.EqualTo(2));
         Assert.That(transformationFunctions[0], Is.TypeOf<Lower>());
         Assert.That(transformationFunctions[1], Is.TypeOf<Trim>());

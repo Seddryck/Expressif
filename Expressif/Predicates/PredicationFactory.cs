@@ -36,6 +36,7 @@ public class PredicationFactory : BaseExpressionFactory
     => predication switch
     {
         SinglePredication single => Instantiate(single, context),
+        PipelinePredication pipeline => Instantiate(pipeline, context),
         UnaryPredication unary => Instantiate(unary, context),
         BinaryPredication binary => Instantiate(binary, context),
         _ => throw new BindingException($"Unsupported predication model '{predication.GetType().Name}'.")
@@ -43,21 +44,17 @@ public class PredicationFactory : BaseExpressionFactory
 
     internal IPredicate Instantiate(SinglePredication basic, IContext context)
     {
-        var predicates = new List<IPredicate>();
-        foreach (var predicate in basic.Members)
-        {
-            var type = TypeMapper.Execute(predicate.Name);
-            predicates.Add(Instantiate<IPredicate>(type, predicate.Arguments, context));
-        }
-        return predicates.Count == 1
-            ? predicates[0]
-            : new ContextualPredicate(new ChainFunction(predicates));
+        var type = TypeMapper.Execute(basic.Member.Name);
+        return Instantiate<IPredicate>(type, basic.Member.Arguments, context);
     }
+
+    internal IPredicate Instantiate(PipelinePredication pipeline, IContext context)
+        => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(pipeline.Expression, context));
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
         => parameter is OpenExpressionParameter open
             ? CreateFunctionCast(
-                () => Instantiate(new SinglePredication(open.Expression.Members.ToArray()), context)
+                () => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(open.Expression, context))
                     .Evaluate(EvaluationRuntime.Frame?.Ambient ?? context.CurrentObject.Value),
                 scalarType)
             : base.CreateParameter(parameter, scalarType, context);
@@ -66,17 +63,6 @@ public class PredicationFactory : BaseExpressionFactory
     {
         var expression = new FunctionFactory().Instantiate(new ClosedRootExpression(input.Expression), context);
         return CreateFunctionCast(() => expression.Evaluate(null), type);
-    }
-
-    private sealed class ContextualPredicate(IFunction expression) : IPredicate
-    {
-        public bool Evaluate(object? value)
-        {
-            using var scope = EvaluationRuntime.Derive(value);
-            return Boolean.BooleanConversion.ToBoolean(expression.Evaluate(value));
-        }
-
-        object? IFunction.Evaluate(object? value) => Evaluate(value);
     }
 
     internal IPredicate Instantiate(UnaryPredication unary, IContext context)
