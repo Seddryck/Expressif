@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+"Hello World" | clean-whitespace → "Hello World"
+```
+
+
 **Kind:** Function  
 **Scope:** `text/normalization`  
 **Aliases:** `text-to-clean-whitespace`

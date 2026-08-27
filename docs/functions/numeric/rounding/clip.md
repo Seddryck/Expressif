@@ -35,6 +35,13 @@ Returns the value of an argument number, unless it is smaller than min, in which
 
 
 
+## Examples
+
+```expressif
+10 | clip(5, 15) → 10
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/rounding`  
 **Aliases:** `numeric-to-clip`

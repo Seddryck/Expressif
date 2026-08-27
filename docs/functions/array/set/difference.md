@@ -33,6 +33,13 @@ Returns the distinct values from the pipeline input that do not appear in the sp
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | difference({2, 3, 4}) → {1}
+```
+
+
 **Kind:** Function  
 **Scope:** `array/set`  
 **Aliases:** `difference`

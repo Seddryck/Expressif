@@ -33,6 +33,13 @@ Omits the requested number of elements from the start of the input enumerable an
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | skip-first-elements(2) → {3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `skip-first`

@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | invert → 0.1
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-invert`

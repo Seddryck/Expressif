@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | pairwise → {T(1, 2), T(2, 3)}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `pairwise`

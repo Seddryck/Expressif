@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+2024 | catholic-calendar("Easter Sunday") → #"2024-03-31 00:00:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/calendar`  
 **Aliases:** `calendar-catholic`

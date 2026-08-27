@@ -33,6 +33,13 @@ Returns the dateTime argument except if the value is `null` then it returns the 
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | null-to-date(#"2024-01-01 00:00:00") → #"2024-01-15 12:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/conversion`  
 **Aliases:** None

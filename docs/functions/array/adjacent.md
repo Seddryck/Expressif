@@ -33,6 +33,13 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | adjacent(subtract) → {1, 1}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `adjacent`

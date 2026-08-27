@@ -33,6 +33,13 @@ Returns the greatest common divisor (GCD) of the argument integer and the parame
 
 
 
+## Examples
+
+```expressif
+10 | greatest-common-divisor(5) → 5
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-greatest-common-divisor`

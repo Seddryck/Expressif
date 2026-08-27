@@ -33,6 +33,13 @@ Returns the value of the named field from the input record or object. Returns `n
 
 
 
+## Examples
+
+```expressif
+{name := "Ada", score := 10} | field("name") → "Ada"
+```
+
+
 **Kind:** Function  
 **Scope:** `record`  
 **Aliases:** None

@@ -33,6 +33,13 @@ Returns the distinct values from the specified array that do not appear in the p
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | complement({2, 3, 4}) → {4}
+```
+
+
 **Kind:** Function  
 **Scope:** `array/set`  
 **Aliases:** `complement`

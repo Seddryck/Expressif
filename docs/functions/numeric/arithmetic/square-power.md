@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | square-power → 100
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-square-power`

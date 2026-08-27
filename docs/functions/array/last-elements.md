@@ -33,6 +33,13 @@ Returns up to the requested number of elements from the end of the input enumera
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | last-elements(2) → {2, 3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `last`

@@ -33,6 +33,13 @@ Splits an array into consecutive, non-overlapping chunks of at most the specifie
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | chunk(2) → {{1, 2}, {3}}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `chunk`

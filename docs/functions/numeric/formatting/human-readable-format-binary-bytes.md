@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | human-readable-format-binary-bytes → "10 B"
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/formatting`  
 **Aliases:** `numeric-to-human-readable-format-binary-bytes`

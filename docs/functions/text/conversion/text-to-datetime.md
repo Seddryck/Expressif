@@ -35,6 +35,14 @@ Returns a dateTime value matching the argument value parsed by the long format i
 
 
 
+## Examples
+
+```expressif
+"2024-01-15 12:30:00" | text-to-datetime("yyyy-MM-dd HH:mm:ss") → #"2024-01-15 12:30:00"
+"01/15/2024 12:30:00" | text-to-datetime("MM/dd/yyyy HH:mm:ss", "en-US") → #"2024-01-15 12:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `text/conversion`  
 **Aliases:** `text-to-dateTime`

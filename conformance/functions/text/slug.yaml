@@ -1,0 +1,33 @@
+suite: text
+kind: function
+operator: slug
+tests:
+  - id: slug.valid
+    cases:
+      - id: slug.valid.text.basic
+        value: Hello, World!
+        expected: hello-world
+      - id: slug.valid.text.whitespace
+        value: "  Foo & Bar  "
+        expected: foo-bar
+      - id: slug.valid.text.repeated-separators
+        value: foo___bar
+        expected: foo-bar
+      - id: slug.valid.text.latin-diacritics
+        value: Crème brûlée recipe
+        expected: creme-brulee-recipe
+      - id: slug.valid.text.non-latin
+        value: Москва Центр
+        expected: москва-центр
+      - id: slug.valid.text.already-normalized
+        value: customer-order
+        expected: customer-order
+      - id: slug.valid.special.null
+        value: (null)
+        expected: (empty)
+      - id: slug.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: slug.valid.special.blank
+        value: (blank)
+        expected: (empty)

@@ -33,6 +33,13 @@ Returns the first non-null result from two or more expressions evaluated from le
 
 
 
+## Examples
+
+```expressif
+#null | coalesce(#null, 42) → 42
+```
+
+
 **Kind:** Function  
 **Scope:** `special`  
 **Aliases:** None

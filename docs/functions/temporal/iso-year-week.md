@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | iso-year-week → "2024-W03"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-iso-year-week`

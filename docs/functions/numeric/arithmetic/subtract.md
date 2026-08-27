@@ -35,6 +35,13 @@ Returns the difference between the argument number and the parameter value.
 
 
 
+## Examples
+
+```expressif
+10 | subtract(5, 2) → 0
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-subtract`

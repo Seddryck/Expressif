@@ -35,6 +35,13 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | clamp(#"2024-01-01 00:00:00", #"2024-01-31 00:00:00") → #"2024-01-15 12:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-clamp`, `dateTime-to-clip`

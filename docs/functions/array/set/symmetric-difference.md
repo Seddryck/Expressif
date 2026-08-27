@@ -33,6 +33,13 @@ Returns the distinct values that appear in exactly one of the two arrays, listin
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | symmetric-difference({2, 3, 4}) → {1, 4}
+```
+
+
 **Kind:** Function  
 **Scope:** `array/set`  
 **Aliases:** `symmetric-difference`

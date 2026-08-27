@@ -3,7 +3,7 @@ layout: docs
 title: "Array functions"
 parent: "Functions library"
 
-nav_order: 60
+nav_order: 10
 has_children: true
 has_toc: false
 permalink: /functions/array-functions/

@@ -3,7 +3,7 @@ layout: docs
 title: "Io functions"
 parent: "Functions library"
 
-nav_order: 50
+nav_order: 20
 has_children: true
 has_toc: false
 permalink: /functions/io-functions/

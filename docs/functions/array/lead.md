@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | lead → {2, 3, #null}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `array-to-lead`

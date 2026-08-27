@@ -33,6 +33,13 @@ Returns a new date value corresponding to the occurrence of the weekday, passed 
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15" | next-weekday("Monday") → #"2024-01-22"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-next-weekday`

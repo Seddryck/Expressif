@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+"docs/_data/function.json" | root → ""
+```
+
+
 **Kind:** Function  
 **Scope:** `io`  
 **Aliases:** `path-to-root`

@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | year → "2024"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-year`

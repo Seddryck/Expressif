@@ -3,7 +3,7 @@ layout: docs
 title: "trim"
 parent: "Normalization functions"
 grand_parent: "Text functions"
-nav_order: 30
+nav_order: 60
 has_toc: false
 permalink: /functions/text/normalization/trim/
 tags:
@@ -27,6 +27,13 @@ This function has no parameters.
 
 
 
+
+
+## Examples
+
+```expressif
+"Hello World" | trim → "Hello World"
+```
 
 
 **Kind:** Function  

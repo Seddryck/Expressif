@@ -33,6 +33,13 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | fold(sum) → 6
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `array-to-fold`

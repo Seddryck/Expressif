@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | human-readable-format-decimal → "10"
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/formatting`  
 **Aliases:** `numeric-to-human-readable-format-decimal`

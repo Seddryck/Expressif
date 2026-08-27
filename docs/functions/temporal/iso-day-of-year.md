@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | iso-day-of-year → 15
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-iso-day-of-year`

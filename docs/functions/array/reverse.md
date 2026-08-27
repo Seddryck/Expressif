@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | reverse → {3, 2, 1}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `reverse`

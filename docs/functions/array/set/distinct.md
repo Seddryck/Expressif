@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | distinct → {1, 2, 3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array/set`  
 **Aliases:** `distinct`

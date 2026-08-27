@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | first-of-month → #"2024-01-01 00:00:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/calendar`  
 **Aliases:** `dateTime-to-first-of-month`

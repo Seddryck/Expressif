@@ -33,6 +33,13 @@ Applies a transformation expression to each input item and returns the transform
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | map(add(1)) → {2, 3, 4}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `map`

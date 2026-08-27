@@ -3,7 +3,7 @@ layout: docs
 title: "whitespaces-to-null"
 parent: "Normalization functions"
 grand_parent: "Text functions"
-nav_order: 50
+nav_order: 80
 has_toc: false
 permalink: /functions/text/normalization/whitespaces-to-null/
 tags:
@@ -27,6 +27,13 @@ This function has no parameters.
 
 
 
+
+
+## Examples
+
+```expressif
+"Hello World" | whitespaces-to-null → "Hello World"
+```
 
 
 **Kind:** Function  

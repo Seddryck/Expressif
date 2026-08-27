@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | square-root → 3.16227766016838
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-square-root`

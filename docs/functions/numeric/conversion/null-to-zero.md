@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | null-to-zero → 10
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/conversion`  
 **Aliases:** None

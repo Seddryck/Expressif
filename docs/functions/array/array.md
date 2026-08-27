@@ -33,6 +33,14 @@ Constructs a new array by evaluating zero or more positional expressions from le
 
 
 
+## Examples
+
+```expressif
+#null | array → {}
+#null | array(1, 2, 3) → {1, 2, 3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `array`

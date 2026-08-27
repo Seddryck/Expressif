@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#null | any-to-any → "(any)"
+```
+
+
 **Kind:** Function  
 **Scope:** `special`  
 **Aliases:** None

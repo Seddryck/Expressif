@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+T(10, 20, 30) | tuple-second → 20
+```
+
+
 **Kind:** Function  
 **Scope:** `special`  
 **Aliases:** `tuple-second`

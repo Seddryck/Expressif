@@ -33,6 +33,13 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | scan(sum) → {1, 3, 6}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `array-to-scan`

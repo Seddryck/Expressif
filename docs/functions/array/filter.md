@@ -33,6 +33,13 @@ Applies a predicate expression to each input item and returns only items for whi
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | filter(greater-than(1)) → {2, 3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `filter`

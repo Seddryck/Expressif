@@ -33,6 +33,13 @@ Returns the value of an argument number to the specified number of fractional di
 
 
 
+## Examples
+
+```expressif
+10 | round(2) → 10
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/rounding`  
 **Aliases:** `numeric-to-round`

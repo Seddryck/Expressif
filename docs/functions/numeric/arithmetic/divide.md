@@ -33,6 +33,13 @@ Returns the argument number divided by the parameter value. If the parameter val
 
 
 
+## Examples
+
+```expressif
+10 | divide(5) → 2
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-divide`

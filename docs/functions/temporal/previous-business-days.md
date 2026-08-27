@@ -33,6 +33,13 @@ Returns a new date value corresponding to the date passed as the argument, count
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | previous-business-days(2) → #"2024-01-11"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `temporal-to-previous-business-days`, `previous-business-day`, `subtract-business-days`

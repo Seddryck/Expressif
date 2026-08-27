@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | lag → {#null, 1, 2}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `array-to-lag`
