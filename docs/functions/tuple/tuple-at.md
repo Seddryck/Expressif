@@ -3,7 +3,7 @@ layout: docs
 title: "tuple-at"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/tuple/tuple-at/
 tags:
