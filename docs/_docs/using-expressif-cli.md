@@ -178,7 +178,9 @@ expressif run "add(1)" --input 42
 Nested enumerable elements are preserved and not flattened when using `--batch`.
 
 ```console
+{% raw %}
 expressif run "count" --batch "{{1, 2, 3}, {4, 5}}"
+{% endraw %}
 ```
 
 ```text

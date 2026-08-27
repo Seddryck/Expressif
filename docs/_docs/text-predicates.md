@@ -2,21 +2,9 @@
 title: Text predicates
 subtitle: Predicates applicable to text values
 tags: [predicates, text]
-keywords: [is-any-of, contains, is-empty, is-empty-or-null, ends-with, is-equivalent-to, is-lower-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, is-sorted-after, is-sorted-after-or-equivalent-to, is-sorted-before, is-sorted-before-or-equivalent-to, starts-with, is-upper-case] # AUTO-GENERATED KEYWORDS
+keywords: [contains, ends-with, is-any-of, is-empty, is-empty-or-null, is-equivalent-to, is-lower-case, is-sorted-after, is-sorted-after-or-equivalent-to, is-sorted-before, is-sorted-before-or-equivalent-to, is-upper-case, matches-date, matches-datetime, matches-numeric, matches-regex, matches-time, starts-with] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
-##### is-any-of
-
-###### Aliases: `any-of`, `text-is-any-of`
-
-###### Overview
-
-Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
-
-###### Parameters
-* references: An array of text values.
-* comparer (optional) : 
-
 ##### contains
 
 ###### Alias: `text-contains`
@@ -28,6 +16,30 @@ Returns `true` if the value passed as argument contains, anywhere in the string,
 ###### Parameters
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
+
+##### ends-with
+
+###### Alias: `text-ends-with`
+
+###### Overview
+
+Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.
+
+###### Parameters
+* reference: A string to be compared to the argument value..
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
+
+##### is-any-of
+
+###### Aliases: `any-of`, `text-is-any-of`
+
+###### Overview
+
+Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.
+
+###### Parameters
+* references: An array of text values.
+* comparer (optional) :
 
 ##### is-empty
 
@@ -44,18 +56,6 @@ Returns `true` if argument value has a length of `0`. Return `false` otherwise.
 ###### Overview
 
 Returns `true` if argument value has a length of `0` or is `null`. Return `false` otherwise.
-
-##### ends-with
-
-###### Alias: `text-ends-with`
-
-###### Overview
-
-Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.
-
-###### Parameters
-* reference: A string to be compared to the argument value..
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
 ##### is-equivalent-to
 
@@ -76,50 +76,6 @@ Compare the text value passed as argument and the text value passed as parameter
 ###### Overview
 
 Returns `true` if all characters of the text value passed as argument are lower-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
-
-##### matches-date
-
-###### Alias: `text-matches-date`
-
-###### Overview
-
-Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise.
-
-##### matches-datetime
-
-###### Alias: `text-matches-datetime`
-
-###### Overview
-
-Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise.
-
-##### matches-numeric
-
-###### Alias: `text-matches-numeric`
-
-###### Overview
-
-Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise.
-
-##### matches-regex
-
-###### Alias: `text-matches-regex`
-
-###### Overview
-
-Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.
-
-###### Parameters
-* regex: A string to be compared to the argument value.
-* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
-
-##### matches-time
-
-###### Alias: `text-matches-time`
-
-###### Overview
-
-Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.
 
 ##### is-sorted-after
 
@@ -169,6 +125,58 @@ Compare the text value passed as argument and the text value passed as parameter
 * reference: A string to be compared to the argument value.
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
 
+##### is-upper-case
+
+###### Aliases: `upper-case`, `text-is-upper-case`
+
+###### Overview
+
+Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
+
+##### matches-date
+
+###### Alias: `text-matches-date`
+
+###### Overview
+
+Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise.
+
+##### matches-datetime
+
+###### Alias: `text-matches-datetime`
+
+###### Overview
+
+Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise.
+
+##### matches-numeric
+
+###### Alias: `text-matches-numeric`
+
+###### Overview
+
+Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise.
+
+##### matches-regex
+
+###### Alias: `text-matches-regex`
+
+###### Overview
+
+Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.
+
+###### Parameters
+* regex: A string to be compared to the argument value.
+* comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
+
+##### matches-time
+
+###### Alias: `text-matches-time`
+
+###### Overview
+
+Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.
+
 ##### starts-with
 
 ###### Alias: `text-starts-with`
@@ -180,13 +188,5 @@ Returns `true` if the value passed as argument starts with the text value passed
 ###### Parameters
 * reference: A string to be compared to the argument value..
 * comparer (optional) : A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).
-
-##### is-upper-case
-
-###### Aliases: `upper-case`, `text-is-upper-case`
-
-###### Overview
-
-Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
 
 <!-- END AUTO-GENERATED -->
