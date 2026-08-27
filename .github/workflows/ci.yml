@@ -35,7 +35,7 @@ env:
   DOTNET_NOLOGO: true
 
 jobs:
-  prepare:
+  calculate-version:
     runs-on: windows-latest
     outputs:
       semver: ${{ steps.version.outputs.semver }}
@@ -57,7 +57,7 @@ jobs:
         shell: pwsh
         run: ./install-gitversion.ps1
 
-      - name: Calculate version
+      - name: calculate-version
         id: version
         shell: pwsh
         run: |
@@ -65,9 +65,6 @@ jobs:
           "semver=$($version.SemVer)" >> $env:GITHUB_OUTPUT
           "patch=$($version.Patch)" >> $env:GITHUB_OUTPUT
           Write-Host "Building Expressif version $($version.SemVer)"
-
-      - name: Restore local .NET tools
-        run: dotnet tool restore
 
   validate-conformance:
     runs-on: windows-latest
@@ -88,10 +85,10 @@ jobs:
             throw "Conformance validation failed with $violations violation(s)."
           }
 
-  tests:
+  build-and-tests:
     name: build and tests (${{ matrix.name }})
     needs:
-      - prepare
+      - calculate-version
       - validate-conformance
     runs-on: windows-latest
     permissions:
@@ -146,7 +143,7 @@ jobs:
           --framework ${{ matrix.framework }}
           --no-restore
           --nologo
-          -p:Version=${{ needs.prepare.outputs.semver }}
+          -p:Version=${{ needs.calculate-version.outputs.semver }}
           -p:ContinuousIntegrationBuild=true
 
       - name: Validate metadata consistency
@@ -232,8 +229,8 @@ jobs:
   package-nuget:
     name: package (${{ matrix.name }})
     needs:
-      - prepare
-      - tests
+      - calculate-version
+      - build-and-tests
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -276,7 +273,7 @@ jobs:
           ${{ matrix.pack_arguments }}
           --no-restore
           --nologo
-          -p:Version=${{ needs.prepare.outputs.semver }}
+          -p:Version=${{ needs.calculate-version.outputs.semver }}
           -p:ContinuousIntegrationBuild=true
 
       - name: Upload package artifacts
@@ -288,8 +285,8 @@ jobs:
 
   package-conformance:
     needs:
-      - prepare
-      - tests
+      - calculate-version
+      - build-and-tests
     runs-on: windows-latest
     steps:
       - name: Check out repository
@@ -324,7 +321,7 @@ jobs:
       - name: Package conformance assets
         shell: pwsh
         env:
-          GitVersion_SemVer: ${{ needs.prepare.outputs.semver }}
+          GitVersion_SemVer: ${{ needs.calculate-version.outputs.semver }}
         run: |
           . ./Conformance.ps1
           $conformanceVersion = Get-ConformanceVersion -Warn
@@ -332,9 +329,9 @@ jobs:
           ./Export-ConformanceReport.ps1 `
             -Path ./conformance `
             -ReportPath ./conformance/bin/Expressif.Conformance.DotNet.xml `
-            -OutputYamlPath ./conformance/bin/expressif.conformance.dotnet.${{ needs.prepare.outputs.semver }}.yaml `
+            -OutputYamlPath ./conformance/bin/expressif.conformance.dotnet.${{ needs.calculate-version.outputs.semver }}.yaml `
             -Platform dotnet `
-            -PlatformVersion ${{ needs.prepare.outputs.semver }} `
+            -PlatformVersion ${{ needs.calculate-version.outputs.semver }} `
             -ConformanceVersion $env:GitVersion_Conformance_SemVer `
             -NUnit
 
@@ -347,8 +344,8 @@ jobs:
             conformance/bin/Expressif.Conformance.*.zip
             conformance/bin/expressif.conformance.dotnet.*.yaml
 
-  syntax-assets:
-    needs: prepare
+  package-syntax-highlighters:
+    needs: calculate-version
     runs-on: windows-latest
     steps:
       - name: Check out repository
@@ -367,7 +364,7 @@ jobs:
       - name: Generate syntax assets
         shell: pwsh
         working-directory: Expressif.Syntax
-        run: ./New-tmBundle.ps1 -Bundle expressif-syntax -Version ${{ needs.prepare.outputs.semver }}
+        run: ./New-tmBundle.ps1 -Bundle expressif-syntax -Version ${{ needs.calculate-version.outputs.semver }}
 
       - name: Upload syntax assets
         uses: actions/upload-artifact@v7
@@ -376,12 +373,12 @@ jobs:
           if-no-files-found: error
           path: Expressif.Syntax/bin/**
 
-  distribution:
+  package-cli-distributions:
     needs:
-      - prepare
+      - calculate-version
       - package-nuget
       - package-conformance
-      - syntax-assets
+      - package-syntax-highlighters
     runs-on: windows-latest
     steps:
       - name: Check out repository
@@ -402,7 +399,7 @@ jobs:
         shell: pwsh
         run: >-
           ./distribution/build-distribution.ps1
-          -Version ${{ needs.prepare.outputs.semver }}
+          -Version ${{ needs.calculate-version.outputs.semver }}
           -Configuration Release
 
       - name: Upload distribution artifacts
@@ -414,7 +411,7 @@ jobs:
             distribution/bin/archives/Expressif-*.*
             distribution/bin/installers/Expressif-*-setup.exe*
 
-  publish:
+  publish-nuget:
     needs: package-nuget
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: windows-latest
@@ -472,15 +469,15 @@ jobs:
             }
           }
 
-  release:
+  publish-github-release:
     needs:
-      - prepare
+      - calculate-version
       - package-conformance
-      - distribution
+      - package-cli-distributions
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      needs.prepare.outputs.patch == '0'
+      needs.calculate-version.outputs.patch == '0'
     runs-on: windows-latest
     permissions:
       contents: write
@@ -529,7 +526,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_VERSION: ${{ needs.prepare.outputs.semver }}
+          RELEASE_VERSION: ${{ needs.calculate-version.outputs.semver }}
         run: |
           $tag = "v$env:RELEASE_VERSION"
           gh release view $tag *> $null
