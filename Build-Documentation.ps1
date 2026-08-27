@@ -20,7 +20,7 @@ $pages = @(
 )
 
 foreach ($page in $pages) {
-    & ./update-docs.ps1 -class $page.Class -scope $page.Scope
+    & ./update-docs.ps1 -Class $page.Class -Scope $page.Scope
 }
 
 & ./update-index.ps1
