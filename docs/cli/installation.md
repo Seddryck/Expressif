@@ -34,13 +34,13 @@ Open a new terminal if the command is not immediately available after installati
 Download the installer for the machine architecture from the [Expressif releases](https://github.com/Seddryck/Expressif/releases) page. Installer filenames follow this pattern:
 
 ```text
-Expressif-<version>-net10.0-<runtime>-setup.exe
+expressif-<version>-net10.0-<runtime>-setup.exe
 ```
 
 For example:
 
 ```text
-Expressif-1.32.0-net10.0-win-x64-setup.exe
+expressif-1.32.0-net10.0-win-x64-setup.exe
 ```
 
 The installer places the executable under `Program Files`, adds it to the system `PATH`, and checks for the required .NET runtime. Remove it from **Settings > Apps > Installed apps**.
@@ -62,7 +62,7 @@ On Windows with PowerShell:
 
 ```powershell
 Expand-Archive `
-  -LiteralPath .\Expressif-<version>-net10.0-win-x64.zip `
+  -LiteralPath .\expressif-<version>-net10.0-win-x64.zip `
   -DestinationPath "$env:LOCALAPPDATA\Expressif"
 
 & "$env:LOCALAPPDATA\Expressif\expressif.exe" version
@@ -72,7 +72,7 @@ On Linux:
 
 ```bash
 mkdir -p "$HOME/.local/share/expressif"
-tar -xzf Expressif-<version>-net10.0-linux-x64.tar.gz \
+tar -xzf expressif-<version>-net10.0-linux-x64.tar.gz \
   -C "$HOME/.local/share/expressif"
 chmod +x "$HOME/.local/share/expressif/expressif"
 ```

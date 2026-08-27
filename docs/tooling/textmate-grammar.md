@@ -4,7 +4,7 @@ parent: Tooling
 nav_order: 2
 tags: [edition]
 ---
-Expressif syntax highlighting is defined by a TextMate grammar. The standalone `expressif-<version>.tmLanguage.json` file can be used in two main ways:
+Expressif syntax highlighting is defined by a TextMate grammar. The standalone `expressif-syntax-<version>-textmate.json` file can be used in two main ways:
 
 1. Use it with TextMate-compatible consumers such as Shiki.
 2. Use it in Monaco-based applications through a TextMate tokenizer such as `vscode-textmate`; Monaco does not load TextMate grammars directly.
@@ -15,7 +15,7 @@ Zed does not use TextMate grammars. Use the [Expressif Language Server]({{ '/too
 
 ## Download the standalone grammar
 
-Download `expressif-<version>.tmLanguage.json` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases), then follow the host tool's instructions for registering a TextMate grammar with the `source.expressif` scope.
+Download `expressif-syntax-<version>-textmate.json` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases), then follow the host tool's instructions for registering a TextMate grammar with the `source.expressif` scope.
 
 The standalone file provides lexical colorization only. File-extension registration and editor behavior depend on the host tool.
 
@@ -80,7 +80,7 @@ Install [Visual Studio Code](https://code.visualstudio.com).
 
 ### Download the extension
 
-The extension is not currently available on the Visual Studio Marketplace. Download `expressif-syntax-<version>.vsix` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases).
+The extension is not currently available on the Visual Studio Marketplace. Download `expressif-syntax-<version>-vscode.vsix` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases).
 
 
 ### Install the extension

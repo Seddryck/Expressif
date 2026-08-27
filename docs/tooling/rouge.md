@@ -8,7 +8,7 @@ Expressif provides a standalone lexer for [Rouge](https://rouge-ruby.github.io/)
 
 ## Download
 
-Download `expressif-<version>-rouge.zip` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases), then extract the archive. It contains `expressif-rouge.rb`.
+Download `expressif-syntax-<version>-rouge.zip` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases), then extract the archive. It contains `expressif-rouge.rb`.
 
 ## Load the lexer
 

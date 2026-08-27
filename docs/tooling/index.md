@@ -27,9 +27,9 @@ VS Code users do **not** need to download the standalone server unless they deli
 | Integration | Distribution | Capabilities |
 |:------------|:-------------|:-------------|
 | [Expressif Language Server]({{ '/tooling/language-server/' | relative_url }}) | Standalone LSP server | Live syntax diagnostics and function completion in Zed and other LSP-capable editors. |
-| [TextMate grammar]({{ '/tooling/textmate-grammar/' | relative_url }}) | `expressif-<version>.tmLanguage.json` | Syntax highlighting for TextMate consumers such as Shiki, or Monaco through a tokenizer such as `vscode-textmate`. |
-| [Notepad++]({{ '/tooling/notepad-plus-plus/' | relative_url }}) | `expressif-<version>-notepadpp-udl.xml` | Syntax highlighting through a user-defined language. |
-| [Rouge]({{ '/tooling/rouge/' | relative_url }}) | `expressif-<version>-rouge.zip` | Syntax highlighting for Jekyll and other Ruby publishing tools. |
+| [TextMate grammar]({{ '/tooling/textmate-grammar/' | relative_url }}) | `expressif-syntax-<version>-textmate.json` | Syntax highlighting for TextMate consumers such as Shiki, or Monaco through a tokenizer such as `vscode-textmate`. |
+| [Notepad++]({{ '/tooling/notepad-plus-plus/' | relative_url }}) | `expressif-syntax-<version>-notepadpp.xml` | Syntax highlighting through a user-defined language. |
+| [Rouge]({{ '/tooling/rouge/' | relative_url }}) | `expressif-syntax-<version>-rouge.zip` | Syntax highlighting for Jekyll and other Ruby publishing tools. |
 
 These integrations do not all provide the same features: editor grammars perform lexical colorization, while the language server parses the document and provides interactive assistance. An editor can use both when it supports both mechanisms.
 

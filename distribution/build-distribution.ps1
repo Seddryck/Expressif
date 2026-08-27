@@ -72,8 +72,8 @@ $CommandName = "expressif"
 $PackageId = "Expressif-cli"
 
 # Distribution archive/installer prefix:
-#   Expressif-2026.7.0-net10.0-win-x64.zip
-$DistributionName = "Expressif"
+#   expressif-2026.7.0-net10.0-win-x64.zip
+$DistributionName = "expressif"
 
 $Project = [System.IO.Path]::GetFullPath(
     (Join-Path $PSScriptRoot $Project)
@@ -457,11 +457,13 @@ function Invoke-Archive {
                 $archiveBaseName =
                     "$DistributionName-$Version-$framework-$runtime"
 
+                $archiveName = "$archiveBaseName.tar.gz"
+
                 $tarPath = Join-Path `
                     $ArchiveRoot `
                     "$archiveBaseName.tar"
 
-                $archivePath = "$tarPath.gz"
+                $archivePath = Join-Path $ArchiveRoot $archiveName
             } else {
                 $archiveName =
                     "$DistributionName-$Version-$framework-$runtime.zip"
