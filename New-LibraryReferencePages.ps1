@@ -104,14 +104,21 @@ if (-not (Test-Path -LiteralPath $resolvedCategoryTemplatePath -PathType Leaf)) 
 
 $allMembers = Get-Content -LiteralPath $resolvedDataPath -Raw | ConvertFrom-Json
 $members = @($allMembers | Where-Object { $_.IsPublic -eq $true })
+$selectedScopes = @()
 
 if ($PSBoundParameters.ContainsKey("Scope") -and @($Scope).Count -gt 0) {
+    $selectedScopes = @(
+        $Scope |
+            ForEach-Object { $_.Trim().ToLowerInvariant() } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            Sort-Object -Unique
+    )
     $members = @(
         $members | Where-Object {
             $memberScope = ([string] $_.Scope).ToLowerInvariant()
             $memberRootScope = ($memberScope -split '/')[0]
-            @($Scope | ForEach-Object { $_.ToLowerInvariant() }) -contains $memberScope -or
-                @($Scope | ForEach-Object { $_.ToLowerInvariant() }) -contains $memberRootScope
+            $selectedScopes -contains $memberScope -or
+                $selectedScopes -contains $memberRootScope
         }
     )
 }
@@ -420,6 +427,26 @@ foreach ($existingPage in Get-ChildItem -LiteralPath $collectionDestination -Rec
     $existingPath = [System.IO.Path]::GetFullPath($existingPage.FullName)
     if ($generatedPaths.Contains($existingPath)) {
         continue
+    }
+
+    if ($selectedScopes.Count -gt 0) {
+        $relativePath = [System.IO.Path]::GetRelativePath($collectionDestination, $existingPath)
+        $relativeDirectory = [System.IO.Path]::GetDirectoryName($relativePath)
+        $existingScope = if ([string]::IsNullOrWhiteSpace($relativeDirectory)) {
+            $existingPage.BaseName -replace "-$([regex]::Escape($kindPlural))$", ""
+        } else {
+            $relativeDirectory.Replace([System.IO.Path]::DirectorySeparatorChar, '/').ToLowerInvariant()
+        }
+
+        $belongsToSelectedScope = @(
+            $selectedScopes | Where-Object {
+                $existingScope -eq $_ -or $existingScope.StartsWith("$_/", [System.StringComparison]::Ordinal)
+            }
+        ).Count -gt 0
+
+        if (-not $belongsToSelectedScope) {
+            continue
+        }
     }
 
     if (Select-String -LiteralPath $existingPath -Pattern '^generated: true$' -Quiet) {
