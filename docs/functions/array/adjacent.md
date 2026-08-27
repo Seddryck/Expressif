@@ -33,6 +33,14 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 
 
 
+## Behavior
+
+`adjacent` evaluates the supplied operation against each consecutive pair of values.
+
+For each pair, the first value becomes the input of the operation and the second value is supplied as its missing argument. This means that a binary function such as `subtract` can be passed directly.
+
+For example, `{1, 2, 3} | adjacent(subtract)` is conceptually equivalent to applying `$1 | subtract($0)` to each consecutive pair.
+
 ## Examples
 
 {% raw %}

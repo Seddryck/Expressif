@@ -31,6 +31,12 @@ internal static class FunctionHelpFormatter
             builder.AppendLine();
         }
 
+        if (!string.IsNullOrWhiteSpace(function.Behavior))
+        {
+            builder.AppendLine("Behavior:");
+            builder.AppendLine(function.Behavior).AppendLine();
+        }
+
         if (function.Examples is { Length: > 0 })
         {
             builder.AppendLine("Examples:");

@@ -63,4 +63,10 @@ public class FunctionCatalogTest
         => Assert.That(
             FunctionCatalog.Default.Find("add")?.Examples,
             Is.EqualTo(new[] { "10 | add(5)      → 15", "10 | add(5, 2)   → 20" }));
+
+    [Test]
+    public void Default_FunctionWithBehavior_DeserializesBehavior()
+        => Assert.That(
+            FunctionCatalog.Default.Find("adjacent")?.Behavior,
+            Does.StartWith("`adjacent` evaluates the supplied operation"));
 }
