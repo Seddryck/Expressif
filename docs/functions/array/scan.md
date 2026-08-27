@@ -3,7 +3,7 @@ layout: docs
 title: "scan"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 140
+nav_order: 150
 has_toc: false
 permalink: /functions/array/scan/
 tags:
@@ -28,6 +28,7 @@ Executes an accumulator progressively over the input enumerable and returns the 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `accumulator` | `accumulator` | Yes | Factory that creates the accumulator instance used for the scan execution. |
+
 
 
 

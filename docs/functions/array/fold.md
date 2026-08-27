@@ -3,7 +3,7 @@ layout: docs
 title: "fold"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/array/fold/
 tags:
@@ -28,6 +28,7 @@ Executes an accumulator once over the full input enumerable and returns the fina
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `accumulator` | `accumulator` | Yes | Factory that creates the accumulator instance used for the fold execution. |
+
 
 
 

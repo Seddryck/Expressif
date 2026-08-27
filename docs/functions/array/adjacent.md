@@ -41,6 +41,8 @@ For each pair, the first value becomes the input of the operation and the second
 
 For example, `{1, 2, 3} | adjacent(subtract)` is conceptually equivalent to applying `$1 | subtract($0)` to each consecutive pair.
 
+
+
 ## Examples
 
 {% raw %}

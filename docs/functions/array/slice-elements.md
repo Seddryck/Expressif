@@ -3,7 +3,7 @@ layout: docs
 title: "slice-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 170
+nav_order: 180
 has_toc: false
 permalink: /functions/array/slice-elements/
 tags:
@@ -30,6 +30,7 @@ Returns the elements in the zero-based half-open range from start, inclusive, to
 |:-----|:-----|:---------|:------------|
 | `start` | `integer` | Yes | Zero-based index of the first element to return. |
 | `end` | `integer` | Yes | Zero-based exclusive index at which to stop returning elements. |
+
 
 
 

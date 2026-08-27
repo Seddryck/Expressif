@@ -3,7 +3,7 @@ layout: docs
 title: "skip-first-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /functions/array/skip-first-elements/
 tags:
@@ -28,6 +28,7 @@ Omits the requested number of elements from the start of the input enumerable an
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to omit from the start of the input. |
+
 
 
 

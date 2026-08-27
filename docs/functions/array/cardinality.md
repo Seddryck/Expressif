@@ -1,23 +1,23 @@
 ---
 layout: docs
-title: "extension"
-parent: "Io functions"
+title: "cardinality"
+parent: "Array functions"
 grand_parent: "Functions library"
 nav_order: 40
 has_toc: false
-permalink: /functions/io/extension/
+permalink: /functions/array/cardinality/
 tags:
   - functions
-  - io
+  - array
 generated: true
 ---
 
 ```
-text →
-extension() → text
+array →
+cardinality() → integer
 ```
 
-Returns the extension of a file path provided as argument.
+Returns the number of elements in the input array.
 
 ## Parameters
 
@@ -34,12 +34,13 @@ This function has no parameters.
 
 {% raw %}
 ```expressif
-"docs/_data/function.json" | extension → ".json"
+{} | cardinality → 0
+{1, 2, 3} | cardinality → 3
 ```
 {% endraw %}
 
 
 **Kind:** Function  
-**Scope:** `io`  
-**Aliases:** `path-to-extension`
+**Scope:** `array`  
+**Aliases:** None
 {: .member-reference }

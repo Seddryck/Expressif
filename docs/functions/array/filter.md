@@ -3,7 +3,7 @@ layout: docs
 title: "filter"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /functions/array/filter/
 tags:
@@ -28,6 +28,7 @@ Applies a predicate expression to each input item and returns only items for whi
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `predicate` | `predicate` | Yes | Expression defining the predicate applied to each input item. |
+
 
 
 
