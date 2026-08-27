@@ -3,7 +3,7 @@ layout: docs
 title: "last-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /functions/array/last-elements/
 tags:
@@ -28,6 +28,7 @@ Returns up to the requested number of elements from the end of the input enumera
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to return from the end of the input. |
+
 
 
 

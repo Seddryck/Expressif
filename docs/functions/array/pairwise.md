@@ -3,7 +3,7 @@ layout: docs
 title: "pairwise"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/array/pairwise/
 tags:
@@ -24,6 +24,7 @@ Returns each consecutive pair of input values as a tuple. Returns `null` when th
 
 
 This function has no parameters.
+
 
 
 

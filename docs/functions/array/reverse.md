@@ -3,7 +3,7 @@ layout: docs
 title: "reverse"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /functions/array/reverse/
 tags:
@@ -24,6 +24,7 @@ Returns the input enumerable with elements emitted in the opposite order. Preser
 
 
 This function has no parameters.
+
 
 
 

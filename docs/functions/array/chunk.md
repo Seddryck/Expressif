@@ -3,7 +3,7 @@ layout: docs
 title: "chunk"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 50
 has_toc: false
 permalink: /functions/array/chunk/
 tags:
@@ -28,6 +28,7 @@ Splits an array into consecutive, non-overlapping chunks of at most the specifie
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `size` | `integer` | Yes | The strictly positive number of items in each chunk. |
+
 
 
 

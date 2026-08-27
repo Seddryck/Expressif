@@ -3,7 +3,7 @@ layout: docs
 title: "first-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /functions/array/first-elements/
 tags:
@@ -28,6 +28,7 @@ Returns up to the requested number of elements from the start of the input enume
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to return from the start of the input. |
+
 
 
 

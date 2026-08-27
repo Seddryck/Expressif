@@ -3,7 +3,7 @@ layout: docs
 title: "map"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 110
+nav_order: 120
 has_toc: false
 permalink: /functions/array/map/
 tags:
@@ -28,6 +28,7 @@ Applies a transformation expression to each input item and returns the transform
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `transformation` | `expression` | Yes | Expression creating the transformation applied to each input item. |
+
 
 
 
