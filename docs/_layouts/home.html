@@ -5,6 +5,7 @@
 
 <head>
   {% include head.html %}
+  <title>{{ page.title | default: site.title }}{% unless page.title == site.title %} | {{ site.title }}{% endunless %}</title>
 </head>
 
 <body class="home-page">
