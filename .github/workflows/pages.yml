@@ -12,9 +12,6 @@ on:
       - 'update-index.ps1'
       - 'docs/**'
 
-permissions:
-  contents: read
-
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -22,6 +19,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
