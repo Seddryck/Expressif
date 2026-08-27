@@ -1621,6 +1621,22 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Help_FunctionWithBehavior_DisplaysBehaviorBeforeExamples()
+    {
+        var result = await InvokeAsync("help", "adjacent");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Behavior:"));
+            Assert.That(result.StdOut, Does.Contain("conceptually equivalent"));
+            Assert.That(result.StdOut.IndexOf("Behavior:", StringComparison.Ordinal),
+                Is.LessThan(result.StdOut.IndexOf("Examples:", StringComparison.Ordinal)));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Help_FunctionWithExamples_DisplaysExamplesBeforeAliasesAndScope()
     {
         var result = await InvokeAsync("help", "add");

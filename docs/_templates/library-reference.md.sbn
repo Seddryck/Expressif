@@ -37,6 +37,13 @@ This {{ model.kind }} has no parameters.
 {{ model.parameter_rows }}
 {{ end }}
 
+{{~ if model.has_behavior }}
+
+## Behavior
+
+{{ model.behavior }}
+{{ end ~}}
+
 {{ if model.examples.size > 0 }}
 
 ## Examples

@@ -314,6 +314,11 @@ foreach ($member in $members) {
         $examples = @($member.Examples | ForEach-Object { [string] $_ })
     }
 
+    $behavior = ""
+    if ($null -ne $member.PSObject.Properties["Behavior"]) {
+        $behavior = [string] $member.Behavior
+    }
+
     $inputType = ""
     if ($null -ne $member.PSObject.Properties["Input"]) {
         $inputType = [string] $member.Input
@@ -386,6 +391,8 @@ foreach ($member in $members) {
         has_contract        = $hasContract
         signature           = $signatureLines -join "`n"
         summary             = [string] $member.Summary
+        behavior            = $behavior
+        has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes
         parameter_rows      = $parameterRows -join "`n"
