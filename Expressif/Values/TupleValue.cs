@@ -6,7 +6,7 @@ using System.Linq;
 namespace Expressif.Values;
 
 /// <summary>
-/// Represents an immutable, ordered collection of two or more heterogeneous values.
+/// Represents an immutable, ordered collection of heterogeneous values.
 /// </summary>
 public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>
 {
@@ -15,9 +15,6 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>
     public TupleValue(params object?[] values)
     {
         ArgumentNullException.ThrowIfNull(values);
-        if (values.Length < 2)
-            throw new ArgumentException("A tuple must contain at least two values.", nameof(values));
-
         this.values = [.. values];
     }
 

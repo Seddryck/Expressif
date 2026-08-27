@@ -4,6 +4,18 @@ using Expressif.Values;
 namespace Expressif.Functions.Tuple;
 
 /// <summary>
+/// Returns the number of positional elements in the input tuple.
+/// </summary>
+[Function(prefix: "", aliases: ["arity"])]
+[Scope("tuple")]
+public sealed class Arity : IFunction<TupleValue, int>
+{
+    public int Evaluate(TupleValue value) => value.Count;
+
+    object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
+}
+
+/// <summary>
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>
 [Function(prefix: "", aliases: ["tuple-at"])]

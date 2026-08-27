@@ -1332,6 +1332,21 @@
     ]
   },
   {
+    "Name": "arity",
+    "IsPublic": true,
+    "Aliases": [
+      "arity"
+    ],
+    "Scope": "tuple",
+    "Input": "tuple",
+    "Output": "integer",
+    "Summary": "Returns the number of positional elements in the input tuple.",
+    "Parameters": [],
+    "Examples": [
+      "T(10, \"foo\", #true) | arity → 3"
+    ]
+  },
+  {
     "Name": "tuple-at",
     "IsPublic": true,
     "Aliases": [

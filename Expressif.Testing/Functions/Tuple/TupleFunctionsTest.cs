@@ -1,10 +1,23 @@
 using Expressif.Functions.Tuple;
 using Expressif.Values;
+using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Functions.Tuple;
 
 public class TupleFunctionsTest
 {
+    [Conformance]
+    public void Arity_Valid(string value, int expected)
+        => Assert.That(
+            new Arity().Evaluate(ParseTuple(value)),
+            Is.EqualTo(expected));
+
+    private static TupleValue ParseTuple(string value)
+    {
+        var source = value.Trim('"').Replace('{', '(').Replace('}', ')');
+        return source == "T()" ? new Expressif.Values.Tuple() : (TupleValue)Expression.CreateClosed(source).Evaluate(null)!;
+    }
+
     [Test]
     public void Evaluate_Accessors_Valid()
     {
