@@ -1,4 +1,3 @@
-
 Remove-Item .\docs\Gemfile.lock -Force -ErrorAction SilentlyContinue
 
 $ErrorActionPreference = "Stop"
