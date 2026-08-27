@@ -19,6 +19,47 @@ Download `expressif-<version>.tmLanguage.json` from the matching version on the 
 
 The standalone file provides lexical colorization only. File-extension registration and editor behavior depend on the host tool.
 
+## Use with Shiki
+
+Install [Shiki](https://shiki.style/guide/install):
+
+```shell
+npm install shiki
+```
+
+Load the downloaded grammar as a custom language, then use its registered name when rendering an expression:
+
+```javascript
+import { readFile } from 'node:fs/promises'
+import { createHighlighter } from 'shiki'
+
+const grammar = JSON.parse(
+  await readFile('./expressif.tmLanguage.json', 'utf8')
+)
+
+const highlighter = await createHighlighter({
+  langs: [{ ...grammar, name: 'expressif' }],
+  themes: ['github-dark'],
+})
+
+const expression = `filter(greater-than(15))
+|> add(10)
+| scan(sum)
+| filter(less-than(150)
+|OR greater-than(0))`
+
+const html = highlighter.codeToHtml(expression, {
+  lang: 'expressif',
+  theme: 'github-dark',
+})
+```
+
+The resulting `html` value contains a highlighted `<pre>` element:
+
+![Expressif pipeline rendered by Shiki]({{ '/assets/images/shiki-expressif-rendering.svg' | relative_url }})
+
+The grammar declares `Expressif` as its name. Overriding that property while registering it provides the predictable lowercase language identifier used by the rendering call without modifying the downloaded file.
+
 ## Use with Visual Studio Code
 
 For Visual Studio Code, the grammar is distributed in a VSIX package that combines three pieces:
