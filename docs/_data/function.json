@@ -17,6 +17,7 @@
         "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
       }
     ],
+    "Behavior": "`adjacent` evaluates the supplied operation against each consecutive pair of values.\n\nFor each pair, the first value becomes the input of the operation and the second value is supplied as its missing argument. This means that a binary function such as `subtract` can be passed directly.\n\nFor example, `{1, 2, 3} | adjacent(subtract)` is conceptually equivalent to applying `$1 | subtract($0)` to each consecutive pair.",
     "Examples": [
       "{1, 2, 3} | adjacent(subtract) → {1, 1}"
     ]

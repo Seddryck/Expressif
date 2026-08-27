@@ -9,7 +9,8 @@ public sealed record FunctionDocumentation(
     string Output,
     string Summary,
     FunctionParameterDocumentation[] Parameters,
-    string[]? Examples = null);
+    string[]? Examples = null,
+    string? Behavior = null);
 
 public sealed record FunctionParameterDocumentation(
     string Name,
