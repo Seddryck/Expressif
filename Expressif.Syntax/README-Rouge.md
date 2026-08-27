@@ -38,6 +38,16 @@ Once loaded, Expressif code blocks can use:
 ```
 ````
 
+In documented evaluation examples, the lexer emits the arrow as an operator and everything following it on the same line as Rouge's standard `Generic::Output` token:
+
+````markdown
+```expressif
+10 | add(5)      → 15
+```
+````
+
+Rouge formatters expose this token with the standard `go` CSS class, allowing themes to distinguish evaluation output without Expressif-specific styling hooks.
+
 ## More information
 
 - Expressif repository: https://github.com/Seddryck/Expressif

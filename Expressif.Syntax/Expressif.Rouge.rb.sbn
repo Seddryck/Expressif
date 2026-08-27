@@ -12,6 +12,7 @@ require "rouge"
       filenames "*.expr", "*.expressif"
 
       state :root do
+        rule %r/(→)([^\r\n]*)/, groups(Operator, Generic::Output)
         rule %r/\s+/, Text::Whitespace
         rule %r/#"(?:\\.|[^"\\])*"/, Literal::Date
         rule %r/"(?:\\.|[^"\\])*"/, Str
