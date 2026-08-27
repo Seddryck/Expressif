@@ -187,6 +187,39 @@ public class FunctionIntrospectorTest
             Infos.SelectMany(x => x.Parameters).Select(x => x.Type),
             Is.All.Not.Null.And.Not.Empty);
 
+    [TestCase("array", "values", "any", true, 0)]
+    [TestCase("record", "entries", "entry", true, 0)]
+    [TestCase("coalesce", "expressions", "expression", false, 2)]
+    public void Describe_VariadicParameter_ExposesElementTypeAndVariadicity(
+        string function,
+        string parameter,
+        string type,
+        bool optional,
+        int minimumCardinality)
+    {
+        var info = Infos.Single(x => x.Name == function).Parameters.Single(x => x.Name == parameter);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(info.Type, Is.EqualTo(type));
+            Assert.That(info.Optional, Is.EqualTo(optional));
+            Assert.That(info.Variadic, Is.True);
+            Assert.That(info.MinimumCardinality, Is.EqualTo(minimumCardinality));
+        }
+    }
+
+    [Test]
+    public void Describe_NonVariadicParameter_IsNotVariadic()
+    {
+        var info = Infos.Single(x => x.Name == "difference").Parameters.Single(x => x.Name == "array");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(info.Variadic, Is.False);
+            Assert.That(info.MinimumCardinality, Is.EqualTo(1));
+        }
+    }
+
     [Test]
     public void Locate_ExpressifAssembly_ArrayFunctionsExposeWrappersAndShiftsOnly()
     {

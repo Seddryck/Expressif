@@ -34,8 +34,8 @@ public class FunctionCatalogTest
                 Assert.That(documentation.Input, Is.EqualTo(implementation.Input), $"Input for {name}");
                 Assert.That(documentation.Output, Is.EqualTo(implementation.Output), $"Output for {name}");
                 Assert.That(documentation.Summary, Is.Not.Empty, $"Summary for {name}");
-                Assert.That(documentation.Parameters.Select(x => (x.Name, x.Type, x.Optional)),
-                    Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional))),
+                Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic)),
+                    Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic))),
                     $"Parameters for {name}");
                 Assert.That(documentation.Parameters.Select(x => x.Summary), Is.All.Not.Empty, $"Parameter summaries for {name}");
             }
@@ -45,6 +45,17 @@ public class FunctionCatalogTest
     [Test]
     public void Find_Alias_ReturnsCanonicalFunction()
         => Assert.That(FunctionCatalog.Default.Find("array-to-broadcast")?.Name, Is.EqualTo("broadcast"));
+
+    [TestCase("array", "values", 0)]
+    [TestCase("record", "entries", 0)]
+    [TestCase("coalesce", "expressions", 2)]
+    public void Default_VariadicParameter_DeserializesMinimumCardinality(
+        string function,
+        string parameter,
+        int minimumCardinality)
+        => Assert.That(
+            FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).MinimumCardinality,
+            Is.EqualTo(minimumCardinality));
 
     [Test]
     public void Find_CaseVariantAliasForSameFunction_ReturnsCanonicalFunction()

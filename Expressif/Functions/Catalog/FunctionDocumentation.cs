@@ -14,7 +14,12 @@ public sealed record FunctionDocumentation(
 
 public sealed record FunctionParameterDocumentation(
     string Name,
-    string Type,
+    string? Type,
     bool Optional,
     string Summary,
-    bool Variadic = false);
+    bool Variadic = false,
+    int MinimumCardinality = 1,
+    string? Kind = null)
+{
+    public string TypeOrKind => Type ?? Kind ?? "any";
+}
