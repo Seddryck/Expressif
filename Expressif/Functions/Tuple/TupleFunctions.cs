@@ -76,6 +76,18 @@ public sealed class Pick : IFunction<TupleValue, TupleValue>
     object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
 }
 
+/// <summary>Evaluates an expression with the input tuple as its positional context.</summary>
+[Function(prefix: "", aliases: ["apply"])]
+[Scope("tuple")]
+public sealed class Apply : IFunction<TupleValue, object?>
+{
+    private Func<IFunction> Expression { get; }
+    /// <param name="expression">Specifies the expression evaluated against the tuple.</param>
+    public Apply(Func<IFunction> expression) => Expression = expression;
+    public object? Evaluate(TupleValue value) => Expression.Invoke().Evaluate(value);
+    public object? Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
+}
+
 /// <summary>
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>
