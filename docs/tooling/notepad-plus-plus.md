@@ -8,7 +8,7 @@ Expressif provides a Notepad++ user-defined language (UDL). It adds syntax highl
 
 ## Download
 
-Download `expressif-<version>-notepadpp-udl.xml` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases).
+Download `expressif-syntax-<version>-notepadpp.xml` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases).
 
 ## Install the language definition
 

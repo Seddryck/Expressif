@@ -27,7 +27,7 @@
 #endif
 
 #ifndef OutputBaseFilename
-  #define OutputBaseFilename AppName + "-" + AppVersion + "-" + TargetFramework + "-" + RuntimeIdentifier + "-setup"
+  #define OutputBaseFilename "expressif-" + AppVersion + "-" + TargetFramework + "-" + RuntimeIdentifier + "-setup"
 #endif
 
 [Setup]

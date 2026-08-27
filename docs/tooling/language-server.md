@@ -38,7 +38,7 @@ code --install-extension ./artifacts/expressif-language-support.vsix
 
 Leave `expressif.languageServer.path` empty to use the bundled server. Set it to the absolute path of a separately installed executable only when you intentionally want the VSIX to use that external server build.
 
-The language-server client and the syntax-only `expressif-syntax-<version>.vsix` are complementary extensions. The language-support extension does not bundle the TextMate grammar:
+The language-server client and the syntax-only `expressif-syntax-<version>-vscode.vsix` are complementary extensions. The language-support extension does not bundle the TextMate grammar:
 
 | Extension | Purpose |
 |:----------|:--------|

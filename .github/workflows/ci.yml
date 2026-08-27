@@ -392,7 +392,7 @@ jobs:
           if-no-files-found: error
           path: |
             conformance/bin/conformance.manifest.yaml
-            conformance/bin/Expressif.Conformance.*.zip
+            conformance/bin/expressif.conformance.*.zip
             conformance/bin/expressif.conformance.dotnet.*.yaml
 
   package-syntax-highlighters:
@@ -522,8 +522,8 @@ jobs:
           name: distribution-${{ matrix.framework }}-${{ matrix.runtime }}
           if-no-files-found: error
           path: |
-            distribution/bin/archives/Expressif-*.*
-            distribution/bin/installers/Expressif-*-setup.exe*
+            distribution/bin/archives/expressif-*.*
+            distribution/bin/installers/expressif-*-setup.exe*
 
   publish-nuget:
     needs: package-nuget
@@ -642,6 +642,14 @@ jobs:
             throw "Expected conformance manifest '$manifest', found none."
           }
           Write-Host "Found conformance manifest: $manifest"
+
+          $releaseAssets = @(Get-ChildItem -Path release-assets -Recurse -File)
+          $mixedCaseAssets = @($releaseAssets | Where-Object {
+            $_.Name -cne $_.Name.ToLowerInvariant()
+          })
+          if ($mixedCaseAssets.Count -gt 0) {
+            throw "Release asset names must be lower-case: $($mixedCaseAssets.Name -join ', ')"
+          }
 
       - name: Create or update GitHub release
         shell: pwsh
