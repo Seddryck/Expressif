@@ -3,7 +3,7 @@ layout: docs
 title: "tuple-second"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /functions/tuple/tuple-second/
 tags:

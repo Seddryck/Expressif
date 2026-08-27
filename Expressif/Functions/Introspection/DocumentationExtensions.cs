@@ -122,11 +122,13 @@ public static class DocumentationExtensions
             {
                 paramInfos.Add(new ParamInfo(
                     names[i],
-                    ExpressifTypeMapper.ToExpressifType(
-                        parameters[i].ParameterType,
-                        unwrapProvider: true,
-                        declaringType: type,
-                        parameterName: names[i]),
+                    type == typeof(Tuple.Pick) && names[i] == "positions"
+                        ? "integer"
+                        : ExpressifTypeMapper.ToExpressifType(
+                            parameters[i].ParameterType,
+                            unwrapProvider: true,
+                            declaringType: type,
+                            parameterName: names[i]),
                     IsVariadicParameter(type, names[i]),
                     GetMinimumCardinality(type, names[i]),
                     paramNodes[i].InnerText.Trim()));
@@ -140,10 +142,13 @@ public static class DocumentationExtensions
     private static bool IsVariadicParameter(Type declaringType, string parameterName)
         => (declaringType == typeof(Array.Array) && parameterName == "values")
             || (declaringType == typeof(Record.Record) && parameterName == "entries")
-            || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions");
+            || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")
+            || (declaringType == typeof(Tuple.Pick) && parameterName == "positions");
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
-        => declaringType == typeof(Special.Coalesce) && parameterName == "expressions" ? 2 : 0;
+        => declaringType == typeof(Special.Coalesce) && parameterName == "expressions" ? 2
+            : declaringType == typeof(Tuple.Pick) && parameterName == "positions" ? 1
+            : 0;
 
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the

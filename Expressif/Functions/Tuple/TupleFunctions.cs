@@ -58,6 +58,24 @@ public sealed class Extend : IFunction<TupleValue, TupleValue>
     object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
 }
 
+/// <summary>Returns a tuple containing selected positions in the requested order.</summary>
+[Function(prefix: "", aliases: ["pick"])]
+[Scope("tuple")]
+public sealed class Pick : IFunction<TupleValue, TupleValue>
+{
+    private Func<int[]> Positions { get; }
+    /// <param name="positions">One or more zero-based tuple positions.</param>
+    public Pick(Func<int[]> positions) => Positions = positions;
+    public TupleValue Evaluate(TupleValue value)
+    {
+        var positions = Positions.Invoke();
+        if (positions.Length == 0) throw new ArgumentException("Pick requires at least one position.");
+        if (positions.Any(x => x < 0 || x >= value.Count)) throw new IndexOutOfRangeException("Tuple pick position is out of range.");
+        return new Expressif.Values.Tuple(positions.Select(x => value[x]).ToArray());
+    }
+    object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
+}
+
 /// <summary>
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>
