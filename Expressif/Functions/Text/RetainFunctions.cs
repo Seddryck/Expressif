@@ -8,6 +8,7 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/filtering")]
 public abstract class BaseTextRetain : BaseTextFunction
 {
     protected override object? EvaluateBlank() => new Empty().Keyword;

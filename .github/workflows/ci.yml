@@ -10,7 +10,6 @@ on:
       - '**'
     paths-ignore:
       - '.githooks/**'
-      - 'docs/**'
       - 'misc/**'
       - 'README.md'
       - 'LICENSE'
@@ -20,7 +19,6 @@ on:
   pull_request:
     paths-ignore:
       - '.githooks/**'
-      - 'docs/**'
       - 'misc/**'
       - 'README.md'
       - 'LICENSE'
@@ -107,18 +105,26 @@ jobs:
             project: Expressif.Testing/Expressif.Testing.csproj
             framework: net8.0
             coverage: expressif-net8.0
+            suite: coverage
           - name: library, net9.0
             project: Expressif.Testing/Expressif.Testing.csproj
             framework: net9.0
             coverage: expressif-net9.0
+            suite: coverage
           - name: library, net10.0
             project: Expressif.Testing/Expressif.Testing.csproj
             framework: net10.0
             coverage: expressif-net10.0
+            suite: coverage
           - name: CLI, net10.0
             project: Expressif.Cli.Tests/Expressif.Cli.Tests.csproj
             framework: net10.0
             coverage: expressif-cli-net10.0
+            suite: coverage
+          - name: documentation, net10.0
+            project: Expressif.Testing/Expressif.Testing.csproj
+            framework: net10.0
+            suite: documentation
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -144,7 +150,7 @@ jobs:
           -p:ContinuousIntegrationBuild=true
 
       - name: Validate metadata consistency
-        if: matrix.coverage == 'expressif-net10.0'
+        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
         run: >-
           dotnet test ${{ matrix.project }}
           --configuration Release
@@ -155,6 +161,7 @@ jobs:
           --filter TestCategory=MetadataConsistency
 
       - name: Run tests with coverage
+        if: matrix.suite == 'coverage'
         shell: pwsh
         run: |
           $results = '.coverage/results'
@@ -164,7 +171,7 @@ jobs:
             --no-build `
             --no-restore `
             --nologo `
-            --filter 'TestCategory!=MetadataConsistency' `
+            --filter 'TestCategory!=MetadataConsistency&TestCategory!=documentation' `
             --collect 'XPlat Code Coverage;Format=opencover' `
             --results-directory $results
 
@@ -179,20 +186,31 @@ jobs:
           }
           Copy-Item $report.FullName '.coverage/${{ matrix.coverage }}.xml'
 
+      - name: Run documentation tests
+        if: matrix.suite == 'documentation'
+        run: >-
+          dotnet test ${{ matrix.project }}
+          --configuration Release
+          --framework ${{ matrix.framework }}
+          --no-build
+          --no-restore
+          --nologo
+          --filter TestCategory=documentation
+
       - name: Create conformance report directory
-        if: matrix.coverage == 'expressif-net10.0'
+        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
         shell: pwsh
         run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
 
       - name: Run .NET conformance tests
-        if: matrix.coverage == 'expressif-net10.0'
+        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
         run: >-
           dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
           --TestCaseFilter:TestCategory=conformance
           --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
 
       - name: Upload conformance test report
-        if: matrix.coverage == 'expressif-net10.0'
+        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
         uses: actions/upload-artifact@v7
         with:
           name: conformance-test-report
@@ -201,6 +219,7 @@ jobs:
           path: conformance/bin/Expressif.Conformance.DotNet.xml
 
       - name: Upload coverage to Codecov
+        if: matrix.suite == 'coverage'
         uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
         with:
           files: ./.coverage/${{ matrix.coverage }}.xml

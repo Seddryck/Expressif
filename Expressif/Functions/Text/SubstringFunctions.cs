@@ -7,6 +7,7 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/selection")]
 public abstract class BaseSubstringFunction : BaseTextFunction
 {
     public Func<string> Substring { get; }
