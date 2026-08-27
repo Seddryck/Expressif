@@ -131,6 +131,21 @@ Evaluation conformance records observable results. Parser or binder diagnostics 
 
 If expected results cannot be derived unambiguously, ask for concrete examples before writing. Never invent semantics from an operator name alone.
 
+## Regenerate documentation pages
+
+After changing a catalog, regenerate the affected library reference pages with the
+post-v2 page generator:
+
+```powershell
+./New-LibraryReferencePages.ps1 -Kind <Kind> -Scope <Scope>
+```
+
+Map `<Kind>` to `Function`, `Predicate`, or `Accumulator`. Pass the changed
+operator's scope, such as `text` or `text/conversion`, so generation and stale-page
+cleanup stay limited to that scope. Include the generated page for the new operator
+and its affected indexes in the task. Regeneration must succeed before the completed
+operator work is committed or pushed.
+
 ## Commit message proposal
 
 After the contract is settled, propose a Conventional Commit message describing the eventual completed change. Treat it as a handoff suggestion that `/implement` or the final workflow may retain or refine after implementation.
@@ -164,6 +179,7 @@ Report:
 
 * operator kind, name, and semantic contract;
 * catalog and conformance files changed;
+* documentation reference pages regenerated;
 * optional, dynamic, or variadic semantics recorded;
 * validation performed;
 * proposed commit message;
