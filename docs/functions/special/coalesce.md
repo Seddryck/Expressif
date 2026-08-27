@@ -15,7 +15,7 @@ generated: true
 ```
 any →
 coalesce(
-    expressions: array
+    ...expressions: expression
 ) → any
 ```
 
@@ -27,7 +27,7 @@ Returns the first non-null result from two or more expressions evaluated from le
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `expressions` | `array` | Yes | The candidate expressions, with at least two required. |
+| `expressions` | `expression` | Variadic (two or more) | Two or more candidate expressions evaluated from left to right against the same input. |
 
 
 

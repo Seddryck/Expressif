@@ -33,11 +33,18 @@ public abstract class BaseIntrospector
     protected IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
         => ctorInfos.SelectMany(x => x.Parameters)
                     .GroupBy(x => x.Name)
-                    .Select(parameters => new ParameterInfo(
-                        parameters.Key,
-                        string.Join(" | ", parameters.Select(x => x.Type).Distinct().OrderBy(x => x)),
-                        !ctorInfos.All(c => c.Parameters.Any(p => p.Name == parameters.Key)),
-                        parameters.First().Summary));
+                    .Select(parameters =>
+                    {
+                        var optional = !ctorInfos.All(c => c.Parameters.Any(p => p.Name == parameters.Key));
+                        var variadic = parameters.Any(x => x.Variadic);
+                        return new ParameterInfo(
+                            parameters.Key,
+                            string.Join(" | ", parameters.Select(x => x.Type).Distinct().OrderBy(x => x)),
+                            optional,
+                            variadic,
+                            variadic ? parameters.Max(x => x.MinimumCardinality) : optional ? 0 : 1,
+                            parameters.First().Summary);
+                    });
 }
 
 public class AssemblyTypesProbe : ITypesProbe

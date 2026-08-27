@@ -15,7 +15,7 @@ generated: true
 ```
 any →
 record(
-    entries: array
+    ...entries: entry
 ) → record
 ```
 
@@ -27,7 +27,7 @@ Creates a record by evaluating its named and spread entries against the input va
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `entries` | `array` | Yes | Factory that creates the named and spread entries used to build the record. |
+| `entries` | `entry` | Variadic (zero or more) | Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value. |
 
 
 

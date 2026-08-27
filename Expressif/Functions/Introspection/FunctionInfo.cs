@@ -26,5 +26,7 @@ public record ParameterInfo
     string Name,
     string Type,
     bool Optional,
+    bool Variadic,
+    int MinimumCardinality,
     string Summary
 );

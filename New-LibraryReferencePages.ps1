@@ -292,6 +292,29 @@ foreach ($member in $members) {
                 $parameterType = [string] $parameter.Type
             }
 
+            if ([string]::IsNullOrWhiteSpace($parameterType) -and $null -ne $parameter.PSObject.Properties["Kind"]) {
+                $parameterType = [string] $parameter.Kind
+            }
+
+            $parameterVariadic = $false
+            if ($null -ne $parameter.PSObject.Properties["Variadic"]) {
+                $parameterVariadic = [bool] $parameter.Variadic
+            }
+
+            $minimumCardinality = if ($parameterVariadic) {
+                if ($null -ne $parameter.PSObject.Properties["MinimumCardinality"]) {
+                    [int] $parameter.MinimumCardinality
+                } elseif ([bool] $parameter.Optional) {
+                    0
+                } else {
+                    1
+                }
+            } elseif ([bool] $parameter.Optional) {
+                0
+            } else {
+                1
+            }
+
             $parameterSummary = ""
             if ($null -ne $parameter.PSObject.Properties["Summary"]) {
                 $parameterSummary = [string] $parameter.Summary
@@ -302,6 +325,8 @@ foreach ($member in $members) {
                 type     = $parameterType
                 has_type = -not [string]::IsNullOrWhiteSpace($parameterType)
                 optional = [bool] $parameter.Optional
+                variadic = $parameterVariadic
+                minimum_cardinality = $minimumCardinality
                 summary  = $parameterSummary
             }
         }
@@ -344,17 +369,26 @@ foreach ($member in $members) {
         $signatureLines.Add("$memberName(")
         for ($index = 0; $index -lt $parameters.Count; $index++) {
             $parameter = $parameters[$index]
-            $optionalMarker = if ($parameter.optional) { "?" } else { "" }
+            $optionalMarker = if ($parameter.optional -and -not $parameter.variadic) { "?" } else { "" }
+            $variadicMarker = if ($parameter.variadic) { "..." } else { "" }
             $typeAnnotation = if ($parameter.has_type) { ": $($parameter.type)" } else { "" }
             $separator = if ($index -lt $parameters.Count - 1) { "," } else { "" }
-            $signatureLines.Add("    $($parameter.name)$optionalMarker$typeAnnotation$separator")
+            $signatureLines.Add("    $variadicMarker$($parameter.name)$optionalMarker$typeAnnotation$separator")
         }
 
         $signatureLines.Add(")$(if ($hasContract) { " → $outputType" })")
     }
 
     $parameterRows = foreach ($parameter in $parameters) {
-        $required = if ($parameter.optional) { "No" } else { "Yes" }
+        $required = if ($parameter.variadic) {
+            $minimumLabel = switch ($parameter.minimum_cardinality) {
+                0 { "zero" }
+                1 { "one" }
+                2 { "two" }
+                default { [string] $parameter.minimum_cardinality }
+            }
+            "Variadic ($minimumLabel or more)"
+        } elseif ($parameter.optional) { "No" } else { "Yes" }
         $summary = ([string] $parameter.summary) -replace '\|', '\|' -replace '[\r\n]+', ' '
         if ($hasParameterTypes) {
             $type = if ($parameter.has_type) { "``$($parameter.type)``" } else { "Not specified" }

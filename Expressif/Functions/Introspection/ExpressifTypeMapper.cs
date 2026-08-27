@@ -14,6 +14,9 @@ internal static class ExpressifTypeMapper
             [("Fold", "accumulator")] = "accumulator",
             [("Scan", "accumulator")] = "accumulator",
             [("DurationBetween", "previous")] = "date | date-time | year-month",
+            [("Array", "values")] = "any",
+            [("Record", "entries")] = "entry",
+            [("Coalesce", "expressions")] = "expression",
         };
 
     public static string ToExpressifType(

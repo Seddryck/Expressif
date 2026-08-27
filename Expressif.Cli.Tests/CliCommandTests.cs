@@ -1608,6 +1608,21 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Help_VariadicParameter_DisplaysElementTypeAndMinimumCardinality()
+    {
+        var result = await InvokeAsync("help", "coalesce");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"any →{Environment.NewLine}coalesce({Environment.NewLine}    ...expressions: expression{Environment.NewLine}) → any"));
+            Assert.That(result.StdOut, Does.Contain("expressions  expression (variadic, two or more)"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Help_DynamicFunction_DisplaysAnyContract()
     {
         var result = await InvokeAsync("help", "field");

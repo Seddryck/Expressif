@@ -113,7 +113,7 @@ public class Coalesce : IFunction
 {
     public IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
-    /// <param name="expressions">The candidate expressions, with at least two required.</param>
+    /// <param name="expressions">Two or more candidate expressions evaluated from left to right against the same input.</param>
     public Coalesce(IEnumerable<Func<object?, object?>> expressions)
     {
         Expressions = expressions.ToArray();
