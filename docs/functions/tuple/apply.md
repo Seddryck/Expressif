@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "pick"
+title: "apply"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 10
 has_toc: false
-permalink: /functions/tuple/pick/
+permalink: /functions/tuple/apply/
 tags:
   - functions
   - tuple
@@ -14,12 +14,12 @@ generated: true
 
 ```
 tuple →
-pick(
-    ...positions: integer
-) → tuple
+apply(
+    expression: expression
+) → any
 ```
 
-Returns a tuple containing selected positions in the requested order.
+Evaluates an expression with the input tuple as its positional context.
 
 ## Parameters
 
@@ -27,7 +27,7 @@ Returns a tuple containing selected positions in the requested order.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `positions` | `integer` | Variadic (one or more) | One or more zero-based tuple positions. |
+| `expression` | `expression` | Yes | Specifies the expression evaluated against the tuple. |
 
 
 
@@ -38,12 +38,12 @@ Returns a tuple containing selected positions in the requested order.
 
 {% raw %}
 ```expressif
-T("John", "Smith", 42) | pick(1, 0) → T("Smith", "John")
+T(10, 20) | apply($0 | add($1)) → 30
 ```
 {% endraw %}
 
 
 **Kind:** Function  
 **Scope:** `tuple`  
-**Aliases:** `pick`
+**Aliases:** `apply`
 {: .member-reference }

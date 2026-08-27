@@ -108,4 +108,8 @@ public class TupleFunctionsTest
         => Assert.That(
             Expression.Create("pick(1, 0, 1)").Evaluate(new TupleValue("John", "Smith")),
             Is.EqualTo(new TupleValue("Smith", "John", "Smith")));
+
+    [Test]
+    public void Apply_EvaluatesExpressionAgainstTuple()
+        => Assert.That(Expression.Create("apply($0 | add($1))").Evaluate(new TupleValue(10, 20)), Is.EqualTo(30));
 }
