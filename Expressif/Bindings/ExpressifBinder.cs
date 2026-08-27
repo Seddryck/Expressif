@@ -202,7 +202,12 @@ public sealed class ExpressifBinder
     private Function BindPipelineMember(ExpressionSyntax syntax) => syntax switch
     {
         FunctionCallSyntax call => BindFunction(call),
-        TupleProjectionSyntax projection => new Function("tuple-at", [new LiteralParameter(projection.Index.ToString())], FunctionSyntax.TupleProjectionShorthand),
+        TupleProjectionSyntax projection => new Function(
+            "tuple-at",
+            [new LiteralParameter((projection.Direction is TupleProjectionDirection.FromEnd
+                ? projection.Index == 0 ? int.MinValue : -projection.Index
+                : projection.Index).ToString())],
+            FunctionSyntax.TupleProjectionShorthand),
         RecordAccessSyntax access when !access.IsOriginalInput => BindRecordAccessFunction(access),
         RecordAccessSyntax access => throw InvalidContextualRecordAccessPipelineStage(access),
         MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),

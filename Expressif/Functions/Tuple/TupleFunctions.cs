@@ -19,9 +19,13 @@ public class TupleAt : IFunction<TupleValue, object?>
     public object? Evaluate(object? value)
     {
         var position = Position.Invoke();
-        return value is TupleValue tuple && position >= 0 && position < tuple.Count
-            ? tuple[position]
+        var index = position == int.MinValue ? -1 : position < 0 ? tupleIndexFromEnd(position) : position;
+        return value is TupleValue tuple && index >= 0 && index < tuple.Count
+            ? tuple[index]
             : null;
+
+        int tupleIndexFromEnd(int offset)
+            => value is TupleValue tuple ? tuple.Count + offset : -1;
     }
 
     public object? Evaluate(TupleValue value) => Evaluate((object?)value);
