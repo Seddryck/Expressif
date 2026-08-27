@@ -376,10 +376,48 @@ jobs:
   package-cli-distributions:
     needs:
       - calculate-version
-      - package-nuget
-      - package-conformance
-      - package-syntax-highlighters
+      - build-and-tests
     runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - framework: net8.0
+            runtime: win-x64
+            installer: false
+          - framework: net8.0
+            runtime: win-arm64
+            installer: false
+          - framework: net8.0
+            runtime: linux-x64
+            installer: false
+          - framework: net8.0
+            runtime: linux-musl-x64
+            installer: false
+          - framework: net9.0
+            runtime: win-x64
+            installer: false
+          - framework: net9.0
+            runtime: win-arm64
+            installer: false
+          - framework: net9.0
+            runtime: linux-x64
+            installer: false
+          - framework: net9.0
+            runtime: linux-musl-x64
+            installer: false
+          - framework: net10.0
+            runtime: win-x64
+            installer: true
+          - framework: net10.0
+            runtime: win-arm64
+            installer: true
+          - framework: net10.0
+            runtime: linux-x64
+            installer: false
+          - framework: net10.0
+            runtime: linux-musl-x64
+            installer: false
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -392,20 +430,45 @@ jobs:
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Install Inno Setup
+        if: matrix.installer
         shell: pwsh
         run: ./distribution/Install-Iscc.ps1
 
-      - name: Build distribution
+      - name: Publish distribution
         shell: pwsh
         run: >-
           ./distribution/build-distribution.ps1
+          -Mode Publish
           -Version ${{ needs.calculate-version.outputs.semver }}
           -Configuration Release
+          -Frameworks ${{ matrix.framework }}
+          -Runtimes ${{ matrix.runtime }}
+
+      - name: Archive distribution
+        shell: pwsh
+        run: >-
+          ./distribution/build-distribution.ps1
+          -Mode Archive
+          -Version ${{ needs.calculate-version.outputs.semver }}
+          -Configuration Release
+          -Frameworks ${{ matrix.framework }}
+          -Runtimes ${{ matrix.runtime }}
+
+      - name: Build Windows installer
+        if: matrix.installer
+        shell: pwsh
+        run: >-
+          ./distribution/build-distribution.ps1
+          -Mode Bundle
+          -Version ${{ needs.calculate-version.outputs.semver }}
+          -Configuration Release
+          -Frameworks ${{ matrix.framework }}
+          -Runtimes ${{ matrix.runtime }}
 
       - name: Upload distribution artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: distribution
+          name: distribution-${{ matrix.framework }}-${{ matrix.runtime }}
           if-no-files-found: error
           path: |
             distribution/bin/archives/Expressif-*.*
@@ -473,6 +536,7 @@ jobs:
     needs:
       - calculate-version
       - package-conformance
+      - package-syntax-highlighters
       - package-cli-distributions
     if: >-
       github.event_name == 'push' &&
@@ -498,7 +562,8 @@ jobs:
       - name: Download distribution assets
         uses: actions/download-artifact@v8
         with:
-          name: distribution
+          pattern: distribution-*
+          merge-multiple: true
           path: release-assets/distribution
 
       - name: Validate release assets
