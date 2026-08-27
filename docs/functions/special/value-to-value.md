@@ -3,7 +3,7 @@ layout: docs
 title: "value-to-value"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 150
+nav_order: 120
 has_toc: false
 permalink: /functions/special/value-to-value/
 tags:
@@ -24,6 +24,7 @@ Returns `value` except if the argument value is `null` then it returns `null`.
 
 
 This function has no parameters.
+
 
 
 

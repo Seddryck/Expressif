@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "tuple-at"
-parent: "Special functions"
+parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 10
 has_toc: false
-permalink: /functions/special/tuple-at/
+permalink: /functions/tuple/tuple-at/
 tags:
   - functions
-  - special
+  - tuple
 generated: true
 ---
 
@@ -33,6 +33,7 @@ Returns the tuple field at the specified zero-based position. Returns `null` whe
 
 
 
+
 ## Examples
 
 {% raw %}
@@ -43,6 +44,6 @@ T(10, 20, 30) | tuple-at(1) → 20
 
 
 **Kind:** Function  
-**Scope:** `special`  
+**Scope:** `tuple`  
 **Aliases:** `tuple-at`
 {: .member-reference }
