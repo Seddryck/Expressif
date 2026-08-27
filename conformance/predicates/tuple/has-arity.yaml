@@ -1,0 +1,18 @@
+suite: tuple
+kind: predicate
+operator: has-arity
+tests:
+  - id: has-arity.valid
+    cases:
+      - id: has-arity.valid.tuple.empty
+        value: T()
+        parameters: [0]
+        expected: true
+      - id: has-arity.valid.tuple.match
+        value: T(1, 2)
+        parameters: [2]
+        expected: true
+      - id: has-arity.valid.tuple.mismatch
+        value: T(1, 2, 3)
+        parameters: [2]
+        expected: false
