@@ -33,6 +33,13 @@ Creates a record by evaluating its named and spread entries against the input va
 
 
 
+## Examples
+
+```expressif
+{name := "Ada", score := 10} | record(name := "Ada", score := 10) → {name := "Ada", score := 10}
+```
+
+
 **Kind:** Function  
 **Scope:** `record`  
 **Aliases:** None

@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | integer → 10
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/rounding`  
 **Aliases:** `numeric-to-integer`

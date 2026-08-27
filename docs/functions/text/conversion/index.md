@@ -3,7 +3,7 @@ layout: docs
 title: "Conversion functions"
 parent: "Text functions"
 grand_parent: "Functions library"
-nav_order: 10
+nav_order: 40
 has_children: true
 has_toc: false
 permalink: /functions/text/conversion/

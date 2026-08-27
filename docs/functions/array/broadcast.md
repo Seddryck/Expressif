@@ -33,6 +33,13 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | broadcast(sum) → {6, 6, 6}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `array-to-broadcast`

@@ -35,6 +35,13 @@ Returns the elements in the zero-based half-open range from start, inclusive, to
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | slice-elements(1, 3) → {2, 3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `slice`

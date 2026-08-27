@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | last-of-year → #"2024-12-31 00:00:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/calendar`  
 **Aliases:** `dateTime-to-last-of-year`

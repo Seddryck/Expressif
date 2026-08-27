@@ -33,6 +33,13 @@ Returns the percentage change from the previous numeric value to the current inp
 
 
 
+## Examples
+
+```expressif
+10 | percent-change(8) → 25.00
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-percent-change`

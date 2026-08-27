@@ -33,6 +33,13 @@ Returns the tuple field at the specified zero-based position. Returns `null` whe
 
 
 
+## Examples
+
+```expressif
+T(10, 20, 30) | tuple-at(1) → 20
+```
+
+
 **Kind:** Function  
 **Scope:** `special`  
 **Aliases:** `tuple-at`

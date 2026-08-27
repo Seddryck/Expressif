@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | local-to-utc("UTC") → #"2024-01-15 12:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** None

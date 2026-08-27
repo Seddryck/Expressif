@@ -3,7 +3,7 @@ layout: docs
 title: "without-diacritics"
 parent: "Normalization functions"
 grand_parent: "Text functions"
-nav_order: 60
+nav_order: 90
 has_toc: false
 permalink: /functions/text/normalization/without-diacritics/
 tags:
@@ -27,6 +27,13 @@ This function has no parameters.
 
 
 
+
+
+## Examples
+
+```expressif
+"Hello World" | without-diacritics → "Hello World"
+```
 
 
 **Kind:** Function  

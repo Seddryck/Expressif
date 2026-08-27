@@ -33,6 +33,13 @@ Returns a new date value corresponding to the date passed as the argument, count
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | next-business-days(2) → #"2024-01-17"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `temporal-to-next-business-days`, `next-business-day`, `add-business-days`

@@ -33,6 +33,13 @@ Returns a new date value corresponding to the first occurrence of the weekday pa
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15" | first-in-month("Monday") → #"2024-01-01"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/calendar`  
 **Aliases:** `dateTime-to-first-in-month`

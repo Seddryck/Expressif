@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#null | value-to-value → "(null)"
+```
+
+
 **Kind:** Function  
 **Scope:** `special`  
 **Aliases:** None

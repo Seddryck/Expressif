@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+10 | ceiling → 10
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/rounding`  
 **Aliases:** `numeric-to-ceiling`

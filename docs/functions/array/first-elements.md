@@ -33,6 +33,13 @@ Returns up to the requested number of elements from the start of the input enume
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | first-elements(2) → {1, 2}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `first`

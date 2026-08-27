@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | datetime-to-date → #"2024-01-15 00:00:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/conversion`  
 **Aliases:** `dateTime-to-date`

@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+"Hello World" | coerce-datetime → #null
+```
+
+
 **Kind:** Function  
 **Scope:** `special`  
 **Aliases:** `special-to-coerce-datetime`

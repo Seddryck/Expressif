@@ -33,6 +33,13 @@ Returns a new dateTime value corresponding to the last occurrence of the weekday
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15" | last-in-month("Monday") → #"2024-01-29"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal/calendar`  
 **Aliases:** `dateTime-to-last-in-month`

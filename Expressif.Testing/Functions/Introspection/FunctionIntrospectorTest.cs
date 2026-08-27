@@ -122,7 +122,7 @@ public class FunctionIntrospectorTest
     [TestCase("text/encoding", new[] { "html-to-text", "text-to-html" })]
     [TestCase("text/filtering", new[] { "filter-chars", "retain-alpha", "retain-alpha-numeric", "retain-numeric", "retain-numeric-symbol" })]
     [TestCase("text/masking", new[] { "mask-to-text", "text-to-mask" })]
-    [TestCase("text/normalization", new[] { "clean-whitespace", "collapse-whitespace", "empty-to-null", "null-to-empty", "trim", "whitespaces-to-empty", "whitespaces-to-null", "without-diacritics", "without-whitespaces" })]
+    [TestCase("text/normalization", new[] { "clean-whitespace", "collapse-whitespace", "empty-to-null", "null-to-empty", "slug", "trim", "whitespaces-to-empty", "whitespaces-to-null", "without-diacritics", "without-whitespaces" })]
     [TestCase("text/padding", new[] { "pad-center", "pad-left", "pad-right" })]
     [TestCase("text/selection", new[] { "after-substring", "before-substring", "first-chars", "last-chars", "skip-first-chars", "skip-last-chars" })]
     [TestCase("text/tokenization", new[] { "token", "token-count" })]

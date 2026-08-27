@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+"docs/_data/function.json" | filename → "function.json"
+```
+
+
 **Kind:** Function  
 **Scope:** `io`  
 **Aliases:** `path-to-filename`

@@ -33,6 +33,13 @@ Returns the argument number multiplied by the parameter value.
 
 
 
+## Examples
+
+```expressif
+10 | multiply(5) → 50
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-multiply`

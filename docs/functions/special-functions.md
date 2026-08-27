@@ -3,7 +3,7 @@ layout: docs
 title: "Special functions"
 parent: "Functions library"
 
-nav_order: 10
+nav_order: 50
 has_children: true
 has_toc: false
 permalink: /functions/special-functions/

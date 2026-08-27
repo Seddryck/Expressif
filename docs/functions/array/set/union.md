@@ -33,6 +33,13 @@ Returns the distinct values appearing in either the pipeline input or the specif
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | union({2, 3, 4}) → {1, 2, 3, 4}
+```
+
+
 **Kind:** Function  
 **Scope:** `array/set`  
 **Aliases:** `union`

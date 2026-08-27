@@ -33,6 +33,13 @@ Returns the distinct values found in both the pipeline input and the specified a
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | intersection({2, 3, 4}) → {2, 3}
+```
+
+
 **Kind:** Function  
 **Scope:** `array/set`  
 **Aliases:** `intersection`

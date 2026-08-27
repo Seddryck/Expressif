@@ -33,6 +33,13 @@ Omits the requested number of elements from the end of the input enumerable and 
 
 
 
+## Examples
+
+```expressif
+{1, 2, 3} | skip-last-elements(2) → {1}
+```
+
+
 **Kind:** Function  
 **Scope:** `array`  
 **Aliases:** `skip-last`

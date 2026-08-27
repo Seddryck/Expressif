@@ -33,6 +33,13 @@ Returns the lowest common multiple (LCM) of the argument integer and the paramet
 
 
 
+## Examples
+
+```expressif
+10 | lowest-common-multiple(5) → 10
+```
+
+
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `numeric-to-lowest-common-multiple`, `least-common-multiple`, `smallest-common-multiple`

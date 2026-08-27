@@ -35,6 +35,14 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | forward("01:30:00") → #"2024-01-15 14:00:00"
+#"2024-01-15 12:30:00" | forward("01:30:00", 2) → #"2024-01-15 15:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-forward`, `dateTime-to-add`

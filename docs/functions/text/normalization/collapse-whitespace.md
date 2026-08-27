@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Examples
+
+```expressif
+"Hello World" | collapse-whitespace → "Hello World"
+```
+
+
 **Kind:** Function  
 **Scope:** `text/normalization`  
 **Aliases:** `text-to-collapse-whitespace`

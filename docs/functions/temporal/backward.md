@@ -35,6 +35,14 @@ Returns a dateTime that subtract the timestamp passed as parameter to the argume
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | backward("01:30:00") → #"2024-01-15 11:00:00"
+#"2024-01-15 12:30:00" | backward("01:30:00", 2) → #"2024-01-15 09:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-backward`, `dateTime-to-subtract`

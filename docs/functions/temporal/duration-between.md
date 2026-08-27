@@ -33,6 +33,13 @@ Returns the signed duration between the current temporal value and a previous te
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | duration-between(#"2024-01-14 12:30:00") → #"2024-01-15 12:30:00" | duration-between(#"2024-01-14 12:30:00")
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** None

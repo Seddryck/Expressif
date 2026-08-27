@@ -33,6 +33,13 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 
 
 
+## Examples
+
+```expressif
+#"2024-01-15 12:30:00" | set-time("01:30:00") → #"2024-01-15 01:30:00"
+```
+
+
 **Kind:** Function  
 **Scope:** `temporal`  
 **Aliases:** `dateTime-to-set-time`
