@@ -489,10 +489,7 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in local time.",
-    "Parameters": [],
-    "Examples": [
-      "\"docs/_data/function.json\" | creation-datetime → \"docs/_data/function.json\" | creation-datetime"
-    ]
+    "Parameters": []
   },
   {
     "Name": "creation-datetime-utc",
@@ -505,10 +502,7 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in UTC.",
-    "Parameters": [],
-    "Examples": [
-      "\"docs/_data/function.json\" | creation-datetime-utc → \"docs/_data/function.json\" | creation-datetime-utc"
-    ]
+    "Parameters": []
   },
   {
     "Name": "directory",
@@ -595,10 +589,7 @@
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the size of the file provided as argument in bytes.",
-    "Parameters": [],
-    "Examples": [
-      "\"docs/_data/function.json\" | size → \"docs/_data/function.json\" | size"
-    ]
+    "Parameters": []
   },
   {
     "Name": "update-datetime",
@@ -611,10 +602,7 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in local time.",
-    "Parameters": [],
-    "Examples": [
-      "\"docs/_data/function.json\" | update-datetime → \"docs/_data/function.json\" | update-datetime"
-    ]
+    "Parameters": []
   },
   {
     "Name": "update-datetime-utc",
@@ -627,10 +615,7 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in UTC.",
-    "Parameters": [],
-    "Examples": [
-      "\"docs/_data/function.json\" | update-datetime-utc → \"docs/_data/function.json\" | update-datetime-utc"
-    ]
+    "Parameters": []
   },
   {
     "Name": "absolute",
