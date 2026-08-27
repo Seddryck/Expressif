@@ -70,6 +70,20 @@
     ]
   },
   {
+    "Name": "cardinality",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "integer",
+    "Summary": "Returns the number of elements in the input array.",
+    "Parameters": [],
+    "Examples": [
+      "{} | cardinality → 0",
+      "{1, 2, 3} | cardinality → 3"
+    ]
+  },
+  {
     "Name": "chunk",
     "IsPublic": true,
     "Aliases": [

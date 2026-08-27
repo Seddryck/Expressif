@@ -3,7 +3,7 @@ layout: docs
 title: "lag"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /functions/array/lag/
 tags:
@@ -24,6 +24,7 @@ Returns the previous value for each input element. The first output value is `nu
 
 
 This function has no parameters.
+
 
 
 

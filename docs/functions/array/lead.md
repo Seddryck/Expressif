@@ -3,7 +3,7 @@ layout: docs
 title: "lead"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/array/lead/
 tags:
@@ -24,6 +24,7 @@ Returns the next value for each input element. The last output value is `null` b
 
 
 This function has no parameters.
+
 
 
 

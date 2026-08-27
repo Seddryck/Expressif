@@ -3,7 +3,7 @@ layout: docs
 title: "skip-last-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 160
+nav_order: 170
 has_toc: false
 permalink: /functions/array/skip-last-elements/
 tags:
@@ -28,6 +28,7 @@ Omits the requested number of elements from the end of the input enumerable and 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to omit from the end of the input. |
+
 
 
 

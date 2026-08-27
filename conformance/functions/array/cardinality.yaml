@@ -1,0 +1,12 @@
+suite: array
+kind: function
+operator: cardinality
+tests:
+  - id: cardinality.valid
+    cases:
+      - id: cardinality.valid.array.empty
+        value: []
+        expected: 0
+      - id: cardinality.valid.array.values
+        value: [1, 2, 3]
+        expected: 3
