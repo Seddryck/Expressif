@@ -112,13 +112,13 @@ Download the installer matching your machine from the [GitHub release](http://gi
 Installer filenames follow this pattern:
 
 ```text
-Expressif-<version>-net10.0-<runtime>-setup.exe
+expressif-<version>-net10.0-<runtime>-setup.exe
 ```
 
 For example:
 
 ```text
-Expressif-1.32.0-net10.0-win-x64-setup.exe
+expressif-1.32.0-net10.0-win-x64-setup.exe
 ```
 
 Run the installer and follow the displayed instructions. The installer:
@@ -147,7 +147,7 @@ Portable archives contain the published CLI files without an installer. They can
 Archive filenames follow this pattern:
 
 ```text
-Expressif-<version>-<framework>-<runtime>.<extension>
+expressif-<version>-<framework>-<runtime>.<extension>
 ```
 
 Choose the archive matching the target platform:
@@ -167,7 +167,7 @@ Download and extract the archive:
 
 ```powershell
 Expand-Archive `
-    -LiteralPath .\Expressif-<version>-net10.0-win-x64.zip `
+    -LiteralPath .\expressif-<version>-net10.0-win-x64.zip `
     -DestinationPath "$env:LOCALAPPDATA\Expressif"
 ```
 
@@ -193,7 +193,7 @@ Create an installation directory and extract the archive:
 
 ```bash
 mkdir -p "$HOME/.local/share/expressif"
-tar -xzf Expressif-<version>-net10.0-linux-x64.tar.gz \
+tar -xzf expressif-<version>-net10.0-linux-x64.tar.gz \
     -C "$HOME/.local/share/expressif"
 ```
 
@@ -222,7 +222,7 @@ Add that line to the shell profile, such as `~/.bashrc`, to make it permanent.
 For Alpine, use the same commands with the `linux-musl-x64` archive:
 
 ```bash
-tar -xzf Expressif-<version>-net10.0-linux-musl-x64.tar.gz \
+tar -xzf expressif-<version>-net10.0-linux-musl-x64.tar.gz \
     -C "$HOME/.local/share/expressif"
 ```
 

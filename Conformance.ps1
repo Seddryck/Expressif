@@ -1237,7 +1237,7 @@ function Package-Conformance {
     }
 
     $archiveDirectory = Join-Path $resolvedPath "bin"
-    $archiveName = "Expressif.Conformance.$conformanceVersion.zip"
+    $archiveName = "expressif.conformance.$conformanceVersion.zip"
     $archivePath = Join-Path $archiveDirectory $archiveName
     $stagingDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ("expressif-conformance-package-" + [Guid]::NewGuid().ToString("N"))
 

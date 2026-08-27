@@ -18,7 +18,7 @@ if ($Version -notmatch '^[0-9A-Za-z][0-9A-Za-z.+-]*$') {
     throw "Version '$Version' is not valid for a package name."
 }
 
-$packageIdentity = "expressif-$Version-rouge"
+$packageIdentity = "expressif-syntax-$Version-rouge"
 $packageFolder = Join-Path $StagingFolder $packageIdentity
 $outputPath = Join-Path $OutputFolder "$packageIdentity.zip"
 

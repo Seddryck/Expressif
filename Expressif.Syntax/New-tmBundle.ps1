@@ -82,12 +82,12 @@ Write-Host "== Generate tmLanguage =="
 
 Copy-Item `
     -LiteralPath ".\obj\syntaxes\expressif.tmLanguage.json" `
-    -Destination ".\bin\expressif-$Version.tmLanguage.json"
+    -Destination ".\bin\expressif-syntax-$Version-textmate.json"
 
 Write-Host "== Generate Notepad++ UDL =="
 .\New-NotepadPlusPlusLanguage.ps1 `
     -InputFolder "..\docs\_data\" `
-    -OutputPath ".\bin\expressif-$Version-notepadpp-udl.xml"
+    -OutputPath ".\bin\expressif-syntax-$Version-notepadpp.xml"
 
 Write-Host "== Package Rouge lexer =="
 .\New-RougePackage.ps1 `
@@ -114,6 +114,6 @@ Copy-Item ..\misc\icon\expressif-icon-128.png .\obj\images\icon.png
 Write-Host "== Package extension =="
 New-VsCodeExtension `
     -InputFolder ".\obj\" `
-    -OutputPath ".\bin\$Bundle-$Version.vsix"
+    -OutputPath ".\bin\$Bundle-$Version-vscode.vsix"
 
 Write-Host "== Done =="
