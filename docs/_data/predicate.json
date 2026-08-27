@@ -134,7 +134,7 @@
       "divisible-by",
       "numeric-is-divisible-by"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Summary": "Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -151,7 +151,7 @@
       "even",
       "numeric-is-even"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Summary": "Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -241,7 +241,7 @@
       "modulo",
       "numeric-is-modulo"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -285,7 +285,7 @@
       "odd",
       "numeric-is-odd"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Summary": "Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.",
     "Parameters": []
   },

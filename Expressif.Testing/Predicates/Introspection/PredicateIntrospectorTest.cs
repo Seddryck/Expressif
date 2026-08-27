@@ -74,13 +74,13 @@ public class PredicateIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
             Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Scope, Does.Match("^(Text|Numeric|Boolean|Temporal|Special)(/[A-Z][A-Za-z]*)?$"));
+            Assert.That(info.Scope, Does.Match("^(Text|Numeric|Boolean|Temporal|Special|[a-z][a-z-]*/[a-z][a-z-]*)$"));
         }
     }
 
     [Test]
     public void Locate_ExpressifAssembly_ArithmeticPredicatesExposeNumericSubcategory()
         => Assert.That(
-            Infos.Where(x => x.Scope == "Numeric/Arithmetic").Select(x => x.Name),
+            Infos.Where(x => x.Scope == "numeric/arithmetic").Select(x => x.Name),
             Is.EquivalentTo(new[] { "has-remainder", "is-divisible-by", "is-even", "is-odd" }));
 }

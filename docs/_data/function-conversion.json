@@ -433,7 +433,7 @@
   },
   {
     "Name": "add",
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -441,7 +441,7 @@
   },
   {
     "Name": "decrement",
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -449,7 +449,7 @@
   },
   {
     "Name": "divide",
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -457,7 +457,7 @@
   },
   {
     "Name": "increment",
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -465,7 +465,7 @@
   },
   {
     "Name": "multiply",
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -473,7 +473,7 @@
   },
   {
     "Name": "subtract",
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",

@@ -843,7 +843,7 @@
     "Aliases": [
       "numeric-to-add"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the sum of the input value and the parameter value.",
@@ -872,7 +872,7 @@
     "Aliases": [
       "numeric-to-decrement"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number decremented of one unit.",
@@ -884,7 +884,7 @@
     "Aliases": [
       "numeric-to-divide"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
@@ -903,7 +903,7 @@
     "Aliases": [
       "numeric-to-increment"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number incremented of one unit.",
@@ -915,7 +915,7 @@
     "Aliases": [
       "numeric-to-multiply"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number multiplied by the parameter value.",
@@ -934,7 +934,7 @@
     "Aliases": [
       "numeric-to-subtract"
     ],
-    "Scope": "Numeric/Arithmetic",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the difference between the argument number and the parameter value.",

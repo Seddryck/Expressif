@@ -98,14 +98,14 @@ public class FunctionIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
             Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Scope, Does.Match("^(Text|Numeric|IO|Temporal|Special|Array|Record)(/[A-Z][A-Za-z]*)?$"));
+            Assert.That(info.Scope, Does.Match("^(Text|Numeric|IO|Temporal|Special|Array|Record|[a-z][a-z-]*/[a-z][a-z-]*)$"));
         }
     }
 
     [Test]
     public void Locate_ExpressifAssembly_ArithmeticFunctionsExposeNumericSubcategory()
         => Assert.That(
-            Infos.Where(x => x.Scope == "Numeric/Arithmetic").Select(x => x.Name),
+            Infos.Where(x => x.Scope == "numeric/arithmetic").Select(x => x.Name),
             Is.EquivalentTo(new[] { "add", "subtract", "increment", "decrement", "multiply", "divide" }));
 
     [Test]
