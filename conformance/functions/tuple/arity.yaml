@@ -1,0 +1,15 @@
+suite: tuple
+kind: function
+operator: arity
+tests:
+  - id: arity.valid
+    cases:
+      - id: arity.valid.tuple.empty
+        value: T()
+        expected: 0
+      - id: arity.valid.tuple.pair
+        value: T(10, 20)
+        expected: 2
+      - id: arity.valid.tuple.heterogeneous
+        value: 'T(10, "foo", #true)'
+        expected: 3

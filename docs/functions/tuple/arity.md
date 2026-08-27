@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "tuple-first"
+title: "arity"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 10
 has_toc: false
-permalink: /functions/tuple/tuple-first/
+permalink: /functions/tuple/arity/
 tags:
   - functions
   - tuple
@@ -14,10 +14,10 @@ generated: true
 
 ```
 tuple →
-tuple-first() → any
+arity() → integer
 ```
 
-Returns the first field of a tuple. Returns `null` when the input is not a tuple.
+Returns the number of positional elements in the input tuple.
 
 ## Parameters
 
@@ -34,12 +34,12 @@ This function has no parameters.
 
 {% raw %}
 ```expressif
-T(10, 20, 30) | tuple-first → 10
+T(10, "foo", #true) | arity → 3
 ```
 {% endraw %}
 
 
 **Kind:** Function  
 **Scope:** `tuple`  
-**Aliases:** `tuple-first`
+**Aliases:** `arity`
 {: .member-reference }

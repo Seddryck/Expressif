@@ -5,8 +5,12 @@ namespace Expressif.Testing.Values;
 public class TupleValueTest
 {
     [Test]
-    public void Constructor_FewerThanTwoFields_Throws()
-        => Assert.Throws<ArgumentException>(() => new Expressif.Values.Tuple(1));
+    public void Constructor_EmptyAndSingleField_PreserveArity()
+        => Assert.Multiple(() =>
+        {
+            Assert.That(new Expressif.Values.Tuple(), Has.Count.Zero);
+            Assert.That(new Expressif.Values.Tuple(1), Has.Count.EqualTo(1));
+        });
 
     [Test]
     public void Equality_SameNestedFields_EqualAndSameHashCode()
