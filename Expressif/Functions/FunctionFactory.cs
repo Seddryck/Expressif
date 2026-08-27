@@ -237,6 +237,14 @@ public class FunctionFactory : BaseExpressionFactory
             return new Tuple.Pick(() => positions.Select(position => position.Invoke()).ToArray());
         }
 
+        if (name.Equals("apply", StringComparison.OrdinalIgnoreCase))
+        {
+            if (function.Parameters.Length != 1 || !TryGetOpenExpression(function.Parameters[0], out var open))
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            var expression = new LexicallyBoundTupleFunction(BuildOpenExpression(open.Expression, context));
+            return new Tuple.Apply(() => expression);
+        }
+
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
