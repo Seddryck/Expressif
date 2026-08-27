@@ -31,7 +31,7 @@ public class ParameterSerializer
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",
             ObjectIndexParameter oi => $"#{oi.Index}",
-            TupleProjectionParameter tp => $"${tp.Index}",
+            TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
             IntervalParameter interval => SerializeInterval(interval.Value),
             _ => throw new NotSupportedException()
         };

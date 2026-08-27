@@ -18,4 +18,12 @@ public class TupleFunctionsTest
             Assert.That(new TupleFirst().Evaluate(new object[] { 10, 20 }), Is.Null);
         });
     }
+
+    [TestCase("T(10, 20, 30) | $^1", 30)]
+    [TestCase("T(10, 20, 30) | $^2", 20)]
+    [TestCase("T(10, 20, 30) | $^3", 10)]
+    [TestCase("T(10, 20, 30) | $^0", null)]
+    [TestCase("T(10, 20, 30) | $^4", null)]
+    public void Evaluate_FromEndProjection_ReturnsExpected(string expression, object? expected)
+        => Assert.That(Expression.CreateClosed(expression).Evaluate(null), Is.EqualTo(expected));
 }
