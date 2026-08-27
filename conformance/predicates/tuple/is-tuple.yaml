@@ -1,0 +1,9 @@
+suite: tuple
+kind: predicate
+operator: is-tuple
+tests:
+  - id: is-tuple.valid
+    cases:
+      - {id: is-tuple.valid.tuple, value: 'T(1, "foo")', expected: true}
+      - {id: is-tuple.valid.array, value: [1, 2], expected: false}
+      - {id: is-tuple.valid.scalar, value: 42, expected: false}

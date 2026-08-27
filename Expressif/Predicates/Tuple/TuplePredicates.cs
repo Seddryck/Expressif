@@ -3,6 +3,14 @@ using Expressif.Values;
 
 namespace Expressif.Predicates.Tuple;
 
+/// <summary>Returns whether the input value is a tuple.</summary>
+[Predicate(appendIs: false, name: "is-tuple")]
+[Scope("tuple")]
+public sealed class IsTuple : BasePredicate
+{
+    public override bool Evaluate(object? value) => value is TupleValue;
+}
+
 /// <summary>Returns whether the input tuple has exactly the expected number of positions.</summary>
 [Predicate(appendIs: false, name: "has-arity")]
 [Scope("tuple")]
