@@ -1,0 +1,13 @@
+suite: tuple
+kind: function
+operator: extend
+tests:
+  - id: extend.valid
+    cases:
+      - {id: extend.valid.values, value: 'T(1, 2)', parameters: ['T(3, "foo")'], expected: 'T(1, 2, 3, "foo")'}
+      - {id: extend.valid.empty-extension, value: 'T(1, 2)', parameters: [T()], expected: 'T(1, 2)'}
+      - {id: extend.valid.literal, value: 'T(1, 2)', parameters: [3], expected: 'T(1, 2, 3)'}
+      - {id: extend.valid.text-literal, value: 'T(1, 2)', parameters: ['"foo"'], expected: 'T(1, 2, "foo")'}
+      - {id: extend.valid.null-literal, value: 'T(1, 2)', parameters: [null], expected: 'T(1, 2, #null)'}
+      - {id: extend.valid.open-expression, value: 'T(10, 20)', parameters: ['$1 | subtract($0)'], expected: 'T(10, 20, 10)'}
+      - {id: extend.valid.closed-expression, value: 'T(1, 2)', parameters: ['(1 | add(2))'], expected: 'T(1, 2, 3)'}
