@@ -4,11 +4,11 @@ subtitle: How to quickly define a predication and evaluate it.
 tags: [quick-start]
 ---
 
-Expressif provides a class named *Predication* to define a combination of predicates applied to an argument. The class is expecting the textual representation of the predicates in its constructor.
+Expressif provides a *Predication* API to define a combination of predicates applied to a value. Pass the textual representation of the predicates to `Predication.Create`, then call `Evaluate` to obtain a Boolean result.
 
 <!-- START INCLUDE "PredicationTest.cs/Evaluate_SinglePredicateWithoutParameter_Valid" -->
 ```csharp
-var predication = new Predication("lower-case");
+var predication = Predication.Create("lower-case");
 var result = predication.Evaluate("Nikola Tesla");
 Assert.That(result, Is.False);
 ```
@@ -18,7 +18,7 @@ Same than for expressions, some predicates require parameters, you can specify t
 
 <!-- START INCLUDE "PredicationTest.cs/Evaluate_IntervalAsParameter_Valid" -->
 ```csharp
-var predication = new Predication("within-interval([0;20[)");
+var predication = Predication.Create("within-interval([0;20[)");
 var result = predication.Evaluate(15);
 Assert.That(result, Is.True);
 ```
@@ -28,7 +28,7 @@ Other predicates require a culture as parameter. To specify a culture just use t
 
 <!-- START INCLUDE "PredicationTest.cs/Evaluate_CultureAsParameter_Valid" -->
 ```csharp
-var predication = new Predication("matches-date(fr-fr)");
+var predication = Predication.Create("matches-date(fr-fr)");
 var result = predication.Evaluate("28/12/1978");
 Assert.That(result, Is.True);
 ```
@@ -38,7 +38,7 @@ Any predicate can be negated to return the opposite result. To negate a predicat
 
 <!-- START INCLUDE "PredicationTest.cs/Evaluate_Negation_Valid" -->
 ```csharp
-var predication = new Predication("!starts-with(Nik)");
+var predication = Predication.Create("!starts-with(Nik)");
 var result = predication.Evaluate("Nikola Tesla");
 Assert.That(result, Is.False);
 ```
@@ -50,7 +50,7 @@ Take into account that when possible, the operators are implementing a short-cir
 
 <!-- START INCLUDE "PredicationTest.cs/Evaluate_CombinationAnd_Valid" -->
 ```csharp
-var predication = new Predication("starts-with(Nik) |AND ends-with(sla)");
+var predication = Predication.Create("starts-with(Nik) |AND ends-with(sla)");
 var result = predication.Evaluate("Nikola Tesla");
 Assert.That(result, Is.True);
 ```
@@ -60,11 +60,11 @@ By default, the predicates are combined from left to right. If you've three pred
 
 <!-- START INCLUDE "PredicationTest.cs/Evaluate_CombinationsGroup_Valid" -->
 ```csharp
-var predication = new Predication("{starts-with(Nik) |AND ends-with(sla)} |OR {starts-with(ola) |AND ends-with(Tes)}");
+var predication = Predication.Create("{starts-with(Nik) |AND ends-with(sla)} |OR {starts-with(ola) |AND ends-with(Tes)}");
 var result = predication.Evaluate("Nikola Tesla");
 Assert.That(result, Is.True);
 
-var withoutGroupsPredication = new Predication("starts-with(Nik) |AND ends-with(sla) |OR starts-with(ola) |AND ends-with(Tes)");
+var withoutGroupsPredication = Predication.Create("starts-with(Nik) |AND ends-with(sla) |OR starts-with(ola) |AND ends-with(Tes)");
 var secondResult = withoutGroupsPredication.Evaluate("Nikola Tesla");
 Assert.That(result, Is.Not.EqualTo(secondResult));
 ```
