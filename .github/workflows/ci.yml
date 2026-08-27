@@ -395,3 +395,52 @@ jobs:
           path: |
             distribution/bin/archives/Expressif-*.*
             distribution/bin/installers/Expressif-*-setup.exe*
+
+  publish:
+    needs: distribution
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+      - name: Download Expressif package
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-nuget-package
+          path: packages/expressif
+
+      - name: Download CLI package
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-cli-nuget-package
+          path: packages/cli
+
+      - name: Validate package artifacts
+        shell: pwsh
+        run: |
+          $expectedArtifacts = @(
+            @{ Name = 'Expressif package'; Path = 'packages/expressif'; Filter = '*.nupkg' },
+            @{ Name = 'Expressif symbol package'; Path = 'packages/expressif'; Filter = '*.snupkg' },
+            @{ Name = 'Expressif CLI package'; Path = 'packages/cli'; Filter = '*.nupkg' }
+          )
+
+          foreach ($artifact in $expectedArtifacts) {
+            $matches = @(Get-ChildItem -Path $artifact.Path -File -Filter $artifact.Filter)
+            if ($matches.Count -ne 1) {
+              throw "Expected exactly one $($artifact.Name), found $($matches.Count)."
+            }
+            Write-Host "Found $($artifact.Name): $($matches[0].Name)"
+          }
+
+      - name: Publish packages and symbols to NuGet
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          $packages = Get-ChildItem -Path packages -Recurse -File -Filter '*.nupkg'
+          foreach ($package in $packages) {
+            dotnet nuget push $package.FullName `
+              --api-key $env:NUGET_API_KEY `
+              --source https://api.nuget.org/v3/index.json
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to publish $($package.Name)."
+            }
+          }

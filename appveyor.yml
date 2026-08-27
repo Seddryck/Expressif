@@ -103,15 +103,6 @@ artifacts:
 - path: '**\bin\archives\Expressif-*.*'
 - path: '**\bin\installers\Expressif-*-setup.exe*'
 
-deploy:
-- provider: NuGet
-  api_key:
-    secure: h9Ya9xxJClhyreQwiQRG8YJmnX2m5GGYVoJ7YXwEtkDmsLl2WjWNrLejsn/jyOKY
-  skip_symbols: false
-  artifact: /.*(\.|\.s)nupkg/
-  on:
-    branch: main
-
 on_success:
 - pwsh: |
     . "$env:APPVEYOR_BUILD_FOLDER\github.ps1"
