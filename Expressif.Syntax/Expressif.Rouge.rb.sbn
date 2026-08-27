@@ -17,13 +17,13 @@ require "rouge"
         rule %r/#"(?:\\.|[^"\\])*"/, Literal::Date
         rule %r/"(?:\\.|[^"\\])*"/, Str
         rule %r/`(?:\\.|[^`\\])*`/, Str
-        rule %r/#(?:true|false|null|empty|blank)\b/i, Keyword::Constant
+        rule %r/(?:{{ model.constantRegex }})\b/i, Keyword::Constant
         rule %r/@(?:_|[A-Za-z_][\w-]*)/, Name::Variable
         rule %r/\^?\.(?:[A-Za-z_][\w-]*|\d+)/, Name::Property
         rule %r/\[(?:[A-Za-z_][\w-]*|\d+)\]/, Name::Property
         rule %r/\b(?:{{ model.functionRegexes | array.join "|" }})\b/i, Name::Function
-        rule %r/[+-]?(?:\d+(?:\.\d+)?|\.\d+)\b/, Num
-        rule %r/\.\.\.|:=|\|(?:AND|OR|XOR)\b|\|[>?]?|&&|\|\||<=|>=|!=|==|[!#$&*+\-<>.,]/i, Operator
+        rule %r/[+-]?\d+(?:\.\d+)?\b/, Num
+        rule %r/(?:{{ model.operatorRegex }})/i, Operator
         rule %r/[(){}\[\]]/, Punctuation
         rule %r/[A-Za-z_][\w-]*/, Text
         rule %r/./, Text

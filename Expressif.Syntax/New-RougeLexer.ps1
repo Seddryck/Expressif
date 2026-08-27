@@ -27,6 +27,10 @@ $catalogNames = $catalogEntries |
 
 $model = [ordered]@{
         functionRegexes = @($catalogNames | ForEach-Object { [regex]::Escape($_) })
+        constantRegex = ($syntax.constants | ForEach-Object {
+            ([regex]::Escape($_)).Replace('\#', '#')
+        }) -join '|'
+        operatorRegex = ($syntax.operators | ForEach-Object { [regex]::Escape($_) }) -join '|'
         standalone = $Standalone
     } | ConvertTo-Json -Depth 20
 
