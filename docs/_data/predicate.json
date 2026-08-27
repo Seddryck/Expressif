@@ -1,5 +1,21 @@
 [
   {
+    "Name": "has-arity",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "tuple",
+    "Input": "tuple",
+    "Output": "boolean",
+    "Summary": "Returns whether the input tuple has exactly the expected number of positions.",
+    "Parameters": [{
+      "Name": "expected",
+      "Type": "integer",
+      "Optional": false,
+      "Summary": "Specifies the required non-negative tuple arity."
+    }],
+    "Examples": ["T(1, 2) | has-arity(2) → #true"]
+  },
+  {
     "Name": "and",
     "IsPublic": true,
     "Aliases": [],
