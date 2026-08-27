@@ -11,7 +11,7 @@ permalink: /
     <span>expressif</span>
   </a>
   <nav class="landing-nav" aria-label="Main navigation">
-    <a href="{{ '/getting-started/' | relative_url }}">Docs</a><a href="{{ '/language/' | relative_url }}">Language</a><a href="{{ '/tooling/' | relative_url }}">Tooling</a><a href="https://github.com/Seddryck/Expressif">GitHub</a>
+    <a href="{{ '/getting-started/' | relative_url }}">Docs</a><a href="{{ '/download/' | relative_url }}">Download</a><a href="{{ '/language/' | relative_url }}">Language</a><a href="{{ '/tooling/' | relative_url }}">Tooling</a><a href="https://github.com/Seddryck/Expressif">GitHub</a>
   </nav>
   <a class="landing-button landing-button--small" href="{{ '/getting-started/' | relative_url }}">Get started</a>
 </header>
