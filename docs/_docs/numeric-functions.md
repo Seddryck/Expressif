@@ -22,11 +22,11 @@ Returns the absolute value of the argument value.
 
 ###### Overview
 
-Returns the sum of an argument number and the parameter value.
+Returns the sum of the input value and the parameter value.
 
 ###### Parameters
-* value: The value to be added to the argument value.
-* times: An integer between 0 and +Infinity, indicating the number of times to repeat the sum.
+* value: The value to add to the input value.
+* times (optional) : Number of times the addition is applied.
 
 ##### ceiling
 

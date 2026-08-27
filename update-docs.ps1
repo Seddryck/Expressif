@@ -11,7 +11,9 @@ Set-Location -Path $PSScriptRoot
 Write-Host "Creating new version of $destinationFile based on $sourceFile ..."
 $elapsed = Measure-Command -Expression {
     $members = Get-Content -Path $sourceFile | ConvertFrom-Json 
-    $members = $members | where {$_.Scope -ieq $scope} | Sort-Object Name
+    $members = $members |
+        Where-Object { $_.Scope -ieq $scope -or $_.Scope.StartsWith("$scope/", [System.StringComparison]::OrdinalIgnoreCase) } |
+        Sort-Object Name
     Write-Host  "`t$($members.Count) $($class.ToLower())s found within scope $scope"
     $text=""
     $keywords=@()
@@ -49,7 +51,7 @@ $elapsed = Measure-Command -Expression {
                 if($parameter.Optional) {
                     $doc += " (optional) "
                 }
-                $doc += ": $($parameter.Summary)`r`n"
+                $doc += (": $($parameter.Summary)".TrimEnd()) + "`r`n"
             }
         }
         $doc += "`r`n"

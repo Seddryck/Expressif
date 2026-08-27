@@ -2,7 +2,7 @@
 title: Array functions
 subtitle: Functions applicable to arrays
 tags: [functions, array]
-keywords: [adjacent, broadcast, chunk, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, pairwise, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
+keywords: [adjacent, array, broadcast, chunk, complement, difference, distinct, filter, first-elements, fold, intersection, lag, last-elements, lead, map, pairwise, reverse, scan, skip-first-elements, skip-last-elements, slice-elements, symmetric-difference, union] # AUTO-GENERATED KEYWORDS
 ---
 <!-- START AUTO-GENERATED -->
 ##### adjacent
@@ -15,6 +15,17 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 
 ###### Parameter
 * operation: Specifies the callable or open expression evaluated against each consecutive pair.
+
+##### array
+
+###### Alias: `array`
+
+###### Overview
+
+Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.
+
+###### Parameter
+* values (optional) : Specifies zero or more positional expressions whose evaluated values become array elements.
 
 ##### broadcast
 
