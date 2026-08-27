@@ -229,7 +229,7 @@ jobs:
           disable_search: true
           use_oidc: true
 
-  package:
+  package-nuget:
     name: package (${{ matrix.name }})
     needs:
       - prepare
@@ -240,7 +240,6 @@ jobs:
       matrix:
         include:
           - name: Expressif NuGet
-            kind: nuget
             project: Expressif/Expressif.csproj
             pack_arguments: --include-symbols
             artifact: expressif-nuget-package
@@ -248,19 +247,12 @@ jobs:
               Expressif/bin/Release/*.nupkg
               Expressif/bin/Release/*.snupkg
           - name: CLI NuGet
-            kind: nuget
             project: Expressif.Cli/Expressif.Cli.csproj
             pack_arguments: ''
             artifact: expressif-cli-nuget-package
             paths: |
               Expressif.Cli/bin/Release/*.nupkg
               Expressif.Cli/bin/Release/*.snupkg
-          - name: conformance
-            kind: conformance
-            artifact: conformance-packages
-            paths: |
-              conformance/bin/Expressif.Conformance.*.zip
-              conformance/bin/expressif.conformance.dotnet.*.yaml
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
@@ -275,32 +267,9 @@ jobs:
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Restore package dependencies
-        if: matrix.kind == 'nuget'
         run: dotnet restore ${{ matrix.project }} --locked-mode
 
-      - name: Download conformance test report
-        if: matrix.kind == 'conformance'
-        uses: actions/download-artifact@v8
-        with:
-          name: conformance-test-report
-          path: conformance/bin
-
-      - name: Restore local .NET tools
-        if: matrix.kind == 'conformance'
-        run: dotnet tool restore
-
-      - name: Install GitVersion
-        if: matrix.kind == 'conformance'
-        shell: pwsh
-        run: ./install-gitversion.ps1
-
-      - name: Install conformance dependencies
-        if: matrix.kind == 'conformance'
-        shell: pwsh
-        run: . ./Conformance.ps1; Install-ConformanceDependencies
-
       - name: Pack NuGet packages
-        if: matrix.kind == 'nuget'
         run: >-
           dotnet pack ${{ matrix.project }}
           --configuration Release
@@ -310,8 +279,49 @@ jobs:
           -p:Version=${{ needs.prepare.outputs.semver }}
           -p:ContinuousIntegrationBuild=true
 
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact }}
+          if-no-files-found: error
+          path: ${{ matrix.paths }}
+
+  package-conformance:
+    needs:
+      - prepare
+      - tests
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+
+      - name: Download conformance test report
+        uses: actions/download-artifact@v8
+        with:
+          name: conformance-test-report
+          path: conformance/bin
+
+      - name: Restore local .NET tools
+        run: dotnet tool restore
+
+      - name: Install GitVersion
+        shell: pwsh
+        run: ./install-gitversion.ps1
+
+      - name: Install conformance dependencies
+        shell: pwsh
+        run: . ./Conformance.ps1; Install-ConformanceDependencies
+
       - name: Package conformance assets
-        if: matrix.kind == 'conformance'
         shell: pwsh
         env:
           GitVersion_SemVer: ${{ needs.prepare.outputs.semver }}
@@ -328,12 +338,14 @@ jobs:
             -ConformanceVersion $env:GitVersion_Conformance_SemVer `
             -NUnit
 
-      - name: Upload package artifacts
+      - name: Upload conformance artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.artifact }}
+          name: conformance-packages
           if-no-files-found: error
-          path: ${{ matrix.paths }}
+          path: |
+            conformance/bin/Expressif.Conformance.*.zip
+            conformance/bin/expressif.conformance.dotnet.*.yaml
 
   syntax-assets:
     needs: prepare
@@ -367,7 +379,8 @@ jobs:
   distribution:
     needs:
       - prepare
-      - package
+      - package-nuget
+      - package-conformance
       - syntax-assets
     runs-on: windows-latest
     steps:
@@ -402,7 +415,7 @@ jobs:
             distribution/bin/installers/Expressif-*-setup.exe*
 
   publish:
-    needs: distribution
+    needs: package-nuget
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: windows-latest
     permissions:
@@ -462,6 +475,7 @@ jobs:
   release:
     needs:
       - prepare
+      - package-conformance
       - distribution
     if: >-
       github.event_name == 'push' &&
