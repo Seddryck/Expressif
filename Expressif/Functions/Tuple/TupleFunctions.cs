@@ -40,6 +40,24 @@ public sealed class Swap : IFunction<TupleValue, TupleValue>
     object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
 }
 
+/// <summary>Returns a new tuple with a value appended, expanding tuple values into their positions.</summary>
+[Function(prefix: "", aliases: ["extend"])]
+[Scope("tuple")]
+public sealed class Extend : IFunction<TupleValue, TupleValue>
+{
+    private Func<TupleValue, object?> Extension { get; }
+    /// <param name="value">Specifies the value to append; tuple values are expanded into their positions.</param>
+    public Extend(Func<TupleValue, object?> value) => Extension = value;
+    public TupleValue Evaluate(TupleValue value)
+    {
+        var extension = Extension.Invoke(value);
+        return extension is TupleValue tuple
+            ? new Expressif.Values.Tuple(value.Concat(tuple).ToArray())
+            : new Expressif.Values.Tuple(value.Append(extension).ToArray());
+    }
+    object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
+}
+
 /// <summary>
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>

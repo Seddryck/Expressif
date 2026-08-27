@@ -1357,6 +1357,12 @@
     "Examples": ["T(\"a\", \"b\", \"c\", \"d\") | swap → T(\"d\", \"b\", \"c\", \"a\")"]
   },
   {
+    "Name": "extend", "IsPublic": true, "Aliases": ["extend"], "Scope": "tuple",
+    "Input": "tuple", "Output": "tuple", "Summary": "Returns a new tuple with a value appended, expanding tuple values into their positions.",
+    "Parameters": [{"Name": "value", "Type": "any", "Optional": false, "Summary": "Specifies the value to append; tuple values are expanded into their positions."}],
+    "Examples": ["T(1, 2) | extend(3) → T(1, 2, 3)", "T(1, 2) | extend(T(3, \"foo\")) → T(1, 2, 3, \"foo\")"]
+  },
+  {
     "Name": "tuple-at",
     "IsPublic": true,
     "Aliases": [

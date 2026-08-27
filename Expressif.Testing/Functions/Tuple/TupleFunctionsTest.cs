@@ -1,6 +1,7 @@
 using Expressif.Functions.Tuple;
 using Expressif.Values;
 using Expressif.Testing.Conformance;
+using System.Globalization;
 
 namespace Expressif.Testing.Functions.Tuple;
 
@@ -14,9 +15,12 @@ public class TupleFunctionsTest
 
     private static TupleValue ParseTuple(string value)
     {
-        var source = value.Trim('"').Replace('{', '(').Replace('}', ')');
+        var source = NormalizeTupleSyntax(value);
         return source == "T()" ? new Expressif.Values.Tuple() : (TupleValue)Expression.CreateClosed(source).Evaluate(null)!;
     }
+
+    private static string NormalizeTupleSyntax(string value)
+        => value.Trim('"').Replace('{', '(').Replace('}', ')');
 
     [Test]
     public void Evaluate_Accessors_Valid()
@@ -51,4 +55,51 @@ public class TupleFunctionsTest
             Assert.That(new Swap(() => 1, () => 1).Evaluate(tuple), Is.EqualTo(tuple));
         });
     }
+
+    [Test]
+    public void Extend_AppendsPositionsWithoutMutation()
+    {
+        var source = new TupleValue(1, 2);
+        var extension = new TupleValue(3, "foo");
+        Assert.That(new Extend(_ => extension).Evaluate(source), Is.EqualTo(new TupleValue(1, 2, 3, "foo")));
+        Assert.That(source, Is.EqualTo(new TupleValue(1, 2)));
+    }
+    [Conformance]
+    public void Extend_Valid(string value, object? extension, string expected)
+    {
+        var parameter = extension switch
+        {
+            null => "#null",
+            bool boolean => boolean ? "#true" : "#false",
+            IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+            _ => extension is string text && text.StartsWith("T{", StringComparison.Ordinal)
+                ? NormalizeTupleSyntax(text)
+                : extension.ToString(),
+        };
+
+        if (parameter == "T()")
+        {
+            Assert.That(
+                new Extend(_ => new Expressif.Values.Tuple()).Evaluate(ParseTuple(value)),
+                Is.EqualTo(ParseTuple(expected)));
+            return;
+        }
+
+        Assert.That(
+            Expression.CreateClosed($"{NormalizeTupleSyntax(value)} | extend({parameter})").Evaluate(null),
+            Is.EqualTo(ParseTuple(expected)));
+    }
+
+    [Test]
+    public void Extend_AppendsScalarAsSinglePosition()
+        => Assert.That(
+            new Extend(_ => "foo").Evaluate(new TupleValue(1, 2)),
+            Is.EqualTo(new TupleValue(1, 2, "foo")));
+
+    [TestCase("T(1, 2) | extend(3)", "T(1, 2, 3)")]
+    [TestCase("T(10, 20) | extend($1 | subtract($0))", "T(10, 20, 10)")]
+    [TestCase("T(1, 2) | extend((1 | add(2)))", "T(1, 2, 3)")]
+    [TestCase("T(10, 20) | extend(apply($1 | subtract($0)))", "T(10, 20, 10)")]
+    public void Extend_EvaluatesSupportedParameterShapes(string source, string expected)
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(ParseTuple(expected)));
 }
