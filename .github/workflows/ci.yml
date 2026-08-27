@@ -341,6 +341,7 @@ jobs:
           name: conformance-packages
           if-no-files-found: error
           path: |
+            conformance/bin/conformance.manifest.yaml
             conformance/bin/Expressif.Conformance.*.zip
             conformance/bin/expressif.conformance.dotnet.*.yaml
 
@@ -585,6 +586,12 @@ jobs:
             }
             Write-Host "Found $($matches.Count) $($expected.Name) file(s)."
           }
+
+          $manifest = 'release-assets/conformance/conformance.manifest.yaml'
+          if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) {
+            throw "Expected conformance manifest '$manifest', found none."
+          }
+          Write-Host "Found conformance manifest: $manifest"
 
       - name: Create or update GitHub release
         shell: pwsh
