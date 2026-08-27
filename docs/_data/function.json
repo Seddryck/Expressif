@@ -2504,7 +2504,7 @@
     "Aliases": [
       "text-to-after-substring"
     ],
-    "Scope": "text",
+    "Scope": "text/selection",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",
@@ -2533,7 +2533,7 @@
     "Aliases": [
       "text-to-allcaps-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2548,7 +2548,7 @@
     "Aliases": [
       "text-to-append"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2570,7 +2570,7 @@
     "Aliases": [
       "text-to-append-new-line"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2585,7 +2585,7 @@
     "Aliases": [
       "text-to-append-space"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2600,7 +2600,7 @@
     "Aliases": [
       "text-to-before-substring"
     ],
-    "Scope": "text",
+    "Scope": "text/selection",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
@@ -2629,7 +2629,7 @@
     "Aliases": [
       "text-to-camel-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2644,7 +2644,7 @@
     "Aliases": [
       "text-to-camel-snake-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2659,7 +2659,7 @@
     "Aliases": [
       "text-to-cobol-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2674,7 +2674,7 @@
     "Aliases": [
       "text-to-count-distinct-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/counting",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
@@ -2689,7 +2689,7 @@
     "Aliases": [
       "text-to-count-substring"
     ],
-    "Scope": "text",
+    "Scope": "text/counting",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.",
@@ -2711,7 +2711,7 @@
     "Aliases": [
       "text-to-dot-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2724,7 +2724,7 @@
     "Name": "empty-to-null",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "text/normalization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
@@ -2739,7 +2739,7 @@
     "Aliases": [
       "text-to-filter-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/filtering",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns only those characters specified in the parameter, in the order, they were originally entered in the input value.",
@@ -2761,7 +2761,7 @@
     "Aliases": [
       "text-to-first-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/selection",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
@@ -2783,7 +2783,7 @@
     "Aliases": [
       "text-to-flat-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2796,7 +2796,7 @@
     "Name": "html-to-text",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "text/encoding",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
@@ -2811,7 +2811,7 @@
     "Aliases": [
       "text-to-kebab-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2826,7 +2826,7 @@
     "Aliases": [
       "text-to-last-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/selection",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
@@ -2849,7 +2849,7 @@
       "text-to-length",
       "count-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/counting",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
@@ -2864,7 +2864,7 @@
     "Aliases": [
       "text-to-lower"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text converted to lowercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -2877,7 +2877,7 @@
     "Name": "mask-to-text",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "text/masking",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.",
@@ -2899,7 +2899,7 @@
     "Aliases": [
       "text-to-namespace-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2912,7 +2912,7 @@
     "Name": "null-to-empty",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "text/normalization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
@@ -2927,7 +2927,7 @@
     "Aliases": [
       "text-to-pad-center"
     ],
-    "Scope": "text",
+    "Scope": "text/padding",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
@@ -2955,7 +2955,7 @@
     "Aliases": [
       "text-to-pad-left"
     ],
-    "Scope": "text",
+    "Scope": "text/padding",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
@@ -2983,7 +2983,7 @@
     "Aliases": [
       "text-to-pad-right"
     ],
-    "Scope": "text",
+    "Scope": "text/padding",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
@@ -3011,7 +3011,7 @@
     "Aliases": [
       "text-to-pascal-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -3026,7 +3026,7 @@
     "Aliases": [
       "text-to-pascal-snake-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -3041,7 +3041,7 @@
     "Aliases": [
       "text-to-path-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -3056,7 +3056,7 @@
     "Aliases": [
       "text-to-prefix"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.",
@@ -3078,7 +3078,7 @@
     "Aliases": [
       "text-to-prefix-new-line"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.",
@@ -3093,7 +3093,7 @@
     "Aliases": [
       "text-to-prefix-space"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.",
@@ -3108,7 +3108,7 @@
     "Aliases": [
       "text-to-prepend"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
@@ -3130,7 +3130,7 @@
     "Aliases": [
       "text-to-prepend-new-line"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -3145,7 +3145,7 @@
     "Aliases": [
       "text-to-prepend-space"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -3160,7 +3160,7 @@
     "Aliases": [
       "text-to-remove-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/character",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.",
@@ -3182,7 +3182,7 @@
     "Aliases": [
       "text-to-replace-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/character",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value where a specific char has been replaced by another, both specified as parameters.",
@@ -3210,7 +3210,7 @@
     "Aliases": [
       "text-to-replace-slice"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value with a subset of the string substitued by a another string.",
@@ -3244,7 +3244,7 @@
     "Aliases": [
       "text-to-retain-alpha"
     ],
-    "Scope": "text",
+    "Scope": "text/filtering",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all characters removed except for letters (A-Z, a-z). If the argument is `null`, it returns `null`.",
@@ -3259,7 +3259,7 @@
     "Aliases": [
       "text-to-retain-alpha-numeric"
     ],
-    "Scope": "text",
+    "Scope": "text/filtering",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all characters removed except for letters (A-Z, a-z) and digits (0-9). If the argument is `null`, it returns `null`.",
@@ -3274,7 +3274,7 @@
     "Aliases": [
       "text-to-retain-numeric"
     ],
-    "Scope": "text",
+    "Scope": "text/filtering",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all non-numeric characters removed, leaving only digits (0-9).. If the argument is `null`, it returns `null`.",
@@ -3289,7 +3289,7 @@
     "Aliases": [
       "text-to-retain-numeric-symbol"
     ],
-    "Scope": "text",
+    "Scope": "text/filtering",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all characters removed except for digits (0-9) and the symbols `+`, `-`, `,` and `.` If the argument is `null`, it returns `null`.",
@@ -3304,7 +3304,7 @@
     "Aliases": [
       "text-to-screaming-snake-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -3320,7 +3320,7 @@
       "text-to-sentence-case",
       "capitalize"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in sentence case by capitalizing the first word while preserving the remaining content. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -3335,7 +3335,7 @@
     "Aliases": [
       "text-to-skip-first-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/selection",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
@@ -3357,7 +3357,7 @@
     "Aliases": [
       "text-to-skip-last-chars"
     ],
-    "Scope": "text",
+    "Scope": "text/selection",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
@@ -3379,7 +3379,7 @@
     "Aliases": [
       "text-to-snake-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -3394,7 +3394,7 @@
     "Aliases": [
       "text-to-suffix"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.",
@@ -3416,7 +3416,7 @@
     "Aliases": [
       "text-to-suffix-new-line"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
@@ -3431,7 +3431,7 @@
     "Aliases": [
       "text-to-suffix-space"
     ],
-    "Scope": "text",
+    "Scope": "text/concatenation",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
@@ -3446,7 +3446,7 @@
     "Aliases": [
       "text-to-swap-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text with lowercase characters converted to uppercase and uppercase characters converted to lowercase. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -3459,7 +3459,7 @@
     "Name": "text-to-html",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "text/encoding",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value converted to an HTML-encoded string",
@@ -3472,7 +3472,7 @@
     "Name": "text-to-mask",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "text/masking",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.",
@@ -3494,7 +3494,7 @@
     "Aliases": [
       "text-to-title-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in title case, capitalizing words while keeping small words lowercase only when they are neither first nor last and do not follow a colon. The first and last words are always capitalized, and a small word after a colon is capitalized. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `Q&A`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -3509,7 +3509,7 @@
     "Aliases": [
       "text-to-token"
     ],
-    "Scope": "text",
+    "Scope": "text/tokenization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
@@ -3538,7 +3538,7 @@
     "Aliases": [
       "text-to-token-count"
     ],
-    "Scope": "text",
+    "Scope": "text/tokenization",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
@@ -3560,7 +3560,7 @@
     "Aliases": [
       "text-to-train-case"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -3575,7 +3575,7 @@
     "Aliases": [
       "text-to-upper"
     ],
-    "Scope": "text",
+    "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text converted to uppercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",

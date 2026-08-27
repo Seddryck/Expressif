@@ -90,6 +90,7 @@ public class WhitespacesToNull : BaseTextFunction
 /// Returns the argument value except if this value is `empty` then it returns `null`.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/normalization")]
 public class EmptyToNull : BaseTextFunction
 {
     protected override object EvaluateEmpty() => new Null().Keyword;
@@ -100,6 +101,7 @@ public class EmptyToNull : BaseTextFunction
 /// Returns the argument value except if this value is `null` then it returns `empty`.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/normalization")]
 public class NullToEmpty : BaseTextFunction
 {
     protected override object EvaluateNull() => new Empty().Keyword;

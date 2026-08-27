@@ -7,6 +7,7 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/selection")]
 public abstract class BaseTextLength : BaseTextFunction
 {
     public Func<int> Length { get; }

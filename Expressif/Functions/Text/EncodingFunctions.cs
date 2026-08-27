@@ -11,6 +11,7 @@ namespace Expressif.Functions.Text;
 /// Returns the argument value that has previously been HTML-encoded into a decoded string.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/encoding")]
 public class HtmlToText : BaseTextFunction
 {
     protected override object EvaluateString(string value) => WebUtility.HtmlDecode(value);
@@ -20,6 +21,7 @@ public class HtmlToText : BaseTextFunction
 /// Returns the argument value converted to an HTML-encoded string
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/encoding")]
 public class TextToHtml : BaseTextFunction
 {
     protected override object EvaluateString(string value) => WebUtility.HtmlEncode(value);
