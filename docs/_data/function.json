@@ -1347,6 +1347,16 @@
     ]
   },
   {
+    "Name": "swap", "IsPublic": true, "Aliases": ["swap"], "Scope": "tuple",
+    "Input": "tuple", "Output": "tuple",
+    "Summary": "Returns a tuple with two positions exchanged, defaulting to the first and last positions.",
+    "Parameters": [
+      {"Name": "first", "Type": "integer", "Optional": false, "Summary": "Specifies the first zero-based position."},
+      {"Name": "second", "Type": "integer", "Optional": false, "Summary": "Specifies the second zero-based position."}
+    ],
+    "Examples": ["T(\"a\", \"b\", \"c\", \"d\") | swap → T(\"d\", \"b\", \"c\", \"a\")"]
+  },
+  {
     "Name": "tuple-at",
     "IsPublic": true,
     "Aliases": [
