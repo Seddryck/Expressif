@@ -52,7 +52,7 @@ public class FunctionCatalogTest
 
     [Test]
     public void ForScope_CaseInsensitive_ReturnsOnlyRequestedScope()
-        => Assert.That(FunctionCatalog.Default.ForScope("record").Select(x => x.Scope), Is.All.EqualTo("Record"));
+        => Assert.That(FunctionCatalog.Default.ForScope("record").Select(x => x.Scope), Is.All.EqualTo("record"));
 
     [Test]
     public void Suggest_CloseName_ReturnsExpectedFunctionFirst()

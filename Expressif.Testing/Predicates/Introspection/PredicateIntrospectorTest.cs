@@ -74,7 +74,7 @@ public class PredicateIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
             Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Scope, Does.Match("^(Text|Numeric|Boolean|Temporal|Special|[a-z][a-z-]*/[a-z][a-z-]*)$"));
+            Assert.That(info.Scope, Does.Match("^[a-z][a-z-]*(/[a-z][a-z-]*)?$"));
         }
     }
 

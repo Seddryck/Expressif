@@ -54,7 +54,7 @@ public class PredicateIntrospector : BaseIntrospector
                     , predicate.Type.IsPublic
                     , aliases
                     , predicate.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
-                        ?? predicate.Type.Namespace!.ToToken('.').Last()
+                        ?? predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()
                     , predicate.Type
                     , fast ? "" : predicate.Type.GetSummary()
                     , fast ? [] : BuildParameters(predicate.Type.GetInfoConstructors()).ToArray()

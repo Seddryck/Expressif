@@ -112,6 +112,7 @@ public class FilterChars : BaseTextFunction
 /// <summary>
 /// returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\r\n` is considered as a single character.
 /// </summary>
+[Scope("text/normalization")]
 public class CollapseWhitespace : BaseTextFunction
 {
     protected override object? EvaluateString(string value)
@@ -136,6 +137,7 @@ public class CollapseWhitespace : BaseTextFunction
 /// <summary>
 /// returns the argument with any whitespace replaced by a space character. `\r\n` is considered as a single character.
 /// </summary>
+[Scope("text/normalization")]
 public class CleanWhitespace : BaseTextFunction
 {
     protected override object? EvaluateString(string value)

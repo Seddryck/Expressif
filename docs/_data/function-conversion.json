@@ -1,7 +1,7 @@
 [
   {
     "Name": "adjacent",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -9,7 +9,7 @@
   },
   {
     "Name": "broadcast",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -17,31 +17,7 @@
   },
   {
     "Name": "chunk",
-    "Scope": "Array",
-    "Converted": true,
-    "Input": "array",
-    "Output": "array",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "complement",
-    "Scope": "Array",
-    "Converted": true,
-    "Input": "array",
-    "Output": "array",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "difference",
-    "Scope": "Array",
-    "Converted": true,
-    "Input": "array",
-    "Output": "array",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "distinct",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -49,7 +25,7 @@
   },
   {
     "Name": "filter",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -57,7 +33,7 @@
   },
   {
     "Name": "first-elements",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -65,23 +41,15 @@
   },
   {
     "Name": "fold",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "any",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "intersection",
-    "Scope": "Array",
-    "Converted": true,
-    "Input": "array",
-    "Output": "array",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "lag",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -89,7 +57,7 @@
   },
   {
     "Name": "last-elements",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -97,7 +65,7 @@
   },
   {
     "Name": "lead",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -105,7 +73,7 @@
   },
   {
     "Name": "map",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -113,7 +81,7 @@
   },
   {
     "Name": "pairwise",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -121,7 +89,7 @@
   },
   {
     "Name": "reverse",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -129,7 +97,7 @@
   },
   {
     "Name": "scan",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -137,7 +105,7 @@
   },
   {
     "Name": "skip-first-elements",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -145,7 +113,7 @@
   },
   {
     "Name": "skip-last-elements",
-    "Scope": "Array",
+    "Scope": "array",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -153,7 +121,39 @@
   },
   {
     "Name": "slice-elements",
-    "Scope": "Array",
+    "Scope": "array",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "complement",
+    "Scope": "array/set",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "difference",
+    "Scope": "array/set",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "distinct",
+    "Scope": "array/set",
+    "Converted": true,
+    "Input": "array",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "intersection",
+    "Scope": "array/set",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -161,7 +161,7 @@
   },
   {
     "Name": "symmetric-difference",
-    "Scope": "Array",
+    "Scope": "array/set",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -169,7 +169,7 @@
   },
   {
     "Name": "union",
-    "Scope": "Array",
+    "Scope": "array/set",
     "Converted": true,
     "Input": "array",
     "Output": "array",
@@ -177,7 +177,7 @@
   },
   {
     "Name": "creation-datetime",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "date-time",
@@ -185,7 +185,7 @@
   },
   {
     "Name": "creation-datetime-utc",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "date-time",
@@ -193,7 +193,7 @@
   },
   {
     "Name": "directory",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -201,7 +201,7 @@
   },
   {
     "Name": "extension",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -209,7 +209,7 @@
   },
   {
     "Name": "filename",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -217,7 +217,7 @@
   },
   {
     "Name": "filename-without-extension",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -225,7 +225,7 @@
   },
   {
     "Name": "root",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -233,7 +233,7 @@
   },
   {
     "Name": "size",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "integer",
@@ -241,7 +241,7 @@
   },
   {
     "Name": "update-datetime",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "date-time",
@@ -249,7 +249,7 @@
   },
   {
     "Name": "update-datetime-utc",
-    "Scope": "IO",
+    "Scope": "io",
     "Converted": true,
     "Input": "text",
     "Output": "date-time",
@@ -257,23 +257,7 @@
   },
   {
     "Name": "absolute",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "ceiling",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "clip",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -281,7 +265,7 @@
   },
   {
     "Name": "cube-power",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -289,23 +273,7 @@
   },
   {
     "Name": "cube-root",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "floor",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "greatest-common-divisor",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -313,7 +281,7 @@
   },
   {
     "Name": "human-readable-format-binary-bytes",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "text",
@@ -321,7 +289,7 @@
   },
   {
     "Name": "human-readable-format-decimal",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "text",
@@ -329,31 +297,15 @@
   },
   {
     "Name": "human-readable-format-decimal-bytes",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "text",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "integer",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "invert",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "lowest-common-multiple",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -361,7 +313,7 @@
   },
   {
     "Name": "nth-root",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -369,7 +321,7 @@
   },
   {
     "Name": "null-to-zero",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -377,7 +329,7 @@
   },
   {
     "Name": "oppose",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -385,7 +337,7 @@
   },
   {
     "Name": "percent-change",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -393,15 +345,7 @@
   },
   {
     "Name": "power",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "round",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -409,7 +353,7 @@
   },
   {
     "Name": "sign",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -417,7 +361,7 @@
   },
   {
     "Name": "square-power",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -425,7 +369,7 @@
   },
   {
     "Name": "square-root",
-    "Scope": "Numeric",
+    "Scope": "numeric",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",
@@ -456,7 +400,23 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
+    "Name": "greatest-common-divisor",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
     "Name": "increment",
+    "Scope": "numeric/arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "lowest-common-multiple",
     "Scope": "numeric/arithmetic",
     "Converted": true,
     "Input": "numeric",
@@ -480,8 +440,48 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
+    "Name": "ceiling",
+    "Scope": "numeric/rounding",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "clip",
+    "Scope": "numeric/rounding",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "floor",
+    "Scope": "numeric/rounding",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "integer",
+    "Scope": "numeric/rounding",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "round",
+    "Scope": "numeric/rounding",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
     "Name": "field",
-    "Scope": "Record",
+    "Scope": "record",
     "Converted": false,
     "Input": "any",
     "Output": "any",
@@ -489,7 +489,7 @@
   },
   {
     "Name": "record",
-    "Scope": "Record",
+    "Scope": "record",
     "Converted": true,
     "Input": "any",
     "Output": "record",
@@ -497,7 +497,7 @@
   },
   {
     "Name": "any-to-any",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "any",
     "Output": "text",
@@ -505,7 +505,7 @@
   },
   {
     "Name": "coalesce",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": false,
     "Input": "any",
     "Output": "any",
@@ -513,7 +513,7 @@
   },
   {
     "Name": "coerce-boolean",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "boolean | integer | numeric | text",
     "Output": "boolean",
@@ -521,7 +521,7 @@
   },
   {
     "Name": "coerce-date",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "date | date-time | text | year-month",
     "Output": "date",
@@ -529,7 +529,7 @@
   },
   {
     "Name": "coerce-datetime",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "date | date-time | text | year-month",
     "Output": "date-time",
@@ -537,7 +537,7 @@
   },
   {
     "Name": "coerce-int",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "boolean | integer | numeric | text",
     "Output": "integer",
@@ -545,7 +545,7 @@
   },
   {
     "Name": "coerce-numeric",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "boolean | integer | numeric | text",
     "Output": "numeric",
@@ -553,7 +553,7 @@
   },
   {
     "Name": "coerce-text",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "boolean | date | date-time | integer | numeric | text | year-month",
     "Output": "text",
@@ -561,7 +561,7 @@
   },
   {
     "Name": "coerce-time",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "date-time | text | time",
     "Output": "time",
@@ -569,7 +569,7 @@
   },
   {
     "Name": "neutral",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": false,
     "Input": "any",
     "Output": "any",
@@ -577,7 +577,7 @@
   },
   {
     "Name": "null-to-value",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "any",
     "Output": "text",
@@ -585,7 +585,7 @@
   },
   {
     "Name": "tuple-at",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "tuple",
     "Output": "any",
@@ -593,7 +593,7 @@
   },
   {
     "Name": "tuple-first",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "tuple",
     "Output": "any",
@@ -601,7 +601,7 @@
   },
   {
     "Name": "tuple-second",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "tuple",
     "Output": "any",
@@ -609,7 +609,7 @@
   },
   {
     "Name": "value-to-value",
-    "Scope": "Special",
+    "Scope": "special",
     "Converted": true,
     "Input": "any",
     "Output": "text",
@@ -617,7 +617,7 @@
   },
   {
     "Name": "age",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -625,15 +625,7 @@
   },
   {
     "Name": "backward",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "catholic-calendar",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -641,7 +633,7 @@
   },
   {
     "Name": "ceiling-hour",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -649,7 +641,7 @@
   },
   {
     "Name": "ceiling-minute",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -657,7 +649,7 @@
   },
   {
     "Name": "change-of-hour",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -665,7 +657,7 @@
   },
   {
     "Name": "change-of-minute",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -673,7 +665,7 @@
   },
   {
     "Name": "change-of-month",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -681,7 +673,7 @@
   },
   {
     "Name": "change-of-second",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -689,7 +681,7 @@
   },
   {
     "Name": "change-of-year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -697,23 +689,15 @@
   },
   {
     "Name": "clamp",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "datetime-to-date",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "day-of-month",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -721,7 +705,7 @@
   },
   {
     "Name": "day-of-week",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -729,7 +713,7 @@
   },
   {
     "Name": "day-of-year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -737,39 +721,15 @@
   },
   {
     "Name": "duration-between",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "duration",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "first-in-month",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "first-of-month",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "first-of-year",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "floor-hour",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -777,7 +737,7 @@
   },
   {
     "Name": "floor-minute",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -785,7 +745,7 @@
   },
   {
     "Name": "forward",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -793,7 +753,7 @@
   },
   {
     "Name": "hour",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -801,7 +761,7 @@
   },
   {
     "Name": "hour-minute",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -809,7 +769,7 @@
   },
   {
     "Name": "hour-minute-second",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -817,23 +777,15 @@
   },
   {
     "Name": "hour-of-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "invalid-to-date",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "iso-day-of-year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -841,7 +793,7 @@
   },
   {
     "Name": "iso-week-of-year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -849,7 +801,7 @@
   },
   {
     "Name": "iso-year-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -857,7 +809,7 @@
   },
   {
     "Name": "iso-year-week",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -865,55 +817,15 @@
   },
   {
     "Name": "iso-year-week-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "last-in-month",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "last-of-month",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "last-of-year",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "length-of-month",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "integer",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "length-of-year",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "integer",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "local-to-utc",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -921,7 +833,7 @@
   },
   {
     "Name": "minute-of-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -929,7 +841,7 @@
   },
   {
     "Name": "minute-of-hour",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -937,7 +849,7 @@
   },
   {
     "Name": "month",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -945,7 +857,7 @@
   },
   {
     "Name": "month-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -953,7 +865,7 @@
   },
   {
     "Name": "month-of-year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -961,7 +873,7 @@
   },
   {
     "Name": "next-business-days",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date",
@@ -969,7 +881,7 @@
   },
   {
     "Name": "next-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -977,7 +889,7 @@
   },
   {
     "Name": "next-month",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -985,7 +897,7 @@
   },
   {
     "Name": "next-weekday",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date",
@@ -993,7 +905,7 @@
   },
   {
     "Name": "next-weekday-or-same",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date",
@@ -1001,15 +913,7 @@
   },
   {
     "Name": "next-year",
-    "Scope": "Temporal",
-    "Converted": true,
-    "Input": "date-time",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "null-to-date",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1017,7 +921,7 @@
   },
   {
     "Name": "previous-business-days",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date",
@@ -1025,7 +929,7 @@
   },
   {
     "Name": "previous-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1033,7 +937,7 @@
   },
   {
     "Name": "previous-month",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1041,7 +945,7 @@
   },
   {
     "Name": "previous-weekday",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date",
@@ -1049,7 +953,7 @@
   },
   {
     "Name": "previous-weekday-or-same",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date",
@@ -1057,7 +961,7 @@
   },
   {
     "Name": "previous-year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1065,7 +969,7 @@
   },
   {
     "Name": "second-of-day",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -1073,7 +977,7 @@
   },
   {
     "Name": "second-of-hour",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -1081,7 +985,7 @@
   },
   {
     "Name": "second-of-minute",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
@@ -1089,7 +993,7 @@
   },
   {
     "Name": "set-time",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1097,7 +1001,7 @@
   },
   {
     "Name": "set-to-local",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1105,7 +1009,7 @@
   },
   {
     "Name": "set-to-utc",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1113,7 +1017,7 @@
   },
   {
     "Name": "utc-to-local",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "date-time",
@@ -1121,7 +1025,7 @@
   },
   {
     "Name": "year",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "text",
@@ -1129,15 +1033,111 @@
   },
   {
     "Name": "year-of-era",
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Converted": true,
     "Input": "date-time",
     "Output": "integer",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
+    "Name": "catholic-calendar",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-in-month",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-of-month",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "first-of-year",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-in-month",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-of-month",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "last-of-year",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "length-of-month",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "length-of-year",
+    "Scope": "temporal/calendar",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "integer",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "datetime-to-date",
+    "Scope": "temporal/conversion",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "invalid-to-date",
+    "Scope": "temporal/conversion",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "null-to-date",
+    "Scope": "temporal/conversion",
+    "Converted": true,
+    "Input": "date-time",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
     "Name": "after-substring",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1145,7 +1145,7 @@
   },
   {
     "Name": "allcaps-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1153,7 +1153,7 @@
   },
   {
     "Name": "append",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1161,7 +1161,7 @@
   },
   {
     "Name": "append-new-line",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1169,7 +1169,7 @@
   },
   {
     "Name": "append-space",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1177,7 +1177,7 @@
   },
   {
     "Name": "before-substring",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1185,7 +1185,7 @@
   },
   {
     "Name": "camel-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1193,15 +1193,7 @@
   },
   {
     "Name": "camel-snake-case",
-    "Scope": "Text",
-    "Converted": true,
-    "Input": "text",
-    "Output": "text",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "clean-whitespace",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1209,15 +1201,7 @@
   },
   {
     "Name": "cobol-case",
-    "Scope": "Text",
-    "Converted": true,
-    "Input": "text",
-    "Output": "text",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "collapse-whitespace",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1225,7 +1209,7 @@
   },
   {
     "Name": "count-distinct-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "integer",
@@ -1233,7 +1217,7 @@
   },
   {
     "Name": "count-substring",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "integer",
@@ -1241,7 +1225,7 @@
   },
   {
     "Name": "dot-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1249,7 +1233,7 @@
   },
   {
     "Name": "empty-to-null",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1257,7 +1241,7 @@
   },
   {
     "Name": "filter-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1265,7 +1249,7 @@
   },
   {
     "Name": "first-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1273,7 +1257,7 @@
   },
   {
     "Name": "flat-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1281,7 +1265,7 @@
   },
   {
     "Name": "html-to-text",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1289,7 +1273,7 @@
   },
   {
     "Name": "kebab-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1297,7 +1281,7 @@
   },
   {
     "Name": "last-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1305,7 +1289,7 @@
   },
   {
     "Name": "length",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "integer",
@@ -1313,7 +1297,7 @@
   },
   {
     "Name": "lower",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1321,7 +1305,7 @@
   },
   {
     "Name": "mask-to-text",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1329,7 +1313,7 @@
   },
   {
     "Name": "namespace-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1337,7 +1321,7 @@
   },
   {
     "Name": "null-to-empty",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1345,7 +1329,7 @@
   },
   {
     "Name": "pad-center",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1353,7 +1337,7 @@
   },
   {
     "Name": "pad-left",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1361,7 +1345,7 @@
   },
   {
     "Name": "pad-right",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1369,7 +1353,7 @@
   },
   {
     "Name": "pascal-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1377,7 +1361,7 @@
   },
   {
     "Name": "pascal-snake-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1385,7 +1369,7 @@
   },
   {
     "Name": "path-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1393,7 +1377,7 @@
   },
   {
     "Name": "prefix",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1401,7 +1385,7 @@
   },
   {
     "Name": "prefix-new-line",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1409,7 +1393,7 @@
   },
   {
     "Name": "prefix-space",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1417,7 +1401,7 @@
   },
   {
     "Name": "prepend",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1425,7 +1409,7 @@
   },
   {
     "Name": "prepend-new-line",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1433,7 +1417,7 @@
   },
   {
     "Name": "prepend-space",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1441,7 +1425,7 @@
   },
   {
     "Name": "remove-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1449,7 +1433,7 @@
   },
   {
     "Name": "replace-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1457,7 +1441,7 @@
   },
   {
     "Name": "replace-slice",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1465,7 +1449,7 @@
   },
   {
     "Name": "retain-alpha",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1473,7 +1457,7 @@
   },
   {
     "Name": "retain-alpha-numeric",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1481,7 +1465,7 @@
   },
   {
     "Name": "retain-numeric",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1489,7 +1473,7 @@
   },
   {
     "Name": "retain-numeric-symbol",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1497,7 +1481,7 @@
   },
   {
     "Name": "screaming-snake-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1505,7 +1489,7 @@
   },
   {
     "Name": "sentence-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1513,7 +1497,7 @@
   },
   {
     "Name": "skip-first-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1521,7 +1505,7 @@
   },
   {
     "Name": "skip-last-chars",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1529,7 +1513,7 @@
   },
   {
     "Name": "snake-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1537,7 +1521,7 @@
   },
   {
     "Name": "suffix",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1545,7 +1529,7 @@
   },
   {
     "Name": "suffix-new-line",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1553,7 +1537,7 @@
   },
   {
     "Name": "suffix-space",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1561,23 +1545,15 @@
   },
   {
     "Name": "swap-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "text-to-datetime",
-    "Scope": "Text",
-    "Converted": true,
-    "Input": "text",
-    "Output": "date-time",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "text-to-html",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1585,7 +1561,7 @@
   },
   {
     "Name": "text-to-mask",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1593,7 +1569,7 @@
   },
   {
     "Name": "title-case",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1601,7 +1577,7 @@
   },
   {
     "Name": "token",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1609,7 +1585,7 @@
   },
   {
     "Name": "token-count",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "integer",
@@ -1617,15 +1593,7 @@
   },
   {
     "Name": "train-case",
-    "Scope": "Text",
-    "Converted": true,
-    "Input": "text",
-    "Output": "text",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "trim",
-    "Scope": "Text",
+    "Scope": "text",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1633,7 +1601,39 @@
   },
   {
     "Name": "upper",
-    "Scope": "Text",
+    "Scope": "text",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "text-to-datetime",
+    "Scope": "text/conversion",
+    "Converted": true,
+    "Input": "text",
+    "Output": "date-time",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "clean-whitespace",
+    "Scope": "text/normalization",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "collapse-whitespace",
+    "Scope": "text/normalization",
+    "Converted": true,
+    "Input": "text",
+    "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "trim",
+    "Scope": "text/normalization",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1641,7 +1641,7 @@
   },
   {
     "Name": "whitespaces-to-empty",
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1649,7 +1649,7 @@
   },
   {
     "Name": "whitespaces-to-null",
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1657,7 +1657,7 @@
   },
   {
     "Name": "without-diacritics",
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Converted": true,
     "Input": "text",
     "Output": "text",
@@ -1665,7 +1665,7 @@
   },
   {
     "Name": "without-whitespaces",
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Converted": true,
     "Input": "text",
     "Output": "text",

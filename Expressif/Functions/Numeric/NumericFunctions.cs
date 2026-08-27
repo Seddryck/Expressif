@@ -53,6 +53,7 @@ public class NullToZero : BaseNumericFunction
     protected override decimal? EvaluateNumeric(decimal numeric) => numeric;
 }
 
+[Scope("numeric/rounding")]
 public abstract class BaseNumericRounding : BaseNumericFunction
 { }
 
@@ -97,6 +98,7 @@ public class Round : BaseNumericRounding
 /// <summary>
 /// Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.
 /// </summary>
+[Scope("numeric/rounding")]
 public class Clip : BaseNumericFunction
 {
     public Func<decimal> Min { get; }

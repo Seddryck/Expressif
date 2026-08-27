@@ -41,7 +41,7 @@ public class FunctionIntrospector : BaseIntrospector
                                 : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}"
                             ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
                     , function.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
-                        ?? function.Type.Namespace!.ToToken('.').Last()
+                        ?? function.Type.Namespace!.ToToken('.').Last().ToKebabCase()
                     , contract.Input
                     , contract.Output
                     , contract.Converted

@@ -11,6 +11,7 @@ namespace Expressif.Functions.Text;
 /// Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-dateTime"])]
+[Scope("text/conversion")]
 public class TextToDateTime : BaseTextFunction<DateTime?>
 {
     public Func<string> Format { get; }
