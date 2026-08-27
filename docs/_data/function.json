@@ -545,35 +545,6 @@
     "Parameters": []
   },
   {
-    "Name": "add",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-add"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the sum of the input value and the parameter value.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Type": "numeric",
-        "Optional": false,
-        "Summary": "The value to add to the input value."
-      },
-      {
-        "Name": "times",
-        "Type": "integer",
-        "Optional": true,
-        "Summary": "Number of times the addition is applied."
-      }
-    ],
-    "Examples": [
-      "10 | add(5)      → 15",
-      "10 | add(5, 2)   → 20"
-    ]
-  },
-  {
     "Name": "ceiling",
     "IsPublic": true,
     "Aliases": [
@@ -633,37 +604,6 @@
     "Output": "numeric",
     "Summary": "Returns cube root of the numeric argument value.",
     "Parameters": []
-  },
-  {
-    "Name": "decrement",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-decrement"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the argument number decremented of one unit.",
-    "Parameters": []
-  },
-  {
-    "Name": "divide",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-divide"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Type": "numeric",
-        "Optional": false,
-        "Summary": "The value to divide the argument value."
-      }
-    ]
   },
   {
     "Name": "floor",
@@ -733,18 +673,6 @@
     "Parameters": []
   },
   {
-    "Name": "increment",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-increment"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the argument number incremented of one unit.",
-    "Parameters": []
-  },
-  {
     "Name": "integer",
     "IsPublic": true,
     "Aliases": [
@@ -786,25 +714,6 @@
         "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the lowest common multiple with the argument value."
-      }
-    ]
-  },
-  {
-    "Name": "multiply",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-multiply"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the argument number multiplied by the parameter value.",
-    "Parameters": [
-      {
-        "Name": "value",
-        "Type": "numeric",
-        "Optional": false,
-        "Summary": "The value to be multiplied by the argument value."
       }
     ]
   },
@@ -929,12 +838,103 @@
     "Parameters": []
   },
   {
+    "Name": "add",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-add"
+    ],
+    "Scope": "Numeric/Arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the sum of the input value and the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "The value to add to the input value."
+      },
+      {
+        "Name": "times",
+        "Type": "integer",
+        "Optional": true,
+        "Summary": "Number of times the addition is applied."
+      }
+    ],
+    "Examples": [
+      "10 | add(5)      → 15",
+      "10 | add(5, 2)   → 20"
+    ]
+  },
+  {
+    "Name": "decrement",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-decrement"
+    ],
+    "Scope": "Numeric/Arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the argument number decremented of one unit.",
+    "Parameters": []
+  },
+  {
+    "Name": "divide",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-divide"
+    ],
+    "Scope": "Numeric/Arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "The value to divide the argument value."
+      }
+    ]
+  },
+  {
+    "Name": "increment",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-increment"
+    ],
+    "Scope": "Numeric/Arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the argument number incremented of one unit.",
+    "Parameters": []
+  },
+  {
+    "Name": "multiply",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-multiply"
+    ],
+    "Scope": "Numeric/Arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the argument number multiplied by the parameter value.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "The value to be multiplied by the argument value."
+      }
+    ]
+  },
+  {
     "Name": "subtract",
     "IsPublic": true,
     "Aliases": [
       "numeric-to-subtract"
     ],
-    "Scope": "Numeric",
+    "Scope": "Numeric/Arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the difference between the argument number and the parameter value.",

@@ -40,7 +40,8 @@ public class FunctionIntrospector : BaseIntrospector
                                 ? $"{function.Type.Namespace!.Split('.').Last().ToKebabCase()}-to-{function.Type.Name.ToKebabCase()}"
                                 : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}"
                             ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
-                    , function.Type.Namespace!.ToToken('.').Last()
+                    , function.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
+                        ?? function.Type.Namespace!.ToToken('.').Last()
                     , contract.Input
                     , contract.Output
                     , contract.Converted

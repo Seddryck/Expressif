@@ -264,14 +264,6 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "add",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "ceiling",
     "Scope": "Numeric",
     "Converted": true,
@@ -297,22 +289,6 @@
   },
   {
     "Name": "cube-root",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "decrement",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "divide",
     "Scope": "Numeric",
     "Converted": true,
     "Input": "numeric",
@@ -360,14 +336,6 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
-    "Name": "increment",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
     "Name": "integer",
     "Scope": "Numeric",
     "Converted": true,
@@ -385,14 +353,6 @@
   },
   {
     "Name": "lowest-common-multiple",
-    "Scope": "Numeric",
-    "Converted": true,
-    "Input": "numeric",
-    "Output": "numeric",
-    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
-  },
-  {
-    "Name": "multiply",
     "Scope": "Numeric",
     "Converted": true,
     "Input": "numeric",
@@ -472,8 +432,48 @@
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   },
   {
+    "Name": "add",
+    "Scope": "Numeric/Arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "decrement",
+    "Scope": "Numeric/Arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "divide",
+    "Scope": "Numeric/Arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "increment",
+    "Scope": "Numeric/Arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "multiply",
+    "Scope": "Numeric/Arithmetic",
+    "Converted": true,
+    "Input": "numeric",
+    "Output": "numeric",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
     "Name": "subtract",
-    "Scope": "Numeric",
+    "Scope": "Numeric/Arithmetic",
     "Converted": true,
     "Input": "numeric",
     "Output": "numeric",

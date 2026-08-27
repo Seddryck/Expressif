@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Numeric;
 
+[Scope("Numeric/Arithmetic")]
 public abstract class BaseNumericArithmetic : BaseNumericFunction
 {
     public Func<decimal> Value { get; }

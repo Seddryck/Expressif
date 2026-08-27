@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
 
 namespace Expressif.Predicates.Numeric;
 
@@ -12,6 +13,7 @@ namespace Expressif.Predicates.Numeric;
 /// Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.
 /// </summary>
 [Predicate(name: "has-remainder")]
+[Scope("Numeric/Arithmetic")]
 public class Modulo : BaseNumericPredicateReference
 {
     public Func<decimal> Remainder { get; }
