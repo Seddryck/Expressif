@@ -15,6 +15,31 @@ public sealed class Arity : IFunction<TupleValue, int>
     object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
 }
 
+/// <summary>Returns a tuple with two positions exchanged, defaulting to the first and last positions.</summary>
+[Function(prefix: "", aliases: ["swap"])]
+[Scope("tuple")]
+public sealed class Swap : IFunction<TupleValue, TupleValue>
+{
+    private Func<int>? First { get; }
+    private Func<int>? Second { get; }
+    public Swap() { }
+    /// <param name="first">Specifies the first zero-based position.</param>
+    /// <param name="second">Specifies the second zero-based position.</param>
+    public Swap(Func<int> first, Func<int> second) => (First, Second) = (first, second);
+    public TupleValue Evaluate(TupleValue value)
+    {
+        if (value.Count == 0) return new Expressif.Values.Tuple();
+        var first = First?.Invoke() ?? 0;
+        var second = Second?.Invoke() ?? value.Count - 1;
+        if (first < 0 || first >= value.Count || second < 0 || second >= value.Count)
+            throw new IndexOutOfRangeException("Tuple swap position is out of range.");
+        var values = value.ToArray();
+        (values[first], values[second]) = (values[second], values[first]);
+        return new Expressif.Values.Tuple(values);
+    }
+    object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
+}
+
 /// <summary>
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>

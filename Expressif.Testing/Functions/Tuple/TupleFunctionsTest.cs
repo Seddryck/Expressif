@@ -39,4 +39,16 @@ public class TupleFunctionsTest
     [TestCase("T(10, 20, 30) | $^4", null)]
     public void Evaluate_FromEndProjection_ReturnsExpected(string expression, object? expected)
         => Assert.That(Expression.CreateClosed(expression).Evaluate(null), Is.EqualTo(expected));
+
+    [Test]
+    public void Swap_DefaultAndExplicit_ExchangePositions()
+    {
+        var tuple = new TupleValue("a", "b", "c", "d");
+        Assert.Multiple(() =>
+        {
+            Assert.That(new Swap().Evaluate(tuple), Is.EqualTo(new TupleValue("d", "b", "c", "a")));
+            Assert.That(new Swap(() => 1, () => 2).Evaluate(tuple), Is.EqualTo(new TupleValue("a", "c", "b", "d")));
+            Assert.That(new Swap(() => 1, () => 1).Evaluate(tuple), Is.EqualTo(tuple));
+        });
+    }
 }
