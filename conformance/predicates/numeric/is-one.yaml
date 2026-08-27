@@ -1,0 +1,27 @@
+suite: numeric
+kind: predicate
+operator: is-one
+tests:
+  - id: is-one.valid
+    cases:
+      - id: is-one.valid.numeric.zero
+        value: 0
+        expected: false
+      - id: is-one.valid.numeric.one
+        value: 1
+        expected: true
+      - id: is-one.valid.numeric.ten
+        value: 10
+        expected: false
+      - id: is-one.valid.numeric.minus-ten
+        value: -10
+        expected: false
+      - id: is-one.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: is-one.valid.special.blank
+        value: (blank)
+        expected: false
+      - id: is-one.valid.special.null
+        value: (null)
+        expected: false

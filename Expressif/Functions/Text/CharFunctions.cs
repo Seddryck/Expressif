@@ -10,6 +10,7 @@ namespace Expressif.Functions.Text;
 /// <summary>
 /// Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.
 /// </summary>
+[Scope("text/character")]
 public class RemoveChars : BaseTextFunction
 {
     public Func<char> CharToRemove { get; }
@@ -42,6 +43,7 @@ public class RemoveChars : BaseTextFunction
 /// <summary>
 /// Returns the argument value where a specific char has been replaced by another, both specified as parameters.
 /// </summary>
+[Scope("text/character")]
 public class ReplaceChars : BaseTextFunction
 {
     public Func<char> CharToReplace { get; }
@@ -76,6 +78,7 @@ public class ReplaceChars : BaseTextFunction
 /// <summary>
 /// Returns only those characters specified in the parameter, in the order, they were originally entered in the input value.
 /// </summary>
+[Scope("text/filtering")]
 public class FilterChars : BaseTextFunction
 {
     public Func<char[]> Filter { get; }
@@ -112,6 +115,7 @@ public class FilterChars : BaseTextFunction
 /// <summary>
 /// returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\r\n` is considered as a single character.
 /// </summary>
+[Scope("text/normalization")]
 public class CollapseWhitespace : BaseTextFunction
 {
     protected override object? EvaluateString(string value)
@@ -136,6 +140,7 @@ public class CollapseWhitespace : BaseTextFunction
 /// <summary>
 /// returns the argument with any whitespace replaced by a space character. `\r\n` is considered as a single character.
 /// </summary>
+[Scope("text/normalization")]
 public class CleanWhitespace : BaseTextFunction
 {
     protected override object? EvaluateString(string value)

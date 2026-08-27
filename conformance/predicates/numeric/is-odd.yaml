@@ -1,0 +1,24 @@
+suite: numeric
+kind: predicate
+operator: is-odd
+tests:
+  - id: is-odd.valid
+    cases:
+      - id: is-odd.valid.numeric.positive.even
+        value: 10
+        expected: false
+      - id: is-odd.valid.numeric.positive.odd
+        value: 11
+        expected: true
+      - id: is-odd.valid.numeric.negative.odd
+        value: -3
+        expected: true
+      - id: is-odd.valid.numeric.one
+        value: 1
+        expected: true
+      - id: is-odd.valid.numeric.zero
+        value: 0
+        expected: false
+      - id: is-odd.valid.special.empty
+        value:
+        expected: false

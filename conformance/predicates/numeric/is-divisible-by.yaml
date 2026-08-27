@@ -1,0 +1,26 @@
+suite: numeric
+kind: predicate
+operator: is-divisible-by
+tests:
+  - id: is-divisible-by.valid
+    cases:
+      - id: is-divisible-by.valid.integer.success
+        value: 10
+        expected: true
+        parameters:
+          - 5
+      - id: is-divisible-by.valid.integer.failure
+        value: 10
+        expected: false
+        parameters:
+          - 6
+      - id: is-divisible-by.valid.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - 5
+      - id: is-divisible-by.valid.special.empty
+        value: (empty)
+        expected: false
+        parameters:
+          - 5

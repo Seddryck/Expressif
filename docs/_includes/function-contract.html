@@ -1,0 +1,37 @@
+<div class="function-contract">
+    <div class="function-contract__row">
+        <span class="function-contract__label">Argument</span>
+        <div class="function-contract__value">
+            <code>{{ include.pipeline.type }}</code>
+        </div>
+    </div>
+
+    <div class="function-contract__row">
+        <span class="function-contract__label">Parameters</span>
+        <div class="function-contract__value">
+            {% if include.arguments.size == 0 %}
+                <span class="function-contract__empty">None</span>
+            {% else %}
+                {% for argument in include.arguments %}
+                    <div class="function-contract__argument">
+                        <code>{{ argument.name }}</code>
+                        <code>{{ argument.type }}</code>
+
+                        {% if argument.description %}
+                            <span class="function-contract__description">
+                                {{ argument.description }}
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="function-contract__row">
+        <span class="function-contract__label">Returns</span>
+        <div class="function-contract__value">
+            <code>{{ include.returns.type }}</code>
+        </div>
+    </div>
+</div>

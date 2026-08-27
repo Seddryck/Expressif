@@ -1,14 +1,14 @@
-﻿using System;
+using Expressif.Predicates;
+using Expressif.Bindings;
+using Expressif.Values.Special;
+using Expressif.Serializers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Parsers;
-using Expressif.Predicates;
-using Expressif.Serializers;
-using Expressif.Values.Special;
+using System.Linq.Expressions;
 
 namespace Expressif;
 
@@ -70,17 +70,17 @@ public class PredicationBuilder : AbstractPredicationBuilder
     public PredicationBuilder(IContext? context = null, PredicationFactory? factory = null, PredicationSerializer? serializer = null)
         : base(context, factory, serializer) { }
 
-    public PredicationBuilderNext Create<TPredicate>()
-        where TPredicate : IPredicate
-      => Create(typeof(TPredicate), []);
+    public PredicationBuilderNext Create<T>()
+        where T : IPredicate
+      => Create(typeof(T), []);
 
-    public PredicationBuilderNext Create<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-      => Create(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Create<T>(params object?[] parameters)
+        where T : IPredicate
+      => Create(typeof(T), parameters);
 
-    public PredicationBuilderNext Create<TPredicate>(params Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-       => Create(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Create<T>(params Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+       => Create(typeof(T), parameters);
 
     public PredicationBuilderNext Create(Type type, params object?[] parameters)
     {
@@ -91,17 +91,17 @@ public class PredicationBuilder : AbstractPredicationBuilder
         return new(this);
     }
 
-    public PredicationBuilderNext Not<TPredicate>()
-        where TPredicate : IPredicate
-        => Not<TPredicate>([]);
+    public PredicationBuilderNext Not<T>()
+        where T : IPredicate
+        => Not<T>([]);
 
-    public PredicationBuilderNext Not<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => Not(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Not<T>(params object?[] parameters)
+        where T : IPredicate
+        => Not(typeof(T), parameters);
 
-    public PredicationBuilderNext Not<TPredicate>(params Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => Not(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Not<T>(params Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => Not(typeof(T), parameters);
 
     public PredicationBuilderNext Not(Type type, params object?[] parameters)
     {
@@ -120,17 +120,17 @@ public class PredicationBuilderNext : AbstractPredicationBuilder
 
     #region And
 
-    public PredicationBuilderNext And<TPredicate>()
-        where TPredicate : IPredicate
-        => And(typeof(TPredicate), []);
+    public PredicationBuilderNext And<T>()
+        where T : IPredicate
+        => And(typeof(T), []);
 
-    public PredicationBuilderNext And<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => And(typeof(TPredicate), parameters);
+    public PredicationBuilderNext And<T>(params object?[] parameters)
+        where T : IPredicate
+        => And(typeof(T), parameters);
 
-    public PredicationBuilderNext And<TPredicate>(params Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => And(typeof(TPredicate), parameters);
+    public PredicationBuilderNext And<T>(params Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => And(typeof(T), parameters);
 
     public PredicationBuilderNext And(Type type, params object?[] parameters)
     {
@@ -149,17 +149,17 @@ public class PredicationBuilderNext : AbstractPredicationBuilder
 
     #region AndNot
 
-    public PredicationBuilderNext AndNot<TPredicate>()
-        where TPredicate : IPredicate
-        => AndNot(typeof(TPredicate), []);
+    public PredicationBuilderNext AndNot<T>()
+        where T : IPredicate
+        => AndNot(typeof(T), []);
 
-    public PredicationBuilderNext AndNot<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => AndNot(typeof(TPredicate), parameters);
+    public PredicationBuilderNext AndNot<T>(params object?[] parameters)
+        where T : IPredicate
+        => AndNot(typeof(T), parameters);
 
-    public PredicationBuilderNext AndNot<TPredicate>(Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => AndNot(typeof(TPredicate), parameters);
+    public PredicationBuilderNext AndNot<T>(Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => AndNot(typeof(T), parameters);
 
     public PredicationBuilderNext AndNot(Type type, params object?[] parameters)
     {
@@ -172,17 +172,17 @@ public class PredicationBuilderNext : AbstractPredicationBuilder
 
     #region Or
 
-    public PredicationBuilderNext Or<TPredicate>()
-        where TPredicate : IPredicate
-        => Or(typeof(TPredicate), []);
+    public PredicationBuilderNext Or<T>()
+        where T : IPredicate
+        => Or(typeof(T), []);
 
-    public PredicationBuilderNext Or<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => Or(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Or<T>(params object?[] parameters)
+        where T : IPredicate
+        => Or(typeof(T), parameters);
 
-    public PredicationBuilderNext Or<TPredicate>(Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => Or(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Or<T>(Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => Or(typeof(T), parameters);
 
     public PredicationBuilderNext Or(Type type, params object?[] parameters)
     {
@@ -201,17 +201,17 @@ public class PredicationBuilderNext : AbstractPredicationBuilder
 
     #region OrNot
 
-    public PredicationBuilderNext OrNot<TPredicate>()
-        where TPredicate : IPredicate
-        => OrNot(typeof(TPredicate), []);
+    public PredicationBuilderNext OrNot<T>()
+        where T : IPredicate
+        => OrNot(typeof(T), []);
 
-    public PredicationBuilderNext OrNot<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => OrNot(typeof(TPredicate), parameters);
+    public PredicationBuilderNext OrNot<T>(params object?[] parameters)
+        where T : IPredicate
+        => OrNot(typeof(T), parameters);
 
-    public PredicationBuilderNext OrNot<TPredicate>(Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => OrNot(typeof(TPredicate), parameters);
+    public PredicationBuilderNext OrNot<T>(Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => OrNot(typeof(T), parameters);
 
     public PredicationBuilderNext OrNot(Type type, params object?[] parameters)
     {
@@ -224,17 +224,17 @@ public class PredicationBuilderNext : AbstractPredicationBuilder
 
     #region Xor
 
-    public PredicationBuilderNext Xor<TPredicate>()
-        where TPredicate : IPredicate
-        => Xor(typeof(TPredicate), []);
+    public PredicationBuilderNext Xor<T>()
+        where T : IPredicate
+        => Xor(typeof(T), []);
 
-    public PredicationBuilderNext Xor<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => Xor(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Xor<T>(params object?[] parameters)
+        where T : IPredicate
+        => Xor(typeof(T), parameters);
 
-    public PredicationBuilderNext Xor<TPredicate>(Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => Xor(typeof(TPredicate), parameters);
+    public PredicationBuilderNext Xor<T>(Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => Xor(typeof(T), parameters);
 
     public PredicationBuilderNext Xor(Type type, params object?[] parameters)
     {
@@ -253,17 +253,17 @@ public class PredicationBuilderNext : AbstractPredicationBuilder
 
     #region XorNot
 
-    public PredicationBuilderNext XorNot<TPredicate>()
-        where TPredicate : IPredicate
-        => XorNot(typeof(TPredicate), []);
+    public PredicationBuilderNext XorNot<T>()
+        where T : IPredicate
+        => XorNot(typeof(T), []);
 
-    public PredicationBuilderNext XorNot<TPredicate>(params object?[] parameters)
-        where TPredicate : IPredicate
-        => XorNot(typeof(TPredicate), parameters);
+    public PredicationBuilderNext XorNot<T>(params object?[] parameters)
+        where T : IPredicate
+        => XorNot(typeof(T), parameters);
 
-    public PredicationBuilderNext XorNot<TPredicate>(Expression<Func<IContext, object?>>[] parameters)
-        where TPredicate : IPredicate
-        => XorNot(typeof(TPredicate), parameters);
+    public PredicationBuilderNext XorNot<T>(Expression<Func<IContext, object?>>[] parameters)
+        where T : IPredicate
+        => XorNot(typeof(T), parameters);
 
     public PredicationBuilderNext XorNot(Type type, params object?[] parameters)
     {

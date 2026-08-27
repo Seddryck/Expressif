@@ -7,8 +7,11 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Text;
 
 [Function]
-public abstract class BaseTextFunction : IFunction
+public abstract class BaseTextFunction<TOut> : IFunction<string?, TOut?>
 {
+    TOut? IFunction<string?, TOut?>.Evaluate(string? value)
+        => Evaluate((object?)value) is TOut result ? result : default;
+
     public object? Evaluate(object? value)
     {
         return value switch
@@ -57,10 +60,14 @@ public abstract class BaseTextFunction : IFunction
     protected abstract object? EvaluateString(string value);
 }
 
+public abstract class BaseTextFunction : BaseTextFunction<string>
+{ }
+
 /// <summary>
 /// Returns the argument value except if this value only contains white-space characters then it returns `empty`.
 /// </summary>
 [Function(prefix: "", aliases: ["blank-to-empty"])]
+[Scope("text/normalization")]
 public class WhitespacesToEmpty : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Empty().Keyword;
@@ -71,6 +78,7 @@ public class WhitespacesToEmpty : BaseTextFunction
 /// Returns the argument value except if this value only contains white-space characters then it returns `null`.
 /// </summary>
 [Function(prefix: "", aliases: ["blank-to-null"])]
+[Scope("text/normalization")]
 public class WhitespacesToNull : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Null().Keyword;
@@ -82,6 +90,7 @@ public class WhitespacesToNull : BaseTextFunction
 /// Returns the argument value except if this value is `empty` then it returns `null`.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/normalization")]
 public class EmptyToNull : BaseTextFunction
 {
     protected override object EvaluateEmpty() => new Null().Keyword;
@@ -92,6 +101,7 @@ public class EmptyToNull : BaseTextFunction
 /// Returns the argument value except if this value is `null` then it returns `empty`.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/normalization")]
 public class NullToEmpty : BaseTextFunction
 {
     protected override object EvaluateNull() => new Empty().Keyword;

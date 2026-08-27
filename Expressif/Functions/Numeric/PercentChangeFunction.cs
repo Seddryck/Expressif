@@ -5,6 +5,7 @@ namespace Expressif.Functions.Numeric;
 /// <summary>
 /// Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class PercentChange : BaseNumericFunction
 {
     public Func<decimal> Previous { get; }

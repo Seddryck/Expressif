@@ -5,14 +5,44 @@
     "Aliases": [
       "adjacent"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.",
     "Parameters": [
       {
         "Name": "operation",
+        "Type": "expression",
         "Optional": false,
         "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | adjacent(subtract) → {1, 1}"
+    ]
+  },
+  {
+    "Name": "array",
+    "IsPublic": true,
+    "Aliases": [
+      "array"
+    ],
+    "Scope": "array",
+    "Input": "any",
+    "Output": "array",
+    "Summary": "Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.",
+    "Parameters": [
+      {
+        "Name": "values",
+        "Type": "array",
+        "Optional": true,
+        "Variadic": true,
+        "Summary": "Specifies zero or more positional expressions whose evaluated values become array elements."
+      }
+    ],
+    "Examples": [
+      "#null | array → {}",
+      "#null | array(1, 2, 3) → {1, 2, 3}"
     ]
   },
   {
@@ -21,14 +51,20 @@
     "Aliases": [
       "array-to-broadcast"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Executes an accumulator once over the full input enumerable, then returns the final accumulated value repeated once for each input element. Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "accumulator",
+        "Type": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | broadcast(sum) → {6, 6, 6}"
     ]
   },
   {
@@ -37,57 +73,21 @@
     "Aliases": [
       "chunk"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
     "Parameters": [
       {
         "Name": "size",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The strictly positive number of items in each chunk."
       }
-    ]
-  },
-  {
-    "Name": "complement",
-    "IsPublic": true,
-    "Aliases": [
-      "complement"
     ],
-    "Scope": "Array",
-    "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Optional": false,
-        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
-      }
+    "Examples": [
+      "{1, 2, 3} | chunk(2) → {{1, 2}, {3}}"
     ]
-  },
-  {
-    "Name": "difference",
-    "IsPublic": true,
-    "Aliases": [
-      "difference"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Optional": false,
-        "Summary": "Specifies the array containing values to exclude from the pipeline input."
-      }
-    ]
-  },
-  {
-    "Name": "distinct",
-    "IsPublic": true,
-    "Aliases": [
-      "distinct"
-    ],
-    "Scope": "Array",
-    "Summary": "Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.",
-    "Parameters": []
   },
   {
     "Name": "filter",
@@ -95,14 +95,20 @@
     "Aliases": [
       "filter"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "predicate",
+        "Type": "predicate",
         "Optional": false,
         "Summary": "Expression defining the predicate applied to each input item."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | filter(greater-than(1)) → {2, 3}"
     ]
   },
   {
@@ -111,14 +117,20 @@
     "Aliases": [
       "first"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to return from the start of the input."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | first-elements(2) → {1, 2}"
     ]
   },
   {
@@ -127,30 +139,20 @@
     "Aliases": [
       "array-to-fold"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
     "Summary": "Executes an accumulator once over the full input enumerable and returns the final accumulated value. Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "accumulator",
+        "Type": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the fold execution."
       }
-    ]
-  },
-  {
-    "Name": "intersection",
-    "IsPublic": true,
-    "Aliases": [
-      "intersection"
     ],
-    "Scope": "Array",
-    "Summary": "Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Optional": false,
-        "Summary": "Specifies the array to compare with the pipeline input."
-      }
+    "Examples": [
+      "{1, 2, 3} | fold(sum) → 6"
     ]
   },
   {
@@ -159,9 +161,14 @@
     "Aliases": [
       "array-to-lag"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "{1, 2, 3} | lag → {#null, 1, 2}"
+    ]
   },
   {
     "Name": "last-elements",
@@ -169,14 +176,20 @@
     "Aliases": [
       "last"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to return from the end of the input."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | last-elements(2) → {2, 3}"
     ]
   },
   {
@@ -185,9 +198,14 @@
     "Aliases": [
       "array-to-lead"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "{1, 2, 3} | lead → {2, 3, #null}"
+    ]
   },
   {
     "Name": "map",
@@ -195,14 +213,20 @@
     "Aliases": [
       "map"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "transformation",
+        "Type": "expression",
         "Optional": false,
         "Summary": "Expression creating the transformation applied to each input item."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | map(add(1)) → {2, 3, 4}"
     ]
   },
   {
@@ -211,9 +235,14 @@
     "Aliases": [
       "pairwise"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "{1, 2, 3} | pairwise → {T(1, 2), T(2, 3)}"
+    ]
   },
   {
     "Name": "reverse",
@@ -221,9 +250,14 @@
     "Aliases": [
       "reverse"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "{1, 2, 3} | reverse → {3, 2, 1}"
+    ]
   },
   {
     "Name": "scan",
@@ -231,14 +265,20 @@
     "Aliases": [
       "array-to-scan"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Executes an accumulator progressively over the input enumerable and returns the intermediate accumulated value after each input element. Preserves input cardinality (one output item per input item). This differs from fold (final value only) and broadcast (final value repeated). Returns `null` when the input is not an enumerable or is a string.",
     "Parameters": [
       {
         "Name": "accumulator",
+        "Type": "accumulator",
         "Optional": false,
         "Summary": "Factory that creates the accumulator instance used for the scan execution."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | scan(sum) → {1, 3, 6}"
     ]
   },
   {
@@ -247,14 +287,20 @@
     "Aliases": [
       "skip-first"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to omit from the start of the input."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | skip-first-elements(2) → {3}"
     ]
   },
   {
@@ -263,14 +309,20 @@
     "Aliases": [
       "skip-last"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Number of elements to omit from the end of the input."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | skip-last-elements(2) → {1}"
     ]
   },
   {
@@ -279,19 +331,107 @@
     "Aliases": [
       "slice"
     ],
-    "Scope": "Array",
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.",
     "Parameters": [
       {
         "Name": "start",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Zero-based index of the first element to return."
       },
       {
         "Name": "end",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Zero-based exclusive index at which to stop returning elements."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | slice-elements(1, 3) → {2, 3}"
+    ]
+  },
+  {
+    "Name": "complement",
+    "IsPublic": true,
+    "Aliases": [
+      "complement"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3} | complement({2, 3, 4}) → {4}"
+    ]
+  },
+  {
+    "Name": "difference",
+    "IsPublic": true,
+    "Aliases": [
+      "difference"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the array containing values to exclude from the pipeline input."
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3} | difference({2, 3, 4}) → {1}"
+    ]
+  },
+  {
+    "Name": "distinct",
+    "IsPublic": true,
+    "Aliases": [
+      "distinct"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [],
+    "Examples": [
+      "{1, 2, 3} | distinct → {1, 2, 3}"
+    ]
+  },
+  {
+    "Name": "intersection",
+    "IsPublic": true,
+    "Aliases": [
+      "intersection"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the array to compare with the pipeline input."
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3} | intersection({2, 3, 4}) → {2, 3}"
     ]
   },
   {
@@ -300,14 +440,20 @@
     "Aliases": [
       "symmetric-difference"
     ],
-    "Scope": "Array",
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the second array to compare against the pipeline input."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | symmetric-difference({2, 3, 4}) → {1, 4}"
     ]
   },
   {
@@ -316,14 +462,20 @@
     "Aliases": [
       "union"
     ],
-    "Scope": "Array",
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
     "Summary": "Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
     "Parameters": [
       {
         "Name": "array",
+        "Type": "array",
         "Optional": false,
         "Summary": "Specifies the second array whose values are combined with the pipeline input."
       }
+    ],
+    "Examples": [
+      "{1, 2, 3} | union({2, 3, 4}) → {1, 2, 3, 4}"
     ]
   },
   {
@@ -333,7 +485,9 @@
       "file-to-creation-datetime",
       "file-to-creation-dateTime"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in local time.",
     "Parameters": []
   },
@@ -344,7 +498,9 @@
       "file-to-creation-datetime-utc",
       "file-to-creation-dateTime-utc"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in UTC.",
     "Parameters": []
   },
@@ -354,9 +510,14 @@
     "Aliases": [
       "path-to-directory"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"docs/_data/function.json\" | directory → \"docs\\\\_data\\\\\""
+    ]
   },
   {
     "Name": "extension",
@@ -364,9 +525,14 @@
     "Aliases": [
       "path-to-extension"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the extension of a file path provided as argument.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"docs/_data/function.json\" | extension → \".json\""
+    ]
   },
   {
     "Name": "filename",
@@ -374,9 +540,14 @@
     "Aliases": [
       "path-to-filename"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the file name and extension of a file path provided as argument.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"docs/_data/function.json\" | filename → \"function.json\""
+    ]
   },
   {
     "Name": "filename-without-extension",
@@ -384,9 +555,14 @@
     "Aliases": [
       "path-to-filename-without-extension"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the file name without the extension of a file path provided as argument.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"docs/_data/function.json\" | filename-without-extension → \"function\""
+    ]
   },
   {
     "Name": "root",
@@ -394,9 +570,14 @@
     "Aliases": [
       "path-to-root"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"docs/_data/function.json\" | root → \"\""
+    ]
   },
   {
     "Name": "size",
@@ -404,7 +585,9 @@
     "Aliases": [
       "file-to-size"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "integer",
     "Summary": "Returns the size of the file provided as argument in bytes.",
     "Parameters": []
   },
@@ -415,7 +598,9 @@
       "file-to-update-datetime",
       "file-to-update-dateTime"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in local time.",
     "Parameters": []
   },
@@ -426,7 +611,9 @@
       "file-to-update-datetime-utc",
       "file-to-update-dateTime-utc"
     ],
-    "Scope": "IO",
+    "Scope": "io",
+    "Input": "text",
+    "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in UTC.",
     "Parameters": []
   },
@@ -436,9 +623,14 @@
     "Aliases": [
       "numeric-to-absolute"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the absolute value of the argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | absolute → 10"
+    ]
   },
   {
     "Name": "add",
@@ -446,50 +638,27 @@
     "Aliases": [
       "numeric-to-add"
     ],
-    "Scope": "Numeric",
-    "Summary": "Returns the sum of an argument number and the parameter value.",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the sum of the input value and the parameter value.",
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
-        "Summary": "The value to be added to the argument value."
+        "Summary": "The value to add to the input value."
       },
       {
         "Name": "times",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the sum."
+        "Type": "integer",
+        "Optional": true,
+        "Summary": "Number of times the addition is applied."
       }
-    ]
-  },
-  {
-    "Name": "ceiling",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-ceiling"
     ],
-    "Scope": "Numeric",
-    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
-    "Name": "clip",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-clip"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it."
-      },
-      {
-        "Name": "max",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it."
-      }
+    "Examples": [
+      "10 | add(5)      → 15",
+      "10 | add(5, 2)   → 20"
     ]
   },
   {
@@ -498,9 +667,14 @@
     "Aliases": [
       "numeric-to-cube-power"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the the numeric argument value raised to the cube power.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | cube-power → 1000"
+    ]
   },
   {
     "Name": "cube-root",
@@ -508,9 +682,14 @@
     "Aliases": [
       "numeric-to-cube-root"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns cube root of the numeric argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | cube-root → 2.15443469003188"
+    ]
   },
   {
     "Name": "decrement",
@@ -518,9 +697,14 @@
     "Aliases": [
       "numeric-to-decrement"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the argument number decremented of one unit.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | decrement → 9"
+    ]
   },
   {
     "Name": "divide",
@@ -528,25 +712,21 @@
     "Aliases": [
       "numeric-to-divide"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to divide the argument value."
       }
-    ]
-  },
-  {
-    "Name": "floor",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-floor"
     ],
-    "Scope": "Numeric",
-    "Summary": "Returns the largest integer less than or equal to the argument number.",
-    "Parameters": []
+    "Examples": [
+      "10 | divide(5) → 2"
+    ]
   },
   {
     "Name": "greatest-common-divisor",
@@ -554,45 +734,21 @@
     "Aliases": [
       "numeric-to-greatest-common-divisor"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.",
     "Parameters": [
       {
         "Name": "value",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the greatest common divisor with the argument value."
       }
+    ],
+    "Examples": [
+      "10 | greatest-common-divisor(5) → 5"
     ]
-  },
-  {
-    "Name": "human-readable-format-binary-bytes",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-binary-bytes"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-decimal",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-decimal"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Formats a numeric value using decimal SI prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-decimal-bytes",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-decimal-bytes"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
-    "Parameters": []
   },
   {
     "Name": "increment",
@@ -600,19 +756,14 @@
     "Aliases": [
       "numeric-to-increment"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the argument number incremented of one unit.",
-    "Parameters": []
-  },
-  {
-    "Name": "integer",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-integer"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | increment → 11"
+    ]
   },
   {
     "Name": "invert",
@@ -620,9 +771,14 @@
     "Aliases": [
       "numeric-to-invert"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | invert → 0.1"
+    ]
   },
   {
     "Name": "lowest-common-multiple",
@@ -632,14 +788,20 @@
       "least-common-multiple",
       "smallest-common-multiple"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.",
     "Parameters": [
       {
         "Name": "value",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the lowest common multiple with the argument value."
       }
+    ],
+    "Examples": [
+      "10 | lowest-common-multiple(5) → 10"
     ]
   },
   {
@@ -648,14 +810,20 @@
     "Aliases": [
       "numeric-to-multiply"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the argument number multiplied by the parameter value.",
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be multiplied by the argument value."
       }
+    ],
+    "Examples": [
+      "10 | multiply(5) → 50"
     ]
   },
   {
@@ -664,17 +832,14 @@
     "Aliases": [
       "numeric-to-nth-root"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the root specified by the parameter value of the numeric argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "null-to-zero",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "16 | nth-root(2) → 4"
+    ]
   },
   {
     "Name": "oppose",
@@ -682,9 +847,14 @@
     "Aliases": [
       "numeric-to-oppose"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | oppose → -10"
+    ]
   },
   {
     "Name": "percent-change",
@@ -692,14 +862,20 @@
     "Aliases": [
       "numeric-to-percent-change"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
     "Parameters": [
       {
         "Name": "previous",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
       }
+    ],
+    "Examples": [
+      "10 | percent-change(8) → 25.00"
     ]
   },
   {
@@ -708,24 +884,13 @@
     "Aliases": [
       "numeric-to-power"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the the numeric argument value raised to the power specified by the parameter value.",
-    "Parameters": []
-  },
-  {
-    "Name": "round",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-round"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
-    "Parameters": [
-      {
-        "Name": "digits",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
-      }
+    "Parameters": [],
+    "Examples": [
+      "4 | power(2) → 16"
     ]
   },
   {
@@ -734,9 +899,14 @@
     "Aliases": [
       "numeric-to-sign"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | sign → 1"
+    ]
   },
   {
     "Name": "square-power",
@@ -744,9 +914,14 @@
     "Aliases": [
       "numeric-to-square-power"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the the numeric argument value raised to the square power.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | square-power → 100"
+    ]
   },
   {
     "Name": "square-root",
@@ -754,9 +929,14 @@
     "Aliases": [
       "numeric-to-square-root"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns square root of the numeric argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "10 | square-root → 3.16227766016838"
+    ]
   },
   {
     "Name": "subtract",
@@ -764,69 +944,357 @@
     "Aliases": [
       "numeric-to-subtract"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
+    "Input": "numeric",
+    "Output": "numeric",
     "Summary": "Returns the difference between the argument number and the parameter value.",
     "Parameters": [
       {
         "Name": "value",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
       }
+    ],
+    "Examples": [
+      "10 | subtract(5, 2) → 0"
+    ]
+  },
+  {
+    "Name": "null-to-zero",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "numeric/conversion",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Parameters": [],
+    "Examples": [
+      "10 | null-to-zero → 10"
+    ]
+  },
+  {
+    "Name": "human-readable-format-binary-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-binary-bytes"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
+    "Parameters": [],
+    "Examples": [
+      "10 | human-readable-format-binary-bytes → \"10 B\""
+    ]
+  },
+  {
+    "Name": "human-readable-format-decimal",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value using decimal SI prefixes.",
+    "Parameters": [],
+    "Examples": [
+      "10 | human-readable-format-decimal → \"10\""
+    ]
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal-bytes"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
+    "Parameters": [],
+    "Examples": [
+      "10 | human-readable-format-decimal-bytes → \"10 B\""
+    ]
+  },
+  {
+    "Name": "ceiling",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-ceiling"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
+    "Parameters": [],
+    "Examples": [
+      "10 | ceiling → 10"
+    ]
+  },
+  {
+    "Name": "clip",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-clip"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is smaller than it."
+      },
+      {
+        "Name": "max",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is greater than it."
+      }
+    ],
+    "Examples": [
+      "10 | clip(5, 15) → 10"
+    ]
+  },
+  {
+    "Name": "floor",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-floor"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the largest integer less than or equal to the argument number.",
+    "Parameters": [],
+    "Examples": [
+      "10 | floor → 10"
+    ]
+  },
+  {
+    "Name": "integer",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-integer"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
+    "Parameters": [],
+    "Examples": [
+      "10 | integer → 10"
+    ]
+  },
+  {
+    "Name": "round",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-round"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
+    "Parameters": [
+      {
+        "Name": "digits",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
+      }
+    ],
+    "Examples": [
+      "10 | round(2) → 10"
     ]
   },
   {
     "Name": "field",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Record",
+    "Scope": "record",
+    "Input": "any",
+    "Output": "any",
     "Summary": "Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values.",
     "Parameters": [
       {
         "Name": "name",
+        "Type": "text",
         "Optional": false,
         "Summary": "Name of the field to retrieve from the input."
       }
+    ],
+    "Examples": [
+      "{name := \"Ada\", score := 10} | field(\"name\") → \"Ada\""
     ]
   },
   {
     "Name": "record",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Record",
+    "Scope": "record",
+    "Input": "any",
+    "Output": "record",
     "Summary": "Creates a record by evaluating its named and spread entries against the input value. Later entries overwrite fields with the same name created by earlier entries.",
     "Parameters": [
       {
         "Name": "entries",
+        "Type": "array",
         "Optional": false,
         "Summary": "Factory that creates the named and spread entries used to build the record."
       }
+    ],
+    "Examples": [
+      "{name := \"Ada\", score := 10} | record(name := \"Ada\", score := 10) → {name := \"Ada\", score := 10}"
     ]
   },
   {
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "any",
+    "Output": "text",
     "Summary": "Returns `any`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#null | any-to-any → \"(any)\""
+    ]
   },
   {
     "Name": "coalesce",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "any",
+    "Output": "any",
     "Summary": "Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.",
     "Parameters": [
       {
         "Name": "expressions",
+        "Type": "array",
         "Optional": false,
         "Summary": "The candidate expressions, with at least two required."
       }
+    ],
+    "Examples": [
+      "#null | coalesce(#null, 42) → 42"
+    ]
+  },
+  {
+    "Name": "coerce-boolean",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-boolean"
+    ],
+    "Scope": "special",
+    "Input": "boolean | integer | numeric | text",
+    "Output": "boolean",
+    "Summary": "Attempts to convert the input to a boolean value. Returns `null` when the input cannot be converted.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-boolean → #null"
+    ]
+  },
+  {
+    "Name": "coerce-date",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-date"
+    ],
+    "Scope": "special",
+    "Input": "date | date-time | text | year-month",
+    "Output": "date",
+    "Summary": "Attempts to convert the input to a date value. Returns `null` when the input cannot be converted.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-date → #null"
+    ]
+  },
+  {
+    "Name": "coerce-datetime",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-datetime"
+    ],
+    "Scope": "special",
+    "Input": "date | date-time | text | year-month",
+    "Output": "date-time",
+    "Summary": "Attempts to convert the input to a date-time value. Returns `null` when the input cannot be converted.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-datetime → #null"
+    ]
+  },
+  {
+    "Name": "coerce-int",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-int"
+    ],
+    "Scope": "special",
+    "Input": "boolean | integer | numeric | text",
+    "Output": "integer",
+    "Summary": "Attempts to convert the input to an integer value. Returns `null` when the input cannot be converted without loss.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-int → #null"
+    ]
+  },
+  {
+    "Name": "coerce-numeric",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-numeric"
+    ],
+    "Scope": "special",
+    "Input": "boolean | integer | numeric | text",
+    "Output": "numeric",
+    "Summary": "Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-numeric → #null"
+    ]
+  },
+  {
+    "Name": "coerce-text",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-text"
+    ],
+    "Scope": "special",
+    "Input": "boolean | date | date-time | integer | numeric | text | year-month",
+    "Output": "text",
+    "Summary": "Attempts to convert the input to a text value. Returns `null` when the input cannot be converted.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-text → \"Hello World\""
+    ]
+  },
+  {
+    "Name": "coerce-time",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce-time"
+    ],
+    "Scope": "special",
+    "Input": "date-time | text | time",
+    "Output": "time",
+    "Summary": "Attempts to convert the input to a time value. Returns `null` when the input cannot be converted.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | coerce-time → #null"
     ]
   },
   {
@@ -835,17 +1303,27 @@
     "Aliases": [
       "Special-to-neutral"
     ],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "any",
+    "Output": "any",
     "Summary": "Returns the argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#null | neutral → #null"
+    ]
   },
   {
     "Name": "null-to-value",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "any",
+    "Output": "text",
     "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#null | null-to-value → \"(value)\""
+    ]
   },
   {
     "Name": "tuple-at",
@@ -853,14 +1331,20 @@
     "Aliases": [
       "tuple-at"
     ],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "tuple",
+    "Output": "any",
     "Summary": "Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.",
     "Parameters": [
       {
         "Name": "position",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Specifies the zero-based position of the tuple field to return."
       }
+    ],
+    "Examples": [
+      "T(10, 20, 30) | tuple-at(1) → 20"
     ]
   },
   {
@@ -869,9 +1353,14 @@
     "Aliases": [
       "tuple-first"
     ],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "tuple",
+    "Output": "any",
     "Summary": "Returns the first field of a tuple. Returns `null` when the input is not a tuple.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "T(10, 20, 30) | tuple-first → 10"
+    ]
   },
   {
     "Name": "tuple-second",
@@ -879,17 +1368,27 @@
     "Aliases": [
       "tuple-second"
     ],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "tuple",
+    "Output": "any",
     "Summary": "Returns the second field of a tuple. Returns `null` when the input is not a tuple.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "T(10, 20, 30) | tuple-second → 20"
+    ]
   },
   {
     "Name": "value-to-value",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": "any",
+    "Output": "text",
     "Summary": "Returns `value` except if the argument value is `null` then it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#null | value-to-value → \"(null)\""
+    ]
   },
   {
     "Name": "age",
@@ -897,9 +1396,14 @@
     "Aliases": [
       "date-to-age"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "Returns how many years separate the argument dateTime and now.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | age → 2"
+    ]
   },
   {
     "Name": "backward",
@@ -908,30 +1412,28 @@
       "dateTime-to-backward",
       "dateTime-to-subtract"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
-        "Name": "timeSpan",
+        "Name": "time",
+        "Type": "time",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": true,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
       }
-    ]
-  },
-  {
-    "Name": "catholic-calendar",
-    "IsPublic": true,
-    "Aliases": [
-      "calendar-catholic"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.",
-    "Parameters": []
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | backward(\"01:30:00\") → #\"2024-01-15 11:00:00\"",
+      "#\"2024-01-15 12:30:00\" | backward(\"01:30:00\", 2) → #\"2024-01-15 09:30:00\""
+    ]
   },
   {
     "Name": "ceiling-hour",
@@ -939,9 +1441,14 @@
     "Aliases": [
       "dateTime-to-ceiling-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero and an hour added.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | ceiling-hour → #\"2024-01-15 13:00:00\""
+    ]
   },
   {
     "Name": "ceiling-minute",
@@ -949,9 +1456,14 @@
     "Aliases": [
       "dateTime-to-ceiling-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | ceiling-minute → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "change-of-hour",
@@ -959,9 +1471,14 @@
     "Aliases": [
       "dateTime-to-change-of-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:45\" | change-of-hour(8) → #\"2024-01-15 08:30:45\""
+    ]
   },
   {
     "Name": "change-of-minute",
@@ -969,9 +1486,14 @@
     "Aliases": [
       "dateTime-to-change-of-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:45\" | change-of-minute(15) → #\"2024-01-15 12:15:45\""
+    ]
   },
   {
     "Name": "change-of-month",
@@ -979,9 +1501,14 @@
     "Aliases": [
       "dateTime-to-change-of-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter. If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:45\" | change-of-month(6) → #\"2024-06-15 12:30:45\""
+    ]
   },
   {
     "Name": "change-of-second",
@@ -989,9 +1516,14 @@
     "Aliases": [
       "dateTime-to-change-of-second"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:45\" | change-of-second(10) → #\"2024-01-15 12:30:10\""
+    ]
   },
   {
     "Name": "change-of-year",
@@ -999,9 +1531,14 @@
     "Aliases": [
       "dateTime-to-change-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same day and month of the argument value but of the year passed as the parameter. If the original date was the 29th of February and the year passed as a parameter is not a leap year then it returns the 28th of February.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:45\" | change-of-year(2025) → #\"2025-01-15 12:30:45\""
+    ]
   },
   {
     "Name": "clamp",
@@ -1010,30 +1547,27 @@
       "dateTime-to-clamp",
       "dateTime-to-clip"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
     "Parameters": [
       {
         "Name": "min",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "value returned in case the argument value is before than it"
       },
       {
         "Name": "max",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "value returned in case the argument value is after than it"
       }
-    ]
-  },
-  {
-    "Name": "datetime-to-date",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-date"
     ],
-    "Scope": "Temporal",
-    "Summary": "Returns the date at midnight of the argument dateTime.",
-    "Parameters": []
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | clamp(#\"2024-01-01 00:00:00\", #\"2024-01-31 00:00:00\") → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "day-of-month",
@@ -1041,9 +1575,14 @@
     "Aliases": [
       "dateTime-to-day-of-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the day of the month of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | day-of-month → 15"
+    ]
   },
   {
     "Name": "day-of-week",
@@ -1051,9 +1590,14 @@
     "Aliases": [
       "dateTime-to-day-of-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the day of the week (1 being Monday and 7 being Sunday) of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | day-of-week → 1"
+    ]
   },
   {
     "Name": "day-of-year",
@@ -1061,59 +1605,34 @@
     "Aliases": [
       "dateTime-to-day-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | day-of-year → 15"
+    ]
   },
   {
     "Name": "duration-between",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "duration",
     "Summary": "Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.",
     "Parameters": [
       {
         "Name": "previous",
+        "Type": "date | date-time | year-month",
         "Optional": false,
         "Summary": "The previous temporal value to subtract from the current input."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | duration-between(#\"2024-01-14 12:30:00\") → #\"2024-01-15 12:30:00\" | duration-between(#\"2024-01-14 12:30:00\")"
     ]
-  },
-  {
-    "Name": "first-in-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-first-in-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
-    "Parameters": [
-      {
-        "Name": "weekday",
-        "Optional": false,
-        "Summary": "The day of week to compare to the argument."
-      }
-    ]
-  },
-  {
-    "Name": "first-of-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-first-of-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the first day of the month of the same month/year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "first-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-first-of-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the first of January of the same year than the argument dateTime.",
-    "Parameters": []
   },
   {
     "Name": "floor-hour",
@@ -1121,9 +1640,14 @@
     "Aliases": [
       "dateTime-to-floor-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | floor-hour → #\"2024-01-15 12:00:00\""
+    ]
   },
   {
     "Name": "floor-minute",
@@ -1131,9 +1655,14 @@
     "Aliases": [
       "dateTime-to-floor-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the seconds and milliseconds set to zero.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | floor-minute → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "forward",
@@ -1142,19 +1671,27 @@
       "dateTime-to-forward",
       "dateTime-to-add"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
     "Parameters": [
       {
-        "Name": "timeSpan",
+        "Name": "time",
+        "Type": "time",
         "Optional": false,
         "Summary": "The value to be added to the argument value"
       },
       {
         "Name": "times",
+        "Type": "integer",
         "Optional": true,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | forward(\"01:30:00\") → #\"2024-01-15 14:00:00\"",
+      "#\"2024-01-15 12:30:00\" | forward(\"01:30:00\", 2) → #\"2024-01-15 15:30:00\""
     ]
   },
   {
@@ -1163,9 +1700,14 @@
     "Aliases": [
       "dateTime-to-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format hh (24 hours format) representing the hours of the dateTime passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | hour → \"12\""
+    ]
   },
   {
     "Name": "hour-minute",
@@ -1173,9 +1715,14 @@
     "Aliases": [
       "dateTime-to-hour-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | hour-minute → \"12:30\""
+    ]
   },
   {
     "Name": "hour-minute-second",
@@ -1183,9 +1730,14 @@
     "Aliases": [
       "dateTime-to-hour-minute-second"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format hh:mm:ss (24 hours format) representing the hours, minutes, and seconds of the dateTime passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | hour-minute-second → \"12:30:00\""
+    ]
   },
   {
     "Name": "hour-of-day",
@@ -1193,22 +1745,13 @@
     "Aliases": [
       "dateTime-to-hour-of-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the hours of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "invalid-to-date",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
-      }
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | hour-of-day → 12"
     ]
   },
   {
@@ -1217,9 +1760,14 @@
     "Aliases": [
       "dateTime-to-iso-day-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | iso-day-of-year → 15"
+    ]
   },
   {
     "Name": "iso-week-of-year",
@@ -1227,9 +1775,14 @@
     "Aliases": [
       "dateTime-to-iso-week-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | iso-week-of-year → 3"
+    ]
   },
   {
     "Name": "iso-year-day",
@@ -1237,9 +1790,14 @@
     "Aliases": [
       "dateTime-to-iso-year-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format YYYY-ddd representing the year, and the day number of the date passed as the argument (both according to ISO 8601)",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | iso-year-day → \"2024-015\""
+    ]
   },
   {
     "Name": "iso-year-week",
@@ -1247,9 +1805,14 @@
     "Aliases": [
       "dateTime-to-iso-year-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | iso-year-week → \"2024-W03\""
+    ]
   },
   {
     "Name": "iso-year-week-day",
@@ -1257,73 +1820,27 @@
     "Aliases": [
       "dateTime-to-iso-year-week-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601), and the day number (1 being Monday) of the date passed as the argument",
-    "Parameters": []
-  },
-  {
-    "Name": "last-in-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-last-in-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
-    "Parameters": [
-      {
-        "Name": "weekday",
-        "Optional": false,
-        "Summary": "The day of week to compare to the argument."
-      }
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | iso-year-week-day → \"2024-W03-1\""
     ]
-  },
-  {
-    "Name": "last-of-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-last-of-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the last day of the month of the same month/year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "last-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-last-of-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the 31st of December of the same year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "length-of-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-length-of-month"
-    ],
-    "Scope": "Temporal",
-    "Summary": "returns the count of days within the month of the dateTime value passed as the argument. If the argument is not a dateTime but a text at format \"YYYY-MM\", it returns count of days of the month represented by this value. It returns a value between 28 and 31 (depending of leap year and month).",
-    "Parameters": []
-  },
-  {
-    "Name": "length-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-length-of-year"
-    ],
-    "Scope": "Temporal",
-    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument. If the argument is not a dateTime but an integer, returns count of days of the corresponding year. It returns 365 or 366 (for leap years).",
-    "Parameters": []
   },
   {
     "Name": "local-to-utc",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | local-to-utc(\"UTC\") → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "minute-of-day",
@@ -1331,9 +1848,14 @@
     "Aliases": [
       "dateTime-to-minute-of-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the minutes of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | minute-of-day → 750"
+    ]
   },
   {
     "Name": "minute-of-hour",
@@ -1341,9 +1863,14 @@
     "Aliases": [
       "dateTime-to-minute-of-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the minutes of the hour passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | minute-of-hour → 30"
+    ]
   },
   {
     "Name": "month",
@@ -1351,9 +1878,14 @@
     "Aliases": [
       "dateTime-to-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format MM representing the month of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | month → \"01\""
+    ]
   },
   {
     "Name": "month-day",
@@ -1361,9 +1893,14 @@
     "Aliases": [
       "dateTime-to-month-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format MM-DD representing the month and day of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | month-day → \"01-15\""
+    ]
   },
   {
     "Name": "month-of-year",
@@ -1371,9 +1908,14 @@
     "Aliases": [
       "dateTime-to-month-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the month of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | month-of-year → 1"
+    ]
   },
   {
     "Name": "next-business-days",
@@ -1383,14 +1925,20 @@
       "next-business-day",
       "add-business-days"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date",
     "Summary": "Returns a new date value corresponding to the date passed as the argument, counting forward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The count of business days to move forward."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | next-business-days(2) → #\"2024-01-17\""
     ]
   },
   {
@@ -1399,9 +1947,14 @@
     "Aliases": [
       "dateTime-to-next-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the day immediately following the dateTime passed as argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | next-day → #\"2024-01-16 12:30:00\""
+    ]
   },
   {
     "Name": "next-month",
@@ -1409,9 +1962,14 @@
     "Aliases": [
       "dateTime-to-next-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime that adds a month to the dateTime passed as argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | next-month → #\"2024-02-15 12:30:00\""
+    ]
   },
   {
     "Name": "next-weekday",
@@ -1419,14 +1977,20 @@
     "Aliases": [
       "dateTime-to-next-weekday"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday, passed as a parameter, following the date passed as the argument.",
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15\" | next-weekday(\"Monday\") → #\"2024-01-22\""
     ]
   },
   {
@@ -1435,14 +1999,20 @@
     "Aliases": [
       "dateTime-to-next-weekday-or-same"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter following the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15\" | next-weekday-or-same(\"Monday\") → #\"2024-01-15\""
     ]
   },
   {
@@ -1451,22 +2021,13 @@
     "Aliases": [
       "dateTime-to-next-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime that adds a year to the dateTime passed as argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "null-to-date",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
-      }
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | next-year → #\"2025-01-15 12:30:00\""
     ]
   },
   {
@@ -1477,14 +2038,20 @@
       "previous-business-day",
       "subtract-business-days"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date",
     "Summary": "Returns a new date value corresponding to the date passed as the argument, counting backward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The count of business days to move forward."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | previous-business-days(2) → #\"2024-01-11\""
     ]
   },
   {
@@ -1493,9 +2060,14 @@
     "Aliases": [
       "dateTime-to-previous-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | previous-day → #\"2024-01-14 12:30:00\""
+    ]
   },
   {
     "Name": "previous-month",
@@ -1503,9 +2075,14 @@
     "Aliases": [
       "dateTime-to-previous-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | previous-month → #\"2023-12-15 12:30:00\""
+    ]
   },
   {
     "Name": "previous-weekday",
@@ -1513,14 +2090,20 @@
     "Aliases": [
       "dateTime-to-previous-weekday"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument.",
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15\" | previous-weekday(\"Monday\") → #\"2024-01-08\""
     ]
   },
   {
@@ -1529,14 +2112,20 @@
     "Aliases": [
       "dateTime-to-previous-weekday-or-same"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15\" | previous-weekday-or-same(\"Monday\") → #\"2024-01-15\""
     ]
   },
   {
@@ -1545,9 +2134,14 @@
     "Aliases": [
       "dateTime-to-previous-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | previous-year → #\"2023-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "second-of-day",
@@ -1555,9 +2149,14 @@
     "Aliases": [
       "dateTime-to-second-of-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the seconds of the day of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | second-of-day → 45000"
+    ]
   },
   {
     "Name": "second-of-hour",
@@ -1565,9 +2164,14 @@
     "Aliases": [
       "dateTime-to-second-of-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the seconds of the hour of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | second-of-hour → 1800"
+    ]
   },
   {
     "Name": "second-of-minute",
@@ -1575,9 +2179,14 @@
     "Aliases": [
       "dateTime-to-second-of-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the seconds of the minute of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | second-of-minute → 0"
+    ]
   },
   {
     "Name": "set-time",
@@ -1585,39 +2194,60 @@
     "Aliases": [
       "dateTime-to-set-time"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
     "Parameters": [
       {
         "Name": "instant",
+        "Type": "text",
         "Optional": false,
         "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
       }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | set-time(\"01:30:00\") → #\"2024-01-15 01:30:00\""
     ]
   },
   {
     "Name": "set-to-local",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to local",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | set-to-local → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "set-to-utc",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to UTC",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | set-to-utc → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "utc-to-local",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | utc-to-local(\"UTC\") → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "year",
@@ -1625,9 +2255,14 @@
     "Aliases": [
       "dateTime-to-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "text",
     "Summary": "returns a textual value at format YYYY representing the year of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | year → \"2024\""
+    ]
   },
   {
     "Name": "year-of-era",
@@ -1635,9 +2270,218 @@
     "Aliases": [
       "dateTime-to-year-of-era"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": "date-time",
+    "Output": "integer",
     "Summary": "returns a numeric value representing the year of the date passed as the argument",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | year-of-era → 2024"
+    ]
+  },
+  {
+    "Name": "catholic-calendar",
+    "IsPublic": true,
+    "Aliases": [
+      "calendar-catholic"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.",
+    "Parameters": [],
+    "Examples": [
+      "2024 | catholic-calendar(\"Easter Sunday\") → #\"2024-03-31 00:00:00\""
+    ]
+  },
+  {
+    "Name": "first-in-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-in-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date",
+    "Summary": "Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
+    "Parameters": [
+      {
+        "Name": "weekday",
+        "Type": "weekday",
+        "Optional": false,
+        "Summary": "The day of week to compare to the argument."
+      }
+    ],
+    "Examples": [
+      "#\"2024-01-15\" | first-in-month(\"Monday\") → #\"2024-01-01\""
+    ]
+  },
+  {
+    "Name": "first-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-of-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the first day of the month of the same month/year than the argument dateTime.",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | first-of-month → #\"2024-01-01 00:00:00\""
+    ]
+  },
+  {
+    "Name": "first-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-of-year"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the first of January of the same year than the argument dateTime.",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | first-of-year → #\"2024-01-01 00:00:00\""
+    ]
+  },
+  {
+    "Name": "last-in-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-last-in-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date",
+    "Summary": "Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
+    "Parameters": [
+      {
+        "Name": "weekday",
+        "Type": "weekday",
+        "Optional": false,
+        "Summary": "The day of week to compare to the argument."
+      }
+    ],
+    "Examples": [
+      "#\"2024-01-15\" | last-in-month(\"Monday\") → #\"2024-01-29\""
+    ]
+  },
+  {
+    "Name": "last-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-last-of-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the last day of the month of the same month/year than the argument dateTime.",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | last-of-month → #\"2024-01-31 00:00:00\""
+    ]
+  },
+  {
+    "Name": "last-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-last-of-year"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the 31st of December of the same year than the argument dateTime.",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | last-of-year → #\"2024-12-31 00:00:00\""
+    ]
+  },
+  {
+    "Name": "length-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-length-of-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "integer",
+    "Summary": "returns the count of days within the month of the dateTime value passed as the argument. If the argument is not a dateTime but a text at format \"YYYY-MM\", it returns count of days of the month represented by this value. It returns a value between 28 and 31 (depending of leap year and month).",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | length-of-month → 31"
+    ]
+  },
+  {
+    "Name": "length-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-length-of-year"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "integer",
+    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument. If the argument is not a dateTime but an integer, returns count of days of the corresponding year. It returns 365 or 366 (for leap years).",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | length-of-year → 366"
+    ]
+  },
+  {
+    "Name": "datetime-to-date",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-date"
+    ],
+    "Scope": "temporal/conversion",
+    "Input": "date-time",
+    "Output": "date",
+    "Summary": "Returns the date at midnight of the argument dateTime.",
+    "Parameters": [],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | datetime-to-date → #\"2024-01-15 00:00:00\""
+    ]
+  },
+  {
+    "Name": "invalid-to-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "temporal/conversion",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Type": "date-time",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
+      }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | invalid-to-date(#\"2024-01-01 00:00:00\") → #\"2024-01-15 12:30:00\""
+    ]
+  },
+  {
+    "Name": "null-to-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "temporal/conversion",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Type": "date-time",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is `null`."
+      }
+    ],
+    "Examples": [
+      "#\"2024-01-15 12:30:00\" | null-to-date(#\"2024-01-01 00:00:00\") → #\"2024-01-15 12:30:00\""
+    ]
   },
   {
     "Name": "after-substring",
@@ -1645,19 +2489,27 @@
     "Aliases": [
       "text-to-after-substring"
     ],
-    "Scope": "Text",
+    "Scope": "text/selection",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",
     "Parameters": [
       {
         "Name": "substring",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string to seek."
       },
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": true,
         "Summary": "The number of character positions to examine."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | after-substring(\"lo\") → \" World\"",
+      "\"Hello World\" | after-substring(\"lo\", 2) → \"(null)\""
     ]
   },
   {
@@ -1666,9 +2518,14 @@
     "Aliases": [
       "text-to-allcaps-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | allcaps-case → \"HELLOWORLD\""
+    ]
   },
   {
     "Name": "append",
@@ -1676,14 +2533,20 @@
     "Aliases": [
       "text-to-append"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
     "Parameters": [
       {
         "Name": "text",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | append(\"Hi \") → \"Hello WorldHi \""
     ]
   },
   {
@@ -1692,9 +2555,14 @@
     "Aliases": [
       "text-to-append-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | append-new-line → \"Hello World\" | append-new-line"
+    ]
   },
   {
     "Name": "append-space",
@@ -1702,9 +2570,14 @@
     "Aliases": [
       "text-to-append-space"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | append-space → \"Hello World \""
+    ]
   },
   {
     "Name": "before-substring",
@@ -1712,19 +2585,27 @@
     "Aliases": [
       "text-to-before-substring"
     ],
-    "Scope": "Text",
+    "Scope": "text/selection",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
     "Parameters": [
       {
         "Name": "substring",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string to seek."
       },
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": true,
         "Summary": "The number of character positions to examine."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | before-substring(\"lo\") → \"Hel\"",
+      "\"Hello World\" | before-substring(\"lo\", 2) → \"(null)\""
     ]
   },
   {
@@ -1733,9 +2614,14 @@
     "Aliases": [
       "text-to-camel-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | camel-case → \"helloWorld\""
+    ]
   },
   {
     "Name": "camel-snake-case",
@@ -1743,19 +2629,14 @@
     "Aliases": [
       "text-to-camel-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "clean-whitespace",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-clean-whitespace"
-    ],
-    "Scope": "Text",
-    "Summary": "returns the argument with any whitespace replaced by a space character. `\\r\\n` is considered as a single character.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | camel-snake-case → \"hello_World\""
+    ]
   },
   {
     "Name": "cobol-case",
@@ -1763,19 +2644,14 @@
     "Aliases": [
       "text-to-cobol-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "collapse-whitespace",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-collapse-whitespace"
-    ],
-    "Scope": "Text",
-    "Summary": "returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\\r\\n` is considered as a single character.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | cobol-case → \"HELLO-WORLD\""
+    ]
   },
   {
     "Name": "count-distinct-chars",
@@ -1783,9 +2659,14 @@
     "Aliases": [
       "text-to-count-distinct-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/counting",
+    "Input": "text",
+    "Output": "integer",
     "Summary": "Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | count-distinct-chars → 8"
+    ]
   },
   {
     "Name": "count-substring",
@@ -1793,14 +2674,20 @@
     "Aliases": [
       "text-to-count-substring"
     ],
-    "Scope": "Text",
+    "Scope": "text/counting",
+    "Input": "text",
+    "Output": "integer",
     "Summary": "Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.",
     "Parameters": [
       {
         "Name": "substring",
+        "Type": "text",
         "Optional": false,
         "Summary": "The substring to count in the argument value."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | count-substring(\"lo\") → 1"
     ]
   },
   {
@@ -1809,17 +2696,27 @@
     "Aliases": [
       "text-to-dot-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | dot-case → \"hello.world\""
+    ]
   },
   {
     "Name": "empty-to-null",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | empty-to-null → \"Hello World\""
+    ]
   },
   {
     "Name": "filter-chars",
@@ -1827,14 +2724,20 @@
     "Aliases": [
       "text-to-filter-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/filtering",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns only those characters specified in the parameter, in the order, they were originally entered in the input value.",
     "Parameters": [
       {
         "Name": "filter",
+        "Type": "array | text",
         "Optional": false,
         "Summary": "The chars to filter from the argument string."
       }
+    ],
+    "Examples": [
+      "#null → #null"
     ]
   },
   {
@@ -1843,14 +2746,20 @@
     "Aliases": [
       "text-to-first-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/selection",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | first-chars(2) → \"He\""
     ]
   },
   {
@@ -1859,17 +2768,27 @@
     "Aliases": [
       "text-to-flat-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | flat-case → \"helloworld\""
+    ]
   },
   {
     "Name": "html-to-text",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | html-to-text → \"Hello World\""
+    ]
   },
   {
     "Name": "kebab-case",
@@ -1877,9 +2796,14 @@
     "Aliases": [
       "text-to-kebab-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | kebab-case → \"hello-world\""
+    ]
   },
   {
     "Name": "last-chars",
@@ -1887,14 +2811,20 @@
     "Aliases": [
       "text-to-last-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/selection",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | last-chars(2) → \"ld\""
     ]
   },
   {
@@ -1904,9 +2834,14 @@
       "text-to-length",
       "count-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/counting",
+    "Input": "text",
+    "Output": "integer",
     "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | length → 11"
+    ]
   },
   {
     "Name": "lower",
@@ -1914,22 +2849,33 @@
     "Aliases": [
       "text-to-lower"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text converted to lowercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | lower → \"hello world\""
+    ]
   },
   {
     "Name": "mask-to-text",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text/masking",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.",
     "Parameters": [
       {
         "Name": "mask",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string representing the mask to be unset from the argument string."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | mask-to-text(\"000-000\") → \"(null)\""
     ]
   },
   {
@@ -1938,17 +2884,27 @@
     "Aliases": [
       "text-to-namespace-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | namespace-case → \"hello::world\""
+    ]
   },
   {
     "Name": "null-to-empty",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | null-to-empty → \"Hello World\""
+    ]
   },
   {
     "Name": "pad-center",
@@ -1956,19 +2912,26 @@
     "Aliases": [
       "text-to-pad-center"
     ],
-    "Scope": "Text",
+    "Scope": "text/padding",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | pad-center(2, \"-\") → \"Hello World\""
     ]
   },
   {
@@ -1977,19 +2940,26 @@
     "Aliases": [
       "text-to-pad-left"
     ],
-    "Scope": "Text",
+    "Scope": "text/padding",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | pad-left(2, \"-\") → \"Hello World\""
     ]
   },
   {
@@ -1998,19 +2968,26 @@
     "Aliases": [
       "text-to-pad-right"
     ],
-    "Scope": "Text",
+    "Scope": "text/padding",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | pad-right(2, \"-\") → \"Hello World\""
     ]
   },
   {
@@ -2019,9 +2996,14 @@
     "Aliases": [
       "text-to-pascal-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | pascal-case → \"HelloWorld\""
+    ]
   },
   {
     "Name": "pascal-snake-case",
@@ -2029,9 +3011,14 @@
     "Aliases": [
       "text-to-pascal-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | pascal-snake-case → \"Hello_World\""
+    ]
   },
   {
     "Name": "path-case",
@@ -2039,9 +3026,14 @@
     "Aliases": [
       "text-to-path-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | path-case → \"hello/world\""
+    ]
   },
   {
     "Name": "prefix",
@@ -2049,14 +3041,20 @@
     "Aliases": [
       "text-to-prefix"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.",
     "Parameters": [
       {
         "Name": "prefix",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | prefix(\"Hi \") → \"Hi Hello World\""
     ]
   },
   {
@@ -2065,9 +3063,14 @@
     "Aliases": [
       "text-to-prefix-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | prefix-new-line → \"Hello World\" | prefix-new-line"
+    ]
   },
   {
     "Name": "prefix-space",
@@ -2075,9 +3078,14 @@
     "Aliases": [
       "text-to-prefix-space"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | prefix-space → \" Hello World\""
+    ]
   },
   {
     "Name": "prepend",
@@ -2085,14 +3093,20 @@
     "Aliases": [
       "text-to-prepend"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
     "Parameters": [
       {
         "Name": "text",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to prepend"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | prepend(\"Hi \") → \"Hi Hello World\""
     ]
   },
   {
@@ -2101,9 +3115,14 @@
     "Aliases": [
       "text-to-prepend-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | prepend-new-line → \"Hello World\" | prepend-new-line"
+    ]
   },
   {
     "Name": "prepend-space",
@@ -2111,9 +3130,14 @@
     "Aliases": [
       "text-to-prepend-space"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | prepend-space → \" Hello World\""
+    ]
   },
   {
     "Name": "remove-chars",
@@ -2121,14 +3145,20 @@
     "Aliases": [
       "text-to-remove-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/character",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.",
     "Parameters": [
       {
         "Name": "charToRemove",
+        "Type": "text",
         "Optional": false,
         "Summary": "The char to be removed from the argument string."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | remove-chars(\"l\") → \"Heo Word\""
     ]
   },
   {
@@ -2137,19 +3167,26 @@
     "Aliases": [
       "text-to-replace-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/character",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value where a specific char has been replaced by another, both specified as parameters.",
     "Parameters": [
       {
         "Name": "charToReplace",
+        "Type": "text",
         "Optional": false,
         "Summary": "The char to be replaced from the argument string."
       },
       {
         "Name": "charReplacing",
+        "Type": "text",
         "Optional": false,
         "Summary": "The replacing char from the argument string."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | replace-chars(\"l\", \"x\") → \"Hexxo Worxd\""
     ]
   },
   {
@@ -2158,24 +3195,32 @@
     "Aliases": [
       "text-to-replace-slice"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value with a subset of the string substitued by a another string.",
     "Parameters": [
       {
         "Name": "start",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The position to start to replace"
       },
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "The length to replace"
       },
       {
         "Name": "append",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append when the slice has been removed"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | replace-slice(1, 2, \"X\") → \"HXlo World\""
     ]
   },
   {
@@ -2184,9 +3229,14 @@
     "Aliases": [
       "text-to-retain-alpha"
     ],
-    "Scope": "Text",
+    "Scope": "text/filtering",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input string with all characters removed except for letters (A-Z, a-z). If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | retain-alpha → \"HelloWorld\""
+    ]
   },
   {
     "Name": "retain-alpha-numeric",
@@ -2194,9 +3244,14 @@
     "Aliases": [
       "text-to-retain-alpha-numeric"
     ],
-    "Scope": "Text",
+    "Scope": "text/filtering",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input string with all characters removed except for letters (A-Z, a-z) and digits (0-9). If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | retain-alpha-numeric → \"HelloWorld\""
+    ]
   },
   {
     "Name": "retain-numeric",
@@ -2204,9 +3259,14 @@
     "Aliases": [
       "text-to-retain-numeric"
     ],
-    "Scope": "Text",
+    "Scope": "text/filtering",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input string with all non-numeric characters removed, leaving only digits (0-9).. If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | retain-numeric → \"(empty)\""
+    ]
   },
   {
     "Name": "retain-numeric-symbol",
@@ -2214,9 +3274,14 @@
     "Aliases": [
       "text-to-retain-numeric-symbol"
     ],
-    "Scope": "Text",
+    "Scope": "text/filtering",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input string with all characters removed except for digits (0-9) and the symbols `+`, `-`, `,` and `.` If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | retain-numeric-symbol → \"(empty)\""
+    ]
   },
   {
     "Name": "screaming-snake-case",
@@ -2224,9 +3289,14 @@
     "Aliases": [
       "text-to-screaming-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | screaming-snake-case → \"HELLO_WORLD\""
+    ]
   },
   {
     "Name": "sentence-case",
@@ -2235,9 +3305,14 @@
       "text-to-sentence-case",
       "capitalize"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in sentence case by capitalizing the first word while preserving the remaining content. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | sentence-case → \"Hello World\""
+    ]
   },
   {
     "Name": "skip-first-chars",
@@ -2245,14 +3320,20 @@
     "Aliases": [
       "text-to-skip-first-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/selection",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | skip-first-chars(2) → \"llo World\""
     ]
   },
   {
@@ -2261,14 +3342,20 @@
     "Aliases": [
       "text-to-skip-last-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text/selection",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
     "Parameters": [
       {
         "Name": "length",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | skip-last-chars(2) → \"Hello Wor\""
     ]
   },
   {
@@ -2277,9 +3364,14 @@
     "Aliases": [
       "text-to-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | snake-case → \"hello_world\""
+    ]
   },
   {
     "Name": "suffix",
@@ -2287,14 +3379,20 @@
     "Aliases": [
       "text-to-suffix"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.",
     "Parameters": [
       {
         "Name": "suffix",
+        "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | suffix(\"!\") → \"Hello World!\""
     ]
   },
   {
@@ -2303,9 +3401,14 @@
     "Aliases": [
       "text-to-suffix-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | suffix-new-line → \"Hello World\" | suffix-new-line"
+    ]
   },
   {
     "Name": "suffix-space",
@@ -2313,9 +3416,14 @@
     "Aliases": [
       "text-to-suffix-space"
     ],
-    "Scope": "Text",
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | suffix-space → \"Hello World \""
+    ]
   },
   {
     "Name": "swap-case",
@@ -2323,51 +3431,46 @@
     "Aliases": [
       "text-to-swap-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text with lowercase characters converted to uppercase and uppercase characters converted to lowercase. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "text-to-datetime",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-dateTime"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
-    "Parameters": [
-      {
-        "Name": "format",
-        "Optional": false,
-        "Summary": "A string representing the required format."
-      },
-      {
-        "Name": "culture",
-        "Optional": true,
-        "Summary": "A string representing a pre-defined culture."
-      }
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | swap-case → \"hELLO wORLD\""
     ]
   },
   {
     "Name": "text-to-html",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value converted to an HTML-encoded string",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | text-to-html → \"Hello World\""
+    ]
   },
   {
     "Name": "text-to-mask",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text/masking",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.",
     "Parameters": [
       {
         "Name": "mask",
+        "Type": "text",
         "Optional": false,
         "Summary": "The string representing the mask to apply to the argument string."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | text-to-mask(\"000-000\") → \"000-000\""
     ]
   },
   {
@@ -2376,9 +3479,14 @@
     "Aliases": [
       "text-to-title-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in title case, capitalizing words while keeping small words lowercase only when they are neither first nor last and do not follow a colon. The first and last words are always capitalized, and a small word after a colon is capitalized. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `Q&A`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | title-case → \"Hello World\""
+    ]
   },
   {
     "Name": "token",
@@ -2386,19 +3494,27 @@
     "Aliases": [
       "text-to-token"
     ],
-    "Scope": "Text",
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
     "Parameters": [
       {
         "Name": "index",
+        "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
       },
       {
         "Name": "separator",
+        "Type": "text",
         "Optional": true,
         "Summary": "A character that delimits the substrings in this instance."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | token(1) → \"World\"",
+      "\"Hello World\" | token(1, \" \") → \"World\""
     ]
   },
   {
@@ -2407,14 +3523,20 @@
     "Aliases": [
       "text-to-token-count"
     ],
-    "Scope": "Text",
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "integer",
     "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
     "Parameters": [
       {
         "Name": "separator",
+        "Type": "text",
         "Optional": false,
         "Summary": "A character that delimits the substrings in this instance."
       }
+    ],
+    "Examples": [
+      "\"Hello World\" | token-count(\" \") → 2"
     ]
   },
   {
@@ -2423,19 +3545,14 @@
     "Aliases": [
       "text-to-train-case"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "trim",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-trim"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | train-case → \"Hello-World\""
+    ]
   },
   {
     "Name": "upper",
@@ -2443,9 +3560,88 @@
     "Aliases": [
       "text-to-upper"
     ],
-    "Scope": "Text",
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the input text converted to uppercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | upper → \"HELLO WORLD\""
+    ]
+  },
+  {
+    "Name": "text-to-datetime",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-dateTime"
+    ],
+    "Scope": "text/conversion",
+    "Input": "text",
+    "Output": "date-time",
+    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
+    "Parameters": [
+      {
+        "Name": "format",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "A string representing the required format."
+      },
+      {
+        "Name": "culture",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "A string representing a pre-defined culture."
+      }
+    ],
+    "Examples": [
+      "\"2024-01-15 12:30:00\" | text-to-datetime(\"yyyy-MM-dd HH:mm:ss\") → #\"2024-01-15 12:30:00\"",
+      "\"01/15/2024 12:30:00\" | text-to-datetime(\"MM/dd/yyyy HH:mm:ss\", \"en-US\") → #\"2024-01-15 12:30:00\""
+    ]
+  },
+  {
+    "Name": "clean-whitespace",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-clean-whitespace"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "returns the argument with any whitespace replaced by a space character. `\\r\\n` is considered as a single character.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | clean-whitespace → \"Hello World\""
+    ]
+  },
+  {
+    "Name": "collapse-whitespace",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-collapse-whitespace"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\\r\\n` is considered as a single character.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | collapse-whitespace → \"Hello World\""
+    ]
+  },
+  {
+    "Name": "trim",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-trim"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | trim → \"Hello World\""
+    ]
   },
   {
     "Name": "whitespaces-to-empty",
@@ -2453,9 +3649,14 @@
     "Aliases": [
       "blank-to-empty"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | whitespaces-to-empty → \"Hello World\""
+    ]
   },
   {
     "Name": "whitespaces-to-null",
@@ -2463,9 +3664,14 @@
     "Aliases": [
       "blank-to-null"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | whitespaces-to-null → \"Hello World\""
+    ]
   },
   {
     "Name": "without-diacritics",
@@ -2473,9 +3679,14 @@
     "Aliases": [
       "text-to-without-diacritics"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument string without diacritics.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | without-diacritics → \"Hello World\""
+    ]
   },
   {
     "Name": "without-whitespaces",
@@ -2483,8 +3694,28 @@
     "Aliases": [
       "text-to-without-whitespaces"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
     "Summary": "Returns the argument string without white-space characters.",
-    "Parameters": []
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | without-whitespaces → \"HelloWorld\""
+    ]
+  },
+  {
+    "Name": "slug",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-slug"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns a lowercase, separator-normalized slug, removing Latin diacritics without transliterating non-Latin scripts. Returns empty text when the input is `null`, empty, or blank.",
+    "Parameters": [],
+    "Examples": [
+      "\"Crème brûlée recipe\" | slug → \"creme-brulee-recipe\""
+    ]
   }
 ]

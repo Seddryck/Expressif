@@ -5,10 +5,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Expressif.Values.Special;
-using Sprache;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/filtering")]
 public abstract class BaseTextRetain : BaseTextFunction
 {
     protected override object? EvaluateBlank() => new Empty().Keyword;

@@ -20,26 +20,26 @@ tests:
         value: { preferred-name: "Ally", name: "Alice" }
         expected: Ally
         parameters:
-          - '[preferred-name]'
-          - '[name]'
+          - '^.preferred-name'
+          - '^.name'
           - '"Anonymous"'
       - id: coalesce.valid.expressions.text.second-non-null
         value: { preferred-name: null, name: "Alice" }
         expected: Alice
         parameters:
-          - '[preferred-name]'
-          - '[name]'
+          - '^.preferred-name'
+          - '^.name'
           - '"Anonymous"'
       - id: coalesce.valid.expressions.text.fallback
         value: { preferred-name: null, name: null }
         expected: Anonymous
         parameters:
-          - '[preferred-name]'
-          - '[name]'
+          - '^.preferred-name'
+          - '^.name'
           - '"Anonymous"'
       - id: coalesce.valid.expressions.special.all-null
         value: { preferred-name: null, name: null }
         expected:
         parameters:
-          - '[preferred-name]'
-          - '[name]'
+          - '^.preferred-name'
+          - '^.name'

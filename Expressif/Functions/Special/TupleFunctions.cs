@@ -7,7 +7,7 @@ namespace Expressif.Functions.Special;
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>
 [Function(prefix: "", aliases: ["tuple-at"])]
-public class TupleAt : IFunction
+public class TupleAt : IFunction<TupleValue, object?>
 {
     public Func<int> Position { get; }
 
@@ -22,6 +22,8 @@ public class TupleAt : IFunction
             ? tuple[position]
             : null;
     }
+
+    public object? Evaluate(TupleValue value) => Evaluate((object?)value);
 }
 
 /// <summary>

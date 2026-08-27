@@ -6,8 +6,12 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Numeric;
 
 [Function]
-public abstract class FormatFunction : IFunction
+[Scope("numeric/formatting")]
+public abstract class FormatFunction : IFunction<decimal?, string?>
 {
+    public string? Evaluate(decimal? value)
+        => value.HasValue ? EvaluateNumeric(value.Value) : null;
+
     public object? Evaluate(object? value)
     {
         return value switch

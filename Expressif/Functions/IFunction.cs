@@ -10,3 +10,8 @@ public interface IFunction
 {
     object? Evaluate(object? value);
 }
+
+public interface IFunction<in TIn, out TOut> : IFunction
+{
+    TOut Evaluate(TIn value);
+}

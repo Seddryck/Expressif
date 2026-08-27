@@ -28,13 +28,20 @@ public class PredicateIntrospectorTest
     }
 
     [Test]
-    public void Locate_ExpressifAssembly_NameEqualClass()
+    public void Locate_ExpressifAssembly_NameFollowsPredicateConvention()
     {
         foreach (var info in Infos)
         {
             Debug.WriteLine(info.Name);
             Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Name.ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
+            Assert.That(
+                info.Name.StartsWith("is-", StringComparison.Ordinal)
+                    || info.Name.StartsWith("has-", StringComparison.Ordinal)
+                    || info.Name is "and" or "or" or "xor" or "not"
+                    || info.Name is "contains" or "starts-with" or "ends-with"
+                    || info.Name.StartsWith("matches-", StringComparison.Ordinal),
+                Is.True,
+                $"Predicate '{info.Name}' does not follow the naming convention.");
         }
     }
 
@@ -67,7 +74,13 @@ public class PredicateIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
             Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Scope, Is.EqualTo("Text").Or.EqualTo("Numeric").Or.EqualTo("Boolean").Or.EqualTo("Temporal").Or.EqualTo("Special"));
+            Assert.That(info.Scope, Does.Match("^[a-z][a-z-]*(/[a-z][a-z-]*)?$"));
         }
     }
+
+    [Test]
+    public void Locate_ExpressifAssembly_ArithmeticPredicatesExposeNumericSubcategory()
+        => Assert.That(
+            Infos.Where(x => x.Scope == "numeric/arithmetic").Select(x => x.Name),
+            Is.EquivalentTo(new[] { "has-remainder", "is-divisible-by", "is-even", "is-odd" }));
 }

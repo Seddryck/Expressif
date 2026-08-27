@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Numeric;
 
+[Scope("numeric/arithmetic")]
 public abstract class BaseNumericArithmetic : BaseNumericFunction
 {
     public Func<decimal> Value { get; }
@@ -15,17 +16,18 @@ public abstract class BaseNumericArithmetic : BaseNumericFunction
 }
 
 /// <summary>
-/// Returns the sum of an argument number and the parameter value.
+/// Returns the sum of the input value and the parameter value.
 /// </summary>
 public class Add : BaseNumericArithmetic
 {
     public Func<int> Times { get; }
 
-    /// <param name="value">The value to be added to the argument value.</param>
-    /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the sum.</param>
+    /// <param name="value">The value to add to the input value.</param>
+    /// <param name="times">Number of times the addition is applied.</param>
     public Add(Func<decimal> value, Func<int> times)
         : base(value) => Times = times;
 
+    /// <param name="value">The value to add to the input value.</param>
     public Add(Func<decimal> value)
         : this(value, () => 1) { }
 
@@ -97,6 +99,7 @@ public class Divide : BaseNumericArithmetic
 /// <summary>
 /// Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class GreatestCommonDivisor : BaseNumericFunction
 {
     public Func<int> Value { get; }
@@ -150,6 +153,7 @@ public class GreatestCommonDivisor : BaseNumericFunction
 /// Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
 /// </summary>
 [Function(aliases: ["least-common-multiple", "smallest-common-multiple"])]
+[Scope("numeric/arithmetic")]
 public class LowestCommonMultiple : BaseNumericFunction
 {
     public Func<int> Value { get; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
 using Expressif.Functions.Introspection;
 
 namespace Expressif.Predicates.Introspection;
@@ -36,15 +37,24 @@ public class PredicateIntrospector : BaseIntrospector
                                         ? predicate.Type.Namespace!.Split('.').Last().ToKebabCase()
                                         : predicate.Attribute.Prefix;
 
-            var suffix = predicate.Attribute.AppendIs ? $"is" : string.Empty;
-
-            var array = new[] { prefix, suffix, predicate.Type.Name.ToKebabCase() }.Where(x => !string.IsNullOrEmpty(x));
+            var typeName = predicate.Type.Name.ToKebabCase();
+            var suffix = predicate.Attribute.AppendIs ? "is" : string.Empty;
+            var canonicalName = predicate.Attribute.Name
+                ?? string.Join('-', new[] { suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
+            var prefixedName = string.Join('-', new[] { prefix, suffix, typeName }.Where(x => !string.IsNullOrEmpty(x)));
+            var aliases = predicate.Attribute.Aliases
+                .Append(typeName)
+                .Append(prefixedName)
+                .Where(x => !string.Equals(x, canonicalName, StringComparison.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
             yield return new PredicateInfo(
-                    predicate.Type.Name.ToKebabCase()
+                    canonicalName
                     , predicate.Type.IsPublic
-                    , predicate.Attribute.Aliases.AsQueryable().Prepend(string.Join('-', array)).ToArray()
-                    , predicate.Type.Namespace!.ToToken('.').Last()
+                    , aliases
+                    , predicate.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
+                        ?? predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()
                     , predicate.Type
                     , fast ? "" : predicate.Type.GetSummary()
                     , fast ? [] : BuildParameters(predicate.Type.GetInfoConstructors()).ToArray()

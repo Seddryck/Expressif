@@ -7,6 +7,7 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/concatenation")]
 public abstract class BaseTextAppend : BaseTextFunction
 {
     public Func<string> Append { get; }

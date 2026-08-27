@@ -1,19 +1,65 @@
-using Expressif.Cli.Commands;
+using Expressif.Cli.Application;
+using Expressif.Cli.Inputs;
+using Expressif.Cli.Expressions;
+using Expressif.Cli.Infrastructure;
 
 namespace Expressif.Cli.Tests;
 
 public class CsvSourceOptionTests
 {
+    private readonly CliInputValueParser parser = new();
+    private readonly SourceInfrastructure sourceInfrastructure = new(
+        new ExpressionService(),
+        new CliInputValueParser(),
+        new StrictUtf8TextReader());
+
+    [Test]
+    public void Parse_PlainScalar_FallsBackToTrimmedText()
+        => Assert.That(parser.Parse("  nikola  "), Is.EqualTo("nikola"));
+
+    [Test]
+    public void Parse_UnprefixedPrimitiveName_FallsBackToText()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(parser.Parse("null"), Is.EqualTo("null"));
+            Assert.That(parser.Parse("true"), Is.EqualTo("true"));
+            Assert.That(parser.Parse("false"), Is.EqualTo("false"));
+        });
+    }
+
+    [Test]
+    public void Parse_IsoDate_PreservesDateType()
+        => Assert.That(
+            parser.Parse("  2026-08-23  "),
+            Is.EqualTo(new DateOnly(2026, 8, 23)).And.TypeOf<DateOnly>());
+
+    [Test]
+    public void Parse_ExplicitPrimitives_PreserveTypes()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(parser.Parse("#null"), Is.Null);
+            Assert.That(parser.Parse("#true"), Is.True);
+            Assert.That(parser.Parse("#false"), Is.False);
+        });
+    }
+
+    [TestCase("  {1, 2")]
+    [TestCase("  T(1, 2")]
+    public void Parse_MalformedStructuredInput_DoesNotFallBackToText(string value)
+        => Assert.Throws<FormatException>(() => parser.Parse(value));
+
     [Test]
     public void BuildCsvProfile_AllSupportedOptions_AreTranslated()
     {
-        var (profile, hasHeader) = RunCommand.BuildCsvProfile(
+        var (profile, hasHeader) = sourceInfrastructure.BuildCsvProfile(
         [
-            "delimiter=\";\"", "line-terminator=\"|\"", "quote-char=null",
-            "double-quote=false", "escape-char=\"\\\\\"", "header=false",
-            "header-rows={1, 3}", "header-join=\".\"", "header-repeat=false",
+            "delimiter=\";\"", "line-terminator=\"|\"", "quote-char=#null",
+            "double-quote=#false", "escape-char=\"\\\\\"", "header=#false",
+            "header-rows={1, 3}", "header-join=\".\"", "header-repeat=#false",
             "comment-char=\"#\"", "comment-rows={2, 4}", "null-sequence=\"NULL\"",
-            "missing-cell=\"missing\"", "skip-initial-space=true",
+            "missing-cell=\"missing\"", "skip-initial-space=#true",
             "array-delimiter=\";\"", "array-prefix=\"[\"", "array-suffix=\"]\""
         ]);
 
@@ -41,13 +87,13 @@ public class CsvSourceOptionTests
         });
     }
 
-    [TestCase("unknown=1", "Unknown CSV source option 'unknown' with value '1'.")]
+    [TestCase("unknown=1", "Unknown CSV source option 'unknown' with value '1'. Valid source options: delimiter, line-terminator, quote-char, double-quote, escape-char, header, header-rows, header-join, header-repeat, comment-char, comment-rows, null-sequence, missing-cell, skip-initial-space, array-delimiter, array-prefix, array-suffix.")]
     [TestCase("delimiter=\"long\"", "Invalid CSV source option 'delimiter' with value '\"long\"'")]
     [TestCase("header=\"true\"", "Invalid CSV source option 'header' with value '\"true\"'")]
     [TestCase("header-rows={0}", "Invalid CSV source option 'header-rows' with value '{0}'")]
     public void BuildCsvProfile_InvalidOption_IdentifiesNameAndValue(string option, string expected)
     {
-        var exception = Assert.Throws<FormatException>(() => RunCommand.BuildCsvProfile([option]));
+        var exception = Assert.Throws<FormatException>(() => sourceInfrastructure.BuildCsvProfile([option]));
         Assert.That(exception!.Message, Does.StartWith(expected));
     }
 }

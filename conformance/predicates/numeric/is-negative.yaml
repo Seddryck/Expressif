@@ -1,0 +1,33 @@
+suite: numeric
+kind: predicate
+operator: is-negative
+tests:
+  - id: is-negative.valid
+    cases:
+      - id: is-negative.valid.integer.zero
+        value: 0
+        expected: false
+      - id: is-negative.valid.integer.one
+        value: 1
+        expected: false
+      - id: is-negative.valid.integer.positive
+        value: 10
+        expected: false
+      - id: is-negative.valid.integer.negative
+        value: -10
+        expected: true
+      - id: is-negative.valid.numeric.positive-decimal
+        value: 10.001
+        expected: false
+      - id: is-negative.valid.numeric.negative-decimal
+        value: -10.001
+        expected: true
+      - id: is-negative.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: is-negative.valid.special.null
+        value: (null)
+        expected: false
+      - id: is-negative.valid.special.blank
+        value: (blank)
+        expected: false

@@ -1,10 +1,10 @@
-﻿using System;
+using Expressif.Bindings;
+using Expressif.Values.Special;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Parsers;
-using Expressif.Values.Special;
 
 namespace Expressif.Serializers;
 
@@ -37,12 +37,16 @@ public class FunctionSerializer
         if (function.Parameters.Any())
         {
             stringBuilder.Append('(');
-            foreach (var parameter in function.Parameters)
+            foreach (var argument in function.Arguments)
             {
-                stringBuilder.Append(ParameterSerializer.Serialize(parameter switch
+                if (argument.Name is not null)
+                    stringBuilder.Append(argument.Name).Append(" := ");
+                if (argument.IsSpread)
+                    stringBuilder.Append("...");
+                stringBuilder.Append(ParameterSerializer.Serialize(argument.Value switch
                 {
                     IParameter p => p,
-                    _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
+                    _ => new LiteralParameter(argument.Value?.ToString() ?? new Null().Keyword)
                 }));
                 stringBuilder.Append(',').Append(' ');
             }

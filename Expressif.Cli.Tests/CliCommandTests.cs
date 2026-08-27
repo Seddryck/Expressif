@@ -1,5 +1,10 @@
 using System.Data;
+using Expressif.Cli.Application;
 using Expressif.Cli.Commands;
+using Expressif.Cli.Expressions;
+using Expressif.Cli.Infrastructure;
+using Expressif.Cli.Inputs;
+using Expressif.Functions.Catalog;
 
 namespace Expressif.Cli.Tests;
 
@@ -7,15 +12,35 @@ namespace Expressif.Cli.Tests;
 public class CliCommandTests
 {
     private readonly List<string> tempFilesToDelete = [];
+    private FakeExpressionService expressions = null!;
+    private Func<string, object?>? sourceResolver;
+
+    [SetUp]
+    public void SetUp()
+    {
+        expressions = new FakeExpressionService();
+        sourceResolver = null;
+    }
+
+    [Test]
+    public void DiagnosticWriter_Colorize_UsesAnsiRedOnlyWhenEnabled()
+    {
+        const string message = "Syntax error [EXPR1001]";
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                CommandDiagnosticWriter.Colorize(message, useColor: true),
+                Is.EqualTo("\u001b[31mSyntax error [EXPR1001]\u001b[0m"));
+            Assert.That(
+                CommandDiagnosticWriter.Colorize(message, useColor: false),
+                Is.EqualTo(message));
+        });
+    }
 
     [TearDown]
     public void TearDown()
     {
-        EvaluateCommand.ResetDelegates();
-        RunCommand.ResetDelegates();
-        ValidateCommand.BuildExpression = static (code, context) => new Expression(code, context);
-        ValidateCommand.BuildClosedExpression = static (code, context) => new ClosedExpression(code, context);
-
         foreach (var path in tempFilesToDelete)
         {
             if (File.Exists(path))
@@ -34,6 +59,93 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("17"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("even", "4", "true")]
+    [TestCase("even", "5", "false")]
+    [TestCase("is-even", "4", "true")]
+    public async Task Evaluate_PredicateOnlyExpression_ReturnsBoolean(string expression, string input, string expected)
+    {
+        var result = await InvokeAsync("evaluate", expression, "--input", input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("4", "false")]
+    [TestCase("6", "true")]
+    [TestCase("7", "false")]
+    public async Task Evaluate_ComposedPredicateOnlyExpression_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync("evaluate", "even |AND greater-than(5)", "--input", input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("-1", "true")]
+    [TestCase("6", "true")]
+    [TestCase("3", "false")]
+    [TestCase("5", "false")]
+    public async Task Evaluate_NestedLowercasePredicateExpression_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "(even |and greater-than(5)) |or less-than(0)",
+            "--input",
+            input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("-3", "true")]
+    [TestCase("-2", "false")]
+    [TestCase("6", "true")]
+    [TestCase("7", "false")]
+    public async Task Evaluate_TwoNestedPredicateBranches_ReturnsBoolean(string input, string expected)
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "(odd |and less-than(0)) |or (even |and greater-than(5))",
+            "--input",
+            input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_PredicateClosedInputExpression_ResolvesNestedFunction()
+    {
+        var result = await InvokeAsync(
+            "evaluate",
+            "filter(greater-than(17 | add(17)))",
+            "--input",
+            "{10,12,13}");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -80,7 +192,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_RecordLiteralInput_ReturnsFieldValue()
     {
-        var result = await InvokeAsync("evaluate", ".loc", "--input", "{loc:=mons, temp:=17.5}");
+        var result = await InvokeAsync("evaluate", ".loc", "--input", "{loc:=\"mons\", temp:=17.5}");
 
         Assert.Multiple(() =>
         {
@@ -93,7 +205,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_TupleLiteralInput_ReturnsTupleField()
     {
-        var result = await InvokeAsync("evaluate", "tuple-second", "--input", "T(mons, 17.5)");
+        var result = await InvokeAsync("evaluate", "tuple-second", "--input", "T(\"mons\", 17.5)");
 
         Assert.Multiple(() =>
         {
@@ -179,8 +291,8 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_ClosedEvaluationInputRequired_ButInvalidOpenExpression_ReturnsValidationError()
     {
-        EvaluateCommand.BuildClosedExpression = static (_, _) => throw new ExpressionRequiresInputException("upper");
-        EvaluateCommand.BuildExpression = static (_, _) => throw new NotImplementedFunctionException("unknown");
+        expressions.CompileClosedHandler = static (_, _) => throw new ExpressionRequiresInputException("upper");
+        expressions.CompileOpenHandler = static (_, _) => throw new NotImplementedFunctionException("unknown");
 
         var result = await InvokeAsync("evaluate", "upper");
 
@@ -196,7 +308,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_ClosedExpression_UnexpectedCompileException_ReturnsUnexpectedInternalErrorExitCode()
     {
-        EvaluateCommand.BuildClosedExpression = static (_, _) => throw new InvalidOperationException("boom closed compile");
+        expressions.CompileClosedHandler = static (_, _) => throw new InvalidOperationException("boom closed compile");
 
         var result = await InvokeAsync("evaluate", "5 | add(3)");
 
@@ -211,7 +323,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_OpenExpression_UnexpectedCompileException_ReturnsUnexpectedInternalErrorExitCode()
     {
-        EvaluateCommand.BuildExpression = static (_, _) => throw new InvalidOperationException("boom open compile");
+        expressions.CompileOpenHandler = static (_, _) => throw new InvalidOperationException("boom open compile");
 
         var result = await InvokeAsync("evaluate", "trim | upper", "--input", "abc");
 
@@ -226,7 +338,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_ClosedExpression_RuntimeFailure_ReturnsEvaluationExitCode()
     {
-        EvaluateCommand.EvaluateClosedExpression = static _ => throw new InvalidOperationException("boom closed runtime");
+        expressions.EvaluateHandler = static (_, _) => throw new InvalidOperationException("boom closed runtime");
 
         var result = await InvokeAsync("evaluate", "5 | add(3)");
 
@@ -234,7 +346,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("boom closed runtime"));
+            Assert.That(result.StdErr, Does.StartWith("Evaluation error [EXPR3001]:"));
+            Assert.That(result.StdErr, Does.Contain("boom closed runtime"));
         });
     }
 
@@ -294,6 +407,41 @@ public class CliCommandTests
                 Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
                 Assert.That(result.StdOut.Trim(), Is.EqualTo("NIKOLA"));
                 Assert.That(result.StdErr, Is.Empty);
+            });
+        }
+        finally
+        {
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+    }
+
+    [TestCase("utf-16-le")]
+    [TestCase("utf-16-be")]
+    [TestCase("utf-32-le")]
+    [TestCase("utf-32-be")]
+    public async Task Evaluate_ExpressionFile_WithNonUtf8Bom_ReturnsClearError(string encodingName)
+    {
+        var encoding = encodingName switch
+        {
+            "utf-16-le" => System.Text.Encoding.Unicode,
+            "utf-16-be" => System.Text.Encoding.BigEndianUnicode,
+            "utf-32-le" => new System.Text.UTF32Encoding(bigEndian: false, byteOrderMark: true),
+            "utf-32-be" => new System.Text.UTF32Encoding(bigEndian: true, byteOrderMark: true),
+            _ => throw new ArgumentOutOfRangeException(nameof(encodingName)),
+        };
+        var path = Path.Combine(Path.GetTempPath(), $"expressif-bom-{Guid.NewGuid():N}.expr");
+        File.WriteAllText(path, "trim | upper", encoding);
+
+        try
+        {
+            var result = await InvokeAsync("evaluate", "--file", path, "--input", "nikola");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+                Assert.That(result.StdOut, Is.Empty);
+                Assert.That(result.StdErr.Trim(), Is.EqualTo($"Expression file '{path}' could not be decoded as UTF-8."));
             });
         }
         finally
@@ -568,9 +716,9 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task Run_ScalarNullToken_RemainsTypedNull()
+    public async Task Run_ExplicitNullToken_RemainsTypedNull()
     {
-        var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "null");
+        var result = await InvokeAsync("run", "null-to-empty | count-chars", "--input", "#null");
 
         Assert.Multiple(() =>
         {
@@ -597,13 +745,15 @@ public class CliCommandTests
     [Test]
     public async Task Run_InputRecordWithDuplicateFields_ReturnsClearError()
     {
-        var result = await InvokeAsync("run", "count", "--input", "{name := alice, name := bob}");
+        var result = await InvokeAsync("run", "count", "--input", "{name := \"alice\", name := \"bob\"}");
 
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("Input enumeration failed at position 0: Duplicate field 'name' in record literal."));
+            Assert.That(result.StdErr, Does.StartWith("Runtime error [EXPR4001]:"));
+            Assert.That(result.StdErr, Does.Contain("Duplicate field 'name' in record literal."));
+            Assert.That(result.StdErr, Does.Contain("Input row: 1"));
         });
     }
 
@@ -623,7 +773,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_BatchOption_RecordValue_ReturnsClearEnumerableError()
     {
-        var result = await InvokeAsync("run", "count", "--batch", "{name := alice, age := 32}");
+        var result = await InvokeAsync("run", "count", "--batch", "{name := \"alice\", age := 32}");
 
         Assert.Multiple(() =>
         {
@@ -631,6 +781,22 @@ public class CliCommandTests
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr.Trim(), Is.EqualTo("The --batch option requires an enumerable value."));
         });
+    }
+
+    [Test]
+    public async Task Run_BatchOption_RepeatedEqualsSyntax_ReturnsDuplicateError()
+    {
+        var result = await InvokeAsync("run", "trim", "--batch=a", "--batch=b");
+
+        Assert.That(result.StdErr, Does.Contain("The --batch option can only be specified once."));
+    }
+
+    [Test]
+    public async Task Run_BatchOption_RepeatedBareTokens_DoesNotReturnDuplicateError()
+    {
+        var result = await InvokeAsync("run", "trim", "--batch", "--batch");
+
+        Assert.That(result.StdErr, Does.Not.Contain("The --batch option can only be specified once."));
     }
 
     [Test]
@@ -729,7 +895,7 @@ public class CliCommandTests
     public async Task Evaluate_SourceDependentOptionWithoutSource_ReturnsClearError(string option, string expectedError)
     {
         var arguments = option == "--source-option"
-            ? new[] { "evaluate", "count", option, "header=true" }
+            ? new[] { "evaluate", "count", option, "header=#true" }
             : new[] { "evaluate", "count", option };
         var result = await InvokeAsync(arguments);
 
@@ -756,11 +922,61 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_HeaderlessSourceCsvScalar_EvaluatesFirstAndFollowingValues()
+    {
+        var sourcePath = CreateTempFile($"12{Environment.NewLine}5{Environment.NewLine}42{Environment.NewLine}17", ".csv");
+        var result = await InvokeAsync(
+            "run", "add(5)", "--source", sourcePath, "--scalar",
+            "--source-option", "header=#false");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "17", "10", "47", "22" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_HeaderlessSourceCsv_UsesGeneratedColumnNames()
+    {
+        var sourcePath = CreateTempFile($"Alice,32{Environment.NewLine}Bob,41", ".csv");
+        var result = await InvokeAsync(
+            "run", ".column1 | upper", "--source", sourcePath,
+            "--source-option", "header=#false");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_HeaderlessSourceCsvInconsistentFields_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile($"Alice,32{Environment.NewLine}Bob", ".csv");
+        var result = await InvokeAsync(
+            "run", ".column1 | upper", "--source", sourcePath,
+            "--source-option", "header=#false");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("ALICE"));
+            Assert.That(result.StdErr, Does.Contain("CSV record 2").And.Contain("contains 1 fields, but 2 fields were expected"));
+        });
+    }
+
+    [Test]
     public async Task Run_SourceCsv_EvaluatesEachRecord()
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41,France{Environment.NewLine}Charlie,27,Germany", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -790,9 +1006,9 @@ public class CliCommandTests
         var sourcePath = CreateTempFile($"name;country{Environment.NewLine} Alice;Belgium{Environment.NewLine} Bob;France", ".csv");
 
         var result = await InvokeAsync(
-            "run", "[name] | upper", "--source", sourcePath,
+            "run", ".name | upper", "--source", sourcePath,
             "--source-option", "delimiter=\";\"",
-            "--source-option", "skip-initial-space=true");
+            "--source-option", "skip-initial-space=#true");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -809,8 +1025,44 @@ public class CliCommandTests
         var sourcePath = CreateTempFile($"name,country{Environment.NewLine}Alice,Belgium{Environment.NewLine}Bob,France", ".csv");
 
         var result = await InvokeAsync(
-            "run", "[name] | upper", "--source", sourcePath,
-            "--source-option", "header=true");
+            "run", ".name | upper", "--source", sourcePath,
+            "--source-option", "header=#true");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_WithMultipleHeaderRows_DoesNotEmitAdditionalHeaders()
+    {
+        var sourcePath = CreateTempFile($"person{Environment.NewLine}name{Environment.NewLine}Alice{Environment.NewLine}Bob", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "upper", "--source", sourcePath, "--scalar",
+            "--source-option", "header-rows={1, 2}");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceCsv_WithRepeatedHeaders_DoesNotEmitRepeatedHeader()
+    {
+        var sourcePath = CreateTempFile($"name{Environment.NewLine}Alice{Environment.NewLine}name{Environment.NewLine}Bob", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "upper", "--source", sourcePath, "--scalar",
+            "--source-option", "header-repeat=#true");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -824,7 +1076,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceOption_WithoutSource_ReturnsClearError()
     {
-        var result = await InvokeAsync("run", "absolute", "--input", "1", "--source-option", "header=true");
+        var result = await InvokeAsync("run", "absolute", "--input", "1", "--source-option", "header=#true");
 
         Assert.Multiple(() =>
         {
@@ -839,7 +1091,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile("name,age", ".csv");
 
-        var result = await InvokeAsync("run", "[name]", "--source", sourcePath, "--source-option", "delimiter=\"long\"");
+        var result = await InvokeAsync("run", ".name", "--source", sourcePath, "--source-option", "delimiter=\"long\"");
 
         Assert.Multiple(() =>
         {
@@ -850,11 +1102,30 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_SourceCsv_UnknownSourceOption_ListsValidOptions()
+    {
+        var sourcePath = CreateTempFile("12", ".csv");
+
+        var result = await InvokeAsync(
+            "run", "add(5)", "--source", sourcePath, "--scalar",
+            "--source-option", "headers=#false");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("Unknown CSV source option 'headers' with value '#false'."));
+            Assert.That(result.StdErr, Does.Contain("Valid source options: delimiter, line-terminator"));
+            Assert.That(result.StdErr, Does.Contain("array-prefix, array-suffix."));
+        });
+    }
+
+    [Test]
     public async Task Run_SourceCsvHeaderOnly_ProducesNoOutputAndSuccess()
     {
         var sourcePath = CreateTempFile("name,age,country", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -869,7 +1140,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile(string.Empty, ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -884,7 +1155,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile($"name,name,country{Environment.NewLine}Alice,32,Belgium", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -899,7 +1170,7 @@ public class CliCommandTests
     {
         var sourcePath = CreateTempFile($"name,age,country{Environment.NewLine}Alice,32,Belgium{Environment.NewLine}Bob,41", ".csv");
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", sourcePath);
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath);
 
         Assert.Multiple(() =>
         {
@@ -928,7 +1199,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceNull_ReturnsClearError()
     {
-        RunCommand.ResolveSourceValue = static _ => null;
+        sourceResolver = static _ => null;
 
         var result = await InvokeAsync("run", "add(1)", "--source", "source.expr");
 
@@ -944,7 +1215,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceDataReader_EvaluatesEachRecord()
     {
-        RunCommand.ResolveSourceValue = static _ =>
+        sourceResolver = static _ =>
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("name", typeof(string));
@@ -953,7 +1224,7 @@ public class CliCommandTests
             return dataTable.CreateDataReader();
         };
 
-        var result = await InvokeAsync("run", "#0 | upper", "--source", "customers.sql");
+        var result = await InvokeAsync("run", ".name | upper", "--source", "customers.sql");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -967,7 +1238,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceDataReader_PassesRecordValueToExpression()
     {
-        RunCommand.ResolveSourceValue = static _ =>
+        sourceResolver = static _ =>
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("name", typeof(string));
@@ -988,7 +1259,7 @@ public class CliCommandTests
     [Test]
     public async Task Run_SourceCsvPathWithGenericDataReader_DoesNotSkipFirstRow()
     {
-        RunCommand.ResolveSourceValue = static _ =>
+        sourceResolver = static _ =>
         {
             var dataTable = new DataTable();
             dataTable.Columns.Add("name", typeof(string));
@@ -997,7 +1268,7 @@ public class CliCommandTests
             return dataTable.CreateDataReader();
         };
 
-        var result = await InvokeAsync("run", "[name] | upper", "--source", "customers.csv");
+        var result = await InvokeAsync("run", ".name | upper", "--source", "customers.csv");
 
         var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         Assert.Multiple(() =>
@@ -1055,13 +1326,14 @@ public class CliCommandTests
     [Test]
     public async Task Run_EvaluationFailure_StopsEnumerationAndReturnsFailure()
     {
-        var result = await InvokeAsync("run", "add(1)", "--batch", "{1, unknown, 3}");
+        var result = await InvokeAsync("run", "add(1)", "--batch", "{1, \"unknown\", 3}");
 
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
-            Assert.That(result.StdErr, Does.Contain("Expression evaluation failed for input unknown"));
+            Assert.That(result.StdErr, Does.Contain("Evaluation error [EXPR3001]:"));
+            Assert.That(result.StdErr, Does.Contain("Input row: 2"));
         });
     }
 
@@ -1148,6 +1420,28 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task ValidateEvaluateAndRun_InvalidSyntax_RenderEquivalentDiagnostics()
+    {
+        const string expression = "lower | add(,)";
+
+        var validateResult = await InvokeAsync("validate", expression);
+        var evaluateResult = await InvokeAsync("evaluate", expression, "--input", "value");
+        var runResult = await InvokeAsync("run", expression, "--input", "value");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(validateResult.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(evaluateResult.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(runResult.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(validateResult.StdErr, Is.EqualTo(evaluateResult.StdErr));
+            Assert.That(validateResult.StdErr, Is.EqualTo(runResult.StdErr));
+            Assert.That(validateResult.StdErr, Does.Contain("Syntax error [EXPR1001] at line 1, column"));
+            Assert.That(validateResult.StdErr, Does.Contain(expression));
+            Assert.That(validateResult.StdErr, Does.Contain("^"));
+        });
+    }
+
+    [Test]
     public async Task Validate_ExpressionFile_InvalidExpression_ReturnsSourceAwareError()
     {
         var path = CreateTempFile("absolute | unknown(5)");
@@ -1166,7 +1460,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_DefaultOpen_IgnoresClosedValidationHook()
     {
-        ValidateCommand.BuildClosedExpression = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
+        expressions.CompileClosedHandler = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
 
         var result = await InvokeAsync("validate", "absolute | add(5)");
 
@@ -1181,7 +1475,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_ClosedValidationError_WithClosedOption_ReturnsValidationExitCode()
     {
-        ValidateCommand.BuildClosedExpression = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
+        expressions.CompileClosedHandler = static (_, _) => throw new NotImplementedFunctionException("close-only-unknown");
 
         var result = await InvokeAsync("validate", "absolute | add(5)", "--closed");
 
@@ -1196,7 +1490,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_ClosedValidationUnexpectedException_WithClosedOption_ReturnsUnexpectedInternalErrorExitCode()
     {
-        ValidateCommand.BuildClosedExpression = static (_, _) => throw new InvalidOperationException("boom validate closed");
+        expressions.CompileClosedHandler = static (_, _) => throw new InvalidOperationException("boom validate closed");
 
         var result = await InvokeAsync("validate", "absolute | add(5)", "--closed");
 
@@ -1261,8 +1555,148 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("evaluate"));
             Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
+            Assert.That(result.StdOut, Does.Contain("help"));
             Assert.That(result.StdOut, Does.Contain("version"));
             Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_CanonicalName_DisplaysFunctionDocumentation()
+    {
+        var result = await InvokeAsync("help", "reverse");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith($"array →{Environment.NewLine}reverse() → array"));
+            Assert.That(result.StdOut, Does.Contain("Scope:   array"));
+            Assert.That(result.StdOut, Does.Contain("Aliases: reverse"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_Alias_DisplaysCanonicalFunctionAndAlias()
+    {
+        var result = await InvokeAsync("help", "array-to-broadcast");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"array →{Environment.NewLine}broadcast({Environment.NewLine}    accumulator: accumulator{Environment.NewLine}) → array"));
+            Assert.That(result.StdOut, Does.Contain("Aliases: array-to-broadcast"));
+            Assert.That(result.StdOut, Does.Contain("Parameters:"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_OptionalParameter_MarksParameterAsOptional()
+    {
+        var result = await InvokeAsync("help", "after-substring");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count?: integer{Environment.NewLine}) → text"));
+            Assert.That(result.StdOut, Does.Contain("count?"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_DynamicFunction_DisplaysAnyContract()
+    {
+        var result = await InvokeAsync("help", "field");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"any →{Environment.NewLine}field({Environment.NewLine}    name: text{Environment.NewLine}) → any"));
+        });
+    }
+
+    [Test]
+    public async Task Help_FunctionWithExamples_DisplaysExamplesBeforeAliasesAndScope()
+    {
+        var result = await InvokeAsync("help", "add");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith(
+                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times?: integer{Environment.NewLine}) → numeric"));
+            Assert.That(result.StdOut, Does.Contain("Returns the sum of the input value and the parameter value."));
+            Assert.That(result.StdOut, Does.Contain("times  integer (optional)"));
+            Assert.That(result.StdOut, Does.Contain("  10 | add(5)      → 15"));
+            Assert.That(result.StdOut, Does.Contain("  10 | add(5, 2)   → 20"));
+            Assert.That(result.StdOut.IndexOf("Examples:", StringComparison.Ordinal),
+                Is.LessThan(result.StdOut.IndexOf("Aliases:", StringComparison.Ordinal)));
+            Assert.That(result.StdOut.IndexOf("Aliases:", StringComparison.Ordinal),
+                Is.LessThan(result.StdOut.IndexOf("Scope:", StringComparison.Ordinal)));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_UnknownName_DisplaysCloseMatchAndInvalidInputExitCode()
+    {
+        var result = await InvokeAsync("help", "revers");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("Unknown function 'revers'."));
+            Assert.That(result.StdErr, Does.Contain("Did you mean: reverse?"));
+        });
+    }
+
+    [Test]
+    public async Task Help_List_DisplaysFunctionsFromSeveralScopes()
+    {
+        var result = await InvokeAsync("help", "--list");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("array:"));
+            Assert.That(result.StdOut, Does.Contain("numeric/arithmetic:"));
+            Assert.That(result.StdOut, Does.Contain("record:"));
+            Assert.That(result.StdOut, Does.Contain("temporal:"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_ScopeCaseInsensitive_DisplaysOnlyRequestedScope()
+    {
+        var result = await InvokeAsync("help", "--scope", "record");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.StartWith("record:"));
+            Assert.That(result.StdOut, Does.Contain("  field"));
+            Assert.That(result.StdOut, Does.Not.Contain("Array:"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_ConflictingModes_ReturnsInvalidInputExitCode()
+    {
+        var result = await InvokeAsync("help", "reverse", "--list");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Specify exactly one function name, --list, or --scope."));
         });
     }
 
@@ -1323,7 +1757,7 @@ public class CliCommandTests
     [Test]
     public async Task Validate_UnexpectedException_ReturnsUnexpectedInternalErrorExitCode()
     {
-        ValidateCommand.BuildExpression = static (_, _) => throw new InvalidOperationException("boom");
+        expressions.CompileOpenHandler = static (_, _) => throw new InvalidOperationException("boom");
 
         var result = await InvokeAsync("validate", "absolute");
 
@@ -1335,7 +1769,7 @@ public class CliCommandTests
         });
     }
 
-    private static async Task<InvocationResult> InvokeAsync(params string[] args)
+    private async Task<InvocationResult> InvokeAsync(params string[] args)
     {
         var originalOut = Console.Out;
         var originalError = Console.Error;
@@ -1348,7 +1782,22 @@ public class CliCommandTests
 
         try
         {
-            var exitCode = await CliInvoker.InvokeAsync(args);
+            var values = new CliInputValueParser();
+            var textFiles = new StrictUtf8TextReader();
+            var infrastructure = new SourceInfrastructure(expressions, values, textFiles);
+            IFileSourceProvider[] providers = sourceResolver is null
+                ? [new CsvFileSourceProvider(infrastructure), new ExpressionFileSourceProvider(infrastructure)]
+                : [new FakeFileSourceProvider(sourceResolver)];
+            var sources = new SourcePipeline(providers, infrastructure);
+            var composition = new CliComposition(
+                new ParseHandler(new SyntaxService()),
+                new BindHandler(new SyntaxService()),
+                new EvaluateHandler(expressions, values, sources),
+                new RunHandler(expressions, values, textFiles, sources),
+                new ValidateHandler(expressions),
+                new HelpHandler(new FunctionCatalogService(FunctionCatalog.Default)),
+                textFiles);
+            var exitCode = await CliInvoker.InvokeAsync(args, composition);
             return new InvocationResult(exitCode, stdout.ToString(), stderr.ToString());
         }
         finally
@@ -1367,4 +1816,27 @@ public class CliCommandTests
     }
 
     private sealed record InvocationResult(int ExitCode, string StdOut, string StdErr);
+
+    private sealed class FakeFileSourceProvider(Func<string, object?> resolve) : IFileSourceProvider
+    {
+        public bool CanOpen(string path) => true;
+
+        public object? Open(string path, IReadOnlyList<string> options) => resolve(path);
+    }
+
+    private sealed class FakeExpressionService : IExpressionService
+    {
+        public Func<string, Context, IExpression> CompileOpenHandler { get; set; }
+            = static (code, context) => Expression.Create(code, context);
+
+        public Func<string, Context, IExpression> CompileClosedHandler { get; set; }
+            = static (code, context) => Expression.CreateClosed(code, context);
+
+        public Func<IExpression, object?, object?> EvaluateHandler { get; set; }
+            = static (expression, input) => expression.Evaluate(input);
+
+        public IExpression CompileOpen(string code, Context context) => CompileOpenHandler(code, context);
+        public IExpression CompileClosed(string code, Context context) => CompileClosedHandler(code, context);
+        public object? Evaluate(IExpression expression, object? input) => EvaluateHandler(expression, input);
+    }
 }

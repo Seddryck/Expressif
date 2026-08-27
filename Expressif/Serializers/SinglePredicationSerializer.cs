@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Expressif.Functions;
-using Expressif.Parsers;
+using Expressif.Bindings;
 using Expressif.Predicates.Operators;
 
 namespace Expressif.Serializers;
@@ -26,7 +26,7 @@ public class SinglePredicationSerializer
     }
 
     public virtual void Serialize(SinglePredication predication, ref StringBuilder stringBuilder)
-        => Serialize(predication.Members[0], ref stringBuilder);
+        => Serialize(predication.Member, ref stringBuilder);
 
     protected virtual void Serialize(Function predicate, ref StringBuilder stringBuilder)
     {
@@ -34,9 +34,11 @@ public class SinglePredicationSerializer
         if (predicate.Parameters.Length != 0)
         {
             stringBuilder.Append('(');
-            foreach (var parameter in predicate.Parameters)
+            foreach (var argument in predicate.Arguments)
             {
-                stringBuilder.Append(ParameterSerializer.Serialize(parameter));
+                if (argument.Name is not null)
+                    stringBuilder.Append(argument.Name).Append(" := ");
+                stringBuilder.Append(ParameterSerializer.Serialize(argument.Value));
                 stringBuilder.Append(", ");
             }
             stringBuilder.Remove(stringBuilder.Length - 2, 2);

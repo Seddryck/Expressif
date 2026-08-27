@@ -7,7 +7,7 @@ using Expressif.Values;
 
 namespace Expressif.Functions.Temporal;
 
-public abstract class BaseTemporalWeekdayFunction : BaseTemporalFunction
+public abstract class BaseTemporalWeekdayFunction : BaseTemporalFunction<DateOnly?>
 {
     protected override object EvaluateDateTime(DateTime dt)
         => EvaluateDate(DateOnly.FromDateTime(dt));
@@ -90,6 +90,7 @@ public class PreviousWeekdayOrSame : BaseTemporalWeekdayFunction
 /// <summary>
 /// Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
 /// </summary>
+[Scope("temporal/calendar")]
 public class FirstInMonth : NextWeekdayOrSame
 {
     /// <param name="weekday">The day of week to compare to the argument.</param>
@@ -103,6 +104,7 @@ public class FirstInMonth : NextWeekdayOrSame
 /// <summary>
 /// Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
 /// </summary>
+[Scope("temporal/calendar")]
 public class LastInMonth : PreviousWeekdayOrSame
 {
     /// <param name="weekday">The day of week to compare to the argument.</param>

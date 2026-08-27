@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="180" viewBox="0 0 960 180" role="img" aria-labelledby="title description">
+  <title id="title">Expressif expression highlighted by Shiki</title>
+  <desc id="description">A five-line Expressif pipeline rendered with the GitHub Dark theme.</desc>
+  <rect width="960" height="180" rx="8" fill="#24292e"/>
+  <g font-family="Consolas, 'Courier New', monospace" font-size="16">
+    <text x="24" y="36" xml:space="preserve"><tspan fill="#79B8FF">filter</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">greater-than</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">15</tspan><tspan fill="#E1E4E8">))</tspan></text>
+    <text x="24" y="62" xml:space="preserve"><tspan fill="#F97583">|&gt;</tspan><tspan fill="#E1E4E8"> </tspan><tspan fill="#79B8FF">add</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">10</tspan><tspan fill="#E1E4E8">)</tspan></text>
+    <text x="24" y="88" xml:space="preserve"><tspan fill="#F97583">|</tspan><tspan fill="#E1E4E8"> </tspan><tspan fill="#79B8FF">scan</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">sum</tspan><tspan fill="#E1E4E8">)</tspan></text>
+    <text x="24" y="114" xml:space="preserve"><tspan fill="#F97583">|</tspan><tspan fill="#E1E4E8"> </tspan><tspan fill="#79B8FF">filter</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">less-than</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">150</tspan><tspan fill="#E1E4E8">)</tspan></text>
+    <text x="24" y="140" xml:space="preserve"><tspan fill="#F97583">|OR</tspan><tspan fill="#E1E4E8"> </tspan><tspan fill="#79B8FF">greater-than</tspan><tspan fill="#E1E4E8">(</tspan><tspan fill="#79B8FF">0</tspan><tspan fill="#E1E4E8">))</tspan></text>
+  </g>
+</svg>

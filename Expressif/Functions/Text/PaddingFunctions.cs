@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/padding")]
 public abstract class BasePaddingFunction : BaseTextLength
 {
     public Func<char> Character { get; }

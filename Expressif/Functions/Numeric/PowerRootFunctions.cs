@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Numeric;
 
+[Scope("numeric/arithmetic")]
 public abstract class BaseNumericPowerRootFunction : BaseNumericFunction
 {
     public Func<decimal> Exponent { get; }

@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.Numeric;
+using Expressif.Predicates.Numeric;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Numeric;
@@ -7,7 +7,7 @@ namespace Expressif.Testing.Predicates.Numeric;
 public class ComparisonTest
 {
     [Conformance]
-    public void EqualTo_Valid(object? value, decimal reference, bool expected)
+    public void IsEqualTo_Valid(object? value, decimal reference, bool expected)
     {
         var predicate = new EqualTo(() => reference);
         Assert.Multiple(() =>
@@ -18,7 +18,7 @@ public class ComparisonTest
     }
 
     [Conformance]
-    public void GreaterThan_Valid(object? value, decimal reference, bool expected)
+    public void IsGreaterThan_Valid(object? value, decimal reference, bool expected)
     {
         var predicate = new GreaterThan(() => reference);
         Assert.Multiple(() =>
@@ -29,7 +29,7 @@ public class ComparisonTest
     }
 
     [Conformance]
-    public void GreaterThanOrEqual_Valid(object? value, decimal reference, bool expected)
+    public void IsGreaterThanOrEqual_Valid(object? value, decimal reference, bool expected)
     {
         var predicate = new GreaterThanOrEqual(() => reference);
         Assert.Multiple(() =>
@@ -40,7 +40,7 @@ public class ComparisonTest
     }
 
     [Conformance]
-    public void LessThan_Valid(object? value, decimal reference, bool expected)
+    public void IsLessThan_Valid(object? value, decimal reference, bool expected)
     {
         var predicate = new LessThan(() => reference);
         Assert.Multiple(() =>
@@ -51,7 +51,7 @@ public class ComparisonTest
     }
 
     [Conformance]
-    public void LessThanOrEqual_Valid(object? value, decimal reference, bool expected)
+    public void IsLessThanOrEqual_Valid(object? value, decimal reference, bool expected)
     {
         var predicate = new LessThanOrEqual(() => reference);
         Assert.Multiple(() =>
@@ -62,7 +62,7 @@ public class ComparisonTest
     }
 
     [Conformance]
-    public void Opposite_Valid(object? value, decimal reference, bool expected)
+    public void IsOpposite_Valid(object? value, decimal reference, bool expected)
     {
         var predicate = new Opposite(() => reference);
         Assert.Multiple(() =>

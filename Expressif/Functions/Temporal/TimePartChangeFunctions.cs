@@ -17,7 +17,7 @@ public abstract class BaseTimePartChangeFunction : BaseTemporalFunction
 /// <summary>
 /// returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
 /// </summary>
-public class ChangeOfHour : BaseDatePartNumericFunction
+public class ChangeOfHour : BaseTimePartChangeFunction
 {
     public Func<int> Hour { get; }
     public ChangeOfHour(Func<int> hour)
@@ -35,7 +35,7 @@ public class ChangeOfHour : BaseDatePartNumericFunction
 /// <summary>
 /// returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
 /// </summary>
-public class ChangeOfMinute : BaseDatePartNumericFunction
+public class ChangeOfMinute : BaseTimePartChangeFunction
 {
     public Func<int> Minute { get; }
     public ChangeOfMinute(Func<int> minute)
@@ -53,7 +53,7 @@ public class ChangeOfMinute : BaseDatePartNumericFunction
 /// <summary>
 /// returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
 /// </summary>
-public class ChangeOfSecond : BaseDatePartNumericFunction
+public class ChangeOfSecond : BaseTimePartChangeFunction
 {
     public Func<int> Second { get; }
     public ChangeOfSecond(Func<int> second)

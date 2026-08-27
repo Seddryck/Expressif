@@ -1,0 +1,31 @@
+suite: temporal
+kind: predicate
+operator: is-on-the-hour
+tests:
+  - id: is-on-the-hour.valid.date
+    cases:
+      - id: is-on-the-hour.valid.date
+        value: 2022-11-21
+        expected: true
+  - id: is-on-the-hour.valid.date-time
+    cases:
+      - id: is-on-the-hour.valid.date-time.midnight
+        value: 2022-11-21 00:00:00
+        expected: true
+      - id: is-on-the-hour.valid.date-time.on-the-hour
+        value: 2022-11-21 17:00:00
+        expected: true
+      - id: is-on-the-hour.valid.date-time.on-the-minute
+        value: 2022-11-21 17:12:00
+        expected: false
+      - id: is-on-the-hour.valid.date-time.random-second
+        value: 2022-11-21 17:12:25
+        expected: false
+  - id: is-on-the-hour.valid.special
+    cases:
+      - id: is-on-the-hour.valid.special.empty
+        value:
+        expected: false
+      - id: is-on-the-hour.valid.special.null
+        value: (null)
+        expected: false

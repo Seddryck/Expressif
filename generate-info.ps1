@@ -36,7 +36,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $destination)
         $locator = New-Object -TypeName "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
         $functions = $locator.Describe() |
                         Sort-Object Scope, Name |
-                        Select-Object -Property Name, IsPublic, Aliases, Scope, Summary, Parameters
+                        Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters
         Write-Host  "`t$($functions.Count) $($class.ToLower()) identified"
         $functions | ForEach-Object {
             if ($_.IsPublic) {
@@ -46,6 +46,15 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $destination)
             }
         }
         $functions | ConvertTo-Json -depth 4 | Out-File "$destination"
+
+        if ($class -eq "function") {
+            $conversionDestination = Join-Path (Split-Path $destination) "function-conversion.json"
+            $locator.Describe() |
+                Sort-Object Scope, Name |
+                Select-Object -Property Name, Scope, Converted, Input, Output, Reason |
+                ConvertTo-Json -Depth 4 |
+                Out-File $conversionDestination
+        }
     }
     Write-Host  "File created at $destination in $($elapsed.TotalSeconds) seconds"
 } -Args "$assemblyPath\$directory\$dllfile", $class, "$destinationPath\$destinationFile"

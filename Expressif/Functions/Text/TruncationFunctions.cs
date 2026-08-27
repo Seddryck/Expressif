@@ -7,6 +7,7 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
+[Scope("text/selection")]
 public abstract class BaseTextLength : BaseTextFunction
 {
     public Func<int> Length { get; }
@@ -70,6 +71,7 @@ public class SkipLastChars : BaseTextLength
 /// <summary>
 /// Returns the argument value without all leading or trailing white-space characters.
 /// </summary>
+[Scope("text/normalization")]
 public class Trim : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Empty().Keyword;

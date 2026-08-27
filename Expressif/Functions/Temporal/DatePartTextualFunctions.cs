@@ -9,8 +9,7 @@ using Expressif.Values.Casters;
 using Expressif.Values.Special;
 
 namespace Expressif.Functions.Temporal;
-
-public abstract class BaseDatePartTextualFunction : BaseTemporalFunction
+public abstract class BaseDatePartTextualFunction : BaseTemporalFunction<string>
 {
     protected override object? EvaluateUncasted(object value)
     {

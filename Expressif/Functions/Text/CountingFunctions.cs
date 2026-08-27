@@ -8,7 +8,8 @@ using Expressif.Values.Special;
 
 namespace Expressif.Functions.Text;
 
-public abstract class BaseTextCountingFunction : BaseTextFunction
+[Scope("text/counting")]
+public abstract class BaseTextCountingFunction : BaseTextFunction<int?>
 {
     protected override object? EvaluateSpecial(string value) => null;
     protected override object? EvaluateBlank() => null;
@@ -81,6 +82,7 @@ public class CountSubstring : BaseTextCountingFunction
 /// <summary>
 /// Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.
 /// </summary>
+[Scope("text/tokenization")]
 public class TokenCount : BaseTextCountingFunction
 {
     public Func<char>? Separator { get; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -70,12 +71,12 @@ public class TemporalFunctionsTest
 
     [Conformance]
     public void Forward_Valid(object value, string timeSpan, int times, DateTime expected)
-        => Assert.That(new Forward(() => timeSpan, () => times)
+        => Assert.That(new Forward(() => TimeOnly.Parse(timeSpan, CultureInfo.InvariantCulture), () => times)
             .Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
     public void Backward_Valid(object value, string timeSpan, int times, DateTime expected)
-    => Assert.That(new Backward(() => timeSpan, () => times)
+    => Assert.That(new Backward(() => TimeOnly.Parse(timeSpan, CultureInfo.InvariantCulture), () => times)
         .Evaluate(value), Is.EqualTo(expected));
 
     [Test]

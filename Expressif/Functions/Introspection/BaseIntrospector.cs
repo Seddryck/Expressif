@@ -32,15 +32,12 @@ public abstract class BaseIntrospector
 
     protected IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
         => ctorInfos.SelectMany(x => x.Parameters)
-                    .Select(y => new ParameterInfo(
-                                y.Name
-                                , !ctorInfos.All(c => c.Parameters.Any(p => p.Name == y.Name))
-                                , ctorInfos.First(c => c.Parameters.Any(p => p.Name == y.Name))
-                                                .Parameters
-                                                .Single(p => p.Name == y.Name)
-                                                .Summary
-                        )
-                    ).Distinct();
+                    .GroupBy(x => x.Name)
+                    .Select(parameters => new ParameterInfo(
+                        parameters.Key,
+                        string.Join(" | ", parameters.Select(x => x.Type).Distinct().OrderBy(x => x)),
+                        !ctorInfos.All(c => c.Parameters.Any(p => p.Name == parameters.Key)),
+                        parameters.First().Summary));
 }
 
 public class AssemblyTypesProbe : ITypesProbe

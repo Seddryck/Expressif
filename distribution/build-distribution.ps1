@@ -224,6 +224,35 @@ function Get-PublishDirectory {
     return Join-Path $PublishRoot "$Framework/$Runtime"
 }
 
+function Remove-UnusedTreeSitterGrammars {
+    param(
+        [Parameter(Mandatory)]
+        [string] $Path
+    )
+
+    $unusedGrammars = @(
+        Get-ChildItem `
+            -LiteralPath $Path `
+            -File `
+            -Recurse |
+        Where-Object {
+            $_.Name -match `
+                '^(?:lib)?tree-sitter-(?!expressif(?:\.|$)).+\.(?:dll|so|dylib)$'
+        }
+    )
+
+    foreach ($grammar in $unusedGrammars) {
+        Remove-Item -LiteralPath $grammar.FullName -Force
+    }
+
+    if ($unusedGrammars.Count -gt 0) {
+        Write-Host (
+            "Removed $($unusedGrammars.Count) unused Tree-sitter " +
+            "grammar binaries from the publish output."
+        )
+    }
+}
+
 function Get-ArchiveName {
     param(
         [Parameter(Mandatory)]
@@ -360,6 +389,8 @@ function Invoke-Publish {
             Invoke-ExternalCommand `
                 -Command "dotnet" `
                 -Arguments $arguments
+
+            Remove-UnusedTreeSitterGrammars -Path $publishDirectory
 
             $publishedExecutableName = Get-ExecutableFileName `
                 -Runtime $runtime `

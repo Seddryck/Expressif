@@ -1,4 +1,4 @@
-﻿using Expressif.Predicates.Special;
+using Expressif.Predicates.Special;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Special;
@@ -7,7 +7,7 @@ namespace Expressif.Testing.Predicates.Special;
 public class NullTest
 {
     [Conformance]
-    public void Null_Valid(object? value, bool expected)
+    public void IsNull_Valid(object? value, bool expected)
     => Assert.That(new Null().Evaluate(value), Is.EqualTo(expected));
 }
 

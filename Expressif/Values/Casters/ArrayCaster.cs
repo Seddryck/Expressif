@@ -1,15 +1,14 @@
+using Expressif.Bindings;
+using Expressif.Syntax;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Expressif.Parsers;
-using Expressif.Serializers;
-using Sprache;
 
 namespace Expressif.Values.Casters;
 
 public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
 {
-    private static readonly ParameterSerializer ParameterSerializer = new();
+    private static readonly ParameterValueConverter ValueConverter = new();
 
     public virtual bool TryCast(object obj, [NotNullWhen(true)] out object?[]? value)
         => obj switch
@@ -30,14 +29,14 @@ public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
 
         try
         {
-            var parameter = Parameter.Parser.End().Parse(text);
-            if (parameter is not ArrayParameter array)
+            var result = ValueConverter.Parse(text);
+            if (result is not object?[] array)
                 return false;
 
-            value = array.Values.Select(ConvertToRuntimeValue).ToArray();
+            value = array;
             return true;
         }
-        catch (ParseException)
+        catch (Exception exception) when (exception is ExpressifSyntaxException or BindingException)
         {
             return false;
         }
@@ -45,27 +44,4 @@ public class ArrayCaster : ICaster<object?[]>, IParser<object?[]>
 
     public virtual object?[] Parse(string text)
         => TryParse(text, out var value) ? value : throw new FormatException();
-
-    private static object? ConvertToRuntimeValue(IParameter parameter)
-    {
-        return parameter switch
-        {
-            LiteralParameter literal => RecordSyntax.TryParseTypedToken(literal.Value, out var typed)
-                ? typed
-                : literal.Value,
-            QuotedLiteralParameter quoted => quoted.Value,
-            ArrayParameter array => array.Values.Select(ConvertToRuntimeValue).ToArray(),
-            RecordLiteralParameter record => ConvertRecord(record),
-            _ => ParameterSerializer.Serialize(parameter),
-        };
-    }
-
-    private static RecordValue ConvertRecord(RecordLiteralParameter record)
-    {
-        var value = new RecordValue();
-        foreach (var field in record.Fields)
-            value.Set(field.Name, ConvertToRuntimeValue(field.Value));
-
-        return value;
-    }
 }

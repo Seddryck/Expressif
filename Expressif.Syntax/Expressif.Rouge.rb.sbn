@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+{{ if model.standalone ~}}
+require "rouge"
+
+{{ end }}module Rouge
+  module Lexers
+    class Expressif < RegexLexer
+      title "Expressif"
+      desc "The Expressif transformation expression language"
+      tag "expressif"
+      filenames "*.expr", "*.expressif"
+
+      state :root do
+        rule %r/(→)([^\r\n]*)/, groups(Operator, Generic::Output)
+        rule %r/\s+/, Text::Whitespace
+        rule %r/#"(?:\\.|[^"\\])*"/, Literal::Date
+        rule %r/"(?:\\.|[^"\\])*"/, Str
+        rule %r/`(?:\\.|[^`\\])*`/, Str
+        rule %r/(?:{{ model.constantRegex }})\b/i, Keyword::Constant
+        rule %r/@(?:_|[A-Za-z_][\w-]*)/, Name::Variable
+        rule %r/\^?\.(?:[A-Za-z_][\w-]*|\d+)/, Name::Property
+        rule %r/\[(?:[A-Za-z_][\w-]*|\d+)\]/, Name::Property
+        rule %r/\b(?:{{ model.functionRegexes | array.join "|" }})\b/i, Name::Function
+        rule %r/[+-]?\d+(?:\.\d+)?\b/, Num
+        rule %r/(?:{{ model.operatorRegex }})/i, Operator
+        rule %r/[(){}\[\]]/, Punctuation
+        rule %r/[A-Za-z_][\w-]*/, Text
+        rule %r/./, Text
+      end
+    end
+  end
+end

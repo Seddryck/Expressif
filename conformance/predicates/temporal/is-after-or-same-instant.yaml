@@ -1,0 +1,46 @@
+suite: temporal
+kind: predicate
+operator: is-after-or-same-instant
+tests:
+  - id: is-after-or-same-instant.valid.date-time
+    cases:
+      - id: is-after-or-same-instant.valid.date-time.today
+        value: 2022-11-21
+        expected: true
+        parameters:
+          - 2022-11-21
+      - id: is-after-or-same-instant.valid.date-time.yesterday
+        value: 2022-11-20
+        expected: false
+        parameters:
+          - 2022-11-21
+      - id: is-after-or-same-instant.valid.date-time.tomorrow
+        value: 2022-11-22
+        expected: true
+        parameters:
+          - 2022-11-21
+      - id: is-after-or-same-instant.valid.date-time.same-date-time
+        value: 2022-11-21 17:12:24
+        expected: true
+        parameters:
+          - 2022-11-21 17:12:24
+      - id: is-after-or-same-instant.valid.date-time.before-date-time
+        value: 2022-11-21 17:12:23
+        expected: false
+        parameters:
+          - 2022-11-21 17:12:24
+      - id: is-after-or-same-instant.valid.date-time.after-date-time
+        value: 2022-11-21 17:12:25
+        expected: true
+        parameters:
+          - 2022-11-21 17:12:24
+      - id: is-after-or-same-instant.valid.special.empty
+        value:
+        expected: false
+        parameters:
+          - 2022-11-21
+      - id: is-after-or-same-instant.valid.special.null
+        value: (null)
+        expected: false
+        parameters:
+          - 2022-11-21

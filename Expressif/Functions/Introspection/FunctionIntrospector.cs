@@ -29,6 +29,7 @@ public class FunctionIntrospector : BaseIntrospector
 
         foreach (var function in functions)
         {
+            var contract = FunctionContractIntrospector.Describe(function.Type, function.Type.Name.ToKebabCase());
             yield return new FunctionInfo(
                     function.Type.Name.ToKebabCase()
                     , function.Type.IsPublic
@@ -39,7 +40,12 @@ public class FunctionIntrospector : BaseIntrospector
                                 ? $"{function.Type.Namespace!.Split('.').Last().ToKebabCase()}-to-{function.Type.Name.ToKebabCase()}"
                                 : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}"
                             ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
-                    , function.Type.Namespace!.ToToken('.').Last()
+                    , function.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
+                        ?? function.Type.Namespace!.ToToken('.').Last().ToKebabCase()
+                    , contract.Input
+                    , contract.Output
+                    , contract.Converted
+                    , contract.Reason
                     , function.Type
                     , fast ? "" : function.Type.GetSummary()
                     , fast ? [] : BuildParameters(function.Type.GetInfoConstructors()).ToArray()

@@ -63,9 +63,9 @@ The expression must be provided through exactly one source:
 
 Providing both sources, or neither source, returns an error.
 
-### ClosedExpression evaluation (no input)
+### Closed expression evaluation (no input)
 
-When `--input` is not provided, the expression is evaluated as a `ClosedExpression` and executed exactly once.
+When `--input` is not provided, the expression is validated as closed and executed exactly once.
 
 ```console
 expressif evaluate "5 | add(3)"
@@ -178,7 +178,9 @@ expressif run "add(1)" --input 42
 Nested enumerable elements are preserved and not flattened when using `--batch`.
 
 ```console
+{% raw %}
 expressif run "count" --batch "{{1, 2, 3}, {4, 5}}"
+{% endraw %}
 ```
 
 ```text

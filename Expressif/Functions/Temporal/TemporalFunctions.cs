@@ -6,8 +6,11 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Temporal;
 
 [Function(prefix: "dateTime")]
-public abstract class BaseTemporalFunction : IFunction
+public abstract class BaseTemporalFunction<TOut> : IFunction<DateTime?, TOut?>
 {
+    TOut? IFunction<DateTime?, TOut?>.Evaluate(DateTime? value)
+        => Evaluate((object?)value) is TOut result ? result : default;
+
     public object? Evaluate(object? value)
     {
         return value switch
@@ -35,10 +38,14 @@ public abstract class BaseTemporalFunction : IFunction
     protected abstract object EvaluateDateTime(DateTime value);
 }
 
+public abstract class BaseTemporalFunction : BaseTemporalFunction<DateTime?>
+{ }
+
 /// <summary>
 /// Returns the date at midnight of the argument dateTime.
 /// </summary>
 [Function(prefix: "", aliases: ["dateTime-to-date"])]
+[Scope("temporal/conversion")]
 public class DateTimeToDate : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => value.Date;
@@ -48,7 +55,7 @@ public class DateTimeToDate : BaseTemporalFunction
 /// Returns how many years separate the argument dateTime and now.
 /// </summary>
 [Function(prefix: "", aliases: ["date-to-age"])]
-public class Age : BaseTemporalFunction
+public class Age : BaseTemporalFunction<int?>
 {
     protected override object EvaluateNull() => 0;
     protected override object EvaluateDateTime(DateTime value)
@@ -67,6 +74,7 @@ public class Age : BaseTemporalFunction
 /// Returns `null` if the event is unknown.
 /// </summary>
 [Function(prefix: "", aliases: ["calendar-catholic"])]
+[Scope("temporal/calendar")]
 public class CatholicCalendar : BaseDatePartChangeFunction
 {
     public Func<string> Event { get; }
@@ -150,6 +158,7 @@ public class CatholicCalendar : BaseDatePartChangeFunction
 /// <summary>
 /// Returns the first day of the month of the same month/year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class FirstOfMonth : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1);
@@ -158,6 +167,7 @@ public class FirstOfMonth : BaseTemporalFunction
 /// <summary>
 /// Returns the first of January of the same year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class FirstOfYear : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 1, 1);
@@ -166,6 +176,7 @@ public class FirstOfYear : BaseTemporalFunction
 /// <summary>
 /// Returns the last day of the month of the same month/year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class LastOfMonth : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1).AddMonths(1).AddDays(-1);
@@ -174,6 +185,7 @@ public class LastOfMonth : BaseTemporalFunction
 /// <summary>
 /// Returns the 31st of December of the same year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class LastOfYear : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 12, 31);
@@ -249,7 +261,7 @@ public class Clamp : BaseTemporalFunction
 /// Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.
 /// </summary>
 [Function(prefix: "")]
-public class DurationBetween : BaseTemporalFunction
+public class DurationBetween : BaseTemporalFunction<TimeSpan?>
 {
     public Func<object?> Previous { get; }
 
@@ -293,6 +305,7 @@ public class SetTime : BaseTemporalFunction
 /// Returns the dateTime argument except if the value is `null` then it returns the parameter value.
 /// </summary>
 [Function(prefix: "")]
+[Scope("temporal/conversion")]
 public class NullToDate : BaseTemporalFunction
 {
     public Func<DateTime> Default { get; }
@@ -309,6 +322,7 @@ public class NullToDate : BaseTemporalFunction
 /// Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.
 /// </summary>
 [Function(prefix: "")]
+[Scope("temporal/conversion")]
 public class InvalidToDate : BaseTemporalFunction
 {
     public Func<DateTime> Default { get; }
@@ -374,19 +388,19 @@ public class CeilingMinute : BaseTemporalFunction
 public class Forward : BaseTemporalFunction
 {
     public Func<int> Times { get; }
-    public Func<string> TimeSpan { get; }
+    public Func<TimeOnly> Time { get; }
 
-    /// <param name="timeSpan">The value to be added to the argument value</param>
+    /// <param name="time">The value to be added to the argument value</param>
     /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the addition</param>
-    public Forward(Func<string> timeSpan, Func<int> times)
-        => (TimeSpan, Times) = (timeSpan, times);
+    public Forward(Func<TimeOnly> time, Func<int> times)
+        => (Time, Times) = (time, times);
 
-    /// <param name="timeSpan">The value to be added to the argument value</param>
-    public Forward(Func<string> timeSpan)
-        : this(timeSpan, () => 1) { }
+    /// <param name="time">The value to be added to the argument value</param>
+    public Forward(Func<TimeOnly> time)
+        : this(time, () => 1) { }
 
     protected override object EvaluateDateTime(DateTime value)
-        => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Invoke()!).Ticks * Times.Invoke());
+        => value.AddTicks(Time.Invoke().ToTimeSpan().Ticks * Times.Invoke());
 }
 
 /// <summary>
@@ -395,15 +409,15 @@ public class Forward : BaseTemporalFunction
 [Function(prefix: "dateTime", aliases: ["dateTime-to-subtract"])]
 public class Backward : Forward
 {
-    /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
+    /// <param name="time">The value to be subtracted to the argument value.</param>
     /// <param name="times">An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction</param>
-    public Backward(Func<string> timeSpan, Func<int> times)
-        : base(timeSpan, times) { }
+    public Backward(Func<TimeOnly> time, Func<int> times)
+        : base(time, times) { }
 
-    /// <param name="timeSpan">The value to be subtracted to the argument value.</param>
-    public Backward(Func<string> timeSpan)
-        : base(timeSpan) { }
+    /// <param name="time">The value to be subtracted to the argument value.</param>
+    public Backward(Func<TimeOnly> time)
+        : base(time) { }
 
     protected override object EvaluateDateTime(DateTime value)
-        => value.AddTicks(System.TimeSpan.Parse(TimeSpan.Invoke()!).Ticks * Times.Invoke() * -1);
+        => value.AddTicks(Time.Invoke().ToTimeSpan().Ticks * Times.Invoke() * -1);
 }

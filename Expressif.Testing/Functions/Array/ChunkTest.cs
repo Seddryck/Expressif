@@ -17,7 +17,7 @@ public class ChunkTest
 
     [Test]
     public void Expression_LiteralSize_InstantiatesAndEvaluates()
-        => Assert.That(new Expression("chunk(2)").Evaluate(new[] { 1, 2, 3 }),
+        => Assert.That(Expression.Create("chunk(2)").Evaluate(new[] { 1, 2, 3 }),
             Is.EqualTo(new object?[][] { [1, 2], [3] }));
 
     [Test]
@@ -26,7 +26,7 @@ public class ChunkTest
         var context = new Context();
         context.Variables.Add<int>("size", 1);
 
-        Assert.That(new Expression("chunk({@size | increment})", context).Evaluate(new[] { 1, 2, 3 }),
+        Assert.That(Expression.Create("chunk({@size | increment})", context).Evaluate(new[] { 1, 2, 3 }),
             Is.EqualTo(new object?[][] { [1, 2], [3] }));
     }
 

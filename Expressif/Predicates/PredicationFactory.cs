@@ -1,20 +1,19 @@
-﻿using System;
+using Expressif.Functions;
+using Expressif.Bindings;
+using Expressif.Predicates.Operators;
+using Expressif.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Functions;
-using Expressif.Parsers;
-using Expressif.Predicates.Operators;
-using Sprache;
 
 namespace Expressif.Predicates;
 
 public class PredicationFactory : BaseExpressionFactory
 {
-    private Parser<IPredication> Parser { get; } = Parsers.Predication.Parser;
+    private ExpressifBinder Binder { get; } = new();
 
     protected UnaryOperatorFactory UnaryOperatorFactory { get; }
     protected BinaryOperatorFactory BinaryOperatorFactory { get; }
@@ -28,7 +27,7 @@ public class PredicationFactory : BaseExpressionFactory
 
     public virtual IPredicate Instantiate(string code, IContext context)
     {
-        var predication = Parser.Parse(code);
+        var predication = Binder.BindPredication(ExpressionParser.Parse(code));
         var predicate = Instantiate(predication, context);
         return predicate;
     }
@@ -37,17 +36,33 @@ public class PredicationFactory : BaseExpressionFactory
     => predication switch
     {
         SinglePredication single => Instantiate(single, context),
+        PipelinePredication pipeline => Instantiate(pipeline, context),
         UnaryPredication unary => Instantiate(unary, context),
         BinaryPredication binary => Instantiate(binary, context),
-        _ => throw new NotImplementedException()
+        _ => throw new BindingException($"Unsupported predication model '{predication.GetType().Name}'.")
     };
 
     internal IPredicate Instantiate(SinglePredication basic, IContext context)
     {
-        var predicates = new List<IPredicate>();
-        foreach (var predicate in basic.Members)
-            predicates.Add(Instantiate<IPredicate>(predicate.Name, predicate.Parameters, context));
-        return predicates[0];
+        var type = TypeMapper.Execute(basic.Member.Name);
+        return Instantiate<IPredicate>(type, basic.Member.Arguments, context);
+    }
+
+    internal IPredicate Instantiate(PipelinePredication pipeline, IContext context)
+        => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(pipeline.Expression, context));
+
+    protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
+        => parameter is OpenExpressionParameter open
+            ? CreateFunctionCast(
+                () => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(open.Expression, context))
+                    .Evaluate(EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value),
+                scalarType)
+            : base.CreateParameter(parameter, scalarType, context);
+
+    protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
+    {
+        var expression = new FunctionFactory().Instantiate(new ClosedRootExpression(input.Expression), context);
+        return CreateFunctionCast(() => expression.Evaluate(null), type);
     }
 
     internal IPredicate Instantiate(UnaryPredication unary, IContext context)

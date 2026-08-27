@@ -1,0 +1,30 @@
+suite: special
+kind: predicate
+operator: is-null
+tests:
+  - id: is-null.valid
+    cases:
+      - id: is-null.valid.special.empty
+        value:
+        expected: true
+      - id: is-null.valid.integer.zero
+        value: 0
+        expected: false
+      - id: is-null.valid.numeric.positive
+        value: 4
+        expected: false
+      - id: is-null.valid.special.null
+        value: (null)
+        expected: true
+      - id: is-null.valid.special.value
+        value: (value)
+        expected: false
+      - id: is-null.valid.special.empty-to-false
+        value: (empty)
+        expected: false
+      - id: is-null.valid.special.blank
+        value: (blank)
+        expected: false
+      - id: is-null.valid.text.foo
+        value: foo
+        expected: false

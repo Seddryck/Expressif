@@ -1,0 +1,155 @@
+// -----------------------------------------------------------------------------
+// Expressif function reference
+// -----------------------------------------------------------------------------
+
+.main-content {
+  .function-reference {
+    max-width: 60rem;
+  }
+
+  .function-reference__category {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+
+    padding: .3rem .65rem;
+
+    background: rgba($principal-light-color,.08);
+    color: $principal-light-color;
+
+    border-radius: .35rem;
+
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+  }
+
+  .function-reference {
+      margin-top: .75rem;
+  }
+  
+  .function-reference__meta {
+      display: grid;
+      gap: .35rem;
+      margin: 0 0 0.5rem;
+  }
+
+  .function-reference__description {
+      margin: 0;
+  }
+
+  .function-signature {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+
+    padding: 1rem 1.2rem;
+
+    font-family: var(--font-mono);
+    font-size: 1rem;
+
+    background: $code-background-color;
+    border: 1px solid $border-color;
+    border-radius: .5rem;
+  }
+  
+  .expr-value {
+      color: $body-text-color;
+  }
+  
+  .expr-pipe {
+      color: #b9b3ac;
+      font-weight: 400;
+  }
+  
+  .expr-function {
+      color: $principal-light-color;
+      font-weight: 650;
+  }
+
+  .function-divider {
+    margin: 2rem 0 2.25rem;
+
+    border: 0;
+    border-top: 1px solid $border-color;
+  }
+
+  .function-contract {
+    display: grid;
+    gap: 0.9rem;
+    padding-top: 2rem;
+    padding-left: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .function-contract__row {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+    align-items: start;
+
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid $border-color;
+  }
+
+  .function-contract__row:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .function-contract__label {
+    color: $body-text-color;
+    font-weight: 600;
+  }
+
+  .function-contract__value {
+    display: grid;
+    gap: 0.45rem;
+    justify-items: start;
+  }
+
+  .function-contract__argument {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .function-contract code {
+    padding: 0.12rem 0.35rem;
+    font-size: 0.85rem;
+    background: $code-background-color;
+    border: 1px solid $border-color;
+    border-radius: 0.25rem;
+  }
+
+  .function-contract__description,
+  .function-contract__empty {
+    color: $body-text-color;
+    opacity: 0.75;
+  }
+
+  @media (max-width: 40rem) {
+    .function-contract {
+      gap: 0.75rem;
+    }
+
+    .function-contract__row {
+      grid-template-columns: 1fr;
+      gap: 0.45rem;
+    }
+  }
+
+  .function-result {
+      margin-top: .25rem;
+      margin-bottom: 1.25rem;
+      margin-left: 1.25rem;
+  }
+
+  .member-reference {
+    color: $grey-dk-100;
+    font-size: 0.875rem;
+    margin-top: 2rem;
+  }
+}

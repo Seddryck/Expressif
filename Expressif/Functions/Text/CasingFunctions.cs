@@ -7,6 +7,7 @@ namespace Expressif.Functions.Text;
 /// <summary>
 /// Base class for character-by-character text casing transformations. For these functions, `null`, `DBNull`, and `(null)` return `null`; `(empty)` returns `(empty)`; and blank values return `(blank)`.
 /// </summary>
+[Scope("text/casing")]
 public abstract class BaseTextCasing : BaseTextFunction
 {
     private static readonly ArrayCaster ArrayCaster = new();

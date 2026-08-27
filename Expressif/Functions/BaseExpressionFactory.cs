@@ -1,12 +1,12 @@
-﻿using System;
+using Expressif.Bindings;
+using Expressif.Values;
+using Expressif.Values.Casters;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Expressif.Parsers;
-using Expressif.Values;
-using Expressif.Values.Casters;
 using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Functions;
@@ -49,6 +49,31 @@ public abstract class BaseExpressionFactory
         return (T)ctor.Invoke(typedFunctionParameters.ToArray());
     }
 
+    protected T Instantiate<T>(Type type, FunctionArgument[] arguments, IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, arguments);
+        return Instantiate<T>(binding.Constructor, binding.Parameters, context);
+    }
+
+    private T Instantiate<T>(ConstructorInfo ctor, IParameter[] parameters, IContext context)
+    {
+        var zip = ctor.GetParameters().Zip(parameters, (x, y) => new { x.ParameterType, Value = y });
+        var typedFunctionParameters = new List<Delegate>();
+        foreach (var param in zip)
+        {
+            if (param.ParameterType.IsGenericType && param.ParameterType.GetGenericTypeDefinition() == typeof(Func<>))
+            {
+                var scalarType = param.ParameterType.GenericTypeArguments[0];
+                typedFunctionParameters.Add(CreateParameter(param.Value, scalarType, context));
+            }
+            else
+            {
+                typedFunctionParameters.Add(() => param.Value);
+            }
+        }
+        return (T)ctor.Invoke(typedFunctionParameters.ToArray());
+    }
+
     protected internal virtual ConstructorInfo GetMatchingConstructor(Type type, int paramCount)
         => type.GetConstructors().SingleOrDefault(x => x.GetParameters().Length == paramCount)
             ?? throw new MissingOrUnexpectedParametersFunctionException(type.Name, paramCount);
@@ -63,25 +88,30 @@ public abstract class BaseExpressionFactory
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
+            LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
-            ObjectIndexParameter index => CreateFunctionCast(() => context.CurrentObject[index.Index], scalarType),
-            TupleProjectionParameter projection => CreateFunctionCast(() => context.CurrentObject.Value is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
-            ObjectPropertyParameter prop => CreateFunctionCast(() => context.CurrentObject[prop.Name], scalarType),
-            VariableParameter variable => CreateFunctionCast(() => context.Variables[variable.Name], scalarType),
+            ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
+            TupleProjectionParameter projection => CreateFunctionCast(() => GetCurrent(context) is TupleValue tuple && projection.Index < tuple.Count ? tuple[projection.Index] : null, scalarType),
+            ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
+            VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
-            _ => throw new NotImplementedException($"Cannot handle the parameter type '{parameter.GetType().Name}'")
+            _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
 
         object?[] BuildArray(ArrayParameter array, IContext currentContext)
         {
-            var values = new object?[array.Values.Length];
-            for (var i = 0; i < array.Values.Length; i++)
+            var values = new List<object?>();
+            foreach (var element in array.Elements)
             {
-                var elementFactory = CreateParameter(array.Values[i], typeof(object), currentContext);
-                values[i] = elementFactory.DynamicInvoke();
+                var elementFactory = CreateParameter(element.Value, typeof(object), currentContext);
+                var evaluated = elementFactory.DynamicInvoke();
+                if (element.IsSpread)
+                    Functions.Array.SpreadValues.Append(evaluated, values);
+                else
+                    values.Add(evaluated);
             }
 
-            return values;
+            return values.ToArray();
         }
 
         Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)
@@ -110,9 +140,9 @@ public abstract class BaseExpressionFactory
                     continue;
                 }
 
-                if (field.Value is LiteralParameter literal && RecordSyntax.TryParseTypedToken(literal.Value, out var typed))
+                if (field.Value is LiteralParameter literal)
                 {
-                    value.Set(field.Name, typed);
+                    value.Set(field.Name, literal.Value);
                     continue;
                 }
 
@@ -123,8 +153,30 @@ public abstract class BaseExpressionFactory
             return value;
         }
 
-        static IInterval buildInterval(Interval value)
-            => new IntervalBuilder().Create(value.LowerBoundType, value.LowerBound, value.UpperBound, value.UpperBoundType);
+        static IInterval buildInterval(IntervalBinding value)
+            => new IntervalBuilder().Create(value);
+    }
+
+    private static object? GetAmbient(IContext context)
+        => context.CurrentObject.Value ?? EvaluationRuntime.Frame?.Ambient;
+
+    private static object? GetCurrent(IContext context)
+        => EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
+
+    private static object? GetVariable(IContext context, string name)
+        => EvaluationRuntime.Context is { } evaluationContext
+            && evaluationContext.TryGetVariable(name, out var value)
+                ? value
+                : context.Variables[name];
+
+    private static object? GetAmbientValue(IContext context, string name)
+        => NamedValueAccessor.Get(GetAmbient(context), name);
+
+    private static object? GetAmbientValue(IContext context, int index)
+    {
+        var ambient = new ContextObject();
+        ambient.Set(GetAmbient(context));
+        return ambient[index];
     }
 
     private MethodInfo? cacheCastInfo;

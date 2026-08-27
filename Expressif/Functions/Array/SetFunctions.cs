@@ -5,6 +5,7 @@ using Expressif.Functions;
 
 namespace Expressif.Functions.Array;
 
+[Scope("array/set")]
 public abstract class BaseArraySetFunction : BaseArrayFunction
 {
     protected static object?[] DistinctByOrder(IEnumerable source)
@@ -51,6 +52,7 @@ public abstract class BaseArraySetFunction : BaseArrayFunction
 /// Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.
 /// </summary>
 [Function(prefix: "", aliases: ["distinct"])]
+[Scope("array/set")]
 public class Distinct : BaseArrayFunction
 {
     public Distinct() { }

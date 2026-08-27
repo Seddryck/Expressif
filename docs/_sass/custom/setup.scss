@@ -1,0 +1,24 @@
+// Layout
+$sidebar-width: 280px;
+$content-width: 60rem;
+
+// Expressif coffee palette
+$coffee-000: #faf6f1;
+$coffee-100: #ead8c5;
+$coffee-200: #cda472;
+$coffee-300: #9a633d;
+
+// Slate palette used by custom components
+$expressif-slate-050: #f8fafc;
+$expressif-slate-100: #f1f5f9;
+$expressif-slate-200: #e2e8f0;
+$expressif-slate-300: #cbd5e1;
+$expressif-slate-500: #64748b;
+$expressif-slate-700: #334155;
+$expressif-slate-900: #0f172a;
+
+// Shared brand tokens used by custom partials across multiple theme entrypoints.
+$nav-child-link-color: #cbd5e1 !default;
+$accent-color: #d4a373 !default;
+$principal-light-color: #a66a3f !default;
+$principal-dark-color: $expressif-slate-900 !default;

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Expressif.Predicates.Temporal;
 using Expressif.Testing.Conformance;
 
@@ -16,7 +16,7 @@ public class AroundTodayPredicatesTest
     }
 
     [Conformance]
-    public void Tomorrow_Valid_Date(string text, bool expected)
+    public void IsTomorrow_Valid_Date(string text, bool expected)
         => Assert.That(new Tomorrow(new DateTime(2022, 12, 29))
                 .Evaluate(
                     TypeDescriptor.GetConverter(typeof(DateOnly))
@@ -25,72 +25,72 @@ public class AroundTodayPredicatesTest
             , Is.EqualTo(expected));
 
     [Conformance]
-    public void Tomorrow_Valid_DateTime(DateTime dt, bool expected)
+    public void IsTomorrow_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new Tomorrow(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void Today_Valid_DateTime(DateTime dt, bool expected)
+    public void IsToday_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new Today(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void Today_Valid_Date(string text, bool expected)
+    public void IsToday_Valid_Date(string text, bool expected)
             => Assert.That(new Today(new DateTime(2022, 12, 29)).Evaluate(
                 TypeDescriptor.GetConverter(typeof(DateOnly))
                 .ConvertFromInvariantString(text)!
             ), Is.EqualTo(expected));
 
     [Conformance]
-    public void Yesterday_Valid_DateTime(DateTime dt, bool expected)
+    public void IsYesterday_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new Yesterday(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void Yesterday_Valid_Date(string text, bool expected)
+    public void IsYesterday_Valid_Date(string text, bool expected)
             => Assert.That(new Yesterday(new DateTime(2022, 12, 29)).Evaluate(
                 TypeDescriptor.GetConverter(typeof(DateOnly))
                 .ConvertFromInvariantString(text)!
             ), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinCurrentWeek_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinCurrentWeek_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinCurrentWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinCurrentMonth_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinCurrentMonth_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinCurrentMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinCurrentYear_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinCurrentYear_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinCurrentYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinUpcomingWeek_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinUpcomingWeek_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinUpcomingWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinUpcomingMonth_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinUpcomingMonth_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinUpcomingMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinUpcomingYear_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinUpcomingYear_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinUpcomingYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinLastWeek_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinLastWeek_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinLastWeek(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinLastMonth_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinLastMonth_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinLastMonth(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinLastYear_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinLastYear_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinLastYear(new DateTime(2022, 12, 29)).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinNextDays_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinNextDays_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinNextDays(new DateTime(2022, 12, 29), () => 3).Evaluate(dt), Is.EqualTo(expected));
 
     [Conformance]
-    public void WithinPreviousDays_Valid_DateTime(DateTime dt, bool expected)
+    public void IsWithinPreviousDays_Valid_DateTime(DateTime dt, bool expected)
         => Assert.That(new WithinPreviousDays(new DateTime(2022, 12, 29), () => 3).Evaluate(dt), Is.EqualTo(expected));
 }

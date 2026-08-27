@@ -1,12 +1,12 @@
-﻿using System;
+using Expressif.Bindings;
+using Expressif.Predicates.Text;
+using Expressif.Serializers;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Parsers;
-using Expressif.Predicates.Text;
-using Expressif.Serializers;
-using NUnit.Framework;
 
 namespace Expressif.Testing;
 
@@ -157,7 +157,7 @@ public class PredicationBuilderTest
         context.CurrentObject.Set(new List<string>() { "stein", "sla", "Alb" });
         Assert.That(predication.Evaluate("Nikola Tesla"), Is.True);
 
-        context.CurrentObject.Set(new List<string>() { "sla", "stein", "Alb" });
+        context.CurrentObject.Set(new List<string>() { "sla", "stein","Alb" });
         Assert.That(predication.Evaluate("Nikola Tesla"), Is.False);
     }
 

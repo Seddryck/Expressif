@@ -1,11 +1,11 @@
-﻿using System;
+using Expressif.Functions.Text;
+using Expressif.Bindings;
+using Expressif.Serializers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Functions.Text;
-using Expressif.Parsers;
-using Expressif.Serializers;
 
 namespace Expressif.Testing;
 
@@ -115,7 +115,7 @@ public class ExpressionBuilderTest
             .Chain<FirstChars>(5)
             .Chain<PadRight>(7, '*');
         var str = builder.Serialize();
-        internalSerializer.Verify(x => x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
+        internalSerializer.Verify(x=>x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
     }
 
     [Test]
@@ -126,7 +126,7 @@ public class ExpressionBuilderTest
             .Chain<FirstChars>(5)
             .Chain<PadRight>(7, '*');
         var str = builder.Serialize();
-        Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, *)"));
+        Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, \"*\")"));
     }
 
     [Test]

@@ -98,9 +98,94 @@ public class FunctionIntrospectorTest
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
             Assert.That(info.Scope, Is.Not.Null.And.Not.Empty);
-            Assert.That(info.Scope, Is.EqualTo("Text").Or.EqualTo("Numeric").Or.EqualTo("IO").Or.EqualTo("Temporal").Or.EqualTo("Special").Or.EqualTo("Array").Or.EqualTo("Record"));
+            Assert.That(info.Scope, Does.Match("^[a-z][a-z-]*(/[a-z][a-z-]*)?$"));
         }
     }
+
+    [Test]
+    public void Locate_ExpressifAssembly_ArithmeticFunctionsExposeNumericSubcategory()
+        => Assert.That(
+            Infos.Where(x => x.Scope == "numeric/arithmetic").Select(x => x.Name),
+            Is.EquivalentTo(new[] { "absolute", "add", "cube-power", "cube-root", "decrement", "divide", "greatest-common-divisor", "increment", "invert", "lowest-common-multiple", "multiply", "nth-root", "oppose", "percent-change", "power", "sign", "square-power", "square-root", "subtract" }));
+
+    [TestCase("array/set", new[] { "complement", "difference", "distinct", "intersection", "symmetric-difference", "union" })]
+    [TestCase("numeric/rounding", new[] { "ceiling", "clip", "floor", "integer", "round" })]
+    [TestCase("numeric/conversion", new[] { "null-to-zero" })]
+    [TestCase("numeric/formatting", new[] { "human-readable-format-binary-bytes", "human-readable-format-decimal", "human-readable-format-decimal-bytes" })]
+    [TestCase("temporal/calendar", new[] { "catholic-calendar", "first-in-month", "first-of-month", "first-of-year", "last-in-month", "last-of-month", "last-of-year", "length-of-month", "length-of-year" })]
+    [TestCase("temporal/conversion", new[] { "datetime-to-date", "invalid-to-date", "null-to-date" })]
+    [TestCase("text/casing", new[] { "allcaps-case", "camel-case", "camel-snake-case", "cobol-case", "dot-case", "flat-case", "kebab-case", "lower", "namespace-case", "pascal-case", "pascal-snake-case", "path-case", "screaming-snake-case", "sentence-case", "snake-case", "swap-case", "title-case", "train-case", "upper" })]
+    [TestCase("text/character", new[] { "remove-chars", "replace-chars" })]
+    [TestCase("text/concatenation", new[] { "append", "append-new-line", "append-space", "prefix", "prefix-new-line", "prefix-space", "prepend", "prepend-new-line", "prepend-space", "replace-slice", "suffix", "suffix-new-line", "suffix-space" })]
+    [TestCase("text/conversion", new[] { "text-to-datetime" })]
+    [TestCase("text/counting", new[] { "count-distinct-chars", "count-substring", "length" })]
+    [TestCase("text/encoding", new[] { "html-to-text", "text-to-html" })]
+    [TestCase("text/filtering", new[] { "filter-chars", "retain-alpha", "retain-alpha-numeric", "retain-numeric", "retain-numeric-symbol" })]
+    [TestCase("text/masking", new[] { "mask-to-text", "text-to-mask" })]
+    [TestCase("text/normalization", new[] { "clean-whitespace", "collapse-whitespace", "empty-to-null", "null-to-empty", "slug", "trim", "whitespaces-to-empty", "whitespaces-to-null", "without-diacritics", "without-whitespaces" })]
+    [TestCase("text/padding", new[] { "pad-center", "pad-left", "pad-right" })]
+    [TestCase("text/selection", new[] { "after-substring", "before-substring", "first-chars", "last-chars", "skip-first-chars", "skip-last-chars" })]
+    [TestCase("text/tokenization", new[] { "token", "token-count" })]
+    public void Locate_ExpressifAssembly_FunctionsExposeBehavioralSubcategory(string scope, string[] names)
+        => Assert.That(
+            Infos.Where(x => x.Scope == scope).Select(x => x.Name),
+            Is.EquivalentTo(names));
+
+    [Test]
+    public void Describe_AllFunctionsExposeExpressifInputAndOutputTypes()
+    {
+        foreach (var info in Infos)
+        {
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(info.Input, Is.Not.Null.And.Not.Empty, info.Name);
+                Assert.That(info.Output, Is.Not.Null.And.Not.Empty, info.Name);
+            }
+        }
+    }
+
+    [TestCase("round", "numeric", "numeric")]
+    [TestCase("length", "text", "integer")]
+    [TestCase("datetime-to-date", "date-time", "date")]
+    [TestCase("next-weekday", "date-time", "date")]
+    [TestCase("reverse", "array", "array")]
+    [TestCase("record", "any", "record")]
+    public void Describe_TypedFunction_ExposesExpressifContract(string name, string input, string output)
+    {
+        var info = Infos.Single(x => x.Name == name);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(info.Converted, Is.True);
+            Assert.That(info.Input, Is.EqualTo(input));
+            Assert.That(info.Output, Is.EqualTo(output));
+        }
+    }
+
+    [Test]
+    public void Describe_UnconvertedFunctions_AreExplicitlyReported()
+        => Assert.That(
+            Infos.Where(x => !x.Converted).Select(x => x.Name),
+            Is.EquivalentTo(new[] { "coalesce", "field", "neutral" }));
+
+    [TestCase("after-substring", "substring", "text")]
+    [TestCase("first-chars", "length", "integer")]
+    [TestCase("clamp", "min", "date-time")]
+    [TestCase("filter", "predicate", "predicate")]
+    [TestCase("adjacent", "operation", "expression")]
+    [TestCase("fold", "accumulator", "accumulator")]
+    [TestCase("next-weekday", "weekday", "weekday")]
+    [TestCase("duration-between", "previous", "date | date-time | year-month")]
+    public void Describe_Parameter_ExposesExpressifType(string function, string parameter, string type)
+        => Assert.That(
+            Infos.Single(x => x.Name == function).Parameters.Single(x => x.Name == parameter).Type,
+            Is.EqualTo(type));
+
+    [Test]
+    public void Describe_AllParametersExposeExpressifTypes()
+        => Assert.That(
+            Infos.SelectMany(x => x.Parameters).Select(x => x.Type),
+            Is.All.Not.Null.And.Not.Empty);
 
     [Test]
     public void Locate_ExpressifAssembly_ArrayFunctionsExposeWrappersAndShiftsOnly()

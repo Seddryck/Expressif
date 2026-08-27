@@ -1,0 +1,52 @@
+---
+layout: docs
+title: "{{ model.name }}"
+parent: "{{ model.parent_title }}"
+grand_parent: "{{ model.grand_parent_title }}"
+nav_order: {{ model.nav_order }}
+has_toc: false
+permalink: /{{ model.kind_plural }}/{{ model.scope_slug }}/{{ model.name }}/
+tags:
+  - {{ model.kind_plural }}
+  - {{ model.scope_slug }}
+generated: true
+---
+
+```
+{{ model.signature }}
+```
+
+{{ model.summary }}
+
+## Parameters
+
+{{ if model.parameters.size == 0 }}
+
+This {{ model.kind }} has no parameters.
+
+{{ else if model.has_parameter_types }}
+
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+{{ model.parameter_rows }}
+
+{{ else }}
+
+| Name | Required | Description |
+|:-----|:---------|:------------|
+{{ model.parameter_rows }}
+{{ end }}
+
+{{ if model.examples.size > 0 }}
+
+## Examples
+
+{% raw %}
+```expressif
+{{ model.examples_text }}
+```
+{% endraw %}
+{{ end }}
+
+{{ model.reference_text }}
+{: .member-reference }

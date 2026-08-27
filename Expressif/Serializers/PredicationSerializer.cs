@@ -1,9 +1,9 @@
+using Expressif.Bindings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Parsers;
 
 namespace Expressif.Serializers;
 
@@ -30,6 +30,10 @@ public class PredicationSerializer
             case SinglePredication single:
                 SingleSerializer.Serialize(single, ref stringBuilder);
                 break;
+            case PipelinePredication pipeline:
+                var serializer = new FunctionSerializer();
+                stringBuilder.Append(string.Join(" | ", pipeline.Expression.Members.Select(serializer.Serialize)));
+                break;
             case UnaryPredication unary:
                 stringBuilder.Append('!');
                 stringBuilder.Append('{');
@@ -48,7 +52,7 @@ public class PredicationSerializer
                 stringBuilder.Append('}');
                 break;
             default:
-                throw new NotImplementedException();
+                throw new BindingException($"Unsupported predication model '{predication.GetType().Name}'.");
         }
     }
 }

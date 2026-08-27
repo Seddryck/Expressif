@@ -1,11 +1,10 @@
-﻿using System;
+using Expressif.Bindings;
+using Expressif.Serializers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Expressif.Parsers;
-using Expressif.Serializers;
-using Sprache;
 
 namespace Expressif.Testing.Serializers;
 
@@ -14,7 +13,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_FieldShorthand_PreservesShorthand()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse(".name");
+        var function = new ExpressifBinder().BindFunction(ExpressifSyntax.Parse(".name"));
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(".name"));
     }
@@ -22,9 +21,9 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_DynamicFieldName_PreservesLongForm()
     {
-        var function = Expressif.Parsers.Function.Parser.End().Parse("field([requested-field])");
+        var function = new ExpressifBinder().BindFunction(ExpressifSyntax.Parse("field(\"requested-field\")"));
 
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field([requested-field])"));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field(\"requested-field\")"));
     }
     [Test]
     public void Serialize_NoParameter_NoParenthesis()
@@ -70,7 +69,7 @@ public class FunctionSerializerTest
     public void Serialize_MultipleParameter_ParenthesisAndComas()
     {
         var function = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, *)"));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("pad-right(7, \"*\")"));
     }
 
     [Test]
@@ -84,5 +83,14 @@ public class FunctionSerializerTest
         serializer.Serialize(function);
 
         internalSerializer.Verify(x => x.Serialize(It.IsAny<LiteralParameter>()), Times.Exactly(2));
+    }
+
+    [Test]
+    public void Serialize_NamedArguments_PreservesNames()
+    {
+        var function = new ExpressifBinder().BindFunction(ExpressifSyntax.Parse("replace-slice(2, append := \"abc\", length := 4)"));
+
+        Assert.That(new FunctionSerializer().Serialize(function),
+            Is.EqualTo("replace-slice(2, append := \"abc\", length := 4)"));
     }
 }

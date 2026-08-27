@@ -1,0 +1,33 @@
+suite: numeric
+kind: predicate
+operator: is-positive-or-zero
+tests:
+  - id: is-positive-or-zero.valid
+    cases:
+      - id: is-positive-or-zero.valid.integer.zero
+        value: 0
+        expected: true
+      - id: is-positive-or-zero.valid.integer.one
+        value: 1
+        expected: true
+      - id: is-positive-or-zero.valid.integer.positive
+        value: 10
+        expected: true
+      - id: is-positive-or-zero.valid.integer.negative
+        value: -10
+        expected: false
+      - id: is-positive-or-zero.valid.numeric.positive-decimal
+        value: 10.001
+        expected: true
+      - id: is-positive-or-zero.valid.numeric.negative-decimal
+        value: -10.001
+        expected: false
+      - id: is-positive-or-zero.valid.special.empty-tag
+        value: (empty)
+        expected: false
+      - id: is-positive-or-zero.valid.special.null
+        value: (null)
+        expected: false
+      - id: is-positive-or-zero.valid.special.blank
+        value: (blank)
+        expected: false

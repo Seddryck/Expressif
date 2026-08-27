@@ -11,6 +11,7 @@ namespace Expressif.Functions.Text;
 /// Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/masking")]
 public class TextToMask : BaseTextFunction
 {
     private char maskChar { get; } = '*';
@@ -46,6 +47,7 @@ public class TextToMask : BaseTextFunction
 /// Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.
 /// </summary>
 [Function(prefix: "")]
+[Scope("text/masking")]
 public class MaskToText : BaseTextFunction
 {
     private char maskChar { get; } = '*';

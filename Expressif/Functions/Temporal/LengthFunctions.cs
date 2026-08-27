@@ -9,7 +9,8 @@ using Expressif.Values.Casters;
 
 namespace Expressif.Functions.Temporal;
 
-public abstract class BaseTemporalLengthFunction : BaseTemporalFunction
+[Scope("temporal/calendar")]
+public abstract class BaseTemporalLengthFunction : BaseTemporalFunction<int?>
 {
     protected override object? EvaluateUncasted(object value)
     {
