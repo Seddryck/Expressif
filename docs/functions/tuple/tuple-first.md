@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "tuple-first"
-parent: "Special functions"
+parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 130
+nav_order: 20
 has_toc: false
-permalink: /functions/special/tuple-first/
+permalink: /functions/tuple/tuple-first/
 tags:
   - functions
-  - special
+  - tuple
 generated: true
 ---
 
@@ -29,6 +29,7 @@ This function has no parameters.
 
 
 
+
 ## Examples
 
 {% raw %}
@@ -39,6 +40,6 @@ T(10, 20, 30) | tuple-first → 10
 
 
 **Kind:** Function  
-**Scope:** `special`  
+**Scope:** `tuple`  
 **Aliases:** `tuple-first`
 {: .member-reference }

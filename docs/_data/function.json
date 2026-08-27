@@ -1337,7 +1337,7 @@
     "Aliases": [
       "tuple-at"
     ],
-    "Scope": "special",
+    "Scope": "tuple",
     "Input": "tuple",
     "Output": "any",
     "Summary": "Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.",
@@ -1359,7 +1359,7 @@
     "Aliases": [
       "tuple-first"
     ],
-    "Scope": "special",
+    "Scope": "tuple",
     "Input": "tuple",
     "Output": "any",
     "Summary": "Returns the first field of a tuple. Returns `null` when the input is not a tuple.",
@@ -1374,7 +1374,7 @@
     "Aliases": [
       "tuple-second"
     ],
-    "Scope": "special",
+    "Scope": "tuple",
     "Input": "tuple",
     "Output": "any",
     "Summary": "Returns the second field of a tuple. Returns `null` when the input is not a tuple.",

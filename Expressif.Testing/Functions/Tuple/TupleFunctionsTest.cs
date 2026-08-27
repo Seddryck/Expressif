@@ -1,7 +1,7 @@
-using Expressif.Functions.Special;
+using Expressif.Functions.Tuple;
 using Expressif.Values;
 
-namespace Expressif.Testing.Functions.Special;
+namespace Expressif.Testing.Functions.Tuple;
 
 public class TupleFunctionsTest
 {
