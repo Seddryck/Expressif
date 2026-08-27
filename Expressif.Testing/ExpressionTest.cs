@@ -489,6 +489,22 @@ public class ExpressionTest
         Assert.That(result, Is.EqualTo(new object?[] { "alice", "anna" }));
     }
 
+    [TestCase("filter(less-than(150) |AND greater-than(0))", new int[] { 30 })]
+    [TestCase("filter(less-than(0) |OR greater-than(150))", new int[] { -10, 200 })]
+    public void Evaluate_ArrayFilterWithComposedPredicate_FiltersCurrentElements(string code, int[] expected)
+    {
+        var expression = Expression.Create(code);
+
+        var result = expression.Evaluate(new object[] { -10, 30, 200 });
+
+        Assert.That(result, Is.EqualTo(expected));
+    }
+
+    [TestCase("less-than(150) |AND greater-than(0)", true)]
+    [TestCase("less-than(0) |OR greater-than(150)", false)]
+    public void Evaluate_ComposedPredicateAgainstScalar_UsesScalarInput(string code, bool expected)
+        => Assert.That(Expression.Create(code).Evaluate(30), Is.EqualTo(expected));
+
     [TestCase(null, true)]
     [TestCase(2, true)]
     [TestCase(3, false)]
