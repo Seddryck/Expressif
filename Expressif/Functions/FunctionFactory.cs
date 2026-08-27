@@ -221,6 +221,14 @@ public class FunctionFactory : BaseExpressionFactory
         if (name.Equals("adjacent", StringComparison.OrdinalIgnoreCase))
             return BuildAdjacentFunction(function, context);
 
+        if (name.Equals("extend", StringComparison.OrdinalIgnoreCase))
+        {
+            if (function.Arguments is not [var extension]
+                || (extension.Name is not null && !extension.Name.Equals("value", StringComparison.OrdinalIgnoreCase)))
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            var evaluator = BuildValueEvaluator(extension.Value, context);
+            return new Tuple.Extend(value => evaluator.Invoke(value));
+        }
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
