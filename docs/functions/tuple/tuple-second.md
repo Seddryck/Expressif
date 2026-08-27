@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "tuple-second"
-parent: "Special functions"
+parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 140
+nav_order: 30
 has_toc: false
-permalink: /functions/special/tuple-second/
+permalink: /functions/tuple/tuple-second/
 tags:
   - functions
-  - special
+  - tuple
 generated: true
 ---
 
@@ -29,6 +29,7 @@ This function has no parameters.
 
 
 
+
 ## Examples
 
 {% raw %}
@@ -39,6 +40,6 @@ T(10, 20, 30) | tuple-second → 20
 
 
 **Kind:** Function  
-**Scope:** `special`  
+**Scope:** `tuple`  
 **Aliases:** `tuple-second`
 {: .member-reference }

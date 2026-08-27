@@ -1,12 +1,13 @@
 using System;
 using Expressif.Values;
 
-namespace Expressif.Functions.Special;
+namespace Expressif.Functions.Tuple;
 
 /// <summary>
 /// Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.
 /// </summary>
 [Function(prefix: "", aliases: ["tuple-at"])]
+[Scope("tuple")]
 public class TupleAt : IFunction<TupleValue, object?>
 {
     public Func<int> Position { get; }
@@ -30,6 +31,7 @@ public class TupleAt : IFunction<TupleValue, object?>
 /// Returns the first field of a tuple. Returns `null` when the input is not a tuple.
 /// </summary>
 [Function(prefix: "", aliases: ["tuple-first"])]
+[Scope("tuple")]
 public class TupleFirst : TupleAt
 {
     public TupleFirst()
@@ -40,6 +42,7 @@ public class TupleFirst : TupleAt
 /// Returns the second field of a tuple. Returns `null` when the input is not a tuple.
 /// </summary>
 [Function(prefix: "", aliases: ["tuple-second"])]
+[Scope("tuple")]
 public class TupleSecond : TupleAt
 {
     public TupleSecond()
