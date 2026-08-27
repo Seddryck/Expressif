@@ -13,7 +13,7 @@ namespace Expressif.Functions.Introspection;
 
 public record CtorInfo(ParamInfo[] Parameters);
 
-public record ParamInfo(string Name, string Type, string Summary);
+public record ParamInfo(string Name, string Type, bool Variadic, int MinimumCardinality, string Summary);
 
 /// <summary>
 /// Utility class to provide documentation for various types where available with the assembly.
@@ -127,6 +127,8 @@ public static class DocumentationExtensions
                         unwrapProvider: true,
                         declaringType: type,
                         parameterName: names[i]),
+                    IsVariadicParameter(type, names[i]),
+                    GetMinimumCardinality(type, names[i]),
                     paramNodes[i].InnerText.Trim()));
             }
 
@@ -134,6 +136,14 @@ public static class DocumentationExtensions
         }
         return ctorInfos.ToArray();
     }
+
+    private static bool IsVariadicParameter(Type declaringType, string parameterName)
+        => (declaringType == typeof(Array.Array) && parameterName == "values")
+            || (declaringType == typeof(Record.Record) && parameterName == "entries")
+            || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions");
+
+    private static int GetMinimumCardinality(Type declaringType, string parameterName)
+        => declaringType == typeof(Special.Coalesce) && parameterName == "expressions" ? 2 : 0;
 
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the

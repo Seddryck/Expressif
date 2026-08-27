@@ -17,12 +17,14 @@ internal static class FunctionHelpFormatter
         {
             builder.AppendLine("Parameters:");
             var nameWidth = function.Parameters.Max(x => x.Name.Length);
-            var typeWidth = function.Parameters.Max(x => x.Type.Length);
+            var typeWidth = function.Parameters.Max(x => x.TypeOrKind.Length);
             foreach (var parameter in function.Parameters)
             {
                 builder.Append("  ").Append(parameter.Name.PadRight(nameWidth)).Append("  ")
-                    .Append(parameter.Type.PadRight(typeWidth));
-                if (parameter.Optional)
+                    .Append(parameter.TypeOrKind.PadRight(typeWidth));
+                if (parameter.Variadic)
+                    builder.Append(" (variadic, ").Append(FormatMinimumCardinality(parameter)).Append(" or more)");
+                else if (parameter.Optional)
                     builder.Append(" (optional)");
 
                 builder.Append("  ").AppendLine(parameter.Summary);
@@ -81,11 +83,15 @@ internal static class FunctionHelpFormatter
         for (var i = 0; i < function.Parameters.Length; i++)
         {
             var parameter = function.Parameters[i];
-            builder.Append("    ").Append(parameter.Name);
-            if (parameter.Optional)
+            builder.Append("    ");
+            if (parameter.Variadic)
+                builder.Append("...");
+
+            builder.Append(parameter.Name);
+            if (parameter.Optional && !parameter.Variadic)
                 builder.Append('?');
 
-            builder.Append(": ").Append(parameter.Type);
+            builder.Append(": ").Append(parameter.TypeOrKind);
             if (i < function.Parameters.Length - 1)
                 builder.Append(',');
 
@@ -94,4 +100,13 @@ internal static class FunctionHelpFormatter
 
         builder.Append(") → ").AppendLine(function.Output);
     }
+
+    private static string FormatMinimumCardinality(FunctionParameterDocumentation parameter)
+        => parameter.MinimumCardinality switch
+        {
+            0 => "zero",
+            1 => "one",
+            2 => "two",
+            _ => parameter.MinimumCardinality.ToString(),
+        };
 }

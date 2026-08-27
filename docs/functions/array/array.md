@@ -15,7 +15,7 @@ generated: true
 ```
 any →
 array(
-    values?: array
+    ...values: any
 ) → array
 ```
 
@@ -27,7 +27,7 @@ Constructs a new array by evaluating zero or more positional expressions from le
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `array` | No | Specifies zero or more positional expressions whose evaluated values become array elements. |
+| `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the elements of the resulting array. |
 
 
 

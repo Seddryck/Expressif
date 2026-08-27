@@ -15,7 +15,7 @@ public class Array : IFunction<object?, object?[]>
     public Array()
         : this(() => []) { }
 
-    /// <param name="values">Specifies zero or more positional expressions whose evaluated values become array elements.</param>
+    /// <param name="values">Zero or more expressions whose evaluated values become the elements of the resulting array.</param>
     public Array(Func<ArrayArgumentEvaluator[]> values)
         => Values = values;
 

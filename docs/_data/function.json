@@ -35,10 +35,11 @@
     "Parameters": [
       {
         "Name": "values",
-        "Type": "array",
+        "Type": "any",
         "Optional": true,
         "Variadic": true,
-        "Summary": "Specifies zero or more positional expressions whose evaluated values become array elements."
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more expressions whose evaluated values become the elements of the resulting array."
       }
     ],
     "Examples": [
@@ -1151,9 +1152,11 @@
     "Parameters": [
       {
         "Name": "entries",
-        "Type": "array",
-        "Optional": false,
-        "Summary": "Factory that creates the named and spread entries used to build the record."
+        "Kind": "entry",
+        "Optional": true,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value."
       }
     ],
     "Examples": [
@@ -1184,9 +1187,11 @@
     "Parameters": [
       {
         "Name": "expressions",
-        "Type": "array",
+        "Type": "expression",
         "Optional": false,
-        "Summary": "The candidate expressions, with at least two required."
+        "Variadic": true,
+        "MinimumCardinality": 2,
+        "Summary": "Two or more candidate expressions evaluated from left to right against the same input."
       }
     ],
     "Examples": [

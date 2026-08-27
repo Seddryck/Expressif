@@ -31,10 +31,11 @@ public class Record : IFunction<object?, ValueRecord>
 {
     private Func<RecordEntryEvaluator[]> Entries { get; }
 
+    /// <summary>Creates an empty record constructor.</summary>
     public Record()
         : this(() => []) { }
 
-    /// <param name="entries">Factory that creates the named and spread entries used to build the record.</param>
+    /// <param name="entries">Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value.</param>
     public Record(Func<RecordEntryEvaluator[]> entries)
         => Entries = entries;
 
