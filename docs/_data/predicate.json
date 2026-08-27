@@ -1,5 +1,10 @@
 [
   {
+    "Name": "is-tuple", "IsPublic": true, "Aliases": [], "Scope": "tuple",
+    "Input": "any", "Output": "boolean", "Summary": "Returns whether the input value is a tuple.",
+    "Parameters": [], "Examples": ["T(1, \"foo\") | is-tuple → #true"]
+  },
+  {
     "Name": "has-arity",
     "IsPublic": true,
     "Aliases": [],

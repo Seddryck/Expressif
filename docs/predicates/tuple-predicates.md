@@ -19,3 +19,4 @@ Reference documentation for Expressif predicates in the `tuple` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`has-arity`]({{ '/predicates/tuple/has-arity/' | relative_url }}) | Returns whether the input tuple has exactly the expected number of positions. |
+| [`is-tuple`]({{ '/predicates/tuple/is-tuple/' | relative_url }}) | Returns whether the input value is a tuple. |
