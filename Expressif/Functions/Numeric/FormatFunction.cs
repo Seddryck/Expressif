@@ -6,6 +6,7 @@ using Expressif.Values.Special;
 namespace Expressif.Functions.Numeric;
 
 [Function]
+[Scope("numeric/formatting")]
 public abstract class FormatFunction : IFunction<decimal?, string?>
 {
     public string? Evaluate(decimal? value)

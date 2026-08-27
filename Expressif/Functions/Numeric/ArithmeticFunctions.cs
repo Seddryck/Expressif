@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Functions.Numeric;
 
+[Scope("numeric/arithmetic")]
 public abstract class BaseNumericArithmetic : BaseNumericFunction
 {
     public Func<decimal> Value { get; }
@@ -98,6 +99,7 @@ public class Divide : BaseNumericArithmetic
 /// <summary>
 /// Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class GreatestCommonDivisor : BaseNumericFunction
 {
     public Func<int> Value { get; }
@@ -151,6 +153,7 @@ public class GreatestCommonDivisor : BaseNumericFunction
 /// Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
 /// </summary>
 [Function(aliases: ["least-common-multiple", "smallest-common-multiple"])]
+[Scope("numeric/arithmetic")]
 public class LowestCommonMultiple : BaseNumericFunction
 {
     public Func<int> Value { get; }

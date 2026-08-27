@@ -1570,7 +1570,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith($"array →{Environment.NewLine}reverse() → array"));
-            Assert.That(result.StdOut, Does.Contain("Scope:   Array"));
+            Assert.That(result.StdOut, Does.Contain("Scope:   array"));
             Assert.That(result.StdOut, Does.Contain("Aliases: reverse"));
             Assert.That(result.StdErr, Is.Empty);
         });
@@ -1664,10 +1664,10 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.Contain("Array:"));
-            Assert.That(result.StdOut, Does.Contain("Numeric:"));
-            Assert.That(result.StdOut, Does.Contain("Record:"));
-            Assert.That(result.StdOut, Does.Contain("Temporal:"));
+            Assert.That(result.StdOut, Does.Contain("array:"));
+            Assert.That(result.StdOut, Does.Contain("numeric/arithmetic:"));
+            Assert.That(result.StdOut, Does.Contain("record:"));
+            Assert.That(result.StdOut, Does.Contain("temporal:"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -1680,7 +1680,7 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.StartWith("Record:"));
+            Assert.That(result.StdOut, Does.StartWith("record:"));
             Assert.That(result.StdOut, Does.Contain("  field"));
             Assert.That(result.StdOut, Does.Not.Contain("Array:"));
             Assert.That(result.StdErr, Is.Empty);

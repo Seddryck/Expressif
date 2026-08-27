@@ -3,11 +3,14 @@
     "Name": "and",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.",
     "Parameters": [
       {
         "Name": "expression",
+        "Type": "any",
         "Optional": false,
         "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `true`."
       }
@@ -20,7 +23,9 @@
       "false",
       "boolean-is-false"
     ],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is effectively `false` else return `false`.",
     "Parameters": []
   },
@@ -31,7 +36,9 @@
       "false-or-null",
       "boolean-is-false-or-null"
     ],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is effectively `false` or `null` else return `false`.",
     "Parameters": []
   },
@@ -42,35 +49,16 @@
       "identical-to",
       "boolean-is-identical-to"
     ],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "boolean",
         "Optional": false,
         "Summary": "A boolean value to compare to the argument."
-      }
-    ]
-  },
-  {
-    "Name": "not",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Boolean",
-    "Summary": "Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.",
-    "Parameters": []
-  },
-  {
-    "Name": "or",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Boolean",
-    "Summary": "Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.",
-    "Parameters": [
-      {
-        "Name": "expression",
-        "Optional": false,
-        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `false`."
       }
     ]
   },
@@ -81,7 +69,9 @@
       "true",
       "boolean-is-true"
     ],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is effectively `true` else return `false`.",
     "Parameters": []
   },
@@ -92,19 +82,51 @@
       "true-or-null",
       "boolean-is-true-or-null"
     ],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is effectively `true` or `null` else return `false`.",
     "Parameters": []
+  },
+  {
+    "Name": "not",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns the logical negation of the Boolean-converted input. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`.",
+    "Parameters": []
+  },
+  {
+    "Name": "or",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `false`."
+      }
+    ]
   },
   {
     "Name": "xor",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Boolean",
+    "Scope": "boolean",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` when exactly one of the Boolean-converted input and a secondary predicate expression evaluates to `true`. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Always evaluates the secondary expression.",
     "Parameters": [
       {
         "Name": "expression",
+        "Type": "any",
         "Optional": false,
         "Summary": "Specifies the secondary predicate expression evaluated after the input."
       }
@@ -117,43 +139,18 @@
       "equal-to",
       "numeric-is-equal-to"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is equal to the numeric value passed as parameter.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
       }
     ]
-  },
-  {
-    "Name": "is-divisible-by",
-    "IsPublic": true,
-    "Aliases": [
-      "divisible-by",
-      "numeric-is-divisible-by"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "divisor",
-        "Optional": false,
-        "Summary": "An integer value used as the divisor."
-      }
-    ]
-  },
-  {
-    "Name": "is-even",
-    "IsPublic": true,
-    "Aliases": [
-      "even",
-      "numeric-is-even"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise.",
-    "Parameters": []
   },
   {
     "Name": "is-greater-than",
@@ -162,11 +159,14 @@
       "greater-than",
       "numeric-is-greater-than"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
       }
@@ -179,11 +179,14 @@
       "greater-than-or-equal",
       "numeric-is-greater-than-or-equal"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is greater than or equal to the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
       }
@@ -196,7 +199,9 @@
       "integer",
       "numeric-is-integer"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is an integer value. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -207,11 +212,14 @@
       "less-than",
       "numeric-is-less-than"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is less than the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
       }
@@ -224,35 +232,16 @@
       "less-than-or-equal",
       "numeric-is-less-than-or-equal"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is less than or equal to the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
-      }
-    ]
-  },
-  {
-    "Name": "has-remainder",
-    "IsPublic": true,
-    "Aliases": [
-      "modulo",
-      "numeric-is-modulo"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "modulus",
-        "Optional": false,
-        "Summary": "An integer value used as the modulus."
-      },
-      {
-        "Name": "remainder",
-        "Optional": false,
-        "Summary": "An integer value defined as the expected reminder."
       }
     ]
   },
@@ -263,7 +252,9 @@
       "negative",
       "numeric-is-negative"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric argument is less than 0.",
     "Parameters": []
   },
@@ -274,19 +265,10 @@
       "negative-or-zero",
       "numeric-is-negative-or-zero"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric argument is less or equal to 0.",
-    "Parameters": []
-  },
-  {
-    "Name": "is-odd",
-    "IsPublic": true,
-    "Aliases": [
-      "odd",
-      "numeric-is-odd"
-    ],
-    "Scope": "Numeric",
-    "Summary": "Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -296,7 +278,9 @@
       "one",
       "numeric-is-one"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric argument is equal to 1.",
     "Parameters": []
   },
@@ -307,11 +291,14 @@
       "opposite",
       "numeric-is-opposite"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
       }
@@ -324,7 +311,9 @@
       "positive",
       "numeric-is-positive"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric argument is greater than 0.",
     "Parameters": []
   },
@@ -335,7 +324,9 @@
       "positive-or-zero",
       "numeric-is-positive-or-zero"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric argument is greater or equal to 0.",
     "Parameters": []
   },
@@ -346,11 +337,14 @@
       "within-interval",
       "numeric-is-within-interval"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "interval",
+        "Type": "any",
         "Optional": false,
         "Summary": "A numeric interval to compare to the argument."
       }
@@ -363,7 +357,9 @@
       "zero",
       "numeric-is-zero"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric argument is equal to 0.",
     "Parameters": []
   },
@@ -374,8 +370,82 @@
       "zero-or-null",
       "numeric-is-zero-or-null"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the numeric value passed as argument is equal to `0` or `null`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "has-remainder",
+    "IsPublic": true,
+    "Aliases": [
+      "modulo",
+      "numeric-is-modulo"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "modulus",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "An integer value used as the modulus."
+      },
+      {
+        "Name": "remainder",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "An integer value defined as the expected reminder."
+      }
+    ]
+  },
+  {
+    "Name": "is-divisible-by",
+    "IsPublic": true,
+    "Aliases": [
+      "divisible-by",
+      "numeric-is-divisible-by"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "divisor",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "An integer value used as the divisor."
+      }
+    ]
+  },
+  {
+    "Name": "is-even",
+    "IsPublic": true,
+    "Aliases": [
+      "even",
+      "numeric-is-even"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "is-odd",
+    "IsPublic": true,
+    "Aliases": [
+      "odd",
+      "numeric-is-odd"
+    ],
+    "Scope": "numeric/arithmetic",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -384,7 +454,9 @@
     "Aliases": [
       "null"
     ],
-    "Scope": "Special",
+    "Scope": "special",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is effectively `null` else return `false`.",
     "Parameters": []
   },
@@ -395,11 +467,14 @@
       "after",
       "dateTime-is-after"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
       }
@@ -412,11 +487,14 @@
       "after-or-same-instant",
       "dateTime-is-after-or-same-instant"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the temporal value passed as argument is chronologically after the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
       }
@@ -429,11 +507,14 @@
       "before",
       "dateTime-is-before"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument"
       }
@@ -446,11 +527,14 @@
       "before-or-same-instant",
       "dateTime-is-before-or-same-instant"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
       }
@@ -463,7 +547,9 @@
       "business-day",
       "dateTime-is-business-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the date passed as the argument doesn't correspond to a Saturday or a Sunday. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -474,11 +560,14 @@
       "contained-in",
       "dateTime-is-contained-in"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the temporal value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "interval",
+        "Type": "any",
         "Optional": false,
         "Summary": "A temporal interval to compare to the argument."
       }
@@ -491,7 +580,9 @@
       "in-the-future",
       "dateTime-is-in-the-future"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is after today. Returns false otherwise.",
     "Parameters": []
   },
@@ -502,7 +593,9 @@
       "in-the-future-or-now",
       "dateTime-is-in-the-future-or-now"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the dateTime passed as argument is after now. If a Date is passed as argument, it returns true if the date is today or after. Returns false otherwise.",
     "Parameters": []
   },
@@ -513,7 +606,9 @@
       "in-the-future-or-today",
       "dateTime-is-in-the-future-or-today"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be today or after. Returns false otherwise.",
     "Parameters": []
   },
@@ -524,7 +619,9 @@
       "in-the-past",
       "dateTime-is-in-the-past"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is before today. Returns false otherwise.",
     "Parameters": []
   },
@@ -535,7 +632,9 @@
       "in-the-past-or-now",
       "dateTime-is-in-the-past-or-now"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the dateTime passed as argument is before now. If a Date is passed as argument, it returns true if the date is today or before. Returns false otherwise.",
     "Parameters": []
   },
@@ -546,7 +645,9 @@
       "in-the-past-or-today",
       "dateTime-is-in-the-past-or-today"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it returns true if the date of this datetime is today or any other date before today. Returns false otherwise.",
     "Parameters": []
   },
@@ -557,7 +658,9 @@
       "leap-year",
       "dateTime-is-leap-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the year of the dateTime value passed as the argument is a leap year. If the argument is not a dateTime but a numeric, returns true if the integer part of this value corresponds to a year that is a leap year. Returns false otherwise.",
     "Parameters": []
   },
@@ -568,7 +671,9 @@
       "on-the-day",
       "dateTime-is-on-the-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -579,7 +684,9 @@
       "on-the-hour",
       "dateTime-is-on-the-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -590,7 +697,9 @@
       "on-the-minute",
       "dateTime-is-on-the-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the argument is of type `DateTime` and the seconds and milliseconds are all set at `0`. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -601,11 +710,14 @@
       "same-instant",
       "dateTime-is-same-instant"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
       }
@@ -618,7 +730,9 @@
       "today",
       "dateTime-is-today"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is representing the current date. Returns false otherwise.",
     "Parameters": []
   },
@@ -629,7 +743,9 @@
       "tomorrow",
       "dateTime-is-tomorrow"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is representing the next date compared to the current date. Returns false otherwise.",
     "Parameters": []
   },
@@ -640,11 +756,14 @@
       "weekday",
       "dateTime-is-weekday"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "weekday",
+        "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
       }
@@ -657,7 +776,9 @@
       "weekend",
       "dateTime-is-weekend"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the date passed as the argument corresponds to a Saturday or a Sunday. Returns `false` otherwise.",
     "Parameters": []
   },
@@ -668,7 +789,9 @@
       "within-current-month",
       "dateTime-is-within-current-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the same month than the current date. Returns false otherwise.",
     "Parameters": []
   },
@@ -679,7 +802,9 @@
       "within-current-week",
       "dateTime-is-within-current-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the same week than the current date. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
     "Parameters": []
   },
@@ -690,7 +815,9 @@
       "within-current-year",
       "dateTime-is-within-current-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the same year than the current date. Returns false otherwise.",
     "Parameters": []
   },
@@ -701,7 +828,9 @@
       "within-last-month",
       "dateTime-is-within-last-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.",
     "Parameters": []
   },
@@ -712,7 +841,9 @@
       "within-last-week",
       "dateTime-is-within-last-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the week preceding the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
     "Parameters": []
   },
@@ -723,7 +854,9 @@
       "within-last-year",
       "dateTime-is-within-last-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the year preceding the current year. Returns false otherwise.",
     "Parameters": []
   },
@@ -734,11 +867,14 @@
       "within-next-days",
       "dateTime-is-within-next-days"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is between tomorrow and the count of days after the current date. Returns false otherwise.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false."
       }
@@ -751,11 +887,14 @@
       "within-previous-days",
       "dateTime-is-within-previous-days"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is between the count of days before the current date and yesterday (both included). Returns false otherwise.",
     "Parameters": [
       {
         "Name": "count",
+        "Type": "integer",
         "Optional": false,
         "Summary": "Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false."
       }
@@ -768,7 +907,9 @@
       "within-upcoming-month",
       "dateTime-is-within-upcoming-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.",
     "Parameters": []
   },
@@ -779,7 +920,9 @@
       "within-upcoming-week",
       "dateTime-is-within-upcoming-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the week following the current week. A week is starting on Monday and ending on Sunday. Returns false otherwise.",
     "Parameters": []
   },
@@ -790,7 +933,9 @@
       "within-upcoming-year",
       "dateTime-is-within-upcoming-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is part of the year following the current year. Returns false otherwise.",
     "Parameters": []
   },
@@ -801,9 +946,61 @@
       "yesterday",
       "dateTime-is-yesterday"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns true if the date passed as argument is representing the previous date compared to the current date. Returns false otherwise.",
     "Parameters": []
+  },
+  {
+    "Name": "contains",
+    "IsPublic": true,
+    "Aliases": [
+      "text-contains"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "A string to be compared to the argument value."
+      },
+      {
+        "Name": "comparer",
+        "Type": "any",
+        "Optional": true,
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+      }
+    ]
+  },
+  {
+    "Name": "ends-with",
+    "IsPublic": true,
+    "Aliases": [
+      "text-ends-with"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "A string to be compared to the argument value.."
+      },
+      {
+        "Name": "comparer",
+        "Type": "any",
+        "Optional": true,
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+      }
+    ]
   },
   {
     "Name": "is-any-of",
@@ -812,39 +1009,22 @@
       "any-of",
       "text-is-any-of"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if the list of text values passed as parameter contains the text value passed as argument. Returns `false` otherwise.",
     "Parameters": [
       {
         "Name": "references",
+        "Type": "array",
         "Optional": false,
         "Summary": "An array of text values."
       },
       {
         "Name": "comparer",
+        "Type": "any",
         "Optional": true,
         "Summary": ""
-      }
-    ]
-  },
-  {
-    "Name": "contains",
-    "IsPublic": true,
-    "Aliases": [
-      "text-contains"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the value passed as argument contains, anywhere in the string, the text value passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A string to be compared to the argument value."
-      },
-      {
-        "Name": "comparer",
-        "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
       }
     ]
   },
@@ -855,7 +1035,9 @@
       "empty",
       "text-is-empty"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if argument value has a length of `0`. Return `false` otherwise.",
     "Parameters": []
   },
@@ -866,30 +1048,11 @@
       "empty-or-null",
       "text-is-empty-or-null"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if argument value has a length of `0` or is `null`. Return `false` otherwise.",
     "Parameters": []
-  },
-  {
-    "Name": "ends-with",
-    "IsPublic": true,
-    "Aliases": [
-      "text-ends-with"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the value passed as argument ends with the text value passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A string to be compared to the argument value.."
-      },
-      {
-        "Name": "comparer",
-        "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
-      }
-    ]
   },
   {
     "Name": "is-equivalent-to",
@@ -898,16 +1061,20 @@
       "equivalent-to",
       "text-is-equivalent-to"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if they are equal. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).."
       }
@@ -920,69 +1087,10 @@
       "lower-case",
       "text-is-lower-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if all characters of the text value passed as argument are lower-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "matches-date",
-    "IsPublic": true,
-    "Aliases": [
-      "text-matches-date"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "matches-datetime",
-    "IsPublic": true,
-    "Aliases": [
-      "text-matches-datetime"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "matches-numeric",
-    "IsPublic": true,
-    "Aliases": [
-      "text-matches-numeric"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise.",
-    "Parameters": []
-  },
-  {
-    "Name": "matches-regex",
-    "IsPublic": true,
-    "Aliases": [
-      "text-matches-regex"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "regex",
-        "Optional": false,
-        "Summary": "A string to be compared to the argument value."
-      },
-      {
-        "Name": "comparer",
-        "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
-      }
-    ]
-  },
-  {
-    "Name": "matches-time",
-    "IsPublic": true,
-    "Aliases": [
-      "text-matches-time"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.",
     "Parameters": []
   },
   {
@@ -992,16 +1100,20 @@
       "sorted-after",
       "text-is-sorted-after"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
       }
@@ -1014,16 +1126,20 @@
       "sorted-after-or-equivalent-to",
       "text-is-sorted-after-or-equivalent-to"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted after the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
       }
@@ -1036,16 +1152,20 @@
       "sorted-before",
       "text-is-sorted-before"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
       }
@@ -1058,37 +1178,20 @@
       "sorted-before-or-equivalent-to",
       "text-is-sorted-before-or-equivalent-to"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Compare the text value passed as argument and the text value passed as parameter and returns `true` if argument value is alphabetically sorted before the parameter value or if the two values are equal. By default the comparison is agnostic of the culture and case-insensitive.",
     "Parameters": [
       {
         "Name": "reference",
+        "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
-        "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
-      }
-    ]
-  },
-  {
-    "Name": "starts-with",
-    "IsPublic": true,
-    "Aliases": [
-      "text-starts-with"
-    ],
-    "Scope": "Text",
-    "Summary": "Returns `true` if the value passed as argument starts with the text value passed as parameter. Returns `false` otherwise.",
-    "Parameters": [
-      {
-        "Name": "reference",
-        "Optional": false,
-        "Summary": "A string to be compared to the argument value.."
-      },
-      {
-        "Name": "comparer",
+        "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
       }
@@ -1101,8 +1204,108 @@
       "upper-case",
       "text-is-upper-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
     "Summary": "Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.",
     "Parameters": []
+  },
+  {
+    "Name": "matches-date",
+    "IsPublic": true,
+    "Aliases": [
+      "text-matches-date"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a date in the culture specified as parameter. If the value is of type `DateTime` and the time part is set to midnight then it returns `true`. If the value is of type `Date`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "matches-datetime",
+    "IsPublic": true,
+    "Aliases": [
+      "text-matches-datetime"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a dateTime in the culture specified as parameter. The expected format is the concatenation of the ShortDatePattern, a space and the LongTimePattern. If the value is of type `DateTime`, it returns `true`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "matches-numeric",
+    "IsPublic": true,
+    "Aliases": [
+      "text-matches-numeric"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a numeric in the culture specified as parameter. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "matches-regex",
+    "IsPublic": true,
+    "Aliases": [
+      "text-matches-regex"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the value passed as argument validate the regex passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "regex",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "A string to be compared to the argument value."
+      },
+      {
+        "Name": "comparer",
+        "Type": "any",
+        "Optional": true,
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+      }
+    ]
+  },
+  {
+    "Name": "matches-time",
+    "IsPublic": true,
+    "Aliases": [
+      "text-matches-time"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.",
+    "Parameters": []
+  },
+  {
+    "Name": "starts-with",
+    "IsPublic": true,
+    "Aliases": [
+      "text-starts-with"
+    ],
+    "Scope": "text",
+    "Input": null,
+    "Output": null,
+    "Summary": "Returns `true` if the value passed as argument starts with the text value passed as parameter. Returns `false` otherwise.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "A string to be compared to the argument value.."
+      },
+      {
+        "Name": "comparer",
+        "Type": "any",
+        "Optional": true,
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+      }
+    ]
   }
 ]

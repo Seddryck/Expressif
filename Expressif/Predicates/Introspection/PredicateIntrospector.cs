@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Expressif.Functions;
 using Expressif.Functions.Introspection;
 
 namespace Expressif.Predicates.Introspection;
@@ -52,7 +53,8 @@ public class PredicateIntrospector : BaseIntrospector
                     canonicalName
                     , predicate.Type.IsPublic
                     , aliases
-                    , predicate.Type.Namespace!.ToToken('.').Last()
+                    , predicate.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
+                        ?? predicate.Type.Namespace!.ToToken('.').Last().ToKebabCase()
                     , predicate.Type
                     , fast ? "" : predicate.Type.GetSummary()
                     , fast ? [] : BuildParameters(predicate.Type.GetInfoConstructors()).ToArray()

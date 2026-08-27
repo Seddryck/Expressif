@@ -5,7 +5,7 @@
     "Aliases": [
       "adjacent"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.",
@@ -24,7 +24,7 @@
     "Aliases": [
       "array"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "any",
     "Output": "array",
     "Summary": "Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.",
@@ -44,7 +44,7 @@
     "Aliases": [
       "array-to-broadcast"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Executes an accumulator once over the full input enumerable, then returns the final accumulated value repeated once for each input element. Returns `null` when the input is not an enumerable or is a string.",
@@ -63,7 +63,7 @@
     "Aliases": [
       "chunk"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
@@ -77,62 +77,12 @@
     ]
   },
   {
-    "Name": "complement",
-    "IsPublic": true,
-    "Aliases": [
-      "complement"
-    ],
-    "Scope": "Array",
-    "Input": "array",
-    "Output": "array",
-    "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Type": "array",
-        "Optional": false,
-        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
-      }
-    ]
-  },
-  {
-    "Name": "difference",
-    "IsPublic": true,
-    "Aliases": [
-      "difference"
-    ],
-    "Scope": "Array",
-    "Input": "array",
-    "Output": "array",
-    "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Type": "array",
-        "Optional": false,
-        "Summary": "Specifies the array containing values to exclude from the pipeline input."
-      }
-    ]
-  },
-  {
-    "Name": "distinct",
-    "IsPublic": true,
-    "Aliases": [
-      "distinct"
-    ],
-    "Scope": "Array",
-    "Input": "array",
-    "Output": "array",
-    "Summary": "Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.",
-    "Parameters": []
-  },
-  {
     "Name": "filter",
     "IsPublic": true,
     "Aliases": [
       "filter"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
@@ -151,7 +101,7 @@
     "Aliases": [
       "first"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -170,7 +120,7 @@
     "Aliases": [
       "array-to-fold"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "any",
     "Summary": "Executes an accumulator once over the full input enumerable and returns the final accumulated value. Returns `null` when the input is not an enumerable or is a string.",
@@ -184,31 +134,12 @@
     ]
   },
   {
-    "Name": "intersection",
-    "IsPublic": true,
-    "Aliases": [
-      "intersection"
-    ],
-    "Scope": "Array",
-    "Input": "array",
-    "Output": "array",
-    "Summary": "Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
-    "Parameters": [
-      {
-        "Name": "array",
-        "Type": "array",
-        "Optional": false,
-        "Summary": "Specifies the array to compare with the pipeline input."
-      }
-    ]
-  },
-  {
     "Name": "lag",
     "IsPublic": true,
     "Aliases": [
       "array-to-lag"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -220,7 +151,7 @@
     "Aliases": [
       "last"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -239,7 +170,7 @@
     "Aliases": [
       "array-to-lead"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -251,7 +182,7 @@
     "Aliases": [
       "map"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -270,7 +201,7 @@
     "Aliases": [
       "pairwise"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.",
@@ -282,7 +213,7 @@
     "Aliases": [
       "reverse"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -294,7 +225,7 @@
     "Aliases": [
       "array-to-scan"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Executes an accumulator progressively over the input enumerable and returns the intermediate accumulated value after each input element. Preserves input cardinality (one output item per input item). This differs from fold (final value only) and broadcast (final value repeated). Returns `null` when the input is not an enumerable or is a string.",
@@ -313,7 +244,7 @@
     "Aliases": [
       "skip-first"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -332,7 +263,7 @@
     "Aliases": [
       "skip-last"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -351,7 +282,7 @@
     "Aliases": [
       "slice"
     ],
-    "Scope": "Array",
+    "Scope": "array",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.",
@@ -371,12 +302,81 @@
     ]
   },
   {
+    "Name": "complement",
+    "IsPublic": true,
+    "Aliases": [
+      "complement"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
+      }
+    ]
+  },
+  {
+    "Name": "difference",
+    "IsPublic": true,
+    "Aliases": [
+      "difference"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the array containing values to exclude from the pipeline input."
+      }
+    ]
+  },
+  {
+    "Name": "distinct",
+    "IsPublic": true,
+    "Aliases": [
+      "distinct"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.",
+    "Parameters": []
+  },
+  {
+    "Name": "intersection",
+    "IsPublic": true,
+    "Aliases": [
+      "intersection"
+    ],
+    "Scope": "array/set",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the array to compare with the pipeline input."
+      }
+    ]
+  },
+  {
     "Name": "symmetric-difference",
     "IsPublic": true,
     "Aliases": [
       "symmetric-difference"
     ],
-    "Scope": "Array",
+    "Scope": "array/set",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
@@ -395,7 +395,7 @@
     "Aliases": [
       "union"
     ],
-    "Scope": "Array",
+    "Scope": "array/set",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
@@ -415,7 +415,7 @@
       "file-to-creation-datetime",
       "file-to-creation-dateTime"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in local time.",
@@ -428,7 +428,7 @@
       "file-to-creation-datetime-utc",
       "file-to-creation-dateTime-utc"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in UTC.",
@@ -440,7 +440,7 @@
     "Aliases": [
       "path-to-directory"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.",
@@ -452,7 +452,7 @@
     "Aliases": [
       "path-to-extension"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the extension of a file path provided as argument.",
@@ -464,7 +464,7 @@
     "Aliases": [
       "path-to-filename"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the file name and extension of a file path provided as argument.",
@@ -476,7 +476,7 @@
     "Aliases": [
       "path-to-filename-without-extension"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the file name without the extension of a file path provided as argument.",
@@ -488,7 +488,7 @@
     "Aliases": [
       "path-to-root"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.",
@@ -500,7 +500,7 @@
     "Aliases": [
       "file-to-size"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the size of the file provided as argument in bytes.",
@@ -513,7 +513,7 @@
       "file-to-update-datetime",
       "file-to-update-dateTime"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in local time.",
@@ -526,7 +526,7 @@
       "file-to-update-datetime-utc",
       "file-to-update-dateTime-utc"
     ],
-    "Scope": "IO",
+    "Scope": "io",
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in UTC.",
@@ -538,7 +538,7 @@
     "Aliases": [
       "numeric-to-absolute"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the absolute value of the argument value.",
@@ -550,7 +550,7 @@
     "Aliases": [
       "numeric-to-add"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the sum of the input value and the parameter value.",
@@ -574,49 +574,12 @@
     ]
   },
   {
-    "Name": "ceiling",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-ceiling"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
-    "Name": "clip",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-clip"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
-    "Parameters": [
-      {
-        "Name": "min",
-        "Type": "numeric",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it."
-      },
-      {
-        "Name": "max",
-        "Type": "numeric",
-        "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it."
-      }
-    ]
-  },
-  {
     "Name": "cube-power",
     "IsPublic": true,
     "Aliases": [
       "numeric-to-cube-power"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the the numeric argument value raised to the cube power.",
@@ -628,7 +591,7 @@
     "Aliases": [
       "numeric-to-cube-root"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns cube root of the numeric argument value.",
@@ -640,7 +603,7 @@
     "Aliases": [
       "numeric-to-decrement"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number decremented of one unit.",
@@ -652,7 +615,7 @@
     "Aliases": [
       "numeric-to-divide"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`.",
@@ -666,24 +629,12 @@
     ]
   },
   {
-    "Name": "floor",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-floor"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the largest integer less than or equal to the argument number.",
-    "Parameters": []
-  },
-  {
     "Name": "greatest-common-divisor",
     "IsPublic": true,
     "Aliases": [
       "numeric-to-greatest-common-divisor"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.",
@@ -697,63 +648,15 @@
     ]
   },
   {
-    "Name": "human-readable-format-binary-bytes",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-binary-bytes"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "text",
-    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-decimal",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-decimal"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "text",
-    "Summary": "Formats a numeric value using decimal SI prefixes.",
-    "Parameters": []
-  },
-  {
-    "Name": "human-readable-format-decimal-bytes",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-human-readable-format-decimal-bytes"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "text",
-    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
-    "Parameters": []
-  },
-  {
     "Name": "increment",
     "IsPublic": true,
     "Aliases": [
       "numeric-to-increment"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number incremented of one unit.",
-    "Parameters": []
-  },
-  {
-    "Name": "integer",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-integer"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
     "Parameters": []
   },
   {
@@ -762,7 +665,7 @@
     "Aliases": [
       "numeric-to-invert"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.",
@@ -776,7 +679,7 @@
       "least-common-multiple",
       "smallest-common-multiple"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.",
@@ -795,7 +698,7 @@
     "Aliases": [
       "numeric-to-multiply"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the argument number multiplied by the parameter value.",
@@ -814,20 +717,10 @@
     "Aliases": [
       "numeric-to-nth-root"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the root specified by the parameter value of the numeric argument value.",
-    "Parameters": []
-  },
-  {
-    "Name": "null-to-zero",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
     "Parameters": []
   },
   {
@@ -836,7 +729,7 @@
     "Aliases": [
       "numeric-to-oppose"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the integer being the additive inverse of the argument meaning that their sum is equal to zero. The opposite of 0 is 0.",
@@ -848,7 +741,7 @@
     "Aliases": [
       "numeric-to-percent-change"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.",
@@ -867,30 +760,11 @@
     "Aliases": [
       "numeric-to-power"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the the numeric argument value raised to the power specified by the parameter value.",
     "Parameters": []
-  },
-  {
-    "Name": "round",
-    "IsPublic": true,
-    "Aliases": [
-      "numeric-to-round"
-    ],
-    "Scope": "Numeric",
-    "Input": "numeric",
-    "Output": "numeric",
-    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
-    "Parameters": [
-      {
-        "Name": "digits",
-        "Type": "integer",
-        "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
-      }
-    ]
   },
   {
     "Name": "sign",
@@ -898,7 +772,7 @@
     "Aliases": [
       "numeric-to-sign"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.",
@@ -910,7 +784,7 @@
     "Aliases": [
       "numeric-to-square-power"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the the numeric argument value raised to the square power.",
@@ -922,7 +796,7 @@
     "Aliases": [
       "numeric-to-square-root"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns square root of the numeric argument value.",
@@ -934,7 +808,7 @@
     "Aliases": [
       "numeric-to-subtract"
     ],
-    "Scope": "Numeric",
+    "Scope": "numeric/arithmetic",
     "Input": "numeric",
     "Output": "numeric",
     "Summary": "Returns the difference between the argument number and the parameter value.",
@@ -954,10 +828,136 @@
     ]
   },
   {
+    "Name": "null-to-zero",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "numeric/conversion",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-binary-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-binary-bytes"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as binary bytes using IEC prefixes.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-decimal",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value using decimal SI prefixes.",
+    "Parameters": []
+  },
+  {
+    "Name": "human-readable-format-decimal-bytes",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-human-readable-format-decimal-bytes"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as decimal bytes using SI prefixes.",
+    "Parameters": []
+  },
+  {
+    "Name": "ceiling",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-ceiling"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the smallest integer greater than or equal to the argument number.",
+    "Parameters": []
+  },
+  {
+    "Name": "clip",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-clip"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max.",
+    "Parameters": [
+      {
+        "Name": "min",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is smaller than it."
+      },
+      {
+        "Name": "max",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "value returned in case the argument value is greater than it."
+      }
+    ]
+  },
+  {
+    "Name": "floor",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-floor"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the largest integer less than or equal to the argument number.",
+    "Parameters": []
+  },
+  {
+    "Name": "integer",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-integer"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the value of an argument number rounded to the nearest integer.",
+    "Parameters": []
+  },
+  {
+    "Name": "round",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-round"
+    ],
+    "Scope": "numeric/rounding",
+    "Input": "numeric",
+    "Output": "numeric",
+    "Summary": "Returns the value of an argument number to the specified number of fractional digits.",
+    "Parameters": [
+      {
+        "Name": "digits",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
+      }
+    ]
+  },
+  {
     "Name": "field",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Record",
+    "Scope": "record",
     "Input": "any",
     "Output": "any",
     "Summary": "Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values.",
@@ -974,7 +974,7 @@
     "Name": "record",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Record",
+    "Scope": "record",
     "Input": "any",
     "Output": "record",
     "Summary": "Creates a record by evaluating its named and spread entries against the input value. Later entries overwrite fields with the same name created by earlier entries.",
@@ -991,7 +991,7 @@
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "any",
     "Output": "text",
     "Summary": "Returns `any`.",
@@ -1001,7 +1001,7 @@
     "Name": "coalesce",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "any",
     "Output": "any",
     "Summary": "Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.",
@@ -1020,7 +1020,7 @@
     "Aliases": [
       "special-to-coerce-boolean"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "boolean | integer | numeric | text",
     "Output": "boolean",
     "Summary": "Attempts to convert the input to a boolean value. Returns `null` when the input cannot be converted.",
@@ -1032,7 +1032,7 @@
     "Aliases": [
       "special-to-coerce-date"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "date | date-time | text | year-month",
     "Output": "date",
     "Summary": "Attempts to convert the input to a date value. Returns `null` when the input cannot be converted.",
@@ -1044,7 +1044,7 @@
     "Aliases": [
       "special-to-coerce-datetime"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "date | date-time | text | year-month",
     "Output": "date-time",
     "Summary": "Attempts to convert the input to a date-time value. Returns `null` when the input cannot be converted.",
@@ -1056,7 +1056,7 @@
     "Aliases": [
       "special-to-coerce-int"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "boolean | integer | numeric | text",
     "Output": "integer",
     "Summary": "Attempts to convert the input to an integer value. Returns `null` when the input cannot be converted without loss.",
@@ -1068,7 +1068,7 @@
     "Aliases": [
       "special-to-coerce-numeric"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "boolean | integer | numeric | text",
     "Output": "numeric",
     "Summary": "Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted.",
@@ -1080,7 +1080,7 @@
     "Aliases": [
       "special-to-coerce-text"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "boolean | date | date-time | integer | numeric | text | year-month",
     "Output": "text",
     "Summary": "Attempts to convert the input to a text value. Returns `null` when the input cannot be converted.",
@@ -1092,7 +1092,7 @@
     "Aliases": [
       "special-to-coerce-time"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "date-time | text | time",
     "Output": "time",
     "Summary": "Attempts to convert the input to a time value. Returns `null` when the input cannot be converted.",
@@ -1104,7 +1104,7 @@
     "Aliases": [
       "Special-to-neutral"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "any",
     "Output": "any",
     "Summary": "Returns the argument value.",
@@ -1114,7 +1114,7 @@
     "Name": "null-to-value",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "any",
     "Output": "text",
     "Summary": "Returns the value passed as argument, except if the value is `null` then it returns `value`.",
@@ -1126,7 +1126,7 @@
     "Aliases": [
       "tuple-at"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "tuple",
     "Output": "any",
     "Summary": "Returns the tuple field at the specified zero-based position. Returns `null` when the input is not a tuple or the position is out of range.",
@@ -1145,7 +1145,7 @@
     "Aliases": [
       "tuple-first"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "tuple",
     "Output": "any",
     "Summary": "Returns the first field of a tuple. Returns `null` when the input is not a tuple.",
@@ -1157,7 +1157,7 @@
     "Aliases": [
       "tuple-second"
     ],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "tuple",
     "Output": "any",
     "Summary": "Returns the second field of a tuple. Returns `null` when the input is not a tuple.",
@@ -1167,7 +1167,7 @@
     "Name": "value-to-value",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Special",
+    "Scope": "special",
     "Input": "any",
     "Output": "text",
     "Summary": "Returns `value` except if the argument value is `null` then it returns `null`.",
@@ -1179,7 +1179,7 @@
     "Aliases": [
       "date-to-age"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "Returns how many years separate the argument dateTime and now.",
@@ -1192,7 +1192,7 @@
       "dateTime-to-backward",
       "dateTime-to-subtract"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
@@ -1212,24 +1212,12 @@
     ]
   },
   {
-    "Name": "catholic-calendar",
-    "IsPublic": true,
-    "Aliases": [
-      "calendar-catholic"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.",
-    "Parameters": []
-  },
-  {
     "Name": "ceiling-hour",
     "IsPublic": true,
     "Aliases": [
       "dateTime-to-ceiling-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero and an hour added.",
@@ -1241,7 +1229,7 @@
     "Aliases": [
       "dateTime-to-ceiling-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the seconds and milliseconds set to zero and a minute added.",
@@ -1253,7 +1241,7 @@
     "Aliases": [
       "dateTime-to-change-of-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.",
@@ -1265,7 +1253,7 @@
     "Aliases": [
       "dateTime-to-change-of-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.",
@@ -1277,7 +1265,7 @@
     "Aliases": [
       "dateTime-to-change-of-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter. If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.",
@@ -1289,7 +1277,7 @@
     "Aliases": [
       "dateTime-to-change-of-second"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.",
@@ -1301,7 +1289,7 @@
     "Aliases": [
       "dateTime-to-change-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "returns a temporal value corresponding to the same day and month of the argument value but of the year passed as the parameter. If the original date was the 29th of February and the year passed as a parameter is not a leap year then it returns the 28th of February.",
@@ -1314,7 +1302,7 @@
       "dateTime-to-clamp",
       "dateTime-to-clip"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the value of an argument dateTime, unless it is before min (in which case it returns min), or after max (in which case it returns max).",
@@ -1334,24 +1322,12 @@
     ]
   },
   {
-    "Name": "datetime-to-date",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-date"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date",
-    "Summary": "Returns the date at midnight of the argument dateTime.",
-    "Parameters": []
-  },
-  {
     "Name": "day-of-month",
     "IsPublic": true,
     "Aliases": [
       "dateTime-to-day-of-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the day of the month of the date passed as the argument",
@@ -1363,7 +1339,7 @@
     "Aliases": [
       "dateTime-to-day-of-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the day of the week (1 being Monday and 7 being Sunday) of the date passed as the argument",
@@ -1375,7 +1351,7 @@
     "Aliases": [
       "dateTime-to-day-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
@@ -1385,7 +1361,7 @@
     "Name": "duration-between",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "duration",
     "Summary": "Returns the signed duration between the current temporal value and a previous temporal value. Returns `null` when either value cannot be evaluated or the temporal values are incompatible.",
@@ -1399,55 +1375,12 @@
     ]
   },
   {
-    "Name": "first-in-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-first-in-month"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date",
-    "Summary": "Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
-    "Parameters": [
-      {
-        "Name": "weekday",
-        "Type": "weekday",
-        "Optional": false,
-        "Summary": "The day of week to compare to the argument."
-      }
-    ]
-  },
-  {
-    "Name": "first-of-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-first-of-month"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the first day of the month of the same month/year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "first-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-first-of-year"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the first of January of the same year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
     "Name": "floor-hour",
     "IsPublic": true,
     "Aliases": [
       "dateTime-to-floor-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero.",
@@ -1459,7 +1392,7 @@
     "Aliases": [
       "dateTime-to-floor-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument value with the seconds and milliseconds set to zero.",
@@ -1472,7 +1405,7 @@
       "dateTime-to-forward",
       "dateTime-to-add"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns a dateTime that adds the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.",
@@ -1497,7 +1430,7 @@
     "Aliases": [
       "dateTime-to-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format hh (24 hours format) representing the hours of the dateTime passed as the argument",
@@ -1509,7 +1442,7 @@
     "Aliases": [
       "dateTime-to-hour-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument",
@@ -1521,7 +1454,7 @@
     "Aliases": [
       "dateTime-to-hour-minute-second"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format hh:mm:ss (24 hours format) representing the hours, minutes, and seconds of the dateTime passed as the argument",
@@ -1533,28 +1466,11 @@
     "Aliases": [
       "dateTime-to-hour-of-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the hours of the date passed as the argument",
     "Parameters": []
-  },
-  {
-    "Name": "invalid-to-date",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Type": "date-time",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
-      }
-    ]
   },
   {
     "Name": "iso-day-of-year",
@@ -1562,7 +1478,7 @@
     "Aliases": [
       "dateTime-to-iso-day-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the day position within the year of the date passed as the argument",
@@ -1574,7 +1490,7 @@
     "Aliases": [
       "dateTime-to-iso-week-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
@@ -1586,7 +1502,7 @@
     "Aliases": [
       "dateTime-to-iso-year-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format YYYY-ddd representing the year, and the day number of the date passed as the argument (both according to ISO 8601)",
@@ -1598,7 +1514,7 @@
     "Aliases": [
       "dateTime-to-iso-year-week"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format YYYY-Www representing the year and week number (according to ISO 8601) of the date passed as the argument",
@@ -1610,84 +1526,17 @@
     "Aliases": [
       "dateTime-to-iso-year-week-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601), and the day number (1 being Monday) of the date passed as the argument",
     "Parameters": []
   },
   {
-    "Name": "last-in-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-last-in-month"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date",
-    "Summary": "Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
-    "Parameters": [
-      {
-        "Name": "weekday",
-        "Type": "weekday",
-        "Optional": false,
-        "Summary": "The day of week to compare to the argument."
-      }
-    ]
-  },
-  {
-    "Name": "last-of-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-last-of-month"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the last day of the month of the same month/year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "last-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-last-of-year"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the 31st of December of the same year than the argument dateTime.",
-    "Parameters": []
-  },
-  {
-    "Name": "length-of-month",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-length-of-month"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "integer",
-    "Summary": "returns the count of days within the month of the dateTime value passed as the argument. If the argument is not a dateTime but a text at format \"YYYY-MM\", it returns count of days of the month represented by this value. It returns a value between 28 and 31 (depending of leap year and month).",
-    "Parameters": []
-  },
-  {
-    "Name": "length-of-year",
-    "IsPublic": true,
-    "Aliases": [
-      "dateTime-to-length-of-year"
-    ],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "integer",
-    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument. If the argument is not a dateTime but an integer, returns count of days of the corresponding year. It returns 365 or 366 (for leap years).",
-    "Parameters": []
-  },
-  {
     "Name": "local-to-utc",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.",
@@ -1699,7 +1548,7 @@
     "Aliases": [
       "dateTime-to-minute-of-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the minutes of the date passed as the argument",
@@ -1711,7 +1560,7 @@
     "Aliases": [
       "dateTime-to-minute-of-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the minutes of the hour passed as the argument",
@@ -1723,7 +1572,7 @@
     "Aliases": [
       "dateTime-to-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format MM representing the month of the date passed as the argument",
@@ -1735,7 +1584,7 @@
     "Aliases": [
       "dateTime-to-month-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format MM-DD representing the month and day of the date passed as the argument",
@@ -1747,7 +1596,7 @@
     "Aliases": [
       "dateTime-to-month-of-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the month of the date passed as the argument",
@@ -1761,7 +1610,7 @@
       "next-business-day",
       "add-business-days"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the date passed as the argument, counting forward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.",
@@ -1780,7 +1629,7 @@
     "Aliases": [
       "dateTime-to-next-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the day immediately following the dateTime passed as argument value.",
@@ -1792,7 +1641,7 @@
     "Aliases": [
       "dateTime-to-next-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime that adds a month to the dateTime passed as argument value.",
@@ -1804,7 +1653,7 @@
     "Aliases": [
       "dateTime-to-next-weekday"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday, passed as a parameter, following the date passed as the argument.",
@@ -1823,7 +1672,7 @@
     "Aliases": [
       "dateTime-to-next-weekday-or-same"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter following the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
@@ -1842,28 +1691,11 @@
     "Aliases": [
       "dateTime-to-next-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime that adds a year to the dateTime passed as argument value.",
     "Parameters": []
-  },
-  {
-    "Name": "null-to-date",
-    "IsPublic": true,
-    "Aliases": [],
-    "Scope": "Temporal",
-    "Input": "date-time",
-    "Output": "date-time",
-    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
-    "Parameters": [
-      {
-        "Name": "default",
-        "Type": "date-time",
-        "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
-      }
-    ]
   },
   {
     "Name": "previous-business-days",
@@ -1873,7 +1705,7 @@
       "previous-business-day",
       "subtract-business-days"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the date passed as the argument, counting backward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.",
@@ -1892,7 +1724,7 @@
     "Aliases": [
       "dateTime-to-previous-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime that substract a day to the dateTime passed as argument value.",
@@ -1904,7 +1736,7 @@
     "Aliases": [
       "dateTime-to-previous-month"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime that substract a month to the dateTime passed as argument value.",
@@ -1916,7 +1748,7 @@
     "Aliases": [
       "dateTime-to-previous-weekday"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument.",
@@ -1935,7 +1767,7 @@
     "Aliases": [
       "dateTime-to-previous-weekday-or-same"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
@@ -1954,7 +1786,7 @@
     "Aliases": [
       "dateTime-to-previous-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime that substract a year to the dateTime passed as argument value.",
@@ -1966,7 +1798,7 @@
     "Aliases": [
       "dateTime-to-second-of-day"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the seconds of the day of the date passed as the argument",
@@ -1978,7 +1810,7 @@
     "Aliases": [
       "dateTime-to-second-of-hour"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the seconds of the hour of the date passed as the argument",
@@ -1990,7 +1822,7 @@
     "Aliases": [
       "dateTime-to-second-of-minute"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the seconds of the minute of the date passed as the argument",
@@ -2002,7 +1834,7 @@
     "Aliases": [
       "dateTime-to-set-time"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns a dateTime with the time part set to the value passed as parameter and the date part corresponding to the argument value.",
@@ -2019,7 +1851,7 @@
     "Name": "set-to-local",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to local",
@@ -2029,7 +1861,7 @@
     "Name": "set-to-utc",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to UTC",
@@ -2039,7 +1871,7 @@
     "Name": "utc-to-local",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "date-time",
     "Summary": "Returns the dateTime passed as argument and set in UTC converted to the time zone passed as parameter.",
@@ -2051,7 +1883,7 @@
     "Aliases": [
       "dateTime-to-year"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "text",
     "Summary": "returns a textual value at format YYYY representing the year of the date passed as the argument",
@@ -2063,11 +1895,179 @@
     "Aliases": [
       "dateTime-to-year-of-era"
     ],
-    "Scope": "Temporal",
+    "Scope": "temporal",
     "Input": "date-time",
     "Output": "integer",
     "Summary": "returns a numeric value representing the year of the date passed as the argument",
     "Parameters": []
+  },
+  {
+    "Name": "catholic-calendar",
+    "IsPublic": true,
+    "Aliases": [
+      "calendar-catholic"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.",
+    "Parameters": []
+  },
+  {
+    "Name": "first-in-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-in-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date",
+    "Summary": "Returns a new date value corresponding to the first occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
+    "Parameters": [
+      {
+        "Name": "weekday",
+        "Type": "weekday",
+        "Optional": false,
+        "Summary": "The day of week to compare to the argument."
+      }
+    ]
+  },
+  {
+    "Name": "first-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-of-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the first day of the month of the same month/year than the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "first-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-first-of-year"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the first of January of the same year than the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "last-in-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-last-in-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date",
+    "Summary": "Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.",
+    "Parameters": [
+      {
+        "Name": "weekday",
+        "Type": "weekday",
+        "Optional": false,
+        "Summary": "The day of week to compare to the argument."
+      }
+    ]
+  },
+  {
+    "Name": "last-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-last-of-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the last day of the month of the same month/year than the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "last-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-last-of-year"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the 31st of December of the same year than the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "length-of-month",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-length-of-month"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "integer",
+    "Summary": "returns the count of days within the month of the dateTime value passed as the argument. If the argument is not a dateTime but a text at format \"YYYY-MM\", it returns count of days of the month represented by this value. It returns a value between 28 and 31 (depending of leap year and month).",
+    "Parameters": []
+  },
+  {
+    "Name": "length-of-year",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-length-of-year"
+    ],
+    "Scope": "temporal/calendar",
+    "Input": "date-time",
+    "Output": "integer",
+    "Summary": "Returns the count of days within the year of the dateTime value passed as the argument. If the argument is not a dateTime but an integer, returns count of days of the corresponding year. It returns 365 or 366 (for leap years).",
+    "Parameters": []
+  },
+  {
+    "Name": "datetime-to-date",
+    "IsPublic": true,
+    "Aliases": [
+      "dateTime-to-date"
+    ],
+    "Scope": "temporal/conversion",
+    "Input": "date-time",
+    "Output": "date",
+    "Summary": "Returns the date at midnight of the argument dateTime.",
+    "Parameters": []
+  },
+  {
+    "Name": "invalid-to-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "temporal/conversion",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Type": "date-time",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
+      }
+    ]
+  },
+  {
+    "Name": "null-to-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "temporal/conversion",
+    "Input": "date-time",
+    "Output": "date-time",
+    "Summary": "Returns the dateTime argument except if the value is `null` then it returns the parameter value.",
+    "Parameters": [
+      {
+        "Name": "default",
+        "Type": "date-time",
+        "Optional": false,
+        "Summary": "The dateTime to be returned if the argument is `null`."
+      }
+    ]
   },
   {
     "Name": "after-substring",
@@ -2075,7 +2075,7 @@
     "Aliases": [
       "text-to-after-substring"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.",
@@ -2100,7 +2100,7 @@
     "Aliases": [
       "text-to-allcaps-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2112,7 +2112,7 @@
     "Aliases": [
       "text-to-append"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2131,7 +2131,7 @@
     "Aliases": [
       "text-to-append-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2143,7 +2143,7 @@
     "Aliases": [
       "text-to-append-space"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2155,7 +2155,7 @@
     "Aliases": [
       "text-to-before-substring"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.",
@@ -2180,7 +2180,7 @@
     "Aliases": [
       "text-to-camel-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2192,22 +2192,10 @@
     "Aliases": [
       "text-to-camel-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "clean-whitespace",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-clean-whitespace"
-    ],
-    "Scope": "Text",
-    "Input": "text",
-    "Output": "text",
-    "Summary": "returns the argument with any whitespace replaced by a space character. `\\r\\n` is considered as a single character.",
     "Parameters": []
   },
   {
@@ -2216,22 +2204,10 @@
     "Aliases": [
       "text-to-cobol-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "collapse-whitespace",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-collapse-whitespace"
-    ],
-    "Scope": "Text",
-    "Input": "text",
-    "Output": "text",
-    "Summary": "returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\\r\\n` is considered as a single character.",
     "Parameters": []
   },
   {
@@ -2240,7 +2216,7 @@
     "Aliases": [
       "text-to-count-distinct-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the count of distinct chars in the textual argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
@@ -2252,7 +2228,7 @@
     "Aliases": [
       "text-to-count-substring"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.",
@@ -2271,7 +2247,7 @@
     "Aliases": [
       "text-to-dot-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2281,7 +2257,7 @@
     "Name": "empty-to-null",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value except if this value is `empty` then it returns `null`.",
@@ -2293,7 +2269,7 @@
     "Aliases": [
       "text-to-filter-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns only those characters specified in the parameter, in the order, they were originally entered in the input value.",
@@ -2312,7 +2288,7 @@
     "Aliases": [
       "text-to-first-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
@@ -2331,7 +2307,7 @@
     "Aliases": [
       "text-to-flat-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2341,7 +2317,7 @@
     "Name": "html-to-text",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value that has previously been HTML-encoded into a decoded string.",
@@ -2353,7 +2329,7 @@
     "Aliases": [
       "text-to-kebab-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2365,7 +2341,7 @@
     "Aliases": [
       "text-to-last-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the last chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.",
@@ -2385,7 +2361,7 @@
       "text-to-length",
       "count-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.",
@@ -2397,7 +2373,7 @@
     "Aliases": [
       "text-to-lower"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text converted to lowercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -2407,7 +2383,7 @@
     "Name": "mask-to-text",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.",
@@ -2426,7 +2402,7 @@
     "Aliases": [
       "text-to-namespace-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2436,7 +2412,7 @@
     "Name": "null-to-empty",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value except if this value is `null` then it returns `empty`.",
@@ -2448,7 +2424,7 @@
     "Aliases": [
       "text-to-pad-center"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns a new string that center-aligns the characters in this string by padding them on both the left and the right with a specified character, for a specified total length. If the padding cannot be symetrical then the padding char is added on the right. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
@@ -2473,7 +2449,7 @@
     "Aliases": [
       "text-to-pad-left"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns a new string that right-aligns the characters in this string by padding them on the left with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
@@ -2498,7 +2474,7 @@
     "Aliases": [
       "text-to-pad-right"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns a new string that left-aligns the characters in this string by padding them on the right with a specified character, for a specified total length. If the length of the argument value is longer than the parameter value then the argument value is returned unmodified.",
@@ -2523,7 +2499,7 @@
     "Aliases": [
       "text-to-pascal-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2535,7 +2511,7 @@
     "Aliases": [
       "text-to-pascal-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2547,7 +2523,7 @@
     "Aliases": [
       "text-to-path-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2559,7 +2535,7 @@
     "Aliases": [
       "text-to-prefix"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.",
@@ -2578,7 +2554,7 @@
     "Aliases": [
       "text-to-prefix-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.",
@@ -2590,7 +2566,7 @@
     "Aliases": [
       "text-to-prefix-space"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.",
@@ -2602,7 +2578,7 @@
     "Aliases": [
       "text-to-prepend"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2621,7 +2597,7 @@
     "Aliases": [
       "text-to-prepend-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2633,7 +2609,7 @@
     "Aliases": [
       "text-to-prepend-space"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
@@ -2645,7 +2621,7 @@
     "Aliases": [
       "text-to-remove-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.",
@@ -2664,7 +2640,7 @@
     "Aliases": [
       "text-to-replace-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value where a specific char has been replaced by another, both specified as parameters.",
@@ -2689,7 +2665,7 @@
     "Aliases": [
       "text-to-replace-slice"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value with a subset of the string substitued by a another string.",
@@ -2720,7 +2696,7 @@
     "Aliases": [
       "text-to-retain-alpha"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all characters removed except for letters (A-Z, a-z). If the argument is `null`, it returns `null`.",
@@ -2732,7 +2708,7 @@
     "Aliases": [
       "text-to-retain-alpha-numeric"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all characters removed except for letters (A-Z, a-z) and digits (0-9). If the argument is `null`, it returns `null`.",
@@ -2744,7 +2720,7 @@
     "Aliases": [
       "text-to-retain-numeric"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all non-numeric characters removed, leaving only digits (0-9).. If the argument is `null`, it returns `null`.",
@@ -2756,7 +2732,7 @@
     "Aliases": [
       "text-to-retain-numeric-symbol"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input string with all characters removed except for digits (0-9) and the symbols `+`, `-`, `,` and `.` If the argument is `null`, it returns `null`.",
@@ -2768,7 +2744,7 @@
     "Aliases": [
       "text-to-screaming-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2781,7 +2757,7 @@
       "text-to-sentence-case",
       "capitalize"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in sentence case by capitalizing the first word while preserving the remaining content. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -2793,7 +2769,7 @@
     "Aliases": [
       "text-to-skip-first-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the last chars of the argument value. The length of the string omitted at the beginning of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
@@ -2812,7 +2788,7 @@
     "Aliases": [
       "text-to-skip-last-chars"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the first chars of the argument value. The length of the string omitted at the end of the argument value is equal to the parameter value. If the length of the argument value is smaller or equal to the parameter value then the functions returns `empty`.",
@@ -2831,7 +2807,7 @@
     "Aliases": [
       "text-to-snake-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
@@ -2843,7 +2819,7 @@
     "Aliases": [
       "text-to-suffix"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.",
@@ -2862,7 +2838,7 @@
     "Aliases": [
       "text-to-suffix-new-line"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
@@ -2874,7 +2850,7 @@
     "Aliases": [
       "text-to-suffix-space"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.",
@@ -2886,42 +2862,17 @@
     "Aliases": [
       "text-to-swap-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text with lowercase characters converted to uppercase and uppercase characters converted to lowercase. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
     "Parameters": []
   },
   {
-    "Name": "text-to-datetime",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-dateTime"
-    ],
-    "Scope": "Text",
-    "Input": "text",
-    "Output": "date-time",
-    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
-    "Parameters": [
-      {
-        "Name": "format",
-        "Type": "text",
-        "Optional": false,
-        "Summary": "A string representing the required format."
-      },
-      {
-        "Name": "culture",
-        "Type": "text",
-        "Optional": true,
-        "Summary": "A string representing a pre-defined culture."
-      }
-    ]
-  },
-  {
     "Name": "text-to-html",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value converted to an HTML-encoded string",
@@ -2931,7 +2882,7 @@
     "Name": "text-to-mask",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.",
@@ -2950,7 +2901,7 @@
     "Aliases": [
       "text-to-title-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in title case, capitalizing words while keeping small words lowercase only when they are neither first nor last and do not follow a colon. The first and last words are always capitalized, and a small word after a colon is capitalized. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `Q&A`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
@@ -2962,7 +2913,7 @@
     "Aliases": [
       "text-to-token"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the token at the specified index in the argument value. The index of the first token is 0, the second token is 1, and so on. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
@@ -2987,7 +2938,7 @@
     "Aliases": [
       "text-to-token-count"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the count of token within the argument value. By default, the tokenization is executed based on any white-space characters. If a character is specified then the tokenization is executed based on this character to separate two tokens.",
@@ -3006,22 +2957,10 @@
     "Aliases": [
       "text-to-train-case"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
-    "Parameters": []
-  },
-  {
-    "Name": "trim",
-    "IsPublic": true,
-    "Aliases": [
-      "text-to-trim"
-    ],
-    "Scope": "Text",
-    "Input": "text",
-    "Output": "text",
-    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
     "Parameters": []
   },
   {
@@ -3030,10 +2969,71 @@
     "Aliases": [
       "text-to-upper"
     ],
-    "Scope": "Text",
+    "Scope": "text",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the input text converted to uppercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Parameters": []
+  },
+  {
+    "Name": "text-to-datetime",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-dateTime"
+    ],
+    "Scope": "text/conversion",
+    "Input": "text",
+    "Output": "date-time",
+    "Summary": "Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.",
+    "Parameters": [
+      {
+        "Name": "format",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "A string representing the required format."
+      },
+      {
+        "Name": "culture",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "A string representing a pre-defined culture."
+      }
+    ]
+  },
+  {
+    "Name": "clean-whitespace",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-clean-whitespace"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "returns the argument with any whitespace replaced by a space character. `\\r\\n` is considered as a single character.",
+    "Parameters": []
+  },
+  {
+    "Name": "collapse-whitespace",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-collapse-whitespace"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\\r\\n` is considered as a single character.",
+    "Parameters": []
+  },
+  {
+    "Name": "trim",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-trim"
+    ],
+    "Scope": "text/normalization",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns the argument value without all leading or trailing white-space characters.",
     "Parameters": []
   },
   {
@@ -3042,7 +3042,7 @@
     "Aliases": [
       "blank-to-empty"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `empty`.",
@@ -3054,7 +3054,7 @@
     "Aliases": [
       "blank-to-null"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value except if this value only contains white-space characters then it returns `null`.",
@@ -3066,7 +3066,7 @@
     "Aliases": [
       "text-to-without-diacritics"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument string without diacritics.",
@@ -3078,7 +3078,7 @@
     "Aliases": [
       "text-to-without-whitespaces"
     ],
-    "Scope": "Text",
+    "Scope": "text/normalization",
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument string without white-space characters.",

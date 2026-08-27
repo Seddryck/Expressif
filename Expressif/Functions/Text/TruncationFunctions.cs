@@ -70,6 +70,7 @@ public class SkipLastChars : BaseTextLength
 /// <summary>
 /// Returns the argument value without all leading or trailing white-space characters.
 /// </summary>
+[Scope("text/normalization")]
 public class Trim : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Empty().Keyword;

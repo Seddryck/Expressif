@@ -45,6 +45,7 @@ public abstract class BaseTemporalFunction : BaseTemporalFunction<DateTime?>
 /// Returns the date at midnight of the argument dateTime.
 /// </summary>
 [Function(prefix: "", aliases: ["dateTime-to-date"])]
+[Scope("temporal/conversion")]
 public class DateTimeToDate : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => value.Date;
@@ -73,6 +74,7 @@ public class Age : BaseTemporalFunction<int?>
 /// Returns `null` if the event is unknown.
 /// </summary>
 [Function(prefix: "", aliases: ["calendar-catholic"])]
+[Scope("temporal/calendar")]
 public class CatholicCalendar : BaseDatePartChangeFunction
 {
     public Func<string> Event { get; }
@@ -156,6 +158,7 @@ public class CatholicCalendar : BaseDatePartChangeFunction
 /// <summary>
 /// Returns the first day of the month of the same month/year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class FirstOfMonth : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1);
@@ -164,6 +167,7 @@ public class FirstOfMonth : BaseTemporalFunction
 /// <summary>
 /// Returns the first of January of the same year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class FirstOfYear : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 1, 1);
@@ -172,6 +176,7 @@ public class FirstOfYear : BaseTemporalFunction
 /// <summary>
 /// Returns the last day of the month of the same month/year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class LastOfMonth : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, value.Month, 1).AddMonths(1).AddDays(-1);
@@ -180,6 +185,7 @@ public class LastOfMonth : BaseTemporalFunction
 /// <summary>
 /// Returns the 31st of December of the same year than the argument dateTime.
 /// </summary>
+[Scope("temporal/calendar")]
 public class LastOfYear : BaseTemporalFunction
 {
     protected override object EvaluateDateTime(DateTime value) => new DateTime(value.Year, 12, 31);
@@ -299,6 +305,7 @@ public class SetTime : BaseTemporalFunction
 /// Returns the dateTime argument except if the value is `null` then it returns the parameter value.
 /// </summary>
 [Function(prefix: "")]
+[Scope("temporal/conversion")]
 public class NullToDate : BaseTemporalFunction
 {
     public Func<DateTime> Default { get; }
@@ -315,6 +322,7 @@ public class NullToDate : BaseTemporalFunction
 /// Returns the dateTime argument except if the value is not a valid dateTime then it returns the parameter value.
 /// </summary>
 [Function(prefix: "")]
+[Scope("temporal/conversion")]
 public class InvalidToDate : BaseTemporalFunction
 {
     public Func<DateTime> Default { get; }

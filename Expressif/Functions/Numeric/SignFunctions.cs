@@ -9,6 +9,7 @@ namespace Expressif.Functions.Numeric;
 /// <summary>
 /// Returns an integer that indicates the sign of the argument value. It returns -1 if the value is strictly negative, 0 if the value is 0 and 1 if the value is strictly positive.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class Sign : BaseNumericFunction
 {
     protected override decimal? EvaluateNumeric(decimal numeric) => Math.Sign(numeric);
@@ -17,6 +18,7 @@ public class Sign : BaseNumericFunction
 /// <summary>
 /// Returns the absolute value of the argument value.
 /// </summary>
+[Scope("numeric/arithmetic")]
 public class Absolute : BaseNumericFunction
 {
     protected override decimal? EvaluateNumeric(decimal numeric) => Math.Abs(numeric);

@@ -67,6 +67,7 @@ public abstract class BaseTextFunction : BaseTextFunction<string>
 /// Returns the argument value except if this value only contains white-space characters then it returns `empty`.
 /// </summary>
 [Function(prefix: "", aliases: ["blank-to-empty"])]
+[Scope("text/normalization")]
 public class WhitespacesToEmpty : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Empty().Keyword;
@@ -77,6 +78,7 @@ public class WhitespacesToEmpty : BaseTextFunction
 /// Returns the argument value except if this value only contains white-space characters then it returns `null`.
 /// </summary>
 [Function(prefix: "", aliases: ["blank-to-null"])]
+[Scope("text/normalization")]
 public class WhitespacesToNull : BaseTextFunction
 {
     protected override object EvaluateBlank() => new Null().Keyword;
