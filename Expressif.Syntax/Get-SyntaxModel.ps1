@@ -34,7 +34,7 @@ function Get-SyntaxModel {
         functions = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'function.json'))
         predicates = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'predicate.json'))
         accumulators = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'accumulator.json'))
-        constants = @('any', 'blank', 'empty', 'false', 'null', 'true', 'value')
-        operators = @('...', ':=', '<=', '>=', '|>', '|?', '!', '#', '$', '&', '*', '+', '-', '.', '<', '>', '@', '|')
+        constants = @('#blank', '#empty', '#false', '#null', '#true')
+        operators = @('...', ':=', '|>', '|?', '|OR', '|XOR', '|AND', '!', '#', '$', '&', '.', '@', '|')
     }
 }

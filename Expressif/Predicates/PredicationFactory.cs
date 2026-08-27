@@ -55,7 +55,7 @@ public class PredicationFactory : BaseExpressionFactory
         => parameter is OpenExpressionParameter open
             ? CreateFunctionCast(
                 () => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(open.Expression, context))
-                    .Evaluate(EvaluationRuntime.Frame?.Ambient ?? context.CurrentObject.Value),
+                    .Evaluate(EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value),
                 scalarType)
             : base.CreateParameter(parameter, scalarType, context);
 
