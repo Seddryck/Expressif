@@ -1363,6 +1363,12 @@
     "Examples": ["T(1, 2) | extend(3) → T(1, 2, 3)", "T(1, 2) | extend(T(3, \"foo\")) → T(1, 2, 3, \"foo\")"]
   },
   {
+    "Name": "pick", "IsPublic": true, "Aliases": ["pick"], "Scope": "tuple",
+    "Input": "tuple", "Output": "tuple", "Summary": "Returns a tuple containing selected positions in the requested order.",
+    "Parameters": [{"Name": "positions", "Type": "integer", "Optional": false, "Variadic": true, "MinimumCardinality": 1, "Summary": "One or more zero-based tuple positions."}],
+    "Examples": ["T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"]
+  },
+  {
     "Name": "tuple-at",
     "IsPublic": true,
     "Aliases": [

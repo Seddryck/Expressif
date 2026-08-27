@@ -229,6 +229,14 @@ public class FunctionFactory : BaseExpressionFactory
             var evaluator = BuildValueEvaluator(extension.Value, context);
             return new Tuple.Extend(value => evaluator.Invoke(value));
         }
+        if (name.Equals("pick", StringComparison.OrdinalIgnoreCase))
+        {
+            var positions = function.Arguments
+                .Select(argument => (Func<int>)CreateParameter(argument.Value, typeof(int), context))
+                .ToArray();
+            return new Tuple.Pick(() => positions.Select(position => position.Invoke()).ToArray());
+        }
+
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 

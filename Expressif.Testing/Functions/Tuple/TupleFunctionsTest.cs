@@ -102,4 +102,10 @@ public class TupleFunctionsTest
     [TestCase("T(10, 20) | extend(apply($1 | subtract($0)))", "T(10, 20, 10)")]
     public void Extend_EvaluatesSupportedParameterShapes(string source, string expected)
         => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(ParseTuple(expected)));
+
+    [Test]
+    public void Pick_SelectsReordersAndRepeats()
+        => Assert.That(
+            Expression.Create("pick(1, 0, 1)").Evaluate(new TupleValue("John", "Smith")),
+            Is.EqualTo(new TupleValue("Smith", "John", "Smith")));
 }
