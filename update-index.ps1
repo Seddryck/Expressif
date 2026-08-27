@@ -16,11 +16,12 @@ $elapsed = Measure-Command -Expression {
         $doc += "## $($class)s`r`n`r`n"
 
         ForEach($member in $members) {
-            $doc += "* [$($member.Name)]({{ site.baseurl }}/docs/$($member.Scope.ToLower())-$($class.ToLower())s/#$($member.Name))`r`n"
+            $pageScope = $member.Scope.Split('/')[0].ToLower()
+            $doc += "* [$($member.Name)]({{ site.baseurl }}/docs/$pageScope-$($class.ToLower())s/#$($member.Name))`r`n"
         }
         $doc += "`r`n`r`n"
     }
-    $top = $top.Remove($top.Length-2, 2)
+    $top = $top.Remove($top.Length-3, 3)
 }
 
 ########### Update the sub-part of the docs file ##########

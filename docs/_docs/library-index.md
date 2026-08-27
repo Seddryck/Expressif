@@ -4,7 +4,7 @@ subtitle: Complete list of functions and predicates
 tags: [predicates, functions]
 ---
 <!-- START AUTO-GENERATED -->
-[Functions](#functions) - [Predicates](#predicates) 
+[Functions](#functions) - [Predicates](#predicates) - [Accumulators](#accumulators)
 
 
 ## Functions
@@ -19,6 +19,7 @@ tags: [predicates, functions]
 * [append]({{ site.baseurl }}/docs/text-functions/#append)
 * [append-new-line]({{ site.baseurl }}/docs/text-functions/#append-new-line)
 * [append-space]({{ site.baseurl }}/docs/text-functions/#append-space)
+* [array]({{ site.baseurl }}/docs/array-functions/#array)
 * [backward]({{ site.baseurl }}/docs/temporal-functions/#backward)
 * [before-substring]({{ site.baseurl }}/docs/text-functions/#before-substring)
 * [broadcast]({{ site.baseurl }}/docs/array-functions/#broadcast)
@@ -39,6 +40,13 @@ tags: [predicates, functions]
 * [clip]({{ site.baseurl }}/docs/numeric-functions/#clip)
 * [coalesce]({{ site.baseurl }}/docs/special-functions/#coalesce)
 * [cobol-case]({{ site.baseurl }}/docs/text-functions/#cobol-case)
+* [coerce-boolean]({{ site.baseurl }}/docs/special-functions/#coerce-boolean)
+* [coerce-date]({{ site.baseurl }}/docs/special-functions/#coerce-date)
+* [coerce-datetime]({{ site.baseurl }}/docs/special-functions/#coerce-datetime)
+* [coerce-int]({{ site.baseurl }}/docs/special-functions/#coerce-int)
+* [coerce-numeric]({{ site.baseurl }}/docs/special-functions/#coerce-numeric)
+* [coerce-text]({{ site.baseurl }}/docs/special-functions/#coerce-text)
+* [coerce-time]({{ site.baseurl }}/docs/special-functions/#coerce-time)
 * [collapse-whitespace]({{ site.baseurl }}/docs/text-functions/#collapse-whitespace)
 * [complement]({{ site.baseurl }}/docs/array-functions/#complement)
 * [count-distinct-chars]({{ site.baseurl }}/docs/text-functions/#count-distinct-chars)
@@ -215,19 +223,20 @@ tags: [predicates, functions]
 
 ## Predicates
 
+* [and]({{ site.baseurl }}/docs/boolean-predicates/#and)
+* [contains]({{ site.baseurl }}/docs/text-predicates/#contains)
+* [ends-with]({{ site.baseurl }}/docs/text-predicates/#ends-with)
+* [has-remainder]({{ site.baseurl }}/docs/numeric-predicates/#has-remainder)
 * [is-after]({{ site.baseurl }}/docs/temporal-predicates/#is-after)
 * [is-after-or-same-instant]({{ site.baseurl }}/docs/temporal-predicates/#is-after-or-same-instant)
-* [and]({{ site.baseurl }}/docs/boolean-predicates/#and)
 * [is-any-of]({{ site.baseurl }}/docs/text-predicates/#is-any-of)
 * [is-before]({{ site.baseurl }}/docs/temporal-predicates/#is-before)
 * [is-before-or-same-instant]({{ site.baseurl }}/docs/temporal-predicates/#is-before-or-same-instant)
 * [is-business-day]({{ site.baseurl }}/docs/temporal-predicates/#is-business-day)
 * [is-contained-in]({{ site.baseurl }}/docs/temporal-predicates/#is-contained-in)
-* [contains]({{ site.baseurl }}/docs/text-predicates/#contains)
 * [is-divisible-by]({{ site.baseurl }}/docs/numeric-predicates/#is-divisible-by)
 * [is-empty]({{ site.baseurl }}/docs/text-predicates/#is-empty)
 * [is-empty-or-null]({{ site.baseurl }}/docs/text-predicates/#is-empty-or-null)
-* [ends-with]({{ site.baseurl }}/docs/text-predicates/#ends-with)
 * [is-equal-to]({{ site.baseurl }}/docs/numeric-predicates/#is-equal-to)
 * [is-equivalent-to]({{ site.baseurl }}/docs/text-predicates/#is-equivalent-to)
 * [is-even]({{ site.baseurl }}/docs/numeric-predicates/#is-even)
@@ -247,15 +256,8 @@ tags: [predicates, functions]
 * [is-less-than]({{ site.baseurl }}/docs/numeric-predicates/#is-less-than)
 * [is-less-than-or-equal]({{ site.baseurl }}/docs/numeric-predicates/#is-less-than-or-equal)
 * [is-lower-case]({{ site.baseurl }}/docs/text-predicates/#is-lower-case)
-* [matches-date]({{ site.baseurl }}/docs/text-predicates/#matches-date)
-* [matches-datetime]({{ site.baseurl }}/docs/text-predicates/#matches-datetime)
-* [matches-numeric]({{ site.baseurl }}/docs/text-predicates/#matches-numeric)
-* [matches-regex]({{ site.baseurl }}/docs/text-predicates/#matches-regex)
-* [matches-time]({{ site.baseurl }}/docs/text-predicates/#matches-time)
-* [has-remainder]({{ site.baseurl }}/docs/numeric-predicates/#has-remainder)
 * [is-negative]({{ site.baseurl }}/docs/numeric-predicates/#is-negative)
 * [is-negative-or-zero]({{ site.baseurl }}/docs/numeric-predicates/#is-negative-or-zero)
-* [not]({{ site.baseurl }}/docs/boolean-predicates/#not)
 * [is-null]({{ site.baseurl }}/docs/special-predicates/#is-null)
 * [is-odd]({{ site.baseurl }}/docs/numeric-predicates/#is-odd)
 * [is-on-the-day]({{ site.baseurl }}/docs/temporal-predicates/#is-on-the-day)
@@ -263,7 +265,6 @@ tags: [predicates, functions]
 * [is-on-the-minute]({{ site.baseurl }}/docs/temporal-predicates/#is-on-the-minute)
 * [is-one]({{ site.baseurl }}/docs/numeric-predicates/#is-one)
 * [is-opposite]({{ site.baseurl }}/docs/numeric-predicates/#is-opposite)
-* [or]({{ site.baseurl }}/docs/boolean-predicates/#or)
 * [is-positive]({{ site.baseurl }}/docs/numeric-predicates/#is-positive)
 * [is-positive-or-zero]({{ site.baseurl }}/docs/numeric-predicates/#is-positive-or-zero)
 * [is-same-instant]({{ site.baseurl }}/docs/temporal-predicates/#is-same-instant)
@@ -271,7 +272,6 @@ tags: [predicates, functions]
 * [is-sorted-after-or-equivalent-to]({{ site.baseurl }}/docs/text-predicates/#is-sorted-after-or-equivalent-to)
 * [is-sorted-before]({{ site.baseurl }}/docs/text-predicates/#is-sorted-before)
 * [is-sorted-before-or-equivalent-to]({{ site.baseurl }}/docs/text-predicates/#is-sorted-before-or-equivalent-to)
-* [starts-with]({{ site.baseurl }}/docs/text-predicates/#starts-with)
 * [is-today]({{ site.baseurl }}/docs/temporal-predicates/#is-today)
 * [is-tomorrow]({{ site.baseurl }}/docs/temporal-predicates/#is-tomorrow)
 * [is-true]({{ site.baseurl }}/docs/boolean-predicates/#is-true)
@@ -291,9 +291,29 @@ tags: [predicates, functions]
 * [is-within-upcoming-month]({{ site.baseurl }}/docs/temporal-predicates/#is-within-upcoming-month)
 * [is-within-upcoming-week]({{ site.baseurl }}/docs/temporal-predicates/#is-within-upcoming-week)
 * [is-within-upcoming-year]({{ site.baseurl }}/docs/temporal-predicates/#is-within-upcoming-year)
-* [xor]({{ site.baseurl }}/docs/boolean-predicates/#xor)
 * [is-yesterday]({{ site.baseurl }}/docs/temporal-predicates/#is-yesterday)
 * [is-zero]({{ site.baseurl }}/docs/numeric-predicates/#is-zero)
 * [is-zero-or-null]({{ site.baseurl }}/docs/numeric-predicates/#is-zero-or-null)
+* [matches-date]({{ site.baseurl }}/docs/text-predicates/#matches-date)
+* [matches-datetime]({{ site.baseurl }}/docs/text-predicates/#matches-datetime)
+* [matches-numeric]({{ site.baseurl }}/docs/text-predicates/#matches-numeric)
+* [matches-regex]({{ site.baseurl }}/docs/text-predicates/#matches-regex)
+* [matches-time]({{ site.baseurl }}/docs/text-predicates/#matches-time)
+* [not]({{ site.baseurl }}/docs/boolean-predicates/#not)
+* [or]({{ site.baseurl }}/docs/boolean-predicates/#or)
+* [starts-with]({{ site.baseurl }}/docs/text-predicates/#starts-with)
+* [xor]({{ site.baseurl }}/docs/boolean-predicates/#xor)
+
+
+## Accumulators
+
+* [any]({{ site.baseurl }}/docs/array-accumulators/#any)
+* [count]({{ site.baseurl }}/docs/array-accumulators/#count)
+* [every]({{ site.baseurl }}/docs/array-accumulators/#every)
+* [first]({{ site.baseurl }}/docs/array-accumulators/#first)
+* [last]({{ site.baseurl }}/docs/array-accumulators/#last)
+* [max]({{ site.baseurl }}/docs/array-accumulators/#max)
+* [min]({{ site.baseurl }}/docs/array-accumulators/#min)
+* [sum]({{ site.baseurl }}/docs/array-accumulators/#sum)
 
 

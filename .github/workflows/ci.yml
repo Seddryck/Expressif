@@ -395,3 +395,141 @@ jobs:
           path: |
             distribution/bin/archives/Expressif-*.*
             distribution/bin/installers/Expressif-*-setup.exe*
+
+  publish:
+    needs: distribution
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download Expressif package
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-nuget-package
+          path: packages/expressif
+
+      - name: Download CLI package
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-cli-nuget-package
+          path: packages/cli
+
+      - name: Validate package artifacts
+        shell: pwsh
+        run: |
+          $expectedArtifacts = @(
+            @{ Name = 'Expressif package'; Path = 'packages/expressif'; Filter = '*.nupkg' },
+            @{ Name = 'Expressif symbol package'; Path = 'packages/expressif'; Filter = '*.snupkg' },
+            @{ Name = 'Expressif CLI package'; Path = 'packages/cli'; Filter = '*.nupkg' }
+          )
+
+          foreach ($artifact in $expectedArtifacts) {
+            $matches = @(Get-ChildItem -Path $artifact.Path -File -Filter $artifact.Filter)
+            if ($matches.Count -ne 1) {
+              throw "Expected exactly one $($artifact.Name), found $($matches.Count)."
+            }
+            Write-Host "Found $($artifact.Name): $($matches[0].Name)"
+          }
+
+      - name: Authenticate with NuGet
+        id: nuget
+        uses: NuGet/login@v1
+        with:
+          user: Seddryck
+
+      - name: Publish packages and symbols to NuGet
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget.outputs.NUGET_API_KEY }}
+        run: |
+          $packages = Get-ChildItem -Path packages -Recurse -File -Filter '*.nupkg'
+          foreach ($package in $packages) {
+            dotnet nuget push $package.FullName `
+              --api-key $env:NUGET_API_KEY `
+              --source https://api.nuget.org/v3/index.json
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to publish $($package.Name)."
+            }
+          }
+
+  release:
+    needs:
+      - prepare
+      - distribution
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.prepare.outputs.patch == '0'
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download syntax assets
+        uses: actions/download-artifact@v8
+        with:
+          name: syntax-assets
+          path: release-assets/syntax
+
+      - name: Download conformance assets
+        uses: actions/download-artifact@v8
+        with:
+          name: conformance-packages
+          path: release-assets/conformance
+
+      - name: Download distribution assets
+        uses: actions/download-artifact@v8
+        with:
+          name: distribution
+          path: release-assets/distribution
+
+      - name: Validate release assets
+        shell: pwsh
+        run: |
+          $expectedAssets = @(
+            @{ Name = 'syntax asset'; Path = 'release-assets/syntax'; Extensions = @('.vsix', '.json', '.xml', '.zip') },
+            @{ Name = 'conformance ZIP'; Path = 'release-assets/conformance'; Extensions = @('.zip') },
+            @{ Name = 'conformance YAML'; Path = 'release-assets/conformance'; Extensions = @('.yaml') },
+            @{ Name = 'distribution archive'; Path = 'release-assets/distribution'; Extensions = @('.zip', '.gz') },
+            @{ Name = 'Windows installer'; Path = 'release-assets/distribution'; Extensions = @('.exe') }
+          )
+
+          foreach ($expected in $expectedAssets) {
+            $matches = @(Get-ChildItem -Path $expected.Path -Recurse -File |
+              Where-Object Extension -In $expected.Extensions)
+            if ($matches.Count -eq 0) {
+              throw "Expected at least one $($expected.Name), found none."
+            }
+            Write-Host "Found $($matches.Count) $($expected.Name) file(s)."
+          }
+
+      - name: Create or update GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.prepare.outputs.semver }}
+        run: |
+          $tag = "v$env:RELEASE_VERSION"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $tag `
+              --target $env:GITHUB_SHA `
+              --title "Expressif $env:RELEASE_VERSION" `
+              --generate-notes `
+              --discussion-category Announcements
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to create release $tag."
+            }
+          }
+          else {
+            Write-Host "Reusing existing release $tag."
+          }
+
+          $assetExtensions = @('.vsix', '.json', '.xml', '.zip', '.yaml', '.gz', '.exe')
+          $assets = @(Get-ChildItem -Path release-assets -Recurse -File |
+            Where-Object Extension -In $assetExtensions)
+          gh release upload $tag @($assets.FullName) --clobber
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to upload assets to release $tag."
+          }
