@@ -51,4 +51,34 @@ public class EvaluationContextTest
 
         Assert.That(results, Is.EquivalentTo(Enumerable.Range(0, 100).Select(index => $"{index}!")));
     }
+
+    [Test]
+    public void PredicationWithContext_ReturnsNewPredicationWithoutChangingOriginal()
+    {
+        var legacy = new Context(new Dictionary<string, object?> { ["prefix"] = "old" });
+        var predication = Predication.Create("starts-with(@prefix)", legacy);
+        var contextual = predication.WithContext(
+            new EvaluationContext(new Dictionary<string, object?> { ["prefix"] = "new" }));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(predication.Evaluate("old value"), Is.True);
+            Assert.That(predication.Evaluate("new value"), Is.False);
+            Assert.That(contextual.Evaluate("new value"), Is.True);
+            Assert.That(contextual.Evaluate("old value"), Is.False);
+        });
+    }
+
+    [Test]
+    public void PredicationWithContext_IsSafeForConcurrentEvaluation()
+    {
+        var predication = Predication.Create("starts-with(@prefix)").WithContext(
+            new EvaluationContext(new Dictionary<string, object?> { ["prefix"] = "value-" }));
+
+        var results = ParallelEnumerable.Range(0, 100)
+            .Select(index => predication.Evaluate($"value-{index}"))
+            .ToArray();
+
+        Assert.That(results, Is.All.True);
+    }
 }
