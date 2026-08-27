@@ -47,8 +47,7 @@ Or to transformations that depend on neighbouring values:
 ![Still maintained](https://img.shields.io/maintenance/yes/2026.svg)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/Seddryck/Expressif)
 
-**Continuous integration builds:** [![Build status](https://ci.appveyor.com/api/projects/status/7btqredpvl803ri5?svg=true)](https://ci.appveyor.com/project/Seddryck/Expressif/)
-[![Tests](https://img.shields.io/appveyor/tests/seddryck/Expressif.svg)](https://ci.appveyor.com/project/Seddryck/Expressif/build/tests)
+**Continuous integration builds:**
 [![CodeFactor](https://www.codefactor.io/repository/github/seddryck/expressif/badge)](https://www.codefactor.io/repository/github/seddryck/expressif)
 [![codecov](https://codecov.io/github/Seddryck/Expressif/branch/main/graph/badge.svg?token=9ZSJ6N0X9E)](https://codecov.io/github/Seddryck/Expressif)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FSeddryck%2FExpressif.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FSeddryck%2FExpressif?ref=badge_shield)
