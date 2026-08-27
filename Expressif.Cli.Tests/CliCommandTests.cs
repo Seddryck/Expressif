@@ -1665,7 +1665,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.Contain("array:"));
-            Assert.That(result.StdOut, Does.Contain("numeric:"));
+            Assert.That(result.StdOut, Does.Contain("numeric/arithmetic:"));
             Assert.That(result.StdOut, Does.Contain("record:"));
             Assert.That(result.StdOut, Does.Contain("temporal:"));
             Assert.That(result.StdErr, Is.Empty);
