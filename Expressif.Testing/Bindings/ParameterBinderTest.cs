@@ -94,6 +94,24 @@ public class ParameterBinderTest
         Assert.That(parameter.Values.Last(), Is.TypeOf<TupleParameter>());
     }
 
+    [Test]
+    public void Bind_TupleLiteral_PreservesSpreadElements()
+    {
+        var syntax = SyntaxFactory.Tuple(
+            SyntaxFactory.TupleElement(SyntaxFactory.Number(1)),
+            SyntaxFactory.TupleElement(SyntaxFactory.Variable("items"), true),
+            SyntaxFactory.TupleElement(null, true));
+
+        var parameter = (TupleParameter)BindParameter(syntax);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(parameter.Elements.Select(element => element.IsSpread),
+                Is.EqualTo(new[] { false, true, true }));
+            Assert.That(parameter.Elements.Last().Value, Is.TypeOf<IncomingValueParameter>());
+        });
+    }
+
     private static IParameter BindParameter(ValueSyntax value)
         => Binder.BindParameter(SyntaxFactory.Closed(value));
 }

@@ -192,6 +192,7 @@ public class FunctionFactory : BaseExpressionFactory
     {
         if (parameter is IncomingValueParameter
             or ArrayParameter
+            or TupleParameter
             or RecordLiteralParameter
             or InputExpressionParameter)
             return BuildValueEvaluator(parameter, context);
@@ -330,8 +331,8 @@ public class FunctionFactory : BaseExpressionFactory
             };
         }
 
-        var provider = CreateParameter(parameter, typeof(object), context);
-        return input => WithCurrentObject(context, input, () => provider.DynamicInvoke());
+        var provider = (Func<object?>)CreateParameter(parameter, typeof(object), context);
+        return input => WithCurrentObject(context, input, provider);
     }
 
     private static object? WithCurrentObject(IContext context, object? input, Func<object?> evaluator)
