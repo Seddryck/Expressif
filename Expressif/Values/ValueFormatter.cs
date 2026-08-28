@@ -10,9 +10,9 @@ namespace Expressif.Values;
 public static class ValueFormatter
 {
     public static string Format(object? value)
-        => Format(value, forRecordValue: false);
+        => Format(value, structuredValue: false);
 
-    private static string Format(object? value, bool forRecordValue)
+    private static string Format(object? value, bool structuredValue)
     {
         if (IsNullLike(value))
             return "null";
@@ -21,29 +21,33 @@ public static class ValueFormatter
             return named;
 
         if (value is TupleValue tuple)
-            return $"T({string.Join(", ", tuple.Select(x => Format(x, forRecordValue)))})";
+            return $"T({string.Join(", ", tuple.Select(x => Format(x, structuredValue: true)))})";
 
-        return FormatScalarOrEnumerable(value!, forRecordValue);
+        return FormatScalarOrEnumerable(value!, structuredValue);
     }
 
     private static bool IsNullLike(object? value)
         => value is null || value == DBNull.Value;
 
-    private static string FormatScalarOrEnumerable(object value, bool forRecordValue)
+    private static string FormatScalarOrEnumerable(object value, bool structuredValue)
         => value switch
         {
-            bool boolean => boolean ? "true" : "false",
-            string text => forRecordValue ? RecordSyntax.FormatString(text) : text,
-            DateOnly date => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-            IEnumerable enumerable when value is not string => FormatEnumerable(enumerable, forRecordValue),
+            bool boolean => boolean ? "#true" : "#false",
+            string text => structuredValue ? QuoteString(text) : text,
+            DateOnly date => $"#{QuoteString(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))}",
+            DateTime dateTime => $"#{QuoteString(dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture))}",
+            IEnumerable enumerable when value is not string => FormatEnumerable(enumerable),
             _ => Convert.ToString(value, CultureInfo.InvariantCulture) ?? value.ToString() ?? "null",
         };
 
-    private static string FormatEnumerable(IEnumerable enumerable, bool forRecordValue)
+    private static string QuoteString(string value)
+        => $"\"{RecordSyntax.EscapeDoubleQuoted(value)}\"";
+
+    private static string FormatEnumerable(IEnumerable enumerable)
     {
         var values = new List<string>();
         foreach (var item in enumerable)
-            values.Add(Format(item, forRecordValue));
+            values.Add(Format(item, structuredValue: true));
 
         return $"{{{string.Join(", ", values)}}}";
     }
@@ -74,7 +78,7 @@ public static class ValueFormatter
             return false;
         }
 
-        formatted = $"{{{string.Join(", ", fields.Select(x => $"{FormatFieldName(x.Key)} := {Format(x.Value, forRecordValue: true)}"))}}}";
+        formatted = $"{{{string.Join(", ", fields.Select(x => $"{FormatFieldName(x.Key)} := {Format(x.Value, structuredValue: true)}"))}}}";
         return true;
     }
 
