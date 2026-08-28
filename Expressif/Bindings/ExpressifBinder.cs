@@ -220,17 +220,17 @@ public sealed class ExpressifBinder
         {
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
-            "array" => Function.FromArguments(syntax.Name, BindArrayFunctionArguments(syntax)),
+            "array" or "text" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
 
-    private FunctionArgument[] BindArrayFunctionArguments(FunctionCallSyntax syntax)
+    private FunctionArgument[] BindSpreadFunctionArguments(FunctionCallSyntax syntax)
     {
         var arguments = new List<FunctionArgument>();
         foreach (var argument in syntax.Arguments)
         {
             if (argument is NamedArgumentSyntax)
-                throw new BindingException("Function 'array' does not support named arguments.");
+                throw new BindingException($"Function '{syntax.Name}' does not support named arguments.");
 
             arguments.Add(new FunctionArgument(
                 null,
