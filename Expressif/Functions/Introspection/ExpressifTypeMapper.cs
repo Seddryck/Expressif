@@ -15,6 +15,7 @@ internal static class ExpressifTypeMapper
             [("Scan", "accumulator")] = "accumulator",
             [("DurationBetween", "previous")] = "date | date-time | year-month",
             [("Array", "values")] = "any",
+            [("Text", "values")] = "expression",
             [("Record", "entries")] = "entry",
             [("Coalesce", "expressions")] = "expression",
         };
