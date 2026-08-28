@@ -8,6 +8,8 @@ namespace Expressif.Functions.Introspection;
 
 internal static class ExpressifTypeMapper
 {
+    private const string ValuesParameter = "values";
+
     private static readonly IReadOnlyDictionary<(string Function, string Parameter), string> ParameterOverrides =
         new Dictionary<(string, string), string>
         {
@@ -15,15 +17,15 @@ internal static class ExpressifTypeMapper
             [("Fold", "accumulator")] = "accumulator",
             [("Scan", "accumulator")] = "accumulator",
             [("DurationBetween", "previous")] = "date | date-time | year-month",
-            [("Array", "values")] = "any",
-            [("Tuple", "values")] = "any",
+            [("Array", ValuesParameter)] = "any",
+            [("Tuple", ValuesParameter)] = "any",
             [("Pair", "key")] = "any",
             [("Pair", "value")] = "any",
-            [("Grouping", "values")] = "pair",
-            [("Dictionary", "values")] = "pair",
+            [("Grouping", ValuesParameter)] = "pair",
+            [("Dictionary", ValuesParameter)] = "pair",
             [("Key", "expressions")] = "expression",
             [("GroupBy", "expressions")] = "expression",
-            [("Text", "values")] = "expression",
+            [("Text", ValuesParameter)] = "expression",
             [("Record", "entries")] = "entry",
             [("Put", "assignments")] = "entry",
             [("PutPresent", "assignments")] = "entry",
@@ -46,6 +48,10 @@ internal static class ExpressifTypeMapper
             [("SatisfiesExactly", "predicates")] = "predicate",
             [("SatisfiesAtLeast", "predicates")] = "predicate",
             [("SatisfiesAtMost", "predicates")] = "predicate",
+            [("MapOver", "expression")] = "expression",
+            [("MapOver", ValuesParameter)] = "array",
+            [("MapWith", "expression")] = "expression",
+            [("MapWith", ValuesParameter)] = "array",
         };
 
     public static string ToExpressifType(
