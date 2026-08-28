@@ -68,11 +68,8 @@ public class ZipStrictTest
 
     [TestCase(1, 2)]
     [TestCase(2, 1)]
-    public void Evaluate_UnequalLengths_ThrowsInvalidOperation(int leftLength, int rightLength)
-    {
-        var result = (IEnumerable)new ZipStrict(() => new object?[rightLength])
-            .Evaluate(new object?[leftLength])!;
-
-        Assert.That(() => result.Cast<object?>().ToArray(), Throws.InvalidOperationException);
-    }
+    public void Evaluate_UnequalLengths_ReturnsNull(int leftLength, int rightLength)
+        => Assert.That(
+            new ZipStrict(() => new object?[rightLength]).Evaluate(new object?[leftLength]),
+            Is.Null);
 }

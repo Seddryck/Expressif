@@ -19,3 +19,13 @@ tests:
         parameters:
           - [null, b]
         expected: [[1, null], [null, b]]
+      - id: zip-strict.valid.array.values.left-longer
+        value: [1, 2]
+        parameters:
+          - [a]
+        expected:
+      - id: zip-strict.valid.array.values.right-longer
+        value: [1]
+        parameters:
+          - [a, b]
+        expected:

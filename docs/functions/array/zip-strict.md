@@ -19,7 +19,7 @@ zip-strict(
 ) → array
 ```
 
-Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Throws an invalid-operation error when the arrays have different lengths and returns `null` when either value cannot be evaluated as an array.
+Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array.
 
 ## Parameters
 

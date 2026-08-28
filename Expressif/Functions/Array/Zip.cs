@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Expressif.Functions.Array;
 
@@ -14,10 +15,10 @@ public abstract class BaseZipFunction : BaseArrayFunction
     protected override object? EvaluateArray(IEnumerable enumerable)
     {
         var array = Array.Invoke();
-        return array is null ? null : Enumerate(enumerable, array);
+        return array is null ? null : EvaluateZip(enumerable, array);
     }
 
-    protected abstract IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right);
+    protected abstract object? EvaluateZip(IEnumerable left, IEnumerable right);
 
     protected static IEnumerator GetEnumerator(IEnumerable source)
         => source.GetEnumerator();
@@ -36,7 +37,10 @@ public sealed class Zip : BaseZipFunction
     public Zip(Func<object?[]> array)
         : base(array) { }
 
-    protected override IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
+    protected override object EvaluateZip(IEnumerable left, IEnumerable right)
+        => Enumerate(left, right);
+
+    private static IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
     {
         var leftEnumerator = GetEnumerator(left);
         var rightEnumerator = GetEnumerator(right);
@@ -63,7 +67,10 @@ public sealed class ZipPadded : BaseZipFunction
     public ZipPadded(Func<object?[]> array)
         : base(array) { }
 
-    protected override IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
+    protected override object EvaluateZip(IEnumerable left, IEnumerable right)
+        => Enumerate(left, right);
+
+    private static IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
     {
         var leftEnumerator = GetEnumerator(left);
         var rightEnumerator = GetEnumerator(right);
@@ -90,7 +97,7 @@ public sealed class ZipPadded : BaseZipFunction
 }
 
 /// <summary>
-/// Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Throws an invalid-operation error when the arrays have different lengths and returns `null` when either value cannot be evaluated as an array.
+/// Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array.
 /// </summary>
 [Function(prefix: "")]
 public sealed class ZipStrict : BaseZipFunction
@@ -99,28 +106,15 @@ public sealed class ZipStrict : BaseZipFunction
     public ZipStrict(Func<object?[]> array)
         : base(array) { }
 
-    protected override IEnumerable<Expressif.Values.Tuple> Enumerate(IEnumerable left, IEnumerable right)
+    protected override object? EvaluateZip(IEnumerable left, IEnumerable right)
     {
-        var leftEnumerator = GetEnumerator(left);
-        var rightEnumerator = GetEnumerator(right);
-        try
-        {
-            while (true)
-            {
-                var hasLeft = leftEnumerator.MoveNext();
-                var hasRight = rightEnumerator.MoveNext();
-                if (hasLeft != hasRight)
-                    throw new InvalidOperationException("Cannot zip arrays of different lengths in strict mode.");
-                if (!hasLeft)
-                    yield break;
-
-                yield return new Expressif.Values.Tuple(leftEnumerator.Current, rightEnumerator.Current);
-            }
-        }
-        finally
-        {
-            Dispose(leftEnumerator);
-            Dispose(rightEnumerator);
-        }
+        var leftValues = left.Cast<object?>().ToArray();
+        var rightValues = right.Cast<object?>().ToArray();
+        return leftValues.Length != rightValues.Length
+            ? null
+            : leftValues.Zip(
+                rightValues,
+                (leftValue, rightValue) => new Expressif.Values.Tuple(leftValue, rightValue))
+                .ToArray();
     }
 }
