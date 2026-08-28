@@ -106,6 +106,59 @@ jobs:
             Export-ConformanceReport.ps1
             .config/dotnet-tools.json
 
+  test-conformance:
+    needs:
+      - calculate-version
+      - validate-conformance
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            .config/dotnet-tools.json
+
+      - name: Restore conformance test dependencies
+        run: >-
+          dotnet restore Expressif.Testing/Expressif.Testing.csproj
+          --use-lock-file
+          --force-evaluate
+
+      - name: Build conformance test project
+        run: >-
+          dotnet build Expressif.Testing/Expressif.Testing.csproj
+          --configuration Release
+          --framework net10.0
+          --no-restore
+          --nologo
+          -p:Version=${{ needs.calculate-version.outputs.semver }}
+          -p:ContinuousIntegrationBuild=true
+
+      - name: Create conformance report directory
+        shell: pwsh
+        run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
+
+      - name: Run .NET conformance tests
+        run: >-
+          dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
+          --TestCaseFilter:TestCategory=conformance
+          --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
+
+      - name: Upload conformance test report
+        uses: actions/upload-artifact@v7
+        with:
+          name: conformance-test-report
+          if-no-files-found: error
+          retention-days: 7
+          path: conformance/bin/Expressif.Conformance.DotNet.xml
+
   build-and-tests:
     name: build and tests (${{ matrix.name }})
     needs:
@@ -234,27 +287,6 @@ jobs:
           --nologo
           --filter TestCategory=documentation
 
-      - name: Create conformance report directory
-        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
-        shell: pwsh
-        run: New-Item -ItemType Directory -Path conformance/bin -Force | Out-Null
-
-      - name: Run .NET conformance tests
-        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
-        run: >-
-          dotnet vstest Expressif.Testing/bin/Release/net10.0/Expressif.Testing.dll
-          --TestCaseFilter:TestCategory=conformance
-          --Logger:"nunit;LogFilePath=conformance/bin/Expressif.Conformance.DotNet.xml"
-
-      - name: Upload conformance test report
-        if: matrix.suite == 'coverage' && matrix.coverage == 'expressif-net10.0'
-        uses: actions/upload-artifact@v7
-        with:
-          name: conformance-test-report
-          if-no-files-found: error
-          retention-days: 7
-          path: conformance/bin/Expressif.Conformance.DotNet.xml
-
       - name: Upload CLI dependency lock
         if: matrix.generate_cli_lock
         uses: actions/upload-artifact@v7
@@ -354,7 +386,8 @@ jobs:
   package-conformance:
     needs:
       - calculate-version
-      - build-and-tests
+      - validate-conformance
+      - test-conformance
     runs-on: windows-latest
     steps:
 
