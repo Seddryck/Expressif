@@ -94,6 +94,7 @@ public abstract class BaseExpressionFactory
             TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
             VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
+            IncomingValueParameter => CreateFunctionCast(() => GetCurrent(context), scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
             _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
@@ -116,14 +117,26 @@ public abstract class BaseExpressionFactory
 
         Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)
         {
-            var values = new object?[tuple.Values.Length];
-            for (var i = 0; i < tuple.Values.Length; i++)
+            var values = new List<object?>();
+            foreach (var element in tuple.Elements)
             {
-                var elementFactory = CreateParameter(tuple.Values[i], typeof(object), currentContext);
-                values[i] = elementFactory.DynamicInvoke();
+                var elementFactory = (Func<object?>)CreateParameter(element.Value, typeof(object), currentContext);
+                var evaluated = elementFactory.Invoke();
+                if (element.IsSpread)
+                {
+                    if (evaluated is null)
+                        throw new SpreadArgumentException("Spread argument cannot be null.");
+                    if (evaluated is not TupleValue spread)
+                        throw new SpreadArgumentException("Spread argument must evaluate to a tuple.");
+                    values.AddRange(spread);
+                }
+                else
+                {
+                    values.Add(evaluated);
+                }
             }
 
-            return new Expressif.Values.Tuple(values);
+            return new Expressif.Values.Tuple(values.ToArray());
         }
 
         ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)

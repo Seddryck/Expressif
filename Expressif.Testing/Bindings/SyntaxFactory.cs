@@ -69,7 +69,13 @@ internal static class SyntaxFactory
         => new(new SourceSpan(0, 0), string.Empty, value, spread);
 
     public static TupleLiteralSyntax Tuple(params ValueSyntax[] values)
-        => new(new SourceSpan(0, 0), string.Empty, values);
+        => new(new SourceSpan(0, 0), string.Empty, values.Select(value => TupleElement(value)));
+
+    public static TupleLiteralSyntax Tuple(params TupleElementSyntax[] elements)
+        => new(new SourceSpan(0, 0), string.Empty, elements);
+
+    public static TupleElementSyntax TupleElement(ExpressionSyntax? value, bool spread = false)
+        => new(new SourceSpan(0, 0), string.Empty, value, spread);
 
     public static RecordLiteralSyntax Record(params RecordEntrySyntax[] entries)
         => new(new SourceSpan(0, 0), string.Empty, entries);

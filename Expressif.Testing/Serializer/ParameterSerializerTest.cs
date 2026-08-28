@@ -114,4 +114,12 @@ public class ParameterSerializerTest
             Assert.That(((RecordLiteralParameter)parsed).Fields, Is.Empty);
         });
     }
+
+    [Test]
+    public void Serialize_TupleSpread_PreservesSpreadMarkers()
+    {
+        var parameter = new ExpressifBinder().BindParameter(ExpressifSyntax.Parse("T(1, ...T(2, 3), ...)"));
+
+        Assert.That(new ParameterSerializer().Serialize(parameter), Is.EqualTo("T(1, ...T(2, 3), ...)"));
+    }
 }

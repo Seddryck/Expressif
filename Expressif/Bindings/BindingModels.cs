@@ -65,7 +65,14 @@ public sealed record ArrayParameter(ArrayElementParameter[] Elements) : IParamet
 
     public IParameter[] Values => Elements.Select(element => element.Value).ToArray();
 }
-public sealed record TupleParameter(IParameter[] Values) : IParameter;
+public sealed record TupleElementParameter(IParameter Value, bool IsSpread = false);
+public sealed record TupleParameter(TupleElementParameter[] Elements) : IParameter
+{
+    public TupleParameter(IParameter[] values)
+        : this(values.Select(value => new TupleElementParameter(value)).ToArray()) { }
+
+    public IParameter[] Values => Elements.Select(element => element.Value).ToArray();
+}
 public sealed record QuotedLiteralParameter(string Value) : IParameter;
 public sealed record IncomingValueParameter() : IParameter;
 public sealed record RecordLiteralField(string Name, IParameter Value);

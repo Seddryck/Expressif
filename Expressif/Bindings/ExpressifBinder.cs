@@ -354,7 +354,7 @@ public sealed class ExpressifBinder
         TimeLiteralSyntax time => new LiteralParameter(time.Value),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
-        TupleLiteralSyntax tuple => new TupleParameter(tuple.Values.Select(BindValue).ToArray()),
+        TupleLiteralSyntax tuple => new TupleParameter(tuple.Elements.Select(BindTupleElement).ToArray()),
         RecordLiteralSyntax record => BindRecordLiteral(record),
         _ => throw Unsupported(syntax),
     };
@@ -365,6 +365,14 @@ public sealed class ExpressifBinder
                 ? new IncomingValueParameter()
                 : BindArgument(element.Expression
                     ?? throw new BindingException("An explicit array spread must include an expression.")),
+            element.IsSpread);
+
+    private TupleElementParameter BindTupleElement(TupleElementSyntax element)
+        => new(
+            element.IsImplicitSpread
+                ? new IncomingValueParameter()
+                : BindArgument(element.Expression
+                    ?? throw new BindingException("An explicit tuple spread must include an expression.")),
             element.IsSpread);
 
     private RecordLiteralParameter BindRecordLiteral(RecordLiteralSyntax record)

@@ -13,3 +13,6 @@ tests:
       - id: arity.valid.tuple.heterogeneous
         value: 'T(10, "foo", #true)'
         expected: 3
+      - id: arity.valid.tuple.explicit-spread
+        value: 'T(0, ...T(1, 2), 3)'
+        expected: 4
