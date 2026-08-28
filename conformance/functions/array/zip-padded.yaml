@@ -1,0 +1,31 @@
+suite: array
+kind: function
+operator: zip-padded
+tests:
+  - id: zip-padded.valid.array
+    cases:
+      - id: zip-padded.valid.array.empty.both
+        value: []
+        parameters:
+          - []
+        expected: []
+      - id: zip-padded.valid.array.values.equal-length
+        value: [1, 2]
+        parameters:
+          - [a, b]
+        expected: [[1, a], [2, b]]
+      - id: zip-padded.valid.array.values.left-longer
+        value: [1, 2, 3]
+        parameters:
+          - [a, b]
+        expected: [[1, a], [2, b], [3, null]]
+      - id: zip-padded.valid.array.values.right-longer
+        value: [1]
+        parameters:
+          - [a, b]
+        expected: [[1, a], [null, b]]
+      - id: zip-padded.valid.array.values.preserve-null
+        value: [null]
+        parameters:
+          - [null]
+        expected: [[null, null]]
