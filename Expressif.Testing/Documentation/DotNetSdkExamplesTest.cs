@@ -115,7 +115,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Predication_ReturnsBoolean()
     {
-        var predication = new Predication("lower-case");
+        var predication = Predication.Create("lower-case");
 
         bool first = predication.Evaluate("Nikola Tesla");
         bool second = predication.Evaluate("nikola tesla");
@@ -134,7 +134,7 @@ public class DotNetSdkExamplesTest
         object? expressionResult = Expression.Create("lower-case")
             .Evaluate("nikola tesla");
 
-        bool predicationResult = new Predication("lower-case")
+        bool predicationResult = Predication.Create("lower-case")
             .Evaluate("nikola tesla");
 
         Assert.Multiple(() =>
