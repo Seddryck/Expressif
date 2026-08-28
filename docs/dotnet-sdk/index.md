@@ -34,7 +34,7 @@ flowchart LR
 ```csharp
 using Expressif;
 
-var expression = new Expression("trim | upper");
+var expression = Expression.Create("trim | upper");
 var result = expression.Evaluate("  Alice  ");
 ```
 

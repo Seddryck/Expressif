@@ -43,7 +43,7 @@ using Expressif;
 Then evaluate a small expression:
 
 ```csharp
-var expression = new Expression("lower");
+var expression = Expression.Create("lower");
 var result = expression.Evaluate("Nikola Tesla");
 ```
 

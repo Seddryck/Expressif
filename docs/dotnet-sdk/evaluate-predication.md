@@ -11,7 +11,7 @@ A `Predication` is the strongly typed .NET API for an Expressif rule that return
 Create it once, then evaluate each input with the same rule:
 
 ```csharp
-var predication = new Predication("lower-case");
+var predication = Predication.Create("lower-case");
 
 bool first = predication.Evaluate("Nikola Tesla");
 bool second = predication.Evaluate("nikola tesla");
@@ -25,7 +25,7 @@ The added value over `Expression.Create(...)` is the return type:
 object? expressionResult = Expression.Create("lower-case")
     .Evaluate("nikola tesla");
 
-bool predicationResult = new Predication("lower-case")
+bool predicationResult = Predication.Create("lower-case")
     .Evaluate("nikola tesla");
 ```
 
