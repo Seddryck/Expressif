@@ -3505,6 +3505,31 @@
     ]
   },
   {
+    "Name": "text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/concatenation",
+    "Input": "any",
+    "Output": "text",
+    "Summary": "Constructs text by evaluating zero or more positional expressions from left to right against the same input, converting each result to text, and concatenating the converted values in order. Spread arguments expand array values in place. Returns empty text when no expressions are supplied.",
+    "Parameters": [
+      {
+        "Name": "values",
+        "Type": "expression",
+        "Optional": true,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place."
+      }
+    ],
+    "Examples": [
+      "#null | text() → \"\"",
+      "#null | text(\"foo\", \"bar\") → \"foobar\"",
+      "{\"Nikola\", \"Tesla\"} | text(\"foo\", ..., \"bar\") → \"fooNikolaTeslabar\"",
+      "{firstName := \"John\", lastName := \"Doe\"} | text(.lastName, \", \", .firstName) → \"Doe, John\""
+    ]
+  },
+  {
     "Name": "text-to-html",
     "IsPublic": true,
     "Aliases": [],

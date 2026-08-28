@@ -116,7 +116,7 @@ public class FunctionIntrospectorTest
     [TestCase("temporal/conversion", new[] { "datetime-to-date", "invalid-to-date", "null-to-date" })]
     [TestCase("text/casing", new[] { "allcaps-case", "camel-case", "camel-snake-case", "cobol-case", "dot-case", "flat-case", "kebab-case", "lower", "namespace-case", "pascal-case", "pascal-snake-case", "path-case", "screaming-snake-case", "sentence-case", "snake-case", "swap-case", "title-case", "train-case", "upper" })]
     [TestCase("text/character", new[] { "remove-chars", "replace-chars" })]
-    [TestCase("text/concatenation", new[] { "append", "append-new-line", "append-space", "prefix", "prefix-new-line", "prefix-space", "prepend", "prepend-new-line", "prepend-space", "replace-slice", "suffix", "suffix-new-line", "suffix-space" })]
+    [TestCase("text/concatenation", new[] { "append", "append-new-line", "append-space", "prefix", "prefix-new-line", "prefix-space", "prepend", "prepend-new-line", "prepend-space", "replace-slice", "suffix", "suffix-new-line", "suffix-space", "text" })]
     [TestCase("text/conversion", new[] { "text-to-datetime" })]
     [TestCase("text/counting", new[] { "count-distinct-chars", "count-substring", "length" })]
     [TestCase("text/encoding", new[] { "html-to-text", "text-to-html" })]

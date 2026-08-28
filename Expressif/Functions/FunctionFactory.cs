@@ -8,6 +8,8 @@ using Expressif.Functions.Coercions;
 using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
 using RecordFunction = Expressif.Functions.Record.Record;
 using ArrayFunction = Expressif.Functions.Array.Array;
+using TextArgumentEvaluator = Expressif.Functions.Text.TextArgumentEvaluator;
+using TextFunction = Expressif.Functions.Text.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -216,6 +218,8 @@ public class FunctionFactory : BaseExpressionFactory
             return BuildRecordFunction(function, context);
         if (name.Equals("array", StringComparison.OrdinalIgnoreCase))
             return BuildArrayFunction(function, context);
+        if (name.Equals("text", StringComparison.OrdinalIgnoreCase))
+            return BuildTextFunction(function, context);
 
         if (name.Equals("coalesce", StringComparison.OrdinalIgnoreCase))
             return BuildCoalesceFunction(function, context);
@@ -277,6 +281,33 @@ public class FunctionFactory : BaseExpressionFactory
                 argument.IsSpread))
             .ToArray();
         return new ArrayFunction(() => values);
+    }
+
+    private IFunction BuildTextFunction(Bindings.Function function, IContext context)
+    {
+        var values = function.Arguments
+            .Select(argument => BuildTextArgumentEvaluator(argument, context))
+            .ToArray();
+        return new TextFunction(() => values);
+    }
+
+    private TextArgumentEvaluator BuildTextArgumentEvaluator(FunctionArgument argument, IContext context)
+    {
+        if (!argument.IsSpread || argument.Value is not InputExpressionParameter inputExpression)
+            return new TextArgumentEvaluator(BuildValueEvaluator(argument.Value, context), argument.IsSpread);
+
+        var source = BuildValueEvaluator(inputExpression.Expression.Parameter, context);
+        var chain = new ChainFunction(inputExpression.Expression.Members
+            .Select(member => InstantiateOrWrapAggregation(member, context))
+            .ToArray());
+        return new TextArgumentEvaluator(input =>
+        {
+            var items = new List<object?>();
+            SpreadValues.Append(source.Invoke(input), items);
+            return items
+                .Select(item => WithCurrentObject(context, item, () => chain.Evaluate(item)))
+                .ToArray();
+        }, true);
     }
 
     private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context)

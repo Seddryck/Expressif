@@ -1,0 +1,56 @@
+suite: text
+kind: function
+operator: text
+tests:
+  - id: text.valid.variadic-values
+    cases:
+      - id: text.valid.variadic-values.empty
+        value: (null)
+        parameters: ['text()']
+        expected: ''
+      - id: text.valid.variadic-values.single
+        value: (null)
+        parameters: ['text("foo")']
+        expected: foo
+      - id: text.valid.variadic-values.multiple
+        value: (null)
+        parameters: ['text("foo", "bar")']
+        expected: foobar
+      - id: text.valid.variadic-values.heterogeneous
+        value: (null)
+        parameters: ['text(1, " / ", 2)']
+        expected: 1 / 2
+      - id: text.valid.variadic-values.record-fields
+        value:
+          firstName: John
+          lastName: Doe
+        parameters: ['text(.lastName, ", ", .firstName)']
+        expected: Doe, John
+      - id: text.valid.variadic-values.function-call
+        value: 10
+        parameters: ['text("Result: ", add(1, 2))']
+        expected: 'Result: 12'
+      - id: text.valid.variadic-values.input-spread
+        value: [Nikola, Tesla]
+        parameters: ['text("foo", ..., "bar")']
+        expected: fooNikolaTeslabar
+      - id: text.valid.variadic-values.inline-spread
+        value: (null)
+        parameters: ['text("foo", ...{"Nikola", "Tesla"}, "bar")']
+        expected: fooNikolaTeslabar
+      - id: text.valid.variadic-values.multiple-spreads
+        value: (null)
+        parameters: ['text(...{"Nikola"}, " + ", ...{"Tesla"})']
+        expected: Nikola + Tesla
+      - id: text.valid.variadic-values.empty-spread
+        value: (null)
+        parameters: ['text("foo", ...{}, "bar")']
+        expected: foobar
+      - id: text.valid.variadic-values.spread-pipeline
+        value: (null)
+        parameters: ['text("foo", ...{"Nikola", "Tesla"} | prepend-space)']
+        expected: foo Nikola Tesla
+      - id: text.valid.variadic-values.non-spread-array
+        value: (null)
+        parameters: ['text({"Nikola", "Tesla"})']
+        expected: System.Object[]

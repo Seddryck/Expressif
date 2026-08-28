@@ -93,6 +93,25 @@ public class FunctionBinderTest
     }
 
     [Test]
+    public void Bind_TextSpread_PreservesSpreadAndOrder()
+    {
+        var syntax = SyntaxFactory.Open(SyntaxFactory.Function(
+            "text",
+            SyntaxFactory.Argument(SyntaxFactory.Text("before")),
+            SyntaxFactory.Spread(SyntaxFactory.Variable("values")),
+            SyntaxFactory.Argument(SyntaxFactory.Text("after"))));
+
+        var function = Binder.BindFunction(syntax);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(function.Arguments.Select(argument => argument.IsSpread),
+                Is.EqualTo(new[] { false, true, false }));
+            Assert.That(function.Arguments[1].Value, Is.TypeOf<VariableParameter>());
+        });
+    }
+
+    [Test]
     public void Bind_ArrayNamedArgument_ThrowsBindingError()
     {
         var syntax = SyntaxFactory.Open(
