@@ -1,0 +1,21 @@
+suite: array
+kind: function
+operator: zip-strict
+tests:
+  - id: zip-strict.valid.array
+    cases:
+      - id: zip-strict.valid.array.empty.both
+        value: []
+        parameters:
+          - []
+        expected: []
+      - id: zip-strict.valid.array.values.equal-length
+        value: [1, 2]
+        parameters:
+          - [a, b]
+        expected: [[1, a], [2, b]]
+      - id: zip-strict.valid.array.values.preserve-null
+        value: [1, null]
+        parameters:
+          - [null, b]
+        expected: [[1, null], [null, b]]

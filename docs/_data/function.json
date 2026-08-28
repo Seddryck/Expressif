@@ -261,6 +261,66 @@
     ]
   },
   {
+    "Name": "zip",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the second array whose values form the second element of each tuple."
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3} | zip({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\")}"
+    ]
+  },
+  {
+    "Name": "zip-padded",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the second array whose values form the second element of each tuple."
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3} | zip-padded({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\"), T(3, #null)}"
+    ]
+  },
+  {
+    "Name": "zip-strict",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Throws an invalid-operation error when the arrays have different lengths and returns `null` when either value cannot be evaluated as an array.",
+    "Parameters": [
+      {
+        "Name": "array",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Specifies the equally sized second array whose values form the second element of each tuple."
+      }
+    ],
+    "Examples": [
+      "{1, 2} | zip-strict({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\")}"
+    ]
+  },
+  {
     "Name": "reverse",
     "IsPublic": true,
     "Aliases": [
