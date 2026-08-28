@@ -245,6 +245,10 @@ public class FunctionFactory : BaseExpressionFactory
             return BuildAdjacentFunction(function, context);
         if (name.Equals("generate", StringComparison.OrdinalIgnoreCase))
             return BuildGenerateFunction(function, context);
+        if (name.Equals("map-over", StringComparison.OrdinalIgnoreCase))
+            return BuildDirectionalMap(function, context, mapOver: true);
+        if (name.Equals("map-with", StringComparison.OrdinalIgnoreCase))
+            return BuildDirectionalMap(function, context, mapOver: false);
 
         if (name.Equals("extend", StringComparison.OrdinalIgnoreCase))
         {
@@ -511,6 +515,82 @@ public class FunctionFactory : BaseExpressionFactory
 
         return new Generate(condition, BuildTransformationProvider(next, context), result);
     }
+
+    private IFunction BuildDirectionalMap(Bindings.Function function, IContext context, bool mapOver)
+    {
+        var type = mapOver ? typeof(MapOver) : typeof(MapWith);
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments);
+        if (binding.Parameters is not [OpenExpressionParameter expression, var values])
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var valuesEvaluator = BuildValueEvaluator(values, context);
+        Func<System.Collections.IEnumerable?> valuesProvider = () =>
+            valuesEvaluator.Invoke(EvaluationRuntime.Frame?.Current) is { } evaluated
+                && AggregationEnumerable.TryGetEnumerable(evaluated, out var enumerable)
+                    ? enumerable
+                    : null;
+        Func<IFunction> operationProvider = () => BuildDirectionalMapOperation(expression, context, mapOver);
+
+        return mapOver
+            ? new MapOver(operationProvider, valuesProvider)
+            : new MapWith(operationProvider, valuesProvider);
+    }
+
+    private IFunction BuildDirectionalMapOperation(OpenExpressionParameter expression, IContext context, bool mapOver)
+    {
+        var members = expression.Expression.Members.ToArray();
+        var isBareCallable = members is [{ Parameters.Length: 0 }];
+        if (isBareCallable)
+        {
+            var name = members[0].Name;
+            return new DelegatedFunction(value =>
+            {
+                var invocation = GetDirectionalMapInput(value);
+                var arguments = mapOver
+                    ? GetMapOverArguments(invocation.Item)
+                    : [new LiteralParameter(invocation.Outer)];
+                var callable = InstantiateOrWrapAggregation(new Bindings.Function(name, arguments), context);
+                using var scope = EvaluationRuntime.Derive(invocation.Item);
+                return callable.Evaluate(mapOver ? invocation.Outer : invocation.Item);
+            });
+        }
+
+        var normalized = mapOver ? NormalizeMapOverProjections(expression.Expression) : expression.Expression;
+        var operation = BuildOpenExpression(normalized, context);
+        return new DelegatedFunction(value =>
+        {
+            var invocation = GetDirectionalMapInput(value);
+            using var scope = EvaluationRuntime.Derive(invocation.Item);
+            return operation.Evaluate(mapOver ? invocation.Outer : invocation.Item);
+        });
+    }
+
+    private static IParameter[] GetMapOverArguments(object? item)
+        => item is Values.Tuple tuple
+            ? tuple.Select(value => (IParameter)new LiteralParameter(value)).ToArray()
+            : [new LiteralParameter(item)];
+
+    private static DirectionalMapInput GetDirectionalMapInput(object? value)
+        => value as DirectionalMapInput
+            ?? throw new InvalidOperationException("Directional map operations require a directional map input.");
+
+    private static OpenExpression NormalizeMapOverProjections(OpenExpression expression)
+        => new(expression.Members.Select(member => new Bindings.Function(
+            member.Name,
+            member.Parameters.Select(NormalizeMapOverProjection).ToArray(),
+            member.Syntax)));
+
+    private static IParameter NormalizeMapOverProjection(IParameter parameter)
+        => parameter switch
+        {
+            TupleProjectionParameter { Index: > 0, FromEnd: false } projection
+                => projection with { Index = projection.Index - 1 },
+            ArrayParameter array => new ArrayParameter(array.Elements.Select(element
+                => element with { Value = NormalizeMapOverProjection(element.Value) }).ToArray()),
+            TupleParameter tuple => new TupleParameter(tuple.Elements.Select(element
+                => element with { Value = NormalizeMapOverProjection(element.Value) }).ToArray()),
+            _ => parameter,
+        };
 
     private bool TryBuildBinaryCallable(string name, IContext context, [NotNullWhen(true)] out IFunction? callable)
     {
