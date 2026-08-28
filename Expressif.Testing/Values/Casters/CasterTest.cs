@@ -38,6 +38,16 @@ public class CasterTest
     public void Cast_TypedToNullableType_Itself()
     => Assert.That(new Caster().Cast<string>("abc"), Is.EqualTo("abc"));
 
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("\t\r\n")]
+    public void TryCast_EmptyOrWhitespaceString_PreservesValue(string value)
+        => Assert.Multiple(() =>
+        {
+            Assert.That(new Caster().TryCast<string>(value, out var result), Is.True);
+            Assert.That(result, Is.EqualTo(value));
+        });
+
     [Test]
     public void Cast_TypedToPrimitive_Itself()
         => Assert.That(new Caster().Cast<int>(123), Is.EqualTo(123));

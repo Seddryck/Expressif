@@ -48,6 +48,14 @@ public class Caster
     public virtual bool TryCast<T>(object? value, [NotNullWhen(true)] out T? result)
     {
         result = default;
+        if (value is string text
+            && typeof(T) == typeof(string)
+            && !IsSpecialKeyword(text))
+        {
+            result = (T)(object)text;
+            return true;
+        }
+
         if (new Null().Equals(value) || new Empty().Equals(value) || new Whitespace().Equals(value))
             return false;
 
@@ -63,6 +71,10 @@ public class Caster
         result = (T)converted!;
         return true;
     }
+
+    private static bool IsSpecialKeyword(string value)
+        => new[] { new Null().Keyword, new Empty().Keyword, new Whitespace().Keyword }
+            .Contains(value.Trim(), StringComparer.OrdinalIgnoreCase);
 
     private static bool TryCast(object value, Type targetType, out object? result)
     {
