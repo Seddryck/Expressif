@@ -20,7 +20,7 @@ public sealed class ParameterValueConverter
             LiteralParameter literal => literal.Value,
             QuotedLiteralParameter quoted => quoted.Value,
             ArrayParameter array => ConvertArray(array),
-            TupleParameter tuple => new Tuple(tuple.Values.Select(Convert).ToArray()),
+            TupleParameter tuple => ConvertTuple(tuple),
             RecordLiteralParameter record => ConvertRecord(record),
             _ => serializer.Serialize(parameter),
         };
@@ -37,6 +37,29 @@ public sealed class ParameterValueConverter
                 values.Add(value);
         }
         return values.ToArray();
+    }
+
+    private Tuple ConvertTuple(TupleParameter tuple)
+    {
+        var values = new List<object?>();
+        foreach (var element in tuple.Elements)
+        {
+            var value = Convert(element.Value);
+            if (element.IsSpread)
+            {
+                if (value is null)
+                    throw new SpreadArgumentException("Spread argument cannot be null.");
+                if (value is not TupleValue spread)
+                    throw new SpreadArgumentException("Spread argument must evaluate to a tuple.");
+                values.AddRange(spread);
+            }
+            else
+            {
+                values.Add(value);
+            }
+        }
+
+        return new Tuple(values.ToArray());
     }
 
     private RecordValue ConvertRecord(RecordLiteralParameter record)
