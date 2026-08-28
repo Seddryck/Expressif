@@ -51,6 +51,30 @@ public class Record : IFunction<object?, ValueRecord>
     ValueRecord IFunction<object?, ValueRecord>.Evaluate(object? value) => (ValueRecord)Evaluate(value)!;
 }
 
+/// <summary>
+/// Evaluates named projections against the same input and evaluates a body expression against their temporary record.
+/// </summary>
+[Function(prefix: "")]
+public class With : IFunction
+{
+    private Func<RecordEntryEvaluator[]> Projections { get; }
+    private Func<object?, object?> Body { get; }
+
+    /// <param name="projections">One or more named projections evaluated independently against the input value.</param>
+    /// <param name="body">The final expression evaluated against the temporary projection record.</param>
+    public With(Func<RecordEntryEvaluator[]> projections, Func<object?, object?> body)
+        => (Projections, Body) = (projections, body);
+
+    public object? Evaluate(object? value)
+    {
+        var temporary = new ValueRecord();
+        foreach (var projection in Projections.Invoke())
+            projection.Apply(value, temporary);
+
+        return Body.Invoke(temporary);
+    }
+}
+
 public class RecordEntryEvaluator
 {
     private string? Name { get; }

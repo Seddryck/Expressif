@@ -1178,6 +1178,34 @@
     ]
   },
   {
+    "Name": "with",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Evaluates named projections independently against the input, then evaluates a body expression against their temporary record.",
+    "Parameters": [
+      {
+        "Name": "projections",
+        "Kind": "entry",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more named projections evaluated independently against the input value."
+      },
+      {
+        "Name": "body",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The final expression evaluated against the temporary projection record."
+      }
+    ],
+    "Examples": [
+      "{firstName := \"John\", lastName := \"Doe\"} | with(last-name := .lastName, first-name := .firstName, .last-name | append(\", \") | append(.first-name)) → \"Doe, John\""
+    ]
+  },
+  {
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],

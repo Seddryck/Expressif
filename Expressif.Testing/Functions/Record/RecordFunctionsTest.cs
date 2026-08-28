@@ -1,5 +1,6 @@
 using Expressif.Functions.Record;
 using Expressif.Values;
+using Expressif.Testing.Conformance;
 using RecordFunction = Expressif.Functions.Record.Record;
 using ValueRecord = Expressif.Values.RecordValue;
 
@@ -7,6 +8,63 @@ namespace Expressif.Testing.Functions.Record;
 
 public class RecordFunctionsTest
 {
+    [Conformance]
+    public void With_Valid_Text(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void With_Valid_Numeric(object? value, string expression, decimal expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    public void With_DuplicateProjectionName_ThrowsBindingDiagnostic()
+        => Assert.That(
+            () => Expression.Create("with(name := .firstName, name := .lastName, .name)"),
+            Throws.TypeOf<BindingException>().With.Message.EqualTo("Duplicate projection 'name' in with(...)."));
+
+    [TestCase("with(.name)")]
+    [TestCase("with(name := .name)")]
+    [TestCase("with(.name, .name)")]
+    public void With_InvalidShape_ThrowsBindingDiagnostic(string source)
+        => Assert.That(
+            () => Expression.Create(source),
+            Throws.TypeOf<BindingException>().With.Message.EqualTo(
+                "Function 'with' expects one or more named projections followed by a body expression."));
+
+    [Test]
+    public void With_AggregatedProjections_ComposesTemporaryRecord()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["orders"] = new object?[]
+            {
+                new Dictionary<string, object?> { ["active"] = true, ["amount"] = 12m },
+                new Dictionary<string, object?> { ["active"] = false, ["amount"] = 8m },
+                new Dictionary<string, object?> { ["active"] = true, ["amount"] = 10m },
+            },
+        };
+        var expression = Expression.Create("""
+            with(
+                active-count := .orders | filter(.active) | count,
+                total := .orders | map(.amount) | sum,
+                record(
+                    active-count := .active-count,
+                    total := .total,
+                    mean := .total | divide(.active-count)
+                )
+            )
+            """);
+
+        var result = (ValueRecord)expression.Evaluate(input)!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result["active-count"], Is.EqualTo(2));
+            Assert.That(result["total"], Is.EqualTo(30m));
+            Assert.That(result["mean"], Is.EqualTo(15m));
+        });
+    }
+
     [Test]
     public void Field_Evaluate_DictionaryValue_ReturnsExpectedValue()
     {

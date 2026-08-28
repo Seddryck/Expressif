@@ -166,7 +166,7 @@ public class FunctionIntrospectorTest
     public void Describe_UnconvertedFunctions_AreExplicitlyReported()
         => Assert.That(
             Infos.Where(x => !x.Converted).Select(x => x.Name),
-            Is.EquivalentTo(new[] { "coalesce", "field", "neutral" }));
+            Is.EquivalentTo(new[] { "coalesce", "field", "neutral", "with" }));
 
     [TestCase("after-substring", "substring", "text")]
     [TestCase("first-chars", "length", "integer")]
@@ -176,6 +176,8 @@ public class FunctionIntrospectorTest
     [TestCase("fold", "accumulator", "accumulator")]
     [TestCase("next-weekday", "weekday", "weekday")]
     [TestCase("duration-between", "previous", "date | date-time | year-month")]
+    [TestCase("with", "projections", "entry")]
+    [TestCase("with", "body", "expression")]
     public void Describe_Parameter_ExposesExpressifType(string function, string parameter, string type)
         => Assert.That(
             Infos.Single(x => x.Name == function).Parameters.Single(x => x.Name == parameter).Type,
