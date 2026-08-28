@@ -153,11 +153,17 @@ jobs:
         with:
           dotnet-version: 10.0.x
           cache: true
-          cache-dependency-path: '**/packages.lock.json'
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            .config/dotnet-tools.json
 
       - name: Restore test dependencies
         if: ${{ !matrix.generate_cli_lock }}
-        run: dotnet restore ${{ matrix.project }} --locked-mode
+        run: >-
+          dotnet restore ${{ matrix.project }}
+          --use-lock-file
+          --force-evaluate
 
       - name: Generate CLI dependency lock
         if: matrix.generate_cli_lock
@@ -305,7 +311,10 @@ jobs:
         with:
           dotnet-version: 10.0.x
           cache: true
-          cache-dependency-path: '**/packages.lock.json'
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            .config/dotnet-tools.json
 
       - name: Download CLI dependency lock
         if: matrix.use_generated_lock
@@ -315,7 +324,15 @@ jobs:
           path: Expressif.Cli
 
       - name: Restore package dependencies
+        if: matrix.use_generated_lock
         run: dotnet restore ${{ matrix.project }} --locked-mode
+
+      - name: Generate package dependency lock
+        if: ${{ !matrix.use_generated_lock }}
+        run: >-
+          dotnet restore ${{ matrix.project }}
+          --use-lock-file
+          --force-evaluate
 
       - name: Pack NuGet packages
         run: >-
@@ -405,7 +422,10 @@ jobs:
         with:
           dotnet-version: 10.0.x
           cache: true
-          cache-dependency-path: '**/packages.lock.json'
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            .config/dotnet-tools.json
 
       - name: Restore local .NET tools
         run: dotnet tool restore
@@ -476,7 +496,19 @@ jobs:
         with:
           dotnet-version: 10.0.x
           cache: true
-          cache-dependency-path: '**/packages.lock.json'
+          cache-dependency-path: |
+            **/*.csproj
+            **/*.props
+            .config/dotnet-tools.json
+
+      - name: Download CLI dependency lock
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-cli-dependency-lock
+          path: Expressif.Cli
+
+      - name: Restore distribution dependencies
+        run: dotnet restore Expressif.Cli/Expressif.Cli.csproj --locked-mode
 
       - name: Install Inno Setup
         if: matrix.installer

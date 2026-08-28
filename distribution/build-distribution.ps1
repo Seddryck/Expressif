@@ -379,7 +379,8 @@ function Invoke-Publish {
                 "--runtime", $runtime,
                 "--output", $publishDirectory,
                 "-p:version=$Version",
-                "--no-self-contained"
+                "--no-self-contained",
+                "--no-restore"
             )
 
             if ($NoBuild) {
