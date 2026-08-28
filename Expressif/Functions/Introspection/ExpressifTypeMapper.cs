@@ -17,6 +17,8 @@ internal static class ExpressifTypeMapper
             [("Array", "values")] = "any",
             [("Text", "values")] = "expression",
             [("Record", "entries")] = "entry",
+            [("With", "projections")] = "entry",
+            [("With", "body")] = "expression",
             [("Coalesce", "expressions")] = "expression",
         };
 

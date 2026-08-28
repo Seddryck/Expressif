@@ -81,6 +81,8 @@ public interface IRecordDefinitionEntry;
 public sealed record RecordNamedEntry(string Name, IParameter Value) : IRecordDefinitionEntry;
 public sealed record RecordSpreadEntry() : IRecordDefinitionEntry;
 public sealed record RecordDefinitionParameter(IRecordDefinitionEntry[] Entries) : IParameter;
+public sealed record WithProjection(string Name, IParameter Value);
+public sealed record WithDefinitionParameter(WithProjection[] Projections, IParameter Body) : IParameter;
 public sealed record InputExpressionParameter(ClosedExpression Expression) : IParameter;
 public sealed record OpenExpressionParameter(OpenExpression Expression) : IParameter;
 public sealed record PredicationParameter(IPredication Predication) : IParameter;

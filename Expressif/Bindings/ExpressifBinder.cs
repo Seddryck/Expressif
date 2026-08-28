@@ -220,6 +220,7 @@ public sealed class ExpressifBinder
         {
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
+            "with" => BindWithFunction(syntax),
             "array" or "text" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
@@ -298,6 +299,28 @@ public sealed class ExpressifBinder
         => syntax.Arguments.Count == 0
             ? new Function(syntax.Name, [])
             : new Function(syntax.Name, [new RecordDefinitionParameter(syntax.Arguments.Select(BindRecordEntry).ToArray())]);
+
+    private Function BindWithFunction(FunctionCallSyntax syntax)
+    {
+        if (syntax.Arguments.Count < 2
+            || syntax.Arguments[^1] is not PositionalArgumentSyntax { Value: { } body }
+            || syntax.Arguments.Take(syntax.Arguments.Count - 1).Any(argument => argument is not NamedArgumentSyntax))
+            throw new BindingException("Function 'with' expects one or more named projections followed by a body expression.");
+
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        var projections = syntax.Arguments
+            .Take(syntax.Arguments.Count - 1)
+            .Cast<NamedArgumentSyntax>()
+            .Select(named =>
+            {
+                if (!names.Add(named.Name.Value))
+                    throw new BindingException($"Duplicate projection '{named.Name.Value}' in with(...).");
+                return new WithProjection(named.Name.Value, BindArgument(named.Value));
+            })
+            .ToArray();
+
+        return new Function(syntax.Name, [new WithDefinitionParameter(projections, BindArgument(body))]);
+    }
 
     private IRecordDefinitionEntry BindRecordEntry(ArgumentSyntax syntax) => syntax switch
     {

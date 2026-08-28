@@ -31,6 +31,19 @@ public class FunctionFactory : BaseExpressionFactory
     public FunctionFactory()
         : base(new FunctionTypeMapper()) { }
 
+    protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
+    {
+        if (parameter is OpenExpressionParameter open)
+        {
+            var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
+            return CreateFunctionCast(
+                () => evaluator.Invoke(context.CurrentObject.Value ?? EvaluationRuntime.Frame?.Current),
+                scalarType);
+        }
+
+        return base.CreateParameter(parameter, scalarType, context);
+    }
+
     public IFunction Instantiate(IRootExpression rootExpression, IContext context)
     {
         return rootExpression switch
@@ -216,6 +229,8 @@ public class FunctionFactory : BaseExpressionFactory
 
         if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
             return BuildRecordFunction(function, context);
+        if (name.Equals("with", StringComparison.OrdinalIgnoreCase))
+            return BuildWithFunction(function, context);
         if (name.Equals("array", StringComparison.OrdinalIgnoreCase))
             return BuildArrayFunction(function, context);
         if (name.Equals("text", StringComparison.OrdinalIgnoreCase))
@@ -534,6 +549,20 @@ public class FunctionFactory : BaseExpressionFactory
         }
 
         return new RecordFunction(() => [.. evaluators]);
+    }
+
+    private IFunction BuildWithFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters is not [WithDefinitionParameter definition])
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var projections = definition.Projections
+            .Select(projection => RecordEntryEvaluator.Named(
+                projection.Name,
+                BuildValueEvaluator(projection.Value, context)))
+            .ToArray();
+        var body = BuildValueEvaluator(definition.Body, context);
+        return new Expressif.Functions.Record.With(() => projections, body);
     }
 
     private Func<object?, object?> BuildRecordNamedValueEvaluator(IParameter parameter, IContext context)

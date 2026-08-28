@@ -143,11 +143,13 @@ public static class DocumentationExtensions
         => (declaringType == typeof(Array.Array) && parameterName == "values")
             || (declaringType == typeof(Text.Text) && parameterName == "values")
             || (declaringType == typeof(Record.Record) && parameterName == "entries")
+            || (declaringType == typeof(Record.With) && parameterName == "projections")
             || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")
             || (declaringType == typeof(Tuple.Pick) && parameterName == "positions");
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
         => declaringType == typeof(Special.Coalesce) && parameterName == "expressions" ? 2
+            : declaringType == typeof(Record.With) && parameterName == "projections" ? 1
             : declaringType == typeof(Tuple.Pick) && parameterName == "positions" ? 1
             : 0;
 
