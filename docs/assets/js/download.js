@@ -6,12 +6,28 @@
 
   const repository = root.dataset.repository;
   const githubApi = `https://api.github.com/repos/${repository}/releases`;
-  const state = { releases: [], release: null, section: "cli", method: "tool", choices: {}, packages: [], packagesStatus: "idle" };
+  const state = { releases: [], release: null, section: "cli", method: "tool", choices: {}, packages: [], packageVersions: [], packageVersion: null, packagesStatus: "idle" };
 
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character]));
   const versionOf = (release) => release.tag_name.replace(/^v/i, "");
   const distinct = (items, key) => [...new Map(items.map((item) => [item[key], item[key]])).values()];
   const label = { win: "Windows", linux: "Linux", x64: "x64", arm64: "Arm64", glibc: "Standard Linux / glibc", musl: "Alpine / musl", setup: "Installer", portable: "Portable" };
+  const downloadIcon = '<svg class="download-icon" aria-hidden="true" viewBox="0 0 16 16"><path d="M8 1v9m0 0 3.5-3.5M8 10 4.5 6.5M2 12v2h12v-2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/></svg>';
+
+  function parseVersion(version) {
+    const match = /^(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?(?:-([0-9A-Za-z.-]+))?/.exec(String(version).replace(/^v/i, ""));
+    return match ? { major: Number(match[1]), minor: Number(match[2]), patch: Number(match[3]), revision: Number(match[4] || 0), prerelease: match[5] || "" } : null;
+  }
+
+  function compareVersions(left, right) {
+    const a = parseVersion(left);
+    const b = parseVersion(right);
+    if (!a || !b) return String(right).localeCompare(String(left), undefined, { numeric: true });
+    for (const key of ["major", "minor", "patch", "revision"]) if (a[key] !== b[key]) return b[key] - a[key];
+    if (!a.prerelease && b.prerelease) return -1;
+    if (a.prerelease && !b.prerelease) return 1;
+    return b.prerelease.localeCompare(a.prerelease, undefined, { numeric: true });
+  }
 
   function parseAsset(asset, version) {
     const name = asset.name.toLowerCase();
@@ -76,14 +92,29 @@
     const selected = candidates[0];
     if (!selected) return html + `<div class="download-notice">No download matches these choices.</div>`;
     const friendly = [label[selected.os], label[selected.arch], selected.libc === "musl" ? "musl" : null, selected.framework.replace("net", ".NET ")].filter(Boolean).join(" · ");
-    return html + `<div class="download-card download-card--recommended"><span class="download-badge">Recommended download</span><h3>Expressif ${escapeHtml(versionOf(state.release))} — ${escapeHtml(friendly)}</h3><a class="download-action" href="${escapeHtml(selected.asset.browser_download_url)}">Download ${escapeHtml(label[selected.packageType].toLowerCase())}</a><div class="download-filename">${escapeHtml(selected.asset.name)}</div></div>`;
+    return html + `<div class="download-card download-card--recommended"><span class="download-badge">Recommended download</span><h3>Expressif ${escapeHtml(versionOf(state.release))} — ${escapeHtml(friendly)}</h3><a class="download-action" href="${escapeHtml(selected.asset.browser_download_url)}">${downloadIcon}<span>Download ${escapeHtml(label[selected.packageType].toLowerCase())}</span></a><div class="download-filename">${escapeHtml(selected.asset.name)}</div></div>`;
   }
 
   function commandBlock(command) {
     return `<div class="download-command"><code>${escapeHtml(command)}</code><button class="download-copy" type="button" data-copy="${escapeHtml(command)}">Copy</button></div>`;
   }
 
-  function toolPackages() { return state.packages.filter((item) => item.isTool); }
+  function renderPackageCard(item) {
+    const command = commandBlock(`dotnet add package ${item.id} --version ${item.version}`);
+    return `<article class="download-card download-package"><h3>${escapeHtml(item.id)}</h3><p class="download-package__description">${escapeHtml(item.description)}</p>${command}<p><a href="${escapeHtml(item.url)}">View on NuGet</a></p></article>`;
+  }
+
+  function renderSyntaxCard(item) {
+    const details = syntaxDetails[item.target];
+    return `<article class="download-card"><h3>${details[0]}</h3><p>${details[1]}</p><a class="download-action" href="${escapeHtml(item.asset.browser_download_url)}">${downloadIcon}<span>Download</span></a><div class="download-filename">${escapeHtml(item.asset.name)}</div></article>`;
+  }
+
+  function renderConformanceCard(item) {
+    const title = item.implementation ? `${escapeHtml(item.implementation)} implementation manifest` : "Complete suite";
+    return `<article class="download-card"><h3>${title}</h3><a class="download-action" href="${escapeHtml(item.asset.browser_download_url)}">${downloadIcon}<span>Download</span></a><div class="download-filename">${escapeHtml(item.asset.name)}</div></article>`;
+  }
+
+  function toolPackages() { return state.packages.filter((item) => item.isTool && item.version.toLowerCase() === versionOf(state.release).toLowerCase()); }
   function renderTool() {
     if (state.packagesStatus === "loading" || state.packagesStatus === "idle") return `<div class="download-loading">Loading matching .NET tools from NuGet…</div>`;
     if (state.packagesStatus === "error") return `<div class="download-notice download-notice--error">NuGet package information could not be loaded. Try <a href="https://www.nuget.org/packages?q=Expressif">NuGet search</a> or refresh this page.</div>`;
@@ -99,19 +130,24 @@
   function renderPackages() {
     if (state.packagesStatus === "loading" || state.packagesStatus === "idle") return `<h2>.NET packages</h2><div class="download-loading">Loading matching packages from NuGet…</div>`;
     if (state.packagesStatus === "error") return `<h2>.NET packages</h2><div class="download-notice download-notice--error">NuGet package information could not be loaded. Try <a href="https://www.nuget.org/packages?q=Expressif">NuGet search</a> or refresh this page.</div>`;
-    const packages = state.packages.filter((item) => !item.isTool);
-    return `<h2>.NET packages</h2><p>Use Expressif from a .NET application. These packages are independent of operating system and architecture.</p>${packages.length ? `<div class="download-grid">${packages.map((item) => `<article class="download-card download-package"><h3>${escapeHtml(item.id)}</h3><p class="download-package__description">${escapeHtml(item.description)}</p>${commandBlock(`dotnet add package ${item.id} --version ${item.version}`)}<p><a href="${escapeHtml(item.url)}">View on NuGet</a></p></article>`).join("")}</div>` : `<div class="download-notice">No Expressif library package matching version ${escapeHtml(versionOf(state.release))} was found on NuGet.</div>`}`;
+    const packages = state.packages.filter((item) => !item.isTool && item.version === state.packageVersion);
+    const versionOptions = state.packageVersions.map((version) => `<option value="${escapeHtml(version)}" ${version === state.packageVersion ? "selected" : ""}>${escapeHtml(version)}</option>`).join("");
+    const versionPicker = state.packageVersions.length > 1 ? `<div class="download-package-version"><label for="download-package-version">Package version</label><select id="download-package-version" data-package-version>${versionOptions}</select><p class="download-help">Patch releases are primarily bug fixes and may be published only to NuGet, without a corresponding GitHub Release. The latest available patch in the ${escapeHtml(versionOf(state.release).split(".").slice(0, 2).join("."))}.x line is selected automatically.</p></div>` : "";
+    const packageContent = packages.length ? `<div class="download-grid">${packages.map(renderPackageCard).join("")}</div>` : `<div class="download-notice">No Expressif library package matching version ${escapeHtml(state.packageVersion || versionOf(state.release))} was found on NuGet.</div>`;
+    return `<h2>.NET packages</h2><p>Use Expressif from a .NET application. These packages are independent of operating system and architecture.</p>${versionPicker}${packageContent}`;
   }
 
   const syntaxDetails = { vscode: ["VS Code", "Install Expressif highlighting in Visual Studio Code."], textmate: ["TextMate", "Use the TextMate grammar in compatible editors."], rouge: ["Rouge", "Add Expressif highlighting to Rouge-based sites."], notepadpp: ["Notepad++", "Import the user-defined language into Notepad++."] };
   function renderSyntax() {
     const assets = parsedAssets().filter((item) => item.kind === "syntax");
-    return `<h2>Syntax highlighting</h2><p>These packages add Expressif language highlighting. They do not install the Expressif runtime or CLI.</p>${assets.length ? `<div class="download-grid">${assets.map((item) => `<article class="download-card"><h3>${syntaxDetails[item.target][0]}</h3><p>${syntaxDetails[item.target][1]}</p><a class="download-action" href="${escapeHtml(item.asset.browser_download_url)}">Download</a><div class="download-filename">${escapeHtml(item.asset.name)}</div></article>`).join("")}</div>` : `<div class="download-notice">No recognized syntax-highlighting assets are available for this release.</div>`}`;
+    const content = assets.length ? `<div class="download-grid">${assets.map(renderSyntaxCard).join("")}</div>` : '<div class="download-notice">No recognized syntax-highlighting assets are available for this release.</div>';
+    return `<h2>Syntax highlighting</h2><p>These packages add Expressif language highlighting. They do not install the Expressif runtime or CLI.</p>${content}`;
   }
 
   function renderConformance() {
     const assets = parsedAssets().filter((item) => item.kind === "conformance");
-    return `<h2>Conformance assets</h2><p>Use these assets when implementing or validating another Expressif runtime against the official behaviour.</p>${assets.length ? `<div class="download-grid">${assets.map((item) => `<article class="download-card"><h3>${item.implementation ? `${escapeHtml(item.implementation)} implementation manifest` : "Complete suite"}</h3><a class="download-action" href="${escapeHtml(item.asset.browser_download_url)}">Download</a><div class="download-filename">${escapeHtml(item.asset.name)}</div></article>`).join("")}</div>` : `<div class="download-notice">No recognized conformance assets are available for this release.</div>`}`;
+    const content = assets.length ? `<div class="download-grid">${assets.map(renderConformanceCard).join("")}</div>` : '<div class="download-notice">No recognized conformance assets are available for this release.</div>';
+    return `<h2>Conformance assets</h2><p>Use these assets when implementing or validating another Expressif runtime against the official behaviour.</p>${content}`;
   }
 
   function render() {
@@ -125,6 +161,8 @@
     const requestedVersion = versionOf(state.release);
     state.packagesStatus = "loading";
     state.packages = [];
+    state.packageVersions = [];
+    state.packageVersion = null;
     render();
     try {
       const service = await fetch("https://api.nuget.org/v3/index.json").then(checkResponse).then((response) => response.json());
@@ -136,15 +174,20 @@
         const registration = await fetch(registrationUrl).then(checkResponse).then((response) => response.json());
         const pages = await Promise.all(registration.items.map((page) => page.items ? page : fetch(page["@id"]).then(checkResponse).then((response) => response.json())));
         const leaves = pages.flatMap((page) => page.items || []);
-        const match = leaves.find((leaf) => leaf.catalogEntry.version.toLowerCase() === requestedVersion.toLowerCase());
-        if (!match) return null;
-        const entry = match.catalogEntry;
-        const packageTypes = (entry.packageTypes || item.packageTypes || []).map((type) => type.name);
-        if (packageTypes.includes("DotnetToolRidPackage")) return null;
-        return { id: entry.id, version: entry.version, description: entry.description || item.description || "Expressif package", isTool: packageTypes.includes("DotnetTool"), url: `https://www.nuget.org/packages/${encodeURIComponent(entry.id)}/${encodeURIComponent(entry.version)}` };
+        const requested = parseVersion(requestedVersion);
+        return leaves.map((leaf) => leaf.catalogEntry).filter((entry) => {
+          const candidate = parseVersion(entry.version);
+          return candidate?.major === requested?.major && candidate?.minor === requested?.minor;
+        }).map((entry) => {
+          const packageTypes = (entry.packageTypes || item.packageTypes || []).map((type) => type.name);
+          if (packageTypes.includes("DotnetToolRidPackage")) return null;
+          return { id: entry.id, version: entry.version, description: entry.description || item.description || "Expressif package", isTool: packageTypes.includes("DotnetTool"), url: `https://www.nuget.org/packages/${encodeURIComponent(entry.id)}/${encodeURIComponent(entry.version)}` };
+        }).filter(Boolean);
       }));
       if (requestedVersion !== versionOf(state.release)) return;
-      state.packages = packages.filter(Boolean).sort((a, b) => a.id.localeCompare(b.id));
+      state.packages = packages.flat().sort((a, b) => a.id.localeCompare(b.id));
+      state.packageVersions = [...new Set(state.packages.filter((item) => !item.isTool).map((item) => item.version))].sort(compareVersions);
+      state.packageVersion = state.packageVersions[0] || null;
       state.packagesStatus = "ready";
     } catch (error) {
       state.packagesStatus = "error";
@@ -169,10 +212,12 @@
   });
 
   root.addEventListener("change", (event) => {
-    if (!event.target.matches("[data-version]")) return;
-    state.release = state.releases.find((release) => String(release.id) === event.target.value);
-    state.choices = {};
-    loadPackages();
+    if (event.target.matches("[data-package-version]")) { state.packageVersion = event.target.value; render(); return; }
+    if (event.target.matches("[data-version]")) {
+      state.release = state.releases.find((release) => String(release.id) === event.target.value);
+      state.choices = {};
+      loadPackages();
+    }
   });
 
   Promise.all([
