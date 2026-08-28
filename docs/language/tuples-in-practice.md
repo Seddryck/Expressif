@@ -1,7 +1,7 @@
 ---
 title: Tuples in practice
 parent: Expressif language
-nav_order: 11
+nav_order: 12
 description: Follow a concrete tuple pipeline that compares consecutive measurements and retains significant changes.
 ---
 
