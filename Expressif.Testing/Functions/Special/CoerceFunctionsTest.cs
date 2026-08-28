@@ -22,6 +22,20 @@ public class CoerceFunctionsTest
     public void CoerceText_Valid(object? value, string? expected)
         => Assert.That(new CoerceText().Evaluate(value), Is.EqualTo(expected));
 
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("\t\r\n")]
+    public void CoerceText_EmptyOrWhitespaceString_PreservesValue(string value)
+    {
+        IFunction<string, string?> typed = new CoerceText();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(new CoerceText().Evaluate(value), Is.EqualTo(value));
+            Assert.That(typed.Evaluate(value), Is.EqualTo(value));
+        });
+    }
+
     [Conformance]
     public void CoerceBoolean_Valid(object? value, bool? expected)
         => Assert.That(new CoerceBoolean().Evaluate(value), Is.EqualTo(expected));
