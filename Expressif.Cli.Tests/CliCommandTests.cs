@@ -63,9 +63,9 @@ public class CliCommandTests
         });
     }
 
-    [TestCase("even", "4", "true")]
-    [TestCase("even", "5", "false")]
-    [TestCase("is-even", "4", "true")]
+    [TestCase("even", "4", "#true")]
+    [TestCase("even", "5", "#false")]
+    [TestCase("is-even", "4", "#true")]
     public async Task Evaluate_PredicateOnlyExpression_ReturnsBoolean(string expression, string input, string expected)
     {
         var result = await InvokeAsync("evaluate", expression, "--input", input);
@@ -78,9 +78,9 @@ public class CliCommandTests
         });
     }
 
-    [TestCase("4", "false")]
-    [TestCase("6", "true")]
-    [TestCase("7", "false")]
+    [TestCase("4", "#false")]
+    [TestCase("6", "#true")]
+    [TestCase("7", "#false")]
     public async Task Evaluate_ComposedPredicateOnlyExpression_ReturnsBoolean(string input, string expected)
     {
         var result = await InvokeAsync("evaluate", "even |AND greater-than(5)", "--input", input);
@@ -93,10 +93,10 @@ public class CliCommandTests
         });
     }
 
-    [TestCase("-1", "true")]
-    [TestCase("6", "true")]
-    [TestCase("3", "false")]
-    [TestCase("5", "false")]
+    [TestCase("-1", "#true")]
+    [TestCase("6", "#true")]
+    [TestCase("3", "#false")]
+    [TestCase("5", "#false")]
     public async Task Evaluate_NestedLowercasePredicateExpression_ReturnsBoolean(string input, string expected)
     {
         var result = await InvokeAsync(
@@ -113,10 +113,10 @@ public class CliCommandTests
         });
     }
 
-    [TestCase("-3", "true")]
-    [TestCase("-2", "false")]
-    [TestCase("6", "true")]
-    [TestCase("7", "false")]
+    [TestCase("-3", "#true")]
+    [TestCase("-2", "#false")]
+    [TestCase("6", "#true")]
+    [TestCase("7", "#false")]
     public async Task Evaluate_TwoNestedPredicateBranches_ReturnsBoolean(string input, string expected)
     {
         var result = await InvokeAsync(
@@ -997,7 +997,7 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := Alice, age := \"32\"}"));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := \"Alice\", age := \"32\"}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -1251,7 +1251,7 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := Alice}"));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := \"Alice\"}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

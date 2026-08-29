@@ -6,7 +6,7 @@ namespace Expressif.Testing.Values;
 public class ValueFormatterTest
 {
     [Test]
-    public void Format_Record_UsesMinimalQuotingWithoutTypeAmbiguity()
+    public void Format_Record_QuotesStringsWithoutTypeAmbiguity()
     {
         var record = new RecordValue();
         record.Set("name", "Alice");
@@ -15,7 +15,7 @@ public class ValueFormatterTest
 
         var result = ValueFormatter.Format(record);
 
-        Assert.That(result, Is.EqualTo("{name := Alice, country := \"United Kingdom\", booleanText := \"true\"}"));
+        Assert.That(result, Is.EqualTo("{name := \"Alice\", country := \"United Kingdom\", booleanText := \"true\"}"));
     }
 
     [Test]
@@ -32,7 +32,7 @@ public class ValueFormatterTest
 
         var result = ValueFormatter.Format(record);
 
-        Assert.That(result, Is.EqualTo("{name := Alice, address := {city := Brussels, country := Belgium}, roles := {admin, reviewer}}"));
+        Assert.That(result, Is.EqualTo("{name := \"Alice\", address := {city := \"Brussels\", country := \"Belgium\"}, roles := {\"admin\", \"reviewer\"}}"));
     }
 
     [Test]
@@ -44,7 +44,42 @@ public class ValueFormatterTest
 
         var result = ValueFormatter.Format(record);
 
-        Assert.That(result, Is.EqualTo("{__NONAME_0 := Alice, active := true}"));
+        Assert.That(result, Is.EqualTo("{__NONAME_0 := \"Alice\", active := #true}"));
+    }
+
+    [Test]
+    public void Format_Array_PreservesScalarSyntax()
+    {
+        object?[] array = [true, "Ada", 10.5m, new DateOnly(2026, 8, 28), new DateTime(2026, 8, 28, 14, 30, 45)];
+
+        Assert.That(
+            ValueFormatter.Format(array),
+            Is.EqualTo("{#true, \"Ada\", 10.5, #\"2026-08-28\", #\"2026-08-28T14:30:45\"}"));
+    }
+
+    [Test]
+    public void Format_Tuple_PreservesScalarSyntax()
+    {
+        var tuple = new TupleValue(true, "Ada", 10.5m, new DateOnly(2026, 8, 28), new DateTime(2026, 8, 28, 14, 30, 45));
+
+        Assert.That(
+            ValueFormatter.Format(tuple),
+            Is.EqualTo("T(#true, \"Ada\", 10.5, #\"2026-08-28\", #\"2026-08-28T14:30:45\")"));
+    }
+
+    [Test]
+    public void Format_Record_PreservesScalarSyntax()
+    {
+        var record = new RecordValue();
+        record.Set("boolean", true);
+        record.Set("string", "Ada");
+        record.Set("numeric", 10.5m);
+        record.Set("date", new DateOnly(2026, 8, 28));
+        record.Set("datetime", new DateTime(2026, 8, 28, 14, 30, 45));
+
+        Assert.That(
+            ValueFormatter.Format(record),
+            Is.EqualTo("{boolean := #true, string := \"Ada\", numeric := 10.5, date := #\"2026-08-28\", datetime := #\"2026-08-28T14:30:45\"}"));
     }
 
     [Test]
