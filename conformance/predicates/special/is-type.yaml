@@ -1,0 +1,46 @@
+suite: special
+kind: predicate
+operator: is-type
+tests:
+  - id: is-type.text
+    cases:
+      - id: is-type.text.text
+        value: "42"
+        parameters: [text]
+        expected: true
+      - id: is-type.text.numeric
+        value: "42"
+        parameters: [numeric]
+        expected: false
+      - id: is-type.text.boolean
+        value: "true"
+        parameters: [boolean]
+        expected: false
+  - id: is-type.integer
+    cases:
+      - id: is-type.integer.integer
+        value: 42
+        parameters: [integer]
+        expected: true
+      - id: is-type.integer.numeric
+        value: 42
+        parameters: [numeric]
+        expected: true
+      - id: is-type.integer.decimal
+        value: 42
+        parameters: [decimal]
+        expected: false
+  - id: is-type.decimal
+    cases:
+      - id: is-type.decimal.decimal
+        value: 42.5
+        parameters: [decimal]
+        expected: true
+      - id: is-type.decimal.numeric
+        value: 42.5
+        parameters: [numeric]
+        expected: true
+      - id: is-type.decimal.integer
+        value: 42.5
+        parameters: [integer]
+        expected: false

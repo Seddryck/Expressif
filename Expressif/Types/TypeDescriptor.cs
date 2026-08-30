@@ -10,7 +10,8 @@ public sealed record TypeDescriptor(
     string Summary,
     string? Parent,
     TypeLiteralMetadata? Literal,
-    IReadOnlyDictionary<string, string> Bindings);
+    IReadOnlyDictionary<string, string> Bindings,
+    Type? RuntimeType);
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class ExpressifTypeAttribute : Attribute
@@ -46,6 +47,39 @@ public static class TypeRegistry
         => TryResolve(name, out var descriptor)
             ? descriptor
             : throw new UnknownExpressifTypeException(name);
+
+    public static bool IsInstance(object? value, TypeDescriptor expected)
+    {
+        ArgumentNullException.ThrowIfNull(expected);
+
+        if (value is null)
+            return expected.Name.Equals("null", StringComparison.OrdinalIgnoreCase);
+
+        var actual = All
+            .Where(descriptor => descriptor.RuntimeType?.IsInstanceOfType(value) == true)
+            .OrderByDescending(GetDepth)
+            .FirstOrDefault();
+
+        while (actual is not null)
+        {
+            if (actual.Name.Equals(expected.Name, StringComparison.OrdinalIgnoreCase))
+                return true;
+            actual = actual.Parent is null ? null : Resolve(actual.Parent);
+        }
+
+        return false;
+    }
+
+    private static int GetDepth(TypeDescriptor descriptor)
+    {
+        var depth = 0;
+        while (descriptor.Parent is not null)
+        {
+            depth++;
+            descriptor = Resolve(descriptor.Parent);
+        }
+        return depth;
+    }
 
     private static IReadOnlyDictionary<string, TypeDescriptor> BuildLookup()
     {
@@ -128,7 +162,8 @@ public sealed class TypeIntrospector : BaseIntrospector
                 : new TypeLiteralMetadata(metadata.LiteralSyntax, metadata.LiteralExamples),
             runtimeType is null
                 ? new Dictionary<string, string>()
-                : new Dictionary<string, string> { ["dotnet"] = runtimeType.FullName! });
+                : new Dictionary<string, string> { ["dotnet"] = runtimeType.FullName! },
+            runtimeType);
     }
 }
 

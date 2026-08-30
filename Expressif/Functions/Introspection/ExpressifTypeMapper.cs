@@ -1,5 +1,6 @@
 using Expressif.Accumulators;
 using Expressif.Predicates;
+using Expressif.Types;
 using Expressif.Values;
 using System.Collections;
 
@@ -43,6 +44,8 @@ internal static class ExpressifTypeMapper
             return "predicate";
         if (type == typeof(IAccumulator))
             return "accumulator";
+        if (type == typeof(TypeDescriptor))
+            return "type";
         if (type == typeof(string) || type == typeof(char) || type.IsEnum)
             return "text";
         if (type == typeof(bool))

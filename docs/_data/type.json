@@ -74,7 +74,7 @@
   {
     "Name": "duration",
     "Summary": "An elapsed duration expressed using ISO 8601 notation.",
-    "Parent": "temporal",
+    "Parent": "scalar",
     "Literal": null,
     "Bindings": {
       "dotnet": "System.TimeSpan"

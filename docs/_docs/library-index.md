@@ -290,6 +290,7 @@ tags: [predicates, functions]
 * [is-true]({{ site.baseurl }}/docs/boolean-predicates/#is-true)
 * [is-true-or-null]({{ site.baseurl }}/docs/boolean-predicates/#is-true-or-null)
 * [is-tuple]({{ site.baseurl }}/docs/tuple-predicates/#is-tuple)
+* [is-type]({{ site.baseurl }}/docs/special-predicates/#is-type)
 * [is-upper-case]({{ site.baseurl }}/docs/text-predicates/#is-upper-case)
 * [is-weekday]({{ site.baseurl }}/docs/temporal-predicates/#is-weekday)
 * [is-weekend]({{ site.baseurl }}/docs/temporal-predicates/#is-weekend)
