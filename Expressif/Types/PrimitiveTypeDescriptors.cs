@@ -47,7 +47,7 @@ public sealed class DateTimeTypeDescriptor : TypeDescriptor<DateTime> { }
 public sealed class TimeTypeDescriptor : TypeDescriptor<TimeOnly> { }
 
 /// <summary>An elapsed duration expressed using ISO 8601 notation.</summary>
-[ExpressifType(Parent = "temporal")]
+[ExpressifType(Parent = "scalar")]
 public sealed class DurationTypeDescriptor : TypeDescriptor<TimeSpan> { }
 
 /// <summary>The common type family for values containing other values.</summary>

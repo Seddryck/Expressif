@@ -590,6 +590,29 @@
     ]
   },
   {
+    "Name": "is-type",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "special",
+    "Summary": "Returns whether the input has the requested Expressif runtime type or belongs to the requested type family, without coercion.",
+    "Parameters": [
+      {
+        "Name": "type",
+        "Type": "type",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the Expressif type descriptor to test."
+      }
+    ],
+    "Examples": [
+      "42 | is-type(:numeric) → #true",
+      "\"42\" | is-type(:numeric) → #false"
+    ],
+    "Input": "any",
+    "Output": "boolean"
+  },
+  {
     "Name": "is-after",
     "IsPublic": true,
     "Aliases": [

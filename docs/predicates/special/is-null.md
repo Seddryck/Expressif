@@ -28,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+#null | is-null → #true
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `special`  
 **Aliases:** `null`

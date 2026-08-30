@@ -44,7 +44,7 @@ flowchart TD
     G --> H[date]
     G --> I[datetime]
     G --> J[time]
-    G --> K[duration]
+    A --> K[duration]
 ```
 
 ### Text
@@ -98,13 +98,12 @@ The literals `10` and `-10` have type `integer`; `10.1` and `-10.1` have type `d
 
 Temporal values represent dates and times.
 
-The temporal family can include:
+The temporal family includes:
 
 ```expressif
 date
 datetime
 time
-duration
 ```
 
 Prefix temporal literals with `#` and enclose their value in double quotes:
@@ -116,7 +115,7 @@ Prefix temporal literals with `#` and enclose their value in double quotes:
 #"P2DT3H30M"
 ```
 
-These values represent a date, datetime, time, and duration respectively. Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function.
+These values represent a date, datetime, time, and duration respectively. Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function.
 
 ### Null
 
@@ -215,6 +214,30 @@ flowchart LR
 ```
 
 The user should not need to annotate every intermediate value.
+
+## Strict type inspection
+
+Use `is-type(:type)` to test the current value against a first-class Expressif type descriptor. It accepts any input and returns a boolean. The check is strict: it never coerces the input and uses the same canonical `:type` vocabulary as type-directed coercion.
+
+```expressif
+"42" | is-type(:numeric)                    // #false
+42 | is-type(:numeric)                      // #true
+42 | is-type(:integer)                      // #true
+#"2026-08-30" | is-type(:temporal)          // #true
+#"2026-08-30" | is-type(:datetime)          // #false
+#"2026-08-30T14:30:00" | is-type(:date)     // #false
+```
+
+`:numeric` includes `:integer` and `:decimal`. `:temporal` includes `:date`, `:datetime`, and `:time`, while those specific temporal types remain distinct from one another. `:duration` is separate from `:temporal`. Structured values are also distinguished strictly: arrays, tuples, and records are not reinterpreted as one another.
+
+Text that resembles another type remains text until it is explicitly converted:
+
+```expressif
+"42" | is-type(:integer)    // #false
+"42" | coerce(:integer)     // 42
+```
+
+Use `is-null` as the dedicated null check. A null input returns `#false` for every non-null type descriptor.
 
 ## Conversion and coercion
 
