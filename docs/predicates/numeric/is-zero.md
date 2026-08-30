@@ -28,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-zero → #false
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric`  
 **Aliases:** `zero`, `numeric-is-zero`

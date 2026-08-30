@@ -32,6 +32,16 @@ Returns true if the numeric value passed as argument is between the lower bound 
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+#null | is-within-interval(#null) → #false
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric`  
 **Aliases:** `within-interval`, `numeric-is-within-interval`

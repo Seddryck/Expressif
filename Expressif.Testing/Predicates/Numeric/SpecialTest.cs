@@ -6,6 +6,6 @@ namespace Expressif.Testing.Predicates.Numeric;
 public class SpecialTest
 {
     [Conformance]
-    public void IsInteger_Valid(object? value, bool expected)
-        => Assert.That(new Integer().Evaluate(value), Is.EqualTo(expected));
+    public void IsWholeNumber_Valid(object? value, bool expected)
+        => Assert.That(new WholeNumber().Evaluate(value), Is.EqualTo(expected));
 }

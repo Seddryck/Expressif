@@ -1,0 +1,36 @@
+suite: numeric
+kind: predicate
+operator: is-whole-number
+tests:
+  - id: is-whole-number.valid
+    cases:
+     - id: is-whole-number.valid.numeric.zero
+       value: 0
+       expected: true
+     - id: is-whole-number.valid.numeric.four
+       value: 4
+       expected: true
+     - id: is-whole-number.valid.numeric.positive
+       value: 4.0
+       expected: true
+     - id: is-whole-number.valid.numeric.positive-decimal
+       value: 4.25
+       expected: false
+     - id: is-whole-number.valid.numeric.negative
+       value: -4.0
+       expected: true
+     - id: is-whole-number.valid.numeric.negative-decimal
+       value: -4.25
+       expected: false
+     - id: is-whole-number.valid.special.empty
+       value:
+       expected: false
+     - id: is-whole-number.valid.special.null
+       value: (null)
+       expected: false
+     - id: is-whole-number.valid.special.blank
+       value: (blank)
+       expected: false
+     - id: is-whole-number.valid.special.empty-tag
+       value: (empty)
+       expected: false

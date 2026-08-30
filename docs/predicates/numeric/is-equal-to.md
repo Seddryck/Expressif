@@ -32,6 +32,16 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-equal-to(5) → #false
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric`  
 **Aliases:** `equal-to`, `numeric-is-equal-to`

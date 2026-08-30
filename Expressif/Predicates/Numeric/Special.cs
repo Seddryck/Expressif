@@ -8,9 +8,10 @@ using Expressif.Predicates.Text;
 namespace Expressif.Predicates.Numeric;
 
 /// <summary>
-/// Returns true if the numeric value passed as argument is an integer value. Returns `false` otherwise.
+/// Returns true if the numeric value passed as argument is a whole-number value. Returns `false` otherwise.
 /// </summary>
-public class Integer : BaseNumericPredicate
+[Predicate(aliases: ["is-integer", "integer", "numeric-is-integer"])]
+public class WholeNumber : BaseNumericPredicate
 {
     protected override bool EvaluateNumeric(decimal value) => value % 1 == 0;
 }
