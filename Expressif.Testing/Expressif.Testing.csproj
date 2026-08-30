@@ -32,5 +32,6 @@
 		<None Include="..\predicates-rename.json" Link="predicates-rename.json" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="..\docs\_data\function.json" Link="Documentation\function.json" CopyToOutputDirectory="PreserveNewest" />
 		<None Include="..\docs\_data\predicate.json" Link="Documentation\predicate.json" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="..\docs\_data\accumulator.json" Link="Documentation\accumulator.json" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 </Project>
