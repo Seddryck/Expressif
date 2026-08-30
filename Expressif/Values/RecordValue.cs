@@ -1,10 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
-public class RecordValue : IReadOnlyDictionary<string, object?>
+/// <summary>
+/// Represents a value containing an ordered collection of named fields.
+/// </summary>
+[ExpressifType(Parent = "structured", LiteralSyntax = "Named fields enclosed in braces", LiteralExamples = ["{name := \"Alice\", age := 42}"])]
+public class RecordValue : IReadOnlyDictionary<string, object?>, IExpressifValueType
 {
     private readonly List<string> order = [];
     private readonly Dictionary<string, object?> fields = [];

@@ -8,14 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Expressif.Values.Casters;
 using Expressif.Values.Converters;
+using Expressif.Types;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Expressif.Values;
 
+/// <summary>
+/// Represents a calendar year and month.
+/// </summary>
 [TypeConverter(typeof(YearMonthConverter))]
-public record YearMonth(int Year, int Month)
+[ExpressifType(Parent = "temporal")]
+public record YearMonth(int Year, int Month) : IExpressifValueType
 #if NET7_0_OR_GREATER
-    : IParsable<YearMonth>
+    , IParsable<YearMonth>
 #endif
 {
     public override string ToString() => $"{Year:####}-{Month:0#}";
@@ -29,7 +34,7 @@ public record YearMonth(int Year, int Month)
     }
 
     public static implicit operator YearMonth(string v)
-        => (YearMonth)TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(v)!;
+        => (YearMonth)System.ComponentModel.TypeDescriptor.GetConverter(typeof(YearMonth)).ConvertFromInvariantString(v)!;
 
     protected static readonly NumberStyles Style = NumberStyles.None;
     protected static readonly NumberFormatInfo Format = CultureInfo.InvariantCulture.NumberFormat;

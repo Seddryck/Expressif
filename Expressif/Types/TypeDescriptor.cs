@@ -1,4 +1,5 @@
-using Expressif.Values;
+using Expressif.Functions.Introspection;
+using System.Reflection;
 
 namespace Expressif.Types;
 
@@ -11,46 +12,32 @@ public sealed record TypeDescriptor(
     TypeLiteralMetadata? Literal,
     IReadOnlyDictionary<string, string> Bindings);
 
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
+public sealed class ExpressifTypeAttribute : Attribute
+{
+    public string? Name { get; init; }
+    public string? Parent { get; init; }
+    public string? LiteralSyntax { get; init; }
+    public string[] LiteralExamples { get; init; } = [];
+}
+
+public interface ITypeDescriptor
+{
+    Type? RuntimeType { get; }
+}
+
+public interface IExpressifValueType { }
+
+public abstract class TypeDescriptor<T> : ITypeDescriptor
+{
+    public Type RuntimeType => typeof(T);
+}
+
 public static class TypeRegistry
 {
-    private static readonly TypeDescriptor[] Descriptors =
-    [
-        Create("scalar", "The common type family for non-structured values."),
-        Create("text", "A text value represents a sequence of characters.", "scalar",
-            "A value enclosed in double quotes", ["\"hello\""], typeof(string)),
-        Create("boolean", "A boolean value is either true or false.", "scalar",
-            "#true or #false", ["#true", "#false"], typeof(bool)),
-        Create("numeric", "The common type family for integer and decimal values.", "scalar",
-            null, ["10", "-10", "10.1", "-10.1"], typeof(decimal)),
-        Create("integer", "An integer is a numeric value written without a decimal separator.", "numeric",
-            "Digits, optionally preceded by a sign", ["10", "-10"], typeof(int)),
-        Create("decimal", "A decimal is a numeric value written with a decimal separator.", "numeric",
-            "Digits with a . decimal separator, optionally preceded by a sign", ["10.1", "-10.1"], typeof(decimal)),
-        Create("temporal", "The common type family for date and time values.", "scalar"),
-        Create("date", "A calendar date without a time component.", "temporal",
-            "#\"yyyy-MM-dd\"", ["#\"2025-12-16\""], typeof(DateOnly)),
-        Create("datetime", "A calendar date and time.", "temporal",
-            "#\"yyyy-MM-ddTHH:mm:ss\"", ["#\"2025-12-16T14:30:00\""], typeof(DateTime)),
-        Create("time", "A time of day without a date component.", "temporal",
-            "#\"HH:mm:ss\"", ["#\"14:30:00\""], typeof(TimeOnly)),
-        Create("duration", "An elapsed duration expressed using ISO 8601 notation.", "temporal",
-            runtimeType: typeof(TimeSpan)),
-        Create("year-month", "A calendar year and month.", "temporal", runtimeType: typeof(YearMonth)),
-        Create("weekday", "A day of the week.", "temporal", runtimeType: typeof(Weekday)),
-        Create("structured", "The common type family for values containing other values."),
-        Create("array", "An array contains a sequence of values.", "structured",
-            "Values enclosed in braces and separated by commas", ["{1, 2, 3}"], typeof(object[])),
-        Create("tuple", "A tuple contains a fixed sequence of positional values.", "structured",
-            "T followed by parenthesized comma-separated values", ["T(\"Alice\", 42)"], typeof(TupleValue)),
-        Create("record", "A record contains named fields.", "structured",
-            "Named fields enclosed in braces", ["{name := \"Alice\", age := 42}"], typeof(RecordValue)),
-        Create("null", "Null represents the absence of a value.", "scalar",
-            "#null", ["#null"]),
-    ];
+    public static IReadOnlyList<TypeDescriptor> All { get; } = new TypeIntrospector().Describe().ToArray();
 
     private static readonly IReadOnlyDictionary<string, TypeDescriptor> ByName = BuildLookup();
-
-    public static IReadOnlyList<TypeDescriptor> All => Descriptors;
 
     public static bool TryResolve(string name, out TypeDescriptor descriptor)
         => ByName.TryGetValue(name, out descriptor!);
@@ -60,33 +47,67 @@ public static class TypeRegistry
             ? descriptor
             : throw new UnknownExpressifTypeException(name);
 
-    private static TypeDescriptor Create(
-        string name,
-        string summary,
-        string? parent = null,
-        string? syntax = null,
-        string[]? examples = null,
-        Type? runtimeType = null)
-        => new(
-            name,
-            summary,
-            parent,
-            examples is null ? null : new TypeLiteralMetadata(syntax, examples),
-            runtimeType is null
-                ? new Dictionary<string, string>()
-                : new Dictionary<string, string> { ["dotnet"] = runtimeType.FullName! });
-
     private static IReadOnlyDictionary<string, TypeDescriptor> BuildLookup()
     {
-        var lookup = Descriptors.ToDictionary(descriptor => descriptor.Name, StringComparer.OrdinalIgnoreCase);
+        var lookup = All.ToDictionary(descriptor => descriptor.Name, StringComparer.OrdinalIgnoreCase);
         lookup.Add("date-time", lookup["datetime"]);
         return lookup;
     }
 }
 
-public sealed class TypeIntrospector
+public sealed class TypeIntrospector : BaseIntrospector
 {
-    public IEnumerable<TypeDescriptor> Describe() => TypeRegistry.All;
+    public TypeIntrospector()
+        : this(new AssemblyTypesProbe()) { }
+
+    public TypeIntrospector(Assembly[] assemblies)
+        : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
+
+    public TypeIntrospector(ITypesProbe probe)
+        : base(probe) { }
+
+    public IEnumerable<TypeDescriptor> Describe()
+        => Types
+            .Where(type => typeof(ITypeDescriptor).IsAssignableFrom(type)
+                || typeof(IExpressifValueType).IsAssignableFrom(type))
+            .Where(type => type.IsDefined(typeof(ExpressifTypeAttribute), false))
+            .Select(Describe)
+            .OrderBy(descriptor => descriptor.Name);
+
+    private static TypeDescriptor Describe(Type implementationType)
+    {
+        var metadata = implementationType.GetCustomAttribute<ExpressifTypeAttribute>()
+            ?? throw new InvalidOperationException($"Type metadata is missing for '{implementationType.FullName}'.");
+        var descriptor = typeof(ITypeDescriptor).IsAssignableFrom(implementationType)
+            ? (ITypeDescriptor)Activator.CreateInstance(implementationType)!
+            : null;
+        var runtimeType = descriptor is null ? implementationType : descriptor.RuntimeType;
+
+        return new TypeDescriptor(
+            metadata.Name ?? InferName(implementationType),
+            implementationType.GetSummary(),
+            metadata.Parent,
+            metadata.LiteralExamples.Length == 0
+                ? null
+                : new TypeLiteralMetadata(metadata.LiteralSyntax, metadata.LiteralExamples),
+            runtimeType is null
+                ? new Dictionary<string, string>()
+                : new Dictionary<string, string> { ["dotnet"] = runtimeType.FullName! });
+    }
+
+    private static string InferName(Type implementationType)
+    {
+        var name = implementationType.Name;
+        foreach (var suffix in new[] { "TypeDescriptor", "Value" })
+        {
+            if (!name.EndsWith(suffix, StringComparison.Ordinal))
+                continue;
+
+            name = name[..^suffix.Length];
+            break;
+        }
+        return name.ToKebabCase();
+    }
 }
 
 public sealed class UnknownExpressifTypeException : Exception

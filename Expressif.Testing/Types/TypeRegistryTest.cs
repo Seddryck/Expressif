@@ -1,8 +1,10 @@
 using System.Text.Json;
 using Expressif.Bindings;
 using Expressif.Functions.Special;
+using Expressif.Functions.Introspection;
 using Expressif.Syntax;
 using Expressif.Types;
+using Expressif.Values;
 
 namespace Expressif.Testing.Types;
 
@@ -93,5 +95,33 @@ public class TypeRegistryTest
             Assert.That(new CoerceInt().Evaluate("42"), Is.TypeOf<int>());
             Assert.That(new CoerceNumeric().Evaluate("42.5"), Is.TypeOf<decimal>());
         });
+    }
+
+    [TestCase("year-month", typeof(YearMonth))]
+    [TestCase("weekday", typeof(Weekday))]
+    [TestCase("tuple", typeof(TupleValue))]
+    [TestCase("record", typeof(RecordValue))]
+    public void ValueTypeSummary_ComesFromImplementationDocumentation(string name, Type implementationType)
+        => Assert.That(TypeRegistry.Resolve(name).Summary, Is.EqualTo(implementationType.GetSummary()));
+
+    [Test]
+    public void Introspector_UnionsIntrinsicDescriptorsAndImplementedValueTypes()
+    {
+        var names = new TypeIntrospector().Describe().Select(descriptor => descriptor.Name).ToArray();
+        Assert.That(names, Does.Contain("numeric").And.Contain("tuple").And.Contain("record"));
+    }
+
+    [Test]
+    public void IntrinsicDescriptors_OnlyBindSystemTypes()
+    {
+        var descriptorTypes = typeof(TypeRegistry).Assembly.GetTypes()
+            .Where(type => !type.IsAbstract && typeof(ITypeDescriptor).IsAssignableFrom(type))
+            .Select(type => (ITypeDescriptor)Activator.CreateInstance(type)!)
+            .ToArray();
+
+        Assert.That(
+            descriptorTypes.Where(descriptor => descriptor.RuntimeType is not null)
+                .Select(descriptor => descriptor.RuntimeType!.Namespace),
+            Is.All.EqualTo("System"));
     }
 }

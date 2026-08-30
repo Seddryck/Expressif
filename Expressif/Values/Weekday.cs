@@ -9,13 +9,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Expressif.Values.Casters;
 using Expressif.Values.Converters;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
+/// <summary>
+/// Represents a day of the week.
+/// </summary>
 [TypeConverter(typeof(WeekdayConverter))]
-public record Weekday(int Index, string Name)
+[ExpressifType(Parent = "temporal")]
+public record Weekday(int Index, string Name) : IExpressifValueType
 #if NET7_0_OR_GREATER
-    : IParsable<Weekday>
+    , IParsable<Weekday>
 #endif
 {
     protected static readonly NumberStyles Style = NumberStyles.None;

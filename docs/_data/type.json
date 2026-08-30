@@ -126,7 +126,7 @@
   },
   {
     "Name": "record",
-    "Summary": "A record contains named fields.",
+    "Summary": "Represents a value containing an ordered collection of named fields.",
     "Parent": "structured",
     "Literal": {
       "Syntax": "Named fields enclosed in braces",
@@ -189,7 +189,7 @@
   },
   {
     "Name": "tuple",
-    "Summary": "A tuple contains a fixed sequence of positional values.",
+    "Summary": "Represents an immutable, ordered collection of heterogeneous values.",
     "Parent": "structured",
     "Literal": {
       "Syntax": "T followed by parenthesized comma-separated values",
@@ -203,7 +203,7 @@
   },
   {
     "Name": "weekday",
-    "Summary": "A day of the week.",
+    "Summary": "Represents a day of the week.",
     "Parent": "temporal",
     "Literal": null,
     "Bindings": {
@@ -212,7 +212,7 @@
   },
   {
     "Name": "year-month",
-    "Summary": "A calendar year and month.",
+    "Summary": "Represents a calendar year and month.",
     "Parent": "temporal",
     "Literal": null,
     "Bindings": {
