@@ -563,7 +563,7 @@
     "Name": "coerce-time",
     "Scope": "special",
     "Converted": true,
-    "Input": "date-time | text | time",
+    "Input": "date | date-time | text | time",
     "Output": "time",
     "Reason": "Exposes direct typed coercion contracts through the coercion registry."
   },
@@ -1669,6 +1669,14 @@
     "Converted": true,
     "Input": "text",
     "Output": "text",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "generate",
+    "Scope": "array",
+    "Converted": true,
+    "Input": "any",
+    "Output": "array",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   }
 ]

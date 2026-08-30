@@ -22,6 +22,14 @@ public class GenerateTest
         Assert.That(result, Is.EqualTo(expected));
     }
 
+    [Conformance]
+    public void Generate_Valid_Temporal_DateSequence(DateOnly input, string[] parameters, DateOnly[] expected)
+        => Assert.That(Evaluate(input, parameters), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Generate_Valid_Temporal_TimeSequence(DateOnly input, string[] parameters, TimeOnly[] expected)
+        => Assert.That(Evaluate(input, parameters), Is.EqualTo(expected));
+
     [Test]
     public void Evaluate_UsesCurrentSeedForResultAndNextInThatOrder()
     {
@@ -49,6 +57,11 @@ public class GenerateTest
 
         Assert.That(generate.Evaluate(1), Is.EqualTo(new object?[] { 10m, 20m }));
     }
+
+    private static object? Evaluate(object input, string[] parameters)
+        => new ExpressionFactory().Create(
+            $"generate(while := {parameters[0]}, next := {parameters[1]}, result := {parameters[2]})")
+            .Evaluate(input);
 
     private sealed class DelegatedFunction(Func<object?, object?> implementation) : IFunction
     {

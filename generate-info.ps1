@@ -95,7 +95,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $names, $destination
                 $span = $spans[$entry.Name]
                 $replacements += @{ Start = $span.Start; Length = $span.Length; Text = $entryText }
             } else {
-                $additions += $entryText
+                $additions += "  $entryText"
             }
         }
 
@@ -149,6 +149,12 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $names, $destination
                     $property = $previous.PSObject.Properties[$propertyName]
                     if ($null -ne $property) {
                         $_ | Add-Member -NotePropertyName $propertyName -NotePropertyValue $property.Value
+                    }
+                }
+                foreach ($propertyName in @("Input", "Output")) {
+                    $property = $previous.PSObject.Properties[$propertyName]
+                    if ($null -eq $_.$propertyName -and $null -ne $property) {
+                        $_ | Add-Member -NotePropertyName $propertyName -NotePropertyValue $property.Value -Force
                     }
                 }
             }

@@ -1,24 +1,42 @@
 [
   {
-    "Name": "is-tuple", "IsPublic": true, "Aliases": [], "Scope": "tuple",
-    "Input": "any", "Output": "boolean", "Summary": "Returns whether the input value is a tuple.",
-    "Parameters": [], "Examples": ["T(1, \"foo\") | is-tuple → #true"]
+    "Name": "is-tuple",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple-is-tuple"
+    ],
+    "Scope": "tuple",
+    "Summary": "Returns whether the input value is a tuple.",
+    "Parameters": [],
+    "Examples": [
+      "T(1, \"foo\") | is-tuple → #true"
+    ],
+    "Input": "any",
+    "Output": "boolean"
   },
   {
     "Name": "has-arity",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "tuple-has-arity"
+    ],
     "Scope": "tuple",
-    "Input": "tuple",
-    "Output": "boolean",
     "Summary": "Returns whether the input tuple has exactly the expected number of positions.",
-    "Parameters": [{
-      "Name": "expected",
-      "Type": "integer",
-      "Optional": false,
-      "Summary": "Specifies the required non-negative tuple arity."
-    }],
-    "Examples": ["T(1, 2) | has-arity(2) → #true"]
+    "Parameters": [
+      {
+        "Name": "expected",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the required non-negative tuple arity."
+      }
+    ],
+    "Examples": [
+      "T(1, 2) | has-arity(2) → #true"
+    ],
+    "Input": "tuple",
+    "Output": "boolean"
   },
   {
     "Name": "and",
