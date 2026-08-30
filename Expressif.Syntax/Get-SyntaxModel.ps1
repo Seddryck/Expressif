@@ -22,6 +22,18 @@ function Get-IntrospectionEntries {
     @($entries.Values)
 }
 
+function Get-TypeEntries {
+    param([Parameter(Mandatory = $true)][string] $Path)
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        throw "Introspection file '$Path' does not exist."
+    }
+
+    @(Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json) |
+        ForEach-Object { ":$($_.Name)" } |
+        Sort-Object -Unique
+}
+
 function Get-SyntaxModel {
     param(
         [Parameter(Mandatory = $true)]
@@ -34,7 +46,8 @@ function Get-SyntaxModel {
         functions = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'function.json'))
         predicates = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'predicate.json'))
         accumulators = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'accumulator.json'))
+        types = @(Get-TypeEntries -Path (Join-Path $resolvedInputFolder 'type.json'))
         constants = @('#blank', '#empty', '#false', '#null', '#true')
-        operators = @('...', ':=', '|>', '|?', '|OR', '|XOR', '|AND', '!', '#', '$', '&', '.', '@', '|')
+        operators = @('...', ':=', '->', '|>', '|?', '|OR', '|XOR', '|AND', '!', '#', '$', '&', '.', '@', '|')
     }
 }

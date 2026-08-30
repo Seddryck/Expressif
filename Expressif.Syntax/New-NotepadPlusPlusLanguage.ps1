@@ -24,6 +24,7 @@ $model = [ordered]@{
         accumulators = [System.Security.SecurityElement]::Escape(
             (($syntax.accumulators | ForEach-Object { $_.name }) -join ' '))
         constants = [System.Security.SecurityElement]::Escape(($syntax.constants -join ' '))
+        types = [System.Security.SecurityElement]::Escape(($syntax.types -join ' '))
         operators = [System.Security.SecurityElement]::Escape(($udlOperators -join ' '))
     } | ConvertTo-Json -Depth 20
 

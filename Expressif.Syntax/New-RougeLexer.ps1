@@ -30,6 +30,7 @@ $model = [ordered]@{
         constantRegex = ($syntax.constants | ForEach-Object {
             ([regex]::Escape($_)).Replace('\#', '#')
         }) -join '|'
+        typeRegex = ($syntax.types | ForEach-Object { [regex]::Escape($_) }) -join '|'
         operatorRegex = ($syntax.operators | ForEach-Object { [regex]::Escape($_) }) -join '|'
         standalone = $Standalone
     } | ConvertTo-Json -Depth 20

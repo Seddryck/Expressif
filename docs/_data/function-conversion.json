@@ -1678,5 +1678,13 @@
     "Input": "any",
     "Output": "array",
     "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
+  },
+  {
+    "Name": "types",
+    "Scope": "introspection",
+    "Converted": true,
+    "Input": "any",
+    "Output": "array",
+    "Reason": "Exposes at least one closed IFunction<TIn, TOut> contract."
   }
 ]

@@ -30,6 +30,10 @@
         "match": "({{ model.constantRegex }})\\b"
     },
     {
+        "name": "storage.type.expressif",
+        "match": "(?:{{ model.typeRegex }})\\b"
+    },
+    {
         "name": "constant.numeric.expressif",
         "match": "\\b[+-]?\\d+(\\.\\d+)?\\b"
     },
