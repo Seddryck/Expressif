@@ -65,18 +65,32 @@ public class Caster
             return true;
         }
 
-        if (!TryCast(value!, typeof(T), out var converted))
+        if (!TryCastCore(value!, typeof(T), out var converted))
             return false;
 
         result = (T)converted!;
         return true;
     }
 
+    public virtual bool TryCast(object? value, Type targetType, out object? result)
+    {
+        ArgumentNullException.ThrowIfNull(targetType);
+        result = null;
+        if (value is null || new Null().Equals(value) || new Empty().Equals(value) || new Whitespace().Equals(value))
+            return false;
+        if (targetType.IsInstanceOfType(value))
+        {
+            result = value;
+            return true;
+        }
+        return TryCastCore(value, targetType, out result);
+    }
+
     private static bool IsSpecialKeyword(string value)
         => new[] { new Null().Keyword, new Empty().Keyword, new Whitespace().Keyword }
             .Contains(value.Trim(), StringComparer.OrdinalIgnoreCase);
 
-    private static bool TryCast(object value, Type targetType, out object? result)
+    private static bool TryCastCore(object value, Type targetType, out object? result)
     {
         result = null;
         if (targetType == typeof(bool) && new BooleanCaster().TryCast(value, out var boolean))

@@ -3,7 +3,7 @@ layout: docs
 title: "coerce-numeric"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/special/coerce-numeric/
 tags:

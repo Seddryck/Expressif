@@ -69,3 +69,5 @@ public class ExpressionRequiresInputException : ExpressifException
 }
 
 public sealed class SpreadArgumentException(string message) : ExpressifException(message);
+
+public sealed class StructuralValidationException(string message) : ExpressifException(message);

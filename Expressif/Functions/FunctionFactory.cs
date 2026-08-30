@@ -230,21 +230,9 @@ public class FunctionFactory : BaseExpressionFactory
         if (function.Arguments.Any(x => x.Name is not null) && name == "generate")
             function = new Bindings.Function(name, ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters);
 
-        if (name.Equals("record", StringComparison.OrdinalIgnoreCase))
-            return BuildRecordFunction(function, context);
-        if (name.Equals("with", StringComparison.OrdinalIgnoreCase))
-            return BuildWithFunction(function, context);
-        if (name.Equals("array", StringComparison.OrdinalIgnoreCase))
-            return BuildArrayFunction(function, context);
-        if (name.Equals("text", StringComparison.OrdinalIgnoreCase))
-            return BuildTextFunction(function, context);
-
-        if (name.Equals("coalesce", StringComparison.OrdinalIgnoreCase))
-            return BuildCoalesceFunction(function, context);
-        if (name.Equals("adjacent", StringComparison.OrdinalIgnoreCase))
-            return BuildAdjacentFunction(function, context);
-        if (name.Equals("generate", StringComparison.OrdinalIgnoreCase))
-            return BuildGenerateFunction(function, context);
+        var specialFunction = TryBuildSpecialFunction(name, function, context);
+        if (specialFunction is not null)
+            return specialFunction;
 
         if (name.Equals("extend", StringComparison.OrdinalIgnoreCase))
         {
@@ -291,6 +279,44 @@ public class FunctionFactory : BaseExpressionFactory
             return filtering;
 
         return Instantiate<IFunction>(type, function.Arguments, context);
+    }
+
+    private IFunction? TryBuildSpecialFunction(string name, Bindings.Function function, IContext context)
+        => name.ToLowerInvariant() switch
+        {
+            "record" => BuildRecordFunction(function, context),
+            "with" => BuildWithFunction(function, context),
+            "array" => BuildArrayFunction(function, context),
+            "text" => BuildTextFunction(function, context),
+            "coalesce" => BuildCoalesceFunction(function, context),
+            "coerce" => BuildCoerceFunction(function),
+            "adjacent" => BuildAdjacentFunction(function, context),
+            "generate" => BuildGenerateFunction(function, context),
+            _ => null,
+        };
+
+    private static IFunction BuildCoerceFunction(Bindings.Function function)
+    {
+        if (function.Parameters.All(parameter => parameter is PositionalCoercionParameter))
+        {
+            return new Special.Coerce(function.Parameters
+                .Cast<PositionalCoercionParameter>()
+                .Select(parameter => parameter.TargetType)
+                .ToArray());
+        }
+
+        var mappings = function.Parameters.Select(parameter => parameter switch
+        {
+            FieldCoercionParameter field => new Special.CoercionMapping(
+                new Special.FieldCoercionSelector(field.Field),
+                field.TargetType),
+            TupleCoercionParameter tuple => new Special.CoercionMapping(
+                new Special.TupleCoercionSelector(tuple.Position),
+                tuple.TargetType),
+            _ => throw new InvalidOperationException(
+                $"Unsupported bound coercion specification '{parameter.GetType().Name}'."),
+        }).ToArray();
+        return new Special.Coerce(mappings);
     }
 
     private IFunction BuildArrayFunction(Bindings.Function function, IContext context)

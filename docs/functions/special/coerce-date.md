@@ -3,7 +3,7 @@ layout: docs
 title: "coerce-date"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 50
 has_toc: false
 permalink: /functions/special/coerce-date/
 tags:
