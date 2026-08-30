@@ -7,6 +7,8 @@ namespace Expressif.Functions.Introspection;
 
 internal static class ExpressifTypeMapper
 {
+    private const string ValuesParameter = "values";
+
     private static readonly IReadOnlyDictionary<(string Function, string Parameter), string> ParameterOverrides =
         new Dictionary<(string, string), string>
         {
@@ -14,12 +16,16 @@ internal static class ExpressifTypeMapper
             [("Fold", "accumulator")] = "accumulator",
             [("Scan", "accumulator")] = "accumulator",
             [("DurationBetween", "previous")] = "date | date-time | year-month",
-            [("Array", "values")] = "any",
-            [("Text", "values")] = "expression",
+            [("Array", ValuesParameter)] = "any",
+            [("Text", ValuesParameter)] = "expression",
             [("Record", "entries")] = "entry",
             [("With", "projections")] = "entry",
             [("With", "body")] = "expression",
             [("Coalesce", "expressions")] = "expression",
+            [("MapOver", "expression")] = "expression",
+            [("MapOver", ValuesParameter)] = "array",
+            [("MapWith", "expression")] = "expression",
+            [("MapWith", ValuesParameter)] = "array",
         };
 
     public static string ToExpressifType(

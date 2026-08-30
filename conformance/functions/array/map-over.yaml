@@ -1,0 +1,24 @@
+suite: array
+kind: function
+operator: map-over
+tests:
+  - id: map-over.valid.scalar-values
+    cases:
+      - id: map-over.valid.scalar-values.numeric.subtract
+        value: 5
+        expected: [-5, -6]
+  - id: map-over.valid.empty-values
+    cases:
+      - id: map-over.valid.empty-values.array.empty
+        value: 5
+        expected: []
+  - id: map-over.valid.tuple-arguments
+    cases:
+      - id: map-over.valid.tuple-arguments.numeric.subtract
+        value: 20
+        expected: [18, 8]
+  - id: map-over.valid.tuple-projection
+    cases:
+      - id: map-over.valid.tuple-projection.numeric.reordered
+        value: 20
+        expected: [17, 13]

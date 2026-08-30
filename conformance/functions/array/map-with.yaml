@@ -1,0 +1,14 @@
+suite: array
+kind: function
+operator: map-with
+tests:
+  - id: map-with.valid.scalar-values
+    cases:
+      - id: map-with.valid.scalar-values.numeric.subtract
+        value: 5
+        expected: [5, 6]
+  - id: map-with.valid.empty-values
+    cases:
+      - id: map-with.valid.empty-values.array.empty
+        value: 5
+        expected: []

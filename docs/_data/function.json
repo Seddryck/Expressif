@@ -246,6 +246,59 @@
     ]
   },
   {
+    "Name": "map-over",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "any",
+    "Output": "array",
+    "Summary": "Evaluates an expression once for every supplied value while preserving the pipeline input as the expression input. Tuple values are expanded into positional arguments for a bare callable. Returns `null` when values is not enumerable or is text.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression evaluated with the outer pipeline input and each supplied value as its argument context."
+      },
+      {
+        "Name": "values",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Values iterated as argument contexts in declaration order."
+      }
+    ],
+    "Examples": [
+      "5 | map-over(subtract, {10, 11}) → {-5, -6}",
+      "20 | map-over(subtract($2), {T(1, 2), T(3, 4)}) → {18, 16}"
+    ]
+  },
+  {
+    "Name": "map-with",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "any",
+    "Output": "array",
+    "Summary": "Evaluates an expression once for every supplied value, using that value as the pipeline input and the outer input as its argument. Tuple values remain ordinary pipeline values and are not expanded. Returns `null` when values is not enumerable or is text.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression evaluated with each supplied value as input and the outer pipeline input as its argument."
+      },
+      {
+        "Name": "values",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Values iterated as pipeline inputs in declaration order."
+      }
+    ],
+    "Examples": [
+      "5 | map-with(subtract, {10, 11}) → {5, 6}"
+    ]
+  },
+  {
     "Name": "pairwise",
     "IsPublic": true,
     "Aliases": [
