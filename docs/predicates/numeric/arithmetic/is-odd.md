@@ -28,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-odd → #false
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `odd`, `numeric-is-odd`

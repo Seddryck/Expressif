@@ -3,7 +3,7 @@ layout: docs
 title: "is-positive-or-zero"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 120
+nav_order: 110
 has_toc: false
 permalink: /predicates/numeric/is-positive-or-zero/
 tags:
@@ -26,6 +26,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-positive-or-zero → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

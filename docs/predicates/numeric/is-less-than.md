@@ -3,7 +3,7 @@ layout: docs
 title: "is-less-than"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 50
+nav_order: 40
 has_toc: false
 permalink: /predicates/numeric/is-less-than/
 tags:
@@ -30,6 +30,16 @@ Returns true if the numeric value passed as argument is less than the numeric va
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-less-than(5) → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

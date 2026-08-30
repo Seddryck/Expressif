@@ -32,6 +32,16 @@ Returns `true` if the numeric value passed as argument is evenly divisible by th
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-divisible-by(3) → #false
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `divisible-by`, `numeric-is-divisible-by`

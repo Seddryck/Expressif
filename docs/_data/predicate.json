@@ -268,20 +268,23 @@
     ]
   },
   {
-    "Name": "is-integer",
+    "Name": "is-whole-number",
     "IsPublic": true,
     "Aliases": [
+      "is-integer",
       "integer",
-      "numeric-is-integer"
+      "numeric-is-integer",
+      "whole-number",
+      "numeric-is-whole-number"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
-    "Summary": "Returns true if the numeric value passed as argument is an integer value. Returns `false` otherwise.",
+    "Summary": "Returns true if the numeric value passed as argument is a whole-number value. Returns `false` otherwise.",
     "Parameters": [],
     "Examples": [
-      "10 | is-integer → #true"
-    ]
+      "10 | is-whole-number → #true"
+    ],
+    "Input": null,
+    "Output": null
   },
   {
     "Name": "is-less-than",

@@ -3,7 +3,7 @@ layout: docs
 title: "is-positive"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 110
+nav_order: 100
 has_toc: false
 permalink: /predicates/numeric/is-positive/
 tags:
@@ -26,6 +26,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-positive → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

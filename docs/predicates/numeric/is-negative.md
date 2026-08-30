@@ -3,7 +3,7 @@ layout: docs
 title: "is-negative"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 70
+nav_order: 60
 has_toc: false
 permalink: /predicates/numeric/is-negative/
 tags:
@@ -26,6 +26,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-negative → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

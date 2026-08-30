@@ -24,7 +24,6 @@ Reference documentation for Expressif predicates in the `numeric` scope.
 | [`is-even`]({{ '/predicates/numeric/arithmetic/is-even/' | relative_url }}) | Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise. |
 | [`is-greater-than`]({{ '/predicates/numeric/is-greater-than/' | relative_url }}) | Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise. |
 | [`is-greater-than-or-equal`]({{ '/predicates/numeric/is-greater-than-or-equal/' | relative_url }}) | Returns true if the numeric value passed as argument is greater than or equal to the numeric value passed as parameter. Returns `false` otherwise. |
-| [`is-integer`]({{ '/predicates/numeric/is-integer/' | relative_url }}) | Returns true if the numeric value passed as argument is an integer value. Returns `false` otherwise. |
 | [`is-less-than`]({{ '/predicates/numeric/is-less-than/' | relative_url }}) | Returns true if the numeric value passed as argument is less than the numeric value passed as parameter. Returns `false` otherwise. |
 | [`is-less-than-or-equal`]({{ '/predicates/numeric/is-less-than-or-equal/' | relative_url }}) | Returns true if the numeric value passed as argument is less than or equal to the numeric value passed as parameter. Returns `false` otherwise. |
 | [`is-negative`]({{ '/predicates/numeric/is-negative/' | relative_url }}) | Returns true if the numeric argument is less than 0. |
@@ -34,6 +33,7 @@ Reference documentation for Expressif predicates in the `numeric` scope.
 | [`is-opposite`]({{ '/predicates/numeric/is-opposite/' | relative_url }}) | Returns true if the numeric value passed as argument additive inverse of the numeric value passed as parameter. Returns `false` otherwise. |
 | [`is-positive`]({{ '/predicates/numeric/is-positive/' | relative_url }}) | Returns true if the numeric argument is greater than 0. |
 | [`is-positive-or-zero`]({{ '/predicates/numeric/is-positive-or-zero/' | relative_url }}) | Returns true if the numeric argument is greater or equal to 0. |
+| [`is-whole-number`]({{ '/predicates/numeric/is-whole-number/' | relative_url }}) | Returns true if the numeric value passed as argument is a whole-number value. Returns `false` otherwise. |
 | [`is-within-interval`]({{ '/predicates/numeric/is-within-interval/' | relative_url }}) | Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise. |
 | [`is-zero`]({{ '/predicates/numeric/is-zero/' | relative_url }}) | Returns true if the numeric argument is equal to 0. |
 | [`is-zero-or-null`]({{ '/predicates/numeric/is-zero-or-null/' | relative_url }}) | Returns true if the numeric value passed as argument is equal to `0` or `null`. Returns `false` otherwise. |

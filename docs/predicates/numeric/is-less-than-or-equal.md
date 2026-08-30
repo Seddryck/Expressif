@@ -3,7 +3,7 @@ layout: docs
 title: "is-less-than-or-equal"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 60
+nav_order: 50
 has_toc: false
 permalink: /predicates/numeric/is-less-than-or-equal/
 tags:
@@ -30,6 +30,16 @@ Returns true if the numeric value passed as argument is less than or equal to th
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-less-than-or-equal(5) → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

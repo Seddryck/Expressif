@@ -34,6 +34,16 @@ Returns `true` if the division of the numeric value passed as argument by the mo
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | has-remainder(3, 1) → #true
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `modulo`, `numeric-is-modulo`

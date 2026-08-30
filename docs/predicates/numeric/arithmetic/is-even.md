@@ -28,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-even → #true
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  
 **Aliases:** `even`, `numeric-is-even`

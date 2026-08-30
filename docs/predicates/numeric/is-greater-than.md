@@ -32,6 +32,16 @@ Returns true if the numeric value passed as argument is greater than the numeric
 
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+10 | is-greater-than(5) → #true
+```
+{% endraw %}
+
+
 **Kind:** Predicate  
 **Scope:** `numeric`  
 **Aliases:** `greater-than`, `numeric-is-greater-than`
