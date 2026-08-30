@@ -179,17 +179,6 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
             $functions | ConvertTo-Json -depth 4 | Out-File "$destination"
         }
 
-        if ($class -eq "function") {
-            $conversionDestination = Join-Path (Split-Path $destination) "function-conversion.json"
-            $conversions = @($described |
-                Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
-                Select-Object -Property Name, Scope, Converted, Input, Output, Reason)
-            if ($names.Count -gt 0 -and (Test-Path -LiteralPath $conversionDestination -PathType Leaf)) {
-                Update-JsonArrayEntries -Path $conversionDestination -Entries $conversions
-            } else {
-                $conversions | ConvertTo-Json -Depth 4 | Out-File $conversionDestination
-            }
-        }
     }
     Write-Host  "File created at $destination in $($elapsed.TotalSeconds) seconds"
 } -Args $assemblyPath, $class, ($name -join "`0"), "$destinationPath\$destinationFile"
