@@ -2,13 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
 /// <summary>
 /// Represents an immutable, ordered collection of heterogeneous values.
 /// </summary>
-public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>
+[ExpressifType(Parent = "structured", LiteralSyntax = "T followed by parenthesized comma-separated values", LiteralExamples = ["T(\"Alice\", 42)"])]
+public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpressifValueType
 {
     private readonly object?[] values;
 

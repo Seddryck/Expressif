@@ -9,9 +9,10 @@
 	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
-    <PackageReference Include="Expressif.Syntax" Version="0.29.0" />
+    <PackageReference Include="Expressif.Syntax" Version="0.32.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="..\docs\_data\function.json" LogicalName="Expressif.FunctionCatalog.json" />
+		<EmbeddedResource Include="..\docs\_data\type.json" LogicalName="Expressif.TypeCatalog.json" />
 	</ItemGroup>
 </Project>

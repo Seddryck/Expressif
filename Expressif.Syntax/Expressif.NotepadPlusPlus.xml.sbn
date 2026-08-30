@@ -30,7 +30,7 @@
       <Keywords name="Keywords3">{{ model.accumulators }}</Keywords>
       <Keywords name="Keywords4">{{ model.constants }}</Keywords>
       <Keywords name="Keywords5">. ^. $</Keywords>
-      <Keywords name="Keywords6"></Keywords>
+      <Keywords name="Keywords6">{{ model.types }}</Keywords>
       <Keywords name="Keywords7"></Keywords>
       <Keywords name="Keywords8"></Keywords>
       <Keywords name="Delimiters">00&quot; 01\ 02&quot; 03` 04 05` 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23</Keywords>

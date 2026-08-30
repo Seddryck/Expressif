@@ -24,6 +24,7 @@ $model = [ordered]@{
         accumulators = $syntax.accumulators | ForEach-Object {
             [ordered]@{ name = $_.name; scope = $_.scope; regex = [regex]::Escape($_.name) }
         }
+        typeRegex = ($syntax.types | ForEach-Object { [regex]::Escape($_) }) -join '|'
         constantRegex = ($syntax.constants | ForEach-Object {
             ([regex]::Escape($_)).Replace('\#', '#')
         }) -join '|'

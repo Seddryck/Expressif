@@ -1,0 +1,222 @@
+[
+  {
+    "Name": "array",
+    "Summary": "An array contains a sequence of values.",
+    "Parent": "structured",
+    "Literal": {
+      "Syntax": "Values enclosed in braces and separated by commas",
+      "Examples": [
+        "{1, 2, 3}"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.Object[]"
+    }
+  },
+  {
+    "Name": "boolean",
+    "Summary": "A boolean value is either true or false.",
+    "Parent": "scalar",
+    "Literal": {
+      "Syntax": "#true or #false",
+      "Examples": [
+        "#true",
+        "#false"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.Boolean"
+    }
+  },
+  {
+    "Name": "date",
+    "Summary": "A calendar date without a time component.",
+    "Parent": "temporal",
+    "Literal": {
+      "Syntax": "#\"yyyy-MM-dd\"",
+      "Examples": [
+        "#\"2025-12-16\""
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.DateOnly"
+    }
+  },
+  {
+    "Name": "datetime",
+    "Summary": "A calendar date and time.",
+    "Parent": "temporal",
+    "Literal": {
+      "Syntax": "#\"yyyy-MM-ddTHH:mm:ss\"",
+      "Examples": [
+        "#\"2025-12-16T14:30:00\""
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.DateTime"
+    }
+  },
+  {
+    "Name": "decimal",
+    "Summary": "A decimal is a numeric value written with a decimal separator.",
+    "Parent": "numeric",
+    "Literal": {
+      "Syntax": "Digits with a . decimal separator, optionally preceded by a sign",
+      "Examples": [
+        "10.1",
+        "-10.1"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.Decimal"
+    }
+  },
+  {
+    "Name": "duration",
+    "Summary": "An elapsed duration expressed using ISO 8601 notation.",
+    "Parent": "temporal",
+    "Literal": null,
+    "Bindings": {
+      "dotnet": "System.TimeSpan"
+    }
+  },
+  {
+    "Name": "integer",
+    "Summary": "An integer is a numeric value written without a decimal separator.",
+    "Parent": "numeric",
+    "Literal": {
+      "Syntax": "Digits, optionally preceded by a sign",
+      "Examples": [
+        "10",
+        "-10"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.Int32"
+    }
+  },
+  {
+    "Name": "null",
+    "Summary": "Null represents the absence of a value.",
+    "Parent": "scalar",
+    "Literal": {
+      "Syntax": "#null",
+      "Examples": [
+        "#null"
+      ]
+    },
+    "Bindings": {}
+  },
+  {
+    "Name": "numeric",
+    "Summary": "The common type family for integer and decimal values.",
+    "Parent": "scalar",
+    "Literal": {
+      "Syntax": null,
+      "Examples": [
+        "10",
+        "-10",
+        "10.1",
+        "-10.1"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.Decimal"
+    }
+  },
+  {
+    "Name": "record",
+    "Summary": "Represents a value containing an ordered collection of named fields.",
+    "Parent": "structured",
+    "Literal": {
+      "Syntax": "Named fields enclosed in braces",
+      "Examples": [
+        "{name := \"Alice\", age := 42}"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.RecordValue"
+    }
+  },
+  {
+    "Name": "scalar",
+    "Summary": "The common type family for non-structured values.",
+    "Parent": null,
+    "Literal": null,
+    "Bindings": {}
+  },
+  {
+    "Name": "structured",
+    "Summary": "The common type family for values containing other values.",
+    "Parent": null,
+    "Literal": null,
+    "Bindings": {}
+  },
+  {
+    "Name": "temporal",
+    "Summary": "The common type family for date and time values.",
+    "Parent": "scalar",
+    "Literal": null,
+    "Bindings": {}
+  },
+  {
+    "Name": "text",
+    "Summary": "A text value represents a sequence of characters.",
+    "Parent": "scalar",
+    "Literal": {
+      "Syntax": "A value enclosed in double quotes",
+      "Examples": [
+        "\"hello\""
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.String"
+    }
+  },
+  {
+    "Name": "time",
+    "Summary": "A time of day without a date component.",
+    "Parent": "temporal",
+    "Literal": {
+      "Syntax": "#\"HH:mm:ss\"",
+      "Examples": [
+        "#\"14:30:00\""
+      ]
+    },
+    "Bindings": {
+      "dotnet": "System.TimeOnly"
+    }
+  },
+  {
+    "Name": "tuple",
+    "Summary": "Represents an immutable, ordered collection of heterogeneous values.",
+    "Parent": "structured",
+    "Literal": {
+      "Syntax": "T followed by parenthesized comma-separated values",
+      "Examples": [
+        "T(\"Alice\", 42)"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.TupleValue"
+    }
+  },
+  {
+    "Name": "weekday",
+    "Summary": "Represents a day of the week.",
+    "Parent": "temporal",
+    "Literal": null,
+    "Bindings": {
+      "dotnet": "Expressif.Values.Weekday"
+    }
+  },
+  {
+    "Name": "year-month",
+    "Summary": "Represents a calendar year and month.",
+    "Parent": "temporal",
+    "Literal": null,
+    "Bindings": {
+      "dotnet": "Expressif.Values.YearMonth"
+    }
+  }
+]

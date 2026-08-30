@@ -18,6 +18,7 @@ require "rouge"
         rule %r/"(?:\\.|[^"\\])*"/, Str
         rule %r/`(?:\\.|[^`\\])*`/, Str
         rule %r/(?:{{ model.constantRegex }})\b/i, Keyword::Constant
+        rule %r/(?:{{ model.typeRegex }})\b/i, Keyword::Type
         rule %r/@(?:_|[A-Za-z_][\w-]*)/, Name::Variable
         rule %r/\^?\.(?:[A-Za-z_][\w-]*|\d+)/, Name::Property
         rule %r/\[(?:[A-Za-z_][\w-]*|\d+)\]/, Name::Property

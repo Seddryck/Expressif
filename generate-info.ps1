@@ -1,7 +1,7 @@
 ﻿#requires -PSEdition Core
 param (
     [Parameter(Mandatory)]
-    [ValidateSet("function", "predicate", "accumulator")]
+    [ValidateSet("function", "predicate", "accumulator", "type")]
     [string] $class,
 
     [Parameter()]
@@ -10,6 +10,7 @@ param (
 
 $destinationPath = ".\docs\_data"
 $destinationFile = "$($class.ToLower()).json"
+$name = @($name | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 
 
 ########### Check if it's useful to make changes to doc or readme #############
@@ -40,7 +41,8 @@ if ($name.Count -gt 0) {
     Write-Host "Generating JSON for all $($class.ToLower())s based on $assemblyPath"
 }
 
-$job = Start-Job -ScriptBlock { param($fullDllPath, $class, $names, $destination)
+$job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $destination)
+    $names = if ([string]::IsNullOrEmpty($serializedNames)) { @() } else { @($serializedNames -split "`0") }
     function Update-JsonArrayEntries {
         param(
             [Parameter(Mandatory)]
@@ -116,11 +118,22 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $names, $destination
     Add-Type -Path "$fullDllPath"
     $elapsed = Measure-Command -Expression {
         $TextInfo = (Get-Culture).TextInfo
-        $locator = New-Object -TypeName "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
+        $locatorType = if ($class -eq "type") {
+            "Expressif.Types.TypeIntrospector"
+        } else {
+            "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
+        }
+        $locator = New-Object -TypeName $locatorType
         $described = @($locator.Describe() | Sort-Object Scope, Name)
-        $functions = @($described |
-            Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
-            Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters)
+        $functions = if ($class -eq "type") {
+            @($described |
+                Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
+                Select-Object -Property Name, Summary, Parent, Literal, Bindings)
+        } else {
+            @($described |
+                Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
+                Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters)
+        }
 
         $missingNames = @($names | Where-Object { $_ -notin $functions.Name })
         if ($missingNames.Count -gt 0) {
@@ -129,7 +142,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $names, $destination
 
         Write-Host  "`t$($functions.Count) $($class.ToLower()) identified"
         $functions | ForEach-Object {
-            if ($_.IsPublic) {
+            if ($class -eq "type" -or $_.IsPublic) {
                 Write-Host "`t`t$($_.Name)"
             } else {
                 Write-Warning "`t$($_.Name)"
@@ -166,20 +179,9 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $names, $destination
             $functions | ConvertTo-Json -depth 4 | Out-File "$destination"
         }
 
-        if ($class -eq "function") {
-            $conversionDestination = Join-Path (Split-Path $destination) "function-conversion.json"
-            $conversions = @($described |
-                Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
-                Select-Object -Property Name, Scope, Converted, Input, Output, Reason)
-            if ($names.Count -gt 0 -and (Test-Path -LiteralPath $conversionDestination -PathType Leaf)) {
-                Update-JsonArrayEntries -Path $conversionDestination -Entries $conversions
-            } else {
-                $conversions | ConvertTo-Json -Depth 4 | Out-File $conversionDestination
-            }
-        }
     }
     Write-Host  "File created at $destination in $($elapsed.TotalSeconds) seconds"
-} -Args $assemblyPath, $class, $name, "$destinationPath\$destinationFile"
+} -Args $assemblyPath, $class, ($name -join "`0"), "$destinationPath\$destinationFile"
 $job | Wait-Job | Out-Null
 if ($job.State -eq "Failed") {
     Receive-Job $job
@@ -190,9 +192,9 @@ Receive-Job $job -ErrorAction Stop
 ########### Check if it's useful to report a change #############
 
 If ($hash.Hash -eq (Get-FileHash $destinationPath\$destinationFile).Hash) {
-    Write-Host "No change detected in the list of predicates."
+    Write-Host "No change detected in the list of $($class)s."
     Exit 0
 } else {
-    Write-Host "Changes detected in the list of predicates."
+    Write-Host "Changes detected in the list of $($class)s."
     Exit 1
 }

@@ -1,6 +1,7 @@
 using Expressif.Syntax;
 using Expressif.Functions;
 using Expressif.Functions.Coercions;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 
@@ -375,6 +376,7 @@ public sealed class ExpressifBinder
         DateLiteralSyntax date => new LiteralParameter(date.Value),
         DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),
         TimeLiteralSyntax time => new LiteralParameter(time.Value),
+        TypeLiteralSyntax type => new LiteralParameter(TypeRegistry.Resolve(type.Name)),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Elements.Select(BindTupleElement).ToArray()),
