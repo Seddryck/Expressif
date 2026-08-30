@@ -49,6 +49,10 @@ public class CoerceFunctionsTest
         => Assert.That(new CoerceTime().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
+    public void CoerceTime_Valid_DateOnly(DateOnly value, TimeOnly expected)
+        => Assert.That(new CoerceTime().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
     public void CoerceDatetime_Valid(object? value, DateTime? expected)
         => Assert.That(new CoerceDateTime().Evaluate(value), Is.EqualTo(expected));
 
@@ -144,6 +148,7 @@ public class CoerceFunctionsTest
         AssertTyped<YearMonth, DateOnly?>(new CoerceDate(), new YearMonth(2026, 8));
         AssertTyped<DateOnly, DateTime?>(new CoerceDateTime(), new DateOnly(2026, 8, 19));
         AssertTyped<YearMonth, DateTime?>(new CoerceDateTime(), new YearMonth(2026, 8));
+        AssertTyped<DateOnly, TimeOnly?>(new CoerceTime(), new DateOnly(2026, 8, 19));
         AssertTyped<DateTime, TimeOnly?>(new CoerceTime(), new DateTime(2026, 8, 19, 12, 30, 0));
         AssertTyped<DateOnly, string?>(new CoerceText(), new DateOnly(2026, 8, 19));
     }

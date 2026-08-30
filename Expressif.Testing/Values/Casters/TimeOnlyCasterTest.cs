@@ -22,4 +22,16 @@ public class TimeOnlyCasterTest
             Assert.That(value, Is.EqualTo(new TimeOnly(14, 30, 0)));
         });
     }
+
+    [Test]
+    public void TryCast_DateOnly_ReturnsMidnight()
+    {
+        var success = new TimeOnlyCaster().TryCast(new DateOnly(2026, 9, 1), out var value);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(success, Is.True);
+            Assert.That(value, Is.EqualTo(TimeOnly.MinValue));
+        });
+    }
 }

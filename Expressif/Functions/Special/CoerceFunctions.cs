@@ -137,10 +137,12 @@ public sealed class CoerceDate : BaseCoerceValueFunction<DateOnly>,
 [Function]
 public sealed class CoerceTime : BaseCoerceValueFunction<TimeOnly>,
     IFunction<TimeOnly, TimeOnly?>,
+    IFunction<DateOnly, TimeOnly?>,
     IFunction<DateTime, TimeOnly?>,
     IFunction<string, TimeOnly?>
 {
     TimeOnly? IFunction<TimeOnly, TimeOnly?>.Evaluate(TimeOnly value) => value;
+    TimeOnly? IFunction<DateOnly, TimeOnly?>.Evaluate(DateOnly value) => EvaluateTyped(value);
     TimeOnly? IFunction<DateTime, TimeOnly?>.Evaluate(DateTime value) => EvaluateTyped(value);
     TimeOnly? IFunction<string, TimeOnly?>.Evaluate(string value) => EvaluateTyped(value);
 }
