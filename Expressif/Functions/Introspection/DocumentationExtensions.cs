@@ -145,13 +145,18 @@ public static class DocumentationExtensions
             || (declaringType == typeof(Record.Record) && parameterName == "entries")
             || (declaringType == typeof(Record.With) && parameterName == "projections")
             || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")
+            || (declaringType == typeof(Special.Coerce) && parameterName == "specifications")
             || (declaringType == typeof(Tuple.Pick) && parameterName == "positions");
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
-        => declaringType == typeof(Special.Coalesce) && parameterName == "expressions" ? 2
-            : declaringType == typeof(Record.With) && parameterName == "projections" ? 1
-            : declaringType == typeof(Tuple.Pick) && parameterName == "positions" ? 1
-            : 0;
+        => (declaringType, parameterName) switch
+        {
+            (var type, "expressions") when type == typeof(Special.Coalesce) => 2,
+            (var type, "specifications") when type == typeof(Special.Coerce) => 1,
+            (var type, "projections") when type == typeof(Record.With) => 1,
+            (var type, "positions") when type == typeof(Tuple.Pick) => 1,
+            _ => 0,
+        };
 
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the

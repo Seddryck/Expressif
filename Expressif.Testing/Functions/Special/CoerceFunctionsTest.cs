@@ -4,12 +4,94 @@ using Expressif.Testing.Conformance;
 using Expressif.Values.Casters;
 using Expressif.Values;
 using System.Numerics;
+using Expressif.Bindings;
 
 namespace Expressif.Testing.Functions.Special;
 
 [TestFixture]
 public class CoerceFunctionsTest
 {
+    [Conformance]
+    public void Coerce_Valid_TypeDirected(object? value, string expression, string expected)
+    {
+        var input = value is string text && (text.StartsWith("T(") || text.StartsWith('{'))
+            ? new ParameterValueConverter().Parse(text)
+            : value;
+        Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
+    }
+
+    [TestCase("coerce()")]
+    [TestCase("coerce(:text, $2 -> :integer)")]
+    [TestCase("coerce(name -> :text, $2 -> :integer)")]
+    [TestCase("coerce(age -> :integer, age -> :text)")]
+    [TestCase("coerce($2 -> :integer, $2 -> :text)")]
+    [TestCase("coerce(:expression)")]
+    public void Coerce_InvalidSpecification_ThrowsBindingError(string expression)
+        => Assert.That(() => Expression.Create(expression), Throws.Exception);
+
+    [Test]
+    public void Coerce_Constructors_SeparatePositionalTypesFromSelectorMappings()
+    {
+        var positional = new Coerce(typeof(int));
+        var record = new RecordValue();
+        record.Set("age", "42");
+        var selective = new Coerce(new CoercionMapping(
+            new FieldCoercionSelector("age"),
+            typeof(int)));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(positional.Evaluate("42"), Is.EqualTo(42));
+            Assert.That(((RecordValue)selective.Evaluate(record)!)["age"], Is.EqualTo(42));
+            Assert.That(
+                typeof(Coerce).GetConstructors().Select(constructor => constructor.GetParameters().Single().ParameterType),
+                Is.EquivalentTo(new[] { typeof(Type[]), typeof(CoercionMapping[]) }));
+        });
+    }
+
+    [Test]
+    public void Coerce_MissingRecordField_PreservesRecord()
+        => Assert.That(
+            ValueFormatter.Format(Expression.Create("coerce(missing -> :integer)").Evaluate(new RecordValue())),
+            Is.EqualTo("{}"));
+
+    [Test]
+    public void Coerce_FailedConversion_ReturnsNull()
+        => Assert.That(Expression.Create("coerce(:integer)").Evaluate("abc"), Is.Null);
+
+    [TestCase("coerce(:integer, :text)", "42")]
+    [TestCase("coerce(:integer)", "{name := \"Bob\"}")]
+    [TestCase("coerce(name -> :text)", "T(\"Bob\", \"42\")")]
+    public void Coerce_UnknownInputShape_InvalidAtEvaluation_ThrowsStructuralValidationError(
+        string expression,
+        string input)
+    {
+        var value = input.StartsWith("T(") || input.StartsWith('{')
+            ? new ParameterValueConverter().Parse(input)
+            : input;
+        Assert.That(
+            () => Expression.Create(expression).Evaluate(value),
+            Throws.TypeOf<StructuralValidationException>());
+    }
+
+    [TestCase("\"42\" | coerce(:integer, :text)")]
+    [TestCase("trim | coerce(:integer, :text)")]
+    [TestCase("T(\"Bob\", \"42\") | coerce(name -> :text)")]
+    [TestCase("{name := \"Bob\"} | coerce(:text)")]
+    public void Coerce_KnownInputShape_InvalidAtBinding_ThrowsBindingError(string expression)
+        => Assert.That(() => Expression.Create(expression), Throws.TypeOf<BindingException>());
+
+    [TestCase(
+        "T(\"Bob\", \"42\") | coerce(:text, :integer, :boolean)",
+        "T(\"Bob\", 42)")]
+    [TestCase(
+        "T(\"Bob\", \"42\") | coerce($3 -> :integer)",
+        "T(\"Bob\", \"42\")")]
+    public void Coerce_UnavailableTuplePositions_AreIgnored(string expression, string expected)
+        => Assert.That(
+            ValueFormatter.Format(Expression.Create(expression).Evaluate(null)),
+            Is.EqualTo(expected));
+
     [Conformance]
     public void CoerceNumeric_Valid(object? value, decimal? expected)
         => Assert.That(new CoerceNumeric().Evaluate(value), Is.EqualTo(expected));

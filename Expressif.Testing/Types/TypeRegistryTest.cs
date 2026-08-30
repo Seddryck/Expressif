@@ -58,6 +58,22 @@ public class TypeRegistryTest
     public void Registry_DotNetBindingMatchesCanonicalRuntimeType(string name, Type expected)
         => Assert.That(TypeRegistry.Resolve(name).Bindings["dotnet"], Is.EqualTo(expected.FullName));
 
+    [TestCase("integer", typeof(int))]
+    [TestCase("numeric", typeof(decimal))]
+    [TestCase("boolean", typeof(bool))]
+    [TestCase("text", typeof(string))]
+    [TestCase("date", typeof(DateOnly))]
+    [TestCase("datetime", typeof(DateTime))]
+    [TestCase("date-time", typeof(DateTime))]
+    [TestCase("tuple", typeof(TupleValue))]
+    [TestCase("record", typeof(RecordValue))]
+    public void RuntimeRegistry_ResolvesImplementationTypeDirectly(string name, Type expected)
+        => Assert.That(RuntimeTypeRegistry.Resolve(name), Is.EqualTo(expected));
+
+    [Test]
+    public void RuntimeRegistry_FamilyWithoutRuntimeType_ReturnsNull()
+        => Assert.That(RuntimeTypeRegistry.Resolve("scalar"), Is.Null);
+
     [Test]
     public void LiteralExamples_AreAcceptedByParser()
     {

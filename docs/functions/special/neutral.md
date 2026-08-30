@@ -3,7 +3,7 @@ layout: docs
 title: "neutral"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/special/neutral/
 tags:

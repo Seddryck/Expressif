@@ -3,7 +3,7 @@ layout: docs
 title: "coerce-boolean"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /functions/special/coerce-boolean/
 tags:

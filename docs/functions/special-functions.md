@@ -20,6 +20,7 @@ Reference documentation for Expressif functions in the `special` scope.
 |:-----|:---------|
 | [`any-to-any`]({{ '/functions/special/any-to-any/' | relative_url }}) | Returns `any`. |
 | [`coalesce`]({{ '/functions/special/coalesce/' | relative_url }}) | Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`. |
+| [`coerce`]({{ '/functions/special/coerce/' | relative_url }}) | Coerces a scalar value or selected tuple and record values to requested Expressif types. |
 | [`coerce-boolean`]({{ '/functions/special/coerce-boolean/' | relative_url }}) | Attempts to convert the input to a boolean value. Returns `null` when the input cannot be converted. |
 | [`coerce-date`]({{ '/functions/special/coerce-date/' | relative_url }}) | Attempts to convert the input to a date value. Returns `null` when the input cannot be converted. |
 | [`coerce-datetime`]({{ '/functions/special/coerce-datetime/' | relative_url }}) | Attempts to convert the input to a date-time value. Returns `null` when the input cannot be converted. |

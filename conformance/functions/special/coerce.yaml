@@ -1,0 +1,16 @@
+suite: special
+kind: function
+operator: coerce
+tests:
+  - id: coerce.valid.type-directed
+    cases:
+      - {id: coerce.valid.type-directed.scalar.integer, value: "42", parameters: ["coerce(:integer)"], expected: "42"}
+      - {id: coerce.valid.type-directed.scalar.text, value: 42, parameters: ["coerce(:text)"], expected: "42"}
+      - {id: coerce.valid.type-directed.tuple.first, value: 'T("42", "Bob")', parameters: ["coerce(:integer)"], expected: 'T(42, "Bob")'}
+      - {id: coerce.valid.type-directed.tuple.positional, value: 'T("Bob", "42", "true")', parameters: ["coerce(:text, :integer, :boolean)"], expected: 'T("Bob", 42, #true)'}
+      - {id: coerce.valid.type-directed.tuple.trailing, value: 'T("42", "Bob", #true)', parameters: ["coerce(:integer, :text)"], expected: 'T(42, "Bob", #true)'}
+      - {id: coerce.valid.type-directed.tuple.selective, value: 'T("bob", "42")', parameters: ["coerce($2 -> :integer)"], expected: 'T("bob", 42)'}
+      - {id: coerce.valid.type-directed.tuple.extra-positional, value: 'T("bob", "42")', parameters: ["coerce(:text, :integer, :boolean)"], expected: 'T("bob", 42)'}
+      - {id: coerce.valid.type-directed.tuple.missing-position, value: 'T("bob", "42")', parameters: ["coerce($3 -> :integer)"], expected: 'T("bob", "42")'}
+      - {id: coerce.valid.type-directed.record.selective, value: '{name := "bob", age := "42"}', parameters: ["coerce(age -> :integer)"], expected: '{name := "bob", age := 42}'}
+      - {id: coerce.valid.type-directed.record.multiple, value: '{name := "bob", age := "42"}', parameters: ["coerce(name -> :text, age -> :integer)"], expected: '{name := "bob", age := 42}'}

@@ -51,6 +51,10 @@ public class ClosedExpression(IParameter parameter, IEnumerable<Function> member
 
 public interface IParameter { }
 public sealed record LiteralParameter(object? Value) : IParameter;
+public abstract record CoercionSpecificationParameter(Type TargetType) : IParameter;
+public sealed record PositionalCoercionParameter(Type TargetType) : CoercionSpecificationParameter(TargetType);
+public sealed record FieldCoercionParameter(string Field, Type TargetType) : CoercionSpecificationParameter(TargetType);
+public sealed record TupleCoercionParameter(int Position, Type TargetType) : CoercionSpecificationParameter(TargetType);
 public sealed record IntervalParameter(IntervalBinding Value) : IParameter;
 public sealed record VariableParameter(string Name) : IParameter;
 public sealed record ObjectPropertyParameter(string Name) : IParameter;

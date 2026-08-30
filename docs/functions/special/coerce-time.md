@@ -3,7 +3,7 @@ layout: docs
 title: "coerce-time"
 parent: "Special functions"
 grand_parent: "Functions library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /functions/special/coerce-time/
 tags:
@@ -13,7 +13,7 @@ generated: true
 ---
 
 ```
-date-time | text | time →
+date | date-time | text | time →
 coerce-time() → time
 ```
 

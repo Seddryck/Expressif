@@ -80,13 +80,79 @@ public sealed class ExpressifBinder
     }
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
-        => new(ApplyCoercions([
+    {
+        var members = ApplyCoercions([
             .. syntax.Source is null ? [] : BindPipelineMembers(syntax.Source),
             .. syntax.Pipeline.SelectMany(BindPipelineMembers),
-        ]));
+        ]).ToArray();
+        ValidateCoercePipeline(members, null);
+        return new OpenExpression(members);
+    }
 
     private ClosedExpression BindClosed(ClosedExpressionSyntax syntax)
-        => new(BindValue(syntax.Value), ApplyCoercions(syntax.Pipeline.SelectMany(BindPipelineMembers)));
+    {
+        var source = BindValue(syntax.Value);
+        var members = ApplyCoercions(syntax.Pipeline.SelectMany(BindPipelineMembers)).ToArray();
+        ValidateCoercePipeline(members, GetStaticType(source));
+        return new ClosedExpression(source, members);
+    }
+
+    private void ValidateCoercePipeline(
+        IReadOnlyList<Function> members,
+        Type? inputType)
+    {
+        var currentType = inputType;
+        foreach (var member in members)
+        {
+            if (member.Name.Equals("coerce", StringComparison.OrdinalIgnoreCase))
+            {
+                if (currentType is not null)
+                    ValidateCoerceInput(member, currentType);
+                continue;
+            }
+
+            if (TryGetContract(member, out _, out var outputType) && outputType != typeof(object))
+            {
+                currentType = Nullable.GetUnderlyingType(outputType) ?? outputType;
+            }
+            else
+            {
+                currentType = null;
+            }
+        }
+    }
+
+    private static void ValidateCoerceInput(Function function, Type inputType)
+    {
+        var specifications = function.Parameters.Cast<CoercionSpecificationParameter>().ToArray();
+        if (typeof(Values.TupleValue).IsAssignableFrom(inputType))
+        {
+            if (specifications.Any(specification => specification is FieldCoercionParameter))
+                throw new BindingException("Tuple input requires tuple-position selectors.");
+            return;
+        }
+
+        if (typeof(Values.RecordValue).IsAssignableFrom(inputType))
+        {
+            if (specifications.Any(specification => specification is not FieldCoercionParameter))
+                throw new BindingException("Record input requires field selector mappings.");
+            return;
+        }
+
+        if (specifications is not [PositionalCoercionParameter])
+            throw new BindingException("Scalar input requires exactly one positional type descriptor.");
+    }
+
+    private static Type? GetStaticType(IParameter parameter)
+        => parameter switch
+        {
+            QuotedLiteralParameter => typeof(string),
+            LiteralParameter { Value: { } value } => value.GetType(),
+            TupleParameter => typeof(Values.TupleValue),
+            RecordLiteralParameter => typeof(Values.RecordValue),
+            ArrayParameter => typeof(object[]),
+            _ => null,
+        };
 
     private IEnumerable<Function> ApplyCoercions(IEnumerable<Function> functions)
     {
@@ -219,12 +285,75 @@ public sealed class ExpressifBinder
     private Function BindFunction(FunctionCallSyntax syntax)
         => syntax.Name.ToLowerInvariant() switch
         {
+            "coerce" => BindCoerceFunction(syntax),
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
             "array" or "text" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private static Function BindCoerceFunction(FunctionCallSyntax syntax)
+    {
+        if (syntax.Arguments.Count == 0)
+            throw new BindingException("Function 'coerce' expects one or more coercion specifications.");
+        if (syntax.Arguments.Any(argument => argument is not PositionalArgumentSyntax))
+            throw new BindingException("Function 'coerce' accepts positional coercion specifications only.");
+
+        var specifications = syntax.Arguments
+            .Select(argument => BindCoercionSpecification(RequireArgumentValue(argument)))
+            .ToArray();
+        ValidateCoercionModes(specifications);
+        ValidateDuplicateCoercionSelectors(specifications);
+
+        return new Function(syntax.Name, specifications);
+    }
+
+    private static void ValidateCoercionModes(CoercionSpecificationParameter[] specifications)
+    {
+        if (specifications.OfType<PositionalCoercionParameter>().Any()
+            && specifications.Any(specification => specification is not PositionalCoercionParameter))
+            throw new BindingException("Function 'coerce' cannot mix positional type descriptors and selector mappings.");
+        if (specifications.Any(specification => specification is FieldCoercionParameter)
+            && specifications.Any(specification => specification is TupleCoercionParameter))
+            throw new BindingException("Function 'coerce' cannot mix field and tuple-position selector mappings.");
+    }
+
+    private static void ValidateDuplicateCoercionSelectors(CoercionSpecificationParameter[] specifications)
+    {
+        var duplicateField = specifications.OfType<FieldCoercionParameter>()
+            .GroupBy(specification => specification.Field, StringComparer.Ordinal)
+            .FirstOrDefault(group => group.Count() > 1);
+        if (duplicateField is not null)
+            throw new BindingException($"Duplicate coercion selector '{duplicateField.Key}'.");
+
+        var duplicatePosition = specifications.OfType<TupleCoercionParameter>()
+            .GroupBy(specification => specification.Position)
+            .FirstOrDefault(group => group.Count() > 1);
+        if (duplicatePosition is not null)
+            throw new BindingException($"Duplicate coercion selector '${duplicatePosition.Key}'.");
+    }
+
+    private static CoercionSpecificationParameter BindCoercionSpecification(ExpressionSyntax syntax)
+        => syntax switch
+        {
+            TypeLiteralSyntax type => new PositionalCoercionParameter(ResolveCoercionType(type)),
+            BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: TupleProjectionSyntax selector }
+                when selector.Direction is TupleProjectionDirection.FromStart && selector.Index > 0
+                => new TupleCoercionParameter(selector.Index, ResolveCoercionType(type)),
+            BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: FunctionCallSyntax selector }
+                when selector.Arguments.Count == 0
+                => new FieldCoercionParameter(selector.Name, ResolveCoercionType(type)),
+            _ => throw new BindingException("A coerce specification must be ':type' or 'selector -> :type'."),
+        };
+
+    private static Type ResolveCoercionType(TypeLiteralSyntax syntax)
+    {
+        var targetType = RuntimeTypeRegistry.Resolve(syntax.Name);
+        return targetType
+            ?? throw new BindingException(
+                $"Expressif type ':{syntax.Name}' cannot be used as a coercion target.");
+    }
 
     private FunctionArgument[] BindSpreadFunctionArguments(FunctionCallSyntax syntax)
     {

@@ -20,6 +20,7 @@ internal static class ExpressifTypeMapper
             [("With", "projections")] = "entry",
             [("With", "body")] = "expression",
             [("Coalesce", "expressions")] = "expression",
+            [("Coerce", "specifications")] = "type | mapping",
         };
 
     public static string ToExpressifType(

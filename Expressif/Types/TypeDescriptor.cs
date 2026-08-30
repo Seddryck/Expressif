@@ -55,6 +55,42 @@ public static class TypeRegistry
     }
 }
 
+public static class RuntimeTypeRegistry
+{
+    private static readonly IReadOnlyDictionary<string, Type?> ByName = BuildLookup();
+
+    public static Type? Resolve(string name)
+        => ByName.TryGetValue(name, out var runtimeType)
+            ? runtimeType
+            : throw new UnknownExpressifTypeException(name);
+
+    private static IReadOnlyDictionary<string, Type?> BuildLookup()
+    {
+        var lookup = typeof(RuntimeTypeRegistry).Assembly.GetTypes()
+            .Where(type => !type.IsAbstract
+                && type.IsDefined(typeof(ExpressifTypeAttribute), false)
+                && (typeof(ITypeDescriptor).IsAssignableFrom(type)
+                    || typeof(IExpressifValueType).IsAssignableFrom(type)))
+            .ToDictionary(
+                ExpressifTypeName.Get,
+                GetRuntimeType,
+                StringComparer.OrdinalIgnoreCase);
+        lookup.Add("date-time", lookup["datetime"]);
+        return lookup;
+    }
+
+    private static Type? GetRuntimeType(Type implementationType)
+    {
+        if (!typeof(ITypeDescriptor).IsAssignableFrom(implementationType))
+            return implementationType;
+
+        var descriptor = Activator.CreateInstance(implementationType) as ITypeDescriptor
+            ?? throw new InvalidOperationException(
+                $"Unable to create runtime type descriptor '{implementationType.FullName}'.");
+        return descriptor.RuntimeType;
+    }
+}
+
 public sealed class TypeIntrospector : BaseIntrospector
 {
     public TypeIntrospector()
@@ -84,7 +120,7 @@ public sealed class TypeIntrospector : BaseIntrospector
         var runtimeType = descriptor is null ? implementationType : descriptor.RuntimeType;
 
         return new TypeDescriptor(
-            metadata.Name ?? InferName(implementationType),
+            ExpressifTypeName.Get(implementationType),
             implementationType.GetSummary(),
             metadata.Parent,
             metadata.LiteralExamples.Length == 0
@@ -94,9 +130,17 @@ public sealed class TypeIntrospector : BaseIntrospector
                 ? new Dictionary<string, string>()
                 : new Dictionary<string, string> { ["dotnet"] = runtimeType.FullName! });
     }
+}
 
-    private static string InferName(Type implementationType)
+internal static class ExpressifTypeName
+{
+    public static string Get(Type implementationType)
     {
+        var metadata = implementationType.GetCustomAttribute<ExpressifTypeAttribute>()
+            ?? throw new InvalidOperationException($"Type metadata is missing for '{implementationType.FullName}'.");
+        if (metadata.Name is not null)
+            return metadata.Name;
+
         var name = implementationType.Name;
         foreach (var suffix in new[] { "TypeDescriptor", "Value" })
         {

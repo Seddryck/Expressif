@@ -1301,6 +1301,30 @@
     ]
   },
   {
+    "Name": "coerce",
+    "IsPublic": true,
+    "Aliases": [
+      "special-to-coerce"
+    ],
+    "Scope": "special",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Coerces a scalar value or selected tuple and record values to requested Expressif types.",
+    "Parameters": [
+      {
+        "Name": "specifications",
+        "Type": "type | mapping",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more positional type descriptors or selector-to-type mappings."
+      }
+    ],
+    "Examples": [
+      "\"42\" | coerce(:integer) → 42"
+    ]
+  },
+  {
     "Name": "coerce-boolean",
     "IsPublic": true,
     "Aliases": [
