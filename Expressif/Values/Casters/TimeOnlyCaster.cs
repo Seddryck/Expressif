@@ -9,6 +9,7 @@ public class TimeOnlyCaster : ICaster<TimeOnly>, IParser<TimeOnly>
         => obj switch
         {
             TimeOnly time => (value = time) == value,
+            DateOnly => (value = TimeOnly.MinValue) == value,
             DateTime dateTime => (value = TimeOnly.FromDateTime(dateTime)) == value,
             string text => TryParse(text, out value),
             _ => (value = default) != value,

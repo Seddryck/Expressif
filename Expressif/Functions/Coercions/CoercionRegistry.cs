@@ -81,7 +81,7 @@ public sealed class CoercionRegistry
             new CoercionDescriptor(
                 "coerce-time",
                 typeof(TimeOnly?),
-                [typeof(TimeOnly), typeof(DateTime), typeof(string)],
+                [typeof(TimeOnly), typeof(DateOnly), typeof(DateTime), typeof(string)],
                 _ => new CoerceTime()),
             new CoercionDescriptor(
                 "coerce-datetime",

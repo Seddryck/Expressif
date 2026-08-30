@@ -19,3 +19,8 @@ tests:
       - id: coerce-time.valid.text.invalid
         value: invalid
         expected:
+  - id: coerce-time.valid.date-only
+    cases:
+      - id: coerce-time.valid.date-only.midnight
+        value: "2026-09-01"
+        expected: "00:00:00"

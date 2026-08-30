@@ -102,6 +102,7 @@ public class CoercionRegistryTest
         AssertPair<YearMonth, DateOnly?>(new CoerceDate(), new YearMonth(2026, 8));
         AssertPair<string, DateOnly?>(new CoerceDate(), "2026-08-22");
         AssertPair<TimeOnly, TimeOnly?>(new CoerceTime(), new TimeOnly(12, 30));
+        AssertPair<DateOnly, TimeOnly?>(new CoerceTime(), new DateOnly(2026, 8, 22));
         AssertPair<DateTime, TimeOnly?>(new CoerceTime(), new DateTime(2026, 8, 22, 12, 30, 0));
         AssertPair<string, TimeOnly?>(new CoerceTime(), "12:30:00");
         AssertPair<DateTime, DateTime?>(new CoerceDateTime(), new DateTime(2026, 8, 22, 12, 30, 0));
