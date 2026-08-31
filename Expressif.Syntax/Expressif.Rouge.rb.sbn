@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
-{{ if model.standalone ~}}
 require "rouge"
 
-{{ end }}module Rouge
+module Rouge
   module Lexers
-    class Expressif < RegexLexer
+    class Expressif < Rouge::RegexLexer
       title "Expressif"
       desc "The Expressif transformation expression language"
       tag "expressif"
       filenames "*.expr", "*.expressif"
 
       state :root do
-        rule %r/(→)([^\r\n]*)/, groups(Operator, Generic::Output)
+        rule %r/(→)([^\r\n]*)/ do
+          groups Operator, Generic::Output
+        end
         rule %r/\s+/, Text::Whitespace
         rule %r/#"(?:\\.|[^"\\])*"/, Literal::Date
         rule %r/"(?:\\.|[^"\\])*"/, Str
