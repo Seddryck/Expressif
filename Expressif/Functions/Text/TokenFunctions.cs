@@ -67,3 +67,15 @@ public class Tokenize : BaseTextFunction<string[]>
         return tokenizer.Execute(value);
     }
 }
+
+/// <summary>
+/// Returns lexical tokens in source order, preserving punctuation and symbols as separate tokens.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenizeLexical : BaseTextFunction<string[]>
+{
+    protected override object EvaluateNull() => System.Array.Empty<string>();
+    protected override object EvaluateEmpty() => System.Array.Empty<string>();
+    protected override object EvaluateBlank() => System.Array.Empty<string>();
+    protected override object EvaluateString(string value) => new LexicalTokenizer().Execute(value);
+}

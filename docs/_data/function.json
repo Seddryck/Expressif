@@ -3793,6 +3793,21 @@
     ]
   },
   {
+    "Name": "token-count-lexical",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-token-count-lexical"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "integer",
+    "Summary": "Returns the number of lexical tokens in the argument value, including punctuation and symbols.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello, David!\" | token-count-lexical → 4"
+    ]
+  },
+  {
     "Name": "tokenize",
     "IsPublic": true,
     "Aliases": [
@@ -3813,6 +3828,21 @@
     "Examples": [
       "\"Hello World\" | tokenize → {\"Hello\", \"World\"}",
       "\"Hello,World\" | tokenize(\",\") → {\"Hello\", \"World\"}"
+    ]
+  },
+  {
+    "Name": "tokenize-lexical",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-tokenize-lexical"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns lexical tokens in source order, preserving punctuation and symbols as separate tokens.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello, David!\" | tokenize-lexical → {\"Hello\", \",\", \"David\", \"!\"}"
     ]
   },
   {

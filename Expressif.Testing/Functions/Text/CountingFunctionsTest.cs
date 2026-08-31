@@ -26,4 +26,8 @@ public class CountingFunctionsTest
     [Conformance]
     public void TokenCount_Valid(object? value, int expected)
         => Assert.That(new TokenCount().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TokenCountLexical_Valid(object? value, int expected)
+        => Assert.That(new TokenCountLexical().Evaluate(value), Is.EqualTo(expected));
 }

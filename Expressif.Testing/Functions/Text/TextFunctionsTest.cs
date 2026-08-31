@@ -26,6 +26,10 @@ public class TextFunctionsTest
     public void Tokenize_CustomSeparator_Valid(object? value, char separator, string[] expected)
         => Assert.That(new Tokenize(() => separator).Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void TokenizeLexical_Valid(object? value, string[] expected)
+        => Assert.That(new TokenizeLexical().Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void Tokenize_ExposesClosedTypedContract()
     {

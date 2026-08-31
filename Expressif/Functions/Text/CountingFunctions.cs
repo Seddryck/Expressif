@@ -102,3 +102,13 @@ public class TokenCount : BaseTextCountingFunction
         return tokenizer.Execute(value).Length;
     }
 }
+
+/// <summary>
+/// Returns the number of lexical tokens in the argument value, including punctuation and symbols.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenCountLexical : BaseTextCountingFunction
+{
+    protected override object? EvaluateBlank() => 0;
+    protected override object? EvaluateString(string value) => new LexicalTokenizer().Execute(value).Length;
+}
