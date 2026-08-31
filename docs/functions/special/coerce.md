@@ -33,12 +33,25 @@ Coerces a scalar value or selected tuple and record values to requested Expressi
 
 
 
+## Behavior
+
+Tuple selector mappings use zero-based positions: `$0` selects the first position, `$1` selects the second, and unavailable positions are ignored.
+
+
 
 ## Examples
 
 {% raw %}
 ```expressif
 "42" | coerce(:integer) → 42
+```
+
+```expressif
+T("42", "Bob") | coerce($0 -> :integer) → T(42, "Bob")
+```
+
+```expressif
+T("Bob", "42") | coerce($1 -> :integer) → T("Bob", 42)
 ```
 {% endraw %}
 

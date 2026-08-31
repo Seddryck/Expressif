@@ -54,8 +54,7 @@ public sealed class Coerce : IFunction<object?, object?>
                 throw new StructuralValidationException("Tuple input requires tuple-position selectors.");
             foreach (var mapping in mappings)
             {
-                var position = ((TupleCoercionSelector)mapping.Selector).Position;
-                var index = position - 1;
+                var index = ((TupleCoercionSelector)mapping.Selector).Position;
                 if (index < 0 || index >= values.Length)
                     continue;
                 values[index] = Convert(values[index], mapping.TargetType);

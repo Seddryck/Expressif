@@ -1431,8 +1431,11 @@
         "Summary": "One or more positional type descriptors or selector-to-type mappings."
       }
     ],
+    "Behavior": "Tuple selector mappings use zero-based positions: `$0` selects the first position, `$1` selects the second, and unavailable positions are ignored.",
     "Examples": [
-      "\"42\" | coerce(:integer) → 42"
+      "\"42\" | coerce(:integer) → 42",
+      "T(\"42\", \"Bob\") | coerce($0 -> :integer) → T(42, \"Bob\")",
+      "T(\"Bob\", \"42\") | coerce($1 -> :integer) → T(\"Bob\", 42)"
     ]
   },
   {
