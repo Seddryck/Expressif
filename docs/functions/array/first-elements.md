@@ -34,11 +34,18 @@ Returns up to the requested number of elements from the start of the input enume
 
 
 
+## Behavior
+
+When `count` is greater than the number of elements in the input, `first-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.
+
+
+
 ## Examples
 
 {% raw %}
 ```expressif
 {1, 2, 3} | first-elements(2) → {1, 2}
+{1, 2, 3} | first-elements(5) → {1, 2, 3}
 ```
 {% endraw %}
 
