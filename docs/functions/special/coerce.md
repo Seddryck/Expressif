@@ -44,14 +44,8 @@ Tuple selector mappings use zero-based positions: `$0` selects the first positio
 {% raw %}
 ```expressif
 "42" | coerce(:integer) → 42
-```
-
-```expressif
-T("42", "Bob") | coerce($0 -> :integer) → T(42, "Bob")
-```
-
-```expressif
-T("Bob", "42") | coerce($1 -> :integer) → T("Bob", 42)
+T("42", "Bob") | coerce($0 -> :integer) | $0 → 42
+T("Bob", "42") | coerce($1 -> :integer) | $1 → 42
 ```
 {% endraw %}
 
