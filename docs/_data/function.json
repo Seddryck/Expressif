@@ -286,6 +286,29 @@
     ]
   },
   {
+    "Name": "walk",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "structure",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Recursively traverses arrays, tuples, and records and evaluates an expression against each leaf value while preserving container shape.",
+    "Parameters": [
+      {
+        "Name": "transformation",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression evaluated against every leaf value."
+      }
+    ],
+    "Behavior": "`walk` recursively visits array items, tuple items, and record field values. Record field names and container kinds are preserved, and only leaves are supplied to the transformation. The transformation retains its ordinary semantics, so `walk(trim)` permits normal coercion while `walk(*trim)` uses guarded entry.",
+    "Examples": [
+      "T(42, \" 42 \") | walk(trim) → T(\"42\", \"42\")",
+      "T(42, \" 42 \") | walk(*trim) → T(42, \"42\")",
+      "{name := \" Bob \", address := {city := \" Brussels \"}} | walk(*trim) → {name := \"Bob\", address := {city := \"Brussels\"}}"
+    ]
+  },
+  {
     "Name": "zip",
     "IsPublic": true,
     "Aliases": [],

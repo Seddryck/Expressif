@@ -1,0 +1,15 @@
+suite: structure.walk
+kind: function
+operator: walk
+tests:
+  - id: walk.array
+    cases:
+      - id: walk.array.nested-text
+        value:
+          - " Nikola "
+          - [" Tesla ", " Edison "]
+        parameters:
+          - trim
+        expected:
+          - Nikola
+          - [Tesla, Edison]
