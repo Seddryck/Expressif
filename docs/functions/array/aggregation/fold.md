@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "fold"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 80
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 20
 has_toc: false
-permalink: /functions/array/fold/
+permalink: /functions/array/aggregation/fold/
 tags:
   - functions
-  - array
+  - array/aggregation
 generated: true
 ---
 
@@ -44,6 +44,6 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/aggregation`  
 **Aliases:** `array-to-fold`
 {: .member-reference }

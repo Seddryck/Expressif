@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "chunk"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 50
+parent: "Partitioning functions"
+grand_parent: "Array functions"
+nav_order: 10
 has_toc: false
-permalink: /functions/array/chunk/
+permalink: /functions/array/partitioning/chunk/
 tags:
   - functions
-  - array
+  - array/partitioning
 generated: true
 ---
 
@@ -44,6 +44,6 @@ Splits an array into consecutive, non-overlapping chunks of at most the specifie
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/partitioning`  
 **Aliases:** `chunk`
 {: .member-reference }

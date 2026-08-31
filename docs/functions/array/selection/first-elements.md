@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "first-elements"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 70
+parent: "Selection functions"
+grand_parent: "Array functions"
+nav_order: 10
 has_toc: false
-permalink: /functions/array/first-elements/
+permalink: /functions/array/selection/first-elements/
 tags:
   - functions
-  - array
+  - array/selection
 generated: true
 ---
 
@@ -33,17 +33,23 @@ Returns up to the requested number of elements from the start of the input enume
 
 
 
+## Behavior
+
+When `count` is greater than the number of elements in the input, `first-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.
+
+
 
 ## Examples
 
 {% raw %}
 ```expressif
 {1, 2, 3} | first-elements(2) → {1, 2}
+{1, 2, 3} | first-elements(5) → {1, 2, 3}
 ```
 {% endraw %}
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/selection`  
 **Aliases:** `first`
 {: .member-reference }

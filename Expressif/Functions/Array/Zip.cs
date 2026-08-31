@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Expressif.Functions.Array;
 
+[Scope("array/combination")]
 public abstract class BaseZipFunction : BaseArrayFunction
 {
     protected Func<object?[]> Array { get; }

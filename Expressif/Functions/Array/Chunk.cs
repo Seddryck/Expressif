@@ -8,6 +8,7 @@ namespace Expressif.Functions.Array;
 /// Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.
 /// </summary>
 [Function(prefix: "", aliases: ["chunk"])]
+[Scope("array/partitioning")]
 public class Chunk : BaseArrayFunction
 {
     public Func<int> Size { get; }

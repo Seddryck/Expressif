@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "reverse"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 150
+parent: "Sequencing functions"
+grand_parent: "Array functions"
+nav_order: 60
 has_toc: false
-permalink: /functions/array/reverse/
+permalink: /functions/array/sequencing/reverse/
 tags:
   - functions
-  - array
+  - array/sequencing
 generated: true
 ---
 
@@ -40,6 +40,6 @@ This function has no parameters.
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/sequencing`  
 **Aliases:** `reverse`
 {: .member-reference }

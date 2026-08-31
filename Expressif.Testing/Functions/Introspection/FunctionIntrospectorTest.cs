@@ -109,6 +109,11 @@ public class FunctionIntrospectorTest
             Is.EquivalentTo(new[] { "absolute", "add", "cube-power", "cube-root", "decrement", "divide", "greatest-common-divisor", "increment", "invert", "lowest-common-multiple", "multiply", "nth-root", "oppose", "percent-change", "power", "sign", "square-power", "square-root", "subtract" }));
 
     [TestCase("array/set", new[] { "complement", "difference", "distinct", "intersection", "symmetric-difference", "union" })]
+    [TestCase("array/aggregation", new[] { "broadcast", "fold", "scan" })]
+    [TestCase("array/combination", new[] { "zip", "zip-padded", "zip-strict" })]
+    [TestCase("array/partitioning", new[] { "chunk" })]
+    [TestCase("array/selection", new[] { "first-elements", "last-elements", "skip-first-elements", "skip-last-elements", "slice-elements", "value-at" })]
+    [TestCase("array/sequencing", new[] { "adjacent", "lag", "lead", "pairwise", "position-of", "reverse", "with-position" })]
     [TestCase("numeric/rounding", new[] { "ceiling", "clip", "floor", "integer", "round" })]
     [TestCase("numeric/conversion", new[] { "null-to-zero" })]
     [TestCase("numeric/formatting", new[] { "human-readable-format-binary-bytes", "human-readable-format-decimal", "human-readable-format-decimal-bytes" })]

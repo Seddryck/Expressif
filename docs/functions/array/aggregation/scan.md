@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "scan"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 160
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 30
 has_toc: false
-permalink: /functions/array/scan/
+permalink: /functions/array/aggregation/scan/
 tags:
   - functions
-  - array
+  - array/aggregation
 generated: true
 ---
 
@@ -44,6 +44,6 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/aggregation`  
 **Aliases:** `array-to-scan`
 {: .member-reference }
