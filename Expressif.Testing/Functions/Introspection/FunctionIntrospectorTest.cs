@@ -125,7 +125,7 @@ public class FunctionIntrospectorTest
     [TestCase("text/normalization", new[] { "clean-whitespace", "collapse-whitespace", "empty-to-null", "null-to-empty", "slug", "trim", "whitespaces-to-empty", "whitespaces-to-null", "without-diacritics", "without-whitespaces" })]
     [TestCase("text/padding", new[] { "pad-center", "pad-left", "pad-right" })]
     [TestCase("text/selection", new[] { "after-substring", "before-substring", "first-chars", "last-chars", "skip-first-chars", "skip-last-chars" })]
-    [TestCase("text/tokenization", new[] { "token", "token-count" })]
+    [TestCase("text/tokenization", new[] { "token", "token-count", "tokenize" })]
     public void Locate_ExpressifAssembly_FunctionsExposeBehavioralSubcategory(string scope, string[] names)
         => Assert.That(
             Infos.Where(x => x.Scope == scope).Select(x => x.Name),

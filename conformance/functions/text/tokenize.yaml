@@ -1,0 +1,77 @@
+suite: text
+kind: function
+operator: tokenize
+tests:
+  - id: tokenize.default-separator.valid
+    cases:
+      - id: tokenize.default-separator.valid.multiple
+        value: foo bar baz
+        expected:
+          - foo
+          - bar
+          - baz
+      - id: tokenize.default-separator.valid.mixed-whitespace
+        value: "  foo\tbar\r\nbaz  "
+        expected:
+          - foo
+          - bar
+          - baz
+      - id: tokenize.default-separator.valid.punctuation
+        value: foo, bar-baz!
+        expected:
+          - foo,
+          - bar-baz!
+      - id: tokenize.default-separator.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize.default-separator.valid.blank
+        value: (blank)
+        expected: []
+      - id: tokenize.default-separator.valid.null
+        value: (null)
+        expected: []
+  - id: tokenize.custom-separator.valid
+    cases:
+      - id: tokenize.custom-separator.valid.multiple
+        value: foo,bar,baz
+        parameters:
+          - ','
+        expected:
+          - foo
+          - bar
+          - baz
+      - id: tokenize.custom-separator.valid.leading-trailing-consecutive
+        value: ',foo,,bar,'
+        parameters:
+          - ','
+        expected:
+          - foo
+          - bar
+      - id: tokenize.custom-separator.valid.not-present
+        value: foo
+        parameters:
+          - ','
+        expected:
+          - foo
+      - id: tokenize.custom-separator.valid.preserves-whitespace
+        value: 'foo, bar '
+        parameters:
+          - ','
+        expected:
+          - foo
+          - ' bar '
+      - id: tokenize.custom-separator.valid.empty
+        value: (empty)
+        parameters:
+          - ','
+        expected: []
+      - id: tokenize.custom-separator.valid.blank
+        value: (blank)
+        parameters:
+          - ','
+        expected: []
+      - id: tokenize.custom-separator.valid.null
+        value: (null)
+        parameters:
+          - ','
+        expected: []

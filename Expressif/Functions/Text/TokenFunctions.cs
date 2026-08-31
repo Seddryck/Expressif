@@ -38,3 +38,32 @@ public class Token : BaseTextFunction
             return new Null().Keyword;
     }
 }
+
+/// <summary>
+/// Returns all tokens in the argument value in source order. By default, tokenization uses white-space characters as delimiters. If a character is specified, that character delimits the tokens.
+/// </summary>
+[Scope("text/tokenization")]
+public class Tokenize : BaseTextFunction<string[]>
+{
+    public Func<char>? Separator { get; }
+
+    /// <summary>
+    /// Initializes tokenization with white-space delimiters.
+    /// </summary>
+    public Tokenize()
+        => Separator = null;
+
+    /// <param name="separator">A character that delimits the tokens in the argument value.</param>
+    public Tokenize(Func<char> separator)
+        => Separator = separator;
+
+    protected override object EvaluateNull() => System.Array.Empty<string>();
+    protected override object EvaluateEmpty() => System.Array.Empty<string>();
+    protected override object EvaluateBlank() => System.Array.Empty<string>();
+
+    protected override object EvaluateString(string value)
+    {
+        var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Invoke());
+        return tokenizer.Execute(value);
+    }
+}
