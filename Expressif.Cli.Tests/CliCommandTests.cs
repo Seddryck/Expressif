@@ -1001,6 +1001,107 @@ public class CliCommandTests
             Assert.That(result.StdErr, Is.Empty);
         });
     }
+
+    [Test]
+    public async Task Run_SourceJson_ArrayOfRecords_EvaluatesEachRecord()
+    {
+        var sourcePath = CreateTempFile(
+            """
+            [
+              {
+                "firstName": "John",
+                "lastName": "Doe",
+                "orders": [
+                  { "amount": 10, "active": true },
+                  { "amount": 25, "active": false }
+                ]
+              }
+            ]
+            """,
+            ".json");
+
+        var nameResult = await InvokeAsync("run", ".lastName | upper", "--source", sourcePath);
+        var orderResult = await InvokeAsync(
+            "run", ".orders | filter(.active) | map(.amount) | sum", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(nameResult.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(nameResult.StdOut.Trim(), Is.EqualTo("DOE"));
+            Assert.That(nameResult.StdErr, Is.Empty);
+            Assert.That(orderResult.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(orderResult.StdOut.Trim(), Is.EqualTo("10"));
+            Assert.That(orderResult.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceJson_NestedRecordAndArray_ArePreserved()
+    {
+        var sourcePath = CreateTempFile(
+            """{ "customer": { "name": "Alice" }, "values": [1, 2, 3] }""",
+            ".json");
+
+        var result = await InvokeAsync(
+            "run", "record(name := .customer | .name, total := .values | sum)", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{name := \"Alice\", total := 6}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("42", "is-type(:numeric)")]
+    [TestCase("\"hello\"", "is-type(:text)")]
+    [TestCase("true", "is-type(:boolean)")]
+    [TestCase("null", "is-null")]
+    public async Task Run_SourceJson_ScalarRoot_IsEvaluatedAsOneRow(string json, string expression)
+    {
+        var sourcePath = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("run", expression, "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("#true"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("\"2025-12-10\"")]
+    [TestCase("\"06:44:00\"")]
+    [TestCase("\"2025-12-10T06:44:00\"")]
+    [TestCase("\"P1D\"")]
+    public async Task Run_SourceJson_TemporalLookingString_RemainsText(string json)
+    {
+        var sourcePath = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("run", "is-type(:text)", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("#true"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_SourceJson_WithSourceOption_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile("[]", ".json");
+
+        var result = await InvokeAsync("run", "upper", "--source", sourcePath, "--source-option", "header=#false");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo($"Source options are not supported for source '{sourcePath}'."));
+        });
+    }
     public async Task Run_SourceCsv_WithRepeatedSourceOptions_UsesConfiguredProfile()
     {
         var sourcePath = CreateTempFile($"name;country{Environment.NewLine} Alice;Belgium{Environment.NewLine} Bob;France", ".csv");
@@ -1817,7 +1918,7 @@ public class CliCommandTests
             var textFiles = new StrictUtf8TextReader();
             var infrastructure = new SourceInfrastructure(expressions, values, textFiles);
             IFileSourceProvider[] providers = sourceResolver is null
-                ? [new CsvFileSourceProvider(infrastructure), new ExpressionFileSourceProvider(infrastructure)]
+                ? [new CsvFileSourceProvider(infrastructure), new JsonFileSourceProvider(infrastructure), new ExpressionFileSourceProvider(infrastructure)]
                 : [new FakeFileSourceProvider(sourceResolver)];
             var sources = new SourcePipeline(providers, infrastructure);
             var composition = new CliComposition(

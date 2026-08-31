@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Data;
 using System.Globalization;
+using System.Text.Json;
 using PocketCsvReader;
 using Expressif.Values;
 using Expressif.Bindings;
@@ -278,6 +279,56 @@ internal sealed class SourceInfrastructure(
         {
             throw new FormatException($"The source '{sourcePath}' could not be evaluated: {exception.Message}", exception);
         }
+    }
+
+    internal object?[] OpenJsonSource(string sourcePath, IReadOnlyList<string> sourceOptions)
+    {
+        if (sourceOptions.Count > 0)
+            throw new FormatException($"Source options are not supported for source '{sourcePath}'.");
+
+        var source = ReadUtf8File(sourcePath);
+        try
+        {
+            using var document = JsonDocument.Parse(source);
+            var root = document.RootElement;
+            return root.ValueKind == JsonValueKind.Array
+                ? root.EnumerateArray().Select(ConvertJsonValue).ToArray()
+                : [ConvertJsonValue(root)];
+        }
+        catch (JsonException exception)
+        {
+            throw new FormatException($"Invalid JSON syntax in '{sourcePath}': {exception.Message}", exception);
+        }
+    }
+
+    private static object? ConvertJsonValue(JsonElement element)
+        => element.ValueKind switch
+        {
+            JsonValueKind.Object => ConvertJsonObject(element),
+            JsonValueKind.Array => element.EnumerateArray().Select(ConvertJsonValue).ToArray(),
+            JsonValueKind.String => element.GetString(),
+            JsonValueKind.Number => ConvertJsonNumber(element),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            _ => throw new FormatException($"Unsupported JSON value kind '{element.ValueKind}'."),
+        };
+
+    private static RecordValue ConvertJsonObject(JsonElement element)
+    {
+        var record = new RecordValue();
+        foreach (var property in element.EnumerateObject())
+            record.Set(property.Name, ConvertJsonValue(property.Value));
+        return record;
+    }
+
+    private static object ConvertJsonNumber(JsonElement element)
+    {
+        if (element.TryGetInt32(out var integer))
+            return integer;
+        if (element.TryGetDecimal(out var decimalNumber))
+            return decimalNumber;
+        return element.GetDouble();
     }
 
     internal IDataReader OpenCsvDataReader(string sourcePath, IReadOnlyList<string> sourceOptions)

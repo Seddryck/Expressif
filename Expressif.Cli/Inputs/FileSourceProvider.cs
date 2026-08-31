@@ -21,6 +21,18 @@ internal sealed class CsvFileSourceProvider(SourceInfrastructure infrastructure)
     }
 }
 
+internal sealed class JsonFileSourceProvider(SourceInfrastructure infrastructure) : IFileSourceProvider
+{
+    public bool CanOpen(string path)
+        => Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase);
+
+    public object? Open(string path, IReadOnlyList<string> options)
+    {
+        SourcePathValidator.Validate(path);
+        return infrastructure.OpenJsonSource(path, options);
+    }
+}
+
 internal sealed class ExpressionFileSourceProvider(SourceInfrastructure infrastructure) : IFileSourceProvider
 {
     public bool CanOpen(string path) => true;

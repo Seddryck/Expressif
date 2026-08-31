@@ -24,6 +24,7 @@ internal sealed record CliComposition(
         IFileSourceProvider[] providers =
         [
             new CsvFileSourceProvider(sourceInfrastructure),
+            new JsonFileSourceProvider(sourceInfrastructure),
             new ExpressionFileSourceProvider(sourceInfrastructure),
         ];
         var sources = new SourcePipeline(providers, sourceInfrastructure);
