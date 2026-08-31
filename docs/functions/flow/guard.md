@@ -54,5 +54,5 @@ Evaluates an expression only when the current input is directly compatible with 
 
 **Kind:** Function  
 **Scope:** `flow`  
-**Aliases:** None
+**Aliases:** `guard`
 {: .member-reference }

@@ -174,7 +174,9 @@
   {
     "Name": "guard",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "guard"
+    ],
     "Scope": "flow",
     "Input": "any",
     "Output": "any",
@@ -288,7 +290,9 @@
   {
     "Name": "walk",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "walk"
+    ],
     "Scope": "structure",
     "Input": "any",
     "Output": "any",

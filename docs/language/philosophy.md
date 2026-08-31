@@ -128,6 +128,8 @@ flowchart TD
 
 This makes small expressions reusable building blocks inside larger expressions.
 
+Higher-order functions retain the supplied expression's semantics. For example, `walk(trim)` recursively applies normal coercion to leaves, while `walk(*trim)` trims only leaves that are already text. A complete leaf pipeline can be guarded with grouping: `walk(*(trim | append-space))`.
+
 ## Predicates are functions too
 
 A predicate is not a separate mini-language. It is an expression whose result is boolean.

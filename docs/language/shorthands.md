@@ -161,7 +161,9 @@ can be shortened to:
 |> (.amount)
 ```
 
-The shorter expression keeps the same value-flow model: `.field` replaces `field(...)`, `|OR` replaces `or(..., ...)`, and `|> (...)` replaces `| map(...)`.
+The shorter expression keeps the same value-flow model: `.field` replaces `field(...)`, `|OR` replaces `or(..., ...)`, `|> (...)` replaces `| map(...)`, and `*expression` replaces `guard(expression)`.
+
+The guarded shorthand preserves expression boundaries. `*trim` guards one function, while `*(trim | append-space)` guards the whole grouped pipeline. There is no separate `|*` operator.
 
 ## Prefer readability over density
 

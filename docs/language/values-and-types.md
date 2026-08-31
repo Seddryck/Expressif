@@ -283,4 +283,6 @@ Do not assume that unrelated types are interchangeable. Text containing digits, 
 
 After a coercion produces `#null`, the next step depends on the receiving function's contract. It may propagate `#null`, replace it with a default, or handle it in another documented way.
 
+Use `guard(expression)`, or its `*expression` shorthand, when coercion should not be used to enter an expression. The decision uses the same canonical type hierarchy as type inspection: an integer is directly compatible with `numeric`, but numeric input is not directly compatible with `text`. Incompatibility is decided before evaluation and returns the exact original value; it is not inferred from a `#null` result, because `#null` may be the legitimate result of a compatible expression.
+
 Good Expressif expressions make these type transitions and nullable results understandable from left to right.

@@ -132,6 +132,19 @@ flowchart TD
 
 The exact evaluation behavior depends on the function, but the principle stays the same: nested expressions receive a context appropriate to the function that evaluates them.
 
+## Guarded expressions and grouping
+
+Prefix an expression with `*` to enter it only when the current value is already directly compatible with its first executable stage. The shorthand `*trim` means `guard(trim)`: text is trimmed, while a numeric value is returned unchanged instead of being coerced to text.
+
+Grouping defines the guarded boundary:
+
+```expressif
+42 | *trim | append-space          // "42 "
+42 | *(trim | append-space)        // 42
+```
+
+In the first expression, only `trim` is guarded; after it is skipped, the outer pipeline continues to `append-space`. In the second, the complete parenthesized expression is guarded and skipped. For compatible input, `" Bob " | *(trim | append-space)` returns `"Bob "`: the guard controls entry only, and later stages run normally.
+
 ## Root and nested contexts
 
 When expressions become nested, it is useful to distinguish:

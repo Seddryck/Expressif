@@ -52,5 +52,5 @@ T(42, " 42 ") | walk(*trim) ΓåÆ T(42, "42")
 
 **Kind:** Function  
 **Scope:** `structure`  
-**Aliases:** None
+**Aliases:** `walk`
 {: .member-reference }

@@ -14,7 +14,9 @@ internal static class FunctionContractIntrospector
         {
             ["coalesce"] = "Output depends on the first non-null expression result at runtime.",
             ["field"] = "Output depends on the selected field in the runtime record shape.",
+            ["guard"] = "Output preserves the input type when entry is incompatible and otherwise depends on the guarded expression.",
             ["neutral"] = "Identity semantics require an open TIn -> TIn contract rather than one closed contract.",
+            ["walk"] = "Output preserves each container kind while leaf output types depend on the supplied expression.",
         };
 
     private static readonly IReadOnlyDictionary<string, string> OutputOverrides =

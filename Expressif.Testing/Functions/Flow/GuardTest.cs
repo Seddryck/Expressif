@@ -52,4 +52,19 @@ public class GuardTest
     [Test]
     public void Evaluate_UngroupedExpression_ContinuesAfterGuard()
         => Assert.That(Expression.Create("*trim | append-space").Evaluate(42), Is.EqualTo("42 "));
+
+    [Test]
+    public void Evaluate_CompatibleExpressionReturningNull_PreservesNullResult()
+        => Assert.That(Expression.Create("*square-root").Evaluate(-1), Is.Null);
+
+    [Test]
+    public void Evaluate_IncompatibleInput_PreservesExactOriginalReference()
+    {
+        var input = new object();
+        Assert.That(Expression.Create("*trim").Evaluate(input), Is.SameAs(input));
+    }
+
+    [Test]
+    public void Evaluate_CompatibleGroupedExpression_RunsLaterStagesNormally()
+        => Assert.That(Expression.Create("*(trim | append-space)").Evaluate(" Bob "), Is.EqualTo("Bob "));
 }

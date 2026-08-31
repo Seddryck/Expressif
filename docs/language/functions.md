@@ -239,3 +239,8 @@ function(parameters)
 ```
 
 This mirrors how the expression itself is evaluated and keeps the pipeline model visible in the documentation.
+## Guarding function invocation
+
+A normal invocation such as `trim` follows the ordinary coercion rules. `*trim` is shorthand for `guard(trim)` and invokes `trim` only for directly compatible input, so `"42" | *trim` returns the text `"42"`. A parameterized call works the same way: `"5" | *add(1)` preserves the text `"5"` because entering the numeric function would require coercion. Integer input still enters `*add(1)` directly through the canonical `numeric` type family.
+
+The modifier applies to expressions, not only names or calls, so `*(trim | append-space)` guards entry into the complete grouped pipeline.
