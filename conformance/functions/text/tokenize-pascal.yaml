@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: tokenize-pascal
+tests:
+  - id: tokenize-pascal.valid
+    cases:
+      - id: tokenize-pascal.valid.standard
+        value: FirstName
+        expected: [First, Name]
+      - id: tokenize-pascal.valid.acronym
+        value: HTTPServerURL
+        expected: [HTTP, Server, URL]
+      - id: tokenize-pascal.valid.digits
+        value: Version2HTTPServer
+        expected: [Version2, HTTP, Server]
+      - id: tokenize-pascal.valid.unicode
+        value: ÉlèveÉmérite
+        expected: [Élève, Émérite]
+      - id: tokenize-pascal.valid.null
+        value: (null)
+        expected: []
+      - id: tokenize-pascal.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize-pascal.valid.blank
+        value: (blank)
+        expected: []

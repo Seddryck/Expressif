@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: tokenize-camel
+tests:
+  - id: tokenize-camel.valid
+    cases:
+      - id: tokenize-camel.valid.standard
+        value: firstName
+        expected: [first, Name]
+      - id: tokenize-camel.valid.acronym
+        value: httpServerURL
+        expected: [http, Server, URL]
+      - id: tokenize-camel.valid.digits
+        value: version2HTTPServer
+        expected: [version2, HTTP, Server]
+      - id: tokenize-camel.valid.unicode
+        value: élèveÉmérite
+        expected: [élève, Émérite]
+      - id: tokenize-camel.valid.null
+        value: (null)
+        expected: []
+      - id: tokenize-camel.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize-camel.valid.blank
+        value: (blank)
+        expected: []

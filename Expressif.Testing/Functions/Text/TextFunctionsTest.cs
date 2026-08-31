@@ -30,6 +30,34 @@ public class TextFunctionsTest
     public void TokenizeLexical_Valid(object? value, string[] expected)
         => Assert.That(new TokenizeLexical().Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void TokenizeKebab_Valid(object? value, string[] expected)
+        => Assert.That(new TokenizeKebab().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TokenizeSnake_Valid(object? value, string[] expected)
+        => Assert.That(new TokenizeSnake().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TokenizeCamel_Valid(object? value, string[] expected)
+        => Assert.That(new TokenizeCamel().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TokenizePascal_Valid(object? value, string[] expected)
+        => Assert.That(new TokenizePascal().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TokenizeWords_Valid(object? value, string[] expected)
+        => Assert.That(new TokenizeWords().Evaluate(value), Is.EqualTo(expected));
+
+    [TestCase("\"first-name\" | tokenize-kebab | pascal-case", "FirstName")]
+    [TestCase("\"first_name\" | tokenize-snake | kebab-case", "first-name")]
+    [TestCase("\"firstName\" | tokenize-camel | snake-case", "first_name")]
+    [TestCase("\"FirstName\" | tokenize-pascal | kebab-case", "first-name")]
+    [TestCase("\"customer_HTTP-server_id\" | tokenize-words | pascal-case", "CustomerHttpServerId")]
+    public void TokenizeNormalized_ComposesWithCasing(string expression, string expected)
+        => Assert.That(new ExpressionFactory().Create(expression).Evaluate(null), Is.EqualTo(expected));
+
     [Test]
     public void Tokenize_ExposesClosedTypedContract()
     {

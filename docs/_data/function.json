@@ -3831,6 +3831,36 @@
     ]
   },
   {
+    "Name": "tokenize-camel",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-tokenize-camel"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns tokens from a camelCase name using case and acronym transitions as boundaries.",
+    "Parameters": [],
+    "Examples": [
+      "\"firstName\" | tokenize-camel → {\"first\", \"Name\"}"
+    ]
+  },
+  {
+    "Name": "tokenize-kebab",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-tokenize-kebab"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns normalized tokens from a hyphen-separated name, preserving escaped hyphens within tokens.",
+    "Parameters": [],
+    "Examples": [
+      "\"first-name\" | tokenize-kebab → {\"first\", \"name\"}"
+    ]
+  },
+  {
     "Name": "tokenize-lexical",
     "IsPublic": true,
     "Aliases": [
@@ -3843,6 +3873,51 @@
     "Parameters": [],
     "Examples": [
       "\"Hello, David!\" | tokenize-lexical → {\"Hello\", \",\", \"David\", \"!\"}"
+    ]
+  },
+  {
+    "Name": "tokenize-pascal",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-tokenize-pascal"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns tokens from a PascalCase name using case and acronym transitions as boundaries.",
+    "Parameters": [],
+    "Examples": [
+      "\"HTTPServerURL\" | tokenize-pascal → {\"HTTP\", \"Server\", \"URL\"}"
+    ]
+  },
+  {
+    "Name": "tokenize-snake",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-tokenize-snake"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns normalized tokens from an underscore-separated name, preserving escaped underscores within tokens.",
+    "Parameters": [],
+    "Examples": [
+      "\"first_name\" | tokenize-snake → {\"first\", \"name\"}"
+    ]
+  },
+  {
+    "Name": "tokenize-words",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-tokenize-words"
+    ],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns word tokens using separators, punctuation, symbols, case transitions, and acronym transitions as boundaries.",
+    "Parameters": [],
+    "Examples": [
+      "\"customer_HTTP-server_id\" | tokenize-words → {\"customer\", \"HTTP\", \"server\", \"id\"}"
     ]
   },
   {

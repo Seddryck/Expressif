@@ -1,0 +1,42 @@
+suite: text
+kind: function
+operator: tokenize-words
+tests:
+  - id: tokenize-words.valid
+    cases:
+      - id: tokenize-words.valid.mixed-conventions
+        value: customer_HTTP-server_id
+        expected: [customer, HTTP, server, id]
+      - id: tokenize-words.valid.prose
+        value: Hello, David! How are you?
+        expected: [Hello, David, How, are, you]
+      - id: tokenize-words.valid.contraction-possessive
+        value: "don't David’s"
+        expected: ["don't", "David’s"]
+      - id: tokenize-words.valid.decimal
+        value: version 12.5
+        expected: [version, '12', '5']
+      - id: tokenize-words.valid.hyphenated
+        value: state-of-the-art
+        expected: [state, of, the, art]
+      - id: tokenize-words.valid.symbols-punctuation-run
+        value: A+B=C?!...
+        expected: [A, B, C]
+      - id: tokenize-words.valid.unicode
+        value: Καλημέρα_世界-１２３
+        expected: [Καλημέρα, 世界, '１２３']
+      - id: tokenize-words.valid.escaped-separators
+        value: 'first\-name_customer\_id'
+        expected: [first-name, customer_id]
+      - id: tokenize-words.valid.redundant-separators
+        value: '__first---name__'
+        expected: [first, name]
+      - id: tokenize-words.valid.null
+        value: (null)
+        expected: []
+      - id: tokenize-words.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize-words.valid.blank
+        value: (blank)
+        expected: []
