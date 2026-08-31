@@ -6,7 +6,9 @@ on:
     branches:
       - main
     paths:
+      - '.config/dotnet-tools.json'
       - '.github/workflows/pages.yml'
+      - 'Expressif.Syntax/**'
       - 'docs/**'
 
 concurrency:
@@ -21,6 +23,23 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+
+      - name: Generate Rouge lexer
+        working-directory: Expressif.Syntax
+        shell: pwsh
+        run: |
+          ./New-RougeLexer.ps1 `
+            -InputFolder ../docs/_data `
+            -OutputPath ../docs/_plugins/expressif.rb `
+            -Standalone $true
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1

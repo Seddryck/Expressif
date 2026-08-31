@@ -358,3 +358,6 @@ MigrationBackup/
 
 # Code coverage executable
 [Cc]odecov.exe
+
+# Generated website syntax highlighter
+docs/_plugins/expressif.rb
