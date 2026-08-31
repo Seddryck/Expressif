@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Expressif.Functions;
 using Expressif.Functions.Text;
 using Expressif.Testing.Conformance;
 using Expressif.Values.Special;
@@ -16,6 +17,22 @@ public class TextFunctionsTest
     public void Token_CustomSeparator_Valid(string value, int index, char separator, string expected)
     => Assert.That(new Token(() => (index), () => (separator))
         .Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Tokenize_DefaultSeparator_Valid(object? value, string[] expected)
+        => Assert.That(new Tokenize().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Tokenize_CustomSeparator_Valid(object? value, char separator, string[] expected)
+        => Assert.That(new Tokenize(() => separator).Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    public void Tokenize_ExposesClosedTypedContract()
+    {
+        IFunction<string?, string[]?> function = new Tokenize();
+
+        Assert.That(function.Evaluate("foo bar"), Is.EqualTo(new[] { "foo", "bar" }));
+    }
 
     [Test]
     [TestCase("abc 123")]
