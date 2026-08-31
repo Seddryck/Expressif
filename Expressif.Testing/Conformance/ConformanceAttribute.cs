@@ -8,7 +8,7 @@ using NUnit.Framework.Internal.Builders;
 namespace Expressif.Testing.Conformance;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-public sealed class ConformanceAttribute : NUnitAttribute, ITestBuilder
+public sealed class ConformanceAttribute : NUnitAttribute, ITestBuilder, IImplyFixture
 {
     private const string CategoryName = "conformance";
 
