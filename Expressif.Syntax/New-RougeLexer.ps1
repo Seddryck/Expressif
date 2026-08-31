@@ -37,7 +37,7 @@ $model = [ordered]@{
 
 Write-Host "Running Didot via local installation..."
 $model | dotnet tool run didot `
-    -t .\Expressif.Rouge.rb.sbn `
+    -t (Join-Path $PSScriptRoot 'Expressif.Rouge.rb.sbn') `
     -e scriban `
     -i `
     -r json `
