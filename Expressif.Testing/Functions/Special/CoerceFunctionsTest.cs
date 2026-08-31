@@ -25,6 +25,7 @@ public class CoerceFunctionsTest
     [TestCase("coerce(name -> :text, $2 -> :integer)")]
     [TestCase("coerce(age -> :integer, age -> :text)")]
     [TestCase("coerce($1 -> :integer, $1 -> :text)")]
+    [TestCase("coerce($^1 -> :integer)")]
     [TestCase("coerce(:expression)")]
     public void Coerce_InvalidSpecification_ThrowsBindingError(string expression)
         => Assert.That(() => Expression.Create(expression), Throws.Exception);
