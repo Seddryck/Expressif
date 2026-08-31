@@ -136,17 +136,17 @@ flowchart TD
 
 ### Array
 
-An array contains a sequence of values.
+An array represents an ordered sequence of values. Its elements are peers: collection functions process them one after another without assigning a distinct meaning to each position.
 
 ```expressif
 {1, 2, 3}
 ```
 
-Arrays are commonly used with functions such as `map`, `filter`, `adjacent`, accumulators, and other collection transformations.
+Arrays are commonly used with functions such as `map`, `filter`, `adjacent`, accumulators, and other collection transformations. An array may already contain all its elements, or its elements may become available progressively while the expression consumes the sequence. A function may therefore process an array element by element, keep a limited amount of intermediate state, reduce it to one value, or collect the complete result when its behavior requires that.
 
 ### Tuple
 
-A tuple contains a fixed sequence of positions.
+A tuple is a positional value with a fixed, known number of elements. Each position can have its own meaning and is directly accessible.
 
 Conceptually:
 
@@ -154,7 +154,25 @@ Conceptually:
 T("Alice", 42)
 ```
 
-Tuple items are addressed by position rather than by field name.
+Tuple elements are addressed by position rather than by field name. Tuples are useful for compact structures such as pairs, coordinates, intermediate comparison results, and argument-like contexts.
+
+### Converting between tuples and arrays
+
+Tuples and arrays remain distinct types, but a tuple can be coerced to an array when a function expects an array. The tuple positions become array elements in the same order:
+
+```expressif
+T(1, 2, 3) | map(add(1))
+```
+
+returns the array `{2, 3, 4}`. The result is an array, not a tuple: applying an array operation does not preserve the tuple's positional structure.
+
+The opposite conversion is never implicit. An array does not acquire positional structure merely because it currently contains a small or known number of elements. Use `to-tuple` when that structure is required:
+
+```expressif
+{1, "A", #true} | to-tuple
+```
+
+returns `T(1, "A", #true)`. `to-tuple` consumes the array and creates a tuple containing the same elements in the same order. Nested values are preserved; nested arrays are not recursively converted.
 
 ### Record
 
@@ -228,7 +246,7 @@ Use `is-type(:type)` to test the current value against a first-class Expressif t
 #"2026-08-30T14:30:00" | is-type(:date)     // #false
 ```
 
-`:numeric` includes `:integer` and `:decimal`. `:temporal` includes `:date`, `:datetime`, and `:time`, while those specific temporal types remain distinct from one another. `:duration` is separate from `:temporal`. Structured values are also distinguished strictly: arrays, tuples, and records are not reinterpreted as one another.
+`:numeric` includes `:integer` and `:decimal`. `:temporal` includes `:date`, `:datetime`, and `:time`, while those specific temporal types remain distinct from one another. `:duration` is separate from `:temporal`. Structured values are also distinguished strictly: a tuple remains a tuple during inspection even though a function accepting an array may coerce it to an array. An array is not implicitly coerced to a tuple, and records are not treated as either arrays or tuples.
 
 Text that resembles another type remains text until it is explicitly converted:
 

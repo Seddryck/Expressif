@@ -20,7 +20,7 @@ They solve different problems.
 
 ## Arrays
 
-An array represents a sequence of values.
+An array represents an ordered sequence of peer values. Its elements may all be available already or may become available progressively as the sequence is consumed.
 
 Example:
 
@@ -28,7 +28,7 @@ Example:
 {1, 2, 3}
 ```
 
-Arrays are appropriate when the number of values can vary and the values represent the same kind of thing.
+Arrays are appropriate when the number of values can vary and the values represent the same kind of thing. Collection operations can process the sequence element by element; operations that need to compare, reorder, or inspect the complete sequence may collect its elements before returning a result.
 
 Typical operations include:
 
@@ -98,7 +98,7 @@ Other accumulators can produce text, counts, booleans, or structured results dep
 
 ## Tuples
 
-A tuple represents a fixed set of positional values.
+A tuple represents a fixed, positional value. Its number of elements is known, every element can be accessed by position, and different positions may have different meanings.
 
 Conceptually:
 
@@ -200,6 +200,38 @@ Use a record when:
 - fields have distinct meanings;
 - field names are part of the structure;
 - data should be self-describing.
+
+The distinction is based on structure, not size. A two-element array is still an array, while a tuple can contain more than two elements.
+
+## Tuples as arrays
+
+When a function expects an array, Expressif can coerce a tuple to an array. The tuple positions are presented as array elements in the same order. Array operations then produce arrays rather than preserving tuple structure:
+
+```expressif
+T(10, 20, 30) | filter(greater-than(10))
+```
+
+returns:
+
+```expressif
+{20, 30}
+```
+
+This direction is implicit because every tuple has a finite, ordered sequence of elements.
+
+The reverse direction is explicit. An array does not state what each position means, and its number of elements may only become known after consuming it. Use `to-tuple` to collect those elements and create a positional value:
+
+```expressif
+{10, 20, 30} | to-tuple
+```
+
+returns:
+
+```expressif
+T(10, 20, 30)
+```
+
+The conversion preserves element order and values. It does not recursively convert arrays nested inside the source array.
 
 ## Nested structured values
 
