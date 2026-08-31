@@ -66,4 +66,16 @@ public class FormatFunctionTest
             }
         }
     }
+
+    [Conformance]
+    public void HumanReadableFormatDecimal_Invalid(object? value, string? expected)
+        => Assert.That(new HumanReadableFormatDecimal().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void HumanReadableFormatDecimalBytes_Invalid(object? value, string? expected)
+        => Assert.That(new HumanReadableFormatDecimalBytes().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void HumanReadableFormatBinaryBytes_Invalid(object? value, string? expected)
+        => Assert.That(new HumanReadableFormatBinaryBytes().Evaluate(value), Is.EqualTo(expected));
 }

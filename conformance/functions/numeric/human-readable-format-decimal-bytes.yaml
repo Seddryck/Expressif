@@ -36,3 +36,8 @@ tests:
         expected: 1 KB
         parameters:
           - 0
+  - id: human-readable-format-decimal-bytes.invalid
+    cases:
+      - id: human-readable-format-decimal-bytes.invalid.text
+        value: A
+        expected:

@@ -26,3 +26,8 @@ tests:
       - id: date-time-to-date.valid.date-time-offset.temporal.2018-02-01t00-00-00-01-00
         value: 2018-02-01T00:00:00+01:00
         expected: 2018-01-31
+  - id: date-time-to-date.invalid
+    cases:
+      - id: date-time-to-date.invalid.text
+        value: A
+        expected:

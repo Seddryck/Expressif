@@ -34,3 +34,8 @@ tests:
         expected: 1.000 MiB
         parameters:
           - 3
+  - id: human-readable-format-binary-bytes.invalid
+    cases:
+      - id: human-readable-format-binary-bytes.invalid.text
+        value: A
+        expected:

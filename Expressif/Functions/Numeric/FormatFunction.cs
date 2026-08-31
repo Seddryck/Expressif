@@ -28,9 +28,9 @@ public abstract class FormatFunction : IFunction<decimal?, string?>
         if (new Null().Equals(value) || new Empty().Equals(value) || new Whitespace().Equals(value))
             return EvaluateNull();
 
-        var caster = new NumericCaster();
-        var numeric = caster.Cast(value);
-        return EvaluateNumeric(numeric);
+        return new NumericCaster().TryCast(value, out var numeric)
+            ? EvaluateNumeric(numeric)
+            : EvaluateNull();
     }
 
     protected virtual object? EvaluateNull() => null;

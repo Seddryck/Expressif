@@ -45,6 +45,22 @@ public class FunctionFactoryTest
     }
 
     [Test]
+    public void Instantiate_NumericFunctionWithInvalidDirectInput_ReturnsNull()
+        => Assert.That(Instantiate("nth-root(2)", new Context()).Evaluate("A"), Is.Null);
+
+    [Test]
+    public void Instantiate_NumericFunctionWithInvalidDynamicInput_ReturnsNull()
+        => Assert.That(
+            Instantiate("coalesce(coerce(:integer), \"?\") | nth-root(2)", new Context()).Evaluate("A"),
+            Is.Null);
+
+    [Test]
+    public void Instantiate_TemporalFunctionWithInvalidDynamicInput_ReturnsNull()
+        => Assert.That(
+            Instantiate("coalesce(coerce(:dateTime), \"?\") | dateTime-to-date", new Context()).Evaluate("A"),
+            Is.Null);
+
+    [Test]
     public void BuildTypedChain_InvokesTypedContractsInsteadOfObjectFallbacks()
     {
         var first = new TypedCallProbe("first");

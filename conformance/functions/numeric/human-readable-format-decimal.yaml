@@ -41,3 +41,8 @@ tests:
         expected: 1 k
         parameters:
           - 0
+  - id: human-readable-format-decimal.invalid
+    cases:
+      - id: human-readable-format-decimal.invalid.text
+        value: A
+        expected:

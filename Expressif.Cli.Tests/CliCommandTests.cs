@@ -367,7 +367,7 @@ public class CliCommandTests
     [Test]
     public async Task Evaluate_EvaluationFailure_ReturnsEvaluationExitCode()
     {
-        var result = await InvokeAsync("evaluate", "add(1)", "--input", "abc");
+        var result = await InvokeAsync("evaluate", "fold(sum)", "--input", "{1, \"abc\", 3}");
 
         Assert.Multiple(() =>
         {
@@ -1326,12 +1326,12 @@ public class CliCommandTests
     [Test]
     public async Task Run_EvaluationFailure_StopsEnumerationAndReturnsFailure()
     {
-        var result = await InvokeAsync("run", "add(1)", "--batch", "{1, \"unknown\", 3}");
+        var result = await InvokeAsync("run", "fold(sum)", "--batch", "{{1}, {\"unknown\"}, {3}}");
 
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.EvaluationFailed));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("1"));
             Assert.That(result.StdErr, Does.Contain("Evaluation error [EXPR3001]:"));
             Assert.That(result.StdErr, Does.Contain("Input row: 2"));
         });

@@ -143,6 +143,10 @@ public class TemporalFunctionsTest
         => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
+    public void DateTimeToDate_Invalid(object? value, DateTime? expected)
+        => Assert.That(new DateTimeToDate().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
     public void NullToDate_Valid(object value, DateTime defaultValue, DateTime expected)
         => Assert.That(new NullToDate(() => defaultValue).Evaluate(value)
             , Is.EqualTo(expected));

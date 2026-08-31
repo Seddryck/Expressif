@@ -29,9 +29,9 @@ public abstract class BaseTemporalFunction<TOut> : IFunction<DateTime?, TOut?>
         if (new Null().Equals(value))
             return EvaluateNull();
 
-        var caster = new DateTimeCaster();
-        var dateTime = caster.Cast(value);
-        return EvaluateDateTime(dateTime);
+        return new DateTimeCaster().TryCast(value, out var dateTime)
+            ? EvaluateDateTime(dateTime)
+            : EvaluateNull();
     }
 
     protected virtual object? EvaluateNull() => null;

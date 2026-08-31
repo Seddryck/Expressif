@@ -34,4 +34,8 @@ public class PowerRootFunctionsTest
     [Conformance]
     public void NthRoot_Valid_Exponent(object? value, decimal exponent, decimal? expected)
         => Assert.That(new NthRoot(() => exponent).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void NthRoot_Invalid(object? value, decimal exponent, decimal? expected)
+        => Assert.That(new NthRoot(() => exponent).Evaluate(value), Is.EqualTo(expected));
 }

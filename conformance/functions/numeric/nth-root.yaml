@@ -69,3 +69,10 @@ tests:
         expected: 
         parameters:
           - 1
+  - id: nth-root.invalid
+    cases:
+      - id: nth-root.invalid.text
+        value: A
+        expected:
+        parameters:
+          - 2
