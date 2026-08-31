@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "adjacent"
-parent: "Array functions"
-grand_parent: "Functions library"
+parent: "Sequencing functions"
+grand_parent: "Array functions"
 nav_order: 10
 has_toc: false
-permalink: /functions/array/adjacent/
+permalink: /functions/array/sequencing/adjacent/
 tags:
   - functions
-  - array
+  - array/sequencing
 generated: true
 ---
 
@@ -53,6 +53,6 @@ For example, `{1, 2, 3} | adjacent(subtract)` is conceptually equivalent to appl
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/sequencing`  
 **Aliases:** `adjacent`
 {: .member-reference }

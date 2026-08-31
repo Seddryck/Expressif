@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "pairwise"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 130
+parent: "Sequencing functions"
+grand_parent: "Array functions"
+nav_order: 40
 has_toc: false
-permalink: /functions/array/pairwise/
+permalink: /functions/array/sequencing/pairwise/
 tags:
   - functions
-  - array
+  - array/sequencing
 generated: true
 ---
 
@@ -40,6 +40,6 @@ This function has no parameters.
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/sequencing`  
 **Aliases:** `pairwise`
 {: .member-reference }

@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "zip-strict"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 210
+parent: "Combination functions"
+grand_parent: "Array functions"
+nav_order: 30
 has_toc: false
-permalink: /functions/array/zip-strict/
+permalink: /functions/array/combination/zip-strict/
 tags:
   - functions
-  - array
+  - array/combination
 generated: true
 ---
 
@@ -44,6 +44,6 @@ Combines corresponding values from equally sized input and parameter arrays into
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/combination`  
 **Aliases:** None
 {: .member-reference }

@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "slice-elements"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 180
+parent: "Selection functions"
+grand_parent: "Array functions"
+nav_order: 50
 has_toc: false
-permalink: /functions/array/slice-elements/
+permalink: /functions/array/selection/slice-elements/
 tags:
   - functions
-  - array
+  - array/selection
 generated: true
 ---
 
@@ -35,7 +35,6 @@ Returns the elements in the zero-based half-open range from start, inclusive, to
 
 
 
-
 ## Behavior
 
 When `start` is greater than `end`, the requested range contains no elements and `slice-elements` returns an empty array.
@@ -53,6 +52,6 @@ When `start` is greater than `end`, the requested range contains no elements and
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/selection`  
 **Aliases:** `slice`
 {: .member-reference }

@@ -11,6 +11,7 @@ namespace Expressif.Functions.Array;
 /// Returns <see langword="null"/> when the input is not an enumerable or is a string.
 /// </summary>
 [Function]
+[Scope("array/sequencing")]
 public class Lag : BaseArrayFunction
 {
     protected override object? EvaluateArray(IEnumerable enumerable)

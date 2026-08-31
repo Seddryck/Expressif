@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "skip-last-elements"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 170
+parent: "Selection functions"
+grand_parent: "Array functions"
+nav_order: 40
 has_toc: false
-permalink: /functions/array/skip-last-elements/
+permalink: /functions/array/selection/skip-last-elements/
 tags:
   - functions
-  - array
+  - array/selection
 generated: true
 ---
 
@@ -33,7 +33,6 @@ Omits the requested number of elements from the end of the input enumerable and 
 
 
 
-
 ## Behavior
 
 When `count` is greater than the number of elements in the input, `skip-last-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.
@@ -51,6 +50,6 @@ When `count` is greater than the number of elements in the input, `skip-last-ele
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/selection`  
 **Aliases:** `skip-last`
 {: .member-reference }

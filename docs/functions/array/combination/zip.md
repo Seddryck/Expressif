@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "zip"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 190
+parent: "Combination functions"
+grand_parent: "Array functions"
+nav_order: 10
 has_toc: false
-permalink: /functions/array/zip/
+permalink: /functions/array/combination/zip/
 tags:
   - functions
-  - array
+  - array/combination
 generated: true
 ---
 
@@ -44,6 +44,6 @@ Combines corresponding values from the input array and a second array into two-e
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/combination`  
 **Aliases:** None
 {: .member-reference }

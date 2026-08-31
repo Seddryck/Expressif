@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "skip-first-elements"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 160
+parent: "Selection functions"
+grand_parent: "Array functions"
+nav_order: 30
 has_toc: false
-permalink: /functions/array/skip-first-elements/
+permalink: /functions/array/selection/skip-first-elements/
 tags:
   - functions
-  - array
+  - array/selection
 generated: true
 ---
 
@@ -33,7 +33,6 @@ Omits the requested number of elements from the start of the input enumerable an
 
 
 
-
 ## Behavior
 
 When `count` is greater than the number of elements in the input, `skip-first-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.
@@ -51,6 +50,6 @@ When `count` is greater than the number of elements in the input, `skip-first-el
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/selection`  
 **Aliases:** `skip-first`
 {: .member-reference }
