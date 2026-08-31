@@ -38,7 +38,7 @@ Once loaded, Expressif code blocks can use:
 ```
 ````
 
-In documented evaluation examples, the lexer emits the arrow as an operator, preserves the separator as whitespace, and emits the remaining text on the same line as Rouge's standard `Generic::Output` token:
+In documented evaluation examples, the lexer emits the arrow as an operator, preserves the first separator space as whitespace, and emits the remaining text on the same line as Rouge's standard `Generic::Output` token:
 
 ````markdown
 ```expressif
