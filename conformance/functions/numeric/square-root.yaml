@@ -16,6 +16,9 @@ tests:
       - id: square-root.valid.numeric.nine
         value: 9
         expected: 3
+      - id: square-root.valid.numeric.negative
+        value: -16
+        expected:
       - id: square-root.valid.special.empty
         value: 
         expected: 

@@ -81,7 +81,9 @@ public class SquareRoot : BaseNumericPowerRootFunction
         : base(() => 2) { }
 
     protected override decimal? EvaluateNumeric(decimal numeric)
-        => Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(numeric)));
+        => numeric < 0
+            ? null
+            : Convert.ToDecimal(Math.Sqrt(Convert.ToDouble(numeric)));
 }
 
 /// <summary>
