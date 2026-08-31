@@ -3,7 +3,7 @@ layout: docs
 title: "filter"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 60
+nav_order: 30
 has_toc: false
 permalink: /functions/array/filter/
 tags:

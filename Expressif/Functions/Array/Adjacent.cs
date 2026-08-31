@@ -9,6 +9,7 @@ namespace Expressif.Functions.Array;
 /// Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.
 /// </summary>
 [Function(prefix: "", aliases: ["adjacent"])]
+[Scope("array/sequencing")]
 public class Adjacent : BaseArrayFunction
 {
     public Func<IFunction> Operation { get; }

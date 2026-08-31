@@ -8,6 +8,7 @@ namespace Expressif.Functions.Array;
 /// Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.
 /// </summary>
 [Function(prefix: "", aliases: ["pairwise"])]
+[Scope("array/sequencing")]
 public class Pairwise : BaseArrayFunction
 {
     protected override object? EvaluateArray(IEnumerable enumerable)

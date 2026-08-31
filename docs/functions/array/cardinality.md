@@ -3,7 +3,7 @@ layout: docs
 title: "cardinality"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 20
 has_toc: false
 permalink: /functions/array/cardinality/
 tags:

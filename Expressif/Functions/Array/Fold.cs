@@ -11,6 +11,7 @@ namespace Expressif.Functions.Array;
 /// Returns `null` when the input is not an enumerable or is a string.
 /// </summary>
 [Function]
+[Scope("array/aggregation")]
 public class Fold : BaseArrayFunction<object>
 {
     public Func<IAccumulator> Accumulator { get; }

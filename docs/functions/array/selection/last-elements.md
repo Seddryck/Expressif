@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "last-elements"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 100
+parent: "Selection functions"
+grand_parent: "Array functions"
+nav_order: 20
 has_toc: false
-permalink: /functions/array/last-elements/
+permalink: /functions/array/selection/last-elements/
 tags:
   - functions
-  - array
+  - array/selection
 generated: true
 ---
 
@@ -33,17 +33,23 @@ Returns up to the requested number of elements from the end of the input enumera
 
 
 
+## Behavior
+
+When `count` is greater than the number of elements in the input, `last-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.
+
+
 
 ## Examples
 
 {% raw %}
 ```expressif
 {1, 2, 3} | last-elements(2) → {2, 3}
+{1, 2, 3} | last-elements(5) → {1, 2, 3}
 ```
 {% endraw %}
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/selection`  
 **Aliases:** `last`
 {: .member-reference }

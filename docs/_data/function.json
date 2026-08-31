@@ -5,7 +5,7 @@
     "Aliases": [
       "adjacent"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
     "Summary": "Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.",
@@ -14,6 +14,8 @@
         "Name": "operation",
         "Type": "expression",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
       }
     ],
@@ -53,7 +55,7 @@
     "Aliases": [
       "array-to-broadcast"
     ],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "array",
     "Summary": "Executes an accumulator once over the full input enumerable, then returns the final accumulated value repeated once for each input element. Returns `null` when the input is not an enumerable or is a string.",
@@ -62,6 +64,8 @@
         "Name": "accumulator",
         "Type": "accumulator",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
       }
     ],
@@ -89,7 +93,7 @@
     "Aliases": [
       "chunk"
     ],
-    "Scope": "array",
+    "Scope": "array/partitioning",
     "Input": "array",
     "Output": "array",
     "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
@@ -98,6 +102,8 @@
         "Name": "size",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "The strictly positive number of items in each chunk."
       }
     ],
@@ -133,7 +139,7 @@
     "Aliases": [
       "first"
     ],
-    "Scope": "array",
+    "Scope": "array/selection",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -142,11 +148,15 @@
         "Name": "count",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Number of elements to return from the start of the input."
       }
     ],
+    "Behavior": "When `count` is greater than the number of elements in the input, `first-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.",
     "Examples": [
-      "{1, 2, 3} | first-elements(2) → {1, 2}"
+      "{1, 2, 3} | first-elements(2) → {1, 2}",
+      "{1, 2, 3} | first-elements(5) → {1, 2, 3}"
     ]
   },
   {
@@ -155,7 +165,7 @@
     "Aliases": [
       "array-to-fold"
     ],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Summary": "Executes an accumulator once over the full input enumerable and returns the final accumulated value. Returns `null` when the input is not an enumerable or is a string.",
@@ -164,6 +174,8 @@
         "Name": "accumulator",
         "Type": "accumulator",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Factory that creates the accumulator instance used for the fold execution."
       }
     ],
@@ -204,7 +216,7 @@
     "Aliases": [
       "array-to-lag"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -219,7 +231,7 @@
     "Aliases": [
       "last"
     ],
-    "Scope": "array",
+    "Scope": "array/selection",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -228,11 +240,15 @@
         "Name": "count",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Number of elements to return from the end of the input."
       }
     ],
+    "Behavior": "When `count` is greater than the number of elements in the input, `last-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.",
     "Examples": [
-      "{1, 2, 3} | last-elements(2) → {2, 3}"
+      "{1, 2, 3} | last-elements(2) → {2, 3}",
+      "{1, 2, 3} | last-elements(5) → {1, 2, 3}"
     ]
   },
   {
@@ -241,7 +257,7 @@
     "Aliases": [
       "array-to-lead"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -278,7 +294,7 @@
     "Aliases": [
       "pairwise"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.",
@@ -293,7 +309,7 @@
     "Aliases": [
       "with-position"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.",
@@ -308,7 +324,7 @@
     "Aliases": [
       "position-of"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "integer",
     "Summary": "Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.",
@@ -317,6 +333,8 @@
         "Name": "value",
         "Type": "any",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the value to locate."
       }
     ],
@@ -330,7 +348,7 @@
     "Aliases": [
       "value-at"
     ],
-    "Scope": "array",
+    "Scope": "array/selection",
     "Input": "array",
     "Output": "any",
     "Summary": "Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.",
@@ -339,6 +357,8 @@
         "Name": "position",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the zero-based position of the item to return."
       }
     ],
@@ -375,7 +395,7 @@
     "Name": "zip",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/combination",
     "Input": "array",
     "Output": "array",
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array.",
@@ -384,6 +404,8 @@
         "Name": "array",
         "Type": "array",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the second array whose values form the second element of each tuple."
       }
     ],
@@ -395,7 +417,7 @@
     "Name": "zip-padded",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/combination",
     "Input": "array",
     "Output": "array",
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.",
@@ -404,6 +426,8 @@
         "Name": "array",
         "Type": "array",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the second array whose values form the second element of each tuple."
       }
     ],
@@ -415,7 +439,7 @@
     "Name": "zip-strict",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/combination",
     "Input": "array",
     "Output": "array",
     "Summary": "Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array.",
@@ -424,6 +448,8 @@
         "Name": "array",
         "Type": "array",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the equally sized second array whose values form the second element of each tuple."
       }
     ],
@@ -437,7 +463,7 @@
     "Aliases": [
       "reverse"
     ],
-    "Scope": "array",
+    "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
@@ -452,7 +478,7 @@
     "Aliases": [
       "array-to-scan"
     ],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "array",
     "Summary": "Executes an accumulator progressively over the input enumerable and returns the intermediate accumulated value after each input element. Preserves input cardinality (one output item per input item). This differs from fold (final value only) and broadcast (final value repeated). Returns `null` when the input is not an enumerable or is a string.",
@@ -461,6 +487,8 @@
         "Name": "accumulator",
         "Type": "accumulator",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Factory that creates the accumulator instance used for the scan execution."
       }
     ],
@@ -474,7 +502,7 @@
     "Aliases": [
       "skip-first"
     ],
-    "Scope": "array",
+    "Scope": "array/selection",
     "Input": "array",
     "Output": "array",
     "Summary": "Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -483,11 +511,15 @@
         "Name": "count",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Number of elements to omit from the start of the input."
       }
     ],
+    "Behavior": "When `count` is greater than the number of elements in the input, `skip-first-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.",
     "Examples": [
-      "{1, 2, 3} | skip-first-elements(2) → {3}"
+      "{1, 2, 3} | skip-first-elements(2) → {3}",
+      "{1, 2, 3} | skip-first-elements(5) → {}"
     ]
   },
   {
@@ -496,7 +528,7 @@
     "Aliases": [
       "skip-last"
     ],
-    "Scope": "array",
+    "Scope": "array/selection",
     "Input": "array",
     "Output": "array",
     "Summary": "Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
@@ -505,11 +537,15 @@
         "Name": "count",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Number of elements to omit from the end of the input."
       }
     ],
+    "Behavior": "When `count` is greater than the number of elements in the input, `skip-last-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.",
     "Examples": [
-      "{1, 2, 3} | skip-last-elements(2) → {1}"
+      "{1, 2, 3} | skip-last-elements(2) → {1}",
+      "{1, 2, 3} | skip-last-elements(5) → {}"
     ]
   },
   {
@@ -518,7 +554,7 @@
     "Aliases": [
       "slice"
     ],
-    "Scope": "array",
+    "Scope": "array/selection",
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.",
@@ -527,17 +563,23 @@
         "Name": "start",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Zero-based index of the first element to return."
       },
       {
         "Name": "end",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Zero-based exclusive index at which to stop returning elements."
       }
     ],
+    "Behavior": "When `start` is greater than `end`, the requested range contains no elements and `slice-elements` returns an empty array.",
     "Examples": [
-      "{1, 2, 3} | slice-elements(1, 3) → {2, 3}"
+      "{1, 2, 3} | slice-elements(1, 3) → {2, 3}",
+      "{1, 2, 3} | slice-elements(2, 1) → {}"
     ]
   },
   {

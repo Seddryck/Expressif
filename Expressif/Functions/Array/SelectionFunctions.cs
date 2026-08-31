@@ -10,6 +10,7 @@ namespace Expressif.Functions.Array;
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
 /// </summary>
 [Function(prefix: "", aliases: ["first"])]
+[Scope("array/selection")]
 public class FirstElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
@@ -44,6 +45,7 @@ public class FirstElements : BaseArrayFunction
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
 /// </summary>
 [Function(prefix: "", aliases: ["skip-first"])]
+[Scope("array/selection")]
 public class SkipFirstElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
@@ -77,6 +79,7 @@ public class SkipFirstElements : BaseArrayFunction
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
 /// </summary>
 [Function(prefix: "", aliases: ["last"])]
+[Scope("array/selection")]
 public class LastElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
@@ -112,6 +115,7 @@ public class LastElements : BaseArrayFunction
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
 /// </summary>
 [Function(prefix: "", aliases: ["skip-last"])]
+[Scope("array/selection")]
 public class SkipLastElements : BaseArrayFunction
 {
     public Func<int> Count { get; }
@@ -153,6 +157,7 @@ public class SkipLastElements : BaseArrayFunction
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or either bound is negative.
 /// </summary>
 [Function(prefix: "", aliases: ["slice"])]
+[Scope("array/selection")]
 public class SliceElements : BaseArrayFunction
 {
     public Func<int> Start { get; }

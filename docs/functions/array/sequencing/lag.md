@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "lag"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 90
+parent: "Sequencing functions"
+grand_parent: "Array functions"
+nav_order: 20
 has_toc: false
-permalink: /functions/array/lag/
+permalink: /functions/array/sequencing/lag/
 tags:
   - functions
-  - array
+  - array/sequencing
 generated: true
 ---
 
@@ -40,6 +40,6 @@ This function has no parameters.
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/sequencing`  
 **Aliases:** `array-to-lag`
 {: .member-reference }

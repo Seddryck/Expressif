@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "broadcast"
-parent: "Array functions"
-grand_parent: "Functions library"
-nav_order: 30
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 10
 has_toc: false
-permalink: /functions/array/broadcast/
+permalink: /functions/array/aggregation/broadcast/
 tags:
   - functions
-  - array
+  - array/aggregation
 generated: true
 ---
 
@@ -44,6 +44,6 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 
 **Kind:** Function  
-**Scope:** `array`  
+**Scope:** `array/aggregation`  
 **Aliases:** `array-to-broadcast`
 {: .member-reference }
