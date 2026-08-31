@@ -20,6 +20,8 @@ Reference documentation for Expressif functions in the `numeric` scope.
 |:-----|:---------|
 | [`absolute`]({{ '/functions/numeric/arithmetic/absolute/' | relative_url }}) | Returns the absolute value of the argument value. |
 | [`add`]({{ '/functions/numeric/arithmetic/add/' | relative_url }}) | Returns the sum of the input value and the parameter value. |
+| [`bucket`]({{ '/functions/numeric/classification/bucket/' | relative_url }}) | Classifies a numeric value into an equal-width bucket within a half-open interval. Returns `null` when the value is outside the interval or the bucket configuration is invalid. |
+| [`bucket-with-outliers`]({{ '/functions/numeric/classification/bucket-with-outliers/' | relative_url }}) | Classifies a numeric value into an equal-width bucket, using additional buckets for values below and above the configured interval. Returns `null` when the bucket configuration is invalid. |
 | [`ceiling`]({{ '/functions/numeric/rounding/ceiling/' | relative_url }}) | Returns the smallest integer greater than or equal to the argument number. |
 | [`clip`]({{ '/functions/numeric/rounding/clip/' | relative_url }}) | Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max. |
 | [`cube-power`]({{ '/functions/numeric/arithmetic/cube-power/' | relative_url }}) | Returns the the numeric argument value raised to the cube power. |

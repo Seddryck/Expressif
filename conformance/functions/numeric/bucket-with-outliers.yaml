@@ -1,0 +1,76 @@
+suite: numeric
+kind: function
+operator: bucket-with-outliers
+tests:
+  - id: bucket-with-outliers.valid
+    cases:
+      - id: bucket-with-outliers.valid.numeric.below-minimum
+        value: 2500
+        expected: 0
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.numeric.minimum
+        value: 5000
+        expected: 1
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.numeric.internal-boundary
+        value: 10000
+        expected: 2
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.numeric.in-range
+        value: 12500
+        expected: 2
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.numeric.maximum
+        value: 20000
+        expected: 4
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.numeric.above-maximum
+        value: 22500
+        expected: 4
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket-with-outliers.valid.numeric.non-positive-count
+        value: 10
+        expected:
+        parameters:
+          - 0
+          - 20
+          - 0
+      - id: bucket-with-outliers.valid.numeric.reversed-range
+        value: 10
+        expected:
+        parameters:
+          - 20
+          - 0
+          - 4
+      - id: bucket-with-outliers.valid.numeric.empty-range
+        value: 10
+        expected:
+        parameters:
+          - 10
+          - 10
+          - 4
