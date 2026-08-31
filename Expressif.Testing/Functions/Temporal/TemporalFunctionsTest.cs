@@ -79,16 +79,21 @@ public class TemporalFunctionsTest
     => Assert.That(new Backward(() => TimeOnly.Parse(timeSpan, CultureInfo.InvariantCulture), () => times)
         .Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("1978-12-28", 43)]
-    [TestCase("2010-07-04", 12)]
-    public void Age_Valid(DateTime value, int expected)
-        => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
+    [Conformance]
+    public void Age_Valid_FixedCurrentDate(object? value, DateTime currentDate, int? expected)
+    {
+        var context = new EvaluationContext(new Dictionary<string, object?>
+        {
+            ["current-date"] = currentDate,
+        });
+        var expression = new Expression(new Age()).WithContext(context);
+
+        Assert.That(expression.Evaluate(value), Is.EqualTo(expected));
+    }
 
     [Test]
-    [TestCase(null, 0)]
-    public void Age_Null_Zero(object? value, int expected)
-        => Assert.That(new Age().Evaluate(value), Is.AtLeast(expected));
+    public void Age_Default_Current_Date()
+        => Assert.That(new Age().Evaluate(DateTime.Today.AddYears(-20)), Is.EqualTo(20));
 
     [Conformance]
     public void CatholicCalendar_Valid(object value, string @event, DateTime expected)

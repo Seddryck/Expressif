@@ -17,7 +17,7 @@ date-time →
 age() → integer
 ```
 
-Returns how many years separate the argument dateTime and now.
+Returns the completed years between the argument dateTime and the current date. Returns `null` for null or future dates. In a non-leap year, a February 29 birthday is reached on February 28.
 
 ## Parameters
 
