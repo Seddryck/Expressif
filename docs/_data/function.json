@@ -398,8 +398,7 @@
     "Parameters": [],
     "Behavior": "`to-tuple` materializes the input array as a tuple without changing its elements. Null values and nested arrays, records, and tuples are preserved without recursive conversion.",
     "Examples": [
-      "{1, \"A\", #true} | to-tuple → T(1, \"A\", #true)",
-      "{} | to-tuple → T()"
+      "{1, \"A\", #true} | to-tuple → T(1, \"A\", #true)"
     ]
   },
   {

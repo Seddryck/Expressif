@@ -40,7 +40,6 @@ This function has no parameters.
 {% raw %}
 ```expressif
 {1, "A", #true} | to-tuple → T(1, "A", #true)
-{} | to-tuple → T()
 ```
 {% endraw %}
 
