@@ -4,7 +4,6 @@
 		<IsPackable>true</IsPackable>
 		<IsPackable Condition="$(MSBuildProjectName.EndsWith('Testing'))">false</IsPackable>
 		<DebugType>portable</DebugType>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	</PropertyGroup>
 
 	<PropertyGroup>
