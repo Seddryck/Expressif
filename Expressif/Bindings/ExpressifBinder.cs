@@ -208,6 +208,7 @@ public sealed class ExpressifBinder
     private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)
         => syntax switch
         {
+            GuardedExpressionSyntax guarded => [BindGuardedExpression(guarded)],
             UnaryExpressionSyntax unary => BindUnaryExpression(unary).Members,
             BinaryExpressionSyntax binary => BindBinaryExpression(binary).Members,
             ParenthesizedExpressionSyntax { Expression: OpenExpressionSyntax open } => BindOpen(open).Members,
@@ -221,6 +222,9 @@ public sealed class ExpressifBinder
             ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression).Members,
             _ => [BindPipelineMember(syntax)],
         };
+
+    private Function BindGuardedExpression(GuardedExpressionSyntax syntax)
+        => new("guard", [new OpenExpressionParameter(BindExpression(syntax.Expression))]);
 
     private OpenExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         => new([.. BindExpression(syntax.Operand).Members, new Function(BindUnaryOperator(syntax.Operator), [])]);
@@ -237,6 +241,7 @@ public sealed class ExpressifBinder
 
     private OpenExpression BindExpression(ExpressionSyntax syntax) => syntax switch
     {
+        GuardedExpressionSyntax guarded => new OpenExpression([BindGuardedExpression(guarded)]),
         OpenExpressionSyntax open => BindOpen(open),
         UnaryExpressionSyntax unary => BindUnaryExpression(unary),
         BinaryExpressionSyntax binary => BindBinaryExpression(binary),
@@ -462,6 +467,8 @@ public sealed class ExpressifBinder
 
     private IParameter BindArgument(ExpressionSyntax syntax) => syntax switch
     {
+        GuardedExpressionSyntax guarded => new OpenExpressionParameter(
+            new OpenExpression([BindGuardedExpression(guarded)])),
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
             => new OpenExpressionParameter(new OpenExpression([BindRecordAccessFunction(access)])),
         ValueSyntax value => BindValue(value),

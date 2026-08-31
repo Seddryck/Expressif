@@ -1,0 +1,28 @@
+suite: flow.guard
+kind: function
+operator: guard
+tests:
+  - id: guard.text
+    cases:
+      - id: guard.text.compatible
+        value: "  Bob  "
+        parameters:
+          - trim
+        expected: Bob
+      - id: guard.text.compatible-numeric-content
+        value: "42"
+        parameters:
+          - trim
+        expected: "42"
+      - id: guard.text.coercible-numeric-entry
+        value: "5"
+        parameters:
+          - add(1)
+        expected: "5"
+  - id: guard.numeric
+    cases:
+      - id: guard.numeric.incompatible-text-entry
+        value: 42
+        parameters:
+          - trim
+        expected: 42
