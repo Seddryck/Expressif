@@ -1,0 +1,48 @@
+suite: temporal
+kind: function
+operator: age
+tests:
+  - id: age.valid.fixed-current-date
+    cases:
+      - id: age.valid.fixed-current-date.birthday-passed
+        value: 2000-08-30
+        context:
+          variables:
+            current-date: 2026-08-31
+        expected: 26
+      - id: age.valid.fixed-current-date.birthday-today
+        value: 2000-08-31
+        context:
+          variables:
+            current-date: 2026-08-31
+        expected: 26
+      - id: age.valid.fixed-current-date.birthday-later
+        value: 2000-09-01
+        context:
+          variables:
+            current-date: 2026-08-31
+        expected: 25
+      - id: age.valid.fixed-current-date.null
+        value: (null)
+        context:
+          variables:
+            current-date: 2026-08-31
+        expected:
+      - id: age.valid.fixed-current-date.future
+        value: 2027-01-01
+        context:
+          variables:
+            current-date: 2026-08-31
+        expected:
+      - id: age.valid.fixed-current-date.leap-day-before-observed-birthday
+        value: 2000-02-29
+        context:
+          variables:
+            current-date: 2025-02-27
+        expected: 24
+      - id: age.valid.fixed-current-date.leap-day-on-observed-birthday
+        value: 2000-02-29
+        context:
+          variables:
+            current-date: 2025-02-28
+        expected: 25

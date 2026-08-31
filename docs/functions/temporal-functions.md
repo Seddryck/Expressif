@@ -18,7 +18,7 @@ Reference documentation for Expressif functions in the `temporal` scope.
 
 | Name | Overview |
 |:-----|:---------|
-| [`age`]({{ '/functions/temporal/age/' | relative_url }}) | Returns how many years separate the argument dateTime and now. |
+| [`age`]({{ '/functions/temporal/age/' | relative_url }}) | Returns the completed years between the argument dateTime and the current date. Returns `null` for null or future dates. In a non-leap year, a February 29 birthday is reached on February 28. |
 | [`backward`]({{ '/functions/temporal/backward/' | relative_url }}) | Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced. |
 | [`catholic-calendar`]({{ '/functions/temporal/calendar/catholic-calendar/' | relative_url }}) | Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown. |
 | [`ceiling-hour`]({{ '/functions/temporal/ceiling-hour/' | relative_url }}) | Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero and an hour added. |

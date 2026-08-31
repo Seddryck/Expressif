@@ -52,21 +52,27 @@ public class DateTimeToDate : BaseTemporalFunction
 }
 
 /// <summary>
-/// Returns how many years separate the argument dateTime and now.
+/// Returns the completed years between the argument dateTime and the current date. Returns `null` for null or future dates. In a non-leap year, a February 29 birthday is reached on February 28.
 /// </summary>
 [Function(prefix: "", aliases: ["date-to-age"])]
 public class Age : BaseTemporalFunction<int?>
 {
-    protected override object EvaluateNull() => 0;
     protected override object EvaluateDateTime(DateTime value)
     {
-        // Save today's date.
-        var today = DateTime.Today;
-        // Calculate the age.
+        var today = GetCurrentDate();
+        if (value.Date > today)
+            return null!;
+
         var age = today.Year - value.Year;
-        // Go back to the year the person was born in case of a leap year
-        return value.AddYears(age) > today ? age-- : age;
+        return value.AddYears(age).Date > today ? age - 1 : age;
     }
+
+    private static DateTime GetCurrentDate()
+        => EvaluationRuntime.Context is { } context
+            && context.TryGetVariable("current-date", out var value)
+            && value is not null
+                ? new DateTimeCaster().Cast(value).Date
+                : DateTime.Today;
 }
 
 /// <summary>

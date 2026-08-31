@@ -771,15 +771,18 @@ public class ExpressionTest
             ["birthDate"] = new DateTime(1978, 12, 28)
         };
         var expression = Expression.Create(
-            "record(name:= .lastName | append(\", \") | append(^.firstName), age:=.birthDate | age)");
+            "record(name:= .lastName | append(\", \") | append(^.firstName), age:=.birthDate | age)")
+            .WithContext(new EvaluationContext(new Dictionary<string, object?>
+            {
+                ["current-date"] = new DateTime(2026, 8, 31),
+            }));
 
         var result = (RecordValue)expression.Evaluate(input)!;
-        var expectedAge = DateTime.Today.Year - 1978;
 
         Assert.Multiple(() =>
         {
             Assert.That(result["name"], Is.EqualTo("Charlier, Cédric"));
-            Assert.That(result["age"], Is.EqualTo(expectedAge));
+            Assert.That(result["age"], Is.EqualTo(47));
         });
     }
 }
