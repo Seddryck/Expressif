@@ -3,7 +3,7 @@ layout: docs
 title: "slice-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 180
+nav_order: 190
 has_toc: false
 permalink: /functions/array/slice-elements/
 tags:

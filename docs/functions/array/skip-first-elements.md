@@ -3,7 +3,7 @@ layout: docs
 title: "skip-first-elements"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 160
+nav_order: 170
 has_toc: false
 permalink: /functions/array/skip-first-elements/
 tags:

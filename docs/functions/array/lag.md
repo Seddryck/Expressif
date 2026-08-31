@@ -3,7 +3,7 @@ layout: docs
 title: "lag"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /functions/array/lag/
 tags:

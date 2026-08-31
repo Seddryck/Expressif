@@ -3,7 +3,7 @@ layout: docs
 title: "reverse"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 140
+nav_order: 150
 has_toc: false
 permalink: /functions/array/reverse/
 tags:

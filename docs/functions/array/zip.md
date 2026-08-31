@@ -3,7 +3,7 @@ layout: docs
 title: "zip"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 190
+nav_order: 210
 has_toc: false
 permalink: /functions/array/zip/
 tags:

@@ -1,0 +1,21 @@
+suite: array
+kind: function
+operator: to-tuple
+tests:
+  - id: to-tuple.valid
+    cases:
+      - id: to-tuple.valid.array.empty
+        value: '{}'
+        expected: 'T()'
+      - id: to-tuple.valid.array.heterogeneous
+        value: '{1, "A", #true}'
+        expected: 'T(1, "A", #true)'
+      - id: to-tuple.valid.array.nested-values
+        value: '{1, #null, {2, 3}, {name := "Bob"}, T(4, 5)}'
+        expected: 'T(1, null, {2, 3}, {name := "Bob"}, T(4, 5))'
+      - id: to-tuple.valid.special.null
+        value: (null)
+        expected:
+      - id: to-tuple.valid.non-array.integer
+        value: 42
+        expected:

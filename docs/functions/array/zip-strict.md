@@ -3,7 +3,7 @@ layout: docs
 title: "zip-strict"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 210
+nav_order: 230
 has_toc: false
 permalink: /functions/array/zip-strict/
 tags:

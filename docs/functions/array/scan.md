@@ -3,7 +3,7 @@ layout: docs
 title: "scan"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /functions/array/scan/
 tags:

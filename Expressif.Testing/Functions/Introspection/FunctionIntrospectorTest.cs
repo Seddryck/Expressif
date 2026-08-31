@@ -149,6 +149,7 @@ public class FunctionIntrospectorTest
     [TestCase("datetime-to-date", "date-time", "date")]
     [TestCase("next-weekday", "date-time", "date")]
     [TestCase("reverse", "array", "array")]
+    [TestCase("to-tuple", "array", "tuple")]
     [TestCase("record", "any", "record")]
     public void Describe_TypedFunction_ExposesExpressifContract(string name, string input, string output)
     {
