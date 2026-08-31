@@ -137,6 +137,7 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Behavior": "When `count` is greater than the number of elements in the input, `first-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.",
     "Parameters": [
       {
         "Name": "count",
@@ -146,7 +147,8 @@
       }
     ],
     "Examples": [
-      "{1, 2, 3} | first-elements(2) → {1, 2}"
+      "{1, 2, 3} | first-elements(2) → {1, 2}",
+      "{1, 2, 3} | first-elements(5) → {1, 2, 3}"
     ]
   },
   {
@@ -223,6 +225,7 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Behavior": "When `count` is greater than the number of elements in the input, `last-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.",
     "Parameters": [
       {
         "Name": "count",
@@ -232,7 +235,8 @@
       }
     ],
     "Examples": [
-      "{1, 2, 3} | last-elements(2) → {2, 3}"
+      "{1, 2, 3} | last-elements(2) → {2, 3}",
+      "{1, 2, 3} | last-elements(5) → {1, 2, 3}"
     ]
   },
   {
