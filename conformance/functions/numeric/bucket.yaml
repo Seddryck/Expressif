@@ -1,0 +1,84 @@
+suite: numeric
+kind: function
+operator: bucket
+tests:
+  - id: bucket.valid
+    cases:
+      - id: bucket.valid.numeric.minimum
+        value: 5000
+        expected: 1
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.first-internal-boundary
+        value: 10000
+        expected: 2
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.second-bucket
+        value: 12500
+        expected: 2
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.last-bucket
+        value: 19999.5
+        expected: 3
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.below-minimum
+        value: 4999
+        expected:
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.maximum
+        value: 20000
+        expected:
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.above-maximum
+        value: 20001
+        expected:
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.special.null
+        value: (null)
+        expected:
+        parameters:
+          - 5000
+          - 20000
+          - 3
+      - id: bucket.valid.numeric.non-positive-count
+        value: 10
+        expected:
+        parameters:
+          - 0
+          - 20
+          - 0
+      - id: bucket.valid.numeric.reversed-range
+        value: 10
+        expected:
+        parameters:
+          - 20
+          - 0
+          - 4
+      - id: bucket.valid.numeric.empty-range
+        value: 10
+        expected:
+        parameters:
+          - 10
+          - 10
+          - 4
+

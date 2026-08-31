@@ -1292,6 +1292,71 @@
     ]
   },
   {
+    "Name": "bucket",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "numeric/classification",
+    "Input": "numeric",
+    "Output": "integer",
+    "Summary": "Classifies a numeric value into an equal-width bucket within a half-open interval. Returns `null` when the value is outside the interval or the bucket configuration is invalid.",
+    "Parameters": [
+      {
+        "Name": "minimum",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "Inclusive lower bound of the classified interval."
+      },
+      {
+        "Name": "maximum",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "Exclusive upper bound of the classified interval."
+      },
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "Strictly positive number of equal-width buckets."
+      }
+    ],
+    "Examples": [
+      "12500 | bucket(5000, 20000, 3) → 2"
+    ]
+  },
+  {
+    "Name": "bucket-with-outliers",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "numeric/classification",
+    "Input": "numeric",
+    "Output": "integer",
+    "Summary": "Classifies a numeric value into an equal-width bucket, using additional buckets for values below and above the configured interval. Returns `null` when the bucket configuration is invalid.",
+    "Parameters": [
+      {
+        "Name": "minimum",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "Inclusive lower bound of the classified interval."
+      },
+      {
+        "Name": "maximum",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "Exclusive upper bound of the classified interval."
+      },
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "Strictly positive number of equal-width in-range buckets."
+      }
+    ],
+    "Examples": [
+      "2500 | bucket-with-outliers(5000, 20000, 3) → 0",
+      "22500 | bucket-with-outliers(5000, 20000, 3) → 4"
+    ]
+  },
+  {
     "Name": "null-to-zero",
     "IsPublic": true,
     "Aliases": [],
