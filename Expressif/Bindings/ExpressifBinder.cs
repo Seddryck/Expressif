@@ -344,7 +344,7 @@ public sealed class ExpressifBinder
         {
             TypeLiteralSyntax type => new PositionalCoercionParameter(ResolveCoercionType(type)),
             BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: TupleProjectionSyntax selector }
-                when selector.Direction is TupleProjectionDirection.FromStart && selector.Index > 0
+                when selector.Direction is TupleProjectionDirection.FromStart
                 => new TupleCoercionParameter(selector.Index, ResolveCoercionType(type)),
             BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: FunctionCallSyntax selector }
                 when selector.Arguments.Count == 0

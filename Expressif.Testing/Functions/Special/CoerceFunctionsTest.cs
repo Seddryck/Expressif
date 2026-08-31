@@ -24,7 +24,7 @@ public class CoerceFunctionsTest
     [TestCase("coerce(:text, $2 -> :integer)")]
     [TestCase("coerce(name -> :text, $2 -> :integer)")]
     [TestCase("coerce(age -> :integer, age -> :text)")]
-    [TestCase("coerce($2 -> :integer, $2 -> :text)")]
+    [TestCase("coerce($1 -> :integer, $1 -> :text)")]
     [TestCase("coerce(:expression)")]
     public void Coerce_InvalidSpecification_ThrowsBindingError(string expression)
         => Assert.That(() => Expression.Create(expression), Throws.Exception);
@@ -85,7 +85,7 @@ public class CoerceFunctionsTest
         "T(\"Bob\", \"42\") | coerce(:text, :integer, :boolean)",
         "T(\"Bob\", 42)")]
     [TestCase(
-        "T(\"Bob\", \"42\") | coerce($3 -> :integer)",
+        "T(\"Bob\", \"42\") | coerce($2 -> :integer)",
         "T(\"Bob\", \"42\")")]
     public void Coerce_UnavailableTuplePositions_AreIgnored(string expression, string expected)
         => Assert.That(
