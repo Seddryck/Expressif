@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: tokenize-lexical
+tests:
+  - id: tokenize-lexical.valid
+    cases:
+      - id: tokenize-lexical.valid.sentence
+        value: Hello, David! How are you?
+        expected: [Hello, ',', David, '!', How, are, you, '?']
+      - id: tokenize-lexical.valid.contractions
+        value: "don't l’amour"
+        expected: ["don't", "l’amour"]
+      - id: tokenize-lexical.valid.hyphenated
+        value: state-of-the-art
+        expected: [state, '-', of, '-', the, '-', art]
+      - id: tokenize-lexical.valid.numbers
+        value: version 12.5
+        expected: [version, '12', '.', '5']
+      - id: tokenize-lexical.valid.symbols
+        value: A+B=C
+        expected: [A, '+', B, '=', C]
+      - id: tokenize-lexical.valid.unicode
+        value: Καλημέρα 世界 １２３
+        expected: [Καλημέρα, 世界, '１２３']
+      - id: tokenize-lexical.valid.repeated-punctuation
+        value: What?!...
+        expected: [What, '?', '!', '.', '.', '.']
+      - id: tokenize-lexical.valid.null
+        value: (null)
+        expected: []
+      - id: tokenize-lexical.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize-lexical.valid.blank
+        value: (blank)
+        expected: []

@@ -1,0 +1,30 @@
+suite: text
+kind: function
+operator: token-count-lexical
+tests:
+  - id: token-count-lexical.valid
+    cases:
+      - id: token-count-lexical.valid.sentence
+        value: Hello, David! How are you?
+        expected: 8
+      - id: token-count-lexical.valid.contractions
+        value: "don't l’amour"
+        expected: 2
+      - id: token-count-lexical.valid.hyphenated
+        value: state-of-the-art
+        expected: 7
+      - id: token-count-lexical.valid.symbols
+        value: A+B=C
+        expected: 5
+      - id: token-count-lexical.valid.repeated-punctuation
+        value: What?!...
+        expected: 6
+      - id: token-count-lexical.valid.null
+        value: (null)
+        expected: 0
+      - id: token-count-lexical.valid.empty
+        value: (empty)
+        expected: 0
+      - id: token-count-lexical.valid.blank
+        value: (blank)
+        expected: 0
