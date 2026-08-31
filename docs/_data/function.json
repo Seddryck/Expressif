@@ -473,6 +473,20 @@
     ]
   },
   {
+    "Name": "to-tuple",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "tuple",
+    "Summary": "Returns a tuple containing the input array's elements in order. Returns `null` when the input is not an array.",
+    "Parameters": [],
+    "Behavior": "`to-tuple` materializes the input array as a tuple without changing its elements. Null values and nested arrays, records, and tuples are preserved without recursive conversion.",
+    "Examples": [
+      "{1, \"A\", #true} | to-tuple → T(1, \"A\", #true)"
+    ]
+  },
+  {
     "Name": "scan",
     "IsPublic": true,
     "Aliases": [
