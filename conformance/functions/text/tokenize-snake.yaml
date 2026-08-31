@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: tokenize-snake
+tests:
+  - id: tokenize-snake.valid
+    cases:
+      - id: tokenize-snake.valid.standard
+        value: first_name
+        expected: [first, name]
+      - id: tokenize-snake.valid.redundant-separators
+        value: __first___name__
+        expected: [first, name]
+      - id: tokenize-snake.valid.escaped-separator
+        value: 'first\_name_last'
+        expected: [first_name, last]
+      - id: tokenize-snake.valid.case-preserved
+        value: First_HTTP
+        expected: [First, HTTP]
+      - id: tokenize-snake.valid.null
+        value: (null)
+        expected: []
+      - id: tokenize-snake.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize-snake.valid.blank
+        value: (blank)
+        expected: []

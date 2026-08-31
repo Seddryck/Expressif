@@ -79,3 +79,58 @@ public class TokenizeLexical : BaseTextFunction<string[]>
     protected override object EvaluateBlank() => System.Array.Empty<string>();
     protected override object EvaluateString(string value) => new LexicalTokenizer().Execute(value);
 }
+
+public abstract class BaseNormalizedTokenize : BaseTextFunction<string[]>
+{
+    protected abstract string[] Tokenize(string value);
+
+    protected override object EvaluateNull() => System.Array.Empty<string>();
+    protected override object EvaluateEmpty() => System.Array.Empty<string>();
+    protected override object EvaluateBlank() => System.Array.Empty<string>();
+    protected override object EvaluateString(string value) => Tokenize(value);
+}
+
+/// <summary>
+/// Returns normalized tokens from a hyphen-separated name, preserving escaped hyphens within tokens.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenizeKebab : BaseNormalizedTokenize
+{
+    protected override string[] Tokenize(string value) => new SeparatedWordTokenizer('-').Execute(value);
+}
+
+/// <summary>
+/// Returns normalized tokens from an underscore-separated name, preserving escaped underscores within tokens.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenizeSnake : BaseNormalizedTokenize
+{
+    protected override string[] Tokenize(string value) => new SeparatedWordTokenizer('_').Execute(value);
+}
+
+/// <summary>
+/// Returns tokens from a camelCase name using case and acronym transitions as boundaries.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenizeCamel : BaseNormalizedTokenize
+{
+    protected override string[] Tokenize(string value) => new CaseWordTokenizer(true, false, false).Execute(value);
+}
+
+/// <summary>
+/// Returns tokens from a PascalCase name using case and acronym transitions as boundaries.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenizePascal : BaseNormalizedTokenize
+{
+    protected override string[] Tokenize(string value) => new CaseWordTokenizer(true, false, false).Execute(value);
+}
+
+/// <summary>
+/// Returns word tokens using separators, punctuation, symbols, case transitions, and acronym transitions as boundaries.
+/// </summary>
+[Scope("text/tokenization")]
+public class TokenizeWords : BaseNormalizedTokenize
+{
+    protected override string[] Tokenize(string value) => new CaseWordTokenizer(true, true, true).Execute(value);
+}

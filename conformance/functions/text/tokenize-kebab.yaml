@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: tokenize-kebab
+tests:
+  - id: tokenize-kebab.valid
+    cases:
+      - id: tokenize-kebab.valid.standard
+        value: first-name
+        expected: [first, name]
+      - id: tokenize-kebab.valid.redundant-separators
+        value: --first---name--
+        expected: [first, name]
+      - id: tokenize-kebab.valid.escaped-separator
+        value: 'first\-name-last'
+        expected: [first-name, last]
+      - id: tokenize-kebab.valid.case-preserved
+        value: First-HTTP
+        expected: [First, HTTP]
+      - id: tokenize-kebab.valid.null
+        value: (null)
+        expected: []
+      - id: tokenize-kebab.valid.empty
+        value: (empty)
+        expected: []
+      - id: tokenize-kebab.valid.blank
+        value: (blank)
+        expected: []
