@@ -11,8 +11,8 @@ module Rouge
       filenames "*.expr", "*.expressif"
 
       state :root do
-        rule %r/(→)([^\r\n]*)/ do
-          groups Operator, Generic::Output
+        rule %r/(→)([^\S\r\n]*)([^\r\n]*)/ do
+          groups Operator, Text::Whitespace, Generic::Output
         end
         rule %r/\s+/, Text::Whitespace
         rule %r/#"(?:\\.|[^"\\])*"/, Literal::Date
