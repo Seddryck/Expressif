@@ -214,8 +214,7 @@ The shape of a value is more than its type. When reading a transformation, ask t
 An operation can preserve one of these properties while changing another. For example, mapping an array preserves the outer array and produces one result for every input element, but the mapped expression can turn each scalar into a tuple, record, or nested array:
 
 ```expressif
-{10, 20, 30}
-| map(record(amount:=..., taxed:=multiply(1.21)))
+{10, 20} |> record(score:=@_, name:=multiply(10))
 ```
 
 Conceptually, this changes `array<numeric>` into `array<record>` without changing the outer container or its cardinality.
