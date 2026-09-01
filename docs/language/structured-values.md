@@ -203,6 +203,62 @@ Use a record when:
 
 The distinction is based on structure, not size. A two-element array is still an array, while a tuple can contain more than two elements.
 
+## Reasoning about shape
+
+The shape of a value is more than its type. When reading a transformation, ask three separate questions:
+
+1. What is the outer value: a scalar, array, tuple, or record?
+2. How many elements or fields can the result contain?
+3. What shape can each contained value have?
+
+An operation can preserve one of these properties while changing another. For example, mapping an array preserves the outer array and produces one result for every input element, but the mapped expression can turn each scalar into a tuple, record, or nested array:
+
+```expressif
+{10, 20, 30}
+| map(record(amount:=..., taxed:=multiply(1.21)))
+```
+
+Conceptually, this changes `array<numeric>` into `array<record>` without changing the outer container or its cardinality.
+
+Use these broad categories to reason about a pipeline:
+
+| Category | Outer result | Cardinality | Element shape |
+|---|---|---|---|
+| Mapping | Array remains an array | One result per input element | May change |
+| Filtering or selection | Usually remains an array | May shrink or depend on the data | Usually preserved |
+| Ordering | Array remains an array | Usually preserved | Preserved |
+| Grouping, pairing, or windowing | Array remains an array | Defined by the operation | Often becomes nested or tuple-shaped |
+| Reduction | Container is consumed | One result | Defined by the accumulator |
+| Construction or conversion | Explicitly chosen container | Defined by the construct | Preserved or projected as documented |
+
+These are reasoning categories, not an exhaustive function list. Consult the [function reference]({{ '/functions/' | relative_url }}) for the exact input, output, cardinality, and edge cases of an individual operation.
+
+## Element-wise and whole-collection evaluation
+
+Expressif does not automatically apply a scalar function to every item in a structured value. Mapping is explicit: `map(expression)` and its `|> (expression)` shorthand evaluate the expression once for every array item.
+
+Other functions receive the complete structured value. An accumulator such as `sum` consumes the whole array and returns one result. `scan` also consumes the array as an accumulation but returns each intermediate result, while `broadcast` repeats the final accumulated result once per input element. That behavior belongs specifically to the `broadcast` function; it is not a general rule that scalar arguments are broadcast across collections.
+
+A tuple passed to a function is likewise one input value. If the function expects an array, the tuple may first be coerced to an array as described below. That does not mean the function is independently applied to each tuple position.
+
+## Spread expands; it does not map or flatten
+
+Spread is explicit expansion during construction. In an array construction, a spread array contributes its elements at that position:
+
+```expressif
+{1, ...{2, 3}, 4}
+```
+
+produces `{1, 2, 3, 4}`. In `record(...)`, a standalone `...` contributes the incoming record's fields to the new record.
+
+Spread does not evaluate a transformation for each element, and it does not recursively flatten nested collections. `{1, ...{{2, 3}}, 4}` still contains the nested array `{2, 3}` as one element. See [Advanced expressions](advanced.md#array-spread-arguments) for the supported spread contexts.
+
+## Tuple positions and record fields
+
+Tuple positions and record field names are parts of their respective shapes. Tuple operations can explicitly select, extend, or reconstruct positions. Converting a tuple to an array discards the tuple container kind, but preserves its element order and values.
+
+Reading a record field projects that field's value and therefore removes the outer record from the result. Constructing a record explicitly creates a new set of named fields. When an operation transforms record field values while preserving the record container, the field names remain unchanged unless that operation's contract says otherwise.
+
 ## Tuples as arrays
 
 When a function expects an array, Expressif can coerce a tuple to an array. The tuple positions are presented as array elements in the same order. Array operations then produce arrays rather than preserving tuple structure:
@@ -256,6 +312,8 @@ A record containing arrays:
 ```
 
 A tuple can also contain arrays, records, or other tuples where the function contract allows it.
+
+Nesting is preserved by default. Collections are not implicitly flattened, and conversions apply to the outer value only unless an operation explicitly documents recursive traversal or reconstruction. For example, converting an array to a tuple does not convert arrays nested inside it.
 
 ## Structured transformations stay value-oriented
 
