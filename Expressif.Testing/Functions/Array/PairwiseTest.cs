@@ -1,11 +1,16 @@
 using System.Collections;
 using Expressif.Functions.Array;
+using Expressif.Testing.Conformance;
 using Expressif.Values;
 
 namespace Expressif.Testing.Functions.Array;
 
 public class PairwiseTest
 {
+    [Conformance]
+    public void Pairwise_Valid(object? value, object? expected)
+        => Assert.That(new Pairwise().Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void Evaluate_Values_ReturnsConsecutiveTuples()
         => Assert.That(new Pairwise().Evaluate(new object?[] { 100, 105, 120 }),

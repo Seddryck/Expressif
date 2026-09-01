@@ -2,11 +2,13 @@ suite: tuple
 kind: function
 operator: swap
 tests:
-  - id: swap.valid
+  - id: swap.valid.default
     cases:
       - id: swap.valid.default
         value: T(a, b, c, d)
         expected: T(d, b, c, a)
+  - id: swap.valid.explicit
+    cases:
       - id: swap.valid.explicit
         value: T(a, b, c, d)
         parameters: [1, 2]

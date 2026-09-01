@@ -11,7 +11,7 @@ tests:
         value: ' My Lord ! '
         expected: MyLord!
       - id: without-whitespaces.valid.text.value
-        value: >-
+        value: "My Lord !\r\nMy taylor is \t rich"
         expected: MyLord!Mytaylorisrich
       - id: without-whitespaces.valid.special.null
         value: (null)
