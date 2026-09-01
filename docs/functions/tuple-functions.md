@@ -18,7 +18,6 @@ Reference documentation for Expressif functions in the `tuple` scope.
 
 | Name | Overview |
 |:-----|:---------|
-| [`apply`]({{ '/functions/tuple/apply/' | relative_url }}) | Evaluates an expression with the input tuple as its positional context. |
 | [`arity`]({{ '/functions/tuple/arity/' | relative_url }}) | Returns the number of positional elements in the input tuple. |
 | [`extend`]({{ '/functions/tuple/extend/' | relative_url }}) | Returns a new tuple with all positions from another tuple appended. |
 | [`pick`]({{ '/functions/tuple/pick/' | relative_url }}) | Returns a tuple containing selected positions in the requested order. |
