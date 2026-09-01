@@ -5,6 +5,7 @@
   if (!root) return;
 
   const repository = root.dataset.repository;
+  const windowsInstallerUrl = root.dataset.windowsInstallerUrl;
   const githubApi = `https://api.github.com/repos/${repository}/releases`;
   const state = { releases: [], release: null, section: "cli", method: "tool", choices: {}, packages: [], packageVersions: [], packageVersion: null, packagesStatus: "idle" };
 
@@ -92,7 +93,10 @@
     const selected = candidates[0];
     if (!selected) return html + `<div class="download-notice">No download matches these choices.</div>`;
     const friendly = [label[selected.os], label[selected.arch], selected.libc === "musl" ? "musl" : null, selected.framework.replace("net", ".NET ")].filter(Boolean).join(" · ");
-    return html + `<div class="download-card download-card--recommended"><span class="download-badge">Recommended download</span><h3>Expressif ${escapeHtml(versionOf(state.release))} — ${escapeHtml(friendly)}</h3><a class="download-action" href="${escapeHtml(selected.asset.browser_download_url)}">${downloadIcon}<span>Download ${escapeHtml(label[selected.packageType].toLowerCase())}</span></a><div class="download-filename">${escapeHtml(selected.asset.name)}</div></div>`;
+    const installerHelp = selected.packageType === "setup" && windowsInstallerUrl
+      ? `<p><a href="${escapeHtml(windowsInstallerUrl)}">Windows installer options and silent setup</a></p>`
+      : "";
+    return html + `<div class="download-card download-card--recommended"><span class="download-badge">Recommended download</span><h3>Expressif ${escapeHtml(versionOf(state.release))} — ${escapeHtml(friendly)}</h3><a class="download-action" href="${escapeHtml(selected.asset.browser_download_url)}">${downloadIcon}<span>Download ${escapeHtml(label[selected.packageType].toLowerCase())}</span></a><div class="download-filename">${escapeHtml(selected.asset.name)}</div>${installerHelp}</div>`;
   }
 
   function commandBlock(command) {
