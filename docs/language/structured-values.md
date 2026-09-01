@@ -225,9 +225,9 @@ Use these broad categories to reason about a pipeline:
 | Category | Outer result | Cardinality | Element shape |
 |---|---|---|---|
 | Mapping | Array remains an array | One result per input element | May change |
-| Filtering or selection | Usually remains an array | May shrink or depend on the data | Usually preserved |
-| Ordering | Array remains an array | Usually preserved | Preserved |
-| Grouping, pairing, or windowing | Array remains an array | Defined by the operation | Often becomes nested or tuple-shaped |
+| Filtering | Array remains an array | From zero to the input count | Selected values are unchanged |
+| Ordering | Array remains an array | Same as the input | Preserved |
+| Grouping, pairing, or windowing | Array remains an array | Defined by the operation | Explicitly grouped or projected |
 | Reduction | Container is consumed | One result | Defined by the accumulator |
 | Construction or conversion | Explicitly chosen container | Defined by the construct | Preserved or projected as documented |
 
