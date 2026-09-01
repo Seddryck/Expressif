@@ -45,6 +45,8 @@ expressif-1.32.0-net10.0-win-x64-setup.exe
 
 The installer places the executable under `Program Files`, adds it to the system `PATH`, and checks for the required .NET runtime. Remove it from **Settings > Apps > Installed apps**.
 
+See [Windows installer](windows-installer.md) for interactive and silent installation, custom installation directories, setup logging, and unattended removal.
+
 ## Use a portable archive
 
 Portable archives are useful for pinned, isolated, or manually managed deployments.

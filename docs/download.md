@@ -6,7 +6,7 @@ permalink: /download/
 description: Guided downloads for the Expressif CLI, .NET packages, syntax highlighting, and conformance assets.
 ---
 
-<div id="download-app" class="download-app" data-repository="Seddryck/Expressif">
+<div id="download-app" class="download-app" data-repository="Seddryck/Expressif" data-windows-installer-url="{{ '/cli/windows-installer/' | relative_url }}">
   <noscript>
     <div class="download-notice download-notice--error">This page needs JavaScript to load current releases and packages. You can still use the <a href="https://github.com/Seddryck/Expressif/releases">GitHub releases page</a> or <a href="https://www.nuget.org/profiles/Seddryck">NuGet profile</a>.</div>
   </noscript>
