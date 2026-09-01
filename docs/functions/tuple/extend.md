@@ -3,7 +3,7 @@ layout: docs
 title: "extend"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 20
 has_toc: false
 permalink: /functions/tuple/extend/
 tags:
@@ -39,8 +39,6 @@ Returns a new tuple with a value appended, expanding tuple values into their pos
 {% raw %}
 ```expressif
 T(1, 2) | extend(3) → T(1, 2, 3)
-```
-```expressif
 T(1, 2) | extend(T(3, "foo")) → T(1, 2, 3, "foo")
 ```
 {% endraw %}

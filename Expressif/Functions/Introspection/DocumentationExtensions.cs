@@ -140,8 +140,7 @@ public static class DocumentationExtensions
     }
 
     private static bool IsVariadicParameter(Type declaringType, string parameterName)
-        => (declaringType == typeof(Array.Array) && parameterName == "values")
-            || (declaringType == typeof(Text.Text) && parameterName == "values")
+        => (typeof(IValueSpreadAware).IsAssignableFrom(declaringType) && parameterName == "values")
             || (declaringType == typeof(Record.Record) && parameterName == "entries")
             || (declaringType == typeof(Record.With) && parameterName == "projections")
             || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")

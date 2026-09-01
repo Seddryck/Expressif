@@ -1,0 +1,55 @@
+suite: tuple
+kind: function
+operator: tuple
+tests:
+  - id: tuple.valid.variadic-values
+    cases:
+      - id: tuple.valid.variadic-values.empty
+        value: (null)
+        parameters: [tuple()]
+        expected: 'T()'
+      - id: tuple.valid.variadic-values.single
+        value: (null)
+        parameters: [tuple(1)]
+        expected: 'T(1)'
+      - id: tuple.valid.variadic-values.multiple
+        value: (null)
+        parameters: ['tuple(1, 2, 3)']
+        expected: 'T(1, 2, 3)'
+      - id: tuple.valid.variadic-values.heterogeneous
+        value: (null)
+        parameters: ['tuple(1, "a", #true)']
+        expected: 'T(1, "a", #true)'
+      - id: tuple.valid.variadic-values.spread
+        value: (null)
+        parameters: ['tuple(...{1, 2, 3}, 4)']
+        expected: 'T(1, 2, 3, 4)'
+      - id: tuple.valid.variadic-values.multiple-spreads
+        value: (null)
+        parameters: ['tuple(...{1, 2}, ...{3, 4})']
+        expected: 'T(1, 2, 3, 4)'
+      - id: tuple.valid.variadic-values.empty-spread
+        value: (null)
+        parameters: ['tuple(...{})']
+        expected: 'T()'
+      - id: tuple.valid.variadic-values.implicit-input-spread
+        value: (null)
+        parameters: ['{1, 2, 3} | tuple(0, ..., 4)']
+        expected: 'T(0, 1, 2, 3, 4)'
+      - id: tuple.valid.variadic-values.explicit-input-spread
+        value: (null)
+        parameters: ['{1, 2, 3} | tuple(0, ...@_, 4)']
+        expected: 'T(0, 1, 2, 3, 4)'
+      - id: tuple.valid.variadic-values.mapped-spread
+        value: (null)
+        parameters: ['tuple(...({1, 2, 3} |> multiply(10)))']
+        expected: 'T(10, 20, 30)'
+  - id: tuple.valid.variable-spread
+    cases:
+      - id: tuple.valid.variable-spread.array
+        value: (null)
+        parameters: ['tuple(0, ...@values, 4)']
+        context:
+          variables:
+            values: [1, 2, 3]
+        expected: 'T(0, 1, 2, 3, 4)'

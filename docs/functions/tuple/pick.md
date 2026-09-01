@@ -3,7 +3,7 @@ layout: docs
 title: "pick"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 30
 has_toc: false
 permalink: /functions/tuple/pick/
 tags:

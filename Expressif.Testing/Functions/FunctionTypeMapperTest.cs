@@ -11,6 +11,7 @@ using Expressif.Functions.Special;
 using Expressif.Functions.Temporal;
 using Expressif.Functions.Text;
 using RecordFunction = Expressif.Functions.Record.Record;
+using TupleFunction = Expressif.Functions.Tuple.Tuple;
 
 namespace Expressif.Testing.Functions;
 
@@ -31,6 +32,7 @@ public class PredicateTypeMapperTest
     [TestCase("blank-to-empty", typeof(WhitespacesToEmpty))]
     [TestCase("field", typeof(Field))]
     [TestCase("record", typeof(RecordFunction))]
+    [TestCase("tuple", typeof(TupleFunction))]
     public void Execute_FunctionName_Valid(string value, Type expected)
             => Assert.That(new FunctionTypeMapper().Execute(value), Is.EqualTo(expected));
 

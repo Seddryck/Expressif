@@ -1678,6 +1678,32 @@
     "Examples": ["T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"]
   },
   {
+    "Name": "tuple",
+    "IsPublic": true,
+    "Aliases": [
+      "tuple"
+    ],
+    "Scope": "tuple",
+    "Input": "any",
+    "Output": "tuple",
+    "Summary": "Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.",
+    "Parameters": [
+      {
+        "Name": "values",
+        "Type": "any",
+        "Optional": true,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more expressions whose evaluated values become the positions of the resulting tuple."
+      }
+    ],
+    "Examples": [
+      "#null | tuple() → T()",
+      "#null | tuple(1, \"a\", #true) → T(1, \"a\", #true)",
+      "#null | tuple(...{1, 2, 3}, 4) → T(1, 2, 3, 4)"
+    ]
+  },
+  {
     "Name": "tuple-at",
     "IsPublic": true,
     "Aliases": [

@@ -50,7 +50,9 @@ public class DocumentationExamplesTest
         var expressionText = example[..separatorIndex].Trim();
         var expectedText = example[(separatorIndex + 1)..].Trim();
         var actual = Expression.CreateClosed(expressionText).Evaluate(null);
-        var expected = Expression.CreateClosed(expectedText).Evaluate(null);
+        var expected = expectedText == "T()"
+            ? new Expressif.Values.Tuple()
+            : Expression.CreateClosed(expectedText).Evaluate(null);
 
         Assert.That(actual, Is.EqualTo(expected));
     }
