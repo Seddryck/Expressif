@@ -169,8 +169,6 @@ can be shortened to:
 
 The shorter expression keeps the same value-flow model: `.field` replaces `field(...)`, `|OR` replaces `or(..., ...)`, `|> (...)` replaces `| map(...)`, and `*expression` replaces `guard(expression)`.
 
-Shorthand syntax does not introduce separate shape behavior. In particular, `|> (...)` has the same one-result-per-item behavior as `map(...)`, while spread is explicit construction-time expansion rather than mapping or recursive flattening. See [Reasoning about shape](structured-values.md#reasoning-about-shape) for the common structural rules.
-
 The guarded shorthand preserves expression boundaries. `*trim` guards one function, while `*(trim | append-space)` guards the whole grouped pipeline. There is no separate `|*` operator.
 
 ## Prefer readability over density

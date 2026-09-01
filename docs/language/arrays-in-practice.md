@@ -136,5 +136,3 @@ At each stage, the array represents the collection currently being processed.
 `filter` changes which elements belong to the collection. The `|>` operator applies a transformation to every element while preserving the array structure. Finally, `sum` reduces the array to a single value.
 
 Arrays are therefore a natural fit when several values need to be filtered, transformed, or combined as part of the same computation.
-
-For the common rules behind outer container shape, cardinality, element shape, reductions, and nesting, see [Reasoning about shape](structured-values.md#reasoning-about-shape).
