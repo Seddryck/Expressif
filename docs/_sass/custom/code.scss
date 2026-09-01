@@ -38,6 +38,12 @@
     font-size: inherit;
   }
 
+  code.language-mermaid {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem;
+  }
+
   :not(pre) > code {
     padding: 0.1em 0.32em;
 
