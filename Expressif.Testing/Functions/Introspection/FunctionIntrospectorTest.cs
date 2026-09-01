@@ -111,7 +111,7 @@ public class FunctionIntrospectorTest
     [TestCase("array/set", new[] { "complement", "difference", "distinct", "intersection", "symmetric-difference", "union" })]
     [TestCase("array/aggregation", new[] { "broadcast", "fold", "scan" })]
     [TestCase("array/combination", new[] { "zip", "zip-padded", "zip-strict" })]
-    [TestCase("array/partitioning", new[] { "chunk" })]
+    [TestCase("array/partitioning", new[] { "chunk", "chunk-around", "chunk-on", "chunk-while" })]
     [TestCase("array/selection", new[] { "first-elements", "last-elements", "skip-first-elements", "skip-last-elements", "slice-elements", "value-at" })]
     [TestCase("array/sequencing", new[] { "adjacent", "lag", "lead", "pairwise", "position-of", "reverse", "with-position" })]
     [TestCase("numeric/rounding", new[] { "ceiling", "clip", "floor", "integer", "round" })]

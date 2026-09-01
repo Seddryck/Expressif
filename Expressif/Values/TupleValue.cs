@@ -12,6 +12,7 @@ namespace Expressif.Values;
 [ExpressifType(Parent = "structured", LiteralSyntax = "T followed by parenthesized comma-separated values", LiteralExamples = ["T(\"Alice\", 42)"])]
 public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpressifValueType
 {
+    private static readonly IEqualityComparer<object?> StructuralComparer = new StructuralValueComparer();
     private readonly object?[] values;
 
     public TupleValue(params object?[] values)
@@ -30,7 +31,7 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpre
         => values.GetEnumerator();
 
     public bool Equals(TupleValue? other)
-        => other is not null && values.SequenceEqual(other.values);
+        => other is not null && values.SequenceEqual(other.values, StructuralComparer);
 
     public override bool Equals(object? obj)
         => obj is TupleValue other && Equals(other);
@@ -39,12 +40,21 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpre
     {
         var hash = default(HashCode);
         foreach (var value in values)
-            hash.Add(value);
+            hash.Add(value, StructuralComparer);
         return hash.ToHashCode();
     }
 
     public override string ToString()
         => ValueFormatter.Format(this);
+
+    private sealed class StructuralValueComparer : IEqualityComparer<object?>
+    {
+        public new bool Equals(object? x, object? y)
+            => StructuralComparisons.StructuralEqualityComparer.Equals(x, y);
+
+        public int GetHashCode(object? obj)
+            => obj is null ? 0 : StructuralComparisons.StructuralEqualityComparer.GetHashCode(obj);
+    }
 }
 
 /// <summary>

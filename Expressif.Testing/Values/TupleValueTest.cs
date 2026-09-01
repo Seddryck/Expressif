@@ -26,6 +26,19 @@ public class TupleValueTest
     }
 
     [Test]
+    public void Equality_SameArrayFields_EqualAndSameHashCode()
+    {
+        var left = new TupleValue(new object?[] { 1, null }, new[] { "two", "three" });
+        var right = new TupleValue(new object?[] { 1, null }, new[] { "two", "three" });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(left, Is.EqualTo(right));
+            Assert.That(left.GetHashCode(), Is.EqualTo(right.GetHashCode()));
+        });
+    }
+
+    [Test]
     public void Format_NestedTuple_UsesCanonicalSyntax()
         => Assert.That(ValueFormatter.Format(new TupleValue(1, new TupleValue(2, 3))), Is.EqualTo("T(1, T(2, 3))"));
 
