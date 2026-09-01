@@ -121,6 +121,12 @@ The shorthand form is:
 !greater-than(100)
 ```
 
+## Evaluation order and grouping
+
+Expressif does not define an arithmetic-style operator precedence hierarchy. Expressions compose from left to right. Prefixes apply to the expression that follows them, and parentheses define explicit nested expressions and expression boundaries.
+
+This is why the mapped expression in `|> (...)` is parenthesized and why `*trim` and `*(trim | append-space)` have different guarded boundaries. Use parentheses when the intended grouping would otherwise be unclear; there is no separate precedence table to consult.
+
 ## Unsupported operator syntax
 
 Expressif does not support infix arithmetic or comparison operators such as `+`, `*`, `>`, or `==`. Use named functions and predicates instead:

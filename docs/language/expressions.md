@@ -85,6 +85,8 @@ is read from left to right:
 2. trim it;
 3. convert it to upper case.
 
+Pipelines are evaluated from left to right. Parentheses define an explicit nested expression when a different grouping or expression boundary is required.
+
 ## A function can use the current object
 
 A function call does not repeat its pipeline input as an argument.
