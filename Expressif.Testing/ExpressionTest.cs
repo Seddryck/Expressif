@@ -614,12 +614,16 @@ public class ExpressionTest
     }
 
     [TestCaseSource(nameof(FieldShorthandEdgeCases))]
-    public void Evaluate_FieldShorthand_EdgeCasesMatchLongForm(object? input)
+    public void Evaluate_FieldShorthand_AbsentValueMatchesLongForm(object? input)
     {
-        var longForm = Assert.Catch(() => Expression.Create("field(name)").Evaluate(input));
-        var shorthand = Assert.Catch(() => Expression.Create(".name").Evaluate(input));
+        var longForm = Expression.Create("field(name)").Evaluate(input);
+        var shorthand = Expression.Create(".name").Evaluate(input);
 
-        Assert.That(shorthand, Is.TypeOf(longForm!.GetType()));
+        Assert.Multiple(() =>
+        {
+            Assert.That(longForm, Is.Null);
+            Assert.That(shorthand, Is.EqualTo(longForm));
+        });
     }
 
     private static IEnumerable<TestCaseData> FieldShorthandEdgeCases()

@@ -1,0 +1,23 @@
+suite: record
+kind: function
+operator: field
+tests:
+  - id: field.valid.numeric
+    cases:
+      - id: field.valid.numeric.present-value
+        value:
+        parameters:
+          - '{name := "Ada", score := 10} | .score'
+        expected: 10
+  - id: field.valid.null
+    cases:
+      - id: field.valid.null.explicit-null
+        value:
+        parameters:
+          - '{name := "Ada", score := #null} | .score'
+        expected:
+      - id: field.valid.null.missing-field
+        value:
+        parameters:
+          - '{name := "Ada"} | .score'
+        expected:
