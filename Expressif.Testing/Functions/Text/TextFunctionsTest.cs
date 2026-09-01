@@ -197,81 +197,38 @@ public class TextFunctionsTest
     public void Trim_Valid(object value, object expected)
         => Assert.That(new Trim().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("Cédric")]
-    public void TextToHtml_Valid(object value)
-        => Assert.That(new TextToHtml().Evaluate(value), Is.EqualTo("C&#233;dric"));
+    [Conformance]
+    public void TextToHtml_Valid(object value, object expected)
+        => Assert.That(new TextToHtml().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("C&#233;dric")]
-    [TestCase("C&eacute;dric")]
-    public void HtmlToText_Valid(object value)
-        => Assert.That(new HtmlToText().Evaluate(value), Is.EqualTo("Cédric"));
+    [Conformance]
+    public void HtmlToText_Valid(object value, object expected)
+        => Assert.That(new HtmlToText().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("Cédric")]
-    [TestCase("Cèdric")]
-    [TestCase("Cêdric")]
-    [TestCase("Cedrîc")]
-    [TestCase("Cedrïc")]
-    [TestCase("Cedriç")]
-    [TestCase("Cedrìc")]
-    public void WithoutDiacritics_Valid(object value)
-        => Assert.That(new WithoutDiacritics().Evaluate(value), Is.EqualTo("Cedric"));
+    [Conformance]
+    public void WithoutDiacritics_Valid(object value, object expected)
+        => Assert.That(new WithoutDiacritics().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("My taylor is rich", "Mytaylorisrich")]
-    [TestCase(" My Lord ! ", "MyLord!")]
-    [TestCase("My Lord !\r\nMy taylor is \t rich", "MyLord!Mytaylorisrich")]
-    [TestCase("(null)", "(null)")]
-    [TestCase(null, "(null)")]
-    [TestCase("(empty)", "(empty)")]
-    [TestCase("(blank)", "(empty)")]
-    public void WithoutWhitespaces_Valid(object? value, string expected)
+    [Conformance]
+    public void WithoutWhitespaces_Valid(object? value, object? expected)
         => Assert.That(new WithoutWhitespaces().Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("123456789", 9, "123456789")]
-    [TestCase("123456789", 10, "123456789")]
-    [TestCase("123456789", 8, "12345678")]
-    [TestCase("123456789", 0, "")]
-    [TestCase("(null)", 3, "(null)")]
-    [TestCase("(empty)", 3, "(empty)")]
+    [Conformance]
     public void FirstChars_Valid(string value, int length, string expected)
         => Assert.That(new FirstChars(() => (length)).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("123456789", 9, "123456789")]
-    [TestCase("123456789", 10, "123456789")]
-    [TestCase("123456789", 8, "23456789")]
-    [TestCase("123456789", 0, "")]
-    [TestCase("(null)", 3, "(null)")]
-    [TestCase("(empty)", 3, "(empty)")]
+    [Conformance]
     public void LastChars_Valid(string value, int length, string expected)
         => Assert.That(new LastChars(() => (length)).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("123456789", 9, "(empty)")]
-    [TestCase("123456789", 10, "(empty)")]
-    [TestCase("123456789", 8, "9")]
-    [TestCase("123456789", 5, "6789")]
-    [TestCase("123456789", 0, "123456789")]
-    [TestCase("(null)", 3, "(null)")]
-    [TestCase("(empty)", 3, "(empty)")]
+    [Conformance]
     public void SkipFirstChars_Valid(string value, int length, string expected)
         => Assert.That(new SkipFirstChars(() => (length)).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("123456789", 9, "(empty)")]
-    [TestCase("123456789", 10, "(empty)")]
-    [TestCase("123456789", 8, "1")]
-    [TestCase("123456789", 5, "1234")]
-    [TestCase("123456789", 0, "123456789")]
-    [TestCase("(null)", 3, "(null)")]
-    [TestCase("(empty)", 3, "(empty)")]
+    [Conformance]
     public void SkipLastChars_Valid(string value, int length, string expected)
         => Assert.That(new SkipLastChars(() => (length)).Evaluate(value)
             , Is.EqualTo(expected));
@@ -297,34 +254,18 @@ public class TextFunctionsTest
         });
     }
 
-    [Test]
-    [TestCase("20190317111223", "yyyyMMddhhmmss", "fr-fr", "2019-03-17 11:12:23")]
-    [TestCase("mercredi 25-sept.-19", "dddd dd-MMM-yy", "fr-fr", "2019-09-25")]
-    public void TextToDateTime_Culture_Valid(string value, string format, string culture, DateTime expected)
+    [Conformance]
+    public void TextToDateTime_Valid_Culture(string value, string format, string culture, DateTime expected)
         => Assert.That(new TextToDateTime(() => (format), () => (culture))
             .Evaluate(value), Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]
-    [TestCase("1234567890", "BE-***.***.**", "BE-123.456.78")]
-    [TestCase("12345", "BE-***.***.**", "BE-123.45*.**")]
-    [TestCase("(null)", "BE-***.***.**", "(null)")]
-    [TestCase("(empty)", "BE-***.***.**", "BE-***.***.**")]
-    [TestCase("(blank)", "BE-***.***.**", "BE-***.***.**")]
+    [Conformance]
     public void TextToMask_Valid(string value, string mask, string expected)
         => Assert.That(new TextToMask(() => (mask)).Evaluate(value)
             , Is.EqualTo(expected));
 
-    [Test]
-    [TestCase("12345678", "BE-***.***.**", "BE-123.456.78")]
-    [TestCase("12345", "BE-***.***.**", "BE-123.45*.**")]
-    [TestCase("(null)", "BE-***.***.**", "(null)")]
-    [TestCase("", "BE-***.***.**", "BE-***.***.**")]
-    [TestCase("(null)", "BE-***.***.**", "(empty)")]
-    [TestCase("(empty)", "********", "(empty)")]
-    [TestCase("(null)", "BE-***.***.**", "(blank)")]
-    [TestCase("(blank)", "********", "(blank)")]
-    public void MaskToText_Valid(string expected, string mask, string value)
+    [Conformance]
+    public void MaskToText_Valid(string value, string mask, string expected)
         => Assert.That(new MaskToText(() => (mask)).Evaluate(value)
             , Is.EqualTo(expected));
 }
