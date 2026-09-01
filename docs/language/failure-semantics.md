@@ -31,17 +31,25 @@ A binding error occurs after parsing when the requested expression cannot be con
 10 | unknown-function
 ```
 
+An incorrect number of arguments is also a binding error. `add` requires a value argument, so this call cannot be bound:
+
+```expressif
+10 | add()
+```
+
 Both kinds of error occur before evaluation. Changing the input value cannot make the same parsed and bound request valid.
 
 ## Evaluation errors
 
 An expression can parse and bind correctly but still encounter input for which its operation is undefined. That is an evaluation error when the operation's contract does not define a result value for the situation.
 
-For example, field access is a valid bound expression, but evaluating it against a record without that field raises an error:
+For example, selector-based coercion is valid syntax and can be bound without knowing the eventual pipeline input:
 
 ```expressif
-{name := "Ada"} | .score
+coerce($1 -> :integer)
 ```
+
+Evaluating this expression with the scalar input `42` raises an error because a tuple-position selector cannot be applied to a scalar. The binder can validate the selector and target type, but it cannot reject the expression based on an external input value that is supplied only during evaluation. The same expression can accept a tuple, so the structural mismatch is detected when the scalar value reaches `coerce`.
 
 Evaluation stops at the failing stage. The error is not converted to `#null` and later pipeline stages do not receive it.
 
@@ -50,10 +58,10 @@ Evaluation stops at the failing stage. The error is not converted to `#null` and
 `#null` is a normal Expressif value. It can be written as a literal, stored in a record or collection, passed through a pipeline, and returned by a function whose contract permits it.
 
 ```expressif
-{name := "Ada", score := #null} | .score
+{name := "Ada"} | .score
 ```
 
-This expression evaluates successfully to `#null`. The field exists; its value happens to be null.
+This expression evaluates successfully to `#null`. Field access defines `#null` as its result when the requested field is missing.
 
 A function can also return `#null` after successful evaluation. For example, an aggregate with no result for an empty input can define `#null` as its result:
 
@@ -91,10 +99,10 @@ For ordinary field access, the distinction is:
 |---|---|
 | Field exists with a non-null value | That value |
 | Field exists with `#null` | Successful `#null` result |
-| Field does not exist | Evaluation error |
-| Input does not expose named fields | Evaluation error |
+| Field does not exist | Successful `#null` result |
+| Input does not expose named fields | Successful `#null` result |
 
-The first two cases produce values. The last two do not.
+Field access therefore does not preserve the distinction between an explicitly null field, a missing field, and an input without named fields. All three evaluate to `#null`. This is the documented contract of field access, not a language-wide rule for missing data or evaluation failures.
 
 ## Compatibility is decided before evaluation
 
