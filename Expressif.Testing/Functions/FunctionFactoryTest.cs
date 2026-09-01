@@ -11,6 +11,24 @@ namespace Expressif.Testing.Functions;
 
 public class FunctionFactoryTest
 {
+    [Test]
+    public void Instantiate_ValueSpreadAwareFunction_DispatchesByResolvedType()
+    {
+        var mapper = new TestTypeMapper("unrelated-name", typeof(SpreadAwareProbe));
+        var function = Expressif.Bindings.Function.FromArguments("unrelated-name", [
+            new FunctionArgument(null, new LiteralParameter(1)),
+            new FunctionArgument(null, new ArrayParameter([
+                new ArrayElementParameter(new LiteralParameter(2)),
+                new ArrayElementParameter(new LiteralParameter(3)),
+            ]), true),
+        ]);
+        var root = new OpenRootExpression(new OpenExpression([function]));
+
+        var runtime = new FunctionFactory(mapper).Instantiate(root, new Context());
+
+        Assert.That(runtime.Evaluate(null), Is.EqualTo(new object?[] { 1, 2, 3 }));
+    }
+
     [TestCase("even", 4, true)]
     [TestCase("even", 5, false)]
     [TestCase("is-even", 4, true)]
@@ -420,5 +438,18 @@ public class FunctionFactoryTest
             ObjectCalls++;
             return $"{value}-object";
         }
+    }
+
+    private sealed class SpreadAwareProbe(Func<ValueArgumentEvaluator[]> arguments)
+        : IFunction, IValueSpreadAware
+    {
+        public object? Evaluate(object? value)
+            => ValueArguments.Evaluate(arguments.Invoke(), value).ToArray();
+    }
+
+    private sealed class TestTypeMapper(string name, Type type) : BaseTypeMapper
+    {
+        protected override IDictionary<string, Type> Initialize()
+            => new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase) { [name] = type };
     }
 }

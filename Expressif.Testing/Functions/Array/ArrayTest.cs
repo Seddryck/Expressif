@@ -42,6 +42,12 @@ public class ArrayTest
     }
 
     [Test]
+    public void Expression_MultipleSpreads_ExpandInPlace()
+        => Assert.That(
+            Expression.Create("array(...{1, 2}, ...{3, 4})").Evaluate(null),
+            Is.EqualTo(new[] { 1, 2, 3, 4 }));
+
+    [Test]
     public void Expression_VariablePipeline_ImplicitSpread_ExpandsCurrentInput()
     {
         var context = new Context();
@@ -79,6 +85,12 @@ public class ArrayTest
             Expression.Create("@items | array(0, ...(filter(greater-than(1))), 4)", context).Evaluate(null),
             Is.EqualTo(new[] { 0, 2, 3, 4 }));
     }
+
+    [Test]
+    public void Expression_SpreadMappedValues_MapsBeforeExpansion()
+        => Assert.That(
+            Expression.Create("array(...({1, 2, 3} |> multiply(10)))").Evaluate(null),
+            Is.EqualTo(new[] { 10, 20, 30 }));
 
     [TestCase("array(...#null)", "Spread argument cannot be null.")]
     [TestCase("array(...42)", "Spread argument must evaluate to an array.")]

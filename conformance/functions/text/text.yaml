@@ -48,7 +48,7 @@ tests:
         expected: foobar
       - id: text.valid.variadic-values.spread-pipeline
         value: (null)
-        parameters: ['text("foo", ...{"Nikola", "Tesla"} | prepend-space)']
+        parameters: ['text("foo", ...({"Nikola", "Tesla"} |> prepend-space))']
         expected: foo Nikola Tesla
       - id: text.valid.variadic-values.non-spread-array
         value: (null)

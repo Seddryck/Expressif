@@ -11,43 +11,27 @@ namespace Expressif.Functions.Text;
 /// </summary>
 [Function(prefix: "")]
 [Scope("text/concatenation")]
-public sealed class Text : IFunction<object?, string>
+public sealed class Text : IFunction<object?, string>, IValueSpreadAware
 {
-    private Func<TextArgumentEvaluator[]> Values { get; }
+    private Func<ValueArgumentEvaluator[]> Values { get; }
 
     /// <summary>Creates an empty text constructor.</summary>
     public Text()
         : this(() => []) { }
 
     /// <param name="values">Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.</param>
-    public Text(Func<TextArgumentEvaluator[]> values)
+    public Text(Func<ValueArgumentEvaluator[]> values)
         => Values = values;
 
     public string Evaluate(object? value)
     {
         var result = new StringBuilder();
         var coercion = new CoerceText();
-        foreach (var argument in Values.Invoke())
-        {
-            var evaluated = argument.Evaluator.Invoke(value);
-            if (!argument.IsSpread)
-            {
-                result.Append(coercion.Evaluate(evaluated));
-                continue;
-            }
-
-            var expanded = new List<object?>();
-            SpreadValues.Append(evaluated, expanded);
-            foreach (var item in expanded)
-                result.Append(coercion.Evaluate(item));
-        }
+        foreach (var item in ValueArguments.Evaluate(Values.Invoke(), value))
+            result.Append(coercion.Evaluate(item));
 
         return result.ToString();
     }
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
 }
-
-public sealed record TextArgumentEvaluator(
-    Func<object?, object?> Evaluator,
-    bool IsSpread = false);

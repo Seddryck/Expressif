@@ -44,8 +44,14 @@ public class TextConstructorTest
     [Test]
     public void Expression_SpreadPipeline_AppliesToSpreadSource()
         => Assert.That(
-            Expression.Create("text(\"foo\", ...{\"Nikola\", \"Tesla\"} | prepend-space)").Evaluate(null),
+            Expression.Create("text(\"foo\", ...({\"Nikola\", \"Tesla\"} |> prepend-space))").Evaluate(null),
             Is.EqualTo("foo Nikola Tesla"));
+
+    [Test]
+    public void Expression_SpreadMappedValues_MapsBeforeExpansion()
+        => Assert.That(
+            Expression.Create("text(...({\"nikola\", \"tesla\"} |> upper))").Evaluate(null),
+            Is.EqualTo("NIKOLATESLA"));
 
     [Test]
     public void Evaluate_NonSpreadArray_RemainsSingleValue()
