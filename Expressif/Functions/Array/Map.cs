@@ -24,7 +24,10 @@ public class Map : BaseArrayFunction
         var transformation = Transformation.Invoke();
         var output = new List<object?>();
         foreach (var item in enumerable!)
+        {
+            using var scope = EvaluationRuntime.Derive(item);
             output.Add(transformation.Evaluate(item));
+        }
 
         return output.ToArray();
     }

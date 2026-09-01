@@ -63,6 +63,20 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_ClosedExpressionIncomingValueParameter_UsesPipelineValue()
+        => Assert.That(Expression.Create("10 | power(@_)").Evaluate(null), Is.EqualTo(10000000000m));
+
+    [Test]
+    public void Evaluate_ComposedIncomingValueParameter_UsesExpressionInput()
+        => Assert.That(Expression.Create("increment | power(@_)").Evaluate(2), Is.EqualTo(9m));
+
+    [Test]
+    public void Evaluate_MappedIncomingValueParameter_UsesCurrentItem()
+        => Assert.That(
+            Expression.Create("{2, 3} |> power(@_)").Evaluate(null),
+            Is.EqualTo(new object?[] { 4m, 27m }));
+
+    [Test]
     public void Evaluate_TwoFunctions_Valid()
     {
         var expression = Expression.Create("lower | remove-chars(\"a\")");
