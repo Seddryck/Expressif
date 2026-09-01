@@ -14,7 +14,7 @@ public class BoundTreeFormatterTests
             new TupleParameter([new ObjectIndexParameter(2), new TupleProjectionParameter(1, true)]),
             new RecordLiteralParameter([new RecordLiteralField("name", new ObjectPropertyParameter("source"))]),
             new RecordDefinitionParameter([
-                new RecordSpreadEntry(),
+                new RecordSpreadEntry(new IncomingValueParameter()),
                 new RecordNamedEntry("amount", new LiteralParameter(12.5m)),
                 new UnknownRecordEntry(),
             ]),

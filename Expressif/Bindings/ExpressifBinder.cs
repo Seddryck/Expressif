@@ -460,8 +460,12 @@ public sealed class ExpressifBinder
     private IRecordDefinitionEntry BindRecordEntry(ArgumentSyntax syntax) => syntax switch
     {
         NamedArgumentSyntax named => new RecordNamedEntry(named.Name.Value, BindArgument(named.Value)),
-        SpreadArgumentSyntax => new RecordSpreadEntry(),
-        PositionalArgumentSyntax { Value: IncomingValueSyntax } => new RecordSpreadEntry(),
+        SpreadArgumentSyntax spread => new RecordSpreadEntry(
+            spread.IsImplicitSpread
+                ? new IncomingValueParameter()
+                : BindArgument(spread.Value
+                    ?? throw new BindingException("An explicit record spread must include an expression."))),
+        PositionalArgumentSyntax { Value: IncomingValueSyntax } => new RecordSpreadEntry(new IncomingValueParameter()),
         _ => throw Unsupported(syntax),
     };
 

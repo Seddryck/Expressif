@@ -655,17 +655,17 @@ public class ExpressionTest
     }
 
     [Test]
-    public void Evaluate_Record_SpreadNonRecord_GeneratesUniqueUnnamedField()
+    [TestCase("record(...#null)")]
+    [TestCase("record(...42)")]
+    [TestCase("record(...\"Alice\")")]
+    [TestCase("record(...{1, 2})")]
+    [TestCase("record(...T(1, 2))")]
+    public void Evaluate_Record_SpreadNonRecord_ThrowsSpreadArgumentException(string source)
     {
-        var expression = Expression.Create("record(__NONAME_0 := reserved, ...)");
-        var result = (RecordValue)expression.Evaluate("Alice")!;
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0", "__NONAME_1" }));
-            Assert.That(result["__NONAME_0"], Is.EqualTo("reserved"));
-            Assert.That(result["__NONAME_1"], Is.EqualTo("Alice"));
-        });
+        Assert.That(
+            () => Expression.Create(source).Evaluate(null),
+            Throws.TypeOf<SpreadArgumentException>()
+                .With.Message.EqualTo("Spread argument must evaluate to a record."));
     }
 
     [Test]

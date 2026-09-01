@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using Expressif.Values;
 using ValueRecord = Expressif.Values.RecordValue;
 
@@ -27,7 +29,7 @@ public class Field : IFunction
 /// Later entries overwrite fields with the same name created by earlier entries.
 /// </summary>
 [Function(prefix: "")]
-public class Record : IFunction<object?, ValueRecord>
+public class Record : IFunction<object?, ValueRecord>, IValueSpreadAware
 {
     private Func<RecordEntryEvaluator[]> Entries { get; }
 
@@ -78,15 +80,15 @@ public class With : IFunction
 public class RecordEntryEvaluator
 {
     private string? Name { get; }
-    private Func<object?, object?>? Evaluator { get; }
+    private Func<object?, object?> Evaluator { get; }
 
     private bool IsSpread => Name == null;
 
-    private RecordEntryEvaluator(string? name, Func<object?, object?>? evaluator)
+    private RecordEntryEvaluator(string? name, Func<object?, object?> evaluator)
         => (Name, Evaluator) = (name, evaluator);
 
-    public static RecordEntryEvaluator Spread()
-        => new(null, null);
+    public static RecordEntryEvaluator Spread(Func<object?, object?> evaluator)
+        => new(null, evaluator);
 
     public static RecordEntryEvaluator Named(string name, Func<object?, object?> evaluator)
         => new(name, evaluator);
@@ -95,16 +97,17 @@ public class RecordEntryEvaluator
     {
         if (IsSpread)
         {
-            ApplySpread(input, target);
+            ApplySpread(Evaluator.Invoke(input), target);
             return;
         }
 
-        target.Set(Name!, Evaluator!.Invoke(input));
+        target.Set(Name!, Evaluator.Invoke(input));
     }
 
     private static void ApplySpread(object? input, ValueRecord target)
     {
-        if (NamedValueAccessor.TryEnumerate(input, out IReadOnlyList<KeyValuePair<string, object?>>? fields))
+        if (IsRecord(input)
+            && NamedValueAccessor.TryEnumerate(input, out IReadOnlyList<KeyValuePair<string, object?>>? fields))
         {
             foreach (var field in fields)
                 target.Set(field.Key, field.Value);
@@ -112,15 +115,14 @@ public class RecordEntryEvaluator
             return;
         }
 
-        target.Set(GenerateUnnamedFieldName(target), input);
+        throw new SpreadArgumentException("Spread argument must evaluate to a record.");
     }
 
-    private static string GenerateUnnamedFieldName(ValueRecord target)
-    {
-        var index = 0;
-        while (target.ContainsKey($"__NONAME_{index}"))
-            index++;
-
-        return $"__NONAME_{index}";
-    }
+    private static bool IsRecord(object? value)
+        => value is ValueRecord
+            or IReadOnlyDictionary<string, object?>
+            or IDictionary<string, object?>
+            or IDictionary
+            or DataRow
+            or ILiteDataRow;
 }

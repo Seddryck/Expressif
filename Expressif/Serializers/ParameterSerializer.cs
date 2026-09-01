@@ -48,7 +48,8 @@ public class ParameterSerializer
     private string SerializeRecordEntry(IRecordDefinitionEntry entry)
         => entry switch
         {
-            RecordSpreadEntry => "...",
+            RecordSpreadEntry { Value: IncomingValueParameter } => "...",
+            RecordSpreadEntry spread => $"...{Serialize(spread.Value)}",
             RecordNamedEntry named => $"{SerializeFieldName(named.Name)} := {Serialize(named.Value)}",
             _ => throw new NotSupportedException(),
         };
