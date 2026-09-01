@@ -1,11 +1,26 @@
-Remove-Item .\docs\Gemfile.lock -Force -ErrorAction SilentlyContinue
-
 $ErrorActionPreference = "Stop"
 
-$ComposeFile = "jekyll-compose.yml"
+$RepositoryRoot = $PSScriptRoot
+$ComposeFile = Join-Path $RepositoryRoot "jekyll-compose.yml"
 
-Write-Host "Stopping existing Jekyll container if any..."
-docker compose -f $ComposeFile down --remove-orphans
+Push-Location $RepositoryRoot
 
-Write-Host "Starting Jekyll..."
-docker compose -f $ComposeFile up
+try {
+    Write-Host "Restoring .NET tools..."
+    dotnet tool restore
+
+    Write-Host "Generating Rouge lexer..."
+    .\Expressif.Syntax\New-RougeLexer.ps1 `
+        -InputFolder .\docs\_data `
+        -OutputPath .\docs\_plugins\expressif.rb `
+        -Standalone $true
+
+    Write-Host "Stopping existing Jekyll container if any..."
+    docker compose -f $ComposeFile down --remove-orphans
+
+    Write-Host "Starting Jekyll..."
+    docker compose -f $ComposeFile up
+}
+finally {
+    Pop-Location
+}

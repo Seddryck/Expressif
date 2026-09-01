@@ -3,7 +3,7 @@ services:
     image: ruby:3.2
     command: >
       bash -lc "bundle install &&
-                bundle exec jekyll serve --host 0.0.0.0 --livereload --force_polling"
+                bundle exec jekyll serve --host 0.0.0.0 --livereload --force_polling --disable-disk-cache"
     ports:
       - "4000:4000"
       - "35729:35729"
