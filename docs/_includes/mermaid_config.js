@@ -2,8 +2,7 @@
   theme: "base",
   themeVariables: {
     background: "#f8fafc",
-    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    fontSize: "16px",
+    fontFamily: "inherit",
     primaryColor: "#ead8c5",
     primaryBorderColor: "#9a633d",
     primaryTextColor: "#0f172a",
