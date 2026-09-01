@@ -1,7 +1,9 @@
 using Expressif.Functions.Tuple;
 using Expressif.Values;
 using Expressif.Testing.Conformance;
+using Expressif.Values.Special;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace Expressif.Testing.Functions.Tuple;
 
@@ -15,7 +17,10 @@ public class TupleFunctionsTest
 
     private static TupleValue ParseTuple(string value)
     {
-        var source = NormalizeTupleSyntax(value);
+        var source = Regex.Replace(
+            NormalizeTupleSyntax(value),
+            @"(?<=\(|,)\s*([A-Za-z][\w-]*)\s*(?=,|\))",
+            "\"$1\"");
         return source == "T()" ? new Expressif.Values.Tuple() : (TupleValue)Expression.CreateClosed(source).Evaluate(null)!;
     }
 
@@ -36,6 +41,31 @@ public class TupleFunctionsTest
         });
     }
 
+    [Conformance]
+    public void TupleAt_Valid_Position(string value, int position, object? expected)
+        => Assert.That(new TupleAt(() => position).Evaluate(ParseInput(value)), Is.EqualTo(ParseExpected(expected)));
+
+    [Conformance]
+    public void TupleFirst_Valid(string value, object? expected)
+        => Assert.That(new TupleFirst().Evaluate(ParseInput(value)), Is.EqualTo(ParseExpected(expected)));
+
+    [Conformance]
+    public void TupleSecond_Valid(string value, object? expected)
+        => Assert.That(new TupleSecond().Evaluate(ParseInput(value)), Is.EqualTo(ParseExpected(expected)));
+
+    private static object? ParseInput(string value)
+        => value switch
+        {
+            "(null)" => null,
+            "(empty)" => new Empty(),
+            _ => ParseTuple(value),
+        };
+
+    private static object? ParseExpected(object? expected)
+        => expected is string text && decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out var number)
+            ? number
+            : expected;
+
     [TestCase("T(10, 20, 30) | $^1", 30)]
     [TestCase("T(10, 20, 30) | $^2", 20)]
     [TestCase("T(10, 20, 30) | $^3", 10)]
@@ -55,6 +85,16 @@ public class TupleFunctionsTest
             Assert.That(new Swap(() => 1, () => 1).Evaluate(tuple), Is.EqualTo(tuple));
         });
     }
+
+    [Conformance]
+    public void Swap_Valid_Default(string value, string expected)
+        => Assert.That(new Swap().Evaluate(ParseTuple(value)), Is.EqualTo(ParseTuple(expected)));
+
+    [Conformance]
+    public void Swap_Valid_Explicit(string value, int first, int second, string expected)
+        => Assert.That(
+            new Swap(() => first, () => second).Evaluate(ParseTuple(value)),
+            Is.EqualTo(ParseTuple(expected)));
 
     [Test]
     public void Extend_AppendsPositionsWithoutMutation()
@@ -108,6 +148,12 @@ public class TupleFunctionsTest
         => Assert.That(
             Expression.Create("pick(1, 0, 1)").Evaluate(new TupleValue("John", "Smith")),
             Is.EqualTo(new TupleValue("Smith", "John", "Smith")));
+
+    [Conformance]
+    public void Pick_Valid(string value, int[] positions, string expected)
+        => Assert.That(
+            Expression.Create($"pick({string.Join(", ", positions)})").Evaluate(ParseTuple(value)),
+            Is.EqualTo(ParseTuple(expected)));
 
     [Test]
     public void Apply_EvaluatesExpressionAgainstTuple()
