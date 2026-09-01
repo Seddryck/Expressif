@@ -200,6 +200,7 @@ public class FunctionFactory : BaseExpressionFactory
         return new DelegatedFunction(input =>
         {
             var source = sourceEvaluator.Invoke(input);
+            using var scope = EvaluationRuntime.Derive(source);
             return functions.Aggregate(source, (current, function) => function.Evaluate(current));
         });
     }
