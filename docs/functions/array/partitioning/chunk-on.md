@@ -19,7 +19,7 @@ chunk-on(
 ) → tuple
 ```
 
-Splits an array on a zero-based boundary and returns the elements before and from that position as a tuple. Returns `null` when the position is invalid or the input cannot be evaluated.
+Splits an array on a zero-based boundary and returns the elements before and from that position as a tuple. Positions beyond the end use the end boundary. Returns `null` when the position is negative or the input cannot be evaluated.
 
 ## Parameters
 
@@ -35,7 +35,7 @@ Splits an array on a zero-based boundary and returns the elements before and fro
 
 ## Behavior
 
-`chunk-on` materializes the input and returns `T(before, from-position)`. Positions from zero through the input cardinality are valid, so either chunk may be empty.
+`chunk-on` materializes the input and returns `T(before, from-position)`. Positions beyond the input cardinality use the end boundary, so the right chunk is empty. Negative positions return `null`.
 
 
 

@@ -6,7 +6,7 @@ using Expressif.Values;
 namespace Expressif.Functions.Array;
 
 /// <summary>
-/// Splits an array on a zero-based boundary and returns the elements before and from that position as a tuple. Returns `null` when the position is invalid or the input cannot be evaluated.
+/// Splits an array on a zero-based boundary and returns the elements before and from that position as a tuple. Positions beyond the end use the end boundary. Returns `null` when the position is negative or the input cannot be evaluated.
 /// </summary>
 [Function(prefix: "", aliases: [])]
 [Scope("array/partitioning")]
@@ -22,8 +22,10 @@ public sealed class ChunkOn : BaseArrayFunction<TupleValue>
     {
         var values = enumerable.Cast<object?>().ToArray();
         var position = Position.Invoke();
-        if (position < 0 || position > values.Length)
+        if (position < 0)
             return null;
+
+        position = Math.Min(position, values.Length);
 
         return new Values.Tuple(values[..position], values[position..]);
     }

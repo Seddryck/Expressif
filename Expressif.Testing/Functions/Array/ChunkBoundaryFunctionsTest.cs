@@ -21,6 +21,11 @@ public class ChunkOnTest
     public void Expression_Position_InstantiatesAndEvaluates()
         => Assert.That(Expressif.Values.ValueFormatter.Format(Expression.Create("chunk-on(2)").Evaluate(new[] { 10, 20, 30 })),
             Is.EqualTo("T({10, 20}, {30})"));
+
+    [Test]
+    public void Expression_PositionBeyondEnd_UsesEndBoundary()
+        => Assert.That(Expressif.Values.ValueFormatter.Format(Expression.Create("chunk-on(4)").Evaluate(new[] { 10, 20 })),
+            Is.EqualTo("T({10, 20}, {})"));
 }
 
 [TestFixture]

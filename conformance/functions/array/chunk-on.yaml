@@ -17,7 +17,7 @@ tests:
       - id: chunk-on.valid.position.beyond-end
         value: '{10, 20}'
         parameters: [3]
-        expected:
+        expected: 'T({10, 20}, {})'
       - id: chunk-on.valid.position.special-null
         value: (null)
         parameters: [0]
