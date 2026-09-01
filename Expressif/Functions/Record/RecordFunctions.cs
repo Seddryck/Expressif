@@ -19,7 +19,7 @@ public class Field : IFunction
         => Name = name;
 
     public object? Evaluate(object? value)
-        => NamedValueAccessor.Get(value, Name.Invoke());
+        => NamedValueAccessor.TryGetValue(value, Name.Invoke(), out var result) ? result : null;
 }
 
 /// <summary>

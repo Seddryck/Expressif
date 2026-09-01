@@ -9,6 +9,14 @@ namespace Expressif.Testing.Functions.Record;
 public class RecordFunctionsTest
 {
     [Conformance]
+    public void Field_Valid_Numeric(object? value, string expression, decimal expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Field_Valid_Null(object? value, string expression, object? expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
     public void With_Valid_Text(object? value, string expression, string expected)
         => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
 
@@ -89,12 +97,12 @@ public class RecordFunctionsTest
     }
 
     [Test]
-    public void Field_Evaluate_MissingField_ThrowsArgumentOutOfRangeException()
+    public void Field_Evaluate_MissingField_ReturnsNull()
     {
         var function = new Field(() => "missing");
         var input = new Dictionary<string, object?> { ["name"] = "Alice" };
 
-        Assert.That(() => function.Evaluate(input), Throws.TypeOf<ArgumentOutOfRangeException>());
+        Assert.That(function.Evaluate(input), Is.Null);
     }
 
     [Test]
