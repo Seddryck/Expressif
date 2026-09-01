@@ -1,0 +1,22 @@
+suite: record
+kind: function
+operator: record
+tests:
+  - id: record.valid.spread
+    cases:
+      - id: record.valid.spread.explicit
+        value:
+        parameters: ['record(a := 10, ...{foo := 1, bar := 2}, b := 20)']
+        expected: '{a := 10, foo := 1, bar := 2, b := 20}'
+      - id: record.valid.spread.implicit-input
+        value:
+        parameters: ['{foo := 1, bar := 2} | record(a := 10, ..., b := 20)']
+        expected: '{a := 10, foo := 1, bar := 2, b := 20}'
+      - id: record.valid.spread.expression
+        value:
+        parameters: ['record(a := 10, ...({foo := 1, bar := 2} | record(...)), b := 20)']
+        expected: '{a := 10, foo := 1, bar := 2, b := 20}'
+      - id: record.valid.spread.later-entry-overwrites
+        value:
+        parameters: ['record(value := 1, ...{value := 2})']
+        expected: '{value := 2}'

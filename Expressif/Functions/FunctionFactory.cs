@@ -578,8 +578,8 @@ public class FunctionFactory : BaseExpressionFactory
         {
             switch (entry)
             {
-                case RecordSpreadEntry:
-                    evaluators.Add(RecordEntryEvaluator.Spread());
+                case RecordSpreadEntry spread:
+                    evaluators.Add(RecordEntryEvaluator.Spread(BuildRecordNamedValueEvaluator(spread.Value, context)));
                     break;
                 case RecordNamedEntry named:
                     evaluators.Add(RecordEntryEvaluator.Named(named.Name, BuildRecordNamedValueEvaluator(named.Value, context)));

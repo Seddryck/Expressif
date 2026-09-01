@@ -9,6 +9,10 @@ namespace Expressif.Testing.Functions.Record;
 public class RecordFunctionsTest
 {
     [Conformance]
+    public void Record_Valid_Spread(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
     public void Field_Valid_Numeric(object? value, string expression, decimal expected)
         => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
 
@@ -115,6 +119,10 @@ public class RecordFunctionsTest
     }
 
     [Test]
+    public void Record_DeclaresValueSpreadAwareness()
+        => Assert.That(new RecordFunction(), Is.InstanceOf<Expressif.Functions.IValueSpreadAware>());
+
+    [Test]
     public void Record_Evaluate_NamedEntries_PreservesDeclarationOrder()
     {
         var function = new RecordFunction(() => new[]
@@ -146,7 +154,7 @@ public class RecordFunctionsTest
 
         var function = new RecordFunction(() => new[]
         {
-            RecordEntryEvaluator.Spread(),
+            RecordEntryEvaluator.Spread(value => value),
             RecordEntryEvaluator.Named("name", _ => "ALICE")
         });
 
@@ -161,39 +169,17 @@ public class RecordFunctionsTest
     }
 
     [Test]
-    public void Record_Evaluate_SpreadScalar_GeneratesUnnamedField()
+    public void Record_Evaluate_SpreadScalar_ThrowsSpreadArgumentException()
     {
         var function = new RecordFunction(() => new[]
         {
-            RecordEntryEvaluator.Spread()
+            RecordEntryEvaluator.Spread(value => value)
         });
 
-        var result = (ValueRecord)function.Evaluate("Alice")!;
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0" }));
-            Assert.That(result["__NONAME_0"], Is.EqualTo("Alice"));
-        });
-    }
-
-    [Test]
-    public void Record_Evaluate_SpreadScalar_AvoidsUnnamedCollision()
-    {
-        var function = new RecordFunction(() => new[]
-        {
-            RecordEntryEvaluator.Named("__NONAME_0", _ => "reserved"),
-            RecordEntryEvaluator.Spread()
-        });
-
-        var result = (ValueRecord)function.Evaluate("Alice")!;
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Keys.ToArray(), Is.EqualTo(new[] { "__NONAME_0", "__NONAME_1" }));
-            Assert.That(result["__NONAME_0"], Is.EqualTo("reserved"));
-            Assert.That(result["__NONAME_1"], Is.EqualTo("Alice"));
-        });
+        Assert.That(
+            () => function.Evaluate("Alice"),
+            Throws.TypeOf<SpreadArgumentException>()
+                .With.Message.EqualTo("Spread argument must evaluate to a record."));
     }
 
     [Test]

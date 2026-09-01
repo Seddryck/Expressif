@@ -122,4 +122,14 @@ public class ParameterSerializerTest
 
         Assert.That(new ParameterSerializer().Serialize(parameter), Is.EqualTo("T(1, ...T(2, 3), ...)"));
     }
+
+    [Test]
+    public void Serialize_RecordSpread_PreservesSpreadExpressions()
+    {
+        var function = new ExpressifBinder().BindFunction(ExpressifSyntax.Parse(
+            "record(a := 1, ...{b := 2}, ..., c := 3)"));
+
+        Assert.That(new FunctionSerializer().Serialize(function),
+            Is.EqualTo("record(a := 1, ...{b := 2}, ..., c := 3)"));
+    }
 }

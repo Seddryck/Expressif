@@ -36,7 +36,7 @@ internal static class BoundTreeFormatter
         => entry switch
         {
             RecordNamedEntry named => NamedParameter($"Field: {named.Name}", named.Value),
-            RecordSpreadEntry => Node("Spread: IncomingValue"),
+            RecordSpreadEntry spread => NamedParameter("Spread", spread.Value),
             _ => Node(entry.GetType().Name)
         };
 

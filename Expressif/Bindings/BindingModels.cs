@@ -83,7 +83,7 @@ public sealed record RecordLiteralField(string Name, IParameter Value);
 public sealed record RecordLiteralParameter(RecordLiteralField[] Fields) : IParameter;
 public interface IRecordDefinitionEntry;
 public sealed record RecordNamedEntry(string Name, IParameter Value) : IRecordDefinitionEntry;
-public sealed record RecordSpreadEntry() : IRecordDefinitionEntry;
+public sealed record RecordSpreadEntry(IParameter Value) : IRecordDefinitionEntry;
 public sealed record RecordDefinitionParameter(IRecordDefinitionEntry[] Entries) : IParameter;
 public sealed record WithProjection(string Name, IParameter Value);
 public sealed record WithDefinitionParameter(WithProjection[] Projections, IParameter Body) : IParameter;
