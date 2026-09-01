@@ -9,7 +9,19 @@ tests:
       - {id: chunk-around.valid.position.last, value: '{10, 20}', parameters: [1], expected: 'T({10}, 20, {})'}
       - {id: chunk-around.valid.position.null-element, value: '{10, #null, 20}', parameters: [1], expected: 'T({10}, null, {20})'}
       - {id: chunk-around.valid.position.nested-element, value: '{10, {20, 21}, 30}', parameters: [1], expected: 'T({10}, {20, 21}, {30})'}
-      - {id: chunk-around.valid.position.negative, value: '{10, 20}', parameters: [-1], expected:}
-      - {id: chunk-around.valid.position.at-end, value: '{10, 20}', parameters: [2], expected:}
-      - {id: chunk-around.valid.position.empty, value: '{}', parameters: [0], expected:}
-      - {id: chunk-around.valid.position.special-null, value: (null), parameters: [0], expected:}
+      - id: chunk-around.valid.position.negative
+        value: '{10, 20}'
+        parameters: [-1]
+        expected:
+      - id: chunk-around.valid.position.at-end
+        value: '{10, 20}'
+        parameters: [2]
+        expected:
+      - id: chunk-around.valid.position.empty
+        value: '{}'
+        parameters: [0]
+        expected:
+      - id: chunk-around.valid.position.special-null
+        value: (null)
+        parameters: [0]
+        expected:

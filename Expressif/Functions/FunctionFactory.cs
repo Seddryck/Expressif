@@ -518,7 +518,7 @@ public class FunctionFactory : BaseExpressionFactory
             operation = BuildOpenExpression(open.Expression, context);
         }
 
-        return new ChunkWhile(() => new LexicallyBoundTupleFunction(operation));
+        return new ChunkWhile(() => new LexicallyBoundContextFunction(operation));
     }
 
     private IFunction BuildGenerateFunction(Bindings.Function function, IContext context)

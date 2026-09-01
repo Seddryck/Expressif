@@ -12,4 +12,7 @@ tests:
       - {id: chunk-while.valid.operation.always-false, value: '{1, 2, 3}', parameters: ['$1 | is-greater-than(4)'], expected: '{{1}, {2}, {3}}'}
       - {id: chunk-while.valid.operation.empty, value: '{}', parameters: [greater-than], expected: '{}'}
       - {id: chunk-while.valid.operation.singleton, value: '{10}', parameters: [greater-than], expected: '{{10}}'}
-      - {id: chunk-while.valid.operation.special-null, value: (null), parameters: [greater-than], expected:}
+      - id: chunk-while.valid.operation.special-null
+        value: (null)
+        parameters: [greater-than]
+        expected:
