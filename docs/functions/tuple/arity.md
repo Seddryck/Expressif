@@ -3,7 +3,7 @@ layout: docs
 title: "arity"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 10
 has_toc: false
 permalink: /functions/tuple/arity/
 tags:

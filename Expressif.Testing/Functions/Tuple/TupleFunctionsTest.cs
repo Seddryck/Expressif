@@ -10,6 +10,31 @@ namespace Expressif.Testing.Functions.Tuple;
 public class TupleFunctionsTest
 {
     [Conformance]
+    public void Tuple_Valid_VariadicValues(object? input, string expression, string expected)
+        => Assert.That(
+            ValueFormatter.Format(Expression.Create(expression).Evaluate(input)),
+            Is.EqualTo(expected));
+
+    [Conformance]
+    public void Tuple_Valid_VariableSpread(object? input, string expression, decimal[] values, string expected)
+    {
+        var context = new Context();
+        context.Variables.Add<decimal[]>("values", values);
+
+        Assert.That(
+            ValueFormatter.Format(Expression.Create(expression, context).Evaluate(input)),
+            Is.EqualTo(expected));
+    }
+
+    [TestCase("tuple(...#null)", "Spread argument cannot be null.")]
+    [TestCase("tuple(...42)", "Spread argument must evaluate to an array.")]
+    [TestCase("tuple(...\"abc\")", "Spread argument must evaluate to an array.")]
+    public void Tuple_InvalidSpread_ThrowsSpecificError(string source, string message)
+        => Assert.That(
+            () => Expression.Create(source).Evaluate(null),
+            Throws.TypeOf<SpreadArgumentException>().With.Message.EqualTo(message));
+
+    [Conformance]
     public void Arity_Valid(string value, int expected)
         => Assert.That(
             new Arity().Evaluate(ParseTuple(value)),

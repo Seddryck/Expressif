@@ -294,7 +294,7 @@ public sealed class ExpressifBinder
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
-            "array" or "text" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
+            "array" or "text" or "tuple" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
 

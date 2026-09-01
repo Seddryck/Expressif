@@ -4,6 +4,29 @@ using Expressif.Values;
 namespace Expressif.Functions.Tuple;
 
 /// <summary>
+/// Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.
+/// </summary>
+[Function(prefix: "", aliases: ["tuple"])]
+[Scope("tuple")]
+public sealed class Tuple : IFunction<object?, TupleValue>, IValueSpreadAware
+{
+    private Func<ValueArgumentEvaluator[]> Values { get; }
+
+    /// <summary>Creates an empty tuple constructor.</summary>
+    public Tuple()
+        : this(() => []) { }
+
+    /// <param name="values">Zero or more expressions whose evaluated values become the positions of the resulting tuple.</param>
+    public Tuple(Func<ValueArgumentEvaluator[]> values)
+        => Values = values;
+
+    public TupleValue Evaluate(object? value)
+        => new Expressif.Values.Tuple(ValueArguments.Evaluate(Values.Invoke(), value).ToArray());
+
+    object? IFunction.Evaluate(object? value) => Evaluate(value);
+}
+
+/// <summary>
 /// Returns the number of positional elements in the input tuple.
 /// </summary>
 [Function(prefix: "", aliases: ["arity"])]
