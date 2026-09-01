@@ -8,8 +8,6 @@ using Expressif.Functions.Coercions;
 using RecordEntryEvaluator = Expressif.Functions.Record.RecordEntryEvaluator;
 using RecordFunction = Expressif.Functions.Record.Record;
 using ArrayFunction = Expressif.Functions.Array.Array;
-using TextArgumentEvaluator = Expressif.Functions.Text.TextArgumentEvaluator;
-using TextFunction = Expressif.Functions.Text.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -30,6 +28,9 @@ public class FunctionFactory : BaseExpressionFactory
 
     public FunctionFactory()
         : base(new FunctionTypeMapper()) { }
+
+    internal FunctionFactory(BaseTypeMapper typeMapper)
+        : base(typeMapper) { }
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
     {
@@ -273,6 +274,9 @@ public class FunctionFactory : BaseExpressionFactory
             throw new NotImplementedFunctionException(function.Name);
         }
 
+        if (typeof(IValueSpreadAware).IsAssignableFrom(type))
+            return InstantiateValueSpreadAware(type, function, context);
+
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
 
@@ -290,8 +294,6 @@ public class FunctionFactory : BaseExpressionFactory
         {
             "record" => BuildRecordFunction(function, context),
             "with" => BuildWithFunction(function, context),
-            "array" => BuildArrayFunction(function, context),
-            "text" => BuildTextFunction(function, context),
             "coalesce" => BuildCoalesceFunction(function, context),
             "coerce" => BuildCoerceFunction(function),
             "adjacent" => BuildAdjacentFunction(function, context),
@@ -323,41 +325,17 @@ public class FunctionFactory : BaseExpressionFactory
         return new Special.Coerce(mappings);
     }
 
-    private IFunction BuildArrayFunction(Bindings.Function function, IContext context)
+    private IFunction InstantiateValueSpreadAware(Type type, Bindings.Function function, IContext context)
     {
         var values = function.Arguments
-            .Select(argument => new ArrayArgumentEvaluator(
+            .Select(argument => new ValueArgumentEvaluator(
                 BuildValueEvaluator(argument.Value, context),
                 argument.IsSpread))
             .ToArray();
-        return new ArrayFunction(() => values);
-    }
-
-    private IFunction BuildTextFunction(Bindings.Function function, IContext context)
-    {
-        var values = function.Arguments
-            .Select(argument => BuildTextArgumentEvaluator(argument, context))
-            .ToArray();
-        return new TextFunction(() => values);
-    }
-
-    private TextArgumentEvaluator BuildTextArgumentEvaluator(FunctionArgument argument, IContext context)
-    {
-        if (!argument.IsSpread || argument.Value is not InputExpressionParameter inputExpression)
-            return new TextArgumentEvaluator(BuildValueEvaluator(argument.Value, context), argument.IsSpread);
-
-        var source = BuildValueEvaluator(inputExpression.Expression.Parameter, context);
-        var chain = new ChainFunction(inputExpression.Expression.Members
-            .Select(member => InstantiateOrWrapAggregation(member, context))
-            .ToArray());
-        return new TextArgumentEvaluator(input =>
-        {
-            var items = new List<object?>();
-            SpreadValues.Append(source.Invoke(input), items);
-            return items
-                .Select(item => WithCurrentObject(context, item, () => chain.Evaluate(item)))
-                .ToArray();
-        }, true);
+        var arguments = (Func<ValueArgumentEvaluator[]>)(() => values);
+        return Activator.CreateInstance(type, arguments) as IFunction
+            ?? throw new InvalidOperationException(
+                $"Value-spread-aware type '{type.FullName}' must expose a constructor accepting Func<ValueArgumentEvaluator[]>.");
     }
 
     private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context)
@@ -386,7 +364,7 @@ public class FunctionFactory : BaseExpressionFactory
         if (parameter is ArrayParameter array)
         {
             var elements = array.Elements
-                .Select(element => new ArrayArgumentEvaluator(
+                .Select(element => new ValueArgumentEvaluator(
                     BuildValueEvaluator(element.Value, context),
                     element.IsSpread))
                 .ToArray();
