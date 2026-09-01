@@ -1,8 +1,0 @@
-suite: tuple
-kind: function
-operator: apply
-tests:
-  - id: apply.valid
-    cases:
-      - {id: apply.valid.arithmetic, value: 'T(10, 20)', parameters: ['$0 | add($1)'], expected: 30}
-      - {id: apply.valid.implicit-spread, value: 'T(1, 2)', parameters: ['T(..., 3) | arity'], expected: 3}

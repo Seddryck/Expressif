@@ -1,0 +1,26 @@
+suite: flow.apply
+kind: function
+operator: apply
+tests:
+  - id: apply.valid.tuple
+    cases:
+      - id: apply.valid.tuple.arithmetic
+        value: 'T(10, 20)'
+        parameters: ['$0 | add($1)']
+        expected: 30
+      - id: apply.valid.tuple.closed-expression
+        value: 'T(2, 3)'
+        parameters: ['5 | power($0) | add(2) | nth-root($1)']
+        expected: 3
+  - id: apply.valid.record
+    cases:
+      - id: apply.valid.record.fields
+        value: {firstName: John, lastName: Doe}
+        parameters: ['.firstName | append-space | append(.lastName)']
+        expected: John Doe
+  - id: apply.valid.array
+    cases:
+      - id: apply.valid.array.self-zip-double-lag
+        value: [1, 2, 3, 4]
+        parameters: ['zip(lag | lag)']
+        expected: [[1, null], [2, null], [3, 1], [4, 2]]

@@ -149,6 +149,17 @@ public class FunctionIntrospectorTest
         }
     }
 
+    [Test]
+    public void Describe_Apply_ExposesIntentionalDynamicContract()
+    {
+        var info = Infos.Single(x => x.Name == "apply");
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(info.Input, Is.EqualTo("any"));
+            Assert.That(info.Output, Is.EqualTo("any"));
+        }
+    }
+
     [TestCase("round", "numeric", "numeric")]
     [TestCase("length", "text", "integer")]
     [TestCase("datetime-to-date", "date-time", "date")]
@@ -172,7 +183,7 @@ public class FunctionIntrospectorTest
     public void Describe_UnconvertedFunctions_AreExplicitlyReported()
         => Assert.That(
             Infos.Where(x => !x.Converted).Select(x => x.Name),
-            Is.EquivalentTo(new[] { "coalesce", "field", "guard", "neutral", "walk", "with" }));
+            Is.EquivalentTo(new[] { "apply", "coalesce", "field", "guard", "neutral", "walk", "with" }));
 
     [TestCase("after-substring", "substring", "text")]
     [TestCase("first-chars", "length", "integer")]

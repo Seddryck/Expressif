@@ -252,10 +252,14 @@ public class FunctionFactory : BaseExpressionFactory
 
         if (name.Equals("apply", StringComparison.OrdinalIgnoreCase))
         {
-            if (function.Parameters.Length != 1 || !TryGetOpenExpression(function.Parameters[0], out var open))
+            if (function.Parameters.Length != 1)
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
-            var expression = new LexicallyBoundTupleFunction(BuildOpenExpression(open.Expression, context));
-            return new Tuple.Apply(() => expression);
+
+            var operation = TryGetOpenExpression(function.Parameters[0], out var open)
+                ? BuildOpenExpression(open.Expression, context)
+                : new DelegatedFunction(BuildValueEvaluator(function.Parameters[0], context));
+            var expression = new LexicallyBoundContextFunction(operation);
+            return new Flow.Apply(() => expression);
         }
 
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
@@ -507,7 +511,7 @@ public class FunctionFactory : BaseExpressionFactory
             operation = BuildOpenExpression(open.Expression, context);
         }
 
-        return new Adjacent(() => new LexicallyBoundTupleFunction(operation));
+        return new Adjacent(() => new LexicallyBoundContextFunction(operation));
     }
 
     private IFunction BuildGenerateFunction(Bindings.Function function, IContext context)
@@ -567,7 +571,7 @@ public class FunctionFactory : BaseExpressionFactory
         return false;
     }
 
-    private sealed class LexicallyBoundTupleFunction(IFunction expression) : IFunction
+    private sealed class LexicallyBoundContextFunction(IFunction expression) : IFunction
     {
         public object? Evaluate(object? value)
         {
