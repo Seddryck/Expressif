@@ -1,9 +1,14 @@
 using System.Collections;
+using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Functions.Array;
 
 public class AdjacentTest
 {
+    [Conformance]
+    public void Adjacent_Valid_Operation(object? value, string operation, decimal?[]? expected)
+        => Assert.That(Expression.Create($"adjacent({operation})").Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void Expression_ShorthandSubtract_ReturnsDifferences()
         => Assert.That(Expression.Create("adjacent(subtract)").Evaluate(new[] { 100, 105, 120 }), Is.EqualTo(new decimal?[] { 5, 15 }));
