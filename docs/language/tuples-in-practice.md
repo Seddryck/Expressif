@@ -186,3 +186,5 @@ pairs
 No named fields are required because the meaning of each element is local to the transformation and its position is sufficient.
 
 Records are generally more appropriate when values have persistent domain meaning and benefit from named fields. Tuples are often preferable when values are combined temporarily for comparison, matching, ranking, or intermediate calculations.
+
+For the common rules behind array shape, tuple positions, cardinality, and explicit reconstruction, see [Reasoning about shape](structured-values.md#reasoning-about-shape).
