@@ -112,7 +112,7 @@ public class FunctionIntrospectorTest
     [TestCase("array/aggregation", new[] { "broadcast", "fold", "scan" })]
     [TestCase("array/combination", new[] { "zip", "zip-padded", "zip-strict" })]
     [TestCase("array/partitioning", new[] { "chunk", "chunk-around", "chunk-on", "chunk-while" })]
-    [TestCase("array/selection", new[] { "first-elements", "last-elements", "skip-first-elements", "skip-last-elements", "slice-elements", "value-at" })]
+    [TestCase("array/selection", new[] { "first-elements", "last-elements", "single", "skip-first-elements", "skip-last-elements", "slice-elements", "value-at" })]
     [TestCase("array/sequencing", new[] { "adjacent", "lag", "lead", "pairwise", "position-of", "reverse", "with-position" })]
     [TestCase("numeric/rounding", new[] { "ceiling", "clip", "floor", "integer", "round" })]
     [TestCase("numeric/conversion", new[] { "null-to-zero" })]
@@ -166,6 +166,7 @@ public class FunctionIntrospectorTest
     [TestCase("next-weekday", "date-time", "date")]
     [TestCase("reverse", "array", "array")]
     [TestCase("to-tuple", "array", "tuple")]
+    [TestCase("single", "array", "any")]
     [TestCase("record", "any", "record")]
     public void Describe_TypedFunction_ExposesExpressifContract(string name, string input, string output)
     {

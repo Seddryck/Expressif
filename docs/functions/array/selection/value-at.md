@@ -3,7 +3,7 @@ layout: docs
 title: "value-at"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /functions/array/selection/value-at/
 tags:

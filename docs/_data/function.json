@@ -593,6 +593,22 @@
     ]
   },
   {
+    "Name": "single",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/selection",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the only element of the input array without transforming it. Returns `null` when the input is empty, contains more than one element, or cannot be evaluated as an array.",
+    "Parameters": [],
+    "Behavior": "`single` expresses an exact-cardinality requirement: the input must contain exactly one element. A sole `null` value is still the only element and therefore returns `null`; scalar and structured values retain their runtime type and value. Unlike `first-elements(1)`, `single` returns an element rather than an array and rejects additional elements by returning `null`.",
+    "Examples": [
+      "{42} | single → 42",
+      "{} | single → #null",
+      "{1, 2} | single → #null"
+    ]
+  },
+  {
     "Name": "skip-first-elements",
     "IsPublic": true,
     "Aliases": [

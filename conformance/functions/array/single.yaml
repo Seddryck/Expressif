@@ -1,0 +1,37 @@
+suite: array
+kind: function
+operator: single
+tests:
+  - id: single.valid.cardinality
+    cases:
+      - id: single.valid.cardinality.empty
+        value: []
+        expected:
+      - id: single.valid.cardinality.scalar.integer
+        value: [42]
+        expected: 42
+      - id: single.valid.cardinality.scalar.text
+        value: [alpha]
+        expected: alpha
+      - id: single.valid.cardinality.special.null-element
+        value: [null]
+        expected:
+      - id: single.valid.cardinality.structured.array
+        value: [[1, 2]]
+        expected: [1, 2]
+      - id: single.valid.cardinality.structured.record
+        value:
+          - name: Alice
+            active: true
+        expected:
+          name: Alice
+          active: true
+      - id: single.valid.cardinality.multiple
+        value: [1, 2]
+        expected:
+      - id: single.valid.cardinality.special.null-input
+        value: (null)
+        expected:
+      - id: single.valid.cardinality.non-array
+        value: 42
+        expected:
