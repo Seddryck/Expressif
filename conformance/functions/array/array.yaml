@@ -32,6 +32,18 @@ tests:
         value: []
         parameters: ['array(1, ...{2, 3}, 4)']
         expected: '[1,2,3,4]'
+      - id: array.valid.variadic-values.array.empty-spread
+        value: []
+        parameters: ['array(1, ...{}, 2)']
+        expected: '[1,2]'
+      - id: array.valid.variadic-values.array.multiple-spreads
+        value: []
+        parameters: ['array(...{1, 2}, ...{3, 4})']
+        expected: '[1,2,3,4]'
+      - id: array.valid.variadic-values.array.nested-without-spread
+        value: []
+        parameters: ['array(1, {2, 3}, 4)']
+        expected: '[1,[2,3],4]'
       - id: array.valid.variadic-values.array.record
         value: []
         parameters: ["array(record(year:=2024, total:=100))"]
