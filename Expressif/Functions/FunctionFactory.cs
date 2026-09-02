@@ -256,6 +256,12 @@ public class FunctionFactory : BaseExpressionFactory
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
             return new Pair.Pair(BuildValueEvaluator(key, context), BuildValueEvaluator(value, context));
         }
+        if (name.Equals("key", StringComparison.OrdinalIgnoreCase))
+            return new Array.Key(BuildGroupingExpressionEvaluators(function, context));
+
+        if (name.Equals("group-by", StringComparison.OrdinalIgnoreCase))
+            return new Array.GroupBy(BuildGroupingExpressionEvaluators(function, context));
+
         if (name.Equals("pick", StringComparison.OrdinalIgnoreCase))
         {
             var positions = function.Arguments
@@ -334,6 +340,16 @@ public class FunctionFactory : BaseExpressionFactory
             "generate" => BuildGenerateFunction(function, context),
             _ => null,
         };
+
+    private IEnumerable<Func<object?, object?>> BuildGroupingExpressionEvaluators(
+        Bindings.Function function,
+        IContext context)
+    {
+        if (function.Arguments.Length == 0 || function.Arguments.Any(argument => argument.Name is not null || argument.IsSpread))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        return function.Arguments.Select(argument => BuildValueEvaluator(argument.Value, context)).ToArray();
+    }
 
     private IFunction BuildTransformWithFunction(Bindings.Function function, IContext context)
     {

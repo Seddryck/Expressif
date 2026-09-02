@@ -1,20 +1,20 @@
 ---
 layout: docs
-title: "Array functions"
-parent: "Functions library"
-
+title: "Grouping functions"
+parent: "Array functions"
+grand_parent: "Functions library"
 nav_order: 10
 has_children: true
 has_toc: false
-permalink: /functions/array-functions/
+permalink: /functions/array/grouping/
 tags:
   - functions
   - array
-
+  - grouping
 generated: true
 ---
 
-Reference documentation for Expressif functions in the `array` scope.
+Reference documentation for Expressif functions in the `array/grouping` scope.
 
 | Name | Overview |
 |:-----|:---------|

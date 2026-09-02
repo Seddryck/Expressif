@@ -1,0 +1,18 @@
+suite: group
+kind: function
+operator: group
+tests:
+  - id: group.valid.stable
+    cases:
+      - id: group.valid.stable.scalar-keys
+        value: (null)
+        parameters: ['{("BE" => "Alice"), ("FR" => "Charlie"), ("BE" => "Bob")} | group']
+        expected: '#{("BE" => {"Alice", "Bob"}), ("FR" => {"Charlie"})}'
+      - id: group.valid.stable.null-keys
+        value: (null)
+        parameters: ['{(#null => 1), ("BE" => 2), (#null => 3)} | group']
+        expected: '#{(null => {1, 3}), ("BE" => {2})}'
+      - id: group.valid.stable.empty
+        value: (null)
+        parameters: ['{} | group']
+        expected: '#{}'

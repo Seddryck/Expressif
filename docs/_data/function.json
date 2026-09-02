@@ -1986,6 +1986,65 @@
     "Examples": ["T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"]
   },
   {
+    "Name": "key",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/grouping",
+    "Input": "any",
+    "Output": "pair",
+    "Summary": "Associates the input value with a key calculated by one or more expressions.",
+    "Parameters": [
+      {
+        "Name": "expressions",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more expressions evaluated against the input; multiple results form a tuple key."
+      }
+    ],
+    "Examples": [
+      "\"Belgium\" | key(@_) → (\"Belgium\" => \"Belgium\")",
+      "\"Alice\" | key(upper, lower) → (T(\"ALICE\", \"alice\") => \"Alice\")"
+    ]
+  },
+  {
+    "Name": "group",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/grouping",
+    "Input": "array",
+    "Output": "grouping",
+    "Summary": "Groups pairs by structurally equal keys while preserving first-seen group and value order.",
+    "Parameters": [],
+    "Examples": [
+      "{(\"BE\" => \"Alice\"), (\"FR\" => \"Charlie\"), (\"BE\" => \"Bob\")} | group → #{(\"BE\" => {\"Alice\", \"Bob\"}), (\"FR\" => {\"Charlie\"})}",
+      "{} | group → #{}"
+    ]
+  },
+  {
+    "Name": "group-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/grouping",
+    "Input": "array",
+    "Output": "grouping",
+    "Summary": "Groups input values by keys calculated from one or more expressions.",
+    "Parameters": [
+      {
+        "Name": "expressions",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more expressions evaluated once per input value; multiple results form a tuple key."
+      }
+    ],
+    "Examples": [
+      "{\"BE\", \"be\", \"FR\"} | group-by(lower) → #{(\"be\" => {\"BE\", \"be\"}), (\"fr\" => {\"FR\"})}"
+    ]
+  },
+  {
     "Name": "grouping",
     "IsPublic": true,
     "Aliases": [],

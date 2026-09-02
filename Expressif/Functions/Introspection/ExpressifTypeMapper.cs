@@ -20,6 +20,8 @@ internal static class ExpressifTypeMapper
             [("Pair", "key")] = "any",
             [("Pair", "value")] = "any",
             [("Grouping", "values")] = "pair",
+            [("Key", "expressions")] = "expression",
+            [("GroupBy", "expressions")] = "expression",
             [("Text", "values")] = "expression",
             [("Record", "entries")] = "entry",
             [("With", "projections")] = "entry",
