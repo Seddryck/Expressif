@@ -1,0 +1,15 @@
+suite: array
+kind: function
+operator: distribute-round-robin
+tests:
+  - id: distribute-round-robin.valid.count
+    cases:
+      - {id: distribute-round-robin.valid.count.two, value: [1, 2, 3, 4, 5], parameters: [2], expected: [[1, 3, 5], [2, 4]]}
+      - {id: distribute-round-robin.valid.count.three, value: [1, 2, 3, 4, 5, 6, 7], parameters: [3], expected: [[1, 4, 7], [2, 5], [3, 6]]}
+      - {id: distribute-round-robin.valid.count.one, value: [1, 2, 3], parameters: [1], expected: [[1, 2, 3]]}
+      - {id: distribute-round-robin.valid.count.more-than-input, value: [1, 2, 3], parameters: [5], expected: [[1], [2], [3], [], []]}
+      - {id: distribute-round-robin.valid.count.empty, value: [], parameters: [3], expected: [[], [], []]}
+      - id: distribute-round-robin.valid.count.null
+        value: (null)
+        parameters: [2]
+        expected:

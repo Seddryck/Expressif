@@ -203,6 +203,29 @@
     ]
   },
   {
+    "Name": "distribute-round-robin",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Distributes successive array values cyclically among a requested number of output arrays. Returns `null` when the count is not strictly positive or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the strictly positive number of output arrays."
+      }
+    ],
+    "Behavior": "The value at zero-based input position `i` is assigned to output array `i modulo count`. The result always contains exactly `count` arrays, including empty trailing arrays when the count exceeds the input cardinality. Relative input order is preserved within every output array. Empty input returns `count` empty arrays.",
+    "Examples": [
+      "{1, 2, 3, 4, 5} | distribute-round-robin(2) → {{1, 3, 5}, {2, 4}}"
+    ]
+  },
+  {
     "Name": "distribute-random-split",
     "IsPublic": true,
     "Aliases": [],
