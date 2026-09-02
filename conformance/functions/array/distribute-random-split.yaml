@@ -1,0 +1,16 @@
+suite: array
+kind: function
+operator: distribute-random-split
+tests:
+  - id: distribute-random-split.valid.weights
+    cases:
+      - {id: distribute-random-split.valid.weights.first-only, value: '{1, 2, 3}', parameters: ['{1, 0}', 42], expected: '{{1, 2, 3}, {}}'}
+      - {id: distribute-random-split.valid.weights.second-only, value: '{1, 2, 3}', parameters: ['{0, 5}', 42], expected: '{{}, {1, 2, 3}}'}
+      - {id: distribute-random-split.valid.weights.empty, value: '{}', parameters: ['{1, 2, 3}', 42], expected: '{{}, {}, {}}'}
+      - id: distribute-random-split.valid.weights.null
+        value: (null)
+        parameters: ['{1, 1}', 42]
+        expected:
+  - id: distribute-random-split.seeded.assignment
+    cases:
+      - {id: distribute-random-split.seeded.assignment.equal-weights, value: '{1, 2, 3, 4, 5}', parameters: ['{1, 1}', 42], expected: '{{2, 3, 5}, {1, 4}}'}
