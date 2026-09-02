@@ -1,0 +1,28 @@
+suite: flow.transform-with
+kind: function
+operator: transform-with
+tests:
+  - id: transform-with.valid.field-access
+    cases:
+      - id: transform-with.valid.field-access.names
+        value: {first-name: ' Alice ', last-name: ' Smith '}
+        parameters: [trim, .first-name, .last-name]
+        expected: 'T("Alice", "Smith")'
+  - id: transform-with.valid.arbitrary-expressions
+    cases:
+      - id: transform-with.valid.arbitrary-expressions.record
+        value: {first-name: ' Alice ', city: Brussels, country: Belgium, nickname: null, name: ' Ada '}
+        parameters: [trim, .first-name, 'text(.city, " ", .country)', 'coalesce(.nickname, .name)']
+        expected: 'T("Alice", "Brussels Belgium", "Ada")'
+  - id: transform-with.valid.ordering
+    cases:
+      - id: transform-with.valid.ordering.numeric
+        value: 10
+        parameters: ['add(100)', 'add(1)', 'multiply(2)', 'subtract(3)']
+        expected: 'T(111, 120, 107)'
+  - id: transform-with.valid.single-expression
+    cases:
+      - id: transform-with.valid.single-expression.field
+        value: {name: ' Ada '}
+        parameters: [trim, .name]
+        expected: 'T("Ada")'

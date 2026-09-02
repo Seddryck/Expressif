@@ -3,7 +3,7 @@ layout: docs
 title: "guard"
 parent: "Flow functions"
 grand_parent: "Functions library"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/flow/guard/
 tags:

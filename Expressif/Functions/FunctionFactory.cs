@@ -264,6 +264,12 @@ public class FunctionFactory : BaseExpressionFactory
             return new Flow.Apply(() => expression);
         }
 
+        if (name.Equals("transform-with", StringComparison.OrdinalIgnoreCase))
+            return BuildTransformWithFunction(function, context);
+
+        if (name.Equals("transform-as", StringComparison.OrdinalIgnoreCase))
+            return BuildTransformAsFunction(function, context);
+
         if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
             return new Fold(() => name);
 
@@ -302,6 +308,43 @@ public class FunctionFactory : BaseExpressionFactory
             "generate" => BuildGenerateFunction(function, context),
             _ => null,
         };
+
+    private IFunction BuildTransformWithFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters.Length < 2 || !TryGetOpenExpression(function.Parameters[0], out var open))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var operation = BuildOpenExpression(open.Expression, context);
+        var expressions = function.Parameters.Skip(1).Select(parameter => BuildValueEvaluator(parameter, context));
+        return new Flow.TransformWith(
+            () => new LexicallyBoundContextFunction(operation),
+            expressions);
+    }
+
+    private IFunction BuildTransformAsFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Arguments.Length < 2
+            || function.Arguments[0].Name is not null
+            || !TryGetOpenExpression(function.Arguments[0].Value, out var open)
+            || function.Arguments.Skip(1).Any(argument => argument.Name is null || argument.IsSpread))
+        {
+            throw new BindingException(
+                $"The function named '{function.Name}' expects one positional open expression followed by one or more named expressions.");
+        }
+
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        var duplicate = function.Arguments.Skip(1).FirstOrDefault(argument => !names.Add(argument.Name!));
+        if (duplicate is not null)
+            throw new BindingException($"Duplicate named expression '{duplicate.Name}' in {function.Name}(...).");
+
+        var operation = BuildOpenExpression(open.Expression, context);
+        var expressions = function.Arguments.Skip(1).Select(argument => new Flow.NamedExpressionEvaluator(
+            argument.Name!,
+            BuildValueEvaluator(argument.Value, context)));
+        return new Flow.TransformAs(
+            () => new LexicallyBoundContextFunction(operation),
+            expressions);
+    }
 
     private static IFunction BuildCoerceFunction(Bindings.Function function)
     {

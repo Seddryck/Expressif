@@ -1,0 +1,28 @@
+suite: flow.transform-as
+kind: function
+operator: transform-as
+tests:
+  - id: transform-as.valid.field-access
+    cases:
+      - id: transform-as.valid.field-access.names
+        value: {first-name: ' Alice ', last-name: ' Smith '}
+        parameters: [trim, 'first-name := .first-name', 'last-name := .last-name']
+        expected: '{first-name := "Alice", last-name := "Smith"}'
+  - id: transform-as.valid.arbitrary-expressions
+    cases:
+      - id: transform-as.valid.arbitrary-expressions.record
+        value: {customer-name: ada, country-code: null}
+        parameters: [upper, 'customer := .customer-name', 'country := coalesce(.country-code, "unknown")']
+        expected: '{customer := "ADA", country := "UNKNOWN"}'
+  - id: transform-as.valid.field-naming-and-order
+    cases:
+      - id: transform-as.valid.field-naming-and-order.numeric
+        value: 10
+        parameters: ['add(100)', 'second := multiply(2)', 'first := add(1)']
+        expected: '{second := 120, first := 111}'
+  - id: transform-as.valid.single-field
+    cases:
+      - id: transform-as.valid.single-field.name
+        value: {name: ' Ada '}
+        parameters: [trim, 'display-name := .name']
+        expected: '{display-name := "Ada"}'
