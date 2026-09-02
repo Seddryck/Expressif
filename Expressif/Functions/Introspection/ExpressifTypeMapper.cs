@@ -23,6 +23,10 @@ internal static class ExpressifTypeMapper
             [("With", "body")] = "expression",
             [("Coalesce", "expressions")] = "expression",
             [("Coerce", "specifications")] = "type | mapping",
+            [("TransformWith", "operation")] = "expression",
+            [("TransformWith", "expressions")] = "expression",
+            [("TransformAs", "operation")] = "expression",
+            [("TransformAs", "expressions")] = "entry",
         };
 
     public static string ToExpressifType(

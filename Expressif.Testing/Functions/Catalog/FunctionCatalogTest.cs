@@ -49,6 +49,8 @@ public class FunctionCatalogTest
     [TestCase("array", "values", 0)]
     [TestCase("record", "entries", 0)]
     [TestCase("coalesce", "expressions", 2)]
+    [TestCase("transform-with", "expressions", 1)]
+    [TestCase("transform-as", "expressions", 1)]
     public void Default_VariadicParameter_DeserializesMinimumCardinality(
         string function,
         string parameter,

@@ -145,6 +145,8 @@ public static class DocumentationExtensions
             || (declaringType == typeof(Record.With) && parameterName == "projections")
             || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")
             || (declaringType == typeof(Special.Coerce) && parameterName == "specifications")
+            || (declaringType == typeof(Flow.TransformWith) && parameterName == "expressions")
+            || (declaringType == typeof(Flow.TransformAs) && parameterName == "expressions")
             || (declaringType == typeof(Tuple.Pick) && parameterName == "positions");
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
@@ -154,6 +156,8 @@ public static class DocumentationExtensions
             (var type, "specifications") when type == typeof(Special.Coerce) => 1,
             (var type, "projections") when type == typeof(Record.With) => 1,
             (var type, "positions") when type == typeof(Tuple.Pick) => 1,
+            (var type, "expressions") when type == typeof(Flow.TransformWith) => 1,
+            (var type, "expressions") when type == typeof(Flow.TransformAs) => 1,
             _ => 0,
         };
 

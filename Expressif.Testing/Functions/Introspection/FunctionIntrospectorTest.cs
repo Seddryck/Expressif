@@ -195,6 +195,10 @@ public class FunctionIntrospectorTest
     [TestCase("duration-between", "previous", "date | date-time | year-month")]
     [TestCase("with", "projections", "entry")]
     [TestCase("with", "body", "expression")]
+    [TestCase("transform-with", "operation", "expression")]
+    [TestCase("transform-with", "expressions", "expression")]
+    [TestCase("transform-as", "operation", "expression")]
+    [TestCase("transform-as", "expressions", "entry")]
     public void Describe_Parameter_ExposesExpressifType(string function, string parameter, string type)
         => Assert.That(
             Infos.Single(x => x.Name == function).Parameters.Single(x => x.Name == parameter).Type,
@@ -209,6 +213,8 @@ public class FunctionIntrospectorTest
     [TestCase("array", "values", "any", true, 0)]
     [TestCase("record", "entries", "entry", true, 0)]
     [TestCase("coalesce", "expressions", "expression", false, 2)]
+    [TestCase("transform-with", "expressions", "expression", false, 1)]
+    [TestCase("transform-as", "expressions", "entry", false, 1)]
     public void Describe_VariadicParameter_ExposesElementTypeAndVariadicity(
         string function,
         string parameter,
