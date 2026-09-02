@@ -2082,6 +2082,27 @@
     ]
   },
   {
+    "Name": "circular-distance",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "temporal",
+    "Input": "time",
+    "Output": "duration",
+    "Summary": "Returns the shortest unsigned duration between the current time and a reference time on a 24-hour clock. Returns `null` when either time is `null`.",
+    "Parameters": [
+      {
+        "Name": "reference",
+        "Type": "time",
+        "Optional": false,
+        "Summary": "The time from which to measure the shortest distance around the clock."
+      }
+    ],
+    "Examples": [
+      "#\"23:45:00\" | circular-distance(#\"01:00:00\") → #\"2024-01-01T01:15:00\" | duration-between(#\"2024-01-01T00:00:00\")",
+      "#\"16:00:00\" | circular-distance(#\"23:45:00\") → #\"2024-01-01T07:45:00\" | duration-between(#\"2024-01-01T00:00:00\")"
+    ]
+  },
+  {
     "Name": "day-of-month",
     "IsPublic": true,
     "Aliases": [

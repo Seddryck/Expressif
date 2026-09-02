@@ -3,7 +3,7 @@ layout: docs
 title: "next-day"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 340
+nav_order: 350
 has_toc: false
 permalink: /functions/temporal/next-day/
 tags:
@@ -24,6 +24,7 @@ Returns the day immediately following the dateTime passed as argument value.
 
 
 This function has no parameters.
+
 
 
 

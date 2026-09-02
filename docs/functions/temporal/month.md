@@ -3,7 +3,7 @@ layout: docs
 title: "month"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 300
+nav_order: 310
 has_toc: false
 permalink: /functions/temporal/month/
 tags:
@@ -24,6 +24,7 @@ returns a textual value at format MM representing the month of the date passed a
 
 
 This function has no parameters.
+
 
 
 

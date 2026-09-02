@@ -3,7 +3,7 @@ layout: docs
 title: "set-to-utc"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 500
+nav_order: 510
 has_toc: false
 permalink: /functions/temporal/set-to-utc/
 tags:
@@ -24,6 +24,7 @@ Returns the dateTime passed as argument without changing the current hours/minut
 
 
 This function has no parameters.
+
 
 
 

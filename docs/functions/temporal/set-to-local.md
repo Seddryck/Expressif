@@ -3,7 +3,7 @@ layout: docs
 title: "set-to-local"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 490
+nav_order: 500
 has_toc: false
 permalink: /functions/temporal/set-to-local/
 tags:
@@ -24,6 +24,7 @@ Returns the dateTime passed as argument without changing the current hours/minut
 
 
 This function has no parameters.
+
 
 
 

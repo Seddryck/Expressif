@@ -3,7 +3,7 @@ layout: docs
 title: "next-weekday-or-same"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 370
+nav_order: 380
 has_toc: false
 permalink: /functions/temporal/next-weekday-or-same/
 tags:
@@ -28,6 +28,7 @@ Returns a new date value corresponding to the occurrence of the weekday passed a
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `weekday` | `weekday` | Yes | The day of week to compare to the argument. |
+
 
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "next-business-days"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 330
+nav_order: 340
 has_toc: false
 permalink: /functions/temporal/next-business-days/
 tags:
@@ -28,6 +28,7 @@ Returns a new date value corresponding to the date passed as the argument, count
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | The count of business days to move forward. |
+
 
 
 

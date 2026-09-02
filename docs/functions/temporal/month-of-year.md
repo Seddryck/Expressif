@@ -3,7 +3,7 @@ layout: docs
 title: "month-of-year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 320
+nav_order: 330
 has_toc: false
 permalink: /functions/temporal/month-of-year/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the month of the date passed as the argumen
 
 
 This function has no parameters.
+
 
 
 

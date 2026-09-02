@@ -3,7 +3,7 @@ layout: docs
 title: "local-to-utc"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 270
+nav_order: 280
 has_toc: false
 permalink: /functions/temporal/local-to-utc/
 tags:
@@ -24,6 +24,7 @@ Returns the dateTime passed as argument and set in the time zone passed as param
 
 
 This function has no parameters.
+
 
 
 

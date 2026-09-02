@@ -1,0 +1,46 @@
+suite: temporal
+kind: function
+operator: circular-distance
+tests:
+  - id: circular-distance.valid.reference
+    cases:
+      - id: circular-distance.valid.reference.wraparound.forward
+        value: 23:45:00
+        parameters:
+          - 01:00:00
+        expected: 01:15:00
+      - id: circular-distance.valid.reference.wraparound.reverse
+        value: 01:00:00
+        parameters:
+          - 23:45:00
+        expected: 01:15:00
+      - id: circular-distance.valid.reference.same-day.forward
+        value: 16:00:00
+        parameters:
+          - 23:45:00
+        expected: 07:45:00
+      - id: circular-distance.valid.reference.same-day.reverse
+        value: 23:45:00
+        parameters:
+          - 16:00:00
+        expected: 07:45:00
+      - id: circular-distance.valid.reference.equal
+        value: 08:30:00
+        parameters:
+          - 08:30:00
+        expected: 00:00:00
+      - id: circular-distance.valid.reference.maximum
+        value: 00:00:00
+        parameters:
+          - 12:00:00
+        expected: 12:00:00
+      - id: circular-distance.valid.reference.special.null-input
+        value: (null)
+        parameters:
+          - 12:00:00
+        expected:
+      - id: circular-distance.valid.reference.special.null-reference
+        value: 12:00:00
+        parameters:
+          - (null)
+        expected:

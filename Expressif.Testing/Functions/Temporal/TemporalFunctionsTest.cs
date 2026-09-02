@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Expressif.Functions;
 using Expressif.Functions.Temporal;
 using Expressif.Functions.Text;
 using Expressif.Testing.Conformance;
@@ -15,6 +16,33 @@ namespace Expressif.Testing.Functions.Temporal;
 [TestFixture]
 public class TemporalFunctionsTest
 {
+    [Conformance]
+    public void CircularDistance_Valid_Reference(object? input, object? reference, TimeSpan? expected)
+        => Assert.That(
+            new CircularDistance(() => ParseTime(reference)).Evaluate(ParseTime(input)),
+            Is.EqualTo(expected));
+
+    private static TimeOnly? ParseTime(object? value)
+        => value is null || new Null().Equals(value)
+            ? null
+            : TimeOnly.Parse((string)value, CultureInfo.InvariantCulture);
+
+    [Test]
+    public void CircularDistance_ExposesClosedTimeContract()
+    {
+        IFunction<TimeOnly?, TimeSpan?> function = new CircularDistance(() => new TimeOnly(1, 0));
+
+        Assert.That(function.Evaluate(new TimeOnly(23, 45)), Is.EqualTo(TimeSpan.FromMinutes(75)));
+    }
+
+    [Test]
+    public void CircularDistance_BindsByCanonicalName()
+    {
+        var expression = Expression.Create("circular-distance(#\"01:00:00\")", new Context());
+
+        Assert.That(expression.Evaluate(new TimeOnly(23, 45)), Is.EqualTo(TimeSpan.FromMinutes(75)));
+    }
+
     [Conformance]
     public void DurationBetween_Valid_Previous(object input, object previous, TimeSpan? expected)
         => Assert.That(new DurationBetween(() => previous).Evaluate(input), Is.EqualTo(expected));

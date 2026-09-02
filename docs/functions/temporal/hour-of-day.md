@@ -3,7 +3,7 @@ layout: docs
 title: "hour-of-day"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 210
+nav_order: 220
 has_toc: false
 permalink: /functions/temporal/hour-of-day/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the hours of the date passed as the argumen
 
 
 This function has no parameters.
+
 
 
 

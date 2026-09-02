@@ -3,7 +3,7 @@ layout: docs
 title: "forward"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 170
+nav_order: 180
 has_toc: false
 permalink: /functions/temporal/forward/
 tags:
@@ -30,6 +30,7 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 |:-----|:-----|:---------|:------------|
 | `time` | `time` | Yes | The value to be added to the argument value |
 | `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the addition |
+
 
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "iso-week-of-year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 230
+nav_order: 240
 has_toc: false
 permalink: /functions/temporal/iso-week-of-year/
 tags:
@@ -24,6 +24,7 @@ returns a textual value at format YYYY-Www representing the year and week number
 
 
 This function has no parameters.
+
 
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "clamp"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/temporal/clamp/
 tags:
@@ -30,6 +30,7 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 |:-----|:-----|:---------|:------------|
 | `min` | `date-time` | Yes | value returned in case the argument value is before than it |
 | `max` | `date-time` | Yes | value returned in case the argument value is after than it |
+
 
 
 

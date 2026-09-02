@@ -3,7 +3,7 @@ layout: docs
 title: "day-of-week"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/temporal/day-of-week/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the day of the week (1 being Monday and 7 b
 
 
 This function has no parameters.
+
 
 
 
