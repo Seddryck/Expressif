@@ -3,7 +3,7 @@ layout: docs
 title: "skip-last-elements"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 40
+nav_order: 50
 has_toc: false
 permalink: /functions/array/selection/skip-last-elements/
 tags:
