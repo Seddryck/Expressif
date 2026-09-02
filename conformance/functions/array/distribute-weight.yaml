@@ -1,0 +1,16 @@
+suite: array
+kind: function
+operator: distribute-weight
+tests:
+  - id: distribute-weight.valid.weight
+    cases:
+      - {id: distribute-weight.valid.weight.balanced, value: '{8, 7, 6, 5}', parameters: ['neutral'], expected: '{{8, 5}, {7, 6}}'}
+      - {id: distribute-weight.valid.weight.restores-order, value: '{5, 8, 7, 6}', parameters: ['neutral'], expected: '{{5, 8}, {7, 6}}'}
+      - {id: distribute-weight.valid.weight.equal, value: '{1, 1, 1, 1, 1}', parameters: ['neutral'], expected: '{{1, 1, 1}, {1, 1}}'}
+      - {id: distribute-weight.valid.weight.zero, value: '{0, 0, 0, 0}', parameters: ['neutral'], expected: '{{0, 0}, {0, 0}}'}
+      - {id: distribute-weight.valid.weight.singleton, value: '{10}', parameters: ['neutral'], expected: '{{10}, {}}'}
+      - {id: distribute-weight.valid.weight.empty, value: '{}', parameters: ['neutral'], expected: '{{}, {}}'}
+      - id: distribute-weight.valid.weight.null
+        value: (null)
+        parameters: ['neutral']
+        expected:

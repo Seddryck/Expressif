@@ -203,6 +203,29 @@
     ]
   },
   {
+    "Name": "distribute-weight",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Distributes array values into two groups whose aggregate evaluated weights are approximately balanced. Returns `null` when the input or a weight cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "weight",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the expression that produces a finite, non-negative numeric weight for each input value."
+      }
+    ],
+    "Behavior": "`distribute-weight` evaluates `weight` exactly once per input value, orders values by descending weight using original position to break equal-weight ties, and assigns each value to the group with the lower aggregate weight. Aggregate-weight ties prefer the group with fewer values; remaining ties prefer the first group. It then restores relative input order within both groups. This deterministic largest-weight-first strategy is best-effort and does not guarantee the mathematically optimal partition. Empty input returns two empty arrays and a singleton is placed in the first group.",
+    "Examples": [
+      "{8, 7, 6, 5} | distribute-weight(neutral) → {{8, 5}, {7, 6}}"
+    ]
+  },
+  {
     "Name": "distribute-round-robin",
     "IsPublic": true,
     "Aliases": [],
