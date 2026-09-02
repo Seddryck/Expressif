@@ -42,8 +42,8 @@ tests:
         expected: '[1,2,3,4]'
       - id: array.valid.variadic-values.array.nested-without-spread
         value: []
-        parameters: ['array(1, {2, 3}, 4)']
-        expected: '[1,[2,3],4]'
+        parameters: ['array(1, ...{2, {3, 4}}, 5)']
+        expected: '[1,2,[3,4],5]'
       - id: array.valid.variadic-values.array.record
         value: []
         parameters: ["array(record(year:=2024, total:=100))"]
