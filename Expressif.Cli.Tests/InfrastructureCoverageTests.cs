@@ -125,7 +125,7 @@ public class InfrastructureCoverageTests
 
         Assert.That(
             () => pipeline.Read("virtual.source", []).ToArray(),
-            Throws.TypeOf<FormatException>().With.Message.Contains("No source provider"));
+            Throws.TypeOf<FormatException>().With.Message.Contains("input format").And.Message.Contains("--format"));
     }
 
     [Test]
@@ -211,6 +211,7 @@ public class InfrastructureCoverageTests
 
     private sealed class ThrowingSourceProvider : IFileSourceProvider
     {
+        public SourceFormat? Format => null;
         public bool CanOpen(string path) => true;
         public object? Open(string path, IReadOnlyList<string> options) => throw new InvalidOperationException("boom");
     }

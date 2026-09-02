@@ -18,6 +18,7 @@ internal static class RunRequestValidator
         return ValidateScalar(request)
             ?? ValidateBatchOccurrences(request)
             ?? ValidateInputMode(mode)
+            ?? ValidateFormat(request, mode)
             ?? ValidateSourceOptions(request, mode);
     }
 
@@ -53,5 +54,10 @@ internal static class RunRequestValidator
     private static string? ValidateSourceOptions(RunRequest request, RunInputMode mode)
         => request.HasSourceOptions && mode != RunInputMode.Source
             ? "The --source-option option requires --source."
+            : null;
+
+    private static string? ValidateFormat(RunRequest request, RunInputMode mode)
+        => request.SourceFormat is not null && mode != RunInputMode.Source
+            ? "The --format option requires --source."
             : null;
 }

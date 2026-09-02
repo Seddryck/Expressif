@@ -14,6 +14,7 @@ internal sealed record RunRequest(
     string[] InputRows,
     string? BatchInput,
     string? SourcePath,
+    SourceFormat? SourceFormat,
     string[] SourceOptions,
     bool Scalar,
     bool HasInput,
@@ -48,7 +49,7 @@ internal sealed class RunHandler(
         }
 
         var inputs = request.HasSource
-            ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar)
+            ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar, request.SourceFormat)
             : BuildInputSource(request).Read();
         var context = new Context();
         IExpression expression;
@@ -91,8 +92,9 @@ internal sealed class RunHandler(
     internal IEnumerable<object?> BuildSourceRows(
         string? sourcePath,
         IReadOnlyList<string> sourceOptions,
-        bool scalar = false)
-        => sources.Read(sourcePath, sourceOptions, scalar);
+        bool scalar = false,
+        SourceFormat? format = null)
+        => sources.Read(sourcePath, sourceOptions, scalar, format);
 
     private IRunInputSource BuildInputSource(RunRequest request)
     {

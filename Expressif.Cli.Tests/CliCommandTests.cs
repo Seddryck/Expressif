@@ -988,6 +988,22 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_ExplicitCsvFormat_OverridesFileExtension()
+    {
+        var sourcePath = CreateTempFile($"name{Environment.NewLine}Alice{Environment.NewLine}Bob", ".json");
+
+        var result = await InvokeAsync("run", "upper", "--source", sourcePath, "--format", "csv", "--scalar");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
+                Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Run_SourceCsv_PassesRecordValueToExpression()
     {
         var sourcePath = CreateTempFile($"name,age{Environment.NewLine}Alice,32", ".csv");
@@ -1032,6 +1048,50 @@ public class CliCommandTests
             Assert.That(orderResult.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(orderResult.StdOut.Trim(), Is.EqualTo("10"));
             Assert.That(orderResult.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_ExplicitJsonFormat_OverridesMissingExtension()
+    {
+        var sourcePath = CreateTempFile("""[{ "name": "Alice" }, { "name": "Bob" }]""", string.Empty);
+
+        var result = await InvokeAsync("run", ".name | upper", "--source", sourcePath, "--format", "json");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
+                Is.EqualTo(new[] { "ALICE", "BOB" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_UnknownSourceExtensionWithoutFormat_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile("name", ".data");
+
+        var result = await InvokeAsync("run", ".name", "--source", sourcePath);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr, Does.Contain("input format").And.Contain("--format csv or --format json"));
+        });
+    }
+
+    [Test]
+    public async Task Run_InvalidFormat_ReturnsOptionValidationError()
+    {
+        var sourcePath = CreateTempFile("name", ".csv");
+
+        var result = await InvokeAsync("run", ".name", "--source", sourcePath, "--format", "xml");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.Not.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdErr, Does.Contain("xml").And.Contain("--format"));
         });
     }
 
@@ -1951,6 +2011,8 @@ public class CliCommandTests
 
     private sealed class FakeFileSourceProvider(Func<string, object?> resolve) : IFileSourceProvider
     {
+        public SourceFormat? Format => null;
+
         public bool CanOpen(string path) => true;
 
         public object? Open(string path, IReadOnlyList<string> options) => resolve(path);

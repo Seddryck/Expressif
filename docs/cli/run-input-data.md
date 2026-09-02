@@ -23,7 +23,8 @@ flowchart LR
 |:--|:--|:--|
 | `--input` / `-i` | Each occurrence supplies exactly one row. | Can be combined with `--batch`. |
 | `--batch` | Each direct element of one enumerable becomes a row. | Can be combined with `--input`. |
-| `--source` / `-s` | Rows are read from a CSV file or source expression. | Cannot be combined with `--input` or `--batch`. |
+| `--source` / `-s` | Rows are read from a CSV, JSON, or source-expression file. | Cannot be combined with `--input` or `--batch`. |
+| `--format` | Overrides source format detection with `csv` or `json`. | Requires `--source`. |
 
 At least one input mode is required.
 
@@ -56,6 +57,17 @@ When repeated inputs and a batch are combined, `--input` rows are evaluated befo
 ```bash
 expressif run '.name | upper' --source people.csv
 ```
+
+The source format is normally inferred from the filename. Use `--format csv` or
+`--format json` when the filename has no recognized extension or when its extension
+does not describe its contents. An explicit format takes precedence over the extension:
+
+```shell
+expressif run '.name | upper' --source people.data --format json
+```
+
+Without `--format`, recognized source extensions are `.csv`, `.json`, `.expr`, and
+`.expressif`. Other extensions produce an error explaining how to select a format.
 
 The `.csv` extension is matched without regard to case. By default, the first row supplies field names and every following row becomes a record.
 
