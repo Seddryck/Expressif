@@ -3,7 +3,7 @@ layout: docs
 title: "second-of-hour"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 460
+nav_order: 470
 has_toc: false
 permalink: /functions/temporal/second-of-hour/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the seconds of the hour of the date passed 
 
 
 This function has no parameters.
+
 
 
 

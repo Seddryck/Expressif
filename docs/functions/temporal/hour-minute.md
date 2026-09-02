@@ -3,7 +3,7 @@ layout: docs
 title: "hour-minute"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 190
+nav_order: 200
 has_toc: false
 permalink: /functions/temporal/hour-minute/
 tags:
@@ -24,6 +24,7 @@ returns a textual value at format hh:mm (24 hours format) representing the hours
 
 
 This function has no parameters.
+
 
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "previous-year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 440
+nav_order: 450
 has_toc: false
 permalink: /functions/temporal/previous-year/
 tags:
@@ -24,6 +24,7 @@ Returns the dateTime that substract a year to the dateTime passed as argument va
 
 
 This function has no parameters.
+
 
 
 

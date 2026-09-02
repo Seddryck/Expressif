@@ -3,7 +3,7 @@ layout: docs
 title: "previous-day"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 400
+nav_order: 410
 has_toc: false
 permalink: /functions/temporal/previous-day/
 tags:
@@ -24,6 +24,7 @@ Returns the dateTime that substract a day to the dateTime passed as argument val
 
 
 This function has no parameters.
+
 
 
 

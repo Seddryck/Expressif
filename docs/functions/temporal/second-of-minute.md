@@ -3,7 +3,7 @@ layout: docs
 title: "second-of-minute"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 470
+nav_order: 480
 has_toc: false
 permalink: /functions/temporal/second-of-minute/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the seconds of the minute of the date passe
 
 
 This function has no parameters.
+
 
 
 

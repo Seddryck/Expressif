@@ -3,7 +3,7 @@ layout: docs
 title: "second-of-day"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 450
+nav_order: 460
 has_toc: false
 permalink: /functions/temporal/second-of-day/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the seconds of the day of the date passed a
 
 
 This function has no parameters.
+
 
 
 

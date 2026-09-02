@@ -3,7 +3,7 @@ layout: docs
 title: "floor-hour"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /functions/temporal/floor-hour/
 tags:
@@ -24,6 +24,7 @@ Returns the dateTime passed as argument value with the minutes, seconds and mill
 
 
 This function has no parameters.
+
 
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "hour"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 180
+nav_order: 190
 has_toc: false
 permalink: /functions/temporal/hour/
 tags:
@@ -24,6 +24,7 @@ returns a textual value at format hh (24 hours format) representing the hours of
 
 
 This function has no parameters.
+
 
 
 

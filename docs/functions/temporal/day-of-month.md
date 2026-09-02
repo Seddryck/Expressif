@@ -3,7 +3,7 @@ layout: docs
 title: "day-of-month"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 110
+nav_order: 120
 has_toc: false
 permalink: /functions/temporal/day-of-month/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the day of the month of the date passed as 
 
 
 This function has no parameters.
+
 
 
 

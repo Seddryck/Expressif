@@ -3,7 +3,7 @@ layout: docs
 title: "minute-of-hour"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 290
+nav_order: 300
 has_toc: false
 permalink: /functions/temporal/minute-of-hour/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the minutes of the hour passed as the argum
 
 
 This function has no parameters.
+
 
 
 

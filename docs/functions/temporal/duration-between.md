@@ -3,7 +3,7 @@ layout: docs
 title: "duration-between"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 140
+nav_order: 150
 has_toc: false
 permalink: /functions/temporal/duration-between/
 tags:
@@ -28,6 +28,7 @@ Returns the signed duration between the current temporal value and a previous te
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `previous` | `date | date-time | year-month` | Yes | The previous temporal value to subtract from the current input. |
+
 
 
 

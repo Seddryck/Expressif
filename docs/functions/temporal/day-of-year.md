@@ -3,7 +3,7 @@ layout: docs
 title: "day-of-year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /functions/temporal/day-of-year/
 tags:
@@ -24,6 +24,7 @@ returns a numeric value representing the day position within the year of the dat
 
 
 This function has no parameters.
+
 
 
 

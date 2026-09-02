@@ -3,7 +3,7 @@ layout: docs
 title: "set-time"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 480
+nav_order: 490
 has_toc: false
 permalink: /functions/temporal/set-time/
 tags:
@@ -28,6 +28,7 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `instant` | `text` | Yes | The time value to set as hours, minutes, seconds of the dateTime argument |
+
 
 
 

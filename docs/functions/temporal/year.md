@@ -3,7 +3,7 @@ layout: docs
 title: "year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 520
+nav_order: 530
 has_toc: false
 permalink: /functions/temporal/year/
 tags:
@@ -24,6 +24,7 @@ returns a textual value at format YYYY representing the year of the date passed 
 
 
 This function has no parameters.
+
 
 
 
