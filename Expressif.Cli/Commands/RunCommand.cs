@@ -1,5 +1,6 @@
 using System.CommandLine;
 using Expressif.Cli.Application;
+using Expressif.Cli.Inputs;
 
 namespace Expressif.Cli.Commands;
 
@@ -15,6 +16,7 @@ internal static class RunCommand
         file.Aliases.Add("-f");
         var source = new Option<string?>("--source") { Description = "Path to a source file returning rows as IEnumerable or IDataReader." };
         source.Aliases.Add("-s");
+        var format = new Option<SourceFormat?>("--format") { Description = "Input format override: csv or json." };
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var scalar = new Option<bool>("--scalar") { Description = "Treat each source row as a single value. The source must contain exactly one column." };
         var command = new Command("run", "Evaluate an Expressif expression for each element of an input sequence.");
@@ -22,12 +24,13 @@ internal static class RunCommand
         command.Options.Add(input);
         command.Options.Add(batch);
         command.Options.Add(source);
+        command.Options.Add(format);
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
         command.SetAction(result => handler.Execute(new RunRequest(
             result.GetValue(expression), result.GetValue(file), result.GetValue(input) ?? [], result.GetValue(batch)?.FirstOrDefault(),
-            result.GetValue(source), result.GetValue(sourceOptions) ?? [], result.GetValue(scalar),
+            result.GetValue(source), result.GetValue(format), result.GetValue(sourceOptions) ?? [], result.GetValue(scalar),
             result.GetResult(input) is not null, result.GetResult(batch) is not null, result.GetResult(source) is not null,
             result.GetResult(sourceOptions) is not null, result.GetResult(batch)?.IdentifierTokenCount ?? 0)));
         return command;

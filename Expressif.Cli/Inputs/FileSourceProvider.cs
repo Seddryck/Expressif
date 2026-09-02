@@ -2,8 +2,16 @@ using Expressif.Cli.Infrastructure;
 
 namespace Expressif.Cli.Inputs;
 
+internal enum SourceFormat
+{
+    Csv,
+    Json,
+}
+
 internal interface IFileSourceProvider
 {
+    SourceFormat? Format { get; }
+
     bool CanOpen(string path);
 
     object? Open(string path, IReadOnlyList<string> options);
@@ -11,6 +19,8 @@ internal interface IFileSourceProvider
 
 internal sealed class CsvFileSourceProvider(SourceInfrastructure infrastructure) : IFileSourceProvider
 {
+    public SourceFormat? Format => SourceFormat.Csv;
+
     public bool CanOpen(string path)
         => Path.GetExtension(path).Equals(".csv", StringComparison.OrdinalIgnoreCase);
 
@@ -23,6 +33,8 @@ internal sealed class CsvFileSourceProvider(SourceInfrastructure infrastructure)
 
 internal sealed class JsonFileSourceProvider(SourceInfrastructure infrastructure) : IFileSourceProvider
 {
+    public SourceFormat? Format => SourceFormat.Json;
+
     public bool CanOpen(string path)
         => Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase);
 
@@ -35,7 +47,12 @@ internal sealed class JsonFileSourceProvider(SourceInfrastructure infrastructure
 
 internal sealed class ExpressionFileSourceProvider(SourceInfrastructure infrastructure) : IFileSourceProvider
 {
-    public bool CanOpen(string path) => true;
+    public SourceFormat? Format => null;
+
+    public bool CanOpen(string path)
+        => Path.GetExtension(path) is var extension
+            && (extension.Equals(".expr", StringComparison.OrdinalIgnoreCase)
+                || extension.Equals(".expressif", StringComparison.OrdinalIgnoreCase));
 
     public object? Open(string path, IReadOnlyList<string> options)
     {
@@ -48,14 +65,24 @@ internal sealed class SourcePipeline(
     IReadOnlyList<IFileSourceProvider> providers,
     SourceInfrastructure infrastructure)
 {
-    public IEnumerable<object?> Read(string? sourcePath, IReadOnlyList<string> options, bool scalar = false)
+    public IEnumerable<object?> Read(
+        string? sourcePath,
+        IReadOnlyList<string> options,
+        bool scalar = false,
+        SourceFormat? format = null)
     {
         var path = sourcePath ?? string.Empty;
         object? source;
         try
         {
-            var provider = providers.FirstOrDefault(candidate => candidate.CanOpen(path))
-                ?? throw new FormatException($"No source provider can open '{path}'.");
+            var provider = format is null
+                ? providers.FirstOrDefault(candidate => candidate.CanOpen(path))
+                : providers.FirstOrDefault(candidate => candidate.Format == format);
+            if (provider is null)
+            {
+                throw new FormatException(
+                    $"The input format for source '{path}' could not be determined. Specify --format csv or --format json.");
+            }
             source = provider.Open(path, options);
         }
         catch (FormatException)

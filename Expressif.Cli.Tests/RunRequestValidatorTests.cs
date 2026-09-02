@@ -46,6 +46,7 @@ public class RunRequestValidatorTests
             InputRows: [],
             BatchInput: null,
             SourcePath: null,
+            SourceFormat: null,
             SourceOptions: [],
             Scalar: false,
             HasInput: hasInput,
