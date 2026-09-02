@@ -17,6 +17,8 @@ internal static class ExpressifTypeMapper
             [("DurationBetween", "previous")] = "date | date-time | year-month",
             [("Array", "values")] = "any",
             [("Tuple", "values")] = "any",
+            [("Pair", "key")] = "any",
+            [("Pair", "value")] = "any",
             [("Text", "values")] = "expression",
             [("Record", "entries")] = "entry",
             [("With", "projections")] = "entry",
@@ -75,6 +77,8 @@ internal static class ExpressifTypeMapper
             return "weekday";
         if (type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
+        if (type == typeof(PairValue) || type == typeof(Expressif.Values.Pair))
+            return "pair";
         if (type == typeof(RecordValue))
             return "record";
         if (type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type))

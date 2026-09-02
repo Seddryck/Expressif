@@ -210,6 +210,7 @@ public class FunctionFactory : BaseExpressionFactory
         if (parameter is IncomingValueParameter
             or ArrayParameter
             or TupleParameter
+            or PairParameter
             or RecordLiteralParameter
             or InputExpressionParameter)
             return BuildValueEvaluator(parameter, context);
@@ -243,6 +244,13 @@ public class FunctionFactory : BaseExpressionFactory
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
             var evaluator = BuildValueEvaluator(extension.Value, context);
             return new Tuple.Extend(value => evaluator.Invoke(value));
+        }
+        if (name.Equals("pair", StringComparison.OrdinalIgnoreCase))
+        {
+            var bound = ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters;
+            if (bound is not [var key, var value])
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            return new Pair.Pair(BuildValueEvaluator(key, context), BuildValueEvaluator(value, context));
         }
         if (name.Equals("pick", StringComparison.OrdinalIgnoreCase))
         {
@@ -415,6 +423,13 @@ public class FunctionFactory : BaseExpressionFactory
                 .ToArray();
             var function = new ArrayFunction(() => elements);
             return function.Evaluate;
+        }
+
+        if (parameter is PairParameter pair)
+        {
+            var key = BuildValueEvaluator(pair.Key, context);
+            var value = BuildValueEvaluator(pair.Value, context);
+            return input => new PairValue(key.Invoke(input), value.Invoke(input));
         }
 
         if (parameter is RecordLiteralParameter record)

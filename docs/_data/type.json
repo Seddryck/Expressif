@@ -125,6 +125,20 @@
     }
   },
   {
+    "Name": "pair",
+    "Summary": "Represents an immutable key/value association.",
+    "Parent": "structured",
+    "Literal": {
+      "Syntax": "Key and value expressions separated by => and enclosed in parentheses",
+      "Examples": [
+        "(\"BE\" => 42)"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.PairValue"
+    }
+  },
+  {
     "Name": "record",
     "Summary": "Represents a value containing an ordered collection of named fields.",
     "Parent": "structured",

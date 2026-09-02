@@ -1,0 +1,52 @@
+suite: pair
+kind: function
+operator: pair
+tests:
+  - id: pair.valid.constructor
+    cases:
+      - id: pair.valid.constructor.text-key
+        value: (null)
+        parameters: ['pair("BE", 42)']
+        expected: '("BE" => 42)'
+      - id: pair.valid.constructor.numeric-key
+        value: (null)
+        parameters: ['pair(42, "answer")']
+        expected: '(42 => "answer")'
+      - id: pair.valid.constructor.null-components
+        value: (null)
+        parameters: ['pair(#null, #null)']
+        expected: '(null => null)'
+      - id: pair.valid.constructor.input-expressions
+        value:
+          country: BE
+          amount: 42
+        parameters: ['pair(.country, .amount)']
+        expected: '("BE" => "42")'
+  - id: pair.valid.literal
+    cases:
+      - id: pair.valid.literal.text-key
+        value: (null)
+        parameters: ['("BE" => 42)']
+        expected: '("BE" => 42)'
+      - id: pair.valid.literal.expression-components
+        value:
+          country: BE
+          amount: 42
+        parameters: ['(.country => .amount)']
+        expected: '("BE" => "42")'
+  - id: pair.valid.accessors
+    cases:
+      - id: pair.valid.accessors.key
+        value: (null)
+        parameters: ['("BE" => 42) | $key']
+        expected: BE
+      - id: pair.valid.accessors.value
+        value: (null)
+        parameters: ['("BE" => 42) | $value']
+        expected: 42
+  - id: pair.valid.array
+    cases:
+      - id: pair.valid.array.values
+        value: (null)
+        parameters: ['{("BE" => 42), ("FR" => 51), ("DE" => 67)}']
+        expected: '{("BE" => 42), ("FR" => 51), ("DE" => 67)}'
