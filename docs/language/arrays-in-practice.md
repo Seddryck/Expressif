@@ -136,3 +136,23 @@ At each stage, the array represents the collection currently being processed.
 `filter` changes which elements belong to the collection. The `|>` operator applies a transformation to every element while preserving the array structure. Finally, `sum` reduces the array to a single value.
 
 Arrays are therefore a natural fit when several values need to be filtered, transformed, or combined as part of the same computation.
+
+## Classifying instead of batching
+
+Use `distribute-condition` when both values that satisfy a condition and values that do not satisfy it are needed:
+
+```expressif
+{1, 2, 3, 4, 5} | distribute-condition(is-even)
+→ {{2, 4}, {1, 3, 5}}
+```
+
+The first output array contains matching values and the second contains non-matching values. Their relative input order is preserved.
+
+This differs from `chunk`, which creates consecutive batches based only on position:
+
+```expressif
+{1, 2, 3, 4, 5} | chunk(2)
+→ {{1, 2}, {3, 4}, {5}}
+```
+
+Choose `distribute-condition` for classification and `chunk` for position-based batching.

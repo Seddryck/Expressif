@@ -203,6 +203,29 @@
     ]
   },
   {
+    "Name": "distribute-condition",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Distributes array values into matching and non-matching groups by evaluating a predicate once for each value. Returns `null` when the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "condition",
+        "Type": "predicate",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the predicate used to classify each input value."
+      }
+    ],
+    "Behavior": "`distribute-condition` returns exactly two arrays. The first contains values for which `condition` evaluates to `true`; the second contains values for which it evaluates to `false`. Each value occurs in exactly one output array, and relative input order is preserved within both arrays. Empty input returns two empty arrays.",
+    "Examples": [
+      "{1, 2, 3, 4, 5} | distribute-condition(is-even) → {{2, 4}, {1, 3, 5}}"
+    ]
+  },
+  {
     "Name": "first-elements",
     "IsPublic": true,
     "Aliases": [
