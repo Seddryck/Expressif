@@ -1,0 +1,16 @@
+suite: array
+kind: function
+operator: distribute-condition
+tests:
+  - id: distribute-condition.valid.condition
+    cases:
+      - {id: distribute-condition.valid.condition.mixed, value: '{1, 2, 3, 4, 5}', parameters: ['is-even'], expected: '{{2, 4}, {1, 3, 5}}'}
+      - {id: distribute-condition.valid.condition.all-match, value: '{2, 4}', parameters: ['is-even'], expected: '{{2, 4}, {}}'}
+      - {id: distribute-condition.valid.condition.none-match, value: '{1, 3}', parameters: ['is-even'], expected: '{{}, {1, 3}}'}
+      - {id: distribute-condition.valid.condition.singleton-match, value: '{2}', parameters: ['is-even'], expected: '{{2}, {}}'}
+      - {id: distribute-condition.valid.condition.singleton-non-match, value: '{1}', parameters: ['is-even'], expected: '{{}, {1}}'}
+      - {id: distribute-condition.valid.condition.empty, value: '{}', parameters: ['is-even'], expected: '{{}, {}}'}
+      - id: distribute-condition.valid.condition.null
+        value: (null)
+        parameters: ['is-even']
+        expected:
