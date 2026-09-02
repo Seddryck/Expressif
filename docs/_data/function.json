@@ -112,6 +112,75 @@
     ]
   },
   {
+    "Name": "chunk-around",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "tuple",
+    "Summary": "Separates the element at a zero-based position from the elements before and after it, returning the three parts as a tuple. Returns `null` when the position is invalid or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "position",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The zero-based position of the element to separate."
+      }
+    ],
+    "Behavior": "`chunk-around` materializes the input and returns `T(before, selected, after)`. The selected value is preserved as a scalar, including when it is `null` or structured. A position is valid only when it identifies an existing element.\n\nA common use is resuming an approval workflow where the item at the cursor has a distinct role. Given these steps:\n\n```expressif\n{ValidateInvoice, ManagerApproval, FinanceApproval, ReleasePayment}\n```\n\nand a current position of `2`, the required structure is `completed steps | current step | future steps`:\n\n```expressif\nsteps | chunk-around(2)\n→ T(\n    {ValidateInvoice, ManagerApproval},\n    FinanceApproval,\n    {ReleasePayment}\n)\n```\n\n`FinanceApproval` remains a single workflow-step record, so it can be displayed, executed, or updated as the current step. By contrast, `chunk-on(2)` returns only the values before the cursor and the values from the cursor onward:\n\n```expressif\nsteps | chunk-on(2)\n→ T(\n    {ValidateInvoice, ManagerApproval},\n    {FinanceApproval, ReleasePayment}\n)\n```\n\nThe same three-role structure—`past | selected/current item | future`—appears in workflow engines, carousel focus, undo/redo histories, breadcrumb navigation, and processing a specific failed event in a sequence. The equivalent result can be constructed by splitting the right chunk again, but `chunk-on` alone does not distinguish the current item from future items. `chunk-around` directly provides this array-zipper operation.",
+    "Examples": [
+      "{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})"
+    ]
+  },
+  {
+    "Name": "chunk-on",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "tuple",
+    "Summary": "Splits an array on a zero-based boundary and returns the elements before and from that position as a tuple. Positions beyond the end use the end boundary. Returns `null` when the position is negative or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "position",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The zero-based boundary position; the element at this position belongs to the right chunk."
+      }
+    ],
+    "Behavior": "`chunk-on` materializes the input and returns `T(before, from-position)`. Positions beyond the input cardinality use the end boundary, so the right chunk is empty. Negative positions return `null`.",
+    "Examples": [
+      "{10, 20, 30, 40} | chunk-on(2) → T({10, 20}, {30, 40})"
+    ]
+  },
+  {
+    "Name": "chunk-while",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Groups consecutive values while an operation over each previous and current pair evaluates to `true`. Returns `null` when the operation does not produce a Boolean value or the input cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "operation",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the callable or open expression that decides whether the current value continues the preceding chunk."
+      }
+    ],
+    "Behavior": "`chunk-while` starts a chunk with the first input value. For every subsequent value, it evaluates the operation using the same consecutive-pair convention as `adjacent`: the previous value becomes the operation input and the current value supplies its missing argument. A `true` result appends the current value to the active chunk; `false` starts a new chunk. The operation is not evaluated for an empty or singleton input.",
+    "Examples": [
+      "{10, 20, 21, 22, 30, 31} | chunk-while(subtract | is-less-than(2)) → {{10}, {20, 21, 22}, {30, 31}}"
+    ]
+  },
+  {
     "Name": "filter",
     "IsPublic": true,
     "Aliases": [

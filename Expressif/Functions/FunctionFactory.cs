@@ -297,6 +297,7 @@ public class FunctionFactory : BaseExpressionFactory
             "coalesce" => BuildCoalesceFunction(function, context),
             "coerce" => BuildCoerceFunction(function),
             "adjacent" => BuildAdjacentFunction(function, context),
+            "chunk-while" => BuildChunkWhileFunction(function, context),
             "generate" => BuildGenerateFunction(function, context),
             _ => null,
         };
@@ -490,6 +491,34 @@ public class FunctionFactory : BaseExpressionFactory
         }
 
         return new Adjacent(() => new LexicallyBoundContextFunction(operation));
+    }
+
+    private IFunction BuildChunkWhileFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters.Length != 1 || !TryGetOpenExpression(function.Parameters[0], out var open))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var members = open.Expression.Members.ToArray();
+        IFunction operation;
+        if (members.Length > 0
+            && members[0].Parameters.Length == 0
+            && TryBuildBinaryCallable(members[0].Name, context, out var callable))
+        {
+            var functions = new List<IFunction>
+            {
+                InstantiateOrWrapAggregation(new Bindings.Function("tuple-at", [new LiteralParameter("1")]), context),
+                callable,
+            };
+            if (members.Length > 1)
+                functions.Add(BuildPipeline(new OpenExpression(members.Skip(1)), context));
+            operation = new ChainFunction(functions);
+        }
+        else
+        {
+            operation = BuildOpenExpression(open.Expression, context);
+        }
+
+        return new ChunkWhile(() => new LexicallyBoundContextFunction(operation));
     }
 
     private IFunction BuildGenerateFunction(Bindings.Function function, IContext context)

@@ -1,0 +1,24 @@
+suite: array
+kind: function
+operator: chunk-on
+tests:
+  - id: chunk-on.valid.position
+    cases:
+      - {id: chunk-on.valid.position.first, value: '{10, 20}', parameters: [0], expected: 'T({}, {10, 20})'}
+      - {id: chunk-on.valid.position.middle, value: '{10, 20, 30, 40}', parameters: [2], expected: 'T({10, 20}, {30, 40})'}
+      - {id: chunk-on.valid.position.end, value: '{10, 20}', parameters: [2], expected: 'T({10, 20}, {})'}
+      - {id: chunk-on.valid.position.empty, value: '{}', parameters: [0], expected: 'T({}, {})'}
+      - {id: chunk-on.valid.position.null-element, value: '{10, #null, 20}', parameters: [1], expected: 'T({10}, {null, 20})'}
+      - {id: chunk-on.valid.position.nested-element, value: '{{10}, {20}}', parameters: [1], expected: 'T({{10}}, {{20}})'}
+      - id: chunk-on.valid.position.negative
+        value: '{10, 20}'
+        parameters: [-1]
+        expected:
+      - id: chunk-on.valid.position.beyond-end
+        value: '{10, 20}'
+        parameters: [3]
+        expected: 'T({10, 20}, {})'
+      - id: chunk-on.valid.position.special-null
+        value: (null)
+        parameters: [0]
+        expected:
