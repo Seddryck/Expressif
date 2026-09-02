@@ -19,6 +19,7 @@ internal static class ExpressifTypeMapper
             [("Tuple", "values")] = "any",
             [("Pair", "key")] = "any",
             [("Pair", "value")] = "any",
+            [("Grouping", "values")] = "pair",
             [("Text", "values")] = "expression",
             [("Record", "entries")] = "entry",
             [("With", "projections")] = "entry",
@@ -79,6 +80,10 @@ internal static class ExpressifTypeMapper
             return "tuple";
         if (type == typeof(PairValue) || type == typeof(Expressif.Values.Pair))
             return "pair";
+        if (type == typeof(Group))
+            return "group";
+        if (type == typeof(Expressif.Values.Grouping))
+            return "grouping";
         if (type == typeof(RecordValue))
             return "record";
         if (type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type))

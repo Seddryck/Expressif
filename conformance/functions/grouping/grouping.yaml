@@ -1,0 +1,42 @@
+suite: grouping
+kind: function
+operator: grouping
+tests:
+  - id: grouping.valid.constructor
+    cases:
+      - id: grouping.valid.constructor.empty
+        value: (null)
+        parameters: ['grouping()']
+        expected: '#{}'
+      - id: grouping.valid.constructor.explicit
+        value: (null)
+        parameters: ['grouping(("BE" => {"alice", "bob"}), ("FR" => {"charlie"}))']
+        expected: '#{("BE" => {"alice", "bob"}), ("FR" => {"charlie"})}'
+      - id: grouping.valid.constructor.spread
+        value: (null)
+        parameters: ['grouping(...{("BE" => {"alice"}), ("FR" => {"charlie"})})']
+        expected: '#{("BE" => {"alice"}), ("FR" => {"charlie"})}'
+      - id: grouping.valid.constructor.mixed-spread
+        value: (null)
+        parameters: ['grouping(("BE" => {"alice"}), ...{("FR" => {"charlie"})}, ("DE" => {"dora"}))']
+        expected: '#{("BE" => {"alice"}), ("FR" => {"charlie"}), ("DE" => {"dora"})}'
+  - id: grouping.valid.literal
+    cases:
+      - id: grouping.valid.literal.empty
+        value: (null)
+        parameters: ['#{}']
+        expected: '#{}'
+      - id: grouping.valid.literal.entries
+        value: (null)
+        parameters: ['#{("BE" => {"alice", "bob"}), ("FR" => {"charlie"})}']
+        expected: '#{("BE" => {"alice", "bob"}), ("FR" => {"charlie"})}'
+  - id: grouping.valid.accessors
+    cases:
+      - id: grouping.valid.accessors.key
+        value: (null)
+        parameters: ['#{("BE" => {"alice", "bob"})} | first | $key']
+        expected: BE
+      - id: grouping.valid.accessors.value
+        value: (null)
+        parameters: ['#{("BE" => {"alice", "bob"})} | first | $value']
+        expected: '{"alice", "bob"}'
