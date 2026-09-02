@@ -1,0 +1,26 @@
+suite: text
+kind: function
+operator: code-point
+tests:
+  - id: code-point.valid
+    cases:
+      - id: code-point.valid.ascii
+        value: A
+        expected: 65
+      - id: code-point.valid.bmp
+        value: é
+        expected: 233
+      - id: code-point.valid.supplementary
+        value: 😀
+        expected: 128512
+  - id: code-point.invalid
+    cases:
+      - id: code-point.invalid.empty
+        value: ''
+        expected:
+      - id: code-point.invalid.multiple-scalars
+        value: AB
+        expected:
+      - id: code-point.invalid.null
+        value: (null)
+        expected:

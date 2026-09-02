@@ -3172,6 +3172,19 @@
     ]
   },
   {
+    "Name": "code-point",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/conversion",
+    "Input": "text",
+    "Output": "integer",
+    "Summary": "Returns the Unicode code point represented by a single Unicode scalar value. Returns `null` for any other input.",
+    "Parameters": [],
+    "Examples": [
+      "\"😀\" | code-point → 128512"
+    ]
+  },
+  {
     "Name": "cobol-case",
     "IsPublic": true,
     "Aliases": [
@@ -3308,6 +3321,19 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | flat-case → \"helloworld\""
+    ]
+  },
+  {
+    "Name": "from-code-point",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/conversion",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Returns the text corresponding to an integer Unicode scalar value. Returns `null` for any other input.",
+    "Parameters": [],
+    "Examples": [
+      "128512 | from-code-point → \"😀\""
     ]
   },
   {

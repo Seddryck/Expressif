@@ -1,0 +1,41 @@
+suite: text
+kind: function
+operator: from-code-point
+tests:
+  - id: from-code-point.valid
+    cases:
+      - id: from-code-point.valid.ascii
+        value: 65
+        expected: A
+      - id: from-code-point.valid.bmp
+        value: 233
+        expected: é
+      - id: from-code-point.valid.supplementary
+        value: 128512
+        expected: 😀
+      - id: from-code-point.valid.lower-bound
+        value: 0
+        expected: "\u0000"
+      - id: from-code-point.valid.upper-bound
+        value: 1114111
+        expected: "\U0010FFFF"
+  - id: from-code-point.invalid
+    cases:
+      - id: from-code-point.invalid.negative
+        value: -1
+        expected:
+      - id: from-code-point.invalid.above-range
+        value: 1114112
+        expected:
+      - id: from-code-point.invalid.high-surrogate
+        value: 55296
+        expected:
+      - id: from-code-point.invalid.low-surrogate
+        value: 57343
+        expected:
+      - id: from-code-point.invalid.fractional
+        value: 65.5
+        expected:
+      - id: from-code-point.invalid.null
+        value: (null)
+        expected:
