@@ -199,6 +199,21 @@
     ]
   },
   {
+    "Name": "is-code-point",
+    "IsPublic": true,
+    "Aliases": [
+      "code-point"
+    ],
+    "Scope": "numeric",
+    "Input": "numeric",
+    "Output": "boolean",
+    "Summary": "Returns `true` when the input is an integer Unicode scalar value. Returns `false` otherwise.",
+    "Parameters": [],
+    "Examples": [
+      "128512 | is-code-point → #true"
+    ]
+  },
+  {
     "Name": "is-equal-to",
     "IsPublic": true,
     "Aliases": [

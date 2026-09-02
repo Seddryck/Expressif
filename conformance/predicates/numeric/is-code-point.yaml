@@ -1,0 +1,36 @@
+suite: numeric
+kind: predicate
+operator: is-code-point
+tests:
+  - id: is-code-point.valid
+    cases:
+      - id: is-code-point.valid.ascii
+        value: 127
+        expected: true
+      - id: is-code-point.valid.supplementary
+        value: 128512
+        expected: true
+      - id: is-code-point.valid.lower-bound
+        value: 0
+        expected: true
+      - id: is-code-point.valid.upper-bound
+        value: 1114111
+        expected: true
+      - id: is-code-point.valid.negative
+        value: -1
+        expected: false
+      - id: is-code-point.valid.above-range
+        value: 1114112
+        expected: false
+      - id: is-code-point.valid.high-surrogate
+        value: 55296
+        expected: false
+      - id: is-code-point.valid.low-surrogate
+        value: 57343
+        expected: false
+      - id: is-code-point.valid.fractional
+        value: 65.5
+        expected: false
+      - id: is-code-point.valid.null
+        value: (null)
+        expected: false

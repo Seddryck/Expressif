@@ -19,6 +19,7 @@ Reference documentation for Expressif predicates in the `numeric` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`has-remainder`]({{ '/predicates/numeric/arithmetic/has-remainder/' | relative_url }}) | Returns `true` if the division of the numeric value passed as argument by the modulus provided as parameter value is equal to the required remainder. Returns `false` otherwise. |
+| [`is-code-point`]({{ '/predicates/numeric/is-code-point/' | relative_url }}) | Returns `true` when the input is an integer Unicode scalar value. Returns `false` otherwise. |
 | [`is-divisible-by`]({{ '/predicates/numeric/arithmetic/is-divisible-by/' | relative_url }}) | Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise. |
 | [`is-equal-to`]({{ '/predicates/numeric/is-equal-to/' | relative_url }}) | Returns true if the numeric value passed as argument is equal to the numeric value passed as parameter. |
 | [`is-even`]({{ '/predicates/numeric/arithmetic/is-even/' | relative_url }}) | Returns `true` if the numeric value passed as argument is even. Returns `false` otherwise. |
