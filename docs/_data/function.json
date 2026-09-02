@@ -1986,6 +1986,55 @@
     "Examples": ["T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"]
   },
   {
+    "Name": "pair",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "pair",
+    "Input": "any",
+    "Output": "pair",
+    "Summary": "Constructs a pair by evaluating a key expression and a value expression against the same input.",
+    "Parameters": [
+      {
+        "Name": "key",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "The expression whose evaluated result becomes the key."
+      },
+      {
+        "Name": "value",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "The expression whose evaluated result becomes the value."
+      }
+    ],
+    "Examples": [
+      "#null | pair(\"BE\", 42) → (\"BE\" => 42)",
+      "{country := \"BE\", amount := 42} | pair(.country, .amount) → (\"BE\" => 42)"
+    ]
+  },
+  {
+    "Name": "pair-key",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "pair",
+    "Input": "pair",
+    "Output": "any",
+    "Summary": "Returns the key component of the input pair.",
+    "Parameters": [],
+    "Examples": ["(\"BE\" => 42) | pair-key → \"BE\""]
+  },
+  {
+    "Name": "pair-value",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "pair",
+    "Input": "pair",
+    "Output": "any",
+    "Summary": "Returns the value component of the input pair.",
+    "Parameters": [],
+    "Examples": ["(\"BE\" => 42) | pair-value → 42"]
+  },
+  {
     "Name": "tuple",
     "IsPublic": true,
     "Aliases": [

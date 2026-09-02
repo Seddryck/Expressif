@@ -149,6 +149,7 @@ public sealed class ExpressifBinder
             QuotedLiteralParameter => typeof(string),
             LiteralParameter { Value: { } value } => value.GetType(),
             TupleParameter => typeof(Values.TupleValue),
+            PairParameter => typeof(Values.PairValue),
             RecordLiteralParameter => typeof(Values.RecordValue),
             ArrayParameter => typeof(object[]),
             _ => null,
@@ -280,6 +281,9 @@ public sealed class ExpressifBinder
                 ? projection.Index == 0 ? int.MinValue : -projection.Index
                 : projection.Index).ToString())],
             FunctionSyntax.TupleProjectionShorthand),
+        PairComponentAccessSyntax access => new Function(
+            access.Component is PairComponent.Key ? "pair-key" : "pair-value",
+            []),
         RecordAccessSyntax access => BindRecordAccessFunction(access),
         MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
@@ -497,6 +501,8 @@ public sealed class ExpressifBinder
         TupleProjectionSyntax projection => new TupleProjectionParameter(
             projection.Index,
             projection.Direction is TupleProjectionDirection.FromEnd),
+        PairComponentAccessSyntax access => new OpenExpressionParameter(
+            new OpenExpression([BindPipelineMember(access)])),
         _ => throw Unsupported(syntax),
     };
 
@@ -519,6 +525,7 @@ public sealed class ExpressifBinder
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Elements.Select(BindTupleElement).ToArray()),
+        PairLiteralSyntax pair => new PairParameter(BindArgument(pair.Key), BindArgument(pair.Value)),
         RecordLiteralSyntax record => BindRecordLiteral(record),
         _ => throw Unsupported(syntax),
     };
