@@ -81,6 +81,29 @@
     }
   },
   {
+    "Name": "group",
+    "Summary": "Represents one immutable grouping bucket.",
+    "Parent": "pair",
+    "Literal": null,
+    "Bindings": {
+      "dotnet": "Expressif.Values.Group"
+    }
+  },
+  {
+    "Name": "grouping",
+    "Summary": "Represents an immutable ordered collection of groups with unique keys.",
+    "Parent": "structured",
+    "Literal": {
+      "Syntax": "Pair entries enclosed in #{ and }",
+      "Examples": [
+        "#{(\"BE\" => {\"alice\", \"bob\"})}"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.Grouping"
+    }
+  },
+  {
     "Name": "integer",
     "Summary": "An integer is a numeric value written without a decimal separator.",
     "Parent": "numeric",

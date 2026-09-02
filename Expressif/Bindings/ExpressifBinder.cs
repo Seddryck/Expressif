@@ -150,6 +150,7 @@ public sealed class ExpressifBinder
             LiteralParameter { Value: { } value } => value.GetType(),
             TupleParameter => typeof(Values.TupleValue),
             PairParameter => typeof(Values.PairValue),
+            GroupingParameter => typeof(Values.Grouping),
             RecordLiteralParameter => typeof(Values.RecordValue),
             ArrayParameter => typeof(object[]),
             _ => null,
@@ -298,7 +299,7 @@ public sealed class ExpressifBinder
             "field" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
-            "array" or "text" or "tuple" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
+            "array" or "text" or "tuple" or "grouping" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
 
@@ -527,6 +528,9 @@ public sealed class ExpressifBinder
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
         TupleLiteralSyntax tuple => new TupleParameter(tuple.Elements.Select(BindTupleElement).ToArray()),
         PairLiteralSyntax pair => new PairParameter(BindArgument(pair.Key), BindArgument(pair.Value)),
+        GroupingLiteralSyntax grouping => new GroupingParameter(grouping.Entries
+            .Select(pair => new PairParameter(BindArgument(pair.Key), BindArgument(pair.Value)))
+            .ToArray()),
         RecordLiteralSyntax record => BindRecordLiteral(record),
         _ => throw Unsupported(syntax),
     };

@@ -78,6 +78,7 @@ public sealed record TupleParameter(TupleElementParameter[] Elements) : IParamet
     public IParameter[] Values => Elements.Select(element => element.Value).ToArray();
 }
 public sealed record PairParameter(IParameter Key, IParameter Value) : IParameter;
+public sealed record GroupingParameter(PairParameter[] Entries) : IParameter;
 public sealed record QuotedLiteralParameter(string Value) : IParameter;
 public sealed record IncomingValueParameter() : IParameter;
 public sealed record RecordLiteralField(string Name, IParameter Value);
