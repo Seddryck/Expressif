@@ -203,6 +203,37 @@
     ]
   },
   {
+    "Name": "distribute-random-split",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/partitioning",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Randomly distributes array values among output arrays according to relative output weights. Returns `null` when the input, weights, or seed cannot be evaluated.",
+    "Parameters": [
+      {
+        "Name": "weights",
+        "Type": "array",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies a non-empty array of finite, non-negative output weights with a positive total."
+      },
+      {
+        "Name": "seed",
+        "Type": "integer",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies an optional seed that makes assignments reproducible on the same runtime version."
+      }
+    ],
+    "Behavior": "The weights are normalized by their total and specify assignment probabilities rather than exact output cardinalities. Each input value is independently assigned to exactly one output array. The result contains one array per weight, including empty arrays, and preserves relative input order within each output. Reusing the same seed, input, and weights produces the same result on the same runtime version. Empty input still validates the weights and returns one empty array per valid weight.",
+    "Examples": [
+      "{1, 2, 3, 4, 5} | distribute-random-split({1, 0}, 42) → {{1, 2, 3, 4, 5}, {}}"
+    ]
+  },
+  {
     "Name": "distribute-condition",
     "IsPublic": true,
     "Aliases": [],
