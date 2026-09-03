@@ -135,16 +135,12 @@ public class ExpressionBinderTest
     }
 
     [Test]
-    public void Parse_ContextualRecordAccessAsPipelineStage_ThrowsActionableBindingException()
+    public void Parse_RootRecordAccessAsPipelineStage_BindsRootFieldShorthand()
     {
         var syntax = SyntaxFactory.Open(null, SyntaxFactory.RecordAccess("firstName", true));
+        var expression = ((OpenRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
 
-        Assert.That(
-            () => new ExpressifBinder().Bind(syntax),
-            Throws.TypeOf<BindingException>()
-                .With.Message.EqualTo(
-                    "Contextual record access '^.firstName' cannot be used directly as a pipeline stage. " +
-                    "Use it inside another expression, such as a function argument (for example, 'append(^.firstName)')."));
+        Assert.That(expression.Members.Single().Syntax, Is.EqualTo(FunctionSyntax.RootFieldShorthand));
     }
 
     [Test]

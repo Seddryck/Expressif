@@ -24,8 +24,14 @@ public sealed class Walk : IFunction
             RecordValue record => TransformRecord(record, expression),
             TupleValue tuple => new TupleValue(tuple.Select(item => Transform(item, expression)).ToArray()),
             IEnumerable enumerable when value is not string => TransformArray(enumerable, expression),
-            _ => expression.Evaluate(value),
+            _ => EvaluateNested(expression, value),
         };
+
+    private static object? EvaluateNested(IFunction expression, object? value)
+    {
+        using var scope = EvaluationRuntime.Derive(value);
+        return expression.Evaluate(value);
+    }
 
     private static RecordValue TransformRecord(RecordValue record, IFunction expression)
     {
