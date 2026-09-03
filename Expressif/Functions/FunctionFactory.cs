@@ -212,6 +212,7 @@ public class FunctionFactory : BaseExpressionFactory
             or TupleParameter
             or PairParameter
             or GroupingParameter
+            or DictionaryParameter
             or RecordLiteralParameter
             or InputExpressionParameter)
             return BuildValueEvaluator(parameter, context);
@@ -476,6 +477,19 @@ public class FunctionFactory : BaseExpressionFactory
                 })
                 .ToArray();
             return input => new Values.Grouping(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+        }
+
+        if (parameter is DictionaryParameter dictionary)
+        {
+            var entries = dictionary.Entries
+                .Select(entry => new
+                {
+                    Key = BuildValueEvaluator(entry.Key, context),
+                    Value = BuildValueEvaluator(entry.Value, context),
+                })
+                .ToArray();
+            return input => new Values.Dictionary(entries.Select(entry =>
                 new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 

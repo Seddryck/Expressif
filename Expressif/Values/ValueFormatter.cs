@@ -23,6 +23,9 @@ public static class ValueFormatter
         if (value is Grouping grouping)
             return $"#{{{string.Join(", ", grouping.Select(group => Format(group, structuredValue: true)))}}}";
 
+        if (value is DictionaryValue dictionary)
+            return $"!{{{string.Join(", ", dictionary.Select(pair => Format(pair, structuredValue: true)))}}}";
+
         if (value is PairValue pair)
             return $"({Format(pair.Key, structuredValue: true)} => {Format(pair.Value, structuredValue: true)})";
 

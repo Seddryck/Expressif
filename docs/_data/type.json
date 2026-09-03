@@ -72,6 +72,20 @@
     }
   },
   {
+    "Name": "dictionary",
+    "Summary": "Represents an immutable ordered mapping with structurally unique keys.",
+    "Parent": "structured",
+    "Literal": {
+      "Syntax": "Pair entries enclosed in !{ and }",
+      "Examples": [
+        "!{(\"BE\" => \"Belgium\")}"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.DictionaryValue"
+    }
+  },
+  {
     "Name": "duration",
     "Summary": "An elapsed duration expressed using ISO 8601 notation.",
     "Parent": "scalar",
