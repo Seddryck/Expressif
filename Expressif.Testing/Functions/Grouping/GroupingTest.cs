@@ -18,6 +18,14 @@ public class GroupingTest
     public void Grouping_Valid_Accessors(object? input, string expression, string expected)
         => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
 
+    [Conformance]
+    public void Summarize_Valid_Groups(object? input, string expression, string expected)
+        => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Summarize_Valid_Empty(object? input, string expression, string expected)
+        => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
+
     [Test]
     public void Constructor_ConvertsPairsToGroupsAndPreservesOrder()
     {

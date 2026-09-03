@@ -2092,6 +2092,27 @@
     ]
   },
   {
+    "Name": "summarize",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "dictionary",
+    "Summary": "Evaluates an expression once for each group and returns a dictionary from group keys to summary values.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression evaluated against each group's value collection."
+      }
+    ],
+    "Examples": [
+      "#{(\"BE\" => {10, 20, 30}), (\"FR\" => {5, 15})} | summarize(sum) → !{(\"BE\" => 60), (\"FR\" => 20)}",
+      "#{} | summarize(cardinality) → !{}"
+    ]
+  },
+  {
     "Name": "pair",
     "IsPublic": true,
     "Aliases": [],

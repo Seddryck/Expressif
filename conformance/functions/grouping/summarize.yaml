@@ -1,0 +1,24 @@
+suite: summarize
+kind: function
+operator: summarize
+tests:
+  - id: summarize.valid.groups
+    cases:
+      - id: summarize.valid.groups.sum
+        value: (null)
+        parameters: ['#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} | summarize(sum)']
+        expected: '!{("BE" => 60), ("FR" => 20)}'
+      - id: summarize.valid.groups.cardinality
+        value: (null)
+        parameters: ['#{("BE" => {"Alice", "Charlie"}), ("FR" => {"Bob"})} | summarize(cardinality)']
+        expected: '!{("BE" => 2), ("FR" => 1)}'
+      - id: summarize.valid.groups.null-result
+        value: (null)
+        parameters: ['#{("BE" => {})} | summarize(first)']
+        expected: '!{("BE" => null)}'
+  - id: summarize.valid.empty
+    cases:
+      - id: summarize.valid.empty.grouping
+        value: (null)
+        parameters: ['#{} | summarize(cardinality)']
+        expected: '!{}'
