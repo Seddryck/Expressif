@@ -803,4 +803,48 @@ public class ExpressionTest
             Assert.That(result["age"], Is.EqualTo(47));
         });
     }
+
+    [Test]
+    public void Evaluate_RootFieldPipelineStage_UsesExpressionInput()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["field"] = "root",
+            ["value"] = "flowing",
+        };
+
+        Assert.That(Expression.Create(".value | upper | ^.field").Evaluate(input), Is.EqualTo("root"));
+    }
+
+    [Test]
+    public void Evaluate_MapRootFieldPipelineStage_UsesNestedExpressionInput()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["field"] = "outer",
+            ["items"] = new object?[]
+            {
+                new Dictionary<string, object?> { ["field"] = "first", ["value"] = "ignored" },
+                new Dictionary<string, object?> { ["field"] = "second", ["value"] = "ignored" },
+            },
+        };
+
+        Assert.That(
+            Expression.Create(".items | map(.value | upper | ^.field)").Evaluate(input),
+            Is.EqualTo(new object?[] { "first", "second" }));
+    }
+
+    [Test]
+    public void Evaluate_FilterRootFieldPipelineStage_UsesNestedExpressionInput()
+    {
+        var input = new object?[]
+        {
+            new Dictionary<string, object?> { ["name"] = "first", ["active"] = true },
+            new Dictionary<string, object?> { ["name"] = "second", ["active"] = false },
+        };
+
+        var result = (object?[])Expression.Create("filter(^.active | is-true) | map(.name)").Evaluate(input)!;
+
+        Assert.That(result, Is.EqualTo(new object?[] { "first" }));
+    }
 }

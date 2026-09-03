@@ -24,6 +24,10 @@ The key question is always:
 
 > What value or values will this nested expression receive when the function evaluates it?
 
+That supplied value becomes the nested expression's input/root. Within one expression, pipeline stages change the current value without changing that root. A nested expression creates a new boundary: `^` refers to its input, not to the input of the outer expression.
+
+For example, in `map(.value | upper | ^.label)`, `.value` and `upper` change the current value, while `^.label` reads `label` from the collection item that entered the nested expression.
+
 ```mermaid
 flowchart TD
     A[Outer input] --> B[Expression-aware function]

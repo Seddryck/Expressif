@@ -19,7 +19,7 @@ public sealed class ExpressifBinder
     {
         OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
         ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed when IsRelativeRecordAccess(access)
-            => new OpenRootExpression(BindRelativeRecordAccess(closed, access)),
+            => new OpenRootExpression(BindRecordAccessExpression(closed, access)),
         ClosedExpressionSyntax closed => new ClosedRootExpression(BindClosed(closed)),
         _ => throw Unsupported(syntax),
     };
@@ -218,7 +218,7 @@ public sealed class ExpressifBinder
                 {
                     Value: RecordAccessSyntax access,
                 } closed,
-            } when IsRelativeRecordAccess(access) => BindRelativeRecordAccess(closed, access).Members,
+            } when IsRelativeRecordAccess(access) => BindRecordAccessExpression(closed, access).Members,
             ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression).Members,
             _ => [BindPipelineMember(syntax)],
         };
@@ -280,8 +280,7 @@ public sealed class ExpressifBinder
                 ? projection.Index == 0 ? int.MinValue : -projection.Index
                 : projection.Index).ToString())],
             FunctionSyntax.TupleProjectionShorthand),
-        RecordAccessSyntax access when !access.IsOriginalInput => BindRecordAccessFunction(access),
-        RecordAccessSyntax access => throw InvalidContextualRecordAccessPipelineStage(access),
+        RecordAccessSyntax access => BindRecordAccessFunction(access),
         MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
@@ -486,14 +485,14 @@ public sealed class ExpressifBinder
                 Value: RecordAccessSyntax access,
             } closed,
         } when IsRelativeRecordAccess(access)
-            => new OpenExpressionParameter(BindRelativeRecordAccess(closed, access)),
+            => new OpenExpressionParameter(BindRecordAccessExpression(closed, access)),
         ParenthesizedExpressionSyntax { Expression: ClosedExpressionSyntax closed }
             => new InputExpressionParameter(BindClosed(closed)),
         ParenthesizedExpressionSyntax parenthesized => new OpenExpressionParameter(BindOpenRoot(parenthesized.Expression)),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),
-        ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed when IsRelativeRecordAccess(access)
-            => new OpenExpressionParameter(BindRelativeRecordAccess(closed, access)),
+        ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed
+            => new OpenExpressionParameter(BindRecordAccessExpression(closed, access)),
         ClosedExpressionSyntax closed => new InputExpressionParameter(BindClosed(closed)),
         TupleProjectionSyntax projection => new TupleProjectionParameter(
             projection.Index,
@@ -501,7 +500,7 @@ public sealed class ExpressifBinder
         _ => throw Unsupported(syntax),
     };
 
-    private OpenExpression BindRelativeRecordAccess(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
+    private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
         => new([BindRecordAccessFunction(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);
 
     private IParameter BindValue(ValueSyntax syntax) => syntax switch
@@ -611,14 +610,14 @@ public sealed class ExpressifBinder
             { Index: int index } => index.ToString(),
             _ => throw InvalidRecordFieldSelector(syntax),
         };
-        return new Function("field", [new LiteralParameter(value)], FunctionSyntax.FieldShorthand);
+        return new Function(
+            "field",
+            [new LiteralParameter(value)],
+            syntax.IsOriginalInput ? FunctionSyntax.RootFieldShorthand : FunctionSyntax.FieldShorthand);
     }
 
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)
         => new($"Record access '{syntax.Text}' contains neither a named nor positional field selector.");
-    private static BindingException InvalidContextualRecordAccessPipelineStage(RecordAccessSyntax syntax)
-        => new($"Contextual record access '{syntax.Text}' cannot be used directly as a pipeline stage. " +
-            $"Use it inside another expression, such as a function argument (for example, 'append({syntax.Text})').");
     private static bool IsRelativeRecordAccess(RecordAccessSyntax syntax)
         => !syntax.IsOriginalInput && syntax.Text.StartsWith('.');
     private static BindingException Unsupported(SyntaxNode syntax)

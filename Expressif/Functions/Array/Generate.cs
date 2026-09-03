@@ -35,12 +35,18 @@ public class Generate : IFunction<object?, object?[]>
 
         while (condition.Evaluate(seed))
         {
-            output.Add(result is null ? seed : result.Evaluate(seed));
-            seed = next.Evaluate(seed);
+            output.Add(result is null ? seed : EvaluateNested(result, seed));
+            seed = EvaluateNested(next, seed);
         }
 
         return output.ToArray();
     }
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
+
+    private static object? EvaluateNested(IFunction expression, object? value)
+    {
+        using var scope = EvaluationRuntime.Derive(value);
+        return expression.Evaluate(value);
+    }
 }

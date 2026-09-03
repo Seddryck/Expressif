@@ -10,6 +10,7 @@ public enum FunctionSyntax
     Standard,
     MapShorthand,
     FieldShorthand,
+    RootFieldShorthand,
     TupleProjectionShorthand,
 }
 

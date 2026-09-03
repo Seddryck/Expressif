@@ -86,8 +86,8 @@ var input = new Dictionary<string, object?>
 var result = formatName.Evaluate(input);
 ```
 
-`result` is `"Ada Lovelace (mathematician)"`. The input passed to `Evaluate(...)` is also the ambient root for that call, so `^.suffix` still refers to the original record after `.name` changes the value flowing through the pipeline.
+`result` is `"Ada Lovelace (mathematician)"`. For this outer expression, the input passed to `Evaluate(...)` is the expression root, so `^.suffix` still refers to that record after `.name` changes the value flowing through the pipeline. When a function invokes a nested expression, the value passed to the nested expression becomes its own root.
 
-Each call receives its own evaluation frame. The same expression can therefore process several inputs—including concurrent inputs—without one call replacing another call's ambient root.
+Each call receives its own evaluation frame. The same expression can therefore process several inputs—including concurrent inputs—without one call replacing another call's expression root.
 
-See [References](../language/references.md) for field, variable, and ambient-root syntax. See [Advanced expressions](../language/advanced.md) for nested expressions and other language features.
+See [References](../language/references.md) for field, variable, and expression-root syntax. See [Advanced expressions](../language/advanced.md) for nested expressions and other language features.

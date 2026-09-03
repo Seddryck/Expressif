@@ -73,7 +73,7 @@ Fields of records can be addressed by name.
 
 A reference beginning with `.` starts from the current object. A reference beginning with `@name` starts again from the corresponding context variable.
 
-A reference beginning with `^.` starts from the original contextual object. This is useful when the current object has already changed later in the pipeline.
+A reference beginning with `^.` starts from the input of the current expression. This is useful when the current value has already changed later in the pipeline.
 
 Field references are especially common inside `map`, `filter`, record construction, and predicates.
 
@@ -130,9 +130,9 @@ If `lastName` is `"Doe"` and `firstName` is `"Jane"`, the result is:
 "Doe, Jane"
 ```
 
-## Contextual field references
+## Expression-root field references
 
-The `^.` prefix reads a field from the original contextual object rather than from the value currently flowing through the pipeline.
+The `^.` prefix reads a field from the input, or root, of the current expression rather than from the value currently flowing through its pipeline. Pipeline stages preserve that root; invoking a nested expression establishes a new root from the value passed to that expression.
 
 For example, when the customer record is the input of the expression:
 
@@ -142,18 +142,18 @@ For example, when the customer record is the input of the expression:
 | append(^.firstName)
 ```
 
-After `.lastName`, the current value is the last-name text. The contextual object is still the original customer record, so `^.firstName` can read its `firstName` field and the expression produces `"Doe, Jane"`.
+After `.lastName`, the current value is the last-name text. The expression root is still the customer record, so `^.firstName` can read its `firstName` field and the expression produces `"Doe, Jane"`.
 
 ```mermaid
 flowchart LR
-    A["contextual object<br>customer record"] --> B[".lastName"]
+    A["expression root<br>customer record"] --> B[".lastName"]
     B --> C["current value<br>last-name text"]
     A --> D["^.firstName"]
     C --> E[append]
     D --> E
 ```
 
-Within a pipeline, contextual field access is used inside another expression, such as `append(^.firstName)`. It cannot be used directly as a pipeline stage such as `| ^.firstName`.
+An expression-root field reference can also be a pipeline stage. For example, `.lastName | upper | ^.firstName` returns `firstName` from the record supplied to `.lastName`, regardless of the intermediate uppercase text.
 
 ## Tuple positions
 
@@ -194,7 +194,7 @@ flowchart TD
     D --> E[Current collection item]
 ```
 
-Inside `map(...)`, the current object is the individual collection item, not necessarily the root input.
+Inside `map(...)`, the current object and expression root are the individual collection item. A `^.field` inside that nested expression therefore reads the mapped item, not the root of the outer expression.
 
 When you need data from outside that nested scope, use the appropriate reference syntax rather than assuming the outer current object is still available implicitly.
 
@@ -205,7 +205,7 @@ A useful rule when reading or writing Expressif is:
 - `@name` points to a variable supplied by the environment;
 - `@!name` points to a constant supplied to the expression context;
 - `.field` starts from the current record;
-- `^.field` starts from the original contextual record;
+- `^.field` starts from the input/root of the current expression;
 - `$n` addresses a zero-based position in the current tuple-like context;
 - `#n` reads a zero-based item from the persistent current object.
 

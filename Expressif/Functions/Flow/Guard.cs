@@ -20,7 +20,11 @@ public sealed class Guard : IFunction
     public object? Evaluate(object? value)
     {
         var guarded = expression.Invoke();
-        return IsDirectlyCompatible(value, guarded) ? guarded.Evaluate(value) : value;
+        if (!IsDirectlyCompatible(value, guarded))
+            return value;
+
+        using var scope = EvaluationRuntime.Derive(value);
+        return guarded.Evaluate(value);
     }
 
     private static bool IsDirectlyCompatible(object? value, IFunction function)

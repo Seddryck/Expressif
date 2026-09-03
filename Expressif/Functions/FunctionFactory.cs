@@ -222,6 +222,9 @@ public class FunctionFactory : BaseExpressionFactory
     {
         var name = function.Name.ToKebabCase();
 
+        if (function.Syntax == FunctionSyntax.RootFieldShorthand)
+            return BuildRootFieldFunction(function);
+
         if (function.Arguments.Any(x => x.Name is not null)
             && name is "record" or "coalesce")
             throw new UnknownParameterNameException(name, function.Arguments.First(x => x.Name is not null).Name!);
@@ -294,6 +297,20 @@ public class FunctionFactory : BaseExpressionFactory
             return filtering;
 
         return Instantiate<IFunction>(type, function.Arguments, context);
+    }
+
+    private static IFunction BuildRootFieldFunction(Bindings.Function function)
+    {
+        if (!TryGetFieldName(function.Parameters, out var fieldName))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Ambient, fieldName));
+    }
+
+    private static object? EvaluateNested(IFunction expression, object? input)
+    {
+        using var scope = EvaluationRuntime.Derive(input);
+        return expression.Evaluate(input);
     }
 
     private IFunction? TryBuildSpecialFunction(string name, Bindings.Function function, IContext context)
@@ -706,7 +723,7 @@ public class FunctionFactory : BaseExpressionFactory
         {
             var functions = open.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
             var chain = new ChainFunction(functions);
-            return input => chain.Evaluate(input);
+            return input => EvaluateNested(chain, input);
         }
         catch (NotImplementedFunctionException) when (IsSingleTokenExpression(open))
         {
