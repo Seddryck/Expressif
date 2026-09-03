@@ -7,6 +7,9 @@ tests:
       - id: cobol-case.valid.text.basic
         value: customer order
         expected: CUSTOMER-ORDER
+      - id: cobol-case.valid.text.mixed-casing
+        value: hello World
+        expected: HELLO-WORLD
       - id: cobol-case.valid.text.array-words
         value:
           - customer

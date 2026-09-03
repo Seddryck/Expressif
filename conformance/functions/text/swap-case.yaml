@@ -7,6 +7,9 @@ tests:
       - id: swap-case.valid.text.mixed
         value: cUsToMeR oRdEr
         expected: CuStOmEr OrDeR
+      - id: swap-case.valid.text.mixed-casing
+        value: hello World
+        expected: HELLO wORLD
       - id: swap-case.valid.text.array-words
         value:
           - customer

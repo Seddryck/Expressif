@@ -7,6 +7,9 @@ tests:
       - id: allcaps-case.valid.text.basic
         value: customer order
         expected: CUSTOMERORDER
+      - id: allcaps-case.valid.text.mixed-casing
+        value: hello World
+        expected: HELLOWORLD
       - id: allcaps-case.valid.text.array-words
         value:
           - customer

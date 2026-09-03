@@ -7,6 +7,9 @@ tests:
       - id: kebab-case.valid.text.basic
         value: customer order
         expected: customer-order
+      - id: kebab-case.valid.text.mixed-casing
+        value: hello World
+        expected: hello-world
       - id: kebab-case.valid.text.array-words
         value:
           - customer

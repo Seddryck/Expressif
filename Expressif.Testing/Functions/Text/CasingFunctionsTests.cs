@@ -15,6 +15,7 @@ public class CasingFunctionsTests
             Assert.That(new Lower().Evaluate(null), Is.Null);
             Assert.That(new Upper().Evaluate(null), Is.Null);
             Assert.That(new SwapCase().Evaluate(null), Is.Null);
+            Assert.That(new Capitalize().Evaluate(null), Is.Null);
             Assert.That(new SentenceCase().Evaluate(null), Is.Null);
             Assert.That(new TitleCase().Evaluate(null), Is.Null);
         });
@@ -52,6 +53,7 @@ public class CasingFunctionsTests
             Assert.That(new Lower().Evaluate("   "), Is.EqualTo(expected));
             Assert.That(new Upper().Evaluate("   "), Is.EqualTo(expected));
             Assert.That(new SwapCase().Evaluate("   "), Is.EqualTo(expected));
+            Assert.That(new Capitalize().Evaluate("   "), Is.EqualTo(expected));
             Assert.That(new SentenceCase().Evaluate("   "), Is.EqualTo(expected));
             Assert.That(new TitleCase().Evaluate("   "), Is.EqualTo(expected));
         });
@@ -110,6 +112,10 @@ public class CasingFunctionsTests
     [Conformance]
     public void SwapCase_Valid(object? value, string expected)
         => Assert.That(new SwapCase().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Capitalize_Valid(object? value, string expected)
+        => Assert.That(new Capitalize().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
     public void SentenceCase_Valid(object? value, string expected)

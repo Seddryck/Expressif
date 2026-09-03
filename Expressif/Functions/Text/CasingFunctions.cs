@@ -80,10 +80,10 @@ public class SwapCase : BaseTextCasing
 }
 
 /// <summary>
-/// Returns the input text in sentence case by capitalizing the first word while preserving the remaining content. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&amp;T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+/// Returns the input text with its first word capitalized and the remaining content preserved. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&amp;T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 /// </summary>
-[Function(prefix: "", aliases: ["text-to-sentence-case", "capitalize"])]
-public class SentenceCase : BaseTextCasing
+[Function(prefix: "")]
+public class Capitalize : BaseTextCasing
 {
     protected override object EvaluateString(string value)
     {
@@ -107,6 +107,23 @@ public class SentenceCase : BaseTextCasing
 
         var capitalized = CapitalizeWord(firstWord);
         return value[..firstWordStart] + capitalized + value[firstWordEnd..];
+    }
+}
+
+/// <summary>
+/// Returns the input text in sentence case by capitalizing the first ordinary word and lowercasing subsequent ordinary words. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&amp;T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
+/// </summary>
+[Function(prefix: "", aliases: ["text-to-sentence-case"])]
+public class SentenceCase : BaseTextCasing
+{
+    protected override object EvaluateString(string value)
+    {
+        var words = SplitWordsBySpace(value);
+        return string.Join(" ", words.Select((word, index) => ShouldPreserveWordCasing(word)
+            ? word
+            : index == 0
+                ? CapitalizeWord(word)
+                : word.ToLowerInvariant()));
     }
 }
 

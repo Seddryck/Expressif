@@ -7,6 +7,9 @@ tests:
       - id: screaming-snake-case.valid.text.basic
         value: customer order
         expected: CUSTOMER_ORDER
+      - id: screaming-snake-case.valid.text.mixed-casing
+        value: hello World
+        expected: HELLO_WORLD
       - id: screaming-snake-case.valid.text.array-words
         value:
           - customer
