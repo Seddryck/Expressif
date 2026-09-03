@@ -14,13 +14,13 @@ tests:
         expected: CUSTOMER-ORDER
       - id: cobol-case.valid.special.null
         value: (null)
-        expected: (empty)
+        expected: null
       - id: cobol-case.valid.special.empty
         value: (empty)
         expected: (empty)
       - id: cobol-case.valid.special.blank
         value: (blank)
-        expected: (empty)
+        expected: (blank)
       - id: cobol-case.valid.special.zero-length-array
         value: []
-        expected: (empty)
+        expected: null

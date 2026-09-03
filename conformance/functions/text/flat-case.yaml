@@ -14,13 +14,13 @@ tests:
         expected: customerorder
       - id: flat-case.valid.special.null
         value: (null)
-        expected: (empty)
+        expected: null
       - id: flat-case.valid.special.empty
         value: (empty)
         expected: (empty)
       - id: flat-case.valid.special.blank
         value: (blank)
-        expected: (empty)
+        expected: (blank)
       - id: flat-case.valid.special.zero-length-array
         value: []
-        expected: (empty)
+        expected: null

@@ -21,26 +21,24 @@ public class CasingFunctionsTests
     }
 
     [Test]
-    public void WordCasing_NullInput_ReturnsEmpty()
+    public void WordCasing_NullInput_ReturnsNull()
     {
-        var expected = new Empty().Keyword;
-
         Assert.Multiple(() =>
         {
-            Assert.That(new PascalCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new CamelCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new KebabCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new SnakeCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new CamelSnakeCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new PascalSnakeCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new DotCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new ScreamingSnakeCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new TrainCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new FlatCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new AllcapsCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new CobolCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new PathCase().Evaluate(null), Is.EqualTo(expected));
-            Assert.That(new NamespaceCase().Evaluate(null), Is.EqualTo(expected));
+            Assert.That(new PascalCase().Evaluate(null), Is.Null);
+            Assert.That(new CamelCase().Evaluate(null), Is.Null);
+            Assert.That(new KebabCase().Evaluate(null), Is.Null);
+            Assert.That(new SnakeCase().Evaluate(null), Is.Null);
+            Assert.That(new CamelSnakeCase().Evaluate(null), Is.Null);
+            Assert.That(new PascalSnakeCase().Evaluate(null), Is.Null);
+            Assert.That(new DotCase().Evaluate(null), Is.Null);
+            Assert.That(new ScreamingSnakeCase().Evaluate(null), Is.Null);
+            Assert.That(new TrainCase().Evaluate(null), Is.Null);
+            Assert.That(new FlatCase().Evaluate(null), Is.Null);
+            Assert.That(new AllcapsCase().Evaluate(null), Is.Null);
+            Assert.That(new CobolCase().Evaluate(null), Is.Null);
+            Assert.That(new PathCase().Evaluate(null), Is.Null);
+            Assert.That(new NamespaceCase().Evaluate(null), Is.Null);
         });
     }
 
@@ -60,9 +58,9 @@ public class CasingFunctionsTests
     }
 
     [Test]
-    public void WordCasing_BlankInput_ReturnsEmpty()
+    public void WordCasing_BlankInput_ReturnsBlank()
     {
-        var expected = new Empty().Keyword;
+        var expected = new Whitespace().Keyword;
 
         Assert.Multiple(() =>
         {

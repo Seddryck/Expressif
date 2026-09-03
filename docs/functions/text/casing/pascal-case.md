@@ -17,13 +17,14 @@ text →
 pascal-case() → text
 ```
 
-Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+Returns the input text in PascalCase, capitalizing each word and removing separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 
