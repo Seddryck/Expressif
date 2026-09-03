@@ -17,13 +17,14 @@ text →
 camel-case() → text
 ```
 
-Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

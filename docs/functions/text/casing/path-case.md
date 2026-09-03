@@ -17,13 +17,14 @@ text →
 path-case() → text
 ```
 
-Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+Returns the input text in path/case, lowercasing words and joining them with slashes. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

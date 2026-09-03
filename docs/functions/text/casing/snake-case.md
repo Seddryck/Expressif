@@ -17,13 +17,14 @@ text →
 snake-case() → text
 ```
 
-Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+Returns the input text in snake_case, lowercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

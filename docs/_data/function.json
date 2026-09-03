@@ -3228,7 +3228,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | allcaps-case → \"HELLOWORLD\""
@@ -3324,7 +3324,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | camel-case → \"helloWorld\""
@@ -3339,7 +3339,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | camel-snake-case → \"hello_World\""
@@ -3367,7 +3367,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | cobol-case → \"HELLO-WORLD\""
@@ -3419,7 +3419,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in dot.case, lowercasing words and joining them with periods. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | dot-case → \"hello.world\""
@@ -3491,7 +3491,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in flatcase, lowercasing words and concatenating them without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | flat-case → \"helloworld\""
@@ -3532,7 +3532,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | kebab-case → \"hello-world\""
@@ -3620,7 +3620,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in namespace::case, lowercasing words and joining them with double colons. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | namespace-case → \"hello::world\""
@@ -3732,7 +3732,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in PascalCase, capitalizing each word and removing separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | pascal-case → \"HelloWorld\""
@@ -3747,7 +3747,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | pascal-snake-case → \"Hello_World\""
@@ -3762,7 +3762,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in path/case, lowercasing words and joining them with slashes. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | path-case → \"hello/world\""
@@ -4025,7 +4025,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | screaming-snake-case → \"HELLO_WORLD\""
@@ -4100,7 +4100,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in snake_case, lowercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | snake-case → \"hello_world\""
@@ -4434,7 +4434,7 @@
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.",
+    "Summary": "Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | train-case → \"Hello-World\""

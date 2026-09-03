@@ -152,12 +152,12 @@ public class TitleCase : BaseTextCasing
 }
 
 /// <summary>
-/// Base class for word-based casing transformations. For these functions, `null`, `(null)`, `(blank)`, blank strings, and empty inputs all return `(empty)`.
+/// Base class for word-based casing transformations. These functions preserve `null`, `(null)`, `(empty)`, and `(blank)` inputs, and return `null` for a zero-length array.
 /// </summary>
 public abstract class BaseTextWordCasing : BaseTextCasing
 {
-    protected override object? EvaluateBlank() => new Empty();
-    protected override object? EvaluateNull() => new Empty();
+    protected override object? EvaluateBlank() => new Whitespace();
+    protected override object? EvaluateNull() => null;
 
     protected override object? EvaluateString(string value)
         => EvaluateArray(SplitWordsBySpace(value));
@@ -165,7 +165,7 @@ public abstract class BaseTextWordCasing : BaseTextCasing
     protected override object? EvaluateArray(IEnumerable? array)
     {
         if (array == null || !array.Cast<object>().Any())
-            return new Empty();
+            return null;
 
         if (array is IEnumerable<string?> stringArray)
         {
@@ -182,7 +182,7 @@ public abstract class BaseTextWordCasing : BaseTextCasing
 }
 
 /// <summary>
-/// Returns the input text in PascalCase, capitalizing each word and removing separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in PascalCase, capitalizing each word and removing separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-pascal-case"])]
 public class PascalCase : BaseTextWordCasing
@@ -192,7 +192,7 @@ public class PascalCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in camelCase, lowercasing the first word and capitalizing subsequent words without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-camel-case"])]
 public class CamelCase : BaseTextWordCasing
@@ -206,7 +206,7 @@ public class CamelCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-kebab-case"])]
 public class KebabCase : BaseTextWordCasing
@@ -216,7 +216,7 @@ public class KebabCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in snake_case, lowercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in snake_case, lowercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-snake-case"])]
 public class SnakeCase : BaseTextWordCasing
@@ -226,7 +226,7 @@ public class SnakeCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in camel_Snake case, lowercasing the first word, capitalizing subsequent words, and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-camel-snake-case"])]
 public class CamelSnakeCase : BaseTextWordCasing
@@ -240,7 +240,7 @@ public class CamelSnakeCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in Pascal_Snake case, capitalizing each word and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-pascal-snake-case"])]
 public class PascalSnakeCase : BaseTextWordCasing
@@ -250,7 +250,7 @@ public class PascalSnakeCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in dot.case, lowercasing words and joining them with periods. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in dot.case, lowercasing words and joining them with periods. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-dot-case"])]
 public class DotCase : BaseTextWordCasing
@@ -260,7 +260,7 @@ public class DotCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-screaming-snake-case"])]
 public class ScreamingSnakeCase : BaseTextWordCasing
@@ -270,7 +270,7 @@ public class ScreamingSnakeCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-train-case"])]
 public class TrainCase : BaseTextWordCasing
@@ -280,7 +280,7 @@ public class TrainCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in flatcase, lowercasing words and concatenating them without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-flat-case"])]
 public class FlatCase : BaseTextWordCasing
@@ -290,7 +290,7 @@ public class FlatCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-allcaps-case"])]
 public class AllcapsCase : BaseTextWordCasing
@@ -300,7 +300,7 @@ public class AllcapsCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in COBOL-CASE, uppercasing words and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-cobol-case"])]
 public class CobolCase : BaseTextWordCasing
@@ -310,7 +310,7 @@ public class CobolCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in path/case, lowercasing words and joining them with slashes. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in path/case, lowercasing words and joining them with slashes. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-path-case"])]
 public class PathCase : BaseTextWordCasing
@@ -320,7 +320,7 @@ public class PathCase : BaseTextWordCasing
 }
 
 /// <summary>
-/// Returns the input text in namespace::case, lowercasing words and joining them with double colons. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+/// Returns the input text in namespace::case, lowercasing words and joining them with double colons. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 /// </summary>
 [Function(prefix: "", aliases: ["text-to-namespace-case"])]
 public class NamespaceCase : BaseTextWordCasing

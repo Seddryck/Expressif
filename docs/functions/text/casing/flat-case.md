@@ -17,13 +17,14 @@ text →
 flat-case() → text
 ```
 
-Returns the input text in flatcase, lowercasing words and concatenating them without separators. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+Returns the input text in flatcase, lowercasing words and concatenating them without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

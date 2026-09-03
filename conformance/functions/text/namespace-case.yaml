@@ -14,13 +14,13 @@ tests:
         expected: customer::order
       - id: namespace-case.valid.special.null
         value: (null)
-        expected: (empty)
+        expected: null
       - id: namespace-case.valid.special.empty
         value: (empty)
         expected: (empty)
       - id: namespace-case.valid.special.blank
         value: (blank)
-        expected: (empty)
+        expected: (blank)
       - id: namespace-case.valid.special.zero-length-array
         value: []
-        expected: (empty)
+        expected: null

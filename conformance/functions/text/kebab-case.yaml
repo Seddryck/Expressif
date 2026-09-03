@@ -14,13 +14,13 @@ tests:
         expected: customer-order
       - id: kebab-case.valid.special.null
         value: (null)
-        expected: (empty)
+        expected: null
       - id: kebab-case.valid.special.empty
         value: (empty)
         expected: (empty)
       - id: kebab-case.valid.special.blank
         value: (blank)
-        expected: (empty)
+        expected: (blank)
       - id: kebab-case.valid.special.zero-length-array
         value: []
-        expected: (empty)
+        expected: null

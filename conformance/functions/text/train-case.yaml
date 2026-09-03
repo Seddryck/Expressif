@@ -14,13 +14,13 @@ tests:
         expected: Customer-Order
       - id: train-case.valid.special.null
         value: (null)
-        expected: (empty)
+        expected: null
       - id: train-case.valid.special.empty
         value: (empty)
         expected: (empty)
       - id: train-case.valid.special.blank
         value: (blank)
-        expected: (empty)
+        expected: (blank)
       - id: train-case.valid.special.zero-length-array
         value: []
-        expected: (empty)
+        expected: null

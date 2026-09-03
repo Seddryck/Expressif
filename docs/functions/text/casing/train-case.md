@@ -17,13 +17,14 @@ text →
 train-case() → text
 ```
 
-Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Returns empty text when the input is `null`, `empty`, `blank`, or a zero-length array.
+Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 
