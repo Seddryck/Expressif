@@ -12,15 +12,18 @@ tests:
           - customer
           - order
         expected: Customer order
+      - id: sentence-case.valid.text.mixed-casing
+        value: hello World
+        expected: Hello world
       - id: sentence-case.valid.text.preserve-mixed-case-word
-        value: iTunes releases are frequent
-        expected: iTunes releases are frequent
+        value: new releases on iTunes are frequent
+        expected: New releases on iTunes are frequent
       - id: sentence-case.valid.text.preserve-dotted-word
-        value: example.com remains lowercase
-        expected: example.com remains lowercase
+        value: visit example.com for updates
+        expected: Visit example.com for updates
       - id: sentence-case.valid.text.preserve-ampersand-word
-        value: AT&T and Q&A references
-        expected: AT&T and Q&A references
+        value: read AT&T and Q&A references
+        expected: Read AT&T and Q&A references
       - id: sentence-case.valid.special.null
         value: (null)
         expected: null

@@ -1,0 +1,38 @@
+suite: text
+kind: function
+operator: capitalize
+tests:
+  - id: capitalize.valid
+    cases:
+      - id: capitalize.valid.text.basic
+        value: customer order
+        expected: Customer order
+      - id: capitalize.valid.text.preserve-remainder
+        value: hello World
+        expected: Hello World
+      - id: capitalize.valid.text.array-words
+        value:
+          - customer
+          - Order
+        expected: Customer Order
+      - id: capitalize.valid.text.preserve-mixed-case-word
+        value: iTunes releases are frequent
+        expected: iTunes releases are frequent
+      - id: capitalize.valid.text.preserve-dotted-word
+        value: example.com remains lowercase
+        expected: example.com remains lowercase
+      - id: capitalize.valid.text.preserve-ampersand-word
+        value: AT&T and Q&A references
+        expected: AT&T and Q&A references
+      - id: capitalize.valid.special.null
+        value: (null)
+        expected: null
+      - id: capitalize.valid.special.empty
+        value: (empty)
+        expected: (empty)
+      - id: capitalize.valid.special.blank
+        value: (blank)
+        expected: (blank)
+      - id: capitalize.valid.special.zero-length-array
+        value: []
+        expected: null

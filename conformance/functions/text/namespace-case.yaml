@@ -7,6 +7,9 @@ tests:
       - id: namespace-case.valid.text.basic
         value: customer order
         expected: customer::order
+      - id: namespace-case.valid.text.mixed-casing
+        value: hello World
+        expected: hello::world
       - id: namespace-case.valid.text.array-words
         value:
           - customer

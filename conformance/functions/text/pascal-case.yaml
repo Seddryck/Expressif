@@ -7,6 +7,9 @@ tests:
       - id: pascal-case.valid.text.basic
         value: customer order
         expected: CustomerOrder
+      - id: pascal-case.valid.text.mixed-casing
+        value: hello World
+        expected: HelloWorld
       - id: pascal-case.valid.text.array-words
         value:
           - customer

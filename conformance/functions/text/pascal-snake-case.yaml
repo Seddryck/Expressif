@@ -7,6 +7,9 @@ tests:
       - id: pascal-snake-case.valid.text.basic
         value: customer order
         expected: Customer_Order
+      - id: pascal-snake-case.valid.text.mixed-casing
+        value: hello World
+        expected: Hello_World
       - id: pascal-snake-case.valid.text.array-words
         value:
           - customer

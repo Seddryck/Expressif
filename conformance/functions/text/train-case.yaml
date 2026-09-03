@@ -7,6 +7,9 @@ tests:
       - id: train-case.valid.text.basic
         value: customer order
         expected: Customer-Order
+      - id: train-case.valid.text.mixed-casing
+        value: hello World
+        expected: Hello-World
       - id: train-case.valid.text.array-words
         value:
           - customer

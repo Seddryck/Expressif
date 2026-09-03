@@ -7,6 +7,9 @@ tests:
       - id: dot-case.valid.text.basic
         value: customer order
         expected: customer.order
+      - id: dot-case.valid.text.mixed-casing
+        value: hello World
+        expected: hello.world
       - id: dot-case.valid.text.array-words
         value:
           - customer

@@ -3346,6 +3346,19 @@
     ]
   },
   {
+    "Name": "capitalize",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/casing",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns the input text with its first word capitalized and the remaining content preserved. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Parameters": [],
+    "Examples": [
+      "\"hello World\" | capitalize → \"Hello World\""
+    ]
+  },
+  {
     "Name": "code-point",
     "IsPublic": true,
     "Aliases": [],
@@ -4035,16 +4048,15 @@
     "Name": "sentence-case",
     "IsPublic": true,
     "Aliases": [
-      "text-to-sentence-case",
-      "capitalize"
+      "text-to-sentence-case"
     ],
     "Scope": "text/casing",
     "Input": "text",
     "Output": "text",
-    "Summary": "Returns the input text in sentence case by capitalizing the first word while preserving the remaining content. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
+    "Summary": "Returns the input text in sentence case by capitalizing the first ordinary word and lowercasing subsequent ordinary words. Words containing dots, ampersands, or uppercase letters beyond the first character are treated as already correctly cased and preserved as-is (for example `example.com`, `AT&T`, and `iTunes`). Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.",
     "Parameters": [],
     "Examples": [
-      "\"Hello World\" | sentence-case → \"Hello World\""
+      "\"hello World\" | sentence-case → \"Hello world\""
     ]
   },
   {
