@@ -141,18 +141,22 @@ Arrays are therefore a natural fit when several values need to be filtered, tran
 
 Use `distribute-condition` when both values that satisfy a condition and values that do not satisfy it are needed:
 
+{% raw %}
 ```expressif
 {1, 2, 3, 4, 5} | distribute-condition(is-even)
 → {{2, 4}, {1, 3, 5}}
 ```
+{% endraw %}
 
 The first output array contains matching values and the second contains non-matching values. Their relative input order is preserved.
 
 This differs from `chunk`, which creates consecutive batches based only on position:
 
+{% raw %}
 ```expressif
 {1, 2, 3, 4, 5} | chunk(2)
 → {{1, 2}, {3, 4}, {5}}
 ```
+{% endraw %}
 
 Choose `distribute-condition` for classification and `chunk` for position-based batching.
