@@ -16,6 +16,10 @@ tests:
         value: (null)
         parameters: ['#{("BE" => {})} | summarize(first)']
         expected: '!{("BE" => null)}'
+      - id: summarize.valid.groups.leading-map-shorthand
+        value: (null)
+        parameters: ['{{code:="BE", name:="Alice", score:=30}, {code:="FR", name:="Bob", score:=10}, {code:="BE", name:="Charlie", score:=5}} | group-by(.code) | summarize(|> .score | sum)']
+        expected: '!{("BE" => 35), ("FR" => 10)}'
   - id: summarize.valid.empty
     cases:
       - id: summarize.valid.empty.grouping
