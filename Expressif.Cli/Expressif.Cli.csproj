@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <ApplicationIcon>expressif.ico</ApplicationIcon>
+    <ApplicationIcon>..\artifacts\branding\expressif-dark.ico</ApplicationIcon>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -26,5 +26,12 @@
       <_Parameter1>Expressif.Cli.Tests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+
+  <Target Name="GenerateApplicationIcon"
+          BeforeTargets="CoreCompile"
+          Inputs="$(MSBuildProjectDirectory)\..\Build-Logo.ps1;$(MSBuildProjectDirectory)\..\assets\logo\layers\circle.png;$(MSBuildProjectDirectory)\..\assets\logo\layers\cup.png;$(MSBuildProjectDirectory)\..\assets\logo\layers\liquid.png;$(MSBuildProjectDirectory)\..\assets\logo\layers\steam.png;$(MSBuildProjectDirectory)\..\assets\logo\text.png"
+          Outputs="$(MSBuildProjectDirectory)\..\artifacts\branding\expressif-dark.ico">
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildProjectDirectory)\..\Build-Logo.ps1&quot;" />
+  </Target>
 
 </Project>

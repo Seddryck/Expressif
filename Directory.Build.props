@@ -44,7 +44,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\misc\icon\expressif-icon-128.png" Pack="true" PackagePath="icon\" />
+		<None Include="$(MSBuildThisFileDirectory)artifacts\branding\expressif-icon-background-dark-128.png" Pack="true" PackagePath="icon\expressif-icon-128.png" />
 		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

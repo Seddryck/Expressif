@@ -73,6 +73,33 @@ jobs:
           $version = Get-ConformanceVersion -Warn
           "semver=$version" >> $env:GITHUB_OUTPUT
 
+  package-branding:
+    needs: calculate-version
+    runs-on: windows-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Generate branding assets
+        shell: pwsh
+        run: ./Build-Logo.ps1 -Version '${{ needs.calculate-version.outputs.semver }}'
+
+      - name: Verify tracked README logo
+        shell: pwsh
+        run: |
+          $generated = Get-FileHash artifacts/branding/expressif-logo-dark-256.png -Algorithm SHA256
+          $tracked = Get-FileHash docs/assets/images/expressif-logo-with-name.png -Algorithm SHA256
+          if ($generated.Hash -ne $tracked.Hash) {
+            throw 'The tracked README logo differs from the generated branding asset.'
+          }
+
+      - name: Upload branding package
+        uses: actions/upload-artifact@v7
+        with:
+          name: branding-assets
+          if-no-files-found: error
+          path: artifacts/branding/expressif-branding-${{ needs.calculate-version.outputs.semver }}.zip
+
   validate-conformance:
     runs-on: windows-latest
     steps:
@@ -225,6 +252,11 @@ jobs:
           --use-lock-file
           --force-evaluate
 
+      - name: Generate branding assets
+        if: matrix.generate_cli_lock
+        shell: pwsh
+        run: ./Build-Logo.ps1
+
       - name: Generate CLI dependency lock
         if: matrix.generate_cli_lock
         run: >-
@@ -361,6 +393,10 @@ jobs:
         with:
           name: expressif-cli-dependency-lock
           path: Expressif.Cli
+
+      - name: Generate branding assets
+        shell: pwsh
+        run: ./Build-Logo.ps1
 
       - name: Restore package dependencies
         if: matrix.use_generated_lock
@@ -547,6 +583,10 @@ jobs:
           name: expressif-cli-dependency-lock
           path: Expressif.Cli
 
+      - name: Generate branding assets
+        shell: pwsh
+        run: ./Build-Logo.ps1
+
       - name: Restore distribution dependencies
         run: dotnet restore Expressif.Cli/Expressif.Cli.csproj --locked-mode
 
@@ -656,6 +696,7 @@ jobs:
   publish-github-release:
     needs:
       - calculate-version
+      - package-branding
       - package-conformance
       - package-syntax-highlighters
       - package-cli-distributions
@@ -674,6 +715,12 @@ jobs:
           name: syntax-assets
           path: release-assets/syntax
 
+      - name: Download branding assets
+        uses: actions/download-artifact@v8
+        with:
+          name: branding-assets
+          path: release-assets/branding
+
       - name: Download conformance assets
         uses: actions/download-artifact@v8
         with:
@@ -691,6 +738,7 @@ jobs:
         shell: pwsh
         run: |
           $expectedAssets = @(
+            @{ Name = 'branding ZIP'; Path = 'release-assets/branding'; Extensions = @('.zip') },
             @{ Name = 'syntax asset'; Path = 'release-assets/syntax'; Extensions = @('.vsix', '.json', '.xml', '.zip') },
             @{ Name = 'conformance ZIP'; Path = 'release-assets/conformance'; Extensions = @('.zip') },
             @{ Name = 'conformance YAML'; Path = 'release-assets/conformance'; Extensions = @('.yaml') },
