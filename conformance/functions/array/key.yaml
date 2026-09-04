@@ -1,0 +1,20 @@
+suite: key
+kind: function
+operator: key
+tests:
+  - id: key.valid.scalar
+    cases:
+      - id: key.valid.scalar.record-field
+        value: {name: Alice, country: Belgium}
+        parameters: ['key(.country)']
+        expected: '("Belgium" => {country := "Belgium", name := "Alice"})'
+      - id: key.valid.scalar.null
+        value: {name: Alice}
+        parameters: ['key(.country)']
+        expected: '(null => {name := "Alice"})'
+  - id: key.valid.tuple
+    cases:
+      - id: key.valid.tuple.multiple-expressions
+        value: {name: Alice, country: Belgium}
+        parameters: ['key(.country, .name | lower)']
+        expected: '(T("Belgium", "alice") => {country := "Belgium", name := "Alice"})'

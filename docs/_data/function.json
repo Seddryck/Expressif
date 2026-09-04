@@ -1986,6 +1986,182 @@
     "Examples": ["T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"]
   },
   {
+    "Name": "dictionary",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "dictionary",
+    "Input": "any",
+    "Output": "dictionary",
+    "Summary": "Constructs a dictionary from zero or more pairs. Spread arguments expand arrays of pairs in place.",
+    "Parameters": [
+      {
+        "Name": "values",
+        "Type": "pair",
+        "Optional": true,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more pairs whose unique keys and values become dictionary entries."
+      }
+    ],
+    "Examples": [
+      "#null | dictionary() → !{}",
+      "#null | dictionary((\"BE\" => \"Belgium\"), (\"FR\" => \"France\")) → !{(\"BE\" => \"Belgium\"), (\"FR\" => \"France\")}"
+    ]
+  },
+  {
+    "Name": "key",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/grouping",
+    "Input": "any",
+    "Output": "pair",
+    "Summary": "Associates the input value with a key calculated by one or more expressions.",
+    "Parameters": [
+      {
+        "Name": "expressions",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more expressions evaluated against the input; multiple results form a tuple key."
+      }
+    ],
+    "Examples": [
+      "\"Belgium\" | key(@_) → (\"Belgium\" => \"Belgium\")",
+      "\"Alice\" | key(upper, lower) → (T(\"ALICE\", \"alice\") => \"Alice\")"
+    ]
+  },
+  {
+    "Name": "group",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/grouping",
+    "Input": "array",
+    "Output": "grouping",
+    "Summary": "Groups pairs by structurally equal keys while preserving first-seen group and value order.",
+    "Parameters": [],
+    "Examples": [
+      "{(\"BE\" => \"Alice\"), (\"FR\" => \"Charlie\"), (\"BE\" => \"Bob\")} | group → #{(\"BE\" => {\"Alice\", \"Bob\"}), (\"FR\" => {\"Charlie\"})}",
+      "{} | group → #{}"
+    ]
+  },
+  {
+    "Name": "group-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/grouping",
+    "Input": "array",
+    "Output": "grouping",
+    "Summary": "Groups input values by keys calculated from one or more expressions.",
+    "Parameters": [
+      {
+        "Name": "expressions",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more expressions evaluated once per input value; multiple results form a tuple key."
+      }
+    ],
+    "Examples": [
+      "{\"BE\", \"be\", \"FR\"} | group-by(lower) → #{(\"be\" => {\"BE\", \"be\"}), (\"fr\" => {\"FR\"})}"
+    ]
+  },
+  {
+    "Name": "grouping",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "any",
+    "Output": "grouping",
+    "Summary": "Constructs a grouping from zero or more pairs. Spread arguments expand arrays of pairs in place.",
+    "Parameters": [
+      {
+        "Name": "values",
+        "Type": "pair",
+        "Optional": true,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more pairs whose keys and grouped value collections become groups."
+      }
+    ],
+    "Examples": [
+      "#null | grouping() → #{}",
+      "#null | grouping((\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"charlie\"})) → #{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"charlie\"})}",
+      "#null | grouping(...{(\"BE\" => {\"alice\"}), (\"FR\" => {\"charlie\"})}) → #{(\"BE\" => {\"alice\"}), (\"FR\" => {\"charlie\"})}"
+    ]
+  },
+  {
+    "Name": "summarize",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "dictionary",
+    "Summary": "Evaluates an expression once for each group and returns a dictionary from group keys to summary values.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression evaluated against each group's value collection."
+      }
+    ],
+    "Examples": [
+      "#{(\"BE\" => {10, 20, 30}), (\"FR\" => {5, 15})} | summarize(sum) → !{(\"BE\" => 60), (\"FR\" => 20)}",
+      "#{} | summarize(cardinality) → !{}"
+    ]
+  },
+  {
+    "Name": "pair",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "pair",
+    "Input": "any",
+    "Output": "pair",
+    "Summary": "Constructs a pair by evaluating a key expression and a value expression against the same input.",
+    "Parameters": [
+      {
+        "Name": "key",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "The expression whose evaluated result becomes the key."
+      },
+      {
+        "Name": "value",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "The expression whose evaluated result becomes the value."
+      }
+    ],
+    "Examples": [
+      "#null | pair(\"BE\", 42) → (\"BE\" => 42)",
+      "{country := \"BE\", amount := 42} | pair(.country, .amount) → (\"BE\" => 42)"
+    ]
+  },
+  {
+    "Name": "pair-key",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "pair",
+    "Input": "pair",
+    "Output": "any",
+    "Summary": "Returns the key component of the input pair.",
+    "Parameters": [],
+    "Examples": ["(\"BE\" => 42) | pair-key → \"BE\""]
+  },
+  {
+    "Name": "pair-value",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "pair",
+    "Input": "pair",
+    "Output": "any",
+    "Summary": "Returns the value component of the input pair.",
+    "Parameters": [],
+    "Examples": ["(\"BE\" => 42) | pair-value → 42"]
+  },
+  {
     "Name": "tuple",
     "IsPublic": true,
     "Aliases": [

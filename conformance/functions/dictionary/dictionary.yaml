@@ -1,0 +1,28 @@
+suite: dictionary
+kind: function
+operator: dictionary
+tests:
+  - id: dictionary.valid.constructor
+    cases:
+      - id: dictionary.valid.constructor.empty
+        value: (null)
+        parameters: ['dictionary()']
+        expected: '!{}'
+      - id: dictionary.valid.constructor.entries
+        value: (null)
+        parameters: ['dictionary(("BE" => "Belgium"), ("FR" => "France"))']
+        expected: '!{("BE" => "Belgium"), ("FR" => "France")}'
+      - id: dictionary.valid.constructor.spread
+        value: (null)
+        parameters: ['dictionary(...{("BE" => "Belgium"), ("FR" => "France")})']
+        expected: '!{("BE" => "Belgium"), ("FR" => "France")}'
+  - id: dictionary.valid.literal
+    cases:
+      - id: dictionary.valid.literal.empty
+        value: (null)
+        parameters: ['!{}']
+        expected: '!{}'
+      - id: dictionary.valid.literal.entries
+        value: (null)
+        parameters: ['!{("BE" => "Belgium"), ("FR" => "France")}']
+        expected: '!{("BE" => "Belgium"), ("FR" => "France")}'

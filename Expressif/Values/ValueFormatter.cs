@@ -20,6 +20,15 @@ public static class ValueFormatter
         if (TryFormatNamedCollection(value!, out var named))
             return named;
 
+        if (value is Grouping grouping)
+            return $"#{{{string.Join(", ", grouping.Select(group => Format(group, structuredValue: true)))}}}";
+
+        if (value is DictionaryValue dictionary)
+            return $"!{{{string.Join(", ", dictionary.Select(pair => Format(pair, structuredValue: true)))}}}";
+
+        if (value is PairValue pair)
+            return $"({Format(pair.Key, structuredValue: true)} => {Format(pair.Value, structuredValue: true)})";
+
         if (value is TupleValue tuple)
             return $"T({string.Join(", ", tuple.Select(x => Format(x, structuredValue: true)))})";
 

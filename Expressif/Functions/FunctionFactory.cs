@@ -210,6 +210,9 @@ public class FunctionFactory : BaseExpressionFactory
         if (parameter is IncomingValueParameter
             or ArrayParameter
             or TupleParameter
+            or PairParameter
+            or GroupingParameter
+            or DictionaryParameter
             or RecordLiteralParameter
             or InputExpressionParameter)
             return BuildValueEvaluator(parameter, context);
@@ -247,6 +250,19 @@ public class FunctionFactory : BaseExpressionFactory
             var evaluator = BuildValueEvaluator(extension.Value, context);
             return new Tuple.Extend(value => evaluator.Invoke(value));
         }
+        if (name.Equals("pair", StringComparison.OrdinalIgnoreCase))
+        {
+            var bound = ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters;
+            if (bound is not [var key, var value])
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            return new Pair.Pair(BuildValueEvaluator(key, context), BuildValueEvaluator(value, context));
+        }
+        if (name.Equals("key", StringComparison.OrdinalIgnoreCase))
+            return new Array.Key(BuildGroupingExpressionEvaluators(function, context));
+
+        if (name.Equals("group-by", StringComparison.OrdinalIgnoreCase))
+            return new Array.GroupBy(BuildGroupingExpressionEvaluators(function, context));
+
         if (name.Equals("pick", StringComparison.OrdinalIgnoreCase))
         {
             var positions = function.Arguments
@@ -325,6 +341,16 @@ public class FunctionFactory : BaseExpressionFactory
             "generate" => BuildGenerateFunction(function, context),
             _ => null,
         };
+
+    private IEnumerable<Func<object?, object?>> BuildGroupingExpressionEvaluators(
+        Bindings.Function function,
+        IContext context)
+    {
+        if (function.Arguments.Length == 0 || function.Arguments.Any(argument => argument.Name is not null || argument.IsSpread))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        return function.Arguments.Select(argument => BuildValueEvaluator(argument.Value, context)).ToArray();
+    }
 
     private IFunction BuildTransformWithFunction(Bindings.Function function, IContext context)
     {
@@ -432,6 +458,39 @@ public class FunctionFactory : BaseExpressionFactory
                 .ToArray();
             var function = new ArrayFunction(() => elements);
             return function.Evaluate;
+        }
+
+        if (parameter is PairParameter pair)
+        {
+            var key = BuildValueEvaluator(pair.Key, context);
+            var value = BuildValueEvaluator(pair.Value, context);
+            return input => new Expressif.Values.Pair(key.Invoke(input), value.Invoke(input));
+        }
+
+        if (parameter is GroupingParameter grouping)
+        {
+            var entries = grouping.Entries
+                .Select(entry => new
+                {
+                    Key = BuildValueEvaluator(entry.Key, context),
+                    Value = BuildValueEvaluator(entry.Value, context),
+                })
+                .ToArray();
+            return input => new Values.Grouping(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+        }
+
+        if (parameter is DictionaryParameter dictionary)
+        {
+            var entries = dictionary.Entries
+                .Select(entry => new
+                {
+                    Key = BuildValueEvaluator(entry.Key, context),
+                    Value = BuildValueEvaluator(entry.Value, context),
+                })
+                .ToArray();
+            return input => new Values.Dictionary(entries.Select(entry =>
+                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is RecordLiteralParameter record)

@@ -1,0 +1,22 @@
+suite: group-by
+kind: function
+operator: group-by
+tests:
+  - id: group-by.valid.scalar
+    cases:
+      - id: group-by.valid.scalar.first-seen-order
+        value: (null)
+        parameters: ['{{name := "Alice", country := "BE"}, {name := "Charlie", country := "FR"}, {name := "Bob", country := "BE"}} | group-by(.country)']
+        expected: '#{("BE" => {{name := "Alice", country := "BE"}, {name := "Bob", country := "BE"}}), ("FR" => {{name := "Charlie", country := "FR"}})}'
+  - id: group-by.valid.tuple
+    cases:
+      - id: group-by.valid.tuple.multiple-expressions
+        value: (null)
+        parameters: ['{{country := "BE", province := " west "}, {country := "BE", province := "west"}} | group-by(.country, .province | trim)']
+        expected: '#{(T("BE", "west") => {{country := "BE", province := " west "}, {country := "BE", province := "west"}})}'
+  - id: group-by.valid.empty
+    cases:
+      - id: group-by.valid.empty.array
+        value: (null)
+        parameters: ['{} | group-by(@_)']
+        expected: '#{}'

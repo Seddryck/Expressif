@@ -1,0 +1,22 @@
+---
+layout: docs
+title: "Grouping functions"
+parent: "Functions library"
+
+nav_order: 10
+has_children: true
+has_toc: false
+permalink: /functions/grouping-functions/
+tags:
+  - functions
+  - grouping
+
+generated: true
+---
+
+Reference documentation for Expressif functions in the `grouping` scope.
+
+| Name | Overview |
+|:-----|:---------|
+| [`grouping`]({{ '/functions/grouping/grouping/' | relative_url }}) | Constructs a grouping from zero or more pairs. Spread arguments expand arrays of pairs in place. |
+| [`summarize`]({{ '/functions/grouping/summarize/' | relative_url }}) | Evaluates an expression once for each group and returns a dictionary from group keys to summary values. |
