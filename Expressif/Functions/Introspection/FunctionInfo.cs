@@ -18,7 +18,10 @@ public record FunctionInfo
     string Reason,
     Type ImplementationType,
     string Summary,
-    ParameterInfo[] Parameters
+    ParameterInfo[] Parameters,
+    bool Deprecated,
+    string? Replacement,
+    string? Sunset
 );
 
 public record ParameterInfo

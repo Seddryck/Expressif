@@ -30,6 +30,7 @@ public class FunctionIntrospector : BaseIntrospector
         foreach (var function in functions)
         {
             var contract = FunctionContractIntrospector.Describe(function.Type, function.Type.Name.ToKebabCase());
+            var lifecycle = function.Type.GetCustomAttribute<FunctionLifecycleAttribute>(false);
             yield return new FunctionInfo(
                     function.Type.Name.ToKebabCase()
                     , function.Type.IsPublic
@@ -49,6 +50,9 @@ public class FunctionIntrospector : BaseIntrospector
                     , function.Type
                     , fast ? "" : function.Type.GetSummary()
                     , fast ? [] : BuildParameters(function.Type.GetInfoConstructors()).ToArray()
+                    , lifecycle?.Deprecated ?? false
+                    , lifecycle?.Replacement
+                    , lifecycle?.Sunset
                 );
         }
     }

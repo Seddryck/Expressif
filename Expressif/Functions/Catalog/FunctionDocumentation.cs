@@ -10,7 +10,10 @@ public sealed record FunctionDocumentation(
     string Summary,
     FunctionParameterDocumentation[] Parameters,
     string[]? Examples = null,
-    string? Behavior = null);
+    string? Behavior = null,
+    bool Deprecated = false,
+    string? Replacement = null,
+    string? Sunset = null);
 
 public sealed record FunctionParameterDocumentation(
     string Name,
