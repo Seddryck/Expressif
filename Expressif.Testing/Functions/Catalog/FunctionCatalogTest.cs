@@ -1,5 +1,6 @@
 using Expressif.Functions.Catalog;
 using Expressif.Functions.Introspection;
+using Expressif.Functions;
 
 namespace Expressif.Testing.Functions.Catalog;
 
@@ -34,11 +35,66 @@ public class FunctionCatalogTest
                 Assert.That(documentation.Input, Is.EqualTo(implementation.Input), $"Input for {name}");
                 Assert.That(documentation.Output, Is.EqualTo(implementation.Output), $"Output for {name}");
                 Assert.That(documentation.Summary, Is.Not.Empty, $"Summary for {name}");
+                Assert.That(documentation.Deprecated, Is.EqualTo(implementation.Deprecated), $"Deprecation for {name}");
+                Assert.That(documentation.Replacement, Is.EqualTo(implementation.Replacement), $"Replacement for {name}");
+                Assert.That(documentation.Sunset, Is.EqualTo(implementation.Sunset), $"Sunset for {name}");
                 Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic)),
                     Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic))),
                     $"Parameters for {name}");
                 Assert.That(documentation.Parameters.Select(x => x.Summary), Is.All.Not.Empty, $"Parameter summaries for {name}");
             }
+        }
+    }
+
+    [Test]
+    [Category("MetadataConsistency")]
+    public void Default_LifecycleMetadata_IsConsistent()
+    {
+        foreach (var function in FunctionCatalog.Default.Functions)
+        {
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(function.Replacement is null || function.Deprecated, Is.True,
+                    $"Replacement for {function.Name} requires deprecation.");
+                Assert.That(function.Sunset is null || function.Deprecated, Is.True,
+                    $"Sunset for {function.Name} requires deprecation.");
+                Assert.That(function.Replacement is null || FunctionCatalog.Default.Find(function.Replacement)?.IsPublic == true,
+                    Is.True, $"Replacement for {function.Name} must resolve to a public callable.");
+            }
+        }
+    }
+
+    [Test]
+    public void LifecycleAttribute_Values_ExposesDeprecationMetadata()
+    {
+        var lifecycle = new FunctionLifecycleAttribute("replacement", "3.0");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(lifecycle.Deprecated, Is.True);
+            Assert.That(lifecycle.Replacement, Is.EqualTo("replacement"));
+            Assert.That(lifecycle.Sunset, Is.EqualTo("3.0"));
+        }
+    }
+
+    [Test]
+    public void LifecycleRecords_Values_ExposeDeprecationMetadata()
+    {
+        var documentation = new FunctionDocumentation(
+            "sample", true, [], "special", "any", "any", "Summary.", [],
+            Deprecated: true, Replacement: "replacement", Sunset: "3.0");
+        var implementation = new FunctionInfo(
+            "sample", true, [], "special", "any", "any", false, "Reason.",
+            typeof(object), "Summary.", [], true, "replacement", "3.0");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(documentation.Deprecated, Is.True);
+            Assert.That(documentation.Replacement, Is.EqualTo("replacement"));
+            Assert.That(documentation.Sunset, Is.EqualTo("3.0"));
+            Assert.That(implementation.Deprecated, Is.True);
+            Assert.That(implementation.Replacement, Is.EqualTo("replacement"));
+            Assert.That(implementation.Sunset, Is.EqualTo("3.0"));
         }
     }
 
