@@ -3713,6 +3713,20 @@
     ]
   },
   {
+    "Name": "json-escaped-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns text by decoding escaped JSON string contents without requiring surrounding quotation marks. Returns `null` for malformed input and preserves `null`, empty, and blank inputs.",
+    "Behavior": "Decodes one layer of JSON string escaping, including control-character escapes and valid Unicode escape sequences. The input is fragment content without surrounding JSON quotation marks.",
+    "Parameters": [],
+    "Examples": [
+      "\"He said \\\\\\\"hello\\\\\\\"\" | json-escaped-to-text → \"He said \\\"hello\\\"\""
+    ]
+  },
+  {
     "Name": "kebab-case",
     "IsPublic": true,
     "Aliases": [
@@ -4400,6 +4414,20 @@
     ]
   },
   {
+    "Name": "text-to-json-escaped",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns the escaped contents of a JSON string without surrounding quotation marks. Preserves `null`, empty, and blank inputs.",
+    "Behavior": "Escapes quotation marks, reverse solidus characters, and control characters required by the JSON string grammar while leaving valid Unicode text readable. Already escaped content is escaped again.",
+    "Parameters": [],
+    "Examples": [
+      "\"He said \\\"hello\\\"\" | text-to-json-escaped → \"He said \\\\\\\"hello\\\\\\\"\""
+    ]
+  },
+  {
     "Name": "text-to-mask",
     "IsPublic": true,
     "Aliases": [],
@@ -4417,6 +4445,33 @@
     ],
     "Examples": [
       "\"Hello World\" | text-to-mask(\"000-000\") → \"000-000\""
+    ]
+  },
+  {
+    "Name": "text-to-uri",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns the input text escaped as URI data using UTF-8 percent encoding. Preserves `null`, empty, and blank inputs.",
+    "Parameters": [],
+    "Examples": [
+      "\"café & tea\" | text-to-uri → \"caf%C3%A9%20%26%20tea\""
+    ]
+  },
+  {
+    "Name": "text-to-xml-escaped",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns text escaped for use as XML character data without adding a containing element. Returns `null` for characters that are invalid in XML and preserves `null`, empty, and blank inputs.",
+    "Behavior": "Escapes ampersands and angle brackets for XML text-node content. Quotation marks remain unchanged because the result is character data rather than an attribute value. Already escaped content is escaped again.",
+    "Parameters": [],
+    "Examples": [
+      "\"A & B < C\" | text-to-xml-escaped → \"A &amp; B &lt; C\""
     ]
   },
   {
@@ -4641,6 +4696,33 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | upper → \"HELLO WORLD\""
+    ]
+  },
+  {
+    "Name": "uri-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns text by unescaping one layer of URI percent encoding. Preserves `null`, empty, and blank inputs.",
+    "Parameters": [],
+    "Examples": [
+      "\"caf%C3%A9%20%26%20tea\" | uri-to-text → \"café & tea\""
+    ]
+  },
+  {
+    "Name": "xml-escaped-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns text by decoding XML character data without requiring a containing element. Returns `null` for malformed input and preserves `null`, empty, and blank inputs.",
+    "Behavior": "Decodes one layer of the five predefined XML entities and valid decimal or hexadecimal numeric character references. Markup, document type declarations, unknown entities, and invalid XML characters are rejected.",
+    "Parameters": [],
+    "Examples": [
+      "\"A &amp; B &lt; C\" | xml-escaped-to-text → \"A & B < C\""
     ]
   },
   {

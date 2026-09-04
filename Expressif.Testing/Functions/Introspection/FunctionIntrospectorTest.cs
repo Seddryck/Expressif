@@ -124,7 +124,7 @@ public class FunctionIntrospectorTest
     [TestCase("text/concatenation", new[] { "append", "append-new-line", "append-space", "prefix", "prefix-new-line", "prefix-space", "prepend", "prepend-new-line", "prepend-space", "replace-slice", "suffix", "suffix-new-line", "suffix-space", "text" })]
     [TestCase("text/conversion", new[] { "code-point", "from-code-point", "text-to-datetime" })]
     [TestCase("text/counting", new[] { "count-distinct-chars", "count-substring", "length" })]
-    [TestCase("text/encoding", new[] { "html-to-text", "text-to-html" })]
+    [TestCase("text/encoding", new[] { "html-to-text", "json-escaped-to-text", "text-to-html", "text-to-json-escaped", "text-to-uri", "text-to-xml-escaped", "uri-to-text", "xml-escaped-to-text" })]
     [TestCase("text/filtering", new[] { "filter-chars", "retain-alpha", "retain-alpha-numeric", "retain-numeric", "retain-numeric-symbol" })]
     [TestCase("text/masking", new[] { "mask-to-text", "text-to-mask" })]
     [TestCase("text/normalization", new[] { "clean-whitespace", "collapse-whitespace", "empty-to-null", "null-to-empty", "slug", "trim", "whitespaces-to-empty", "whitespaces-to-null", "without-diacritics", "without-whitespaces" })]

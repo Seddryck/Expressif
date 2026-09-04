@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "text-to-html"
+title: "uri-to-text"
 parent: "Encoding functions"
 grand_parent: "Text functions"
-nav_order: 30
+nav_order: 70
 has_toc: false
-permalink: /functions/text/encoding/text-to-html/
+permalink: /functions/text/encoding/uri-to-text/
 tags:
   - functions
   - text/encoding
@@ -14,10 +14,10 @@ generated: true
 
 ```
 text →
-text-to-html() → text
+uri-to-text() → text
 ```
 
-Returns the argument value converted to an HTML-encoded string
+Returns text by unescaping one layer of URI percent encoding. Preserves `null`, empty, and blank inputs.
 
 ## Parameters
 
@@ -29,11 +29,12 @@ This function has no parameters.
 
 
 
+
 ## Examples
 
 {% raw %}
 ```expressif
-"Hello World" | text-to-html → "Hello World"
+"caf%C3%A9%20%26%20tea" | uri-to-text → "café & tea"
 ```
 {% endraw %}
 

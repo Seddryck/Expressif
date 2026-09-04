@@ -1,0 +1,44 @@
+suite: text
+kind: function
+operator: json-escaped-to-text
+tests:
+  - id: json-escaped-to-text.valid
+    cases:
+      - id: json-escaped-to-text.valid.text.ordinary
+        value: café 😀
+        expected: café 😀
+      - id: json-escaped-to-text.valid.text.delimiters
+        value: 'He said \"hello\" with a \\.'
+        expected: 'He said "hello" with a \.'
+      - id: json-escaped-to-text.valid.text.controls
+        value: 'line\nbreak\tend'
+        expected: "line\nbreak\tend"
+      - id: json-escaped-to-text.valid.text.unicode-bmp
+        value: '\u00E9'
+        expected: é
+      - id: json-escaped-to-text.valid.text.unicode-surrogate-pair
+        value: '\uD83D\uDE00'
+        expected: 😀
+      - id: json-escaped-to-text.valid.text.single-pass
+        value: '\\n'
+        expected: '\n'
+      - id: json-escaped-to-text.valid.text.empty
+        value: (empty)
+        expected: (empty)
+      - id: json-escaped-to-text.valid.text.null
+        value: (null)
+        expected: (null)
+      - id: json-escaped-to-text.valid.text.blank
+        value: (blank)
+        expected: (blank)
+  - id: json-escaped-to-text.invalid
+    cases:
+      - id: json-escaped-to-text.invalid.text.unknown-escape
+        value: '\q'
+        expected:
+      - id: json-escaped-to-text.invalid.text.incomplete-unicode
+        value: '\u12'
+        expected:
+      - id: json-escaped-to-text.invalid.text.raw-quote
+        value: '"'
+        expected:

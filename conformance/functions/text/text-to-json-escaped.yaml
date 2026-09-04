@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: text-to-json-escaped
+tests:
+  - id: text-to-json-escaped.valid
+    cases:
+      - id: text-to-json-escaped.valid.text.ordinary
+        value: café 😀
+        expected: café 😀
+      - id: text-to-json-escaped.valid.text.delimiters
+        value: 'He said "hello" with a \.'
+        expected: 'He said \"hello\" with a \\.'
+      - id: text-to-json-escaped.valid.text.controls
+        value: "line\nbreak\tend"
+        expected: 'line\nbreak\tend'
+      - id: text-to-json-escaped.valid.text.already-escaped
+        value: '\n'
+        expected: '\\n'
+      - id: text-to-json-escaped.valid.text.empty
+        value: (empty)
+        expected: (empty)
+      - id: text-to-json-escaped.valid.text.null
+        value: (null)
+        expected: (null)
+      - id: text-to-json-escaped.valid.text.blank
+        value: (blank)
+        expected: (blank)
