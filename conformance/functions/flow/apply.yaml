@@ -16,7 +16,7 @@ tests:
     cases:
       - id: apply.valid.record.fields
         value: {firstName: John, lastName: Doe}
-        parameters: ['.firstName | append-space | append(.lastName)']
+        parameters: ['.firstName | append-space | suffix(.lastName)']
         expected: John Doe
   - id: apply.valid.array
     cases:

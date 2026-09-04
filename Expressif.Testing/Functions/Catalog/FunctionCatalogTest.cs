@@ -64,6 +64,30 @@ public class FunctionCatalogTest
         }
     }
 
+    [TestCase("append", "suffix", "3.0")]
+    [TestCase("prepend", "prefix", "3.0")]
+    public void Default_DeprecatedTextFunction_ExposesLifecycle(
+        string name,
+        string replacement,
+        string sunset)
+    {
+        var function = FunctionCatalog.Default.Find(name);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(function?.Deprecated, Is.True);
+            Assert.That(function?.Replacement, Is.EqualTo(replacement));
+            Assert.That(function?.Sunset, Is.EqualTo(sunset));
+        }
+    }
+
+    [TestCase("append-space")]
+    [TestCase("append-new-line")]
+    [TestCase("prepend-space")]
+    [TestCase("prepend-new-line")]
+    public void Default_RelatedTextFunction_DoesNotInheritLifecycle(string name)
+        => Assert.That(FunctionCatalog.Default.Find(name)?.Deprecated, Is.False);
+
     [Test]
     public void LifecycleAttribute_Values_ExposesDeprecationMetadata()
     {

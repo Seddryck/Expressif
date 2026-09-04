@@ -18,6 +18,10 @@ generated: true
 
 {{ model.summary }}
 
+{{ if model.deprecated }}
+> **Deprecated:** Use `{{ model.replacement }}` instead. This function is planned for removal in Expressif {{ model.sunset }}.
+{{ end }}
+
 ## Parameters
 
 {{ if model.parameters.size == 0 }}

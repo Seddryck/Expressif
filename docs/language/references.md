@@ -109,8 +109,8 @@ This changing context matters when a later reference starts with `.`. For exampl
 ```expressif
 @customer
 | .lastName
-| append(", ")
-| append(.firstName)
+| suffix(", ")
+| suffix(.firstName)
 ```
 
 After `.lastName`, the current object is the last-name text, not the customer record. The `.firstName` reference therefore tries to find `firstName` on that text value.
@@ -120,8 +120,8 @@ Refer to the context variable again when the value must be read from the origina
 ```expressif
 @customer
 | .lastName
-| append(", ")
-| append(@customer.firstName)
+| suffix(", ")
+| suffix(@customer.firstName)
 ```
 
 If `lastName` is `"Doe"` and `firstName` is `"Jane"`, the result is:
@@ -138,8 +138,8 @@ For example, when the customer record is the input of the expression:
 
 ```expressif
 .lastName
-| append(", ")
-| append(^.firstName)
+| suffix(", ")
+| suffix(^.firstName)
 ```
 
 After `.lastName`, the current value is the last-name text. The expression root is still the customer record, so `^.firstName` can read its `firstName` field and the expression produces `"Doe, Jane"`.
@@ -149,7 +149,7 @@ flowchart LR
     A["expression root<br>customer record"] --> B[".lastName"]
     B --> C["current value<br>last-name text"]
     A --> D["^.firstName"]
-    C --> E[append]
+    C --> E[suffix]
     D --> E
 ```
 

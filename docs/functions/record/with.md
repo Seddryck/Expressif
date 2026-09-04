@@ -40,7 +40,7 @@ Evaluates named projections independently against the input, then evaluates a bo
 
 {% raw %}
 ```expressif
-{firstName := "John", lastName := "Doe"} | with(last-name := .lastName, first-name := .firstName, .last-name | append(", ") | append(.first-name)) → "Doe, John"
+{firstName := "John", lastName := "Doe"} | with(last-name := .lastName, first-name := .firstName, .last-name | suffix(", ") | suffix(.first-name)) → "Doe, John"
 ```
 {% endraw %}
 

@@ -26,7 +26,7 @@ The key question is always:
 
 That supplied value becomes the nested expression's input/root. Within one expression, pipeline stages change the current value without changing that root. A nested expression creates a new boundary: `^` refers to its input, not to the input of the outer expression.
 
-For example, in `map(.value | upper | append(^.label))`, `.value` and `upper` change the current value, while `^.label` reads `label` from the collection item that entered the nested expression and appends it to that uppercase value.
+For example, in `map(.value | upper | suffix(^.label))`, `.value` and `upper` change the current value, while `^.label` reads `label` from the collection item that entered the nested expression and appends it to that uppercase value.
 
 ```mermaid
 flowchart TD
