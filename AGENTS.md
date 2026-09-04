@@ -139,9 +139,14 @@ For every pull-request or `main` pipeline in a version-sensitive integration, ac
 2. Locate the `calculate-version` job, or the repository's equivalent GitVersion job.
 3. Monitor that job until it completes.
 4. Read the calculated version from its outputs or logs.
-5. Compare it immediately with the approved version for that exact SHA.
+5. Compare it immediately with the approved version for that exact SHA, accounting for the pipeline context as described below.
 
-A successful job conclusion is not enough. The calculated version itself MUST equal the expected version.
+A successful job conclusion is not enough. In a `main` pipeline, the calculated version MUST equal the approved version exactly. In a pull-request pipeline, GitVersion may append its normal `PullRequest` prerelease label and counter to the approved `main`-tip version. This is not a version mismatch when the version that was simulated with the same commit as an actual `main` tip is the exact base version of the pull-request result. For example, these results agree:
+
+* simulated as an actual `main` tip: `2.33.0`;
+* pull-request CI: `2.33.0-PullRequest913.3`.
+
+Do not require the pull-request suffix to appear in the approved SHA-to-version table. Compare the pull-request result's base version with the approved `main`-tip version, and treat any other difference as a mismatch.
 
 If the CI-calculated version differs from the expected version:
 
@@ -163,7 +168,7 @@ Do not advance `main` from one planned tip to the next until all of the followin
 
 * `main` points to the exact approved SHA;
 * CI ran against that exact SHA;
-* the CI version-calculation output equals the approved version;
+* the CI version-calculation output equals the approved version, or, for pull-request CI, differs only by the permitted `PullRequest` prerelease suffix described above;
 * the associated pull request is marked `MERGED` when a pull request is part of the plan;
 * all required non-version checks have completed according to the user's approved exception list;
 * no branch, pull-request head, base, tag, or remote tip has diverged from the approved graph.
