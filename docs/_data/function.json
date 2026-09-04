@@ -4244,6 +4244,19 @@
     ]
   },
   {
+    "Name": "text-to-uri",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns the input text escaped as URI data using UTF-8 percent encoding. Preserves `null`, empty, and blank inputs.",
+    "Parameters": [],
+    "Examples": [
+      "\"café & tea\" | text-to-uri → \"caf%C3%A9%20%26%20tea\""
+    ]
+  },
+  {
     "Name": "title-case",
     "IsPublic": true,
     "Aliases": [
@@ -4465,6 +4478,19 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | upper → \"HELLO WORLD\""
+    ]
+  },
+  {
+    "Name": "uri-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/encoding",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Returns text by unescaping one layer of URI percent encoding. Preserves `null`, empty, and blank inputs.",
+    "Parameters": [],
+    "Examples": [
+      "\"caf%C3%A9%20%26%20tea\" | uri-to-text → \"café & tea\""
     ]
   },
   {

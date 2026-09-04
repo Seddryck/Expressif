@@ -1,0 +1,36 @@
+suite: text
+kind: function
+operator: uri-to-text
+tests:
+  - id: uri-to-text.valid
+    cases:
+      - id: uri-to-text.valid.text.unreserved
+        value: AZaz09-._~
+        expected: AZaz09-._~
+      - id: uri-to-text.valid.text.space-and-reserved
+        value: "a%2Fb%3Fx%3Dhello%20world%26y%3D1%2B2"
+        expected: "a/b?x=hello world&y=1+2"
+      - id: uri-to-text.valid.text.non-ascii
+        value: caf%C3%A9
+        expected: café
+      - id: uri-to-text.valid.text.supplementary
+        value: "%F0%9F%98%80"
+        expected: 😀
+      - id: uri-to-text.valid.text.literal-plus
+        value: "one+two"
+        expected: "one+two"
+      - id: uri-to-text.valid.text.single-pass
+        value: "%2520"
+        expected: "%20"
+      - id: uri-to-text.valid.text.malformed
+        value: "%ZZ"
+        expected: "%ZZ"
+      - id: uri-to-text.valid.text.empty
+        value: (empty)
+        expected: (empty)
+      - id: uri-to-text.valid.text.null
+        value: (null)
+        expected: (null)
+      - id: uri-to-text.valid.text.blank
+        value: (blank)
+        expected: (blank)

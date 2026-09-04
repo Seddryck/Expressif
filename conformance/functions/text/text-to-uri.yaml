@@ -1,0 +1,30 @@
+suite: text
+kind: function
+operator: text-to-uri
+tests:
+  - id: text-to-uri.valid
+    cases:
+      - id: text-to-uri.valid.text.unreserved
+        value: AZaz09-._~
+        expected: AZaz09-._~
+      - id: text-to-uri.valid.text.space-and-reserved
+        value: "a/b?x=hello world&y=1+2"
+        expected: "a%2Fb%3Fx%3Dhello%20world%26y%3D1%2B2"
+      - id: text-to-uri.valid.text.non-ascii
+        value: café
+        expected: caf%C3%A9
+      - id: text-to-uri.valid.text.supplementary
+        value: 😀
+        expected: "%F0%9F%98%80"
+      - id: text-to-uri.valid.text.already-escaped
+        value: "%20"
+        expected: "%2520"
+      - id: text-to-uri.valid.text.empty
+        value: (empty)
+        expected: (empty)
+      - id: text-to-uri.valid.text.null
+        value: (null)
+        expected: (null)
+      - id: text-to-uri.valid.text.blank
+        value: (blank)
+        expected: (blank)

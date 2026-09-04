@@ -206,6 +206,14 @@ public class TextFunctionsTest
         => Assert.That(new HtmlToText().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
+    public void TextToUri_Valid(object? value, object? expected)
+        => Assert.That(new TextToUri().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void UriToText_Valid(object? value, object? expected)
+        => Assert.That(new UriToText().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
     public void WithoutDiacritics_Valid(object value, object expected)
         => Assert.That(new WithoutDiacritics().Evaluate(value), Is.EqualTo(expected));
 
