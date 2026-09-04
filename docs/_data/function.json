@@ -3547,7 +3547,7 @@
     "Behavior": "Decodes one layer of JSON string escaping, including control-character escapes and valid Unicode escape sequences. The input is fragment content without surrounding JSON quotation marks.",
     "Parameters": [],
     "Examples": [
-      "\"He said \\\"hello\\\"\" | json-escaped-to-text → \"He said \\\"hello\\\"\""
+      "\"He said \\\\\\\"hello\\\\\\\"\" | json-escaped-to-text → \"He said \\\"hello\\\"\""
     ]
   },
   {

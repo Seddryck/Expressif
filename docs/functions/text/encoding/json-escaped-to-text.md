@@ -39,7 +39,7 @@ Decodes one layer of JSON string escaping, including control-character escapes a
 
 {% raw %}
 ```expressif
-"He said \"hello\"" | json-escaped-to-text → "He said \"hello\""
+"He said \\\"hello\\\"" | json-escaped-to-text → "He said \"hello\""
 ```
 {% endraw %}
 
