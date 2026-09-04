@@ -1,0 +1,32 @@
+{% for member in include.catalog %}
+  {% if member.IsPublic and member.Deprecated %}
+    {% assign member_scope = member.Scope | downcase %}
+    {% capture member_path %}/{{ include.kind_plural }}/{{ member_scope }}/{{ member.Name }}/{% endcapture %}
+    <tr data-kind="{{ include.kind | downcase }}" data-name="{{ member.Name }}" data-replacement="{{ member.Replacement }}" data-sunset="{{ member.Sunset }}">
+      <td>{{ include.kind }}</td>
+      <td><a href="{{ member_path | relative_url }}"><code>{{ member.Name }}</code></a></td>
+      <td>
+        {% if member.Replacement %}
+          {% assign replacements = include.catalog | where: "Name", member.Replacement %}
+          {% assign replacement = replacements | first %}
+          {% if replacement %}
+            {% assign replacement_scope = replacement.Scope | downcase %}
+            {% capture replacement_path %}/{{ include.kind_plural }}/{{ replacement_scope }}/{{ replacement.Name }}/{% endcapture %}
+            <a href="{{ replacement_path | relative_url }}"><code>{{ replacement.Name }}</code></a>
+          {% else %}
+            <code>{{ member.Replacement }}</code>
+          {% endif %}
+        {% else %}
+          <span aria-label="No replacement specified">—</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if member.Sunset %}
+          Expressif {{ member.Sunset }}
+        {% else %}
+          Not scheduled
+        {% endif %}
+      </td>
+    </tr>
+  {% endif %}
+{% endfor %}
