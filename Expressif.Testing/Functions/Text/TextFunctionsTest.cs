@@ -214,6 +214,38 @@ public class TextFunctionsTest
         => Assert.That(new UriToText().Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
+    public void TextToJsonEscaped_Valid(object? value, object? expected)
+        => Assert.That(new TextToJsonEscaped().Evaluate(value), Is.EqualTo(expected));
+
+    [Test]
+    public void TextToJsonEscaped_InvalidUtf16_ReturnsNull()
+        => Assert.That(new TextToJsonEscaped().Evaluate("\uD800"), Is.Null);
+
+    [Conformance]
+    public void JsonEscapedToText_Valid(object? value, object? expected)
+        => Assert.That(new JsonEscapedToText().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void JsonEscapedToText_Invalid(object? value, object? expected)
+        => Assert.That(new JsonEscapedToText().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TextToXmlEscaped_Valid(object? value, object? expected)
+        => Assert.That(new TextToXmlEscaped().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void TextToXmlEscaped_Invalid(object? value, object? expected)
+        => Assert.That(new TextToXmlEscaped().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void XmlEscapedToText_Valid(object? value, object? expected)
+        => Assert.That(new XmlEscapedToText().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void XmlEscapedToText_Invalid(object? value, object? expected)
+        => Assert.That(new XmlEscapedToText().Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
     public void WithoutDiacritics_Valid(object value, object expected)
         => Assert.That(new WithoutDiacritics().Evaluate(value), Is.EqualTo(expected));
 

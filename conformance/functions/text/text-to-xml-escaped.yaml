@@ -1,0 +1,32 @@
+suite: text
+kind: function
+operator: text-to-xml-escaped
+tests:
+  - id: text-to-xml-escaped.valid
+    cases:
+      - id: text-to-xml-escaped.valid.text.ordinary
+        value: café 😀
+        expected: café 😀
+      - id: text-to-xml-escaped.valid.text.markup
+        value: 'A & B < C > D'
+        expected: 'A &amp; B &lt; C &gt; D'
+      - id: text-to-xml-escaped.valid.text.quotes
+        value: '"double" and ''single'''
+        expected: '"double" and ''single'''
+      - id: text-to-xml-escaped.valid.text.already-escaped
+        value: '&amp;'
+        expected: '&amp;amp;'
+      - id: text-to-xml-escaped.valid.text.empty
+        value: (empty)
+        expected: (empty)
+      - id: text-to-xml-escaped.valid.text.null
+        value: (null)
+        expected: (null)
+      - id: text-to-xml-escaped.valid.text.blank
+        value: (blank)
+        expected: (blank)
+  - id: text-to-xml-escaped.invalid
+    cases:
+      - id: text-to-xml-escaped.invalid.text.control-character
+        value: "\u0001"
+        expected:

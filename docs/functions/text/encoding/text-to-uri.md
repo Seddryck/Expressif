@@ -3,7 +3,7 @@ layout: docs
 title: "text-to-uri"
 parent: "Encoding functions"
 grand_parent: "Text functions"
-nav_order: 30
+nav_order: 50
 has_toc: false
 permalink: /functions/text/encoding/text-to-uri/
 tags:

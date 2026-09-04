@@ -3,7 +3,7 @@ layout: docs
 title: "text-to-html"
 parent: "Encoding functions"
 grand_parent: "Text functions"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/text/encoding/text-to-html/
 tags:

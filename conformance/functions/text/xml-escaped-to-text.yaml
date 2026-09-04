@@ -1,0 +1,41 @@
+suite: text
+kind: function
+operator: xml-escaped-to-text
+tests:
+  - id: xml-escaped-to-text.valid
+    cases:
+      - id: xml-escaped-to-text.valid.text.ordinary
+        value: café 😀
+        expected: café 😀
+      - id: xml-escaped-to-text.valid.text.predefined-entities
+        value: '&amp;&lt;&gt;&quot;&apos;'
+        expected: '&<>"'''
+      - id: xml-escaped-to-text.valid.text.numeric-decimal
+        value: '&#233;'
+        expected: é
+      - id: xml-escaped-to-text.valid.text.numeric-hexadecimal
+        value: '&#x1F600;'
+        expected: 😀
+      - id: xml-escaped-to-text.valid.text.single-pass
+        value: '&amp;amp;'
+        expected: '&amp;'
+      - id: xml-escaped-to-text.valid.text.empty
+        value: (empty)
+        expected: (empty)
+      - id: xml-escaped-to-text.valid.text.null
+        value: (null)
+        expected: (null)
+      - id: xml-escaped-to-text.valid.text.blank
+        value: (blank)
+        expected: (blank)
+  - id: xml-escaped-to-text.invalid
+    cases:
+      - id: xml-escaped-to-text.invalid.text.unknown-entity
+        value: '&unknown;'
+        expected:
+      - id: xml-escaped-to-text.invalid.text.incomplete-entity
+        value: '&amp'
+        expected:
+      - id: xml-escaped-to-text.invalid.text.raw-element
+        value: '<element />'
+        expected:
