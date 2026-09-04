@@ -1,0 +1,21 @@
+suite: text
+kind: function
+operator: prefix-space-if-missing
+tests:
+  - id: prefix-space-if-missing.valid
+    cases:
+      - id: prefix-space-if-missing.valid.text.missing
+        value: Hello
+        expected: ' Hello'
+      - id: prefix-space-if-missing.valid.text.present
+        value: ' Hello'
+        expected: ' Hello'
+      - id: prefix-space-if-missing.valid.text.trailing-only
+        value: 'Hello '
+        expected: ' Hello '
+      - id: prefix-space-if-missing.valid.special.empty
+        value: (empty)
+        expected: ' '
+      - id: prefix-space-if-missing.valid.special.null
+        value: (null)
+        expected: (null)

@@ -1,0 +1,21 @@
+suite: text
+kind: function
+operator: prefix-new-line-if-missing
+tests:
+  - id: prefix-new-line-if-missing.valid
+    cases:
+      - id: prefix-new-line-if-missing.valid.text.missing
+        value: Hello
+        expected: "\r\nHello"
+      - id: prefix-new-line-if-missing.valid.text.present
+        value: "\r\nHello"
+        expected: "\r\nHello"
+      - id: prefix-new-line-if-missing.valid.text.lf-only
+        value: "\nHello"
+        expected: "\r\n\nHello"
+      - id: prefix-new-line-if-missing.valid.special.empty
+        value: (empty)
+        expected: "\r\n"
+      - id: prefix-new-line-if-missing.valid.special.null
+        value: (null)
+        expected: (null)

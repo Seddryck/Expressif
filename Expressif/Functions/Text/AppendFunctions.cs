@@ -55,6 +55,49 @@ public class Suffix : BaseTextAppend
     protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
 }
 
+[Scope("text/concatenation")]
+public abstract class BaseTextAffixIfMissing : BaseTextFunction
+{
+    protected string Affix { get; }
+
+    protected BaseTextAffixIfMissing(string affix)
+        => Affix = affix;
+
+    protected override object EvaluateEmpty() => Affix;
+
+    protected override object? EvaluateHighLevelString(string value)
+    {
+        if (new Empty().Equals(value))
+            return EvaluateEmpty();
+
+        if (new Null().Equals(value))
+            return EvaluateNull();
+
+        if (value.StartsWith('(') && value.EndsWith(')'))
+            return EvaluateSpecial(value);
+
+        return EvaluateString(value);
+    }
+}
+
+public abstract class BasePrefixIfMissing : BaseTextAffixIfMissing
+{
+    protected BasePrefixIfMissing(string prefix)
+        : base(prefix) { }
+
+    protected override object EvaluateString(string value)
+        => value.StartsWith(Affix, StringComparison.Ordinal) ? value : $"{Affix}{value}";
+}
+
+public abstract class BaseSuffixIfMissing : BaseTextAffixIfMissing
+{
+    protected BaseSuffixIfMissing(string suffix)
+        : base(suffix) { }
+
+    protected override object EvaluateString(string value)
+        => value.EndsWith(Affix, StringComparison.Ordinal) ? value : $"{value}{Affix}";
+}
+
 /// <summary>
 /// Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
@@ -100,6 +143,24 @@ public class SuffixSpace : Suffix
 }
 
 /// <summary>
+/// Prefixes the argument with a space character unless it already starts with one. Preserves `null`.
+/// </summary>
+public class PrefixSpaceIfMissing : BasePrefixIfMissing
+{
+    public PrefixSpaceIfMissing()
+        : base(" ") { }
+}
+
+/// <summary>
+/// Suffixes the argument with a space character unless it already ends with one. Preserves `null`.
+/// </summary>
+public class SuffixSpaceIfMissing : BaseSuffixIfMissing
+{
+    public SuffixSpaceIfMissing()
+        : base(" ") { }
+}
+
+/// <summary>
 /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
 public class AppendSpace : Append
@@ -137,6 +198,24 @@ public class SuffixNewLine : Suffix
 {
     public SuffixNewLine()
         : base(() => Environment.NewLine) { }
+}
+
+/// <summary>
+/// Prefixes the argument with a CRLF sequence unless it already starts with CRLF. Preserves `null`.
+/// </summary>
+public class PrefixNewLineIfMissing : BasePrefixIfMissing
+{
+    public PrefixNewLineIfMissing()
+        : base("\r\n") { }
+}
+
+/// <summary>
+/// Suffixes the argument with a CRLF sequence unless it already ends with CRLF. Preserves `null`.
+/// </summary>
+public class SuffixNewLineIfMissing : BaseSuffixIfMissing
+{
+    public SuffixNewLineIfMissing()
+        : base("\r\n") { }
 }
 
 /// <summary>

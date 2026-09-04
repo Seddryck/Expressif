@@ -1,0 +1,21 @@
+suite: text
+kind: function
+operator: suffix-space-if-missing
+tests:
+  - id: suffix-space-if-missing.valid
+    cases:
+      - id: suffix-space-if-missing.valid.text.missing
+        value: Hello
+        expected: 'Hello '
+      - id: suffix-space-if-missing.valid.text.present
+        value: 'Hello '
+        expected: 'Hello '
+      - id: suffix-space-if-missing.valid.text.leading-only
+        value: ' Hello'
+        expected: ' Hello '
+      - id: suffix-space-if-missing.valid.special.empty
+        value: (empty)
+        expected: ' '
+      - id: suffix-space-if-missing.valid.special.null
+        value: (null)
+        expected: (null)

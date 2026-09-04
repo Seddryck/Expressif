@@ -4013,6 +4013,22 @@
     ]
   },
   {
+    "Name": "prefix-new-line-if-missing",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-prefix-new-line-if-missing"
+    ],
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Prefixes the argument with a CRLF sequence unless it already starts with CRLF. Preserves `null`.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | prefix-new-line-if-missing → \"\\r\\nHello World\"",
+      "\"\\r\\nHello World\" | prefix-new-line-if-missing → \"\\r\\nHello World\""
+    ]
+  },
+  {
     "Name": "prefix-space",
     "IsPublic": true,
     "Aliases": [
@@ -4025,6 +4041,22 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prefix-space → \" Hello World\""
+    ]
+  },
+  {
+    "Name": "prefix-space-if-missing",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-prefix-space-if-missing"
+    ],
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Prefixes the argument with a space character unless it already starts with one. Preserves `null`.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | prefix-space-if-missing → \" Hello World\"",
+      "\" Hello World\" | prefix-space-if-missing → \" Hello World\""
     ]
   },
   {
@@ -4354,6 +4386,22 @@
     ]
   },
   {
+    "Name": "suffix-new-line-if-missing",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-suffix-new-line-if-missing"
+    ],
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Suffixes the argument with a CRLF sequence unless it already ends with CRLF. Preserves `null`.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | suffix-new-line-if-missing → \"Hello World\\r\\n\"",
+      "\"Hello World\\r\\n\" | suffix-new-line-if-missing → \"Hello World\\r\\n\""
+    ]
+  },
+  {
     "Name": "suffix-space",
     "IsPublic": true,
     "Aliases": [
@@ -4366,6 +4414,22 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | suffix-space → \"Hello World \""
+    ]
+  },
+  {
+    "Name": "suffix-space-if-missing",
+    "IsPublic": true,
+    "Aliases": [
+      "text-to-suffix-space-if-missing"
+    ],
+    "Scope": "text/concatenation",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Suffixes the argument with a space character unless it already ends with one. Preserves `null`.",
+    "Parameters": [],
+    "Examples": [
+      "\"Hello World\" | suffix-space-if-missing → \"Hello World \"",
+      "\"Hello World \" | suffix-space-if-missing → \"Hello World \""
     ]
   },
   {

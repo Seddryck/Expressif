@@ -44,6 +44,16 @@ public class AppendFunctionsTest
             , Is.EqualTo(expected));
 
     [Conformance]
+    public void PrefixSpaceIfMissing_Valid(string value, string expected)
+        => Assert.That(new PrefixSpaceIfMissing().Evaluate(value)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void SuffixSpaceIfMissing_Valid(string value, string expected)
+        => Assert.That(new SuffixSpaceIfMissing().Evaluate(value)
+            , Is.EqualTo(expected));
+
+    [Conformance]
     public void PrependSpace_Valid(string value, string expected)
         => Assert.That(new PrependSpace().Evaluate(value)
             , Is.EqualTo(expected));
@@ -70,6 +80,16 @@ public class AppendFunctionsTest
     public void SuffixNewLine_Valid(string value, string expected)
         => Assert.That(new SuffixNewLine().Evaluate(value)
             , Is.EqualTo(expected.Replace("#NewLine#", Environment.NewLine)));
+
+    [Conformance]
+    public void PrefixNewLineIfMissing_Valid(string value, string expected)
+        => Assert.That(new PrefixNewLineIfMissing().Evaluate(value)
+            , Is.EqualTo(expected));
+
+    [Conformance]
+    public void SuffixNewLineIfMissing_Valid(string value, string expected)
+        => Assert.That(new SuffixNewLineIfMissing().Evaluate(value)
+            , Is.EqualTo(expected));
 
     [Test]
     [TestCase("123456789", "#NewLine#123456789")]

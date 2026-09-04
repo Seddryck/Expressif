@@ -1,0 +1,21 @@
+suite: text
+kind: function
+operator: suffix-new-line-if-missing
+tests:
+  - id: suffix-new-line-if-missing.valid
+    cases:
+      - id: suffix-new-line-if-missing.valid.text.missing
+        value: Hello
+        expected: "Hello\r\n"
+      - id: suffix-new-line-if-missing.valid.text.present
+        value: "Hello\r\n"
+        expected: "Hello\r\n"
+      - id: suffix-new-line-if-missing.valid.text.lf-only
+        value: "Hello\n"
+        expected: "Hello\n\r\n"
+      - id: suffix-new-line-if-missing.valid.special.empty
+        value: (empty)
+        expected: "\r\n"
+      - id: suffix-new-line-if-missing.valid.special.null
+        value: (null)
+        expected: (null)
