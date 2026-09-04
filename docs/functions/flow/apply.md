@@ -45,7 +45,7 @@ Evaluates an expression with the input value as its current context.
 ```expressif
 T(10, 20) | apply($0 | add($1)) → 30
 T(2, 3) | apply(5 | power($0) | add(2) | nth-root($1)) → 3
-{firstName := "John", lastName := "Doe"} | apply(.firstName | append-space | append(.lastName)) → "John Doe"
+{firstName := "John", lastName := "Doe"} | apply(.firstName | append-space | suffix(.lastName)) → "John Doe"
 {1, 2, 3, 4} | apply(zip(lag | lag)) → {T(1, #null), T(2, #null), T(3, 1), T(4, 2)}
 ```
 {% endraw %}

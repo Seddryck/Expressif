@@ -58,6 +58,7 @@ public class Suffix : BaseTextAppend
 /// <summary>
 /// Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
+[FunctionLifecycle("suffix", "3.0")]
 public class Append : BaseTextAppendNonNullable
 {
     /// <param name="text">The text to append</param>
@@ -69,6 +70,7 @@ public class Append : BaseTextAppendNonNullable
 /// <summary>
 /// Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
+[FunctionLifecycle("prefix", "3.0")]
 public class Prepend : BaseTextAppendNonNullable
 {
     /// <param name="text">The text to prepend</param>

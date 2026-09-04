@@ -7,17 +7,17 @@ tests:
       - id: with.valid.text.same-input
         value: { firstName: John, lastName: Doe }
         parameters:
-          - 'with(last-name := .lastName, first-name := .firstName, .last-name | append(", ") | append(.first-name))'
+          - 'with(last-name := .lastName, first-name := .firstName, .last-name | suffix(", ") | suffix(.first-name))'
         expected: Doe, John
       - id: with.valid.text.independent
         value: { name: Alice }
         parameters:
-          - 'with(name := .name | upper, original := .name, .name | append(" / ") | append(.original))'
+          - 'with(name := .name | upper, original := .name, .name | suffix(" / ") | suffix(.original))'
         expected: ALICE / Alice
       - id: with.valid.text.nested
         value: { firstName: John, lastName: Doe }
         parameters:
-          - 'with(person := record(first := .firstName, last := .lastName), with(first := .person | field(first), last := .person | field(last), .first | append(" ") | append(.last)))'
+          - 'with(person := record(first := .firstName, last := .lastName), with(first := .person | field(first), last := .person | field(last), .first | suffix(" ") | suffix(.last)))'
         expected: John Doe
   - id: with.valid.numeric
     cases:

@@ -361,7 +361,7 @@
     "Examples": [
       "T(10, 20) | apply($0 | add($1)) → 30",
       "T(2, 3) | apply(5 | power($0) | add(2) | nth-root($1)) → 3",
-      "{firstName := \"John\", lastName := \"Doe\"} | apply(.firstName | append-space | append(.lastName)) → \"John Doe\"",
+      "{firstName := \"John\", lastName := \"Doe\"} | apply(.firstName | append-space | suffix(.lastName)) → \"John Doe\"",
       "{1, 2, 3, 4} | apply(zip(lag | lag)) → {T(1, #null), T(2, #null), T(3, 1), T(4, 2)}"
     ]
   },
@@ -1750,7 +1750,7 @@
       }
     ],
     "Examples": [
-      "{firstName := \"John\", lastName := \"Doe\"} | with(last-name := .lastName, first-name := .firstName, .last-name | append(\", \") | append(.first-name)) → \"Doe, John\""
+      "{firstName := \"John\", lastName := \"Doe\"} | with(last-name := .lastName, first-name := .firstName, .last-name | suffix(\", \") | suffix(.first-name)) → \"Doe, John\""
     ]
   },
   {
@@ -3420,6 +3420,10 @@
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
+    "Deprecated": true,
+    "Replacement": "suffix",
+    "Sunset": "3.0",
+    "Behavior": "Deprecated in favor of `suffix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix` preserves `null`. Use `null-to-empty | suffix(...)` to retain the existing behavior for null input.",
     "Parameters": [
       {
         "Name": "text",
@@ -4033,6 +4037,10 @@
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.",
+    "Deprecated": true,
+    "Replacement": "prefix",
+    "Sunset": "3.0",
+    "Behavior": "Deprecated in favor of `prefix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix` preserves `null`. Use `null-to-empty | prefix(...)` to retain the existing behavior for null input.",
     "Parameters": [
       {
         "Name": "text",

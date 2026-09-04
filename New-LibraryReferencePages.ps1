@@ -207,6 +207,9 @@ foreach ($categoryScope in @($rootScopes) + @($categoryScopes)) {
     $memberRows = foreach ($categoryMember in $categoryMembers) {
         $memberScope = ([string] $categoryMember.Scope).ToLowerInvariant()
         $memberSummary = ([string] $categoryMember.Summary) -replace '\|', '\|' -replace '[\r\n]+', ' '
+        if ($null -ne $categoryMember.PSObject.Properties["Deprecated"] -and [bool] $categoryMember.Deprecated) {
+            $memberSummary = "**Deprecated.** $memberSummary"
+        }
         $memberUrl = "/$kindPlural/$memberScope/$($categoryMember.Name)/"
         "| [``$($categoryMember.Name)``]({{ '$memberUrl' | relative_url }}) | $memberSummary |"
     }
@@ -344,6 +347,10 @@ foreach ($member in $members) {
         $behavior = [string] $member.Behavior
     }
 
+    $deprecated = $null -ne $member.PSObject.Properties["Deprecated"] -and [bool] $member.Deprecated
+    $replacement = if ($null -ne $member.PSObject.Properties["Replacement"]) { [string] $member.Replacement } else { "" }
+    $sunset = if ($null -ne $member.PSObject.Properties["Sunset"]) { [string] $member.Sunset } else { "" }
+
     $inputType = ""
     if ($null -ne $member.PSObject.Properties["Input"]) {
         $inputType = [string] $member.Input
@@ -425,6 +432,9 @@ foreach ($member in $members) {
         has_contract        = $hasContract
         signature           = $signatureLines -join "`n"
         summary             = [string] $member.Summary
+        deprecated          = $deprecated
+        replacement         = $replacement
+        sunset              = $sunset
         behavior            = $behavior
         has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
         parameters          = $parameters

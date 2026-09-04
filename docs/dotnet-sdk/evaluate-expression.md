@@ -36,7 +36,7 @@ See [Expressions](../../language/expressions/) for the Expressif pipeline and fu
 Variables hold values that are not part of the input itself, such as a user preference or application setting. Create the expression first, then attach an `EvaluationContext` containing those values:
 
 ```csharp
-var expression = Expression.Create("append(@suffix)");
+var expression = Expression.Create("suffix(@suffix)");
 
 var context = new EvaluationContext(
     new Dictionary<string, object?>
@@ -54,7 +54,7 @@ var result = configuredExpression.Evaluate("Hello");
 `WithContext(...)` returns a new expression. It does not modify the original one. This lets the application reuse one parsed expression with different immutable contexts:
 
 ```csharp
-var expression = Expression.Create("append(@suffix)");
+var expression = Expression.Create("suffix(@suffix)");
 
 var excited = expression.WithContext(new EvaluationContext(
     new Dictionary<string, object?> { ["suffix"] = "!" }
@@ -75,7 +75,7 @@ var second = questioning.Evaluate("Really"); // "Really?"
 Pass a structured value directly to `Evaluate(...)`. Expressif can read fields from dictionaries and supported .NET objects:
 
 ```csharp
-var formatName = Expression.Create(".name | trim | append(^.suffix)");
+var formatName = Expression.Create(".name | trim | suffix(^.suffix)");
 
 var input = new Dictionary<string, object?>
 {
