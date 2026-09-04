@@ -56,6 +56,10 @@ jobs:
         working-directory: docs
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
 
+      - name: Validate language deprecations
+        shell: pwsh
+        run: ./Test-LanguageDeprecationPage.ps1
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
