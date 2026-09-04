@@ -36,8 +36,8 @@ This function has no parameters.
 
 {% raw %}
 ```expressif
-"Hello World" | suffix-new-line-if-missing → "Hello World\r\n"
-"Hello World\r\n" | suffix-new-line-if-missing → "Hello World\r\n"
+"Hello World" | suffix-new-line-if-missing → "Hello World" | suffix-new-line
+"Hello World" | suffix-new-line | suffix-new-line-if-missing → "Hello World" | suffix-new-line
 ```
 {% endraw %}
 

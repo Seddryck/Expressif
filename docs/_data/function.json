@@ -4024,8 +4024,8 @@
     "Summary": "Prefixes the argument with a CRLF sequence unless it already starts with CRLF. Preserves `null`.",
     "Parameters": [],
     "Examples": [
-      "\"Hello World\" | prefix-new-line-if-missing → \"\\r\\nHello World\"",
-      "\"\\r\\nHello World\" | prefix-new-line-if-missing → \"\\r\\nHello World\""
+      "\"Hello World\" | prefix-new-line-if-missing → \"Hello World\" | prefix-new-line",
+      "\"Hello World\" | prefix-new-line | prefix-new-line-if-missing → \"Hello World\" | prefix-new-line"
     ]
   },
   {
@@ -4397,8 +4397,8 @@
     "Summary": "Suffixes the argument with a CRLF sequence unless it already ends with CRLF. Preserves `null`.",
     "Parameters": [],
     "Examples": [
-      "\"Hello World\" | suffix-new-line-if-missing → \"Hello World\\r\\n\"",
-      "\"Hello World\\r\\n\" | suffix-new-line-if-missing → \"Hello World\\r\\n\""
+      "\"Hello World\" | suffix-new-line-if-missing → \"Hello World\" | suffix-new-line",
+      "\"Hello World\" | suffix-new-line | suffix-new-line-if-missing → \"Hello World\" | suffix-new-line"
     ]
   },
   {

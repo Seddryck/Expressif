@@ -36,8 +36,8 @@ This function has no parameters.
 
 {% raw %}
 ```expressif
-"Hello World" | prefix-new-line-if-missing → "\r\nHello World"
-"\r\nHello World" | prefix-new-line-if-missing → "\r\nHello World"
+"Hello World" | prefix-new-line-if-missing → "Hello World" | prefix-new-line
+"Hello World" | prefix-new-line | prefix-new-line-if-missing → "Hello World" | prefix-new-line
 ```
 {% endraw %}
 
