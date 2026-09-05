@@ -3,7 +3,7 @@ layout: docs
 title: "zip-strict"
 parent: "Combination functions"
 grand_parent: "Array functions"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /functions/array/combination/zip-strict/
 tags:
@@ -20,6 +20,8 @@ zip-strict(
 ```
 
 Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array.
+
+
 
 ## Parameters
 

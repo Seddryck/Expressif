@@ -3,7 +3,7 @@ layout: docs
 title: "zip-padded"
 parent: "Combination functions"
 grand_parent: "Array functions"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/array/combination/zip-padded/
 tags:
@@ -20,6 +20,8 @@ zip-padded(
 ```
 
 Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.
+
+
 
 ## Parameters
 

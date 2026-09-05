@@ -52,6 +52,14 @@ public class ZipTest
 }
 
 [TestFixture]
+public class ZipCycleTest
+{
+    [Conformance]
+    public void ZipCycle_Valid_Array(object? value, object?[] array, object? expected)
+        => Assert.That(new ZipCycle(() => array).Evaluate(value), Is.EqualTo(expected));
+}
+
+[TestFixture]
 public class ZipPaddedTest
 {
     [Conformance]

@@ -1,0 +1,46 @@
+suite: array
+kind: function
+operator: zip-cycle
+tests:
+  - id: zip-cycle.valid.array
+    cases:
+      - id: zip-cycle.valid.array.empty.both
+        value: []
+        parameters:
+          - []
+        expected: []
+      - id: zip-cycle.valid.array.empty.left
+        value: []
+        parameters:
+          - [a, b]
+        expected:
+      - id: zip-cycle.valid.array.empty.right
+        value: [1, 2]
+        parameters:
+          - []
+        expected:
+      - id: zip-cycle.valid.array.values.equal-length
+        value: [1, 2]
+        parameters:
+          - [a, b]
+        expected: [[1, a], [2, b]]
+      - id: zip-cycle.valid.array.values.left-longer
+        value: [1, 2, 3, 4]
+        parameters:
+          - [a, b]
+        expected: [[1, a], [2, b], [3, a], [4, b]]
+      - id: zip-cycle.valid.array.values.right-longer
+        value: [1, 2]
+        parameters:
+          - [a, b, c]
+        expected: [[1, a], [2, b], [1, c]]
+      - id: zip-cycle.valid.array.values.singleton-right
+        value: [100, 200, 300]
+        parameters:
+          - [250]
+        expected: [[100, 250], [200, 250], [300, 250]]
+      - id: zip-cycle.valid.array.values.preserve-null
+        value: [1, null, 3]
+        parameters:
+          - [null, b]
+        expected: [[1, null], [null, b], [3, null]]
