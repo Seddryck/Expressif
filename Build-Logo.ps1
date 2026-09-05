@@ -5,6 +5,30 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$buildStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+$timings = [System.Collections.Generic.List[object]]::new()
+
+function Invoke-TimedStep {
+    param(
+        [Parameter(Mandatory)][string] $Name,
+        [Parameter(Mandatory)][scriptblock] $Action
+    )
+
+    Write-Host "[logo] $Name..."
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+
+    try {
+        & $Action
+    }
+    finally {
+        $stopwatch.Stop()
+        $timings.Add([pscustomobject]@{
+            Step = $Name
+            Duration = $stopwatch.Elapsed
+        })
+        Write-Host ("[logo] {0} completed in {1:N2} s" -f $Name, $stopwatch.Elapsed.TotalSeconds)
+    }
+}
 
 if (Get-Command magick -ErrorAction SilentlyContinue) {
     $convertCommand = 'magick'
@@ -131,6 +155,8 @@ New-Item -ItemType Directory -Path $temporaryPath -Force | Out-Null
 
 try {
     foreach ($paletteName in $palettes.Keys) {
+        $paletteStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+        Write-Host "[logo] Building '$paletteName' palette..."
         $palette = $palettes[$paletteName]
         $palettePath = Join-Path $temporaryPath $paletteName
         New-Item -ItemType Directory -Path $palettePath -Force | Out-Null
@@ -141,29 +167,37 @@ try {
         $steam = Join-Path $palettePath 'steam.png'
         $text = Join-Path $palettePath 'text.png'
 
-        New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/circle.png') -Color $palette.Background -Destination $circle
-        New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/cup.png') -Color $palette.Structure -Destination $cup
-        New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/liquid.png') -Color $palette.Accent -Destination $liquid
-        New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/steam.png') -Color $palette.Accent -Destination $steam
-        New-ColoredLayer -Source (Join-Path $sourceDirectory 'text.png') -Color $palette.Accent -Destination $text
+        Invoke-TimedStep "Recolor $paletteName layers" {
+            New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/circle.png') -Color $palette.Background -Destination $circle
+            New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/cup.png') -Color $palette.Structure -Destination $cup
+            New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/liquid.png') -Color $palette.Accent -Destination $liquid
+            New-ColoredLayer -Source (Join-Path $sourceDirectory 'layers/steam.png') -Color $palette.Accent -Destination $steam
+            New-ColoredLayer -Source (Join-Path $sourceDirectory 'text.png') -Color $palette.Accent -Destination $text
+        }
 
         $iconComposition = Join-Path $palettePath 'icon.png'
         $logoComposition = Join-Path $palettePath 'logo.png'
         $backgroundIconComposition = Join-Path $palettePath 'icon-background.png'
         $backgroundLogoComposition = Join-Path $palettePath 'logo-background.png'
-        New-Composition -Layers @($cup, $liquid, $steam) -Destination $iconComposition
-        New-Composition -Layers @($cup, $liquid, $steam, $text) -Destination $logoComposition
-        New-Composition -Layers @($circle, $cup, $liquid, $steam) -Destination $backgroundIconComposition
-        New-Composition -Layers @($circle, $cup, $liquid, $steam, $text) -Destination $backgroundLogoComposition
-
-        foreach ($size in $iconSizes) {
-            New-ResizedPng -Source $iconComposition -Size $size -Destination (Join-Path $outputPath "expressif-icon-$paletteName-$size.png")
-            New-ResizedPng -Source $backgroundIconComposition -Size $size -Destination (Join-Path $outputPath "expressif-icon-background-$paletteName-$size.png")
+        Invoke-TimedStep "Compose $paletteName source images" {
+            New-Composition -Layers @($cup, $liquid, $steam) -Destination $iconComposition
+            New-Composition -Layers @($cup, $liquid, $steam, $text) -Destination $logoComposition
+            New-Composition -Layers @($circle, $cup, $liquid, $steam) -Destination $backgroundIconComposition
+            New-Composition -Layers @($circle, $cup, $liquid, $steam, $text) -Destination $backgroundLogoComposition
         }
 
-        foreach ($size in $logoSizes) {
-            New-ResizedPng -Source $logoComposition -Size $size -Destination (Join-Path $outputPath "expressif-logo-$paletteName-$size.png")
-            New-ResizedPng -Source $backgroundLogoComposition -Size $size -Destination (Join-Path $outputPath "expressif-logo-background-$paletteName-$size.png")
+        Invoke-TimedStep "Resize $paletteName icons ($($iconSizes -join ', ') px)" {
+            foreach ($size in $iconSizes) {
+                New-ResizedPng -Source $iconComposition -Size $size -Destination (Join-Path $outputPath "expressif-icon-$paletteName-$size.png")
+                New-ResizedPng -Source $backgroundIconComposition -Size $size -Destination (Join-Path $outputPath "expressif-icon-background-$paletteName-$size.png")
+            }
+        }
+
+        Invoke-TimedStep "Resize $paletteName logos ($($logoSizes -join ', ') px)" {
+            foreach ($size in $logoSizes) {
+                New-ResizedPng -Source $logoComposition -Size $size -Destination (Join-Path $outputPath "expressif-logo-$paletteName-$size.png")
+                New-ResizedPng -Source $backgroundLogoComposition -Size $size -Destination (Join-Path $outputPath "expressif-logo-background-$paletteName-$size.png")
+            }
         }
 
         $iconFrames = @(
@@ -174,59 +208,68 @@ try {
             Join-Path $outputPath "expressif-icon-background-$paletteName-16.png"
         )
         $iconDestination = Join-Path $outputPath "expressif-$paletteName.ico"
-        Invoke-ImageMagick ($iconFrames + $iconDestination)
+        Invoke-TimedStep "Create $paletteName Windows icon" {
+            Invoke-ImageMagick ($iconFrames + $iconDestination)
+        }
+
+        $paletteStopwatch.Stop()
+        Write-Host ("[logo] Palette '{0}' finished in {1:N2} s" -f $paletteName, $paletteStopwatch.Elapsed.TotalSeconds)
     }
 
-    Copy-Item `
-        -LiteralPath (Join-Path $outputPath 'expressif-dark.ico') `
-        -Destination (Join-Path $outputPath 'favicon.ico') `
-        -Force
+    Invoke-TimedStep 'Copy favicon' {
+        Copy-Item `
+            -LiteralPath (Join-Path $outputPath 'expressif-dark.ico') `
+            -Destination (Join-Path $outputPath 'favicon.ico') `
+            -Force
+    }
 
     if ($Version) {
         if ($Version.IndexOfAny([System.IO.Path]::GetInvalidFileNameChars()) -ge 0) {
             throw "Version '$Version' contains characters that are invalid in a file name."
         }
 
-        $archivePath = Join-Path $outputPath "expressif-branding-$Version.zip"
-        Remove-Item -LiteralPath $archivePath -Force -ErrorAction SilentlyContinue
-        $archiveStream = [System.IO.File]::Open($archivePath, [System.IO.FileMode]::CreateNew)
-
-        try {
-            $archive = [System.IO.Compression.ZipArchive]::new(
-                $archiveStream,
-                [System.IO.Compression.ZipArchiveMode]::Create,
-                $false
-            )
+        Invoke-TimedStep "Create version $Version archive" {
+            $archivePath = Join-Path $outputPath "expressif-branding-$Version.zip"
+            Remove-Item -LiteralPath $archivePath -Force -ErrorAction SilentlyContinue
+            $archiveStream = [System.IO.File]::Open($archivePath, [System.IO.FileMode]::CreateNew)
 
             try {
-                $brandingFiles = Get-ChildItem -LiteralPath $outputPath -File |
-                    Where-Object Extension -In @('.png', '.ico') |
-                    Sort-Object Name
+                $archive = [System.IO.Compression.ZipArchive]::new(
+                    $archiveStream,
+                    [System.IO.Compression.ZipArchiveMode]::Create,
+                    $false
+                )
 
-                foreach ($brandingFile in $brandingFiles) {
-                    $entry = $archive.CreateEntry(
-                        $brandingFile.Name,
-                        [System.IO.Compression.CompressionLevel]::Optimal
-                    )
-                    $entry.LastWriteTime = [System.DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [System.TimeSpan]::Zero)
-                    $entryStream = $entry.Open()
-                    $sourceStream = $brandingFile.OpenRead()
+                try {
+                    $brandingFiles = Get-ChildItem -LiteralPath $outputPath -File |
+                        Where-Object Extension -In @('.png', '.ico') |
+                        Sort-Object Name
 
-                    try {
-                        $sourceStream.CopyTo($entryStream)
+                    foreach ($brandingFile in $brandingFiles) {
+                        $entry = $archive.CreateEntry(
+                            $brandingFile.Name,
+                            [System.IO.Compression.CompressionLevel]::Optimal
+                        )
+                        $entry.LastWriteTime = [System.DateTimeOffset]::new(1980, 1, 1, 0, 0, 0, [System.TimeSpan]::Zero)
+                        $entryStream = $entry.Open()
+                        $sourceStream = $brandingFile.OpenRead()
+
+                        try {
+                            $sourceStream.CopyTo($entryStream)
+                        }
+                        finally {
+                            $sourceStream.Dispose()
+                            $entryStream.Dispose()
+                        }
                     }
-                    finally {
-                        $sourceStream.Dispose()
-                        $entryStream.Dispose()
-                    }
+                }
+                finally {
+                    $archive.Dispose()
                 }
             }
             finally {
-                $archive.Dispose()
+                $archiveStream.Dispose()
             }
-        }
-        finally {
-            $archiveStream.Dispose()
         }
     }
 }
@@ -235,5 +278,15 @@ finally {
         Remove-Item -LiteralPath $temporaryPath -Recurse -Force
     }
 }
+
+$buildStopwatch.Stop()
+Write-Host ''
+Write-Host '[logo] Timing report'
+$timings |
+    Sort-Object Duration -Descending |
+    Format-Table Step, @{ Label = 'Seconds'; Expression = { $_.Duration.TotalSeconds.ToString('N2') }; Align = 'Right' } |
+    Out-Host
+Write-Host ("[logo] Total elapsed: {0:N2} s" -f $buildStopwatch.Elapsed.TotalSeconds)
+Write-Host "[logo] Output: $outputPath"
 
 Write-Output $outputPath
