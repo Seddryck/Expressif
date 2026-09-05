@@ -279,6 +279,26 @@
     ]
   },
   {
+    "Name": "xnor",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": "boolean",
+    "Output": "boolean",
+    "Summary": "Returns the negation of the exclusive disjunction of the Boolean input and a secondary Boolean expression. Always evaluates the secondary expression after the input.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "boolean",
+        "Optional": false,
+        "Summary": "Specifies the secondary Boolean expression evaluated after the input."
+      }
+    ],
+    "Examples": [
+      "#true | xnor(#true) → #true"
+    ]
+  },
+  {
     "Name": "is-code-point",
     "IsPublic": true,
     "Aliases": [

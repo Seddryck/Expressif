@@ -161,3 +161,20 @@ public class Nor : BasePredicate
     public override bool Evaluate(object? value)
         => Negation.Evaluate(Disjunction.Evaluate(value));
 }
+
+/// <summary>
+/// Returns the negation of the exclusive disjunction of the Boolean input and a secondary Boolean expression. Always evaluates the secondary expression after the input.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class Xnor : BasePredicate
+{
+    private Xor ExclusiveDisjunction { get; }
+    private Not Negation { get; } = new();
+
+    /// <param name="expression">Specifies the secondary Boolean expression evaluated after the input.</param>
+    public Xnor(Func<bool> expression)
+        => ExclusiveDisjunction = new(() => expression.Invoke());
+
+    public override bool Evaluate(object? value)
+        => Negation.Evaluate(ExclusiveDisjunction.Evaluate(value));
+}
