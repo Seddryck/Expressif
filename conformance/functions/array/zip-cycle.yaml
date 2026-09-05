@@ -13,12 +13,12 @@ tests:
         value: []
         parameters:
           - [a, b]
-        expected: []
+        expected:
       - id: zip-cycle.valid.array.empty.right
         value: [1, 2]
         parameters:
           - []
-        expected: []
+        expected:
       - id: zip-cycle.valid.array.values.equal-length
         value: [1, 2]
         parameters:

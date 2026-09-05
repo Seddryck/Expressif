@@ -59,7 +59,7 @@ public sealed class Zip : BaseZipFunction
 }
 
 /// <summary>
-/// Combines values from two arrays into two-element tuples until the longer array is exhausted, cycling each non-empty shorter array from its beginning. Returns an empty array when either input is empty and `null` when either value cannot be evaluated as an array.
+/// Combines values from two arrays into two-element tuples until the longer array is exhausted, cycling each non-empty shorter array from its beginning. Returns an empty array when both inputs are empty and `null` when exactly one input is empty or either value cannot be evaluated as an array.
 /// </summary>
 [Function(prefix: "")]
 public sealed class ZipCycle : BaseZipFunction
@@ -68,12 +68,14 @@ public sealed class ZipCycle : BaseZipFunction
     public ZipCycle(Func<object?[]> array)
         : base(array) { }
 
-    protected override object EvaluateZip(IEnumerable left, IEnumerable right)
+    protected override object? EvaluateZip(IEnumerable left, IEnumerable right)
     {
         var leftValues = left.Cast<object?>().ToArray();
         var rightValues = right.Cast<object?>().ToArray();
-        if (leftValues.Length == 0 || rightValues.Length == 0)
+        if (leftValues.Length == 0 && rightValues.Length == 0)
             return System.Array.Empty<Expressif.Values.Tuple>();
+        if (leftValues.Length == 0 || rightValues.Length == 0)
+            return null;
 
         return Enumerable.Range(0, Math.Max(leftValues.Length, rightValues.Length))
             .Select(index => new Expressif.Values.Tuple(

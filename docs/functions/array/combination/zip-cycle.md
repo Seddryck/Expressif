@@ -19,7 +19,7 @@ zip-cycle(
 ) → array
 ```
 
-Combines values from two arrays into two-element tuples until the longer array is exhausted, cycling each non-empty shorter array from its beginning. Returns an empty array when either input is empty and `null` when either value cannot be evaluated as an array.
+Combines values from two arrays into two-element tuples until the longer array is exhausted, cycling each non-empty shorter array from its beginning. Returns an empty array when both inputs are empty and `null` when exactly one input is empty or either value cannot be evaluated as an array.
 
 
 
@@ -37,7 +37,7 @@ Combines values from two arrays into two-element tuples until the longer array i
 
 ## Behavior
 
-Both inputs are materialized once. When both arrays are non-empty, the result has the cardinality of the longer array and indexes each input cyclically. If either array is empty, the result is empty.
+Both inputs are materialized once. When both arrays are non-empty, the result has the cardinality of the longer array and indexes each input cyclically. Two empty inputs produce an empty array; exactly one empty input produces `null` because no value is available to cycle.
 
 
 
