@@ -1717,9 +1717,18 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
             Assert.That(result.StdOut, Does.Contain("help"));
+            Assert.That(result.StdOut, Does.Contain("repl"));
             Assert.That(result.StdOut, Does.Contain("version"));
             Assert.That(result.StdErr, Is.Empty);
         });
+    }
+
+    [Test]
+    public async Task Repl_EndOfInput_ReturnsSuccessCode()
+    {
+        var result = await InvokeAsync("repl");
+
+        Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
     }
 
     [Test]
@@ -1988,6 +1997,7 @@ public class CliCommandTests
                 new RunHandler(expressions, values, textFiles, sources),
                 new ValidateHandler(expressions),
                 new HelpHandler(new FunctionCatalogService(FunctionCatalog.Default)),
+                () => new ReplHost(new ReplSession(expressions), new EndOfInputReplTerminal()),
                 textFiles);
             var exitCode = await CliInvoker.InvokeAsync(args, composition);
             return new InvocationResult(exitCode, stdout.ToString(), stderr.ToString());
@@ -2008,6 +2018,13 @@ public class CliCommandTests
     }
 
     private sealed record InvocationResult(int ExitCode, string StdOut, string StdErr);
+
+    private sealed class EndOfInputReplTerminal : IReplTerminal
+    {
+        public string? ReadLine(string prompt, CancellationToken cancellationToken) => null;
+        public void WriteResult(string value) { }
+        public void WriteError(string message) { }
+    }
 
     private sealed class FakeFileSourceProvider(Func<string, object?> resolve) : IFileSourceProvider
     {
