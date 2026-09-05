@@ -239,6 +239,26 @@
     ]
   },
   {
+    "Name": "nor",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": "boolean",
+    "Output": "boolean",
+    "Summary": "Returns the negation of the logical disjunction of the Boolean input and a secondary Boolean expression. Evaluates the secondary expression only when the input is `false`.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "boolean",
+        "Optional": false,
+        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `false`."
+      }
+    ],
+    "Examples": [
+      "#false | nor(#false) → #true"
+    ]
+  },
+  {
     "Name": "xor",
     "IsPublic": true,
     "Aliases": [],

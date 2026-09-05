@@ -3,7 +3,7 @@ layout: docs
 title: "or"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /predicates/boolean/or/
 tags:

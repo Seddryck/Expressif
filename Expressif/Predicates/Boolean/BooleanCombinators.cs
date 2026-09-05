@@ -144,3 +144,20 @@ public class Nand : BasePredicate
     public override bool Evaluate(object? value)
         => Negation.Evaluate(Conjunction.Evaluate(value));
 }
+
+/// <summary>
+/// Returns the negation of the logical disjunction of the Boolean input and a secondary Boolean expression. Evaluates the secondary expression only when the input is `false`.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class Nor : BasePredicate
+{
+    private Or Disjunction { get; }
+    private Not Negation { get; } = new();
+
+    /// <param name="expression">Specifies the secondary Boolean expression evaluated when the input is `false`.</param>
+    public Nor(Func<bool> expression)
+        => Disjunction = new(() => expression.Invoke());
+
+    public override bool Evaluate(object? value)
+        => Negation.Evaluate(Disjunction.Evaluate(value));
+}
