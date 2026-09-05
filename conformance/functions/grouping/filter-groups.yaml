@@ -1,0 +1,28 @@
+suite: filter-groups
+kind: function
+operator: filter-groups
+tests:
+  - id: filter-groups.valid.groups
+    cases:
+      - id: filter-groups.valid.groups.key
+        value: (null)
+        parameters: ['#{("BE" => {1, 2}), ("FR" => {3})} | filter-groups($key | is-equivalent-to("FR"))']
+        expected: '#{("FR" => {3})}'
+      - id: filter-groups.valid.groups.values
+        value: (null)
+        parameters: ['#{("BE" => {1, 2}), ("FR" => {3})} | filter-groups($value | cardinality | greater-than-or-equal(2))']
+        expected: '#{("BE" => {1, 2})}'
+      - id: filter-groups.valid.groups.no-match
+        value: (null)
+        parameters: ['#{("BE" => {1}), ("FR" => {2})} | filter-groups($value | cardinality | greater-than(5))']
+        expected: '#{}'
+      - id: filter-groups.valid.groups.alias
+        value: (null)
+        parameters: ['#{("BE" => {1}), ("FR" => {2})} | having($key | is-equivalent-to("FR"))']
+        expected: '#{("FR" => {2})}'
+  - id: filter-groups.valid.empty
+    cases:
+      - id: filter-groups.valid.empty.grouping
+        value: (null)
+        parameters: ['#{} | filter-groups($value | cardinality | greater-than(0))']
+        expected: '#{}'
