@@ -423,6 +423,13 @@ jobs:
           -p:Version=${{ needs.calculate-version.outputs.semver }}
           -p:ContinuousIntegrationBuild=true
 
+      - name: Validate CLI tool package settings
+        if: matrix.artifact == 'expressif-cli-nuget-package'
+        shell: pwsh
+        run: >-
+          ./.github/scripts/Test-CliToolPackages.ps1
+          -PackageDirectory Expressif.Cli/bin/Release
+
       - name: Upload package artifacts
         uses: actions/upload-artifact@v7
         with:

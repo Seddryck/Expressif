@@ -10,6 +10,9 @@
     <ToolCommandName>expressif</ToolCommandName>
     <PackageId>Expressif-cli</PackageId>
     <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-musl-x64</RuntimeIdentifiers>
+    <!-- The .NET 10.0.400 SDK adds identical pointer settings once per TFM. -->
+    <!-- Package validation confirms that NuGet retains one valid copy. -->
+    <NoWarn>$(NoWarn);NU5118</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
