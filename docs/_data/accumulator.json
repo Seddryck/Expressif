@@ -65,6 +65,32 @@
     ]
   },
   {
+    "Name": "implode",
+    "IsPublic": true,
+    "Aliases": [
+      "implode"
+    ],
+    "Scope": "Text",
+    "Input": "text",
+    "Output": "text",
+    "Summary": "Combines accumulated text values in source order, inserting the separator only between values.",
+    "Behavior": "The separator defaults to the empty string. Empty input returns empty text. Empty values still participate in separator placement, and accumulating `null` is invalid.",
+    "Parameters": [
+      {
+        "Name": "separator",
+        "Type": "text",
+        "Optional": true,
+        "Default": "",
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the text inserted between consecutive accumulated values."
+      }
+    ],
+    "Examples": [
+      "{\"a\", \"b\", \"c\"} | implode(\"-\") → \"a-b-c\""
+    ]
+  },
+  {
     "Name": "max",
     "IsPublic": true,
     "Aliases": [

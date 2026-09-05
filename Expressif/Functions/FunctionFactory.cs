@@ -339,9 +339,20 @@ public class FunctionFactory : BaseExpressionFactory
             "adjacent" => BuildAdjacentFunction(function, context),
             "chunk-while" => BuildChunkWhileFunction(function, context),
             "generate" => BuildGenerateFunction(function, context),
+            "implode" => BuildImplodeFunction(function, context),
             "reduce" => BuildReduceFunction(function, context),
             _ => null,
         };
+
+    private IFunction BuildImplodeFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(ImplodeAccumulator), function.Arguments).Parameters;
+        if (bound.Length == 0)
+            return new Fold(() => new ImplodeAccumulator());
+
+        var separator = (Func<string>)CreateParameter(bound[0], typeof(string), context);
+        return new Fold(() => new ImplodeAccumulator(separator));
+    }
 
     private IFunction BuildReduceFunction(Bindings.Function function, IContext context)
     {
