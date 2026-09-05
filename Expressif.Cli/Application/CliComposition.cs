@@ -12,6 +12,7 @@ internal sealed record CliComposition(
     RunHandler Run,
     ValidateHandler Validate,
     HelpHandler Help,
+    Func<ReplHost> Repl,
     IStrictUtf8TextReader TextFiles)
 {
     public static CliComposition CreateDefault()
@@ -36,6 +37,7 @@ internal sealed record CliComposition(
             new RunHandler(expressions, values, textFiles, sources),
             new ValidateHandler(expressions),
             new HelpHandler(new FunctionCatalogService(FunctionCatalog.Default)),
+            () => new ReplHost(new ReplSession(expressions), new ConsoleReplTerminal()),
             textFiles);
     }
 }

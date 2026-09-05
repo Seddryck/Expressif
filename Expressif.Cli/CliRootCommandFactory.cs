@@ -17,6 +17,7 @@ internal static class CliRootCommandFactory
         rootCommand.Subcommands.Add(RunCommand.Create(composition.Run));
         rootCommand.Subcommands.Add(ValidateCommand.Create(composition.Validate, composition.TextFiles));
         rootCommand.Subcommands.Add(HelpCommand.Create(composition.Help));
+        rootCommand.Subcommands.Add(ReplCommand.Create(composition.Repl));
         rootCommand.Subcommands.Add(VersionCommand.Create());
 
         return rootCommand;
