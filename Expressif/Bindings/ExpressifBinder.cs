@@ -125,7 +125,7 @@ public sealed class ExpressifBinder
     private static void ValidateCoerceInput(Function function, Type inputType)
     {
         var specifications = function.Parameters.Cast<CoercionSpecificationParameter>().ToArray();
-        if (typeof(Values.TupleValue).IsAssignableFrom(inputType))
+        if (typeof(Values.IPositionalValue).IsAssignableFrom(inputType))
         {
             if (specifications.Any(specification => specification is FieldCoercionParameter))
                 throw new BindingException("Tuple input requires tuple-position selectors.");

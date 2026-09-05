@@ -92,7 +92,7 @@ internal static class ExpressifTypeMapper
             return "year-month";
         if (type == typeof(Weekday))
             return "weekday";
-        if (type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
+        if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
         if (type == typeof(PairValue) || type == typeof(Expressif.Values.Pair))
             return "pair";

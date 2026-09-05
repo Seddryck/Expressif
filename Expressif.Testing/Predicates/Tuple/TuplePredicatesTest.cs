@@ -26,6 +26,13 @@ public class TuplePredicatesTest
     public void Pair_TupleSemantics_ComposeThroughBinding(string source, bool expected)
         => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(expected));
 
+    [TestCase("(\"USA\" => 42) | $0", "USA")]
+    [TestCase("(\"USA\" => 42) | $1", 42)]
+    [TestCase("(\"USA\" => 42) | $^1", 42)]
+    [TestCase("(\"USA\" => 42) | $^2", "USA")]
+    public void Pair_PositionalProjection_ReturnsExpected(string source, object expected)
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(expected));
+
     [Test]
     public void Group_IsTuple_ComposesThroughMap()
         => Assert.That(

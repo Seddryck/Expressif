@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Expressif.Types;
 
 namespace Expressif.Values;
@@ -8,28 +7,30 @@ namespace Expressif.Values;
 /// Represents an immutable key/value association and specialized tuple of arity two.
 /// </summary>
 [ExpressifType(Parent = "tuple", LiteralSyntax = "Key and value expressions separated by => and enclosed in parentheses", LiteralExamples = ["(\"BE\" => 42)"])]
-public class PairValue : TupleValue, IEquatable<PairValue>
+public class PairValue : IEquatable<PairValue>, IExpressifValueType, IPositionalValue
 {
-    private static readonly IEqualityComparer StructuralComparer = StructuralComparisons.StructuralEqualityComparer;
-
     public PairValue(object? key, object? value)
-        : base(key, value) { }
+        => (Key, Value) = (key, value);
 
-    public object? Key => this[0];
-    public object? Value => this[1];
+    public object? Key { get; }
+    public object? Value { get; }
+    public int Arity => 2;
+    public object? GetPosition(int index)
+        => index switch
+        {
+            0 => Key,
+            1 => Value,
+            _ => throw new ArgumentOutOfRangeException(nameof(index)),
+        };
 
     public bool Equals(PairValue? other)
-        => other is not null
-            && StructuralComparer.Equals(Key, other.Key)
-            && StructuralComparer.Equals(Value, other.Value);
+        => other is not null && PositionalValueEquality.Equals(this, other);
 
     public override bool Equals(object? obj)
-        => obj is PairValue other && Equals(other);
+        => PositionalValueEquality.Equals(this, obj);
 
     public override int GetHashCode()
-        => HashCode.Combine(
-            Key is null ? 0 : StructuralComparer.GetHashCode(Key),
-            Value is null ? 0 : StructuralComparer.GetHashCode(Value));
+        => PositionalValueEquality.GetHashCode(this);
 
     public override string ToString()
         => ValueFormatter.Format(this);

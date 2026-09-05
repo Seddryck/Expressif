@@ -11,10 +11,10 @@ public sealed class Group : PairValue, IReadOnlyList<object?>
         : base(key, Materialize(values)) { }
 
     public IReadOnlyList<object?> Values => (IReadOnlyList<object?>)Value!;
-    public new int Count => Values.Count;
-    public new object? this[int index] => Values[index];
+    public int Count => Values.Count;
+    public object? this[int index] => Values[index];
 
-    public new IEnumerator<object?> GetEnumerator() => Values.GetEnumerator();
+    public IEnumerator<object?> GetEnumerator() => Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     private static object?[] Materialize(IEnumerable values)

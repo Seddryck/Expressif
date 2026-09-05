@@ -49,9 +49,9 @@ public class TupleFunctionsTest
         return source == "T()" ? new Expressif.Values.Tuple() : (TupleValue)Expression.CreateClosed(source).Evaluate(null)!;
     }
 
-    private static TupleValue ParseTupleLike(string value)
+    private static IPositionalValue ParseTupleLike(string value)
         => value.Contains("=>", StringComparison.Ordinal)
-            ? (TupleValue)Expression.CreateClosed(value).Evaluate(null)!
+            ? (IPositionalValue)Expression.CreateClosed(value).Evaluate(null)!
             : ParseTuple(value);
 
     private static string NormalizeTupleSyntax(string value)

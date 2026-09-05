@@ -49,9 +49,9 @@ public sealed class ParameterValueConverter
             {
                 if (value is null)
                     throw new SpreadArgumentException("Spread argument cannot be null.");
-                if (value is not TupleValue spread)
+                if (value is not IPositionalValue spread)
                     throw new SpreadArgumentException("Spread argument must evaluate to a tuple.");
-                values.AddRange(spread);
+                values.AddRange(Enumerable.Range(0, spread.Arity).Select(spread.GetPosition));
             }
             else
             {

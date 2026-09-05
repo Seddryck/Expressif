@@ -13,5 +13,6 @@ tests:
       - {id: coerce.valid.type-directed.tuple.selective-second, value: 'T("bob", "42")', parameters: ["coerce($1 -> :integer)"], expected: 'T("bob", 42)'}
       - {id: coerce.valid.type-directed.tuple.extra-positional, value: 'T("bob", "42")', parameters: ["coerce(:text, :integer, :boolean)"], expected: 'T("bob", 42)'}
       - {id: coerce.valid.type-directed.tuple.missing-position, value: 'T("bob", "42")', parameters: ["coerce($2 -> :integer)"], expected: 'T("bob", "42")'}
+      - {id: coerce.valid.type-directed.pair.tuple, value: '("USA" => 42)', parameters: ["coerce(:tuple)"], expected: 'T("USA", 42)'}
       - {id: coerce.valid.type-directed.record.selective, value: '{name := "bob", age := "42"}', parameters: ["coerce(age -> :integer)"], expected: '{name := "bob", age := 42}'}
       - {id: coerce.valid.type-directed.record.multiple, value: '{name := "bob", age := "42"}', parameters: ["coerce(name -> :text, age -> :integer)"], expected: '{name := "bob", age := 42}'}
