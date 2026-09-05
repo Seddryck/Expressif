@@ -3,7 +3,7 @@ layout: docs
 title: "grouping"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/grouping/grouping/
 tags:

@@ -2068,6 +2068,27 @@
     ]
   },
   {
+    "Name": "filter-groups",
+    "IsPublic": true,
+    "Aliases": ["having"],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "grouping",
+    "Summary": "Keeps whole groups whose group-level predicate evaluates to true.",
+    "Parameters": [
+      {
+        "Name": "predicate",
+        "Type": "predicate",
+        "Optional": false,
+        "Summary": "The predicate evaluated once against each group, with its key and value collection available."
+      }
+    ],
+    "Examples": [
+      "#{(\"BE\" => {1, 2}), (\"FR\" => {3})} | filter-groups($value | cardinality | greater-than(1)) → #{(\"BE\" => {1, 2})}",
+      "#{(\"BE\" => {1}), (\"FR\" => {2})} | having($key | is-equivalent-to(\"FR\")) → #{(\"FR\" => {2})}"
+    ]
+  },
+  {
     "Name": "grouping",
     "IsPublic": true,
     "Aliases": [],
