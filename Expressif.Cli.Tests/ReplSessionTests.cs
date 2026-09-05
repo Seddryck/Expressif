@@ -125,6 +125,22 @@ public class ReplSessionTests
         Assert.That(host.Run(), Is.EqualTo(ExitCodes.Success));
     }
 
+    [Test]
+    public async Task ConsoleTerminal_InterruptWhileReadIsPending_CancelsRead()
+    {
+        var input = new BlockingTextReader();
+        var interrupts = new FakeInterruptSource();
+        var terminal = new ConsoleReplTerminal(input, TextWriter.Null, TextWriter.Null, interrupts);
+        var read = Task.Run(() => terminal.ReadLine("> ", CancellationToken.None));
+        await input.ReadStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
+
+        interrupts.Interrupt();
+
+        Assert.That(
+            async () => await read.WaitAsync(TimeSpan.FromSeconds(2)),
+            Throws.TypeOf<OperationCanceledException>());
+    }
+
     private sealed class FakeTerminal : IReplTerminal
     {
         private readonly Queue<string?> lines;
@@ -148,6 +164,37 @@ public class ReplSessionTests
 
         public void WriteResult(string value) => Results.Add(value);
         public void WriteError(string message) => Errors.Add(message);
+    }
+
+    private sealed class BlockingTextReader : TextReader
+    {
+        private readonly TaskCompletionSource<string?> line = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource ReadStarted { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public override Task<string?> ReadLineAsync()
+        {
+            ReadStarted.SetResult();
+            return line.Task;
+        }
+    }
+
+    private sealed class FakeInterruptSource : IReplInterruptSource
+    {
+        private Action? interrupt;
+
+        public IDisposable Register(Action callback)
+        {
+            interrupt = callback;
+            return new Registration(() => interrupt = null);
+        }
+
+        public void Interrupt() => interrupt?.Invoke();
+
+        private sealed class Registration(Action unregister) : IDisposable
+        {
+            public void Dispose() => unregister();
+        }
     }
 
     private sealed class TrackingExpressionService : IExpressionService

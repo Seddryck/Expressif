@@ -11,6 +11,11 @@ internal interface IReplTerminal
     void WriteError(string message);
 }
 
+internal interface IReplInterruptSource
+{
+    IDisposable Register(Action interrupt);
+}
+
 internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
 {
     public int Run(CancellationToken cancellationToken = default)
@@ -35,15 +40,49 @@ internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
     }
 }
 
-internal sealed class ConsoleReplTerminal : IReplTerminal
+internal sealed class ConsoleReplTerminal(
+    TextReader input,
+    TextWriter output,
+    TextWriter error,
+    IReplInterruptSource interrupts) : IReplTerminal
 {
+    public ConsoleReplTerminal()
+        : this(Console.In, Console.Out, Console.Error, new ConsoleReplInterruptSource()) { }
+
     public string? ReadLine(string prompt, CancellationToken cancellationToken)
     {
-        Console.Out.Write(prompt);
-        return Console.In.ReadLineAsync(cancellationToken).AsTask().GetAwaiter().GetResult();
+        output.Write(prompt);
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        using var registration = interrupts.Register(cancellation.Cancel);
+        var read = input.ReadLineAsync();
+        var interrupted = Task.Delay(Timeout.InfiniteTimeSpan, cancellation.Token);
+        var completed = Task.WhenAny(read, interrupted).GetAwaiter().GetResult();
+        return completed == read
+            ? read.GetAwaiter().GetResult()
+            : throw new OperationCanceledException(cancellation.Token);
     }
 
-    public void WriteResult(string value) => Console.Out.WriteLine(value);
+    public void WriteResult(string value) => output.WriteLine(value);
 
-    public void WriteError(string message) => Console.Error.WriteLine(message);
+    public void WriteError(string message) => error.WriteLine(message);
+}
+
+internal sealed class ConsoleReplInterruptSource : IReplInterruptSource
+{
+    public IDisposable Register(Action interrupt)
+    {
+        ConsoleCancelEventHandler handler = (_, eventArgs) =>
+        {
+            eventArgs.Cancel = true;
+            interrupt();
+        };
+
+        Console.CancelKeyPress += handler;
+        return new Registration(() => Console.CancelKeyPress -= handler);
+    }
+
+    private sealed class Registration(Action unregister) : IDisposable
+    {
+        public void Dispose() => unregister();
+    }
 }
