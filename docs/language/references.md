@@ -206,10 +206,27 @@ A useful rule when reading or writing Expressif is:
 - `@!name` points to a constant supplied to the expression context;
 - `.field` starts from the current record;
 - `^.field` starts from the input/root of the current expression;
+- `^^.field` starts from the input/root of the enclosing expression;
 - `$n` addresses a zero-based position in the current tuple-like context;
 - `#n` reads a zero-based item from the persistent current object.
 
 This makes scope visible directly in the expression.
+
+## Enclosing expression roots
+
+A nested expression can read a field from the expression that contains it by using `^^.`. This is useful when an outer expression prepares a value that every nested collection item needs:
+
+```expressif
+with(
+    amounts := map(.amount),
+    threshold := map(.amount) | max | divide(2),
+    .amounts | filter(greater-than(^^.threshold)) | sum
+)
+```
+
+The body of `with(...)` receives the temporary record containing `amounts` and `threshold`. Inside `filter(...)`, `^.threshold` would look for `threshold` on the current amount because that amount is the filter expression's root. `^^.threshold` instead reads it from the enclosing `with(...)` body root.
+
+An enclosing-root reference uses a bare field name after `^^.`. When no enclosing expression exists, or its root does not contain the requested field, the reference evaluates to `null`.
 
 ## References are expressions
 

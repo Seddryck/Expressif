@@ -847,4 +847,32 @@ public class ExpressionTest
 
         Assert.That(result, Is.EqualTo(new object?[] { "first" }));
     }
+
+    [Test]
+    public void Evaluate_EnclosingRootFieldInsideFilter_UsesWithRecord()
+    {
+        var input = new object?[]
+        {
+            new Dictionary<string, object?> { ["amount"] = 10m },
+            new Dictionary<string, object?> { ["amount"] = 40m },
+            new Dictionary<string, object?> { ["amount"] = 30m },
+        };
+        var expression = Expression.Create("""
+            with(
+                amounts := map(.amount),
+                threshold := map(.amount) | max | divide(2),
+                .amounts | filter(greater-than(^^.threshold)) | sum
+            )
+            """);
+
+        Assert.That(expression.Evaluate(input), Is.EqualTo(70m));
+    }
+
+    [Test]
+    public void Evaluate_EnclosingRootFieldAsPipelineStage_UsesWithRecord()
+    {
+        var expression = Expression.Create("with(values := {1, 2}, threshold := 20, .values |> (^^.threshold))");
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(new object?[] { 20m, 20m }));
+    }
 }

@@ -30,6 +30,7 @@ public class ParameterSerializer
             LiteralParameter l => SerializeLiteral(l.Value),
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"[{op.Name}]",
+            EnclosingObjectPropertyParameter op => $"^^.{op.Name}",
             ObjectIndexParameter oi => $"#{oi.Index}",
             TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
             IntervalParameter interval => SerializeInterval(interval.Value),

@@ -33,6 +33,12 @@ public class FunctionSerializer
             return;
         }
 
+        if (function.Syntax == FunctionSyntax.EnclosingRootFieldShorthand)
+        {
+            stringBuilder.Append("^^.").Append(((QuotedLiteralParameter)function.Parameters.Single()).Value);
+            return;
+        }
+
         stringBuilder.Append(function.Name.ToKebabCase());
         if (function.Parameters.Any())
         {

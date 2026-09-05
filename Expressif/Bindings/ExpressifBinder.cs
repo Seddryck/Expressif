@@ -255,6 +255,8 @@ public sealed class ExpressifBinder
     private OpenExpression BindOpenRoot(RootExpressionSyntax syntax) => syntax switch
     {
         OpenExpressionSyntax open => BindOpen(open),
+        ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed
+            when access.RootDepth > 0 => BindRecordAccessExpression(closed, access),
         _ => throw Unsupported(syntax),
     };
 
@@ -608,12 +610,13 @@ public sealed class ExpressifBinder
 
     private static IParameter BindRecordAccessParameter(RecordAccessSyntax syntax)
     {
-        if (!syntax.IsOriginalInput || syntax.Fields.Count != 1)
+        if (syntax.RootDepth == 0 || syntax.Fields.Count != 1)
             throw new BindingException($"Record access '{syntax.Text}' cannot be used as a scalar parameter in this iteration.");
         var field = syntax.Fields.Single();
         return field switch
         {
-            { Name: string name } => new ObjectPropertyParameter(name),
+            { Name: string name } when syntax.RootDepth == 1 => new ObjectPropertyParameter(name),
+            { Name: string name } when syntax.RootDepth == 2 => new EnclosingObjectPropertyParameter(name),
             { Index: int index } => new ObjectIndexParameter(index),
             _ => throw InvalidRecordFieldSelector(syntax),
         };
@@ -633,13 +636,19 @@ public sealed class ExpressifBinder
         return new Function(
             "field",
             [new LiteralParameter(value)],
-            syntax.IsOriginalInput ? FunctionSyntax.RootFieldShorthand : FunctionSyntax.FieldShorthand);
+            syntax.RootDepth switch
+            {
+                0 => FunctionSyntax.FieldShorthand,
+                1 => FunctionSyntax.RootFieldShorthand,
+                2 => FunctionSyntax.EnclosingRootFieldShorthand,
+                _ => throw new BindingException($"Expression root depth '{syntax.RootDepth}' is not supported."),
+            });
     }
 
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)
         => new($"Record access '{syntax.Text}' contains neither a named nor positional field selector.");
     private static bool IsRelativeRecordAccess(RecordAccessSyntax syntax)
-        => !syntax.IsOriginalInput && syntax.Text.StartsWith('.');
+        => syntax.RootDepth == 0 && syntax.Text.StartsWith('.');
     private static BindingException Unsupported(SyntaxNode syntax)
         => new($"Syntax kind '{syntax.Kind}' is not bound in this iteration (source: '{syntax.Text}').");
 }

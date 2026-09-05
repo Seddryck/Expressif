@@ -91,7 +91,9 @@ internal static class SyntaxFactory
     public static RecordAccessSyntax RecordAccess(string name, bool original = true)
     {
         var text = $"{(original ? "^" : string.Empty)}.{name}";
-        return new(Span(text), text, original, [new RecordFieldSelector(name, null)]);
+        return ExpressionParser.Parse(text) is ClosedExpressionSyntax { Value: RecordAccessSyntax access }
+            ? access
+            : throw new InvalidOperationException($"'{text}' did not parse as record access.");
     }
 
     public static TupleProjectionSyntax TupleProjection(int index)
