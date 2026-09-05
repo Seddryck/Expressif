@@ -38,6 +38,30 @@ public class BooleanCombinatorsTest
     public void Implies_Valid_Expression(bool value, bool expression, bool expected)
         => Assert.That(new Implies(() => expression).Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void Majority_Zero(object? value, bool expected)
+        => Assert.That(new Majority([]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Majority_One(object? value, bool first, bool expected)
+        => Assert.That(new Majority([() => first]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Majority_Two(object? value, bool first, bool second, bool expected)
+        => Assert.That(new Majority([() => first, () => second]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Majority_Three(object? value, bool first, bool second, bool third, bool expected)
+        => Assert.That(new Majority([() => first, () => second, () => third]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Majority_Four(object? value, bool first, bool second, bool third, bool fourth, bool expected)
+        => Assert.That(new Majority([() => first, () => second, () => third, () => fourth]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Majority_Five(object? value, bool first, bool second, bool third, bool fourth, bool fifth, bool expected)
+        => Assert.That(new Majority([() => first, () => second, () => third, () => fourth, () => fifth]).Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void And_FalseInput_DoesNotEvaluateExpression()
         => Assert.That(
@@ -79,6 +103,18 @@ public class BooleanCombinatorsTest
         => Assert.That(
             () => new Implies(() => throw new InvalidOperationException()).Evaluate(false),
             Throws.Nothing);
+
+    [Test]
+    public void Majority_ResultKnown_DoesNotEvaluateRemainingPredicates()
+        => Assert.That(
+            () => new Majority([() => true, () => true, () => throw new InvalidOperationException()]).Evaluate(null),
+            Throws.Nothing);
+
+    [TestCase("majority()", 3, false)]
+    [TestCase("majority(is-positive)", 3, true)]
+    [TestCase("majority(is-positive, is-even, is-less-than(10))", 4, true)]
+    public void Majority_ParsedAndEvaluated(string code, object? value, bool expected)
+        => Assert.That(new Predication(code).Evaluate(value), Is.EqualTo(expected));
 
     [TestCase("and(#true)", true, true)]
     [TestCase("or(#false)", false, false)]

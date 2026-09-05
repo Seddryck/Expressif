@@ -45,6 +45,14 @@ public class PredicationFactory : BaseExpressionFactory
     internal IPredicate Instantiate(SinglePredication basic, IContext context)
     {
         var type = TypeMapper.Execute(basic.Member.Name);
+        if (type == typeof(Boolean.Majority))
+        {
+            if (basic.Member.Arguments.Any(argument => argument.Name is not null))
+                throw new UnknownParameterNameException(basic.Member.Name, basic.Member.Arguments.First(argument => argument.Name is not null).Name!);
+
+            return new Boolean.Majority(basic.Member.Parameters.Select(parameter
+                => (Func<bool>)CreateParameter(parameter, typeof(bool), context)));
+        }
         return Instantiate<IPredicate>(type, basic.Member.Arguments, context);
     }
 

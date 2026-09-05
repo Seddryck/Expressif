@@ -3,7 +3,7 @@ layout: docs
 title: "xnor"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /predicates/boolean/xnor/
 tags:

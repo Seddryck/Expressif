@@ -42,6 +42,7 @@ internal static class ExpressifTypeMapper
             [("TransformWith", "expressions")] = "expression",
             [("TransformAs", "operation")] = "expression",
             [("TransformAs", "expressions")] = "entry",
+            [("Majority", "predicates")] = "predicate",
         };
 
     public static string ToExpressifType(

@@ -199,3 +199,37 @@ public class Implies : BasePredicate
         return Expression.Invoke();
     }
 }
+
+/// <summary>
+/// Returns `true` when strictly more than half of the supplied predicates are satisfied by the input. Returns `false` when no predicates are supplied and stops evaluating as soon as the result is known.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class Majority : BasePredicate
+{
+    private Func<bool>[] Predicates { get; }
+
+    /// <param name="predicates">Specifies the predicate expressions evaluated against the same input value, in declaration order.</param>
+    public Majority(IEnumerable<Func<bool>> predicates)
+        => Predicates = predicates.ToArray();
+
+    public override bool Evaluate(object? value)
+    {
+        using var scope = EvaluationRuntime.Derive(value);
+        var required = (Predicates.Length / 2) + 1;
+        var satisfied = 0;
+        for (var index = 0; index < Predicates.Length; index++)
+        {
+            if (Predicates[index].Invoke())
+                satisfied++;
+
+            if (satisfied >= required)
+                return true;
+
+            var remaining = Predicates.Length - index - 1;
+            if (satisfied + remaining < required)
+                return false;
+        }
+
+        return false;
+    }
+}

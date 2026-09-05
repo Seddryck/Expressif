@@ -15,7 +15,7 @@ namespace Expressif.Testing.Predicates.Introspection;
 public class PredicateIntrospectorTest
 {
     private static readonly string[] BooleanCombinatorNames =
-        ["and", "or", "xor", "not", "nand", "nor", "xnor", "implies"];
+        ["and", "or", "xor", "not", "nand", "nor", "xnor", "implies", "majority"];
 
     private IEnumerable<PredicateInfo> Infos { get; set; }
 

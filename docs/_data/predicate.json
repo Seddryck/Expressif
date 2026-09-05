@@ -219,6 +219,28 @@
     ]
   },
   {
+    "Name": "majority",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": "any",
+    "Output": "boolean",
+    "Summary": "Returns `true` when strictly more than half of the supplied predicates are satisfied by the input. Returns `false` when no predicates are supplied and stops evaluating as soon as the result is known.",
+    "Parameters": [
+      {
+        "Name": "predicates",
+        "Type": "predicate",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+      }
+    ],
+    "Examples": [
+      "4 | majority(is-positive, is-even, is-less-than(10)) → #true"
+    ]
+  },
+  {
     "Name": "nand",
     "IsPublic": true,
     "Aliases": [],
