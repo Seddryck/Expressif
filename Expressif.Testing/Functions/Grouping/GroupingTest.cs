@@ -26,6 +26,14 @@ public class GroupingTest
     public void Summarize_Valid_Empty(object? input, string expression, string expected)
         => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
 
+    [Conformance]
+    public void MapGroups_Valid_Groups(object? input, string expression, string expected)
+        => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
+
+    [Conformance]
+    public void MapGroups_Valid_Empty(object? input, string expression, string expected)
+        => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
+
     [Test]
     public void Constructor_ConvertsPairsToGroupsAndPreservesOrder()
     {

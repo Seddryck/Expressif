@@ -64,6 +64,12 @@ public class ExpressionSerializer
                 Serialize(expression.Expression, ref stringBuilder);
                 stringBuilder.Append(')');
             }
+            else if (function.Syntax == FunctionSyntax.GroupMapShorthand)
+            {
+                stringBuilder.Append(" |#> ");
+                var expression = (OpenExpressionParameter)function.Parameters.Single();
+                Serialize(expression.Expression, ref stringBuilder);
+            }
             else
             {
                 stringBuilder.Append(" | ");

@@ -11,6 +11,17 @@ namespace Expressif.Testing.Serializers;
 public class ExpressionSerializerTest
 {
     [Test]
+    public void Serialize_GroupMapShorthand_PreservesShorthand()
+    {
+        var root = new ExpressifBinder().Bind(
+            Expressif.Syntax.ExpressionParser.Parse("@groups |#> reverse"));
+        var expression = ((ClosedRootExpression)root).Expression;
+
+        Assert.That(new ExpressionSerializer().Serialize(expression),
+            Is.EqualTo("@groups |#> reverse"));
+    }
+
+    [Test]
     public void Serialize_SingleMember_NoPipe()
     {
         var expression = new Function("Lower", []);

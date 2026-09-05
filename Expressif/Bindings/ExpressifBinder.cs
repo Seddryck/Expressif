@@ -276,6 +276,10 @@ public sealed class ExpressifBinder
 
     private Function BindPipelineMember(ExpressionSyntax syntax) => syntax switch
     {
+        FunctionCallSyntax { Name: "group-map-shorthand" } shorthand => Function.FromArguments(
+            "map-groups",
+            BindFunctionArguments(shorthand),
+            FunctionSyntax.GroupMapShorthand),
         FunctionCallSyntax call => BindFunction(call),
         TupleProjectionSyntax projection => new Function(
             "tuple-at",

@@ -1,0 +1,24 @@
+suite: map-groups
+kind: function
+operator: map-groups
+tests:
+  - id: map-groups.valid.groups
+    cases:
+      - id: map-groups.valid.groups.filtered
+        value: (null)
+        parameters: ['#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} | map-groups(filter(greater-than(10)))']
+        expected: '#{("BE" => {20, 30}), ("FR" => {15})}'
+      - id: map-groups.valid.groups.empty-preserved
+        value: (null)
+        parameters: ['#{("BE" => {10}), ("FR" => {20})} | map-groups(filter(greater-than(15)))']
+        expected: '#{("BE" => {}), ("FR" => {20})}'
+      - id: map-groups.valid.groups.shorthand
+        value: (null)
+        parameters: ['#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} |#> filter(greater-than(10))']
+        expected: '#{("BE" => {20, 30}), ("FR" => {15})}'
+  - id: map-groups.valid.empty
+    cases:
+      - id: map-groups.valid.empty.grouping
+        value: (null)
+        parameters: ['#{} | map-groups(reverse)']
+        expected: '#{}'
