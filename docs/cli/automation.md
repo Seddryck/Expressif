@@ -15,7 +15,7 @@ The CLI keeps successful values and diagnostics on separate streams so scripts c
 | Standard output | Evaluation results, one result per `run` row, validation confirmation, inspection documents, help, and versions. |
 | Standard error | Option and input errors, validation diagnostics, evaluation failures, and unexpected failures. |
 
-A successful `evaluate` writes exactly one formatted value followed by a newline. A successful `run` writes zero or more values, one per line. Neither command adds a `Result:` label.
+A successful `evaluate` writes exactly one formatted value followed by a newline. A successful `run` writes zero or more formatted values. Compact output occupies one line per result; `--output-style pretty` can span several lines. Neither command adds a `Result:` label.
 
 Keep both streams separate when consuming JSON, YAML, or result lines, and check the exit status before trusting captured standard output.
 
