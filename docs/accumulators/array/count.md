@@ -18,6 +18,8 @@ count()
 
 Counts the number of accumulated items, including `null` values.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This accumulator has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+{10, #null, 30} | fold(count) → 3
+```
+{% endraw %}
 
 
 **Kind:** Accumulator  

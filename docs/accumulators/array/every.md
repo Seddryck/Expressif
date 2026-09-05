@@ -18,6 +18,8 @@ every()
 
 Returns `true` only when every accumulated boolean value is `true`.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This accumulator has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+{#true, #true, #false} | fold(every) → #false
+```
+{% endraw %}
 
 
 **Kind:** Accumulator  

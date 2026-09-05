@@ -1,4 +1,5 @@
 using System;
+using Expressif.Functions;
 using Expressif.Values.Casters;
 
 namespace Expressif.Accumulators;
@@ -197,4 +198,54 @@ public class AnyAccumulator : BaseAccumulator
 
     public override object GetValue()
         => any;
+}
+
+/// <summary>
+/// Combines accumulated items in source order by evaluating an expression against the accumulated value and current item.
+/// </summary>
+/// <remarks>
+/// The expression receives a two-element tuple where <c>$0</c> is the accumulated value and <c>$1</c> is the current item.
+/// Without an initial value, the first item becomes the accumulated value. An empty input then returns <see langword="null"/>.
+/// </remarks>
+[Accumulator(prefix: "", aliases: ["reduce"])]
+public class ReduceAccumulator : BaseAccumulator
+{
+    private readonly Func<IFunction> operationProvider;
+    private readonly Func<object?>? initialProvider;
+    private IFunction? operation;
+    private object? value;
+    private bool hasValue;
+
+    /// <param name="operation">Specifies the expression evaluated against each accumulated-value/current-item tuple.</param>
+    public ReduceAccumulator(Func<IFunction> operation)
+        => operationProvider = operation;
+
+    /// <param name="operation">Specifies the expression evaluated against each accumulated-value/current-item tuple.</param>
+    /// <param name="initial">Specifies the initial accumulated value. It is returned unchanged for an empty input.</param>
+    public ReduceAccumulator(Func<IFunction> operation, Func<object?> initial)
+        => (operationProvider, initialProvider) = (operation, initial);
+
+    public override void Initialize()
+    {
+        operation = operationProvider.Invoke();
+        hasValue = initialProvider is not null;
+        value = initialProvider?.Invoke();
+    }
+
+    public override void Accumulate(object? item)
+    {
+        if (!hasValue)
+        {
+            value = item;
+            hasValue = true;
+            return;
+        }
+
+        var pair = new Expressif.Values.Tuple(value, item);
+        using var scope = EvaluationRuntime.Derive(pair);
+        value = operation!.Evaluate(pair);
+    }
+
+    public override object? GetValue()
+        => hasValue ? value : null;
 }

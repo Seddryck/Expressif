@@ -18,6 +18,8 @@ first()
 
 Stores the first accumulated item and ignores all subsequent items.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This accumulator has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+{10, 20, 30} | fold(first) → 10
+```
+{% endraw %}
 
 
 **Kind:** Accumulator  
