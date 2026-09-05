@@ -241,6 +241,90 @@
     ]
   },
   {
+    "Name": "satisfies-exactly",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": "any",
+    "Output": "boolean",
+    "Summary": "Returns `true` when exactly the requested number of supplied predicates are satisfied by the input. The count must be non-negative, and evaluation stops as soon as the result is known.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "Specifies the exact non-negative number of predicates that must be satisfied."
+      },
+      {
+        "Name": "predicates",
+        "Type": "predicate",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+      }
+    ],
+    "Examples": [
+      "4 | satisfies-exactly(2, is-positive, is-even, is-greater-than(10)) → #true"
+    ]
+  },
+  {
+    "Name": "satisfies-at-least",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": "any",
+    "Output": "boolean",
+    "Summary": "Returns `true` when at least the requested number of supplied predicates are satisfied by the input. The count must be non-negative, and evaluation stops as soon as the result is known.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "Specifies the minimum non-negative number of predicates that must be satisfied."
+      },
+      {
+        "Name": "predicates",
+        "Type": "predicate",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+      }
+    ],
+    "Examples": [
+      "4 | satisfies-at-least(2, is-positive, is-even, is-greater-than(10)) → #true"
+    ]
+  },
+  {
+    "Name": "satisfies-at-most",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "boolean",
+    "Input": "any",
+    "Output": "boolean",
+    "Summary": "Returns `true` when at most the requested number of supplied predicates are satisfied by the input. The count must be non-negative, and evaluation stops as soon as the result is known.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "Specifies the maximum non-negative number of predicates that may be satisfied."
+      },
+      {
+        "Name": "predicates",
+        "Type": "predicate",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+      }
+    ],
+    "Examples": [
+      "4 | satisfies-at-most(2, is-positive, is-even, is-greater-than(10)) → #true"
+    ]
+  },
+  {
     "Name": "nand",
     "IsPublic": true,
     "Aliases": [],

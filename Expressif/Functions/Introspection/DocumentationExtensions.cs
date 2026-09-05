@@ -20,6 +20,26 @@ public record ParamInfo(string Name, string Type, bool Variadic, int MinimumCard
 /// </summary>
 public static class DocumentationExtensions
 {
+    private static readonly HashSet<(Type Type, string Parameter)> VariadicParameters =
+    [
+        (typeof(Record.Record), "entries"),
+        (typeof(Record.Put), "assignments"),
+        (typeof(Record.PutPresent), "assignments"),
+        (typeof(Record.PutAbsent), "assignments"),
+        (typeof(Record.With), "projections"),
+        (typeof(Special.Coalesce), "expressions"),
+        (typeof(Special.Coerce), "specifications"),
+        (typeof(Flow.TransformWith), "expressions"),
+        (typeof(Flow.TransformAs), "expressions"),
+        (typeof(Tuple.Pick), "positions"),
+        (typeof(Array.Key), "expressions"),
+        (typeof(Array.GroupBy), "expressions"),
+        (typeof(Predicates.Boolean.Majority), "predicates"),
+        (typeof(Predicates.Boolean.SatisfiesExactly), "predicates"),
+        (typeof(Predicates.Boolean.SatisfiesAtLeast), "predicates"),
+        (typeof(Predicates.Boolean.SatisfiesAtMost), "predicates"),
+    ];
+
     /// <summary>
     /// Provides the documentation comments for a specific method.
     /// </summary>
@@ -141,19 +161,7 @@ public static class DocumentationExtensions
 
     private static bool IsVariadicParameter(Type declaringType, string parameterName)
         => (typeof(IValueSpreadAware).IsAssignableFrom(declaringType) && parameterName == "values")
-            || (declaringType == typeof(Record.Record) && parameterName == "entries")
-            || (declaringType == typeof(Record.Put) && parameterName == "assignments")
-            || (declaringType == typeof(Record.PutPresent) && parameterName == "assignments")
-            || (declaringType == typeof(Record.PutAbsent) && parameterName == "assignments")
-            || (declaringType == typeof(Record.With) && parameterName == "projections")
-            || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")
-            || (declaringType == typeof(Special.Coerce) && parameterName == "specifications")
-            || (declaringType == typeof(Flow.TransformWith) && parameterName == "expressions")
-            || (declaringType == typeof(Flow.TransformAs) && parameterName == "expressions")
-            || (declaringType == typeof(Tuple.Pick) && parameterName == "positions")
-            || (declaringType == typeof(Array.Key) && parameterName == "expressions")
-            || (declaringType == typeof(Array.GroupBy) && parameterName == "expressions")
-            || (declaringType == typeof(Predicates.Boolean.Majority) && parameterName == "predicates");
+            || VariadicParameters.Contains((declaringType, parameterName));
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
         => (declaringType, parameterName) switch

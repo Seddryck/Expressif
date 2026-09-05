@@ -1,0 +1,28 @@
+suite: boolean
+kind: predicate
+operator: satisfies-exactly
+tests:
+  - id: satisfies-exactly.zero
+    cases:
+      - id: satisfies-exactly.zero.count-zero
+        value: 1
+        parameters: [0]
+        expected: true
+      - id: satisfies-exactly.zero.count-one
+        value: 1
+        parameters: [1]
+        expected: false
+  - id: satisfies-exactly.three
+    cases:
+      - id: satisfies-exactly.three.exact
+        value: 1
+        parameters: [2, true, false, true]
+        expected: true
+      - id: satisfies-exactly.three.too-many
+        value: 1
+        parameters: [1, true, false, true]
+        expected: false
+      - id: satisfies-exactly.three.too-few
+        value: 1
+        parameters: [3, true, false, true]
+        expected: false
