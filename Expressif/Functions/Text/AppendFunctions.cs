@@ -163,6 +163,7 @@ public class SuffixSpaceIfMissing : BaseSuffixIfMissing
 /// <summary>
 /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
+[FunctionLifecycle("suffix-space", "3.0")]
 public class AppendSpace : Append
 {
     public AppendSpace()
@@ -172,6 +173,7 @@ public class AppendSpace : Append
 /// <summary>
 /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
+[FunctionLifecycle("prefix-space", "3.0")]
 public class PrependSpace : Prepend
 {
     public PrependSpace()
@@ -221,6 +223,7 @@ public class SuffixNewLineIfMissing : BaseSuffixIfMissing
 /// <summary>
 /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
+[FunctionLifecycle("suffix-new-line", "3.0")]
 public class AppendNewLine : Append
 {
     public AppendNewLine()
@@ -230,6 +233,7 @@ public class AppendNewLine : Append
 /// <summary>
 /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
+[FunctionLifecycle("prefix-new-line", "3.0")]
 public class PrependNewLine : Prepend
 {
     public PrependNewLine()

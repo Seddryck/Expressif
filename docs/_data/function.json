@@ -3446,6 +3446,10 @@
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
+    "Deprecated": true,
+    "Replacement": "suffix-new-line",
+    "Sunset": "3.0",
+    "Behavior": "Deprecated in favor of `suffix-new-line` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-new-line` preserves `null`. Use `null-to-empty | suffix-new-line` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | append-new-line → \"Hello World\" | append-new-line"
@@ -3461,6 +3465,10 @@
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.",
+    "Deprecated": true,
+    "Replacement": "suffix-space",
+    "Sunset": "3.0",
+    "Behavior": "Deprecated in favor of `suffix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-space` preserves `null`. Use `null-to-empty | suffix-space` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | append-space → \"Hello World \""
@@ -4095,6 +4103,10 @@
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
+    "Deprecated": true,
+    "Replacement": "prefix-new-line",
+    "Sunset": "3.0",
+    "Behavior": "Deprecated in favor of `prefix-new-line` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix-new-line` preserves `null`. Use `null-to-empty | prefix-new-line` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prepend-new-line → \"Hello World\" | prepend-new-line"
@@ -4110,6 +4122,10 @@
     "Input": "text",
     "Output": "text",
     "Summary": "Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.",
+    "Deprecated": true,
+    "Replacement": "prefix-space",
+    "Sunset": "3.0",
+    "Behavior": "Deprecated in favor of `prefix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix-space` preserves `null`. Use `null-to-empty | prefix-space` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prepend-space → \" Hello World\""
