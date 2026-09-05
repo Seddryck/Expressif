@@ -8,7 +8,9 @@ description: Apply one open expression to repeated values, a batch, a CSV file, 
 
 `run` parses and binds an expression as open once, then evaluates it for every generated input row.
 
-Each result is written on its own line. Processing stops at the first source or evaluation failure.
+Each compact result is written on its own line. Processing stops at the first source or evaluation failure.
+Use `--output-style pretty` to render structured results across tab-indented lines;
+`--output-style compact` is the default.
 
 ```mermaid
 flowchart LR
@@ -25,6 +27,7 @@ flowchart LR
 | `--batch` | Each direct element of one enumerable becomes a row. | Can be combined with `--input`. |
 | `--source` / `-s` | Rows are read from a CSV, JSON, or source-expression file. | Cannot be combined with `--input` or `--batch`. |
 | `--format` | Overrides source format detection with `csv` or `json`. | Requires `--source`. |
+| `--output-style` | Formats results as `compact` or `pretty`. | Defaults to `compact`. |
 
 At least one input mode is required.
 

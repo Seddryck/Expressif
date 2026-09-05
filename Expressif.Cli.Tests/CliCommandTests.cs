@@ -63,6 +63,31 @@ public class CliCommandTests
         });
     }
 
+    [Test]
+    public async Task Evaluate_PrettyOutputStyle_FormatsStructuredResultAcrossLines()
+    {
+        var result = await InvokeAsync("evaluate", "{1, T(2, 3)}", "--output-style", "pretty");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n\t1,\n\tT(\n\t\t2,\n\t\t3\n\t)\n}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_UnknownOutputStyle_ReturnsParseError()
+    {
+        var result = await InvokeAsync("evaluate", "{1, 2}", "--output-style", "wide");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.Not.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdErr, Does.Contain("wide").And.Contain("--output-style"));
+        });
+    }
+
     [TestCase("even", "4", "#true")]
     [TestCase("even", "5", "#false")]
     [TestCase("is-even", "4", "#true")]
@@ -632,6 +657,19 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(outputs, Is.EqualTo(new[] { "1", "2", "3" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_PrettyOutputStyle_FormatsEveryStructuredResult()
+    {
+        var result = await InvokeAsync("run", "reverse", "--batch", "{{1, 2}}", "--output-style", "pretty");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n\t2,\n\t1\n}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

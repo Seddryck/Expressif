@@ -90,4 +90,19 @@ var result = formatName.Evaluate(input);
 
 Each call receives its own evaluation frame. The same expression can therefore process several inputs—including concurrent inputs—without one call replacing another call's expression root.
 
+## Format structured results
+
+`ValueFormatter` renders evaluation results with Expressif scalar and structured-value
+syntax. Compact output is the default. Request pretty output when inspecting nested
+values, including from the Visual Studio Watch or Immediate window:
+
+```csharp
+var compact = ValueFormatter.Format(result);
+var pretty = ValueFormatter.Format(result, ValueFormat.Pretty);
+```
+
+Pretty output writes each structured element on its own line and uses one tab per
+nesting level. Empty structures remain on one line. Formatting does not change the
+underlying result.
+
 See [References](../language/references.md) for field, variable, and expression-root syntax. See [Advanced expressions](../language/advanced.md) for nested expressions and other language features.

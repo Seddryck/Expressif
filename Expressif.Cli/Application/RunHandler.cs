@@ -21,7 +21,8 @@ internal sealed record RunRequest(
     bool HasBatch,
     bool HasSource,
     bool HasSourceOptions,
-    int BatchOccurrences);
+    int BatchOccurrences,
+    ValueFormat OutputStyle = ValueFormat.Compact);
 
 internal sealed class RunHandler(
     IExpressionService expressions,
@@ -74,7 +75,7 @@ internal sealed class RunHandler(
         try
         {
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
-                Console.Out.WriteLine(ValueFormatter.Format(result));
+                Console.Out.WriteLine(ValueFormatter.Format(result, request.OutputStyle));
             return ExitCodes.Success;
         }
         catch (FormatException exception)

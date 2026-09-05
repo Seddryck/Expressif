@@ -8,6 +8,15 @@ description: Evaluate a closed expression, one explicit input, or one complete d
 
 `evaluate` always evaluates an expression once and writes one formatted value.
 
+Structured results use compact, single-line formatting by default. Pass
+`--output-style pretty` to display each element on its own tab-indented line:
+
+```bash
+expressif evaluate '{1, T(2, 3)}' --output-style pretty
+```
+
+Use `--output-style compact` to select the default behavior explicitly.
+
 What changes is the value supplied to that evaluation.
 
 | Mode | How to select it | Input to the expression |

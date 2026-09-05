@@ -19,6 +19,7 @@ internal static class EvaluateCommand
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var file = new Option<string?>("--file") { Description = "Path to a UTF-8 file containing the expression to evaluate." };
         file.Aliases.Add("-f");
+        var outputStyle = new Option<ValueFormat>("--output-style") { Description = "Output style: compact or pretty." };
         var command = new Command("evaluate", "Evaluate an Expressif expression.");
         command.Arguments.Add(expression);
         command.Options.Add(input);
@@ -26,13 +27,14 @@ internal static class EvaluateCommand
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
-        command.SetAction(result => Execute(result, handler, textFiles, expression, input, source, scalar, sourceOptions, file));
+        command.Options.Add(outputStyle);
+        command.SetAction(result => Execute(result, handler, textFiles, expression, input, source, scalar, sourceOptions, file, outputStyle));
         return command;
     }
 
     private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles,
         Argument<string?> expression, Option<string?> input, Option<string?> source,
-        Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file)
+        Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file, Option<ValueFormat> outputStyle)
     {
         var hasInput = result.GetResult(input) is not null;
         var hasSource = result.GetResult(source) is not null;
@@ -51,7 +53,7 @@ internal static class EvaluateCommand
         var kind = hasSource ? EvaluateInputKind.Source : hasInput ? EvaluateInputKind.Value : EvaluateInputKind.Closed;
         var request = new EvaluateRequest(code, kind, result.GetValue(input), result.GetValue(source),
             result.GetValue(sourceOptions) ?? [], result.GetValue(scalar));
-        return WriteResult(handler.Execute(request), code, fromFile, filePath);
+        return WriteResult(handler.Execute(request), code, fromFile, filePath, result.GetValue(outputStyle));
     }
 
     private static string? ValidateOptions(ParseResult result, bool hasInput, bool hasSource, bool scalar, bool hasSourceOptions)
@@ -65,10 +67,10 @@ internal static class EvaluateCommand
         return hasSourceOptions && !hasSource ? "The --source-option option requires --source." : null;
     }
 
-    private static int WriteResult(ExpressionOperationResult result, string code, bool fromFile, string? filePath)
+    private static int WriteResult(ExpressionOperationResult result, string code, bool fromFile, string? filePath, ValueFormat outputStyle)
         => result switch
         {
-            ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value),
+            ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value, outputStyle),
             ExpressionValidationFailure failure => ExpressionCommandCommon.WriteValidationError(failure.Exception, code, fromFile, filePath),
             ExpressionInputRequiredFailure failure => WriteInputRequired(failure.Exception),
             ExpressionInputFailure failure => WriteError(failure.Message, ExitCodes.InvalidExpressionOrInput),
@@ -77,9 +79,9 @@ internal static class EvaluateCommand
             _ => throw new InvalidOperationException($"Unexpected evaluation result '{result.GetType().Name}'.")
         };
 
-    private static int WriteSuccess(object? value)
+    private static int WriteSuccess(object? value, ValueFormat outputStyle)
     {
-        Console.Out.WriteLine(ValueFormatter.Format(value));
+        Console.Out.WriteLine(ValueFormatter.Format(value, outputStyle));
         return ExitCodes.Success;
     }
 
