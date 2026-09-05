@@ -1,0 +1,10 @@
+suite: record
+kind: function
+operator: drop-null-fields
+tests:
+  - id: drop-null-fields.valid.record
+    cases:
+      - id: drop-null-fields.valid.record.shallow
+        value:
+        parameters: ['{name := "Nikola", age := #null, active := #false, score := 0, note := "", empty := {}, details := {birthDate := #null}} | drop-null-fields']
+        expected: '{name := "Nikola", active := #false, score := 0, note := "", empty := {}, details := {birthDate := null}}'

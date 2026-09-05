@@ -3,7 +3,7 @@ layout: docs
 title: "record"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 90
 has_toc: false
 permalink: /functions/record/record/
 tags:
@@ -20,6 +20,8 @@ record(
 ```
 
 Creates a record by evaluating its named and spread entries against the input value. Later entries overwrite fields with the same name created by earlier entries.
+
+
 
 ## Parameters
 

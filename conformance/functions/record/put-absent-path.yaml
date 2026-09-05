@@ -1,0 +1,18 @@
+suite: record
+kind: function
+operator: put-absent-path
+tests:
+  - id: put-absent-path.valid.record
+    cases:
+      - id: put-absent-path.valid.record.existing
+        value:
+        parameters: ['{customer := {age := 41}} | put-absent-path(T("customer", "age"), 42)']
+        expected: '{customer := {age := 41}}'
+      - id: put-absent-path.valid.record.missing
+        value:
+        parameters: ['{name := "Alice"} | put-absent-path(T("customer", "age"), 42)']
+        expected: '{name := "Alice", customer := {age := 42}}'
+      - id: put-absent-path.valid.record.present-null
+        value:
+        parameters: ['{age := #null} | put-absent-path("age", 42)']
+        expected: '{age := null}'

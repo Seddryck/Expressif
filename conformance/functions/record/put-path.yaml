@@ -1,0 +1,22 @@
+suite: record
+kind: function
+operator: put-path
+tests:
+  - id: put-path.valid.record
+    cases:
+      - id: put-path.valid.record.dynamic-top-level
+        value:
+        parameters: ['{key := "Score", value := 32} | put-path(.key | lower, .value | add(10))']
+        expected: '{key := "Score", value := 32, score := 42}'
+      - id: put-path.valid.record.dotted-literal
+        value:
+        parameters: ['{name := "Alice"} | put-path("customer.address.city", "Ghent")']
+        expected: '{name := "Alice", "customer.address.city" := "Ghent"}'
+      - id: put-path.valid.record.nested
+        value:
+        parameters: ['{customer := {address := {city := "Brussels"}}} | put-path(T("customer", "address", "city"), "Ghent")']
+        expected: '{customer := {address := {city := "Ghent"}}}'
+      - id: put-path.valid.record.create-intermediate
+        value:
+        parameters: ['{name := "Nikola"} | put-path(T("customer", "address", "city"), "Ghent")']
+        expected: '{name := "Nikola", customer := {address := {city := "Ghent"}}}'

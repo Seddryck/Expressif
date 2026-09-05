@@ -1,0 +1,18 @@
+suite: record
+kind: function
+operator: put-absent
+tests:
+  - id: put-absent.valid.record
+    cases:
+      - id: put-absent.valid.record.existing
+        value:
+        parameters: ['{name := "Alice", age := 41} | put-absent(age := 42)']
+        expected: '{name := "Alice", age := 41}'
+      - id: put-absent.valid.record.missing
+        value:
+        parameters: ['{name := "Alice"} | put-absent(age := 42)']
+        expected: '{name := "Alice", age := 42}'
+      - id: put-absent.valid.record.present-null
+        value:
+        parameters: ['{name := "Alice", age := #null} | put-absent(age := 42)']
+        expected: '{name := "Alice", age := null}'

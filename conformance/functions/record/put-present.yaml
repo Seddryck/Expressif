@@ -1,0 +1,18 @@
+suite: record
+kind: function
+operator: put-present
+tests:
+  - id: put-present.valid.record
+    cases:
+      - id: put-present.valid.record.existing
+        value:
+        parameters: ['{name := "Alice", age := 41} | put-present(age := .age | add(1))']
+        expected: '{name := "Alice", age := 42}'
+      - id: put-present.valid.record.missing
+        value:
+        parameters: ['{name := "Alice"} | put-present(age := 42)']
+        expected: '{name := "Alice"}'
+      - id: put-present.valid.record.present-null
+        value:
+        parameters: ['{name := "Alice", age := #null} | put-present(age := 42)']
+        expected: '{name := "Alice", age := 42}'

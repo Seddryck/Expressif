@@ -1,0 +1,18 @@
+suite: record
+kind: function
+operator: put-present-path
+tests:
+  - id: put-present-path.valid.record
+    cases:
+      - id: put-present-path.valid.record.existing
+        value:
+        parameters: ['{customer := {age := 41}} | put-present-path(T("customer", "age"), 42)']
+        expected: '{customer := {age := 42}}'
+      - id: put-present-path.valid.record.missing
+        value:
+        parameters: ['{name := "Alice"} | put-present-path(T("customer", "age"), 42)']
+        expected: '{name := "Alice"}'
+      - id: put-present-path.valid.record.present-null
+        value:
+        parameters: ['{age := #null} | put-present-path("age", 42)']
+        expected: '{age := 42}'

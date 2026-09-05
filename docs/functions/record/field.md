@@ -3,7 +3,7 @@ layout: docs
 title: "field"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/record/field/
 tags:
@@ -20,6 +20,8 @@ field(
 ```
 
 Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values.
+
+
 
 ## Parameters
 

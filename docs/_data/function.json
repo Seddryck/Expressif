@@ -1726,6 +1726,163 @@
     ]
   },
   {
+    "Name": "put",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Creates or replaces statically named fields while preserving every other field. Assignment expressions are evaluated against the original input record.",
+    "Parameters": [
+      {
+        "Name": "assignments",
+        "Kind": "entry",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more named assignments evaluated against the original input record."
+      }
+    ],
+    "Examples": [
+      "{name := \"Alice\", age := 41} | put(age := .age | add(1)) → {name := \"Alice\", age := 42}"
+    ]
+  },
+  {
+    "Name": "put-present",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Assigns statically named fields only when they are present, including fields whose value is null.",
+    "Parameters": [
+      {
+        "Name": "assignments",
+        "Kind": "entry",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more named assignments applied only to fields already present."
+      }
+    ],
+    "Examples": [
+      "{name := \"Alice\", age := #null} | put-present(age := 42) → {name := \"Alice\", age := 42}"
+    ]
+  },
+  {
+    "Name": "put-absent",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Assigns statically named fields only when they are absent; a present field containing null remains unchanged.",
+    "Parameters": [
+      {
+        "Name": "assignments",
+        "Kind": "entry",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more named assignments applied only to fields that are absent."
+      }
+    ],
+    "Examples": [
+      "{name := \"Alice\"} | put-absent(age := 42) → {name := \"Alice\", age := 42}"
+    ]
+  },
+  {
+    "Name": "put-path",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Creates or replaces the field at a dynamic path. Text is one literal segment; a tuple supplies nested segments, creating missing intermediate records.",
+    "Parameters": [
+      {
+        "Name": "path",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
+      },
+      {
+        "Name": "value",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression producing the assigned value from the original input record."
+      }
+    ],
+    "Examples": [
+      "{customer := {address := {city := \"Brussels\"}}} | put-path(T(\"customer\", \"address\", \"city\"), \"Ghent\") → {customer := {address := {city := \"Ghent\"}}}"
+    ]
+  },
+  {
+    "Name": "put-present-path",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Assigns the field at a dynamic path only when the final segment is present, including when its value is null.",
+    "Parameters": [
+      {
+        "Name": "path",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
+      },
+      {
+        "Name": "value",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression producing the assigned value from the original input record."
+      }
+    ],
+    "Examples": [
+      "{age := #null} | put-present-path(\"age\", 42) → {age := 42}"
+    ]
+  },
+  {
+    "Name": "put-absent-path",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Assigns the field at a dynamic path only when the final segment is absent, creating missing intermediate records.",
+    "Parameters": [
+      {
+        "Name": "path",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
+      },
+      {
+        "Name": "value",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression producing the assigned value from the original input record."
+      }
+    ],
+    "Examples": [
+      "{name := \"Alice\"} | put-absent-path(T(\"details\", \"age\"), 42) → {name := \"Alice\", details := {age := 42}}"
+    ]
+  },
+  {
+    "Name": "drop-null-fields",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Removes null-valued fields from the input record without traversing nested records or collections.",
+    "Parameters": [],
+    "Examples": [
+      "{name := \"Nikola\", age := #null, active := #false} | drop-null-fields → {name := \"Nikola\", active := #false}"
+    ]
+  },
+  {
     "Name": "with",
     "IsPublic": true,
     "Aliases": [],

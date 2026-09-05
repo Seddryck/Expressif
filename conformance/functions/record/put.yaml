@@ -1,0 +1,18 @@
+suite: record
+kind: function
+operator: put
+tests:
+  - id: put.valid.record
+    cases:
+      - id: put.valid.record.create
+        value:
+        parameters: ['{name := "Alice"} | put(age := 42)']
+        expected: '{name := "Alice", age := 42}'
+      - id: put.valid.record.replace-from-original
+        value:
+        parameters: ['{name := "Alice", age := 41} | put(age := .age | add(1), display := .name | upper)']
+        expected: '{name := "Alice", age := 42, display := "ALICE"}'
+      - id: put.valid.record.present-null
+        value:
+        parameters: ['{name := "Alice", age := #null} | put(age := 42)']
+        expected: '{name := "Alice", age := 42}'

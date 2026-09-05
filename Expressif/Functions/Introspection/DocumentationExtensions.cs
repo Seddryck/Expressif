@@ -142,6 +142,9 @@ public static class DocumentationExtensions
     private static bool IsVariadicParameter(Type declaringType, string parameterName)
         => (typeof(IValueSpreadAware).IsAssignableFrom(declaringType) && parameterName == "values")
             || (declaringType == typeof(Record.Record) && parameterName == "entries")
+            || (declaringType == typeof(Record.Put) && parameterName == "assignments")
+            || (declaringType == typeof(Record.PutPresent) && parameterName == "assignments")
+            || (declaringType == typeof(Record.PutAbsent) && parameterName == "assignments")
             || (declaringType == typeof(Record.With) && parameterName == "projections")
             || (declaringType == typeof(Special.Coalesce) && parameterName == "expressions")
             || (declaringType == typeof(Special.Coerce) && parameterName == "specifications")
@@ -157,6 +160,9 @@ public static class DocumentationExtensions
             (var type, "expressions") when type == typeof(Special.Coalesce) => 2,
             (var type, "specifications") when type == typeof(Special.Coerce) => 1,
             (var type, "projections") when type == typeof(Record.With) => 1,
+            (var type, "assignments") when type == typeof(Record.Put) => 1,
+            (var type, "assignments") when type == typeof(Record.PutPresent) => 1,
+            (var type, "assignments") when type == typeof(Record.PutAbsent) => 1,
             (var type, "positions") when type == typeof(Tuple.Pick) => 1,
             (var type, "expressions") when type == typeof(Array.Key) => 1,
             (var type, "expressions") when type == typeof(Array.GroupBy) => 1,

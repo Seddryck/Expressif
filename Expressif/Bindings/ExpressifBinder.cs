@@ -301,6 +301,7 @@ public sealed class ExpressifBinder
         {
             "coerce" => BindCoerceFunction(syntax),
             "field" => BindFieldFunction(syntax),
+            "is-present" or "is-absent" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
             "array" or "text" or "tuple" or "grouping" or "dictionary" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),

@@ -257,6 +257,11 @@ public class FunctionFactory : BaseExpressionFactory
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
             return new Pair.Pair(BuildValueEvaluator(key, context), BuildValueEvaluator(value, context));
         }
+        if (name is "put" or "put-present" or "put-absent")
+            return BuildPutFunction(name, function, context);
+
+        if (name is "put-path" or "put-present-path" or "put-absent-path")
+            return BuildPutPathFunction(name, function, context);
         if (name.Equals("key", StringComparison.OrdinalIgnoreCase))
             return new Array.Key(BuildGroupingExpressionEvaluators(function, context));
 
@@ -389,6 +394,47 @@ public class FunctionFactory : BaseExpressionFactory
 
         var normalized = new OpenExpression(members);
         return () => BuildPipeline(normalized, context);
+    }
+
+    private IFunction BuildPutFunction(string name, Bindings.Function function, IContext context)
+    {
+        if (function.Arguments.Length == 0 || function.Arguments.Any(argument => argument.Name is null || argument.IsSpread))
+            throw new BindingException($"Function '{name}' expects one or more named assignments.");
+
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        var duplicate = function.Arguments.FirstOrDefault(argument => !names.Add(argument.Name!));
+        if (duplicate is not null)
+            throw new BindingException($"Duplicate assignment '{duplicate.Name}' in {name}(...).");
+
+        var assignments = function.Arguments
+            .Select(argument => new Record.RecordAssignmentEvaluator(
+                argument.Name!,
+                BuildValueEvaluator(argument.Value, context)))
+            .ToArray();
+        return name switch
+        {
+            "put" => new Record.Put(() => assignments),
+            "put-present" => new Record.PutPresent(() => assignments),
+            "put-absent" => new Record.PutAbsent(() => assignments),
+            _ => throw new NotImplementedFunctionException(name),
+        };
+    }
+
+    private IFunction BuildPutPathFunction(string name, Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters;
+        if (bound is not [var path, var value])
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var pathEvaluator = BuildValueEvaluator(path, context);
+        var valueEvaluator = BuildValueEvaluator(value, context);
+        return name switch
+        {
+            "put-path" => new Record.PutPath(pathEvaluator, valueEvaluator),
+            "put-present-path" => new Record.PutPresentPath(pathEvaluator, valueEvaluator),
+            "put-absent-path" => new Record.PutAbsentPath(pathEvaluator, valueEvaluator),
+            _ => throw new NotImplementedFunctionException(name),
+        };
     }
 
     private IEnumerable<Func<object?, object?>> BuildGroupingExpressionEvaluators(

@@ -1,0 +1,18 @@
+suite: record
+kind: predicate
+operator: is-present
+tests:
+  - id: is-present.valid.record
+    cases:
+      - id: is-present.valid.record.non-null
+        value: { name: Alice, age: 42 }
+        parameters: [age]
+        expected: true
+      - id: is-present.valid.record.null
+        value: { name: Alice, age: null }
+        parameters: [age]
+        expected: true
+      - id: is-present.valid.record.absent
+        value: { name: Alice }
+        parameters: [age]
+        expected: false

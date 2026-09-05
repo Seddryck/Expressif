@@ -3,7 +3,7 @@ layout: docs
 title: "with"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 100
 has_toc: false
 permalink: /functions/record/with/
 tags:
@@ -21,6 +21,8 @@ with(
 ```
 
 Evaluates named projections independently against the input, then evaluates a body expression against their temporary record.
+
+
 
 ## Parameters
 

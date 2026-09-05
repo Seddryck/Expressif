@@ -28,6 +28,84 @@ public class RecordFunctionsTest
     public void With_Valid_Numeric(object? value, string expression, decimal expected)
         => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void Put_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void PutPresent_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void PutAbsent_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void PutPath_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void PutPresentPath_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void PutAbsentPath_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void DropNullFields_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [TestCase("{name := \"Alice\"} | put-path(#null, 42)", "Record path must evaluate to text or a tuple of text segments. (Parameter 'value')")]
+    [TestCase("{name := \"Alice\"} | put-path(1, 42)", "Record path must evaluate to text or a tuple of text segments. (Parameter 'value')")]
+    [TestCase("{name := \"Alice\"} | put-path({1, 2}, 42)", "Record path must evaluate to text or a tuple of text segments. (Parameter 'value')")]
+    [TestCase("{name := \"Alice\"} | put-path({}, 42)", "Record path must evaluate to text or a tuple of text segments. (Parameter 'value')")]
+    [TestCase("{name := \"Alice\"} | put-path(\"\", 42)", "Record path segments must not be empty. (Parameter 'value')")]
+    [TestCase("{name := \"Alice\"} | put-path(T(\"name\", 1), 42)", "Every record path tuple segment must be text. (Parameter 'value')")]
+    [TestCase("{name := \"Alice\"} | put-path(T(\"name\", \"first\"), 42)", "Cannot traverse record path through non-record segment 'name'. (Parameter 'path')")]
+    public void PutPath_InvalidPath_ThrowsClearError(string expression, string message)
+        => Assert.That(
+            () => Expression.Create(expression).Evaluate(null),
+            Throws.TypeOf<ArgumentException>().With.Message.EqualTo(message));
+
+    [Test]
+    public void PutPath_EmptyTuple_ThrowsClearError()
+        => Assert.That(
+            () => new PutPath(_ => new TupleValue(), _ => 42).Evaluate(new ValueRecord()),
+            Throws.TypeOf<ArgumentException>()
+                .With.Message.EqualTo("Record path tuple must contain at least one segment. (Parameter 'value')"));
+
+    [Test]
+    public void PutPath_NestedAssignment_DoesNotMutateInput()
+    {
+        var address = new ValueRecord();
+        address.Set("city", "Brussels");
+        var customer = new ValueRecord();
+        customer.Set("address", address);
+        var input = new ValueRecord();
+        input.Set("customer", customer);
+
+        var result = new PutPath(_ => new TupleValue("customer", "address", "city"), _ => "Ghent")
+            .Evaluate(input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(((ValueRecord)((ValueRecord)result["customer"]!)["address"]!)["city"], Is.EqualTo("Ghent"));
+            Assert.That(address["city"], Is.EqualTo("Brussels"));
+        });
+    }
+
+    [TestCase("put()")]
+    [TestCase("put(42)")]
+    public void Put_InvalidShape_ThrowsBindingDiagnostic(string source)
+        => Assert.That(() => Expression.Create(source), Throws.TypeOf<BindingException>());
+
+    [Test]
+    public void Put_DuplicateAssignment_ThrowsSpecificDiagnostic()
+        => Assert.That(
+            () => Expression.Create("put-present(name := 1, name := 2)"),
+            Throws.TypeOf<DuplicateNamedArgumentException>());
+
     [Test]
     public void With_DuplicateProjectionName_ThrowsBindingDiagnostic()
         => Assert.That(

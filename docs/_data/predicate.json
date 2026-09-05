@@ -59,6 +59,46 @@
     ]
   },
   {
+    "Name": "is-present",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "boolean",
+    "Summary": "Returns whether the named field exists in the input record, independently of its value.",
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "Name of the field whose presence is tested."
+      }
+    ],
+    "Examples": [
+      "{name := \"Alice\", age := #null} | is-present(age) → #true"
+    ]
+  },
+  {
+    "Name": "is-absent",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "boolean",
+    "Summary": "Returns whether the named field does not exist in the input record, independently of field values.",
+    "Parameters": [
+      {
+        "Name": "name",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "Name of the field whose absence is tested."
+      }
+    ],
+    "Examples": [
+      "{name := \"Alice\"} | is-absent(age) → #true"
+    ]
+  },
+  {
     "Name": "is-false",
     "IsPublic": true,
     "Aliases": [
