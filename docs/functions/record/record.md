@@ -40,7 +40,7 @@ Creates a record by evaluating its named and spread entries against the input va
 
 {% raw %}
 ```expressif
-{name := "Ada", score := 10} | record(name := "Ada", score := 10) → {name := "Ada", score := 10}
+{score := 10} | record(..., score := .score | add(1)) → {score := 11}
 ```
 {% endraw %}
 
