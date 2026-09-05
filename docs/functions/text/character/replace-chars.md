@@ -3,7 +3,7 @@ layout: docs
 title: "replace-chars"
 parent: "Character functions"
 grand_parent: "Text functions"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/text/character/replace-chars/
 tags:

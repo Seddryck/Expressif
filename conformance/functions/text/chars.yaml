@@ -1,0 +1,27 @@
+suite: text
+kind: function
+operator: chars
+tests:
+  - id: chars.valid
+    cases:
+      - id: chars.valid.multiple
+        value: abc
+        expected:
+          - a
+          - b
+          - c
+      - id: chars.valid.single
+        value: x
+        expected:
+          - x
+      - id: chars.valid.empty
+        value: ''
+        expected: []
+      - id: chars.valid.blank
+        value: '  '
+        expected:
+          - ' '
+          - ' '
+      - id: chars.valid.null
+        value: (null)
+        expected:
