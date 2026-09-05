@@ -1,0 +1,39 @@
+suite: text
+kind: accumulator
+operator: implode
+tests:
+  - id: implode.without-separator
+    cases:
+      - id: implode.without-separator.multiple
+        value: '{"a", "b", "c"}'
+        expected: abc
+      - id: implode.without-separator.single
+        value: '{"a"}'
+        expected: a
+      - id: implode.without-separator.empty
+        value: (empty)
+        expected: ''
+  - id: implode.with-separator
+    parameters:
+      - separator
+    cases:
+      - id: implode.with-separator.multiple
+        value: '{"a", "b", "c"}'
+        parameters:
+          - '-'
+        expected: a-b-c
+      - id: implode.with-separator.single
+        value: '{"a"}'
+        parameters:
+          - '-'
+        expected: a
+      - id: implode.with-separator.empty
+        value: (empty)
+        parameters:
+          - '-'
+        expected: ''
+      - id: implode.with-separator.empty-value
+        value: '{"a", "", "b"}'
+        parameters:
+          - '-'
+        expected: a--b
