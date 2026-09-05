@@ -3,7 +3,7 @@ layout: docs
 title: "summarize"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/grouping/summarize/
 tags:
@@ -20,6 +20,8 @@ summarize(
 ```
 
 Evaluates an expression once for each group and returns a dictionary from group keys to summary values.
+
+
 
 ## Parameters
 

@@ -19,4 +19,5 @@ Reference documentation for Expressif functions in the `grouping` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`grouping`]({{ '/functions/grouping/grouping/' | relative_url }}) | Constructs a grouping from zero or more pairs. Spread arguments expand arrays of pairs in place. |
+| [`map-groups`]({{ '/functions/grouping/map-groups/' | relative_url }}) | Transforms each group's value collection while preserving its key and position. |
 | [`summarize`]({{ '/functions/grouping/summarize/' | relative_url }}) | Evaluates an expression once for each group and returns a dictionary from group keys to summary values. |

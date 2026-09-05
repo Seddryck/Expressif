@@ -2092,6 +2092,27 @@
     ]
   },
   {
+    "Name": "map-groups",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "grouping",
+    "Summary": "Transforms each group's value collection while preserving its key and position.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression evaluated once against each group's value collection."
+      }
+    ],
+    "Examples": [
+      "#{(\"BE\" => {10, 20, 30}), (\"FR\" => {5, 15})} | map-groups(filter(greater-than(10))) → #{(\"BE\" => {20, 30}), (\"FR\" => {15})}",
+      "#{(\"BE\" => {10}), (\"FR\" => {20})} |#> filter(greater-than(15)) → #{(\"BE\" => {}), (\"FR\" => {20})}"
+    ]
+  },
+  {
     "Name": "summarize",
     "IsPublic": true,
     "Aliases": [],

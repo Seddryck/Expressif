@@ -9,6 +9,7 @@ public enum FunctionSyntax
 {
     Standard,
     MapShorthand,
+    GroupMapShorthand,
     FieldShorthand,
     RootFieldShorthand,
     TupleProjectionShorthand,
@@ -26,6 +27,9 @@ public sealed class Function : IBoundExpression
 
     internal static Function FromArguments(string name, FunctionArgument[] arguments)
         => new(name, arguments, FunctionSyntax.Standard);
+
+    internal static Function FromArguments(string name, FunctionArgument[] arguments, FunctionSyntax syntax)
+        => new(name, arguments, syntax);
 
     public string Name { get; }
     public FunctionArgument[] Arguments { get; }
