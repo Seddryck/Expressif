@@ -37,6 +37,14 @@ Coerces a scalar value or selected tuple and record values to requested Expressi
 
 Tuple selector mappings use zero-based positions: `$0` selects the first position, `$1` selects the second, and unavailable positions are ignored.
 
+Pairs and groups participate in tuple coercion through their key and value positions. `coerce(:tuple)` materializes an ordinary tuple rather than preserving the specialized runtime kind:
+
+```expressif
+("BE" => 42) | coerce(:tuple) → T("BE", 42)
+```
+
+For a group, the resulting tuple contains the group key at position zero and the grouped-values collection at position one. Pair-to-tuple compatibility for tuple-consuming functions is implicit and does not require explicit coercion.
+
 
 
 ## Examples

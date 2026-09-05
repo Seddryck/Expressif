@@ -126,6 +126,28 @@ flowchart LR
     C --> D["$0 / $1"]
 ```
 
+### Pairs and groups are specialized tuples
+
+A pair participates in tuple semantics as a fixed positional value of arity two. Its key is position `$0` and its value is position `$1`; from-end references address the same positions as `$^2` and `$^1`, respectively.
+
+```expressif
+("BE" => 42) | arity
+```
+
+returns `2`, and `("BE" => 42) | $1` returns `42`. The `is-tuple` predicate and `is-type(:tuple)` likewise return `#true` for pairs.
+
+A group is a specialized pair. In tuple context, `$0` is its key and `$1` is the complete grouped-values collection. This positional view does not alter collection behavior: mapping or enumerating a group still operates on its grouped values. A grouping is not itself a tuple; only each group inside it is.
+
+Tuple-producing operations normalize specialized inputs. Applying `swap`, `pick`, or `extend` to a pair or group always returns an ordinary tuple:
+
+```expressif
+("BE" => 42) | swap → T(42, "BE")
+("BE" => 42) | pick(1, 0) → T(42, "BE")
+("BE" => 42) | extend(7) → T("BE", 42, 7)
+```
+
+Pairs, groups, and two-position tuples compare by their positional values. Consequently, the pair `("BE" => {code := "BE", name := "Bob"})` and the tuple `T("BE", {code := "BE", name := "Bob"})` are equal when compared. This includes positions containing structurally equal arrays or records. Equal positional values also have equal hash codes.
+
 ## Records
 
 A record contains named fields.
