@@ -152,7 +152,8 @@ public static class DocumentationExtensions
             || (declaringType == typeof(Flow.TransformAs) && parameterName == "expressions")
             || (declaringType == typeof(Tuple.Pick) && parameterName == "positions")
             || (declaringType == typeof(Array.Key) && parameterName == "expressions")
-            || (declaringType == typeof(Array.GroupBy) && parameterName == "expressions");
+            || (declaringType == typeof(Array.GroupBy) && parameterName == "expressions")
+            || (declaringType == typeof(Predicates.Boolean.Majority) && parameterName == "predicates");
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
         => (declaringType, parameterName) switch

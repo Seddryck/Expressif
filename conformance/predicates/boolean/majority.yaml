@@ -1,0 +1,47 @@
+suite: boolean
+kind: predicate
+operator: majority
+tests:
+  - id: majority.zero
+    cases:
+      - id: majority.zero.false
+        value: 1
+        expected: false
+  - id: majority.one
+    cases:
+      - id: majority.one.false
+        value: 1
+        parameters: [false]
+        expected: false
+      - id: majority.one.true
+        value: 1
+        parameters: [true]
+        expected: true
+  - id: majority.two
+    cases:
+      - id: majority.two.one-true
+        value: 1
+        parameters: [true, false]
+        expected: false
+      - id: majority.two.two-true
+        value: 1
+        parameters: [true, true]
+        expected: true
+  - id: majority.three
+    cases:
+      - id: majority.three.two-true
+        value: 1
+        parameters: [true, false, true]
+        expected: true
+  - id: majority.four
+    cases:
+      - id: majority.four.two-true
+        value: 1
+        parameters: [true, false, true, false]
+        expected: false
+  - id: majority.five
+    cases:
+      - id: majority.five.three-true
+        value: 1
+        parameters: [true, false, true, false, true]
+        expected: true

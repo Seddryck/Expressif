@@ -3,7 +3,7 @@ layout: docs
 title: "nor"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /predicates/boolean/nor/
 tags:
