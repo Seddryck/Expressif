@@ -12,6 +12,18 @@ namespace Expressif.Testing.Functions;
 public class FunctionFactoryTest
 {
     [Test]
+    public void Instantiate_EnclosingRootFieldWithoutName_Throws()
+    {
+        var function = new Function("field", [], FunctionSyntax.EnclosingRootFieldShorthand);
+
+        Assert.That(
+            () => new FunctionFactory().Instantiate(
+                new OpenRootExpression(new OpenExpression([function])),
+                new Context()),
+            Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
+    }
+
+    [Test]
     public void Instantiate_ValueSpreadAwareFunction_DispatchesByResolvedType()
     {
         var mapper = new TestTypeMapper("unrelated-name", typeof(SpreadAwareProbe));

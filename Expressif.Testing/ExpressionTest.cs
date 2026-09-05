@@ -867,4 +867,12 @@ public class ExpressionTest
 
         Assert.That(expression.Evaluate(input), Is.EqualTo(70m));
     }
+
+    [Test]
+    public void Evaluate_EnclosingRootFieldAsPipelineStage_UsesWithRecord()
+    {
+        var expression = Expression.Create("with(values := {1, 2}, threshold := 20, .values |> (^^.threshold))");
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(new object?[] { 20m, 20m }));
+    }
 }

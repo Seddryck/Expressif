@@ -255,6 +255,8 @@ public sealed class ExpressifBinder
     private OpenExpression BindOpenRoot(RootExpressionSyntax syntax) => syntax switch
     {
         OpenExpressionSyntax open => BindOpen(open),
+        ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed
+            when access.RootDepth > 0 => BindRecordAccessExpression(closed, access),
         _ => throw Unsupported(syntax),
     };
 

@@ -96,6 +96,17 @@ public class ExpressionSerializerTest
     }
 
     [Test]
+    public void Serialize_EnclosingRootFieldFunction_PreservesShorthand()
+    {
+        var function = new Function(
+            "field",
+            [new QuotedLiteralParameter("threshold")],
+            FunctionSyntax.EnclosingRootFieldShorthand);
+
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("^^.threshold"));
+    }
+
+    [Test]
     [Ignore("Limited added-value to manage subexpression")]
     public void Serialize_WithSubExpression_WithPipe()
     {
