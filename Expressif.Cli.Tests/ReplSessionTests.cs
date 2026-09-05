@@ -23,6 +23,18 @@ public class ReplSessionTests
     }
 
     [Test]
+    public void Execute_LeadingMapPipeline_PreservesPipelineOperator()
+    {
+        var session = new ReplSession(new ExpressionService());
+        _ = session.Execute("{1, 2, 3}");
+
+        var result = session.Execute("|> add(1)");
+
+        Assert.That(result, Is.TypeOf<ReplEvaluationResult>());
+        Assert.That(((ReplEvaluationResult)result).Value, Is.EqualTo(new object?[] { 2, 3, 4 }));
+    }
+
+    [Test]
     public void Execute_LeadingPipelineWithoutCurrentInput_ReturnsInputError()
     {
         var session = new ReplSession(new ExpressionService());

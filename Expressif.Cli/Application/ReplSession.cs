@@ -47,7 +47,11 @@ internal sealed class ReplSession
         if (isOpen && !HasCurrentInput)
             return new ReplErrorResult(ReplErrorKind.Input, "There is no current input. Evaluate a standalone expression first.");
 
-        var code = isOpen ? trimmed[1..].TrimStart() : source;
+        var code = isOpen
+            ? trimmed.StartsWith("|>", StringComparison.Ordinal)
+                ? trimmed
+                : trimmed[1..].TrimStart()
+            : source;
         IExpression expression;
         try
         {
