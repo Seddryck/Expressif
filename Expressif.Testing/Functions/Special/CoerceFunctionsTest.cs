@@ -14,8 +14,12 @@ public class CoerceFunctionsTest
     [Conformance]
     public void Coerce_Valid_TypeDirected(object? value, string expression, string expected)
     {
-        var input = value is string text && (text.StartsWith("T(") || text.StartsWith('{'))
-            ? new ParameterValueConverter().Parse(text)
+        var input = value is string text
+            ? text.Contains("=>")
+                ? Expression.CreateClosed(text).Evaluate(null)
+                : text.StartsWith("T(") || text.StartsWith('{')
+                    ? new ParameterValueConverter().Parse(text)
+                    : value
             : value;
         Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
     }
@@ -92,6 +96,18 @@ public class CoerceFunctionsTest
         => Assert.That(
             ValueFormatter.Format(Expression.Create(expression).Evaluate(null)),
             Is.EqualTo(expected));
+
+    [Test]
+    public void Coerce_PairToTuple_MaterializesOrdinaryTuple()
+        => Assert.That(
+            Expression.CreateClosed("(\"USA\" => 42) | coerce(:tuple)").Evaluate(null),
+            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue("USA", 42m)));
+
+    [Test]
+    public void Coerce_GroupToTuple_UsesKeyAndValuesPositions()
+        => Assert.That(
+            new Coerce(typeof(TupleValue)).Evaluate(new Group("USA", new[] { 1, 2 })),
+            Is.TypeOf<Expressif.Values.Tuple>().And.EqualTo(new TupleValue("USA", new[] { 1, 2 })));
 
     [Conformance]
     public void CoerceNumeric_Valid(object? value, decimal? expected)

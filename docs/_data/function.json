@@ -2144,26 +2144,85 @@
     ]
   },
   {
-    "Name": "swap", "IsPublic": true, "Aliases": ["swap"], "Scope": "tuple",
-    "Input": "tuple", "Output": "tuple",
+    "Name": "swap",
+    "IsPublic": true,
+    "Aliases": [
+      "swap"
+    ],
+    "Scope": "tuple",
+    "Input": "tuple",
+    "Output": "tuple",
     "Summary": "Returns a tuple with two positions exchanged, defaulting to the first and last positions.",
     "Parameters": [
-      {"Name": "first", "Type": "integer", "Optional": false, "Summary": "Specifies the first zero-based position."},
-      {"Name": "second", "Type": "integer", "Optional": false, "Summary": "Specifies the second zero-based position."}
+      {
+        "Name": "first",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the first zero-based position."
+      },
+      {
+        "Name": "second",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the second zero-based position."
+      }
     ],
-    "Examples": ["T(\"a\", \"b\", \"c\", \"d\") | swap → T(\"d\", \"b\", \"c\", \"a\")"]
+    "Examples": [
+      "T(\"a\", \"b\", \"c\", \"d\") | swap → T(\"d\", \"b\", \"c\", \"a\")"
+    ]
   },
   {
-    "Name": "extend", "IsPublic": true, "Aliases": ["extend"], "Scope": "tuple",
-    "Input": "tuple", "Output": "tuple", "Summary": "Returns a new tuple with a value appended, expanding tuple values into their positions.",
-    "Parameters": [{"Name": "value", "Type": "any", "Optional": false, "Summary": "Specifies the value to append; tuple values are expanded into their positions."}],
-    "Examples": ["T(1, 2) | extend(3) → T(1, 2, 3)", "T(1, 2) | extend(T(3, \"foo\")) → T(1, 2, 3, \"foo\")"]
+    "Name": "extend",
+    "IsPublic": true,
+    "Aliases": [
+      "extend"
+    ],
+    "Scope": "tuple",
+    "Input": "tuple",
+    "Output": "tuple",
+    "Summary": "Returns a new tuple with a value appended, expanding tuple values into their positions.",
+    "Parameters": [
+      {
+        "Name": "value",
+        "Type": "any",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the value to append; tuple values are expanded into their positions."
+      }
+    ],
+    "Examples": [
+      "T(1, 2) | extend(3) → T(1, 2, 3)",
+      "T(1, 2) | extend(T(3, \"foo\")) → T(1, 2, 3, \"foo\")"
+    ]
   },
   {
-    "Name": "pick", "IsPublic": true, "Aliases": ["pick"], "Scope": "tuple",
-    "Input": "tuple", "Output": "tuple", "Summary": "Returns a tuple containing selected positions in the requested order.",
-    "Parameters": [{"Name": "positions", "Type": "integer", "Optional": false, "Variadic": true, "MinimumCardinality": 1, "Summary": "One or more zero-based tuple positions."}],
-    "Examples": ["T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"]
+    "Name": "pick",
+    "IsPublic": true,
+    "Aliases": [
+      "pick"
+    ],
+    "Scope": "tuple",
+    "Input": "tuple",
+    "Output": "tuple",
+    "Summary": "Returns a tuple containing selected positions in the requested order.",
+    "Parameters": [
+      {
+        "Name": "positions",
+        "Type": "integer",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "One or more zero-based tuple positions."
+      }
+    ],
+    "Examples": [
+      "T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"
+    ]
   },
   {
     "Name": "dictionary",
@@ -2438,6 +2497,8 @@
         "Name": "position",
         "Type": "integer",
         "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
         "Summary": "Specifies the zero-based position of the tuple field to return."
       }
     ],

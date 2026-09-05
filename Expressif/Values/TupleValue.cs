@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Expressif.Types;
 
 namespace Expressif.Values;
@@ -10,9 +9,8 @@ namespace Expressif.Values;
 /// Represents an immutable, ordered collection of heterogeneous values.
 /// </summary>
 [ExpressifType(Parent = "structured", LiteralSyntax = "T followed by parenthesized comma-separated values", LiteralExamples = ["T(\"Alice\", 42)"])]
-public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpressifValueType
+public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpressifValueType, IPositionalValue
 {
-    private static readonly IEqualityComparer<object?> StructuralComparer = new StructuralValueComparer();
     private readonly object?[] values;
 
     public TupleValue(params object?[] values)
@@ -23,6 +21,8 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpre
 
     public int Count => values.Length;
     public object? this[int index] => values[index];
+    public int Arity => Count;
+    public object? GetPosition(int index) => this[index];
 
     public IEnumerator<object?> GetEnumerator()
         => ((IEnumerable<object?>)values).GetEnumerator();
@@ -31,30 +31,18 @@ public class TupleValue : IReadOnlyList<object?>, IEquatable<TupleValue>, IExpre
         => values.GetEnumerator();
 
     public bool Equals(TupleValue? other)
-        => other is not null && values.SequenceEqual(other.values, StructuralComparer);
+        => other is not null && PositionalValueEquality.Equals(this, other);
 
     public override bool Equals(object? obj)
-        => obj is TupleValue other && Equals(other);
+        => PositionalValueEquality.Equals(this, obj);
 
     public override int GetHashCode()
     {
-        var hash = default(HashCode);
-        foreach (var value in values)
-            hash.Add(value, StructuralComparer);
-        return hash.ToHashCode();
+        return PositionalValueEquality.GetHashCode(this);
     }
 
     public override string ToString()
         => ValueFormatter.Format(this);
-
-    private sealed class StructuralValueComparer : IEqualityComparer<object?>
-    {
-        public new bool Equals(object? x, object? y)
-            => StructuralComparisons.StructuralEqualityComparer.Equals(x, y);
-
-        public int GetHashCode(object? obj)
-            => obj is null ? 0 : StructuralComparisons.StructuralEqualityComparer.GetHashCode(obj);
-    }
 }
 
 /// <summary>

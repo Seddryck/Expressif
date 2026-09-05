@@ -26,7 +26,7 @@ public sealed class Coerce : IFunction<object?, object?>
     public object? Evaluate(object? value)
         => value switch
         {
-            TupleValue tuple => CoerceTuple(tuple),
+            IPositionalValue tuple => CoerceTuple(tuple),
             RecordValue record => CoerceRecord(record),
             _ => CoerceScalar(value),
         };
@@ -40,9 +40,11 @@ public sealed class Coerce : IFunction<object?, object?>
         return Convert(value, type);
     }
 
-    private TupleValue CoerceTuple(TupleValue tuple)
+    private TupleValue CoerceTuple(IPositionalValue tuple)
     {
-        var values = tuple.ToArray();
+        var values = Enumerable.Range(0, tuple.Arity).Select(tuple.GetPosition).ToArray();
+        if (positionalTypes is [var tupleType] && tupleType == typeof(TupleValue))
+            return new Values.Tuple(values);
         if (positionalTypes is not null)
         {
             for (var index = 0; index < Math.Min(positionalTypes.Length, values.Length); index++)

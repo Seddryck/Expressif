@@ -129,9 +129,9 @@ public abstract class BaseExpressionFactory
                 {
                     if (evaluated is null)
                         throw new SpreadArgumentException("Spread argument cannot be null.");
-                    if (evaluated is not TupleValue spread)
+                    if (evaluated is not IPositionalValue spread)
                         throw new SpreadArgumentException("Spread argument must evaluate to a tuple.");
-                    values.AddRange(spread);
+                    values.AddRange(Enumerable.Range(0, spread.Arity).Select(spread.GetPosition));
                 }
                 else
                 {
@@ -175,11 +175,11 @@ public abstract class BaseExpressionFactory
 
     private static object? ResolveTupleProjection(object? value, TupleProjectionParameter projection)
     {
-        if (value is not TupleValue tuple)
+        if (value is not IPositionalValue tuple)
             return null;
 
-        var index = projection.FromEnd ? tuple.Count - projection.Index : projection.Index;
-        return index >= 0 && index < tuple.Count ? tuple[index] : null;
+        var index = projection.FromEnd ? tuple.Arity - projection.Index : projection.Index;
+        return index >= 0 && index < tuple.Arity ? tuple.GetPosition(index) : null;
     }
 
     private static object? GetAmbient(IContext context)
