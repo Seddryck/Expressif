@@ -29,6 +29,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'ci-main-release' || github.run_id }}
+  cancel-in-progress: false
+
 env:
   DOTNET_NO_WORKLOAD_UPDATE_NOTIFICATION: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -635,8 +639,97 @@ jobs:
             distribution/bin/archives/expressif-*.*
             distribution/bin/installers/expressif-*-setup.exe*
 
+  tag-version:
+    needs:
+      - calculate-version
+      - package-nuget
+      - package-branding
+      - package-conformance
+      - package-syntax-highlighters
+      - package-cli-distributions
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Install GitVersion
+        shell: pwsh
+        run: ./install-gitversion.ps1
+
+      - name: Revalidate version and create tag
+        shell: pwsh
+        env:
+          BUILT_VERSION: ${{ needs.calculate-version.outputs.semver }}
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          git fetch origin +refs/heads/main:refs/remotes/origin/main --tags
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Failed to refresh main and version tags.'
+          }
+
+          $mainSha = git rev-parse refs/remotes/origin/main
+          if ($mainSha -ne $env:EXPECTED_SHA) {
+            throw "origin/main moved from $env:EXPECTED_SHA to $mainSha before publication."
+          }
+
+          $currentVersion = (gitversion /output json | ConvertFrom-Json).SemVer
+          if ($currentVersion -ne $env:BUILT_VERSION) {
+            throw "Version changed after packaging: artifacts use $env:BUILT_VERSION, but GitVersion calculates $currentVersion."
+          }
+
+          $tag = "v$currentVersion"
+
+          function Get-RemoteTagCommit([string] $Name) {
+            $refs = @(git ls-remote origin "refs/tags/$Name" "refs/tags/$Name^{}")
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to inspect remote tag $Name."
+            }
+            if ($refs.Count -eq 0) {
+              return $null
+            }
+
+            $peeled = @($refs | Where-Object { $_ -like "*refs/tags/$Name^{}" })
+            $ref = if ($peeled.Count -gt 0) { $peeled[0] } else { $refs[0] }
+            return ($ref -split '\s+')[0]
+          }
+
+          $tagSha = Get-RemoteTagCommit $tag
+          if ($null -ne $tagSha) {
+            if ($tagSha -ne $env:EXPECTED_SHA) {
+              throw "Tag $tag points to $tagSha instead of $env:EXPECTED_SHA."
+            }
+            Write-Host "Tag $tag already identifies $env:EXPECTED_SHA; continuing."
+            exit 0
+          }
+
+          git tag $tag $env:EXPECTED_SHA
+          git push origin "refs/tags/$tag"
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Created tag $tag at $env:EXPECTED_SHA."
+            exit 0
+          }
+
+          $tagSha = Get-RemoteTagCommit $tag
+          if ($tagSha -eq $env:EXPECTED_SHA) {
+            Write-Host "Tag $tag was concurrently created at the expected commit; continuing."
+            exit 0
+          }
+          throw "Failed to reserve tag $tag for $env:EXPECTED_SHA; remote tag points to $tagSha."
+
   publish-nuget:
-    needs: package-nuget
+    needs:
+      - package-nuget
+      - tag-version
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: windows-latest
     permissions:
@@ -696,6 +789,7 @@ jobs:
   publish-github-release:
     needs:
       - calculate-version
+      - tag-version
       - package-branding
       - package-conformance
       - package-syntax-highlighters
@@ -780,7 +874,7 @@ jobs:
           gh release view $tag *> $null
           if ($LASTEXITCODE -ne 0) {
             gh release create $tag `
-              --target $env:GITHUB_SHA `
+              --verify-tag `
               --title "Expressif $env:RELEASE_VERSION" `
               --generate-notes `
               --discussion-category Announcements
