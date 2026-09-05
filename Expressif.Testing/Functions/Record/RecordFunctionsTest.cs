@@ -21,6 +21,26 @@ public class RecordFunctionsTest
         => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
 
     [Conformance]
+    public void FieldNames_Valid_Array(object? value, string expression, object?[] expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void SelectFields_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [Conformance]
+    public void ExcludeFields_Valid_Record(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
+
+    [TestCase("select-fields({\"name\", 1})")]
+    [TestCase("exclude-fields({#null})")]
+    public void FieldSelection_NonTextName_ThrowsClearError(string source)
+        => Assert.That(
+            () => Expression.Create(source).Evaluate(new ValueRecord()),
+            Throws.TypeOf<ArgumentException>()
+                .With.Message.EqualTo("Every field name must be text. (Parameter 'names')"));
+
+    [Conformance]
     public void With_Valid_Text(object? value, string expression, string expected)
         => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
 

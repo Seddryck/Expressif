@@ -25,6 +25,60 @@ public class Field : IFunction
         => NamedValueAccessor.TryGetValue(value, Name.Invoke(), out var result) ? result : null;
 }
 
+/// <summary>Returns the names of all fields in the input record, preserving field order.</summary>
+[Function(prefix: "")]
+[Scope("record")]
+public sealed class FieldNames : IFunction<ValueRecord, string[]>
+{
+    public string[] Evaluate(ValueRecord value)
+        => RecordOperations.Enumerate(value).Select(field => field.Key).ToArray();
+
+    object? IFunction.Evaluate(object? value)
+        => RecordOperations.Enumerate(value).Select(field => field.Key).ToArray();
+}
+
+/// <summary>Returns only fields whose names appear in the supplied array, preserving input field order and ignoring unknown names.</summary>
+[Function(prefix: "")]
+[Scope("record")]
+public sealed class SelectFields : IFunction<ValueRecord, ValueRecord>
+{
+    private Func<object?[]> Names { get; }
+
+    /// <param name="names">Field names to retain. Unknown and duplicate names are ignored.</param>
+    public SelectFields(Func<object?[]> names) => Names = names;
+
+    public ValueRecord Evaluate(ValueRecord value) => EvaluateCore(value);
+
+    object? IFunction.Evaluate(object? value) => EvaluateCore(value);
+
+    private ValueRecord EvaluateCore(object? value)
+    {
+        var selected = RecordOperations.ResolveNames(Names.Invoke());
+        return RecordOperations.Filter(value, field => selected.Contains(field.Key));
+    }
+}
+
+/// <summary>Returns all fields except those whose names appear in the supplied array, preserving input field order and ignoring unknown names.</summary>
+[Function(prefix: "")]
+[Scope("record")]
+public sealed class ExcludeFields : IFunction<ValueRecord, ValueRecord>
+{
+    private Func<object?[]> Names { get; }
+
+    /// <param name="names">Field names to remove. Unknown and duplicate names are ignored.</param>
+    public ExcludeFields(Func<object?[]> names) => Names = names;
+
+    public ValueRecord Evaluate(ValueRecord value) => EvaluateCore(value);
+
+    object? IFunction.Evaluate(object? value) => EvaluateCore(value);
+
+    private ValueRecord EvaluateCore(object? value)
+    {
+        var excluded = RecordOperations.ResolveNames(Names.Invoke());
+        return RecordOperations.Filter(value, field => !excluded.Contains(field.Key));
+    }
+}
+
 /// <summary>
 /// Creates a record by evaluating its named and spread entries against the input value.
 /// Later entries overwrite fields with the same name created by earlier entries.
@@ -244,6 +298,22 @@ internal static class RecordOperations
         foreach (var field in Enumerate(input))
             copy.Set(field.Key, field.Value);
         return copy;
+    }
+
+    internal static ValueRecord Filter(object? input, Func<KeyValuePair<string, object?>, bool> predicate)
+    {
+        var result = new ValueRecord();
+        foreach (var field in Enumerate(input).Where(predicate))
+            result.Set(field.Key, field.Value);
+        return result;
+    }
+
+    internal static HashSet<string> ResolveNames(IEnumerable<object?> names)
+    {
+        if (names.Any(name => name is not string))
+            throw new ArgumentException("Every field name must be text.", nameof(names));
+
+        return new HashSet<string>(names.Cast<string>(), StringComparer.Ordinal);
     }
 
     internal static string[] ResolvePath(object? value)

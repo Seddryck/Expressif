@@ -1,0 +1,30 @@
+suite: record
+kind: function
+operator: select-fields
+tests:
+  - id: select-fields.valid.record
+    cases:
+      - id: select-fields.valid.record.subset-in-input-order
+        value:
+        parameters: ['{name := "Mons", temp := 18, pressure := 1012} | select-fields({"pressure", "temp"})']
+        expected: '{temp := 18, pressure := 1012}'
+      - id: select-fields.valid.record.empty-names
+        value:
+        parameters: ['{name := "Mons", temp := 18} | select-fields({})']
+        expected: '{}'
+      - id: select-fields.valid.record.all-fields
+        value:
+        parameters: ['{name := "Mons", temp := 18} | select-fields({"name", "temp"})']
+        expected: '{name := "Mons", temp := 18}'
+      - id: select-fields.valid.record.unknown-and-duplicate-names
+        value:
+        parameters: ['{name := "Mons", temp := 18} | select-fields({"missing", "temp", "temp"})']
+        expected: '{temp := 18}'
+      - id: select-fields.valid.record.empty-record
+        value:
+        parameters: ['record() | select-fields({"name"})']
+        expected: '{}'
+      - id: select-fields.valid.record.computed-names
+        value:
+        parameters: ['{name := "Mons", measure_temp := 18, measure_pressure := 1012} | select-fields(field-names | filter(starts-with("measure_")))']
+        expected: '{measure_temp := 18, measure_pressure := 1012}'

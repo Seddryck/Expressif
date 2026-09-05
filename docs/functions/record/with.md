@@ -3,7 +3,7 @@ layout: docs
 title: "with"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 130
 has_toc: false
 permalink: /functions/record/with/
 tags:
@@ -43,15 +43,6 @@ Evaluates named projections independently against the input, then evaluates a bo
 {% raw %}
 ```expressif
 {firstName := "John", lastName := "Doe"} | with(last-name := .lastName, first-name := .firstName, .last-name | suffix(", ") | suffix(.first-name)) → "Doe, John"
-```
-
-```expressif
-{{amount := 10}, {amount := 40}, {amount := 30}}
-| with(
-    amounts := map(.amount),
-    threshold := map(.amount) | max | divide(2),
-    .amounts | filter(greater-than(^^.threshold)) | sum
-) → 70
 ```
 {% endraw %}
 
