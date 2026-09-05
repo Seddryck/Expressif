@@ -18,6 +18,8 @@ max()
 
 Tracks the greatest numeric value found during accumulation.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This accumulator has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+{10, 30, 20} | fold(max) → 30
+```
+{% endraw %}
 
 
 **Kind:** Accumulator  

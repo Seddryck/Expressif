@@ -79,6 +79,7 @@ public class AccumulatorIntrospectorTest
             Assert.That(Infos.Any(x => x.Name == "last"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "every"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "any"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "reduce"), Is.True);
         }
     }
 }

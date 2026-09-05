@@ -18,6 +18,8 @@ any()
 
 Returns `true` when at least one accumulated boolean value is `true`.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This accumulator has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+{#false, #true, #false} | fold(any) → #true
+```
+{% endraw %}
 
 
 **Kind:** Accumulator  

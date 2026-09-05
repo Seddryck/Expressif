@@ -25,4 +25,5 @@ Reference documentation for Expressif accumulators in the `array` scope.
 | [`last`]({{ '/accumulators/array/last/' | relative_url }}) | Stores the most recently accumulated item. |
 | [`max`]({{ '/accumulators/array/max/' | relative_url }}) | Tracks the greatest numeric value found during accumulation. |
 | [`min`]({{ '/accumulators/array/min/' | relative_url }}) | Tracks the smallest numeric value found during accumulation. |
+| [`reduce`]({{ '/accumulators/array/reduce/' | relative_url }}) | Combines array elements in source order by repeatedly evaluating an expression against the accumulated value and current element. |
 | [`sum`]({{ '/accumulators/array/sum/' | relative_url }}) | Computes the sum of all accumulated numeric values. |

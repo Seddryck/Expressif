@@ -339,8 +339,46 @@ public class FunctionFactory : BaseExpressionFactory
             "adjacent" => BuildAdjacentFunction(function, context),
             "chunk-while" => BuildChunkWhileFunction(function, context),
             "generate" => BuildGenerateFunction(function, context),
+            "reduce" => BuildReduceFunction(function, context),
             _ => null,
         };
+
+    private IFunction BuildReduceFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(ReduceAccumulator), function.Arguments).Parameters;
+        if (!TryGetOpenExpression(bound[0], out var operation))
+        {
+            throw new ArgumentException(
+                $"The accumulator named '{function.Name}' expects parameter 'operation' to be an open expression.",
+                nameof(function));
+        }
+
+        var operationProvider = BuildReduceOperationProvider(operation, context);
+        if (bound.Length == 1)
+            return new Fold(() => new ReduceAccumulator(operationProvider));
+
+        var initial = BuildValueEvaluator(bound[1], context);
+        return new Fold(() => new ReduceAccumulator(operationProvider, () => initial.Invoke(EvaluationRuntime.Frame?.Current)));
+    }
+
+    private Func<IFunction> BuildReduceOperationProvider(OpenExpressionParameter operation, IContext context)
+    {
+        var members = operation.Expression.Members.ToArray();
+        if (members is [var first, ..]
+            && first.Arguments is [
+                { Name: null, Value: TupleProjectionParameter { Index: 0, FromEnd: false } },
+                .. var remaining])
+        {
+            members[0] = Bindings.Function.FromArguments(first.Name, remaining);
+            members = [
+                new Bindings.Function("tuple-at", [new LiteralParameter("0")]),
+                .. members,
+            ];
+        }
+
+        var normalized = new OpenExpression(members);
+        return () => BuildPipeline(normalized, context);
+    }
 
     private IEnumerable<Func<object?, object?>> BuildGroupingExpressionEvaluators(
         Bindings.Function function,

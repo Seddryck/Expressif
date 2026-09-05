@@ -91,6 +91,40 @@
     ]
   },
   {
+    "Name": "reduce",
+    "IsPublic": true,
+    "Aliases": [
+      "reduce"
+    ],
+    "Scope": "Array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Combines array elements in source order by repeatedly evaluating an expression against the accumulated value and current element.",
+    "Behavior": "The combining expression receives a two-element tuple: `$0` is the accumulated value and `$1` is the current element. Without `initial`, the first element becomes the accumulated value and an empty array returns `null`. With `initial`, evaluation starts by combining it with the first element, and an empty array returns the initial value unchanged.",
+    "Parameters": [
+      {
+        "Name": "operation",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the expression evaluated against each accumulated-value/current-element tuple."
+      },
+      {
+        "Name": "initial",
+        "Type": "any",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the initial accumulated value and the result returned for an empty array."
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3, 4} | reduce(add($0, $1)) → 10",
+      "{1, 2, 3} | reduce(add($0, $1), 10) → 16"
+    ]
+  },
+  {
     "Name": "sum",
     "IsPublic": true,
     "Aliases": [

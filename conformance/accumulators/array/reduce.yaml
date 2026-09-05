@@ -1,0 +1,46 @@
+suite: array
+kind: accumulator
+operator: reduce
+tests:
+  - id: reduce.without-initial
+    parameters:
+      - operation
+    cases:
+      - id: reduce.without-initial.multiple
+        value: "{1, 2, 3, 4}"
+        parameters:
+          - "add($0, $1)"
+        expected: 10
+      - id: reduce.without-initial.single
+        value: "{7}"
+        parameters:
+          - "add($0, $1)"
+        expected: 7
+      - id: reduce.without-initial.empty
+        value: (empty)
+        parameters:
+          - "add($0, $1)"
+        expected:
+  - id: reduce.with-initial
+    parameters:
+      - operation
+      - initial
+    cases:
+      - id: reduce.with-initial.multiple
+        value: "{1, 2, 3}"
+        parameters:
+          - "add($0, $1)"
+          - 10
+        expected: 16
+      - id: reduce.with-initial.empty
+        value: (empty)
+        parameters:
+          - "add($0, $1)"
+          - 10
+        expected: 10
+      - id: reduce.with-initial.order-sensitive
+        value: "{3, 2}"
+        parameters:
+          - "subtract($0, $1)"
+          - 10
+        expected: 5

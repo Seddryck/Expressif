@@ -18,6 +18,8 @@ last()
 
 Stores the most recently accumulated item.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This accumulator has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+{10, 20, 30} | fold(last) → 30
+```
+{% endraw %}
 
 
 **Kind:** Accumulator  
