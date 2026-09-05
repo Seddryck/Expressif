@@ -9,45 +9,7 @@ public sealed class ExpressionParser : IExpressionParser
     /// Parses source text into its canonical syntax representation.
     /// </summary>
     public static RootExpressionSyntax Parse(string text)
-        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(
-            NormalizeBinaryOperators(NormalizeEnclosingRootReferences(text))));
-
-    private static string NormalizeEnclosingRootReferences(string text)
-    {
-        const string marker = "^^.";
-        var result = new System.Text.StringBuilder(text.Length);
-        var quoted = false;
-        for (var index = 0; index < text.Length; index++)
-        {
-            if (IsUnescapedQuote(text, index))
-                quoted = !quoted;
-
-            if (quoted || !text.AsSpan(index).StartsWith(marker, StringComparison.Ordinal))
-            {
-                result.Append(text[index]);
-                continue;
-            }
-
-            var fieldStart = index + marker.Length;
-            var fieldEnd = fieldStart;
-            while (fieldEnd < text.Length && IsBareFieldCharacter(text[fieldEnd]))
-                fieldEnd++;
-
-            if (fieldEnd == fieldStart)
-            {
-                result.Append(text[index]);
-                continue;
-            }
-
-            var field = text[fieldStart..fieldEnd];
-            result.Append("enclosing-root-field(\"").Append(field).Append("\")");
-            index = fieldEnd - 1;
-        }
-        return result.ToString();
-    }
-
-    private static bool IsBareFieldCharacter(char value)
-        => char.IsLetterOrDigit(value) || value is '_' or '-';
+        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(text)));
 
     private static string NormalizeGroupingMapOperators(string text)
     {
