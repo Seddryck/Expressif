@@ -16,6 +16,14 @@ tests:
         value: T(10, 20)
         expected: 10
         parameters: [0]
+      - id: tuple-at.valid.position.pair.key
+        value: '("USA" => 42)'
+        expected: USA
+        parameters: [0]
+      - id: tuple-at.valid.position.pair.value
+        value: '("USA" => 42)'
+        expected: 42
+        parameters: [1]
       - id: tuple-at.valid.position.tuple.out-of-range
         value: T(10, 20)
         expected:

@@ -163,8 +163,8 @@
   },
   {
     "Name": "pair",
-    "Summary": "Represents an immutable key/value association.",
-    "Parent": "structured",
+    "Summary": "Represents an immutable key/value association and specialized tuple of arity two.",
+    "Parent": "tuple",
     "Literal": {
       "Syntax": "Key and value expressions separated by => and enclosed in parentheses",
       "Examples": [
