@@ -1,0 +1,24 @@
+suite: drop-empty-groups
+kind: function
+operator: drop-empty-groups
+tests:
+  - id: drop-empty-groups.valid.groups
+    cases:
+      - id: drop-empty-groups.valid.groups.mixed
+        value: (null)
+        parameters: ['#{("BE" => {}), ("FR" => {15}), ("DE" => {20, 30})} | drop-empty-groups']
+        expected: '#{("FR" => {15}), ("DE" => {20, 30})}'
+      - id: drop-empty-groups.valid.groups.null-item
+        value: (null)
+        parameters: ['#{("BE" => {#null})} | drop-empty-groups']
+        expected: '#{("BE" => {null})}'
+      - id: drop-empty-groups.valid.groups.all-empty
+        value: (null)
+        parameters: ['#{("BE" => {}), ("FR" => {})} | drop-empty-groups']
+        expected: '#{}'
+  - id: drop-empty-groups.valid.empty
+    cases:
+      - id: drop-empty-groups.valid.empty.grouping
+        value: (null)
+        parameters: ['#{} | drop-empty-groups']
+        expected: '#{}'

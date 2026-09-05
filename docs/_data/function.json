@@ -2068,6 +2068,20 @@
     ]
   },
   {
+    "Name": "drop-empty-groups",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "grouping",
+    "Summary": "Removes groups whose value collection contains no items.",
+    "Parameters": [],
+    "Examples": [
+      "#{(\"BE\" => {}), (\"FR\" => {15})} | drop-empty-groups → #{(\"FR\" => {15})}",
+      "#{(\"BE\" => {#null})} | drop-empty-groups → #{(\"BE\" => {#null})}"
+    ]
+  },
+  {
     "Name": "filter-groups",
     "IsPublic": true,
     "Aliases": ["having"],
