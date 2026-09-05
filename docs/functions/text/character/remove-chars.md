@@ -3,7 +3,7 @@ layout: docs
 title: "remove-chars"
 parent: "Character functions"
 grand_parent: "Text functions"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/text/character/remove-chars/
 tags:

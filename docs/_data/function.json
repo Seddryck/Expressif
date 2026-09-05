@@ -4188,6 +4188,21 @@
     ]
   },
   {
+    "Name": "chars",
+    "IsPublic": true,
+    "Aliases": [
+      "chars"
+    ],
+    "Scope": "text/character",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns the characters in the input text as an array in source order. Returns `null` for `null` and an empty array for empty text.",
+    "Parameters": [],
+    "Examples": [
+      "\"123\" | chars → {\"1\", \"2\", \"3\"}"
+    ]
+  },
+  {
     "Name": "remove-chars",
     "IsPublic": true,
     "Aliases": [

@@ -120,7 +120,7 @@ public class FunctionIntrospectorTest
     [TestCase("temporal/calendar", new[] { "catholic-calendar", "first-in-month", "first-of-month", "first-of-year", "last-in-month", "last-of-month", "last-of-year", "length-of-month", "length-of-year" })]
     [TestCase("temporal/conversion", new[] { "datetime-to-date", "invalid-to-date", "null-to-date" })]
     [TestCase("text/casing", new[] { "allcaps-case", "camel-case", "camel-snake-case", "capitalize", "cobol-case", "dot-case", "flat-case", "kebab-case", "lower", "namespace-case", "pascal-case", "pascal-snake-case", "path-case", "screaming-snake-case", "sentence-case", "snake-case", "swap-case", "title-case", "train-case", "upper" })]
-    [TestCase("text/character", new[] { "remove-chars", "replace-chars" })]
+    [TestCase("text/character", new[] { "chars", "remove-chars", "replace-chars" })]
     [TestCase("text/concatenation", new[] { "append", "append-new-line", "append-space", "prefix", "prefix-new-line", "prefix-new-line-if-missing", "prefix-space", "prefix-space-if-missing", "prepend", "prepend-new-line", "prepend-space", "replace-slice", "suffix", "suffix-new-line", "suffix-new-line-if-missing", "suffix-space", "suffix-space-if-missing", "text" })]
     [TestCase("text/conversion", new[] { "code-point", "from-code-point", "text-to-datetime" })]
     [TestCase("text/counting", new[] { "count-distinct-chars", "count-substring", "length" })]
