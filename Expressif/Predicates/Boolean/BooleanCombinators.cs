@@ -178,3 +178,24 @@ public class Xnor : BasePredicate
     public override bool Evaluate(object? value)
         => Negation.Evaluate(ExclusiveDisjunction.Evaluate(value));
 }
+
+/// <summary>
+/// Returns logical implication from the Boolean input to a secondary Boolean expression. Returns `true` without evaluating the expression when the input is `false`.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class Implies : BasePredicate
+{
+    private Func<bool> Expression { get; }
+
+    /// <param name="expression">Specifies the secondary Boolean expression evaluated when the input is `true`.</param>
+    public Implies(Func<bool> expression)
+        => Expression = expression;
+
+    public override bool Evaluate(object? value)
+    {
+        if (!BooleanConversion.ToBoolean(value))
+            return true;
+
+        return Expression.Invoke();
+    }
+}

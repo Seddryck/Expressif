@@ -3,7 +3,7 @@ layout: docs
 title: "is-true-or-null"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /predicates/boolean/is-true-or-null/
 tags:

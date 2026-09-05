@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "nand"
+title: "implies"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 80
+nav_order: 20
 has_toc: false
-permalink: /predicates/boolean/nand/
+permalink: /predicates/boolean/implies/
 tags:
   - predicates
   - boolean
@@ -14,12 +14,12 @@ generated: true
 
 ```
 boolean →
-nand(
+implies(
     expression: boolean
 ) → boolean
 ```
 
-Returns the negation of the logical conjunction of the Boolean input and a secondary Boolean expression. Evaluates the secondary expression only when the input is `true`.
+Returns logical implication from the Boolean input to a secondary Boolean expression. Returns `true` without evaluating the expression when the input is `false`.
 
 
 
@@ -40,7 +40,7 @@ Returns the negation of the logical conjunction of the Boolean input and a secon
 
 {% raw %}
 ```expressif
-#true | nand(#true) → #false
+#true | implies(#false) → #false
 ```
 {% endraw %}
 

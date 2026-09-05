@@ -14,6 +14,9 @@ namespace Expressif.Testing.Predicates.Introspection;
 [NonParallelizable]
 public class PredicateIntrospectorTest
 {
+    private static readonly string[] BooleanCombinatorNames =
+        ["and", "or", "xor", "not", "nand", "nor", "xnor", "implies"];
+
     private IEnumerable<PredicateInfo> Infos { get; set; }
 
     [SetUp]
@@ -37,13 +40,19 @@ public class PredicateIntrospectorTest
             Assert.That(
                 info.Name.StartsWith("is-", StringComparison.Ordinal)
                     || info.Name.StartsWith("has-", StringComparison.Ordinal)
-                    || info.Name is "and" or "or" or "xor" or "not"
+                    || BooleanCombinatorNames.Contains(info.Name, StringComparer.Ordinal)
                     || info.Name is "contains" or "starts-with" or "ends-with"
                     || info.Name.StartsWith("matches-", StringComparison.Ordinal),
                 Is.True,
                 $"Predicate '{info.Name}' does not follow the naming convention.");
         }
     }
+
+    [Test]
+    public void Locate_ExpressifAssembly_BooleanCombinatorsAreAvailable()
+        => Assert.That(
+            Infos.Where(x => x.Scope == "boolean").Select(x => x.Name),
+            Is.SupersetOf(BooleanCombinatorNames));
 
     [Test]
     public void Locate_ExpressifAssembly_SomeAliases()

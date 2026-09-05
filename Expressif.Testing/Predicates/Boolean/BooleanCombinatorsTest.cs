@@ -34,6 +34,10 @@ public class BooleanCombinatorsTest
     public void Xnor_Valid_Expression(bool value, bool expression, bool expected)
         => Assert.That(new Xnor(() => expression).Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void Implies_Valid_Expression(bool value, bool expression, bool expected)
+        => Assert.That(new Implies(() => expression).Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void And_FalseInput_DoesNotEvaluateExpression()
         => Assert.That(
@@ -70,6 +74,12 @@ public class BooleanCombinatorsTest
             () => new Xnor(() => throw new InvalidOperationException()).Evaluate(false),
             Throws.TypeOf<InvalidOperationException>());
 
+    [Test]
+    public void Implies_FalseInput_DoesNotEvaluateExpression()
+        => Assert.That(
+            () => new Implies(() => throw new InvalidOperationException()).Evaluate(false),
+            Throws.Nothing);
+
     [TestCase("and(#true)", true, true)]
     [TestCase("or(#false)", false, false)]
     [TestCase("xor(#true)", false, true)]
@@ -77,6 +87,7 @@ public class BooleanCombinatorsTest
     [TestCase("nand(#true)", true, false)]
     [TestCase("nor(#false)", false, true)]
     [TestCase("xnor(#true)", true, true)]
+    [TestCase("implies(#false)", true, false)]
     public void PredicateName_ParsedAndEvaluated(string code, object? value, bool expected)
         => Assert.That(new Predication(code).Evaluate(value), Is.EqualTo(expected));
 }

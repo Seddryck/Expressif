@@ -3,7 +3,7 @@ layout: docs
 title: "is-false"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /predicates/boolean/is-false/
 tags:

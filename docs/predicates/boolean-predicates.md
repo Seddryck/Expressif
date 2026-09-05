@@ -19,6 +19,7 @@ Reference documentation for Expressif predicates in the `boolean` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`and`]({{ '/predicates/boolean/and/' | relative_url }}) | Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`. |
+| [`implies`]({{ '/predicates/boolean/implies/' | relative_url }}) | Returns logical implication from the Boolean input to a secondary Boolean expression. Returns `true` without evaluating the expression when the input is `false`. |
 | [`is-false`]({{ '/predicates/boolean/is-false/' | relative_url }}) | Returns `true` if the argument is effectively `false` else return `false`. |
 | [`is-false-or-null`]({{ '/predicates/boolean/is-false-or-null/' | relative_url }}) | Returns `true` if the argument is effectively `false` or `null` else return `false`. |
 | [`is-identical-to`]({{ '/predicates/boolean/is-identical-to/' | relative_url }}) | Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise. |
