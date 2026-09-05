@@ -21,6 +21,8 @@ zip(
 
 Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array.
 
+
+
 ## Parameters
 
 
