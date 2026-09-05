@@ -17,10 +17,10 @@ public sealed class ExpressionParser : IExpressionParser
         var quoted = false;
         for (var index = 0; index < text.Length; index++)
         {
-            if (text[index] == '"' && (index == 0 || text[index - 1] != '\\'))
+            if (IsUnescapedQuote(text, index))
                 quoted = !quoted;
 
-            if (quoted || index + 2 >= text.Length || text.AsSpan(index, 3) is not "|#>")
+            if (quoted || !IsGroupingMapOperator(text, index))
             {
                 result.Append(text[index]);
                 continue;
@@ -31,28 +31,36 @@ public sealed class ExpressionParser : IExpressionParser
                 index++;
 
             var start = index;
-            var depth = 0;
-            var innerQuoted = false;
-            for (; index < text.Length; index++)
-            {
-                var current = text[index];
-                if (current == '"' && (index == start || text[index - 1] != '\\'))
-                    innerQuoted = !innerQuoted;
-                if (innerQuoted)
-                    continue;
-                if (current is '(' or '{')
-                    depth++;
-                else if (current is ')' or '}')
-                    depth--;
-                else if (current == '|' && depth == 0)
-                    break;
-            }
-
+            index = FindGroupingMapExpressionEnd(text, start);
             var expression = text[start..index].TrimEnd();
             result.Append("| group-map-shorthand(").Append(expression).Append(')');
             index--;
         }
         return result.ToString();
+    }
+
+    private static bool IsUnescapedQuote(string text, int index)
+        => text[index] == '"' && (index == 0 || text[index - 1] != '\\');
+
+    private static bool IsGroupingMapOperator(string text, int index)
+        => index + 2 < text.Length && text.AsSpan(index, 3) is "|#>";
+
+    private static int FindGroupingMapExpressionEnd(string text, int start)
+    {
+        var depth = 0;
+        var quoted = false;
+        for (var index = start; index < text.Length; index++)
+        {
+            var current = text[index];
+            if (IsUnescapedQuote(text, index))
+                quoted = !quoted;
+            if (quoted)
+                continue;
+            depth += current is '(' or '{' ? 1 : current is ')' or '}' ? -1 : 0;
+            if (current == '|' && depth == 0)
+                return index;
+        }
+        return text.Length;
     }
 
     private static string NormalizeBinaryOperators(string text)
