@@ -1,4 +1,5 @@
 using Expressif.Predicates.Boolean;
+using Expressif.Predicates;
 using Expressif.Testing.Conformance;
 
 namespace Expressif.Testing.Predicates.Boolean;
@@ -62,6 +63,30 @@ public class BooleanCombinatorsTest
     public void Majority_Five(object? value, bool first, bool second, bool third, bool fourth, bool fifth, bool expected)
         => Assert.That(new Majority([() => first, () => second, () => third, () => fourth, () => fifth]).Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void SatisfiesExactly_Zero(object? value, int count, bool expected)
+        => Assert.That(new SatisfiesExactly(() => count, []).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void SatisfiesExactly_Three(object? value, int count, bool first, bool second, bool third, bool expected)
+        => Assert.That(new SatisfiesExactly(() => count, [() => first, () => second, () => third]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void SatisfiesAtLeast_Zero(object? value, int count, bool expected)
+        => Assert.That(new SatisfiesAtLeast(() => count, []).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void SatisfiesAtLeast_Three(object? value, int count, bool first, bool second, bool third, bool expected)
+        => Assert.That(new SatisfiesAtLeast(() => count, [() => first, () => second, () => third]).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void SatisfiesAtMost_Zero(object? value, int count, bool expected)
+        => Assert.That(new SatisfiesAtMost(() => count, []).Evaluate(value), Is.EqualTo(expected));
+
+    [Conformance]
+    public void SatisfiesAtMost_Three(object? value, int count, bool first, bool second, bool third, bool expected)
+        => Assert.That(new SatisfiesAtMost(() => count, [() => first, () => second, () => third]).Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void And_FalseInput_DoesNotEvaluateExpression()
         => Assert.That(
@@ -109,6 +134,43 @@ public class BooleanCombinatorsTest
         => Assert.That(
             () => new Majority([() => true, () => true, () => throw new InvalidOperationException()]).Evaluate(null),
             Throws.Nothing);
+
+    [TestCaseSource(nameof(CardinalityPredicates))]
+    public void PredicateCardinality_NegativeCount_Throws(Func<int, IPredicate> create)
+        => Assert.That(
+            () => create(-1).Evaluate(null),
+            Throws.TypeOf<ArgumentOutOfRangeException>());
+
+    private static IEnumerable<Func<int, IPredicate>> CardinalityPredicates()
+    {
+        yield return count => new SatisfiesExactly(() => count, []);
+        yield return count => new SatisfiesAtLeast(() => count, []);
+        yield return count => new SatisfiesAtMost(() => count, []);
+    }
+
+    [Test]
+    public void SatisfiesExactly_TooFewRemain_DoesNotEvaluateRemainingPredicates()
+        => Assert.That(
+            () => new SatisfiesExactly(() => 2, [() => false, () => false, () => throw new InvalidOperationException()]).Evaluate(null),
+            Throws.Nothing);
+
+    [Test]
+    public void SatisfiesAtLeast_TargetReached_DoesNotEvaluateRemainingPredicates()
+        => Assert.That(
+            () => new SatisfiesAtLeast(() => 2, [() => true, () => true, () => throw new InvalidOperationException()]).Evaluate(null),
+            Throws.Nothing);
+
+    [Test]
+    public void SatisfiesAtMost_TargetExceeded_DoesNotEvaluateRemainingPredicates()
+        => Assert.That(
+            () => new SatisfiesAtMost(() => 1, [() => true, () => true, () => throw new InvalidOperationException()]).Evaluate(null),
+            Throws.Nothing);
+
+    [TestCase("satisfies-exactly(2, is-positive, is-even, is-less-than(0))", 4, true)]
+    [TestCase("satisfies-at-least(2, is-positive, is-even, is-less-than(0))", 4, true)]
+    [TestCase("satisfies-at-most(1, is-positive, is-even, is-less-than(0))", 4, false)]
+    public void PredicateCardinality_ParsedAndEvaluated(string code, object? value, bool expected)
+        => Assert.That(new Predication(code).Evaluate(value), Is.EqualTo(expected));
 
     [TestCase("majority()", 3, false)]
     [TestCase("majority(is-positive)", 3, true)]

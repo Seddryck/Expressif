@@ -1,0 +1,24 @@
+suite: boolean
+kind: predicate
+operator: satisfies-at-most
+tests:
+  - id: satisfies-at-most.zero
+    cases:
+      - id: satisfies-at-most.zero.count-zero
+        value: 1
+        parameters: [0]
+        expected: true
+      - id: satisfies-at-most.zero.count-one
+        value: 1
+        parameters: [1]
+        expected: true
+  - id: satisfies-at-most.three
+    cases:
+      - id: satisfies-at-most.three.within-limit
+        value: 1
+        parameters: [2, true, false, true]
+        expected: true
+      - id: satisfies-at-most.three.exceeds-limit
+        value: 1
+        parameters: [1, true, false, true]
+        expected: false

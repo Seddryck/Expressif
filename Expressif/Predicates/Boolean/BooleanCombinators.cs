@@ -233,3 +233,112 @@ public class Majority : BasePredicate
         return false;
     }
 }
+
+public abstract class PredicateCardinalityBase : BasePredicate
+{
+    private Func<int> Count { get; }
+    protected Func<bool>[] Predicates { get; }
+
+    protected PredicateCardinalityBase(Func<int> count, IEnumerable<Func<bool>> predicates)
+        => (Count, Predicates) = (count, predicates.ToArray());
+
+    protected int GetValidatedCount()
+    {
+        var count = Count.Invoke();
+        return count >= 0
+            ? count
+            : throw new ArgumentOutOfRangeException(nameof(count), count, "Predicate count must be non-negative.");
+    }
+}
+
+/// <summary>
+/// Returns `true` when exactly the requested number of supplied predicates are satisfied by the input. The count must be non-negative, and evaluation stops as soon as the result is known.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class SatisfiesExactly : PredicateCardinalityBase
+{
+    /// <param name="count">Specifies the exact non-negative number of predicates that must be satisfied.</param>
+    /// <param name="predicates">Specifies the predicate expressions evaluated against the same input value, in declaration order.</param>
+    public SatisfiesExactly(Func<int> count, IEnumerable<Func<bool>> predicates)
+        : base(count, predicates) { }
+
+    public override bool Evaluate(object? value)
+    {
+        using var scope = EvaluationRuntime.Derive(value);
+        var count = GetValidatedCount();
+        if (count > Predicates.Length)
+            return false;
+
+        var satisfied = 0;
+        for (var index = 0; index < Predicates.Length; index++)
+        {
+            if (Predicates[index].Invoke())
+                satisfied++;
+            if (satisfied > count)
+                return false;
+
+            var remaining = Predicates.Length - index - 1;
+            if (satisfied + remaining < count)
+                return false;
+        }
+        return satisfied == count;
+    }
+}
+
+/// <summary>
+/// Returns `true` when at least the requested number of supplied predicates are satisfied by the input. The count must be non-negative, and evaluation stops as soon as the result is known.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class SatisfiesAtLeast : PredicateCardinalityBase
+{
+    /// <param name="count">Specifies the minimum non-negative number of predicates that must be satisfied.</param>
+    /// <param name="predicates">Specifies the predicate expressions evaluated against the same input value, in declaration order.</param>
+    public SatisfiesAtLeast(Func<int> count, IEnumerable<Func<bool>> predicates)
+        : base(count, predicates) { }
+
+    public override bool Evaluate(object? value)
+    {
+        using var scope = EvaluationRuntime.Derive(value);
+        var count = GetValidatedCount();
+        if (count == 0)
+            return true;
+        if (count > Predicates.Length)
+            return false;
+
+        var satisfied = 0;
+        foreach (var predicate in Predicates)
+        {
+            if (predicate.Invoke() && ++satisfied >= count)
+                return true;
+        }
+        return false;
+    }
+}
+
+/// <summary>
+/// Returns `true` when at most the requested number of supplied predicates are satisfied by the input. The count must be non-negative, and evaluation stops as soon as the result is known.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class SatisfiesAtMost : PredicateCardinalityBase
+{
+    /// <param name="count">Specifies the maximum non-negative number of predicates that may be satisfied.</param>
+    /// <param name="predicates">Specifies the predicate expressions evaluated against the same input value, in declaration order.</param>
+    public SatisfiesAtMost(Func<int> count, IEnumerable<Func<bool>> predicates)
+        : base(count, predicates) { }
+
+    public override bool Evaluate(object? value)
+    {
+        using var scope = EvaluationRuntime.Derive(value);
+        var count = GetValidatedCount();
+        if (count >= Predicates.Length)
+            return true;
+
+        var satisfied = 0;
+        foreach (var predicate in Predicates)
+        {
+            if (predicate.Invoke() && ++satisfied > count)
+                return false;
+        }
+        return true;
+    }
+}

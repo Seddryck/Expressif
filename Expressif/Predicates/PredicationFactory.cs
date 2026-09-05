@@ -13,6 +13,14 @@ namespace Expressif.Predicates;
 
 public class PredicationFactory : BaseExpressionFactory
 {
+    private static readonly IReadOnlyDictionary<Type, Func<Func<int>, IEnumerable<Func<bool>>, IPredicate>> CardinalityFactories =
+        new Dictionary<Type, Func<Func<int>, IEnumerable<Func<bool>>, IPredicate>>
+        {
+            [typeof(Boolean.SatisfiesExactly)] = (count, predicates) => new Boolean.SatisfiesExactly(count, predicates),
+            [typeof(Boolean.SatisfiesAtLeast)] = (count, predicates) => new Boolean.SatisfiesAtLeast(count, predicates),
+            [typeof(Boolean.SatisfiesAtMost)] = (count, predicates) => new Boolean.SatisfiesAtMost(count, predicates),
+        };
+
     private ExpressifBinder Binder { get; } = new();
 
     protected UnaryOperatorFactory UnaryOperatorFactory { get; }
@@ -46,14 +54,39 @@ public class PredicationFactory : BaseExpressionFactory
     {
         var type = TypeMapper.Execute(basic.Member.Name);
         if (type == typeof(Boolean.Majority))
-        {
-            if (basic.Member.Arguments.Any(argument => argument.Name is not null))
-                throw new UnknownParameterNameException(basic.Member.Name, basic.Member.Arguments.First(argument => argument.Name is not null).Name!);
-
-            return new Boolean.Majority(basic.Member.Parameters.Select(parameter
-                => (Func<bool>)CreateParameter(parameter, typeof(bool), context)));
-        }
+            return InstantiateMajority(basic.Member, context);
+        if (CardinalityFactories.TryGetValue(type, out var factory))
+            return InstantiateCardinality(basic.Member, context, factory);
         return Instantiate<IPredicate>(type, basic.Member.Arguments, context);
+    }
+
+    private IPredicate InstantiateMajority(Bindings.Function function, IContext context)
+    {
+        EnsureOnlyPositionalArguments(function);
+        return new Boolean.Majority(CreateBooleanEvaluators(function.Parameters, context));
+    }
+
+    private IPredicate InstantiateCardinality(
+        Bindings.Function function,
+        IContext context,
+        Func<Func<int>, IEnumerable<Func<bool>>, IPredicate> factory)
+    {
+        EnsureOnlyPositionalArguments(function);
+        if (function.Parameters.Length == 0)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, 0);
+
+        var count = (Func<int>)CreateParameter(function.Parameters[0], typeof(int), context);
+        return factory(count, CreateBooleanEvaluators(function.Parameters.Skip(1), context));
+    }
+
+    private IEnumerable<Func<bool>> CreateBooleanEvaluators(IEnumerable<IParameter> parameters, IContext context)
+        => parameters.Select(parameter => (Func<bool>)CreateParameter(parameter, typeof(bool), context));
+
+    private static void EnsureOnlyPositionalArguments(Bindings.Function function)
+    {
+        var named = function.Arguments.FirstOrDefault(argument => argument.Name is not null);
+        if (named is not null)
+            throw new UnknownParameterNameException(function.Name, named.Name!);
     }
 
     internal IPredicate Instantiate(PipelinePredication pipeline, IContext context)
