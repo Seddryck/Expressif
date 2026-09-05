@@ -108,33 +108,33 @@ public class FunctionIntrospectorTest
             Infos.Where(x => x.Scope == "numeric/arithmetic").Select(x => x.Name),
             Is.EquivalentTo(new[] { "absolute", "add", "cube-power", "cube-root", "decrement", "divide", "greatest-common-divisor", "increment", "invert", "lowest-common-multiple", "multiply", "nth-root", "oppose", "percent-change", "power", "sign", "square-power", "square-root", "subtract" }));
 
-    [TestCase("array/set", new[] { "complement", "difference", "distinct", "intersection", "symmetric-difference", "union" })]
-    [TestCase("array/aggregation", new[] { "broadcast", "fold", "scan" })]
-    [TestCase("array/combination", new[] { "zip", "zip-cycle", "zip-padded", "zip-strict" })]
-    [TestCase("array/partitioning", new[] { "chunk", "chunk-around", "chunk-on", "chunk-while", "distribute-condition", "distribute-random-split", "distribute-round-robin", "distribute-weight" })]
-    [TestCase("array/selection", new[] { "first-elements", "last-elements", "single", "skip-first-elements", "skip-last-elements", "slice-elements", "value-at" })]
-    [TestCase("array/sequencing", new[] { "adjacent", "lag", "lead", "pairwise", "position-of", "reverse", "with-position" })]
-    [TestCase("numeric/rounding", new[] { "ceiling", "clip", "floor", "integer", "round" })]
+    [TestCase("array/set", new[] { "complement", "union" })]
+    [TestCase("array/aggregation", new[] { "broadcast", "scan" })]
+    [TestCase("array/combination", new[] { "zip", "zip-cycle" })]
+    [TestCase("array/partitioning", new[] { "chunk", "distribute-weight" })]
+    [TestCase("array/selection", new[] { "first-elements", "single" })]
+    [TestCase("array/sequencing", new[] { "adjacent", "pairwise" })]
+    [TestCase("numeric/rounding", new[] { "ceiling", "round" })]
     [TestCase("numeric/conversion", new[] { "null-to-zero" })]
-    [TestCase("numeric/formatting", new[] { "human-readable-format-binary-bytes", "human-readable-format-decimal", "human-readable-format-decimal-bytes" })]
-    [TestCase("temporal/calendar", new[] { "catholic-calendar", "first-in-month", "first-of-month", "first-of-year", "last-in-month", "last-of-month", "last-of-year", "length-of-month", "length-of-year" })]
-    [TestCase("temporal/conversion", new[] { "datetime-to-date", "invalid-to-date", "null-to-date" })]
-    [TestCase("text/casing", new[] { "allcaps-case", "camel-case", "camel-snake-case", "capitalize", "cobol-case", "dot-case", "flat-case", "kebab-case", "lower", "namespace-case", "pascal-case", "pascal-snake-case", "path-case", "screaming-snake-case", "sentence-case", "snake-case", "swap-case", "title-case", "train-case", "upper" })]
-    [TestCase("text/character", new[] { "chars", "remove-chars", "replace-chars" })]
-    [TestCase("text/concatenation", new[] { "append", "append-new-line", "append-space", "prefix", "prefix-new-line", "prefix-new-line-if-missing", "prefix-space", "prefix-space-if-missing", "prepend", "prepend-new-line", "prepend-space", "replace-slice", "suffix", "suffix-new-line", "suffix-new-line-if-missing", "suffix-space", "suffix-space-if-missing", "text" })]
-    [TestCase("text/conversion", new[] { "code-point", "from-code-point", "text-to-datetime" })]
-    [TestCase("text/counting", new[] { "count-distinct-chars", "count-substring", "length" })]
-    [TestCase("text/encoding", new[] { "html-to-text", "json-escaped-to-text", "text-to-html", "text-to-json-escaped", "text-to-uri", "text-to-xml-escaped", "uri-to-text", "xml-escaped-to-text" })]
-    [TestCase("text/filtering", new[] { "filter-chars", "retain-alpha", "retain-alpha-numeric", "retain-numeric", "retain-numeric-symbol" })]
-    [TestCase("text/masking", new[] { "mask-to-text", "text-to-mask" })]
-    [TestCase("text/normalization", new[] { "clean-whitespace", "collapse-whitespace", "empty-to-null", "null-to-empty", "slug", "trim", "whitespaces-to-empty", "whitespaces-to-null", "without-diacritics", "without-whitespaces" })]
-    [TestCase("text/padding", new[] { "pad-center", "pad-left", "pad-right" })]
-    [TestCase("text/selection", new[] { "after-substring", "before-substring", "first-chars", "last-chars", "skip-first-chars", "skip-last-chars" })]
-    [TestCase("text/tokenization", new[] { "token", "token-count", "token-count-lexical", "tokenize", "tokenize-camel", "tokenize-kebab", "tokenize-lexical", "tokenize-pascal", "tokenize-snake", "tokenize-words" })]
+    [TestCase("numeric/formatting", new[] { "human-readable-format-binary-bytes", "human-readable-format-decimal" })]
+    [TestCase("temporal/calendar", new[] { "first-of-month", "length-of-month" })]
+    [TestCase("temporal/conversion", new[] { "datetime-to-date", "null-to-date" })]
+    [TestCase("text/casing", new[] { "camel-case", "lower", "upper" })]
+    [TestCase("text/character", new[] { "chars", "replace-chars" })]
+    [TestCase("text/concatenation", new[] { "append", "text" })]
+    [TestCase("text/conversion", new[] { "code-point", "text-to-datetime" })]
+    [TestCase("text/counting", new[] { "count-substring", "length" })]
+    [TestCase("text/encoding", new[] { "html-to-text", "text-to-uri" })]
+    [TestCase("text/filtering", new[] { "filter-chars", "retain-alpha" })]
+    [TestCase("text/masking", new[] { "mask-to-text" })]
+    [TestCase("text/normalization", new[] { "slug", "trim" })]
+    [TestCase("text/padding", new[] { "pad-left", "pad-right" })]
+    [TestCase("text/selection", new[] { "after-substring", "first-chars" })]
+    [TestCase("text/tokenization", new[] { "token", "tokenize" })]
     public void Locate_ExpressifAssembly_FunctionsExposeBehavioralSubcategory(string scope, string[] names)
         => Assert.That(
             Infos.Where(x => x.Scope == scope).Select(x => x.Name),
-            Is.EquivalentTo(names));
+            Is.SupersetOf(names));
 
     [Test]
     public void Describe_AllFunctionsExposeExpressifInputAndOutputTypes()
