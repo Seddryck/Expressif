@@ -6,3 +6,4 @@ tests:
     cases:
       - {id: pick.valid.reorder, value: 'T("John", "Smith", 42)', parameters: [1, 0], expected: 'T("Smith", "John")'}
       - {id: pick.valid.repeat, value: 'T("John", "Smith")', parameters: [1, 0, 1], expected: 'T("Smith", "John", "Smith")'}
+      - {id: pick.valid.pair, value: '("USA" => 42)', parameters: [1, 0], expected: 'T(42, "USA")'}

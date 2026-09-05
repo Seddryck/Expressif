@@ -6,6 +6,8 @@ tests:
     cases:
       - {id: extend.valid.values, value: 'T(1, 2)', parameters: ['T(3, "foo")'], expected: 'T(1, 2, 3, "foo")'}
       - {id: extend.valid.empty-extension, value: 'T(1, 2)', parameters: [T()], expected: 'T(1, 2)'}
+      - {id: extend.valid.pair-empty-extension, value: '("USA" => 42)', parameters: [T()], expected: 'T("USA", 42)'}
+      - {id: extend.valid.pair-scalar, value: '("USA" => 42)', parameters: [3], expected: 'T("USA", 42, 3)'}
       - {id: extend.valid.literal, value: 'T(1, 2)', parameters: [3], expected: 'T(1, 2, 3)'}
       - {id: extend.valid.text-literal, value: 'T(1, 2)', parameters: ['"foo"'], expected: 'T(1, 2, "foo")'}
       - {id: extend.valid.null-literal, value: 'T(1, 2)', parameters: [null], expected: 'T(1, 2, #null)'}

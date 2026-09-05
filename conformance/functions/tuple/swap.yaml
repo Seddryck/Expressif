@@ -7,6 +7,9 @@ tests:
       - id: swap.valid.default
         value: T(a, b, c, d)
         expected: T(d, b, c, a)
+      - id: swap.valid.default.pair
+        value: '("USA" => 42)'
+        expected: 'T(42, "USA")'
   - id: swap.valid.explicit
     cases:
       - id: swap.valid.explicit

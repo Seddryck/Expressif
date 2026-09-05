@@ -10,6 +10,9 @@ tests:
       - id: arity.valid.tuple.pair
         value: T(10, 20)
         expected: 2
+      - id: arity.valid.pair
+        value: '("USA" => 42)'
+        expected: 2
       - id: arity.valid.tuple.heterogeneous
         value: 'T(10, "foo", #true)'
         expected: 3

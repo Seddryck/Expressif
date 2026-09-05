@@ -45,6 +45,7 @@ public class TypeRegistryTest
     [TestCase("date", "temporal")]
     [TestCase("datetime", "temporal")]
     [TestCase("time", "temporal")]
+    [TestCase("pair", "tuple")]
     public void Registry_ParentMatchesCanonicalHierarchy(string name, string parent)
         => Assert.That(TypeRegistry.Resolve(name).Parent, Is.EqualTo(parent));
 

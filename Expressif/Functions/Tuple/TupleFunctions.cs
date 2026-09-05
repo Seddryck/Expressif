@@ -56,7 +56,7 @@ public sealed class Swap : IFunction<TupleValue, TupleValue>
         var second = Second?.Invoke() ?? value.Count - 1;
         if (first < 0 || first >= value.Count || second < 0 || second >= value.Count)
             throw new IndexOutOfRangeException("Tuple swap position is out of range.");
-        var values = value.ToArray();
+        var values = Enumerable.Range(0, value.Count).Select(index => value[index]).ToArray();
         (values[first], values[second]) = (values[second], values[first]);
         return new Expressif.Values.Tuple(values);
     }
@@ -75,8 +75,11 @@ public sealed class Extend : IFunction<TupleValue, TupleValue>
     {
         var extension = Extension.Invoke(value);
         return extension is TupleValue tuple
-            ? new Expressif.Values.Tuple(value.Concat(tuple).ToArray())
-            : new Expressif.Values.Tuple(value.Append(extension).ToArray());
+            ? new Expressif.Values.Tuple(PositionalValues(value).Concat(PositionalValues(tuple)).ToArray())
+            : new Expressif.Values.Tuple(PositionalValues(value).Append(extension).ToArray());
+
+        static IEnumerable<object?> PositionalValues(TupleValue tuple)
+            => Enumerable.Range(0, tuple.Count).Select(index => tuple[index]);
     }
     object? IFunction.Evaluate(object? value) => value is TupleValue tuple ? Evaluate(tuple) : null;
 }
