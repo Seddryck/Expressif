@@ -27,7 +27,7 @@ internal static class EvaluationRuntime
         }
 
         var previous = current;
-        CurrentState.Value = new State(new EvaluationFrame(input, input), current.Context);
+        CurrentState.Value = new State(new EvaluationFrame(input, input, parent: current.Frame), current.Context);
         return new Scope(previous);
     }
 

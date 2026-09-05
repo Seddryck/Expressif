@@ -301,12 +301,22 @@ public sealed class ExpressifBinder
         {
             "coerce" => BindCoerceFunction(syntax),
             "field" => BindFieldFunction(syntax),
+            "enclosing-root-field" => BindEnclosingRootField(syntax),
             "is-present" or "is-absent" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
             "array" or "text" or "tuple" or "grouping" or "dictionary" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private Function BindEnclosingRootField(FunctionCallSyntax syntax)
+    {
+        var arguments = BindFunctionArguments(syntax);
+        if (arguments is not [{ Value: QuotedLiteralParameter }])
+            throw new BindingException("Enclosing-root field access expects exactly one field name.");
+
+        return Function.FromArguments(syntax.Name, arguments, FunctionSyntax.EnclosingRootFieldShorthand);
+    }
 
     private static Function BindCoerceFunction(FunctionCallSyntax syntax)
     {
@@ -486,6 +496,7 @@ public sealed class ExpressifBinder
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
             => new OpenExpressionParameter(new OpenExpression([BindRecordAccessFunction(access)])),
         ValueSyntax value => BindValue(value),
+        FunctionCallSyntax { Name: "enclosing-root-field" } call => BindEnclosingRootFieldParameter(call),
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         UnaryExpressionSyntax unary => new OpenExpressionParameter(BindUnaryExpression(unary)),
         BinaryExpressionSyntax binary => new OpenExpressionParameter(BindBinaryExpression(binary)),
@@ -501,6 +512,16 @@ public sealed class ExpressifBinder
             => new InputExpressionParameter(BindClosed(closed)),
         ParenthesizedExpressionSyntax parenthesized => new OpenExpressionParameter(BindOpenRoot(parenthesized.Expression)),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
+        OpenExpressionSyntax
+        {
+            Source: FunctionCallSyntax { Name: "enclosing-root-field" } call,
+            Pipeline.Count: 0,
+        } => BindEnclosingRootFieldParameter(call),
+        OpenExpressionSyntax
+        {
+            Source: null,
+            Pipeline: [FunctionCallSyntax { Name: "enclosing-root-field" } call],
+        } => BindEnclosingRootFieldParameter(call),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),
         ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed
             => new OpenExpressionParameter(BindRecordAccessExpression(closed, access)),
@@ -512,6 +533,14 @@ public sealed class ExpressifBinder
             new OpenExpression([BindPipelineMember(access)])),
         _ => throw Unsupported(syntax),
     };
+
+    private static IParameter BindEnclosingRootFieldParameter(FunctionCallSyntax syntax)
+    {
+        if (syntax.Arguments is not [PositionalArgumentSyntax { Value: QuotedLiteralSyntax field }])
+            throw new BindingException("Enclosing-root field access expects exactly one field name.");
+
+        return new EnclosingObjectPropertyParameter(field.Value);
+    }
 
     private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
         => new([BindRecordAccessFunction(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);

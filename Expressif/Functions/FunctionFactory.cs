@@ -228,6 +228,9 @@ public class FunctionFactory : BaseExpressionFactory
         if (function.Syntax == FunctionSyntax.RootFieldShorthand)
             return BuildRootFieldFunction(function);
 
+        if (function.Syntax == FunctionSyntax.EnclosingRootFieldShorthand)
+            return BuildEnclosingRootFieldFunction(function);
+
         if (function.Arguments.Any(x => x.Name is not null)
             && name is "record" or "coalesce")
             throw new UnknownParameterNameException(name, function.Arguments.First(x => x.Name is not null).Name!);
@@ -326,6 +329,14 @@ public class FunctionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Ambient, fieldName));
+    }
+
+    private static IFunction BuildEnclosingRootFieldFunction(Bindings.Function function)
+    {
+        if (!TryGetFieldName(function.Parameters, out var fieldName))
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Parent?.Ambient, fieldName));
     }
 
     private static object? EvaluateNested(IFunction expression, object? input)

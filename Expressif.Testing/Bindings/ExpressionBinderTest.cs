@@ -4,6 +4,16 @@ namespace Expressif.Testing.Bindings;
 
 public class ExpressionBinderTest
 {
+    [Test]
+    public void Bind_EnclosingRootReferenceAsArgument_CreatesEnclosingPropertyParameter()
+    {
+        var syntax = ExpressionParser.Parse("greater-than(^^.threshold)");
+        var expression = ((OpenRootExpression)new ExpressifBinder().Bind(syntax)).Expression;
+
+        Assert.That(expression.Members.Single().Parameters.Single(),
+            Is.EqualTo(new EnclosingObjectPropertyParameter("threshold")));
+    }
+
     [SetUp]
     public void Setup()
     { }

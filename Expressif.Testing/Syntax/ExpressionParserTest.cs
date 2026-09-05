@@ -24,6 +24,21 @@ public class ExpressionParserTest
         Assert.That(quoted.Value, Is.EqualTo("|and"));
     }
 
+    [Test]
+    public void Parse_EnclosingRootReference_NormalizesOutsideQuotedLiterals()
+    {
+        var syntax = ExpressionParser.Parse("greater-than(^^.threshold) | suffix(\"^^.literal\")");
+        var descendants = syntax.Children.SelectMany(DescendantsAndSelf).ToArray();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(descendants.OfType<FunctionCallSyntax>()
+                .Any(call => call.Name == "enclosing-root-field"), Is.True);
+            Assert.That(descendants.OfType<QuotedLiteralSyntax>()
+                .Any(literal => literal.Value == "^^.literal"), Is.True);
+        });
+    }
+
     private static IEnumerable<SyntaxNode> DescendantsAndSelf(SyntaxNode node)
         => new[] { node }.Concat(node.Children.SelectMany(DescendantsAndSelf));
 }

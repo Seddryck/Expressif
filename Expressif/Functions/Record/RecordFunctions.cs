@@ -74,6 +74,7 @@ public class With : IFunction
         foreach (var projection in Projections.Invoke())
             projection.Apply(value, temporary);
 
+        using var scope = EvaluationRuntime.Derive(temporary);
         return Body.Invoke(temporary);
     }
 }

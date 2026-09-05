@@ -44,6 +44,15 @@ Evaluates named projections independently against the input, then evaluates a bo
 ```expressif
 {firstName := "John", lastName := "Doe"} | with(last-name := .lastName, first-name := .firstName, .last-name | suffix(", ") | suffix(.first-name)) → "Doe, John"
 ```
+
+```expressif
+{{amount := 10}, {amount := 40}, {amount := 30}}
+| with(
+    amounts := map(.amount),
+    threshold := map(.amount) | max | divide(2),
+    .amounts | filter(greater-than(^^.threshold)) | sum
+) → 70
+```
 {% endraw %}
 
 

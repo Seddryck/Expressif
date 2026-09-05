@@ -85,6 +85,17 @@ public class ExpressionSerializerTest
     }
 
     [Test]
+    public void Serialize_EnclosingRootField_PreservesShorthand()
+    {
+        var root = new ExpressifBinder().Bind(
+            Expressif.Syntax.ExpressionParser.Parse("greater-than(^^.threshold)"));
+        var expression = ((OpenRootExpression)root).Expression;
+
+        Assert.That(new ExpressionSerializer().Serialize(expression),
+            Is.EqualTo("greater-than(^^.threshold)"));
+    }
+
+    [Test]
     [Ignore("Limited added-value to manage subexpression")]
     public void Serialize_WithSubExpression_WithPipe()
     {

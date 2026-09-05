@@ -7,10 +7,15 @@ namespace Expressif;
 /// </summary>
 internal sealed record EvaluationFrame
 {
-    public EvaluationFrame(object? current, object? ambient, IExpressionObservation? observation = null)
-        => (Current, Ambient, Observation) = (current, ambient, observation);
+    public EvaluationFrame(
+        object? current,
+        object? ambient,
+        IExpressionObservation? observation = null,
+        EvaluationFrame? parent = null)
+        => (Current, Ambient, Observation, Parent) = (current, ambient, observation, parent);
 
     public object? Current { get; }
     public object? Ambient { get; }
     public IExpressionObservation? Observation { get; }
+    public EvaluationFrame? Parent { get; }
 }

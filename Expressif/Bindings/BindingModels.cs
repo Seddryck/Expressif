@@ -12,6 +12,7 @@ public enum FunctionSyntax
     GroupMapShorthand,
     FieldShorthand,
     RootFieldShorthand,
+    EnclosingRootFieldShorthand,
     TupleProjectionShorthand,
 }
 
@@ -63,6 +64,7 @@ public sealed record TupleCoercionParameter(int Position, Type TargetType) : Coe
 public sealed record IntervalParameter(IntervalBinding Value) : IParameter;
 public sealed record VariableParameter(string Name) : IParameter;
 public sealed record ObjectPropertyParameter(string Name) : IParameter;
+public sealed record EnclosingObjectPropertyParameter(string Name) : IParameter;
 public sealed record ObjectIndexParameter(int Index) : IParameter;
 public sealed record TupleProjectionParameter(int Index, bool FromEnd = false) : IParameter;
 public sealed record ContextParameter(Func<IContext, object?> Function) : IParameter;

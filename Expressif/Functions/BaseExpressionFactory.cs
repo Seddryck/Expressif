@@ -93,6 +93,9 @@ public abstract class BaseExpressionFactory
             ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
             TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
+            EnclosingObjectPropertyParameter prop => CreateFunctionCast(
+                () => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Parent?.Ambient, prop.Name),
+                scalarType),
             VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
             IncomingValueParameter => CreateFunctionCast(() => GetCurrent(context), scalarType),
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
