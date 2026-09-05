@@ -20,6 +20,8 @@ and(
 
 Returns the logical conjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `true`.
 
+
+
 ## Parameters
 
 
@@ -30,6 +32,16 @@ Returns the logical conjunction of the Boolean-converted input and a secondary p
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | and(#true) → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

@@ -18,6 +18,8 @@ is-true()
 
 Returns `true` if the argument is effectively `true` else return `false`.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | is-true → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

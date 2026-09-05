@@ -127,3 +127,20 @@ public class Not : BaseBooleanPredicate
     protected override bool EvaluateNull()
         => true;
 }
+
+/// <summary>
+/// Returns the negation of the logical conjunction of the Boolean input and a secondary Boolean expression. Evaluates the secondary expression only when the input is `true`.
+/// </summary>
+[Predicate(false, prefix: "")]
+public class Nand : BasePredicate
+{
+    private And Conjunction { get; }
+    private Not Negation { get; } = new();
+
+    /// <param name="expression">Specifies the secondary Boolean expression evaluated when the input is `true`.</param>
+    public Nand(Func<bool> expression)
+        => Conjunction = new(() => expression.Invoke());
+
+    public override bool Evaluate(object? value)
+        => Negation.Evaluate(Conjunction.Evaluate(value));
+}

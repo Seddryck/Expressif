@@ -3,7 +3,7 @@ layout: docs
 title: "xor"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /predicates/boolean/xor/
 tags:
@@ -20,6 +20,8 @@ xor(
 
 Returns `true` when exactly one of the Boolean-converted input and a secondary predicate expression evaluates to `true`. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Always evaluates the secondary expression.
 
+
+
 ## Parameters
 
 
@@ -30,6 +32,16 @@ Returns `true` when exactly one of the Boolean-converted input and a secondary p
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | xor(#true) → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

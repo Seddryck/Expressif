@@ -1,0 +1,26 @@
+suite: boolean
+kind: predicate
+operator: nand
+tests:
+  - id: nand.valid.expression
+    cases:
+      - id: nand.valid.expression.false-false
+        value: false
+        expected: true
+        parameters:
+          - false
+      - id: nand.valid.expression.false-true
+        value: false
+        expected: true
+        parameters:
+          - true
+      - id: nand.valid.expression.true-false
+        value: true
+        expected: true
+        parameters:
+          - false
+      - id: nand.valid.expression.true-true
+        value: true
+        expected: false
+        parameters:
+          - true

@@ -20,6 +20,8 @@ is-identical-to(
 
 Returns `true` if the boolean passed as argument has the same value than the boolean passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -30,6 +32,16 @@ Returns `true` if the boolean passed as argument has the same value than the boo
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | is-identical-to(#true) → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

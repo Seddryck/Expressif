@@ -3,7 +3,7 @@ layout: docs
 title: "or"
 parent: "Boolean predicates"
 grand_parent: "Predicates library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /predicates/boolean/or/
 tags:
@@ -20,6 +20,8 @@ or(
 
 Returns the logical disjunction of the Boolean-converted input and a secondary predicate expression. Null-like and unconvertible values convert to `false`; zero converts to `false`; nonzero numbers and recognized true text convert to `true`. Evaluates the secondary expression only when the converted input is `false`.
 
+
+
 ## Parameters
 
 
@@ -30,6 +32,16 @@ Returns the logical disjunction of the Boolean-converted input and a secondary p
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | or(add(1)) → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

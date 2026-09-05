@@ -18,6 +18,8 @@ is-false()
 
 Returns `true` if the argument is effectively `false` else return `false`.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | is-false → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

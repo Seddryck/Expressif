@@ -18,6 +18,8 @@ is-true-or-null()
 
 Returns `true` if the argument is effectively `true` or `null` else return `false`.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#true | is-true-or-null → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

@@ -22,6 +22,10 @@ public class BooleanCombinatorsTest
     public void Not_Valid(object? value, bool expected)
         => Assert.That(new Not().Evaluate(value), Is.EqualTo(expected));
 
+    [Conformance]
+    public void Nand_Valid_Expression(bool value, bool expression, bool expected)
+        => Assert.That(new Nand(() => expression).Evaluate(value), Is.EqualTo(expected));
+
     [Test]
     public void And_FalseInput_DoesNotEvaluateExpression()
         => Assert.That(
@@ -40,10 +44,17 @@ public class BooleanCombinatorsTest
             () => new Xor(() => throw new InvalidOperationException()).Evaluate(false),
             Throws.TypeOf<InvalidOperationException>());
 
+    [Test]
+    public void Nand_FalseInput_DoesNotEvaluateExpression()
+        => Assert.That(
+            () => new Nand(() => throw new InvalidOperationException()).Evaluate(false),
+            Throws.Nothing);
+
     [TestCase("and(#true)", true, true)]
     [TestCase("or(#false)", false, false)]
     [TestCase("xor(#true)", false, true)]
     [TestCase("not", true, false)]
+    [TestCase("nand(#true)", true, false)]
     public void PredicateName_ParsedAndEvaluated(string code, object? value, bool expected)
         => Assert.That(new Predication(code).Evaluate(value), Is.EqualTo(expected));
 }
