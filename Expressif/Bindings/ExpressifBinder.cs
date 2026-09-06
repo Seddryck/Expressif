@@ -149,6 +149,7 @@ public sealed class ExpressifBinder
             QuotedLiteralParameter => typeof(string),
             LiteralParameter { Value: { } value } => value.GetType(),
             TupleParameter => typeof(Values.TupleValue),
+            VectorParameter => typeof(Values.VectorValue),
             PairParameter => typeof(Values.PairValue),
             GroupingParameter => typeof(Values.Grouping),
             DictionaryParameter => typeof(Values.Dictionary),
@@ -533,7 +534,7 @@ public sealed class ExpressifBinder
         TypeLiteralSyntax type => new LiteralParameter(TypeRegistry.Resolve(type.Name)),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
-        TupleLiteralSyntax tuple => new TupleParameter(tuple.Elements.Select(BindTupleElement).ToArray()),
+        TupleLiteralSyntax tuple => BindTupleLike(tuple),
         PairLiteralSyntax pair => new PairParameter(BindArgument(pair.Key), BindArgument(pair.Value)),
         GroupingLiteralSyntax grouping => new GroupingParameter(grouping.Entries
             .Select(pair => new PairParameter(BindArgument(pair.Key), BindArgument(pair.Value)))
@@ -579,6 +580,21 @@ public sealed class ExpressifBinder
                     : throw new BindingException($"Record literal field '{field.Name.Value}' must contain a value.")));
         }
         return new RecordLiteralParameter(fields.ToArray());
+    }
+
+    private IParameter BindTupleLike(TupleLiteralSyntax tuple)
+    {
+        var elements = tuple.Elements.Select(BindTupleElement).ToArray();
+        const string marker = "__expressif_internal_vector_literal__";
+        const string markerEnd = "__expressif_internal_vector_literal_end__";
+        return elements is
+            [
+                { IsSpread: false, Value: QuotedLiteralParameter { Value: marker } },
+                { IsSpread: false, Value: QuotedLiteralParameter { Value: markerEnd } },
+                .. var components
+            ]
+            ? new VectorParameter(components)
+            : new TupleParameter(elements);
     }
 
     private static IntervalBinding BindInterval(IntervalLiteralSyntax syntax)

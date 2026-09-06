@@ -84,6 +84,7 @@ public sealed record TupleParameter(TupleElementParameter[] Elements) : IParamet
 
     public IParameter[] Values => Elements.Select(element => element.Value).ToArray();
 }
+public sealed record VectorParameter(TupleElementParameter[] Elements) : IParameter;
 public sealed record PairParameter(IParameter Key, IParameter Value) : IParameter;
 public sealed record GroupingParameter(PairParameter[] Entries) : IParameter;
 public sealed record DictionaryParameter(PairParameter[] Entries) : IParameter;

@@ -59,6 +59,9 @@ public static class ValueFormatter
                 case PairValue pair:
                     WritePair(pair, depth);
                     break;
+                case VectorValue vector:
+                    WriteCollection("V(", ")", vector, depth);
+                    break;
                 case TupleValue tuple:
                     WriteCollection("T(", ")", tuple, depth);
                     break;
@@ -67,7 +70,6 @@ public static class ValueFormatter
                     break;
             }
         }
-
         public override string ToString() => builder.ToString();
 
         private void WriteScalarOrEnumerable(object value, bool structuredValue, int depth)

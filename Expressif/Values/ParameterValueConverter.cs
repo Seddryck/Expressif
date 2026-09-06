@@ -21,6 +21,7 @@ public sealed class ParameterValueConverter
             QuotedLiteralParameter quoted => quoted.Value,
             ArrayParameter array => ConvertArray(array),
             TupleParameter tuple => ConvertTuple(tuple),
+            VectorParameter vector => ConvertVector(vector),
             RecordLiteralParameter record => ConvertRecord(record),
             _ => serializer.Serialize(parameter),
         };
@@ -60,6 +61,28 @@ public sealed class ParameterValueConverter
         }
 
         return new Tuple(values.ToArray());
+    }
+
+    private Vector ConvertVector(VectorParameter vector)
+    {
+        var values = new List<object?>();
+        foreach (var element in vector.Elements)
+        {
+            var value = Convert(element.Value);
+            if (element.IsSpread)
+            {
+                if (value is null)
+                    throw new SpreadArgumentException("Spread argument cannot be null.");
+                if (value is not VectorValue spread)
+                    throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
+                values.AddRange(spread);
+            }
+            else
+            {
+                values.Add(value);
+            }
+        }
+        return new Vector(values.ToArray());
     }
 
     private RecordValue ConvertRecord(RecordLiteralParameter record)

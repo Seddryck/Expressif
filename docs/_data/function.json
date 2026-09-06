@@ -2203,8 +2203,8 @@
       "swap"
     ],
     "Scope": "tuple",
-    "Input": "tuple",
-    "Output": "tuple",
+    "Input": "tuple | vector",
+    "Output": "tuple | vector",
     "Summary": "Returns a tuple with two positions exchanged, defaulting to the first and last positions.",
     "Parameters": [
       {
@@ -2235,8 +2235,8 @@
       "extend"
     ],
     "Scope": "tuple",
-    "Input": "tuple",
-    "Output": "tuple",
+    "Input": "tuple | vector",
+    "Output": "tuple | vector",
     "Summary": "Returns a new tuple with a value appended, expanding tuple values into their positions.",
     "Parameters": [
       {
@@ -2260,8 +2260,8 @@
       "pick"
     ],
     "Scope": "tuple",
-    "Input": "tuple",
-    "Output": "tuple",
+    "Input": "tuple | vector",
+    "Output": "tuple | vector",
     "Summary": "Returns a tuple containing selected positions in the requested order.",
     "Parameters": [
       {

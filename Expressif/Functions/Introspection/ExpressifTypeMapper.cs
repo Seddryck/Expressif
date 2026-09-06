@@ -94,6 +94,8 @@ internal static class ExpressifTypeMapper
             return "weekday";
         if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
+        if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))
+            return "vector";
         if (type == typeof(PairValue) || type == typeof(Expressif.Values.Pair))
             return "pair";
         if (type == typeof(Group))
