@@ -1,0 +1,66 @@
+suite: text
+kind: function
+operator: tokenize-regex
+tests:
+  - id: tokenize-regex.valid
+    cases:
+      - id: tokenize-regex.valid.multiple
+        value: "a, b;c"
+        parameters: ["[,;]\\s*"]
+        expected: ["a", "b", "c"]
+      - id: tokenize-regex.valid.empty-segments
+        value: ",a,,"
+        parameters: [","]
+        expected: ["", "a", "", ""]
+      - id: tokenize-regex.valid.captures
+        value: "a,b;c"
+        parameters: ["([,;])"]
+        expected: ["a", "b", "c"]
+      - id: tokenize-regex.valid.zero-width
+        value: "ab"
+        parameters: ["(?=b)"]
+        expected: ["a", "b"]
+      - id: tokenize-regex.valid.empty-pattern
+        value: "ab"
+        parameters: [""]
+        expected: ["", "a", "b", ""]
+      - id: tokenize-regex.valid.no-match
+        value: "abc"
+        parameters: [","]
+        expected: ["abc"]
+      - id: tokenize-regex.valid.spaces
+        value: " a , b "
+        parameters: [","]
+        expected: [" a ", " b "]
+      - id: tokenize-regex.valid.blank
+        value: "(blank)"
+        parameters: [","]
+        expected: [" "]
+      - id: tokenize-regex.valid.only-spaces
+        value: "  "
+        parameters: [","]
+        expected: ["  "]
+      - id: tokenize-regex.valid.case-sensitive
+        value: "aAb"
+        parameters: ["a"]
+        expected: ["", "Ab"]
+      - id: tokenize-regex.valid.inline-options
+        value: "aAb"
+        parameters: ["(?i)a"]
+        expected: ["", "", "b"]
+      - id: tokenize-regex.valid.parentheses
+        value: "(abc)"
+        parameters: [","]
+        expected: ["(abc)"]
+      - id: tokenize-regex.valid.empty
+        value: "(empty)"
+        parameters: [","]
+        expected: []
+      - id: tokenize-regex.valid.literal-empty
+        value: ""
+        parameters: [","]
+        expected: []
+      - id: tokenize-regex.valid.null
+        value: "(null)"
+        parameters: [","]
+        expected: []

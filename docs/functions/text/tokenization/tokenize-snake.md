@@ -3,7 +3,7 @@ layout: docs
 title: "tokenize-snake"
 parent: "Tokenization functions"
 grand_parent: "Text functions"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/text/tokenization/tokenize-snake/
 tags:
