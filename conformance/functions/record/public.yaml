@@ -1,0 +1,27 @@
+suite: record
+kind: function
+operator: public
+tests:
+  - id: public.valid.record
+    cases:
+      - id: public.valid.record.mixed
+        value:
+        parameters: ['{foo := 10, _tmp := 20, bar := 30} | public']
+        expected: '{foo := 10, bar := 30}'
+      - id: public.valid.record.public-only
+        value:
+        parameters: ['{foo := 10, bar := 30} | public()']
+        expected: '{foo := 10, bar := 30}'
+      - id: public.valid.record.private-only
+        value:
+        parameters: ['{_foo := 10, __bar := 30} | public']
+        expected: '{}'
+      - id: public.valid.record.empty
+        value:
+        parameters: ['record() | public']
+        expected: '{}'
+      - id: public.valid.record.shallow-null
+        value:
+        parameters: ['{foo := #null, nested := {_secret := 1}, foo_bar := 2} | public']
+        expected: '{foo := null, nested := {_secret := 1}, foo_bar := 2}'
+

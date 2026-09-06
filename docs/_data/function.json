@@ -1780,6 +1780,19 @@
     ]
   },
   {
+    "Name": "public",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Returns a new record without fields whose names start with an underscore, preserving public field order and values. Unlike set-public and set-private, this function removes fields rather than renaming them.",
+    "Parameters": [],
+    "Examples": [
+      "{foo := 10, _tmp := 20, bar := 30} | public → {foo := 10, bar := 30}"
+    ]
+  },
+  {
     "Name": "record",
     "IsPublic": true,
     "Aliases": [],
