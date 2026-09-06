@@ -5425,8 +5425,7 @@
       "#\"2026-09-01\" | generate(while := before(#\"2026-09-01T01:00:00\"), next := forward(#\"00:15:00\"), result := coerce-time) → {#\"00:00:00\", #\"00:15:00\", #\"00:30:00\", #\"00:45:00\"}",
       "#\"2026-09-01\" | generate(while := before(#\"2026-09-06\"), next := next-day, result := record(date := coerce-date, day := day-of-month, weekday := day-of-week)) → {{date := #\"2026-09-01\", day := 1, weekday := 2}, {date := #\"2026-09-02\", day := 2, weekday := 3}, {date := #\"2026-09-03\", day := 3, weekday := 4}, {date := #\"2026-09-04\", day := 4, weekday := 5}, {date := #\"2026-09-05\", day := 5, weekday := 6}}"
     ]
-  }
-  ,
+  },
   {
     "Name": "dot",
     "IsPublic": true,
@@ -5447,6 +5446,19 @@
     ],
     "Examples": [
       "V(1, 2, 3) | dot(V(4, 5, 6)) → 32"
+    ]
+  },
+  {
+    "Name": "normalize",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "vector",
+    "Input": "vector",
+    "Output": "vector",
+    "Summary": "Returns a unit vector pointing in the same direction as the input vector.",
+    "Parameters": [],
+    "Examples": [
+      "V(3, 4) | normalize → V(0.6, 0.8)"
     ]
   }
 ]
