@@ -3,7 +3,7 @@ layout: docs
 title: "first"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 40
+nav_order: 60
 has_toc: false
 permalink: /accumulators/array/first/
 tags:

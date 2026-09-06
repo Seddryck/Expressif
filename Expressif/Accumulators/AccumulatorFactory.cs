@@ -7,7 +7,7 @@ internal static class AccumulatorFactory
     public static IAccumulator Instantiate(string? name)
     {
         var key = (name ?? string.Empty).Trim();
-        var typeName = $"{key}Accumulator";
+        var typeName = $"{key.ToPascalCase()}Accumulator";
         var fullName = $"{typeof(AccumulatorFactory).Namespace}.{typeName}";
 
         var type = typeof(AccumulatorFactory).Assembly.GetType(fullName, false, true);

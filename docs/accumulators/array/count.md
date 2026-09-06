@@ -3,7 +3,7 @@ layout: docs
 title: "count"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 20
+nav_order: 40
 has_toc: false
 permalink: /accumulators/array/count/
 tags:

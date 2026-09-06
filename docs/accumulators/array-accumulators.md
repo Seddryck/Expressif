@@ -19,6 +19,8 @@ Reference documentation for Expressif accumulators in the `array` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`any`]({{ '/accumulators/array/any/' | relative_url }}) | Returns `true` when at least one accumulated boolean value is `true`. |
+| [`common-prefix`]({{ '/accumulators/array/common-prefix/' | relative_url }}) | Returns the longest prefix shared by all accumulated strings. |
+| [`common-suffix`]({{ '/accumulators/array/common-suffix/' | relative_url }}) | Returns the longest suffix shared by all accumulated strings. |
 | [`count`]({{ '/accumulators/array/count/' | relative_url }}) | Counts the number of accumulated items, including `null` values. |
 | [`every`]({{ '/accumulators/array/every/' | relative_url }}) | Returns `true` only when every accumulated boolean value is `true`. |
 | [`first`]({{ '/accumulators/array/first/' | relative_url }}) | Stores the first accumulated item and ignores all subsequent items. |
