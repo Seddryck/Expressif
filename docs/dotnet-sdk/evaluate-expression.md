@@ -99,6 +99,7 @@ values, including from the Visual Studio Watch or Immediate window:
 ```csharp
 var compact = ValueFormatter.Format(result);
 var pretty = ValueFormatter.Format(result, ValueFormat.Pretty);
+var fourSpaces = ValueFormatter.Format(result, ValueFormat.Pretty, "    ");
 ```
 
 Pretty output writes each structured element on its own line and uses two spaces per

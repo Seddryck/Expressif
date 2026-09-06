@@ -136,4 +136,18 @@ public class ValueFormatterTest
         => Assert.That(
             () => ValueFormatter.Format(42, (ValueFormat)99),
             Throws.TypeOf<ArgumentOutOfRangeException>());
+
+    [TestCase("", "{\n1,\n2\n}")]
+    [TestCase(" ", "{\n 1,\n 2\n}")]
+    [TestCase("\t", "{\n\t1,\n\t2\n}")]
+    public void Format_Pretty_UsesCustomIndentation(string indentation, string expected)
+        => Assert.That(
+            ValueFormatter.Format(new object?[] { 1, 2 }, ValueFormat.Pretty, indentation),
+            Is.EqualTo(expected));
+
+    [Test]
+    public void Format_IndentationContainingLineBreak_Throws()
+        => Assert.That(
+            () => ValueFormatter.Format(42, ValueFormat.Pretty, "\n"),
+            Throws.ArgumentException);
 }

@@ -16,6 +16,18 @@ expressif evaluate '{1, T(2, 3)}' --output-style pretty
 ```
 
 Use `--output-style compact` to select the default behavior explicitly.
+`--pretty` and `--compact` are shortcuts for the corresponding styles. These
+shortcuts and `--output-style` are mutually exclusive.
+
+Pretty output uses two spaces per nesting level by default. Select another space
+count from 0 to 8, or tabs, with `--indent`:
+
+```bash
+expressif evaluate '{1, T(2, 3)}' --pretty --indent 4
+expressif evaluate '{1, T(2, 3)}' --pretty --indent tab
+```
+
+`--indent` requires pretty output.
 
 What changes is the value supplied to that evaluation.
 

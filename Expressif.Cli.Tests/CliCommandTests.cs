@@ -77,6 +77,57 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_PrettyShortcut_WithIndent_UsesRequestedSpaceCount()
+    {
+        var result = await InvokeAsync("evaluate", "{1, 2}", "--pretty", "--indent", "4");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n    1,\n    2\n}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CompactShortcut_PreservesSingleLineOutput()
+    {
+        var result = await InvokeAsync("evaluate", "{1, 2}", "--compact");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{1, 2}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("--pretty", "--compact")]
+    [TestCase("--pretty", "--output-style", "pretty")]
+    public async Task Evaluate_MultipleOutputStyleSelectors_ReturnsError(params string[] options)
+    {
+        var result = await InvokeAsync(["evaluate", "{1, 2}", .. options]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr, Does.Contain("mutually exclusive"));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_IndentWithCompactOutput_ReturnsError()
+    {
+        var result = await InvokeAsync("evaluate", "{1, 2}", "--compact", "--indent", "4");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr, Does.Contain("requires --output-style pretty"));
+        });
+    }
+
+    [Test]
     public async Task Evaluate_UnknownOutputStyle_ReturnsParseError()
     {
         var result = await InvokeAsync("evaluate", "{1, 2}", "--output-style", "wide");
@@ -670,6 +721,19 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n  2,\n  1\n}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_PrettyShortcut_WithTabIndent_UsesTabs()
+    {
+        var result = await InvokeAsync("run", "reverse", "--batch", "{{1, 2}}", "--pretty", "--indent", "tab");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n\t2,\n\t1\n}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

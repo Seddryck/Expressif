@@ -20,7 +20,10 @@ internal static class RunCommand
         var format = new Option<SourceFormat?>("--format") { Description = "Input format override: csv or json." };
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var scalar = new Option<bool>("--scalar") { Description = "Treat each source row as a single value. The source must contain exactly one column." };
-        var outputStyle = new Option<ValueFormat>("--output-style") { Description = "Output style: compact or pretty." };
+        var outputStyle = new Option<ValueFormat?>("--output-style") { Description = "Output style: compact or pretty." };
+        var pretty = new Option<bool>("--pretty") { Description = "Shortcut for --output-style pretty." };
+        var compact = new Option<bool>("--compact") { Description = "Shortcut for --output-style compact." };
+        var indent = new Option<string?>("--indent") { Description = "Pretty-output indentation: a space count from 0 to 8, or tab." };
         var command = new Command("run", "Evaluate an Expressif expression for each element of an input sequence.");
         command.Arguments.Add(expression);
         command.Options.Add(input);
@@ -31,12 +34,15 @@ internal static class RunCommand
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
         command.Options.Add(outputStyle);
+        command.Options.Add(pretty);
+        command.Options.Add(compact);
+        command.Options.Add(indent);
         command.SetAction(result => handler.Execute(new RunRequest(
             result.GetValue(expression), result.GetValue(file), result.GetValue(input) ?? [], result.GetValue(batch)?.FirstOrDefault(),
             result.GetValue(source), result.GetValue(format), result.GetValue(sourceOptions) ?? [], result.GetValue(scalar),
             result.GetResult(input) is not null, result.GetResult(batch) is not null, result.GetResult(source) is not null,
             result.GetResult(sourceOptions) is not null, result.GetResult(batch)?.IdentifierTokenCount ?? 0,
-            result.GetValue(outputStyle))));
+            result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent))));
         return command;
     }
 }

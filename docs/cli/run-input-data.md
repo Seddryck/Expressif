@@ -28,6 +28,9 @@ flowchart LR
 | `--source` / `-s` | Rows are read from a CSV, JSON, or source-expression file. | Cannot be combined with `--input` or `--batch`. |
 | `--format` | Overrides source format detection with `csv` or `json`. | Requires `--source`. |
 | `--output-style` | Formats results as `compact` or `pretty`. | Defaults to `compact`. |
+| `--pretty` | Shortcut for `--output-style pretty`. | Mutually exclusive with other style selectors. |
+| `--compact` | Shortcut for `--output-style compact`. | Mutually exclusive with other style selectors. |
+| `--indent` | Uses 0–8 spaces or `tab` for pretty indentation. | Requires pretty output; defaults to 2 spaces. |
 
 At least one input mode is required.
 

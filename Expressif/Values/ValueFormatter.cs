@@ -14,16 +14,22 @@ public static class ValueFormatter
         => Format(value, ValueFormat.Compact);
 
     public static string Format(object? value, ValueFormat format)
+        => Format(value, format, "  ");
+
+    public static string Format(object? value, ValueFormat format, string indentation)
     {
         if (!Enum.IsDefined(format))
             throw new ArgumentOutOfRangeException(nameof(format), format, "Unknown value format.");
+        ArgumentNullException.ThrowIfNull(indentation);
+        if (indentation.Contains('\r') || indentation.Contains('\n'))
+            throw new ArgumentException("Indentation cannot contain a line break.", nameof(indentation));
 
-        var writer = new Writer(format);
+        var writer = new Writer(format, indentation);
         writer.Write(value, structuredValue: false);
         return writer.ToString();
     }
 
-    private sealed class Writer(ValueFormat format)
+    private sealed class Writer(ValueFormat format, string indentation)
     {
         private readonly StringBuilder builder = new();
         private readonly bool pretty = format == ValueFormat.Pretty;
@@ -182,7 +188,11 @@ public static class ValueFormatter
             builder.Append('}');
         }
 
-        private void WriteIndent(int depth) => builder.Append(' ', depth * 2);
+        private void WriteIndent(int depth)
+        {
+            for (var index = 0; index < depth; index++)
+                builder.Append(indentation);
+        }
     }
 
     private static bool IsNullLike(object? value)
