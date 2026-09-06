@@ -26,5 +26,5 @@ public class ExtractMatches : BaseTextFunction<string[]>
     protected override object EvaluateString(string value)
         => value.Length == 0
             ? System.Array.Empty<string>()
-            : new Regex(Pattern()).Matches(value).Select(match => match.Value).ToArray();
+            : new Regex(Pattern(), RegexOptions.None, TimeSpan.FromSeconds(1)).Matches(value).Select(match => match.Value).ToArray();
 }
