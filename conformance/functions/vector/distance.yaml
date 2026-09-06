@@ -1,0 +1,22 @@
+suite: vector
+kind: function
+operator: distance
+tests:
+  - id: distance.valid.equal-dimension
+    cases:
+      - id: distance.valid.equal-dimension.classic
+        value: 'V(1, 2)'
+        parameters: ['V(4, 6)']
+        expected: 5
+      - id: distance.valid.equal-dimension.self
+        value: 'V(3, -4)'
+        parameters: ['V(3, -4)']
+        expected: 0
+      - id: distance.valid.equal-dimension.zero
+        value: 'V(0, 0, 0)'
+        parameters: ['V(0, 0, 0)']
+        expected: 0
+      - id: distance.valid.equal-dimension.fractional
+        value: 'V(0.5, 1)'
+        parameters: ['V(0.5, 3)']
+        expected: 2
