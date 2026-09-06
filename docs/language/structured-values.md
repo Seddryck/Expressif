@@ -225,6 +225,27 @@ Use a record when:
 
 The distinction is based on structure, not size. A two-element array is still an array, while a tuple can contain more than two elements.
 
+## Vectors
+
+A vector is a fixed-size positional value whose components are exclusively numeric. Construct one with `V(...)`:
+
+```expressif
+V(1, 2, 3)
+V(0.5, -2, 10)
+V()
+```
+
+The empty vector is valid. A vector is distinct from a numeric tuple: `V(1, 2)` has type `vector`, while `T(1, 2)` has type `tuple`.
+
+Tuple-compatible structural operations also accept vectors. Operations that only reorder or select numeric positions preserve the vector type. Extending a vector with numeric positions also returns a vector, while introducing a nonnumeric position returns `#null` rather than silently changing the result to a tuple:
+
+```expressif
+V(1, 2) | extend(3)     # V(1, 2, 3)
+V(1, 2) | extend("x")   # #null
+```
+
+Vector spread accepts another vector and preserves component order. Invalid explicit construction, including nonnumeric components, is an evaluation error.
+
 ## Reasoning about shape
 
 The shape of a value is more than its type. When reading a transformation, ask three separate questions:

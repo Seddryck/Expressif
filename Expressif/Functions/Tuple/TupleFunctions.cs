@@ -41,7 +41,7 @@ public sealed class Arity : IFunction<IPositionalValue, int>
 /// <summary>Returns a tuple with two positions exchanged, defaulting to the first and last positions.</summary>
 [Function(prefix: "", aliases: ["swap"])]
 [Scope("tuple")]
-public sealed class Swap : IFunction<IPositionalValue, TupleValue>
+public sealed class Swap : IFunction<IPositionalValue, TupleValue?>, IFunction<VectorValue, VectorValue>
 {
     private Func<int>? First { get; }
     private Func<int>? Second { get; }
@@ -49,56 +49,60 @@ public sealed class Swap : IFunction<IPositionalValue, TupleValue>
     /// <param name="first">Specifies the first zero-based position.</param>
     /// <param name="second">Specifies the second zero-based position.</param>
     public Swap(Func<int> first, Func<int> second) => (First, Second) = (first, second);
-    public TupleValue Evaluate(IPositionalValue value)
+    public TupleValue? Evaluate(IPositionalValue value)
     {
-        if (value.Arity == 0) return new Expressif.Values.Tuple();
+        if (value.Arity == 0) return PositionalResultFactory.Create(value, []);
         var first = First?.Invoke() ?? 0;
         var second = Second?.Invoke() ?? value.Arity - 1;
         if (first < 0 || first >= value.Arity || second < 0 || second >= value.Arity)
             throw new IndexOutOfRangeException("Tuple swap position is out of range.");
         var values = Enumerable.Range(0, value.Arity).Select(value.GetPosition).ToArray();
         (values[first], values[second]) = (values[second], values[first]);
-        return new Expressif.Values.Tuple(values);
+        return PositionalResultFactory.Create(value, values);
     }
+    public VectorValue Evaluate(VectorValue value) => (VectorValue)Evaluate((IPositionalValue)value)!;
     object? IFunction.Evaluate(object? value) => value is IPositionalValue tuple ? Evaluate(tuple) : null;
 }
 
 /// <summary>Returns a new tuple with a value appended, expanding tuple values into their positions.</summary>
 [Function(prefix: "", aliases: ["extend"])]
 [Scope("tuple")]
-public sealed class Extend : IFunction<IPositionalValue, TupleValue>
+public sealed class Extend : IFunction<IPositionalValue, TupleValue?>, IFunction<VectorValue, VectorValue?>
 {
     private Func<IPositionalValue, object?> Extension { get; }
     /// <param name="value">Specifies the value to append; tuple values are expanded into their positions.</param>
     public Extend(Func<IPositionalValue, object?> value) => Extension = value;
-    public TupleValue Evaluate(IPositionalValue value)
+    public TupleValue? Evaluate(IPositionalValue value)
     {
         var extension = Extension.Invoke(value);
-        return extension is IPositionalValue tuple
-            ? new Expressif.Values.Tuple(PositionalValues(value).Concat(PositionalValues(tuple)).ToArray())
-            : new Expressif.Values.Tuple(PositionalValues(value).Append(extension).ToArray());
+        var values = extension is IPositionalValue tuple
+            ? PositionalValues(value).Concat(PositionalValues(tuple)).ToArray()
+            : PositionalValues(value).Append(extension).ToArray();
+        return PositionalResultFactory.Create(value, values);
 
         static IEnumerable<object?> PositionalValues(IPositionalValue tuple)
             => Enumerable.Range(0, tuple.Arity).Select(tuple.GetPosition);
     }
+    public VectorValue? Evaluate(VectorValue value) => (VectorValue?)Evaluate((IPositionalValue)value);
     object? IFunction.Evaluate(object? value) => value is IPositionalValue tuple ? Evaluate(tuple) : null;
 }
 
 /// <summary>Returns a tuple containing selected positions in the requested order.</summary>
 [Function(prefix: "", aliases: ["pick"])]
 [Scope("tuple")]
-public sealed class Pick : IFunction<IPositionalValue, TupleValue>
+public sealed class Pick : IFunction<IPositionalValue, TupleValue?>, IFunction<VectorValue, VectorValue>
 {
     private Func<int[]> Positions { get; }
     /// <param name="positions">One or more zero-based tuple positions.</param>
     public Pick(Func<int[]> positions) => Positions = positions;
-    public TupleValue Evaluate(IPositionalValue value)
+    public TupleValue? Evaluate(IPositionalValue value)
     {
         var positions = Positions.Invoke();
         if (positions.Length == 0) throw new ArgumentException("Pick requires at least one position.");
         if (positions.Any(x => x < 0 || x >= value.Arity)) throw new IndexOutOfRangeException("Tuple pick position is out of range.");
-        return new Expressif.Values.Tuple(positions.Select(value.GetPosition).ToArray());
+        return PositionalResultFactory.Create(value, positions.Select(value.GetPosition).ToArray());
     }
+    public VectorValue Evaluate(VectorValue value) => (VectorValue)Evaluate((IPositionalValue)value)!;
     object? IFunction.Evaluate(object? value) => value is IPositionalValue tuple ? Evaluate(tuple) : null;
 }
 

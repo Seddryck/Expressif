@@ -9,7 +9,55 @@ public sealed class ExpressionParser : IExpressionParser
     /// Parses source text into its canonical syntax representation.
     /// </summary>
     public static RootExpressionSyntax Parse(string text)
-        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(text)));
+        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(text))));
+
+    private static string NormalizeVectorConstructors(string text)
+    {
+        var result = new System.Text.StringBuilder(text.Length);
+        var quoted = false;
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (IsUnescapedQuote(text, index))
+                quoted = !quoted;
+            if (!quoted && text[index] == 'V' && (index == 0 || !char.IsLetterOrDigit(text[index - 1])))
+            {
+                var next = index + 1;
+                while (next < text.Length && char.IsWhiteSpace(text[next]))
+                    next++;
+                if (next < text.Length && text[next] == '(')
+                {
+                    var closing = FindClosingParenthesis(text, next);
+                    var components = NormalizeVectorConstructors(text[(next + 1)..closing]);
+                    result.Append("T(\"__expressif_internal_vector_literal__\", \"__expressif_internal_vector_literal_end__\"");
+                    if (!string.IsNullOrWhiteSpace(components))
+                        result.Append(", ").Append(components);
+                    result.Append(')');
+                    index = closing;
+                    continue;
+                }
+            }
+            result.Append(text[index]);
+        }
+        return result.ToString();
+    }
+
+    private static int FindClosingParenthesis(string text, int opening)
+    {
+        var depth = 0;
+        var quoted = false;
+        for (var index = opening; index < text.Length; index++)
+        {
+            if (IsUnescapedQuote(text, index))
+                quoted = !quoted;
+            if (quoted)
+                continue;
+            if (text[index] == '(')
+                depth++;
+            else if (text[index] == ')' && --depth == 0)
+                return index;
+        }
+        return text.Length - 1;
+    }
 
     private static string NormalizeGroupingMapOperators(string text)
     {

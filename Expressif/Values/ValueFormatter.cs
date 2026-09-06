@@ -29,6 +29,9 @@ public static class ValueFormatter
         if (value is PairValue pair)
             return $"({Format(pair.Key, structuredValue: true)} => {Format(pair.Value, structuredValue: true)})";
 
+        if (value is VectorValue vector)
+            return $"V({string.Join(", ", vector.Select(x => Format(x, structuredValue: true)))})";
+
         if (value is TupleValue tuple)
             return $"T({string.Join(", ", tuple.Select(x => Format(x, structuredValue: true)))})";
 
