@@ -24,4 +24,11 @@ tests:
         value:
         parameters: ['{foo := #null, nested := {_secret := 1}, foo_bar := 2} | public']
         expected: '{foo := null, nested := {_secret := 1}, foo_bar := 2}'
-
+      - id: public.valid.record.private-parent-public-children
+        value:
+        parameters: ['{before := 10, _private := {child := 20, nested := {grandchild := 30}}, after := 40} | public']
+        expected: '{before := 10, after := 40}'
+      - id: public.valid.record.only-private-parent-public-children
+        value:
+        parameters: ['{_private := {child := 20, nested := {grandchild := 30}}} | public()']
+        expected: '{}'
