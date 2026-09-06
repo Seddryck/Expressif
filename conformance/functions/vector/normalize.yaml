@@ -1,0 +1,15 @@
+suite: vector
+kind: function
+operator: normalize
+tests:
+  - id: normalize.valid.nonzero
+    cases:
+      - id: normalize.valid.nonzero.positive
+        value: 'V(3, 4)'
+        expected: 'V(0.6, 0.8)'
+      - id: normalize.valid.nonzero.negative
+        value: 'V(-3, -4)'
+        expected: 'V(-0.6, -0.8)'
+      - id: normalize.valid.nonzero.fractional
+        value: 'V(0.3, 0.4)'
+        expected: 'V(0.6, 0.8)'
