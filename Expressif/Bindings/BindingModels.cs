@@ -46,7 +46,7 @@ public class OpenExpression(IEnumerable<Function> members) : IBoundExpression
 public class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IBoundExpression
 {
     private static readonly HashSet<string> ImplicitFoldAccumulators =
-        ["count", "sum", "min", "max", "first", "last", "every", "any", "implode", "reduce"];
+        ["count", "sum", "min", "max", "first", "last", "every", "any", "implode", "reduce", "closest"];
 
     public IParameter Parameter { get; } = parameter;
     public IEnumerable<Function> Members { get; } = members;

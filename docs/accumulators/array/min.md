@@ -3,7 +3,7 @@ layout: docs
 title: "min"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /accumulators/array/min/
 tags:

@@ -355,12 +355,20 @@ public class FunctionFactory : BaseExpressionFactory
             "adjacent" => BuildAdjacentFunction(function, context),
             "chunk-while" => BuildChunkWhileFunction(function, context),
             "generate" => BuildGenerateFunction(function, context),
+            "closest" => new Fold(BuildClosestProvider(function, context)),
             "implode" => BuildImplodeFunction(function, context),
             "map-over" => BuildDirectionalMap(function, context, mapOver: true),
             "map-with" => BuildDirectionalMap(function, context, mapOver: false),
             "reduce" => BuildReduceFunction(function, context),
             _ => null,
         };
+
+    private Func<IAccumulator> BuildClosestProvider(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(ClosestAccumulator), function.Arguments).Parameters;
+        var target = BuildValueEvaluator(bound[0], context);
+        return () => new ClosestAccumulator(() => target.Invoke(EvaluationRuntime.Frame?.Current));
+    }
 
     private IFunction BuildImplodeFunction(Bindings.Function function, IContext context)
     {
