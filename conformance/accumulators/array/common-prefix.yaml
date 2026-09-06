@@ -1,0 +1,51 @@
+suite: array
+kind: accumulator
+operator: common-prefix
+tests:
+  - id: common-prefix.values
+    cases:
+      - id: common-prefix.values.multiple
+        value: ["interact","internet","internal"]
+        expected: "inter"
+      - id: common-prefix.values.shorter
+        value: ["prefix","pre"]
+        expected: "pre"
+      - id: common-prefix.values.longer
+        value: ["pre","prefix"]
+        expected: "pre"
+      - id: common-prefix.values.reversed
+        value: ["internal","internet","interact"]
+        expected: "inter"
+      - id: common-prefix.values.case
+        value: ["Alpha","alpha"]
+        expected: ""
+      - id: common-prefix.values.unicode
+        value: ["été","étude"]
+        expected: "ét"
+      - id: common-prefix.values.whitespace
+        value: [" a"," b"]
+        expected: " "
+      - id: common-prefix.values.single
+        value: ["alone"]
+        expected: "alone"
+      - id: common-prefix.values.repeated
+        value: ["same","same"]
+        expected: "same"
+      - id: common-prefix.values.disjoint
+        value: ["abc","xyz"]
+        expected: ""
+      - id: common-prefix.values.empty-first
+        value: ["","abc"]
+        expected: ""
+      - id: common-prefix.values.empty-last
+        value: ["abc",""]
+        expected: ""
+      - id: common-prefix.values.empty-single
+        value: [""]
+        expected: ""
+      - id: common-prefix.values.remains-empty
+        value: ["abc","xyz","abc"]
+        expected: ""
+      - id: common-prefix.values.empty
+        value: []
+        expected:

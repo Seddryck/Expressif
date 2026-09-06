@@ -3,7 +3,7 @@ layout: docs
 title: "every"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 30
+nav_order: 50
 has_toc: false
 permalink: /accumulators/array/every/
 tags:

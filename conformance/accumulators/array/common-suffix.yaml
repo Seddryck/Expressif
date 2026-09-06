@@ -1,0 +1,51 @@
+suite: array
+kind: accumulator
+operator: common-suffix
+tests:
+  - id: common-suffix.values
+    cases:
+      - id: common-suffix.values.multiple
+        value: ["running","walking","talking"]
+        expected: "ing"
+      - id: common-suffix.values.shorter
+        value: ["suffix","fix"]
+        expected: "fix"
+      - id: common-suffix.values.longer
+        value: ["fix","suffix"]
+        expected: "fix"
+      - id: common-suffix.values.reversed
+        value: ["talking","walking","running"]
+        expected: "ing"
+      - id: common-suffix.values.case
+        value: ["alphA","alpha"]
+        expected: ""
+      - id: common-suffix.values.unicode
+        value: ["café","thé"]
+        expected: "é"
+      - id: common-suffix.values.whitespace
+        value: ["a ","b "]
+        expected: " "
+      - id: common-suffix.values.single
+        value: ["alone"]
+        expected: "alone"
+      - id: common-suffix.values.repeated
+        value: ["same","same"]
+        expected: "same"
+      - id: common-suffix.values.disjoint
+        value: ["abc","xyz"]
+        expected: ""
+      - id: common-suffix.values.empty-first
+        value: ["","abc"]
+        expected: ""
+      - id: common-suffix.values.empty-last
+        value: ["abc",""]
+        expected: ""
+      - id: common-suffix.values.empty-single
+        value: [""]
+        expected: ""
+      - id: common-suffix.values.remains-empty
+        value: ["abc","xyz","abc"]
+        expected: ""
+      - id: common-suffix.values.empty
+        value: []
+        expected:
