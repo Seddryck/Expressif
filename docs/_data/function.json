@@ -5416,6 +5416,19 @@
     ]
   },
   {
+    "Name": "magnitude",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "vector",
+    "Input": "vector",
+    "Output": "numeric",
+    "Summary": "Returns the Euclidean magnitude of the input vector.",
+    "Parameters": [],
+    "Examples": [
+      "V(3, 4) | magnitude → 5"
+    ]
+  },
+  {
     "Name": "normalize",
     "IsPublic": true,
     "Aliases": [],
