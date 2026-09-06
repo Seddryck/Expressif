@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "normalize"
+title: "magnitude"
 parent: "Vector functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 30
 has_toc: false
-permalink: /functions/vector/normalize/
+permalink: /functions/vector/magnitude/
 tags:
   - functions
   - vector
@@ -14,10 +14,10 @@ generated: true
 
 ```
 vector →
-normalize() → vector
+magnitude() → numeric
 ```
 
-Returns a unit vector pointing in the same direction as the input vector.
+Returns the Euclidean magnitude of the input vector.
 
 
 
@@ -36,7 +36,7 @@ This function has no parameters.
 
 {% raw %}
 ```expressif
-V(3, 4) | normalize → V(0.6, 0.8)
+V(3, 4) | magnitude → 5
 ```
 {% endraw %}
 
