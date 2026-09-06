@@ -1,0 +1,22 @@
+suite: vector
+kind: function
+operator: dot
+tests:
+  - id: dot.valid.equal-dimension
+    cases:
+      - id: dot.valid.equal-dimension.positive
+        value: 'V(1, 2, 3)'
+        parameters: ['V(4, 5, 6)']
+        expected: 32
+      - id: dot.valid.equal-dimension.zero
+        value: 'V(0, 0)'
+        parameters: ['V(4, -5)']
+        expected: 0
+      - id: dot.valid.equal-dimension.negative
+        value: 'V(-1, 2)'
+        parameters: ['V(3, -4)']
+        expected: -11
+      - id: dot.valid.equal-dimension.fractional
+        value: 'V(0.5, 2)'
+        parameters: ['V(4, 0.25)']
+        expected: 2.5
