@@ -25,6 +25,11 @@ public class TokenizeRegexTest
         => Assert.Throws<RegexParseException>(() => new TokenizeRegex(() => "[").Evaluate("abc"));
 
     [Test]
+    public void Evaluate_PathologicalPattern_ThrowsTimeout()
+        => Assert.Throws<RegexMatchTimeoutException>(() => new TokenizeRegex(() => "(a+)+$")
+            .Evaluate(new string('a', 10000) + "!"));
+
+    [Test]
     public void Evaluate_ReusesFunctionWithUpdatedPattern()
     {
         var pattern = ",";

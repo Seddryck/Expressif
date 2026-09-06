@@ -4027,7 +4027,7 @@
         "Summary": "The .NET regular expression identifying matches. Matching is case-sensitive unless inline options specify otherwise."
       }
     ],
-    "Behavior": "Returns whole matches without adding capture groups. Invalid patterns raise a regular expression error when evaluated on nonempty text. The blank special value is treated as one space.",
+    "Behavior": "Returns whole matches without adding capture groups. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.",
     "Examples": [
       "\"a12b34\" | extract-matches(\"[0-9]+\") → {\"12\", \"34\"}"
     ]
@@ -5141,7 +5141,7 @@
         "Summary": "The .NET regular expression identifying delimiters. Matching is case-sensitive unless inline options specify otherwise."
       }
     ],
-    "Behavior": "Zero-width delimiters split at each match position with forward progress. Invalid patterns raise a regular expression error when evaluated on nonempty text. The blank special value is treated as one space.",
+    "Behavior": "Zero-width delimiters split at each match position with forward progress. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.",
     "Examples": [
       "\"a, b;c\" | tokenize-regex(\"[,;] *\") → {\"a\", \"b\", \"c\"}"
     ]

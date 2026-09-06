@@ -28,7 +28,7 @@ public class TokenizeRegex : BaseTextFunction<string[]>
         if (value.Length == 0)
             return System.Array.Empty<string>();
 
-        var regex = new Regex(Pattern());
+        var regex = new Regex(Pattern(), RegexOptions.None, TimeSpan.FromSeconds(1));
         var segments = new List<string>();
         var start = 0;
         foreach (Match match in regex.Matches(value))

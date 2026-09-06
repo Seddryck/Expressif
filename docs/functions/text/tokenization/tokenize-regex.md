@@ -37,7 +37,7 @@ Returns segments separated by regular expression matches in source order. Preser
 
 ## Behavior
 
-Zero-width delimiters split at each match position with forward progress. Invalid patterns raise a regular expression error when evaluated on nonempty text. The blank special value is treated as one space.
+Zero-width delimiters split at each match position with forward progress. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.
 
 
 

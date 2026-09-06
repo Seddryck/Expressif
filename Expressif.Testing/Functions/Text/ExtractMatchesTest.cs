@@ -25,6 +25,11 @@ public class ExtractMatchesTest
         => Assert.Throws<RegexParseException>(() => new ExtractMatches(() => "[").Evaluate("abc"));
 
     [Test]
+    public void Evaluate_PathologicalPattern_ThrowsTimeout()
+        => Assert.Throws<RegexMatchTimeoutException>(() => new ExtractMatches(() => "(a+)+$")
+            .Evaluate(new string('a', 10000) + "!"));
+
+    [Test]
     public void Evaluate_ReusesFunctionWithUpdatedPattern()
     {
         var pattern = "[0-9]+";
