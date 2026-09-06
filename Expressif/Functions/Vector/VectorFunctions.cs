@@ -57,6 +57,16 @@ public sealed class Dot : IFunction<VectorValue, decimal>
     object? IFunction.Evaluate(object? value) => value is VectorValue vector ? Evaluate(vector) : null;
 }
 
+/// <summary>Returns the Euclidean magnitude of the input vector.</summary>
+[Function(prefix: "", aliases: [])]
+[Scope("vector")]
+public sealed class Magnitude : IFunction<VectorValue, decimal>
+{
+    public decimal Evaluate(VectorValue value) => VectorMath.Magnitude(value);
+
+    object? IFunction.Evaluate(object? value) => value is VectorValue vector ? Evaluate(vector) : null;
+}
+
 /// <summary>Returns a unit vector pointing in the same direction as the input vector.</summary>
 [Function(prefix: "", aliases: [])]
 [Scope("vector")]

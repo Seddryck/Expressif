@@ -1,0 +1,18 @@
+suite: vector
+kind: function
+operator: magnitude
+tests:
+  - id: magnitude.valid.vector
+    cases:
+      - id: magnitude.valid.vector.positive
+        value: 'V(3, 4)'
+        expected: 5
+      - id: magnitude.valid.vector.negative
+        value: 'V(-3, -4)'
+        expected: 5
+      - id: magnitude.valid.vector.zero
+        value: 'V(0, 0, 0)'
+        expected: 0
+      - id: magnitude.valid.vector.empty
+        value: 'V()'
+        expected: 0
