@@ -85,4 +85,69 @@ public class ValueFormatterTest
     [Test]
     public void Format_DbNull_ReturnsNullLiteral()
         => Assert.That(ValueFormatter.Format(DBNull.Value), Is.EqualTo("null"));
+
+    [Test]
+    public void Format_Pretty_IndentsNestedStructuredValues()
+    {
+        var record = new RecordValue();
+        record.Set("name", "Alice");
+        record.Set("roles", new object?[] { "admin", new TupleValue(true, 10.5m) });
+
+        var result = ValueFormatter.Format(record, ValueFormat.Pretty);
+
+        Assert.That(result, Is.EqualTo(
+            "{\n  name := \"Alice\",\n  roles := {\n    \"admin\",\n" +
+            "    T(\n      #true,\n      10.5\n    )\n  }\n}"));
+    }
+
+    [Test]
+    public void Format_Pretty_FormatsPairsDictionariesAndGroupings()
+    {
+        var pair = new PairValue("BE", new object?[] { "Alice", "Bob" });
+        var dictionary = new DictionaryValue([pair]);
+        var grouping = new Grouping([pair]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ValueFormatter.Format(pair, ValueFormat.Pretty), Is.EqualTo(
+                "(\n  \"BE\" =>\n  {\n    \"Alice\",\n    \"Bob\"\n  }\n)"));
+            Assert.That(ValueFormatter.Format(dictionary, ValueFormat.Pretty), Is.EqualTo(
+                "!{\n  (\n    \"BE\" =>\n    {\n      \"Alice\",\n      \"Bob\"\n    }\n  )\n}"));
+            Assert.That(ValueFormatter.Format(grouping, ValueFormat.Pretty), Is.EqualTo(
+                "#{\n  (\n    \"BE\" =>\n    {\n      \"Alice\",\n      \"Bob\"\n    }\n  )\n}"));
+        });
+    }
+
+    [Test]
+    public void Format_Pretty_KeepsEmptyStructuredValuesOnOneLine()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(ValueFormatter.Format(Array.Empty<object?>(), ValueFormat.Pretty), Is.EqualTo("{}"));
+            Assert.That(ValueFormatter.Format(new TupleValue(), ValueFormat.Pretty), Is.EqualTo("T()"));
+            Assert.That(ValueFormatter.Format(new RecordValue(), ValueFormat.Pretty), Is.EqualTo("{}"));
+            Assert.That(ValueFormatter.Format(new DictionaryValue([]), ValueFormat.Pretty), Is.EqualTo("!{}"));
+            Assert.That(ValueFormatter.Format(new Grouping([]), ValueFormat.Pretty), Is.EqualTo("#{}"));
+        });
+    }
+
+    [Test]
+    public void Format_InvalidValueFormat_Throws()
+        => Assert.That(
+            () => ValueFormatter.Format(42, (ValueFormat)99),
+            Throws.TypeOf<ArgumentOutOfRangeException>());
+
+    [TestCase("", "{\n1,\n2\n}")]
+    [TestCase(" ", "{\n 1,\n 2\n}")]
+    [TestCase("\t", "{\n\t1,\n\t2\n}")]
+    public void Format_Pretty_UsesCustomIndentation(string indentation, string expected)
+        => Assert.That(
+            ValueFormatter.Format(new object?[] { 1, 2 }, ValueFormat.Pretty, indentation),
+            Is.EqualTo(expected));
+
+    [Test]
+    public void Format_IndentationContainingLineBreak_Throws()
+        => Assert.That(
+            () => ValueFormatter.Format(42, ValueFormat.Pretty, "\n"),
+            Throws.ArgumentException);
 }

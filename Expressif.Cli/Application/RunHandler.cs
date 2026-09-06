@@ -21,7 +21,11 @@ internal sealed record RunRequest(
     bool HasBatch,
     bool HasSource,
     bool HasSourceOptions,
-    int BatchOccurrences);
+    int BatchOccurrences,
+    ValueFormat? OutputStyle = null,
+    bool Pretty = false,
+    bool Compact = false,
+    string? Indent = null);
 
 internal sealed class RunHandler(
     IExpressionService expressions,
@@ -35,6 +39,19 @@ internal sealed class RunHandler(
         if (requestError is not null)
         {
             Console.Error.WriteLine(requestError);
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+
+        if (!OutputStyleSelection.TryResolve(
+                request.OutputStyle, request.Pretty, request.Compact, out var outputStyle, out var outputStyleError))
+        {
+            Console.Error.WriteLine(outputStyleError);
+            return ExitCodes.InvalidExpressionOrInput;
+        }
+
+        if (!OutputIndentation.TryResolve(request.Indent, outputStyle, out var indentation, out var indentationError))
+        {
+            Console.Error.WriteLine(indentationError);
             return ExitCodes.InvalidExpressionOrInput;
         }
 
@@ -74,7 +91,7 @@ internal sealed class RunHandler(
         try
         {
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
-                Console.Out.WriteLine(ValueFormatter.Format(result));
+                Console.Out.WriteLine(ValueFormatter.Format(result, outputStyle, indentation));
             return ExitCodes.Success;
         }
         catch (FormatException exception)

@@ -8,6 +8,27 @@ description: Evaluate a closed expression, one explicit input, or one complete d
 
 `evaluate` always evaluates an expression once and writes one formatted value.
 
+Structured results use compact, single-line formatting by default. Pass
+`--output-style pretty` to display each element on its own line with two spaces per nesting level:
+
+```bash
+expressif evaluate '{1, T(2, 3)}' --output-style pretty
+```
+
+Use `--output-style compact` to select the default behavior explicitly.
+`--pretty` and `--compact` are shortcuts for the corresponding styles. These
+shortcuts and `--output-style` are mutually exclusive.
+
+Pretty output uses two spaces per nesting level by default. Select another space
+count from 0 to 8, or tabs, with `--indent`:
+
+```bash
+expressif evaluate '{1, T(2, 3)}' --pretty --indent 4
+expressif evaluate '{1, T(2, 3)}' --pretty --indent tab
+```
+
+`--indent` requires pretty output.
+
 What changes is the value supplied to that evaluation.
 
 | Mode | How to select it | Input to the expression |
