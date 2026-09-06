@@ -1793,6 +1793,46 @@
     ]
   },
   {
+    "Name": "set-public",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Returns a new record by renaming selected private fields by removing one leading underscore, preserving field order and values. Omitting names converts all applicable fields. Existing destination names cause an evaluation error. Unlike public, this function does not remove fields.",
+    "Parameters": [
+      {
+        "Name": "names",
+        "Type": "array",
+        "Optional": true,
+        "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields."
+      }
+    ],
+    "Examples": [
+      "{_id := 42, name := \"Ada\"} | set-public({\"id\"}) → {id := 42, name := \"Ada\"}"
+    ]
+  },
+  {
+    "Name": "set-private",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Returns a new record by renaming selected public fields by adding a leading underscore, preserving field order and values. Omitting names converts all applicable fields. Existing destination names cause an evaluation error. Unlike public, this function does not remove fields.",
+    "Parameters": [
+      {
+        "Name": "names",
+        "Type": "array",
+        "Optional": true,
+        "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields."
+      }
+    ],
+    "Examples": [
+      "{id := 42, name := \"Ada\"} | set-private({\"id\"}) → {_id := 42, name := \"Ada\"}"
+    ]
+  },
+  {
     "Name": "record",
     "IsPublic": true,
     "Aliases": [],
