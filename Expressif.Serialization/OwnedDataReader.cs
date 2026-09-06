@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace Expressif.Cli.Infrastructure;
+namespace Expressif.Serialization;
 
 internal interface IHeaderDataReader : IDataReader
 {
@@ -51,7 +51,7 @@ internal sealed class OwnedDataReader(
     {
         for (var i = 0; i < FieldCount; i++)
         {
-            if (!string.Equals(Convert.ToString(inner.GetValue(i)), inner.GetName(i), StringComparison.OrdinalIgnoreCase))
+            if (inner.IsDBNull(i) || !string.Equals(Convert.ToString(inner.GetValue(i)), inner.GetName(i), StringComparison.OrdinalIgnoreCase))
                 return false;
         }
 
