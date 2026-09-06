@@ -3,6 +3,30 @@ using Expressif.Values.Casters;
 
 namespace Expressif.Functions.Vector;
 
+/// <summary>Returns the Euclidean distance between the input vector and another vector of the same dimension.</summary>
+[Function(prefix: "", aliases: [])]
+[Scope("vector")]
+public sealed class Distance : IFunction<VectorValue, decimal>
+{
+    private Func<VectorValue> Vector { get; }
+
+    /// <param name="vector">Specifies the vector whose distance from the input vector is calculated.</param>
+    public Distance(Func<VectorValue> vector) => Vector = vector;
+
+    public decimal Evaluate(VectorValue value)
+    {
+        var other = Vector.Invoke();
+        if (value.Arity != other.Arity)
+            throw new ArgumentException("Distance requires vectors with equal dimensions.", nameof(value));
+
+        var left = VectorMath.Components(value);
+        var right = VectorMath.Components(other);
+        return VectorMath.Magnitude(left.Zip(right, (first, second) => first - second));
+    }
+
+    object? IFunction.Evaluate(object? value) => value is VectorValue vector ? Evaluate(vector) : null;
+}
+
 /// <summary>Returns the dot product of the input vector and another vector of the same dimension.</summary>
 [Function(prefix: "", aliases: [])]
 [Scope("vector")]
@@ -64,6 +88,8 @@ internal static class VectorMath
         }).ToArray();
     }
 
-    public static decimal Magnitude(VectorValue value)
-        => (decimal)Math.Sqrt((double)Components(value).Sum(component => component * component));
+    public static decimal Magnitude(VectorValue value) => Magnitude(Components(value));
+
+    public static decimal Magnitude(IEnumerable<decimal> components)
+        => (decimal)Math.Sqrt((double)components.Sum(component => component * component));
 }

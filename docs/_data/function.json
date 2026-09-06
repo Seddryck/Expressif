@@ -5372,6 +5372,28 @@
     ]
   },
   {
+    "Name": "distance",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "vector",
+    "Input": "vector",
+    "Output": "numeric",
+    "Summary": "Returns the Euclidean distance between the input vector and another vector of the same dimension.",
+    "Parameters": [
+      {
+        "Name": "vector",
+        "Type": "vector",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the vector whose distance from the input vector is calculated."
+      }
+    ],
+    "Examples": [
+      "V(1, 2) | distance(V(4, 6)) → 5"
+    ]
+  },
+  {
     "Name": "dot",
     "IsPublic": true,
     "Aliases": [],
