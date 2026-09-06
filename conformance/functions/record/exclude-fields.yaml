@@ -1,0 +1,26 @@
+suite: record
+kind: function
+operator: exclude-fields
+tests:
+  - id: exclude-fields.valid.record
+    cases:
+      - id: exclude-fields.valid.record.subset-in-input-order
+        value:
+        parameters: ['{name := "Mons", temp := 18, pressure := 1012} | exclude-fields({"pressure"})']
+        expected: '{name := "Mons", temp := 18}'
+      - id: exclude-fields.valid.record.empty-names
+        value:
+        parameters: ['{name := "Mons", temp := 18} | exclude-fields({})']
+        expected: '{name := "Mons", temp := 18}'
+      - id: exclude-fields.valid.record.all-fields
+        value:
+        parameters: ['{name := "Mons", temp := 18} | exclude-fields({"name", "temp"})']
+        expected: '{}'
+      - id: exclude-fields.valid.record.unknown-and-duplicate-names
+        value:
+        parameters: ['{name := "Mons", temp := 18} | exclude-fields({"missing", "temp", "temp"})']
+        expected: '{name := "Mons"}'
+      - id: exclude-fields.valid.record.empty-record
+        value:
+        parameters: ['record() | exclude-fields({"name"})']
+        expected: '{}'

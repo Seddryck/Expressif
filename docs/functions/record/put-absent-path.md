@@ -3,7 +3,7 @@ layout: docs
 title: "put-absent-path"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 70
 has_toc: false
 permalink: /functions/record/put-absent-path/
 tags:

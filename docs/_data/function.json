@@ -1727,6 +1727,59 @@
     ]
   },
   {
+    "Name": "field-names",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "array",
+    "Summary": "Returns the names of all fields in the input record, preserving field order.",
+    "Parameters": [],
+    "Examples": [
+      "{name := \"Mons\", temp := 18, pressure := 1012} | field-names → {\"name\", \"temp\", \"pressure\"}"
+    ]
+  },
+  {
+    "Name": "select-fields",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Returns only fields whose names appear in the supplied array, preserving input field order and ignoring unknown names.",
+    "Parameters": [
+      {
+        "Name": "names",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Field names to retain. Unknown and duplicate names are ignored."
+      }
+    ],
+    "Examples": [
+      "{name := \"Mons\", temp := 18, pressure := 1012} | select-fields({\"temp\", \"pressure\"}) → {temp := 18, pressure := 1012}"
+    ]
+  },
+  {
+    "Name": "exclude-fields",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "record",
+    "Summary": "Returns all fields except those whose names appear in the supplied array, preserving input field order and ignoring unknown names.",
+    "Parameters": [
+      {
+        "Name": "names",
+        "Type": "array",
+        "Optional": false,
+        "Summary": "Field names to remove. Unknown and duplicate names are ignored."
+      }
+    ],
+    "Examples": [
+      "{name := \"Mons\", temp := 18, pressure := 1012} | exclude-fields({\"pressure\"}) → {name := \"Mons\", temp := 18}"
+    ]
+  },
+  {
     "Name": "record",
     "IsPublic": true,
     "Aliases": [],

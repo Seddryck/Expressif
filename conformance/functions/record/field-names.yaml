@@ -1,0 +1,14 @@
+suite: record
+kind: function
+operator: field-names
+tests:
+  - id: field-names.valid.array
+    cases:
+      - id: field-names.valid.array.ordered-fields
+        value:
+        parameters: ['{name := "Mons", temp := 18, pressure := 1012} | field-names']
+        expected: [name, temp, pressure]
+      - id: field-names.valid.array.empty-record
+        value:
+        parameters: ['record() | field-names']
+        expected: []
