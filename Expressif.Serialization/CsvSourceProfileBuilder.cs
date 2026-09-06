@@ -1,9 +1,9 @@
-using Expressif.Cli.Inputs;
 using PocketCsvReader;
 
-namespace Expressif.Cli.Infrastructure;
+namespace Expressif.Serialization;
 
-internal sealed class CsvSourceProfileBuilder(IInputValueParser values)
+/// <summary>Builds CSV profiles from ordered, typed dialect options.</summary>
+public sealed class CsvSourceProfileBuilder
 {
     private delegate void ApplyOption(CsvDialectSettings settings, object? value, string name);
 
@@ -31,11 +31,11 @@ internal sealed class CsvSourceProfileBuilder(IInputValueParser values)
 
     private static readonly string ValidOptions = string.Join(", ", OptionDefinitions.Keys);
 
-    public (CsvProfile Profile, bool HeadersAreRows) Build(IReadOnlyList<string> options)
+    public (CsvProfile Profile, bool HeadersAreRows) Build(IReadOnlyList<CsvSourceOption> options)
     {
         var settings = CsvDialectSettings.CreateDefault();
         foreach (var text in options)
-            Apply(settings, Parse(text));
+            Apply(settings, text);
         return settings.Build();
     }
 
@@ -55,24 +55,6 @@ internal sealed class CsvSourceProfileBuilder(IInputValueParser values)
         catch (FormatException exception)
         {
             throw InvalidSourceOption(option.Name, option.SuppliedValue, exception.Message);
-        }
-    }
-
-    private CsvSourceOption Parse(string text)
-    {
-        var separator = text.IndexOf('=');
-        if (separator <= 0)
-            throw new FormatException($"Invalid source option '{text}'. Expected <name>=<value>.");
-
-        var name = text[..separator].Trim();
-        var suppliedValue = text[(separator + 1)..];
-        try
-        {
-            return new CsvSourceOption(name, suppliedValue, values.ParseStrict(suppliedValue));
-        }
-        catch (FormatException exception)
-        {
-            throw InvalidSourceOption(name, suppliedValue, exception.Message);
         }
     }
 
@@ -124,8 +106,6 @@ internal sealed class CsvSourceProfileBuilder(IInputValueParser values)
 
     private static FormatException InvalidRows(string name)
         => new($"'{name}' requires a non-empty array of one-based row indexes.");
-
-    private sealed record CsvSourceOption(string Name, string SuppliedValue, object? Value);
 
     private sealed class CsvDialectSettings
     {

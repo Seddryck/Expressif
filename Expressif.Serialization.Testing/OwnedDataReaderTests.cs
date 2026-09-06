@@ -1,7 +1,7 @@
 using System.Data;
-using Expressif.Cli.Infrastructure;
+using Expressif.Serialization;
 
-namespace Expressif.Cli.Tests;
+namespace Expressif.Serialization.Testing;
 
 public class OwnedDataReaderTests
 {

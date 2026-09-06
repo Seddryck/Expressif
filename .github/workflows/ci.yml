@@ -225,6 +225,21 @@ jobs:
             framework: net10.0
             coverage: expressif-net10.0
             suite: coverage
+          - name: serialization, net8.0
+            project: Expressif.Serialization.Testing/Expressif.Serialization.Testing.csproj
+            framework: net8.0
+            coverage: expressif-serialization-net8.0
+            suite: coverage
+          - name: serialization, net9.0
+            project: Expressif.Serialization.Testing/Expressif.Serialization.Testing.csproj
+            framework: net9.0
+            coverage: expressif-serialization-net9.0
+            suite: coverage
+          - name: serialization, net10.0
+            project: Expressif.Serialization.Testing/Expressif.Serialization.Testing.csproj
+            framework: net10.0
+            coverage: expressif-serialization-net10.0
+            suite: coverage
           - name: CLI, net10.0
             project: Expressif.Cli.Tests/Expressif.Cli.Tests.csproj
             framework: net10.0
@@ -367,6 +382,13 @@ jobs:
             paths: |
               Expressif/bin/Release/*.nupkg
               Expressif/bin/Release/*.snupkg
+          - name: Serialization NuGet
+            project: Expressif.Serialization/Expressif.Serialization.csproj
+            pack_arguments: --include-symbols
+            artifact: expressif-serialization-nuget-package
+            paths: |
+              Expressif.Serialization/bin/Release/*.nupkg
+              Expressif.Serialization/bin/Release/*.snupkg
           - name: CLI NuGet
             project: Expressif.Cli/Expressif.Cli.csproj
             pack_arguments: ''
@@ -749,6 +771,12 @@ jobs:
           name: expressif-nuget-package
           path: packages/expressif
 
+      - name: Download serialization package
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-serialization-nuget-package
+          path: packages/serialization
+
       - name: Download CLI package
         uses: actions/download-artifact@v8
         with:
@@ -761,6 +789,8 @@ jobs:
           $expectedArtifacts = @(
             @{ Name = 'Expressif package'; Path = 'packages/expressif'; Filter = '*.nupkg'; Count = 1 },
             @{ Name = 'Expressif symbol package'; Path = 'packages/expressif'; Filter = '*.snupkg'; Count = 1 },
+            @{ Name = 'Serialization package'; Path = 'packages/serialization'; Filter = '*.nupkg'; Count = 1 },
+            @{ Name = 'Serialization symbol package'; Path = 'packages/serialization'; Filter = '*.snupkg'; Count = 1 },
             @{ Name = 'Expressif CLI packages'; Path = 'packages/cli'; Filter = '*.nupkg'; Count = 5 }
           )
 

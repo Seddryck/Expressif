@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Reusable JSON and CSV conversion for Expressif values.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="PocketCsvReader" Version="2.36.34" />
+    <ProjectReference Include="..\Expressif\Expressif.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="..\README.md" />
+    <None Remove="README.md" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
