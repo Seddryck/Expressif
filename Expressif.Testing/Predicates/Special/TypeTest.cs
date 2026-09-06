@@ -39,6 +39,9 @@ public class TypeTest
             Assert.That(Evaluate(new object?[] { 1, 2 }, "array"), Is.True);
             Assert.That(Evaluate(new object?[] { 1, 2 }, "tuple"), Is.False);
             Assert.That(Evaluate(new TupleValue(1, 2), "tuple"), Is.True);
+            Assert.That(Evaluate(new VectorValue(1, 2), "vector"), Is.True);
+            Assert.That(Evaluate(new VectorValue(1, 2), "tuple"), Is.True);
+            Assert.That(Evaluate(new TupleValue(1, 2), "vector"), Is.False);
             Assert.That(Evaluate(new TupleValue(1, 2), "array"), Is.False);
             Assert.That(Evaluate(new PairValue("USA", 42), "pair"), Is.True);
             Assert.That(Evaluate(new PairValue("USA", 42), "tuple"), Is.True);

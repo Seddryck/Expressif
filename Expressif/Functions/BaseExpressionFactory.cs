@@ -84,6 +84,7 @@ public abstract class BaseExpressionFactory
         {
             ArrayParameter array => CreateFunctionCast(() => BuildArray(array, context), scalarType),
             TupleParameter tuple => CreateFunctionCast(() => BuildTuple(tuple, context), scalarType),
+            VectorParameter vector => CreateFunctionCast(() => BuildVector(vector, context), scalarType),
             RecordLiteralParameter record => CreateFunctionCast(() => BuildRecord(record, context), scalarType),
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
             IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
@@ -140,6 +141,30 @@ public abstract class BaseExpressionFactory
             }
 
             return new Expressif.Values.Tuple(values.ToArray());
+        }
+
+        Expressif.Values.Vector BuildVector(VectorParameter vector, IContext currentContext)
+        {
+            var values = new List<object?>();
+            foreach (var element in vector.Elements)
+            {
+                var elementFactory = (Func<object?>)CreateParameter(element.Value, typeof(object), currentContext);
+                var evaluated = elementFactory.Invoke();
+                if (element.IsSpread)
+                {
+                    if (evaluated is null)
+                        throw new SpreadArgumentException("Spread argument cannot be null.");
+                    if (evaluated is not VectorValue spread)
+                        throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
+                    values.AddRange(spread);
+                }
+                else
+                {
+                    values.Add(evaluated);
+                }
+            }
+
+            return new Expressif.Values.Vector(values.ToArray());
         }
 
         ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)

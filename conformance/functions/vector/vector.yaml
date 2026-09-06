@@ -1,0 +1,26 @@
+suite: vector
+kind: function
+operator: vector
+tests:
+  - id: vector.valid.components
+    cases:
+      - id: vector.valid.components.empty
+        value: (null)
+        parameters: [V()]
+        expected: 'V()'
+      - id: vector.valid.components.integer
+        value: (null)
+        parameters: ['V(1, 2, 3)']
+        expected: 'V(1, 2, 3)'
+      - id: vector.valid.components.fractional
+        value: (null)
+        parameters: ['V(0.5, -2, 10)']
+        expected: 'V(0.5, -2, 10)'
+      - id: vector.valid.components.short-syntax
+        value: (null)
+        parameters: ['V(1, 2, 3)']
+        expected: 'V(1, 2, 3)'
+      - id: vector.valid.components.vector-spread
+        value: (null)
+        parameters: ['V(...V(1, 2), 3)']
+        expected: 'V(1, 2, 3)'

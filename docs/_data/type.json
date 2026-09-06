@@ -253,6 +253,20 @@
     }
   },
   {
+    "Name": "vector",
+    "Summary": "Represents an immutable, fixed-size positional collection of numeric components.",
+    "Parent": "tuple",
+    "Literal": {
+      "Syntax": "V followed by parenthesized comma-separated numeric values",
+      "Examples": [
+        "V(1, 2, 3)"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.VectorValue"
+    }
+  },
+  {
     "Name": "weekday",
     "Summary": "Represents a day of the week.",
     "Parent": "temporal",
