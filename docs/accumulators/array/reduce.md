@@ -3,7 +3,7 @@ layout: docs
 title: "reduce"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /accumulators/array/reduce/
 tags:

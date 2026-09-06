@@ -3,7 +3,7 @@ layout: docs
 title: "last"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /accumulators/array/last/
 tags:
