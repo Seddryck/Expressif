@@ -22,6 +22,8 @@ before-substring(
 
 Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
 
+
+
 ## Parameters
 
 
@@ -30,6 +32,7 @@ Returns the substring of the argument string, containing all the characters imme
 |:-----|:-----|:---------|:------------|
 | `substring` | `text` | Yes | The string to seek. |
 | `count` | `integer` | No | The number of character positions to examine. |
+
 
 
 

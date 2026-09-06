@@ -3,7 +3,7 @@ layout: docs
 title: "first-chars"
 parent: "Selection functions"
 grand_parent: "Text functions"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /functions/text/selection/first-chars/
 tags:
@@ -21,6 +21,8 @@ first-chars(
 
 Returns the first chars of the argument value. The length of the string returned is maximum the parameter value, if the argument string is smaller then the full string is returned.
 
+
+
 ## Parameters
 
 
@@ -28,6 +30,7 @@ Returns the first chars of the argument value. The length of the string returned
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `length` | `integer` | Yes | An integer value between 0 and +Infinity, defining the length of the substring to return. |
+
 
 
 
