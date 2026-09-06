@@ -5426,4 +5426,27 @@
       "#\"2026-09-01\" | generate(while := before(#\"2026-09-06\"), next := next-day, result := record(date := coerce-date, day := day-of-month, weekday := day-of-week)) → {{date := #\"2026-09-01\", day := 1, weekday := 2}, {date := #\"2026-09-02\", day := 2, weekday := 3}, {date := #\"2026-09-03\", day := 3, weekday := 4}, {date := #\"2026-09-04\", day := 4, weekday := 5}, {date := #\"2026-09-05\", day := 5, weekday := 6}}"
     ]
   }
+  ,
+  {
+    "Name": "dot",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "vector",
+    "Input": "vector",
+    "Output": "numeric",
+    "Summary": "Returns the dot product of the input vector and another vector of the same dimension.",
+    "Parameters": [
+      {
+        "Name": "vector",
+        "Type": "vector",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the vector whose components are multiplied with the input components."
+      }
+    ],
+    "Examples": [
+      "V(1, 2, 3) | dot(V(4, 5, 6)) → 32"
+    ]
+  }
 ]
