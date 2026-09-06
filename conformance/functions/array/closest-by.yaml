@@ -1,0 +1,30 @@
+suite: array
+kind: function
+operator: closest-by
+tests:
+  - id: closest-by.selection
+    cases:
+      - id: closest-by.selection.derived
+        value: [-8, -3, 3]
+        parameters: ['closest-by(absolute, 3)']
+        expected: -3
+      - id: closest-by.selection.empty
+        value: []
+        parameters: ['closest-by(absolute, 3)']
+        expected: 
+      - id: closest-by.selection.nulls
+        value: [null, null]
+        parameters: ['closest-by(absolute, 3)']
+        expected: 
+      - id: closest-by.selection.skip-null
+        value: [null, -3]
+        parameters: ['closest-by(absolute, 3)']
+        expected: -3
+      - id: closest-by.selection.non-array
+        value: 42
+        parameters: ['closest-by(absolute, 3)']
+        expected: 
+      - id: closest-by.selection.record
+        value: (null)
+        parameters: ['{{id := 1, bar := 10}, {id := 2, bar := 30}, {id := 3, bar := 30}} | closest-by(.bar, 32) | .id']
+        expected: 2

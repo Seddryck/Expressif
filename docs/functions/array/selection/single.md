@@ -3,7 +3,7 @@ layout: docs
 title: "single"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 30
+nav_order: 60
 has_toc: false
 permalink: /functions/array/selection/single/
 tags:
@@ -18,6 +18,8 @@ single() → any
 ```
 
 Returns the only element of the input array without transforming it. Returns `null` when the input is empty, contains more than one element, or cannot be evaluated as an array.
+
+
 
 ## Parameters
 

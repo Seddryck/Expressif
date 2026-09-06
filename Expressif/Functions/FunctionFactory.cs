@@ -1036,22 +1036,33 @@ public class FunctionFactory : BaseExpressionFactory
         transformation = null;
 
         var ctor = type.GetConstructors()
-                       .FirstOrDefault(x => x.GetParameters().Length == 1
-                                         && x.GetParameters()[0].ParameterType == typeof(Func<IFunction>));
+                       .FirstOrDefault(x => x.GetParameters().Length >= 1
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IFunction>)
+                                         && x.GetParameters().Skip(1).All(parameter => parameter.ParameterType.IsGenericType
+                                             && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)));
         if (ctor is null)
             return false;
 
-        if (function.Parameters.Length != 1)
+        if (function.Parameters.Length != ctor.GetParameters().Length)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
-        if (!TryGetOpenExpression(function.Parameters[0], out var openExpression))
+        var bound = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
+
+        if (!TryGetOpenExpression(bound[0], out var openExpression))
         {
             throw new ArgumentException(
-                $"The function named '{function.Name}' expects a parameter of type '{nameof(OpenExpressionParameter)}' but received '{function.Parameters[0].GetType().Name}'.",
+                $"The function named '{function.Name}' expects a parameter of type '{nameof(OpenExpressionParameter)}' but received '{bound[0].GetType().Name}'.",
                 nameof(function));
         }
 
-        transformation = (IFunction)ctor.Invoke([BuildTransformationProvider(openExpression, context)]);
+        var arguments = new List<object> { BuildTransformationProvider(openExpression, context) };
+        foreach (var parameter in ctor.GetParameters().Skip(1))
+        {
+            var scalarType = parameter.ParameterType.GetGenericArguments()[0];
+            arguments.Add(CreateParameter(bound[parameter.Position], scalarType, context));
+        }
+
+        transformation = (IFunction)ctor.Invoke(arguments.ToArray());
         return true;
     }
 

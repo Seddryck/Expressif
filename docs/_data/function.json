@@ -5601,5 +5601,76 @@
     "Examples": [
       "V(3, 4) | normalize → V(0.6, 0.8)"
     ]
+  },
+  {
+    "Name": "min-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/selection",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the original source element whose expression result is smallest. Preserves the first match on ties and skips null criteria. Returns `null` for empty arrays, all-null criteria, or non-array input.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
+      }
+    ],
+    "Behavior": "The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.",
+    "Examples": [
+      "{ -8, -3, 3 } | min-by(absolute) → -3",
+      "{{bar := 10}, {bar := 30}} | min-by(.bar) → {bar := 10}"
+    ]
+  },
+  {
+    "Name": "max-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/selection",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the original source element whose expression result is greatest. Preserves the first match on ties and skips null criteria. Returns `null` for empty arrays, all-null criteria, or non-array input.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
+      }
+    ],
+    "Behavior": "The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.",
+    "Examples": [
+      "{ -8, -3, 3 } | max-by(absolute) → -8",
+      "{{bar := 10}, {bar := 30}} | max-by(.bar) → {bar := 30}"
+    ]
+  },
+  {
+    "Name": "closest-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/selection",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the original source element whose expression result is nearest to the numeric target. Preserves the first match on ties and skips null criteria. Returns `null` for empty arrays, all-null criteria, or non-array input.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
+      },
+      {
+        "Name": "target",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "Numeric value against which criterion distances are compared."
+      }
+    ],
+    "Behavior": "The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.",
+    "Examples": [
+      "{{bar := 10}, {bar := 30}} | closest-by(.bar, 32) → {bar := 30}"
+    ]
   }
 ]

@@ -3,7 +3,7 @@ layout: docs
 title: "value-at"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 70
+nav_order: 100
 has_toc: false
 permalink: /functions/array/selection/value-at/
 tags:
@@ -20,6 +20,8 @@ value-at(
 ```
 
 Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.
+
+
 
 ## Parameters
 

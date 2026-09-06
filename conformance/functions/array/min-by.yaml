@@ -1,0 +1,30 @@
+suite: array
+kind: function
+operator: min-by
+tests:
+  - id: min-by.selection
+    cases:
+      - id: min-by.selection.derived
+        value: [-8, -3, 3]
+        parameters: ['min-by(absolute)']
+        expected: -3
+      - id: min-by.selection.empty
+        value: []
+        parameters: ['min-by(absolute)']
+        expected: 
+      - id: min-by.selection.nulls
+        value: [null, null]
+        parameters: ['min-by(absolute)']
+        expected: 
+      - id: min-by.selection.skip-null
+        value: [null, -3]
+        parameters: ['min-by(absolute)']
+        expected: -3
+      - id: min-by.selection.non-array
+        value: 42
+        parameters: ['min-by(absolute)']
+        expected: 
+      - id: min-by.selection.record
+        value: (null)
+        parameters: ['{{id := 1, bar := 10}, {id := 2, bar := 30}, {id := 3, bar := 30}} | min-by(.bar) | .id']
+        expected: 1

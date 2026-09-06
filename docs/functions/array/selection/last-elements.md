@@ -3,7 +3,7 @@ layout: docs
 title: "last-elements"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/array/selection/last-elements/
 tags:
@@ -20,6 +20,8 @@ last-elements(
 ```
 
 Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
+
+
 
 ## Parameters
 

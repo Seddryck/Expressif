@@ -3,7 +3,7 @@ layout: docs
 title: "skip-last-elements"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 50
+nav_order: 80
 has_toc: false
 permalink: /functions/array/selection/skip-last-elements/
 tags:
@@ -20,6 +20,8 @@ skip-last-elements(
 ```
 
 Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
+
+
 
 ## Parameters
 
