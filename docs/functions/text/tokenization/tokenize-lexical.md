@@ -3,7 +3,7 @@ layout: docs
 title: "tokenize-lexical"
 parent: "Tokenization functions"
 grand_parent: "Text functions"
-nav_order: 50
+nav_order: 70
 has_toc: false
 permalink: /functions/text/tokenization/tokenize-lexical/
 tags:
@@ -18,6 +18,8 @@ tokenize-lexical() → array
 ```
 
 Returns lexical tokens in source order, preserving punctuation and symbols as separate tokens.
+
+
 
 ## Parameters
 

@@ -3,7 +3,7 @@ layout: docs
 title: "tokenize-snake"
 parent: "Tokenization functions"
 grand_parent: "Text functions"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /functions/text/tokenization/tokenize-snake/
 tags:
@@ -18,6 +18,8 @@ tokenize-snake() → array
 ```
 
 Returns normalized tokens from an underscore-separated name, preserving escaped underscores within tokens.
+
+
 
 ## Parameters
 
