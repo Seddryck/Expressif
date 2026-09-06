@@ -3,7 +3,7 @@ layout: docs
 title: "first-elements"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/array/selection/first-elements/
 tags:
@@ -20,6 +20,8 @@ first-elements(
 ```
 
 Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
+
+
 
 ## Parameters
 

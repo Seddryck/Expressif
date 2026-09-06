@@ -3,7 +3,7 @@ layout: docs
 title: "skip-first-elements"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 40
+nav_order: 70
 has_toc: false
 permalink: /functions/array/selection/skip-first-elements/
 tags:
@@ -20,6 +20,8 @@ skip-first-elements(
 ```
 
 Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.
+
+
 
 ## Parameters
 

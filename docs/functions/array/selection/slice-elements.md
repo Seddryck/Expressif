@@ -3,7 +3,7 @@ layout: docs
 title: "slice-elements"
 parent: "Selection functions"
 grand_parent: "Array functions"
-nav_order: 60
+nav_order: 90
 has_toc: false
 permalink: /functions/array/selection/slice-elements/
 tags:
@@ -21,6 +21,8 @@ slice-elements(
 ```
 
 Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.
+
+
 
 ## Parameters
 
