@@ -9,7 +9,7 @@ description: Apply one open expression to repeated values, a batch, a CSV file, 
 `run` parses and binds an expression as open once, then evaluates it for every generated input row.
 
 Each compact result is written on its own line. Processing stops at the first source or evaluation failure.
-Use `--output-style pretty` to render structured results across tab-indented lines;
+Use `--output-style pretty` to render structured results across lines indented with two spaces per nesting level;
 `--output-style compact` is the default.
 
 ```mermaid

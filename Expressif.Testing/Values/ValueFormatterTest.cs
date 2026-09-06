@@ -96,8 +96,8 @@ public class ValueFormatterTest
         var result = ValueFormatter.Format(record, ValueFormat.Pretty);
 
         Assert.That(result, Is.EqualTo(
-            "{\n\tname := \"Alice\",\n\troles := {\n\t\t\"admin\",\n" +
-            "\t\tT(\n\t\t\t#true,\n\t\t\t10.5\n\t\t)\n\t}\n}"));
+            "{\n  name := \"Alice\",\n  roles := {\n    \"admin\",\n" +
+            "    T(\n      #true,\n      10.5\n    )\n  }\n}"));
     }
 
     [Test]
@@ -110,11 +110,11 @@ public class ValueFormatterTest
         Assert.Multiple(() =>
         {
             Assert.That(ValueFormatter.Format(pair, ValueFormat.Pretty), Is.EqualTo(
-                "(\n\t\"BE\" =>\n\t{\n\t\t\"Alice\",\n\t\t\"Bob\"\n\t}\n)"));
+                "(\n  \"BE\" =>\n  {\n    \"Alice\",\n    \"Bob\"\n  }\n)"));
             Assert.That(ValueFormatter.Format(dictionary, ValueFormat.Pretty), Is.EqualTo(
-                "!{\n\t(\n\t\t\"BE\" =>\n\t\t{\n\t\t\t\"Alice\",\n\t\t\t\"Bob\"\n\t\t}\n\t)\n}"));
+                "!{\n  (\n    \"BE\" =>\n    {\n      \"Alice\",\n      \"Bob\"\n    }\n  )\n}"));
             Assert.That(ValueFormatter.Format(grouping, ValueFormat.Pretty), Is.EqualTo(
-                "#{\n\t(\n\t\t\"BE\" =>\n\t\t{\n\t\t\t\"Alice\",\n\t\t\t\"Bob\"\n\t\t}\n\t)\n}"));
+                "#{\n  (\n    \"BE\" =>\n    {\n      \"Alice\",\n      \"Bob\"\n    }\n  )\n}"));
         });
     }
 

@@ -101,7 +101,7 @@ var compact = ValueFormatter.Format(result);
 var pretty = ValueFormatter.Format(result, ValueFormat.Pretty);
 ```
 
-Pretty output writes each structured element on its own line and uses one tab per
+Pretty output writes each structured element on its own line and uses two spaces per
 nesting level. Empty structures remain on one line. Formatting does not change the
 underlying result.
 

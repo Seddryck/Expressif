@@ -71,7 +71,7 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n\t1,\n\tT(\n\t\t2,\n\t\t3\n\t)\n}"));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n  1,\n  T(\n    2,\n    3\n  )\n}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -669,7 +669,7 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n\t2,\n\t1\n}"));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n  2,\n  1\n}"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

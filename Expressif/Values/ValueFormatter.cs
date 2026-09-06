@@ -182,7 +182,7 @@ public static class ValueFormatter
             builder.Append('}');
         }
 
-        private void WriteIndent(int depth) => builder.Append('\t', depth);
+        private void WriteIndent(int depth) => builder.Append(' ', depth * 2);
     }
 
     private static bool IsNullLike(object? value)
