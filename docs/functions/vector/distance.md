@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "dot"
+title: "distance"
 parent: "Vector functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 10
 has_toc: false
-permalink: /functions/vector/dot/
+permalink: /functions/vector/distance/
 tags:
   - functions
   - vector
@@ -14,12 +14,12 @@ generated: true
 
 ```
 vector →
-dot(
+distance(
     vector: vector
 ) → numeric
 ```
 
-Returns the dot product of the input vector and another vector of the same dimension.
+Returns the Euclidean distance between the input vector and another vector of the same dimension.
 
 
 
@@ -29,7 +29,7 @@ Returns the dot product of the input vector and another vector of the same dimen
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `vector` | `vector` | Yes | Specifies the vector whose components are multiplied with the input components. |
+| `vector` | `vector` | Yes | Specifies the vector whose distance from the input vector is calculated. |
 
 
 
@@ -40,7 +40,7 @@ Returns the dot product of the input vector and another vector of the same dimen
 
 {% raw %}
 ```expressif
-V(1, 2, 3) | dot(V(4, 5, 6)) → 32
+V(1, 2) | distance(V(4, 6)) → 5
 ```
 {% endraw %}
 
