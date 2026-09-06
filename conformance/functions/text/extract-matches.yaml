@@ -1,0 +1,66 @@
+suite: text
+kind: function
+operator: extract-matches
+tests:
+  - id: extract-matches.valid
+    cases:
+      - id: extract-matches.valid.multiple
+        value: "a12b34"
+        parameters: ["[0-9]+"]
+        expected: ["12", "34"]
+      - id: extract-matches.valid.captures
+        value: "a12b34"
+        parameters: ["([a-z])([0-9]+)"]
+        expected: ["a12", "b34"]
+      - id: extract-matches.valid.non-overlapping
+        value: "ababa"
+        parameters: ["aba"]
+        expected: ["aba"]
+      - id: extract-matches.valid.zero-width
+        value: "ab"
+        parameters: ["(?=b)"]
+        expected: [""]
+      - id: extract-matches.valid.empty-pattern
+        value: "ab"
+        parameters: [""]
+        expected: ["", "", ""]
+      - id: extract-matches.valid.no-match
+        value: "abc"
+        parameters: ["[0-9]+"]
+        expected: []
+      - id: extract-matches.valid.spaces
+        value: " a  b "
+        parameters: ["\\s+"]
+        expected: [" ", "  ", " "]
+      - id: extract-matches.valid.blank
+        value: "(blank)"
+        parameters: ["\\s+"]
+        expected: [" "]
+      - id: extract-matches.valid.only-spaces
+        value: "  "
+        parameters: ["\\s+"]
+        expected: ["  "]
+      - id: extract-matches.valid.case-sensitive
+        value: "aAb"
+        parameters: ["a"]
+        expected: ["a"]
+      - id: extract-matches.valid.inline-options
+        value: "aAb"
+        parameters: ["(?i)a"]
+        expected: ["a", "A"]
+      - id: extract-matches.valid.parentheses
+        value: "(abc)"
+        parameters: [".+"]
+        expected: ["(abc)"]
+      - id: extract-matches.valid.empty
+        value: "(empty)"
+        parameters: [".*"]
+        expected: []
+      - id: extract-matches.valid.literal-empty
+        value: ""
+        parameters: [".*"]
+        expected: []
+      - id: extract-matches.valid.null
+        value: "(null)"
+        parameters: [".*"]
+        expected: []
