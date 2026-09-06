@@ -19,6 +19,8 @@ token-count-lexical() → integer
 
 Returns the number of lexical tokens in the argument value, including punctuation and symbols.
 
+
+
 ## Parameters
 
 

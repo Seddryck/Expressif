@@ -3,7 +3,7 @@ layout: docs
 title: "Tokenization functions"
 parent: "Text functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 10
 has_children: true
 has_toc: false
 permalink: /functions/text/tokenization/
@@ -25,6 +25,7 @@ Reference documentation for Expressif functions in the `text/tokenization` scope
 | [`tokenize-camel`]({{ '/functions/text/tokenization/tokenize-camel/' | relative_url }}) | Returns tokens from a camelCase name using case and acronym transitions as boundaries. |
 | [`tokenize-kebab`]({{ '/functions/text/tokenization/tokenize-kebab/' | relative_url }}) | Returns normalized tokens from a hyphen-separated name, preserving escaped hyphens within tokens. |
 | [`tokenize-lexical`]({{ '/functions/text/tokenization/tokenize-lexical/' | relative_url }}) | Returns lexical tokens in source order, preserving punctuation and symbols as separate tokens. |
+| [`tokenize-lines`]({{ '/functions/text/tokenization/tokenize-lines/' | relative_url }}) | Returns lines in source order, recognizing CR, LF, and CRLF as separators. Preserves spaces and empty lines, including a final empty line after a trailing separator. Returns an empty array for null or empty input. |
 | [`tokenize-pascal`]({{ '/functions/text/tokenization/tokenize-pascal/' | relative_url }}) | Returns tokens from a PascalCase name using case and acronym transitions as boundaries. |
 | [`tokenize-snake`]({{ '/functions/text/tokenization/tokenize-snake/' | relative_url }}) | Returns normalized tokens from an underscore-separated name, preserving escaped underscores within tokens. |
 | [`tokenize-words`]({{ '/functions/text/tokenization/tokenize-words/' | relative_url }}) | Returns word tokens using separators, punctuation, symbols, case transitions, and acronym transitions as boundaries. |

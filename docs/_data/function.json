@@ -5032,6 +5032,19 @@
     ]
   },
   {
+    "Name": "tokenize-lines",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/tokenization",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Returns lines in source order, recognizing CR, LF, and CRLF as separators. Preserves spaces and empty lines, including a final empty line after a trailing separator. Returns an empty array for null or empty input.",
+    "Parameters": [],
+    "Examples": [
+      "\"first\" | suffix-new-line | suffix(\"second\") | tokenize-lines → {\"first\", \"second\"}"
+    ]
+  },
+  {
     "Name": "tokenize-camel",
     "IsPublic": true,
     "Aliases": [

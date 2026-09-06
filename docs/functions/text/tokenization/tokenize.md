@@ -3,7 +3,7 @@ layout: docs
 title: "tokenize"
 parent: "Tokenization functions"
 grand_parent: "Text functions"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /functions/text/tokenization/tokenize/
 tags:
@@ -20,6 +20,8 @@ tokenize(
 ```
 
 Returns all tokens in the argument value in source order. By default, tokenization uses white-space characters as delimiters. If a character is specified, that character delimits the tokens.
+
+
 
 ## Parameters
 

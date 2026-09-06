@@ -1,0 +1,45 @@
+suite: text
+kind: function
+operator: tokenize-lines
+tests:
+  - id: tokenize-lines.valid
+    cases:
+      - id: tokenize-lines.valid.lf
+        value: "a\nb"
+        expected: ["a", "b"]
+      - id: tokenize-lines.valid.cr
+        value: "a\rb"
+        expected: ["a", "b"]
+      - id: tokenize-lines.valid.crlf
+        value: "a\r\nb"
+        expected: ["a", "b"]
+      - id: tokenize-lines.valid.mixed
+        value: "a\rb\r\nc\nd"
+        expected: ["a", "b", "c", "d"]
+      - id: tokenize-lines.valid.empty-lines
+        value: "\r\na\n\n"
+        expected: ["", "a", "", ""]
+      - id: tokenize-lines.valid.spaces
+        value: " a \n  "
+        expected: [" a ", "  "]
+      - id: tokenize-lines.valid.blank
+        value: "(blank)"
+        expected: [" "]
+      - id: tokenize-lines.valid.whitespace
+        value: " \t"
+        expected: [" \t"]
+      - id: tokenize-lines.valid.only-separators
+        value: "\r\n\r\n"
+        expected: ["", "", ""]
+      - id: tokenize-lines.valid.parentheses
+        value: "(abc)"
+        expected: ["(abc)"]
+      - id: tokenize-lines.valid.empty
+        value: "(empty)"
+        expected: []
+      - id: tokenize-lines.valid.literal-empty
+        value: ""
+        expected: []
+      - id: tokenize-lines.valid.null
+        value: "(null)"
+        expected: []
