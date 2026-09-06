@@ -1,0 +1,48 @@
+suite: record
+kind: function
+operator: set-public
+tests:
+  - id: set-public.valid.record
+    cases:
+      - id: set-public.valid.record.selective
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public({"id", "missing", "id", "name", "source"})']
+        expected: '{id := 42, _active := #true, name := "Ada"}'
+      - id: set-public.valid.record.all
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public()']
+        expected: '{id := 42, active := #true, name := "Ada"}'
+      - id: set-public.valid.record.bare
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public']
+        expected: '{id := 42, active := #true, name := "Ada"}'
+      - id: set-public.valid.record.empty-selection
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public(array())']
+        expected: '{_id := 42, _active := #true, name := "Ada"}'
+      - id: set-public.valid.record.empty-record
+        value:
+        parameters: ['record() | set-public()']
+        expected: '{}'
+      - id: set-public.valid.record.named
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public(names := {"id"})']
+        expected: '{id := 42, _active := #true, name := "Ada"}'
+      - id: set-public.valid.record.multiple
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public({"active", "id"})']
+        expected: '{id := 42, active := #true, name := "Ada"}'
+      - id: set-public.valid.record.case-sensitive
+        value:
+        parameters: ['{_id := 42, _active := #true, name := "Ada"} | set-public({"ID", "absent"})']
+        expected: '{_id := 42, _active := #true, name := "Ada"}'
+  - id: set-public.invalid.collision
+    cases:
+      - id: set-public.invalid.collision.selected
+        value:
+        parameters: ['{_id := 42, id := "ABC"} | set-public({"id"})']
+        expected: "Cannot change field visibility: destination field 'id' already exists."
+      - id: set-public.invalid.collision.all
+        value:
+        parameters: ['{id := "ABC", _id := 42} | set-public()']
+        expected: "Cannot change field visibility: destination field 'id' already exists."

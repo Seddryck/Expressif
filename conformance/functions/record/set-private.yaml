@@ -1,0 +1,52 @@
+suite: record
+kind: function
+operator: set-private
+tests:
+  - id: set-private.valid.record
+    cases:
+      - id: set-private.valid.record.selective
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private({"id", "missing", "id", "name", "source"})']
+        expected: '{_id := 42, active := #true, _source := "xml"}'
+      - id: set-private.valid.record.all
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private()']
+        expected: '{_id := 42, _active := #true, _source := "xml"}'
+      - id: set-private.valid.record.bare
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private']
+        expected: '{_id := 42, _active := #true, _source := "xml"}'
+      - id: set-private.valid.record.empty-selection
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private(array())']
+        expected: '{id := 42, active := #true, _source := "xml"}'
+      - id: set-private.valid.record.empty-record
+        value:
+        parameters: ['record() | set-private()']
+        expected: '{}'
+      - id: set-private.valid.record.named
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private(names := {"id"})']
+        expected: '{_id := 42, active := #true, _source := "xml"}'
+      - id: set-private.valid.record.multiple
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private({"active", "id"})']
+        expected: '{_id := 42, _active := #true, _source := "xml"}'
+      - id: set-private.valid.record.case-sensitive
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private({"ID", "absent"})']
+        expected: '{id := 42, active := #true, _source := "xml"}'
+      - id: set-private.valid.record.computed
+        value:
+        parameters: ['{id := 42, active := #true, _source := "xml"} | set-private(field-names | filter(starts-with("i")))']
+        expected: '{_id := 42, active := #true, _source := "xml"}'
+  - id: set-private.invalid.collision
+    cases:
+      - id: set-private.invalid.collision.selected
+        value:
+        parameters: ['{_id := 42, id := "ABC"} | set-private({"id"})']
+        expected: "Cannot change field visibility: destination field '_id' already exists."
+      - id: set-private.invalid.collision.all
+        value:
+        parameters: ['{id := "ABC", _id := 42} | set-private()']
+        expected: "Cannot change field visibility: destination field '_id' already exists."
