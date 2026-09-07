@@ -28,3 +28,45 @@ tests:
       - id: input-binding.named.function-name
         value: '10 | apply(add :> add(@add))'
         expected: 20
+
+  - id: input-binding.anonymous
+    cases:
+      - id: input-binding.anonymous.adjacent
+        value: '{100, 105, 120} | adjacent(:> $1 | subtract($0) | multiply($1))'
+        expected: [525, 1800]
+      - id: input-binding.anonymous.stable-stage
+        value: 'T(10, 20) | apply(:> $0 | add(5) | $1)'
+        expected: 20
+      - id: input-binding.anonymous.fields
+        value: '{first := "Jane", last := "Doe"} | apply(:> .first | upper | .last)'
+        expected: Doe
+      - id: input-binding.anonymous.field-argument
+        value: '{first := "Jane", last := "Doe"} | apply(:> .first | append-space | suffix(.last))'
+        expected: Jane Doe
+      - id: input-binding.anonymous.field-path
+        value: '{address := {city := "Brussels"}} | apply(:> .address.city | upper)'
+        expected: BRUSSELS
+      - id: input-binding.anonymous.null
+        value: 'T(10, 20) | apply(:> #null | apply(:> $1))'
+        expected: null
+      - id: input-binding.anonymous.enclosing
+        value: 'T(10, 20) | apply(:> $0 | apply(:> ^^$1))'
+        expected: 20
+      - id: input-binding.anonymous.deep-scope
+        value: 'T(10, 20) | apply(:> $0 | apply(:> add(1) | apply(:> ^^^$1)))'
+        expected: 20
+      - id: input-binding.anonymous.missing-scope
+        value: 'T(10, 20) | apply(:> ^^^^$1)'
+        expected: null
+      - id: input-binding.anonymous.reduce
+        value: '{1, 2, 3} | reduce(:> $0 | add($1))'
+        expected: 6
+      - id: input-binding.anonymous.parenthesized-body
+        value: 'T(10, 20) | apply(:> ($0 | add($1)))'
+        expected: 30
+      - id: input-binding.anonymous.lexical-name
+        value: '10 | apply(input :> add(2) | apply(:> add(@input)))'
+        expected: 22
+      - id: input-binding.anonymous.chunk-while
+        value: '{1, 2, 5} | chunk-while(:> $1 | subtract($0) | less-than(2))'
+        expected: [[1, 2], [5]]
