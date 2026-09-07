@@ -588,6 +588,83 @@ public class ExpressionTest
         Assert.That(Expression.Create(".address | .city").Evaluate(input), Is.EqualTo("Brussels"));
     }
 
+    [TestCase(".address.location.city")]
+    [TestCase(".address | .location | .city")]
+    [TestCase("(.address.location.city)")]
+    [TestCase(".address | .location.city")]
+    [TestCase(".address.location.city | upper", "BRUSSELS")]
+    [TestCase(".address | ^.address.location.city")]
+    [TestCase(".address.location.city | suffix(^.address.location.city)", "BrusselsBrussels")]
+    public void Evaluate_ChainedFields_ReadsNestedField(string source, string expected = "Brussels")
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["address"] = new Dictionary<string, object?>
+            {
+                ["location"] = new Dictionary<string, object?> { ["city"] = "Brussels" }
+            }
+        };
+        Assert.That(Expression.Create(source).Evaluate(input), Is.EqualTo(expected));
+    }
+
+    [TestCase("{a := {b := {c := 42}}} | .a.b.c", 42)]
+    [TestCase("{a := #null} | .a.b.c", null)]
+    [TestCase("{:} | .a.b.c", null)]
+    [TestCase("{a := 42} | .a.b.c", null)]
+    [TestCase("#null | .a.b.c", null)]
+    public void Evaluate_ChainedFields_PreservesFieldSemantics(string source, int? expected)
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(expected));
+
+    [Test]
+    public void Evaluate_ChainedFields_MapAndFilter_UsesEachItem()
+    {
+        var result = Expression.CreateClosed(
+            "{{a := {b := 1}}, {a := {b := 2}}} | filter(.a.b | greater-than(1)) | map(.a.b)").Evaluate(null);
+        Assert.That(result, Is.EqualTo(new object[] { 2m }));
+    }
+
+    [Test]
+    public void Evaluate_ChainedFields_RecordProjection_UsesIncomingRecord()
+    {
+        var result = (RecordValue)Expression.CreateClosed(
+            "{a := {b := 42}} | record(value := .a.b)").Evaluate(null)!;
+        Assert.That(result["value"], Is.EqualTo(42m));
+    }
+
+    [Test]
+    public void Evaluate_ChainedFields_LiteralDottedName_RemainsSingleField()
+    {
+        var input = new Dictionary<string, object?>
+        {
+            ["a.b.c"] = "literal",
+            ["a"] = new Dictionary<string, object?>
+            {
+                ["b"] = new Dictionary<string, object?> { ["c"] = "nested" }
+            }
+        };
+        Assert.Multiple(() =>
+        {
+            Assert.That(Expression.Create("field(\"a.b.c\")").Evaluate(input), Is.EqualTo("literal"));
+            Assert.That(Expression.Create(".a.b.c").Evaluate(input), Is.EqualTo("nested"));
+        });
+    }
+
+    [Test]
+    public void Evaluate_ChainedFields_Variable_ReadsNestedField()
+    {
+        var context = new Context();
+        context.Variables.Add<object>("customer", new Dictionary<string, object?>
+        {
+            ["address"] = new Dictionary<string, object?> { ["city"] = "Brussels" }
+        });
+        Assert.That(Expression.CreateClosed("@customer | .address.city", context).Evaluate(null), Is.EqualTo("Brussels"));
+    }
+
+    [TestCase("with(values := {1, 2}, config := {threshold := 20}, .values |> (^^.config.threshold))")]
+    [TestCase("with(values := {1, 2}, config := {threshold := 20}, .values |> (add(^^.config.threshold)))", 21, 22)]
+    public void Evaluate_ChainedFields_EnclosingRoot_UsesOuterRecord(string source, int first = 20, int second = 20)
+        => Assert.That(Expression.Create(source).Evaluate(null), Is.EqualTo(new object[] { first, second }));
+
     [Test]
     public void Evaluate_FieldShorthand_MapAndFilter_UsesEachItemAsInput()
     {

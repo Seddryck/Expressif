@@ -26,6 +26,10 @@ public class ParameterSerializer
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
+            InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
+                => SerializeFieldPath(input, property.Name, FunctionSyntax.RootFieldShorthand),
+            InputExpressionParameter { Expression.Parameter: EnclosingObjectPropertyParameter property } input
+                => SerializeFieldPath(input, property.Name, FunctionSyntax.EnclosingRootFieldShorthand),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
             LiteralParameter l => SerializeLiteral(l.Value),
@@ -37,6 +41,15 @@ public class ParameterSerializer
             IntervalParameter interval => SerializeInterval(interval.Value),
             _ => throw new NotSupportedException()
         };
+    }
+
+    private string SerializeFieldPath(InputExpressionParameter input, string name, FunctionSyntax syntax)
+    {
+        var members = input.Expression.Members.ToArray();
+        if (members.Any(member => member.Syntax != FunctionSyntax.FieldShorthand))
+            throw new NotSupportedException();
+        return FunctionSerializer.Serialize(new Function("field", [new LiteralParameter(name)], syntax))
+            + string.Concat(members.Select(FunctionSerializer.Serialize));
     }
 
     private string SerializeArrayElement(ArrayElementParameter element)
