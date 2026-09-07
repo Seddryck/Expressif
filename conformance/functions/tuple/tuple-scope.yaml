@@ -1,0 +1,118 @@
+suite: tuple
+kind: function
+operator: tuple-scope
+tests:
+  - id: tuple-scope.references
+    cases:
+      - id: current-stage
+        value: 'T(10, 20)'
+        parameters: ['^$1']
+        expected: 20
+      - id: current-argument-after-transformation
+        value: 'T(10, 20)'
+        parameters: ['$0 | add(^$1)']
+        expected: 30
+      - id: enclosing-stage
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | ^^$1)']
+        expected: 20
+      - id: nested-current
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | ^$1)']
+        expected: 2
+      - id: enclosing-argument
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | $0 | add(^^$1))']
+        expected: 21
+      - id: multiple-enclosing
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | apply(T(3, 4) | ^^^$1))']
+        expected: 20
+      - id: grouping-and-stages
+        value: 'T(10, 20)'
+        parameters: ['($0 | add(5)) | ((^$1))']
+        expected: 20
+      - id: sibling-invocations-and-return
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | ^^$0) | apply(T(3, 4) | ^^$1) | add(^$0)']
+        expected: 30
+      - id: selected-null-element
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, #null) | ^$1)']
+        expected: null
+      - id: selected-null-input
+        value: 'T(10, 20)'
+        parameters: ['apply(#null | ^$1)']
+        expected: null
+      - id: selected-non-tuple
+        value: 'T(10, 20)'
+        parameters: ['apply(42 | ^$1)']
+        expected: null
+      - id: selected-out-of-range
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | ^$2)']
+        expected: null
+      - id: missing-scope-stage
+        value: 'T(10, 20)'
+        parameters: ['^^$1']
+        expected: null
+      - id: missing-scope-argument
+        value: 'T(10, 20)'
+        parameters: ['coalesce(^^$1, -1)']
+        expected: -1
+      - id: intermediate-null-scope
+        value: 'T(10, 20)'
+        parameters: ['apply(#null | apply(T(1, 2) | ^^$1))']
+        expected: null
+      - id: skip-intermediate-null-explicitly
+        value: 'T(10, 20)'
+        parameters: ['apply(#null | apply(T(1, 2) | ^^^$1))']
+        expected: 20
+      - id: unqualified-stage-unchanged
+        value: 'T(T(1, 2), 20)'
+        parameters: ['$0 | $1']
+        expected: 2
+      - id: grouped-argument
+        value: 'T(10, 20)'
+        parameters: ['$0 | add(((^$1)))']
+        expected: 30
+      - id: map-current
+        value: '{T(1, 2), T(3, 4)}'
+        parameters: ['map(^$1) | sum']
+        expected: 6
+      - id: map-enclosing
+        value: 'T({T(1, 2), T(3, 4)}, 20)'
+        parameters: ['$0 | map(^$0 | add(^^$1)) | sum']
+        expected: 44
+      - id: map-stage-enclosing
+        value: 'T({T(1, 2), T(3, 4)}, 20)'
+        parameters: ['$0 | map(^^$1) | sum']
+        expected: 40
+      - id: enclosing-non-tuple
+        value: '42'
+        parameters: ['apply(T(1, 2) | ^^$1)']
+        expected: null
+      - id: enclosing-out-of-range
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2, 3) | ^^$2)']
+        expected: null
+      - id: null-root
+        value: '#null'
+        parameters: ['apply(T(1, 2) | ^^$1)']
+        expected: null
+      - id: nested-past-available-depth
+        value: 'T(10, 20)'
+        parameters: ['apply(T(1, 2) | ^^^$1)']
+        expected: null
+      - id: unqualified-arguments-in-explicit-expression-unchanged
+        value: 'T(2, 3)'
+        parameters: ['apply(5 | power($0) | add(2) | nth-root($1))']
+        expected: 3
+      - id: predicate-argument
+        value: 'T({10, 30}, 20)'
+        parameters: ['$0 | filter(greater-than(^^$1)) | sum']
+        expected: 30
+      - id: predicate-pipeline
+        value: 'T({T(1, 10), T(2, 30)}, 20)'
+        parameters: ['$0 | filter(^$1 | greater-than(^^$1)) | map(^$0) | sum']
+        expected: 2

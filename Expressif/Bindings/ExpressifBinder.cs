@@ -288,6 +288,10 @@ public sealed class ExpressifBinder
 
     private Function BindPipelineMemberCore(ExpressionSyntax syntax) => syntax switch
     {
+        FunctionCallSyntax { Name: ExpressionParser.TupleScopeFunction } reference => new Function(
+            ExpressionParser.TupleScopeFunction,
+            [BindTupleScope(reference)],
+            FunctionSyntax.ScopedTupleProjectionShorthand),
         FunctionCallSyntax { Name: "group-map-shorthand" } shorthand => Function.FromArguments(
             "map-groups",
             BindFunctionArguments(shorthand),
@@ -539,6 +543,7 @@ public sealed class ExpressifBinder
 
     private IParameter BindArgumentCore(ExpressionSyntax syntax) => syntax switch
     {
+        _ when FindTupleScope(syntax) is { } reference => BindTupleScope(reference),
         GuardedExpressionSyntax guarded => new OpenExpressionParameter(
             new OpenExpression([BindGuardedExpression(guarded)])),
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
@@ -570,6 +575,29 @@ public sealed class ExpressifBinder
             new OpenExpression([BindPipelineMember(access)])),
         _ => throw Unsupported(syntax),
     };
+
+    private static FunctionCallSyntax? FindTupleScope(ExpressionSyntax syntax) => syntax switch
+    {
+        FunctionCallSyntax { Name: ExpressionParser.TupleScopeFunction } reference => reference,
+        ParenthesizedExpressionSyntax parenthesized => FindTupleScope(parenthesized.Expression),
+        OpenExpressionSyntax { Source: null, Pipeline: [var member] } => FindTupleScope(member),
+        OpenExpressionSyntax { Source: { } source, Pipeline.Count: 0 } => FindTupleScope(source),
+        _ => null,
+    };
+
+    private IParameter BindTupleScope(FunctionCallSyntax syntax)
+    {
+        var arguments = BindFunctionArguments(syntax);
+        if (arguments is not
+            [
+                { Name: null, IsSpread: false, Value: LiteralParameter depth },
+                { Name: null, IsSpread: false, Value: LiteralParameter index },
+            ]
+            || !int.TryParse(depth.Value?.ToString(), out var scopeDepth) || scopeDepth < 1
+            || !int.TryParse(index.Value?.ToString(), out var position) || position < 0)
+            throw new BindingException("Tuple scope references require a positive scope depth and a non-negative Int32 position.");
+        return new ScopedTupleProjectionParameter(position, scopeDepth);
+    }
 
     private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
         => new([.. BindRecordAccessFunctions(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);

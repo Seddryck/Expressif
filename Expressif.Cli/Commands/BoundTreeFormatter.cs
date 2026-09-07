@@ -111,6 +111,7 @@ internal static class BoundTreeFormatter
             ObjectPropertyParameter property => property.Name,
             ObjectIndexParameter index => index.Index,
             TupleProjectionParameter projection => projection.FromEnd ? $"^{projection.Index}" : projection.Index,
+            ScopedTupleProjectionParameter projection => $"{new string('^', projection.ScopeDepth)}${projection.Index}",
             _ => null
         };
 

@@ -9,7 +9,46 @@ public sealed class ExpressionParser : IExpressionParser
     /// Parses source text into its canonical syntax representation.
     /// </summary>
     public static RootExpressionSyntax Parse(string text)
-        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(ControlFlowSyntax.Normalize(ConditionalSyntax.Normalize(text))))));
+        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(NormalizeTupleScopes(ControlFlowSyntax.Normalize(ConditionalSyntax.Normalize(text)))))));
+
+    // Adapt scoped references until the external grammar exposes them directly.
+    internal const string TupleScopeFunction = "expression-tuple-reference";
+
+    private static string NormalizeTupleScopes(string text)
+    {
+        var result = new System.Text.StringBuilder(text.Length);
+        var quoted = false;
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (text[index] == '"')
+            {
+                var escapes = 0;
+                for (var previous = index - 1; previous >= 0 && text[previous] == '\\'; previous--)
+                    escapes++;
+                if (escapes % 2 == 0)
+                    quoted = !quoted;
+            }
+            if (!quoted && text[index] == '^')
+            {
+                var end = index;
+                while (end < text.Length && text[end] == '^')
+                    end++;
+                var depth = end - index;
+                if (end + 1 < text.Length && text[end] == '$' && char.IsAsciiDigit(text[end + 1]))
+                {
+                    var start = ++end;
+                    while (end < text.Length && char.IsAsciiDigit(text[end]))
+                        end++;
+                    result.Append(TupleScopeFunction).Append('(').Append(depth).Append(", ")
+                        .Append(text[start..end]).Append(')');
+                    index = end - 1;
+                    continue;
+                }
+            }
+            result.Append(text[index]);
+        }
+        return result.ToString();
+    }
 
     private static string NormalizeVectorConstructors(string text)
     {

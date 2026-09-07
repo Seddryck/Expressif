@@ -18,16 +18,19 @@ internal static class EvaluationRuntime
     }
 
     public static IDisposable Derive(object? input)
+        => Derive(input, input);
+
+    public static IDisposable Derive(object? input, object? currentInput)
     {
         var current = CurrentState.Value;
         if (current is null)
         {
-            CurrentState.Value = new State(new EvaluationFrame(input, input), EvaluationContext.Empty);
+            CurrentState.Value = new State(new EvaluationFrame(currentInput, input), EvaluationContext.Empty);
             return new Scope(null);
         }
 
         var previous = current;
-        CurrentState.Value = new State(new EvaluationFrame(current.Frame.Scope.Derive(input), current.Frame), current.Context);
+        CurrentState.Value = new State(new EvaluationFrame(current.Frame.Scope.Derive(input) with { Current = currentInput }, current.Frame), current.Context);
         return new Scope(previous);
     }
 

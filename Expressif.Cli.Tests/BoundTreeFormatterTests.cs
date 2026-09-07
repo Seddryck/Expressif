@@ -12,6 +12,7 @@ public class BoundTreeFormatterTests
         {
             new ArrayParameter([new LiteralParameter(true), new QuotedLiteralParameter("text")]),
             new TupleParameter([new ObjectIndexParameter(2), new TupleProjectionParameter(1, true)]),
+            new ScopedTupleProjectionParameter(1, 3),
             new RecordLiteralParameter([new RecordLiteralField("name", new ObjectPropertyParameter("source"))]),
             new RecordDefinitionParameter([
                 new RecordSpreadEntry(new IncomingValueParameter()),
@@ -48,6 +49,7 @@ public class BoundTreeFormatterTests
             Assert.That(result, Does.Contain("UnknownPredication"));
             Assert.That(result, Does.Contain("1, 2"));
             Assert.That(result, Does.Contain("display-value"));
+            Assert.That(result, Does.Contain("^^^$1"));
         });
     }
 

@@ -41,6 +41,7 @@ public class ParameterSerializer
             EnclosingObjectPropertyParameter op => $"^^.{op.Name}",
             ObjectIndexParameter oi => $"#{oi.Index}",
             TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
+            ScopedTupleProjectionParameter tp => $"{new string('^', tp.ScopeDepth)}${tp.Index}",
             IntervalParameter interval => SerializeInterval(interval.Value),
             _ => throw new NotSupportedException()
         };

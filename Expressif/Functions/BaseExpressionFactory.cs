@@ -94,6 +94,7 @@ public abstract class BaseExpressionFactory
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
             TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
+            ScopedTupleProjectionParameter projection => CreateFunctionCast(() => ResolveScopedTupleProjection(projection), scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
             EnclosingObjectPropertyParameter prop => CreateFunctionCast(
                 () => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), prop.Name),
@@ -206,6 +207,14 @@ public abstract class BaseExpressionFactory
 
         var index = projection.FromEnd ? tuple.Arity - projection.Index : projection.Index;
         return index >= 0 && index < tuple.Arity ? tuple.GetPosition(index) : null;
+    }
+
+    protected static object? ResolveScopedTupleProjection(ScopedTupleProjectionParameter projection)
+    {
+        var frame = EvaluationRuntime.Frame;
+        for (var depth = 1; depth < projection.ScopeDepth && frame is not null; depth++)
+            frame = frame.Parent;
+        return ResolveTupleProjection(frame?.Ambient, new TupleProjectionParameter(projection.Index));
     }
 
     private static object? GetAmbient(IContext context)

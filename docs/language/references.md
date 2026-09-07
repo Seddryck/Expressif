@@ -183,6 +183,47 @@ flowchart LR
 
 The exact positions available depend on the function that creates the nested context.
 
+### Explicit expression scopes
+
+Prefix a zero-based tuple position with carets to select an expression input:
+
+| Reference | Input selected |
+| --- | --- |
+| `^$1` | Current expression input, second element |
+| `^^$1` | Immediately enclosing expression input, second element |
+| `^^^$1` | Two enclosing expression scopes out, second element |
+
+Each additional caret moves out exactly one expression scope. Pipeline stages and
+grouping parentheses preserve the scope. Invoking a nested expression, such as
+the transformation in `map` or the expression in `apply`, establishes a scope.
+A nested expression with an explicit source uses that source as its input.
+
+For example, given input `T(10, 20)`:
+
+| Expression | Result |
+| --- | --- |
+| `apply(T(1, 2) \| ^$1)` | `2` |
+| `apply(T(1, 2) \| ^^$1)` | `20` |
+| `apply(T(1, 2) \| $0 \| add(^^$1))` | `21` |
+| `apply(T(1, 2) \| apply(T(3, 4) \| ^^^$1))` | `20` |
+
+The selected input stays available after pipeline transformations and is restored
+when a nested invocation returns or fails. Sibling invocations have independent
+inputs. These references work as pipeline stages and as function arguments;
+parentheses around a reference do not add a scope.
+
+A missing scope, a null or non-tuple input, or a position outside the selected
+tuple returns `null`. A null tuple element also returns `null`. Resolution never
+searches another scope for a tuple or a non-null value. The receiving function
+applies its usual null handling and parameter coercion. Positions must be
+non-negative integers no greater than `2147483647`; larger positions produce a
+binding diagnostic. Negative positions and `$^n` positions are not supported in
+caret-qualified references.
+
+`^$n` is the positional counterpart of `^.field`: both read the current
+expression's input. `^^$n` and `^^.field` read the immediately enclosing input.
+Existing unqualified `$n` and `$^n` behavior is unchanged.
+
 ## Root input and nested input
 
 Nested expressions can change what is considered current.
