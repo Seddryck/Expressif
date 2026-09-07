@@ -53,12 +53,29 @@ public class ParameterSerializer
         var prefix = binding.IsPositional ? $"({string.Join(", ", binding.Names)})" : string.Join("", binding.Names);
         var body = binding.Body switch
         {
-            OpenRootExpression open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
+            OpenRootExpression open => string.Join(" | ", SerializeBoundPipeline(open.Expression.Members)),
             ClosedRootExpression closed => string.Join(" | ", new[] { Serialize(closed.Expression.Parameter) }
-                .Concat(closed.Expression.Members.Select(FunctionSerializer.Serialize))),
+                .Concat(SerializeBoundPipeline(closed.Expression.Members))),
             _ => throw new NotSupportedException(),
         };
         return $"{prefix}{(prefix.Length == 0 ? string.Empty : " ")}:> {body}";
+    }
+
+    private IEnumerable<string> SerializeBoundPipeline(IEnumerable<Function> members)
+    {
+        var parts = new List<string>();
+        var previousWasField = false;
+        foreach (var member in members)
+        {
+            var text = FunctionSerializer.Serialize(member);
+            if (previousWasField && member.Syntax == FunctionSyntax.FieldShorthand)
+                parts[^1] += text;
+            else
+                parts.Add(text);
+            previousWasField = member.Syntax is FunctionSyntax.FieldShorthand or FunctionSyntax.InputFieldShorthand
+                or FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand;
+        }
+        return parts;
     }
 
     private string SerializeFieldPath(InputExpressionParameter input, string name, FunctionSyntax syntax)

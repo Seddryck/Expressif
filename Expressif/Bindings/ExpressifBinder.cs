@@ -590,19 +590,31 @@ public sealed class ExpressifBinder
         _ => null,
     };
 
+    private static string[] BindPositionalNames(PositionalBindingPatternSyntax pattern)
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var name in pattern.Names)
+        {
+            if (!names.Add(name.Name))
+                throw new BindingException($"Duplicate input binding name '{name.Name}' at offset {name.Span.Start}.");
+        }
+        return pattern.Names.Select(name => name.Name).ToArray();
+    }
+
     private InputBoundExpression BindInputBound(InputBoundExpressionSyntax syntax)
     {
         var names = syntax.Binding switch
         {
             BindingNameSyntax name => new[] { name.Name },
             null => [],
-            _ => throw new BindingException("This input binding requires a single name or an anonymous body."),
+            PositionalBindingPatternSyntax pattern => BindPositionalNames(pattern),
+            _ => throw new BindingException("Unsupported input binding declaration."),
         };
         var previous = inputBoundBody;
         inputBoundBody = true;
         try
         {
-            return new InputBoundExpression(names, false, Bind(syntax.Body));
+            return new InputBoundExpression(names, syntax.Binding is PositionalBindingPatternSyntax, Bind(syntax.Body));
         }
         finally
         {

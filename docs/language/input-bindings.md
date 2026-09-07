@@ -56,3 +56,27 @@ For records, `apply(:> .first | upper | .last)` returns `last` from the bound
 record. A chained path such as `.address.city` starts at that record and then
 traverses its fields normally. Use explicit functions such as `field(last)` or
 `tuple-at(1)` when you intend to select from the flowing intermediate value.
+
+## Positional destructuring
+
+A parenthesized list binds names to positional components:
+
+```expressif
+adjacent((previous, current) :> @current | subtract(@previous))
+V(2, 3, 4) | apply((x, y, z) :> @x | multiply(@y) | add(@z))
+```
+
+Tuples and vectors expose their components from left to right. Pairs expose
+`(key, value)`. Groups expose `(key, values)`, where `values` is the whole group
+value collection; the number of items in that collection does not affect the
+group's arity of two.
+
+The number of names must exactly match the input's arity. Null, scalars, arrays,
+and records cannot be destructured by this positional form. An unsupported type
+or arity mismatch raises an argument error. Individual components may be null.
+
+Lists require at least two distinct names. Empty lists, single-name lists,
+trailing commas, nested patterns, and rest patterns are not supported. Duplicate
+names are rejected during binding with the duplicate's source offset. Commas
+inside the list do not terminate the function argument. To bind a whole value,
+including a one-element tuple, use an unparenthesized name instead.
