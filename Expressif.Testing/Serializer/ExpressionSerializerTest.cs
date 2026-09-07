@@ -10,6 +10,20 @@ namespace Expressif.Testing.Serializers;
 
 public class ExpressionSerializerTest
 {
+    [TestCase(".a.b.c", ".a | .b | .c")]
+    [TestCase(".a | ^.a.b.c", ".a | ^.a | .b | .c")]
+    [TestCase("map(.a.b)", "map(.a | .b)")]
+    [TestCase("suffix(^.a.b)", "suffix(^.a.b)")]
+    [TestCase("greater-than(^^.a.b)", "greater-than(^^.a.b)")]
+    public void Serialize_ChainedFields_ProducesEquivalentExpression(string source, string expected)
+    {
+        var binder = new ExpressifBinder();
+        var root = (OpenRootExpression)binder.Bind(Expressif.Syntax.ExpressionParser.Parse(source));
+        var serialized = new ExpressionSerializer().Serialize(root.Expression);
+        Assert.That(serialized, Is.EqualTo(expected));
+        Assert.That(() => binder.Bind(Expressif.Syntax.ExpressionParser.Parse(serialized)), Throws.Nothing);
+    }
+
     [Test]
     public void Serialize_GroupMapShorthand_PreservesShorthand()
     {

@@ -68,12 +68,24 @@ Fields of records can be addressed by name.
 .name
 .address
 .amount
-@customer.address.city
+@customer | .address.city
 ```
 
 A reference beginning with `.` starts from the current object. A reference beginning with `@name` starts again from the corresponding context variable.
 
 A reference beginning with `^.` starts from the input of the current expression. This is useful when the current value has already changed later in the pipeline.
+
+Chained field access is shorthand for successive field lookups:
+
+```expressif
+.field1.field2.field3
+```
+
+This is equivalent to `.field1 | .field2 | .field3`, or `field("field1") | field("field2") | field("field3")`. Each lookup uses the value returned by the previous one. A missing field, null intermediate value, or intermediate value without named fields produces `#null`.
+
+The `field` function still reads one literal field name: `field("field1.field2.field3")` accesses a single field containing dots in its name.
+
+Root prefixes apply only to the first lookup: `^.address.city` means `^.address | .city`, and `^^.address.city` means `^^.address | .city`. To start from a variable, use `@customer | .address.city`.
 
 Field references are especially common inside `map`, `filter`, record construction, and predicates.
 
@@ -93,7 +105,7 @@ The current object is the value currently being evaluated. It evolves as an expr
 Consider a `customer` variable containing an address. A nested field can be referenced directly:
 
 ```expressif
-@customer.address.city
+@customer | .address.city
 ```
 
 The reference is evaluated from left to right. `@customer` makes the customer record current, `.address` makes its address record current, and `.city` makes the city value current.
@@ -121,7 +133,7 @@ Refer to the context variable again when the value must be read from the origina
 @customer
 | .lastName
 | suffix(", ")
-| suffix(@customer.firstName)
+| suffix((@customer | .firstName))
 ```
 
 If `lastName` is `"Doe"` and `firstName` is `"Jane"`, the result is:

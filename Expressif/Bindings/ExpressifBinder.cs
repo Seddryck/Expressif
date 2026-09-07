@@ -212,6 +212,7 @@ public sealed class ExpressifBinder
     private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)
         => syntax switch
         {
+            RecordAccessSyntax access => BindRecordAccessFunctions(access),
             GuardedExpressionSyntax guarded => [BindGuardedExpression(guarded)],
             UnaryExpressionSyntax unary => BindUnaryExpression(unary).Members,
             BinaryExpressionSyntax binary => BindBinaryExpression(binary).Members,
@@ -250,7 +251,7 @@ public sealed class ExpressifBinder
         UnaryExpressionSyntax unary => BindUnaryExpression(unary),
         BinaryExpressionSyntax binary => BindBinaryExpression(binary),
         ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression),
-        _ => new OpenExpression([BindPipelineMember(syntax)]),
+        _ => new OpenExpression(BindPipelineMembers(syntax)),
     };
 
     private OpenExpression BindOpenRoot(RootExpressionSyntax syntax) => syntax switch
@@ -293,7 +294,6 @@ public sealed class ExpressifBinder
         PairComponentAccessSyntax access => new Function(
             access.Component is PairComponent.Key ? "pair-key" : "pair-value",
             []),
-        RecordAccessSyntax access => BindRecordAccessFunction(access),
         MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
@@ -487,7 +487,7 @@ public sealed class ExpressifBinder
         GuardedExpressionSyntax guarded => new OpenExpressionParameter(
             new OpenExpression([BindGuardedExpression(guarded)])),
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
-            => new OpenExpressionParameter(new OpenExpression([BindRecordAccessFunction(access)])),
+            => new OpenExpressionParameter(new OpenExpression(BindRecordAccessFunctions(access))),
         ValueSyntax value => BindValue(value),
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         UnaryExpressionSyntax unary => new OpenExpressionParameter(BindUnaryExpression(unary)),
@@ -517,7 +517,7 @@ public sealed class ExpressifBinder
     };
 
     private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
-        => new([BindRecordAccessFunction(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);
+        => new([.. BindRecordAccessFunctions(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);
 
     private IParameter BindValue(ValueSyntax syntax) => syntax switch
     {
@@ -626,39 +626,38 @@ public sealed class ExpressifBinder
 
     private static IParameter BindRecordAccessParameter(RecordAccessSyntax syntax)
     {
-        if (syntax.RootDepth == 0 || syntax.Fields.Count != 1)
+        if (syntax.RootDepth == 0 || syntax.Fields.Count == 0)
             throw new BindingException($"Record access '{syntax.Text}' cannot be used as a scalar parameter in this iteration.");
-        var field = syntax.Fields.Single();
-        return field switch
+        var field = syntax.Fields.First();
+        IParameter source = field switch
         {
             { Name: string name } when syntax.RootDepth == 1 => new ObjectPropertyParameter(name),
             { Name: string name } when syntax.RootDepth == 2 => new EnclosingObjectPropertyParameter(name),
             { Index: int index } => new ObjectIndexParameter(index),
             _ => throw InvalidRecordFieldSelector(syntax),
         };
+        return syntax.Fields.Count == 1
+            ? source
+            : new InputExpressionParameter(new ClosedExpression(source, BindRecordAccessFunctions(syntax).Skip(1)));
     }
 
-    private static Function BindRecordAccessFunction(RecordAccessSyntax syntax)
+    private static IEnumerable<Function> BindRecordAccessFunctions(RecordAccessSyntax syntax)
     {
-        if (syntax.Fields.Count != 1)
-            throw new BindingException($"Nested record access '{syntax.Text}' is not bound in this iteration.");
-        var field = syntax.Fields.Single();
-        var value = field switch
-        {
-            { Name: string name } => name,
-            { Index: int index } => index.ToString(),
-            _ => throw InvalidRecordFieldSelector(syntax),
-        };
-        return new Function(
+        return syntax.Fields.Select((field, index) => new Function(
             "field",
-            [new LiteralParameter(value)],
-            syntax.RootDepth switch
+            [new LiteralParameter(field switch
+            {
+                { Name: string name } => name,
+                { Index: int position } => position.ToString(),
+                _ => throw InvalidRecordFieldSelector(syntax),
+            })],
+            (index == 0 ? syntax.RootDepth : 0) switch
             {
                 0 => FunctionSyntax.FieldShorthand,
                 1 => FunctionSyntax.RootFieldShorthand,
                 2 => FunctionSyntax.EnclosingRootFieldShorthand,
                 _ => throw new BindingException($"Expression root depth '{syntax.RootDepth}' is not supported."),
-            });
+            }));
     }
 
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)

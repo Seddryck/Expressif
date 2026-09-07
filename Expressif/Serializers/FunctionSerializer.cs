@@ -27,18 +27,25 @@ public class FunctionSerializer
 
     public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
     {
-        if (function.Syntax == FunctionSyntax.FieldShorthand)
+        if (function.Syntax is FunctionSyntax.FieldShorthand
+            or FunctionSyntax.RootFieldShorthand
+            or FunctionSyntax.EnclosingRootFieldShorthand)
         {
-            stringBuilder.Append('.').Append(((LiteralParameter)function.Parameters.Single()).Value);
+            var prefix = function.Syntax switch
+            {
+                FunctionSyntax.RootFieldShorthand => "^.",
+                FunctionSyntax.EnclosingRootFieldShorthand => "^^.",
+                _ => ".",
+            };
+            var name = function.Parameters.Single() switch
+            {
+                LiteralParameter literal => literal.Value,
+                QuotedLiteralParameter quoted => quoted.Value,
+                _ => throw new NotSupportedException(),
+            };
+            stringBuilder.Append(prefix).Append(name);
             return;
         }
-
-        if (function.Syntax == FunctionSyntax.EnclosingRootFieldShorthand)
-        {
-            stringBuilder.Append("^^.").Append(((QuotedLiteralParameter)function.Parameters.Single()).Value);
-            return;
-        }
-
         stringBuilder.Append(function.Name.ToKebabCase());
         if (function.Parameters.Any())
         {
