@@ -25,8 +25,7 @@ public class Map : BaseArrayFunction
         var output = new List<object?>();
         foreach (var item in enumerable!)
         {
-            using var scope = EvaluationRuntime.Derive(item);
-            output.Add(transformation.Evaluate(item));
+            output.Add(EvaluationRuntime.EvaluateNested(transformation, item));
         }
 
         return output.ToArray();

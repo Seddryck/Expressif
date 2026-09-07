@@ -30,8 +30,7 @@ public sealed class DistributeWeight : BaseArrayFunction
         foreach (var item in enumerable)
         {
             object? evaluated;
-            using (EvaluationRuntime.Derive(item))
-                evaluated = weightFunction.Evaluate(item);
+            evaluated = EvaluationRuntime.EvaluateNested(weightFunction, item);
 
             if (evaluated is null
                 || !TypeChecker.IsNumericType(evaluated)

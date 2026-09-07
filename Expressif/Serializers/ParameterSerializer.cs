@@ -25,6 +25,7 @@ public class ParameterSerializer
             RecordLiteralParameter r when r.Fields.Length == 0 => "{:}",
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
+            OpenExpressionParameter { Expression: InputBoundExpression bound } => SerializeInputBound(bound),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
                 when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
@@ -40,11 +41,24 @@ public class ParameterSerializer
             ObjectPropertyParameter op => $"^.{op.Name}",
             EnclosingObjectPropertyParameter op => $"^^.{op.Name}",
             ObjectIndexParameter oi => $"#{oi.Index}",
-            TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
             ScopedTupleProjectionParameter tp => $"{new string('^', tp.ScopeDepth)}${tp.Index}",
+            TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
             IntervalParameter interval => SerializeInterval(interval.Value),
             _ => throw new NotSupportedException()
         };
+    }
+
+    private string SerializeInputBound(InputBoundExpression binding)
+    {
+        var prefix = binding.IsPositional ? $"({string.Join(", ", binding.Names)})" : string.Join("", binding.Names);
+        var body = binding.Body switch
+        {
+            OpenRootExpression open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
+            ClosedRootExpression closed => string.Join(" | ", new[] { Serialize(closed.Expression.Parameter) }
+                .Concat(closed.Expression.Members.Select(FunctionSerializer.Serialize))),
+            _ => throw new NotSupportedException(),
+        };
+        return $"{prefix}{(prefix.Length == 0 ? string.Empty : " ")}:> {body}";
     }
 
     private string SerializeFieldPath(InputExpressionParameter input, string name, FunctionSyntax syntax)

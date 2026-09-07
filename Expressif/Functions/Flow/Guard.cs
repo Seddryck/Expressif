@@ -23,8 +23,7 @@ public sealed class Guard : IFunction
         if (!IsDirectlyCompatible(value, guarded))
             return value;
 
-        using var scope = EvaluationRuntime.Derive(value);
-        return guarded.Evaluate(value);
+        return EvaluationRuntime.EvaluateNested(guarded, value);
     }
 
     private static bool IsDirectlyCompatible(object? value, IFunction function)

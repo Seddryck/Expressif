@@ -27,13 +27,25 @@ public class FunctionSerializer
 
     public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
     {
+        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        {
+            var index = int.Parse((string)((LiteralParameter)function.Parameters.Single()).Value!, System.Globalization.CultureInfo.InvariantCulture);
+            stringBuilder.Append('$');
+            if (index < 0)
+                stringBuilder.Append('^');
+            stringBuilder.Append(index == int.MinValue ? 0 : Math.Abs(index));
+            return;
+        }
         if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+        {
             stringBuilder.Append(ParameterSerializer.Serialize(function.Parameters.Single()));
-        else if (function.Syntax is FunctionSyntax.ConditionalForward or FunctionSyntax.ConditionalBackward)
+            return;
+        }
+        if (function.Syntax is FunctionSyntax.ConditionalForward or FunctionSyntax.ConditionalBackward)
             SerializeConditional(function, stringBuilder);
         else if (function.Name is "switch" or "try")
             SerializeBranches(function, stringBuilder);
-        else if (function.Syntax is FunctionSyntax.FieldShorthand
+        else if (function.Syntax is FunctionSyntax.InputFieldShorthand or FunctionSyntax.FieldShorthand
             or FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand)
             SerializeField(function, stringBuilder);
         else

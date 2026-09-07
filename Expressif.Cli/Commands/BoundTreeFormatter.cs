@@ -67,6 +67,14 @@ internal static class BoundTreeFormatter
             ControlFlowBranchParameter branch => branch.Predicate is null
                 ? [NamedParameter("Fallback", branch.Expression)]
                 : [NamedParameter("Expression", branch.Expression), NamedParameter("Predicate", branch.Predicate)],
+            OpenExpressionParameter { Expression: InputBoundExpression bound } => [
+                Node("InputBinding", new Dictionary<string, object?>
+                {
+                    ["Kind"] = "InputBinding",
+                    ["Names"] = bound.Names,
+                    ["IsPositional"] = bound.IsPositional,
+                }, [ToDocument(bound.Body)]),
+            ],
             OpenExpressionParameter open => open.Expression.Members.Select(ToDocument),
             InputExpressionParameter input => [
                 NamedParameter("Source", input.Expression.Parameter),

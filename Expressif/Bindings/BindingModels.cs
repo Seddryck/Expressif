@@ -17,6 +17,8 @@ public enum FunctionSyntax
     EnclosingRootFieldShorthand,
     TupleProjectionShorthand,
     ScopedTupleProjectionShorthand,
+    InputFieldShorthand,
+    InputTupleProjectionShorthand,
 }
 
 public sealed record FunctionArgument(string? Name, IParameter Value, bool IsSpread = false);

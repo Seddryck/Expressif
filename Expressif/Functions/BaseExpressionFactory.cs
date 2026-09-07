@@ -93,8 +93,8 @@ public abstract class BaseExpressionFactory
             LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
             ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
-            TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
             ScopedTupleProjectionParameter projection => CreateFunctionCast(() => ResolveScopedTupleProjection(projection), scalarType),
+            TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
             EnclosingObjectPropertyParameter prop => CreateFunctionCast(
                 () => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), prop.Name),
@@ -200,7 +200,7 @@ public abstract class BaseExpressionFactory
     private static IInterval BuildInterval(IntervalBinding value)
         => new IntervalBuilder().Create(value);
 
-    private static object? ResolveTupleProjection(object? value, TupleProjectionParameter projection)
+    protected static object? ResolveTupleProjection(object? value, TupleProjectionParameter projection)
     {
         if (value is not IPositionalValue tuple)
             return null;
@@ -221,10 +221,11 @@ public abstract class BaseExpressionFactory
         => ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null));
 
     private static object? GetCurrent(IContext context)
-        => EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
+        => EvaluationRuntime.Frame is { } frame ? frame.Current : context.CurrentObject.Value;
 
     private static object? GetVariable(IContext context, string name)
-        => EvaluationRuntime.Context is { } evaluationContext
+        => EvaluationRuntime.TryGetBinding(name, out var bound) ? bound
+            : EvaluationRuntime.Context is { } evaluationContext
             && evaluationContext.TryGetVariable(name, out var value)
                 ? value
                 : context.Variables[name];

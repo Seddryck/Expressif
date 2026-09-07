@@ -21,8 +21,7 @@ public sealed class Summarize : IFunction<GroupingValue, DictionaryValue>
         var expression = Expression.Invoke();
         return new DictionaryValue(value.Select(group =>
         {
-            using var scope = EvaluationRuntime.Derive(group.Values);
-            return new PairValue(group.Key, expression.Evaluate(group.Values));
+            return new PairValue(group.Key, EvaluationRuntime.EvaluateNested(expression, group.Values));
         }));
     }
 
