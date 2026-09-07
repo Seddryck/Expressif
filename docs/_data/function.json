@@ -199,8 +199,10 @@
       }
     ],
     "Examples": [
-      "{1, 2, 3} | filter(greater-than(1)) → {2, 3}"
-    ]
+      "{1, 2, 3} | filter(greater-than(1)) → {2, 3}",
+      "{{active:=#true}, {active:=#false}} | filter(.active) → {{active:=#true}}"
+    ],
+    "Behavior": "**Argument form — `predicate`:** A predicate call, such as `greater-than(1)`, or an open expression that produces a Boolean, such as `.active`. A bare Boolean literal such as `#true` is not accepted.\n\n**Element binding:** The predicate runs once for each element of the array supplied as pipeline input to this `filter` call. At the start of the predicate, `.field` reads that element's field. In `.lines | filter(.active)`, the inner predicate receives a line from the `.lines` array, not the surrounding record."
   },
   {
     "Name": "distribute-weight",
@@ -1234,7 +1236,8 @@
     "Examples": [
       "10 | add(5)      → 15",
       "10 | add(5, 2)   → 20"
-    ]
+    ],
+    "Behavior": "**Argument form — `value` and `times`:** Value expressions: literals, references, or expression pipelines, such as `5`, `.bonus`, or `5 | multiply(2)`. `times` defaults to `1`; the result is `input + value × times`.\n\n**Inherited binding:** Both arguments retain the surrounding expression context. Field references read its contextual record, independently of the number entering `add`. For example, `{price:=10, bonus:=3} | .price | add(.bonus)` returns `13`: the pipeline input to `add` is `10`, while `.bonus` reads `3` from the surrounding record."
   },
   {
     "Name": "cube-power",

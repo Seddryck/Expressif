@@ -22,6 +22,8 @@ add(
 
 Returns the sum of the input value and the parameter value.
 
+
+
 ## Parameters
 
 
@@ -32,6 +34,14 @@ Returns the sum of the input value and the parameter value.
 | `times` | `integer` | No | Number of times the addition is applied. |
 
 
+
+
+
+## Behavior
+
+**Argument form — `value` and `times`:** Value expressions: literals, references, or expression pipelines, such as `5`, `.bonus`, or `5 | multiply(2)`. `times` defaults to `1`; the result is `input + value × times`.
+
+**Inherited binding:** Both arguments retain the surrounding expression context. Field references read its contextual record, independently of the number entering `add`. For example, `{price:=10, bonus:=3} | .price | add(.bonus)` returns `13`: the pipeline input to `add` is `10`, while `.bonus` reads `3` from the surrounding record.
 
 
 
