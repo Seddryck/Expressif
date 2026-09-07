@@ -116,11 +116,15 @@ public class With : IFunction
 {
     private Func<RecordEntryEvaluator[]> Projections { get; }
     private Func<object?, object?> Body { get; }
+    private bool BodyEstablishesScope { get; }
 
     /// <param name="projections">One or more named projections evaluated independently against the input value.</param>
     /// <param name="body">The final expression evaluated against the temporary projection record.</param>
     public With(Func<RecordEntryEvaluator[]> projections, Func<object?, object?> body)
-        => (Projections, Body) = (projections, body);
+        : this(projections, body, false) { }
+
+    internal With(Func<RecordEntryEvaluator[]> projections, Func<object?, object?> body, bool bodyEstablishesScope)
+        => (Projections, Body, BodyEstablishesScope) = (projections, body, bodyEstablishesScope);
 
     public object? Evaluate(object? value)
     {
@@ -128,6 +132,8 @@ public class With : IFunction
         foreach (var projection in Projections.Invoke())
             projection.Apply(value, temporary);
 
+        if (BodyEstablishesScope)
+            return Body.Invoke(temporary);
         using var scope = EvaluationRuntime.Derive(temporary);
         return Body.Invoke(temporary);
     }

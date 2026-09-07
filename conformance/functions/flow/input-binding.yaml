@@ -70,3 +70,40 @@ tests:
       - id: input-binding.anonymous.chunk-while
         value: '{1, 2, 5} | chunk-while(:> $1 | subtract($0) | less-than(2))'
         expected: [[1, 2], [5]]
+
+  - id: input-binding.destructuring
+    cases:
+      - id: input-binding.destructuring.tuple
+        value: 'T(2, 3, 4) | apply((a, b, c) :> @c | subtract(@a) | multiply(@b))'
+        expected: 6
+      - id: input-binding.destructuring.pair
+        value: '(10 => 20) | apply((key, value) :> @value | subtract(@key))'
+        expected: 10
+      - id: input-binding.destructuring.vector
+        value: 'V(2, 3, 4) | apply((x, y, z) :> @x | multiply(@y) | add(@z))'
+        expected: 10
+      - id: input-binding.destructuring.adjacent
+        value: '{100, 105, 120} | adjacent((previous, current) :> @current | subtract(@previous) | multiply(@current))'
+        expected: [525, 1800]
+      - id: input-binding.destructuring.reduce
+        value: '{1, 2, 3} | reduce((total, item) :> @total | add(@item))'
+        expected: 6
+      - id: input-binding.destructuring.nested
+        value: 'T(10, 20) | apply((a, b) :> @a | apply(inner :> @inner | add(@b)))'
+        expected: 30
+      - id: input-binding.destructuring.null-component
+        value: 'T(10, #null) | apply((a, b) :> @b)'
+        expected: null
+      - id: input-binding.destructuring.shadow-and-restore
+        value: 'T(10, 20) | apply((a, b) :> T(1, 2) | apply((a, b) :> @a | add(@b)) | add(@a))'
+        expected: 13
+      - id: input-binding.destructuring.case-sensitive
+        value: 'T(10, 20) | apply((a, A) :> @A | subtract(@a))'
+        expected: 10
+      - id: input-binding.destructuring.sibling-argument
+        value: '{1, 2, 3} | reduce((total, item) :> @total | add(@item), 10)'
+        expected: 16
+
+      - id: input-binding.destructuring.deferred-body
+        value: 'T(100, {1, 2, 3}) | apply((factor, items) :> @items | adjacent((previous, current) :> @current | multiply(@factor)))'
+        expected: [200, 300]

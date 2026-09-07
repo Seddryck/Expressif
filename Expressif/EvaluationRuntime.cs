@@ -69,6 +69,46 @@ internal static class EvaluationRuntime
         return expression.Evaluate(input);
     }
 
+    public static object? CaptureDeferredResult(object? result)
+        => result is System.Collections.IEnumerable sequence
+            && result is not string and not System.Collections.ICollection and not Types.IExpressifValueType
+            && CurrentState.Value is { } state
+                ? EnumerateInScope(sequence, state)
+                : result;
+
+    private static IEnumerable<object?> EnumerateInScope(System.Collections.IEnumerable sequence, State state)
+    {
+        System.Collections.IEnumerator iterator;
+        using (Restore(state))
+            iterator = sequence.GetEnumerator();
+        try
+        {
+            while (true)
+            {
+                object? item;
+                using (Restore(state))
+                {
+                    if (!iterator.MoveNext())
+                        yield break;
+                    item = CaptureDeferredResult(iterator.Current);
+                }
+                yield return item;
+            }
+        }
+        finally
+        {
+            using var scope = Restore(state);
+            (iterator as IDisposable)?.Dispose();
+        }
+    }
+
+    private static IDisposable Restore(State state)
+    {
+        var previous = CurrentState.Value;
+        CurrentState.Value = state;
+        return new Scope(previous);
+    }
+
     private sealed record State(
         EvaluationFrame Frame,
         EvaluationContext Context,

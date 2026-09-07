@@ -17,8 +17,59 @@ public class InputBindingTest
 
     [TestCase("apply(:> $0 | add($1) | $1)")]
     [TestCase("apply(:> .first | upper | .last)")]
+    [TestCase("apply(:> .address.city | upper)")]
     public void Anonymous_SerializationPreservesReferenceSemantics(string source)
     {
+        var function = new ExpressifBinder().BindFunction(ExpressionParser.Parse(source));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(source));
+    }
+
+    [Conformance]
+    public void InputBinding_Destructuring(string source, object? expected)
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(NormalizeExpected(expected)));
+
+    [TestCase("T(10, 20) | apply(:> $0 | apply(:> add((^^$1))))", 30)]
+    [TestCase("T(10, 20) | apply(:> with(v := 1, :> ^^$1))", 20)]
+    [TestCase("T(10, 20) | apply(:> transform-as(:> ^^$1, x := $0) | field(x))", 20)]
+    public void Binding_DoesNotDuplicateInvocationScopes(string source, int expected)
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(expected));
+
+    [Test]
+    public void Destructuring_GroupBindsKeyAndValueCollection()
+    {
+        var group = new Expressif.Values.Group("BE", new[] { 10, 20, 30 });
+        var expression = Expression.Create("apply((key, values) :> @values | count)");
+        Assert.That(expression.Evaluate(group), Is.EqualTo(3));
+        Assert.That(Expression.Create("apply((key, values) :> @key)").Evaluate(group), Is.EqualTo("BE"));
+    }
+
+    [TestCase("apply((a, a) :> @a)")]
+    [TestCase("apply((a, b, a) :> @b)")]
+    public void Destructuring_RejectsDuplicateNames(string source)
+        => Assert.That(() => Expression.Create(source), Throws.TypeOf<BindingException>()
+            .With.Message.Contains("Duplicate input binding name 'a'").And.Message.Contains("offset"));
+
+    [TestCase("apply(() :> identity)")]
+    [TestCase("apply((a) :> @a)")]
+    [TestCase("apply((a, b,) :> @a)")]
+    [TestCase("apply((a, (b, c)) :> @a)")]
+    public void Destructuring_RejectsMalformedLists(string source)
+        => Assert.Throws<ExpressifSyntaxException>(() => Expression.Create(source));
+
+    [Test]
+    public void Destructuring_RequiresExactArityAndPositionalInput()
+    {
+        var expression = Expression.Create("apply((a, b) :> @a)");
+        foreach (var input in new object?[] { null, 42, "ab", new[] { 1, 2 }, new Expressif.Values.RecordValue() })
+            Assert.That(() => expression.Evaluate(input), Throws.ArgumentException.With.Message.Contains("requires a tuple"));
+        foreach (var input in new[] { new Expressif.Values.Tuple(1), new Expressif.Values.Tuple(1, 2, 3) })
+            Assert.That(() => expression.Evaluate(input), Throws.ArgumentException.With.Message.Contains("expects 2 components"));
+    }
+
+    [Test]
+    public void Destructuring_SerializationPreservesNamesAndOrder()
+    {
+        const string source = "apply((a, b, c) :> @c | subtract(@a) | add(@b))";
         var function = new ExpressifBinder().BindFunction(ExpressionParser.Parse(source));
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(source));
     }

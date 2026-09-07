@@ -239,28 +239,8 @@ public class FunctionFactory : BaseExpressionFactory
         var name = function.Name.ToKebabCase();
         var construction = FunctionConstruction.Classify(name);
 
-        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
-            && function.Parameters is [ScopedTupleProjectionParameter scoped])
-            return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
-        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
-        {
-            var position = int.Parse((string)((LiteralParameter)function.Parameters[0]).Value!, System.Globalization.CultureInfo.InvariantCulture);
-            var projection = new TupleProjectionParameter(position < 0 ? position == int.MinValue ? 0 : -position : position, position < 0);
-            return new DelegatedFunction(input => ResolveTupleProjection(
-                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, projection));
-        }
-        if (function.Syntax == FunctionSyntax.InputFieldShorthand
-            && TryGetFieldName(function.Parameters, out var inputField))
-        {
-            return new DelegatedFunction(input => NamedValueAccessor.Get(
-                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, inputField));
-        }
-
-        if (function.Syntax == FunctionSyntax.RootFieldShorthand)
-            return BuildRootFieldFunction(function);
-
-        if (function.Syntax == FunctionSyntax.EnclosingRootFieldShorthand)
-            return BuildEnclosingRootFieldFunction(function);
+        if (BuildReferenceFunction(function) is { } reference)
+            return reference;
 
         if (function.Arguments.Any(x => x.Name is not null)
             && name is "record" or "coalesce")
@@ -358,6 +338,34 @@ public class FunctionFactory : BaseExpressionFactory
 
     internal static bool IsImplicitFoldAccumulator(Bindings.Function function)
         => ImplicitFoldAccumulators.Contains(function.Name.ToKebabCase()) && function.Parameters.Length == 0;
+
+    private static IFunction? BuildReferenceFunction(Bindings.Function function)
+    {
+        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
+            && function.Parameters is [ScopedTupleProjectionParameter scoped])
+            return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
+        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        {
+            var position = int.Parse((string)((LiteralParameter)function.Parameters[0]).Value!, System.Globalization.CultureInfo.InvariantCulture);
+            var projection = new TupleProjectionParameter(position < 0 ? position == int.MinValue ? 0 : -position : position, position < 0);
+            return new DelegatedFunction(input => ResolveTupleProjection(
+                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, projection));
+        }
+        if (function.Syntax == FunctionSyntax.InputFieldShorthand
+            && TryGetFieldName(function.Parameters, out var inputField))
+        {
+            return new DelegatedFunction(input => NamedValueAccessor.Get(
+                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, inputField));
+        }
+
+        if (function.Syntax == FunctionSyntax.RootFieldShorthand)
+            return BuildRootFieldFunction(function);
+
+        if (function.Syntax == FunctionSyntax.EnclosingRootFieldShorthand)
+            return BuildEnclosingRootFieldFunction(function);
+
+        return null;
+    }
 
     private static IFunction BuildRootFieldFunction(Bindings.Function function)
     {
@@ -1040,7 +1048,8 @@ public class FunctionFactory : BaseExpressionFactory
                 BuildValueEvaluator(projection.Value, context)))
             .ToArray();
         var body = BuildValueEvaluator(definition.Body, context);
-        return new Expressif.Functions.Record.With(() => projections, body);
+        return new Expressif.Functions.Record.With(() => projections, body,
+            definition.Body is OpenExpressionParameter { Expression: InputBoundExpression });
     }
 
     private Func<object?, object?> BuildRecordNamedValueEvaluator(IParameter parameter, IContext context)

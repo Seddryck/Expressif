@@ -27,20 +27,8 @@ public class FunctionSerializer
 
     public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
     {
-        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
-        {
-            var index = int.Parse((string)((LiteralParameter)function.Parameters.Single()).Value!, System.Globalization.CultureInfo.InvariantCulture);
-            stringBuilder.Append('$');
-            if (index < 0)
-                stringBuilder.Append('^');
-            stringBuilder.Append(index == int.MinValue ? 0 : Math.Abs(index));
+        if (TrySerializeReference(function, stringBuilder))
             return;
-        }
-        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
-        {
-            stringBuilder.Append(ParameterSerializer.Serialize(function.Parameters.Single()));
-            return;
-        }
         if (function.Syntax is FunctionSyntax.ConditionalForward or FunctionSyntax.ConditionalBackward)
             SerializeConditional(function, stringBuilder);
         else if (function.Name is "switch" or "try")
@@ -108,5 +96,24 @@ public class FunctionSerializer
         }
         output.Remove(output.Length - 2, 2);
         output.Append(')');
+    }
+
+    private bool TrySerializeReference(Function function, StringBuilder stringBuilder)
+    {
+        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        {
+            var index = int.Parse((string)((LiteralParameter)function.Parameters.Single()).Value!, System.Globalization.CultureInfo.InvariantCulture);
+            stringBuilder.Append('$');
+            if (index < 0)
+                stringBuilder.Append('^');
+            stringBuilder.Append(index == int.MinValue ? 0 : Math.Abs(index));
+            return true;
+        }
+        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+        {
+            stringBuilder.Append(ParameterSerializer.Serialize(function.Parameters.Single()));
+            return true;
+        }
+        return false;
     }
 }
