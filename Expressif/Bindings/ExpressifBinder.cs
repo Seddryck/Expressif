@@ -592,13 +592,17 @@ public sealed class ExpressifBinder
 
     private InputBoundExpression BindInputBound(InputBoundExpressionSyntax syntax)
     {
-        if (syntax.Binding is not BindingNameSyntax name)
-            throw new BindingException("This input binding requires a single name.");
+        var names = syntax.Binding switch
+        {
+            BindingNameSyntax name => new[] { name.Name },
+            null => [],
+            _ => throw new BindingException("This input binding requires a single name or an anonymous body."),
+        };
         var previous = inputBoundBody;
         inputBoundBody = true;
         try
         {
-            return new InputBoundExpression([name.Name], false, Bind(syntax.Body));
+            return new InputBoundExpression(names, false, Bind(syntax.Body));
         }
         finally
         {

@@ -38,3 +38,21 @@ Explicit bindings use the same invocation boundary as the implicit binding
 already supplied by functions such as `apply`, `map`, and `adjacent`; they do
 not add a second scope at that boundary. Existing expressions without `:>`
 retain their existing behavior, including callable shorthands.
+
+## Anonymous binding
+
+Use `:> body` when a name would add no information:
+
+```expressif
+adjacent(:> $1 | subtract($0) | multiply($1))
+```
+
+For the pair `T(100, 105)`, this produces `525`. The input remains available
+through `$0` and `$1` after subtraction changes the pipeline value to `5`.
+No wildcard or synthetic name is required. Nested anonymous bodies establish
+new scopes while retaining access to outer named bindings.
+
+For records, `apply(:> .first | upper | .last)` returns `last` from the bound
+record. A chained path such as `.address.city` starts at that record and then
+traverses its fields normally. Use explicit functions such as `field(last)` or
+`tuple-at(1)` when you intend to select from the flowing intermediate value.

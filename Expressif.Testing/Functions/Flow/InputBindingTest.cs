@@ -11,6 +11,18 @@ public class InputBindingTest
     public void InputBinding_Named(string source, object? expected)
         => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(NormalizeExpected(expected)));
 
+    [Conformance]
+    public void InputBinding_Anonymous(string source, object? expected)
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(NormalizeExpected(expected)));
+
+    [TestCase("apply(:> $0 | add($1) | $1)")]
+    [TestCase("apply(:> .first | upper | .last)")]
+    public void Anonymous_SerializationPreservesReferenceSemantics(string source)
+    {
+        var function = new ExpressifBinder().BindFunction(ExpressionParser.Parse(source));
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(source));
+    }
+
     private static object? NormalizeExpected(object? value) => value switch
     {
         string text when Expressif.Values.RecordSyntax.TryParseTypedToken(text, out var typed) => typed,
