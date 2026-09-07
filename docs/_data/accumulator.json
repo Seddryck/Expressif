@@ -56,6 +56,8 @@
     "Parameters": [
       {
         "Name": "target",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Variadic": false,
@@ -135,6 +137,8 @@
     "Parameters": [
       {
         "Name": "separator",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": true,
         "Default": "",
@@ -187,6 +191,8 @@
     "Parameters": [
       {
         "Name": "operation",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
@@ -195,6 +201,8 @@
       },
       {
         "Name": "initial",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": true,
         "Variadic": false,

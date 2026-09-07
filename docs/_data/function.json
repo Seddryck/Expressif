@@ -12,6 +12,8 @@
     "Parameters": [
       {
         "Name": "operation",
+        "Source": "incoming",
+        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
@@ -37,6 +39,8 @@
     "Parameters": [
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": true,
         "Variadic": true,
@@ -62,6 +66,8 @@
     "Parameters": [
       {
         "Name": "accumulator",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "accumulator",
         "Optional": false,
         "Variadic": false,
@@ -100,6 +106,8 @@
     "Parameters": [
       {
         "Name": "size",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -122,6 +130,8 @@
     "Parameters": [
       {
         "Name": "position",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -145,6 +155,8 @@
     "Parameters": [
       {
         "Name": "position",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -168,6 +180,8 @@
     "Parameters": [
       {
         "Name": "operation",
+        "Source": "incoming",
+        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
@@ -193,6 +207,8 @@
     "Parameters": [
       {
         "Name": "predicate",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "predicate",
         "Optional": false,
         "Summary": "Expression defining the predicate applied to each input item."
@@ -215,6 +231,8 @@
     "Parameters": [
       {
         "Name": "weight",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
@@ -238,6 +256,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -261,6 +281,8 @@
     "Parameters": [
       {
         "Name": "weights",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
@@ -269,6 +291,8 @@
       },
       {
         "Name": "seed",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Variadic": false,
@@ -292,6 +316,8 @@
     "Parameters": [
       {
         "Name": "condition",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "predicate",
         "Optional": false,
         "Variadic": false,
@@ -317,6 +343,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -343,6 +371,8 @@
     "Parameters": [
       {
         "Name": "accumulator",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "accumulator",
         "Optional": false,
         "Variadic": false,
@@ -358,7 +388,7 @@
     "Name": "apply", "IsPublic": true, "Aliases": ["apply"], "Scope": "flow",
     "Input": "any", "Output": "any",
     "Summary": "Evaluates an expression with the input value as its current context.",
-    "Parameters": [{"Name": "expression", "Type": "expression", "Optional": false, "Summary": "Specifies the expression evaluated against the input value."}],
+    "Parameters": [{"Name": "expression", "Source": "incoming", "Selection": "self", "Type": "expression", "Optional": false, "Summary": "Specifies the expression evaluated against the input value."}],
     "Behavior": "`apply` establishes an evaluation boundary that makes its input value current while evaluating its expression. Use it when the child expression contains contextual references or deferred arguments that must resolve against that value. Positional references address tuple elements, field references address record fields, and deferred array expressions consume the current array.",
     "Examples": [
       "T(10, 20) | apply($0 | add($1)) → 30",
@@ -378,12 +408,16 @@
     "Parameters": [
       {
         "Name": "operation",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "Open expression evaluated once against each result."
       },
       {
         "Name": "expressions",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
@@ -407,12 +441,16 @@
     "Parameters": [
       {
         "Name": "operation",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "Open expression evaluated once against each named result."
       },
       {
         "Name": "expressions",
+        "Source": "incoming",
+        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
@@ -438,6 +476,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated when its entry contract directly accepts the current input."
@@ -480,6 +520,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -521,6 +563,8 @@
     "Parameters": [
       {
         "Name": "transformation",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression creating the transformation applied to each input item."
@@ -541,12 +585,16 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated with the outer pipeline input and each supplied value as its argument context."
       },
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Values iterated as argument contexts in declaration order."
@@ -568,12 +616,16 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated with each supplied value as input and the outer pipeline input as its argument."
       },
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Values iterated as pipeline inputs in declaration order."
@@ -626,6 +678,8 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Variadic": false,
@@ -650,6 +704,8 @@
     "Parameters": [
       {
         "Name": "position",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -674,6 +730,8 @@
     "Parameters": [
       {
         "Name": "transformation",
+        "Source": "incoming",
+        "Selection": "leaf",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated against every leaf value."
@@ -697,6 +755,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
@@ -719,6 +779,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
@@ -742,6 +804,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
@@ -764,6 +828,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
@@ -817,6 +883,8 @@
     "Parameters": [
       {
         "Name": "accumulator",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "accumulator",
         "Optional": false,
         "Variadic": false,
@@ -857,6 +925,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -883,6 +953,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -909,6 +981,8 @@
     "Parameters": [
       {
         "Name": "start",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -917,6 +991,8 @@
       },
       {
         "Name": "end",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -943,6 +1019,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
@@ -965,6 +1043,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Specifies the array containing values to exclude from the pipeline input."
@@ -1002,6 +1082,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Specifies the array to compare with the pipeline input."
@@ -1024,6 +1106,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Specifies the second array to compare against the pipeline input."
@@ -1046,6 +1130,8 @@
     "Parameters": [
       {
         "Name": "array",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Specifies the second array whose values are combined with the pipeline input."
@@ -1222,12 +1308,16 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "The value to add to the input value."
       },
       {
         "Name": "times",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Summary": "Number of times the addition is applied."
@@ -1297,6 +1387,8 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "The value to divide the argument value."
@@ -1319,6 +1411,8 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the greatest common divisor with the argument value."
@@ -1373,6 +1467,8 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "The integer used to compute the lowest common multiple with the argument value."
@@ -1395,6 +1491,8 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be multiplied by the argument value."
@@ -1447,6 +1545,8 @@
     "Parameters": [
       {
         "Name": "previous",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
@@ -1529,12 +1629,16 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
@@ -1555,18 +1659,24 @@
     "Parameters": [
       {
         "Name": "minimum",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "Inclusive lower bound of the classified interval."
       },
       {
         "Name": "maximum",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "Exclusive upper bound of the classified interval."
       },
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Strictly positive number of equal-width buckets."
@@ -1587,18 +1697,24 @@
     "Parameters": [
       {
         "Name": "minimum",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "Inclusive lower bound of the classified interval."
       },
       {
         "Name": "maximum",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "Exclusive upper bound of the classified interval."
       },
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Strictly positive number of equal-width in-range buckets."
@@ -1695,12 +1811,16 @@
     "Parameters": [
       {
         "Name": "min",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "value returned in case the argument value is smaller than it."
       },
       {
         "Name": "max",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "value returned in case the argument value is greater than it."
@@ -1753,6 +1873,8 @@
     "Parameters": [
       {
         "Name": "digits",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
@@ -1773,6 +1895,8 @@
     "Parameters": [
       {
         "Name": "name",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "Name of the field to retrieve from the input."
@@ -1806,6 +1930,8 @@
     "Parameters": [
       {
         "Name": "names",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Field names to retain. Unknown and duplicate names are ignored."
@@ -1826,6 +1952,8 @@
     "Parameters": [
       {
         "Name": "names",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "Field names to remove. Unknown and duplicate names are ignored."
@@ -1859,6 +1987,8 @@
     "Parameters": [
       {
         "Name": "names",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": true,
         "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields."
@@ -1879,6 +2009,8 @@
     "Parameters": [
       {
         "Name": "names",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": true,
         "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields."
@@ -1899,6 +2031,8 @@
     "Parameters": [
       {
         "Name": "entries",
+        "Source": "incoming",
+        "Selection": "self",
         "Kind": "entry",
         "Optional": true,
         "Variadic": true,
@@ -1921,6 +2055,8 @@
     "Parameters": [
       {
         "Name": "assignments",
+        "Source": "incoming",
+        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
@@ -1943,6 +2079,8 @@
     "Parameters": [
       {
         "Name": "assignments",
+        "Source": "incoming",
+        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
@@ -1965,6 +2103,8 @@
     "Parameters": [
       {
         "Name": "assignments",
+        "Source": "incoming",
+        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
@@ -1987,12 +2127,16 @@
     "Parameters": [
       {
         "Name": "path",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
       },
       {
         "Name": "value",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "The expression producing the assigned value from the original input record."
@@ -2013,12 +2157,16 @@
     "Parameters": [
       {
         "Name": "path",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
       },
       {
         "Name": "value",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "The expression producing the assigned value from the original input record."
@@ -2039,12 +2187,16 @@
     "Parameters": [
       {
         "Name": "path",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
       },
       {
         "Name": "value",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "The expression producing the assigned value from the original input record."
@@ -2078,6 +2230,8 @@
     "Parameters": [
       {
         "Name": "projections",
+        "Source": "incoming",
+        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
@@ -2086,6 +2240,8 @@
       },
       {
         "Name": "body",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Summary": "The final expression evaluated against the temporary projection record."
@@ -2119,6 +2275,8 @@
     "Parameters": [
       {
         "Name": "expressions",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
@@ -2143,6 +2301,8 @@
     "Parameters": [
       {
         "Name": "specifications",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "type | mapping",
         "Optional": false,
         "Variadic": true,
@@ -2318,6 +2478,8 @@
     "Parameters": [
       {
         "Name": "first",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -2326,6 +2488,8 @@
       },
       {
         "Name": "second",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -2350,6 +2514,8 @@
     "Parameters": [
       {
         "Name": "value",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Variadic": false,
@@ -2375,6 +2541,8 @@
     "Parameters": [
       {
         "Name": "positions",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": true,
@@ -2397,6 +2565,8 @@
     "Parameters": [
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "pair",
         "Optional": true,
         "Variadic": true,
@@ -2420,6 +2590,8 @@
     "Parameters": [
       {
         "Name": "expressions",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
@@ -2457,6 +2629,8 @@
     "Parameters": [
       {
         "Name": "expressions",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
@@ -2493,6 +2667,8 @@
     "Parameters": [
       {
         "Name": "predicate",
+        "Source": "incoming",
+        "Selection": "group",
         "Type": "predicate",
         "Optional": false,
         "Summary": "The predicate evaluated once against each group, with its key and value collection available."
@@ -2514,6 +2690,8 @@
     "Parameters": [
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "pair",
         "Optional": true,
         "Variadic": true,
@@ -2538,6 +2716,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "incoming",
+        "Selection": "group-values",
         "Type": "expression",
         "Optional": false,
         "Summary": "The expression evaluated once against each group's value collection."
@@ -2559,6 +2739,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "incoming",
+        "Selection": "group-values",
         "Type": "expression",
         "Optional": false,
         "Summary": "The expression evaluated against each group's value collection."
@@ -2580,12 +2762,16 @@
     "Parameters": [
       {
         "Name": "key",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "The expression whose evaluated result becomes the key."
       },
       {
         "Name": "value",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "The expression whose evaluated result becomes the value."
@@ -2631,6 +2817,8 @@
     "Parameters": [
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "any",
         "Optional": true,
         "Variadic": true,
@@ -2657,6 +2845,8 @@
     "Parameters": [
       {
         "Name": "position",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -2740,12 +2930,16 @@
     "Parameters": [
       {
         "Name": "time",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "time",
         "Optional": false,
         "Summary": "The value to be subtracted to the argument value."
       },
       {
         "Name": "times",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
@@ -2875,12 +3069,16 @@
     "Parameters": [
       {
         "Name": "min",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "value returned in case the argument value is before than it"
       },
       {
         "Name": "max",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "value returned in case the argument value is after than it"
@@ -2901,6 +3099,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "time",
         "Optional": false,
         "Summary": "The time from which to measure the shortest distance around the clock."
@@ -2967,6 +3167,8 @@
     "Parameters": [
       {
         "Name": "previous",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date | date-time | year-month",
         "Optional": false,
         "Summary": "The previous temporal value to subtract from the current input."
@@ -3020,12 +3222,16 @@
     "Parameters": [
       {
         "Name": "time",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "time",
         "Optional": false,
         "Summary": "The value to be added to the argument value"
       },
       {
         "Name": "times",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
@@ -3274,6 +3480,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "The count of business days to move forward."
@@ -3326,6 +3534,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -3348,6 +3558,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -3387,6 +3599,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "The count of business days to move forward."
@@ -3439,6 +3653,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -3461,6 +3677,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -3543,6 +3761,8 @@
     "Parameters": [
       {
         "Name": "instant",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
@@ -3649,6 +3869,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -3701,6 +3923,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -3796,6 +4020,8 @@
     "Parameters": [
       {
         "Name": "default",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
@@ -3816,6 +4042,8 @@
     "Parameters": [
       {
         "Name": "default",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "The dateTime to be returned if the argument is `null`."
@@ -3838,12 +4066,16 @@
     "Parameters": [
       {
         "Name": "substring",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The string to seek."
       },
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Summary": "The number of character positions to examine."
@@ -3886,6 +4118,8 @@
     "Parameters": [
       {
         "Name": "text",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
@@ -3946,12 +4180,16 @@
     "Parameters": [
       {
         "Name": "substring",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The string to seek."
       },
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Summary": "The number of character positions to examine."
@@ -4061,6 +4299,8 @@
     "Parameters": [
       {
         "Name": "substring",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The substring to count in the argument value."
@@ -4111,6 +4351,8 @@
     "Parameters": [
       {
         "Name": "filter",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array | text",
         "Optional": false,
         "Summary": "The chars to filter from the argument string."
@@ -4131,6 +4373,8 @@
     "Parameters": [
       {
         "Name": "pattern",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The .NET regular expression identifying matches. Matching is case-sensitive unless inline options specify otherwise."
@@ -4154,6 +4398,8 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
@@ -4246,6 +4492,8 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
@@ -4297,6 +4545,8 @@
     "Parameters": [
       {
         "Name": "mask",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The string representing the mask to be unset from the argument string."
@@ -4347,12 +4597,16 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
@@ -4375,12 +4629,16 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
@@ -4403,12 +4661,16 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
       },
       {
         "Name": "character",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The padding character"
@@ -4476,6 +4738,8 @@
     "Parameters": [
       {
         "Name": "prefix",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
@@ -4564,6 +4828,8 @@
     "Parameters": [
       {
         "Name": "text",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The text to prepend"
@@ -4639,6 +4905,8 @@
     "Parameters": [
       {
         "Name": "charToRemove",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The char to be removed from the argument string."
@@ -4661,12 +4929,16 @@
     "Parameters": [
       {
         "Name": "charToReplace",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The char to be replaced from the argument string."
       },
       {
         "Name": "charReplacing",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The replacing char from the argument string."
@@ -4689,18 +4961,24 @@
     "Parameters": [
       {
         "Name": "start",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "The position to start to replace"
       },
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "The length to replace"
       },
       {
         "Name": "append",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The text to append when the slice has been removed"
@@ -4813,6 +5091,8 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
@@ -4835,6 +5115,8 @@
     "Parameters": [
       {
         "Name": "length",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
@@ -4872,6 +5154,8 @@
     "Parameters": [
       {
         "Name": "suffix",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The text to append"
@@ -4969,6 +5253,8 @@
     "Parameters": [
       {
         "Name": "values",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "expression",
         "Optional": true,
         "Variadic": true,
@@ -5021,6 +5307,8 @@
     "Parameters": [
       {
         "Name": "mask",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The string representing the mask to apply to the argument string."
@@ -5085,12 +5373,16 @@
     "Parameters": [
       {
         "Name": "index",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
       },
       {
         "Name": "separator",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": true,
         "Summary": "A character that delimits the substrings in this instance."
@@ -5114,6 +5406,8 @@
     "Parameters": [
       {
         "Name": "separator",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A character that delimits the substrings in this instance."
@@ -5151,6 +5445,8 @@
     "Parameters": [
       {
         "Name": "separator",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": true,
         "Summary": "A character that delimits the tokens in the argument value."
@@ -5245,6 +5541,8 @@
     "Parameters": [
       {
         "Name": "pattern",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "The .NET regular expression identifying delimiters. Matching is case-sensitive unless inline options specify otherwise."
@@ -5355,12 +5653,16 @@
     "Parameters": [
       {
         "Name": "format",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string representing the required format."
       },
       {
         "Name": "culture",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": true,
         "Summary": "A string representing a pre-defined culture."
@@ -5505,6 +5807,8 @@
     "Parameters": [
       {
         "Name": "while",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": false,
@@ -5513,6 +5817,8 @@
       },
       {
         "Name": "next",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
@@ -5521,6 +5827,8 @@
       },
       {
         "Name": "result",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "expression",
         "Optional": true,
         "Variadic": false,
@@ -5546,6 +5854,8 @@
     "Parameters": [
       {
         "Name": "vector",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "vector",
         "Optional": false,
         "Variadic": false,
@@ -5568,6 +5878,8 @@
     "Parameters": [
       {
         "Name": "vector",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "vector",
         "Optional": false,
         "Variadic": false,
@@ -5616,6 +5928,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
@@ -5638,6 +5952,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
@@ -5660,12 +5976,16 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "incoming",
+        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
       },
       {
         "Name": "target",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "Numeric value against which criterion distances are compared."
