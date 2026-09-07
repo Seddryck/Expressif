@@ -6,6 +6,20 @@ namespace Expressif.Cli.Tests;
 [NonParallelizable]
 public class BindCommandTests
 {
+    [TestCase("^^^$1")]
+    [TestCase("add(^^^$1)")]
+    public async Task Bind_TupleRoot_PreservesScope(string source)
+    {
+        var result = await InvokeAsync("bind", source);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("ScopedTupleProjection"));
+            Assert.That(result.StdOut, Does.Contain("^^^$1"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
     [Test]
     public async Task Bind_ValidExpression_DefaultsToHumanReadableTree()
     {

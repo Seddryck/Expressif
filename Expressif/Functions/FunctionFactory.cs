@@ -285,7 +285,7 @@ public class FunctionFactory : BaseExpressionFactory
 
             var operation = TryGetOpenExpression(function.Parameters[0], out var open)
                 ? BuildOpenExpression(open.Expression, context)
-                : new DelegatedFunction(BuildValueEvaluator(function.Parameters[0], context));
+                : new DelegatedFunction(BuildValueEvaluator(function.Parameters[0], context, establishScope: true));
             IFunction expression = function.Parameters[0] is InputExpressionParameter
                 ? operation
                 : new LexicallyBoundContextFunction(operation);
@@ -551,7 +551,7 @@ public class FunctionFactory : BaseExpressionFactory
                 $"Value-spread-aware type '{type.FullName}' must expose a constructor accepting Func<ValueArgumentEvaluator[]>.");
     }
 
-    private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context)
+    private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)
     {
         if (parameter is IncomingValueParameter)
             return input => input;
@@ -571,8 +571,10 @@ public class FunctionFactory : BaseExpressionFactory
             return input => WithCurrentObject(
                 context,
                 input,
-                // Keep unqualified references bound to the invocation input.
-                () => EvaluateNested(chain, source.Invoke(input), input));
+                // Value construction retains its supplying scope; apply invokes a new one.
+                () => establishScope
+                    ? EvaluateNested(chain, source.Invoke(input), input)
+                    : chain.Evaluate(source.Invoke(input)));
         }
 
         var structured = BuildStructuredValueEvaluator(parameter, context);
@@ -1197,7 +1199,7 @@ public class FunctionFactory : BaseExpressionFactory
             OpenExpressionParameter open => open,
             ScopedTupleProjectionParameter projection => new OpenExpressionParameter(new OpenExpression([
                 new Bindings.Function(
-                    Syntax.ExpressionParser.TupleScopeFunction,
+                    "tuple-at",
                     [projection],
                     FunctionSyntax.ScopedTupleProjectionShorthand),
             ])),

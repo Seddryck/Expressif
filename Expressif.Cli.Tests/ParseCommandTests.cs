@@ -8,6 +8,26 @@ namespace Expressif.Cli.Tests;
 public class ParseCommandTests
 {
     [Test]
+    public async Task Parse_TupleRoot_PreservesNativeTreeAndSpans()
+    {
+        var result = await InvokeAsync("parse", "  ^^^$12", "--output", "json");
+        Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+        using var document = JsonDocument.Parse(result.StdOut);
+        var projection = document.RootElement.GetProperty("Children")[0];
+        var root = projection.GetProperty("Children")[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(projection.GetProperty("Kind").GetString(), Is.EqualTo("TupleProjection"));
+            Assert.That(projection.GetProperty("Text").GetString(), Is.EqualTo("^^^$12"));
+            Assert.That(projection.GetProperty("Span").GetProperty("Start").GetInt32(), Is.EqualTo(2));
+            Assert.That(root.GetProperty("Kind").GetString(), Is.EqualTo("ExpressionRoot"));
+            Assert.That(root.GetProperty("Text").GetString(), Is.EqualTo("^^^$"));
+            Assert.That(root.GetProperty("Span").GetProperty("Length").GetInt32(), Is.EqualTo(4));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Parse_ValidExpression_DefaultsToHumanReadableTree()
     {
         var result = await InvokeAsync("parse", "trim | multiply(1.21) | round(2)");

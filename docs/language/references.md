@@ -217,7 +217,7 @@ tuple returns `null`. A null tuple element also returns `null`. Resolution never
 searches another scope for a tuple or a non-null value. The receiving function
 applies its usual null handling and parameter coercion. Positions must be
 non-negative integers no greater than `2147483647`; larger positions produce a
-binding diagnostic. Negative positions and `$^n` positions are not supported in
+syntax diagnostic. Negative positions and `$^n` positions are not supported in
 caret-qualified references.
 
 `^$n` is the positional counterpart of `^.field`: both read the current
