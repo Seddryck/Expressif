@@ -103,6 +103,8 @@ Coercion functions use established `TryCast` semantics, register every supported
 
 ## Documentation and registration
 
+Verify parameter-context prose against the implementation using the [argument-context documentation guidelines](../../../AGENTS.md#argument-context-documentation).
+
 Copy XML summary and parameter text exactly from metadata, escaping XML characters where necessary.
 
 Apply canonical name, aliases, visibility, and scope from metadata. The operator must be discoverable through its registry and consistent with the embedded catalog and introspection model.

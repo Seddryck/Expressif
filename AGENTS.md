@@ -85,6 +85,24 @@ For a new operator that requires both steps, run `/scaffold` before `/implement`
 
 Skills define task-specific procedures. `AGENTS.md` defines repository-wide rules and takes precedence if a skill contains conflicting Git, worktree, branch, issue, commit, or pull-request instructions.
 
+## Argument-context documentation
+
+When writing or updating operator documentation, make argument evaluation context explicit without repeating the signature.
+
+* Distinguish the operator's **pipeline input** from the **context used by its argument expressions**. Do not assume they are the same.
+* Name the source relative to the specific call. Prefer "each element of the array supplied as pipeline input to this `filter` call" over "each array item" or "the incoming array".
+* Explain what relevant references resolve to: for example, which record supplies `.field`, or what `$0` and `$1` represent and in which order. Name the surrounding context when it is retained, and the replacement context when one is introduced. Do not imply access to an outer value unless supported.
+* State evaluation frequency, order, or conditional execution when it affects observable behavior. Do not infer eager evaluation from shared context.
+* Verify claims against binding/runtime behavior and existing tests on the target development line. If the intended contract differs, resolve that discrepancy before documenting a guarantee.
+
+Aim for one or two context sentences per distinct parameter context. Group parameters that share a context, and add one short example with its result only when it clarifies the source or nesting. Keep types, defaults, and constraints in their existing signature or parameter descriptions. Put shared context prose in the catalog's behavior text when supported; do not add schema fields solely for this guidance.
+
+Suggested wording, after verifying the operator's behavior:
+
+> The predicate runs once for each element of the array supplied as pipeline input to this `filter` call. Within the predicate, `.field` reads that element's field.
+
+Before finishing, check that a reader can identify the exact source value in a nested call without consulting the implementation.
+
 ## Version-sensitive integrations
 
 Treat every user-approved version target or version sequence as an invariant. This applies to tasks involving GitVersion, release numbering, staged integrations, package publication, GitHub releases, or commits containing `+semver` directives.
