@@ -22,6 +22,8 @@ map-over(
 
 Evaluates an expression once for every supplied value while preserving the pipeline input as the expression input. Tuple values are expanded into positional arguments for a bare callable. Returns `null` when values is not enumerable or is text.
 
+
+
 ## Parameters
 
 
@@ -29,7 +31,7 @@ Evaluates an expression once for every supplied value while preserving the pipel
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | Expression evaluated with the outer pipeline input and each supplied value as its argument context. |
-| `values` | `array` | Yes | Values iterated as argument contexts in declaration order. |
+| `values` | `array` | Yes | Values evaluated once against the incoming pipeline input, then iterated as argument contexts in declaration order. |
 
 
 
@@ -42,14 +44,7 @@ Evaluates an expression once for every supplied value while preserving the pipel
 ```expressif
 5 | map-over(subtract, {10, 11}) → {-5, -6}
 20 | map-over(subtract($2), {T(1, 2), T(3, 4)}) → {18, 16}
-map(
-    .employee
-    | record(
-        name := .name,
-        contacts := .department | .manager | .contact
-            | map-over(field, field-names)
-    )
-)
+{contact := {email := "manager@example.net", phone := "123"}} | .contact | map-over(field, field-names) → {"manager@example.net", "123"}
 ```
 {% endraw %}
 

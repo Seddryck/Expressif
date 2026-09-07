@@ -2,6 +2,46 @@ suite: array
 kind: function
 operator: map-over
 tests:
+  - id: map-over.valid.input-context
+    cases:
+      - id: map-over.valid.input-context.nested-manager
+        value:
+        parameters:
+          - >-
+            { {employee := {department := {manager := {name := "Tony", contact := {email := "manager@example.net", phone := "123"}}}}} }
+            | map(.employee | .department | .manager | record(name := .name, contacts := .contact | map-over(field, field-names)))
+            | map(.contacts)
+        expected: [["manager@example.net", "123"]]
+      - id: map-over.valid.input-context.transformed-input
+        value:
+        parameters:
+          - '{outer := 1} | record(email := "manager@example.net", phone := "123") | map-over(field, field-names)'
+        expected: ["manager@example.net", "123"]
+      - id: map-over.valid.input-context.empty-selection
+        value:
+        parameters:
+          - '{names := {"outer"}} | record(names := {}) | map-over(field, .names)'
+        expected: []
+      - id: map-over.valid.input-context.explicit-enclosing-scope
+        value:
+        parameters:
+          - '{names := {"email"}, contact := {email := "manager@example.net", phone := "123"}} | .contact | map-over(field, field-names | ^^.names)'
+        expected: ["manager@example.net"]
+      - id: map-over.valid.input-context.null-selection
+        value:
+        parameters:
+          - '{names := {"outer"}} | record(names := #null) | map-over(field, .names)'
+        expected:
+      - id: map-over.valid.input-context.text-selection
+        value:
+        parameters:
+          - '{names := {"outer"}} | record(names := "email") | map-over(field, .names)'
+        expected:
+      - id: map-over.valid.input-context.scalar-selection
+        value:
+        parameters:
+          - '{names := {"outer"}} | record(names := 42) | map-over(field, .names)'
+        expected:
   - id: map-over.valid.scalar-values
     cases:
       - id: map-over.valid.scalar-values.numeric.subtract

@@ -793,8 +793,8 @@ public class FunctionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         var valuesEvaluator = BuildValueEvaluator(values, context);
-        Func<System.Collections.IEnumerable?> valuesProvider = () =>
-            valuesEvaluator.Invoke(EvaluationRuntime.Frame?.Current) is { } evaluated
+        Func<object?, System.Collections.IEnumerable?> valuesProvider = input =>
+            valuesEvaluator.Invoke(input) is { } evaluated
                 && AggregationEnumerable.TryGetEnumerable(evaluated, out var enumerable)
                     ? enumerable
                     : null;
@@ -802,7 +802,7 @@ public class FunctionFactory : BaseExpressionFactory
 
         return mapOver
             ? new MapOver(operationProvider, valuesProvider)
-            : new MapWith(operationProvider, valuesProvider);
+            : new MapWith(operationProvider, () => valuesProvider.Invoke(EvaluationRuntime.Frame?.Current));
     }
 
     private IFunction BuildDirectionalMapOperation(OpenExpressionParameter expression, IContext context, bool mapOver)

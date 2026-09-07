@@ -13,8 +13,11 @@ namespace Expressif.Functions.Array;
 public sealed class MapOver : DirectionalMap
 {
     /// <param name="expression">Expression evaluated with the outer pipeline input and each supplied value as its argument context.</param>
-    /// <param name="values">Values iterated as argument contexts in declaration order.</param>
+    /// <param name="values">Values evaluated once against the incoming pipeline input, then iterated as argument contexts in declaration order.</param>
     public MapOver(Func<IFunction> expression, Func<IEnumerable?> values)
+        : base(expression, values) { }
+
+    internal MapOver(Func<IFunction> expression, Func<object?, IEnumerable?> values)
         : base(expression, values) { }
 }
 
@@ -34,14 +37,17 @@ public sealed class MapWith : DirectionalMap
 public abstract class DirectionalMap : IFunction<object?, IEnumerable?>
 {
     private Func<IFunction> Expression { get; }
-    private Func<IEnumerable?> Values { get; }
+    private Func<object?, IEnumerable?> Values { get; }
 
     private protected DirectionalMap(Func<IFunction> expression, Func<IEnumerable?> values)
+        : this(expression, _ => values.Invoke()) { }
+
+    private protected DirectionalMap(Func<IFunction> expression, Func<object?, IEnumerable?> values)
         => (Expression, Values) = (expression, values);
 
     public IEnumerable? Evaluate(object? value)
     {
-        var values = Values.Invoke();
+        var values = Values.Invoke(value);
         if (values is null || values is string)
             return null;
 
