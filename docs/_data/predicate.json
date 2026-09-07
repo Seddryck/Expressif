@@ -25,6 +25,8 @@
     "Parameters": [
       {
         "Name": "expected",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
@@ -49,6 +51,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `true`."
@@ -69,6 +73,8 @@
     "Parameters": [
       {
         "Name": "name",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "Name of the field whose presence is tested."
@@ -89,6 +95,8 @@
     "Parameters": [
       {
         "Name": "name",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "Name of the field whose absence is tested."
@@ -144,6 +152,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
         "Summary": "A boolean value to compare to the argument."
@@ -209,6 +219,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
         "Summary": "Specifies the secondary Boolean expression evaluated when the input is `true`."
@@ -229,6 +241,8 @@
     "Parameters": [
       {
         "Name": "predicates",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
@@ -251,12 +265,16 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Specifies the exact non-negative number of predicates that must be satisfied."
       },
       {
         "Name": "predicates",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
@@ -279,12 +297,16 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Specifies the minimum non-negative number of predicates that must be satisfied."
       },
       {
         "Name": "predicates",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
@@ -307,12 +329,16 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Specifies the maximum non-negative number of predicates that may be satisfied."
       },
       {
         "Name": "predicates",
+        "Source": "incoming",
+        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
@@ -335,6 +361,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
         "Summary": "Specifies the secondary Boolean expression evaluated when the input is `true`."
@@ -355,6 +383,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `false`."
@@ -375,6 +405,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
         "Summary": "Specifies the secondary Boolean expression evaluated when the input is `false`."
@@ -395,6 +427,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "Specifies the secondary predicate expression evaluated after the input."
@@ -415,6 +449,8 @@
     "Parameters": [
       {
         "Name": "expression",
+        "Source": "custom",
+        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
         "Summary": "Specifies the secondary Boolean expression evaluated after the input."
@@ -453,6 +489,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
@@ -476,6 +514,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
@@ -499,6 +539,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
@@ -541,6 +583,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
@@ -564,6 +608,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
@@ -635,6 +681,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "A numeric value to compare to the argument."
@@ -690,6 +738,8 @@
     "Parameters": [
       {
         "Name": "interval",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "A numeric interval to compare to the argument."
@@ -745,12 +795,16 @@
     "Parameters": [
       {
         "Name": "modulus",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "An integer value used as the modulus."
       },
       {
         "Name": "remainder",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "An integer value defined as the expected reminder."
@@ -774,6 +828,8 @@
     "Parameters": [
       {
         "Name": "divisor",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
         "Summary": "An integer value used as the divisor."
@@ -839,6 +895,8 @@
     "Parameters": [
       {
         "Name": "type",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "type",
         "Optional": false,
         "Variadic": false,
@@ -867,6 +925,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
@@ -890,6 +950,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
@@ -913,6 +975,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument"
@@ -936,6 +1000,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
@@ -975,6 +1041,8 @@
     "Parameters": [
       {
         "Name": "interval",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Summary": "A temporal interval to compare to the argument."
@@ -1158,6 +1226,8 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
         "Summary": "A temporal value to compare to the argument."
@@ -1213,6 +1283,8 @@
     "Parameters": [
       {
         "Name": "weekday",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
         "Summary": "The day of week to compare to the argument."
@@ -1348,6 +1420,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false."
@@ -1371,6 +1445,8 @@
     "Parameters": [
       {
         "Name": "count",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Summary": "Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false."
@@ -1457,12 +1533,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1486,12 +1566,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value.."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1516,12 +1600,16 @@
     "Parameters": [
       {
         "Name": "references",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Summary": "An array of text values."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": ""
@@ -1578,12 +1666,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).."
@@ -1624,12 +1716,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1654,12 +1750,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1684,12 +1784,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1714,12 +1818,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1804,12 +1912,16 @@
     "Parameters": [
       {
         "Name": "regex",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
@@ -1848,12 +1960,16 @@
     "Parameters": [
       {
         "Name": "reference",
+        "Source": "enclosing",
+        "Selection": "self",
         "Type": "text",
         "Optional": false,
         "Summary": "A string to be compared to the argument value.."
       },
       {
         "Name": "comparer",
+        "Source": "custom",
+        "Selection": "custom",
         "Type": "any",
         "Optional": true,
         "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
