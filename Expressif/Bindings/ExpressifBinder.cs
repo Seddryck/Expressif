@@ -9,6 +9,7 @@ public sealed class ExpressifBinder
 {
     private readonly FunctionTypeMapper functionTypeMapper = new();
     private readonly CoercionRegistry coercionRegistry = new();
+    private bool inputBoundBody;
 
     public bool ApplyCoercion { get; }
 
@@ -197,8 +198,7 @@ public sealed class ExpressifBinder
     {
         inputType = null!;
         outputType = null!;
-        // Scoped projections read a frame, not the pipeline input tuple.
-        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+        if (function.Syntax is FunctionSyntax.ScopedTupleProjectionShorthand or FunctionSyntax.InputFieldShorthand or FunctionSyntax.InputTupleProjectionShorthand)
             return false;
         if (!functionTypeMapper.TryExecute(function.Name, out var implementationType))
             return false;
@@ -305,7 +305,7 @@ public sealed class ExpressifBinder
             [new LiteralParameter((projection.Direction is TupleProjectionDirection.FromEnd
                 ? projection.Index == 0 ? int.MinValue : -projection.Index
                 : projection.Index).ToString())],
-            FunctionSyntax.TupleProjectionShorthand),
+            inputBoundBody ? FunctionSyntax.InputTupleProjectionShorthand : FunctionSyntax.TupleProjectionShorthand),
         PairComponentAccessSyntax access => new Function(
             access.Component is PairComponent.Key ? "pair-key" : "pair-value",
             []),
@@ -547,6 +547,7 @@ public sealed class ExpressifBinder
     private IParameter BindArgumentCore(ExpressionSyntax syntax) => syntax switch
     {
         _ when FindTupleScope(syntax) is { } reference => new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth),
+        InputBoundExpressionSyntax bound => new OpenExpressionParameter(BindInputBound(bound)),
         GuardedExpressionSyntax guarded => new OpenExpressionParameter(
             new OpenExpression([BindGuardedExpression(guarded)])),
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
@@ -571,6 +572,7 @@ public sealed class ExpressifBinder
         ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed
             => new OpenExpressionParameter(BindRecordAccessExpression(closed, access)),
         ClosedExpressionSyntax closed => new InputExpressionParameter(BindClosed(closed)),
+        TupleProjectionSyntax { RootDepth: > 0 } projection => new ScopedTupleProjectionParameter(projection.Index, projection.RootDepth),
         TupleProjectionSyntax projection => new TupleProjectionParameter(
             projection.Index,
             projection.Direction is TupleProjectionDirection.FromEnd),
@@ -587,6 +589,22 @@ public sealed class ExpressifBinder
         OpenExpressionSyntax { Source: { } source, Pipeline.Count: 0 } => FindTupleScope(source),
         _ => null,
     };
+
+    private InputBoundExpression BindInputBound(InputBoundExpressionSyntax syntax)
+    {
+        if (syntax.Binding is not BindingNameSyntax name)
+            throw new BindingException("This input binding requires a single name.");
+        var previous = inputBoundBody;
+        inputBoundBody = true;
+        try
+        {
+            return new InputBoundExpression([name.Name], false, Bind(syntax.Body));
+        }
+        finally
+        {
+            inputBoundBody = previous;
+        }
+    }
 
     private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
         => new([.. BindRecordAccessFunctions(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);
@@ -729,6 +747,7 @@ public sealed class ExpressifBinder
             })],
             (index == 0 ? syntax.RootDepth : 0) switch
             {
+                0 when index == 0 && inputBoundBody => FunctionSyntax.InputFieldShorthand,
                 0 => FunctionSyntax.FieldShorthand,
                 1 => FunctionSyntax.RootFieldShorthand,
                 2 => FunctionSyntax.EnclosingRootFieldShorthand,

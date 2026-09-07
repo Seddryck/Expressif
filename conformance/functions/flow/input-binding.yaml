@@ -1,0 +1,30 @@
+suite: flow.input-binding
+kind: function
+operator: apply
+tests:
+  - id: input-binding.named
+    cases:
+      - id: input-binding.named.scalar
+        value: '10 | apply(input :> @input | add(5) | multiply(@input))'
+        expected: 150
+      - id: input-binding.named.nested
+        value: '10 | apply(outer :> add(2) | apply(inner :> @inner | add(@outer)))'
+        expected: 22
+      - id: input-binding.named.shadow
+        value: '10 | apply(input :> add(2) | apply(input :> @input) | add(@input))'
+        expected: 22
+      - id: input-binding.named.null-shadow
+        value: '10 | apply(input :> #null | apply(input :> @input))'
+        expected: null
+      - id: input-binding.named.map
+        value: '{1, 2, 3} | map(input :> @input | add(@input))'
+        expected: [2, 4, 6]
+      - id: input-binding.named.predicate
+        value: '{1, 2, 3} | filter(input :> @input | greater-than(1))'
+        expected: [2, 3]
+      - id: input-binding.named.reduce
+        value: '{1, 2, 3} | reduce(input :> @input | $0 | add($1))'
+        expected: 6
+      - id: input-binding.named.function-name
+        value: '10 | apply(add :> add(@add))'
+        expected: 20

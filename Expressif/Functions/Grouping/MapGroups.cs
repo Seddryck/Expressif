@@ -21,8 +21,7 @@ public sealed class MapGroups : IFunction<GroupingValue, GroupingValue>
         var expression = Expression.Invoke();
         return new GroupingValue(value.Select(group =>
         {
-            using var scope = EvaluationRuntime.Derive(group.Values);
-            var result = expression.Evaluate(group.Values);
+            var result = EvaluationRuntime.EvaluateNested(expression, group.Values);
             if (result is not IEnumerable collection || result is string)
                 throw new ArgumentException("The map-groups expression must return a collection.", nameof(value));
             return new PairValue(group.Key, collection);

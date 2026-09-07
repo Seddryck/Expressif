@@ -4,10 +4,11 @@ namespace Expressif.Predicates;
 
 internal sealed class BooleanFunctionPredicate(IFunction function, bool preserveCurrentInput = false) : IPredicate
 {
+    internal bool IsInputBound => function is InputBoundFunction;
+
     public bool Evaluate(object? value)
     {
-        using var scope = EvaluationRuntime.Derive(value, preserveCurrentInput ? EvaluationRuntime.Frame?.Current : value);
-        var result = function.Evaluate(value);
+        var result = EvaluationRuntime.EvaluateNested(function, value, preserveCurrentInput ? EvaluationRuntime.Frame?.Current : value);
         return result is bool boolean
             ? boolean
             : throw new InvalidCastException(

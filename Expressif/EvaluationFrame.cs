@@ -21,6 +21,7 @@ internal sealed record EvaluationFrame
     internal ScopeFrame<object?> Scope { get; }
     public object? Current => Scope.Current;
     public object? Ambient => Scope.Root;
+    public bool IsInputBound { get; init; }
     public IExpressionObservation? Observation { get; }
     public EvaluationFrame? Parent { get; }
 }

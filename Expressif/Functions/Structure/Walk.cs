@@ -29,8 +29,7 @@ public sealed class Walk : IFunction
 
     private static object? EvaluateNested(IFunction expression, object? value)
     {
-        using var scope = EvaluationRuntime.Derive(value);
-        return expression.Evaluate(value);
+        return EvaluationRuntime.EvaluateNested(expression, value);
     }
 
     private static RecordValue TransformRecord(RecordValue record, IFunction expression)

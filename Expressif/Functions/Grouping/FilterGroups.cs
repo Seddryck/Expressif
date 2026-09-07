@@ -22,8 +22,7 @@ public sealed class FilterGroups : IFunction<GroupingValue, GroupingValue>
         return new GroupingValue(value
             .Where(group =>
             {
-                using var scope = EvaluationRuntime.Derive(group);
-                return predicate.Evaluate(group);
+                return EvaluationRuntime.EvaluateNested(predicate, group) is true;
             })
             .Select(group => new PairValue(group.Key, group.Values)));
     }

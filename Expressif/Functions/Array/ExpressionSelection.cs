@@ -67,8 +67,7 @@ internal static class ExpressionSelection
         object? best = null;
         foreach (var item in source)
         {
-            using var scope = EvaluationRuntime.Derive(item);
-            var criterion = expression.Evaluate(item);
+            var criterion = EvaluationRuntime.EvaluateNested(expression, item);
             if (criterion is null)
                 continue;
 

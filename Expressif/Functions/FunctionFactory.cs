@@ -39,7 +39,8 @@ public class FunctionFactory : BaseExpressionFactory
         {
             var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
             return CreateFunctionCast(
-                () => evaluator.Invoke(ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
+                () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
+                    ? frame.Current : ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
                 scalarType);
         }
 
@@ -80,6 +81,9 @@ public class FunctionFactory : BaseExpressionFactory
 
     private IFunction BuildPipeline(OpenExpression expression, IContext context)
     {
+        if (expression is InputBoundExpression binding)
+            return BuildInputBoundFunction(binding, context);
+
         var members = expression.Members.ToArray();
         var functions = members
             .Select(member => InstantiateOrWrapAggregation(member, context))
@@ -91,6 +95,21 @@ public class FunctionFactory : BaseExpressionFactory
         return TryBuildTypedChain(members, functions, out var chain)
             ? chain
             : new ChainFunction(functions);
+    }
+
+    private IFunction BuildInputBoundFunction(InputBoundExpression binding, IContext context)
+    {
+        var members = binding.Body switch
+        {
+            OpenRootExpression open => open.Expression.Members,
+            ClosedRootExpression closed => closed.Expression.Members,
+            _ => throw new BindingException("Unsupported input binding body."),
+        };
+        var chain = BuildPipeline(new OpenExpression(members), context);
+        Func<object?, object?> source = binding.Body is ClosedRootExpression closedBody
+            ? BuildSourceEvaluator(closedBody.Expression.Parameter, context)
+            : input => input;
+        return new InputBoundFunction(binding, input => chain.Evaluate(source(input)));
     }
 
     internal static bool TryBuildTypedChain(
@@ -221,8 +240,21 @@ public class FunctionFactory : BaseExpressionFactory
         var construction = FunctionConstruction.Classify(name);
 
         if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
-            && function.Parameters is [ScopedTupleProjectionParameter projection])
-            return new DelegatedFunction(_ => ResolveScopedTupleProjection(projection));
+            && function.Parameters is [ScopedTupleProjectionParameter scoped])
+            return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
+        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        {
+            var position = int.Parse((string)((LiteralParameter)function.Parameters[0]).Value!, System.Globalization.CultureInfo.InvariantCulture);
+            var projection = new TupleProjectionParameter(position < 0 ? position == int.MinValue ? 0 : -position : position, position < 0);
+            return new DelegatedFunction(input => ResolveTupleProjection(
+                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, projection));
+        }
+        if (function.Syntax == FunctionSyntax.InputFieldShorthand
+            && TryGetFieldName(function.Parameters, out var inputField))
+        {
+            return new DelegatedFunction(input => NamedValueAccessor.Get(
+                EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, inputField));
+        }
 
         if (function.Syntax == FunctionSyntax.RootFieldShorthand)
             return BuildRootFieldFunction(function);
@@ -348,8 +380,7 @@ public class FunctionFactory : BaseExpressionFactory
 
     private static object? EvaluateNested(IFunction expression, object? input, object? currentInput)
     {
-        using var scope = EvaluationRuntime.Derive(input, currentInput);
-        return expression.Evaluate(input);
+        return EvaluationRuntime.EvaluateNested(expression, input, currentInput);
     }
 
     private IFunction? TryBuildSpecialFunction(FunctionConstructionKind construction, Bindings.Function function, IContext context)
@@ -409,6 +440,9 @@ public class FunctionFactory : BaseExpressionFactory
 
     private Func<IFunction> BuildReduceOperationProvider(OpenExpressionParameter operation, IContext context)
     {
+        if (operation.Expression is InputBoundExpression binding)
+            return () => BuildInputBoundFunction(binding, context);
+
         var members = operation.Expression.Members.ToArray();
         if (members is [var first, ..]
             && first.Arguments is [
@@ -883,12 +917,15 @@ public class FunctionFactory : BaseExpressionFactory
             });
         }
 
-        var normalized = mapOver ? NormalizeMapOverProjections(expression.Expression) : expression.Expression;
+        var normalized = mapOver && expression.Expression is not InputBoundExpression
+            ? NormalizeMapOverProjections(expression.Expression) : expression.Expression;
         var operation = BuildOpenExpression(normalized, context);
         return new DelegatedFunction(value =>
         {
             var invocation = GetDirectionalMapInput(value);
             var inputs = DirectionalScope<object?>.Create(mapOver, invocation.Outer, invocation.Item);
+            if (operation is InputBoundFunction)
+                return operation.Evaluate(inputs.Input);
             using var scope = EvaluationRuntime.Derive(inputs.Arguments);
             return operation.Evaluate(inputs.Input);
         });
@@ -954,8 +991,7 @@ public class FunctionFactory : BaseExpressionFactory
     {
         public object? Evaluate(object? value)
         {
-            using var scope = EvaluationRuntime.Derive(value);
-            return expression.Evaluate(value);
+            return EvaluationRuntime.EvaluateNested(expression, value);
         }
     }
 
@@ -1027,6 +1063,9 @@ public class FunctionFactory : BaseExpressionFactory
 
     private Func<object?, object?> BuildOpenExpressionRecordEvaluator(OpenExpressionParameter open, IContext context)
     {
+        if (open.Expression is InputBoundExpression binding)
+            return BuildInputBoundFunction(binding, context).Evaluate;
+
         if (TryBuildSingleTokenEvaluator(open, out var evaluator))
             return evaluator;
 

@@ -242,8 +242,7 @@ public class ReduceAccumulator : BaseAccumulator
         }
 
         var pair = new Expressif.Values.Tuple(value, item);
-        using var scope = EvaluationRuntime.Derive(pair);
-        value = operation!.Evaluate(pair);
+        value = EvaluationRuntime.EvaluateNested(operation!, pair);
     }
 
     public override object? GetValue()
