@@ -47,7 +47,9 @@ internal static class FunctionContractIntrospector
                 "any",
                 "any",
                 false,
-                UntypedReasons.GetValueOrDefault(
+                implementationType.GetCustomAttributes(typeof(FunctionAttribute), true)
+                    .OfType<FunctionAttribute>().FirstOrDefault()?.DynamicReason
+                ?? UntypedReasons.GetValueOrDefault(
                     name,
                     "No unambiguous closed IFunction<TIn, TOut> contract is exposed."));
         }

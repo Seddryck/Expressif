@@ -3,7 +3,7 @@ layout: docs
 title: "record"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/record/record/
 tags:

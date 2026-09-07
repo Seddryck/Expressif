@@ -1,0 +1,92 @@
+suite: record
+kind: function
+operator: nested-field
+tests:
+  - id: nested-field.valid.value
+    cases:
+      - id: nested-field.valid.value.explicit
+        value:
+        parameters:
+          - '{customer := {address := {city := "Brussels"}}} | nested-field("customer", "address", "city")'
+        expected: Brussels
+      - id: nested-field.valid.value.spread
+        value:
+        parameters:
+          - '{customer := {address := {city := "Brussels"}}} | nested-field(...{"customer", "address", "city"})'
+        expected: Brussels
+      - id: nested-field.valid.value.mixed
+        value:
+        parameters:
+          - '{customer := {address := {city := "Brussels"}}} | nested-field(...{"customer"}, ...{}, "address", ...{"city"})'
+        expected: Brussels
+      - id: nested-field.valid.value.dynamic
+        value:
+        parameters:
+          - '{first := "customer", last := "city", customer := {city := "Brussels", last := "wrong"}} | nested-field(.first, .last)'
+        expected: Brussels
+      - id: nested-field.valid.value.dotted
+        value:
+        parameters:
+          - '{"customer.city" := "Brussels"} | nested-field("customer.city")'
+        expected: Brussels
+      - id: nested-field.valid.value.empty-name
+        value:
+        parameters:
+          - '{"":= "Brussels"} | nested-field("")'
+        expected: Brussels
+      - id: nested-field.valid.value.missing
+        value:
+        parameters:
+          - '{customer := {city := "Brussels"}} | nested-field("customer", "missing")'
+        expected:
+      - id: nested-field.valid.value.missing-parent
+        value:
+        parameters:
+          - '{name := "Ada"} | nested-field("customer", "city")'
+        expected:
+      - id: nested-field.valid.value.null-leaf
+        value:
+        parameters:
+          - '{customer := {city := #null}} | nested-field("customer", "city")'
+        expected:
+      - id: nested-field.valid.value.null-parent
+        value:
+        parameters:
+          - '{customer := #null} | nested-field("customer", "city")'
+        expected:
+      - id: nested-field.valid.value.scalar-parent
+        value:
+        parameters:
+          - '{customer := 42} | nested-field("customer", "city")'
+        expected:
+      - id: nested-field.valid.value.null-input
+        value:
+        parameters:
+          - '#null | nested-field("customer")'
+        expected:
+      - id: nested-field.valid.value.scalar-input
+        value:
+        parameters:
+          - '42 | nested-field("customer")'
+        expected:
+  - id: nested-field.valid.structured
+    cases:
+      - id: nested-field.valid.structured.record
+        value:
+        parameters:
+          - '{customer := {city := "Brussels"}} | nested-field("customer")'
+        expected: '{city := "Brussels"}'
+  - id: nested-field.valid.array
+    cases:
+      - id: nested-field.valid.array.nested
+        value:
+        parameters:
+          - '{customer := {scores := {1, 2}}} | nested-field("customer", "scores")'
+        expected: [1, 2]
+  - id: nested-field.valid.numeric
+    cases:
+      - id: nested-field.valid.numeric.single
+        value:
+        parameters:
+          - '{score := 42} | nested-field("score")'
+        expected: 42
