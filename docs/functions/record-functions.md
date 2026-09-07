@@ -22,6 +22,7 @@ Reference documentation for Expressif functions in the `record` scope.
 | [`exclude-fields`]({{ '/functions/record/exclude-fields/' | relative_url }}) | Returns all fields except those whose names appear in the supplied array, preserving input field order and ignoring unknown names. |
 | [`field`]({{ '/functions/record/field/' | relative_url }}) | Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values. |
 | [`field-names`]({{ '/functions/record/field-names/' | relative_url }}) | Returns the names of all fields in the input record, preserving field order. |
+| [`nested-field`]({{ '/functions/record/nested-field/' | relative_url }}) | Returns the value at a nested field path in the input record or object, or null when the path cannot be resolved. |
 | [`public`]({{ '/functions/record/public/' | relative_url }}) | Returns a new record without fields whose names start with an underscore, preserving public field order and values. Unlike set-public and set-private, this function removes fields rather than renaming them. |
 | [`put`]({{ '/functions/record/put/' | relative_url }}) | Creates or replaces statically named fields while preserving every other field. Assignment expressions are evaluated against the original input record. |
 | [`put-absent`]({{ '/functions/record/put-absent/' | relative_url }}) | Assigns statically named fields only when they are absent; a present field containing null remains unchanged. |

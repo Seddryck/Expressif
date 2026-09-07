@@ -11,6 +11,7 @@ public class FunctionAttribute : Attribute
 {
     public string[] Aliases { get; }
     public string? Prefix { get; }
+    public string? DynamicReason { get; set; }
 
     public FunctionAttribute()
         : this(null, System.Array.Empty<string>()) { }

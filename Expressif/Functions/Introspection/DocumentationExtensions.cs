@@ -22,6 +22,7 @@ public static class DocumentationExtensions
 {
     private static readonly HashSet<(Type Type, string Parameter)> VariadicParameters =
     [
+        (typeof(Record.NestedField), "path"),
         (typeof(Record.Record), "entries"),
         (typeof(Record.Put), "assignments"),
         (typeof(Record.PutPresent), "assignments"),
@@ -166,6 +167,7 @@ public static class DocumentationExtensions
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
         => (declaringType, parameterName) switch
         {
+            (var type, "path") when type == typeof(Record.NestedField) => 1,
             (var type, "expressions") when type == typeof(Special.Coalesce) => 2,
             (var type, "specifications") when type == typeof(Special.Coerce) => 1,
             (var type, "projections") when type == typeof(Record.With) => 1,

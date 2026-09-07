@@ -3,7 +3,7 @@ layout: docs
 title: "set-private"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 140
+nav_order: 150
 has_toc: false
 permalink: /functions/record/set-private/
 tags:

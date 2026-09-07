@@ -3,7 +3,7 @@ layout: docs
 title: "put-absent"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/record/put-absent/
 tags:
