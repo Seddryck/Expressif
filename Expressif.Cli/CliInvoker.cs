@@ -8,8 +8,25 @@ internal static class CliInvoker
     public static async Task<int> InvokeAsync(string[] args)
         => await InvokeAsync(args, CliComposition.CreateDefault());
 
-    internal static async Task<int> InvokeAsync(string[] args, CliComposition composition)
+    internal static async Task<int> InvokeAsync(
+        string[] args,
+        CliComposition composition,
+        bool? isInputRedirected = null,
+        bool? isOutputRedirected = null)
     {
+        if (args.Length == 0)
+        {
+            var interactive = !(isInputRedirected ?? Console.IsInputRedirected)
+                && !(isOutputRedirected ?? Console.IsOutputRedirected);
+            if (interactive)
+            {
+                Console.WriteLine("Welcome to Expressif. Enter an expression to begin.");
+                Console.WriteLine("Exit with Ctrl+C or Ctrl+D on an empty line. For help, run expressif --help after exiting.");
+            }
+
+            args = interactive ? ["repl"] : ["--help"];
+        }
+
         var rootCommand = CliRootCommandFactory.Create(composition);
         var parseResult = rootCommand.Parse(args);
         return await InvokeAsync(parseResult);
