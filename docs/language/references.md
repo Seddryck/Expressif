@@ -100,7 +100,7 @@ Inside the projection, `.amount` refers to the amount field of the current order
 
 ## The current object
 
-The current object is the value currently being evaluated. It evolves as an expression moves through references and functions.
+In a pipeline, each field-access step reads the value arriving at that step. An argument expression has a separate context determined by its parameter.
 
 Consider a `customer` variable containing an address. A nested field can be referenced directly:
 
@@ -116,31 +116,22 @@ flowchart LR
     B --> C[".city<br>text value"]
 ```
 
-This changing context matters when a later reference starts with `.`. For example, the following expression is wrong:
+Inside a function argument, check the parameter's context. For example:
 
 ```expressif
-@customer
+{firstName := "Jane", lastName := "Doe"}
 | .lastName
 | suffix(", ")
 | suffix(.firstName)
 ```
 
-After `.lastName`, the current object is the last-name text, not the customer record. The `.firstName` reference therefore tries to find `firstName` on that text value.
-
-Refer to the context variable again when the value must be read from the original customer:
-
-```expressif
-@customer
-| .lastName
-| suffix(", ")
-| suffix((@customer | .firstName))
-```
-
-If `lastName` is `"Doe"` and `firstName` is `"Jane"`, the result is:
+The incoming value for the final `suffix` call is `"Doe, "`. Its argument uses the enclosing record, so `.firstName` reads `"Jane"`. The result is:
 
 ```expressif
 "Doe, Jane"
 ```
+
+See [Incoming and enclosing contexts](argument-contexts.md) for diagrams explaining how argument contexts differ from the values flowing through a pipeline.
 
 ## Expression-root field references
 
