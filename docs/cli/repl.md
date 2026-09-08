@@ -6,7 +6,30 @@ nav_order: 55
 description: Evaluate expressions interactively and undo previous submissions.
 ---
 
-Start an interactive session with `expressif repl`. Evaluate a standalone expression,
+Start an interactive session with `expressif` (no arguments) in a terminal, or with
+`expressif repl`. Double-clicking `expressif.exe` on Windows also starts an
+interactive session. A no-argument interactive launch displays a short welcome
+with help and exit instructions and stays open until you exit.
+
+To run commands from PowerShell, open a terminal in the executable's folder:
+
+```powershell
+.\expressif.exe
+.\expressif.exe --help
+.\expressif.exe evaluate '2 | add(1)'
+```
+
+The first command starts the REPL; exit with Ctrl+C or Ctrl+D on an empty line
+before running the next command. Explicit commands print their output and exit,
+leaving PowerShell open so you can read the result.
+
+Automatic REPL startup requires both standard input and standard output to be
+connected to an interactive terminal. With either redirected, or no terminal
+available, `expressif` without arguments prints usage and exits without waiting
+for input. Use an explicit `expressif repl` invocation when intentionally feeding
+a session from redirected input.
+
+Evaluate a standalone expression,
 then start a line with `|` to apply another pipeline to the current result.
 
 Use `expressif repl --output-style pretty --indent 4` to format every result with
