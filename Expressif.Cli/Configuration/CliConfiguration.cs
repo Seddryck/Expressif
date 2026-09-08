@@ -16,16 +16,16 @@ internal sealed class CliConfiguration(string path)
         var (command, setting) = ParseKey(key);
         var document = Read();
         var value = command is null ? null : (document[command] as JsonObject)?[setting];
-        return ReadValue(value ?? document[setting], setting);
+        return ReadValue(HasValue(value) ? value : document[setting], setting);
     }
 
     public string GetSource(string key)
     {
         var (command, setting) = ParseKey(key);
         var document = Read();
-        if (command is not null && (document[command] as JsonObject)?[setting] is not null)
+        if (command is not null && HasValue((document[command] as JsonObject)?[setting]))
             return command + "." + setting;
-        return document[setting] is not null ? setting : "built-in default";
+        return HasValue(document[setting]) ? setting : "built-in default";
     }
 
     public void Set(string key, string value)
@@ -84,8 +84,12 @@ internal sealed class CliConfiguration(string path)
             : "Configuration output-style must be 'compact' or 'pretty'.");
     }
 
+    private static bool HasValue(JsonNode? value)
+        => value is not null && !(value is JsonValue scalar
+            && scalar.TryGetValue<string>(out var text) && string.IsNullOrWhiteSpace(text));
+
     private static string ReadValue(JsonNode? value, string setting)
-        => value is null ? setting == "indent" ? "2" : "compact" : ValidateValue(setting, value.ToString());
+        => HasValue(value) ? ValidateValue(setting, value!.ToString()) : setting == "indent" ? "2" : "compact";
 
     private JsonObject Read()
     {
@@ -93,7 +97,10 @@ internal sealed class CliConfiguration(string path)
             return new JsonObject();
         try
         {
-            var document = JsonNode.Parse(File.ReadAllText(Path)) as JsonObject
+            var content = File.ReadAllText(Path);
+            if (string.IsNullOrWhiteSpace(content))
+                return new JsonObject();
+            var document = JsonNode.Parse(content) as JsonObject
                 ?? throw new FormatException("Configuration must be a JSON object.");
             foreach (var setting in new[] { "output-style", "indent" })
             {

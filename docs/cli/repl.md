@@ -54,3 +54,5 @@ Ctrl+C ends the session; Ctrl+D on an empty line also exits.
 
 With redirected input or output, use the literal `:undo` command on its own line;
 keyboard shortcuts are available only in an interactive terminal.
+
+Output preferences can also be saved in [configuration](configuration.md), with `repl.output-style` and `repl.indent` overriding shared defaults. Explicit CLI options, including `--style-output`, override configured values.

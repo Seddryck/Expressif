@@ -191,6 +191,92 @@ public class ConfigurationTests
         Assert.That(File.ReadAllBytes(configuration.Path), Is.EqualTo(before));
     }
 
+    [TestCase("", "compact", "2")]
+    [TestCase(" \r\n\t", "compact", "2")]
+    [TestCase("{}", "compact", "2")]
+    [TestCase("{\"output-style\":\"pretty\"}", "pretty", "2")]
+    [TestCase("{\"indent\":4}", "compact", "4")]
+    [TestCase("{\"output-style\":null,\"indent\":0}", "compact", "0")]
+    [TestCase("{\"output-style\":\"pretty\",\"indent\":null}", "pretty", "2")]
+    [TestCase("{\"output-style\":\"\",\"indent\":\"tab\"}", "compact", "tab")]
+    [TestCase("{\"output-style\":\"pretty\",\"indent\":\" \"}", "pretty", "2")]
+    [TestCase("{\"output-style\":\" \" ,\"indent\":\"\"}", "compact", "2")]
+    public void PartialOrEmptyConfiguration_ResolvesEachDefaultIndependently(string content, string style, string indent)
+    {
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(configuration.Path, content);
+        foreach (var command in CliConfiguration.Commands)
+        {
+            Assert.That(configuration.Get(command + ".output-style"), Is.EqualTo(style));
+            Assert.That(configuration.Get(command + ".indent"), Is.EqualTo(indent));
+        }
+
+        Assert.That(File.ReadAllText(configuration.Path), Is.EqualTo(content));
+    }
+
+    [TestCase("null")]
+    [TestCase("\"\"")]
+    [TestCase("\" \"")]
+    public void EmptyCommandOverrides_InheritSharedValuesAndReportSources(string empty)
+    {
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(configuration.Path,
+            "{\"output-style\":\"pretty\",\"indent\":0,\"repl\":{\"output-style\":" + empty + ",\"indent\":" + empty + "}}");
+        Assert.Multiple(() =>
+        {
+            Assert.That(configuration.Get("repl.output-style"), Is.EqualTo("pretty"));
+            Assert.That(configuration.Get("repl.indent"), Is.EqualTo("0"));
+            Assert.That(configuration.GetSource("repl.output-style"), Is.EqualTo("output-style"));
+            Assert.That(configuration.GetSource("repl.indent"), Is.EqualTo("indent"));
+        });
+    }
+
+    [TestCase("evaluate", "0", "")]
+    [TestCase("evaluate", "tab", "\t")]
+    [TestCase("run", "0", "")]
+    [TestCase("run", "tab", "\t")]
+    public async Task Commands_UseConfiguredIndentation(string command, string indent, string spaces)
+    {
+        configuration.Set("output-style", "pretty");
+        configuration.Set("indent", indent);
+        var args = command == "evaluate" ? new[] { command, "{1, 2}" } : new[] { command, "reverse", "--input", "{2, 1}" };
+        var result = await Invoke(args);
+        Assert.That(result.Code, Is.Zero);
+        Assert.That(result.Output.Trim(), Is.EqualTo($"{{\n{spaces}1,\n{spaces}2\n}}"));
+    }
+
+    [TestCase("compact", "--pretty", null, "{\n    1,\n    2\n}")]
+    [TestCase("pretty", "--compact", null, "{1, 2}")]
+    [TestCase("pretty", "--output-style", "compact", "{1, 2}")]
+    [TestCase("pretty", "--style-output", "compact", "{1, 2}")]
+    [TestCase("compact", "--style-output", "pretty", "{\n    1,\n    2\n}")]
+    [TestCase("pretty", "--indent", "0", "{\n1,\n2\n}")]
+    public async Task Repl_ExplicitOptionsOverrideConfiguration(string storedStyle, string option, string? value, string expected)
+    {
+        configuration.Set("repl.output-style", storedStyle);
+        configuration.Set("indent", "4");
+        var terminal = new TestTerminal();
+        var composition = CliComposition.CreateDefault(configuration) with
+        {
+            Repl = () => new ReplHost(new ReplSession(new Expressif.Cli.Expressions.ExpressionService()), terminal),
+        };
+        string[] args = value is null ? ["repl", option] : ["repl", option, value];
+        var result = await CliInvoker.InvokeAsync(CliRootCommandFactory.Create(composition, configuration).Parse(args));
+        Assert.That(result, Is.Zero);
+        Assert.That(terminal.Result, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task Set_EmptyFile_CreatesUsableConfiguration()
+    {
+        Directory.CreateDirectory(directory);
+        File.WriteAllText(configuration.Path, string.Empty);
+        var result = await Invoke("config", "set", "indent", "0");
+        Assert.That(result.Code, Is.Zero);
+        Assert.That(configuration.Get("indent"), Is.EqualTo("0"));
+        Assert.That(configuration.Get("output-style"), Is.EqualTo("compact"));
+    }
+
     private async Task<(int Code, string Output, string Error)> Invoke(params string[] args)
     {
         var previousOut = Console.Out;

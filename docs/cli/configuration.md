@@ -27,6 +27,8 @@ expressif config list --command repl
 expressif config unset repl.indent
 ```
 
+An empty or whitespace-only file is treated as empty configuration, as is `{}`. An omitted setting, JSON `null`, or an empty/whitespace-only string inherits the next default independently. An empty command-specific setting inherits the shared setting, then the built-in default. Numeric `0` is a real indentation value and does not trigger fallback. For example, `{"output-style": "pretty", "indent": null}` enables pretty output with the built-in two-space indentation. Other malformed JSON and invalid nonempty values are errors. `config set` requires a valid value; use `config unset` to restore inheritance.
+
 `get` returns the effective value, including inherited defaults. It works without a file and does not create one. `set` creates the file and parent directory when needed. `unset` removes an override, restoring inheritance. `list` shows the effective shared settings and their sources; `--command` selects a command's effective settings. Writes require permission to modify the executable directory.
 
 Each setting resolves independently, in this order:
