@@ -26,7 +26,10 @@ public class FirstChars : BaseTextLength
         : base(length) { }
 
     protected override object EvaluateString(string value)
-        => value.Length >= Length.Invoke() ? value[..Length.Invoke()] : value;
+    {
+        var length = Length.Invoke();
+        return value.Length >= length ? value[..length] : value;
+    }
 }
 
 /// <summary>
@@ -39,7 +42,10 @@ public class LastChars : BaseTextLength
         : base(length) { }
 
     protected override object EvaluateString(string value)
-        => value.Length >= Length.Invoke() ? value.Substring(value.Length - Length.Invoke(), Length.Invoke()) : value;
+    {
+        var length = Length.Invoke();
+        return value.Length >= length ? value.Substring(value.Length - length, length) : value;
+    }
 }
 
 /// <summary>
@@ -52,7 +58,10 @@ public class SkipFirstChars : BaseTextLength
         : base(length) { }
 
     protected override object EvaluateString(string value)
-        => value.Length <= Length.Invoke() ? new Empty().Keyword : value[Length.Invoke()..];
+    {
+        var length = Length.Invoke();
+        return value.Length <= length ? new Empty().Keyword : value[length..];
+    }
 }
 
 /// <summary>
@@ -65,7 +74,10 @@ public class SkipLastChars : BaseTextLength
         : base(length) { }
 
     protected override object EvaluateString(string value)
-        => value.Length <= Length.Invoke() ? new Empty().Keyword : value[..^(Length.Invoke())];
+    {
+        var length = Length.Invoke();
+        return value.Length <= length ? new Empty().Keyword : value[..^length];
+    }
 }
 
 /// <summary>

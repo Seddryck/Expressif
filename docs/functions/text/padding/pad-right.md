@@ -33,7 +33,7 @@ Returns a new string that left-aligns the characters in this string by padding t
 
 ## Argument evaluation
 
-- **`length`:** Evaluated in the enclosing context to check the text length, then evaluated again when padding is needed.
+- **`length`:** Evaluated once in the enclosing context.
 - **`character`:** Evaluated once in the enclosing context only when padding is needed.
 
 ## Examples
