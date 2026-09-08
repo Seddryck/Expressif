@@ -15,6 +15,8 @@ internal abstract record ReplResult;
 
 internal sealed record ReplEvaluationResult(object? Value) : ReplResult;
 
+internal sealed record ReplMessageResult(string Message) : ReplResult;
+
 internal sealed record ReplErrorResult(ReplErrorKind Kind, string Message) : ReplResult;
 
 internal sealed class ReplSession
@@ -22,6 +24,7 @@ internal sealed class ReplSession
     private readonly IExpressionService expressions;
     private readonly Context bindingContext;
     private readonly EvaluationContext evaluationContext;
+    private readonly Stack<(bool HasInput, object? Value)> history = new();
     private object? currentInput;
 
     public ReplSession(IExpressionService expressions)
@@ -43,6 +46,9 @@ internal sealed class ReplSession
         ArgumentNullException.ThrowIfNull(source);
 
         var trimmed = source.TrimStart();
+        if (trimmed.TrimEnd() == ":undo")
+            return Undo();
+
         var isOpen = trimmed.StartsWith('|');
         if (isOpen && !HasCurrentInput)
             return new ReplErrorResult(ReplErrorKind.Input, "There is no current input. Evaluate a standalone expression first.");
@@ -78,6 +84,7 @@ internal sealed class ReplSession
         try
         {
             var value = expressions.Evaluate(expression, isOpen ? currentInput : null);
+            history.Push((HasCurrentInput, currentInput));
             currentInput = value;
             HasCurrentInput = true;
             return new ReplEvaluationResult(value);
@@ -88,5 +95,17 @@ internal sealed class ReplSession
                 ReplErrorKind.Evaluation,
                 CommandErrorFormatter.FormatEvaluationError(exception));
         }
+    }
+
+    private ReplResult Undo()
+    {
+        if (!history.TryPop(out var previous))
+            return new ReplMessageResult("Nothing to undo.");
+
+        HasCurrentInput = previous.HasInput;
+        currentInput = previous.Value;
+        return HasCurrentInput
+            ? new ReplEvaluationResult(currentInput)
+            : new ReplMessageResult("There is no current input.");
     }
 }

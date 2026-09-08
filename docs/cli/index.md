@@ -21,6 +21,7 @@ expressif <command> [arguments] [options]
 |:--|:--|
 | `evaluate` | Evaluate an expression once, with no input, one explicit value, or one complete source. |
 | `run` | Evaluate an expression once for every row produced by an input source. |
+| `repl` | [Evaluate interactively and undo submissions](repl.md). |
 | `validate` | Parse, bind, and compile an expression without evaluating it. |
 | `parse` | Inspect how the source text forms a syntax tree. |
 | `bind` | Inspect the functions, parameters, and expression form resolved after parsing. |

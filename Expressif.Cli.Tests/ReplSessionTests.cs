@@ -6,6 +6,81 @@ namespace Expressif.Cli.Tests;
 public class ReplSessionTests
 {
     [Test]
+    public void Execute_Undo_RestoresWholeSubmissionAndAllowsNewPipeline()
+    {
+        var session = new ReplSession(new ExpressionService());
+        var original = session.Execute("2");
+        _ = session.Execute("| add(1) | multiply(4)");
+
+        Assert.That(session.Execute(" :undo "), Is.EqualTo(original));
+        var continued = session.Execute("| multiply(5)");
+        Assert.That(continued, Is.TypeOf<ReplEvaluationResult>());
+        Assert.That(((ReplEvaluationResult)continued).Value, Is.EqualTo(10));
+        Assert.That(session.Execute(":undo"), Is.EqualTo(original));
+        Assert.That(session.Execute(":undo"), Is.EqualTo(new ReplMessageResult("There is no current input.")));
+        Assert.That(session.HasCurrentInput, Is.False);
+        Assert.That(session.Execute("| add(1)"), Is.TypeOf<ReplErrorResult>());
+        Assert.That(session.Execute(":undo"), Is.EqualTo(new ReplMessageResult("Nothing to undo.")));
+    }
+
+    [Test]
+    public void Execute_Undo_RestoresNullAndIgnoresValidationFailure()
+    {
+        var session = new ReplSession(new ExpressionService());
+        _ = session.Execute("{} | first");
+        _ = session.Execute("42");
+        _ = session.Execute("| unknown-function");
+
+        Assert.That(session.Execute(":undo"), Is.EqualTo(new ReplEvaluationResult(null)));
+        Assert.That(session.HasCurrentInput, Is.True);
+        Assert.That(session.Execute("| null-to-empty"), Is.TypeOf<ReplEvaluationResult>());
+    }
+
+    [Test]
+    public void Execute_Undo_DoesNotEvaluateOrRecordRuntimeFailures()
+    {
+        var expressions = new ThrowingEvaluationService { Result = 17 };
+        var session = new ReplSession(expressions);
+        _ = session.Execute("first");
+        expressions.Result = 42;
+        _ = session.Execute("second");
+        expressions.Exception = new InvalidOperationException("boom");
+        _ = session.Execute("third");
+
+        Assert.That(session.Execute(":undo"), Is.EqualTo(new ReplEvaluationResult(17)));
+    }
+
+    [Test]
+    public void Run_Undo_PrintsRestoredValueAndEmptyHistoryMessages()
+    {
+        var terminal = new FakeTerminal("1", "2", ":undo", ":undo", ":undo");
+        var host = new ReplHost(new ReplSession(new ExpressionService()), terminal);
+
+        Assert.That(host.Run(), Is.EqualTo(ExitCodes.Success));
+        Assert.That(terminal.Results, Is.EqualTo(new[] { "1", "2", "1", "There is no current input.", "Nothing to undo." }));
+        Assert.That(terminal.Errors, Is.Empty);
+    }
+
+    [Test]
+    public void ConsoleTerminal_ControlZOnEmptyLine_UndoesEvaluationImmediately()
+    {
+        var keys = new Queue<ConsoleKeyInfo>(new[]
+        {
+            new ConsoleKeyInfo('1', ConsoleKey.D1, false, false, false),
+            new ConsoleKeyInfo('\r', ConsoleKey.Enter, false, false, false),
+            new ConsoleKeyInfo('\u001a', ConsoleKey.Z, false, false, true),
+            new ConsoleKeyInfo('\u0004', ConsoleKey.D, false, false, true),
+        });
+        var output = new StringWriter();
+        var session = new ReplSession(new ExpressionService());
+        var terminal = new ConsoleReplTerminal(TextReader.Null, output, TextWriter.Null, new FakeInterruptSource(), _ => keys.Dequeue());
+
+        Assert.That(new ReplHost(session, terminal).Run(), Is.EqualTo(ExitCodes.Success));
+        Assert.That(session.HasCurrentInput, Is.False);
+        Assert.That(output.ToString(), Does.Contain("There is no current input."));
+    }
+
+    [Test]
     public void Execute_ClosedThenOpenExpression_UsesSuccessfulResultAsCurrentInput()
     {
         var session = new ReplSession(new ExpressionService());
