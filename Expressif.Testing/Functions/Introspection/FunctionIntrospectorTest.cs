@@ -196,6 +196,7 @@ public class FunctionIntrospectorTest
     [TestCase("duration-between", "previous", "date | date-time | year-month")]
     [TestCase("with", "projections", "entry")]
     [TestCase("with", "body", "expression")]
+    [TestCase("split-while", "operation", "expression")]
     [TestCase("transform-with", "operation", "expression")]
     [TestCase("transform-with", "expressions", "expression")]
     [TestCase("transform-as", "operation", "expression")]
