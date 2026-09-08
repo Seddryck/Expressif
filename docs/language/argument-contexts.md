@@ -51,7 +51,7 @@ You only need to look more closely when combining contexts in a less usual way, 
 
 ## What happens in the two examples
 
-For `multiply`, there is one incoming number and one argument to evaluate. The argument gets its value from the surrounding record:
+For `multiply`, there is one incoming number and one argument to evaluate. The argument gets its value from the surrounding record, not the incoming number:
 
 ```mermaid
 flowchart TD
@@ -128,7 +128,7 @@ Its `predicate` parameter then refers to that traversal:
 
 Read these together: visit the elements of the incoming array; for each element, evaluate the predicate with that element as its context. This is why `.active` reads each updated line.
 
-`Selection` belongs to traversal. Besides `array-element`, it can identify a `group`, a group's entire `group-values` collection, or a recursive `leaf`. An argument evaluated once does not need a redundant `self` or `whole` selection.
+`Selection` belongs to traversal. Besides `array-element`, it can identify a `group`, a group's entire `group-values` collection, or a recursive `leaf`.
 
 The `Summary` fields provide the natural sentences displayed in the reference pages. You can read those sentences without reading JSON. `custom` identifies a rule that needs its own explanation, such as evaluating an operation against the accumulated result and the next element together.
 
