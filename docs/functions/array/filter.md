@@ -33,6 +33,11 @@ Applies a predicate expression to each input item and returns only items for whi
 
 
 
+## Argument evaluation
+
+Traverses `incoming` → `array-element`.
+
+- **`predicate`:** Evaluated once against each selected element of the traversal.
 
 
 ## Behavior

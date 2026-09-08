@@ -41,6 +41,24 @@ This {{ model.kind }} has no parameters.
 {{ model.parameter_rows }}
 {{ end }}
 
+{{ if model.has_traversal || model.has_evaluation -}}
+
+## Argument evaluation
+
+{{ if model.has_traversal -}}
+Traverses `{{ model.traversal_source }}` → `{{ model.traversal_selection }}`.
+
+{{ end -}}
+{{ for parameter in model.parameters -}}
+{{ if parameter.evaluation_frequency == "once" -}}
+- **`{{ parameter.name }}`:** Evaluated once against `{{ parameter.evaluation_source }}` → `{{ parameter.evaluation_selection }}`.
+{{ else if parameter.evaluation_frequency == "per-element" -}}
+- **`{{ parameter.name }}`:** Evaluated once against each selected element of the traversal.
+{{ end -}}
+{{ end -}}
+
+{{ end -}}
+
 {{~ if model.has_behavior }}
 
 ## Behavior

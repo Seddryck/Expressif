@@ -281,6 +281,14 @@ foreach ($member in $members) {
     $scopePositions[$scopeSlug]++
     $navOrder = $scopePositions[$scopeSlug] * 10
 
+    $traversal = $null
+    if ($null -ne $member.PSObject.Properties["Traversal"] -and $null -ne $member.Traversal) {
+        $traversal = $member.Traversal
+        foreach ($propertyName in @("Source", "Selection")) {
+            Assert-RequiredProperty -InputObject $traversal -PropertyName $propertyName -MemberName "$memberName traversal"
+        }
+    }
+
     $parameters = @(
         foreach ($parameter in @($member.Parameters)) {
             foreach ($propertyName in @("Name", "Optional")) {
@@ -323,6 +331,33 @@ foreach ($member in $members) {
                 $parameterSummary = [string] $parameter.Summary
             }
 
+            $evaluationFrequency = ""
+            $evaluationSource = ""
+            $evaluationSelection = ""
+            if ($null -ne $parameter.PSObject.Properties["Evaluation"]) {
+                $evaluation = $parameter.Evaluation
+                Assert-RequiredProperty -InputObject $evaluation -PropertyName "Frequency" -MemberName "$memberName parameter evaluation"
+                $evaluationFrequency = [string] $evaluation.Frequency
+                switch ($evaluationFrequency) {
+                    "once" {
+                        foreach ($propertyName in @("Source", "Selection")) {
+                            Assert-RequiredProperty -InputObject $evaluation -PropertyName $propertyName -MemberName "$memberName parameter evaluation"
+                        }
+                        $evaluationSource = [string] $evaluation.Source
+                        $evaluationSelection = [string] $evaluation.Selection
+                    }
+                    "per-element" {
+                        Assert-RequiredProperty -InputObject $evaluation -PropertyName "Context" -MemberName "$memberName parameter evaluation"
+                        if ($evaluation.Context -ne "traversal" -or $null -eq $traversal) {
+                            throw "Library member '$memberName' requires a traversal for per-element evaluation."
+                        }
+                    }
+                    default { throw "Library member '$memberName' has unsupported evaluation frequency '$evaluationFrequency'." }
+                }
+            }
+            $hasDefault = $null -ne $parameter.PSObject.Properties["Default"]
+            $defaultValue = if ($hasDefault) { ConvertTo-Json -InputObject $parameter.Default -Compress -Depth 20 } else { "" }
+
             [ordered] @{
                 name     = [string] $parameter.Name
                 type     = $parameterType
@@ -331,6 +366,11 @@ foreach ($member in $members) {
                 variadic = $parameterVariadic
                 minimum_cardinality = $minimumCardinality
                 summary  = $parameterSummary
+                has_default = $hasDefault
+                default_value = $defaultValue
+                evaluation_frequency = $evaluationFrequency
+                evaluation_source = $evaluationSource
+                evaluation_selection = $evaluationSelection
             }
         }
     )
@@ -376,11 +416,12 @@ foreach ($member in $members) {
         $signatureLines.Add("$memberName(")
         for ($index = 0; $index -lt $parameters.Count; $index++) {
             $parameter = $parameters[$index]
-            $optionalMarker = if ($parameter.optional -and -not $parameter.variadic) { "?" } else { "" }
+            $optionalMarker = if ($parameter.optional -and -not $parameter.variadic -and -not $parameter.has_default) { "?" } else { "" }
             $variadicMarker = if ($parameter.variadic) { "..." } else { "" }
             $typeAnnotation = if ($parameter.has_type) { ": $($parameter.type)" } else { "" }
             $separator = if ($index -lt $parameters.Count - 1) { "," } else { "" }
-            $signatureLines.Add("    $variadicMarker$($parameter.name)$optionalMarker$typeAnnotation$separator")
+            $defaultAnnotation = if ($parameter.has_default) { " = $($parameter.default_value)" } else { "" }
+            $signatureLines.Add("    $variadicMarker$($parameter.name)$optionalMarker$typeAnnotation$defaultAnnotation$separator")
         }
 
         $signatureLines.Add(")$(if ($hasContract) { " → $outputType" })")
@@ -397,6 +438,9 @@ foreach ($member in $members) {
             "Variadic ($minimumLabel or more)"
         } elseif ($parameter.optional) { "No" } else { "Yes" }
         $summary = ([string] $parameter.summary) -replace '\|', '\|' -replace '[\r\n]+', ' '
+        if ($parameter.has_default) {
+            $summary += " Defaults to ``$($parameter.default_value)``."
+        }
         if ($hasParameterTypes) {
             $type = if ($parameter.has_type) { "``$($parameter.type)``" } else { "Not specified" }
             "| ``$($parameter.name)`` | $type | $required | $summary |"
@@ -437,6 +481,10 @@ foreach ($member in $members) {
         sunset              = $sunset
         behavior            = $behavior
         has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
+        has_traversal       = $null -ne $traversal
+        traversal_source   = if ($null -ne $traversal) { [string] $traversal.Source } else { "" }
+        traversal_selection = if ($null -ne $traversal) { [string] $traversal.Selection } else { "" }
+        has_evaluation     = @($parameters | Where-Object { $_.evaluation_frequency -ne "" }).Count -gt 0
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes
         parameter_rows      = $parameterRows -join "`n"
