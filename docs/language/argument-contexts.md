@@ -55,7 +55,7 @@ The answers can be the same, but they do not have to be. In the diagrams below, 
 
 ## Multiplication: the price arrives, the quantity comes from the record
 
-In the first example, `.price` is a pipeline step. It reads the record and produces `10`. That number is the incoming value for `multiply`.
+In the first example, `.price` is a pipeline step. The record arriving at that step is also the enclosing record. `.price` reads its price and produces `10`. That number is the incoming value for `multiply`, while the enclosing context remains the record.
 
 The argument `.quantity` is evaluated using the enclosing record, where it reads `3`. `multiply` combines those two numbers and returns `30`.
 
@@ -68,20 +68,20 @@ flowchart TD
     M --> O["result: 30"]
 ```
 
-The same dot notation appears in two different positions:
+Both field references read the same record here, but they reach it through different rules:
 
-| Position | What it reads in this example |
-|:--|:--|
-| `.price` as a pipeline step | The record arriving at that step. |
-| `.quantity` as the argument of `multiply` | The enclosing record. |
+| Position | How its context is chosen | Value in this example |
+|:--|:--|:--|
+| `.price` as a pipeline step | Use the value arriving at this step. | The original record, which is also the enclosing record. |
+| `.quantity` as the argument of `multiply` | Use the enclosing context of `multiply`. | The same original record. |
 
-Reading `.quantity` does not require the incoming number `10` to have a quantity field. The parameter tells Expressif where to evaluate that argument.
+Incoming and enclosing describe roles, not necessarily different values. At `.price`, both roles refer to the record. At `multiply`, the incoming value is `10` and the enclosing context is still the record. Reading `.quantity` therefore does not require the number `10` to have a quantity field.
 
 ## Filtering: each line becomes the predicate's context
 
 In the second example, `put` creates an updated record containing lines `A` and `B`. `.lines` then produces the updated array. **That array is the incoming value for `filter`**.
 
-The `predicate` parameter selects each array element. Expressif evaluates `.active` against line `A`, then against line `B`. Each line becomes the context for its own predicate evaluation.
+`filter` visits each array element. Expressif evaluates its predicate `.active` against line `A`, then against line `B`. Each line becomes the context for its own predicate evaluation.
 
 ```mermaid
 flowchart TD
