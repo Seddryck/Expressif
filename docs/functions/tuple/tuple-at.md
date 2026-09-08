@@ -29,10 +29,9 @@ Returns the tuple field at the specified zero-based position. Returns `null` whe
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | Specifies the zero-based position of the tuple field to return. |
 
+## Argument evaluation
 
-
-
-
+- **`position`:** Evaluated once in the enclosing context.
 
 ## Examples
 

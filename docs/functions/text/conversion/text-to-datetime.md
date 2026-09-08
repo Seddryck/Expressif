@@ -31,9 +31,10 @@ Returns a dateTime value matching the argument value parsed by the long format i
 | `format` | `text` | Yes | A string representing the required format. |
 | `culture` | `text` | No | A string representing a pre-defined culture. |
 
+## Argument evaluation
 
-
-
+- **`format`:** Evaluated once in the enclosing context.
+- **`culture`:** Evaluated in the enclosing context to check whether a culture was supplied, then evaluated again when a nonempty culture is used.
 
 ## Examples
 

@@ -29,9 +29,9 @@ Returns the argument value formatted according to the mask specified as paramete
 |:-----|:-----|:---------|:------------|
 | `mask` | `text` | Yes | The string representing the mask to apply to the argument string. |
 
+## Argument evaluation
 
-
-
+- **`mask`:** Evaluated once in the enclosing context.
 
 ## Examples
 

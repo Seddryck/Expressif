@@ -29,9 +29,9 @@ Constructs text by evaluating zero or more positional expressions from left to r
 |:-----|:-----|:---------|:------------|
 | `values` | `expression` | Variadic (zero or more) | Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place. |
 
+## Argument evaluation
 
-
-
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 

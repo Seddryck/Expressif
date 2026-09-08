@@ -29,9 +29,9 @@ Returns only those characters specified in the parameter, in the order, they wer
 |:-----|:-----|:---------|:------------|
 | `filter` | `array | text` | Yes | The chars to filter from the argument string. |
 
+## Argument evaluation
 
-
-
+- **`filter`:** Evaluated once in the enclosing context.
 
 ## Examples
 

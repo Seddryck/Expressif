@@ -29,9 +29,11 @@ Groups consecutive values while an operation over each previous and current pair
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Specifies the callable or open expression that decides whether the current value continues the preceding chunk. |
 
+## Argument evaluation
 
+Evaluates each consecutive pair after the first element to decide whether to continue the current chunk.
 
-
+- **`operation`:** Evaluated against each constructed previous/current pair. A bare binary callable receives one value as input and the other as its missing argument.
 
 ## Behavior
 

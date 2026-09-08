@@ -284,7 +284,7 @@ foreach ($member in $members) {
     $traversal = $null
     if ($null -ne $member.PSObject.Properties["Traversal"] -and $null -ne $member.Traversal) {
         $traversal = $member.Traversal
-        foreach ($propertyName in @("Source", "Selection")) {
+        foreach ($propertyName in @("Source", "Selection", "Summary")) {
             Assert-RequiredProperty -InputObject $traversal -PropertyName $propertyName -MemberName "$memberName traversal"
         }
     }
@@ -332,19 +332,22 @@ foreach ($member in $members) {
             }
 
             $evaluationFrequency = ""
-            $evaluationSource = ""
-            $evaluationSelection = ""
+            $evaluationSummary = ""
             if ($null -ne $parameter.PSObject.Properties["Evaluation"]) {
                 $evaluation = $parameter.Evaluation
                 Assert-RequiredProperty -InputObject $evaluation -PropertyName "Frequency" -MemberName "$memberName parameter evaluation"
+                Assert-RequiredProperty -InputObject $evaluation -PropertyName "Summary" -MemberName "$memberName parameter evaluation"
                 $evaluationFrequency = [string] $evaluation.Frequency
+                $evaluationSummary = [string] $evaluation.Summary
+                if ($null -ne $evaluation.PSObject.Properties["Selection"]) {
+                    throw "Library member '$memberName' must declare selection on Traversal, not Evaluation."
+                }
                 switch ($evaluationFrequency) {
                     "once" {
-                        foreach ($propertyName in @("Source", "Selection")) {
-                            Assert-RequiredProperty -InputObject $evaluation -PropertyName $propertyName -MemberName "$memberName parameter evaluation"
-                        }
-                        $evaluationSource = [string] $evaluation.Source
-                        $evaluationSelection = [string] $evaluation.Selection
+                        Assert-RequiredProperty -InputObject $evaluation -PropertyName "Source" -MemberName "$memberName parameter evaluation"
+                    }
+                    "custom" {
+                        Assert-RequiredProperty -InputObject $evaluation -PropertyName "Source" -MemberName "$memberName parameter evaluation"
                     }
                     "per-element" {
                         Assert-RequiredProperty -InputObject $evaluation -PropertyName "Context" -MemberName "$memberName parameter evaluation"
@@ -369,8 +372,7 @@ foreach ($member in $members) {
                 has_default = $hasDefault
                 default_value = $defaultValue
                 evaluation_frequency = $evaluationFrequency
-                evaluation_source = $evaluationSource
-                evaluation_selection = $evaluationSelection
+                evaluation_summary = $evaluationSummary
             }
         }
     )
@@ -482,8 +484,7 @@ foreach ($member in $members) {
         behavior            = $behavior
         has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
         has_traversal       = $null -ne $traversal
-        traversal_source   = if ($null -ne $traversal) { [string] $traversal.Source } else { "" }
-        traversal_selection = if ($null -ne $traversal) { [string] $traversal.Selection } else { "" }
+        traversal_summary  = if ($null -ne $traversal) { [string] $traversal.Summary } else { "" }
         has_evaluation     = @($parameters | Where-Object { $_.evaluation_frequency -ne "" }).Count -gt 0
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes

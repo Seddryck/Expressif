@@ -31,14 +31,11 @@ Applies a predicate expression to each input item and returns only items for whi
 |:-----|:-----|:---------|:------------|
 | `predicate` | `predicate` | Yes | Expression defining the predicate applied to each input item. |
 
-
-
 ## Argument evaluation
 
-Traverses `incoming` → `array-element`.
+Visits each element of the array entering this call.
 
-- **`predicate`:** Evaluated once against each selected element of the traversal.
-
+- **`predicate`:** Evaluated once per visited element, with that element as its context.
 
 ## Behavior
 

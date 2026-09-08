@@ -29,9 +29,9 @@ Returns the argument number multiplied by the parameter value.
 |:-----|:-----|:---------|:------------|
 | `value` | `numeric` | Yes | The value to be multiplied by the argument value. |
 
+## Argument evaluation
 
-
-
+- **`value`:** Evaluated once in the enclosing context.
 
 ## Examples
 

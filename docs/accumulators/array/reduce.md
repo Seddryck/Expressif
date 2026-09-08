@@ -33,9 +33,12 @@ Combines array elements in source order by repeatedly evaluating an expression a
 | `operation` | `expression` | Yes | Specifies the expression evaluated against each accumulated-value/current-element tuple. |
 | `initial` | `any` | No | Specifies the initial accumulated value and the result returned for an empty array. |
 
+## Argument evaluation
 
+Combines each next array element with the accumulated result, in source order.
 
-
+- **`operation`:** Evaluated against a constructed tuple containing the accumulated result and the current array element.
+- **`initial`:** Evaluated once before accumulation, using the incoming collection as its context.
 
 ## Behavior
 

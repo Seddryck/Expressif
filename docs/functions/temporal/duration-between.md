@@ -29,10 +29,9 @@ Returns the signed duration between the current temporal value and a previous te
 |:-----|:-----|:---------|:------------|
 | `previous` | `date | date-time | year-month` | Yes | The previous temporal value to subtract from the current input. |
 
+## Argument evaluation
 
-
-
-
+- **`previous`:** Evaluated once in the enclosing context.
 
 ## Examples
 

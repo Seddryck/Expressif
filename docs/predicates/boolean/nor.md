@@ -31,10 +31,9 @@ Returns the negation of the logical disjunction of the Boolean input and a secon
 |:-----|:-----|:---------|:------------|
 | `expression` | `boolean` | Yes | Specifies the secondary Boolean expression evaluated when the input is `false`. |
 
+## Argument evaluation
 
-
-
-
+- **`expression`:** Evaluated only when the incoming value converts to false. References use their enclosing context; open predicate expressions use the current evaluation value.
 
 ## Examples
 

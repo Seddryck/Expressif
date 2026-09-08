@@ -31,9 +31,10 @@ Returns a new string that center-aligns the characters in this string by padding
 | `length` | `integer` | Yes | An integer value between 0 and +Infinity, defining the minimal length of the string returned |
 | `character` | `text` | Yes | The padding character |
 
+## Argument evaluation
 
-
-
+- **`length`:** Evaluated once in the enclosing context.
+- **`character`:** Evaluated once in the enclosing context only when padding is needed.
 
 ## Examples
 

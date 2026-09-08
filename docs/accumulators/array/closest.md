@@ -31,9 +31,9 @@ Returns the first non-null input value with the smallest absolute distance to th
 |:-----|:-----|:---------|:------------|
 | `target` | `any` | Yes | Specifies the reference value used to measure numeric or temporal distance. |
 
+## Argument evaluation
 
-
-
+- **`target`:** Evaluated once before accumulation, using the incoming collection as its context. The result is reused for every comparison.
 
 ## Behavior
 

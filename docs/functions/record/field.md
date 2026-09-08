@@ -31,10 +31,9 @@ Returns the value of the named field from the input record or object. Returns `n
 |:-----|:-----|:---------|:------------|
 | `name` | `text` | Yes | Name of the field to retrieve from the input. |
 
+## Argument evaluation
 
-
-
-
+- **`name`:** Evaluated once in the enclosing context.
 
 ## Examples
 

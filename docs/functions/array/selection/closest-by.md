@@ -33,9 +33,12 @@ Returns the original source element whose expression result is nearest to the nu
 | `expression` | `expression` | Yes | Expression evaluated once for each source element to obtain its comparison criterion. |
 | `target` | `numeric` | Yes | Numeric value against which criterion distances are compared. |
 
+## Argument evaluation
 
+Visits each element of the array entering this call.
 
-
+- **`expression`:** Evaluated once per visited element, with that element as its context.
+- **`target`:** Evaluated once in the enclosing context. The resulting target is reused for all array elements.
 
 ## Behavior
 

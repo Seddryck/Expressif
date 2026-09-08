@@ -29,10 +29,9 @@ Returns whether the input tuple has exactly the expected number of positions.
 |:-----|:-----|:---------|:------------|
 | `expected` | `integer` | Yes | Specifies the required non-negative tuple arity. |
 
+## Argument evaluation
 
-
-
-
+- **`expected`:** Evaluated once in the enclosing context.
 
 ## Examples
 

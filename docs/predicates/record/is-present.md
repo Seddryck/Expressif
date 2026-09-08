@@ -31,10 +31,9 @@ Returns whether the named field exists in the input record, independently of its
 |:-----|:-----|:---------|:------------|
 | `name` | `text` | Yes | Name of the field whose presence is tested. |
 
+## Argument evaluation
 
-
-
-
+- **`name`:** Evaluated once in the enclosing context.
 
 ## Examples
 

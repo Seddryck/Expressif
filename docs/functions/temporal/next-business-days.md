@@ -29,10 +29,9 @@ Returns a new date value corresponding to the date passed as the argument, count
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | The count of business days to move forward. |
 
+## Argument evaluation
 
-
-
-
+- **`count`:** Evaluated once in the enclosing context.
 
 ## Examples
 

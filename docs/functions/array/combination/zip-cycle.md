@@ -31,9 +31,9 @@ Combines values from two arrays into two-element tuples until the longer array i
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the second array whose values form the second element of each tuple. |
 
+## Argument evaluation
 
-
-
+- **`array`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

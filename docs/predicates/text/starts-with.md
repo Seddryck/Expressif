@@ -30,9 +30,10 @@ Returns `true` if the value passed as argument starts with the text value passed
 | `reference` | `text` | Yes | A string to be compared to the argument value.. |
 | `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity). |
 
+## Argument evaluation
 
-
-
+- **`reference`:** Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once.
+- **`comparer`:** Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value.
 
 **Kind:** Predicate  
 **Scope:** `text`  

@@ -31,10 +31,9 @@ Assigns statically named fields only when they are present, including fields who
 |:-----|:-----|:---------|:------------|
 | `assignments` | `entry` | Variadic (one or more) | One or more named assignments applied only to fields already present. |
 
+## Argument evaluation
 
-
-
-
+- **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is present.
 
 ## Examples
 

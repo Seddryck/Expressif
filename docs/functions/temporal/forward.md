@@ -31,10 +31,10 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 | `time` | `time` | Yes | The value to be added to the argument value |
 | `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the addition |
 
+## Argument evaluation
 
-
-
-
+- **`time`:** Evaluated once in the enclosing context.
+- **`times`:** Evaluated once in the enclosing context.
 
 ## Examples
 

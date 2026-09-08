@@ -29,10 +29,11 @@ Executes an accumulator once over the full input enumerable and returns the fina
 |:-----|:-----|:---------|:------------|
 | `accumulator` | `accumulator` | Yes | Factory that creates the accumulator instance used for the fold execution. |
 
+## Argument evaluation
 
+Visits each element of the array entering this call.
 
-
-
+- **`accumulator`:** The selected accumulator receives each incoming array element through its accumulation lifecycle; the accumulator factory is not recreated for each element.
 
 ## Examples
 

@@ -28,10 +28,9 @@ Returns true if the numeric value passed as argument is greater than or equal to
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
 
+## Argument evaluation
 
-
-
-
+- **`reference`:** Evaluated once in the enclosing context.
 
 ## Examples
 

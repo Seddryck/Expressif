@@ -33,10 +33,10 @@ Creates or replaces the field at a dynamic path. Text is one literal segment; a 
 | `path` | `expression` | Yes | An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments. |
 | `value` | `expression` | Yes | The expression producing the assigned value from the original input record. |
 
+## Argument evaluation
 
-
-
-
+- **`path`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated once against the value entering this call.
 
 ## Examples
 

@@ -31,10 +31,9 @@ Returns a new record by renaming selected public fields by adding a leading unde
 |:-----|:-----|:---------|:------------|
 | `names` | `array` | No | Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields. |
 
+## Argument evaluation
 
-
-
-
+- **`names`:** Evaluated once in the enclosing context.
 
 ## Examples
 

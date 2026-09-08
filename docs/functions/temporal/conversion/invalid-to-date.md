@@ -29,10 +29,9 @@ Returns the dateTime argument except if the value is not a valid dateTime then i
 |:-----|:-----|:---------|:------------|
 | `default` | `date-time` | Yes | The dateTime to be returned if the argument is not a valid dateTime. |
 
+## Argument evaluation
 
-
-
-
+- **`default`:** Evaluated once in the enclosing context only when the fallback value is needed.
 
 ## Examples
 

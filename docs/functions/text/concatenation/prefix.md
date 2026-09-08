@@ -29,9 +29,9 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 |:-----|:-----|:---------|:------------|
 | `prefix` | `text` | Yes | The text to append |
 
+## Argument evaluation
 
-
-
+- **`prefix`:** Evaluated once in the enclosing context.
 
 ## Examples
 

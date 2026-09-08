@@ -29,10 +29,9 @@ Returns the zero-based position of the first input item equal to the specified v
 |:-----|:-----|:---------|:------------|
 | `value` | `any` | Yes | Specifies the value to locate. |
 
+## Argument evaluation
 
-
-
-
+- **`value`:** Evaluated once in the enclosing context.
 
 ## Examples
 

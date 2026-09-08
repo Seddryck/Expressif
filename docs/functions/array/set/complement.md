@@ -29,10 +29,9 @@ Returns the distinct values from the specified array that do not appear in the p
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the reference array from which values present in the pipeline input are excluded. |
 
+## Argument evaluation
 
-
-
-
+- **`array`:** Evaluated once in the enclosing context.
 
 ## Examples
 

@@ -31,10 +31,9 @@ Constructs a grouping from zero or more pairs. Spread arguments expand arrays of
 |:-----|:-----|:---------|:------------|
 | `values` | `pair` | Variadic (zero or more) | Zero or more pairs whose keys and grouped value collections become groups. |
 
+## Argument evaluation
 
-
-
-
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 

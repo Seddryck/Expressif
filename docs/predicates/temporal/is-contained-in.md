@@ -28,9 +28,9 @@ Returns true if the temporal value passed as argument is between the lower bound
 |:-----|:-----|:---------|:------------|
 | `interval` | `any` | Yes | A temporal interval to compare to the argument. |
 
+## Argument evaluation
 
-
-
+- **`interval`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

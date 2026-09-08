@@ -31,10 +31,11 @@ Evaluates an expression once for each group and returns a dictionary from group 
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | The expression evaluated against each group's value collection. |
 
+## Argument evaluation
 
+Visits each group in the incoming grouping and supplies its entire value collection to the expression.
 
-
-
+- **`expression`:** Evaluated once per group against that group's entire value collection.
 
 ## Examples
 

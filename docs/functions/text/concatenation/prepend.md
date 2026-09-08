@@ -33,9 +33,9 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 |:-----|:-----|:---------|:------------|
 | `text` | `text` | Yes | The text to prepend |
 
+## Argument evaluation
 
-
-
+- **`text`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

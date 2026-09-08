@@ -31,10 +31,9 @@ Returns only fields whose names appear in the supplied array, preserving input f
 |:-----|:-----|:---------|:------------|
 | `names` | `array` | Yes | Field names to retain. Unknown and duplicate names are ignored. |
 
+## Argument evaluation
 
-
-
-
+- **`names`:** Evaluated once in the enclosing context.
 
 ## Examples
 

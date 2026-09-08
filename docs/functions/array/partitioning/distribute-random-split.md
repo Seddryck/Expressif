@@ -31,9 +31,10 @@ Randomly distributes array values among output arrays according to relative outp
 | `weights` | `array` | Yes | Specifies a non-empty array of finite, non-negative output weights with a positive total. |
 | `seed` | `integer` | No | Specifies an optional seed that makes assignments reproducible on the same runtime version. |
 
+## Argument evaluation
 
-
-
+- **`weights`:** Evaluated once in the enclosing context.
+- **`seed`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

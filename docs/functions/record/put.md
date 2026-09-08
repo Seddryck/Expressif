@@ -31,10 +31,9 @@ Creates or replaces statically named fields while preserving every other field. 
 |:-----|:-----|:---------|:------------|
 | `assignments` | `entry` | Variadic (one or more) | One or more named assignments evaluated against the original input record. |
 
+## Argument evaluation
 
-
-
-
+- **`assignments`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 

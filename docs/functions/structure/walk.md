@@ -29,9 +29,11 @@ Recursively traverses arrays, tuples, and records and evaluates an expression ag
 |:-----|:-----|:---------|:------------|
 | `transformation` | `expression` | Yes | Expression evaluated against every leaf value. |
 
+## Argument evaluation
 
+Recursively visits the leaf values in the incoming arrays, tuples, and records.
 
-
+- **`transformation`:** Evaluated once against each leaf reached in the incoming structure.
 
 ## Behavior
 

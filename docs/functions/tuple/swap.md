@@ -31,10 +31,10 @@ Returns a tuple with two positions exchanged, defaulting to the first and last p
 | `first` | `integer` | Yes | Specifies the first zero-based position. |
 | `second` | `integer` | Yes | Specifies the second zero-based position. |
 
+## Argument evaluation
 
-
-
-
+- **`first`:** Evaluated once in the enclosing context.
+- **`second`:** Evaluated once in the enclosing context.
 
 ## Examples
 

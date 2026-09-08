@@ -29,10 +29,9 @@ Returns whether the input has the requested Expressif runtime type or belongs to
 |:-----|:-----|:---------|:------------|
 | `type` | `type` | Yes | Specifies the Expressif type descriptor to test. |
 
+## Argument evaluation
 
-
-
-
+- **`type`:** Evaluated once in the enclosing context.
 
 ## Examples
 
