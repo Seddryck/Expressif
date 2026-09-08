@@ -62,22 +62,26 @@ public abstract class BaseTextPredicateReference : BaseTextPredicate
 
     protected override bool EvaluateBaseText(string value)
     {
-        if (new Null().Equals(value) || new Null().Equals(Reference.Invoke()))
+        if (new Null().Equals(value))
             return EvaluateNull();
-        if ((new Whitespace().Equals(value) || new Whitespace().Equals(Reference.Invoke()))
-            && !(new Values.Special.Empty().Equals(value) || new Values.Special.Empty().Equals(Reference.Invoke())))
+
+        var reference = Reference.Invoke();
+        if (new Null().Equals(reference))
+            return EvaluateNull(reference);
+        if ((new Whitespace().Equals(value) || new Whitespace().Equals(reference))
+            && !(new Values.Special.Empty().Equals(value) || new Values.Special.Empty().Equals(reference)))
             return EvaluateWhitespaces();
 
         if (new Values.Special.Empty().Equals(value))
             value = string.Empty;
 
-        var reference = Reference.Invoke()!;
         if (new Values.Special.Empty().Equals(reference))
             reference = string.Empty;
 
-        return EvaluateText(value, reference);
+        return EvaluateText(value, reference!);
     }
 
+    protected virtual bool EvaluateNull(string? reference) => EvaluateNull();
     protected abstract bool EvaluateText(string value, string reference);
     protected virtual bool EvaluateWhitespaces() => false;
 }

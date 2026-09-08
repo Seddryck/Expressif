@@ -32,7 +32,7 @@ Compare the text value passed as argument and the text value passed as parameter
 
 ## Argument evaluation
 
-- **`reference`:** Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once.
+- **`reference`:** Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped.
 - **`comparer`:** Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value.
 
 **Kind:** Predicate  

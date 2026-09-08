@@ -26,7 +26,10 @@ public class EquivalentTo : BaseTextPredicateReference
         : base(reference) { Comparer = comparer; }
 
     protected override bool EvaluateNull()
-        => new Null().Equals(Reference.Invoke()) || base.EvaluateNull();
+        => EvaluateNull(Reference.Invoke());
+
+    protected override bool EvaluateNull(string? reference)
+        => new Null().Equals(reference) || base.EvaluateNull();
 
     protected override bool EvaluateText(string value, string reference)
         => Comparer.Compare(value, reference) == 0;
@@ -47,6 +50,9 @@ public class SortedAfter : EquivalentTo
         : base(reference, comparer) { }
 
     protected override bool EvaluateNull()
+        => false;
+
+    protected override bool EvaluateNull(string? reference)
         => false;
 
     protected override bool EvaluateText(string value, string reference)
@@ -85,6 +91,9 @@ public class SortedBefore : EquivalentTo
         : base(reference, comparer) { }
 
     protected override bool EvaluateNull()
+        => false;
+
+    protected override bool EvaluateNull(string? reference)
         => false;
 
     protected override bool EvaluateText(string value, string reference)
