@@ -85,6 +85,28 @@ For a new operator that requires both steps, run `/scaffold` before `/implement`
 
 Skills define task-specific procedures. `AGENTS.md` defines repository-wide rules and takes precedence if a skill contains conflicting Git, worktree, branch, issue, commit, or pull-request instructions.
 
+## Argument-context documentation
+
+When writing or updating operator documentation, make argument evaluation context explicit without repeating the signature.
+
+* Distinguish the operator's **pipeline input** from the **context used by its argument expressions**. Do not assume they are the same.
+* Name the source relative to the specific call. Prefer "each element of the array supplied as pipeline input to this `filter` call" over "each array item" or "the incoming array".
+* Explain what relevant references resolve to: for example, which record supplies `.field`, or what `$0` and `$1` represent and in which order. Name the surrounding context when it is retained, and the replacement context when one is introduced. Do not imply access to an outer value unless supported.
+* State evaluation frequency, order, or conditional execution when it affects observable behavior. Do not infer eager evaluation from shared context.
+* Verify claims against binding/runtime behavior and existing tests on the target development line. If the intended contract differs, resolve that discrepancy before documenting a guarantee.
+
+Maintain the catalog's operator-level `Traversal` and parameter-level `Evaluation` metadata:
+
+* Use `Traversal` to describe which values the operator visits, with `Source`, `Selection`, and a natural-language `Summary`. Keep `Selection` on `Traversal`, not on a parameter's `Evaluation`.
+* Give each parameter an `Evaluation` with `Frequency` and `Summary`. For `once` and `custom`, specify `Source`; for `per-element`, specify `Context: "traversal"` and declare the operator's `Traversal`. Use `custom` with an explicit explanation when evaluation is conditional or follows another specialized rule.
+* Write context prose in `Traversal.Summary` and `Evaluation.Summary`, which supply the generated reference descriptions. Keep those summaries consistent with the structured fields and runtime behavior. A traversal does not imply that every argument runs per element.
+
+Aim for one or two sentences per traversal or parameter evaluation rule. Keep types, defaults, and constraints in their existing signature or parameter descriptions. Add one short example with its result only when it clarifies the source or nesting; use the catalog's existing behavior or example fields for this additional explanation. Regenerate affected reference pages after changing catalog metadata.
+
+For example, after verifying `filter` behavior, its traversal summary can say "Visits each element of the array entering this call." Its predicate evaluation summary can say "Evaluated once per visited element, with that element as its context." Explain in an example that `.field` reads that element's field when this helps clarify a nested call.
+
+See [Incoming and enclosing contexts](docs/language/argument-contexts.md) for the evaluation model and metadata examples. Before finishing, check that a reader can identify the exact source value in a nested call without consulting the implementation.
+
 ## Version-sensitive integrations
 
 Treat every user-approved version target or version sequence as an invariant. This applies to tasks involving GitVersion, release numbering, staged integrations, package publication, GitHub releases, or commits containing `+semver` directives.

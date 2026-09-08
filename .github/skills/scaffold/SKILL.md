@@ -81,6 +81,8 @@ Only the final positional parameter may be variadic unless the language model ex
 
 ## Documentation
 
+Follow the [argument-context documentation guidelines](../../../AGENTS.md#argument-context-documentation) when defining `Traversal` and parameter `Evaluation` metadata and their summaries, including the source of contextual references.
+
 Write summaries as concise present-tense descriptions of observable behavior. Parameter summaries describe the public role of the parameter rather than CLR or binder mechanics.
 
 Document null, empty, blank, invalid-input, and binding behavior only as semantics require. Do not normalize every failure to null:
