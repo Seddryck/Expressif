@@ -27,6 +27,8 @@ internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
                 var result = session.Execute(source);
                 if (result is ReplEvaluationResult evaluation)
                     terminal.WriteResult(ValueFormatter.Format(evaluation.Value));
+                else if (result is ReplMessageResult message)
+                    terminal.WriteResult(message.Message);
                 else if (result is ReplErrorResult error)
                     terminal.WriteError(error.Message);
             }
@@ -44,16 +46,21 @@ internal sealed class ConsoleReplTerminal(
     TextReader input,
     TextWriter output,
     TextWriter error,
-    IReplInterruptSource interrupts) : IReplTerminal
+    IReplInterruptSource interrupts,
+    Func<CancellationToken, ConsoleKeyInfo>? readKey = null) : IReplTerminal
 {
     public ConsoleReplTerminal()
-        : this(Console.In, Console.Out, Console.Error, new ConsoleReplInterruptSource()) { }
+        : this(Console.In, Console.Out, Console.Error, new ConsoleReplInterruptSource(),
+            Console.IsInputRedirected || Console.IsOutputRedirected ? null : ReadConsoleKey) { }
 
     public string? ReadLine(string prompt, CancellationToken cancellationToken)
     {
         output.Write(prompt);
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         using var registration = interrupts.Register(cancellation.Cancel);
+        if (readKey is not null)
+            return new ReplLineEditor().Read(readKey, output, cancellation.Token);
+
         var read = input.ReadLineAsync();
         var interrupted = Task.Delay(Timeout.InfiniteTimeSpan, cancellation.Token);
         var completed = Task.WhenAny(read, interrupted).GetAwaiter().GetResult();
@@ -65,6 +72,18 @@ internal sealed class ConsoleReplTerminal(
     public void WriteResult(string value) => output.WriteLine(value);
 
     public void WriteError(string message) => error.WriteLine(message);
+
+    private static ConsoleKeyInfo ReadConsoleKey(CancellationToken cancellationToken)
+    {
+        while (!Console.KeyAvailable)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            cancellationToken.WaitHandle.WaitOne(20);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        return Console.ReadKey(intercept: true);
+    }
 }
 
 internal sealed class ConsoleReplInterruptSource : IReplInterruptSource
