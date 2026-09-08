@@ -1653,7 +1653,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped."
         }
       },
       {
@@ -1692,7 +1692,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped."
         }
       },
       {
@@ -1802,9 +1802,9 @@
         "Optional": false,
         "Summary": "A string to be compared to the argument value.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context."
         }
       },
       {
@@ -1860,7 +1860,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped."
         }
       },
       {
@@ -1898,9 +1898,9 @@
         "Optional": false,
         "Summary": "A string to be compared to the argument value.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context."
         }
       },
       {
@@ -1940,7 +1940,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped."
         }
       },
       {
@@ -1978,9 +1978,9 @@
         "Optional": false,
         "Summary": "A string to be compared to the argument value.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context."
         }
       },
       {
@@ -2080,7 +2080,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped."
         }
       },
       {
@@ -2134,7 +2134,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+          "Summary": "Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped."
         }
       },
       {

@@ -32,7 +32,7 @@ Returns `true` if the value passed as argument validate the regex passed as para
 
 ## Argument evaluation
 
-- **`regex`:** Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once.
+- **`regex`:** Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped.
 - **`comparer`:** Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value.
 
 **Kind:** Predicate  
