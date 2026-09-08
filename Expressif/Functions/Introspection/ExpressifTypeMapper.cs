@@ -26,6 +26,7 @@ internal static class ExpressifTypeMapper
             [("Key", "expressions")] = "expression",
             [("GroupBy", "expressions")] = "expression",
             [("Text", ValuesParameter)] = "expression",
+            [("SplitLengths", "lengths")] = "integer",
             [("Record", "entries")] = "entry",
             [("NestedField", "path")] = "text",
             [("Put", "assignments")] = "entry",

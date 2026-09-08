@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -211,6 +211,7 @@ public class FunctionIntrospectorTest
             Infos.SelectMany(x => x.Parameters).Select(x => x.Type),
             Is.All.Not.Null.And.Not.Empty);
 
+    [TestCase("split-lengths", "lengths", "integer", true, 0)]
     [TestCase("array", "values", "any", true, 0)]
     [TestCase("record", "entries", "entry", true, 0)]
     [TestCase("coalesce", "expressions", "expression", false, 2)]
