@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -196,6 +196,7 @@ public class FunctionIntrospectorTest
     [TestCase("duration-between", "previous", "date | date-time | year-month")]
     [TestCase("with", "projections", "entry")]
     [TestCase("with", "body", "expression")]
+    [TestCase("split-while", "operation", "expression")]
     [TestCase("transform-with", "operation", "expression")]
     [TestCase("transform-with", "expressions", "expression")]
     [TestCase("transform-as", "operation", "expression")]
@@ -211,6 +212,7 @@ public class FunctionIntrospectorTest
             Infos.SelectMany(x => x.Parameters).Select(x => x.Type),
             Is.All.Not.Null.And.Not.Empty);
 
+    [TestCase("split-lengths", "lengths", "integer", true, 0)]
     [TestCase("array", "values", "any", true, 0)]
     [TestCase("record", "entries", "entry", true, 0)]
     [TestCase("coalesce", "expressions", "expression", false, 2)]

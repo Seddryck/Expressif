@@ -1,0 +1,38 @@
+suite: text
+kind: function
+operator: split-while
+tests:
+  - id: split-while.partition
+    cases:
+      - id: split-while.partition.vowels
+        value: bonjour
+        parameters: ['split-while(!(($0 | last-chars(1) | matches-regex("(?i)^[aeiouy]$")) |XOR ($1 | matches-regex("(?i)^[aeiouy]$"))))']
+        expected: [b, o, nj, ou, r]
+      - id: split-while.partition.spaces
+        value: 'abc def  ghi jkl   mno'
+        parameters: ['split-while(!(($0 | matches-regex(" {2,}$")) |AND ($1 | matches-regex("^[A-Za-z]$"))))']
+        expected: ['abc def  ', 'ghi jkl   ', mno]
+      - id: split-while.partition.trim
+        value: 'abc def  ghi jkl   mno'
+        parameters: ['split-while(!(($0 | matches-regex(" {2,}$")) |AND ($1 | matches-regex("^[A-Za-z]$")))) | map(trim)']
+        expected: [abc def, ghi jkl, mno]
+      - id: split-while.partition.trim-shorthand
+        value: 'abc def  ghi jkl   mno'
+        parameters: ['split-while(!(($0 | matches-regex(" {2,}$")) |AND ($1 | matches-regex("^[A-Za-z]$")))) |> trim']
+        expected: [abc def, ghi jkl, mno]
+      - {id: split-while.partition.size, value: abcdefgh, parameters: ['split-while($0 | length | is-less-than(3))'], expected: [abc, def, gh]}
+      - {id: split-while.partition.candidate, value: abcDefGhi, parameters: ['split-while($1 | !matches-regex("(?-i)^[A-Z]$"))'], expected: [abc, Def, Ghi]}
+      - {id: split-while.partition.consecutive, value: AbCD, parameters: ['split-while($1 | !matches-regex("(?-i)^[A-Z]$"))'], expected: [Ab, C, D]}
+      - {id: split-while.partition.always, value: 'a,b c', parameters: ['split-while($1 | is-null | not)'], expected: ['a,b c']}
+      - {id: split-while.partition.never, value: abc, parameters: ['split-while($1 | matches-regex("^$"))'], expected: [a, b, c]}
+      - {id: split-while.partition.empty, value: (empty), parameters: ['split-while($0 | length)'], expected: []}
+      - {id: split-while.partition.literal-empty, value: '', parameters: ['split-while($0 | length)'], expected: []}
+      - {id: split-while.partition.null, value: (null), parameters: ['split-while($0 | length)'], expected: []}
+      - {id: split-while.partition.singleton, value: x, parameters: ['split-while($0 | length)'], expected: [x]}
+      - {id: split-while.partition.blank, value: (blank), parameters: ['split-while($0 | length)'], expected: [' ']}
+      - {id: split-while.partition.whitespace, value: " \t  ", parameters: ['split-while($0 | chars | count | is-less-than(2))'], expected: [" \t", '  ']}
+      - {id: split-while.partition.parentheses, value: '(ab)', parameters: ['split-while($0 | length | is-less-than(2))'], expected: ['(a', 'b)']}
+      - {id: split-while.partition.unicode, value: '😀漢字', parameters: ['split-while($0 | length | is-less-than(2))'], expected: ['😀', '漢字']}
+      - {id: split-while.partition.numeric, value: 12345, parameters: ['split-while($0 | length | is-less-than(2))'], expected: ['12', '34', '5']}
+      - {id: split-while.partition.nonboolean, value: abc, parameters: ['split-while($0 | length)'], expected: null}
+      - {id: split-while.partition.named, value: abcdefgh, parameters: ['split-while(operation := ($0 | length | is-less-than(3)))'], expected: [abc, def, gh]}

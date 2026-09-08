@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -33,6 +33,7 @@ public static class DocumentationExtensions
         (typeof(Flow.TransformWith), "expressions"),
         (typeof(Flow.TransformAs), "expressions"),
         (typeof(Tuple.Pick), "positions"),
+        (typeof(Text.SplitLengths), "lengths"),
         (typeof(Array.Key), "expressions"),
         (typeof(Array.GroupBy), "expressions"),
         (typeof(Predicates.Boolean.Majority), "predicates"),

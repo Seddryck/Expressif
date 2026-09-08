@@ -1,0 +1,30 @@
+suite: text
+kind: function
+operator: split-lengths
+tests:
+  - id: split-lengths.partition
+    cases:
+      - {id: split-lengths.partition.remaining, value: abcdefghijkl, parameters: ['split-lengths(5, 3)'], expected: [abcde, fgh, ijkl]}
+      - {id: split-lengths.partition.forty, value: '1234567890123456789012345678901234567890', parameters: ['split-lengths(5, 3, 13)'], expected: ['12345', '678', '9012345678901', '2345678901234567890']}
+      - {id: split-lengths.partition.exact, value: abcdefgh, parameters: ['split-lengths(5, 3)'], expected: [abcde, fgh]}
+      - {id: split-lengths.partition.short, value: abcdef, parameters: ['split-lengths(5, 3)'], expected: [abcde, f]}
+      - {id: split-lengths.partition.exhausted, value: abc, parameters: ['split-lengths(5, 3)'], expected: [abc]}
+      - {id: split-lengths.partition.none, value: abc, parameters: ['split-lengths'], expected: [abc]}
+      - {id: split-lengths.partition.empty-call, value: abc, parameters: ['split-lengths()'], expected: [abc]}
+      - {id: split-lengths.partition.empty, value: (empty), parameters: ['split-lengths(5)'], expected: []}
+      - {id: split-lengths.partition.literal-empty, value: '', parameters: ['split-lengths(5)'], expected: []}
+      - {id: split-lengths.partition.null, value: (null), parameters: ['split-lengths(5)'], expected: []}
+      - {id: split-lengths.partition.blank, value: (blank), parameters: ['split-lengths(1)'], expected: [' ']}
+      - {id: split-lengths.partition.whitespace, value: " \t  ", parameters: ['split-lengths(2, 1)'], expected: [" \t", ' ', ' ']}
+      - {id: split-lengths.partition.punctuation, value: '(a,b)', parameters: ['split-lengths(2, 1)'], expected: ['(a', ',', 'b)']}
+      - {id: split-lengths.partition.unicode, value: 'é😀漢字', parameters: ['split-lengths(1, 2)'], expected: ['é', '😀', '漢字']}
+      - {id: split-lengths.partition.numeric, value: 12345, parameters: ['split-lengths(2)'], expected: ['12', '345']}
+      - {id: split-lengths.partition.spread, value: abcdefgh, parameters: ['split-lengths(1, ...{2, 3})'], expected: [a, bc, def, gh]}
+      - {id: split-lengths.partition.empty-spread, value: abc, parameters: ['split-lengths(...{})'], expected: [abc]}
+      - {id: split-lengths.partition.zero, value: abc, parameters: ['split-lengths(0)'], expected: null}
+      - {id: split-lengths.partition.negative, value: abc, parameters: ['split-lengths(-1)'], expected: null}
+      - {id: split-lengths.partition.invalid-after-end, value: abc, parameters: ['split-lengths(5, 0)'], expected: null}
+      - {id: split-lengths.partition.invalid-empty, value: (empty), parameters: ['split-lengths(0)'], expected: null}
+      - {id: split-lengths.partition.fraction, value: abc, parameters: ['split-lengths(1.5)'], expected: null}
+      - {id: split-lengths.partition.invalid-text, value: abc, parameters: ['split-lengths("invalid")'], expected: null}
+      - {id: split-lengths.partition.nested, value: abc, parameters: ['split-lengths(...{1, {2}})'], expected: null}

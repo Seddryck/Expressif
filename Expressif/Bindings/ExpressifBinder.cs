@@ -307,7 +307,7 @@ public sealed class ExpressifBinder
             "is-present" or "is-absent" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
-            "array" or "text" or "tuple" or "grouping" or "dictionary" or "nested-field" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
+            "array" or "text" or "tuple" or "grouping" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
 

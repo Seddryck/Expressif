@@ -4823,6 +4823,56 @@
     ]
   },
   {
+    "Name": "split-lengths",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/partitioning",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Splits text into consecutive nonempty segments of the requested lengths, preserving any remaining text as a final segment. Returns an empty array for null or empty input and null for invalid lengths.",
+    "Parameters": [
+      {
+        "Name": "lengths",
+        "Type": "integer",
+        "Optional": true,
+        "Variadic": true,
+        "MinimumCardinality": 0,
+        "Summary": "Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place."
+      }
+    ],
+    "Behavior": "All lengths are validated before splitting, including lengths after the input would be exhausted. Invalid, nonintegral, zero, or negative lengths return `null`. A short final segment consumes the available text; an exact fit has no empty remainder. With no lengths, nonempty input returns one segment. Empty and null input return an empty array when lengths are valid. Blank input represents one space; literal whitespace is preserved. Character counts use UTF-16 code units, like `first-chars` and `skip-first-chars`. Spread arguments preserve declaration order; an array without spread is not an integer length. Unlike delimiter-removing tokenization, concatenating the segments reconstructs the original text.",
+    "Examples": [
+      "\"abcdefghijkl\" | split-lengths(5, 3) → {\"abcde\", \"fgh\", \"ijkl\"}",
+      "\"abcdefgh\" | split-lengths(5, 3) → {\"abcde\", \"fgh\"}",
+      "\"abcdef\" | split-lengths(5, 3) → {\"abcde\", \"f\"}",
+      "\"abc\" | split-lengths → {\"abc\"}",
+      "\"\" | split-lengths(5) → {}"
+    ]
+  },
+  {
+    "Name": "split-while",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text/partitioning",
+    "Input": "text",
+    "Output": "array",
+    "Summary": "Splits text into consecutive nonempty segments while an operation over the current segment and next character returns true. Preserves every character. Returns an empty array for null or empty input and null for a non-Boolean operation result.",
+    "Parameters": [
+      {
+        "Name": "operation",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The callable or open expression deciding whether the next character extends the current segment."
+      }
+    ],
+    "Behavior": "The operation receives `T(currentSegment, candidate)`: `$0` is the complete current segment, excluding the candidate, and `$1` is the next UTF-16 code unit as a one-character string. The first character seeds the segment without invoking the operation. For each later character, `true` appends it and `false` emits the segment and starts another with that character. Each candidate is tested exactly once; no character is discarded and no empty segment is emitted. Empty, null, and singleton input do not invoke the operation. Blank input represents one space; literal whitespace is preserved. A non-Boolean result returns `null`.\n\nThis is the text counterpart of the generalized `chunk-while` contract: the current segment is a string rather than an array. Like `split-lengths`, it preserves character order, so concatenating the segments reproduces the input. Character counting follows `first-chars` and `skip-first-chars`.\n\n### Split at vowel/consonant transitions\n\nContinue while the last character and the candidate have the same vowel classification:\n\n```expressif\n\"bonjour\" | split-while(\n    !(\n        ($0 | last-chars(1) | matches-regex(\"(?i)^[aeiouy]$\"))\n        |XOR\n        ($1 | matches-regex(\"(?i)^[aeiouy]$\"))\n    )\n)\n→ {\"b\", \"o\", \"nj\", \"ou\", \"r\"}\n```\n\n`|XOR` detects a classification change and `!` negates the whole comparison. This example assumes unaccented letters, treats `y` as a vowel, and ignores case.\n\n### Split after two or more spaces and trim each segment\n\nA single space does not break the segment. Split before an ASCII letter following at least two literal spaces, then trim each element:\n\n```expressif\n\"abc def  ghi jkl   mno\" | split-while(\n    !(\n        ($0 | matches-regex(\" {2,}$\"))\n        |AND\n        ($1 | matches-regex(\"^[A-Za-z]$\"))\n    )\n) | map(trim)\n→ {\"abc def\", \"ghi jkl\", \"mno\"}\n```\n\nBefore trimming, the result is `{\"abc def  \", \"ghi jkl   \", \"mno\"}`. Splitting preserves the spaces; the explicit `map(trim)` removes them. `|> trim` is equivalent here.",
+    "Examples": [
+      "\"abcdefgh\" | split-while($0 | length | is-less-than(3)) → {\"abc\", \"def\", \"gh\"}"
+    ]
+  },
+  {
     "Name": "skip-first-chars",
     "IsPublic": true,
     "Aliases": [
