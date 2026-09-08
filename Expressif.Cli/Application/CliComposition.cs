@@ -1,4 +1,5 @@
 using Expressif.Cli.Expressions;
+using Expressif.Cli.Configuration;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
 using Expressif.Functions.Catalog;
@@ -15,7 +16,7 @@ internal sealed record CliComposition(
     Func<ReplHost> Repl,
     IStrictUtf8TextReader TextFiles)
 {
-    public static CliComposition CreateDefault()
+    public static CliComposition CreateDefault(CliConfiguration? configuration = null)
     {
         var expressions = new ExpressionService();
         var syntax = new SyntaxService();
@@ -34,7 +35,7 @@ internal sealed record CliComposition(
             new ParseHandler(syntax),
             new BindHandler(syntax),
             new EvaluateHandler(expressions, values, sources),
-            new RunHandler(expressions, values, textFiles, sources),
+            new RunHandler(expressions, values, textFiles, sources, configuration),
             new ValidateHandler(expressions),
             new HelpHandler(new FunctionCatalogService(FunctionCatalog.Default)),
             () => new ReplHost(new ReplSession(expressions), new ConsoleReplTerminal()),

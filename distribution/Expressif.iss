@@ -57,8 +57,12 @@ Source: "{#PublishDirectory}\{#BuildIdentity}.exe"; \
   Flags: ignoreversion
 Source: "{#PublishDirectory}\*"; \
   DestDir: "{app}"; \
-  Excludes: "{#BuildIdentity}.exe"; \
+  Excludes: "{#BuildIdentity}.exe,expressif.config.json"; \
   Flags: ignoreversion recursesubdirs createallsubdirs
+
+Source: "{#PublishDirectory}\expressif.config.json"; \
+  DestDir: "{app}"; \
+  Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 Name: "{group}\{#AppName} Command Prompt"; Filename: "{cmd}"; Parameters: "/K cd /d ""{app}"""

@@ -30,6 +30,10 @@
     </AssemblyAttribute>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="expressif.config.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <Target Name="GenerateApplicationIcon"
           BeforeTargets="CoreCompile"
           Inputs="$(MSBuildProjectDirectory)\..\Build-Logo.ps1;$(MSBuildProjectDirectory)\..\assets\logo\layers\circle.png;$(MSBuildProjectDirectory)\..\assets\logo\layers\cup.png;$(MSBuildProjectDirectory)\..\assets\logo\layers\liquid.png;$(MSBuildProjectDirectory)\..\assets\logo\layers\steam.png;$(MSBuildProjectDirectory)\..\assets\logo\text.png"

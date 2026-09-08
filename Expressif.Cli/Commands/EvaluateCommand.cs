@@ -1,4 +1,5 @@
 using System.CommandLine;
+using Expressif.Cli.Configuration;
 using Expressif.Cli.Application;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
@@ -8,7 +9,7 @@ namespace Expressif.Cli.Commands;
 
 internal static class EvaluateCommand
 {
-    public static Command Create(EvaluateHandler handler, IStrictUtf8TextReader textFiles)
+    public static Command Create(EvaluateHandler handler, IStrictUtf8TextReader textFiles, CliConfiguration? configuration = null)
     {
         var expression = new Argument<string?>("expression") { Arity = ArgumentArity.ZeroOrOne, Description = "Expression to evaluate." };
         var input = new Option<string?>("--input") { Description = "Input value passed to the expression." };
@@ -34,12 +35,12 @@ internal static class EvaluateCommand
         command.Options.Add(pretty);
         command.Options.Add(compact);
         command.Options.Add(indent);
-        command.SetAction(result => Execute(result, handler, textFiles, expression, input, source, scalar, sourceOptions,
+        command.SetAction(result => Execute(result, handler, textFiles, configuration ?? CliConfiguration.CreateDefault(), expression, input, source, scalar, sourceOptions,
             file, outputStyle, pretty, compact, indent));
         return command;
     }
 
-    private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles,
+    private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles, CliConfiguration configuration,
         Argument<string?> expression, Option<string?> input, Option<string?> source,
         Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file,
         Option<ValueFormat?> outputStyle, Option<bool> pretty, Option<bool> compact, Option<string?> indent)
@@ -61,11 +62,10 @@ internal static class EvaluateCommand
         var kind = hasSource ? EvaluateInputKind.Source : hasInput ? EvaluateInputKind.Value : EvaluateInputKind.Closed;
         var request = new EvaluateRequest(code, kind, result.GetValue(input), result.GetValue(source),
             result.GetValue(sourceOptions) ?? [], result.GetValue(scalar));
-        if (!OutputStyleSelection.TryResolve(
-                result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), out var style, out var styleError))
-            return WriteError(styleError!, ExitCodes.InvalidExpressionOrInput);
-        if (!OutputIndentation.TryResolve(result.GetValue(indent), style, out var indentation, out var indentationError))
-            return WriteError(indentationError!, ExitCodes.InvalidExpressionOrInput);
+        if (!ConfiguredOutput.TryResolve(configuration, "evaluate",
+                result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
+                out var style, out var indentation, out var outputError))
+            return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
         return WriteResult(handler.Execute(request), code, fromFile, filePath, style, indentation);
     }
 

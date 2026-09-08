@@ -1,4 +1,5 @@
 using Expressif.Bindings;
+using Expressif.Cli.Configuration;
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Inputs;
@@ -31,7 +32,8 @@ internal sealed class RunHandler(
     IExpressionService expressions,
     IInputValueParser values,
     IStrictUtf8TextReader textFiles,
-    SourcePipeline sources)
+    SourcePipeline sources,
+    CliConfiguration? configuration = null)
 {
     public int Execute(RunRequest request)
     {
@@ -42,16 +44,11 @@ internal sealed class RunHandler(
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        if (!OutputStyleSelection.TryResolve(
-                request.OutputStyle, request.Pretty, request.Compact, out var outputStyle, out var outputStyleError))
+        if (!ConfiguredOutput.TryResolve(configuration ?? CliConfiguration.CreateDefault(), "run",
+                request.OutputStyle, request.Pretty, request.Compact, request.Indent,
+                out var outputStyle, out var indentation, out var outputError))
         {
-            Console.Error.WriteLine(outputStyleError);
-            return ExitCodes.InvalidExpressionOrInput;
-        }
-
-        if (!OutputIndentation.TryResolve(request.Indent, outputStyle, out var indentation, out var indentationError))
-        {
-            Console.Error.WriteLine(indentationError);
+            Console.Error.WriteLine(outputError);
             return ExitCodes.InvalidExpressionOrInput;
         }
 

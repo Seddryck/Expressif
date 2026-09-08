@@ -159,7 +159,25 @@ try {
     }
 
     Write-Host "Extracting '$($archives[0].FullName)' into '$InstallDirectory'."
-    Expand-Archive -LiteralPath $archives[0].FullName -DestinationPath $InstallDirectory -Force:$Force
+    $stagingDirectory = Join-Path $downloadDirectory 'staged'
+    Expand-Archive -LiteralPath $archives[0].FullName -DestinationPath $stagingDirectory
+    $installRoot = [IO.Path]::GetFullPath($InstallDirectory).TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    foreach ($file in Get-ChildItem -LiteralPath $stagingDirectory -File -Recurse) {
+        $relativePath = [IO.Path]::GetRelativePath($stagingDirectory, $file.FullName)
+        $destination = [IO.Path]::GetFullPath((Join-Path $InstallDirectory $relativePath))
+        if (-not $destination.StartsWith($installRoot, [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Archive destination is outside the installation directory: $destination"
+        }
+
+        # User preferences must survive every installation, including -Force.
+        if ($file.Name -eq 'expressif.config.json' -and (Test-Path -LiteralPath $destination)) {
+            Write-Host "Preserving existing configuration '$destination'."
+            continue
+        }
+
+        New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($destination)) -Force | Out-Null
+        Copy-Item -LiteralPath $file.FullName -Destination $destination -Force:$Force
+    }
 
     $executables = @(Get-ChildItem -LiteralPath $InstallDirectory -Filter 'expressif.exe' -File -Recurse)
     if ($executables.Count -ne 1) {

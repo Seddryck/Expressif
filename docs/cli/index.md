@@ -26,6 +26,7 @@ expressif <command> [arguments] [options]
 | `parse` | Inspect how the source text forms a syntax tree. |
 | `bind` | Inspect the functions, parameters, and expression form resolved after parsing. |
 | `help` | List functions or show documentation for a function. |
+| `config` | [Read and update persistent output preferences](configuration.md). |
 | `version` | Display the CLI and Expressif library versions. |
 
 The important distinction is between `evaluate` and `run`:

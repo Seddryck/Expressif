@@ -1,12 +1,13 @@
 using System.CommandLine;
 using Expressif.Cli.Application;
+using Expressif.Cli.Configuration;
 using Expressif.Values;
 
 namespace Expressif.Cli.Commands;
 
 internal static class ReplCommand
 {
-    public static Command Create(Func<ReplHost> hostFactory)
+    public static Command Create(Func<ReplHost> hostFactory, CliConfiguration? configuration = null)
     {
         var command = new Command("repl", "Start an interactive Expressif session.");
         var outputStyle = new Option<ValueFormat?>("--output-style") { Description = "Output style for all results: compact or pretty." };
@@ -20,16 +21,11 @@ internal static class ReplCommand
         command.Options.Add(indent);
         command.SetAction(result =>
         {
-            if (!OutputStyleSelection.TryResolve(
-                    result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), out var style, out var styleError))
+            if (!ConfiguredOutput.TryResolve(configuration ?? CliConfiguration.CreateDefault(), "repl",
+                    result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
+                    out var style, out var indentation, out var error))
             {
-                Console.Error.WriteLine(styleError);
-                return ExitCodes.InvalidExpressionOrInput;
-            }
-
-            if (!OutputIndentation.TryResolve(result.GetValue(indent), style, out var indentation, out var indentationError))
-            {
-                Console.Error.WriteLine(indentationError);
+                Console.Error.WriteLine(error);
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
