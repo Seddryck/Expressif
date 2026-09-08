@@ -299,6 +299,29 @@ public class TextFunctionsTest
         => Assert.That(new TextToDateTime(() => (format), () => (culture))
             .Evaluate(value), Is.EqualTo(expected));
 
+    [TestCase("")]
+    [TestCase("en-US")]
+    [TestCase("fr-FR")]
+    public void TextToDateTime_Culture_EvaluatedOncePerCall(string culture)
+    {
+        var evaluations = 0;
+        var function = new TextToDateTime(() => "yyyy-MM-dd", () =>
+        {
+            evaluations++;
+            return culture;
+        });
+
+        for (var call = 1; call <= 2; call++)
+        {
+            var result = function.Evaluate("2024-01-15");
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.EqualTo(new DateTime(2024, 1, 15)));
+                Assert.That(evaluations, Is.EqualTo(call));
+            });
+        }
+    }
+
     [Conformance]
     public void TextToMask_Valid(string value, string mask, string expected)
         => Assert.That(new TextToMask(() => (mask)).Evaluate(value)
