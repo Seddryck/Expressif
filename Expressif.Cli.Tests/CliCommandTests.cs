@@ -1833,6 +1833,24 @@ public class CliCommandTests
         Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
     }
 
+    [TestCase("mutually exclusive", "--pretty", "--compact")]
+    [TestCase("mutually exclusive", "--style-output", "pretty", "--compact")]
+    [TestCase("requires --output-style pretty", "--indent", "4")]
+    [TestCase("requires --output-style pretty", "--compact", "--indent", "tab")]
+    [TestCase("from 0 to 8", "--pretty", "--indent", "9")]
+    [TestCase("from 0 to 8", "--pretty", "--indent", "-1")]
+    [TestCase("from 0 to 8", "--pretty", "--indent", "spaces")]
+    [TestCase("wide", "--style-output", "wide")]
+    public async Task Repl_InvalidFormattingOptions_ReturnsError(string error, params string[] options)
+    {
+        var result = await InvokeAsync(["repl", .. options]);
+
+        Assert.That(result.ExitCode, Is.Not.EqualTo(ExitCodes.Success));
+        Assert.That(result.StdErr, Does.Contain(error));
+        if (error != "wide")
+            Assert.That(result.StdOut, Is.Empty);
+    }
+
     [Test]
     public async Task Help_CanonicalName_DisplaysFunctionDocumentation()
     {
