@@ -31,9 +31,10 @@ Returns the value of an argument number, unless it is smaller than min, in which
 | `min` | `numeric` | Yes | value returned in case the argument value is smaller than it. |
 | `max` | `numeric` | Yes | value returned in case the argument value is greater than it. |
 
+## Argument evaluation
 
-
-
+- **`min`:** Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned.
+- **`max`:** Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned.
 
 ## Examples
 

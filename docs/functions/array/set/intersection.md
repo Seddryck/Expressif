@@ -29,10 +29,9 @@ Returns the distinct values found in both the pipeline input and the specified a
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the array to compare with the pipeline input. |
 
+## Argument evaluation
 
-
-
-
+- **`array`:** Evaluated once in the enclosing context.
 
 ## Examples
 

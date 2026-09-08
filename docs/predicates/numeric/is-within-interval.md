@@ -28,10 +28,9 @@ Returns true if the numeric value passed as argument is between the lower bound 
 |:-----|:-----|:---------|:------------|
 | `interval` | `any` | Yes | A numeric interval to compare to the argument. |
 
+## Argument evaluation
 
-
-
-
+- **`interval`:** Evaluated once in the enclosing context.
 
 ## Examples
 

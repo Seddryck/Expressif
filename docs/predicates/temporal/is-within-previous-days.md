@@ -28,9 +28,9 @@ Returns true if the date passed as argument is between the count of days before 
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false. |
 
+## Argument evaluation
 
-
-
+- **`count`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

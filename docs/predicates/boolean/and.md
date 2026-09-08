@@ -30,10 +30,9 @@ Returns the logical conjunction of the Boolean-converted input and a secondary p
 |:-----|:-----|:---------|:------------|
 | `expression` | `any` | Yes | Specifies the secondary predicate expression evaluated when the converted input is `true`. |
 
+## Argument evaluation
 
-
-
-
+- **`expression`:** Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value.
 
 ## Examples
 

@@ -28,9 +28,9 @@ Returns true if the temporal value passed as argument is chronologically before 
 |:-----|:-----|:---------|:------------|
 | `reference` | `date-time` | Yes | A temporal value to compare to the argument |
 
+## Argument evaluation
 
-
-
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

@@ -31,10 +31,12 @@ Evaluates an expression once for every supplied value while preserving the pipel
 | `expression` | `expression` | Yes | Expression evaluated with the outer pipeline input and each supplied value as its argument context. |
 | `values` | `array` | Yes | Values iterated as argument contexts in declaration order. |
 
+## Argument evaluation
 
+Visits each value supplied by the values argument.
 
-
-
+- **`expression`:** Iterates the values argument, keeping the call's incoming value as the expression input and using each supplied value as its argument context.
+- **`values`:** Evaluated once against the value entering this call.
 
 ## Examples
 

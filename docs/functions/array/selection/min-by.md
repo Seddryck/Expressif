@@ -31,9 +31,11 @@ Returns the original source element whose expression result is smallest. Preserv
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | Expression evaluated once for each source element to obtain its comparison criterion. |
 
+## Argument evaluation
 
+Visits each element of the array entering this call.
 
-
+- **`expression`:** Evaluated once per visited element, with that element as its context.
 
 ## Behavior
 

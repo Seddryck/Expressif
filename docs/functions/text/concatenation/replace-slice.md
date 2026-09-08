@@ -33,9 +33,11 @@ Returns the argument value with a subset of the string substitued by a another s
 | `length` | `integer` | Yes | The length to replace |
 | `append` | `text` | Yes | The text to append when the slice has been removed |
 
+## Argument evaluation
 
-
-
+- **`start`:** Evaluated once in the enclosing context.
+- **`length`:** Evaluated once in the enclosing context.
+- **`append`:** Evaluated once in the enclosing context.
 
 ## Examples
 

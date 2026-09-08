@@ -33,10 +33,10 @@ Returns the substring of the argument string, containing all the characters imme
 | `substring` | `text` | Yes | The string to seek. |
 | `count` | `integer` | No | The number of character positions to examine. |
 
+## Argument evaluation
 
-
-
-
+- **`substring`:** Evaluated once in the enclosing context.
+- **`count`:** Evaluated in the enclosing context during the search; the count can be read again after each match.
 
 ## Examples
 

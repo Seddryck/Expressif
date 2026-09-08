@@ -31,10 +31,12 @@ Evaluates an expression once for every supplied value, using that value as the p
 | `expression` | `expression` | Yes | Expression evaluated with each supplied value as input and the outer pipeline input as its argument. |
 | `values` | `array` | Yes | Values iterated as pipeline inputs in declaration order. |
 
+## Argument evaluation
 
+Visits each value supplied by the values argument.
 
-
-
+- **`expression`:** Iterates the values argument, using each supplied value as the expression input and supplying the call's incoming value as the argument to a bare callable.
+- **`values`:** Evaluated once against the value entering this call.
 
 ## Examples
 

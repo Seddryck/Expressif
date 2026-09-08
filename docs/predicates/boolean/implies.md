@@ -31,10 +31,9 @@ Returns logical implication from the Boolean input to a secondary Boolean expres
 |:-----|:-----|:---------|:------------|
 | `expression` | `boolean` | Yes | Specifies the secondary Boolean expression evaluated when the input is `true`. |
 
+## Argument evaluation
 
-
-
-
+- **`expression`:** Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value.
 
 ## Examples
 

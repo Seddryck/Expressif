@@ -29,10 +29,9 @@ Returns a new date value corresponding to the first occurrence of the weekday pa
 |:-----|:-----|:---------|:------------|
 | `weekday` | `weekday` | Yes | The day of week to compare to the argument. |
 
+## Argument evaluation
 
-
-
-
+- **`weekday`:** Evaluated once in the enclosing context.
 
 ## Examples
 

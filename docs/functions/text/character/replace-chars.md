@@ -31,9 +31,10 @@ Returns the argument value where a specific char has been replaced by another, b
 | `charToReplace` | `text` | Yes | The char to be replaced from the argument string. |
 | `charReplacing` | `text` | Yes | The replacing char from the argument string. |
 
+## Argument evaluation
 
-
-
+- **`charToReplace`:** Evaluated once in the enclosing context.
+- **`charReplacing`:** Evaluated once in the enclosing context.
 
 ## Examples
 

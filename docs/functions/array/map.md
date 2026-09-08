@@ -29,10 +29,11 @@ Applies a transformation expression to each input item and returns the transform
 |:-----|:-----|:---------|:------------|
 | `transformation` | `expression` | Yes | Expression creating the transformation applied to each input item. |
 
+## Argument evaluation
 
+Visits each element of the array entering this call.
 
-
-
+- **`transformation`:** Evaluated once per visited element, with that element as its context.
 
 ## Examples
 

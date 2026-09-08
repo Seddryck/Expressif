@@ -29,10 +29,11 @@ Groups input values by keys calculated from one or more expressions.
 |:-----|:-----|:---------|:------------|
 | `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated once per input value; multiple results form a tuple key. |
 
+## Argument evaluation
 
+Visits each element of the array entering this call.
 
-
-
+- **`expressions`:** Each supplied expression is evaluated once per visited element, with that element as its context.
 
 ## Examples
 

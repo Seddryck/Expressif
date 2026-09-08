@@ -29,9 +29,9 @@ Evaluates an expression with the input value as its current context.
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | Specifies the expression evaluated against the input value. |
 
+## Argument evaluation
 
-
-
+- **`expression`:** Evaluated once against the value entering this call.
 
 ## Behavior
 

@@ -29,9 +29,11 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Specifies the callable or open expression evaluated against each consecutive pair. |
 
+## Argument evaluation
 
+Evaluates the operation for each consecutive pair of values in the incoming array.
 
-
+- **`operation`:** Evaluated against each constructed previous/current pair. A bare binary callable receives one value as input and the other as its missing argument.
 
 ## Behavior
 

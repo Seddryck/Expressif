@@ -29,10 +29,9 @@ Returns the distinct values appearing in either the pipeline input or the specif
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the second array whose values are combined with the pipeline input. |
 
+## Argument evaluation
 
-
-
-
+- **`array`:** Evaluated once in the enclosing context.
 
 ## Examples
 

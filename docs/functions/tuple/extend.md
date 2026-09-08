@@ -29,10 +29,9 @@ Returns a new tuple with a value appended, expanding tuple values into their pos
 |:-----|:-----|:---------|:------------|
 | `value` | `any` | Yes | Specifies the value to append; tuple values are expanded into their positions. |
 
+## Argument evaluation
 
-
-
-
+- **`value`:** Evaluated once against the value entering this call.
 
 ## Examples
 

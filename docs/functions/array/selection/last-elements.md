@@ -31,9 +31,9 @@ Returns up to the requested number of elements from the end of the input enumera
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to return from the end of the input. |
 
+## Argument evaluation
 
-
-
+- **`count`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

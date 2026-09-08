@@ -29,10 +29,9 @@ Constructs a new tuple by evaluating zero or more positional expressions from le
 |:-----|:-----|:---------|:------------|
 | `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the positions of the resulting tuple. |
 
+## Argument evaluation
 
-
-
-
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 

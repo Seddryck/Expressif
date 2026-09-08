@@ -12,19 +12,27 @@
     "Parameters": [
       {
         "Name": "operation",
-        "Source": "incoming",
-        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the callable or open expression evaluated against each consecutive pair."
+        "Summary": "Specifies the callable or open expression evaluated against each consecutive pair.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Evaluated against each constructed previous/current pair. A bare binary callable receives one value as input and the other as its missing argument."
+        }
       }
     ],
     "Behavior": "`adjacent` evaluates the supplied operation against each consecutive pair of values.\n\nFor each pair, the first value becomes the input of the operation and the second value is supplied as its missing argument. This means that a binary function such as `subtract` can be passed directly.\n\nFor example, `{1, 2, 3} | adjacent(subtract)` is conceptually equivalent to applying `$1 | subtract($0)` to each consecutive pair.",
     "Examples": [
       "{1, 2, 3} | adjacent(subtract) → {1, 1}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "custom",
+      "Summary": "Evaluates the operation for each consecutive pair of values in the incoming array."
+    }
   },
   {
     "Name": "array",
@@ -39,13 +47,16 @@
     "Parameters": [
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": true,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Zero or more expressions whose evaluated values become the elements of the resulting array."
+        "Summary": "Zero or more expressions whose evaluated values become the elements of the resulting array.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -66,18 +77,26 @@
     "Parameters": [
       {
         "Name": "accumulator",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "accumulator",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Factory that creates the accumulator instance used for the broadcast execution."
+        "Summary": "Factory that creates the accumulator instance used for the broadcast execution.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "The selected accumulator receives each incoming array element through its accumulation lifecycle; the accumulator factory is not recreated for each element."
+        }
       }
     ],
     "Examples": [
       "{1, 2, 3} | broadcast(sum) → {6, 6, 6}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "cardinality",
@@ -106,13 +125,16 @@
     "Parameters": [
       {
         "Name": "size",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "The strictly positive number of items in each chunk."
+        "Summary": "The strictly positive number of items in each chunk.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -130,13 +152,16 @@
     "Parameters": [
       {
         "Name": "position",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "The zero-based position of the element to separate."
+        "Summary": "The zero-based position of the element to separate.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "`chunk-around` materializes the input and returns `T(before, selected, after)`. The selected value is preserved as a scalar, including when it is `null` or structured. A position is valid only when it identifies an existing element.\n\nA common use is resuming an approval workflow where the item at the cursor has a distinct role. Given these steps:\n\n```expressif\n{ValidateInvoice, ManagerApproval, FinanceApproval, ReleasePayment}\n```\n\nand a current position of `2`, the required structure is `completed steps | current step | future steps`:\n\n```expressif\nsteps | chunk-around(2)\n→ T(\n    {ValidateInvoice, ManagerApproval},\n    FinanceApproval,\n    {ReleasePayment}\n)\n```\n\n`FinanceApproval` remains a single workflow-step record, so it can be displayed, executed, or updated as the current step. By contrast, `chunk-on(2)` returns only the values before the cursor and the values from the cursor onward:\n\n```expressif\nsteps | chunk-on(2)\n→ T(\n    {ValidateInvoice, ManagerApproval},\n    {FinanceApproval, ReleasePayment}\n)\n```\n\nThe same three-role structure—`past | selected/current item | future`—appears in workflow engines, carousel focus, undo/redo histories, breadcrumb navigation, and processing a specific failed event in a sequence. The equivalent result can be constructed by splitting the right chunk again, but `chunk-on` alone does not distinguish the current item from future items. `chunk-around` directly provides this array-zipper operation.",
@@ -155,13 +180,16 @@
     "Parameters": [
       {
         "Name": "position",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "The zero-based boundary position; the element at this position belongs to the right chunk."
+        "Summary": "The zero-based boundary position; the element at this position belongs to the right chunk.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "`chunk-on` materializes the input and returns `T(before, from-position)`. Positions beyond the input cardinality use the end boundary, so the right chunk is empty. Negative positions return `null`.",
@@ -180,19 +208,27 @@
     "Parameters": [
       {
         "Name": "operation",
-        "Source": "incoming",
-        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the callable or open expression that decides whether the current value continues the preceding chunk."
+        "Summary": "Specifies the callable or open expression that decides whether the current value continues the preceding chunk.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Evaluated against each constructed previous/current pair. A bare binary callable receives one value as input and the other as its missing argument."
+        }
       }
     ],
     "Behavior": "`chunk-while` starts a chunk with the first input value. For every subsequent value, it evaluates the operation using the same consecutive-pair convention as `adjacent`: the previous value becomes the operation input and the current value supplies its missing argument. A `true` result appends the current value to the active chunk; `false` starts a new chunk. The operation is not evaluated for an empty or singleton input.",
     "Examples": [
       "{10, 20, 21, 22, 30, 31} | chunk-while(subtract | is-less-than(2)) → {{10}, {20, 21, 22}, {30, 31}}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "custom",
+      "Summary": "Evaluates each consecutive pair after the first element to decide whether to continue the current chunk."
+    }
   },
   {
     "Name": "filter",
@@ -212,7 +248,8 @@
         "Summary": "Expression defining the predicate applied to each input item.",
         "Evaluation": {
           "Frequency": "per-element",
-          "Context": "traversal"
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
         }
       }
     ],
@@ -223,7 +260,8 @@
     "Behavior": "**Argument form — `predicate`:** A predicate call, such as `greater-than(1)`, or an open expression that produces a Boolean, such as `.active`. A bare Boolean literal such as `#true` is not accepted.\n\n**Element binding:** The predicate runs once for each element of the array supplied as pipeline input to this `filter` call. At the start of the predicate, `.field` reads that element's field. In `.lines | filter(.active)`, the inner predicate receives a line from the `.lines` array, not the surrounding record.",
     "Traversal": {
       "Source": "incoming",
-      "Selection": "array-element"
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
     }
   },
   {
@@ -237,19 +275,27 @@
     "Parameters": [
       {
         "Name": "weight",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the expression that produces a finite, non-negative numeric weight for each input value."
+        "Summary": "Specifies the expression that produces a finite, non-negative numeric weight for each input value.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
+        }
       }
     ],
     "Behavior": "`distribute-weight` evaluates `weight` exactly once per input value, orders values by descending weight using original position to break equal-weight ties, and assigns each value to the group with the lower aggregate weight. Aggregate-weight ties prefer the group with fewer values; remaining ties prefer the first group. It then restores relative input order within both groups. This deterministic largest-weight-first strategy is best-effort and does not guarantee the mathematically optimal partition. Empty input returns two empty arrays and a singleton is placed in the first group.",
     "Examples": [
       "{8, 7, 6, 5} | distribute-weight(neutral) → {{8, 5}, {7, 6}}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "distribute-round-robin",
@@ -262,13 +308,16 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the strictly positive number of output arrays."
+        "Summary": "Specifies the strictly positive number of output arrays.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "The value at zero-based input position `i` is assigned to output array `i modulo count`. The result always contains exactly `count` arrays, including empty trailing arrays when the count exceeds the input cardinality. Relative input order is preserved within every output array. Empty input returns `count` empty arrays.",
@@ -287,23 +336,29 @@
     "Parameters": [
       {
         "Name": "weights",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies a non-empty array of finite, non-negative output weights with a positive total."
+        "Summary": "Specifies a non-empty array of finite, non-negative output weights with a positive total.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "seed",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": true,
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies an optional seed that makes assignments reproducible on the same runtime version."
+        "Summary": "Specifies an optional seed that makes assignments reproducible on the same runtime version.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "The weights are normalized by their total and specify assignment probabilities rather than exact output cardinalities. Each input value is independently assigned to exactly one output array. The result contains one array per weight, including empty arrays, and preserves relative input order within each output. Reusing the same seed, input, and weights produces the same result on the same runtime version. Empty input still validates the weights and returns one empty array per valid weight.",
@@ -322,19 +377,27 @@
     "Parameters": [
       {
         "Name": "condition",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "predicate",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the predicate used to classify each input value."
+        "Summary": "Specifies the predicate used to classify each input value.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
+        }
       }
     ],
     "Behavior": "`distribute-condition` returns exactly two arrays. The first contains values for which `condition` evaluates to `true`; the second contains values for which it evaluates to `false`. Each value occurs in exactly one output array, and relative input order is preserved within both arrays. Empty input returns two empty arrays.",
     "Examples": [
       "{1, 2, 3, 4, 5} | distribute-condition(is-even) → {{2, 4}, {1, 3, 5}}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "first-elements",
@@ -349,13 +412,16 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Number of elements to return from the start of the input."
+        "Summary": "Number of elements to return from the start of the input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "When `count` is greater than the number of elements in the input, `first-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.",
@@ -377,24 +443,50 @@
     "Parameters": [
       {
         "Name": "accumulator",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "accumulator",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Factory that creates the accumulator instance used for the fold execution."
+        "Summary": "Factory that creates the accumulator instance used for the fold execution.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "The selected accumulator receives each incoming array element through its accumulation lifecycle; the accumulator factory is not recreated for each element."
+        }
       }
     ],
     "Examples": [
       "{1, 2, 3} | fold(sum) → 6"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
-    "Name": "apply", "IsPublic": true, "Aliases": ["apply"], "Scope": "flow",
-    "Input": "any", "Output": "any",
+    "Name": "apply",
+    "IsPublic": true,
+    "Aliases": [
+      "apply"
+    ],
+    "Scope": "flow",
+    "Input": "any",
+    "Output": "any",
     "Summary": "Evaluates an expression with the input value as its current context.",
-    "Parameters": [{"Name": "expression", "Source": "incoming", "Selection": "self", "Type": "expression", "Optional": false, "Summary": "Specifies the expression evaluated against the input value."}],
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Specifies the expression evaluated against the input value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
+      }
+    ],
     "Behavior": "`apply` establishes an evaluation boundary that makes its input value current while evaluating its expression. Use it when the child expression contains contextual references or deferred arguments that must resolve against that value. Positional references address tuple elements, field references address record fields, and deferred array expressions consume the current array.",
     "Examples": [
       "T(10, 20) | apply($0 | add($1)) → 30",
@@ -414,27 +506,38 @@
     "Parameters": [
       {
         "Name": "operation",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Open expression evaluated once against each result."
+        "Summary": "Open expression evaluated once against each result.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once against each result produced by the other expression arguments, rather than against an element of the incoming value."
+        }
       },
       {
         "Name": "expressions",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more expressions evaluated independently against the original input."
+        "Summary": "One or more expressions evaluated independently against the original input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Behavior": "`transform-with` evaluates every variadic expression independently against the original input, then evaluates the shared open expression against each resulting value. Results preserve expression order and are always returned as a tuple, including for a single expression. Unlike `apply`, the shared expression is evaluated separately for each result rather than once against the input. Unlike collection mapping, the expressions define the values to transform and the input need not be a collection.",
     "Examples": [
       "{first-name := \" Alice \", last-name := \" Smith \"} | transform-with(trim, .first-name, .last-name) → T(\"Alice\", \"Smith\")"
-    ]
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Evaluates the shared operation against each result produced by the other expression arguments."
+    }
   },
   {
     "Name": "transform-as",
@@ -447,27 +550,38 @@
     "Parameters": [
       {
         "Name": "operation",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Open expression evaluated once against each named result."
+        "Summary": "Open expression evaluated once against each named result.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once against each result produced by the other expression arguments, rather than against an element of the incoming value."
+        }
       },
       {
         "Name": "expressions",
-        "Source": "incoming",
-        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more named expressions evaluated independently against the original input."
+        "Summary": "One or more named expressions evaluated independently against the original input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Behavior": "`transform-as` evaluates every named expression independently against the original input, then evaluates the shared open expression against each resulting value. Each argument name becomes the corresponding field name, declaration order is preserved, and the result is always a record, including for a single named expression. Unnamed expressions after the operation are rejected. `transform-as` is the named, record-producing counterpart of `transform-with`, which accepts positional expressions and returns a tuple. Unlike `apply`, the shared expression is evaluated separately for each named result.",
     "Examples": [
       "{first-name := \" Alice \", last-name := \" Smith \"} | transform-as(trim, first-name := .first-name, last-name := .last-name) → {first-name := \"Alice\", last-name := \"Smith\"}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Evaluates the shared operation against each result produced by the named expression arguments."
+    }
   },
   {
     "Name": "guard",
@@ -482,11 +596,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated when its entry contract directly accepts the current input."
+        "Summary": "Expression evaluated when its entry contract directly accepts the current input.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Evaluated against the incoming value only when its entry contract accepts that value without coercion."
+        }
       }
     ],
     "Behavior": "`guard` checks only whether the current value can enter the supplied expression without coercion. If entry is compatible, the complete expression runs normally, including ordinary coercion between later stages. If entry would require coercion, the expression is skipped and the original value is returned unchanged. The `*expression` syntax is shorthand for `guard(expression)`.",
@@ -526,13 +643,16 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Number of elements to return from the end of the input."
+        "Summary": "Number of elements to return from the end of the input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "When `count` is greater than the number of elements in the input, `last-elements` returns all available elements in their original order. It does not pad the result to reach the requested count.",
@@ -569,16 +689,24 @@
     "Parameters": [
       {
         "Name": "transformation",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression creating the transformation applied to each input item."
+        "Summary": "Expression creating the transformation applied to each input item.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
+        }
       }
     ],
     "Examples": [
       "{1, 2, 3} | map(add(1)) → {2, 3, 4}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "map-over",
@@ -591,25 +719,36 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated with the outer pipeline input and each supplied value as its argument context."
+        "Summary": "Expression evaluated with the outer pipeline input and each supplied value as its argument context.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Iterates the values argument, keeping the call's incoming value as the expression input and using each supplied value as its argument context."
+        }
       },
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Values iterated as argument contexts in declaration order."
+        "Summary": "Values iterated as argument contexts in declaration order.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
       "5 | map-over(subtract, {10, 11}) → {-5, -6}",
       "20 | map-over(subtract($2), {T(1, 2), T(3, 4)}) → {18, 16}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Visits each value supplied by the values argument."
+    }
   },
   {
     "Name": "map-with",
@@ -622,24 +761,35 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated with each supplied value as input and the outer pipeline input as its argument."
+        "Summary": "Expression evaluated with each supplied value as input and the outer pipeline input as its argument.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Iterates the values argument, using each supplied value as the expression input and supplying the call's incoming value as the argument to a bare callable."
+        }
       },
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Values iterated as pipeline inputs in declaration order."
+        "Summary": "Values iterated as pipeline inputs in declaration order.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
       "5 | map-with(subtract, {10, 11}) → {5, 6}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Visits each value supplied by the values argument."
+    }
   },
   {
     "Name": "pairwise",
@@ -684,13 +834,16 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the value to locate."
+        "Summary": "Specifies the value to locate.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -710,13 +863,16 @@
     "Parameters": [
       {
         "Name": "position",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the zero-based position of the item to return."
+        "Summary": "Specifies the zero-based position of the item to return.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -736,11 +892,14 @@
     "Parameters": [
       {
         "Name": "transformation",
-        "Source": "incoming",
-        "Selection": "leaf",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated against every leaf value."
+        "Summary": "Expression evaluated against every leaf value.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once against each leaf reached in the incoming structure."
+        }
       }
     ],
     "Behavior": "`walk` recursively visits array items, tuple items, and record field values. Record field names and container kinds are preserved, and only leaves are supplied to the transformation. The transformation retains its ordinary semantics, so `walk(trim)` permits normal coercion while `walk(*trim)` uses guarded entry.",
@@ -748,7 +907,12 @@
       "T(42, \" 42 \") | walk(trim) → T(\"42\", \"42\")",
       "T(42, \" 42 \") | walk(*trim) → T(42, \"42\")",
       "{name := \" Bob \", address := {city := \" Brussels \"}} | walk(*trim) → {name := \"Bob\", address := {city := \"Brussels\"}}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "leaf",
+      "Summary": "Recursively visits the leaf values in the incoming arrays, tuples, and records."
+    }
   },
   {
     "Name": "zip",
@@ -761,13 +925,16 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the second array whose values form the second element of each tuple."
+        "Summary": "Specifies the second array whose values form the second element of each tuple.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -785,13 +952,16 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the second array whose values form the second element of each tuple."
+        "Summary": "Specifies the second array whose values form the second element of each tuple.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "Both inputs are materialized once. When both arrays are non-empty, the result has the cardinality of the longer array and indexes each input cyclically. Two empty inputs produce an empty array; exactly one empty input produces `null` because no value is available to cycle.",
@@ -810,13 +980,16 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the second array whose values form the second element of each tuple."
+        "Summary": "Specifies the second array whose values form the second element of each tuple.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -834,13 +1007,16 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the equally sized second array whose values form the second element of each tuple."
+        "Summary": "Specifies the equally sized second array whose values form the second element of each tuple.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -889,18 +1065,26 @@
     "Parameters": [
       {
         "Name": "accumulator",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "accumulator",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Factory that creates the accumulator instance used for the scan execution."
+        "Summary": "Factory that creates the accumulator instance used for the scan execution.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "The selected accumulator receives each incoming array element through its accumulation lifecycle; the accumulator factory is not recreated for each element."
+        }
       }
     ],
     "Examples": [
       "{1, 2, 3} | scan(sum) → {1, 3, 6}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "single",
@@ -931,13 +1115,16 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Number of elements to omit from the start of the input."
+        "Summary": "Number of elements to omit from the start of the input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "When `count` is greater than the number of elements in the input, `skip-first-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.",
@@ -959,13 +1146,16 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Number of elements to omit from the end of the input."
+        "Summary": "Number of elements to omit from the end of the input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "When `count` is greater than the number of elements in the input, `skip-last-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.",
@@ -987,23 +1177,29 @@
     "Parameters": [
       {
         "Name": "start",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Zero-based index of the first element to return."
+        "Summary": "Zero-based index of the first element to return.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "end",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Zero-based exclusive index at which to stop returning elements."
+        "Summary": "Zero-based exclusive index at which to stop returning elements.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "When `start` is greater than `end`, the requested range contains no elements and `slice-elements` returns an empty array.",
@@ -1025,11 +1221,14 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded."
+        "Summary": "Specifies the reference array from which values present in the pipeline input are excluded.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1049,11 +1248,14 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Specifies the array containing values to exclude from the pipeline input."
+        "Summary": "Specifies the array containing values to exclude from the pipeline input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1088,11 +1290,14 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Specifies the array to compare with the pipeline input."
+        "Summary": "Specifies the array to compare with the pipeline input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1112,11 +1317,14 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Specifies the second array to compare against the pipeline input."
+        "Summary": "Specifies the second array to compare against the pipeline input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1136,11 +1344,14 @@
     "Parameters": [
       {
         "Name": "array",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Specifies the second array whose values are combined with the pipeline input."
+        "Summary": "Specifies the second array whose values are combined with the pipeline input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1320,7 +1531,7 @@
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
-          "Selection": "whole"
+          "Summary": "Evaluated once in the enclosing context."
         }
       },
       {
@@ -1331,7 +1542,7 @@
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
-          "Selection": "whole"
+          "Summary": "Evaluated once in the enclosing context."
         },
         "Default": 1
       }
@@ -1401,11 +1612,14 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "The value to divide the argument value."
+        "Summary": "The value to divide the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check for zero, then evaluated again for division when the first result is nonzero."
+        }
       }
     ],
     "Examples": [
@@ -1425,11 +1639,14 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "The integer used to compute the greatest common divisor with the argument value."
+        "Summary": "The integer used to compute the greatest common divisor with the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1481,11 +1698,14 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "The integer used to compute the lowest common multiple with the argument value."
+        "Summary": "The integer used to compute the lowest common multiple with the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1505,11 +1725,14 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "The value to be multiplied by the argument value."
+        "Summary": "The value to be multiplied by the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1559,11 +1782,14 @@
     "Parameters": [
       {
         "Name": "previous",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "Specifies the previous numeric value used as the percentage-change baseline."
+        "Summary": "Specifies the previous numeric value used as the percentage-change baseline.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1643,19 +1869,25 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "The value to be subtracted to the argument value."
+        "Summary": "The value to be subtracted to the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "times",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction."
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1673,27 +1905,36 @@
     "Parameters": [
       {
         "Name": "minimum",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "Inclusive lower bound of the classified interval."
+        "Summary": "Inclusive lower bound of the classified interval.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "maximum",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "Exclusive upper bound of the classified interval."
+        "Summary": "Exclusive upper bound of the classified interval.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Strictly positive number of equal-width buckets."
+        "Summary": "Strictly positive number of equal-width buckets.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1711,27 +1952,36 @@
     "Parameters": [
       {
         "Name": "minimum",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "Inclusive lower bound of the classified interval."
+        "Summary": "Inclusive lower bound of the classified interval.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "maximum",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "Exclusive upper bound of the classified interval."
+        "Summary": "Exclusive upper bound of the classified interval.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Strictly positive number of equal-width in-range buckets."
+        "Summary": "Strictly positive number of equal-width in-range buckets.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1825,19 +2075,25 @@
     "Parameters": [
       {
         "Name": "min",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "value returned in case the argument value is smaller than it."
+        "Summary": "value returned in case the argument value is smaller than it.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned."
+        }
       },
       {
         "Name": "max",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "value returned in case the argument value is greater than it."
+        "Summary": "value returned in case the argument value is greater than it.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned."
+        }
       }
     ],
     "Examples": [
@@ -1887,11 +2143,14 @@
     "Parameters": [
       {
         "Name": "digits",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value."
+        "Summary": "An integer between 0 and +Infinity, indicating the number of fractional digits in the return value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1909,11 +2168,14 @@
     "Parameters": [
       {
         "Name": "name",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "Name of the field to retrieve from the input."
+        "Summary": "Name of the field to retrieve from the input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1969,11 +2231,14 @@
     "Parameters": [
       {
         "Name": "names",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Field names to retain. Unknown and duplicate names are ignored."
+        "Summary": "Field names to retain. Unknown and duplicate names are ignored.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1991,11 +2256,14 @@
     "Parameters": [
       {
         "Name": "names",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "Field names to remove. Unknown and duplicate names are ignored."
+        "Summary": "Field names to remove. Unknown and duplicate names are ignored.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -2026,11 +2294,14 @@
     "Parameters": [
       {
         "Name": "names",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": true,
-        "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields."
+        "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -2048,11 +2319,14 @@
     "Parameters": [
       {
         "Name": "names",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": true,
-        "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields."
+        "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -2070,13 +2344,16 @@
     "Parameters": [
       {
         "Name": "entries",
-        "Source": "incoming",
-        "Selection": "self",
         "Kind": "entry",
         "Optional": true,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value."
+        "Summary": "Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each entry is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2094,13 +2371,16 @@
     "Parameters": [
       {
         "Name": "assignments",
-        "Source": "incoming",
-        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more named assignments evaluated against the original input record."
+        "Summary": "One or more named assignments evaluated against the original input record.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2118,13 +2398,16 @@
     "Parameters": [
       {
         "Name": "assignments",
-        "Source": "incoming",
-        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more named assignments applied only to fields already present."
+        "Summary": "One or more named assignments applied only to fields already present.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Each assignment uses the record entering this call and is evaluated only if its target field is present."
+        }
       }
     ],
     "Examples": [
@@ -2142,13 +2425,16 @@
     "Parameters": [
       {
         "Name": "assignments",
-        "Source": "incoming",
-        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more named assignments applied only to fields that are absent."
+        "Summary": "One or more named assignments applied only to fields that are absent.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Each assignment uses the record entering this call and is evaluated only if its target field is absent."
+        }
       }
     ],
     "Examples": [
@@ -2166,19 +2452,25 @@
     "Parameters": [
       {
         "Name": "path",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
+        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       },
       {
         "Name": "value",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "The expression producing the assigned value from the original input record."
+        "Summary": "The expression producing the assigned value from the original input record.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2196,19 +2488,25 @@
     "Parameters": [
       {
         "Name": "path",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
+        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       },
       {
         "Name": "value",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "The expression producing the assigned value from the original input record."
+        "Summary": "The expression producing the assigned value from the original input record.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Evaluated against the original incoming record only if the target path is present."
+        }
       }
     ],
     "Examples": [
@@ -2226,19 +2524,25 @@
     "Parameters": [
       {
         "Name": "path",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments."
+        "Summary": "An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       },
       {
         "Name": "value",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "The expression producing the assigned value from the original input record."
+        "Summary": "The expression producing the assigned value from the original input record.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Evaluated against the original incoming record only if the target path is absent."
+        }
       }
     ],
     "Examples": [
@@ -2269,21 +2573,27 @@
     "Parameters": [
       {
         "Name": "projections",
-        "Source": "incoming",
-        "Selection": "self",
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more named projections evaluated independently against the input value."
+        "Summary": "One or more named projections evaluated independently against the input value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       },
       {
         "Name": "body",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
-        "Summary": "The final expression evaluated against the temporary projection record."
+        "Summary": "The final expression evaluated against the temporary projection record.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "custom",
+          "Summary": "Evaluated once against the temporary record produced by the named projections."
+        }
       }
     ],
     "Examples": [
@@ -2314,13 +2624,16 @@
     "Parameters": [
       {
         "Name": "expressions",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 2,
-        "Summary": "Two or more candidate expressions evaluated from left to right against the same input."
+        "Summary": "Two or more candidate expressions evaluated from left to right against the same input.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Candidates are evaluated against the same incoming value, from left to right, until one produces a non-null result. Later candidates are skipped."
+        }
       }
     ],
     "Examples": [
@@ -2340,13 +2653,16 @@
     "Parameters": [
       {
         "Name": "specifications",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "type | mapping",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more positional type descriptors or selector-to-type mappings."
+        "Summary": "One or more positional type descriptors or selector-to-type mappings.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Type descriptors and field or position mappings are resolved as coercion specifications, rather than evaluated as ordinary expressions."
+        }
       }
     ],
     "Behavior": "Tuple selector mappings use zero-based positions: `$0` selects the first position, `$1` selects the second, and unavailable positions are ignored.",
@@ -2517,23 +2833,29 @@
     "Parameters": [
       {
         "Name": "first",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the first zero-based position."
+        "Summary": "Specifies the first zero-based position.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "second",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the second zero-based position."
+        "Summary": "Specifies the second zero-based position.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -2553,13 +2875,16 @@
     "Parameters": [
       {
         "Name": "value",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the value to append; tuple values are expanded into their positions."
+        "Summary": "Specifies the value to append; tuple values are expanded into their positions.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2580,13 +2905,16 @@
     "Parameters": [
       {
         "Name": "positions",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more zero-based tuple positions."
+        "Summary": "One or more zero-based tuple positions.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -2604,13 +2932,16 @@
     "Parameters": [
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "pair",
         "Optional": true,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Zero or more pairs whose unique keys and values become dictionary entries."
+        "Summary": "Zero or more pairs whose unique keys and values become dictionary entries.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2629,13 +2960,16 @@
     "Parameters": [
       {
         "Name": "expressions",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more expressions evaluated against the input; multiple results form a tuple key."
+        "Summary": "One or more expressions evaluated against the input; multiple results form a tuple key.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2668,18 +3002,26 @@
     "Parameters": [
       {
         "Name": "expressions",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 1,
-        "Summary": "One or more expressions evaluated once per input value; multiple results form a tuple key."
+        "Summary": "One or more expressions evaluated once per input value; multiple results form a tuple key.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Each supplied expression is evaluated once per visited element, with that element as its context."
+        }
       }
     ],
     "Examples": [
       "{\"BE\", \"be\", \"FR\"} | group-by(lower) → #{(\"be\" => {\"BE\", \"be\"}), (\"fr\" => {\"FR\"})}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "drop-empty-groups",
@@ -2698,7 +3040,9 @@
   {
     "Name": "filter-groups",
     "IsPublic": true,
-    "Aliases": ["having"],
+    "Aliases": [
+      "having"
+    ],
     "Scope": "grouping",
     "Input": "grouping",
     "Output": "grouping",
@@ -2706,17 +3050,25 @@
     "Parameters": [
       {
         "Name": "predicate",
-        "Source": "incoming",
-        "Selection": "group",
         "Type": "predicate",
         "Optional": false,
-        "Summary": "The predicate evaluated once against each group, with its key and value collection available."
+        "Summary": "The predicate evaluated once against each group, with its key and value collection available.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited group, with its key and values available in the context."
+        }
       }
     ],
     "Examples": [
       "#{(\"BE\" => {1, 2}), (\"FR\" => {3})} | filter-groups($value | cardinality | greater-than(1)) → #{(\"BE\" => {1, 2})}",
       "#{(\"BE\" => {1}), (\"FR\" => {2})} | having($key | is-equivalent-to(\"FR\")) → #{(\"FR\" => {2})}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "group",
+      "Summary": "Visits each group, including its key and values, in the grouping entering this call."
+    }
   },
   {
     "Name": "grouping",
@@ -2729,13 +3081,16 @@
     "Parameters": [
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "pair",
         "Optional": true,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Zero or more pairs whose keys and grouped value collections become groups."
+        "Summary": "Zero or more pairs whose keys and grouped value collections become groups.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2755,17 +3110,25 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "incoming",
-        "Selection": "group-values",
         "Type": "expression",
         "Optional": false,
-        "Summary": "The expression evaluated once against each group's value collection."
+        "Summary": "The expression evaluated once against each group's value collection.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per group against that group's entire value collection."
+        }
       }
     ],
     "Examples": [
       "#{(\"BE\" => {10, 20, 30}), (\"FR\" => {5, 15})} | map-groups(filter(greater-than(10))) → #{(\"BE\" => {20, 30}), (\"FR\" => {15})}",
       "#{(\"BE\" => {10}), (\"FR\" => {20})} |#> filter(greater-than(15)) → #{(\"BE\" => {}), (\"FR\" => {20})}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "group-values",
+      "Summary": "Visits each group in the incoming grouping and supplies its entire value collection to the expression."
+    }
   },
   {
     "Name": "summarize",
@@ -2778,17 +3141,25 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "incoming",
-        "Selection": "group-values",
         "Type": "expression",
         "Optional": false,
-        "Summary": "The expression evaluated against each group's value collection."
+        "Summary": "The expression evaluated against each group's value collection.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per group against that group's entire value collection."
+        }
       }
     ],
     "Examples": [
       "#{(\"BE\" => {10, 20, 30}), (\"FR\" => {5, 15})} | summarize(sum) → !{(\"BE\" => 60), (\"FR\" => 20)}",
       "#{} | summarize(cardinality) → !{}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "group-values",
+      "Summary": "Visits each group in the incoming grouping and supplies its entire value collection to the expression."
+    }
   },
   {
     "Name": "pair",
@@ -2801,19 +3172,25 @@
     "Parameters": [
       {
         "Name": "key",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "The expression whose evaluated result becomes the key."
+        "Summary": "The expression whose evaluated result becomes the key.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       },
       {
         "Name": "value",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "The expression whose evaluated result becomes the value."
+        "Summary": "The expression whose evaluated result becomes the value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2830,7 +3207,9 @@
     "Output": "any",
     "Summary": "Returns the key component of the input pair.",
     "Parameters": [],
-    "Examples": ["(\"BE\" => 42) | pair-key → \"BE\""]
+    "Examples": [
+      "(\"BE\" => 42) | pair-key → \"BE\""
+    ]
   },
   {
     "Name": "pair-value",
@@ -2841,7 +3220,9 @@
     "Output": "any",
     "Summary": "Returns the value component of the input pair.",
     "Parameters": [],
-    "Examples": ["(\"BE\" => 42) | pair-value → 42"]
+    "Examples": [
+      "(\"BE\" => 42) | pair-value → 42"
+    ]
   },
   {
     "Name": "tuple",
@@ -2856,13 +3237,16 @@
     "Parameters": [
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": true,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Zero or more expressions whose evaluated values become the positions of the resulting tuple."
+        "Summary": "Zero or more expressions whose evaluated values become the positions of the resulting tuple.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -2884,13 +3268,16 @@
     "Parameters": [
       {
         "Name": "position",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the zero-based position of the tuple field to return."
+        "Summary": "Specifies the zero-based position of the tuple field to return.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -2969,19 +3356,25 @@
     "Parameters": [
       {
         "Name": "time",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "time",
         "Optional": false,
-        "Summary": "The value to be subtracted to the argument value."
+        "Summary": "The value to be subtracted to the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "times",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3108,19 +3501,25 @@
     "Parameters": [
       {
         "Name": "min",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "value returned in case the argument value is before than it"
+        "Summary": "value returned in case the argument value is before than it",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned."
+        }
       },
       {
         "Name": "max",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "value returned in case the argument value is after than it"
+        "Summary": "value returned in case the argument value is after than it",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned."
+        }
       }
     ],
     "Examples": [
@@ -3138,11 +3537,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "time",
         "Optional": false,
-        "Summary": "The time from which to measure the shortest distance around the clock."
+        "Summary": "The time from which to measure the shortest distance around the clock.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3206,11 +3608,14 @@
     "Parameters": [
       {
         "Name": "previous",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date | date-time | year-month",
         "Optional": false,
-        "Summary": "The previous temporal value to subtract from the current input."
+        "Summary": "The previous temporal value to subtract from the current input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3261,19 +3666,25 @@
     "Parameters": [
       {
         "Name": "time",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "time",
         "Optional": false,
-        "Summary": "The value to be added to the argument value"
+        "Summary": "The value to be added to the argument value",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "times",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": true,
-        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition"
+        "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3519,11 +3930,14 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "The count of business days to move forward."
+        "Summary": "The count of business days to move forward.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3573,11 +3987,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3597,11 +4014,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3638,11 +4058,14 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "The count of business days to move forward."
+        "Summary": "The count of business days to move forward.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3692,11 +4115,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3716,11 +4142,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3800,11 +4229,14 @@
     "Parameters": [
       {
         "Name": "instant",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument"
+        "Summary": "The time value to set as hours, minutes, seconds of the dateTime argument",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3908,11 +4340,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -3962,11 +4397,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4059,11 +4497,14 @@
     "Parameters": [
       {
         "Name": "default",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is not a valid dateTime."
+        "Summary": "The dateTime to be returned if the argument is not a valid dateTime.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context only when the fallback value is needed."
+        }
       }
     ],
     "Examples": [
@@ -4081,11 +4522,14 @@
     "Parameters": [
       {
         "Name": "default",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "The dateTime to be returned if the argument is `null`."
+        "Summary": "The dateTime to be returned if the argument is `null`.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context only when the fallback value is needed."
+        }
       }
     ],
     "Examples": [
@@ -4105,19 +4549,25 @@
     "Parameters": [
       {
         "Name": "substring",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The string to seek."
+        "Summary": "The string to seek.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": true,
-        "Summary": "The number of character positions to examine."
+        "Summary": "The number of character positions to examine.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context during the search; the count can be read again after each match."
+        }
       }
     ],
     "Examples": [
@@ -4157,11 +4607,14 @@
     "Parameters": [
       {
         "Name": "text",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The text to append"
+        "Summary": "The text to append",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4219,19 +4672,25 @@
     "Parameters": [
       {
         "Name": "substring",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The string to seek."
+        "Summary": "The string to seek.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": true,
-        "Summary": "The number of character positions to examine."
+        "Summary": "The number of character positions to examine.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context during the search; the count can be read again after each match."
+        }
       }
     ],
     "Examples": [
@@ -4338,11 +4797,14 @@
     "Parameters": [
       {
         "Name": "substring",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The substring to count in the argument value."
+        "Summary": "The substring to count in the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4390,11 +4852,14 @@
     "Parameters": [
       {
         "Name": "filter",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array | text",
         "Optional": false,
-        "Summary": "The chars to filter from the argument string."
+        "Summary": "The chars to filter from the argument string.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4412,11 +4877,14 @@
     "Parameters": [
       {
         "Name": "pattern",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The .NET regular expression identifying matches. Matching is case-sensitive unless inline options specify otherwise."
+        "Summary": "The .NET regular expression identifying matches. Matching is case-sensitive unless inline options specify otherwise.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "Returns whole matches without adding capture groups. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.",
@@ -4437,11 +4905,14 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+        }
       }
     ],
     "Examples": [
@@ -4531,11 +5002,14 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return."
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+        }
       }
     ],
     "Examples": [
@@ -4584,11 +5058,14 @@
     "Parameters": [
       {
         "Name": "mask",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The string representing the mask to be unset from the argument string."
+        "Summary": "The string representing the mask to be unset from the argument string.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4636,19 +5113,25 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
+        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "character",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The padding character"
+        "Summary": "The padding character",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context only when padding is needed."
+        }
       }
     ],
     "Examples": [
@@ -4668,19 +5151,25 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
+        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the text length, then evaluated again when padding is needed."
+        }
       },
       {
         "Name": "character",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The padding character"
+        "Summary": "The padding character",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context only when padding is needed."
+        }
       }
     ],
     "Examples": [
@@ -4700,19 +5189,25 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned"
+        "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the text length, then evaluated again when padding is needed."
+        }
       },
       {
         "Name": "character",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The padding character"
+        "Summary": "The padding character",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context only when padding is needed."
+        }
       }
     ],
     "Examples": [
@@ -4777,11 +5272,14 @@
     "Parameters": [
       {
         "Name": "prefix",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The text to append"
+        "Summary": "The text to append",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4867,11 +5365,14 @@
     "Parameters": [
       {
         "Name": "text",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The text to prepend"
+        "Summary": "The text to prepend",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -4944,11 +5445,14 @@
     "Parameters": [
       {
         "Name": "charToRemove",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The char to be removed from the argument string."
+        "Summary": "The char to be removed from the argument string.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for each character tested; whitespace input has a separate check."
+        }
       }
     ],
     "Examples": [
@@ -4968,19 +5472,25 @@
     "Parameters": [
       {
         "Name": "charToReplace",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The char to be replaced from the argument string."
+        "Summary": "The char to be replaced from the argument string.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "charReplacing",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The replacing char from the argument string."
+        "Summary": "The replacing char from the argument string.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5000,27 +5510,36 @@
     "Parameters": [
       {
         "Name": "start",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "The position to start to replace"
+        "Summary": "The position to start to replace",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "The length to replace"
+        "Summary": "The length to replace",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "append",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The text to append when the slice has been removed"
+        "Summary": "The text to append when the slice has been removed",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5180,11 +5699,14 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+        }
       }
     ],
     "Examples": [
@@ -5204,11 +5726,14 @@
     "Parameters": [
       {
         "Name": "length",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip."
+        "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+        }
       }
     ],
     "Examples": [
@@ -5243,11 +5768,14 @@
     "Parameters": [
       {
         "Name": "suffix",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The text to append"
+        "Summary": "The text to append",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5342,13 +5870,16 @@
     "Parameters": [
       {
         "Name": "values",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "expression",
         "Optional": true,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place."
+        "Summary": "Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Each supplied expression is evaluated once against the value entering this call."
+        }
       }
     ],
     "Examples": [
@@ -5396,11 +5927,14 @@
     "Parameters": [
       {
         "Name": "mask",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The string representing the mask to apply to the argument string."
+        "Summary": "The string representing the mask to apply to the argument string.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5462,19 +5996,25 @@
     "Parameters": [
       {
         "Name": "index",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned."
+        "Summary": "An integer value between 0 and +Infinity, defining the position of the token to be returned.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "separator",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": true,
-        "Summary": "A character that delimits the substrings in this instance."
+        "Summary": "A character that delimits the substrings in this instance.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5495,11 +6035,14 @@
     "Parameters": [
       {
         "Name": "separator",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A character that delimits the substrings in this instance."
+        "Summary": "A character that delimits the substrings in this instance.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5534,11 +6077,14 @@
     "Parameters": [
       {
         "Name": "separator",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": true,
-        "Summary": "A character that delimits the tokens in the argument value."
+        "Summary": "A character that delimits the tokens in the argument value.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5630,11 +6176,14 @@
     "Parameters": [
       {
         "Name": "pattern",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "The .NET regular expression identifying delimiters. Matching is case-sensitive unless inline options specify otherwise."
+        "Summary": "The .NET regular expression identifying delimiters. Matching is case-sensitive unless inline options specify otherwise.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Behavior": "Zero-width delimiters split at each match position with forward progress. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.",
@@ -5742,19 +6291,25 @@
     "Parameters": [
       {
         "Name": "format",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string representing the required format."
+        "Summary": "A string representing the required format.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "culture",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": true,
-        "Summary": "A string representing a pre-defined culture."
+        "Summary": "A string representing a pre-defined culture.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context to check whether a culture was supplied, then evaluated again when a nonempty culture is used."
+        }
       }
     ],
     "Examples": [
@@ -5896,33 +6451,42 @@
     "Parameters": [
       {
         "Name": "while",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the predicate that determines whether the current seed is included."
+        "Summary": "Specifies the predicate that determines whether the current seed is included.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated against the current seed before each iteration. A false result ends generation."
+        }
       },
       {
         "Name": "next",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the expression that produces the next seed."
+        "Summary": "Specifies the expression that produces the next seed.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated against the current seed after an accepted iteration to produce the next seed."
+        }
       },
       {
         "Name": "result",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "expression",
         "Optional": true,
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the expression that produces the value appended for the current seed."
+        "Summary": "Specifies the expression that produces the value appended for the current seed.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated against each accepted seed to produce its output value."
+        }
       }
     ],
     "Examples": [
@@ -5930,7 +6494,12 @@
       "#\"2026-09-01\" | generate(while := before(#\"2026-09-06\"), next := next-day, result := coerce-date) → {#\"2026-09-01\", #\"2026-09-02\", #\"2026-09-03\", #\"2026-09-04\", #\"2026-09-05\"}",
       "#\"2026-09-01\" | generate(while := before(#\"2026-09-01T01:00:00\"), next := forward(#\"00:15:00\"), result := coerce-time) → {#\"00:00:00\", #\"00:15:00\", #\"00:30:00\", #\"00:45:00\"}",
       "#\"2026-09-01\" | generate(while := before(#\"2026-09-06\"), next := next-day, result := record(date := coerce-date, day := day-of-month, weekday := day-of-week)) → {{date := #\"2026-09-01\", day := 1, weekday := 2}, {date := #\"2026-09-02\", day := 2, weekday := 3}, {date := #\"2026-09-03\", day := 3, weekday := 4}, {date := #\"2026-09-04\", day := 4, weekday := 5}, {date := #\"2026-09-05\", day := 5, weekday := 6}}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration."
+    }
   },
   {
     "Name": "distance",
@@ -5943,13 +6512,16 @@
     "Parameters": [
       {
         "Name": "vector",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "vector",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the vector whose distance from the input vector is calculated."
+        "Summary": "Specifies the vector whose distance from the input vector is calculated.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -5967,13 +6539,16 @@
     "Parameters": [
       {
         "Name": "vector",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "vector",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the vector whose components are multiplied with the input components."
+        "Summary": "Specifies the vector whose components are multiplied with the input components.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -6017,18 +6592,26 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
+        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
+        }
       }
     ],
     "Behavior": "The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.",
     "Examples": [
       "{ -8, -3, 3 } | min-by(absolute) → -3",
       "{{bar := 10}, {bar := 30}} | min-by(.bar) → {bar := 10}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "max-by",
@@ -6041,18 +6624,26 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
+        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
+        }
       }
     ],
     "Behavior": "The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.",
     "Examples": [
       "{ -8, -3, 3 } | max-by(absolute) → -8",
       "{{bar := 10}, {bar := 30}} | max-by(.bar) → {bar := 30}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   },
   {
     "Name": "closest-by",
@@ -6065,24 +6656,35 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "incoming",
-        "Selection": "array-element",
         "Type": "expression",
         "Optional": false,
-        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion."
+        "Summary": "Expression evaluated once for each source element to obtain its comparison criterion.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element, with that element as its context."
+        }
       },
       {
         "Name": "target",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "Numeric value against which criterion distances are compared."
+        "Summary": "Numeric value against which criterion distances are compared.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context. The resulting target is reused for all array elements."
+        }
       }
     ],
     "Behavior": "The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.",
     "Examples": [
       "{{bar := 10}, {bar := 30}} | closest-by(.bar, 32) → {bar := 30}"
-    ]
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this call."
+    }
   }
 ]

@@ -31,9 +31,9 @@ Returns segments separated by regular expression matches in source order. Preser
 |:-----|:-----|:---------|:------------|
 | `pattern` | `text` | Yes | The .NET regular expression identifying delimiters. Matching is case-sensitive unless inline options specify otherwise. |
 
+## Argument evaluation
 
-
-
+- **`pattern`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

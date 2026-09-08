@@ -31,9 +31,9 @@ Returns complete non-overlapping regular expression matches in source order, inc
 |:-----|:-----|:---------|:------------|
 | `pattern` | `text` | Yes | The .NET regular expression identifying matches. Matching is case-sensitive unless inline options specify otherwise. |
 
+## Argument evaluation
 
-
-
+- **`pattern`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

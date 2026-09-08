@@ -56,13 +56,16 @@
     "Parameters": [
       {
         "Name": "target",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the reference value used to measure numeric or temporal distance."
+        "Summary": "Specifies the reference value used to measure numeric or temporal distance.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once before accumulation, using the incoming collection as its context. The result is reused for every comparison."
+        }
       }
     ],
     "Examples": [
@@ -137,14 +140,17 @@
     "Parameters": [
       {
         "Name": "separator",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": true,
         "Default": "",
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the text inserted between consecutive accumulated values."
+        "Summary": "Specifies the text inserted between consecutive accumulated values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context before accumulation. The result is reused between accumulated values."
+        }
       }
     ],
     "Examples": [
@@ -191,29 +197,40 @@
     "Parameters": [
       {
         "Name": "operation",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "expression",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the expression evaluated against each accumulated-value/current-element tuple."
+        "Summary": "Specifies the expression evaluated against each accumulated-value/current-element tuple.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated against a constructed tuple containing the accumulated result and the current array element."
+        }
       },
       {
         "Name": "initial",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "any",
         "Optional": true,
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the initial accumulated value and the result returned for an empty array."
+        "Summary": "Specifies the initial accumulated value and the result returned for an empty array.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once before accumulation, using the incoming collection as its context."
+        }
       }
     ],
     "Examples": [
       "{1, 2, 3, 4} | reduce(add($0, $1)) → 10",
       "{1, 2, 3} | reduce(add($0, $1), 10) → 16"
-    ]
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Combines each next array element with the accumulated result, in source order."
+    }
   },
   {
     "Name": "sum",

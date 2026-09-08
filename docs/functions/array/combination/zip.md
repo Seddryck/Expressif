@@ -31,10 +31,9 @@ Combines corresponding values from the input array and a second array into two-e
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the second array whose values form the second element of each tuple. |
 
+## Argument evaluation
 
-
-
-
+- **`array`:** Evaluated once in the enclosing context.
 
 ## Examples
 

@@ -29,10 +29,9 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 |:-----|:-----|:---------|:------------|
 | `instant` | `text` | Yes | The time value to set as hours, minutes, seconds of the dateTime argument |
 
+## Argument evaluation
 
-
-
-
+- **`instant`:** Evaluated once in the enclosing context.
 
 ## Examples
 

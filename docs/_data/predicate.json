@@ -25,13 +25,16 @@
     "Parameters": [
       {
         "Name": "expected",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the required non-negative tuple arity."
+        "Summary": "Specifies the required non-negative tuple arity.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -51,11 +54,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `true`."
+        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `true`.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -73,11 +79,14 @@
     "Parameters": [
       {
         "Name": "name",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "Name of the field whose presence is tested."
+        "Summary": "Name of the field whose presence is tested.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -95,11 +104,14 @@
     "Parameters": [
       {
         "Name": "name",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "Name of the field whose absence is tested."
+        "Summary": "Name of the field whose absence is tested.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -152,11 +164,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
-        "Summary": "A boolean value to compare to the argument."
+        "Summary": "A boolean value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -219,11 +234,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
-        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `true`."
+        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `true`.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -241,13 +259,16 @@
     "Parameters": [
       {
         "Name": "predicates",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known."
+        }
       }
     ],
     "Examples": [
@@ -265,21 +286,27 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Specifies the exact non-negative number of predicates that must be satisfied."
+        "Summary": "Specifies the exact non-negative number of predicates that must be satisfied.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the incoming value to determine the required predicate count."
+        }
       },
       {
         "Name": "predicates",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known."
+        }
       }
     ],
     "Examples": [
@@ -297,21 +324,27 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Specifies the minimum non-negative number of predicates that must be satisfied."
+        "Summary": "Specifies the minimum non-negative number of predicates that must be satisfied.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the incoming value to determine the required predicate count."
+        }
       },
       {
         "Name": "predicates",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known."
+        }
       }
     ],
     "Examples": [
@@ -329,21 +362,27 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Specifies the maximum non-negative number of predicates that may be satisfied."
+        "Summary": "Specifies the maximum non-negative number of predicates that may be satisfied.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the incoming value to determine the required predicate count."
+        }
       },
       {
         "Name": "predicates",
-        "Source": "incoming",
-        "Selection": "self",
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order."
+        "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known."
+        }
       }
     ],
     "Examples": [
@@ -361,11 +400,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
-        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `true`."
+        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `true`.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -383,11 +425,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `false`."
+        "Summary": "Specifies the secondary predicate expression evaluated when the converted input is `false`.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated only when the incoming value converts to false. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -405,11 +450,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
-        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `false`."
+        "Summary": "Specifies the secondary Boolean expression evaluated when the input is `false`.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated only when the incoming value converts to false. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -427,11 +475,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "Specifies the secondary predicate expression evaluated after the input."
+        "Summary": "Specifies the secondary predicate expression evaluated after the input.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated after converting the incoming value. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -449,11 +500,14 @@
     "Parameters": [
       {
         "Name": "expression",
-        "Source": "custom",
-        "Selection": "self",
         "Type": "boolean",
         "Optional": false,
-        "Summary": "Specifies the secondary Boolean expression evaluated after the input."
+        "Summary": "Specifies the secondary Boolean expression evaluated after the input.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated after converting the incoming value. References use their enclosing context; open predicate expressions use the current evaluation value."
+        }
       }
     ],
     "Examples": [
@@ -489,11 +543,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "A numeric value to compare to the argument."
+        "Summary": "A numeric value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -514,11 +571,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "A numeric value to compare to the argument."
+        "Summary": "A numeric value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -539,11 +599,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "A numeric value to compare to the argument."
+        "Summary": "A numeric value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -583,11 +646,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "A numeric value to compare to the argument."
+        "Summary": "A numeric value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -608,11 +674,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "A numeric value to compare to the argument."
+        "Summary": "A numeric value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -681,11 +750,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "A numeric value to compare to the argument."
+        "Summary": "A numeric value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -738,11 +810,14 @@
     "Parameters": [
       {
         "Name": "interval",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "A numeric interval to compare to the argument."
+        "Summary": "A numeric interval to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -795,19 +870,25 @@
     "Parameters": [
       {
         "Name": "modulus",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "An integer value used as the modulus."
+        "Summary": "An integer value used as the modulus.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       },
       {
         "Name": "remainder",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "An integer value defined as the expected reminder."
+        "Summary": "An integer value defined as the expected reminder.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -828,11 +909,14 @@
     "Parameters": [
       {
         "Name": "divisor",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "numeric",
         "Optional": false,
-        "Summary": "An integer value used as the divisor."
+        "Summary": "An integer value used as the divisor.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -895,13 +979,16 @@
     "Parameters": [
       {
         "Name": "type",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "type",
         "Optional": false,
         "Variadic": false,
         "MinimumCardinality": 1,
-        "Summary": "Specifies the Expressif type descriptor to test."
+        "Summary": "Specifies the Expressif type descriptor to test.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -925,11 +1012,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "A temporal value to compare to the argument."
+        "Summary": "A temporal value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -950,11 +1040,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "A temporal value to compare to the argument."
+        "Summary": "A temporal value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -975,11 +1068,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "A temporal value to compare to the argument"
+        "Summary": "A temporal value to compare to the argument",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1000,11 +1096,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "A temporal value to compare to the argument."
+        "Summary": "A temporal value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1041,11 +1140,14 @@
     "Parameters": [
       {
         "Name": "interval",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "any",
         "Optional": false,
-        "Summary": "A temporal interval to compare to the argument."
+        "Summary": "A temporal interval to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1226,11 +1328,14 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "date-time",
         "Optional": false,
-        "Summary": "A temporal value to compare to the argument."
+        "Summary": "A temporal value to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1283,11 +1388,14 @@
     "Parameters": [
       {
         "Name": "weekday",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "weekday",
         "Optional": false,
-        "Summary": "The day of week to compare to the argument."
+        "Summary": "The day of week to compare to the argument.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1420,11 +1528,14 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false."
+        "Summary": "Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context only when the date passes the lower-bound check."
+        }
       }
     ],
     "Examples": [
@@ -1445,11 +1556,14 @@
     "Parameters": [
       {
         "Name": "count",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "integer",
         "Optional": false,
-        "Summary": "Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false."
+        "Summary": "Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context."
+        }
       }
     ],
     "Examples": [
@@ -1533,19 +1647,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1566,19 +1686,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value.."
+        "Summary": "A string to be compared to the argument value..",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1600,19 +1726,25 @@
     "Parameters": [
       {
         "Name": "references",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "array",
         "Optional": false,
-        "Summary": "An array of text values."
+        "Summary": "An array of text values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "The reference collection is evaluated once in the enclosing context, then its values are compared until a match is found."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": ""
+        "Summary": "",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1666,19 +1798,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)..",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1716,19 +1854,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1750,19 +1894,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1784,19 +1934,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1818,19 +1974,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1912,19 +2074,25 @@
     "Parameters": [
       {
         "Name": "regex",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value."
+        "Summary": "A string to be compared to the argument value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [
@@ -1960,19 +2128,25 @@
     "Parameters": [
       {
         "Name": "reference",
-        "Source": "enclosing",
-        "Selection": "self",
         "Type": "text",
         "Optional": false,
-        "Summary": "A string to be compared to the argument value.."
+        "Summary": "A string to be compared to the argument value..",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated in the enclosing context for special-value checks and for the comparison; the reference can be read more than once."
+        }
       },
       {
         "Name": "comparer",
-        "Source": "custom",
-        "Selection": "custom",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)."
+        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value."
+        }
       }
     ],
     "Examples": [

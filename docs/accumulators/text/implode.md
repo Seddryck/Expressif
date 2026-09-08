@@ -31,9 +31,9 @@ Combines accumulated text values in source order, inserting the separator only b
 |:-----|:-----|:---------|:------------|
 | `separator` | `text` | No | Specifies the text inserted between consecutive accumulated values. |
 
+## Argument evaluation
 
-
-
+- **`separator`:** Evaluated once in the enclosing context before accumulation. The result is reused between accumulated values.
 
 ## Behavior
 

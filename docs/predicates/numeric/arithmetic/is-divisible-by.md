@@ -28,10 +28,9 @@ Returns `true` if the numeric value passed as argument is evenly divisible by th
 |:-----|:-----|:---------|:------------|
 | `divisor` | `numeric` | Yes | An integer value used as the divisor. |
 
+## Argument evaluation
 
-
-
-
+- **`divisor`:** Evaluated once in the enclosing context.
 
 ## Examples
 

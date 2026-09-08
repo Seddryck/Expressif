@@ -28,9 +28,9 @@ Returns true if the date passed as argument is between tomorrow and the count of
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false. |
 
+## Argument evaluation
 
-
-
+- **`count`:** Evaluated once in the enclosing context only when the date passes the lower-bound check.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

@@ -31,10 +31,10 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 | `min` | `date-time` | Yes | value returned in case the argument value is before than it |
 | `max` | `date-time` | Yes | value returned in case the argument value is after than it |
 
+## Argument evaluation
 
-
-
-
+- **`min`:** Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned.
+- **`max`:** Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned.
 
 ## Examples
 

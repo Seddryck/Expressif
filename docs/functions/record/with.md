@@ -33,10 +33,10 @@ Evaluates named projections independently against the input, then evaluates a bo
 | `projections` | `entry` | Variadic (one or more) | One or more named projections evaluated independently against the input value. |
 | `body` | `expression` | Yes | The final expression evaluated against the temporary projection record. |
 
+## Argument evaluation
 
-
-
-
+- **`projections`:** Each supplied expression is evaluated once against the value entering this call.
+- **`body`:** Evaluated once against the temporary record produced by the named projections.
 
 ## Examples
 

@@ -31,9 +31,9 @@ Omits the requested number of elements from the end of the input enumerable and 
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Number of elements to omit from the end of the input. |
 
+## Argument evaluation
 
-
-
+- **`count`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

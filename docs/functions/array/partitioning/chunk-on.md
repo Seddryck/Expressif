@@ -29,9 +29,9 @@ Splits an array on a zero-based boundary and returns the elements before and fro
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | The zero-based boundary position; the element at this position belongs to the right chunk. |
 
+## Argument evaluation
 
-
-
+- **`position`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

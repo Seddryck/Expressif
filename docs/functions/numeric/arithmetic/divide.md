@@ -29,9 +29,9 @@ Returns the argument number divided by the parameter value. If the parameter val
 |:-----|:-----|:---------|:------------|
 | `value` | `numeric` | Yes | The value to divide the argument value. |
 
+## Argument evaluation
 
-
-
+- **`value`:** Evaluated in the enclosing context to check for zero, then evaluated again for division when the first result is nonzero.
 
 ## Examples
 

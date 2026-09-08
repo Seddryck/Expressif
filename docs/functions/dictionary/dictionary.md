@@ -29,10 +29,9 @@ Constructs a dictionary from zero or more pairs. Spread arguments expand arrays 
 |:-----|:-----|:---------|:------------|
 | `values` | `pair` | Variadic (zero or more) | Zero or more pairs whose unique keys and values become dictionary entries. |
 
+## Argument evaluation
 
-
-
-
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 

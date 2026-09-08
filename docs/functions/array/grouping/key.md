@@ -29,10 +29,9 @@ Associates the input value with a key calculated by one or more expressions.
 |:-----|:-----|:---------|:------------|
 | `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated against the input; multiple results form a tuple key. |
 
+## Argument evaluation
 
-
-
-
+- **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 

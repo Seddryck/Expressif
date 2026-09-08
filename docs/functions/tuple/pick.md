@@ -29,10 +29,9 @@ Returns a tuple containing selected positions in the requested order.
 |:-----|:-----|:---------|:------------|
 | `positions` | `integer` | Variadic (one or more) | One or more zero-based tuple positions. |
 
+## Argument evaluation
 
-
-
-
+- **`positions`:** Evaluated once in the enclosing context.
 
 ## Examples
 

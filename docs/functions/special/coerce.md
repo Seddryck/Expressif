@@ -29,9 +29,9 @@ Coerces a scalar value or selected tuple and record values to requested Expressi
 |:-----|:-----|:---------|:------------|
 | `specifications` | `type | mapping` | Variadic (one or more) | One or more positional type descriptors or selector-to-type mappings. |
 
+## Argument evaluation
 
-
-
+- **`specifications`:** Type descriptors and field or position mappings are resolved as coercion specifications, rather than evaluated as ordinary expressions.
 
 ## Behavior
 

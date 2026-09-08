@@ -29,9 +29,9 @@ Separates the element at a zero-based position from the elements before and afte
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | The zero-based position of the element to separate. |
 
+## Argument evaluation
 
-
-
+- **`position`:** Evaluated once in the enclosing context.
 
 ## Behavior
 

@@ -29,9 +29,9 @@ Returns the argument value followed by the parameter value. If the argument is `
 |:-----|:-----|:---------|:------------|
 | `suffix` | `text` | Yes | The text to append |
 
+## Argument evaluation
 
-
-
+- **`suffix`:** Evaluated once in the enclosing context.
 
 ## Examples
 

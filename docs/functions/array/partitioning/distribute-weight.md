@@ -29,9 +29,11 @@ Distributes array values into two groups whose aggregate evaluated weights are a
 |:-----|:-----|:---------|:------------|
 | `weight` | `expression` | Yes | Specifies the expression that produces a finite, non-negative numeric weight for each input value. |
 
+## Argument evaluation
 
+Visits each element of the array entering this call.
 
-
+- **`weight`:** Evaluated once per visited element, with that element as its context.
 
 ## Behavior
 

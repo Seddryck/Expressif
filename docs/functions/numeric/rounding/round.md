@@ -29,9 +29,9 @@ Returns the value of an argument number to the specified number of fractional di
 |:-----|:-----|:---------|:------------|
 | `digits` | `integer` | Yes | An integer between 0 and +Infinity, indicating the number of fractional digits in the return value. |
 
+## Argument evaluation
 
-
-
+- **`digits`:** Evaluated once in the enclosing context.
 
 ## Examples
 

@@ -31,10 +31,9 @@ Returns `true` when strictly more than half of the supplied predicates are satis
 |:-----|:-----|:---------|:------------|
 | `predicates` | `predicate` | Variadic (zero or more) | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
 
+## Argument evaluation
 
-
-
-
+- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
 
 ## Examples
 

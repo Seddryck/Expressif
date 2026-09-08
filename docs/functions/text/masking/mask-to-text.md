@@ -29,9 +29,9 @@ Returns the value that passed to the function TextToMask will return the argumen
 |:-----|:-----|:---------|:------------|
 | `mask` | `text` | Yes | The string representing the mask to be unset from the argument string. |
 
+## Argument evaluation
 
-
-
+- **`mask`:** Evaluated once in the enclosing context.
 
 ## Examples
 

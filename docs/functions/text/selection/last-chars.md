@@ -31,10 +31,9 @@ Returns the last chars of the argument value. The length of the string returned 
 |:-----|:-----|:---------|:------------|
 | `length` | `integer` | Yes | An integer value between 0 and +Infinity, defining the length of the substring to return. |
 
+## Argument evaluation
 
-
-
-
+- **`length`:** Evaluated in the enclosing context to check the text length and read again when calculating the returned slice.
 
 ## Examples
 

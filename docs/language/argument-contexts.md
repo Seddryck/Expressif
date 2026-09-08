@@ -98,20 +98,26 @@ The filter uses the array arriving at **this call**, including changes made earl
 
 `put` also has an argument context: its assignment expressions use the complete record entering that `put` call. In this example the assignment is a literal array, so it does not need to read any fields from that record.
 
-## Read the source and selection together
+## Separate traversal from argument evaluation
 
-The parameter documentation names both a **source** and a **selection**. The source identifies the value to start from. The selection identifies which part supplies the argument's context.
+The function decides what it visits. The parameter describes when its expression runs and which context it uses.
 
-| Parameter | Source | Selection | Meaning |
-|:--|:--|:--|:--|
-| `multiply.value` | `enclosing` | `self` | Read from the enclosing context as a whole. |
-| `put.assignments` | `incoming` | `self` | Evaluate assignments against the record entering `put`. |
-| `filter.predicate` | `incoming` | `array-element` | Evaluate the predicate against each element of the array entering `filter`. |
-| `map.transformation` | `incoming` | `array-element` | Evaluate the transformation against each element of the array entering `map`. |
+For `filter`, the function visits each element of its incoming array. Its predicate is evaluated once for each visited element, with that element as its context. For `multiply`, the value argument is evaluated once in the enclosing context; there is no element selection to describe for that argument.
 
-`self` does not mean “the original document,” and `array-element` does not mean “an element of any surrounding array.” Both are relative to the named source at that particular call.
+| Parameter | How its expression is evaluated |
+|:--|:--|
+| `multiply.value` | Once in the enclosing context. |
+| `put.assignments` | Each assignment once against the record entering `put`. |
+| `filter.predicate` | Once for each element visited by `filter`, using that element as its context. |
+| `map.transformation` | Once for each element visited by `map`, using that element as its context. |
 
-Other selections are `group` for a whole group, `group-values` for a group's entire value collection, and `leaf` for each recursively reached leaf. `custom` marks a context that needs an operator-specific explanation, such as the accumulated value and current element supplied together by `reduce`.
+An array element always comes from the array entering that particular call. Other traversals visit whole groups, a group's entire value collection, or recursive leaves. These selections belong to the function's traversal, not to arguments evaluated once.
+
+The two kinds of evaluation can occur in the same call. `closest-by(.price, 25)` evaluates `.price` for each incoming array element but evaluates its target once and reuses it throughout the search. The literal `25` does not need to read any context.
+
+Context and frequency are separate facts. An argument that uses the enclosing context is not automatically evaluated once. For example, `divide` evaluates its value argument to check for zero and evaluates it again for division when the first result is nonzero. Read the function's evaluation description for conditional or repeated work.
+
+The catalog keeps these facts structured: `Traversal` identifies a function's source and selection; each parameter's `Evaluation` describes its frequency and context. A once-evaluated argument needs a source, without an extra `self` or `whole` selection. Each declaration also has a `Summary` containing the natural sentence shown in the reference. `custom` marks rules that need a specific explanation, such as the accumulated result and current element supplied together by `reduce`.
 
 ## Enclosing can mean one array element
 
@@ -187,7 +193,7 @@ To calculate using the updated record as the context, start a nested expression 
 ```
 {% endraw %}
 
-Now the result is **`40`**. The expression parameter of `apply` uses `incoming` with selection `self`: the updated record becomes the context of the nested expression. Inside it, `.quantity` reads `4`.
+Now the result is **`40`**. The expression parameter of `apply` is evaluated once against the incoming value: the updated record becomes the context of the nested expression. Inside it, `.quantity` reads `4`.
 
 | Calculation | Incoming value for `multiply` | Enclosing quantity | Result |
 |:--|:--|:--|:--|
