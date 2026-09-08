@@ -55,7 +55,7 @@ The answers can be the same, but they do not have to be. In the diagrams below, 
 
 ## Multiplication: the price arrives, the quantity comes from the record
 
-In the first example, `.price` is a pipeline step. The record arriving at that step is also the enclosing record. `.price` reads its price and produces `10`. That number is the incoming value for `multiply`, while the enclosing context remains the record.
+In the first example, `.price` reads `10` from the record. That number is passed to `multiply`.
 
 The argument `.quantity` is evaluated using the enclosing record, where it reads `3`. `multiply` combines those two numbers and returns `30`.
 
@@ -68,14 +68,7 @@ flowchart TD
     M --> O["result: 30"]
 ```
 
-Both field references read the same record here, but they reach it through different rules:
-
-| Position | How its context is chosen | Value in this example |
-|:--|:--|:--|
-| `.price` as a pipeline step | Use the value arriving at this step. | The original record, which is also the enclosing record. |
-| `.quantity` as the argument of `multiply` | Use the enclosing context of `multiply`. | The same original record. |
-
-Incoming and enclosing describe roles, not necessarily different values. At `.price`, both roles refer to the record. At `multiply`, the incoming value is `10` and the enclosing context is still the record. Reading `.quantity` therefore does not require the number `10` to have a quantity field.
+Focus on the `multiply` call: it receives **`10` as its incoming value** and reads its argument from **the enclosing record**. Both field references read the original record in this example. To see them read different records, we will [change a field before reading it](#updating-the-incoming-value-does-not-replace-the-enclosing-context).
 
 ## Filtering: each line becomes the predicate's context
 
@@ -170,36 +163,43 @@ Only the first line remains. For that line, `multiply` receives `10` and produce
 
 ## Updating the incoming value does not replace the enclosing context
 
-This difference also matters after a record update:
+Now read the same field twice, after changing its value from `3` to `4`:
 
 {% raw %}
 ```expressif
-{price := 10, quantity := 3}
+{quantity := 3}
 | put(quantity := 4)
-| .price
+| .quantity
 | multiply(.quantity)
 ```
 {% endraw %}
 
-The result is **`30`**. `put` returns a record with quantity `4`, and `.price` reads `10` from that updated record. But `.quantity`, as an argument of `multiply`, still reads `3` from the enclosing record.
+The result is **`12`**, because the two occurrences of `.quantity` read different records:
+
+1. `put` produces an updated record: `{quantity := 4}`.
+2. The pipeline step `.quantity` reads that updated record and passes **`4`** to `multiply`.
+3. The argument `.quantity` reads the original enclosing record, where the quantity is still **`3`**.
+4. `multiply` calculates **`4 × 3 = 12`**.
+
+This is the difference that the first example could not show: a pipeline field access follows the updated value, while this argument keeps reading the enclosing record.
 
 To calculate using the updated record as the context, start a nested expression with `apply`:
 
 {% raw %}
 ```expressif
-{price := 10, quantity := 3}
+{quantity := 3}
 | put(quantity := 4)
-| apply(.price | multiply(.quantity))
+| apply(.quantity | multiply(.quantity))
 ```
 {% endraw %}
 
-Now the result is **`40`**. The expression parameter of `apply` is evaluated once against the incoming value: the updated record becomes the context of the nested expression. Inside it, `.quantity` reads `4`.
+Now the result is **`16`**. `apply` uses the updated record as the context of its nested expression. Both occurrences of `.quantity` read `4`, so the calculation is **`4 × 4 = 16`**.
 
 | Calculation | Incoming value for `multiply` | Enclosing quantity | Result |
 |:--|:--|:--|:--|
-| Directly after the update and `.price` | `10` | `3` | `30` |
-| Inside `apply` after the update | `10` | `4` | `40` |
+| Directly after the update and `.quantity` | `4` | `3` | `12` |
+| Inside `apply` after the update | `4` | `4` | `16` |
 
-When a field reference is surprising, locate the call containing it, check that parameter's source and selection, and name the concrete value they identify. For nested expressions, repeat that check at each boundary.
+When an argument reads an unexpected value, find the call it belongs to and read that parameter's evaluation description. Identify the actual record, element, or other value used as its context.
 
 Continue with [References](references.md) for field and root-reference syntax, or [Functions](functions.md) for argument forms and function signatures.
