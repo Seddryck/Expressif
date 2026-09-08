@@ -36,7 +36,7 @@ Evaluates an expression once for every supplied value while preserving the pipel
 Visits each value supplied by the values argument.
 
 - **`expression`:** Iterates the values argument, keeping the call's incoming value as the expression input and using each supplied value as its argument context.
-- **`values`:** Evaluated once against the value entering this call.
+- **`values`:** Evaluated once against the enclosing expression's input, which pipeline stages do not replace.
 
 ## Examples
 
@@ -49,7 +49,7 @@ map(
     | record(
         name := .name,
         contacts := .department | .manager | .contact
-            | map-over(field, field-names)
+            | apply(map-over(field, field-names))
     )
 )
 ```

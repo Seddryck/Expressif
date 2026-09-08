@@ -36,7 +36,7 @@ Evaluates an expression once for every supplied value, using that value as the p
 Visits each value supplied by the values argument.
 
 - **`expression`:** Iterates the values argument, using each supplied value as the expression input and supplying the call's incoming value as the argument to a bare callable.
-- **`values`:** Evaluated once against the value entering this call.
+- **`values`:** Evaluated once against the enclosing expression's input, which pipeline stages do not replace.
 
 ## Examples
 

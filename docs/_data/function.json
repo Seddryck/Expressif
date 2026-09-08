@@ -735,8 +735,8 @@
         "Summary": "Values iterated as argument contexts in declaration order.",
         "Evaluation": {
           "Frequency": "once",
-          "Source": "incoming",
-          "Summary": "Evaluated once against the value entering this call."
+          "Source": "enclosing",
+          "Summary": "Evaluated once against the enclosing expression's input, which pipeline stages do not replace."
         }
       }
     ],
@@ -777,8 +777,8 @@
         "Summary": "Values iterated as pipeline inputs in declaration order.",
         "Evaluation": {
           "Frequency": "once",
-          "Source": "incoming",
-          "Summary": "Evaluated once against the value entering this call."
+          "Source": "enclosing",
+          "Summary": "Evaluated once against the enclosing expression's input, which pipeline stages do not replace."
         }
       }
     ],

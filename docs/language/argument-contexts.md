@@ -190,3 +190,30 @@ If the rest of the calculation should use the updated record as its context, mak
 For cases like this, consult the parameter's evaluation description. The source tells you where it reads; the frequency tells you when it runs. Conditional or repeated evaluation is described explicitly rather than implied by the source.
 
 Continue with [References](references.md) for field and root-reference syntax, or [Functions](functions.md) for argument forms and function signatures.
+
+## Directional maps use two contexts
+
+Both `map-over(expression, values)` and `map-with(expression, values)` evaluate `values` once against the enclosing expression's input. Moving along the pipeline does not replace that input.
+
+For example:
+
+```expressif
+10 | add(1) | map-over(subtract, array(@_))
+```
+
+The call receives `11`, but `array(@_)` supplies `{10}`, so the result is `{1}`. With `map-with`, the same expression produces `{-1}`: the supplied value is the subtraction input and the call's incoming value is its argument.
+
+The operation has a separate rule:
+
+- `map-over` keeps the call's incoming value as its pipeline input and uses each supplied item as its argument context. In an explicit operation such as `add(@_)`, `@_` reads that item.
+- `map-with` uses each supplied item as its pipeline input and supplies the call's incoming value as the argument to a bare callable. An explicit operation resolves `@_` against the supplied item.
+
+For example, `5 | map-over(add(@_), {10, 20})` produces `{15, 25}`.
+
+To evaluate the values argument against a value selected by the pipeline, establish a new context with `apply`:
+
+```expressif
+.contact | apply(map-over(field, field-names))
+```
+
+Here, `field-names` reads the contact record, and `field` retrieves each named field from that same record.
