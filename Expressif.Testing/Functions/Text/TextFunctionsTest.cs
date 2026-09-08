@@ -9,6 +9,35 @@ namespace Expressif.Testing.Functions.Text;
 [TestFixture]
 public class TextFunctionsTest
 {
+    [TestCase("first", 2, "ab")]
+    [TestCase("last", 2, "bc")]
+    [TestCase("skip-first", 2, "c")]
+    [TestCase("skip-last", 2, "a")]
+    [TestCase("first", 4, "abc")]
+    [TestCase("last", 4, "abc")]
+    [TestCase("skip-first", 4, "(empty)")]
+    [TestCase("skip-last", 4, "(empty)")]
+    public void CharacterSelection_Length_EvaluatedOnce(string operation, int length, string expected)
+    {
+        var evaluations = 0;
+        Func<int> getLength = () => { evaluations++; return length; };
+        BaseTextLength function = operation switch
+        {
+            "first" => new FirstChars(getLength),
+            "last" => new LastChars(getLength),
+            "skip-first" => new SkipFirstChars(getLength),
+            _ => new SkipLastChars(getLength),
+        };
+
+        var result = function.Evaluate("abc");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(expected));
+            Assert.That(evaluations, Is.EqualTo(1));
+        });
+    }
+
     [Conformance]
     public void Token_DefaultSeparator_Valid(string value, int index, string expected)
         => Assert.That(new Token(() => (index)).Evaluate(value), Is.EqualTo(expected));

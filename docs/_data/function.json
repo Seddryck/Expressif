@@ -4566,7 +4566,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context during the search; the count can be read again after each match."
+          "Summary": "Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text."
         }
       }
     ],
@@ -4689,7 +4689,7 @@
         "Evaluation": {
           "Frequency": "custom",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context during the search; the count can be read again after each match."
+          "Summary": "Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text."
         }
       }
     ],
@@ -4909,9 +4909,9 @@
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+          "Summary": "Evaluated once in the enclosing context."
         }
       }
     ],
@@ -5006,9 +5006,9 @@
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to return.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+          "Summary": "Evaluated once in the enclosing context."
         }
       }
     ],
@@ -5155,9 +5155,9 @@
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check the text length, then evaluated again when padding is needed."
+          "Summary": "Evaluated once in the enclosing context."
         }
       },
       {
@@ -5193,9 +5193,9 @@
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the minimal length of the string returned",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check the text length, then evaluated again when padding is needed."
+          "Summary": "Evaluated once in the enclosing context."
         }
       },
       {
@@ -5703,9 +5703,9 @@
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+          "Summary": "Evaluated once in the enclosing context."
         }
       }
     ],
@@ -5730,9 +5730,9 @@
         "Optional": false,
         "Summary": "An integer value between 0 and +Infinity, defining the length of the substring to skip.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check the text length and read again when calculating the returned slice."
+          "Summary": "Evaluated once in the enclosing context."
         }
       }
     ],

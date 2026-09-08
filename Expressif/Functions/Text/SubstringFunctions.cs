@@ -39,6 +39,7 @@ public class AfterSubstring : BaseSubstringFunction
         if (!value.Contains(substring))
             return string.Empty;
 
+        var count = Count.Invoke();
         var i = 0;
         var index = substring.Length * -1;
         do
@@ -47,7 +48,7 @@ public class AfterSubstring : BaseSubstringFunction
             index = value.IndexOf(substring, index);
             i += 1;
         }
-        while (index != -1 && i <= Count.Invoke());
+        while (index != -1 && i <= count);
 
         if (index == -1)
             return new Null().Keyword;
@@ -79,6 +80,7 @@ public class BeforeSubstring : BaseSubstringFunction
         if (!value.Contains(substring))
             return string.Empty;
 
+        var count = Count.Invoke();
         var i = 0;
         var index = substring.Length * -1;
         do
@@ -87,7 +89,7 @@ public class BeforeSubstring : BaseSubstringFunction
             index = value.IndexOf(substring, index);
             i += 1;
         }
-        while (index != -1 && i <= Count.Invoke());
+        while (index != -1 && i <= count);
 
         if (index == -1)
             return new Null().Keyword;

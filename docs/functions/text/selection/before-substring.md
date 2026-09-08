@@ -36,7 +36,7 @@ Returns the substring of the argument string, containing all the characters imme
 ## Argument evaluation
 
 - **`substring`:** Evaluated once in the enclosing context.
-- **`count`:** Evaluated in the enclosing context during the search; the count can be read again after each match.
+- **`count`:** Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text.
 
 ## Examples
 

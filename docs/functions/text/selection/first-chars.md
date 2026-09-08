@@ -33,7 +33,7 @@ Returns the first chars of the argument value. The length of the string returned
 
 ## Argument evaluation
 
-- **`length`:** Evaluated in the enclosing context to check the text length and read again when calculating the returned slice.
+- **`length`:** Evaluated once in the enclosing context.
 
 ## Examples
 

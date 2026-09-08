@@ -30,7 +30,10 @@ public class PadRight : BasePaddingFunction
         : base(length, character) { }
 
     protected override object EvaluateString(string value)
-        => value.Length >= Length.Invoke() ? value : value.PadRight(Length.Invoke(), Character.Invoke());
+    {
+        var length = Length.Invoke();
+        return value.Length >= length ? value : value.PadRight(length, Character.Invoke());
+    }
 }
 
 /// <summary>
@@ -44,7 +47,10 @@ public class PadLeft : BasePaddingFunction
         : base(length, character) { }
 
     protected override object EvaluateString(string value)
-        => value.Length >= Length.Invoke() ? value : value.PadLeft(Length.Invoke(), Character.Invoke());
+    {
+        var length = Length.Invoke();
+        return value.Length >= length ? value : value.PadLeft(length, Character.Invoke());
+    }
 }
 
 /// <summary>
