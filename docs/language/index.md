@@ -79,6 +79,7 @@ Then continue with:
 - [Values and types](values-and-types.md) for literals and the Expressif type system.
 - [References](references.md) for variables, constants, fields, tuple items, and the current object.
 - [Functions](functions.md) for function calls, parameters, named arguments, and return values.
+- [Incoming and enclosing contexts](argument-contexts.md) for the difference between the value entering a call and the context its arguments read.
 - [Structured values](structured-values.md) for arrays, tuples, records, mapping, filtering, and aggregation.
 - [Predicates](predicates.md) for expressions that answer yes/no questions.
 - [Shorthands](shorthands.md) for shorter forms of common expressions.

@@ -150,6 +150,8 @@ passes a predicate expression to `filter`.
 
 This is a major part of Expressif: expressions can be composed not only in pipelines but also as arguments to other functions.
 
+The parameter determines which context its argument expression receives. See [Incoming and enclosing contexts](argument-contexts.md) for worked examples comparing `multiply`, `put`, `filter`, and `map`.
+
 ## Functions can change types
 
 A function does not need to return the same type it receives.
