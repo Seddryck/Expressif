@@ -1,10 +1,48 @@
+using System.CommandLine;
 using Expressif.Cli.Application;
+using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 
 namespace Expressif.Cli.Tests;
 
 public class ReplSessionTests
 {
+    [TestCase("--output-style", "pretty", "  ")]
+    [TestCase("--style-output", "pretty", "  ")]
+    [TestCase("--pretty", null, "  ")]
+    [TestCase("--pretty", "0", "")]
+    [TestCase("--pretty", "4", "    ")]
+    [TestCase("--pretty", "8", "        ")]
+    [TestCase("--pretty", "tab", "\t")]
+    public void Command_PrettyOutput_FormatsExpressionsPipelinesAndUndo(string option, string? value, string indentation)
+    {
+        var terminal = new FakeTerminal("{1, T(2, 3)}", "| reverse", ":undo");
+        var command = ReplCommand.Create(() => new ReplHost(new ReplSession(new ExpressionService()), terminal));
+        string[] options = option == "--pretty"
+            ? value is null ? [option] : [option, "--indent", value]
+            : [option, value!];
+
+        Assert.That(command.Parse(options).Invoke(), Is.EqualTo(ExitCodes.Success));
+        var tuple = $"T(\n{indentation}{indentation}2,\n{indentation}{indentation}3\n{indentation})";
+        var original = $"{{\n{indentation}1,\n{indentation}{tuple}\n}}";
+        var reversed = $"{{\n{indentation}{tuple},\n{indentation}1\n}}";
+        Assert.That(terminal.Results, Is.EqualTo(new[] { original, reversed, original }));
+        Assert.That(terminal.Errors, Is.Empty);
+    }
+
+    [TestCase(null)]
+    [TestCase("--compact")]
+    [TestCase("--style-output")]
+    public void Command_CompactOutput_FormatsExpressionsAndUndo(string? option)
+    {
+        var terminal = new FakeTerminal("{1, 2}", "| reverse", ":undo");
+        var command = ReplCommand.Create(() => new ReplHost(new ReplSession(new ExpressionService()), terminal));
+        string[] options = option is null ? [] : option == "--compact" ? [option] : [option, "compact"];
+        Assert.That(command.Parse(options).Invoke(), Is.EqualTo(ExitCodes.Success));
+        Assert.That(terminal.Results, Is.EqualTo(new[] { "{1, 2}", "{2, 1}", "{1, 2}" }));
+        Assert.That(terminal.Errors, Is.Empty);
+    }
+
     [Test]
     public void Execute_Undo_RestoresWholeSubmissionAndAllowsNewPipeline()
     {

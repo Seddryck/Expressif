@@ -18,7 +18,7 @@ internal interface IReplInterruptSource
 
 internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
 {
-    public int Run(CancellationToken cancellationToken = default)
+    public int Run(CancellationToken cancellationToken = default, ValueFormat outputStyle = ValueFormat.Compact, string indentation = "  ")
     {
         try
         {
@@ -26,7 +26,7 @@ internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
             {
                 var result = session.Execute(source);
                 if (result is ReplEvaluationResult evaluation)
-                    terminal.WriteResult(ValueFormatter.Format(evaluation.Value));
+                    terminal.WriteResult(ValueFormatter.Format(evaluation.Value, outputStyle, indentation));
                 else if (result is ReplMessageResult message)
                     terminal.WriteResult(message.Message);
                 else if (result is ReplErrorResult error)

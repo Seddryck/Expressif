@@ -9,6 +9,16 @@ description: Evaluate expressions interactively and undo previous submissions.
 Start an interactive session with `expressif repl`. Evaluate a standalone expression,
 then start a line with `|` to apply another pipeline to the current result.
 
+Use `expressif repl --output-style pretty --indent 4` to format every result with
+four-space indentation. `--style-output` is an alias for `--output-style`;
+`--pretty` and `--compact` are shortcuts for the corresponding styles. Choose
+only one style selector. The default is compact output.
+
+`--indent` accepts a space count from `0` to `8`, or `tab`, and requires pretty
+output. Pretty output defaults to two-space indentation. These settings apply
+throughout the session, including standalone expressions, subsequent pipelines,
+and values restored by undo.
+
 ```text
 > 2
 2
