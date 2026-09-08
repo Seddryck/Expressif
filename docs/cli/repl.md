@@ -30,6 +30,12 @@ and values restored by undo.
 10
 ```
 
+Use **Up** and **Down** to browse expressions and commands submitted in the current
+interactive session. Recalled input can be edited and runs only when you press
+**Enter**. Down past the newest entry restores your unfinished input and cursor.
+Blank submissions and consecutive identical entries are omitted from history.
+History is kept only for the current session, including expressions that failed.
+
 `:undo` restores and displays the result before the last successful submission.
 One undo removes the entire submitted line, even when it contains several operators.
 The next pipeline uses the restored value. Saved results are restored directly,

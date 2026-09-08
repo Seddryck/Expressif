@@ -2,6 +2,8 @@ namespace Expressif.Cli.Application;
 
 internal sealed class ReplLineEditor
 {
+    private readonly List<string> history = [];
+
     public string? Read(
         Func<CancellationToken, ConsoleKeyInfo> readKey,
         TextWriter output,
@@ -10,6 +12,9 @@ internal sealed class ReplLineEditor
         var text = string.Empty;
         var cursor = 0;
         var edits = new Stack<(string Text, int Cursor)>();
+        var historyIndex = history.Count;
+        var draft = (Text: text, Cursor: cursor);
+        var draftEdits = edits;
         while (true)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -20,6 +25,9 @@ internal sealed class ReplLineEditor
             if (key.Key == ConsoleKey.Enter || (control && key.Key == ConsoleKey.Z && text.Length == 0))
             {
                 output.WriteLine();
+                if (key.Key == ConsoleKey.Enter && !string.IsNullOrWhiteSpace(text)
+                    && (history.Count == 0 || history[^1] != text))
+                    history.Add(text);
                 return key.Key == ConsoleKey.Enter ? text : ":undo";
             }
 
@@ -35,6 +43,24 @@ internal sealed class ReplLineEditor
             {
                 if (edits.TryPop(out var previous))
                     (text, cursor) = previous;
+            }
+            else if (key.Key is ConsoleKey.UpArrow or ConsoleKey.DownArrow)
+            {
+                var nextIndex = Math.Clamp(
+                    historyIndex + (key.Key == ConsoleKey.UpArrow ? -1 : 1), 0, history.Count);
+                if (nextIndex != historyIndex)
+                {
+                    if (historyIndex == history.Count)
+                    {
+                        draft = (text, cursor);
+                        draftEdits = edits;
+                    }
+
+                    historyIndex = nextIndex;
+                    (text, cursor) = historyIndex == history.Count
+                        ? draft : (history[historyIndex], history[historyIndex].Length);
+                    edits = historyIndex == history.Count ? draftEdits : new();
+                }
             }
             else if (key.Key == ConsoleKey.LeftArrow)
             {

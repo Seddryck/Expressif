@@ -254,6 +254,23 @@ public class ReplSessionTests
             Throws.TypeOf<OperationCanceledException>());
     }
 
+    [Test]
+    public void ConsoleTerminal_History_PersistsAcrossPromptsAndWaitsForEnter()
+    {
+        var keys = new Queue<ConsoleKeyInfo>([
+            new('1', ConsoleKey.D1, false, false, false),
+            new('\0', ConsoleKey.Enter, false, false, false),
+            new('\0', ConsoleKey.UpArrow, false, false, false),
+            new('2', ConsoleKey.D2, false, false, false),
+            new('\0', ConsoleKey.Enter, false, false, false),
+        ]);
+        var terminal = new ConsoleReplTerminal(TextReader.Null, TextWriter.Null, TextWriter.Null,
+            new FakeInterruptSource(), _ => keys.Dequeue());
+
+        Assert.That(terminal.ReadLine("> ", CancellationToken.None), Is.EqualTo("1"));
+        Assert.That(terminal.ReadLine("> ", CancellationToken.None), Is.EqualTo("12"));
+    }
+
     private sealed class FakeTerminal : IReplTerminal
     {
         private readonly Queue<string?> lines;
