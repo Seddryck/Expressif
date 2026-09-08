@@ -24,7 +24,7 @@ The key question is always:
 
 > What value or values will this nested expression receive when the function evaluates it?
 
-That supplied value becomes the nested expression's input/root. Within one expression, pipeline stages change the current value without changing that root. A nested expression creates a new boundary: `^` refers to its input, not to the input of the outer expression.
+For functions such as `map` and `apply`, that supplied value becomes the nested expression's input/root. Within one expression, pipeline stages change the current value without changing that root. A nested expression creates a new boundary: `^` refers to its input, not to the input of the outer expression.
 
 For example, in `map(.value | upper | suffix(^.label))`, `.value` and `upper` change the current value, while `^.label` reads `label` from the collection item that entered the nested expression and appends it to that uppercase value.
 
@@ -37,7 +37,7 @@ flowchart TD
     E --> B
 ```
 
-Understanding that context is more important than memorizing individual syntax patterns.
+Some functions deliberately separate these values: `map-over` keeps the call's incoming value as the operation's pipeline input but uses each supplied item as its argument context. See [Directional maps use two contexts](argument-contexts.md#directional-maps-use-two-contexts).
 
 ## Named arguments
 
@@ -78,6 +78,20 @@ Array literals support the same operation:
 ```
 
 Other functions do not accept spread arguments. For example, `add(...@values)` is invalid.
+
+## The incoming-value reference `@_`
+
+In ordinary function arguments, `@_` reads the current expression evaluation's input. It does not follow intermediate pipeline results:
+
+```expressif
+10 | add(1) | add(@_)
+```
+
+The result is `21`: the second `add` receives `11` and its argument reads `10`.
+
+`map` establishes this context for each item. Thus `{10, 20} | map(add(1) | add(@_))` produces `{21, 41}`. An explicit `apply` establishes it from the value entering that call.
+
+This is not a universal synonym for an item's value or the latest pipeline value. Functions that evaluate value arguments directly, such as `array` and `record`, pass their incoming value to `@_`. For example, `10 | add(1) | array(@_)` produces `{11}`. Directional maps also have a distinct argument context, as described in [Incoming and enclosing contexts](argument-contexts.md#directional-maps-use-two-contexts).
 
 ## The incoming value: `...`
 
