@@ -6306,9 +6306,9 @@
         "Optional": true,
         "Summary": "A string representing a pre-defined culture.",
         "Evaluation": {
-          "Frequency": "custom",
+          "Frequency": "once",
           "Source": "enclosing",
-          "Summary": "Evaluated in the enclosing context to check whether a culture was supplied, then evaluated again when a nonempty culture is used."
+          "Summary": "Evaluated once in the enclosing context."
         }
       }
     ],

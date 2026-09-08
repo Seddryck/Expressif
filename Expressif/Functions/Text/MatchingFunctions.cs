@@ -28,7 +28,8 @@ public class TextToDateTime : BaseTextFunction<DateTime?>
 
     protected override object EvaluateString(string value)
     {
-        var info = (string.IsNullOrEmpty(Culture.Invoke()) ? CultureInfo.InvariantCulture : new CultureInfo(Culture.Invoke()!)).DateTimeFormat;
+        var culture = Culture.Invoke();
+        var info = (string.IsNullOrEmpty(culture) ? CultureInfo.InvariantCulture : new CultureInfo(culture)).DateTimeFormat;
 
         if (DateTime.TryParseExact(value, Format.Invoke(), info, DateTimeStyles.RoundtripKind, out var dateTime))
             return DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
