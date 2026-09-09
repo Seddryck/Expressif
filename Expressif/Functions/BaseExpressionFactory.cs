@@ -88,7 +88,7 @@ public abstract class BaseExpressionFactory
             VectorParameter vector => CreateFunctionCast(() => BuildVector(vector, context), scalarType),
             RecordLiteralParameter record => CreateFunctionCast(() => BuildRecord(record, context), scalarType),
             InputExpressionParameter input => CreateDelegateCast(CreateInputExpression(input, scalarType, context), scalarType),
-            IntervalParameter interval => CreateCast(buildInterval(interval.Value), scalarType),
+            IntervalParameter interval => CreateCast(BuildInterval(interval.Value), scalarType),
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
             LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
@@ -103,101 +103,101 @@ public abstract class BaseExpressionFactory
             ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
             _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
-
-        object?[] BuildArray(ArrayParameter array, IContext currentContext)
-        {
-            var values = new List<object?>();
-            foreach (var element in array.Elements)
-            {
-                var elementFactory = CreateParameter(element.Value, typeof(object), currentContext);
-                var evaluated = elementFactory.DynamicInvoke();
-                if (element.IsSpread)
-                    Functions.Array.SpreadValues.Append(evaluated, values);
-                else
-                    values.Add(evaluated);
-            }
-
-            return values.ToArray();
-        }
-
-        Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)
-        {
-            var values = new List<object?>();
-            foreach (var element in tuple.Elements)
-            {
-                var elementFactory = (Func<object?>)CreateParameter(element.Value, typeof(object), currentContext);
-                var evaluated = elementFactory.Invoke();
-                if (element.IsSpread)
-                {
-                    if (evaluated is null)
-                        throw new SpreadArgumentException("Spread argument cannot be null.");
-                    if (evaluated is not IPositionalValue spread)
-                        throw new SpreadArgumentException("Spread argument must evaluate to a tuple.");
-                    values.AddRange(Enumerable.Range(0, spread.Arity).Select(spread.GetPosition));
-                }
-                else
-                {
-                    values.Add(evaluated);
-                }
-            }
-
-            return new Expressif.Values.Tuple(values.ToArray());
-        }
-
-        Expressif.Values.Vector BuildVector(VectorParameter vector, IContext currentContext)
-        {
-            var values = new List<object?>();
-            foreach (var element in vector.Elements)
-            {
-                var elementFactory = (Func<object?>)CreateParameter(element.Value, typeof(object), currentContext);
-                var evaluated = elementFactory.Invoke();
-                if (element.IsSpread)
-                {
-                    if (evaluated is null)
-                        throw new SpreadArgumentException("Spread argument cannot be null.");
-                    if (evaluated is not VectorValue spread)
-                        throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
-                    values.AddRange(spread);
-                }
-                else
-                {
-                    values.Add(evaluated);
-                }
-            }
-
-            return new Expressif.Values.Vector(values.ToArray());
-        }
-
-        ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)
-        {
-            var value = new ValueRecord();
-            foreach (var field in record.Fields)
-            {
-                if (value.ContainsKey(field.Name))
-                    throw new ArgumentException($"Duplicate field '{field.Name}' in record literal.");
-
-                if (field.Value is QuotedLiteralParameter quoted)
-                {
-                    value.Set(field.Name, quoted.Value);
-                    continue;
-                }
-
-                if (field.Value is LiteralParameter literal)
-                {
-                    value.Set(field.Name, literal.Value);
-                    continue;
-                }
-
-                var elementFactory = CreateParameter(field.Value, typeof(object), currentContext);
-                value.Set(field.Name, elementFactory.DynamicInvoke());
-            }
-
-            return value;
-        }
-
-        static IInterval buildInterval(IntervalBinding value)
-            => new IntervalBuilder().Create(value);
     }
+
+    private object?[] BuildArray(ArrayParameter array, IContext currentContext)
+    {
+        var values = new List<object?>();
+        foreach (var element in array.Elements)
+        {
+            var elementFactory = CreateParameter(element.Value, typeof(object), currentContext);
+            var evaluated = elementFactory.DynamicInvoke();
+            if (element.IsSpread)
+                Functions.Array.SpreadValues.Append(evaluated, values);
+            else
+                values.Add(evaluated);
+        }
+
+        return values.ToArray();
+    }
+
+    private Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)
+    {
+        var values = new List<object?>();
+        foreach (var element in tuple.Elements)
+        {
+            var elementFactory = (Func<object?>)CreateParameter(element.Value, typeof(object), currentContext);
+            var evaluated = elementFactory.Invoke();
+            if (element.IsSpread)
+            {
+                if (evaluated is null)
+                    throw new SpreadArgumentException("Spread argument cannot be null.");
+                if (evaluated is not IPositionalValue spread)
+                    throw new SpreadArgumentException("Spread argument must evaluate to a tuple.");
+                values.AddRange(Enumerable.Range(0, spread.Arity).Select(spread.GetPosition));
+            }
+            else
+            {
+                values.Add(evaluated);
+            }
+        }
+
+        return new Expressif.Values.Tuple(values.ToArray());
+    }
+
+    private Expressif.Values.Vector BuildVector(VectorParameter vector, IContext currentContext)
+    {
+        var values = new List<object?>();
+        foreach (var element in vector.Elements)
+        {
+            var elementFactory = (Func<object?>)CreateParameter(element.Value, typeof(object), currentContext);
+            var evaluated = elementFactory.Invoke();
+            if (element.IsSpread)
+            {
+                if (evaluated is null)
+                    throw new SpreadArgumentException("Spread argument cannot be null.");
+                if (evaluated is not VectorValue spread)
+                    throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
+                values.AddRange(spread);
+            }
+            else
+            {
+                values.Add(evaluated);
+            }
+        }
+
+        return new Expressif.Values.Vector(values.ToArray());
+    }
+
+    private ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)
+    {
+        var value = new ValueRecord();
+        foreach (var field in record.Fields)
+        {
+            if (value.ContainsKey(field.Name))
+                throw new ArgumentException($"Duplicate field '{field.Name}' in record literal.");
+
+            if (field.Value is QuotedLiteralParameter quoted)
+            {
+                value.Set(field.Name, quoted.Value);
+                continue;
+            }
+
+            if (field.Value is LiteralParameter literal)
+            {
+                value.Set(field.Name, literal.Value);
+                continue;
+            }
+
+            var elementFactory = CreateParameter(field.Value, typeof(object), currentContext);
+            value.Set(field.Name, elementFactory.DynamicInvoke());
+        }
+
+        return value;
+    }
+
+    private static IInterval BuildInterval(IntervalBinding value)
+        => new IntervalBuilder().Create(value);
 
     private static object? ResolveTupleProjection(object? value, TupleProjectionParameter projection)
     {

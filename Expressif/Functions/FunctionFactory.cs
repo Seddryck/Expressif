@@ -572,6 +572,16 @@ public class FunctionFactory : BaseExpressionFactory
                 () => chain.Evaluate(source.Invoke(input)));
         }
 
+        var structured = BuildStructuredValueEvaluator(parameter, context);
+        if (structured is not null)
+            return structured;
+
+        var provider = (Func<object?>)CreateParameter(parameter, typeof(object), context);
+        return input => WithCurrentObject(context, input, provider);
+    }
+
+    private Func<object?, object?>? BuildStructuredValueEvaluator(IParameter parameter, IContext context)
+    {
         if (parameter is ArrayParameter array)
         {
             var elements = array.Elements
@@ -634,8 +644,7 @@ public class FunctionFactory : BaseExpressionFactory
             };
         }
 
-        var provider = (Func<object?>)CreateParameter(parameter, typeof(object), context);
-        return input => WithCurrentObject(context, input, provider);
+        return null;
     }
 
     private static object? WithCurrentObject(IContext context, object? input, Func<object?> evaluator)
