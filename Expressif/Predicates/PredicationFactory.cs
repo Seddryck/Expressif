@@ -93,12 +93,21 @@ public class PredicationFactory : BaseExpressionFactory
         => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(pipeline.Expression, context));
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
-        => parameter is OpenExpressionParameter open
-            ? CreateFunctionCast(
-                () => new BooleanFunctionPredicate(new FunctionFactory().Instantiate(open.Expression, context))
-                    .Evaluate(EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value),
-                scalarType)
-            : base.CreateParameter(parameter, scalarType, context);
+    {
+        if (parameter is not OpenExpressionParameter open)
+            return base.CreateParameter(parameter, scalarType, context);
+
+        return CreateFunctionCast(() =>
+        {
+            var expression = new FunctionFactory().Instantiate(open.Expression, context);
+            var input = EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
+            if (scalarType == typeof(bool))
+                return new BooleanFunctionPredicate(expression).Evaluate(input);
+
+            using var scope = EvaluationRuntime.Derive(input);
+            return expression.Evaluate(input);
+        }, scalarType);
+    }
 
     protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {

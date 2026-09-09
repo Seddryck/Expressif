@@ -8,6 +8,11 @@ namespace Expressif.Testing.Functions.Array;
 
 public class FilterTest
 {
+    [Conformance.Conformance]
+    public void Filter_Valid_OpenArguments(object? value, string code, string expected)
+        => Assert.That(Expression.CreateClosed(code).Evaluate(value),
+            Is.EqualTo(Expression.CreateClosed(expected).Evaluate(null)));
+
     [Test]
     public void Evaluate_GreaterThan_Valid()
         => Assert.That(new Filter(() => new GreaterThan(() => 2)).Evaluate(new object[] { 1, 2, 3, 4 }), Is.EqualTo(new object?[] { 3, 4 }));
