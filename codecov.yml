@@ -8,3 +8,5 @@ coverage:
     patch:
       default:
         target: 80%
+comment:
+  layout: "diff, flags, files, footer"
