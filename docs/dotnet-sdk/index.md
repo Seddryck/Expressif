@@ -27,6 +27,7 @@ flowchart LR
 | `Predication` | Parse a predicate or predicate combination and evaluate it as a Boolean rule. |
 | `ExpressionBuilder` | Compose a function pipeline with C# types. |
 | `PredicationBuilder` | Compose predicates, negation, and Boolean operators with C# types. |
+| `SemanticAnalyzer` | Locate field-reference input and enclosing scopes without evaluation. |
 | `Context` | Supply variables and a current object used by an expression or builder. |
 
 ## A first evaluation
@@ -55,3 +56,5 @@ flowchart LR
 4. [Build an expression with C#](build-expression.md).
 5. [Build a predication with C#](build-predication.md).
 6. [Serialize a builder](serialization.md).
+
+7. [Analyze field scopes](semantic-analysis.md).

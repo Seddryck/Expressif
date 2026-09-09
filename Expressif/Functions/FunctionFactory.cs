@@ -1,4 +1,5 @@
 using Expressif.Bindings;
+using Expressif.Semantics;
 using Expressif.Functions.Array;
 using Expressif.Accumulators;
 using Expressif.Accumulators.Introspection;
@@ -38,7 +39,7 @@ public class FunctionFactory : BaseExpressionFactory
         {
             var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
             return CreateFunctionCast(
-                () => evaluator.Invoke(context.CurrentObject.Value ?? EvaluationRuntime.Frame?.Current),
+                () => evaluator.Invoke(ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
                 scalarType);
         }
 
@@ -84,8 +85,8 @@ public class FunctionFactory : BaseExpressionFactory
             .Select(member => InstantiateOrWrapAggregation(member, context))
             .ToList();
 
-        if (functions is [IPredicate predicate])
-            return predicate;
+        if (FunctionConstruction.IsPredicatePipeline(functions, function => function is IPredicate))
+            return functions[0];
 
         return TryBuildTypedChain(members, functions, out var chain)
             ? chain
@@ -224,6 +225,7 @@ public class FunctionFactory : BaseExpressionFactory
     private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
     {
         var name = function.Name.ToKebabCase();
+        var construction = FunctionConstruction.Classify(name);
 
         if (function.Syntax == FunctionSyntax.RootFieldShorthand)
             return BuildRootFieldFunction(function);
@@ -241,11 +243,11 @@ public class FunctionFactory : BaseExpressionFactory
         if (function.Arguments.Any(x => x.Name is not null) && name == "generate")
             function = new Bindings.Function(name, ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters);
 
-        var specialFunction = TryBuildSpecialFunction(name, function, context);
+        var specialFunction = TryBuildSpecialFunction(construction, function, context);
         if (specialFunction is not null)
             return specialFunction;
 
-        if (name.Equals("extend", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.Extend)
         {
             if (function.Arguments is not [var extension]
                 || (extension.Name is not null && !extension.Name.Equals("value", StringComparison.OrdinalIgnoreCase)))
@@ -253,25 +255,25 @@ public class FunctionFactory : BaseExpressionFactory
             var evaluator = BuildValueEvaluator(extension.Value, context);
             return new Tuple.Extend(value => evaluator.Invoke(value));
         }
-        if (name.Equals("pair", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.Pair)
         {
             var bound = ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters;
             if (bound is not [var key, var value])
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
             return new Pair.Pair(BuildValueEvaluator(key, context), BuildValueEvaluator(value, context));
         }
-        if (name is "put" or "put-present" or "put-absent")
+        if (construction == FunctionConstructionKind.Put)
             return BuildPutFunction(name, function, context);
 
-        if (name is "put-path" or "put-present-path" or "put-absent-path")
+        if (construction == FunctionConstructionKind.PutPath)
             return BuildPutPathFunction(name, function, context);
-        if (name.Equals("key", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.Key)
             return new Array.Key(BuildGroupingExpressionEvaluators(function, context));
 
-        if (name.Equals("group-by", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.GroupBy)
             return new Array.GroupBy(BuildGroupingExpressionEvaluators(function, context));
 
-        if (name.Equals("pick", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.Pick)
         {
             var positions = function.Arguments
                 .Select(argument => (Func<int>)CreateParameter(argument.Value, typeof(int), context))
@@ -279,7 +281,7 @@ public class FunctionFactory : BaseExpressionFactory
             return new Tuple.Pick(() => positions.Select(position => position.Invoke()).ToArray());
         }
 
-        if (name.Equals("apply", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.Apply)
         {
             if (function.Parameters.Length != 1)
                 throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
@@ -291,13 +293,13 @@ public class FunctionFactory : BaseExpressionFactory
             return new Flow.Apply(() => expression);
         }
 
-        if (name.Equals("transform-with", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.TransformWith)
             return BuildTransformWithFunction(function, context);
 
-        if (name.Equals("transform-as", StringComparison.OrdinalIgnoreCase))
+        if (construction == FunctionConstructionKind.TransformAs)
             return BuildTransformAsFunction(function, context);
 
-        if (ImplicitFoldAccumulators.Contains(name) && function.Parameters.Length == 0)
+        if (IsImplicitFoldAccumulator(function))
             return new Fold(() => name);
 
         if (!TypeMapper.TryExecute(function.Name, out var type))
@@ -323,12 +325,15 @@ public class FunctionFactory : BaseExpressionFactory
         return Instantiate<IFunction>(type, function.Arguments, context);
     }
 
+    internal static bool IsImplicitFoldAccumulator(Bindings.Function function)
+        => ImplicitFoldAccumulators.Contains(function.Name.ToKebabCase()) && function.Parameters.Length == 0;
+
     private static IFunction BuildRootFieldFunction(Bindings.Function function)
     {
         if (!TryGetFieldName(function.Parameters, out var fieldName))
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
-        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Ambient, fieldName));
+        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null), fieldName));
     }
 
     private static IFunction BuildEnclosingRootFieldFunction(Bindings.Function function)
@@ -336,7 +341,7 @@ public class FunctionFactory : BaseExpressionFactory
         if (!TryGetFieldName(function.Parameters, out var fieldName))
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
-        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Parent?.Ambient, fieldName));
+        return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), fieldName));
     }
 
     private static object? EvaluateNested(IFunction expression, object? input)
@@ -345,23 +350,23 @@ public class FunctionFactory : BaseExpressionFactory
         return expression.Evaluate(input);
     }
 
-    private IFunction? TryBuildSpecialFunction(string name, Bindings.Function function, IContext context)
-        => name.ToLowerInvariant() switch
+    private IFunction? TryBuildSpecialFunction(FunctionConstructionKind construction, Bindings.Function function, IContext context)
+        => construction switch
         {
-            "record" => BuildRecordFunction(function, context),
-            "with" => BuildWithFunction(function, context),
-            "conditional-forward" or "conditional-backward" => BuildConditionalFunction(function, context),
-            "switch" or "try" => BuildControlFlowFunction(function, context),
-            "coalesce" => BuildCoalesceFunction(function, context),
-            "coerce" => BuildCoerceFunction(function),
-            "adjacent" => BuildAdjacentFunction(function, context),
-            "chunk-while" => BuildChunkWhileFunction(function, context),
-            "generate" => BuildGenerateFunction(function, context),
-            "closest" => new Fold(BuildClosestProvider(function, context)),
-            "implode" => BuildImplodeFunction(function, context),
-            "map-over" => BuildDirectionalMap(function, context, mapOver: true),
-            "map-with" => BuildDirectionalMap(function, context, mapOver: false),
-            "reduce" => BuildReduceFunction(function, context),
+            FunctionConstructionKind.Record => BuildRecordFunction(function, context),
+            FunctionConstructionKind.With => BuildWithFunction(function, context),
+            FunctionConstructionKind.Conditional => BuildConditionalFunction(function, context),
+            FunctionConstructionKind.ControlFlow => BuildControlFlowFunction(function, context),
+            FunctionConstructionKind.Coalesce => BuildCoalesceFunction(function, context),
+            FunctionConstructionKind.Coerce => BuildCoerceFunction(function),
+            FunctionConstructionKind.Adjacent => BuildAdjacentFunction(function, context),
+            FunctionConstructionKind.ChunkWhile => BuildChunkWhileFunction(function, context),
+            FunctionConstructionKind.Generate => BuildGenerateFunction(function, context),
+            FunctionConstructionKind.Closest => new Fold(BuildClosestProvider(function, context)),
+            FunctionConstructionKind.Implode => BuildImplodeFunction(function, context),
+            FunctionConstructionKind.MapOver => BuildDirectionalMap(function, context, mapOver: true),
+            FunctionConstructionKind.MapWith => BuildDirectionalMap(function, context, mapOver: false),
+            FunctionConstructionKind.Reduce => BuildReduceFunction(function, context),
             _ => null,
         };
 
@@ -854,12 +859,13 @@ public class FunctionFactory : BaseExpressionFactory
             return new DelegatedFunction(value =>
             {
                 var invocation = GetDirectionalMapInput(value);
+                var inputs = DirectionalScope<object?>.Create(mapOver, invocation.Outer, invocation.Item);
                 var arguments = mapOver
                     ? GetMapOverArguments(invocation.Item)
                     : [new LiteralParameter(invocation.Outer)];
                 var callable = InstantiateOrWrapAggregation(new Bindings.Function(name, arguments), context);
-                using var scope = EvaluationRuntime.Derive(invocation.Item);
-                return callable.Evaluate(mapOver ? invocation.Outer : invocation.Item);
+                using var scope = EvaluationRuntime.Derive(inputs.Arguments);
+                return callable.Evaluate(inputs.Input);
             });
         }
 
@@ -868,8 +874,9 @@ public class FunctionFactory : BaseExpressionFactory
         return new DelegatedFunction(value =>
         {
             var invocation = GetDirectionalMapInput(value);
-            using var scope = EvaluationRuntime.Derive(invocation.Item);
-            return operation.Evaluate(mapOver ? invocation.Outer : invocation.Item);
+            var inputs = DirectionalScope<object?>.Create(mapOver, invocation.Outer, invocation.Item);
+            using var scope = EvaluationRuntime.Derive(inputs.Arguments);
+            return operation.Evaluate(inputs.Input);
         });
     }
 
