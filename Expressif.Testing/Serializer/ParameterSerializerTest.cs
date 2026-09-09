@@ -82,8 +82,8 @@ public class ParameterSerializerTest
     [Test]
     [TestCase("foo")]
     [TestCase("foo123")]
-    public void Serialize_ObjectPropertyParameter_Brakets(string value)
-        => Assert.That(new ParameterSerializer().Serialize(new ObjectPropertyParameter(value)), Is.EqualTo($"[{value}]"));
+    public void Serialize_ObjectPropertyParameter_RootField(string value)
+        => Assert.That(new ParameterSerializer().Serialize(new ObjectPropertyParameter(value)), Is.EqualTo($"^.{value}"));
 
     [Test]
     [TestCase(0)]

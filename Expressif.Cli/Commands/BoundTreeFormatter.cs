@@ -64,6 +64,9 @@ internal static class BoundTreeFormatter
             TupleParameter tuple => tuple.Values.Select((item, index) => NamedParameter($"Item[{index}]", item)),
             RecordLiteralParameter record => record.Fields.Select(field => NamedParameter($"Field: {field.Name}", field.Value)),
             RecordDefinitionParameter record => record.Entries.Select(ToDocument),
+            ControlFlowBranchParameter branch => branch.Predicate is null
+                ? [NamedParameter("Fallback", branch.Expression)]
+                : [NamedParameter("Expression", branch.Expression), NamedParameter("Predicate", branch.Predicate)],
             OpenExpressionParameter open => open.Expression.Members.Select(ToDocument),
             InputExpressionParameter input => [
                 NamedParameter("Source", input.Expression.Parameter),

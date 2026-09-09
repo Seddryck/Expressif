@@ -167,25 +167,27 @@ public static class DocumentationExtensions
         => (typeof(IValueSpreadAware).IsAssignableFrom(declaringType) && parameterName == "values")
             || VariadicParameters.Contains((declaringType, parameterName));
 
-    private static int GetMinimumCardinality(Type declaringType, string parameterName)
-        => (declaringType, parameterName) switch
+    private static readonly IReadOnlyDictionary<(Type Type, string Parameter), int> MinimumCardinalities =
+        new Dictionary<(Type, string), int>
         {
-            (var type, "branches") when type == typeof(Flow.Switch) => 1,
-            (var type, "branches") when type == typeof(Flow.Try) => 2,
-            (var type, "path") when type == typeof(Record.NestedField) => 1,
-            (var type, "expressions") when type == typeof(Special.Coalesce) => 2,
-            (var type, "specifications") when type == typeof(Special.Coerce) => 1,
-            (var type, "projections") when type == typeof(Record.With) => 1,
-            (var type, "assignments") when type == typeof(Record.Put) => 1,
-            (var type, "assignments") when type == typeof(Record.PutPresent) => 1,
-            (var type, "assignments") when type == typeof(Record.PutAbsent) => 1,
-            (var type, "positions") when type == typeof(Tuple.Pick) => 1,
-            (var type, "expressions") when type == typeof(Array.Key) => 1,
-            (var type, "expressions") when type == typeof(Array.GroupBy) => 1,
-            (var type, "expressions") when type == typeof(Flow.TransformWith) => 1,
-            (var type, "expressions") when type == typeof(Flow.TransformAs) => 1,
-            _ => 0,
+            [(typeof(Flow.Switch), "branches")] = 1,
+            [(typeof(Flow.Try), "branches")] = 2,
+            [(typeof(Record.NestedField), "path")] = 1,
+            [(typeof(Special.Coalesce), "expressions")] = 2,
+            [(typeof(Special.Coerce), "specifications")] = 1,
+            [(typeof(Record.With), "projections")] = 1,
+            [(typeof(Record.Put), "assignments")] = 1,
+            [(typeof(Record.PutPresent), "assignments")] = 1,
+            [(typeof(Record.PutAbsent), "assignments")] = 1,
+            [(typeof(Tuple.Pick), "positions")] = 1,
+            [(typeof(Array.Key), "expressions")] = 1,
+            [(typeof(Array.GroupBy), "expressions")] = 1,
+            [(typeof(Flow.TransformWith), "expressions")] = 1,
+            [(typeof(Flow.TransformAs), "expressions")] = 1,
         };
+
+    private static int GetMinimumCardinality(Type declaringType, string parameterName)
+        => MinimumCardinalities.GetValueOrDefault((declaringType, parameterName));
 
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the

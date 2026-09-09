@@ -8,6 +8,8 @@ public sealed record ClosedRootExpression(ClosedExpression Expression) : IRootEx
 public enum FunctionSyntax
 {
     Standard,
+    ConditionalForward,
+    ConditionalBackward,
     MapShorthand,
     GroupMapShorthand,
     FieldShorthand,

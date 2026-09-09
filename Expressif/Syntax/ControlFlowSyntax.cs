@@ -61,11 +61,24 @@ internal static class ControlFlowSyntax
             var parts = Split(branch, "=>");
             if (parts.Count != 2 || parts.Any(string.IsNullOrWhiteSpace))
                 throw new BindingException("A control-flow branch requires two operands separated by '=>'.");
-            result.Add(parts[0].Trim() == "_"
+            result.Add(IsFallback(parts[0])
                 ? $"fallback := {Normalize(parts[1])}"
                 : $"branch({Normalize(parts[0])}, {Normalize(parts[1])})");
         }
         return string.Join(", ", result);
+    }
+
+    private static bool IsFallback(string text)
+    {
+        var token = new StringBuilder();
+        for (var index = 0; index < text.Length; index++)
+        {
+            if (text.AsSpan(index).StartsWith("//") || text.AsSpan(index).StartsWith("/*"))
+                index = SkipTriviaOrString(text, index) - 1;
+            else if (!char.IsWhiteSpace(text[index]))
+                token.Append(text[index]);
+        }
+        return token.ToString() == "_";
     }
 
     internal static List<string> Split(string text, string separator)
@@ -121,18 +134,11 @@ internal static class ControlFlowSyntax
 
     internal static int SkipTriviaOrString(string text, int index)
     {
-        if (text[index] is '\"' or '\'')
-        {
-            var quote = text[index];
-            for (var end = index + 1; end < text.Length; end++)
-            {
-                if (text[end] == '\\')
-                    end++;
-                else if (text[end] == quote)
-                    return end + 1;
-            }
-            return text.Length;
-        }
+        var intervalEnd = SkipInterval(text, index);
+        if (intervalEnd > index)
+            return intervalEnd;
+        if (text[index] is '"' or '\'')
+            return SkipQuoted(text, index);
         if (text.AsSpan(index).StartsWith("//"))
         {
             var end = text.IndexOf('\n', index);
@@ -144,6 +150,45 @@ internal static class ControlFlowSyntax
             return end < 0 ? text.Length : end + 2;
         }
         return index;
+    }
+
+    private static int SkipQuoted(string text, int index)
+    {
+        var quote = text[index];
+        for (var end = index + 1; end < text.Length; end++)
+        {
+            if (text[end] == '\\')
+                end++;
+            else if (text[end] == quote)
+                return end + 1;
+        }
+        return text.Length;
+    }
+
+    private static int SkipInterval(string text, int index)
+    {
+        // Interval brackets may face either way: I[1, 2[, I]1, 2], I(1, 2].
+        if (text[index] != 'I' || (index > 0 && IsNameCharacter(text[index - 1])))
+            return index;
+        var opening = index + 1;
+        while (opening < text.Length && char.IsWhiteSpace(text[opening]))
+            opening++;
+        if (opening == text.Length || text[opening] is not ('(' or '[' or ']'))
+            return index;
+        return FindIntervalEnd(text, opening, index);
+    }
+
+    private static int FindIntervalEnd(string text, int opening, int start)
+    {
+        for (var end = opening + 1; end < text.Length; end++)
+        {
+            var skipped = SkipTriviaOrString(text, end);
+            if (skipped > end)
+                end = skipped - 1;
+            else if (text[end] is ')' or '[' or ']')
+                return end + 1;
+        }
+        return start;
     }
 
     private static bool IsNameCharacter(char value)

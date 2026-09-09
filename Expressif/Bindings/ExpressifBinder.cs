@@ -302,6 +302,7 @@ public sealed class ExpressifBinder
     private Function BindFunction(FunctionCallSyntax syntax)
         => syntax.Name.ToLowerInvariant() switch
         {
+            "conditional-forward" or "conditional-backward" => BindConditionalFunction(syntax),
             "switch" or "try" => BindControlFlowFunction(syntax),
             "coerce" => BindCoerceFunction(syntax),
             "field" => BindFieldFunction(syntax),
@@ -311,6 +312,16 @@ public sealed class ExpressifBinder
             "array" or "text" or "tuple" or "grouping" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private Function BindConditionalFunction(FunctionCallSyntax syntax)
+    {
+        if (syntax.Arguments.Count != 2 || syntax.Arguments.Any(argument => argument is not PositionalArgumentSyntax))
+            throw new BindingException("A conditional operator requires two positional operands.");
+        return new Function(
+            syntax.Name,
+            syntax.Arguments.Select(argument => BindArgument(RequireArgumentValue(argument))).ToArray(),
+            syntax.Name.Equals("conditional-forward", StringComparison.OrdinalIgnoreCase) ? FunctionSyntax.ConditionalForward : FunctionSyntax.ConditionalBackward);
+    }
 
     private Function BindControlFlowFunction(FunctionCallSyntax syntax)
     {
@@ -338,7 +349,7 @@ public sealed class ExpressifBinder
                 throw new BindingException("Invalid control-flow branch.");
             }
         }
-        return new Function(syntax.Name, branches.ToArray());
+        return new Function(syntax.Name.ToLowerInvariant(), branches.ToArray());
     }
 
     private static Function BindCoerceFunction(FunctionCallSyntax syntax)
