@@ -208,14 +208,7 @@ public class FunctionFactory : BaseExpressionFactory
 
     private Func<object?, object?> BuildSourceEvaluator(IParameter parameter, IContext context)
     {
-        if (parameter is IncomingValueParameter
-            or ArrayParameter
-            or TupleParameter
-            or PairParameter
-            or GroupingParameter
-            or DictionaryParameter
-            or RecordLiteralParameter
-            or InputExpressionParameter)
+        if (FunctionConstruction.UsesInputValueEvaluator(parameter))
             return BuildValueEvaluator(parameter, context);
 
         var provider = CreateParameter(parameter, typeof(object), context);

@@ -219,6 +219,15 @@ public class SemanticAnalyzerTest
         Assert.That(Slice(text, Analyze(text).References.Last().Source.Span!.Value), Is.EqualTo("first"));
     }
 
+    [Test]
+    public void Analyze_ArraySourceWithClosedElement_RetainsSupplyingEvaluationRoot()
+    {
+        const string text = "{...({name := \"inner\"} | ^.names)} | first";
+        var input = new Dictionary<string, object?> { ["names"] = new[] { "outer" } };
+        Assert.That(Analyze(text).References.Single().Source.Kind, Is.EqualTo(SemanticSourceKind.ExternalInput));
+        Assert.That(Expression.Create(text).Evaluate(input), Is.EqualTo("outer"));
+    }
+
     private static SemanticAnalysis Analyze(string text)
     {
         var result = new SemanticAnalyzer().Analyze(text);

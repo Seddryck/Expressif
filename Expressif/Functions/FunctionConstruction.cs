@@ -1,3 +1,5 @@
+using Expressif.Bindings;
+
 namespace Expressif.Functions;
 
 // Factory-integrated calls and ordinary constructor-bound calls must be
@@ -33,6 +35,11 @@ internal enum FunctionConstructionKind
 
 internal static class FunctionConstruction
 {
+    public static bool UsesInputValueEvaluator(IParameter parameter)
+        => parameter is IncomingValueParameter or ArrayParameter or TupleParameter
+            or PairParameter or GroupingParameter or DictionaryParameter
+            or RecordLiteralParameter or InputExpressionParameter;
+
     public static bool IsPredicatePipeline<T>(IReadOnlyList<T> members, Func<T, bool> isPredicate)
         => members.Count == 1 && isPredicate(members[0]);
 
