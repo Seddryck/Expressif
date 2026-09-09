@@ -12,8 +12,13 @@ public sealed class ExpressifBinder
 
     public bool ApplyCoercion { get; }
 
+    internal BindingSourceMap Sources { get; }
+
     public ExpressifBinder(bool applyCoercion = true)
-        => ApplyCoercion = applyCoercion;
+        : this(applyCoercion, false) { }
+
+    internal ExpressifBinder(bool applyCoercion, bool trackSources)
+        => (ApplyCoercion, Sources) = (applyCoercion, new(trackSources));
 
     public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
     {
@@ -278,7 +283,10 @@ public sealed class ExpressifBinder
             _ => throw Unsupported(syntax),
         };
 
-    private Function BindPipelineMember(ExpressionSyntax syntax) => syntax switch
+    private Function BindPipelineMember(ExpressionSyntax syntax)
+        => Sources.Add(BindPipelineMemberCore(syntax), syntax);
+
+    private Function BindPipelineMemberCore(ExpressionSyntax syntax) => syntax switch
     {
         FunctionCallSyntax { Name: "group-map-shorthand" } shorthand => Function.FromArguments(
             "map-groups",
@@ -300,6 +308,9 @@ public sealed class ExpressifBinder
     };
 
     private Function BindFunction(FunctionCallSyntax syntax)
+        => Sources.Add(BindFunctionCore(syntax), syntax);
+
+    private Function BindFunctionCore(FunctionCallSyntax syntax)
         => syntax.Name.ToLowerInvariant() switch
         {
             "conditional-forward" or "conditional-backward" => BindConditionalFunction(syntax),
@@ -523,7 +534,10 @@ public sealed class ExpressifBinder
         _ => throw Unsupported(syntax),
     };
 
-    private IParameter BindArgument(ExpressionSyntax syntax) => syntax switch
+    private IParameter BindArgument(ExpressionSyntax syntax)
+        => Sources.Add(BindArgumentCore(syntax), syntax);
+
+    private IParameter BindArgumentCore(ExpressionSyntax syntax) => syntax switch
     {
         GuardedExpressionSyntax guarded => new OpenExpressionParameter(
             new OpenExpression([BindGuardedExpression(guarded)])),
@@ -560,7 +574,10 @@ public sealed class ExpressifBinder
     private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)
         => new([.. BindRecordAccessFunctions(access), .. syntax.Pipeline.SelectMany(BindPipelineMembers)]);
 
-    private IParameter BindValue(ValueSyntax syntax) => syntax switch
+    private IParameter BindValue(ValueSyntax syntax)
+        => Sources.Add(BindValueCore(syntax), syntax);
+
+    private IParameter BindValueCore(ValueSyntax syntax) => syntax switch
     {
         VariableSyntax variable => new VariableParameter(variable.Name),
         IncomingValueSyntax => new IncomingValueParameter(),
@@ -665,7 +682,7 @@ public sealed class ExpressifBinder
         _ => throw Unsupported(syntax),
     };
 
-    private static IParameter BindRecordAccessParameter(RecordAccessSyntax syntax)
+    private IParameter BindRecordAccessParameter(RecordAccessSyntax syntax)
     {
         if (syntax.RootDepth == 0 || syntax.Fields.Count == 0)
             throw new BindingException($"Record access '{syntax.Text}' cannot be used as a scalar parameter in this iteration.");
@@ -677,14 +694,15 @@ public sealed class ExpressifBinder
             { Index: int index } => new ObjectIndexParameter(index),
             _ => throw InvalidRecordFieldSelector(syntax),
         };
+        Sources.AddField(source, syntax, 0);
         return syntax.Fields.Count == 1
             ? source
             : new InputExpressionParameter(new ClosedExpression(source, BindRecordAccessFunctions(syntax).Skip(1)));
     }
 
-    private static IEnumerable<Function> BindRecordAccessFunctions(RecordAccessSyntax syntax)
+    private IEnumerable<Function> BindRecordAccessFunctions(RecordAccessSyntax syntax)
     {
-        return syntax.Fields.Select((field, index) => new Function(
+        return syntax.Fields.Select((field, index) => Sources.AddField(new Function(
             "field",
             [new LiteralParameter(field switch
             {
@@ -698,7 +716,7 @@ public sealed class ExpressifBinder
                 1 => FunctionSyntax.RootFieldShorthand,
                 2 => FunctionSyntax.EnclosingRootFieldShorthand,
                 _ => throw new BindingException($"Expression root depth '{syntax.RootDepth}' is not supported."),
-            }));
+            }), syntax, index)).ToArray();
     }
 
     private static BindingException InvalidRecordFieldSelector(RecordAccessSyntax syntax)

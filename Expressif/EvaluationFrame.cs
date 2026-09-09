@@ -1,4 +1,5 @@
 using Expressif.Observability;
+using Expressif.Semantics;
 
 namespace Expressif;
 
@@ -12,10 +13,14 @@ internal sealed record EvaluationFrame
         object? ambient,
         IExpressionObservation? observation = null,
         EvaluationFrame? parent = null)
-        => (Current, Ambient, Observation, Parent) = (current, ambient, observation, parent);
+        => (Scope, Observation, Parent) = (new(current, ambient, parent?.Scope), observation, parent);
 
-    public object? Current { get; }
-    public object? Ambient { get; }
+    internal EvaluationFrame(ScopeFrame<object?> scope, EvaluationFrame parent)
+        => (Scope, Parent) = (scope, parent);
+
+    internal ScopeFrame<object?> Scope { get; }
+    public object? Current => Scope.Current;
+    public object? Ambient => Scope.Root;
     public IExpressionObservation? Observation { get; }
     public EvaluationFrame? Parent { get; }
 }

@@ -1,4 +1,5 @@
 using Expressif.Bindings;
+using Expressif.Semantics;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using System;
@@ -95,7 +96,7 @@ public abstract class BaseExpressionFactory
             TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
             ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
             EnclosingObjectPropertyParameter prop => CreateFunctionCast(
-                () => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Parent?.Ambient, prop.Name),
+                () => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), prop.Name),
                 scalarType),
             VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
             IncomingValueParameter => CreateFunctionCast(() => GetCurrent(context), scalarType),
@@ -208,7 +209,7 @@ public abstract class BaseExpressionFactory
     }
 
     private static object? GetAmbient(IContext context)
-        => context.CurrentObject.Value ?? EvaluationRuntime.Frame?.Ambient;
+        => ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null));
 
     private static object? GetCurrent(IContext context)
         => EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
