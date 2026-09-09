@@ -40,6 +40,8 @@ internal static class ExpressifTypeMapper
             [("PutAbsentPath", "value")] = "expression",
             [("With", "projections")] = "entry",
             [("With", "body")] = "expression",
+            [("Switch", "branches")] = "entry",
+            [("Try", "branches")] = "entry",
             [("Coalesce", "expressions")] = "expression",
             [("Coerce", "specifications")] = "type | mapping",
             [("TransformWith", "operation")] = "expression",

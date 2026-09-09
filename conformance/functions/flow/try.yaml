@@ -1,0 +1,22 @@
+suite: flow
+kind: function
+operator: try
+tests:
+  - id: try.branches
+    cases:
+      - id: try.branches.accepted
+        value: -12
+        parameters: ["absolute => greater-than(10), _ => 0"]
+        expected: 12
+      - id: try.branches.rejected
+        value: -5
+        parameters: ["absolute => greater-than(10), _ => 0"]
+        expected: 0
+      - id: try.branches.original-input
+        value: -5
+        parameters: ["absolute => greater-than(10), neutral => is-negative, _ => 0"]
+        expected: -5
+      - id: try.branches.accepted-null
+        value: 1
+        parameters: ["#null => is-null, _ => 42"]
+        expected: 

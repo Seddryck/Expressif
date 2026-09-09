@@ -142,3 +142,5 @@ internal sealed class BinaryPredication(BinaryOperator @operator, IPredication l
     public IPredication LeftMember { get; } = left;
     public IPredication RightMember { get; } = right;
 }
+
+public sealed record ControlFlowBranchParameter(IParameter Expression, IParameter? Predicate) : IParameter;

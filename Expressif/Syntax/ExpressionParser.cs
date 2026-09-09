@@ -9,7 +9,7 @@ public sealed class ExpressionParser : IExpressionParser
     /// Parses source text into its canonical syntax representation.
     /// </summary>
     public static RootExpressionSyntax Parse(string text)
-        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(text))));
+        => ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(ControlFlowSyntax.Normalize(text)))));
 
     private static string NormalizeVectorConstructors(string text)
     {
