@@ -198,6 +198,24 @@ grouping parentheses preserve the scope. Invoking a nested expression, such as
 the transformation in `map` or the expression in `apply`, establishes a scope.
 A nested expression with an explicit source uses that source as its input.
 
+As pipeline stages, `$0` and `^$0` can produce different results after the
+pipeline selects another tuple:
+
+```expressif
+T(10, T(20, 30)) | $1 | $0
+```
+
+The result is `20`: `$1` passes the inner tuple `T(20, 30)` to `$0`, which
+reads its first element.
+
+```expressif
+T(10, T(20, 30)) | $1 | ^$0
+```
+
+The result is `10`: `^$0` reads the first element of the expression's original
+input, `T(10, T(20, 30))`. The `$1` pipeline stage does not replace that root.
+The two references give the same result when they select from the same tuple.
+
 For example, given input `T(10, 20)`:
 
 | Expression | Result |
@@ -257,6 +275,21 @@ A useful rule when reading or writing Expressif is:
 This makes scope visible directly in the expression.
 
 ## Enclosing expression roots
+
+A price calculation can use a tax rate from the enclosing record:
+
+```expressif
+{taxRate := 0.20, prices := {100, 200, 50}}
+| .prices
+| map(multiply(^^.taxRate))
+```
+
+The result is `{20, 40, 10}`, the tax amount for each price. The `.prices` stage
+supplies the prices array as pipeline input to this `map` call while preserving
+the enclosing record as the outer expression's root. `map` evaluates its
+transformation once per price, with that price as the nested expression's input;
+`^^.taxRate` reads `0.20` from the enclosing record for each multiplication.
+Using `^.taxRate` would instead look for the field on the individual price.
 
 A nested expression can read a field from the expression that contains it by using `^^.`. This is useful when an outer expression prepares a value that every nested collection item needs:
 
