@@ -1,0 +1,31 @@
+suite: array
+kind: function
+operator: filter
+tests:
+  - id: filter.valid.open-arguments
+    cases:
+      - id: filter.valid.open-arguments.issue-example
+        value: (null)
+        parameters:
+          - '{{price := 10, tax := 2, minimum := 11}, {price := 10, tax := 2, minimum := 13}} | filter(.price | add(.tax) | greater-than(.minimum))'
+        expected: '{{price := 10, tax := 2, minimum := 11}}'
+      - id: filter.valid.open-arguments.direct-numeric
+        value: (null)
+        parameters:
+          - '{{price := 10, minimum := 9}, {price := 10, minimum := 11}} | filter(.price | greater-than(.minimum))'
+        expected: '{{price := 10, minimum := 9}}'
+      - id: filter.valid.open-arguments.composed-numeric
+        value: (null)
+        parameters:
+          - '{{price := 10, minimum := 7}, {price := 10, minimum := 9}} | filter(.price | greater-than(.minimum | add(2)))'
+        expected: '{{price := 10, minimum := 7}}'
+      - id: filter.valid.open-arguments.text
+        value: (null)
+        parameters:
+          - '{{name := "Alice", prefix := "a"}, {name := "Bob", prefix := "a"}} | filter(.name | starts-with(.prefix))'
+        expected: '{{name := "Alice", prefix := "a"}}'
+      - id: filter.valid.open-arguments.temporal
+        value: (null)
+        parameters:
+          - '{{date := #"2025-01-01", minimum := #"2024-01-01"}, {date := #"2023-01-01", minimum := #"2024-01-01"}} | filter(.date | is-after(.minimum))'
+        expected: '{{date := #"2025-01-01", minimum := #"2024-01-01"}}'
