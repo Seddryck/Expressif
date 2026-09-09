@@ -1,4 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Stryker 4.16 needs a literal framework during mutation testing.
+         https://github.com/stryker-mutator/stryker-net/issues/3758 -->
+    <TargetFrameworks Condition="'$(ExpressifMutation)' == 'true'"></TargetFrameworks>
+    <TargetFramework Condition="'$(ExpressifMutation)' == 'true'">net10.0</TargetFramework>
+  </PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="coverlet.msbuild" Version="10.0.1">
 		  <PrivateAssets>all</PrivateAssets>

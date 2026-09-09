@@ -1,0 +1,15 @@
+{
+  "stryker-config": {
+    "project": "Expressif.csproj",
+    "target-framework": "net10.0",
+    "break-on-initial-test-failure": true,
+    "test-case-filter": "TestCategory=conformance",
+    "mutate": ["**/Functions/Numeric/ArithmeticFunctions.cs"],
+    "reporters": ["progress", "html", "json"],
+    "thresholds": {
+      "high": 90,
+      "low": 70,
+      "break": 0
+    }
+  }
+}
