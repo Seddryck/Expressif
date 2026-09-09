@@ -302,6 +302,7 @@ public sealed class ExpressifBinder
     private Function BindFunction(FunctionCallSyntax syntax)
         => syntax.Name.ToLowerInvariant() switch
         {
+            "switch" or "try" => BindControlFlowFunction(syntax),
             "coerce" => BindCoerceFunction(syntax),
             "field" => BindFieldFunction(syntax),
             "is-present" or "is-absent" => BindFieldFunction(syntax),
@@ -310,6 +311,35 @@ public sealed class ExpressifBinder
             "array" or "text" or "tuple" or "grouping" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private Function BindControlFlowFunction(FunctionCallSyntax syntax)
+    {
+        var isTry = syntax.Name.Equals("try", StringComparison.OrdinalIgnoreCase);
+        if (syntax.Arguments.Count < (isTry ? 2 : 1))
+            throw new BindingException($"Function '{syntax.Name}' has too few branches.");
+        var branches = new List<IParameter>();
+        for (var index = 0; index < syntax.Arguments.Count; index++)
+        {
+            var argument = syntax.Arguments[index];
+            if (argument is NamedArgumentSyntax { Name.Value: "fallback" } fallback)
+            {
+                if (index == 0 || index != syntax.Arguments.Count - 1)
+                    throw new BindingException("A catch-all fallback must follow ordinary branches and be final.");
+                branches.Add(new ControlFlowBranchParameter(BindArgument(fallback.Value), null));
+            }
+            else if (argument is PositionalArgumentSyntax { Value: OpenExpressionSyntax { Source: null, Pipeline: [FunctionCallSyntax { Name: "branch", Arguments.Count: 2 } pair] } })
+            {
+                branches.Add(new ControlFlowBranchParameter(
+                    BindArgument(RequireArgumentValue(pair.Arguments[isTry ? 0 : 1])),
+                    BindArgument(RequireArgumentValue(pair.Arguments[isTry ? 1 : 0]))));
+            }
+            else
+            {
+                throw new BindingException("Invalid control-flow branch.");
+            }
+        }
+        return new Function(syntax.Name, branches.ToArray());
+    }
 
     private static Function BindCoerceFunction(FunctionCallSyntax syntax)
     {

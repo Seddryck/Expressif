@@ -1,0 +1,22 @@
+suite: flow
+kind: function
+operator: switch
+tests:
+  - id: switch.branches
+    cases:
+      - id: switch.branches.match
+        value: 82
+        parameters: ["less-than(50) => \"failed\", less-than(90) => \"good\", _ => \"excellent\""]
+        expected: "good"
+      - id: switch.branches.fallback
+        value: 95
+        parameters: ["less-than(50) => \"failed\", _ => \"excellent\""]
+        expected: "excellent"
+      - id: switch.branches.exhausted
+        value: 95
+        parameters: ["less-than(50) => \"failed\""]
+        expected: 
+      - id: switch.branches.accepted-null
+        value: 1
+        parameters: ["is-positive => #null, _ => 42"]
+        expected: 

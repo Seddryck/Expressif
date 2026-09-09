@@ -27,6 +27,19 @@ public class FunctionSerializer
 
     public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
     {
+        if (function.Name is "switch" or "try")
+        {
+            var isTry = function.Name == "try";
+            stringBuilder.Append(function.Name).Append('(');
+            stringBuilder.Append(string.Join(", ", function.Parameters.Cast<ControlFlowBranchParameter>()
+                .Select(branch => branch.Predicate is null
+                    ? $"_ => {ParameterSerializer.Serialize(branch.Expression)}"
+                    : isTry
+                        ? $"{ParameterSerializer.Serialize(branch.Expression)} => {ParameterSerializer.Serialize(branch.Predicate)}"
+                        : $"{ParameterSerializer.Serialize(branch.Predicate)} => {ParameterSerializer.Serialize(branch.Expression)}")));
+            stringBuilder.Append(')');
+            return;
+        }
         if (function.Syntax is FunctionSyntax.FieldShorthand
             or FunctionSyntax.RootFieldShorthand
             or FunctionSyntax.EnclosingRootFieldShorthand)

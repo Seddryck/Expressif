@@ -184,7 +184,7 @@ public class FunctionIntrospectorTest
     public void Describe_UnconvertedFunctions_AreExplicitlyReported()
         => Assert.That(
             Infos.Where(x => !x.Converted).Select(x => x.Name),
-            Is.EquivalentTo(new[] { "apply", "coalesce", "field", "guard", "nested-field", "neutral", "walk", "with" }));
+            Is.EquivalentTo(new[] { "apply", "coalesce", "field", "guard", "nested-field", "neutral", "switch", "try", "walk", "with" }));
 
     [TestCase("after-substring", "substring", "text")]
     [TestCase("first-chars", "length", "integer")]
@@ -196,6 +196,8 @@ public class FunctionIntrospectorTest
     [TestCase("duration-between", "previous", "date | date-time | year-month")]
     [TestCase("with", "projections", "entry")]
     [TestCase("with", "body", "expression")]
+    [TestCase("switch", "branches", "entry")]
+    [TestCase("try", "branches", "entry")]
     [TestCase("split-while", "operation", "expression")]
     [TestCase("transform-with", "operation", "expression")]
     [TestCase("transform-with", "expressions", "expression")]
@@ -216,6 +218,8 @@ public class FunctionIntrospectorTest
     [TestCase("array", "values", "any", true, 0)]
     [TestCase("record", "entries", "entry", true, 0)]
     [TestCase("coalesce", "expressions", "expression", false, 2)]
+    [TestCase("switch", "branches", "entry", false, 1)]
+    [TestCase("try", "branches", "entry", false, 2)]
     [TestCase("transform-with", "expressions", "expression", false, 1)]
     [TestCase("transform-as", "expressions", "entry", false, 1)]
     public void Describe_VariadicParameter_ExposesElementTypeAndVariadicity(

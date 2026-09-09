@@ -350,6 +350,7 @@ public class FunctionFactory : BaseExpressionFactory
         {
             "record" => BuildRecordFunction(function, context),
             "with" => BuildWithFunction(function, context),
+            "switch" or "try" => BuildControlFlowFunction(function, context),
             "coalesce" => BuildCoalesceFunction(function, context),
             "coerce" => BuildCoerceFunction(function),
             "adjacent" => BuildAdjacentFunction(function, context),
@@ -643,6 +644,34 @@ public class FunctionFactory : BaseExpressionFactory
         {
             context.CurrentObject.Set(previous);
         }
+    }
+
+    private IFunction BuildControlFlowFunction(Bindings.Function function, IContext context)
+    {
+        var branches = function.Parameters.Cast<ControlFlowBranchParameter>()
+            .Select(branch => new Flow.ControlFlowBranch(
+                BuildControlFlowEvaluator(branch.Expression, context),
+                branch.Predicate is null ? null : BuildControlFlowEvaluator(branch.Predicate, context)))
+            .ToArray();
+        return function.Name.Equals("try", StringComparison.OrdinalIgnoreCase)
+            ? new Flow.Try(branches)
+            : new Flow.Switch(branches);
+    }
+
+    private Func<object?, object?> BuildControlFlowEvaluator(IParameter parameter, IContext context)
+    {
+        if (parameter is OpenExpressionParameter open)
+        {
+            var expression = BuildOpenExpression(open.Expression, context);
+            return expression.Evaluate;
+        }
+        if (parameter is InputExpressionParameter closed)
+        {
+            var source = BuildControlFlowEvaluator(closed.Expression.Parameter, context);
+            var expression = BuildOpenExpression(new OpenExpression(closed.Expression.Members), context);
+            return input => expression.Evaluate(source.Invoke(input));
+        }
+        return BuildValueEvaluator(parameter, context);
     }
 
     private IFunction BuildCoalesceFunction(Bindings.Function function, IContext context)

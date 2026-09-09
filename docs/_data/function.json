@@ -6686,5 +6686,59 @@
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
     }
+  },
+  {
+    "Name": "switch",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "flow",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Returns the result of the first branch whose predicate accepts the original input, or the final fallback, or null.",
+    "Parameters": [
+      {
+        "Name": "branches",
+        "Type": "entry",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "Ordered branches with an optional final catch-all fallback.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Branches reuse the original input and stop at the first accepted branch. The output type depends on the selected expression."
+        }
+      }
+    ],
+    "Examples": [
+      "82 | switch(less-than(50) => \"failed\", _ => \"passed\") → \"passed\""
+    ]
+  },
+  {
+    "Name": "try",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "flow",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Returns the first candidate result accepted by its predicate, or the final fallback, or null.",
+    "Parameters": [
+      {
+        "Name": "branches",
+        "Type": "entry",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 2,
+        "Summary": "Ordered branches with an optional final catch-all fallback.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Branches reuse the original input and stop at the first accepted branch. The output type depends on the selected expression."
+        }
+      }
+    ],
+    "Examples": [
+      "-5 | try(absolute => greater-than(10), _ => 0) → 0"
+    ]
   }
 ]

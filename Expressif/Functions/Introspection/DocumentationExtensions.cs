@@ -29,6 +29,8 @@ public static class DocumentationExtensions
         (typeof(Record.PutAbsent), "assignments"),
         (typeof(Record.With), "projections"),
         (typeof(Special.Coalesce), "expressions"),
+        (typeof(Flow.Switch), "branches"),
+        (typeof(Flow.Try), "branches"),
         (typeof(Special.Coerce), "specifications"),
         (typeof(Flow.TransformWith), "expressions"),
         (typeof(Flow.TransformAs), "expressions"),
@@ -168,6 +170,8 @@ public static class DocumentationExtensions
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
         => (declaringType, parameterName) switch
         {
+            (var type, "branches") when type == typeof(Flow.Switch) => 1,
+            (var type, "branches") when type == typeof(Flow.Try) => 2,
             (var type, "path") when type == typeof(Record.NestedField) => 1,
             (var type, "expressions") when type == typeof(Special.Coalesce) => 2,
             (var type, "specifications") when type == typeof(Special.Coerce) => 1,
