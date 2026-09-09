@@ -350,6 +350,7 @@ public class FunctionFactory : BaseExpressionFactory
         {
             "record" => BuildRecordFunction(function, context),
             "with" => BuildWithFunction(function, context),
+            "conditional-forward" or "conditional-backward" => BuildConditionalFunction(function, context),
             "switch" or "try" => BuildControlFlowFunction(function, context),
             "coalesce" => BuildCoalesceFunction(function, context),
             "coerce" => BuildCoerceFunction(function),
@@ -644,6 +645,15 @@ public class FunctionFactory : BaseExpressionFactory
         {
             context.CurrentObject.Set(previous);
         }
+    }
+
+    private IFunction BuildConditionalFunction(Bindings.Function function, IContext context)
+    {
+        var backward = function.Syntax == FunctionSyntax.ConditionalBackward;
+        return new Flow.Conditional(
+            BuildControlFlowEvaluator(function.Parameters[backward ? 0 : 1], context),
+            BuildControlFlowEvaluator(function.Parameters[backward ? 1 : 0], context),
+            backward);
     }
 
     private IFunction BuildControlFlowFunction(Bindings.Function function, IContext context)

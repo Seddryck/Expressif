@@ -27,14 +27,17 @@ public class ParameterSerializer
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
+                when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
                 => SerializeFieldPath(input, property.Name, FunctionSyntax.RootFieldShorthand),
             InputExpressionParameter { Expression.Parameter: EnclosingObjectPropertyParameter property } input
+                when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
                 => SerializeFieldPath(input, property.Name, FunctionSyntax.EnclosingRootFieldShorthand),
+            InputExpressionParameter input => new ExpressionSerializer().Serialize(input.Expression),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
             LiteralParameter l => SerializeLiteral(l.Value),
             VariableParameter v => $"@{v.Name}",
-            ObjectPropertyParameter op => $"[{op.Name}]",
+            ObjectPropertyParameter op => $"^.{op.Name}",
             EnclosingObjectPropertyParameter op => $"^^.{op.Name}",
             ObjectIndexParameter oi => $"#{oi.Index}",
             TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
