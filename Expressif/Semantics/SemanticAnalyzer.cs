@@ -119,82 +119,110 @@ public sealed class SemanticAnalyzer
                 return;
             if (!functions.TryExecute(function.Name, out var type))
             {
-                if (!predicates.TryExecute(function.Name, out type))
-                    return;
-                // Predicate factories have their own nested Boolean scopes. Simple
-                // scalar arguments read the existing frame; combinators are deferred.
-                if (function.Parameters.Length > 1 && function.Parameters.Any(parameter => parameter is OpenExpressionParameter))
-                    return;
-                foreach (var parameter in function.Parameters)
-                {
-                    if (parameter is OpenExpressionParameter open)
-                        Pipeline(open.Expression.Members, frame.Current, frame.Derive(frame.Current));
-                    else
-                        Parameter(parameter, frame.Current, frame);
-                }
+                PredicateArguments(function, frame);
                 return;
             }
-
-            if (function.Parameters is [WithDefinitionParameter definition])
-            {
-                foreach (var projection in definition.Projections)
-                    ValueParameter(projection.Value, input, frame);
-                var temporary = new SemanticSource(SemanticSourceKind.Expression, Sources.Get(function), input);
-                ValueParameter(definition.Body, temporary, frame.Derive(temporary));
+            if (StructuredArguments(function, input, frame))
                 return;
-            }
-            if (function.Parameters is [RecordDefinitionParameter record])
-            {
-                foreach (var entry in record.Entries)
-                {
-                    if (entry is RecordNamedEntry named)
-                        RecordParameter(named.Value, input, frame);
-                    else if (entry is RecordSpreadEntry spread)
-                        RecordParameter(spread.Value, input, frame);
-                }
-                return;
-            }
-            if (type == typeof(Functions.Flow.Apply) && function.Parameters is [OpenExpressionParameter applied])
-            {
-                Pipeline(applied.Expression.Members, input, frame.Derive(input));
-                return;
-            }
-
             if (type == typeof(MapOver) || type == typeof(MapWith))
             {
-                var parameters = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
-                if (parameters is not [OpenExpressionParameter operation, var values])
-                    return;
-                var collection = ValueParameter(values, frame.Current, frame);
-                var item = new SemanticSource(SemanticSourceKind.Element, collection.Syntax, collection);
-                var inputs = DirectionalScope<SemanticSource>.Create(type == typeof(MapOver), input, item);
-                Pipeline(operation.Expression.Members, inputs.Input, frame.Derive(inputs.Arguments));
+                DirectionalArguments(function, type, input, frame);
                 return;
             }
-
             if (type == typeof(Map) || type == typeof(Filter))
             {
-                var parameters = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
-                if (parameters is not [OpenExpressionParameter operation])
-                    return;
-                var item = new SemanticSource(SemanticSourceKind.Element, input.Syntax, input);
-                var members = operation.Expression.Members.ToArray();
-                var nested = type == typeof(Map) || !FunctionConstruction.IsPredicatePipeline(members, member => predicates.TryExecute(member.Name, out _));
-                Pipeline(members, item, nested ? frame.Derive(item) : frame);
+                MappingArguments(function, type, input, frame);
                 return;
             }
-
-            // Only ordinary scalar-provider constructors follow the default factory
-            // path. Factory-integrated operators remain explicitly unresolved.
-            if (FunctionConstruction.Classify(function.Name) != FunctionConstructionKind.Standard
-                || typeof(IValueSpreadAware).IsAssignableFrom(type))
-                return;
-            if (type.GetConstructors().Any(constructor => constructor.GetParameters().Any(parameter =>
-                parameter.ParameterType == typeof(Func<IFunction>) || parameter.ParameterType == typeof(Func<IPredicate>))))
+            if (!UsesScalarProviders(function, type))
                 return;
             foreach (var parameter in ParameterArgumentBinder.Bind(type, function.Arguments).Parameters)
                 Parameter(parameter, frame.Current, frame);
         }
+
+        private void PredicateArguments(BoundFunction function, ScopeFrame<SemanticSource> frame)
+        {
+            if (!predicates.TryExecute(function.Name, out _))
+                return;
+            // Multi-argument combinators have additional deferred Boolean scopes.
+            if (function.Parameters.Length > 1 && function.Parameters.Any(parameter => parameter is OpenExpressionParameter))
+                return;
+            foreach (var parameter in function.Parameters)
+            {
+                if (parameter is OpenExpressionParameter open)
+                    Pipeline(open.Expression.Members, frame.Current, frame.Derive(frame.Current));
+                else
+                    Parameter(parameter, frame.Current, frame);
+            }
+        }
+
+        private bool StructuredArguments(BoundFunction function, SemanticSource input, ScopeFrame<SemanticSource> frame)
+        {
+            if (function.Parameters is [WithDefinitionParameter definition])
+            {
+                WithArguments(function, definition, input, frame);
+                return true;
+            }
+            if (function.Parameters is [RecordDefinitionParameter record])
+            {
+                RecordArguments(record, input, frame);
+                return true;
+            }
+            if (FunctionConstruction.Classify(function.Name) == FunctionConstructionKind.Apply
+                && function.Parameters is [OpenExpressionParameter applied])
+            {
+                Pipeline(applied.Expression.Members, input, frame.Derive(input));
+                return true;
+            }
+            return false;
+        }
+
+        private void WithArguments(BoundFunction function, WithDefinitionParameter definition, SemanticSource input, ScopeFrame<SemanticSource> frame)
+        {
+            foreach (var projection in definition.Projections)
+                ValueParameter(projection.Value, input, frame);
+            var temporary = new SemanticSource(SemanticSourceKind.Expression, Sources.Get(function), input);
+            ValueParameter(definition.Body, temporary, frame.Derive(temporary));
+        }
+
+        private void RecordArguments(RecordDefinitionParameter record, SemanticSource input, ScopeFrame<SemanticSource> frame)
+        {
+            foreach (var entry in record.Entries)
+            {
+                if (entry is RecordNamedEntry named)
+                    RecordParameter(named.Value, input, frame);
+                else if (entry is RecordSpreadEntry spread)
+                    RecordParameter(spread.Value, input, frame);
+            }
+        }
+
+        private void DirectionalArguments(BoundFunction function, Type type, SemanticSource input, ScopeFrame<SemanticSource> frame)
+        {
+            var parameters = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
+            if (parameters is not [OpenExpressionParameter operation, var values])
+                return;
+            var collection = ValueParameter(values, frame.Current, frame);
+            var item = new SemanticSource(SemanticSourceKind.Element, collection.Syntax, collection);
+            var inputs = DirectionalScope<SemanticSource>.Create(type == typeof(MapOver), input, item);
+            Pipeline(operation.Expression.Members, inputs.Input, frame.Derive(inputs.Arguments));
+        }
+
+        private void MappingArguments(BoundFunction function, Type type, SemanticSource input, ScopeFrame<SemanticSource> frame)
+        {
+            var parameters = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
+            if (parameters is not [OpenExpressionParameter operation])
+                return;
+            var item = new SemanticSource(SemanticSourceKind.Element, input.Syntax, input);
+            var members = operation.Expression.Members.ToArray();
+            var nested = type == typeof(Map) || !FunctionConstruction.IsPredicatePipeline(members, member => predicates.TryExecute(member.Name, out _));
+            Pipeline(members, item, nested ? frame.Derive(item) : frame);
+        }
+
+        private static bool UsesScalarProviders(BoundFunction function, Type type)
+            => FunctionConstruction.Classify(function.Name) == FunctionConstructionKind.Standard
+                && !typeof(IValueSpreadAware).IsAssignableFrom(type)
+                && !type.GetConstructors().Any(constructor => constructor.GetParameters().Any(parameter =>
+                    parameter.ParameterType == typeof(Func<IFunction>) || parameter.ParameterType == typeof(Func<IPredicate>)));
 
         private SemanticSource RecordParameter(IParameter parameter, SemanticSource input, ScopeFrame<SemanticSource> frame)
             => parameter is OpenExpressionParameter open
@@ -269,37 +297,24 @@ public sealed class SemanticAnalyzer
                     return Pipeline(open.Expression.Members, argument, frame.Derive(argument));
                 case InputExpressionParameter closed:
                     return Closed(closed.Expression, input, frame);
-                case ArrayParameter array:
-                    foreach (var element in array.Elements)
-                        Parameter(element.Value, input, frame);
-                    break;
-                case TupleParameter tuple:
-                    foreach (var element in tuple.Elements)
-                        Parameter(element.Value, input, frame);
-                    break;
-                case VectorParameter vector:
-                    foreach (var element in vector.Elements)
-                        Parameter(element.Value, input, frame);
-                    break;
-                case RecordLiteralParameter record:
-                    foreach (var recordField in record.Fields)
-                        Parameter(recordField.Value, input, frame);
-                    break;
-                case PairParameter pair:
-                    Parameter(pair.Key, input, frame);
-                    Parameter(pair.Value, input, frame);
-                    break;
-                case GroupingParameter grouping:
-                    foreach (var entry in grouping.Entries)
-                        Parameter(entry, input, frame);
-                    break;
-                case DictionaryParameter dictionary:
-                    foreach (var entry in dictionary.Entries)
-                        Parameter(entry, input, frame);
-                    break;
             }
+            foreach (var child in ParameterChildren(parameter))
+                Parameter(child, input, frame);
             return Source(parameter);
         }
+
+        private static IEnumerable<IParameter> ParameterChildren(IParameter parameter)
+            => parameter switch
+            {
+                ArrayParameter array => array.Elements.Select(element => element.Value),
+                TupleParameter tuple => tuple.Elements.Select(element => element.Value),
+                VectorParameter vector => vector.Elements.Select(element => element.Value),
+                RecordLiteralParameter record => record.Fields.Select(field => field.Value),
+                PairParameter pair => [pair.Key, pair.Value],
+                GroupingParameter grouping => grouping.Entries,
+                DictionaryParameter dictionary => dictionary.Entries,
+                _ => [],
+            };
 
         private SemanticSource Source(object bound)
         {
