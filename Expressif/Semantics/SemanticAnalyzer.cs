@@ -82,7 +82,9 @@ public sealed class SemanticAnalyzer
 
         private SemanticSource Closed(ClosedExpression expression, SemanticSource input, ScopeFrame<SemanticSource> frame)
         {
-            var source = Parameter(expression.Parameter, input, frame);
+            var source = FunctionConstruction.UsesInputValueEvaluator(expression.Parameter)
+                ? ValueParameter(expression.Parameter, input, frame)
+                : Parameter(expression.Parameter, input, frame);
             return Pipeline(expression.Members, source, frame.Derive(source));
         }
 
