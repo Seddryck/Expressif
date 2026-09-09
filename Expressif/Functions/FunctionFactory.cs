@@ -220,6 +220,10 @@ public class FunctionFactory : BaseExpressionFactory
         var name = function.Name.ToKebabCase();
         var construction = FunctionConstruction.Classify(name);
 
+        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
+            && function.Parameters is [ScopedTupleProjectionParameter projection])
+            return new DelegatedFunction(_ => ResolveScopedTupleProjection(projection));
+
         if (function.Syntax == FunctionSyntax.RootFieldShorthand)
             return BuildRootFieldFunction(function);
 
@@ -281,8 +285,10 @@ public class FunctionFactory : BaseExpressionFactory
 
             var operation = TryGetOpenExpression(function.Parameters[0], out var open)
                 ? BuildOpenExpression(open.Expression, context)
-                : new DelegatedFunction(BuildValueEvaluator(function.Parameters[0], context));
-            var expression = new LexicallyBoundContextFunction(operation);
+                : new DelegatedFunction(BuildValueEvaluator(function.Parameters[0], context, establishScope: true));
+            IFunction expression = function.Parameters[0] is InputExpressionParameter
+                ? operation
+                : new LexicallyBoundContextFunction(operation);
             return new Flow.Apply(() => expression);
         }
 
@@ -338,8 +344,11 @@ public class FunctionFactory : BaseExpressionFactory
     }
 
     private static object? EvaluateNested(IFunction expression, object? input)
+        => EvaluateNested(expression, input, input);
+
+    private static object? EvaluateNested(IFunction expression, object? input, object? currentInput)
     {
-        using var scope = EvaluationRuntime.Derive(input);
+        using var scope = EvaluationRuntime.Derive(input, currentInput);
         return expression.Evaluate(input);
     }
 
@@ -542,7 +551,7 @@ public class FunctionFactory : BaseExpressionFactory
                 $"Value-spread-aware type '{type.FullName}' must expose a constructor accepting Func<ValueArgumentEvaluator[]>.");
     }
 
-    private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context)
+    private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)
     {
         if (parameter is IncomingValueParameter)
             return input => input;
@@ -562,7 +571,10 @@ public class FunctionFactory : BaseExpressionFactory
             return input => WithCurrentObject(
                 context,
                 input,
-                () => chain.Evaluate(source.Invoke(input)));
+                // Value construction retains its supplying scope; apply invokes a new one.
+                () => establishScope
+                    ? EvaluateNested(chain, source.Invoke(input), input)
+                    : chain.Evaluate(source.Invoke(input)));
         }
 
         var structured = BuildStructuredValueEvaluator(parameter, context);
@@ -1175,7 +1187,7 @@ public class FunctionFactory : BaseExpressionFactory
     private IPredicate BuildBooleanPredicate(OpenExpression expression, IContext context)
     {
         var function = BuildOpenExpression(expression, context);
-        return function as IPredicate ?? new BooleanFunctionPredicate(function);
+        return new BooleanFunctionPredicate(function, preserveCurrentInput: function is IPredicate);
     }
 
     private static bool TryGetOpenExpression(
@@ -1185,6 +1197,12 @@ public class FunctionFactory : BaseExpressionFactory
         expression = parameter switch
         {
             OpenExpressionParameter open => open,
+            ScopedTupleProjectionParameter projection => new OpenExpressionParameter(new OpenExpression([
+                new Bindings.Function(
+                    "tuple-at",
+                    [projection],
+                    FunctionSyntax.ScopedTupleProjectionShorthand),
+            ])),
             LiteralParameter { Value: string value } => new OpenExpressionParameter(
                 new OpenExpression([new Bindings.Function(value, [])])),
             _ => null

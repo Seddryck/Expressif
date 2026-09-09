@@ -361,7 +361,8 @@ public class FunctionFactoryTest
         var predicate = filter.Predicate.Invoke();
 
         Assert.That(filter, Is.Not.Null);
-        Assert.That(predicate, Is.TypeOf<GreaterThan>());
+        Assert.That(predicate.Evaluate(1), Is.False);
+        Assert.That(predicate.Evaluate(3), Is.True);
     }
 
     [Test]

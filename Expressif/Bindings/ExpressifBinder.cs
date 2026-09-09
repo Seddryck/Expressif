@@ -197,6 +197,9 @@ public sealed class ExpressifBinder
     {
         inputType = null!;
         outputType = null!;
+        // Scoped projections read a frame, not the pipeline input tuple.
+        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+            return false;
         if (!functionTypeMapper.TryExecute(function.Name, out var implementationType))
             return false;
 
@@ -288,6 +291,10 @@ public sealed class ExpressifBinder
 
     private Function BindPipelineMemberCore(ExpressionSyntax syntax) => syntax switch
     {
+        TupleProjectionSyntax { RootDepth: > 0 } reference => new Function(
+            "tuple-at",
+            [new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth)],
+            FunctionSyntax.ScopedTupleProjectionShorthand),
         FunctionCallSyntax { Name: "group-map-shorthand" } shorthand => Function.FromArguments(
             "map-groups",
             BindFunctionArguments(shorthand),
@@ -409,7 +416,7 @@ public sealed class ExpressifBinder
         {
             TypeLiteralSyntax type => new PositionalCoercionParameter(ResolveCoercionType(type)),
             BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: TupleProjectionSyntax selector }
-                when selector.Direction is TupleProjectionDirection.FromStart
+                when selector.Direction is TupleProjectionDirection.FromStart && selector.RootDepth == 0
                 => new TupleCoercionParameter(selector.Index, ResolveCoercionType(type)),
             BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: FunctionCallSyntax selector }
                 when selector.Arguments.Count == 0
@@ -539,6 +546,7 @@ public sealed class ExpressifBinder
 
     private IParameter BindArgumentCore(ExpressionSyntax syntax) => syntax switch
     {
+        _ when FindTupleScope(syntax) is { } reference => new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth),
         GuardedExpressionSyntax guarded => new OpenExpressionParameter(
             new OpenExpression([BindGuardedExpression(guarded)])),
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
@@ -569,6 +577,15 @@ public sealed class ExpressifBinder
         PairComponentAccessSyntax access => new OpenExpressionParameter(
             new OpenExpression([BindPipelineMember(access)])),
         _ => throw Unsupported(syntax),
+    };
+
+    private static TupleProjectionSyntax? FindTupleScope(ExpressionSyntax syntax) => syntax switch
+    {
+        TupleProjectionSyntax { RootDepth: > 0 } reference => reference,
+        ParenthesizedExpressionSyntax parenthesized => FindTupleScope(parenthesized.Expression),
+        OpenExpressionSyntax { Source: null, Pipeline: [var member] } => FindTupleScope(member),
+        OpenExpressionSyntax { Source: { } source, Pipeline.Count: 0 } => FindTupleScope(source),
+        _ => null,
     };
 
     private OpenExpression BindRecordAccessExpression(ClosedExpressionSyntax syntax, RecordAccessSyntax access)

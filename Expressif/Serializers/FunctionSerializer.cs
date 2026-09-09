@@ -27,7 +27,9 @@ public class FunctionSerializer
 
     public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
     {
-        if (function.Syntax is FunctionSyntax.ConditionalForward or FunctionSyntax.ConditionalBackward)
+        if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
+            stringBuilder.Append(ParameterSerializer.Serialize(function.Parameters.Single()));
+        else if (function.Syntax is FunctionSyntax.ConditionalForward or FunctionSyntax.ConditionalBackward)
             SerializeConditional(function, stringBuilder);
         else if (function.Name is "switch" or "try")
             SerializeBranches(function, stringBuilder);

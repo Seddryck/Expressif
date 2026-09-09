@@ -183,6 +183,65 @@ flowchart LR
 
 The exact positions available depend on the function that creates the nested context.
 
+### Explicit expression scopes
+
+Prefix a zero-based tuple position with carets to select an expression input:
+
+| Reference | Input selected |
+| --- | --- |
+| `^$1` | Current expression input, second element |
+| `^^$1` | Immediately enclosing expression input, second element |
+| `^^^$1` | Two enclosing expression scopes out, second element |
+
+Each additional caret moves out exactly one expression scope. Pipeline stages and
+grouping parentheses preserve the scope. Invoking a nested expression, such as
+the transformation in `map` or the expression in `apply`, establishes a scope.
+A nested expression with an explicit source uses that source as its input.
+
+As pipeline stages, `$0` and `^$0` can produce different results after the
+pipeline selects another tuple:
+
+```expressif
+T(10, T(20, 30)) | $1 | $0
+```
+
+The result is `20`: `$1` passes the inner tuple `T(20, 30)` to `$0`, which
+reads its first element.
+
+```expressif
+T(10, T(20, 30)) | $1 | ^$0
+```
+
+The result is `10`: `^$0` reads the first element of the expression's original
+input, `T(10, T(20, 30))`. The `$1` pipeline stage does not replace that root.
+The two references give the same result when they select from the same tuple.
+
+For example, given input `T(10, 20)`:
+
+| Expression | Result |
+| --- | --- |
+| `apply(T(1, 2) \| ^$1)` | `2` |
+| `apply(T(1, 2) \| ^^$1)` | `20` |
+| `apply(T(1, 2) \| $0 \| add(^^$1))` | `21` |
+| `apply(T(1, 2) \| apply(T(3, 4) \| ^^^$1))` | `20` |
+
+The selected input stays available after pipeline transformations and is restored
+when a nested invocation returns or fails. Sibling invocations have independent
+inputs. These references work as pipeline stages and as function arguments;
+parentheses around a reference do not add a scope.
+
+A missing scope, a null or non-tuple input, or a position outside the selected
+tuple returns `null`. A null tuple element also returns `null`. Resolution never
+searches another scope for a tuple or a non-null value. The receiving function
+applies its usual null handling and parameter coercion. Positions must be
+non-negative integers no greater than `2147483647`; larger positions produce a
+syntax diagnostic. Negative positions and `$^n` positions are not supported in
+caret-qualified references.
+
+`^$n` is the positional counterpart of `^.field`: both read the current
+expression's input. `^^$n` and `^^.field` read the immediately enclosing input.
+Existing unqualified `$n` and `$^n` behavior is unchanged.
+
 ## Root input and nested input
 
 Nested expressions can change what is considered current.
@@ -216,6 +275,21 @@ A useful rule when reading or writing Expressif is:
 This makes scope visible directly in the expression.
 
 ## Enclosing expression roots
+
+A price calculation can use a tax rate from the enclosing record:
+
+```expressif
+{taxRate := 0.20, prices := {100, 200, 50}}
+| .prices
+| map(multiply(^^.taxRate))
+```
+
+The result is `{20, 40, 10}`, the tax amount for each price. The `.prices` stage
+supplies the prices array as pipeline input to this `map` call while preserving
+the enclosing record as the outer expression's root. `map` evaluates its
+transformation once per price, with that price as the nested expression's input;
+`^^.taxRate` reads `0.20` from the enclosing record for each multiplication.
+Using `^.taxRate` would instead look for the field on the individual price.
 
 A nested expression can read a field from the expression that contains it by using `^^.`. This is useful when an outer expression prepares a value that every nested collection item needs:
 

@@ -16,6 +16,7 @@ public enum FunctionSyntax
     RootFieldShorthand,
     EnclosingRootFieldShorthand,
     TupleProjectionShorthand,
+    ScopedTupleProjectionShorthand,
 }
 
 public sealed record FunctionArgument(string? Name, IParameter Value, bool IsSpread = false);
@@ -69,6 +70,7 @@ public sealed record ObjectPropertyParameter(string Name) : IParameter;
 public sealed record EnclosingObjectPropertyParameter(string Name) : IParameter;
 public sealed record ObjectIndexParameter(int Index) : IParameter;
 public sealed record TupleProjectionParameter(int Index, bool FromEnd = false) : IParameter;
+public sealed record ScopedTupleProjectionParameter(int Index, int ScopeDepth) : IParameter;
 public sealed record ContextParameter(Func<IContext, object?> Function) : IParameter;
 public sealed record ArrayElementParameter(IParameter Value, bool IsSpread = false);
 public sealed record ArrayParameter(ArrayElementParameter[] Elements) : IParameter
