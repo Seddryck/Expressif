@@ -3,7 +3,7 @@ layout: docs
 title: "tuple"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /functions/tuple/tuple/
 tags:
@@ -21,6 +21,8 @@ tuple(
 
 Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Constructs a new tuple by evaluating zero or more positional expressions from le
 |:-----|:-----|:---------|:------------|
 | `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the positions of the resulting tuple. |
 
+
+
 ## Argument evaluation
 
 - **`values`:** Each supplied expression is evaluated once against the value entering this call.
+
+
 
 ## Examples
 

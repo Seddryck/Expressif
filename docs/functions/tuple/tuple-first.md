@@ -3,7 +3,7 @@ layout: docs
 title: "tuple-first"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/tuple/tuple-first/
 tags:
@@ -18,6 +18,8 @@ tuple-first() → any
 ```
 
 Returns the first field of a tuple. Returns `null` when the input is not a tuple.
+
+
 
 ## Parameters
 

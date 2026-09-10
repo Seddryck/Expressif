@@ -3,7 +3,7 @@ layout: docs
 title: "tuple-second"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /functions/tuple/tuple-second/
 tags:
@@ -18,6 +18,8 @@ tuple-second() → any
 ```
 
 Returns the second field of a tuple. Returns `null` when the input is not a tuple.
+
+
 
 ## Parameters
 
