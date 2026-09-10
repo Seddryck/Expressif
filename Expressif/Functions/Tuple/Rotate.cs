@@ -13,9 +13,9 @@ public sealed class Rotate : IFunction<IPositionalValue, TupleValue?>
 
     /// <summary>Creates a rotation that moves the last tuple item to the front.</summary>
     public Rotate()
-        : this(() => -1) { }
+        : this(() => 1) { }
 
-    /// <param name="offset">Specifies the rotation offset: positive values rotate left and negative values rotate right, wrapping modulo tuple length. Defaults to -1; zero leaves the order unchanged.</param>
+    /// <param name="offset">Specifies the rotation offset: positive values rotate right and negative values rotate left, wrapping modulo tuple length. Defaults to 1; zero leaves the order unchanged.</param>
     public Rotate(Func<int> offset)
         => Offset = offset;
 
@@ -27,7 +27,7 @@ public sealed class Rotate : IFunction<IPositionalValue, TupleValue?>
         var values = new object?[value.Arity];
         if (value.Arity > 0)
         {
-            var position = offset % value.Arity;
+            var position = -(offset % value.Arity);
             if (position < 0)
                 position += value.Arity;
             for (var i = 0; i < values.Length; i++)
