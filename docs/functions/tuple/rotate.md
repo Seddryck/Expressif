@@ -15,7 +15,7 @@ generated: true
 ```
 tuple →
 rotate(
-    offset: integer = -1
+    offset: integer = 1
 ) → tuple
 ```
 
@@ -29,7 +29,7 @@ Returns a tuple with its positions rotated cyclically, preserving arity and item
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `offset` | `integer` | No | Specifies the rotation offset: positive values rotate left and negative values rotate right, wrapping modulo tuple length. Defaults to -1; zero leaves the order unchanged. Defaults to `-1`. |
+| `offset` | `integer` | No | Specifies the rotation offset: positive values rotate right and negative values rotate left, wrapping modulo tuple length. Defaults to 1; zero leaves the order unchanged. Defaults to `1`. |
 
 
 
@@ -49,9 +49,9 @@ Empty and single-item tuples retain their values. Non-positional input returns n
 {% raw %}
 ```expressif
 T(10, 20, 30) | rotate → T(30, 10, 20)
-T(10, 20, 30) | rotate(1) → T(20, 30, 10)
-T(10, 20, 30) | rotate(4) → T(20, 30, 10)
-{items := T(10, 20, 30), offset := 1} | .items | rotate(.offset) → T(20, 30, 10)
+T(10, 20, 30) | rotate(1) → T(30, 10, 20)
+T(10, 20, 30) | rotate(4) → T(30, 10, 20)
+{items := T(10, 20, 30), offset := 1} | .items | rotate(.offset) → T(30, 10, 20)
 ```
 {% endraw %}
 

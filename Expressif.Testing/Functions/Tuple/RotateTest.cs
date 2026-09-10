@@ -30,7 +30,7 @@ public class RotateTest
     [TestCase("T(1, T(10, 20, 30)) | $1 | rotate($0)")]
     [TestCase("T(10, 20, 30) | rotate(offset := 1)")]
     public void Offset_BindingUsesEnclosingContext(string source)
-        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(new TupleValue(20m, 30m, 10m)));
+        => Assert.That(Expression.CreateClosed(source).Evaluate(null), Is.EqualTo(new TupleValue(30m, 10m, 20m)));
 
     [TestCase(0)]
     [TestCase(1)]
@@ -38,7 +38,7 @@ public class RotateTest
     public void Offset_EvaluatedOncePerTuple(int arity)
     {
         var count = 0;
-        IFunction<IPositionalValue, TupleValue?> function = new Rotate(() => { count++; return -1; });
+        IFunction<IPositionalValue, TupleValue?> function = new Rotate(() => { count++; return 1; });
         var input = new TupleValue(Enumerable.Range(0, arity).Cast<object?>().ToArray());
         function.Evaluate(input);
         Assert.That(count, Is.EqualTo(1));
