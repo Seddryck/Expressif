@@ -3,7 +3,7 @@ layout: docs
 title: "swap"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 50
 has_toc: false
 permalink: /functions/tuple/swap/
 tags:
@@ -13,14 +13,16 @@ generated: true
 ---
 
 ```
-tuple →
+tuple | vector →
 swap(
     first: integer,
     second: integer
-) → tuple
+) → tuple | vector
 ```
 
 Returns a tuple with two positions exchanged, defaulting to the first and last positions.
+
+
 
 ## Parameters
 
@@ -31,10 +33,14 @@ Returns a tuple with two positions exchanged, defaulting to the first and last p
 | `first` | `integer` | Yes | Specifies the first zero-based position. |
 | `second` | `integer` | Yes | Specifies the second zero-based position. |
 
+
+
 ## Argument evaluation
 
 - **`first`:** Evaluated once in the enclosing context.
 - **`second`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

@@ -1,0 +1,23 @@
+suite: tuple
+kind: function
+operator: rotate
+tests:
+  - id: rotate.default
+    cases:
+      - {id: rotate.default.three, value: 'T(10, 20, 30)', expected: 'T(30, 10, 20)'}
+      - {id: rotate.default.empty, value: 'T()', expected: 'T()'}
+      - {id: rotate.default.single, value: 'T(10)', expected: 'T(10)'}
+      - {id: rotate.default.null, value: 'T(10, 20, #null)', expected: 'T(#null, 10, 20)'}
+  - id: rotate.offset
+    cases:
+      - {id: rotate.offset.negative, value: 'T(10, 20, 30)', parameters: [-1], expected: 'T(30, 10, 20)'}
+      - {id: rotate.offset.zero, value: 'T(10, 20, 30)', parameters: [0], expected: 'T(10, 20, 30)'}
+      - {id: rotate.offset.positive, value: 'T(10, 20, 30)', parameters: [1], expected: 'T(20, 30, 10)'}
+      - {id: rotate.offset.large, value: 'T(10, 20, 30)', parameters: [4], expected: 'T(20, 30, 10)'}
+      - {id: rotate.offset.negative.large, value: 'T(10, 20, 30)', parameters: [-4], expected: 'T(30, 10, 20)'}
+      - {id: rotate.offset.multiple, value: 'T(10, 20, 30)', parameters: [6], expected: 'T(10, 20, 30)'}
+      - {id: rotate.offset.minimum, value: 'T(10, 20, 30)', parameters: [-2147483648], expected: 'T(20, 30, 10)'}
+      - {id: rotate.offset.maximum, value: 'T(10, 20, 30)', parameters: [2147483647], expected: 'T(20, 30, 10)'}
+      - {id: rotate.offset.empty, value: 'T()', parameters: [1], expected: 'T()'}
+      - {id: rotate.offset.single, value: 'T(#null)', parameters: [-4], expected: 'T(#null)'}
+      - {id: rotate.offset.heterogeneous, value: 'T(10, "a", #null, T(1, 2))', parameters: [2], expected: 'T(#null, T(1, 2), 10, "a")'}
