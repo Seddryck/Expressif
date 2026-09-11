@@ -7,6 +7,7 @@ namespace Expressif.Functions;
 internal enum FunctionConstructionKind
 {
     Standard,
+    TupleBind,
     Conditional,
     ControlFlow,
     Record,
@@ -46,6 +47,7 @@ internal static class FunctionConstruction
     public static FunctionConstructionKind Classify(string name)
         => name.ToKebabCase() switch
         {
+            "bind" => FunctionConstructionKind.TupleBind,
             "conditional-forward" or "conditional-backward" => FunctionConstructionKind.Conditional,
             "switch" or "try" => FunctionConstructionKind.ControlFlow,
             "record" => FunctionConstructionKind.Record,

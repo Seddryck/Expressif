@@ -16,4 +16,7 @@ public record PredicateInfo
     Type ImplementationType,
     string Summary,
     ParameterInfo[] Parameters
-);
+)
+{
+    public IReadOnlyList<Expressif.Functions.TupleBindingSignature> Signatures => Expressif.Functions.TupleBindingCapabilities.Describe(ImplementationType);
+}

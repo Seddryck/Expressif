@@ -58,7 +58,7 @@ public class ParameterSerializer
                 .Concat(SerializeBoundPipeline(closed.Expression.Members))),
             _ => throw new NotSupportedException(),
         };
-        return $"{prefix}{(prefix.Length == 0 ? string.Empty : " ")}:> {body}";
+        return $"@_ | {prefix}{(prefix.Length == 0 ? string.Empty : " ")}:> {body}";
     }
 
     private IEnumerable<string> SerializeBoundPipeline(IEnumerable<Function> members)

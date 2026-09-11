@@ -5,105 +5,105 @@ tests:
   - id: input-binding.named
     cases:
       - id: input-binding.named.scalar
-        value: '10 | apply(input :> @input | add(5) | multiply(@input))'
+        value: '10 | apply(@_ | input :> @input | add(5) | multiply(@input))'
         expected: 150
       - id: input-binding.named.nested
-        value: '10 | apply(outer :> add(2) | apply(inner :> @inner | add(@outer)))'
+        value: '10 | apply(@_ | outer :> add(2) | apply(@_ | inner :> @inner | add(@outer)))'
         expected: 22
       - id: input-binding.named.shadow
-        value: '10 | apply(input :> add(2) | apply(input :> @input) | add(@input))'
+        value: '10 | apply(@_ | input :> add(2) | apply(@_ | input :> @input) | add(@input))'
         expected: 22
       - id: input-binding.named.null-shadow
-        value: '10 | apply(input :> #null | apply(input :> @input))'
+        value: '10 | apply(@_ | input :> #null | apply(@_ | input :> @input))'
         expected: null
       - id: input-binding.named.map
-        value: '{1, 2, 3} | map(input :> @input | add(@input))'
+        value: '{1, 2, 3} | map(@_ | input :> @input | add(@input))'
         expected: [2, 4, 6]
       - id: input-binding.named.predicate
-        value: '{1, 2, 3} | filter(input :> @input | greater-than(1))'
+        value: '{1, 2, 3} | filter(@_ | input :> @input | greater-than(1))'
         expected: [2, 3]
       - id: input-binding.named.reduce
-        value: '{1, 2, 3} | reduce(input :> @input | $0 | add($1))'
+        value: '{1, 2, 3} | reduce(@_ | input :> @input | $0 | add($1))'
         expected: 6
       - id: input-binding.named.function-name
-        value: '10 | apply(add :> add(@add))'
+        value: '10 | apply(@_ | add :> add(@add))'
         expected: 20
 
   - id: input-binding.anonymous
     cases:
       - id: input-binding.anonymous.adjacent
-        value: '{100, 105, 120} | adjacent(:> $1 | subtract($0) | multiply($1))'
+        value: '{100, 105, 120} | adjacent(@_ | :> $1 | subtract($0) | multiply($1))'
         expected: [525, 1800]
       - id: input-binding.anonymous.stable-stage
-        value: 'T(10, 20) | apply(:> $0 | add(5) | $1)'
+        value: 'T(10, 20) | apply(@_ | :> $0 | add(5) | $1)'
         expected: 20
       - id: input-binding.anonymous.fields
-        value: '{first := "Jane", last := "Doe"} | apply(:> .first | upper | .last)'
+        value: '{first := "Jane", last := "Doe"} | apply(@_ | :> .first | upper | .last)'
         expected: Doe
       - id: input-binding.anonymous.field-argument
-        value: '{first := "Jane", last := "Doe"} | apply(:> .first | append-space | suffix(.last))'
+        value: '{first := "Jane", last := "Doe"} | apply(@_ | :> .first | append-space | suffix(.last))'
         expected: Jane Doe
       - id: input-binding.anonymous.field-path
-        value: '{address := {city := "Brussels"}} | apply(:> .address.city | upper)'
+        value: '{address := {city := "Brussels"}} | apply(@_ | :> .address.city | upper)'
         expected: BRUSSELS
       - id: input-binding.anonymous.null
-        value: 'T(10, 20) | apply(:> #null | apply(:> $1))'
+        value: 'T(10, 20) | apply(@_ | :> #null | apply(@_ | :> $1))'
         expected: null
       - id: input-binding.anonymous.enclosing
-        value: 'T(10, 20) | apply(:> $0 | apply(:> ^^$1))'
+        value: 'T(10, 20) | apply(@_ | :> $0 | apply(@_ | :> ^^$1))'
         expected: 20
       - id: input-binding.anonymous.deep-scope
-        value: 'T(10, 20) | apply(:> $0 | apply(:> add(1) | apply(:> ^^^$1)))'
+        value: 'T(10, 20) | apply(@_ | :> $0 | apply(@_ | :> add(1) | apply(@_ | :> ^^^$1)))'
         expected: 20
       - id: input-binding.anonymous.missing-scope
-        value: 'T(10, 20) | apply(:> ^^^^$1)'
+        value: 'T(10, 20) | apply(@_ | :> ^^^^$1)'
         expected: null
       - id: input-binding.anonymous.reduce
-        value: '{1, 2, 3} | reduce(:> $0 | add($1))'
+        value: '{1, 2, 3} | reduce(@_ | :> $0 | add($1))'
         expected: 6
       - id: input-binding.anonymous.parenthesized-body
-        value: 'T(10, 20) | apply(:> ($0 | add($1)))'
+        value: 'T(10, 20) | apply(@_ | :> ($0 | add($1)))'
         expected: 30
       - id: input-binding.anonymous.lexical-name
-        value: '10 | apply(input :> add(2) | apply(:> add(@input)))'
+        value: '10 | apply(@_ | input :> add(2) | apply(@_ | :> add(@input)))'
         expected: 22
       - id: input-binding.anonymous.chunk-while
-        value: '{1, 2, 5} | chunk-while(:> $1 | subtract($0) | less-than(2))'
+        value: '{1, 2, 5} | chunk-while(@_ | :> $1 | subtract($0) | less-than(2))'
         expected: [[1, 2], [5]]
 
   - id: input-binding.destructuring
     cases:
       - id: input-binding.destructuring.tuple
-        value: 'T(2, 3, 4) | apply((a, b, c) :> @c | subtract(@a) | multiply(@b))'
+        value: 'T(2, 3, 4) | apply(@_ | (a, b, c) :> @c | subtract(@a) | multiply(@b))'
         expected: 6
       - id: input-binding.destructuring.pair
-        value: '(10 => 20) | apply((key, value) :> @value | subtract(@key))'
+        value: '(10 => 20) | apply(@_ | (key, value) :> @value | subtract(@key))'
         expected: 10
       - id: input-binding.destructuring.vector
-        value: 'V(2, 3, 4) | apply((x, y, z) :> @x | multiply(@y) | add(@z))'
+        value: 'V(2, 3, 4) | apply(@_ | (x, y, z) :> @x | multiply(@y) | add(@z))'
         expected: 10
       - id: input-binding.destructuring.adjacent
-        value: '{100, 105, 120} | adjacent((previous, current) :> @current | subtract(@previous) | multiply(@current))'
+        value: '{100, 105, 120} | adjacent(@_ | (previous, current) :> @current | subtract(@previous) | multiply(@current))'
         expected: [525, 1800]
       - id: input-binding.destructuring.reduce
-        value: '{1, 2, 3} | reduce((total, item) :> @total | add(@item))'
+        value: '{1, 2, 3} | reduce(@_ | (total, item) :> @total | add(@item))'
         expected: 6
       - id: input-binding.destructuring.nested
-        value: 'T(10, 20) | apply((a, b) :> @a | apply(inner :> @inner | add(@b)))'
+        value: 'T(10, 20) | apply(@_ | (a, b) :> @a | apply(@_ | inner :> @inner | add(@b)))'
         expected: 30
       - id: input-binding.destructuring.null-component
-        value: 'T(10, #null) | apply((a, b) :> @b)'
+        value: 'T(10, #null) | apply(@_ | (a, b) :> @b)'
         expected: null
       - id: input-binding.destructuring.shadow-and-restore
-        value: 'T(10, 20) | apply((a, b) :> T(1, 2) | apply((a, b) :> @a | add(@b)) | add(@a))'
+        value: 'T(10, 20) | apply(@_ | (a, b) :> T(1, 2) | apply(@_ | (a, b) :> @a | add(@b)) | add(@a))'
         expected: 13
       - id: input-binding.destructuring.case-sensitive
-        value: 'T(10, 20) | apply((a, A) :> @A | subtract(@a))'
+        value: 'T(10, 20) | apply(@_ | (a, A) :> @A | subtract(@a))'
         expected: 10
       - id: input-binding.destructuring.sibling-argument
-        value: '{1, 2, 3} | reduce((total, item) :> @total | add(@item), 10)'
+        value: '{1, 2, 3} | reduce(@_ | (total, item) :> @total | add(@item), 10)'
         expected: 16
 
       - id: input-binding.destructuring.deferred-body
-        value: 'T(100, {1, 2, 3}) | apply((factor, items) :> @items | adjacent((previous, current) :> @current | multiply(@factor)))'
+        value: 'T(100, {1, 2, 3}) | apply(@_ | (factor, items) :> @items | adjacent(@_ | (previous, current) :> @current | multiply(@factor)))'
         expected: [200, 300]

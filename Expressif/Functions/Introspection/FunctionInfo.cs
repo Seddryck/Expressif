@@ -22,7 +22,10 @@ public record FunctionInfo
     bool Deprecated,
     string? Replacement,
     string? Sunset
-);
+)
+{
+    public IReadOnlyList<TupleBindingSignature> Signatures => TupleBindingCapabilities.Describe(ImplementationType);
+}
 
 public record ParameterInfo
 (

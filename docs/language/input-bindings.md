@@ -8,17 +8,17 @@ description: Bind an expression's input to a name that remains available through
 An input binding gives a nested expression stable access to the value supplied to it.
 
 ```expressif
-10 | apply(input :> @input | add(5) | multiply(@input))
+10 | apply(@_ | input :> @input | add(5) | multiply(@input))
 ```
 
 This returns `150`: the pipeline reaches `15`, while `@input` remains `10`.
-The form `input:> body` is also accepted. The `:>` operator must be contiguous.
+The form `@_ | input:> body` is also accepted. A binding requires a preceding pipeline input; `@_` supplies the input of the surrounding call. The `:>` operator must be contiguous.
 
 The name binds the whole input, including scalars, records, arrays, tuples, pairs,
 groups, vectors, and null. It does not imply a type or destructure the input.
 Names start with an ASCII letter and contain only ASCII letters and digits.
 References use `@name`; bare names remain function calls. For example,
-`apply(add :> add(@add))` binds the name `add` without hiding the function `add`.
+`apply(@_ | add :> add(@add))` binds the name `add` without hiding the function `add`.
 
 Names are case-sensitive. An inner binding can shadow an outer binding or a
 context variable, including with null. Other outer bindings remain available.
@@ -41,10 +41,10 @@ retain their existing behavior, including callable shorthands.
 
 ## Anonymous binding
 
-Use `:> body` when a name would add no information:
+Use `@_ | :> body` when a name would add no information:
 
 ```expressif
-adjacent(:> $1 | subtract($0) | multiply($1))
+adjacent(@_ | :> $1 | subtract($0) | multiply($1))
 ```
 
 For the pair `T(100, 105)`, this produces `525`. The input remains available
@@ -52,7 +52,7 @@ through `$0` and `$1` after subtraction changes the pipeline value to `5`.
 No wildcard or synthetic name is required. Nested anonymous bodies establish
 new scopes while retaining access to outer named bindings.
 
-For records, `apply(:> .first | upper | .last)` returns `last` from the bound
+For records, `apply(@_ | :> .first | upper | .last)` returns `last` from the bound
 record. A chained path such as `.address.city` starts at that record and then
 traverses its fields normally. Use explicit functions such as `field(last)` or
 `tuple-at(1)` when you intend to select from the flowing intermediate value.
@@ -62,8 +62,8 @@ traverses its fields normally. Use explicit functions such as `field(last)` or
 A parenthesized list binds names to positional components:
 
 ```expressif
-adjacent((previous, current) :> @current | subtract(@previous))
-V(2, 3, 4) | apply((x, y, z) :> @x | multiply(@y) | add(@z))
+adjacent(@_ | (previous, current) :> @current | subtract(@previous))
+V(2, 3, 4) | apply(@_ | (x, y, z) :> @x | multiply(@y) | add(@z))
 ```
 
 Tuples and vectors expose their components from left to right. Pairs expose

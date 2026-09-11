@@ -1,0 +1,10 @@
+suite: tuple
+kind: function
+operator: bind
+tests:
+  - id: bind.invoke
+    cases:
+      - {id: bind.invoke.subtract, value: 'T(120, 135)', parameters: ['subtract'], expected: '-15'}
+      - {id: bind.invoke.predicate, value: 'T(5, 3)', parameters: ['greater-than'], expected: '#true'}
+      - {id: bind.invoke.optional, value: 'tuple(T(1, 2, 3))', parameters: ['rotate'], expected: 'T(3, 1, 2)'}
+      - {id: bind.invoke.variadic, value: 'T(0, 1, 2, #null)', parameters: ['tuple'], expected: 'T(1, 2, #null)'}

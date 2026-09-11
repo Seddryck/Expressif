@@ -10,7 +10,6 @@ public sealed class ExpressifBinder
     private readonly FunctionTypeMapper functionTypeMapper = new();
     private readonly CoercionRegistry coercionRegistry = new();
     private bool inputBoundBody;
-
     public bool ApplyCoercion { get; }
 
     internal BindingSourceMap Sources { get; }
@@ -21,7 +20,14 @@ public sealed class ExpressifBinder
     internal ExpressifBinder(bool applyCoercion, bool trackSources)
         => (ApplyCoercion, Sources) = (applyCoercion, new(trackSources));
 
-    public IRootExpression Bind(RootExpressionSyntax syntax) => syntax switch
+    public IRootExpression Bind(RootExpressionSyntax syntax)
+    {
+        if (syntax is ClosedExpressionSyntax { Value: IncomingValueSyntax, Pipeline: [InputBindingExpressionSyntax binding] })
+            return new OpenRootExpression(BindInputBound(binding));
+        return BindRoot(syntax);
+    }
+
+    private IRootExpression BindRoot(RootExpressionSyntax syntax) => syntax switch
     {
         OpenExpressionSyntax open => new OpenRootExpression(BindOpen(open)),
         ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed when IsRelativeRecordAccess(access)
@@ -87,6 +93,8 @@ public sealed class ExpressifBinder
 
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
     {
+        if (syntax.Source is null && syntax.Pipeline is [InputBindingExpressionSyntax binding])
+            return BindInputBound(binding);
         var members = ApplyCoercions([
             .. syntax.Source is null ? [] : BindPipelineMembers(syntax.Source),
             .. syntax.Pipeline.SelectMany(BindPipelineMembers),
@@ -220,6 +228,7 @@ public sealed class ExpressifBinder
     private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)
         => syntax switch
         {
+            TupleBindingShorthandSyntax shorthand => BindTupleBinding(shorthand),
             RecordAccessSyntax access => BindRecordAccessFunctions(access),
             GuardedExpressionSyntax guarded => [BindGuardedExpression(guarded)],
             UnaryExpressionSyntax unary => BindUnaryExpression(unary).Members,
@@ -235,6 +244,13 @@ public sealed class ExpressifBinder
             ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression).Members,
             _ => [BindPipelineMember(syntax)],
         };
+
+    private IEnumerable<Function> BindTupleBinding(TupleBindingShorthandSyntax syntax)
+    {
+        if (syntax.Direction == TupleBindingDirection.Prefix)
+            yield return Sources.Add(new Function("rotate", []) { SourceSpan = syntax.Span }, syntax);
+        yield return Sources.Add(new Function("bind", [new QuotedLiteralParameter(syntax.Name)]) { SourceSpan = syntax.Span }, syntax);
+    }
 
     private Function BindGuardedExpression(GuardedExpressionSyntax syntax)
         => new("guard", [new OpenExpressionParameter(BindExpression(syntax.Expression))]);
@@ -291,6 +307,7 @@ public sealed class ExpressifBinder
 
     private Function BindPipelineMemberCore(ExpressionSyntax syntax) => syntax switch
     {
+        InputBindingExpressionSyntax binding => new Function("apply", [new OpenExpressionParameter(BindInputBound(binding))], FunctionSyntax.InputBindingStage),
         TupleProjectionSyntax { RootDepth: > 0 } reference => new Function(
             "tuple-at",
             [new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth)],
@@ -315,7 +332,11 @@ public sealed class ExpressifBinder
     };
 
     private Function BindFunction(FunctionCallSyntax syntax)
-        => Sources.Add(BindFunctionCore(syntax), syntax);
+        {
+        var function = Sources.Add(BindFunctionCore(syntax), syntax);
+        function.SourceSpan = syntax.Span;
+        return function;
+    }
 
     private Function BindFunctionCore(FunctionCallSyntax syntax)
         => syntax.Name.ToLowerInvariant() switch
@@ -547,7 +568,8 @@ public sealed class ExpressifBinder
     private IParameter BindArgumentCore(ExpressionSyntax syntax) => syntax switch
     {
         _ when FindTupleScope(syntax) is { } reference => new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth),
-        InputBoundExpressionSyntax bound => new OpenExpressionParameter(BindInputBound(bound)),
+        TupleBindingShorthandSyntax shorthand => new OpenExpressionParameter(new OpenExpression(BindTupleBinding(shorthand))),
+        InputBindingExpressionSyntax bound => new OpenExpressionParameter(BindInputBound(bound)),
         GuardedExpressionSyntax guarded => new OpenExpressionParameter(
             new OpenExpression([BindGuardedExpression(guarded)])),
         RecordAccessSyntax access when IsRelativeRecordAccess(access)
@@ -564,11 +586,15 @@ public sealed class ExpressifBinder
             } closed,
         } when IsRelativeRecordAccess(access)
             => new OpenExpressionParameter(BindRecordAccessExpression(closed, access)),
+        ParenthesizedExpressionSyntax { Expression: ClosedExpressionSyntax { Value: IncomingValueSyntax, Pipeline: [InputBindingExpressionSyntax binding] } }
+            => new OpenExpressionParameter(BindInputBound(binding)),
         ParenthesizedExpressionSyntax { Expression: ClosedExpressionSyntax closed }
             => new InputExpressionParameter(BindClosed(closed)),
         ParenthesizedExpressionSyntax parenthesized => new OpenExpressionParameter(BindOpenRoot(parenthesized.Expression)),
         ParameterizedExpressionSyntax parameterized => new InputExpressionParameter(new ClosedExpression(BindArgument(parameterized.Source), BindOpen(parameterized.Expression).Members)),
         OpenExpressionSyntax open => new OpenExpressionParameter(BindOpen(open)),
+        ClosedExpressionSyntax { Value: IncomingValueSyntax, Pipeline: [InputBindingExpressionSyntax binding] }
+            => new OpenExpressionParameter(BindInputBound(binding)),
         ClosedExpressionSyntax { Value: RecordAccessSyntax access } closed
             => new OpenExpressionParameter(BindRecordAccessExpression(closed, access)),
         ClosedExpressionSyntax closed => new InputExpressionParameter(BindClosed(closed)),
@@ -601,7 +627,7 @@ public sealed class ExpressifBinder
         return pattern.Names.Select(name => name.Name).ToArray();
     }
 
-    private InputBoundExpression BindInputBound(InputBoundExpressionSyntax syntax)
+    private InputBoundExpression BindInputBound(InputBindingExpressionSyntax syntax)
     {
         var names = syntax.Binding switch
         {
