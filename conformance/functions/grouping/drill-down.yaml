@@ -36,3 +36,11 @@ tests:
         value: (null)
         parameters: ['#{("x" => {{n := 2}, {n := 1}})} | drill-down(.n | add(.n))']
         expected: '#{(T("x", 4) => {{n := 2}}), (T("x", 2) => {{n := 1}})}'
+      - id: drill-down.valid.groups.annual-revenue
+        value: (null)
+        parameters: ['{ {country := "BE", year := 2025, amount := 120}, {country := "FR", year := 2025, amount := 90}, {country := "BE", year := 2026, amount := 80}, {country := "BE", year := 2025, amount := 30} } | group-by(.country) | drill-down(.year) | summarize(map(.amount) | sum)']
+        expected: '!{(T("BE", 2025) => 150), (T("BE", 2026) => 80), (T("FR", 2025) => 90)}'
+      - id: drill-down.valid.groups.year-and-channel
+        value: (null)
+        parameters: ['#{ ("BE" => { {year := 2025, channel := "web", amount := 120}, {year := 2025, channel := "store", amount := 30}, {year := 2026, channel := "web", amount := 80} }), ("FR" => { {year := 2025, channel := "web", amount := 90} }) } | drill-down(.year, .channel) | summarize(map(.amount) | sum)']
+        expected: '!{(T("BE", 2025, "web") => 120), (T("BE", 2025, "store") => 30), (T("BE", 2026, "web") => 80), (T("FR", 2025, "web") => 90)}'
