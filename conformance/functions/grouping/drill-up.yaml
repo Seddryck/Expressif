@@ -41,3 +41,11 @@ tests:
         parameters: ['#{("B" => {1}), ("A" => {2})} | drill-up(expression := lower)']
         expected: '#{("b" => {1}), ("a" => {2})}'
 
+      - id: drill-up.valid.groups.merge-country-orders
+        value: (null)
+        parameters: ['#{ (T("BE", 2025) => {"BE-001", "BE-002"}), (T("FR", 2025) => {"FR-001"}), (T("BE", 2026) => {"BE-003"}) } | drill-up($0)']
+        expected: '#{("BE" => {"BE-001", "BE-002", "BE-003"}), ("FR" => {"FR-001"})}'
+      - id: drill-up.valid.groups.country-revenue
+        value: (null)
+        parameters: ['#{ (T("BE", 2025) => {120, 30}), (T("FR", 2025) => {90}), (T("BE", 2026) => {80}) } | drill-up($0) | summarize(sum)']
+        expected: '!{("BE" => 230), ("FR" => 90)}'

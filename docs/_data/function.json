@@ -6870,9 +6870,10 @@
         }
       }
     ],
-    "Behavior": "Structural equality includes null and tuple keys. Matching keys merge value collections in source-group order; new keys retain first-seen order, including keys from empty groups. Returns one grouping level, unlike roll-up, which produces multiple hierarchical levels.",
+    "Behavior": "Structural equality includes null and tuple keys. Matching keys merge value collections in source-group order; new keys retain first-seen order, including keys from empty groups. Returns one grouping level, unlike roll-up, which produces multiple hierarchical levels.\r\n\r\n### Combine annual order lists into country lists\n\nThe first example groups order IDs by `(country, year)`. `drill-up($0)` reads the country from each existing tuple key and combines the Belgian order lists across years. The order IDs remain unchanged and in source-group order; they contain no year field to re-evaluate.\n\n### Calculate country revenue across all years\n\nThe second example keeps individual order amounts under `(country, year)` keys. `drill-up($0)` first merges the amounts for each country, and `summarize(sum)` then calculates the totals: Belgium has `120 + 30 + 80 = 230`, and France has `90`. `$0` refers to the country component of each existing key, not to an amount. This produces one country level; use `roll-up` when multiple hierarchical levels are needed.",
     "Examples": [
-      "#{(T(\"BE\", 2025) => {1}), (T(\"BE\", 2026) => {2})} | drill-up($0) → #{(\"BE\" => {1, 2})}"
+      "#{\n  (T(\"BE\", 2025) => {\"BE-001\", \"BE-002\"}),\n  (T(\"FR\", 2025) => {\"FR-001\"}),\n  (T(\"BE\", 2026) => {\"BE-003\"})\n}\n| drill-up($0)\r\n→ #{(\"BE\" => {\"BE-001\", \"BE-002\", \"BE-003\"}), (\"FR\" => {\"FR-001\"})}\r\n",
+      "#{\n  (T(\"BE\", 2025) => {120, 30}),\n  (T(\"FR\", 2025) => {90}),\n  (T(\"BE\", 2026) => {80})\n}\n| drill-up($0)\n| summarize(sum)\r\n→ !{(\"BE\" => 230), (\"FR\" => 90)}"
     ],
     "Traversal": {
       "Source": "incoming",
