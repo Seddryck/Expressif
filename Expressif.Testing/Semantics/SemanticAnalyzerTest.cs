@@ -4,6 +4,14 @@ namespace Expressif.Testing.Semantics;
 
 public class SemanticAnalyzerTest
 {
+    [TestCase("catch", SemanticSourceKind.ExternalInput)]
+    [TestCase("throw", SemanticSourceKind.Expression)]
+    public void Analyze_NullControlFlow_ArgumentSource(string name, SemanticSourceKind expected)
+    {
+        var reference = Analyze($".item | {name}(.name)").References.Last();
+        Assert.That(reference.Source.Kind, Is.EqualTo(expected));
+    }
+
     [TestCase(".name", FieldReferenceKind.CurrentInput)]
     [TestCase("^.name", FieldReferenceKind.ExpressionRoot)]
     public void Analyze_ExternalSource_HasNoDocumentSpan(string text, FieldReferenceKind kind)

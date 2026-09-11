@@ -1,0 +1,18 @@
+suite: flow.throw
+kind: function
+operator: throw
+tests:
+  - id: throw.accepted
+    cases:
+      - id: throw.accepted.default
+        value: Alice
+        parameters: ['']
+        expected: ALICE
+      - id: throw.accepted.custom
+        value: Alice
+        parameters: [is-null]
+        expected: ALICE
+      - id: throw.accepted.replaces-null-check
+        value: (null)
+        parameters: ['#false']
+        expected:

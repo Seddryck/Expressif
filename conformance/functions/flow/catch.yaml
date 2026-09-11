@@ -1,0 +1,26 @@
+suite: flow.catch
+kind: function
+operator: catch
+tests:
+  - id: catch.recovery
+    cases:
+      - id: catch.recovery.null
+        value: (null)
+        parameters: ['"Anonymous"']
+        expected: Anonymous
+      - id: catch.recovery.null-result
+        value: (null)
+        parameters: ['#null']
+        expected:
+      - id: catch.recovery.pass-through
+        value: Alice
+        parameters: ['"Anonymous"']
+        expected: ALICE
+      - id: catch.recovery.empty
+        value: (empty)
+        parameters: ['"Anonymous"']
+        expected: '(empty)'
+      - id: catch.recovery.blank
+        value: (blank)
+        parameters: ['"Anonymous"']
+        expected: '(blank)'

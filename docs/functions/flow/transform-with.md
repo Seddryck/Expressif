@@ -3,7 +3,7 @@ layout: docs
 title: "transform-with"
 parent: "Flow functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 70
 has_toc: false
 permalink: /functions/flow/transform-with/
 tags:
@@ -22,6 +22,8 @@ transform-with(
 
 Transforms the results of one or more expressions with the same open expression and returns them as a tuple.
 
+
+
 ## Parameters
 
 
@@ -31,12 +33,15 @@ Transforms the results of one or more expressions with the same open expression 
 | `operation` | `expression` | Yes | Open expression evaluated once against each result. |
 | `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated independently against the original input. |
 
+
+
 ## Argument evaluation
 
 Evaluates the shared operation against each result produced by the other expression arguments.
 
 - **`operation`:** Evaluated once against each result produced by the other expression arguments, rather than against an element of the incoming value.
 - **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
+
 
 ## Behavior
 

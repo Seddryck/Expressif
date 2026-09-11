@@ -1,5 +1,53 @@
 [
   {
+    "Name": "catch",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "flow",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Returns a recovery result and terminates the current pipeline when the input is null; otherwise, passes the input through.",
+    "Behavior": "Uses is-null semantics. The output preserves the input type on the pass-through path and depends on the recovery expression otherwise. Recovery errors propagate, and even a null recovery result terminates only the current pipeline.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Recovery expression whose result becomes the final result of the current pipeline.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once only when the value entering this catch call is null, in the enclosing expression's context. Field references read that enclosing record, and tuple references select positions in that enclosing tuple."
+        }
+      }
+    ],
+    "Examples": ["{nickname := #null, name := \"Alice\"} | .nickname | catch(.name) | upper → \"Alice\""]
+  },
+  {
+    "Name": "throw",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "flow",
+    "Input": "any",
+    "Output": "any",
+    "Summary": "Raises an evaluation exception when the input is rejected; otherwise, passes the input through.",
+    "Behavior": "Without a predicate, rejects values matching is-null. A supplied predicate replaces that check completely. The output preserves the input type when accepted; rejection or a predicate error stops evaluation immediately.",
+    "Parameters": [
+      {
+        "Name": "predicate",
+        "Type": "predicate",
+        "Optional": true,
+        "Summary": "Predicate that rejects the input when true; defaults to is-null when omitted.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once against the value entering this throw call, replacing the enclosing context. Field and tuple references read that incoming value."
+        }
+      }
+    ],
+    "Examples": ["12.346 | throw(is-negative) | round(2) → 12.35"]
+  },
+  {
     "Name": "adjacent",
     "IsPublic": true,
     "Aliases": [

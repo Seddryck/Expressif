@@ -3,7 +3,7 @@ layout: docs
 title: "try"
 parent: "Flow functions"
 grand_parent: "Functions library"
-nav_order: 60
+nav_order: 80
 has_toc: false
 permalink: /functions/flow/try/
 tags:
