@@ -3,7 +3,7 @@ layout: docs
 title: "guard"
 parent: "Flow functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/flow/guard/
 tags:
@@ -21,6 +21,8 @@ guard(
 
 Evaluates an expression only when the current input is directly compatible with its entry contract; otherwise, returns the original input unchanged.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,12 @@ Evaluates an expression only when the current input is directly compatible with 
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | Expression evaluated when its entry contract directly accepts the current input. |
 
+
+
 ## Argument evaluation
 
 - **`expression`:** Evaluated against the incoming value only when its entry contract accepts that value without coercion.
+
 
 ## Behavior
 

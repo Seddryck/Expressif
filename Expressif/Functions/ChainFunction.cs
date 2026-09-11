@@ -15,7 +15,22 @@ public class ChainFunction : IFunction
         => Functions = functions;
 
     public virtual object? Evaluate(object? value)
-        => Functions.Aggregate(value, (v, func) => func.Evaluate(v));
+    {
+        foreach (var function in Functions)
+        {
+            if (function is IPipelineControlFunction control)
+            {
+                value = control.Evaluate(value, out var terminate);
+                if (terminate)
+                    return value;
+            }
+            else
+            {
+                value = function.Evaluate(value);
+            }
+        }
+        return value;
+    }
 }
 
 public sealed class ChainFunction<TIn, TOut> : ChainFunction, IFunction<TIn, TOut>

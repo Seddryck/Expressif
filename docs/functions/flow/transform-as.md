@@ -3,7 +3,7 @@ layout: docs
 title: "transform-as"
 parent: "Flow functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 60
 has_toc: false
 permalink: /functions/flow/transform-as/
 tags:
@@ -22,6 +22,8 @@ transform-as(
 
 Transforms one or more named expression results with the same open expression and returns them as a record.
 
+
+
 ## Parameters
 
 
@@ -31,12 +33,15 @@ Transforms one or more named expression results with the same open expression an
 | `operation` | `expression` | Yes | Open expression evaluated once against each named result. |
 | `expressions` | `entry` | Variadic (one or more) | One or more named expressions evaluated independently against the original input. |
 
+
+
 ## Argument evaluation
 
 Evaluates the shared operation against each result produced by the named expression arguments.
 
 - **`operation`:** Evaluated once against each result produced by the other expression arguments, rather than against an element of the incoming value.
 - **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
+
 
 ## Behavior
 

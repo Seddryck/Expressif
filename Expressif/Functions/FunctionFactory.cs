@@ -226,11 +226,12 @@ public partial class FunctionFactory : BaseExpressionFactory
         foreach (var member in expression.Members)
             functions.Add(InstantiateOrWrapAggregation(member, context));
 
+        var pipeline = new ChainFunction(functions);
         return new DelegatedFunction(input =>
         {
             var source = sourceEvaluator.Invoke(input);
             using var scope = EvaluationRuntime.Derive(source);
-            return functions.Aggregate(source, (current, function) => function.Evaluate(current));
+            return pipeline.Evaluate(source);
         });
     }
 
@@ -439,6 +440,8 @@ public partial class FunctionFactory : BaseExpressionFactory
             FunctionConstructionKind.With => BuildWithFunction(function, context),
             FunctionConstructionKind.Conditional => BuildConditionalFunction(function, context),
             FunctionConstructionKind.ControlFlow => BuildControlFlowFunction(function, context),
+            FunctionConstructionKind.Catch => BuildCatchFunction(function, context),
+            FunctionConstructionKind.Throw => BuildThrowFunction(function, context),
             FunctionConstructionKind.Coalesce => BuildCoalesceFunction(function, context),
             FunctionConstructionKind.Coerce => BuildCoerceFunction(function),
             FunctionConstructionKind.Adjacent => BuildAdjacentFunction(function, context),
@@ -756,6 +759,23 @@ public partial class FunctionFactory : BaseExpressionFactory
             BuildControlFlowEvaluator(function.Parameters[backward ? 0 : 1], context),
             BuildControlFlowEvaluator(function.Parameters[backward ? 1 : 0], context),
             backward);
+    }
+
+    private IFunction BuildCatchFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(Flow.Catch), function.Arguments).Parameters;
+        var recovery = new DelegatedFunction(BuildValueEvaluator(bound[0], context));
+        return new Flow.Catch(() => recovery);
+    }
+
+    private IFunction BuildThrowFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(Flow.Throw), function.Arguments).Parameters;
+        if (bound.Length == 0)
+            return new Flow.Throw();
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(bound[0], context));
+        var predicate = new BooleanFunctionPredicate(evaluator);
+        return new Flow.Throw(() => predicate);
     }
 
     private IFunction BuildControlFlowFunction(Bindings.Function function, IContext context)
