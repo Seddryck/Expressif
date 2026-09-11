@@ -1,0 +1,93 @@
+suite: text
+kind: predicate
+operator: is-pascal-case
+tests:
+  - id: is-pascal-case.valid
+    cases:
+      - id: is-pascal-case.valid.accepted.standard
+        value: "FirstName"
+        expected: true
+      - id: is-pascal-case.valid.accepted.single.word
+        value: "Name"
+        expected: true
+      - id: is-pascal-case.valid.accepted.single.letter
+        value: "A"
+        expected: true
+      - id: is-pascal-case.valid.accepted.acronym
+        value: "HTTPServer"
+        expected: true
+      - id: is-pascal-case.valid.accepted.all.acronym
+        value: "XML"
+        expected: true
+      - id: is-pascal-case.valid.accepted.numbers
+        value: "Version2HTTPServer"
+        expected: true
+      - id: is-pascal-case.valid.accepted.unicode
+        value: "ÉlèveÉmérite"
+        expected: true
+      - id: is-pascal-case.valid.accepted.combining.mark
+        value: "ÉName"
+        expected: true
+      - id: is-pascal-case.valid.accepted.supplementary
+        value: "𐐀Name"
+        expected: true
+      - id: is-pascal-case.valid.rejected.null
+        value: "(null)"
+        expected: false
+      - id: is-pascal-case.valid.rejected.empty.tag
+        value: "(empty)"
+        expected: false
+      - id: is-pascal-case.valid.rejected.blank.tag
+        value: "(blank)"
+        expected: false
+      - id: is-pascal-case.valid.rejected.empty
+        value: ""
+        expected: false
+      - id: is-pascal-case.valid.rejected.whitespace
+        value: " "
+        expected: false
+      - id: is-pascal-case.valid.rejected.leading.space
+        value: " first"
+        expected: false
+      - id: is-pascal-case.valid.rejected.trailing.space
+        value: "first "
+        expected: false
+      - id: is-pascal-case.valid.rejected.mixed.separators
+        value: "first-name_value"
+        expected: false
+      - id: is-pascal-case.valid.rejected.dot
+        value: "first.name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.slash
+        value: "first/name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.newline
+        value: "first\nname"
+        expected: false
+      - id: is-pascal-case.valid.rejected.emoji
+        value: "first😀Name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.leading.number
+        value: "2name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.leading.mark
+        value: "́name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.escaped.separator
+        value: "first\\-name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.lower.initial
+        value: "firstName"
+        expected: false
+      - id: is-pascal-case.valid.rejected.lower.acronym
+        value: "httpServer"
+        expected: false
+      - id: is-pascal-case.valid.rejected.hyphen
+        value: "First-Name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.underscore
+        value: "First_Name"
+        expected: false
+      - id: is-pascal-case.valid.rejected.uncased.initial
+        value: "中文名称"
+        expected: false

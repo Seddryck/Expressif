@@ -2153,5 +2153,61 @@
       "\"Hello World\" | starts-with(\"Hello\") → #true",
       "\"Hello World\" | starts-with(\"Hello\") → #true"
     ]
+  },
+  {
+    "Name": "is-kebab-case",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text",
+    "Input": "text",
+    "Output": "boolean",
+    "Summary": "Returns `true` when the complete input is a kebab-case identifier beginning with a letter. Words contain lowercase or uncased Unicode letters, combining marks, and numbers, separated by single hyphens. Returns `false` for null, empty, blank, punctuation, mixed separators, and leading, trailing, or repeated separators.",
+    "Parameters": [],
+    "Examples": [
+      "\"first-name\" | is-kebab-case → #true",
+      "\"first--name\" | is-kebab-case → #false"
+    ]
+  },
+  {
+    "Name": "is-snake-case",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text",
+    "Input": "text",
+    "Output": "boolean",
+    "Summary": "Returns `true` when the complete input is a snake-case identifier beginning with a letter. Words contain lowercase or uncased Unicode letters, combining marks, and numbers, separated by single underscores. Returns `false` for null, empty, blank, punctuation, mixed separators, and leading, trailing, or repeated separators.",
+    "Parameters": [],
+    "Examples": [
+      "\"first_name\" | is-snake-case → #true",
+      "\"first--name\" | is-snake-case → #false"
+    ]
+  },
+  {
+    "Name": "is-camel-case",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text",
+    "Input": "text",
+    "Output": "boolean",
+    "Summary": "Returns `true` when the complete input is a camel-case identifier beginning with a letter. The initial letter is lowercase; subsequent Unicode letters, combining marks, and numbers may include uppercase acronym runs, as in `httpServerURL`. Returns `false` for null, empty, blank, punctuation, mixed separators, and leading, trailing, or repeated separators.",
+    "Parameters": [],
+    "Examples": [
+      "\"firstName\" | is-camel-case → #true",
+      "\"first--name\" | is-camel-case → #false"
+    ]
+  },
+  {
+    "Name": "is-pascal-case",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text",
+    "Input": "text",
+    "Output": "boolean",
+    "Summary": "Returns `true` when the complete input is a pascal-case identifier beginning with a letter. The initial letter is uppercase or titlecase; subsequent Unicode letters, combining marks, and numbers may include uppercase acronym runs, as in `HTTPServer`. Returns `false` for null, empty, blank, punctuation, mixed separators, and leading, trailing, or repeated separators.",
+    "Parameters": [],
+    "Examples": [
+      "\"FirstName\" | is-pascal-case → #true",
+      "\"first--name\" | is-pascal-case → #false"
+    ]
   }
 ]

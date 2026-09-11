@@ -1,0 +1,102 @@
+suite: text
+kind: predicate
+operator: is-snake-case
+tests:
+  - id: is-snake-case.valid
+    cases:
+      - id: is-snake-case.valid.accepted.standard
+        value: "first_name"
+        expected: true
+      - id: is-snake-case.valid.accepted.single.word
+        value: "name"
+        expected: true
+      - id: is-snake-case.valid.accepted.single.letter
+        value: "a"
+        expected: true
+      - id: is-snake-case.valid.accepted.numbers
+        value: "version2_http_server"
+        expected: true
+      - id: is-snake-case.valid.accepted.unicode
+        value: "élève_émérite"
+        expected: true
+      - id: is-snake-case.valid.accepted.numeric.segment
+        value: "a_2"
+        expected: true
+      - id: is-snake-case.valid.accepted.uncased
+        value: "中文_名称"
+        expected: true
+      - id: is-snake-case.valid.accepted.combining.mark
+        value: "é_name"
+        expected: true
+      - id: is-snake-case.valid.accepted.supplementary
+        value: "𐐨_name"
+        expected: true
+      - id: is-snake-case.valid.rejected.null
+        value: "(null)"
+        expected: false
+      - id: is-snake-case.valid.rejected.empty.tag
+        value: "(empty)"
+        expected: false
+      - id: is-snake-case.valid.rejected.blank.tag
+        value: "(blank)"
+        expected: false
+      - id: is-snake-case.valid.rejected.empty
+        value: ""
+        expected: false
+      - id: is-snake-case.valid.rejected.whitespace
+        value: " "
+        expected: false
+      - id: is-snake-case.valid.rejected.leading.space
+        value: " first"
+        expected: false
+      - id: is-snake-case.valid.rejected.trailing.space
+        value: "first "
+        expected: false
+      - id: is-snake-case.valid.rejected.mixed.separators
+        value: "first-name_value"
+        expected: false
+      - id: is-snake-case.valid.rejected.dot
+        value: "first.name"
+        expected: false
+      - id: is-snake-case.valid.rejected.slash
+        value: "first/name"
+        expected: false
+      - id: is-snake-case.valid.rejected.newline
+        value: "first\nname"
+        expected: false
+      - id: is-snake-case.valid.rejected.emoji
+        value: "first😀Name"
+        expected: false
+      - id: is-snake-case.valid.rejected.leading.number
+        value: "2name"
+        expected: false
+      - id: is-snake-case.valid.rejected.leading.mark
+        value: "́name"
+        expected: false
+      - id: is-snake-case.valid.rejected.escaped.separator
+        value: "first\\-name"
+        expected: false
+      - id: is-snake-case.valid.rejected.leading.separator
+        value: "_name"
+        expected: false
+      - id: is-snake-case.valid.rejected.trailing.separator
+        value: "name_"
+        expected: false
+      - id: is-snake-case.valid.rejected.repeated.separator
+        value: "first__name"
+        expected: false
+      - id: is-snake-case.valid.rejected.upper.initial
+        value: "First_name"
+        expected: false
+      - id: is-snake-case.valid.rejected.upper.segment
+        value: "first_Name"
+        expected: false
+      - id: is-snake-case.valid.rejected.all.upper
+        value: "FIRST"
+        expected: false
+      - id: is-snake-case.valid.rejected.wrong.separator
+        value: "first-name"
+        expected: false
+      - id: is-snake-case.valid.rejected.camel
+        value: "firstName"
+        expected: false
