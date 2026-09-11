@@ -3,7 +3,7 @@ layout: docs
 title: "drop-empty-groups"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /functions/grouping/drop-empty-groups/
 tags:

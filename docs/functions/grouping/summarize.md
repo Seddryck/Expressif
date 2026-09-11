@@ -3,7 +3,7 @@ layout: docs
 title: "summarize"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /functions/grouping/summarize/
 tags:

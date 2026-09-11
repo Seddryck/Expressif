@@ -3,7 +3,7 @@ layout: docs
 title: "drill-up"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/grouping/drill-up/
 tags:

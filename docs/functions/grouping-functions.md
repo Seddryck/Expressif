@@ -18,6 +18,7 @@ Reference documentation for Expressif functions in the `grouping` scope.
 
 | Name | Overview |
 |:-----|:---------|
+| [`cube`]({{ '/functions/grouping/cube/' | relative_url }}) | Expands a grouping into all combinations of retained and aggregated dimensions. |
 | [`drill-down`]({{ '/functions/grouping/drill-down/' | relative_url }}) | Refines each existing group by appending dimensions derived from its values. |
 | [`drill-up`]({{ '/functions/grouping/drill-up/' | relative_url }}) | Derives keys from existing grouping keys and merges matching groups into one grouping level. |
 | [`drop-empty-groups`]({{ '/functions/grouping/drop-empty-groups/' | relative_url }}) | Removes groups whose value collection contains no items. |
