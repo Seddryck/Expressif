@@ -66,9 +66,9 @@ $rules = @(Get-Content -LiteralPath (Join-Path $CatalogPath 'usage-lifecycle.jso
 $sections = @([regex]::Matches($content, '(?s)<section id="[^"]*" data-rule-id="([^"]+)" data-deprecated-since="([^"]*)" data-sunset="([^"]*)" data-introduced-commit="([^"]*)">(.*?)</section>'))
 if ($sections.Count -ne $rules.Count) { throw 'Rendered usage rule count does not match the shared lifecycle rules.' }
 foreach ($rule in $rules) {
-    $matches = @($sections | Where-Object { $_.Groups[1].Value -ceq $rule.Id })
-    if ($matches.Count -ne 1) { throw "Expected exactly one section for stable rule '$($rule.Id)'." }
-    $section = $matches[0]
+    $matchingSections = @($sections | Where-Object { $_.Groups[1].Value -ceq $rule.Id })
+    if ($matchingSections.Count -ne 1) { throw "Expected exactly one section for stable rule '$($rule.Id)'." }
+    $section = $matchingSections[0]
     foreach ($field in @(@('DeprecatedSince', 2), @('Sunset', 3), @('IntroducedCommit', 4))) {
         $value = [System.Net.WebUtility]::HtmlDecode($section.Groups[$field[1]].Value)
         if ($value -cne [string] $rule.($field[0])) { throw "Incorrect $($field[0]) for '$($rule.Id)'." }
