@@ -1,0 +1,58 @@
+suite: roll-up
+kind: function
+operator: roll-up
+tests:
+  - id: roll-up.valid.groups
+    cases:
+      - id: roll-up.valid.groups.composite
+        value: (null)
+        parameters: ['#{(T("BE", 2025) => {1, 2}), (T("FR", 2025) => {3}), (T("BE", 2026) => {4})} | roll-up']
+        expected: '#{(T("BE", 2025) => {1, 2}), (T("FR", 2025) => {3}), (T("BE", 2026) => {4}), (T("BE", #all) => {1, 2, 4}), (T("FR", #all) => {3}), (T(#all, #all) => {1, 2, 3, 4})}'
+      - id: roll-up.valid.groups.scalar
+        value: (null)
+        parameters: ['#{("B" => {2, 2}), ("A" => {1})} | roll-up']
+        expected: '#{("B" => {2, 2}), ("A" => {1}), (#all => {2, 2, 1})}'
+      - id: roll-up.valid.groups.null
+        value: (null)
+        parameters: ['#{(T(#null, 1) => {#null}), (T("#all", 1) => {2})} | roll-up']
+        expected: '#{(T(null, 1) => {null}), (T("#all", 1) => {2}), (T(null, #all) => {null}), (T("#all", #all) => {2}), (T(#all, #all) => {null, 2})}'
+      - id: roll-up.valid.groups.null-scalar
+        value: (null)
+        parameters: ['#{(#null => {1}), ("#all" => {2})} | roll-up']
+        expected: '#{(null => {1}), ("#all" => {2}), (#all => {1, 2})}'
+      - id: roll-up.valid.groups.empty-grouping
+        value: (null)
+        parameters: ['#{} | roll-up']
+        expected: '#{}'
+      - id: roll-up.valid.groups.empty-groups
+        value: (null)
+        parameters: ['#{(T("B", 1) => {}), (T("A", 1) => {2})} | roll-up']
+        expected: '#{(T("B", 1) => {}), (T("A", 1) => {2}), (T("B", #all) => {}), (T("A", #all) => {2}), (T(#all, #all) => {2})}'
+      - id: roll-up.valid.groups.empty-tuple
+        value: (null)
+        parameters: ['#{(tuple() => {1})} | roll-up']
+        expected: '#{(T() => {1})}'
+      - id: roll-up.valid.groups.single-component
+        value: (null)
+        parameters: ['#{(tuple(1) => {2})} | roll-up']
+        expected: '#{(T(1) => {2}), (T(#all) => {2})}'
+      - id: roll-up.valid.groups.three-dimensions
+        value: (null)
+        parameters: ['#{(T(1, 2, 3) => {4})} | roll-up']
+        expected: '#{(T(1, 2, 3) => {4}), (T(1, 2, #all) => {4}), (T(1, #all, #all) => {4}), (T(#all, #all, #all) => {4})}'
+      - id: roll-up.valid.groups.nested
+        value: (null)
+        parameters: ['#{(T(T(1, 2), 3) => {4})} | roll-up']
+        expected: '#{(T(T(1, 2), 3) => {4}), (T(T(1, 2), #all) => {4}), (T(#all, #all) => {4})}'
+      - id: roll-up.valid.groups.structural
+        value: (null)
+        parameters: ['#{(T({1}, 2) => {3}), (T({1}, 4) => {5})} | roll-up']
+        expected: '#{(T({1}, 2) => {3}), (T({1}, 4) => {5}), (T({1}, #all) => {3, 5}), (T(#all, #all) => {3, 5})}'
+      - id: roll-up.valid.groups.array-scalar
+        value: (null)
+        parameters: ['#{({1, 2} => {3})} | roll-up']
+        expected: '#{({1, 2} => {3}), (#all => {3})}'
+      - id: roll-up.valid.groups.summarize
+        value: (null)
+        parameters: ['{1, 2, 3} | group-by(1, add(0)) | roll-up | summarize(sum)']
+        expected: '!{(T(1, 1) => 1), (T(1, 2) => 2), (T(1, 3) => 3), (T(1, #all) => 6), (T(#all, #all) => 6)}'
