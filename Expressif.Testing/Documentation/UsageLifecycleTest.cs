@@ -44,7 +44,7 @@ public class UsageLifecycleTest
             Assert.That(use.Lifecycle, Is.SameAs(rule));
             Assert.That(use.RuleId, Is.EqualTo(rule.Id));
             Assert.That(use.Code, Is.EqualTo(rule.DiagnosticCode));
-            Assert.That(use.CanRewrite, Is.True);
+            Assert.That(use.CanRewrite, Is.EqualTo(rule.Operator != "chunk-while"));
             Assert.That(use.Replacement, Is.EqualTo(rule.ReplacementFor(use.Callable)));
             Assert.That(analyzer.Analyze(ExpressionParser.Parse(example.Replacement)), Is.Empty);
             Assert.That(Expression.Create(example.Deprecated).Evaluate(null), Is.EqualTo(result));
@@ -53,10 +53,10 @@ public class UsageLifecycleTest
     }
 
     [Test]
-    public void ChunkWhile_FollowingArgumentsRetainPreviousCurrentPair()
+    public void ChunkWhile_FollowingArgumentsRetainCurrentChunkAndCandidate()
     {
-        const string legacy = "{1, 2, 5} | chunk-while(subtract | less-than($1))";
-        const string replacement = "{1, 2, 5} | chunk-while($1 | subtract($0) | less-than($1))";
+        const string legacy = "{1, 2, 5} | chunk-while($1 | subtract($0 | last) | less-than($1))";
+        const string replacement = "{1, 2, 5} | chunk-while($0 | last | subtract($1) | absolute | less-than($1))";
         Assert.That(Expression.Create(replacement).Evaluate(null), Is.EqualTo(Expression.Create(legacy).Evaluate(null)));
     }
 }

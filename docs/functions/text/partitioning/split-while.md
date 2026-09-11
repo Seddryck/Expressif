@@ -44,7 +44,7 @@ Visits each UTF-16 code unit after the first in the text supplied as pipeline in
 
 The operation receives `T(currentSegment, candidate)`: `$0` is the complete current segment, excluding the candidate, and `$1` is the next UTF-16 code unit as a one-character string. The first character seeds the segment without invoking the operation. For each later character, `true` appends it and `false` emits the segment and starts another with that character. Each candidate is tested exactly once; no character is discarded and no empty segment is emitted. Empty, null, and singleton input do not invoke the operation. Blank input represents one space; literal whitespace is preserved. A non-Boolean result returns `null`.
 
-Unlike the previous/current element pair used by `chunk-while`, the first position here contains the complete current text segment. Like `split-lengths`, it preserves character order, so concatenating the segments reproduces the input. Character counting follows `first-chars` and `skip-first-chars`.
+Like `chunk-while`, the first position contains the complete current segment, excluding the candidate. Like `split-lengths`, it preserves character order, so concatenating the segments reproduces the input. Character counting follows `first-chars` and `skip-first-chars`.
 
 ### Split at vowel/consonant transitions
 

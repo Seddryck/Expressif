@@ -91,8 +91,8 @@ public sealed class LegacyTupleBindingAnalyzer
     {
         return new(consumer, callable.Name, callable.SourceSpan, type,
             selected.Count > 0 ? selected.Distinct().ToArray() : candidates,
-            consumer switch { MapOver => "outer input", MapWith => "supplied item", _ => "current item" },
-            consumer switch { MapOver => "supplied item, expanding its tuple positions once", MapWith => "outer input as one value", _ => "previous item" },
+            consumer switch { MapOver => "outer input", MapWith => "supplied item", "chunk-while" => "candidate", _ => "current item" },
+            consumer switch { MapOver => "supplied item, expanding its tuple positions once", MapWith => "outer input as one value", "chunk-while" => "current chunk as one array", _ => "previous item" },
             UsageLifecycle.Find(consumer)!.ReplacementFor(callable.Name), valid && candidates.Any(signature => signature.SupportsTupleBinding));
     }
 
@@ -117,7 +117,8 @@ public sealed class LegacyTupleBindingAnalyzer
 
     private static List<TupleParameter>? KnownInvocations(string consumer, IParameter? input, IParameter? values)
     {
-        if (consumer is "adjacent" or "chunk-while")
+        if (consumer == "chunk-while") return null; // Chunk boundaries depend on runtime predicate results.
+        if (consumer == "adjacent")
         {
             if (input is not ArrayParameter array || array.Elements.Any(element => element.IsSpread)) return null;
             return array.Values.Zip(array.Values.Skip(1), (previous, current) => new TupleParameter([current, previous])).ToList();
