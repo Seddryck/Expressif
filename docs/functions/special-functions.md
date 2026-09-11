@@ -30,4 +30,5 @@ Reference documentation for Expressif functions in the `special` scope.
 | [`coerce-time`]({{ '/functions/special/coerce-time/' | relative_url }}) | Attempts to convert the input to a time value. Returns `null` when the input cannot be converted. |
 | [`neutral`]({{ '/functions/special/neutral/' | relative_url }}) | Returns the argument value. |
 | [`null-to-value`]({{ '/functions/special/null-to-value/' | relative_url }}) | Returns the value passed as argument, except if the value is `null` then it returns `value`. |
+| [`recode`]({{ '/functions/special/recode/' | relative_url }}) | Returns the dictionary value associated with the input key, or preserves the input when no key matches. |
 | [`value-to-value`]({{ '/functions/special/value-to-value/' | relative_url }}) | Returns `value` except if the argument value is `null` then it returns `null`. |
