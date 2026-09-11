@@ -77,7 +77,10 @@ public sealed class SemanticAnalyzer
                 }
             }
 
-            return new(syntax, references.OrderBy(reference => reference.Span.Start).ToArray(), diagnostics.ToArray());
+            return new(syntax, references.OrderBy(reference => reference.Span.Start).ToArray(), diagnostics.ToArray())
+            {
+                TupleBindings = new TupleBindingAnalyzer().Analyze(syntax),
+            };
         }
 
         private SemanticSource Closed(ClosedExpression expression, SemanticSource input, ScopeFrame<SemanticSource> frame)

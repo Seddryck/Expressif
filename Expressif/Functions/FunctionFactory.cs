@@ -18,7 +18,7 @@ using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Expressif.Functions;
 
-public class FunctionFactory : BaseExpressionFactory
+public partial class FunctionFactory : BaseExpressionFactory
 {
     private static readonly PredicateTypeMapper PredicateTypeMapper = new();
     private static readonly HashSet<string> ImplicitFoldAccumulators = new(
@@ -236,6 +236,9 @@ public class FunctionFactory : BaseExpressionFactory
 
     private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
     {
+        if (function.Syntax == FunctionSyntax.InputBindingStage
+            && function.Parameters is [OpenExpressionParameter { Expression: InputBoundExpression binding }])
+            return BuildInputBoundFunction(binding, context);
         var name = function.Name.ToKebabCase();
         var construction = FunctionConstruction.Classify(name);
 
@@ -394,6 +397,7 @@ public class FunctionFactory : BaseExpressionFactory
     private IFunction? TryBuildSpecialFunction(FunctionConstructionKind construction, Bindings.Function function, IContext context)
         => construction switch
         {
+            FunctionConstructionKind.TupleBind => BuildTupleBind(function, context),
             FunctionConstructionKind.Record => BuildRecordFunction(function, context),
             FunctionConstructionKind.With => BuildWithFunction(function, context),
             FunctionConstructionKind.Conditional => BuildConditionalFunction(function, context),

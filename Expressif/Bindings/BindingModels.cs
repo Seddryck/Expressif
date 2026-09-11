@@ -8,6 +8,7 @@ public sealed record ClosedRootExpression(ClosedExpression Expression) : IRootEx
 public enum FunctionSyntax
 {
     Standard,
+    InputBindingStage,
     ConditionalForward,
     ConditionalBackward,
     MapShorthand,
@@ -37,6 +38,7 @@ public sealed class Function : IBoundExpression
     internal static Function FromArguments(string name, FunctionArgument[] arguments, FunctionSyntax syntax)
         => new(name, arguments, syntax);
 
+    public Expressif.Syntax.SourceSpan? SourceSpan { get; internal set; }
     public string Name { get; }
     public FunctionArgument[] Arguments { get; }
     public IParameter[] Parameters => Arguments.Select(x => x.Value).ToArray();

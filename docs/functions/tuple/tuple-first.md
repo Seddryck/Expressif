@@ -3,7 +3,7 @@ layout: docs
 title: "tuple-first"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /functions/tuple/tuple-first/
 tags:

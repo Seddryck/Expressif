@@ -19,6 +19,7 @@ Reference documentation for Expressif functions in the `tuple` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`arity`]({{ '/functions/tuple/arity/' | relative_url }}) | Returns the number of positional elements in the input tuple. |
+| [`bind`]({{ '/functions/tuple/bind/' | relative_url }}) | Invokes a named callable using the first tuple position as pipeline input and the remaining positions as already-evaluated argument values. |
 | [`extend`]({{ '/functions/tuple/extend/' | relative_url }}) | Returns a new tuple with a value appended, expanding tuple values into their positions. |
 | [`pick`]({{ '/functions/tuple/pick/' | relative_url }}) | Returns a tuple containing selected positions in the requested order. |
 | [`rotate`]({{ '/functions/tuple/rotate/' | relative_url }}) | Returns a tuple with its positions rotated cyclically, preserving arity and item values, including nulls. |

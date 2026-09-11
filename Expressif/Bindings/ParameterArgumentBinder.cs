@@ -8,7 +8,11 @@ internal static class ParameterArgumentBinder
 {
     public static ParameterArgumentBinding Bind(Type type, FunctionArgument[] arguments)
     {
-        var constructors = type.GetConstructors();
+        return Bind(type, arguments, type.GetConstructors());
+    }
+
+    internal static ParameterArgumentBinding Bind(Type type, FunctionArgument[] arguments, ConstructorInfo[] constructors)
+    {
         var positionalCount = arguments.TakeWhile(x => x.Name is null).Count();
         var named = arguments.Skip(positionalCount).ToArray();
         var functionName = type.Name.ToKebabCase();

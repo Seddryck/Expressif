@@ -51,4 +51,7 @@ public sealed record FieldReference(
 public sealed record SemanticAnalysis(
     RootExpressionSyntax? Syntax,
     IReadOnlyList<FieldReference> References,
-    IReadOnlyList<string> Diagnostics);
+    IReadOnlyList<string> Diagnostics)
+{
+    public IReadOnlyList<TupleBindingUse> TupleBindings { get; init; } = [];
+}
