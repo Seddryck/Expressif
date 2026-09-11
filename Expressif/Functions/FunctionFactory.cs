@@ -279,6 +279,17 @@ public partial class FunctionFactory : BaseExpressionFactory
 
         if (construction == FunctionConstructionKind.PutPath)
             return BuildPutPathFunction(name, function, context);
+
+        if (construction == FunctionConstructionKind.RenameFields)
+        {
+            var bound = ParameterArgumentBinder.Bind(typeof(Record.RenameFields), function.Arguments).Parameters;
+            var transform = bound[0] is OpenExpressionParameter open
+                ? BuildOpenExpression(open.Expression, context)
+                : new DelegatedFunction(BuildValueEvaluator(bound[0], context));
+            var filter = bound.Length == 2 ? BuildPredicateProvider(bound[1], context, name).Invoke() : null;
+            return new Record.RenameFields(() => transform, filter is null ? null : () => filter);
+        }
+
         if (construction == FunctionConstructionKind.Key)
             return new Array.Key(BuildGroupingExpressionEvaluators(function, context));
 

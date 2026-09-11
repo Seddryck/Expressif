@@ -1,0 +1,58 @@
+suite: record
+kind: function
+operator: rename-fields
+tests:
+  - id: rename-fields.valid.record
+    cases:
+      - id: rename-fields.valid.record.pascal
+        value:
+        parameters:
+          - '{"first name" := "John"} | rename-fields(pascal-case)'
+        expected: '{FirstName := "John"}'
+      - id: rename-fields.valid.record.all
+        value:
+        parameters:
+          - '{first-name := "John", last-name := "Doe"} | rename-fields(tokenize-kebab | pascal-case)'
+        expected: '{FirstName := "John", LastName := "Doe"}'
+      - id: rename-fields.valid.record.filtered
+        value:
+        parameters:
+          - '{first-name := "John", age := 42} | rename-fields(tokenize-kebab | pascal-case, contains("-"))'
+        expected: '{FirstName := "John", age := 42}'
+      - id: rename-fields.valid.record.composed
+        value:
+        parameters:
+          - '{" First " := #null, SECOND := {nested := 42}} | rename-fields(trim | lower)'
+        expected: '{first := null, second := {nested := 42}}'
+      - id: rename-fields.valid.record.unchanged
+        value:
+        parameters:
+          - '{age := 42} | rename-fields(tokenize-kebab | pascal-case, contains("-"))'
+        expected: '{age := 42}'
+      - id: rename-fields.valid.record.empty
+        value:
+        parameters:
+          - 'record() | rename-fields(lower)'
+        expected: '{}'
+      - id: rename-fields.valid.record.named
+        value:
+        parameters:
+          - '{first-name := "John", age := 42} | rename-fields(filter := contains("-"), transform := tokenize-kebab | pascal-case)'
+        expected: '{FirstName := "John", age := 42}'
+  - id: rename-fields.invalid.collision
+    cases:
+      - id: rename-fields.invalid.collision.renamed
+        value:
+        parameters:
+          - '{FOO := 1, Foo := 2} | rename-fields(lower)'
+        expected: foo
+      - id: rename-fields.invalid.collision.untouched
+        value:
+        parameters:
+          - '{foo-bar := 1, FooBar := 2} | rename-fields(tokenize-kebab | pascal-case, contains("-"))'
+        expected: FooBar
+      - id: rename-fields.invalid.collision.untouched-first
+        value:
+        parameters:
+          - '{FooBar := 2, foo-bar := 1} | rename-fields(tokenize-kebab | pascal-case, contains("-"))'
+        expected: FooBar
