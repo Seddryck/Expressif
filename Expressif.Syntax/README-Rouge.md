@@ -53,3 +53,12 @@ Rouge formatters expose this token with the standard `go` CSS class, allowing th
 - Expressif repository: https://github.com/Seddryck/Expressif
 - Expressif documentation: https://expressif.net/
 - Rouge: https://github.com/rouge-ruby/rouge
+
+## Tuple-binding notation
+
+The tilde in `~subtract`, `subtract~`, and `~greater-than` is an `Operator` token.
+The adjacent recognized callable keeps its `Name::Function` classification. Both
+quoted string forms protect embedded tildes, including escaped delimiters. Unknown
+target names retain lexical fallback styling; runtime eligibility is semantic.
+
+These forms require Expressif.Syntax 0.42.0 and a runtime with tuple binding support.

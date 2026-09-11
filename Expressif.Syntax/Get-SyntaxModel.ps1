@@ -48,6 +48,6 @@ function Get-SyntaxModel {
         accumulators = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'accumulator.json'))
         types = @(Get-TypeEntries -Path (Join-Path $resolvedInputFolder 'type.json'))
         constants = @('#blank', '#empty', '#false', '#null', '#true')
-        operators = @('...', ':=', '->', '|>', '|?', '|OR', '|XOR', '|AND', '!', '#', '$', '&', '.', '@', '|')
+        operators = @('...', ':=', '->', '|>', '|?', '|OR', '|XOR', '|AND', '~', '!', '#', '$', '&', '.', '@', '|')
     }
 }

@@ -7,21 +7,21 @@
 {{~ for function in model.functions ~}}
     {
       "name": "support.function.expressif.{{ function.scope | string.downcase }}",
-      "match": "\\b{{ function.regex }}\\b"
+      "match": "(?<![\\w-]){{ function.regex }}(?![\\w-])"
     }{{ if !for.last }},{{ end ~}}
 {{~ end ~}}
 {{~ if model.functions.size > 0 ~}},{{~ end ~}}
 {{~ for predicate in model.predicates ~}}
     {
       "name": "support.function.expressif.predicate.{{ predicate.scope | string.downcase }}",
-      "match": "\\b{{ predicate.regex }}\\b"
+      "match": "(?<![\\w-]){{ predicate.regex }}(?![\\w-])"
     }{{ if !for.last }},{{ end ~}}
 {{~ end ~}}
 {{~ if model.predicates.size > 0 ~}},{{~ end ~}}
 {{~ for accumulator in model.accumulators ~}}
     {
       "name": "support.function.expressif.accumulator.{{ accumulator.scope | string.downcase }}",
-      "match": "\\b{{ accumulator.regex }}\\b"
+      "match": "(?<![\\w-]){{ accumulator.regex }}(?![\\w-])"
     }{{ if !for.last }},{{ end ~}}
 {{~ end ~}}
 {{~ if model.accumulators.size > 0 ~}},{{~ end ~}}
