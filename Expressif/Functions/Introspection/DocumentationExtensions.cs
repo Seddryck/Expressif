@@ -38,6 +38,7 @@ public static class DocumentationExtensions
         (typeof(Text.SplitLengths), "lengths"),
         (typeof(Array.Key), "expressions"),
         (typeof(Array.GroupBy), "expressions"),
+        (typeof(Grouping.DrillDown), "expressions"),
         (typeof(Predicates.Boolean.Majority), "predicates"),
         (typeof(Predicates.Boolean.SatisfiesExactly), "predicates"),
         (typeof(Predicates.Boolean.SatisfiesAtLeast), "predicates"),
@@ -182,6 +183,7 @@ public static class DocumentationExtensions
             [(typeof(Tuple.Pick), "positions")] = 1,
             [(typeof(Array.Key), "expressions")] = 1,
             [(typeof(Array.GroupBy), "expressions")] = 1,
+            [(typeof(Grouping.DrillDown), "expressions")] = 1,
             [(typeof(Flow.TransformWith), "expressions")] = 1,
             [(typeof(Flow.TransformAs), "expressions")] = 1,
         };

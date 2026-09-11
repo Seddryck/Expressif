@@ -25,6 +25,7 @@ internal static class ExpressifTypeMapper
             [("Dictionary", ValuesParameter)] = "pair",
             [("Key", "expressions")] = "expression",
             [("GroupBy", "expressions")] = "expression",
+            [("DrillDown", "expressions")] = "expression",
             [("Text", ValuesParameter)] = "expression",
             [("SplitLengths", "lengths")] = "integer",
             [("Record", "entries")] = "entry",

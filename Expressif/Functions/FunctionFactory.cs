@@ -282,6 +282,14 @@ public partial class FunctionFactory : BaseExpressionFactory
         if (construction == FunctionConstructionKind.Key)
             return new Array.Key(BuildGroupingExpressionEvaluators(function, context));
 
+        if (construction == FunctionConstructionKind.DrillDown)
+        {
+            var expressions = BuildGroupingExpressionEvaluators(function, context)
+                .Select(evaluator => new DelegatedFunction(evaluator))
+                .Select(expression => (Func<object?, object?>)(value => EvaluateNested(expression, value)));
+            return new Grouping.DrillDown(expressions);
+        }
+
         if (construction == FunctionConstructionKind.GroupBy)
             return new Array.GroupBy(BuildGroupingExpressionEvaluators(function, context));
 

@@ -3,7 +3,7 @@ layout: docs
 title: "filter-groups"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /functions/grouping/filter-groups/
 tags:
@@ -31,11 +31,15 @@ Keeps whole groups whose group-level predicate evaluates to true.
 |:-----|:-----|:---------|:------------|
 | `predicate` | `predicate` | Yes | The predicate evaluated once against each group, with its key and value collection available. |
 
+
+
 ## Argument evaluation
 
 Visits each group, including its key and values, in the grouping entering this call.
 
 - **`predicate`:** Evaluated once per visited group, with its key and values available in the context.
+
+
 
 ## Examples
 
