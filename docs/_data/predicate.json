@@ -1,5 +1,22 @@
 [
   {
+    "Name": "is-single",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "boolean",
+    "Summary": "Returns whether the input array contains exactly one element. Returns false when the input cannot be evaluated as an array.",
+    "Parameters": [],
+    "Behavior": "Cardinality is independent of element values: a sole null, array, or record counts as one element. Uses the same array conversion as single, including text containing an Expressif array literal. When is-single returns true, single returns the sole element.",
+    "Examples": [
+      "{42} | is-single → #true",
+      "{} | is-single → #false",
+      "{1, 2} | is-single → #false",
+      "{#null} | is-single → #true"
+    ]
+  },
+  {
     "Name": "is-tuple",
     "IsPublic": true,
     "Aliases": [
