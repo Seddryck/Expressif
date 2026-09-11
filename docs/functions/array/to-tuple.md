@@ -3,7 +3,7 @@ layout: docs
 title: "to-tuple"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 200
+nav_order: 90
 has_toc: false
 permalink: /functions/array/to-tuple/
 tags:

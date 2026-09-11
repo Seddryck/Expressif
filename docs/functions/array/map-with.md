@@ -3,7 +3,7 @@ layout: docs
 title: "map-with"
 parent: "Array functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/array/map-with/
 tags:

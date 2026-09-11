@@ -739,6 +739,37 @@
     }
   },
   {
+    "Name": "flat-map",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Evaluates an array-producing expression for each input element and concatenates the resulting arrays in order. Flattens one level, preserving nested arrays and null elements. Empty arrays contribute no elements. Throws an argument error when an expression result is not an array, including null or text.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Expression producing the array of output elements for each source element.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element in source order, with that element as its pipeline input and argument context. Field references such as .orders read that element's fields."
+        }
+      }
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array supplied as pipeline input to this flat-map call."
+    },
+    "Examples": [
+      "{{orders := {1, 2}}, {orders := {}}, {orders := {3}}} | flat-map(.orders) → {1, 2, 3}",
+      "{\"one two\", \"three four\"} | flat-map(tokenize(\" \")) → {\"one\", \"two\", \"three\", \"four\"}"
+    ]
+  },
+  {
     "Name": "map-over",
     "IsPublic": true,
     "Aliases": [],

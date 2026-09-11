@@ -1,0 +1,38 @@
+suite: array
+kind: function
+operator: flat-map
+tests:
+  - id: flat-map.expression
+    cases:
+      - id: flat-map.expression.records.order
+        value: '{{orders := {1, 2}}, {orders := {}}, {orders := {3}}}'
+        parameters: ['flat-map(.orders)']
+        expected: '{1, 2, 3}'
+      - id: flat-map.expression.array.nested
+        value: '{{orders := {{1, 2}, {3}}}, {orders := {{4}}}}'
+        parameters: ['flat-map(.orders)']
+        expected: '{{1, 2}, {3}, {4}}'
+      - id: flat-map.expression.array.null-elements
+        value: '{{orders := {#null, 1}}, {orders := {#null}}}'
+        parameters: ['flat-map(.orders)']
+        expected: '{#null, 1, #null}'
+      - id: flat-map.expression.array.empty-source
+        value: '{}'
+        parameters: ['flat-map(.orders)']
+        expected: '{}'
+      - id: flat-map.expression.array.empty-results
+        value: '{{orders := {}}, {orders := {}}}'
+        parameters: ['flat-map(.orders)']
+        expected: '{}'
+      - id: flat-map.expression.text.tokenize
+        value: '{"one two", "three four"}'
+        parameters: ['flat-map(tokenize(" "))']
+        expected: '{"one", "two", "three", "four"}'
+      - id: flat-map.expression.records.nested-map
+        value: '{{orders := {{amount := 2}, {amount := 3}}}, {orders := {{amount := 4}}}}'
+        parameters: ['flat-map(.orders |> .amount) | sum']
+        expected: '9'
+      - id: flat-map.expression.records.named
+        value: '{{orders := {1, 2}}, {orders := {3}}}'
+        parameters: ['flat-map(expression := .orders)']
+        expected: '{1, 2, 3}'
