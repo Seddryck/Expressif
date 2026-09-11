@@ -5,6 +5,10 @@ namespace Expressif.Testing.Functions.Array;
 [TestFixture]
 public class MapOverTest
 {
+    [Conformance]
+    public void MapOver_ExplicitBinding(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(Expression.Create(expected).Evaluate(null)));
+
     [Test]
     public void Expression_ScalarValues_BroadcastsPipelineInput()
         => Assert.That(Expression.Create("map-over(subtract, {10, 11})").Evaluate(5), Is.EqualTo(new decimal?[] { -5, -6 }));
@@ -37,6 +41,10 @@ public class MapOverTest
 [TestFixture]
 public class MapWithTest
 {
+    [Conformance]
+    public void MapWith_ExplicitBinding(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(Expression.Create(expected).Evaluate(null)));
+
     [Test]
     public void Expression_ScalarValues_UsesOuterInputAsArgument()
         => Assert.That(Expression.Create("map-with(subtract, {10, 11})").Evaluate(5), Is.EqualTo(new decimal?[] { 5, 6 }));

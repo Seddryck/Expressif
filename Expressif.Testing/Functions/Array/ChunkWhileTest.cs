@@ -8,6 +8,10 @@ namespace Expressif.Testing.Functions.Array;
 public class ChunkWhileTest
 {
     [Conformance]
+    public void ChunkWhile_ExplicitBinding(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value is string source ? new ParameterValueConverter().Parse(source) : value), Is.EqualTo(Expression.Create(expected).Evaluate(null)));
+
+    [Conformance]
     public void ChunkWhile_Valid_Operation(object? input, string operation, string? expected)
     {
         if (input is "(null)")

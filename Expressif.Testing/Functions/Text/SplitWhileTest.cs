@@ -10,6 +10,10 @@ namespace Expressif.Testing.Functions.Text;
 public class SplitWhileTest
 {
     [Conformance]
+    public void SplitWhile_ExplicitBinding(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(Expression.Create(expected).Evaluate(null)));
+
+    [Conformance]
     public void SplitWhile_Partition(object? value, string expression, string[]? expected)
         => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(expected));
 

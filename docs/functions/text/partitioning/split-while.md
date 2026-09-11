@@ -33,13 +33,18 @@ Splits text into consecutive nonempty segments while an operation over the curre
 
 
 
+## Argument evaluation
+
+Visits each UTF-16 code unit after the first in the text supplied as pipeline input to this split-while call.
+
+- **`operation`:** Evaluated once per candidate with T(current segment, next character) as pipeline input; pipeline selections $0 and $1 read those positions, while argument expressions retain the enclosing expression context. Null, empty and singleton text do not evaluate the operation.
 
 
 ## Behavior
 
 The operation receives `T(currentSegment, candidate)`: `$0` is the complete current segment, excluding the candidate, and `$1` is the next UTF-16 code unit as a one-character string. The first character seeds the segment without invoking the operation. For each later character, `true` appends it and `false` emits the segment and starts another with that character. Each candidate is tested exactly once; no character is discarded and no empty segment is emitted. Empty, null, and singleton input do not invoke the operation. Blank input represents one space; literal whitespace is preserved. A non-Boolean result returns `null`.
 
-This is the text counterpart of the generalized `chunk-while` contract: the current segment is a string rather than an array. Like `split-lengths`, it preserves character order, so concatenating the segments reproduces the input. Character counting follows `first-chars` and `skip-first-chars`.
+Unlike the previous/current element pair used by `chunk-while`, the first position here contains the complete current text segment. Like `split-lengths`, it preserves character order, so concatenating the segments reproduces the input. Character counting follows `first-chars` and `skip-first-chars`.
 
 ### Split at vowel/consonant transitions
 
@@ -75,6 +80,8 @@ A single space does not break the segment. Split before an ASCII letter followin
 
 Before trimming, the result is `{"abc def  ", "ghi jkl   ", "mno"}`. Splitting preserves the spaces; the explicit `map(trim)` removes them. `|> trim` is equivalent here.
 
+`starts-with~` invokes segment | starts-with(candidate), while `~starts-with` invokes candidate | starts-with(segment). Both directions require a Boolean result; existing complete expressions are not deprecated.
+
 
 
 ## Examples
@@ -82,6 +89,7 @@ Before trimming, the result is `{"abc def  ", "ghi jkl   ", "mno"}`. Splitting p
 {% raw %}
 ```expressif
 "abcdefgh" | split-while($0 | length | is-less-than(3)) → {"abc", "def", "gh"}
+"aaabb" | split-while(starts-with~) → {"aaa", "bb"}
 ```
 {% endraw %}
 

@@ -12,3 +12,10 @@ tests:
       - id: map-with.valid.empty-values.array.empty
         value: 5
         expected: []
+
+  - id: map-with.explicit-binding
+    cases:
+      - id: map-with.explicit-binding.direction
+        value: 5
+        parameters: ['map-with(~subtract, {10, 11})']
+        expected: '{5, 6}'

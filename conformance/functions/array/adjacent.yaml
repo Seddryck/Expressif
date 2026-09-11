@@ -20,3 +20,10 @@ tests:
         value: [100, 105, 120]
         expected: [5, 15]
         parameters: [subtract]
+
+  - id: adjacent.explicit-binding
+    cases:
+      - id: adjacent.explicit-binding.direction
+        value: [1, 2, 5]
+        parameters: ['adjacent(~subtract)']
+        expected: '{1, 3}'

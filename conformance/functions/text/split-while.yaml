@@ -36,3 +36,10 @@ tests:
       - {id: split-while.partition.numeric, value: 12345, parameters: ['split-while($0 | length | is-less-than(2))'], expected: ['12', '34', '5']}
       - {id: split-while.partition.nonboolean, value: abc, parameters: ['split-while($0 | length)'], expected: null}
       - {id: split-while.partition.named, value: abcdefgh, parameters: ['split-while(operation := ($0 | length | is-less-than(3)))'], expected: [abc, def, gh]}
+
+  - id: split-while.explicit-binding
+    cases:
+      - id: split-while.explicit-binding.direction
+        value: aaabb
+        parameters: ['split-while(starts-with~)']
+        expected: '{"aaa", "bb"}'
