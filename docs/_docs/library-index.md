@@ -281,6 +281,7 @@ tags: [predicates, functions]
 * [is-positive]({{ site.baseurl }}/docs/numeric-predicates/#is-positive)
 * [is-positive-or-zero]({{ site.baseurl }}/docs/numeric-predicates/#is-positive-or-zero)
 * [is-same-instant]({{ site.baseurl }}/docs/temporal-predicates/#is-same-instant)
+* [is-single]({{ site.baseurl }}/docs/array-predicates/#is-single)
 * [is-sorted-after]({{ site.baseurl }}/docs/text-predicates/#is-sorted-after)
 * [is-sorted-after-or-equivalent-to]({{ site.baseurl }}/docs/text-predicates/#is-sorted-after-or-equivalent-to)
 * [is-sorted-before]({{ site.baseurl }}/docs/text-predicates/#is-sorted-before)

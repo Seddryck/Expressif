@@ -1,0 +1,57 @@
+suite: array
+kind: predicate
+operator: is-single
+tests:
+  - id: is-single.valid.cardinality
+    cases:
+      - id: is-single.valid.cardinality.empty
+        value: []
+        expected: false
+      - id: is-single.valid.cardinality.integer
+        value: [42]
+        expected: true
+      - id: is-single.valid.cardinality.text
+        value: [alpha]
+        expected: true
+      - id: is-single.valid.cardinality.null-element
+        value: [null]
+        expected: true
+      - id: is-single.valid.cardinality.nested
+        value: [[1, 2]]
+        expected: true
+      - id: is-single.valid.cardinality.record
+        value:
+          - name: Alice
+        expected: true
+      - id: is-single.valid.cardinality.multiple
+        value: [1, 2]
+        expected: false
+      - id: is-single.valid.cardinality.multiple-null
+        value: [null, null]
+        expected: false
+      - id: is-single.valid.cardinality.many
+        value: [1, 2, 3]
+        expected: false
+  - id: is-single.valid.conversion
+    cases:
+      - id: is-single.valid.conversion.null
+        value: (null)
+        expected: false
+      - id: is-single.valid.conversion.empty
+        value: (empty)
+        expected: false
+      - id: is-single.valid.conversion.blank
+        value: (blank)
+        expected: false
+      - id: is-single.valid.conversion.number
+        value: 42
+        expected: false
+      - id: is-single.valid.conversion.boolean
+        value: true
+        expected: false
+      - id: is-single.valid.conversion.text
+        value: a
+        expected: false
+      - id: is-single.valid.conversion.array-literal
+        value: "{42}"
+        expected: true
