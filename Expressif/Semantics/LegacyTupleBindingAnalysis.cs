@@ -11,7 +11,10 @@ public sealed record LegacyTupleBindingUse(string Operator, string Callable, Sou
     Type ImplementationType, IReadOnlyList<TupleBindingSignature> Signatures,
     string PipelineInput, string Arguments, string Replacement, bool CanRewrite)
 {
-    public string Code { get; } = "implicit-tuple-binding";
+    public UsageLifecycleRule Lifecycle => UsageLifecycle.Find(Operator)
+        ?? throw new InvalidOperationException($"No usage lifecycle rule exists for '{Operator}'.");
+    public string RuleId => Lifecycle.Id;
+    public string Code => Lifecycle.DiagnosticCode;
     public string Message => $"Implicit argument injection into '{Callable}' is deprecated; use an explicit binding expression.";
 }
 
@@ -50,7 +53,7 @@ public sealed class LegacyTupleBindingAnalyzer
         foreach (var member in members)
         {
             var consumer = member.Name.ToKebabCase();
-            if (consumer is "adjacent" or "chunk-while" or MapOver or MapWith)
+            if (UsageLifecycle.Find(consumer) is { Active: true })
                 Inspect(member, consumer, input, uses);
             foreach (var parameter in member.Parameters)
             {
@@ -86,12 +89,11 @@ public sealed class LegacyTupleBindingAnalyzer
     private static LegacyTupleBindingUse CreateUse(string consumer, BoundFunction callable, Type type,
         TupleBindingSignature[] candidates, List<TupleBindingSignature> selected, bool valid)
     {
-        var prefix = consumer != MapOver;
         return new(consumer, callable.Name, callable.SourceSpan, type,
             selected.Count > 0 ? selected.Distinct().ToArray() : candidates,
             consumer switch { MapOver => "outer input", MapWith => "supplied item", _ => "current item" },
             consumer switch { MapOver => "supplied item, expanding its tuple positions once", MapWith => "outer input as one value", _ => "previous item" },
-            prefix ? "~" + callable.Name : callable.Name + "~", valid && candidates.Any(signature => signature.SupportsTupleBinding));
+            UsageLifecycle.Find(consumer)!.ReplacementFor(callable.Name), valid && candidates.Any(signature => signature.SupportsTupleBinding));
     }
 
     private static List<TupleBindingSignature> SelectSignatures(Type type, TupleBindingSignature[] candidates,

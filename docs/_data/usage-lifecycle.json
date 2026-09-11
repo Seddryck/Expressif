@@ -1,0 +1,126 @@
+[
+  {
+    "Id": "implicit-tuple-binding-adjacent",
+    "DiagnosticCode": "implicit-tuple-binding",
+    "Operator": "adjacent",
+    "Active": true,
+    "DeprecatedSince": null,
+    "IntroducedCommit": "08308605c0dd1f103ad34165e9b08fb190a58a8d",
+    "Sunset": "3.0",
+    "AllowFollowingStages": false,
+    "ReplacementTemplate": "~{callable}",
+    "Condition": "A single bare callable with a binary signature relies on the previous element being injected as its argument and the current element as its pipeline input.",
+    "OperatorPath": "/functions/array/sequencing/adjacent/",
+    "MigrationPath": "/language/tuple-binding/#migrating-implicit-binding",
+    "MigrationConditions": "The operation receives T(previous, current): $0 is the previous element and $1 the current element of the array supplied to this adjacent call. Preserve current minus previous; the reverse shorthand changes operand direction.",
+    "Examples": [
+      {
+        "Deprecated": "{1, 2, 5} | adjacent(subtract)",
+        "Replacement": "{1, 2, 5} | adjacent(~subtract)",
+        "Expected": "{1, 3}",
+        "Availability": "supported",
+        "AppliesWhen": "The resolved callable signature accepts explicit tuple binding and each invocation is compatible."
+      },
+      {
+        "Deprecated": "{1, 2, 5} | adjacent(subtract)",
+        "Replacement": "{1, 2, 5} | adjacent($1 | subtract($0))",
+        "Expected": "{1, 3}",
+        "Availability": "supported",
+        "AppliesWhen": "For numeric subtraction with T(previous, current), including runtimes without tilde shorthand."
+      }
+    ]
+  },
+  {
+    "Id": "implicit-tuple-binding-chunk-while",
+    "DiagnosticCode": "implicit-tuple-binding",
+    "Operator": "chunk-while",
+    "Active": true,
+    "DeprecatedSince": null,
+    "IntroducedCommit": "08308605c0dd1f103ad34165e9b08fb190a58a8d",
+    "Sunset": "3.0",
+    "AllowFollowingStages": true,
+    "ReplacementTemplate": "~{callable}",
+    "Condition": "A bare callable with a binary signature, alone or leading an open pipeline, relies on the previous element being injected as its argument and the current element as its pipeline input.",
+    "OperatorPath": "/functions/array/partitioning/chunk-while/",
+    "MigrationPath": "/language/tuple-binding/#migrating-implicit-binding",
+    "MigrationConditions": "On this development line the operation and following argument expressions use T(previous, current): $0 is previous and $1 is current. Check the source runtime before migrating older expressions; do not apply this positional rewrite to a runtime with a different chunk-while context. Later stages retain the pair as argument context, while receiving the preceding result as pipeline input.",
+    "Examples": [
+      {
+        "Deprecated": "{1, 2, 5} | chunk-while(subtract | less-than(2))",
+        "Replacement": "{1, 2, 5} | chunk-while(~subtract | less-than(2))",
+        "Expected": "{{1, 2}, {5}}",
+        "Availability": "supported",
+        "AppliesWhen": "The resolved leading callable supports tuple binding; preserve the remaining pipeline and its pair context."
+      },
+      {
+        "Deprecated": "{1, 2, 5} | chunk-while(subtract | less-than(2))",
+        "Replacement": "{1, 2, 5} | chunk-while($1 | subtract($0) | less-than(2))",
+        "Expected": "{{1, 2}, {5}}",
+        "Availability": "supported",
+        "AppliesWhen": "For numeric subtraction when the operation context is T(previous, current)."
+      },
+      {
+        "Deprecated": "{1, 2, 5} | chunk-while(greater-than)",
+        "Replacement": "{1, 2, 5} | chunk-while(~greater-than)",
+        "Expected": "{{1, 2, 5}}",
+        "Availability": "supported",
+        "AppliesWhen": "For a compatible binary predicate; the current value remains its pipeline input."
+      }
+    ]
+  },
+  {
+    "Id": "implicit-tuple-binding-map-over",
+    "DiagnosticCode": "implicit-tuple-binding",
+    "Operator": "map-over",
+    "Active": true,
+    "DeprecatedSince": null,
+    "IntroducedCommit": "08308605c0dd1f103ad34165e9b08fb190a58a8d",
+    "Sunset": "3.0",
+    "AllowFollowingStages": false,
+    "ReplacementTemplate": "{callable}~",
+    "Condition": "A single bare callable relies on each supplied item being injected as arguments, expanding an item tuple by one level, with the map-over pipeline input as the callable input.",
+    "OperatorPath": "/functions/array/map-over/",
+    "MigrationPath": "/language/tuple-binding/#migrating-implicit-binding",
+    "MigrationConditions": "The leading binding receives T(outer input, ...item arguments). Only the supplied item tuple expands once; outer input and nested tuples remain intact. Following argument expressions retain the supplied item context, not the prepared invocation tuple.",
+    "Examples": [
+      {
+        "Deprecated": "5 | map-over(subtract, {10, 11})",
+        "Replacement": "5 | map-over(subtract~, {10, 11})",
+        "Expected": "{-5, -6}",
+        "Availability": "supported",
+        "AppliesWhen": "The resolved signature and supplied item shapes are compatible with tuple binding."
+      },
+      {
+        "Deprecated": "20 | map-over(subtract, {T(1, 2), T(3, 4)})",
+        "Replacement": "20 | map-over(subtract~, {T(1, 2), T(3, 4)})",
+        "Expected": "{18, 8}",
+        "Availability": "supported",
+        "AppliesWhen": "These item tuples supply the two supported subtraction arguments without recursively flattening nested values."
+      }
+    ]
+  },
+  {
+    "Id": "implicit-tuple-binding-map-with",
+    "DiagnosticCode": "implicit-tuple-binding",
+    "Operator": "map-with",
+    "Active": true,
+    "DeprecatedSince": null,
+    "IntroducedCommit": "08308605c0dd1f103ad34165e9b08fb190a58a8d",
+    "Sunset": "3.0",
+    "AllowFollowingStages": false,
+    "ReplacementTemplate": "~{callable}",
+    "Condition": "A single bare callable relies on the map-with pipeline input being injected as one argument, with each supplied item as the callable input.",
+    "OperatorPath": "/functions/array/map-with/",
+    "MigrationPath": "/language/tuple-binding/#migrating-implicit-binding",
+    "MigrationConditions": "The leading binding receives T(outer input, item); prefix binding invokes item | f(outer input). The whole outer input and supplied item are preserved. Following argument expressions retain the supplied item context.",
+    "Examples": [
+      {
+        "Deprecated": "5 | map-with(subtract, {10, 11})",
+        "Replacement": "5 | map-with(~subtract, {10, 11})",
+        "Expected": "{5, 6}",
+        "Availability": "supported",
+        "AppliesWhen": "The resolved callable accepts the whole outer input as one argument and the supplied item as its pipeline input."
+      }
+    ]
+  }
+]

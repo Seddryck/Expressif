@@ -74,6 +74,10 @@ jobs:
         shell: pwsh
         run: ./Test-LanguageDeprecationPage.ps1
 
+      - name: Test deprecation page generation and empty states
+        working-directory: docs
+        run: bundle exec ruby _tests/deprecations.rb
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
