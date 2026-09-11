@@ -6848,5 +6848,36 @@
       "Selection": "custom",
       "Summary": "Visits each value within each group of the grouping supplied as pipeline input to this drill-down call, in parent-group and value order."
     }
+  },
+  {
+    "Name": "drill-up",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "grouping",
+    "Summary": "Derives keys from existing grouping keys and merges matching groups into one grouping level.",
+    "Parameters": [
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression that derives a new key from each existing group key.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per existing key, with that key as its context; $0 reads the first component of a tuple key and .field reads a record key's field."
+        }
+      }
+    ],
+    "Behavior": "Structural equality includes null and tuple keys. Matching keys merge value collections in source-group order; new keys retain first-seen order, including keys from empty groups. Returns one grouping level, unlike roll-up, which produces multiple hierarchical levels.",
+    "Examples": [
+      "#{(T(\"BE\", 2025) => {1}), (T(\"BE\", 2026) => {2})} | drill-up($0) → #{(\"BE\" => {1, 2})}"
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "custom",
+      "Summary": "Visits each existing key of the grouping supplied as pipeline input to this drill-up call, in group order, including keys of empty groups."
+    }
   }
 ]

@@ -1,0 +1,43 @@
+suite: drill-up
+kind: function
+operator: drill-up
+tests:
+  - id: drill-up.valid.groups
+    cases:
+      - id: drill-up.valid.groups.composite
+        value: (null)
+        parameters: ['#{(T("BE", 2025) => {1, 2}), (T("FR", 2025) => {3}), (T("BE", 2026) => {4})} | drill-up($0)']
+        expected: '#{("BE" => {1, 2, 4}), ("FR" => {3})}'
+      - id: drill-up.valid.groups.scalar
+        value: (null)
+        parameters: ['#{("B" => {1}), ("a" => {2}), ("b" => {3})} | drill-up(lower)']
+        expected: '#{("b" => {1, 3}), ("a" => {2})}'
+      - id: drill-up.valid.groups.null
+        value: (null)
+        parameters: ['#{("B" => {1, #null}), ("A" => {2})} | drill-up(#null)']
+        expected: '#{(null => {1, null, 2})}'
+      - id: drill-up.valid.groups.tuple
+        value: (null)
+        parameters: ['#{("B" => {1}), ("A" => {2})} | drill-up(T(1, #null))']
+        expected: '#{(T(1, null) => {1, 2})}'
+      - id: drill-up.valid.groups.empty
+        value: (null)
+        parameters: ['#{("B" => {}), ("A" => {1})} | drill-up(lower)']
+        expected: '#{("b" => {}), ("a" => {1})}'
+      - id: drill-up.valid.groups.empty-grouping
+        value: (null)
+        parameters: ['#{} | drill-up(lower)']
+        expected: '#{}'
+      - id: drill-up.valid.groups.array-key
+        value: (null)
+        parameters: ['#{("B" => {1}), ("A" => {2})} | drill-up({1, #null})']
+        expected: '#{({1, null} => {1, 2})}'
+      - id: drill-up.valid.groups.record-key-context
+        value: (null)
+        parameters: ['#{({n := 2} => {"a"}), ({n := 1} => {"b"})} | drill-up(.n | add(.n))']
+        expected: '#{(4 => {"a"}), (2 => {"b"})}'
+      - id: drill-up.valid.groups.named
+        value: (null)
+        parameters: ['#{("B" => {1}), ("A" => {2})} | drill-up(expression := lower)']
+        expected: '#{("b" => {1}), ("a" => {2})}'
+

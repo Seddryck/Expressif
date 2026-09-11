@@ -290,6 +290,15 @@ public partial class FunctionFactory : BaseExpressionFactory
             return new Grouping.DrillDown(expressions);
         }
 
+        if (construction == FunctionConstructionKind.DrillUp)
+        {
+            var bound = ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters;
+            if (bound is not [var expression])
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            var evaluator = new DelegatedFunction(BuildValueEvaluator(expression, context));
+            return new Grouping.DrillUp(key => EvaluateNested(evaluator, key));
+        }
+
         if (construction == FunctionConstructionKind.GroupBy)
             return new Array.GroupBy(BuildGroupingExpressionEvaluators(function, context));
 

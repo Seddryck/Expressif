@@ -19,6 +19,7 @@ Reference documentation for Expressif functions in the `grouping` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`drill-down`]({{ '/functions/grouping/drill-down/' | relative_url }}) | Refines each existing group by appending dimensions derived from its values. |
+| [`drill-up`]({{ '/functions/grouping/drill-up/' | relative_url }}) | Derives keys from existing grouping keys and merges matching groups into one grouping level. |
 | [`drop-empty-groups`]({{ '/functions/grouping/drop-empty-groups/' | relative_url }}) | Removes groups whose value collection contains no items. |
 | [`filter-groups`]({{ '/functions/grouping/filter-groups/' | relative_url }}) | Keeps whole groups whose group-level predicate evaluates to true. |
 | [`grouping`]({{ '/functions/grouping/grouping/' | relative_url }}) | Constructs a grouping from zero or more pairs. Spread arguments expand arrays of pairs in place. |
