@@ -56,3 +56,13 @@ Licensed under the Apache License 2.0. See the LICENSE file for details.
 ## Source
 
 https://github.com/Seddryck/Expressif
+
+## Tuple binding
+
+Tuple binding (Expressif.Syntax 0.42.0 and the matching runtime): ~subtract and subtract~
+use the existing operator style for ~, and the callable retains its function/predicate
+style. Tildes inside double-quoted or backtick strings retain the string style.
+
+To verify generated artifacts, restore local .NET tools, run `npm ci --prefix tests`,
+install Rouge 4.6.1, then run `./Test-Highlighters.ps1` from this directory. This
+executes real TextMate and Rouge tokenization and validates Notepad++ UDL boundaries.

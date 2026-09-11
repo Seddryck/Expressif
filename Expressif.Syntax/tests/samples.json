@@ -1,0 +1,19 @@
+[
+  {"source":"~subtract", "names":["subtract"]},
+  {"source":"subtract~", "names":["subtract"]},
+  {"source":"~greater-than", "names":["greater-than"]},
+  {"source":"greater-than-or-equal~", "names":["greater-than-or-equal"]},
+  {"source":"adjacent(~subtract)", "names":["adjacent","subtract"]},
+  {"source":"chunk-while(~subtract | is-less-than(2))", "names":["chunk-while","subtract","is-less-than"]},
+  {"source":"map-over(subtract~, values)", "names":["map-over","subtract"]},
+  {"source":"map-with(~subtract, values)", "names":["map-with","subtract"]},
+  {"source":"reduce(subtract~)", "names":["reduce","subtract"]},
+  {"source":"split-while(starts-with~)", "names":["split-while","starts-with"]},
+  {"source":"~\nsubtract~ | upper", "names":["subtract","upper"]},
+  {"source":"~), upper", "names":["upper"]},
+  {"source":"\"~subtract\" | upper", "names":["upper"],"quoted":true},
+  {"source":"`subtract~` | upper", "names":["upper"],"quoted":true},
+  {"source":"\"a\\\"~subtract\" | upper", "names":["upper"],"quoted":true},
+  {"source":"`a\\`subtract~` | upper", "names":["upper"],"quoted":true},
+  {"source":"!greater-than(2) | lower", "names":["greater-than","lower"], "operators":["!","|"]}
+]

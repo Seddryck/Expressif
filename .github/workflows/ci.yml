@@ -544,6 +544,19 @@ jobs:
         working-directory: Expressif.Syntax
         run: ./New-tmBundle.ps1 -Bundle expressif-syntax -Version ${{ needs.calculate-version.outputs.semver }}
 
+      - name: Set up Ruby for lexer verification
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Verify generated highlighter tokens
+        shell: pwsh
+        working-directory: Expressif.Syntax
+        run: |
+          npm ci --prefix tests --ignore-scripts --no-audit --no-fund
+          gem install rouge --version 4.6.1 --no-document
+          ./Test-Highlighters.ps1
+
       - name: Upload syntax assets
         uses: actions/upload-artifact@v7
         with:

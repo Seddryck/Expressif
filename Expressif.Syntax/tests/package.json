@@ -1,0 +1,1 @@
+{"name":"expressif-highlighter-tests","private":true,"scripts":{"test":"node textmate.cjs"},"devDependencies":{"vscode-textmate":"9.2.0","vscode-oniguruma":"2.0.1"}}
