@@ -22,3 +22,10 @@ tests:
       - id: map-over.valid.tuple-projection.numeric.reordered
         value: 20
         expected: [17, 13]
+
+  - id: map-over.explicit-binding
+    cases:
+      - id: map-over.explicit-binding.direction
+        value: 5
+        parameters: ['map-over(subtract~, {10, 11})']
+        expected: '{-5, -6}'

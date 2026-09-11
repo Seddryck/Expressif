@@ -48,8 +48,8 @@ The tuple entering this bind call supplies the target input at position zero and
 
 {% raw %}
 ```expressif
-T(120, 135) | bind("subtract") â†’ -15
-T(120, 135) | ~subtract â†’ 15
+T(120, 135) | bind("subtract") → -15
+T(120, 135) | ~subtract → 15
 ```
 {% endraw %}
 

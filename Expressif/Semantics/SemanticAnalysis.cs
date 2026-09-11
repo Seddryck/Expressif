@@ -53,5 +53,6 @@ public sealed record SemanticAnalysis(
     IReadOnlyList<FieldReference> References,
     IReadOnlyList<string> Diagnostics)
 {
+    public IReadOnlyList<LegacyTupleBindingUse> LegacyTupleBindings { get; init; } = [];
     public IReadOnlyList<TupleBindingUse> TupleBindings { get; init; } = [];
 }

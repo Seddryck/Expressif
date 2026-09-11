@@ -44,3 +44,10 @@ tests:
           - "subtract($0, $1)"
           - 10
         expected: 5
+
+  - id: reduce.explicit-binding
+    cases:
+      - id: reduce.explicit-binding.direction
+        value: [20, 3, 2]
+        parameters: ['reduce(subtract~)']
+        expected: '15'

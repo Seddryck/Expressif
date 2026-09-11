@@ -1934,7 +1934,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.Contain("Behavior:"));
-            Assert.That(result.StdOut, Does.Contain("conceptually equivalent"));
+            Assert.That(result.StdOut, Does.Contain("`~f` invokes current | f(previous)"));
             Assert.That(result.StdOut.IndexOf("Behavior:", StringComparison.Ordinal),
                 Is.LessThan(result.StdOut.IndexOf("Examples:", StringComparison.Ordinal)));
             Assert.That(result.StdErr, Is.Empty);

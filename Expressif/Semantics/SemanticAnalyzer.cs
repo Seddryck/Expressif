@@ -80,6 +80,7 @@ public sealed class SemanticAnalyzer
             return new(syntax, references.OrderBy(reference => reference.Span.Start).ToArray(), diagnostics.ToArray())
             {
                 TupleBindings = new TupleBindingAnalyzer().Analyze(syntax),
+                LegacyTupleBindings = new LegacyTupleBindingAnalyzer().Analyze(syntax),
             };
         }
 

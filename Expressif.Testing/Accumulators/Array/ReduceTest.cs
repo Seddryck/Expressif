@@ -7,6 +7,10 @@ namespace Expressif.Testing.Accumulators.Array;
 public class ReduceTest
 {
     [Conformance]
+    public void Reduce_ExplicitBinding(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(Expression.Create(expected).Evaluate(null)));
+
+    [Conformance]
     public void Reduce_WithoutInitial(object? value, string operation, decimal? expected)
         => Assert.That(Evaluate(value, $"reduce({operation})"), Is.EqualTo(expected));
 

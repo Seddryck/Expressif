@@ -6,6 +6,10 @@ namespace Expressif.Testing.Functions.Array;
 public class AdjacentTest
 {
     [Conformance]
+    public void Adjacent_ExplicitBinding(object? value, string expression, string expected)
+        => Assert.That(Expression.Create(expression).Evaluate(value), Is.EqualTo(Expression.Create(expected).Evaluate(null)));
+
+    [Conformance]
     public void Adjacent_Valid_Operation(object? value, string operation, decimal?[]? expected)
         => Assert.That(Expression.Create($"adjacent({operation})").Evaluate(value), Is.EqualTo(expected));
 

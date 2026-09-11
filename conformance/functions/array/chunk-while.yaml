@@ -16,3 +16,10 @@ tests:
         value: (null)
         parameters: [greater-than]
         expected:
+
+  - id: chunk-while.explicit-binding
+    cases:
+      - id: chunk-while.explicit-binding.direction
+        value: "{1, 2, 5}"
+        parameters: ['chunk-while(~subtract | less-than(2))']
+        expected: '{{1, 2}, {5}}'

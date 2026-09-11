@@ -30,7 +30,7 @@ public partial class FunctionFactory : BaseExpressionFactory
     public FunctionFactory()
         : base(new FunctionTypeMapper()) { }
 
-    internal FunctionFactory(BaseTypeMapper typeMapper)
+    public FunctionFactory(BaseTypeMapper typeMapper)
         : base(typeMapper) { }
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
@@ -458,7 +458,7 @@ public partial class FunctionFactory : BaseExpressionFactory
         var members = operation.Expression.Members.ToArray();
         if (members is [var first, ..]
             && first.Arguments is [
-                { Name: null, Value: TupleProjectionParameter { Index: 0, FromEnd: false } },
+            { Name: null, Value: TupleProjectionParameter { Index: 0, FromEnd: false } },
                 .. var remaining])
         {
             members[0] = Bindings.Function.FromArguments(first.Name, remaining);
@@ -818,7 +818,7 @@ public partial class FunctionFactory : BaseExpressionFactory
 
         var members = open.Expression.Members.ToArray();
         IFunction operation;
-        if (members.Length == 1 && members[0].Parameters.Length == 0 && TryBuildBinaryCallable(members[0].Name, context, out var callable))
+        if (LegacyTupleBindingRules.IsCandidate("adjacent", open.Expression) && TryBuildBinaryCallable(members[0].Name, context, out var callable))
         {
             operation = new ChainFunction([
                 InstantiateOrWrapAggregation(new Bindings.Function("tuple-at", [new LiteralParameter("1")]), context),
@@ -840,8 +840,7 @@ public partial class FunctionFactory : BaseExpressionFactory
 
         var members = open.Expression.Members.ToArray();
         IFunction operation;
-        if (members.Length > 0
-            && members[0].Parameters.Length == 0
+        if (LegacyTupleBindingRules.IsCandidate("chunk-while", open.Expression)
             && TryBuildBinaryCallable(members[0].Name, context, out var callable))
         {
             var functions = new List<IFunction>
@@ -912,7 +911,9 @@ public partial class FunctionFactory : BaseExpressionFactory
     private IFunction BuildDirectionalMapOperation(OpenExpressionParameter expression, IContext context, bool mapOver)
     {
         var members = expression.Expression.Members.ToArray();
-        var isBareCallable = members is [{ Parameters.Length: 0 }];
+        if (TupleBindingOperations.LeadingLength(expression.Expression) > 0)
+            return BuildExplicitDirectionalMapOperation(expression.Expression, context, mapOver);
+        var isBareCallable = LegacyTupleBindingRules.IsCandidate(mapOver ? "map-over" : "map-with", expression.Expression);
         if (isBareCallable)
         {
             var name = members[0].Name;
@@ -943,6 +944,22 @@ public partial class FunctionFactory : BaseExpressionFactory
         });
     }
 
+    private IFunction BuildExplicitDirectionalMapOperation(OpenExpression expression, IContext context, bool mapOver)
+    {
+        var explicitOperation = BuildOpenExpression(mapOver
+            ? NormalizeMapOverProjections(expression) : expression, context);
+        return new DelegatedFunction(value =>
+        {
+            var invocation = GetDirectionalMapInput(value);
+            var inputs = DirectionalScope<object?>.Create(mapOver, invocation.Outer, invocation.Item);
+            var arguments = mapOver && invocation.Item is Values.Tuple tuple
+                ? tuple.ToArray() : new[] { invocation.Item };
+            var prepared = new Values.Tuple([invocation.Outer, .. arguments]);
+            using var scope = EvaluationRuntime.Derive(inputs.Arguments);
+            return explicitOperation.Evaluate(prepared);
+        });
+    }
+
     private static IParameter[] GetMapOverArguments(object? item)
         => item is Values.Tuple tuple
             ? tuple.Select(value => (IParameter)new LiteralParameter(value)).ToArray()
@@ -953,10 +970,13 @@ public partial class FunctionFactory : BaseExpressionFactory
             ?? throw new InvalidOperationException("Directional map operations require a directional map input.");
 
     private static OpenExpression NormalizeMapOverProjections(OpenExpression expression)
-        => new(expression.Members.Select(member => new Bindings.Function(
-            member.Name,
-            member.Parameters.Select(NormalizeMapOverProjection).ToArray(),
-            member.Syntax)));
+        => new(expression.Members.Select(member =>
+        {
+            var normalized = Bindings.Function.FromArguments(member.Name,
+                member.Arguments.Select(argument => argument with { Value = NormalizeMapOverProjection(argument.Value) }).ToArray(), member.Syntax);
+            normalized.SourceSpan = member.SourceSpan;
+            return normalized;
+        }));
 
     private static IParameter NormalizeMapOverProjection(IParameter parameter)
         => parameter switch
@@ -975,7 +995,7 @@ public partial class FunctionFactory : BaseExpressionFactory
         var parameterized = new Bindings.Function(name, [new TupleProjectionParameter(0)]);
         if (TypeMapper.TryExecute(name, out var functionType))
         {
-            if (!functionType.GetConstructors().Any(x => x.GetParameters().Length == 1))
+            if (!LegacyTupleBindingRules.HasBinarySignature(functionType))
             {
                 callable = null;
                 return false;
@@ -986,7 +1006,7 @@ public partial class FunctionFactory : BaseExpressionFactory
 
         if (PredicateTypeMapper.TryExecute(name, out var predicateType))
         {
-            if (!predicateType.GetConstructors().Any(x => x.GetParameters().Length == 1))
+            if (!LegacyTupleBindingRules.HasBinarySignature(predicateType))
             {
                 callable = null;
                 return false;

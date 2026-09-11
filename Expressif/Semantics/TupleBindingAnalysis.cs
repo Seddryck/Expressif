@@ -50,7 +50,7 @@ public sealed class TupleBindingAnalyzer
             VisitParameters(member.Parameters, uses);
             if (member.Name.Equals("bind", StringComparison.OrdinalIgnoreCase))
                 uses.Add(Inspect(member, input));
-            if (member.Name.Equals("rotate", StringComparison.OrdinalIgnoreCase) && member.Parameters.Length == 0
+            if (TupleBindingOperations.IsDefaultRotation(member)
                 && input is TupleParameter { Elements.Length: > 0 } tuple)
                 input = new TupleParameter([tuple.Elements[^1], .. tuple.Elements[..^1]]);
             else if (member.Name.Equals("tuple", StringComparison.OrdinalIgnoreCase)
@@ -69,7 +69,7 @@ public sealed class TupleBindingAnalyzer
         }
     }
 
-    private TupleBindingUse Inspect(BoundFunction member, IParameter? input)
+    internal TupleBindingUse Inspect(BoundFunction member, IParameter? input)
     {
         var name = member.Parameters switch
         {
@@ -118,9 +118,19 @@ public sealed class TupleBindingAnalyzer
 
     private static void ValidateValue(IParameter parameter, Type target)
     {
-        var value = parameter switch { LiteralParameter literal => literal.Value, QuotedLiteralParameter quoted => quoted.Value, _ => null };
+        var value = KnownValue(parameter);
         target = Nullable.GetUnderlyingType(target) ?? target;
         if (value is not null && target != typeof(object) && !new Caster().TryCast(value, target, out _))
             throw new TupleBindingException(TupleBindingFailure.IncompatibleValue, $"Value is incompatible with '{target.Name}'.");
     }
+    private static object? KnownValue(IParameter parameter) => parameter switch
+    {
+        LiteralParameter literal => literal.Value,
+        QuotedLiteralParameter quoted => quoted.Value,
+        TupleParameter tuple when tuple.Elements.All(element => !element.IsSpread)
+            => new Values.Tuple(tuple.Values.Select(KnownValue).ToArray()),
+        ArrayParameter array when array.Elements.All(element => !element.IsSpread)
+            => array.Values.Select(KnownValue).ToArray(),
+        _ => null,
+    };
 }

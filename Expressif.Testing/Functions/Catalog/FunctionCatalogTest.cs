@@ -158,5 +158,5 @@ public class FunctionCatalogTest
     public void Default_FunctionWithBehavior_DeserializesBehavior()
         => Assert.That(
             FunctionCatalog.Default.Find("adjacent")?.Behavior,
-            Does.StartWith("`adjacent` evaluates the supplied operation"));
+            Does.StartWith("The operation receives T(previous, current)."));
 }
