@@ -44,13 +44,36 @@ Visits each existing key of the grouping supplied as pipeline input to this dril
 
 Structural equality includes null and tuple keys. Matching keys merge value collections in source-group order; new keys retain first-seen order, including keys from empty groups. Returns one grouping level, unlike roll-up, which produces multiple hierarchical levels.
 
+### Combine annual order lists into country lists
+
+The first example groups order IDs by `(country, year)`. `drill-up($0)` reads the country from each existing tuple key and combines the Belgian order lists across years. The order IDs remain unchanged and in source-group order; they contain no year field to re-evaluate.
+
+### Calculate country revenue across all years
+
+The second example keeps individual order amounts under `(country, year)` keys. `drill-up($0)` first merges the amounts for each country, and `summarize(sum)` then calculates the totals: Belgium has `120 + 30 + 80 = 230`, and France has `90`. `$0` refers to the country component of each existing key, not to an amount. This produces one country level; use `roll-up` when multiple hierarchical levels are needed.
+
 
 
 ## Examples
 
 {% raw %}
 ```expressif
-#{(T("BE", 2025) => {1}), (T("BE", 2026) => {2})} | drill-up($0) → #{("BE" => {1, 2})}
+#{
+  (T("BE", 2025) => {"BE-001", "BE-002"}),
+  (T("FR", 2025) => {"FR-001"}),
+  (T("BE", 2026) => {"BE-003"})
+}
+| drill-up($0)
+→ #{("BE" => {"BE-001", "BE-002", "BE-003"}), ("FR" => {"FR-001"})}
+
+#{
+  (T("BE", 2025) => {120, 30}),
+  (T("FR", 2025) => {90}),
+  (T("BE", 2026) => {80})
+}
+| drill-up($0)
+| summarize(sum)
+→ !{("BE" => 230), ("FR" => 90)}
 ```
 {% endraw %}
 
