@@ -1,0 +1,52 @@
+suite: special
+kind: function
+operator: recode
+
+tests:
+  - id: recode.valid.mapping
+    cases:
+      - id: recode.valid.mapping.matched
+        value: A
+        parameters: ['recode(!{("A" => 1), ("B" => 2)})']
+        expected: '1'
+      - id: recode.valid.mapping.unmatched
+        value: X
+        parameters: ['recode(!{("A" => 1)})']
+        expected: X
+      - id: recode.valid.mapping.empty
+        value: A
+        parameters: ['recode(!{})']
+        expected: A
+      - id: recode.valid.mapping.null-key
+        value: (null)
+        parameters: ['#null | recode(!{(#null => "missing")})']
+        expected: missing
+      - id: recode.valid.mapping.null-value
+        value: A
+        parameters: ['recode(!{("A" => #null)})']
+        expected: 'null'
+      - id: recode.valid.mapping.null-unmatched
+        value: (null)
+        parameters: ['#null | recode(!{})']
+        expected: 'null'
+      - id: recode.valid.mapping.structural-key
+        value: (null)
+        parameters: ['{1, 2} | recode(!{({1, 2} => "match")})']
+        expected: match
+      - id: recode.valid.mapping.structured-value
+        value: A
+        parameters: ['recode(!{("A" => {code := 1})})']
+        expected: '{code := 1}'
+      - id: recode.valid.mapping.expression
+        value: B
+        parameters: ['recode(dictionary(("A" => 1), ("B" => 2)))']
+        expected: '2'
+      - id: recode.valid.mapping.named
+        value: A
+        parameters: ['recode(mapping := !{("A" => 1)})']
+        expected: '1'
+      - id: recode.valid.mapping.enclosing
+        value: (null)
+        parameters: ['{code := "A", status-codes := !{("A" => 1)}} | .code | recode(^.status-codes)']
+        expected: '1'
+

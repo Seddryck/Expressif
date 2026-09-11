@@ -184,7 +184,7 @@ public class FunctionIntrospectorTest
     public void Describe_UnconvertedFunctions_AreExplicitlyReported()
         => Assert.That(
             Infos.Where(x => !x.Converted).Select(x => x.Name),
-            Is.EquivalentTo(new[] { "apply", "coalesce", "field", "guard", "nested-field", "neutral", "switch", "try", "walk", "with" }));
+            Is.EquivalentTo(new[] { "apply", "coalesce", "field", "guard", "nested-field", "neutral", "recode", "switch", "try", "walk", "with" }));
 
     [TestCase("after-substring", "substring", "text")]
     [TestCase("first-chars", "length", "integer")]

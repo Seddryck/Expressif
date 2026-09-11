@@ -35,6 +35,15 @@ public partial class FunctionFactory : BaseExpressionFactory
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
     {
+        if (parameter is PairParameter or GroupingParameter or DictionaryParameter)
+        {
+            var evaluator = BuildStructuredValueEvaluator(parameter, context)!;
+            return CreateFunctionCast(
+                () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
+                    ? frame.Current : ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
+                scalarType);
+        }
+
         if (parameter is OpenExpressionParameter open)
         {
             var evaluator = BuildOpenExpressionRecordEvaluator(open, context);

@@ -25,6 +25,21 @@ public class DictionaryValue : IReadOnlyList<PairValue>, IEquatable<DictionaryVa
 
     public int Count => entries.Length;
     public PairValue this[int index] => entries[index];
+    /// <summary>Finds a value using the same structural key equality as dictionary construction.</summary>
+    public bool TryGetValue(object? key, out object? value)
+    {
+        foreach (var entry in entries)
+        {
+            if (Comparer.Equals(entry.Key, key))
+            {
+                value = entry.Value;
+                return true;
+            }
+        }
+        value = null;
+        return false;
+    }
+
     public IEnumerator<PairValue> GetEnumerator() => ((IEnumerable<PairValue>)entries).GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => entries.GetEnumerator();
     public bool Equals(DictionaryValue? other) => other is not null && entries.SequenceEqual(other.entries);
