@@ -1,0 +1,90 @@
+suite: text
+kind: predicate
+operator: is-camel-case
+tests:
+  - id: is-camel-case.valid
+    cases:
+      - id: is-camel-case.valid.accepted.standard
+        value: "firstName"
+        expected: true
+      - id: is-camel-case.valid.accepted.single.word
+        value: "name"
+        expected: true
+      - id: is-camel-case.valid.accepted.single.letter
+        value: "a"
+        expected: true
+      - id: is-camel-case.valid.accepted.acronym
+        value: "httpServerURL"
+        expected: true
+      - id: is-camel-case.valid.accepted.numbers
+        value: "version2HTTPServer"
+        expected: true
+      - id: is-camel-case.valid.accepted.unicode
+        value: "élèveÉmérite"
+        expected: true
+      - id: is-camel-case.valid.accepted.combining.mark
+        value: "éName"
+        expected: true
+      - id: is-camel-case.valid.accepted.supplementary
+        value: "𐐨Name"
+        expected: true
+      - id: is-camel-case.valid.rejected.null
+        value: "(null)"
+        expected: false
+      - id: is-camel-case.valid.rejected.empty.tag
+        value: "(empty)"
+        expected: false
+      - id: is-camel-case.valid.rejected.blank.tag
+        value: "(blank)"
+        expected: false
+      - id: is-camel-case.valid.rejected.empty
+        value: ""
+        expected: false
+      - id: is-camel-case.valid.rejected.whitespace
+        value: " "
+        expected: false
+      - id: is-camel-case.valid.rejected.leading.space
+        value: " first"
+        expected: false
+      - id: is-camel-case.valid.rejected.trailing.space
+        value: "first "
+        expected: false
+      - id: is-camel-case.valid.rejected.mixed.separators
+        value: "first-name_value"
+        expected: false
+      - id: is-camel-case.valid.rejected.dot
+        value: "first.name"
+        expected: false
+      - id: is-camel-case.valid.rejected.slash
+        value: "first/name"
+        expected: false
+      - id: is-camel-case.valid.rejected.newline
+        value: "first\nname"
+        expected: false
+      - id: is-camel-case.valid.rejected.emoji
+        value: "first😀Name"
+        expected: false
+      - id: is-camel-case.valid.rejected.leading.number
+        value: "2name"
+        expected: false
+      - id: is-camel-case.valid.rejected.leading.mark
+        value: "́name"
+        expected: false
+      - id: is-camel-case.valid.rejected.escaped.separator
+        value: "first\\-name"
+        expected: false
+      - id: is-camel-case.valid.rejected.upper.initial
+        value: "FirstName"
+        expected: false
+      - id: is-camel-case.valid.rejected.upper.acronym
+        value: "HTTPServer"
+        expected: false
+      - id: is-camel-case.valid.rejected.hyphen
+        value: "first-name"
+        expected: false
+      - id: is-camel-case.valid.rejected.underscore
+        value: "first_name"
+        expected: false
+      - id: is-camel-case.valid.rejected.uncased.initial
+        value: "中文名称"
+        expected: false

@@ -233,7 +233,7 @@ internal class CaseWordTokenizer(bool discardBoundaries, bool preserveApostrophe
             && IsLower(runes[index + 1]);
     }
 
-    private static bool IsWordRune(Rune rune)
+    internal static bool IsWordRune(Rune rune)
         => Rune.GetUnicodeCategory(rune) is UnicodeCategory.UppercaseLetter
             or UnicodeCategory.LowercaseLetter
             or UnicodeCategory.TitlecaseLetter
@@ -246,10 +246,10 @@ internal class CaseWordTokenizer(bool discardBoundaries, bool preserveApostrophe
             or UnicodeCategory.LetterNumber
             or UnicodeCategory.OtherNumber;
 
-    private static bool IsUpper(Rune rune)
+    internal static bool IsUpper(Rune rune)
         => Rune.GetUnicodeCategory(rune) is UnicodeCategory.UppercaseLetter or UnicodeCategory.TitlecaseLetter;
 
-    private static bool IsLower(Rune rune)
+    internal static bool IsLower(Rune rune)
         => Rune.GetUnicodeCategory(rune) == UnicodeCategory.LowercaseLetter;
 
     private static bool IsNumber(Rune rune)
@@ -257,7 +257,7 @@ internal class CaseWordTokenizer(bool discardBoundaries, bool preserveApostrophe
             or UnicodeCategory.LetterNumber
             or UnicodeCategory.OtherNumber;
 
-    private static bool IsMark(Rune rune)
+    internal static bool IsMark(Rune rune)
         => Rune.GetUnicodeCategory(rune) is UnicodeCategory.NonSpacingMark
             or UnicodeCategory.SpacingCombiningMark
             or UnicodeCategory.EnclosingMark;
