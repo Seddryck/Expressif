@@ -2,7 +2,7 @@
   {% if member.IsPublic and member.Deprecated %}
     {% assign member_scope = member.Scope | downcase %}
     {% capture member_path %}/{{ include.kind_plural }}/{{ member_scope }}/{{ member.Name }}/{% endcapture %}
-    <tr data-kind="{{ include.kind | downcase }}" data-name="{{ member.Name }}" data-replacement="{{ member.Replacement }}" data-sunset="{{ member.Sunset }}">
+    <tr data-kind="{{ include.kind | downcase }}" data-name="{{ member.Name | escape }}" data-replacement="{{ member.Replacement | escape }}" data-sunset="{{ member.Sunset | escape }}">
       <td>{{ include.kind }}</td>
       <td><a href="{{ member_path | relative_url }}"><code>{{ member.Name }}</code></a></td>
       <td>
@@ -14,7 +14,7 @@
             {% capture replacement_path %}/{{ include.kind_plural }}/{{ replacement_scope }}/{{ replacement.Name }}/{% endcapture %}
             <a href="{{ replacement_path | relative_url }}"><code>{{ replacement.Name }}</code></a>
           {% else %}
-            <code>{{ member.Replacement }}</code>
+            <code>{{ member.Replacement | escape }}</code>
           {% endif %}
         {% else %}
           <span aria-label="No replacement specified">—</span>

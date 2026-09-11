@@ -4,10 +4,12 @@ internal static class LegacyTupleBindingRules
 {
     public static bool IsCandidate(string consumer, OpenExpression expression)
     {
+        var rule = Semantics.UsageLifecycle.Find(consumer);
+        if (rule is null) return false;
         if (expression is InputBoundExpression || TupleBindingOperations.LeadingLength(expression) > 0) return false;
         var members = expression.Members.ToArray();
         return members is [{ Parameters.Length: 0 }, ..]
-            && (consumer == "chunk-while" || members.Length == 1);
+            && (rule.AllowFollowingStages || members.Length == 1);
     }
 
     public static bool HasBinarySignature(Type type)

@@ -14,5 +14,6 @@
 	<ItemGroup>
 		<EmbeddedResource Include="..\docs\_data\function.json" LogicalName="Expressif.FunctionCatalog.json" />
 		<EmbeddedResource Include="..\docs\_data\type.json" LogicalName="Expressif.TypeCatalog.json" />
+		<EmbeddedResource Include="..\docs\_data\usage-lifecycle.json" LogicalName="Expressif.UsageLifecycle.json" />
 	</ItemGroup>
 </Project>

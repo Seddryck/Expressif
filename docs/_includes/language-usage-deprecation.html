@@ -1,0 +1,26 @@
+{% assign rule = include.rule %}
+<section id="{{ rule.Id | escape }}" data-rule-id="{{ rule.Id | escape }}" data-deprecated-since="{{ rule.DeprecatedSince | escape }}" data-sunset="{{ rule.Sunset | escape }}" data-introduced-commit="{{ rule.IntroducedCommit | escape }}">
+  <h3><a href="{{ rule.OperatorPath | relative_url }}"><code>{{ rule.Operator | escape }}</code></a>: implicit argument binding</h3>
+  <p><strong>Rule:</strong> <code>{{ rule.Id | escape }}</code></p>
+  <p>{{ rule.Condition | escape }}</p>
+  <p><strong>Deprecation:</strong> Active now.
+    {% if rule.DeprecatedSince %}Since Expressif {{ rule.DeprecatedSince | escape }}.
+    {% else %}Introducing release version pending; implemented in <a href="https://github.com/Seddryck/Expressif/commit/{{ rule.IntroducedCommit | escape }}">the deprecation commit</a> (not yet tagged for release).
+    {% endif %}
+  </p>
+  <p><strong>Sunset:</strong> {% if rule.Sunset %}Removal planned for v{{ rule.Sunset | escape }}{% else %}Not scheduled{% endif %}</p>
+  <p>{{ rule.MigrationConditions | escape }} <a href="{{ rule.MigrationPath | relative_url }}">Migration documentation</a>.</p>
+  <table>
+    <thead><tr><th>Deprecated usage</th><th>Use instead</th><th>Availability and applicability</th><th>Result</th></tr></thead>
+    <tbody>
+      {% for example in rule.Examples %}
+      <tr data-deprecated="{{ example.Deprecated | escape }}" data-replacement="{{ example.Replacement | escape }}" data-availability="{{ example.Availability | escape }}">
+        <td><code>{{ example.Deprecated | escape }}</code></td>
+        <td><code>{{ example.Replacement | escape }}</code></td>
+        <td>{% if example.Availability == "supported" %}Supported on this development line.{% else %}Planned; not yet supported.{% endif %} {{ example.AppliesWhen | escape }}</td>
+        <td><code>{{ example.Expected | escape }}</code></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
