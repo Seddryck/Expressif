@@ -3,7 +3,7 @@ layout: docs
 title: "summarize"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /functions/grouping/summarize/
 tags:
@@ -31,11 +31,15 @@ Evaluates an expression once for each group and returns a dictionary from group 
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | The expression evaluated against each group's value collection. |
 
+
+
 ## Argument evaluation
 
 Visits each group in the incoming grouping and supplies its entire value collection to the expression.
 
 - **`expression`:** Evaluated once per group against that group's entire value collection.
+
+
 
 ## Examples
 

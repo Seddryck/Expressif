@@ -3,7 +3,7 @@ layout: docs
 title: "grouping"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /functions/grouping/grouping/
 tags:
@@ -31,9 +31,13 @@ Constructs a grouping from zero or more pairs. Spread arguments expand arrays of
 |:-----|:-----|:---------|:------------|
 | `values` | `pair` | Variadic (zero or more) | Zero or more pairs whose keys and grouped value collections become groups. |
 
+
+
 ## Argument evaluation
 
 - **`values`:** Each supplied expression is evaluated once against the value entering this call.
+
+
 
 ## Examples
 

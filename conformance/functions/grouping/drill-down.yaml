@@ -1,0 +1,38 @@
+suite: drill-down
+kind: function
+operator: drill-down
+tests:
+  - id: drill-down.valid.groups
+    cases:
+      - id: drill-down.valid.groups.stable
+        value: (null)
+        parameters: ['#{("B" => {2, 1, 2}), ("A" => {1, 2})} | drill-down(@_)']
+        expected: '#{(T("B", 2) => {2, 2}), (T("B", 1) => {1}), (T("A", 1) => {1}), (T("A", 2) => {2})}'
+      - id: drill-down.valid.groups.composite
+        value: (null)
+        parameters: ['#{(T("BE", 2025) => {1, 2})} | drill-down(@_, #null)']
+        expected: '#{(T("BE", 2025, 1, null) => {1}), (T("BE", 2025, 2, null) => {2})}'
+      - id: drill-down.valid.groups.nested-dimension
+        value: (null)
+        parameters: ['#{(#null => {1, 2})} | drill-down(T(1, 2))']
+        expected: '#{(T(null, T(1, 2)) => {1, 2})}'
+      - id: drill-down.valid.groups.open
+        value: (null)
+        parameters: ['#{("x" => {"A", "a", "B"})} | drill-down(lower)']
+        expected: '#{(T("x", "a") => {"A", "a"}), (T("x", "b") => {"B"})}'
+      - id: drill-down.valid.groups.empty
+        value: (null)
+        parameters: ['#{("x" => {})} | drill-down(@_)']
+        expected: '#{}'
+      - id: drill-down.valid.groups.empty-grouping
+        value: (null)
+        parameters: ['#{} | drill-down(@_)']
+        expected: '#{}'
+      - id: drill-down.valid.groups.tuple-values
+        value: (null)
+        parameters: ['#{("x" => {T("B", 2), T("A", 1), T("B", 3)})} | drill-down($0)']
+        expected: '#{(T("x", "B") => {T("B", 2), T("B", 3)}), (T("x", "A") => {T("A", 1)})}'
+      - id: drill-down.valid.groups.record-context
+        value: (null)
+        parameters: ['#{("x" => {{n := 2}, {n := 1}})} | drill-down(.n | add(.n))']
+        expected: '#{(T("x", 4) => {{n := 2}}), (T("x", 2) => {{n := 1}})}'

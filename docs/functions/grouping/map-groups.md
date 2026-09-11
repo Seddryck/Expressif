@@ -3,7 +3,7 @@ layout: docs
 title: "map-groups"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 40
+nav_order: 50
 has_toc: false
 permalink: /functions/grouping/map-groups/
 tags:
@@ -31,11 +31,15 @@ Transforms each group's value collection while preserving its key and position.
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | The expression evaluated once against each group's value collection. |
 
+
+
 ## Argument evaluation
 
 Visits each group in the incoming grouping and supplies its entire value collection to the expression.
 
 - **`expression`:** Evaluated once per group against that group's entire value collection.
+
+
 
 ## Examples
 
