@@ -3,7 +3,7 @@ layout: docs
 title: "roll-up"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/grouping/roll-up/
 tags:
@@ -45,7 +45,7 @@ Removes dimensions from right to left, retaining tuple arity. Scalar keys have o
 
 {% raw %}
 ```expressif
-#{(T("BE", 2025) => {120, 30}), (T("FR", 2025) => {90}), (T("BE", 2026) => {80})} | roll-up | summarize(sum) → !{(T("BE", 2025) => 150), (T("FR", 2025) => 90), (T("BE", 2026) => 80), (T("BE", #all) => 230), (T("FR", #all) => 90), (T(#all, #all) => 320)}
+#{(T("BE", 2025) => {120, 30}), (T("FR", 2025) => {90}), (T("BE", 2026) => {80})} | roll-up | summarize(sum) | map(pair-value) → {150, 90, 80, 230, 90, 320}
 ```
 {% endraw %}
 
