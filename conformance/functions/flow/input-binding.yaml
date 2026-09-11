@@ -68,7 +68,7 @@ tests:
         value: '10 | apply(@_ | input :> add(2) | apply(@_ | :> add(@input)))'
         expected: 22
       - id: input-binding.anonymous.chunk-while
-        value: '{1, 2, 5} | chunk-while(@_ | :> $1 | subtract($0) | less-than(2))'
+        value: '{1, 2, 5} | chunk-while(@_ | :> $1 | subtract($0 | last) | less-than(2))'
         expected: [[1, 2], [5]]
 
   - id: input-binding.destructuring

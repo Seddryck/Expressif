@@ -20,7 +20,7 @@ Functions, predicates and custom callables share signature-level eligibility. Or
 | Operator | Invocation tuple | Typical form |
 |---|---|---|
 | adjacent | T(previous, current) | adjacent(~subtract) |
-| chunk-while | T(previous, current) | chunk-while(~subtract &#124; less-than(2)) |
+| chunk-while | T(currentChunk, candidate) | chunk-while($1 &#124; subtract($0 &#124; last) &#124; less-than(2)) |
 | map-over | T(outer input, ...item arguments) | map-over(subtract~, values) |
 | map-with | T(outer input, item) | map-with(~subtract, values) |
 | reduce | T(accumulator, current item) | reduce(subtract~) |
@@ -32,8 +32,10 @@ Following stages receive the target result, while their argument expressions ret
 
 ## Migrating implicit binding
 
-Legacy `adjacent(subtract)`, `chunk-while(subtract | less-than(2))`, `map-over(subtract, values)` and `map-with(subtract, values)` remain available for compatibility. Only reliance on injected arguments is deprecated now; the surrounding operators and target callables are not. Prefer `~subtract` for adjacent, chunk-while and map-with, and `subtract~` for map-over. Removal planned for v3.0. See [Deprecated usage patterns]({{ '/deprecations/#deprecated-usage-patterns' | relative_url }}) for shared lifecycle rules and supported replacement expressions.
+Legacy adjacent(subtract), map-over(subtract, values) and map-with(subtract, values) remain available for compatibility. Only reliance on injected arguments is deprecated now; the surrounding operators and target callables are not. Prefer ~subtract for adjacent and map-with, and subtract~ for map-over. Removal planned for v3.0. See [Deprecated usage patterns]({{ '/deprecations/#deprecated-usage-patterns' | relative_url }}) for shared lifecycle rules and supported replacement expressions.
 
-On this development line, `adjacent` and `chunk-while` supply `T(previous, current)` to their operation: `$0` reads the previous element and `$1` the current element of the array supplied to that call. Thus `{1, 2, 5} | adjacent($1 | subtract($0))` and `{1, 2, 5} | adjacent(~subtract)` both return `{1, 3}`. Before migrating from an older runtime, verify its `chunk-while` context; positional replacements depend on that tuple layout. Following stages of a `chunk-while` operation receive the preceding result as pipeline input while retaining the pair as their argument context.
+The operation of adjacent receives T(previous, current): $0 reads the previous element and $1 the current element of the array supplied to that call. The operation of chunk-while receives T(currentChunk, candidate): $0 reads the complete current chunk, excluding the candidate, and $1 reads the candidate. Following stages receive the preceding result as pipeline input while retaining that tuple as their argument context.
 
 The shared semantic API exposes the resolved callable, signature, source span and input/argument mapping. Automatic replacement is withheld when invocation equivalence cannot be established (for example, an unknown tuple shape or incompatible values). Existing complete reduce and split-while expressions are not deprecated, including reduce's leading `$0` normalization.
+
+For chunk-while, callable injection supplies the complete current chunk. The old previous/current contract is replaced; pairwise subtraction requires `$1 | subtract($0 | last)`.

@@ -12,8 +12,8 @@ public class TupleBindingIntegrationTest
     [TestCase("{20, 3, 2} | reduce(~subtract)", "19")]
     [TestCase("{1, 2, 5} | adjacent(~subtract)", "{1, 3}")]
     [TestCase("{1, 2, 5} | adjacent(subtract~)", "{-1, -3}")]
-    [TestCase("{1, 2, 5} | chunk-while(~subtract | is-less-than(2))", "{{1, 2}, {5}}")]
-    [TestCase("{1, 2, 5} | chunk-while(subtract~ | is-less-than(-1))", "{{1}, {2, 5}}")]
+    [TestCase("{1, 2, 5} | chunk-while($1 | subtract($0 | last) | is-less-than(2))", "{{1, 2}, {5}}")]
+    [TestCase("{1, 2, 5} | chunk-while($0 | last | subtract($1) | is-less-than(-1))", "{{1}, {2, 5}}")]
     [TestCase("\"aaabb\" | split-while(starts-with~)", "{\"aaa\", \"bb\"}")]
     [TestCase("\"aaabb\" | split-while(~starts-with)", "{\"aa\", \"a\", \"bb\"}")]
     [TestCase("5 | map-over(subtract~, {10, 11})", "{-5, -6}")]
@@ -53,7 +53,6 @@ public class TupleBindingIntegrationTest
 
     [TestCase("{1, 2, 5} | adjacent(subtract)", "{1, 2, 5} | adjacent(~subtract)")]
     [TestCase("{1, 2, 5} | adjacent(greater-than)", "{1, 2, 5} | adjacent(~greater-than)")]
-    [TestCase("{1, 2, 5} | chunk-while(subtract | less-than(2))", "{1, 2, 5} | chunk-while(~subtract | less-than(2))")]
     [TestCase("{1, #null, 3} | adjacent(subtract)", "{1, #null, 3} | adjacent(~subtract)")]
     [TestCase("5 | map-over(subtract, {10, 11})", "5 | map-over(subtract~, {10, 11})")]
     [TestCase("5 | map-with(subtract, {10, 11})", "5 | map-with(~subtract, {10, 11})")]
@@ -69,7 +68,6 @@ public class TupleBindingIntegrationTest
             new Expressif.Bindings.Function("bind", [new QuotedLiteralParameter("subtract")])])), Is.Zero);
     }
     [TestCase("{1, 2, 5} | adjacent(subtract)", "adjacent", "~subtract")]
-    [TestCase("{1, 2, 5} | chunk-while(subtract | less-than(2))", "chunk-while", "~subtract")]
     [TestCase("5 | map-over(subtract, {10, 11})", "map-over", "subtract~")]
     [TestCase("5 | map-with(subtract, {10, 11})", "map-with", "~subtract")]
     [TestCase("{1, 2} | adjacent(greater-than)", "adjacent", "~greater-than")]
@@ -96,6 +94,7 @@ public class TupleBindingIntegrationTest
     public void CompleteExpression_IsNotDeprecated(string source)
         => Assert.That(new LegacyTupleBindingAnalyzer().Analyze(Expressif.Syntax.ExpressionParser.Parse(source)), Is.Empty);
 
+    [TestCase("{1, 2, 5} | chunk-while(subtract | less-than(2))")]
     [TestCase("adjacent(subtract)")]
     [TestCase("{T(1, 2), T(3, 4)} | adjacent(subtract)")]
     [TestCase("5 | map-over(subtract, {T(1, 2, 3)})")]
@@ -107,7 +106,6 @@ public class TupleBindingIntegrationTest
     }
 
     [TestCase("adjacent(counted)", "adjacent(~counted)", 2)]
-    [TestCase("chunk-while(counted | less-than(2))", "chunk-while(~counted | less-than(2))", 2)]
     [TestCase("map-over(counted, {3, 2})", "map-over(counted~, {3, 2})", 2)]
     [TestCase("map-with(counted, {3, 2})", "map-with(~counted, {3, 2})", 2)]
     public void CustomCallables_MigrateWithIdenticalEvaluationCounts(string legacy, string replacement, int count)
@@ -158,11 +156,28 @@ public class TupleBindingIntegrationTest
             foreach (var info in new Expressif.Functions.Introspection.FunctionIntrospector().Locate())
                 foreach (var name in info.Aliases.Prepend(info.Name)) mapping[name] = info.ImplementationType;
             mapping["counted"] = typeof(Counted);
+            mapping["chunk-counted"] = typeof(ChunkCounted);
             mapping["counted-starts"] = typeof(CountedStarts);
             return mapping;
         }
     }
 
+    [TestCase("chunk-while(chunk-counted)")]
+    [TestCase("chunk-while(~chunk-counted)")]
+    public void CustomChunkPredicate_ReceivesWholeChunkOncePerCandidate(string source)
+    {
+        ChunkCounted.Calls = 0;
+        Assert.That(EvaluateCustom(source, new[] { 1, 2, 3, 4, 5 }),
+            Is.EqualTo(new object?[][] { [1, 2], [3, 4], [5] }));
+        Assert.That(ChunkCounted.Calls, Is.EqualTo(4));
+    }
+
+    public sealed class ChunkCounted(Func<object?[]> argument) : IFunction<object?, bool>
+    {
+        public static int Calls { get; set; }
+        public bool Evaluate(object? value) { Calls++; return argument().Length < 2; }
+        object? IFunction.Evaluate(object? value) => Evaluate(value);
+    }
     public sealed class Counted(Func<decimal> argument) : IFunction<object?, object?>
     {
         public static int Calls { get; set; }

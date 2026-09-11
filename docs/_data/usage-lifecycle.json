@@ -40,31 +40,24 @@
     "Sunset": "3.0",
     "AllowFollowingStages": true,
     "ReplacementTemplate": "~{callable}",
-    "Condition": "A bare callable with a binary signature, alone or leading an open pipeline, relies on the previous element being injected as its argument and the current element as its pipeline input.",
+    "Condition": "A bare callable with a binary signature, alone or leading an open pipeline, relies on the complete current chunk being injected as its argument and the candidate as its pipeline input.",
     "OperatorPath": "/functions/array/partitioning/chunk-while/",
     "MigrationPath": "/language/tuple-binding/#migrating-implicit-binding",
-    "MigrationConditions": "On this development line the operation and following argument expressions use T(previous, current): $0 is previous and $1 is current. Check the source runtime before migrating older expressions; do not apply this positional rewrite to a runtime with a different chunk-while context. Later stages retain the pair as argument context, while receiving the preceding result as pipeline input.",
+    "MigrationConditions": "The operation and following argument expressions use T(currentChunk, candidate): $0 is the complete current chunk, excluding the candidate, and $1 is the candidate from the array supplied to this chunk-while call. Later stages retain that tuple as argument context while receiving the preceding result as pipeline input. The previous/current contract is replaced; pairwise numeric conditions must select $0 | last explicitly. Automatic rewriting is withheld because chunk boundaries depend on runtime predicate results.",
     "Examples": [
       {
-        "Deprecated": "{1, 2, 5} | chunk-while(subtract | less-than(2))",
-        "Replacement": "{1, 2, 5} | chunk-while(~subtract | less-than(2))",
-        "Expected": "{{1, 2}, {5}}",
+        "Deprecated": "{{1, 2}, {3}, {4, 5}} | chunk-while(zip | cardinality | less-than(2))",
+        "Replacement": "{{1, 2}, {3}, {4, 5}} | chunk-while(~zip | cardinality | less-than(2))",
+        "Expected": "{{{1, 2}, {3}}, {{4, 5}}}",
         "Availability": "supported",
-        "AppliesWhen": "The resolved leading callable supports tuple binding; preserve the remaining pipeline and its pair context."
+        "AppliesWhen": "Each candidate is an array; zip pairs its elements with elements of the complete current chunk."
       },
       {
-        "Deprecated": "{1, 2, 5} | chunk-while(subtract | less-than(2))",
-        "Replacement": "{1, 2, 5} | chunk-while($1 | subtract($0) | less-than(2))",
-        "Expected": "{{1, 2}, {5}}",
+        "Deprecated": "{{1, 2}, {3}, {4, 5}} | chunk-while(zip | cardinality | less-than(2))",
+        "Replacement": "{{1, 2}, {3}, {4, 5}} | chunk-while($1 | zip($0) | cardinality | less-than(2))",
+        "Expected": "{{{1, 2}, {3}}, {{4, 5}}}",
         "Availability": "supported",
-        "AppliesWhen": "For numeric subtraction when the operation context is T(previous, current)."
-      },
-      {
-        "Deprecated": "{1, 2, 5} | chunk-while(greater-than)",
-        "Replacement": "{1, 2, 5} | chunk-while(~greater-than)",
-        "Expected": "{{1, 2, 5}}",
-        "Availability": "supported",
-        "AppliesWhen": "For a compatible binary predicate; the current value remains its pipeline input."
+        "AppliesWhen": "The operation context is T(currentChunk, candidate), with an array candidate and an array of accepted elements."
       }
     ]
   },
