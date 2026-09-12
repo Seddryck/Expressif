@@ -26,6 +26,8 @@ Reference documentation for Expressif functions in the `numeric` scope.
 | [`clip`]({{ '/functions/numeric/rounding/clip/' | relative_url }}) | Returns the value of an argument number, unless it is smaller than min, in which case it returns min, or greater than max, in which case it returns max. |
 | [`cube-power`]({{ '/functions/numeric/arithmetic/cube-power/' | relative_url }}) | Returns the the numeric argument value raised to the cube power. |
 | [`cube-root`]({{ '/functions/numeric/arithmetic/cube-root/' | relative_url }}) | Returns cube root of the numeric argument value. |
+| [`currency-after`]({{ '/functions/numeric/formatting/currency-after/' | relative_url }}) | Formats a numeric value as currency with the symbol after the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options. |
+| [`currency-before`]({{ '/functions/numeric/formatting/currency-before/' | relative_url }}) | Formats a numeric value as currency with the symbol before the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options. |
 | [`decrement`]({{ '/functions/numeric/arithmetic/decrement/' | relative_url }}) | Returns the argument number decremented of one unit. |
 | [`divide`]({{ '/functions/numeric/arithmetic/divide/' | relative_url }}) | Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`. |
 | [`floor`]({{ '/functions/numeric/rounding/floor/' | relative_url }}) | Returns the largest integer less than or equal to the argument number. |

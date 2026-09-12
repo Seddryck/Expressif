@@ -3,7 +3,7 @@ layout: docs
 title: "human-readable-format-binary-bytes"
 parent: "Formatting functions"
 grand_parent: "Numeric functions"
-nav_order: 10
+nav_order: 30
 has_toc: false
 permalink: /functions/numeric/formatting/human-readable-format-binary-bytes/
 tags:
@@ -19,11 +19,14 @@ human-readable-format-binary-bytes() → text
 
 Formats a numeric value as binary bytes using IEC prefixes.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

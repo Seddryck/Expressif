@@ -2114,6 +2114,149 @@
     ]
   },
   {
+    "Name": "currency-before",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-currency-before"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as currency with the symbol before the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options.",
+    "Parameters": [
+      {
+        "Name": "symbol",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "Currency symbol placed next to the formatted number.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "decimals",
+        "Type": "integer",
+        "Optional": true,
+        "Summary": "Number of decimal places from 0 to 28; defaults to 2.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "separator",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "Nonempty decimal separator; defaults to a point.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "grouping",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "Thousands separator; defaults to a comma. An empty string disables grouping.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "negative",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "One character prepended to negative amounts, or two characters enclosing them; defaults to a minus sign.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      }
+    ],
+    "Examples": [
+      "123.4567 | numeric-to-currency-before(\"$\") → \"$123.46\""
+    ]
+  },
+  {
+    "Name": "currency-after",
+    "IsPublic": true,
+    "Aliases": [
+      "numeric-to-currency-after"
+    ],
+    "Scope": "numeric/formatting",
+    "Input": "numeric",
+    "Output": "text",
+    "Summary": "Formats a numeric value as currency with the symbol after the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options.",
+    "Parameters": [
+      {
+        "Name": "symbol",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "Currency symbol placed next to the formatted number.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "decimals",
+        "Type": "integer",
+        "Optional": true,
+        "Summary": "Number of decimal places from 0 to 28; defaults to 2.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "separator",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "Nonempty decimal separator; defaults to a point.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "grouping",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "Thousands separator; defaults to a comma. An empty string disables grouping.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      },
+      {
+        "Name": "negative",
+        "Type": "text",
+        "Optional": true,
+        "Summary": "One character prepended to negative amounts, or two characters enclosing them; defaults to a minus sign.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "enclosing",
+          "Summary": "Evaluated once, in parameter order, for a numeric input. Expressions retain the enclosing context; field references read that context rather than the number entering this call."
+        }
+      }
+    ],
+    "Examples": [
+      "57123.4567 | numeric-to-currency-after(\"EUR\", 2, \",\", \".\") → \"57.123,46EUR\"",
+      "-57123.4567 | numeric-to-currency-after(\"EUR\", 2, \",\", \".\", \"()\") → \"(57.123,46EUR)\""
+    ]
+  },
+  {
     "Name": "human-readable-format-binary-bytes",
     "IsPublic": true,
     "Aliases": [
