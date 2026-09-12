@@ -3,7 +3,7 @@ layout: docs
 title: "human-readable-format-decimal-bytes"
 parent: "Formatting functions"
 grand_parent: "Numeric functions"
-nav_order: 30
+nav_order: 50
 has_toc: false
 permalink: /functions/numeric/formatting/human-readable-format-decimal-bytes/
 tags:
@@ -19,11 +19,14 @@ human-readable-format-decimal-bytes() → text
 
 Formats a numeric value as decimal bytes using SI prefixes.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

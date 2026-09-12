@@ -29,6 +29,8 @@ Reference documentation for Expressif functions in the `numeric` scope.
 | [`decrement`]({{ '/functions/numeric/arithmetic/decrement/' | relative_url }}) | Returns the argument number decremented of one unit. |
 | [`divide`]({{ '/functions/numeric/arithmetic/divide/' | relative_url }}) | Returns the argument number divided by the parameter value. If the parameter value is `0`, it returns `null`. |
 | [`floor`]({{ '/functions/numeric/rounding/floor/' | relative_url }}) | Returns the largest integer less than or equal to the argument number. |
+| [`format-currency-prefix`]({{ '/functions/numeric/formatting/format-currency-prefix/' | relative_url }}) | Formats a numeric value as currency with the symbol before the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options. |
+| [`format-currency-suffix`]({{ '/functions/numeric/formatting/format-currency-suffix/' | relative_url }}) | Formats a numeric value as currency with the symbol after the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options. |
 | [`greatest-common-divisor`]({{ '/functions/numeric/arithmetic/greatest-common-divisor/' | relative_url }}) | Returns the greatest common divisor (GCD) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer. |
 | [`human-readable-format-binary-bytes`]({{ '/functions/numeric/formatting/human-readable-format-binary-bytes/' | relative_url }}) | Formats a numeric value as binary bytes using IEC prefixes. |
 | [`human-readable-format-decimal`]({{ '/functions/numeric/formatting/human-readable-format-decimal/' | relative_url }}) | Formats a numeric value using decimal SI prefixes. |
