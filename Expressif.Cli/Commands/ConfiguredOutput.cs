@@ -1,4 +1,5 @@
 using Expressif.Cli.Configuration;
+using Expressif.Serialization;
 using Expressif.Values;
 
 namespace Expressif.Cli.Commands;
@@ -6,6 +7,27 @@ namespace Expressif.Cli.Commands;
 internal static class ConfiguredOutput
 {
     public static bool TryResolve(CliConfiguration configuration, string command, ValueFormat? requested,
+        bool pretty, bool compact, string? indent, out ValueFormat style, out string indentation, out string? error)
+        => TryResolve(configuration, command, null, false, requested, pretty, compact, indent,
+            out _, out style, out indentation, out error);
+
+    public static bool TryResolve(CliConfiguration configuration, string command,
+        ValueSerializationFormat? output, bool raw, ValueFormat? requested,
+        bool pretty, bool compact, string? indent, out IValueSerializer serializer,
+        out ValueFormat style, out string indentation, out string? error)
+    {
+        indentation = "  ";
+        if (!OutputSerializationSelection.TryResolve(output, raw, out serializer, out error))
+        {
+            style = default;
+            return false;
+        }
+
+        return TryResolveStyle(configuration, command, requested, pretty, compact, indent,
+            out style, out indentation, out error);
+    }
+
+    private static bool TryResolveStyle(CliConfiguration configuration, string command, ValueFormat? requested,
         bool pretty, bool compact, string? indent, out ValueFormat style, out string indentation, out string? error)
     {
         indentation = "  ";

@@ -3,6 +3,7 @@ using Expressif.Cli.Configuration;
 using Expressif.Cli.Application;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
+using Expressif.Serialization;
 using Expressif.Values;
 
 namespace Expressif.Cli.Commands;
@@ -20,6 +21,8 @@ internal static class EvaluateCommand
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var file = new Option<string?>("--file") { Description = "Path to a UTF-8 file containing the expression to evaluate." };
         file.Aliases.Add("-f");
+        var output = new Option<ValueSerializationFormat?>("--output") { Description = "Output format: raw or json." };
+        var raw = new Option<bool>("--raw") { Description = "Shortcut for --output raw." };
         var outputStyle = new Option<ValueFormat?>("--output-style") { Description = "Output style: compact or pretty." };
         var pretty = new Option<bool>("--pretty") { Description = "Shortcut for --output-style pretty." };
         var compact = new Option<bool>("--compact") { Description = "Shortcut for --output-style compact." };
@@ -31,18 +34,21 @@ internal static class EvaluateCommand
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
+        command.Options.Add(output);
+        command.Options.Add(raw);
         command.Options.Add(outputStyle);
         command.Options.Add(pretty);
         command.Options.Add(compact);
         command.Options.Add(indent);
         command.SetAction(result => Execute(result, handler, textFiles, configuration ?? CliConfiguration.CreateDefault(), expression, input, source, scalar, sourceOptions,
-            file, outputStyle, pretty, compact, indent));
+            file, output, raw, outputStyle, pretty, compact, indent));
         return command;
     }
 
     private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles, CliConfiguration configuration,
         Argument<string?> expression, Option<string?> input, Option<string?> source,
         Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file,
+        Option<ValueSerializationFormat?> output, Option<bool> raw,
         Option<ValueFormat?> outputStyle, Option<bool> pretty, Option<bool> compact, Option<string?> indent)
     {
         var hasInput = result.GetResult(input) is not null;
@@ -59,15 +65,18 @@ internal static class EvaluateCommand
                 result.GetValue(expression), filePath, textFiles, out var code, out var fromFile))
             return ExitCodes.InvalidExpressionOrInput;
 
-        var kind = hasSource ? EvaluateInputKind.Source : hasInput ? EvaluateInputKind.Value : EvaluateInputKind.Closed;
+        var kind = ResolveInputKind(hasInput, hasSource);
         var request = new EvaluateRequest(code, kind, result.GetValue(input), result.GetValue(source),
             result.GetValue(sourceOptions) ?? [], result.GetValue(scalar));
         if (!ConfiguredOutput.TryResolve(configuration, "evaluate",
-                result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
-                out var style, out var indentation, out var outputError))
+                result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
+                out var serializer, out var style, out var indentation, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
-        return WriteResult(handler.Execute(request), code, fromFile, filePath, style, indentation);
+        return WriteResult(handler.Execute(request), code, fromFile, filePath, serializer, style, indentation);
     }
+
+    private static EvaluateInputKind ResolveInputKind(bool hasInput, bool hasSource)
+        => hasSource ? EvaluateInputKind.Source : hasInput ? EvaluateInputKind.Value : EvaluateInputKind.Closed;
 
     private static string? ValidateOptions(ParseResult result, bool hasInput, bool hasSource, bool scalar, bool hasSourceOptions)
     {
@@ -81,10 +90,10 @@ internal static class EvaluateCommand
     }
 
     private static int WriteResult(ExpressionOperationResult result, string code, bool fromFile, string? filePath,
-        ValueFormat outputStyle, string indentation)
+        IValueSerializer serializer, ValueFormat outputStyle, string indentation)
         => result switch
         {
-            ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value, outputStyle, indentation),
+            ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value, serializer, outputStyle, indentation),
             ExpressionValidationFailure failure => ExpressionCommandCommon.WriteValidationError(failure.Exception, code, fromFile, filePath),
             ExpressionInputRequiredFailure failure => WriteInputRequired(failure.Exception),
             ExpressionInputFailure failure => WriteError(failure.Message, ExitCodes.InvalidExpressionOrInput),
@@ -93,9 +102,9 @@ internal static class EvaluateCommand
             _ => throw new InvalidOperationException($"Unexpected evaluation result '{result.GetType().Name}'.")
         };
 
-    private static int WriteSuccess(object? value, ValueFormat outputStyle, string indentation)
+    private static int WriteSuccess(object? value, IValueSerializer serializer, ValueFormat outputStyle, string indentation)
     {
-        Console.Out.WriteLine(ValueFormatter.Format(value, outputStyle, indentation));
+        Console.Out.WriteLine(serializer.Serialize(value, outputStyle, indentation));
         return ExitCodes.Success;
     }
 

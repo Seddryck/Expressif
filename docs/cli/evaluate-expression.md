@@ -8,6 +8,11 @@ description: Evaluate a closed expression, one explicit input, or one complete d
 
 `evaluate` always evaluates an expression once and writes one formatted value.
 
+Raw Expressif syntax is the default output format. Use `--output json` for a valid JSON
+root value, including scalars such as `"Alice"`, `42`, `true`, and `null`. `--raw` selects
+the default format explicitly and is equivalent to `--output raw`; the two selectors are
+mutually exclusive.
+
 Structured results use compact, single-line formatting by default. Pass
 `--output-style pretty` to display each element on its own line with two spaces per nesting level:
 
@@ -28,6 +33,7 @@ expressif evaluate '{1, T(2, 3)}' --pretty --indent tab
 ```
 
 `--indent` requires pretty output.
+These style options also apply to JSON output.
 
 What changes is the value supplied to that evaluation.
 

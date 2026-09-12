@@ -37,6 +37,10 @@ four-space indentation. `--style-output` is an alias for `--output-style`;
 `--pretty` and `--compact` are shortcuts for the corresponding styles. Choose
 only one style selector. The default is compact output.
 
+Use `--output json` to serialize evaluation results as JSON throughout the session.
+`--raw` explicitly selects the default raw format. `--output` and `--raw` are mutually
+exclusive. Format selection is independent of the style and indentation options.
+
 `--indent` accepts a space count from `0` to `8`, or `tab`, and requires pretty
 output. Pretty output defaults to two-space indentation. These settings apply
 throughout the session, including standalone expressions, subsequent pipelines,

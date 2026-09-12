@@ -4,6 +4,7 @@ using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Inputs;
 using Expressif.Cli.Infrastructure;
+using Expressif.Serialization;
 using Expressif.Syntax;
 using Expressif.Values;
 
@@ -23,6 +24,8 @@ internal sealed record RunRequest(
     bool HasSource,
     bool HasSourceOptions,
     int BatchOccurrences,
+    ValueSerializationFormat? Output = null,
+    bool Raw = false,
     ValueFormat? OutputStyle = null,
     bool Pretty = false,
     bool Compact = false,
@@ -45,8 +48,8 @@ internal sealed class RunHandler(
         }
 
         if (!ConfiguredOutput.TryResolve(configuration ?? CliConfiguration.CreateDefault(), "run",
-                request.OutputStyle, request.Pretty, request.Compact, request.Indent,
-                out var outputStyle, out var indentation, out var outputError))
+                request.Output, request.Raw, request.OutputStyle, request.Pretty, request.Compact, request.Indent,
+                out var serializer, out var outputStyle, out var indentation, out var outputError))
         {
             Console.Error.WriteLine(outputError);
             return ExitCodes.InvalidExpressionOrInput;
@@ -88,7 +91,7 @@ internal sealed class RunHandler(
         try
         {
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
-                Console.Out.WriteLine(ValueFormatter.Format(result, outputStyle, indentation));
+                Console.Out.WriteLine(serializer.Serialize(result, outputStyle, indentation));
             return ExitCodes.Success;
         }
         catch (FormatException exception)

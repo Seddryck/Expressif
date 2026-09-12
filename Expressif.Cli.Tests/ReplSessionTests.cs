@@ -7,6 +7,17 @@ namespace Expressif.Cli.Tests;
 
 public class ReplSessionTests
 {
+    [Test]
+    public void Command_JsonOutput_SerializesEvaluationResults()
+    {
+        var terminal = new FakeTerminal("{1, 2}", "| reverse");
+        var command = ReplCommand.Create(() => new ReplHost(new ReplSession(new ExpressionService()), terminal));
+
+        Assert.That(command.Parse(["--output", "json"]).Invoke(), Is.EqualTo(ExitCodes.Success));
+        Assert.That(terminal.Results, Is.EqualTo(new[] { "[1,2]", "[2,1]" }));
+        Assert.That(terminal.Errors, Is.Empty);
+    }
+
     [TestCase("--output-style", "pretty", "  ")]
     [TestCase("--style-output", "pretty", "  ")]
     [TestCase("--pretty", null, "  ")]
