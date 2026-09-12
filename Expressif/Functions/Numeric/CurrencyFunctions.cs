@@ -51,28 +51,28 @@ public abstract class CurrencyFunction : FormatFunction
 /// <summary>
 /// Formats a numeric value as currency with the symbol before the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options.
 /// </summary>
-public class CurrencyBefore : CurrencyFunction
+public class FormatCurrencyPrefix : CurrencyFunction
 {
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
-    public CurrencyBefore(Func<string> symbol)
+    public FormatCurrencyPrefix(Func<string> symbol)
         : this(symbol, () => 2) { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
     /// <param name="decimals">Number of decimal places from 0 to 28; defaults to 2.</param>
-    public CurrencyBefore(Func<string> symbol, Func<int> decimals)
+    public FormatCurrencyPrefix(Func<string> symbol, Func<int> decimals)
         : this(symbol, decimals, () => ".") { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
     /// <param name="decimals">Number of decimal places from 0 to 28; defaults to 2.</param>
     /// <param name="separator">Nonempty decimal separator; defaults to a point.</param>
-    public CurrencyBefore(Func<string> symbol, Func<int> decimals, Func<string> separator)
+    public FormatCurrencyPrefix(Func<string> symbol, Func<int> decimals, Func<string> separator)
         : this(symbol, decimals, separator, () => ",") { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
     /// <param name="decimals">Number of decimal places from 0 to 28; defaults to 2.</param>
     /// <param name="separator">Nonempty decimal separator; defaults to a point.</param>
     /// <param name="grouping">Thousands separator; defaults to a comma. An empty string disables grouping.</param>
-    public CurrencyBefore(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping)
+    public FormatCurrencyPrefix(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping)
         : this(symbol, decimals, separator, grouping, () => "-") { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
@@ -80,7 +80,7 @@ public class CurrencyBefore : CurrencyFunction
     /// <param name="separator">Nonempty decimal separator; defaults to a point.</param>
     /// <param name="grouping">Thousands separator; defaults to a comma. An empty string disables grouping.</param>
     /// <param name="negative">One character prepended to negative amounts, or two characters enclosing them; defaults to a minus sign.</param>
-    public CurrencyBefore(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping, Func<string> negative)
+    public FormatCurrencyPrefix(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping, Func<string> negative)
         : base(symbol, decimals, separator, grouping, negative) { }
 
     protected override string PlaceSymbol(string number, string symbol)
@@ -90,28 +90,28 @@ public class CurrencyBefore : CurrencyFunction
 /// <summary>
 /// Formats a numeric value as currency with the symbol after the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options.
 /// </summary>
-public class CurrencyAfter : CurrencyFunction
+public class FormatCurrencySuffix : CurrencyFunction
 {
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
-    public CurrencyAfter(Func<string> symbol)
+    public FormatCurrencySuffix(Func<string> symbol)
         : this(symbol, () => 2) { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
     /// <param name="decimals">Number of decimal places from 0 to 28; defaults to 2.</param>
-    public CurrencyAfter(Func<string> symbol, Func<int> decimals)
+    public FormatCurrencySuffix(Func<string> symbol, Func<int> decimals)
         : this(symbol, decimals, () => ".") { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
     /// <param name="decimals">Number of decimal places from 0 to 28; defaults to 2.</param>
     /// <param name="separator">Nonempty decimal separator; defaults to a point.</param>
-    public CurrencyAfter(Func<string> symbol, Func<int> decimals, Func<string> separator)
+    public FormatCurrencySuffix(Func<string> symbol, Func<int> decimals, Func<string> separator)
         : this(symbol, decimals, separator, () => ",") { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
     /// <param name="decimals">Number of decimal places from 0 to 28; defaults to 2.</param>
     /// <param name="separator">Nonempty decimal separator; defaults to a point.</param>
     /// <param name="grouping">Thousands separator; defaults to a comma. An empty string disables grouping.</param>
-    public CurrencyAfter(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping)
+    public FormatCurrencySuffix(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping)
         : this(symbol, decimals, separator, grouping, () => "-") { }
 
     /// <param name="symbol">Currency symbol placed next to the formatted number.</param>
@@ -119,7 +119,7 @@ public class CurrencyAfter : CurrencyFunction
     /// <param name="separator">Nonempty decimal separator; defaults to a point.</param>
     /// <param name="grouping">Thousands separator; defaults to a comma. An empty string disables grouping.</param>
     /// <param name="negative">One character prepended to negative amounts, or two characters enclosing them; defaults to a minus sign.</param>
-    public CurrencyAfter(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping, Func<string> negative)
+    public FormatCurrencySuffix(Func<string> symbol, Func<int> decimals, Func<string> separator, Func<string> grouping, Func<string> negative)
         : base(symbol, decimals, separator, grouping, negative) { }
 
     protected override string PlaceSymbol(string number, string symbol)

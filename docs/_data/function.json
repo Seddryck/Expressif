@@ -2114,10 +2114,10 @@
     ]
   },
   {
-    "Name": "currency-before",
+    "Name": "format-currency-prefix",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-currency-before"
+      "numeric-to-format-currency-prefix"
     ],
     "Scope": "numeric/formatting",
     "Input": "numeric",
@@ -2181,14 +2181,14 @@
       }
     ],
     "Examples": [
-      "123.4567 | numeric-to-currency-before(\"$\") → \"$123.46\""
+      "123.4567 | numeric-to-format-currency-prefix(\"$\") → \"$123.46\""
     ]
   },
   {
-    "Name": "currency-after",
+    "Name": "format-currency-suffix",
     "IsPublic": true,
     "Aliases": [
-      "numeric-to-currency-after"
+      "numeric-to-format-currency-suffix"
     ],
     "Scope": "numeric/formatting",
     "Input": "numeric",
@@ -2252,8 +2252,8 @@
       }
     ],
     "Examples": [
-      "57123.4567 | numeric-to-currency-after(\"EUR\", 2, \",\", \".\") → \"57.123,46EUR\"",
-      "-57123.4567 | numeric-to-currency-after(\"EUR\", 2, \",\", \".\", \"()\") → \"(57.123,46EUR)\""
+      "57123.4567 | numeric-to-format-currency-suffix(\"EUR\", 2, \",\", \".\") → \"57.123,46EUR\"",
+      "-57123.4567 | numeric-to-format-currency-suffix(\"EUR\", 2, \",\", \".\", \"()\") → \"(57.123,46EUR)\""
     ]
   },
   {

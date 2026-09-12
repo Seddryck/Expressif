@@ -1,94 +1,94 @@
 suite: numeric
 kind: function
-operator: currency-before
+operator: format-currency-prefix
 tests:
-  - id: currency-before.arity-1
+  - id: format-currency-prefix.arity-1
     cases:
-      - id: currency-before.arity-1.defaults
+      - id: format-currency-prefix.arity-1.defaults
         value: 123.4567
         parameters: ["$"]
         expected: "$123.46"
-      - id: currency-before.arity-1.zero
+      - id: format-currency-prefix.arity-1.zero
         value: 0
         parameters: ["€"]
         expected: "€0.00"
-      - id: currency-before.arity-1.negative
+      - id: format-currency-prefix.arity-1.negative
         value: -1234.565
         parameters: ["$"]
         expected: "-$1,234.57"
-      - id: currency-before.arity-1.round-carry
+      - id: format-currency-prefix.arity-1.round-carry
         value: 999.995
         parameters: ["$"]
         expected: "$1,000.00"
-      - id: currency-before.arity-1.null
+      - id: format-currency-prefix.arity-1.null
         value: "(null)"
         parameters: ["$"]
         expected: null
-      - id: currency-before.arity-1.empty
+      - id: format-currency-prefix.arity-1.empty
         value: "(empty)"
         parameters: ["$"]
         expected: null
-      - id: currency-before.arity-1.blank
+      - id: format-currency-prefix.arity-1.blank
         value: "(blank)"
         parameters: ["$"]
         expected: null
-  - id: currency-before.arity-2
+  - id: format-currency-prefix.arity-2
     cases:
-      - id: currency-before.arity-2.no-decimals
+      - id: format-currency-prefix.arity-2.no-decimals
         value: 57123.4567
         parameters: ["€",0]
         expected: "€57,123"
-      - id: currency-before.arity-2.invalid-precision
+      - id: format-currency-prefix.arity-2.invalid-precision
         value: 1
         parameters: ["$",-1]
         expected: null
-      - id: currency-before.arity-2.excessive-precision
+      - id: format-currency-prefix.arity-2.excessive-precision
         value: 1
         parameters: ["$",29]
         expected: null
-  - id: currency-before.arity-3
+  - id: format-currency-prefix.arity-3
     cases:
-      - id: currency-before.arity-3.decimal-separator
+      - id: format-currency-prefix.arity-3.decimal-separator
         value: 1234.5
         parameters: ["EUR",2,":"]
         expected: "EUR1,234:50"
-      - id: currency-before.arity-3.empty-decimal
+      - id: format-currency-prefix.arity-3.empty-decimal
         value: 1
         parameters: ["$",2,""]
         expected: null
-  - id: currency-before.arity-4
+  - id: format-currency-prefix.arity-4
     cases:
-      - id: currency-before.arity-4.separators
+      - id: format-currency-prefix.arity-4.separators
         value: 57123.4567
         parameters: ["EUR",2,",","."]
         expected: "EUR57.123,46"
-      - id: currency-before.arity-4.no-grouping
+      - id: format-currency-prefix.arity-4.no-grouping
         value: 1234.5
         parameters: ["",3,".",""]
         expected: "1234.500"
-  - id: currency-before.arity-5
+  - id: format-currency-prefix.arity-5
     cases:
-      - id: currency-before.arity-5.minus
+      - id: format-currency-prefix.arity-5.minus
         value: -57123.4567
         parameters: ["EUR",2,",",".","-"]
         expected: "-EUR57.123,46"
-      - id: currency-before.arity-5.parentheses
+      - id: format-currency-prefix.arity-5.parentheses
         value: -57123.4567
         parameters: ["EUR",2,",",".","()"]
         expected: "(EUR57.123,46)"
-      - id: currency-before.arity-5.positive-markers
+      - id: format-currency-prefix.arity-5.positive-markers
         value: 1234.5
         parameters: ["$",2,".",",","()"]
         expected: "$1,234.50"
-      - id: currency-before.arity-5.custom-sign
+      - id: format-currency-prefix.arity-5.custom-sign
         value: -12
         parameters: ["$",2,".",",","~"]
         expected: "~$12.00"
-      - id: currency-before.arity-5.empty-sign
+      - id: format-currency-prefix.arity-5.empty-sign
         value: -1
         parameters: ["$",2,".",",",""]
         expected: null
-      - id: currency-before.arity-5.long-sign
+      - id: format-currency-prefix.arity-5.long-sign
         value: -1
         parameters: ["$",2,".",",","abc"]
         expected: null

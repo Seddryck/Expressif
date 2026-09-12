@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "currency-before"
+title: "format-currency-suffix"
 parent: "Formatting functions"
 grand_parent: "Numeric functions"
 nav_order: 20
 has_toc: false
-permalink: /functions/numeric/formatting/currency-before/
+permalink: /functions/numeric/formatting/format-currency-suffix/
 tags:
   - functions
   - numeric/formatting
@@ -14,7 +14,7 @@ generated: true
 
 ```
 numeric →
-currency-before(
+format-currency-suffix(
     symbol: text,
     decimals?: integer,
     separator?: text,
@@ -23,7 +23,7 @@ currency-before(
 ) → text
 ```
 
-Formats a numeric value as currency with the symbol before the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options.
+Formats a numeric value as currency with the symbol after the number. Rounds midpoint values away from zero and returns null for null input or invalid formatting options.
 
 
 
@@ -55,12 +55,13 @@ Formats a numeric value as currency with the symbol before the number. Rounds mi
 
 {% raw %}
 ```expressif
-123.4567 | numeric-to-currency-before("$") → "$123.46"
+57123.4567 | numeric-to-format-currency-suffix("EUR", 2, ",", ".") → "57.123,46EUR"
+-57123.4567 | numeric-to-format-currency-suffix("EUR", 2, ",", ".", "()") → "(57.123,46EUR)"
 ```
 {% endraw %}
 
 
 **Kind:** Function  
 **Scope:** `numeric/formatting`  
-**Aliases:** `numeric-to-currency-before`
+**Aliases:** `numeric-to-format-currency-suffix`
 {: .member-reference }
