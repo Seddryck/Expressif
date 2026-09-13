@@ -2012,7 +2012,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith(
-                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times?: integer{Environment.NewLine}) → numeric"));
+                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times: integer = 1{Environment.NewLine}) → numeric"));
             Assert.That(result.StdOut, Does.Contain("Returns the sum of the input value and the parameter value."));
             Assert.That(result.StdOut, Does.Contain("times  integer (optional)"));
             Assert.That(result.StdOut, Does.Contain("  10 | add(5)      → 15"));

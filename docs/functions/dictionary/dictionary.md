@@ -27,7 +27,7 @@ Constructs a dictionary from zero or more pairs. Spread arguments expand arrays 
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `pair` | Variadic (zero or more) | Zero or more pairs whose unique keys and values become dictionary entries. |
+| `values` | `pair` | Variadic (zero or more) | Zero or more pairs whose unique keys and values become dictionary entries. Omission supplies an empty variadic sequence. |
 
 ## Argument evaluation
 
