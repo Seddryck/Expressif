@@ -80,7 +80,13 @@ Install [Visual Studio Code](https://code.visualstudio.com).
 
 ### Download the extension
 
-The extension is not currently available on the Visual Studio Marketplace. Download `expressif-syntax-<version>-vscode.vsix` from the matching version on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases).
+Install [Expressif Syntax Highlighting from the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=seddryck.expressif-syntax-highlighting), or run:
+
+```console
+code --install-extension seddryck.expressif-syntax-highlighting
+```
+
+Versioned `expressif-syntax-<version>-vscode.vsix` packages also remain available on the [GitHub Releases page](https://github.com/Seddryck/Expressif/releases) for offline or pinned-version installation.
 
 
 ### Install the extension

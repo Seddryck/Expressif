@@ -2,16 +2,27 @@
     "name": "expressif-syntax-highlighting",
     "displayName": "Expressif Syntax Highlighting",
     "description": "Syntax highlighting for Expressif expressions in Visual Studio Code.",
+    "keywords": [ "expressif", "syntax highlighting", "textmate" ],
     "categories": [ "Programming Languages" ],
     "version": "{{model.version}}",
     "repository": {
         "type": "git",
         "url": "https://github.com/Seddryck/Expressif.git"
     },
+    "homepage": "https://seddryck.github.io/Expressif/tooling/textmate-grammar/",
+    "bugs": {
+        "url": "https://github.com/Seddryck/Expressif/issues"
+    },
     "license": "Apache-2.0",
     "author": "Cédric L. Charlier",
     "publisher": "seddryck",
     "icon": "images/icon.png",
+    "files": [
+        "LICENSE",
+        "images/icon.png",
+        "language-configuration.json",
+        "syntaxes/expressif.tmLanguage.json"
+    ],
     "engines": {
         "vscode": "^1.80.0"
     },

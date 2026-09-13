@@ -539,6 +539,11 @@ jobs:
       - name: Restore local .NET tools
         run: dotnet tool restore
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
       - name: Generate syntax assets
         shell: pwsh
         working-directory: Expressif.Syntax
@@ -548,6 +553,13 @@ jobs:
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: '3.3'
+
+      - name: Verify VS Code extension contract
+        shell: pwsh
+        working-directory: Expressif.Syntax
+        run: >-
+          ./Test-VsCodeExtension.ps1
+          -PackagePath ./bin/expressif-syntax-${{ needs.calculate-version.outputs.semver }}-vscode.vsix
 
       - name: Verify generated highlighter tokens
         shell: pwsh
@@ -834,6 +846,44 @@ jobs:
             if ($LASTEXITCODE -ne 0) {
               throw "Failed to publish $($package.Name)."
             }
+          }
+
+  publish-vscode-marketplace:
+    needs:
+      - calculate-version
+      - package-syntax-highlighters
+      - tag-version
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.calculate-version.outputs.patch == '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download syntax assets
+        uses: actions/download-artifact@v8
+        with:
+          name: syntax-assets
+          path: syntax-assets
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Publish syntax extension to Visual Studio Marketplace
+        shell: pwsh
+        run: |
+          $packages = @(Get-ChildItem -Path syntax-assets -Recurse -File -Filter '*.vsix')
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly one VSIX package, found $($packages.Count)."
+          }
+
+          npx --yes @vscode/vsce@3.9.2 publish --oidc --packagePath $packages[0].FullName
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Failed to publish the syntax extension to the Visual Studio Marketplace.'
           }
 
   publish-github-release:
