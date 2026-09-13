@@ -26,6 +26,9 @@ public static class ValueSerializers
     {
         public string Serialize(object? value, ValueFormat style = ValueFormat.Compact, string indentation = "  ")
             => ValueFormatter.Format(value, style, indentation);
+
+        public string Serialize(object? value, ValueFormattingOptions options)
+            => ValueFormatter.Format(value, options);
     }
 
     private sealed class JsonValueSerializer : IValueSerializer
@@ -38,18 +41,39 @@ public static class ValueSerializers
             if (indentation.Any(character => character is not ' ' and not '\t'))
                 throw new ArgumentException("Indentation can contain only spaces and tabs.", nameof(indentation));
 
-            var writer = new JsonWriter(style == ValueFormat.Pretty, indentation);
+            return Serialize(value, new ValueFormattingOptions { Format = style, Indentation = indentation });
+        }
+
+        public string Serialize(object? value, ValueFormattingOptions options)
+        {
+            ArgumentNullException.ThrowIfNull(options);
+            if (!Enum.IsDefined(options.Format))
+                throw new ArgumentOutOfRangeException(nameof(options), options.Format, "Unknown value format.");
+            ArgumentNullException.ThrowIfNull(options.Indentation);
+            if (options.Indentation.Any(character => character is not ' ' and not '\t'))
+                throw new ArgumentException("Indentation can contain only spaces and tabs.", nameof(options));
+            ArgumentNullException.ThrowIfNull(options.InlineValueTypes);
+            if (options.InlineValueTypes.Any(type => type is null))
+                throw new ArgumentException("Inline value types cannot contain null.", nameof(options));
+            if (options.PreferredLineWidth <= 0)
+                throw new ArgumentOutOfRangeException(nameof(options), options.PreferredLineWidth, "Preferred line width must be positive.");
+
+            var writer = new JsonWriter(options);
             writer.Write(value);
             return writer.ToString();
         }
     }
 
-    private sealed class JsonWriter(bool pretty, string indentation)
+    private sealed class JsonWriter(ValueFormattingOptions options)
     {
         private readonly StringBuilder builder = new();
+        private readonly bool pretty = options.Format == ValueFormat.Pretty;
 
         public void Write(object? value, int depth = 0)
         {
+            if (TryWriteInline(value))
+                return;
+
             if (value is null || value == DBNull.Value)
             {
                 builder.Append("null");
@@ -101,6 +125,33 @@ public static class ValueSerializers
         }
 
         public override string ToString() => builder.ToString();
+
+        private bool TryWriteInline(object? value)
+        {
+            if (!pretty || value is null || !options.InlineValueTypes.Contains(value.GetType()))
+                return false;
+
+            var compactWriter = new JsonWriter(new ValueFormattingOptions { Format = ValueFormat.Compact });
+            compactWriter.Write(value);
+            var compact = compactWriter.ToString();
+            if (compact.Contains('\r') || compact.Contains('\n')
+                || compact.Length > options.PreferredLineWidth - CurrentLineLength())
+                return false;
+
+            builder.Append(compact);
+            return true;
+        }
+
+        private int CurrentLineLength()
+        {
+            for (var index = builder.Length - 1; index >= 0; index--)
+            {
+                if (builder[index] == '\n')
+                    return builder.Length - index - 1;
+            }
+
+            return builder.Length;
+        }
 
         private void WriteObject(IReadOnlyList<KeyValuePair<string, object?>> fields, int depth)
         {
@@ -163,7 +214,7 @@ public static class ValueSerializers
         private void WriteIndent(int depth)
         {
             for (var index = 0; index < depth; index++)
-                builder.Append(indentation);
+                builder.Append(options.Indentation);
         }
 
         private void WriteString(string value) => builder.Append(JsonSerializer.Serialize(value));

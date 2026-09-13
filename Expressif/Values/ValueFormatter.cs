@@ -24,18 +24,39 @@ public static class ValueFormatter
         if (indentation.Contains('\r') || indentation.Contains('\n'))
             throw new ArgumentException("Indentation cannot contain a line break.", nameof(indentation));
 
-        var writer = new Writer(format, indentation);
+        return Format(value, new ValueFormattingOptions { Format = format, Indentation = indentation });
+    }
+
+    /// <summary>Formats a value using the requested presentation options.</summary>
+    public static string Format(object? value, ValueFormattingOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        if (!Enum.IsDefined(options.Format))
+            throw new ArgumentOutOfRangeException(nameof(options), options.Format, "Unknown value format.");
+        ArgumentNullException.ThrowIfNull(options.Indentation);
+        if (options.Indentation.Contains('\r') || options.Indentation.Contains('\n'))
+            throw new ArgumentException("Indentation cannot contain a line break.", nameof(options));
+        ArgumentNullException.ThrowIfNull(options.InlineValueTypes);
+        if (options.InlineValueTypes.Any(type => type is null))
+            throw new ArgumentException("Inline value types cannot contain null.", nameof(options));
+        if (options.PreferredLineWidth <= 0)
+            throw new ArgumentOutOfRangeException(nameof(options), options.PreferredLineWidth, "Preferred line width must be positive.");
+
+        var writer = new Writer(options);
         writer.Write(value, structuredValue: false);
         return writer.ToString();
     }
 
-    private sealed class Writer(ValueFormat format, string indentation)
+    private sealed class Writer(ValueFormattingOptions options)
     {
         private readonly StringBuilder builder = new();
-        private readonly bool pretty = format == ValueFormat.Pretty;
+        private readonly bool pretty = options.Format == ValueFormat.Pretty;
 
         public void Write(object? value, bool structuredValue, int depth = 0)
         {
+            if (TryWriteInline(value, structuredValue))
+                return;
+
             if (IsNullLike(value))
             {
                 builder.Append("null");
@@ -71,6 +92,37 @@ public static class ValueFormatter
             }
         }
         public override string ToString() => builder.ToString();
+
+        private bool TryWriteInline(object? value, bool structuredValue)
+        {
+            if (!pretty || value is null || !options.InlineValueTypes.Contains(value.GetType()))
+                return false;
+
+            var compactWriter = new Writer(new ValueFormattingOptions
+            {
+                Format = ValueFormat.Compact,
+                Indentation = options.Indentation,
+            });
+            compactWriter.Write(value, structuredValue);
+            var compact = compactWriter.ToString();
+            if (compact.Contains('\r') || compact.Contains('\n')
+                || compact.Length > options.PreferredLineWidth - CurrentLineLength())
+                return false;
+
+            builder.Append(compact);
+            return true;
+        }
+
+        private int CurrentLineLength()
+        {
+            for (var index = builder.Length - 1; index >= 0; index--)
+            {
+                if (builder[index] == '\n')
+                    return builder.Length - index - 1;
+            }
+
+            return builder.Length;
+        }
 
         private void WriteScalarOrEnumerable(object value, bool structuredValue, int depth)
         {
@@ -193,7 +245,7 @@ public static class ValueFormatter
         private void WriteIndent(int depth)
         {
             for (var index = 0; index < depth; index++)
-                builder.Append(indentation);
+                builder.Append(options.Indentation);
         }
     }
 

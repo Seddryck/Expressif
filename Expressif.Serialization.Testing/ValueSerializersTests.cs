@@ -118,4 +118,53 @@ public class ValueSerializersTests
             Assert.That(parsed, Is.EqualTo(source));
         });
     }
+
+    [TestCase(ValueSerializationFormat.Raw, 9, "{\n  T(1, 2)\n}")]
+    [TestCase(ValueSerializationFormat.Raw, 8, "{\n  T(\n    1,\n    2\n  )\n}")]
+    [TestCase(ValueSerializationFormat.Json, 7, "[\n  [1,2]\n]")]
+    [TestCase(ValueSerializationFormat.Json, 6, "[\n  [\n    1,\n    2\n  ]\n]")]
+    public void PrettyInlineTuple_UsesOriginalRuntimeTypeAndRemainingWidth(
+        ValueSerializationFormat format,
+        int width,
+        string expected)
+    {
+        var serializer = ValueSerializers.Resolve(format);
+        var value = new object?[] { new TupleValue(1, 2) };
+
+        var result = serializer.Serialize(value, PrettyWithInlineTuples(width));
+
+        Assert.That(result, Is.EqualTo(expected));
+        if (format == ValueSerializationFormat.Json)
+            Assert.DoesNotThrow(() => JsonDocument.Parse(result));
+    }
+
+    [Test]
+    public void Json_PrettyInlineTuple_LeavesOrdinaryArrayMultiline()
+    {
+        var value = new object?[] { new TupleValue(1, 2), new object?[] { 3, 4 } };
+
+        var result = Json.Serialize(value, PrettyWithInlineTuples(80));
+
+        Assert.That(result, Is.EqualTo("[\n  [1,2],\n  [\n    3,\n    4\n  ]\n]"));
+        Assert.DoesNotThrow(() => JsonDocument.Parse(result));
+    }
+
+    [Test]
+    public void Json_PrettyInlineTuple_RecursesAfterParentFallback()
+    {
+        var value = new TupleValue(new object?[] { 12345 }, new TupleValue(2, 3));
+
+        var result = Json.Serialize(value, PrettyWithInlineTuples(10));
+
+        Assert.That(result, Is.EqualTo("[\n  [\n    12345\n  ],\n  [2,3]\n]"));
+        Assert.DoesNotThrow(() => JsonDocument.Parse(result));
+    }
+
+    private static ValueFormattingOptions PrettyWithInlineTuples(int width)
+        => new()
+        {
+            Format = ValueFormat.Pretty,
+            InlineValueTypes = new HashSet<Type> { typeof(TupleValue) },
+            PreferredLineWidth = width,
+        };
 }
