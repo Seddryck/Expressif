@@ -1880,9 +1880,25 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("evaluate"));
             Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
+            Assert.That(result.StdOut, Does.Contain("plan"));
             Assert.That(result.StdOut, Does.Contain("help"));
             Assert.That(result.StdOut, Does.Contain("repl"));
             Assert.That(result.StdOut, Does.Contain("version"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Plan_Expression_DisplaysCanonicalLogicalTree()
+    {
+        var result = await InvokeAsync("plan", "trim | upper");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Pipeline"));
+            Assert.That(result.StdOut, Does.Contain("Call: trim"));
+            Assert.That(result.StdOut, Does.Contain("Call: upper"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -2175,6 +2191,7 @@ public class CliCommandTests
             var composition = new CliComposition(
                 new ParseHandler(new SyntaxService()),
                 new BindHandler(new SyntaxService()),
+                new PlanHandler(new SyntaxService()),
                 new EvaluateHandler(expressions, values, sources),
                 new RunHandler(expressions, values, textFiles, sources),
                 new ValidateHandler(expressions),
