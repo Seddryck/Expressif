@@ -20,3 +20,13 @@ tests:
         value: 'V(0.5, 1)'
         parameters: ['V(0.5, 3)']
         expected: 2
+  - id: distance.valid.dimension-mismatch
+    cases:
+      - id: distance.valid.dimension-mismatch.shorter-argument
+        value: 'V(1, 2)'
+        parameters: ['V(3)']
+        expected: null
+      - id: distance.valid.dimension-mismatch.longer-argument
+        value: 'V(1, 2)'
+        parameters: ['V(3, 4, 5)']
+        expected: null

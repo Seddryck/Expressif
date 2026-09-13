@@ -20,3 +20,13 @@ tests:
         value: 'V(0.5, 2)'
         parameters: ['V(4, 0.25)']
         expected: 2.5
+  - id: dot.valid.dimension-mismatch
+    cases:
+      - id: dot.valid.dimension-mismatch.shorter-argument
+        value: 'V(1, 2)'
+        parameters: ['V(3)']
+        expected: null
+      - id: dot.valid.dimension-mismatch.longer-argument
+        value: 'V(1, 2)'
+        parameters: ['V(3, 4, 5)']
+        expected: null

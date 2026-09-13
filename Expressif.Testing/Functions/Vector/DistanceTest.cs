@@ -11,6 +11,10 @@ public class DistanceTest
     public void Distance_Valid_EqualDimension(string value, string vector, decimal expected)
         => Assert.That(new Distance(() => Parse(vector)).Evaluate(Parse(value)), Is.EqualTo(expected));
 
+    [Conformance]
+    public void Distance_Valid_DimensionMismatch(string value, string vector, decimal? expected)
+        => Assert.That(new Distance(() => Parse(vector)).Evaluate(Parse(value)), Is.EqualTo(expected));
+
     [Test]
     public void Evaluate_Symmetric_ReturnsSameDistance()
     {
@@ -21,12 +25,6 @@ public class DistanceTest
     }
 
     [Test]
-    public void Evaluate_DimensionMismatch_Throws()
-        => Assert.That(
-            () => new Distance(() => new VectorValue(1)).Evaluate(new VectorValue(1, 2)),
-            Throws.ArgumentException.With.Message.Contains("equal dimensions"));
-
-    [Test]
     public void Evaluate_TupleInput_ReturnsNull()
         => Assert.That(
             ((IFunction)new Distance(() => new VectorValue(1, 2))).Evaluate(new TupleValue(1, 2)),
@@ -35,6 +33,10 @@ public class DistanceTest
     [Test]
     public void Expression_VectorDistance_ReturnsExpected()
         => Assert.That(Expression.CreateClosed("V(1, 2) | distance(V(4, 6))").Evaluate(null), Is.EqualTo(5m));
+
+    [Test]
+    public void Expression_DimensionMismatch_ReturnsNull()
+        => Assert.That(Expression.CreateClosed("V(1, 2) | distance(V(3, 4, 5))").Evaluate(null), Is.Null);
 
     private static VectorValue Parse(string source)
         => (VectorValue)Expression.CreateClosed(source).Evaluate(null)!;
