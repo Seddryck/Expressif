@@ -1,3 +1,6 @@
+using System.Reflection;
+using Expressif.Bindings;
+using Expressif.Functions.Catalog;
 using Expressif.Planning;
 using Expressif.Syntax;
 
@@ -5,6 +8,51 @@ namespace Expressif.Testing.Planning;
 
 public class LogicalPlannerTest
 {
+    private static IEnumerable<TestCaseData> ParameterShapes()
+    {
+        yield return Shape(new LiteralParameter(1), "literal");
+        yield return Shape(new QuotedLiteralParameter("quoted"), "literal");
+        yield return Shape(new VariableParameter("value"), "variable");
+        yield return Shape(new IncomingValueParameter(), "incoming");
+        yield return Shape(new ObjectPropertyParameter("name"), "field");
+        yield return Shape(new EnclosingObjectPropertyParameter("name"), "field");
+        yield return Shape(new ObjectIndexParameter(2), "field");
+        yield return Shape(new TupleProjectionParameter(2, FromEnd: true), "tuple-at");
+        yield return new TestCaseData(new TupleProjectionParameter(2), "tuple-at")
+            .SetName("Value_TupleProjectionParameter_FromStart");
+        yield return Shape(new ScopedTupleProjectionParameter(2, 3), "tuple-at");
+        yield return Shape(new ArrayParameter([new LiteralParameter(1)]), "array");
+        yield return Shape(new TupleParameter([new LiteralParameter(1)]), "tuple");
+        yield return Shape(new VectorParameter([new TupleElementParameter(new LiteralParameter(1), IsSpread: true)]), "vector");
+        yield return Shape(new PairParameter(new LiteralParameter("key"), new LiteralParameter(1)), "pair");
+        yield return Shape(new GroupingParameter([new PairParameter(new LiteralParameter("key"), new LiteralParameter(1))]), "grouping");
+        yield return Shape(new DictionaryParameter([new PairParameter(new LiteralParameter("key"), new LiteralParameter(1))]), "dictionary");
+        yield return Shape(new RecordLiteralParameter([new RecordLiteralField("name", new LiteralParameter("value"))]), "record");
+        yield return Shape(new RecordDefinitionParameter([
+            new RecordNamedEntry("name", new LiteralParameter("value")),
+            new RecordSpreadEntry(new IncomingValueParameter()),
+        ]), "record");
+        yield return Shape(new OpenExpressionParameter(new OpenExpression([new Function("trim", [])])), "pipeline");
+        yield return Shape(new InputExpressionParameter(new ClosedExpression(new LiteralParameter("text"), [new Function("trim", [])])), "pipeline");
+        yield return Shape(new IntervalParameter(new IntervalBinding(
+            new IntervalBoundBinding(IntervalBoundBindingKind.NegativeInfinity),
+            new IntervalBoundBinding(IntervalBoundBindingKind.PositiveInfinity),
+            false,
+            false)), "interval");
+        yield return Shape(new PositionalCoercionParameter(typeof(string)), "coercion");
+        yield return Shape(new FieldCoercionParameter("name", typeof(string)), "field-coercion");
+        yield return Shape(new TupleCoercionParameter(1, typeof(string)), "tuple-coercion");
+        yield return Shape(new PredicationParameter(new SinglePredication(new Function("even", []))), "even");
+        yield return Shape(new PredicationParameter(new PipelinePredication(new OpenExpression([new Function("even", [])]))), "pipeline");
+        yield return Shape(new ControlFlowBranchParameter(new LiteralParameter(1), null), "branch");
+        yield return new TestCaseData(
+            new ControlFlowBranchParameter(new LiteralParameter(1), new LiteralParameter(true)),
+            "branch").SetName("Value_ControlFlowBranchParameter_WithPredicate");
+        yield return Shape(new WithDefinitionParameter(
+            [new WithProjection("name", new LiteralParameter("value"))],
+            new VariableParameter("name")), "with");
+    }
+
     [Test]
     public void Plan_AliasAndCanonicalSyntax_ProduceEquivalentCalls()
     {
@@ -92,6 +140,81 @@ public class LogicalPlannerTest
             Is.EqualTo(new[] { "split", "length" }));
     }
 
+    [TestCaseSource(nameof(ParameterShapes))]
+    public void Value_EverySupportedParameterShape_ProducesLogicalValue(IParameter parameter, string expectedShape)
+    {
+        var value = InvokeValue(parameter);
+
+        Assert.That(ShapeOf(value), Is.EqualTo(expectedShape));
+    }
+
+    [Test]
+    public void Value_UnsupportedParameter_ThrowsPlanningException()
+    {
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeValue(new UnsupportedParameter()));
+
+        Assert.That(exception!.InnerException, Is.TypeOf<LogicalPlanningException>()
+            .And.Message.EqualTo("Unsupported parameter 'UnsupportedParameter'."));
+    }
+
+    [Test]
+    public void Value_RecordDefinitionWithUnsupportedEntry_ThrowsPlanningException()
+    {
+        var parameter = new RecordDefinitionParameter([new UnsupportedRecordEntry()]);
+
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeValue(parameter));
+
+        Assert.That(exception!.InnerException, Is.TypeOf<LogicalPlanningException>()
+            .And.Message.EqualTo("Unsupported record entry 'UnsupportedRecordEntry'."));
+    }
+
+    [Test]
+    public void NormalizeArguments_ParameterlessFunctionWithArgument_ThrowsPlanningException()
+    {
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeNormalizeArguments(
+            "trim",
+            [],
+            [new FunctionArgument(null, new LiteralParameter("value"))]));
+
+        Assert.That(exception!.InnerException, Is.TypeOf<LogicalPlanningException>()
+            .And.Message.EqualTo("Function 'trim' does not accept arguments."));
+    }
+
+    [Test]
+    public void NormalizeArguments_ParameterlessFunctionWithoutArgument_ReturnsEmptyList()
+    {
+        var arguments = InvokeNormalizeArguments("trim", [], []);
+
+        Assert.That(arguments, Is.Empty);
+    }
+
     private static LogicalCall SingleCall(string source)
         => (LogicalCall)LogicalPlanner.Plan(ExpressionParser.Parse(source)).Pipeline.Items.Single();
+
+    private static TestCaseData Shape(IParameter parameter, string expected)
+        => new TestCaseData(parameter, expected).SetName($"Value_{parameter.GetType().Name}");
+
+    private static LogicalValue InvokeValue(IParameter parameter)
+        => (LogicalValue)typeof(LogicalPlanner)
+            .GetMethod("Value", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .Invoke(new LogicalPlanner(), [parameter])!;
+
+    private static IReadOnlyList<LogicalArgument> InvokeNormalizeArguments(
+        string name,
+        IReadOnlyList<FunctionParameterDocumentation> parameters,
+        IReadOnlyList<FunctionArgument> supplied)
+        => (IReadOnlyList<LogicalArgument>)typeof(LogicalPlanner)
+            .GetMethod("NormalizeArguments", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .Invoke(new LogicalPlanner(), [name, parameters, supplied])!;
+
+    private static string ShapeOf(LogicalValue value) => value switch
+    {
+        LogicalLiteral => "literal",
+        LogicalPipeline => "pipeline",
+        LogicalCall call => call.Function.Name,
+        _ => value.GetType().Name,
+    };
+
+    private sealed record UnsupportedParameter : IParameter;
+    private sealed record UnsupportedRecordEntry : IRecordDefinitionEntry;
 }
