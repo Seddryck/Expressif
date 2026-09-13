@@ -142,7 +142,10 @@
         "Name": "separator",
         "Type": "text",
         "Optional": true,
-        "Default": "",
+        "Omission": {
+          "Mode": "constant",
+          "Value": ""
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the text inserted between consecutive accumulated values.",
@@ -212,6 +215,9 @@
         "Name": "initial",
         "Type": "any",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the initial accumulated value and the result returned for an empty array.",

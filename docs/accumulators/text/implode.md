@@ -15,7 +15,7 @@ generated: true
 ```
 text →
 implode(
-    separator?: text
+    separator: text = ""
 ) → text
 ```
 
@@ -29,7 +29,7 @@ Combines accumulated text values in source order, inserting the separator only b
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `separator` | `text` | No | Specifies the text inserted between consecutive accumulated values. |
+| `separator` | `text` | No | Specifies the text inserted between consecutive accumulated values. Defaults to `""`. |
 
 ## Argument evaluation
 

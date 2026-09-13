@@ -29,7 +29,7 @@ Constructs a new tuple by evaluating zero or more positional expressions from le
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the positions of the resulting tuple. |
+| `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the positions of the resulting tuple. Omission supplies an empty variadic sequence. |
 
 
 

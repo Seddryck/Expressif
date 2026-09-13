@@ -28,7 +28,7 @@ Returns `true` if the value passed as argument validate the regex passed as para
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `regex` | `text` | Yes | A string to be compared to the argument value. |
-| `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity). |
+| `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity). Omission is preserved for operator-specific handling. |
 
 ## Argument evaluation
 
