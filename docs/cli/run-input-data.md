@@ -14,9 +14,10 @@ result as a valid JSON value; `--raw` is a shortcut for the default `--output ra
 Use `--output-style pretty` to render structured results across lines indented with two spaces per nesting level;
 `--output-style compact` is the default. Output format and style are independent, so
 `--output json --pretty --indent 2` produces indented JSON.
-Tuples whose complete compact form fits within the default preferred line width of
-80 characters remain inline in pretty raw and JSON output. Longer tuples use the
-multiline layout; other structured values remain multiline.
+Configured value types whose complete compact form fits within the preferred line
+width remain inline in pretty raw and JSON output. The defaults select tuples and
+80 characters. Use the shared or `run`-specific `inline-types` and
+`preferred-line-width` configuration settings to change that policy.
 
 ```mermaid
 flowchart LR

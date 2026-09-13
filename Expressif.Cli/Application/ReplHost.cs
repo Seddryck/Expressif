@@ -21,10 +21,10 @@ internal interface IReplInterruptSource
 internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
 {
     public int Run(CancellationToken cancellationToken = default, IValueSerializer? serializer = null,
-        ValueFormat outputStyle = ValueFormat.Compact, string indentation = "  ")
+        ValueFormat outputStyle = ValueFormat.Compact, string indentation = "  ", ValueFormattingOptions? formatting = null)
     {
         serializer ??= ValueSerializers.Resolve(ValueSerializationFormat.Raw);
-        var formatting = CliValueFormatting.Create(outputStyle, indentation);
+        formatting ??= CliValueFormatting.Create(outputStyle, indentation);
         try
         {
             while (terminal.ReadLine("> ", cancellationToken) is { } source)

@@ -1,4 +1,8 @@
 {
   "output-style": "compact",
-  "indent": 2
+  "indent": 2,
+  "preferred-line-width": 80,
+  "inline-types": [
+    "tuple"
+  ]
 }

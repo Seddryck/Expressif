@@ -49,7 +49,7 @@ internal sealed class RunHandler(
 
         if (!ConfiguredOutput.TryResolve(configuration ?? CliConfiguration.CreateDefault(), "run",
                 request.Output, request.Raw, request.OutputStyle, request.Pretty, request.Compact, request.Indent,
-                out var serializer, out var outputStyle, out var indentation, out var outputError))
+                out var serializer, out var formatting, out var outputError))
         {
             Console.Error.WriteLine(outputError);
             return ExitCodes.InvalidExpressionOrInput;
@@ -90,7 +90,6 @@ internal sealed class RunHandler(
 
         try
         {
-            var formatting = CliValueFormatting.Create(outputStyle, indentation);
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
                 Console.Out.WriteLine(serializer.Serialize(result, formatting));
             return ExitCodes.Success;

@@ -29,6 +29,10 @@ public class ConfigurationTests
     [TestCase("indent", "2")]
     [TestCase("repl.output-style", "compact")]
     [TestCase("run.indent", "2")]
+    [TestCase("preferred-line-width", "80")]
+    [TestCase("inline-types", "tuple")]
+    [TestCase("evaluate.preferred-line-width", "80")]
+    [TestCase("repl.inline-types", "tuple")]
     public async Task Get_MissingFile_ReturnsDefaultWithoutCreatingFile(string key, string expected)
     {
         var result = await Invoke("config", "get", key);
@@ -50,18 +54,42 @@ public class ConfigurationTests
     }
 
     [Test]
+    public async Task Set_FormattingPolicy_PersistsNumberAndTypeArray()
+    {
+        Assert.That((await Invoke("config", "set", "preferred-line-width", "120")).Code, Is.Zero);
+        Assert.That((await Invoke("config", "set", "inline-types", "tuple, vector")).Code, Is.Zero);
+
+        var document = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(configuration.Path))!;
+        Assert.Multiple(() =>
+        {
+            Assert.That(document["preferred-line-width"]!.GetValue<int>(), Is.EqualTo(120));
+            Assert.That(document["inline-types"]!.AsArray().Select(type => type!.GetValue<string>()),
+                Is.EqualTo(new[] { "tuple", "vector" }));
+            Assert.That(configuration.Get("inline-types"), Is.EqualTo("tuple,vector"));
+        });
+    }
+
+    [Test]
     public void Settings_ResolveIndependentlyAndUnsetRestoresInheritance()
     {
         configuration.Set("output-style", "pretty");
         configuration.Set("indent", "4");
         configuration.Set("run.output-style", "compact");
         configuration.Set("repl.indent", "tab");
+        configuration.Set("preferred-line-width", "100");
+        configuration.Set("run.preferred-line-width", "60");
+        configuration.Set("inline-types", "tuple,vector");
+        configuration.Set("repl.inline-types", "none");
         Assert.Multiple(() =>
         {
             Assert.That(configuration.Get("run.indent"), Is.EqualTo("4"));
             Assert.That(configuration.Get("repl.output-style"), Is.EqualTo("pretty"));
             Assert.That(configuration.Get("repl.indent"), Is.EqualTo("tab"));
             Assert.That(configuration.Get("evaluate.output-style"), Is.EqualTo("pretty"));
+            Assert.That(configuration.Get("run.preferred-line-width"), Is.EqualTo("60"));
+            Assert.That(configuration.Get("repl.preferred-line-width"), Is.EqualTo("100"));
+            Assert.That(configuration.Get("repl.inline-types"), Is.EqualTo("none"));
+            Assert.That(configuration.Get("evaluate.inline-types"), Is.EqualTo("tuple,vector"));
         });
         configuration.Unset("run.output-style");
         Assert.That(configuration.Get("run.output-style"), Is.EqualTo("pretty"));
@@ -72,6 +100,10 @@ public class ConfigurationTests
     [TestCase("output-style", "wide")]
     [TestCase("indent", "9")]
     [TestCase("indent", "-1")]
+    [TestCase("preferred-line-width", "0")]
+    [TestCase("preferred-line-width", "wide")]
+    [TestCase("inline-types", "unknown")]
+    [TestCase("inline-types", "none,tuple")]
     public async Task Set_InvalidValue_DoesNotCreateFile(string key, string value)
     {
         var result = await Invoke("config", "set", key, value);
@@ -84,6 +116,9 @@ public class ConfigurationTests
     [TestCase("{\"indent\":9}")]
     [TestCase("{\"repl\":false}")]
     [TestCase("{\"indent\":2,\"indent\":4}")]
+    [TestCase("{\"preferred-line-width\":0}")]
+    [TestCase("{\"inline-types\":[\"unknown\"]}")]
+    [TestCase("{\"inline-types\":[42]}")]
     public async Task InvalidJson_IsReportedAndPreserved(string content)
     {
         Directory.CreateDirectory(directory);
@@ -159,7 +194,11 @@ public class ConfigurationTests
     {
         var packaged = CliConfiguration.CreateDefault();
         Assert.That(File.Exists(packaged.Path), Is.True);
-        foreach (var key in new[] { "output-style", "indent", "repl.output-style", "run.indent", "evaluate.indent" })
+        foreach (var key in new[]
+        {
+            "output-style", "indent", "preferred-line-width", "inline-types",
+            "repl.output-style", "run.indent", "evaluate.preferred-line-width", "run.inline-types",
+        })
             Assert.That(packaged.Get(key), Is.EqualTo(configuration.Get(key)));
     }
 
@@ -177,6 +216,8 @@ public class ConfigurationTests
             Assert.That(listed.Code, Is.Zero);
             Assert.That(listed.Output, Does.Contain("repl.indent=4 (source: indent)"));
             Assert.That(listed.Output, Does.Contain("repl.output-style=compact (source: built-in default)"));
+            Assert.That(listed.Output, Does.Contain("repl.preferred-line-width=80 (source: built-in default)"));
+            Assert.That(listed.Output, Does.Contain("repl.inline-types=tuple (source: built-in default)"));
             Assert.That(path.Output.Trim(), Is.EqualTo(configuration.Path));
         });
     }
@@ -243,6 +284,32 @@ public class ConfigurationTests
         var result = await Invoke(args);
         Assert.That(result.Code, Is.Zero);
         Assert.That(result.Output.Trim(), Is.EqualTo($"{{\n{spaces}1,\n{spaces}2\n}}"));
+    }
+
+    [TestCase("raw", "T(\n  1,\n  2\n)")]
+    [TestCase("json", "[\n  1,\n  2\n]")]
+    public async Task Evaluate_UsesConfiguredPreferredLineWidth(string output, string expected)
+    {
+        configuration.Set("evaluate.output-style", "pretty");
+        configuration.Set("evaluate.preferred-line-width", "4");
+
+        var result = await Invoke("evaluate", "T(1, 2)", "--output", output);
+
+        Assert.That(result.Code, Is.Zero);
+        Assert.That(result.Output.Trim(), Is.EqualTo(expected));
+    }
+
+    [TestCase("none", "{\n  T(\n    1,\n    2\n  ),\n  V(\n    3,\n    4\n  )\n}")]
+    [TestCase("vector", "{\n  T(\n    1,\n    2\n  ),\n  V(3, 4)\n}")]
+    public async Task Evaluate_UsesConfiguredInlineTypes(string inlineTypes, string expected)
+    {
+        configuration.Set("output-style", "pretty");
+        configuration.Set("inline-types", inlineTypes);
+
+        var result = await Invoke("evaluate", "{T(1, 2), V(3, 4)}");
+
+        Assert.That(result.Code, Is.Zero);
+        Assert.That(result.Output.Trim(), Is.EqualTo(expected));
     }
 
     [TestCase("compact", "--pretty", null, "{\n    1,\n    2\n}")]
