@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Expressif.Functions.Catalog;
 using Expressif.Functions.Introspection;
 using Expressif.Functions;
@@ -177,4 +178,55 @@ public class FunctionCatalogTest
         => Assert.That(
             FunctionCatalog.Default.Find("adjacent")?.Behavior,
             Does.StartWith("The operation receives T(previous, current)."));
+
+    [TestCase("add", "times", ParameterOmissionMode.Constant)]
+    [TestCase("array", "values", ParameterOmissionMode.EmptyVariadic)]
+    [TestCase("throw", "predicate", ParameterOmissionMode.Absent)]
+    [TestCase("distribute-random-split", "seed", ParameterOmissionMode.EnvironmentDerived)]
+    public void Default_OptionalParameter_DeserializesOmissionMode(
+        string function,
+        string parameter,
+        ParameterOmissionMode expected)
+        => Assert.That(
+            FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).Omission?.Mode,
+            Is.EqualTo(expected));
+
+    [TestCase("{\"Mode\":\"constant\",\"Value\":1}", JsonValueKind.Number, "1")]
+    [TestCase("{\"Mode\":\"constant\",\"Value\":\"text\"}", JsonValueKind.String, "\"text\"")]
+    [TestCase("{\"Mode\":\"constant\",\"Value\":true}", JsonValueKind.True, "true")]
+    [TestCase("{\"Mode\":\"constant\",\"Value\":null}", JsonValueKind.Null, "null")]
+    public void ParameterOmission_ConstantValue_RoundTripsWithJsonType(
+        string json,
+        JsonValueKind expectedKind,
+        string expectedValue)
+    {
+        var omission = JsonSerializer.Deserialize<ParameterOmissionDocumentation>(json)!;
+        var serialized = JsonSerializer.Serialize(omission);
+        using var document = JsonDocument.Parse(serialized);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(omission.Value.ValueKind, Is.EqualTo(expectedKind));
+            Assert.That(document.RootElement.GetProperty("Mode").GetString(), Is.EqualTo("constant"));
+            Assert.That(document.RootElement.GetProperty("Value").GetRawText(), Is.EqualTo(expectedValue));
+        }
+    }
+
+    [TestCase(true, false, "is optional and must declare omission behavior")]
+    [TestCase(false, true, "is required and cannot declare omission behavior")]
+    public void ValidateOmissions_InconsistentOptionality_Throws(
+        bool optional,
+        bool hasOmission,
+        string message)
+    {
+        var omission = hasOmission
+            ? new ParameterOmissionDocumentation(ParameterOmissionMode.Absent)
+            : null;
+        var parameter = new FunctionParameterDocumentation("value", "any", optional, "Summary.", Omission: omission);
+        var function = new FunctionDocumentation("sample", true, [], "special", "any", "any", "Summary.", [parameter]);
+
+        Assert.That(
+            () => FunctionCatalog.ValidateOmissions([function]),
+            Throws.InvalidOperationException.With.Message.Contains(message));
+    }
 }
