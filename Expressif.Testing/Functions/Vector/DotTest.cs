@@ -11,11 +11,9 @@ public class DotTest
     public void Dot_Valid_EqualDimension(string value, string vector, decimal expected)
         => Assert.That(new Dot(() => Parse(vector)).Evaluate(Parse(value)), Is.EqualTo(expected));
 
-    [Test]
-    public void Evaluate_DimensionMismatch_Throws()
-        => Assert.That(
-            () => new Dot(() => new VectorValue(1)).Evaluate(new VectorValue(1, 2)),
-            Throws.ArgumentException.With.Message.Contains("equal dimensions"));
+    [Conformance]
+    public void Dot_Valid_DimensionMismatch(string value, string vector, decimal? expected)
+        => Assert.That(new Dot(() => Parse(vector)).Evaluate(Parse(value)), Is.EqualTo(expected));
 
     [Test]
     public void Evaluate_TupleInput_ReturnsNull()
@@ -26,6 +24,10 @@ public class DotTest
     [Test]
     public void Expression_VectorDot_ReturnsExpected()
         => Assert.That(Expression.CreateClosed("V(1, 2, 3) | dot(V(4, 5, 6))").Evaluate(null), Is.EqualTo(32m));
+
+    [Test]
+    public void Expression_DimensionMismatch_ReturnsNull()
+        => Assert.That(Expression.CreateClosed("V(1, 2) | dot(V(3, 4, 5))").Evaluate(null), Is.Null);
 
     private static VectorValue Parse(string source)
         => (VectorValue)Expression.CreateClosed(source).Evaluate(null)!;

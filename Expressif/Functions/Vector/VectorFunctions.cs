@@ -6,18 +6,18 @@ namespace Expressif.Functions.Vector;
 /// <summary>Returns the Euclidean distance between the input vector and another vector of the same dimension.</summary>
 [Function(prefix: "", aliases: [])]
 [Scope("vector")]
-public sealed class Distance : IFunction<VectorValue, decimal>
+public sealed class Distance : IFunction<VectorValue, decimal?>
 {
     private Func<VectorValue> Vector { get; }
 
     /// <param name="vector">Specifies the vector whose distance from the input vector is calculated.</param>
     public Distance(Func<VectorValue> vector) => Vector = vector;
 
-    public decimal Evaluate(VectorValue value)
+    public decimal? Evaluate(VectorValue value)
     {
         var other = Vector.Invoke();
         if (value.Arity != other.Arity)
-            throw new ArgumentException("Distance requires vectors with equal dimensions.", nameof(value));
+            return null;
 
         var left = VectorMath.Components(value);
         var right = VectorMath.Components(other);
@@ -30,18 +30,18 @@ public sealed class Distance : IFunction<VectorValue, decimal>
 /// <summary>Returns the dot product of the input vector and another vector of the same dimension.</summary>
 [Function(prefix: "", aliases: [])]
 [Scope("vector")]
-public sealed class Dot : IFunction<VectorValue, decimal>
+public sealed class Dot : IFunction<VectorValue, decimal?>
 {
     private Func<VectorValue> Vector { get; }
 
     /// <param name="vector">Specifies the vector whose components are multiplied with the input components.</param>
     public Dot(Func<VectorValue> vector) => Vector = vector;
 
-    public decimal Evaluate(VectorValue value)
+    public decimal? Evaluate(VectorValue value)
     {
         var other = Vector.Invoke();
         if (value.Arity != other.Arity)
-            throw new ArgumentException("Dot product requires vectors with equal dimensions.", nameof(value));
+            return null;
 
         var caster = new NumericCaster();
         var result = 0m;
