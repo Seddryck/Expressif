@@ -952,4 +952,30 @@ public class ExpressionTest
 
         Assert.That(expression.Evaluate(null), Is.EqualTo(new object?[] { 20m, 20m }));
     }
+
+    [TestCase("multiply(^^.taxRate | add(1))", 120)]
+    [TestCase("multiply((^^.taxRate | add(1)))", 120)]
+    [TestCase("multiply((^^.taxRate | add(1) | add(^^.prices | cardinality)))", 420)]
+    public void Evaluate_EnclosingRootPipelineAsArgument_DoesNotRequireParentheses(
+        string transformation,
+        decimal expected)
+    {
+        var expression = Expression.Create(
+            $"{{taxRate := 0.20, prices := {{100, 200, 50}}}} | .prices | map({transformation})");
+
+        Assert.That(expression.Evaluate(null),
+            Is.EqualTo(new object?[] { expected, expected * 2, expected / 2 }));
+    }
+
+    [TestCase(".taxRate | add(1)")]
+    [TestCase("^.taxRate | add(1)")]
+    [TestCase("^^.taxRate | add(1)")]
+    public void Evaluate_ScalarArgumentPipeline_PreservesReferenceScope(string factor)
+    {
+        var expression = Expression.Create(
+            $"{{taxRate := 0.20, prices := {{{{price := 100, taxRate := 0.20}}, {{price := 200, taxRate := 0.20}}}}}} " +
+            $"| .prices | map(.price | multiply({factor}))");
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(new object?[] { 120m, 240m }));
+    }
 }

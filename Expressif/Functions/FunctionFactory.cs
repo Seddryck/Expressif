@@ -46,7 +46,9 @@ public partial class FunctionFactory : BaseExpressionFactory
 
         if (parameter is OpenExpressionParameter open)
         {
-            var evaluator = BuildOpenExpressionRecordEvaluator(open, context);
+            var evaluator = IsExplicitlyRooted(open)
+                ? BuildPipeline(open.Expression, context).Evaluate
+                : BuildOpenExpressionRecordEvaluator(open, context);
             return CreateFunctionCast(
                 () => evaluator.Invoke(EvaluationRuntime.Frame is { IsInputBound: true } frame
                     ? frame.Current : ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Current)),
@@ -55,6 +57,15 @@ public partial class FunctionFactory : BaseExpressionFactory
 
         return base.CreateParameter(parameter, scalarType, context);
     }
+
+    internal static bool IsExplicitlyRooted(OpenExpressionParameter expression)
+        => expression.Expression.Members.FirstOrDefault()?.Syntax
+            is FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand;
+
+    internal static bool IsExplicitlyRooted(IParameter parameter)
+        => parameter is ObjectPropertyParameter or EnclosingObjectPropertyParameter
+            || (parameter is InputExpressionParameter expression
+                && IsExplicitlyRooted(expression.Expression.Parameter));
 
     public IFunction Instantiate(IRootExpression rootExpression, IContext context)
     {
@@ -1341,8 +1352,19 @@ public partial class FunctionFactory : BaseExpressionFactory
 
     protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {
-        var expression = Instantiate(new ClosedRootExpression(input.Expression), context);
-        return CreateFunctionCast(() => expression.Evaluate(null), type);
+        var source = BuildValueEvaluator(input.Expression.Parameter, context);
+        var chain = new ChainFunction(input.Expression.Members
+            .Select(member => InstantiateOrWrapAggregation(member, context))
+            .ToArray());
+        return CreateFunctionCast(() =>
+        {
+            var value = source.Invoke(EvaluationRuntime.Frame?.Current);
+            if (IsExplicitlyRooted(input.Expression.Parameter))
+                return chain.Evaluate(value);
+
+            using var scope = EvaluationRuntime.Derive(value);
+            return chain.Evaluate(value);
+        }, type);
     }
 
     private Func<string> BuildAccumulatorNameProvider(IParameter parameter, IContext context)
