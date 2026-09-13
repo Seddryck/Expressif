@@ -80,6 +80,7 @@ Then continue with:
 - [References](references.md) for variables, constants, fields, tuple items, and the current object.
 - [Functions](functions.md) for function calls, parameters, named arguments, and return values.
 - [Incoming and enclosing contexts](argument-contexts.md) for the difference between the value entering a call and the context its arguments read.
+- [Input bindings](input-bindings.md) for stable named access to outer values in nested expressions.
 - [Structured values](structured-values.md) for arrays, tuples, records, mapping, filtering, and aggregation.
 - [Predicates](predicates.md) for expressions that answer yes/no questions.
 - [Shorthands](shorthands.md) for shorter forms of common expressions.

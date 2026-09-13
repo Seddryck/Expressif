@@ -137,6 +137,11 @@ See [Incoming and enclosing contexts](argument-contexts.md) for diagrams explain
 
 The `^.` prefix reads a field from the input, or root, of the current expression rather than from the value currently flowing through its pipeline. Pipeline stages preserve that root; invoking a nested expression establishes a new root from the value passed to that expression.
 
+Carets navigate expression scopes, not data-parent relationships. At the beginning
+of an expression, `.field` and `^.field` can therefore read the same input; they
+diverge after the pipeline advances because `.field` follows the flowing value
+while `^.field` continues to read the expression input.
+
 For example, when the customer record is the input of the expression:
 
 ```expressif
@@ -258,7 +263,7 @@ flowchart TD
 
 Inside `map(...)`, the current object and expression root are the individual collection item. A `^.field` inside that nested expression therefore reads the mapped item, not the root of the outer expression.
 
-When you need data from outside that nested scope, use the appropriate reference syntax rather than assuming the outer current object is still available implicitly.
+When you need data from outside that nested scope, use an explicit reference rather than assuming the outer current object is still available implicitly. Carets are concise for nearby scopes; for a deliberate dependency on outer data across deeper nesting, [prefer a named input binding](input-bindings.md).
 
 ## References should make scope visible
 
@@ -304,6 +309,10 @@ with(
 The body of `with(...)` receives the temporary record containing `amounts` and `threshold`. Inside `filter(...)`, `^.threshold` would look for `threshold` on the current amount because that amount is the filter expression's root. `^^.threshold` instead reads it from the enclosing `with(...)` body root.
 
 An enclosing-root reference uses a bare field name after `^^.`. When no enclosing expression exists, or its root does not contain the requested field, the reference evaluates to `null`.
+
+For calculations that repeatedly depend on an outer record, a
+[named input binding](input-bindings.md) is more stable than counting carets as
+expression boundaries are added or removed.
 
 ## References are expressions
 

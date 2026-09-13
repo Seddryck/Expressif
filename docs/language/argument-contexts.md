@@ -189,6 +189,15 @@ If the rest of the calculation should use the updated record as its context, mak
 
 For cases like this, consult the parameter's evaluation description. The source tells you where it reads; the frequency tells you when it runs. Conditional or repeated evaluation is described explicitly rather than implied by the source.
 
+## Prefer a binding for deliberate outer dependencies
+
+Caret references such as `^.` and `^^.` navigate expression scopes; they do not
+walk to a value's data parent. They are useful for short, local navigation, but a
+deeply nested calculation becomes easier to maintain when it gives required outer
+data a name. See [Input bindings](input-bindings.md) for the named
+`value | name :> body` form, the distinct anonymous `value | :> body` form, and a
+worked outer-record example.
+
 Continue with [References](references.md) for field and root-reference syntax, or [Functions](functions.md) for argument forms and function signatures.
 
 ## Directional maps use two contexts

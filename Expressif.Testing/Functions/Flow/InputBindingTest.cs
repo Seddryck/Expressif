@@ -118,6 +118,24 @@ public class InputBindingTest
     }
 
     [Test]
+    [Category("documentation")]
+    public void Named_OuterRecordRemainsStableAcrossNestedArguments()
+    {
+        const string source = """
+            {taxRate := 0.20, prices := {100, 200, 50}}
+            | source :> .prices
+            | map(
+                multiply(
+                    @source | .taxRate | add(1) | add(@source | .prices | cardinality)
+                )
+            )
+            """;
+
+        Assert.That(Expression.CreateClosed(source).Evaluate(null),
+            Is.EqualTo(new object?[] { 420m, 840m, 210m }));
+    }
+
+    [Test]
     public void Named_FailureDoesNotLeakBinding()
     {
         var context = new Context();
