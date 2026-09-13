@@ -115,7 +115,7 @@ Function, predicate, and accumulator details live in these references rather tha
 
 ## Tooling
 
-Expressif provides syntax highlighting for Visual Studio Code, TextMate consumers, Notepad++, and Rouge. Language-aware diagnostics and completion are available through the [Expressif Language Server](https://github.com/Seddryck/Expressif.LanguageServer).
+Install [Expressif Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=seddryck.expressif-syntax-highlighting) for lightweight Visual Studio Code colorization with no language server or runtime. Add the [Expressif Language Server](https://github.com/Seddryck/Expressif.LanguageServer) for full language-aware editor support. Expressif also provides syntax highlighting for TextMate consumers, Notepad++, and Rouge.
 
 Download the editor assets that match your Expressif version from [GitHub Releases](https://github.com/Seddryck/Expressif/releases), then follow the [tooling documentation](https://seddryck.github.io/Expressif/tooling/) for installation and capabilities.
 

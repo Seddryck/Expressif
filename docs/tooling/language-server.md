@@ -43,7 +43,7 @@ The language-server client and the syntax-only `expressif-syntax-<version>-vscod
 | Extension | Purpose |
 |:----------|:--------|
 | Expressif Language Support | Runs the language server for diagnostics and completion. |
-| Expressif Syntax | Provides the TextMate colorizer and basic editor configuration. |
+| [Expressif Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=seddryck.expressif-syntax-highlighting) | Provides the TextMate colorizer and basic editor configuration. |
 
 Install both for the complete VS Code experience. Install only Expressif Syntax when colorization is sufficient and you do not want to run a language server.
 

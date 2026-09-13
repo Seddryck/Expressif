@@ -15,9 +15,9 @@ Install [Visual Studio Code](https://code.visualstudio.com)
 
 ## Download extension
 
-Extension is currently not available on the VSCode Marketplace but you can download it from GitHub.
+Install [Expressif Syntax Highlighting from the Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=seddryck.expressif-syntax-highlighting), or run `code --install-extension seddryck.expressif-syntax-highlighting`.
 
-You can download the latest `.vsix` release from the [Releases page](https://github.com/Seddryck/Expressif/releases) of this repository. Look for assets named like `expressif-syntax-*-vscode.vsix`.
+Versioned `.vsix` packages remain available from this repository's [Releases page](https://github.com/Seddryck/Expressif/releases). Look for assets named like `expressif-syntax-*-vscode.vsix`.
 
 
 ## Install VS Code Extension

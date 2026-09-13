@@ -539,6 +539,11 @@ jobs:
       - name: Restore local .NET tools
         run: dotnet tool restore
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
       - name: Generate syntax assets
         shell: pwsh
         working-directory: Expressif.Syntax
@@ -548,6 +553,13 @@ jobs:
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: '3.3'
+
+      - name: Verify VS Code extension contract
+        shell: pwsh
+        working-directory: Expressif.Syntax
+        run: >-
+          ./Test-VsCodeExtension.ps1
+          -PackagePath ./bin/expressif-syntax-${{ needs.calculate-version.outputs.semver }}-vscode.vsix
 
       - name: Verify generated highlighter tokens
         shell: pwsh

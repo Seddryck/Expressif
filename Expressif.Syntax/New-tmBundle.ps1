@@ -22,7 +22,7 @@ function New-VsCodeExtension {
     Push-Location $InputFolder
     try {
         Write-Host "-> Installing packaging tool through npx"
-        npx --yes @vscode/vsce package --out "..\$OutputPath"
+        npx --yes @vscode/vsce@3.9.2 package --out "..\$OutputPath"
     }
     finally {
         Pop-Location
@@ -108,7 +108,7 @@ Copy-RemoteText `
 
 Write-Host "== Stage extension files =="
 Copy-Item .\language-configuration.json .\obj\language-configuration.json
-Copy-Item .\README .\obj\README
+Copy-Item .\README .\obj\README.md
 Copy-Item ..\misc\icon\expressif-icon-128.png .\obj\images\icon.png
 
 Write-Host "== Package extension =="

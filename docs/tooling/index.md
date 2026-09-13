@@ -15,8 +15,8 @@ VS Code users have two levels of support:
 
 | Option | Install | What you get |
 |:-------|:--------|:-------------|
-| Syntax highlighting | [Expressif Syntax]({{ '/tooling/textmate-grammar/' | relative_url }}) VSIX | TextMate colorization, `.expr` and `.expressif` file recognition, and basic bracket and quote behavior. |
-| Complete editor support | Expressif Syntax VSIX **and** [Expressif Language Support]({{ '/tooling/language-server/' | relative_url }}) VSIX | Syntax highlighting plus live syntax diagnostics and function completion. |
+| Syntax highlighting | [Expressif Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=seddryck.expressif-syntax-highlighting) | TextMate colorization, `.expr` and `.expressif` file recognition, and basic bracket and quote behavior with no language server or runtime. |
+| Complete editor support | Expressif Syntax Highlighting **and** [Expressif Language Support]({{ '/tooling/language-server/' | relative_url }}) | Syntax highlighting plus live diagnostics, completion, and other language-aware features. |
 
 The two extensions are complementary. Expressif Language Support embeds and starts the language server, but it does not contain the TextMate grammar; Expressif Syntax supplies the colorization. Install both for the complete experience.
 
@@ -33,4 +33,4 @@ VS Code users do **not** need to download the standalone server unless they deli
 
 These integrations do not all provide the same features: editor grammars perform lexical colorization, while the language server parses the document and provides interactive assistance. An editor can use both when it supports both mechanisms.
 
-Download the syntax highlighters from the matching Expressif version on the [Expressif Releases page](https://github.com/Seddryck/Expressif/releases). The language server is maintained and released separately in [Seddryck/Expressif.LanguageServer](https://github.com/Seddryck/Expressif.LanguageServer).
+Install the syntax-only extension from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=seddryck.expressif-syntax-highlighting). Versioned VSIX packages and the other syntax highlighters remain available from the matching version on the [Expressif Releases page](https://github.com/Seddryck/Expressif/releases). The language server is maintained and released separately in [Seddryck/Expressif.LanguageServer](https://github.com/Seddryck/Expressif.LanguageServer).
