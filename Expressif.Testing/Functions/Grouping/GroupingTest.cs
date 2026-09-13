@@ -100,6 +100,19 @@ public class GroupingTest
     }
 
     [Test]
+    public void Literal_RoundTripsAggregatedDimensionKeys()
+    {
+        var source = new GroupingValue([
+            new PairValue(new TupleValue("BE", AllDimension.Instance), new object?[] { 230m }),
+            new PairValue(new TupleValue(AllDimension.Instance, AllDimension.Instance), new object?[] { 320m }),
+        ]);
+
+        var parsed = Expression.CreateClosed(ValueFormatter.Format(source)).Evaluate(null);
+
+        Assert.That(parsed, Is.EqualTo(source));
+    }
+
+    [Test]
     public void OrdinaryPairLiteral_RemainsPair()
         => Assert.That(
             Expression.CreateClosed("(\"BE\" => {\"alice\"})").Evaluate(null),

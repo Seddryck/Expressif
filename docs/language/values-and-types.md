@@ -22,6 +22,7 @@ Common values can be written directly in an expression.
 | decimal | Digits with a `.` decimal separator, optionally preceded by a sign | `10.1` or `-10.1` |
 | boolean | `#true` or `#false` | `#true` |
 | null | `#null` | `#null` |
+| aggregated dimension | `#all` | `#all` |
 | date | `#"yyyy-MM-dd"` | `#"2025-12-16"` |
 | datetime | `#"yyyy-MM-ddTHH:mm:ss"` | `#"2025-12-16T14:30:00"` |
 | time | `#"HH:mm:ss"` | `#"14:30:00"` |
@@ -122,6 +123,10 @@ These values represent a date, datetime, time, and duration respectively. Dates 
 `#null` represents the absence of a value.
 
 Null is important because not every transformation can always produce a meaningful non-null value. Conversion functions, missing fields, or optional data can result in null depending on the function and input.
+
+### Aggregated dimension
+
+`#all` represents an already-aggregated dimension value in grouping keys, such as the year position in `T("BE", #all)`. It is an ordinary literal value: reading it does not aggregate data or act as a wildcard. It is distinct from `#null` and the text value `"#all"`.
 
 ## Structured types
 

@@ -113,6 +113,7 @@ public class ParameterSerializer
         => value switch
         {
             null => "#null",
+            AllDimension => "#all",
             bool boolean => boolean ? "#true" : "#false",
             decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
             DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",

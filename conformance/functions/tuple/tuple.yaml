@@ -20,6 +20,10 @@ tests:
         value: (null)
         parameters: ['tuple(1, "a", #true)']
         expected: 'T(1, "a", #true)'
+      - id: tuple.valid.variadic-values.all-dimension
+        value: (null)
+        parameters: ['tuple("#all", #all)']
+        expected: 'T("#all", #all)'
       - id: tuple.valid.variadic-values.spread
         value: (null)
         parameters: ['tuple(...{1, 2, 3}, 4)']
