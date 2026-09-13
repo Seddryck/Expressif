@@ -16,7 +16,7 @@ generated: true
 date-time →
 forward(
     time: time,
-    times?: integer
+    times: integer = 1
 ) → date-time
 ```
 
@@ -29,7 +29,7 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `time` | `time` | Yes | The value to be added to the argument value |
-| `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the addition |
+| `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the addition Defaults to `1`. |
 
 ## Argument evaluation
 

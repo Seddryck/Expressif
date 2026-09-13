@@ -16,7 +16,7 @@ generated: true
 text →
 text-to-datetime(
     format: text,
-    culture?: text
+    culture: text = ""
 ) → date-time
 ```
 
@@ -29,7 +29,7 @@ Returns a dateTime value matching the argument value parsed by the long format i
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `format` | `text` | Yes | A string representing the required format. |
-| `culture` | `text` | No | A string representing a pre-defined culture. |
+| `culture` | `text` | No | A string representing a pre-defined culture. Defaults to `""`. |
 
 ## Argument evaluation
 

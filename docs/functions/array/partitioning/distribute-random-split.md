@@ -29,7 +29,7 @@ Randomly distributes array values among output arrays according to relative outp
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `weights` | `array` | Yes | Specifies a non-empty array of finite, non-negative output weights with a positive total. |
-| `seed` | `integer` | No | Specifies an optional seed that makes assignments reproducible on the same runtime version. |
+| `seed` | `integer` | No | Specifies an optional seed that makes assignments reproducible on the same runtime version. When omitted, the value is derived from the runtime's shared random-number generator. |
 
 ## Argument evaluation
 

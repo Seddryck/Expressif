@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace Expressif.Functions.Catalog;
 
 public sealed record FunctionDocumentation(
@@ -24,7 +27,45 @@ public sealed record FunctionParameterDocumentation(
     string Summary,
     bool Variadic = false,
     int MinimumCardinality = 1,
-    string? Kind = null)
+    string? Kind = null,
+    ParameterOmissionDocumentation? Omission = null)
 {
     public string TypeOrKind => Type ?? Kind ?? "any";
+}
+
+[JsonConverter(typeof(ParameterOmissionModeJsonConverter))]
+public enum ParameterOmissionMode
+{
+    Constant,
+    EmptyVariadic,
+    Absent,
+    EnvironmentDerived,
+}
+
+public sealed record ParameterOmissionDocumentation(
+    ParameterOmissionMode Mode,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] JsonElement Value = default,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Source = null);
+
+public sealed class ParameterOmissionModeJsonConverter : JsonConverter<ParameterOmissionMode>
+{
+    public override ParameterOmissionMode Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        => reader.GetString() switch
+        {
+            "constant" => ParameterOmissionMode.Constant,
+            "empty-variadic" => ParameterOmissionMode.EmptyVariadic,
+            "absent" => ParameterOmissionMode.Absent,
+            "environment-derived" => ParameterOmissionMode.EnvironmentDerived,
+            var value => throw new JsonException($"Unsupported parameter omission mode '{value}'."),
+        };
+
+    public override void Write(Utf8JsonWriter writer, ParameterOmissionMode value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value switch
+        {
+            ParameterOmissionMode.Constant => "constant",
+            ParameterOmissionMode.EmptyVariadic => "empty-variadic",
+            ParameterOmissionMode.Absent => "absent",
+            ParameterOmissionMode.EnvironmentDerived => "environment-derived",
+            _ => throw new JsonException($"Unsupported parameter omission mode '{value}'."),
+        });
 }
