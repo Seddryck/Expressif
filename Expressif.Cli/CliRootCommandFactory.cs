@@ -15,6 +15,7 @@ internal static class CliRootCommandFactory
 
         rootCommand.Subcommands.Add(ParseCommand.Create(composition.Parse));
         rootCommand.Subcommands.Add(BindCommand.Create(composition.Bind));
+        rootCommand.Subcommands.Add(PlanCommand.Create(composition.Plan));
         rootCommand.Subcommands.Add(EvaluateCommand.Create(composition.Evaluate, composition.TextFiles, configuration));
         rootCommand.Subcommands.Add(RunCommand.Create(composition.Run));
         rootCommand.Subcommands.Add(ValidateCommand.Create(composition.Validate, composition.TextFiles));

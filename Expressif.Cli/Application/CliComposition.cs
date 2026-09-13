@@ -9,6 +9,7 @@ namespace Expressif.Cli.Application;
 internal sealed record CliComposition(
     ParseHandler Parse,
     BindHandler Bind,
+    PlanHandler Plan,
     EvaluateHandler Evaluate,
     RunHandler Run,
     ValidateHandler Validate,
@@ -34,6 +35,7 @@ internal sealed record CliComposition(
         return new CliComposition(
             new ParseHandler(syntax),
             new BindHandler(syntax),
+            new PlanHandler(syntax),
             new EvaluateHandler(expressions, values, sources),
             new RunHandler(expressions, values, textFiles, sources, configuration),
             new ValidateHandler(expressions),

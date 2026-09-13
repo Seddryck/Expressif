@@ -1,6 +1,7 @@
 using Expressif.Bindings;
 using Expressif.Cli.Expressions;
 using Expressif.Functions.Catalog;
+using Expressif.Planning;
 using Expressif.Syntax;
 
 namespace Expressif.Cli.Application;
@@ -37,6 +38,12 @@ internal sealed class BindHandler(ISyntaxService syntax)
         syntax.Validate(bound, new Context());
         return bound;
     }
+}
+
+internal sealed class PlanHandler(ISyntaxService syntax)
+{
+    public LogicalPlan Execute(string expression)
+        => LogicalPlanner.Plan(syntax.Parse(expression));
 }
 
 internal enum HelpMode
