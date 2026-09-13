@@ -7,6 +7,6 @@ public sealed class AllDimension
 
     private AllDimension() { }
 
-    /// <summary>Returns the display token; this token is not a source literal.</summary>
+    /// <summary>Returns the source literal for the aggregated dimension value.</summary>
     public override string ToString() => "#all";
 }

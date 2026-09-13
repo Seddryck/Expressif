@@ -26,3 +26,7 @@ tests:
         value: (null)
         parameters: ['!{("BE" => "Belgium"), ("FR" => "France")}']
         expected: '!{("BE" => "Belgium"), ("FR" => "France")}'
+      - id: dictionary.valid.literal.all-dimension
+        value: (null)
+        parameters: ['!{(#all => "total"), ("#all" => "text")}']
+        expected: '!{(#all => "total"), ("#all" => "text")}'

@@ -2,6 +2,7 @@ using Expressif.Syntax;
 using Expressif.Functions;
 using Expressif.Functions.Coercions;
 using Expressif.Types;
+using Expressif.Values;
 
 namespace Expressif.Bindings;
 
@@ -662,6 +663,7 @@ public sealed class ExpressifBinder
         NumericLiteralSyntax numeric => new LiteralParameter(numeric.Value),
         BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Value),
         NullLiteralSyntax => new LiteralParameter(null),
+        AllLiteralSyntax => new LiteralParameter(AllDimension.Instance),
         QuotedLiteralSyntax quoted => new QuotedLiteralParameter(quoted.Value),
         DateLiteralSyntax date => new LiteralParameter(date.Value),
         DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),

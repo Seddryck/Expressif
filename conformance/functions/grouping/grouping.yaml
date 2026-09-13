@@ -30,6 +30,10 @@ tests:
         value: (null)
         parameters: ['#{("BE" => {"alice", "bob"}), ("FR" => {"charlie"})}']
         expected: '#{("BE" => {"alice", "bob"}), ("FR" => {"charlie"})}'
+      - id: grouping.valid.literal.all-dimension
+        value: (null)
+        parameters: ['#{(T("BE", #all) => {230}), (T(#all, #all) => {320})}']
+        expected: '#{(T("BE", #all) => {230}), (T(#all, #all) => {320})}'
   - id: grouping.valid.accessors
     cases:
       - id: grouping.valid.accessors.key

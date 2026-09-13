@@ -1,5 +1,6 @@
 using Expressif.Serializers;
 using Expressif.Bindings;
+using Expressif.Values;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,23 @@ public class ParameterSerializerTest
             Assert.That(serializer.Serialize(new LiteralParameter(42m)), Is.EqualTo("42"));
             Assert.That(serializer.Serialize(new LiteralParameter(true)), Is.EqualTo("#true"));
             Assert.That(serializer.Serialize(new LiteralParameter(null)), Is.EqualTo("#null"));
+            Assert.That(serializer.Serialize(new LiteralParameter(AllDimension.Instance)), Is.EqualTo("#all"));
             Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new DateTime(2026, 8, 17, 14, 30, 0))), Is.EqualTo("#\"2026-08-17T14:30:00\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new TimeOnly(14, 30, 0))), Is.EqualTo("#\"14:30:00\""));
+        });
+    }
+
+    [Test]
+    public void Serialize_AllDimensionLiteral_RoundTripsSingleton()
+    {
+        var serialized = new ParameterSerializer().Serialize(new LiteralParameter(AllDimension.Instance));
+        var parsed = new ExpressifBinder().BindParameter(ExpressifSyntax.Parse(serialized));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(serialized, Is.EqualTo("#all"));
+            Assert.That(((LiteralParameter)parsed).Value, Is.SameAs(AllDimension.Instance));
         });
     }
 

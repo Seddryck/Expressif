@@ -5,6 +5,7 @@ namespace Expressif.Serialization.Testing;
 
 public class ValueSerializersTests
 {
+    private static readonly IValueSerializer Raw = ValueSerializers.Resolve(ValueSerializationFormat.Raw);
     private static readonly IValueSerializer Json = ValueSerializers.Resolve(ValueSerializationFormat.Json);
 
     [TestCase("Alice", "\"Alice\"")]
@@ -97,8 +98,24 @@ public class ValueSerializersTests
     [Test]
     public void Raw_UsesExistingValueFormatting()
     {
-        var serializer = ValueSerializers.Resolve(ValueSerializationFormat.Raw);
+        Assert.That(Raw.Serialize(new object?[] { "Alice", true }), Is.EqualTo("{\"Alice\", #true}"));
+    }
 
-        Assert.That(serializer.Serialize(new object?[] { "Alice", true }), Is.EqualTo("{\"Alice\", #true}"));
+    [Test]
+    public void Raw_AllDimensionValues_RoundTripThroughExpressifSource()
+    {
+        var source = new DictionaryValue([
+            new PairValue(new TupleValue("BE", AllDimension.Instance), 230m),
+            new PairValue(new TupleValue(AllDimension.Instance, AllDimension.Instance), 320m),
+        ]);
+
+        var serialized = Raw.Serialize(source);
+        var parsed = Expression.CreateClosed(serialized).Evaluate(null);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(serialized, Is.EqualTo("!{(T(\"BE\", #all) => 230), (T(#all, #all) => 320)}"));
+            Assert.That(parsed, Is.EqualTo(source));
+        });
     }
 }

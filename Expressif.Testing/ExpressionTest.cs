@@ -799,6 +799,17 @@ public class ExpressionTest
     }
 
     [Test]
+    public void Evaluate_AllDimensionLiteral_PreservesIdentityAndDistinctions()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(Expression.CreateClosed("#all").Evaluate(null), Is.SameAs(AllDimension.Instance));
+            Assert.That(Expression.CreateClosed("#null").Evaluate(null), Is.Null);
+            Assert.That(Expression.CreateClosed("\"#all\"").Evaluate(null), Is.EqualTo("#all"));
+        });
+    }
+
+    [Test]
     public void Evaluate_EmptyArrayPipeFilter_EmptyArray()
     {
         var expression = Expression.CreateClosed("{} | filter(even)");
