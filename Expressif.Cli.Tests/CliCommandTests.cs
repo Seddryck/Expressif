@@ -1987,8 +1987,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith(
-                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count?: integer{Environment.NewLine}) → text"));
-            Assert.That(result.StdOut, Does.Contain("count?"));
+                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count: integer = 0{Environment.NewLine}) → text"));
+            Assert.That(result.StdOut, Does.Contain("count: integer = 0"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
