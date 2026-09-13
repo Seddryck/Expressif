@@ -31,7 +31,7 @@ Transforms selected field names while preserving field values and order. Duplica
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `transform` | `expression` | Yes | An expression transforming a field name from text to text. |
-| `filter` | `predicate` | No | An optional predicate selecting field names to transform. Omission selects every field. Omission is preserved for operator-specific handling. |
+| `filter` | `predicate` | No | An optional predicate selecting field names to transform. Omission selects every field. |
 
 
 

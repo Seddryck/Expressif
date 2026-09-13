@@ -220,7 +220,7 @@
         },
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the initial accumulated value and the result returned for an empty array.",
+        "Summary": "Specifies the initial accumulated value and the result returned for an empty array. When omitted, the first item becomes the accumulated value and an empty array returns null.",
         "Evaluation": {
           "Frequency": "once",
           "Source": "incoming",
