@@ -23,12 +23,23 @@ module Rouge
         rule %r/@(?:_|[A-Za-z_][\w-]*)/, Name::Variable
         rule %r/\^?\.(?:[A-Za-z_][\w-]*|\d+)/, Name::Property
         rule %r/\[(?:[A-Za-z_][\w-]*|\d+)\]/, Name::Property
+        rule %r/\((?=\s*[A-Za-z][A-Za-z0-9]*(?:\s*,\s*[A-Za-z][A-Za-z0-9]*)+\s*\)\s*:>)/, Punctuation, :binding_pattern
+        rule %r/(?<![A-Za-z0-9_])([A-Za-z][A-Za-z0-9]*)(\s*)(:>)/ do
+          groups Name::Variable, Text::Whitespace, Operator
+        end
         rule %r/\b(?:{{ model.functionRegexes | array.join "|" }})\b/i, Name::Function
         rule %r/[+-]?\d+(?:\.\d+)?\b/, Num
         rule %r/(?:{{ model.operatorRegex }})/i, Operator
         rule %r/[(){}\[\]]/, Punctuation
         rule %r/[A-Za-z_][\w-]*/, Text
         rule %r/./, Text
+      end
+
+      state :binding_pattern do
+        rule %r/\s+/, Text::Whitespace
+        rule %r/[A-Za-z][A-Za-z0-9]*/, Name::Variable
+        rule %r/[,)]/, Punctuation
+        rule %r/:>/, Operator, :pop!
       end
     end
   end

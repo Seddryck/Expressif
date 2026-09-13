@@ -44,3 +44,7 @@ The exact loading location depends on the site configuration. For a site that pe
 {1, 2, 3, 4}
 | filter(greater-than(2))
 ```
+
+The lexer classifies `:>` as an operator and the names declared by a named or
+positional input binding as variables. A declaration keeps that classification
+when its name is also a recognized callable, as in `(add, value) :>`.

@@ -15,7 +15,7 @@ if ($outputDirectory) {
     New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
 }
 
-$udlOperators = @($syntax.operators | Where-Object { $_ -notin @('-', '.', '$') }) + @('(', ')', ',')
+$udlOperators = @($syntax.operators | Where-Object { $_ -notin @('-', '.', '$', '@') }) + @('(', ')', ',')
 $model = [ordered]@{
         functions = [System.Security.SecurityElement]::Escape(
             (($syntax.functions | ForEach-Object { $_.name }) -join ' '))

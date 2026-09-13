@@ -27,6 +27,14 @@ const onig = require('vscode-oniguruma');
     }
     for (const operator of sample.operators || []) assert(operators.some(t => t.text === operator), `${sample.source}: ${operator}`);
     for (const name of sample.names) assert(tokens.some(t => t.text === name && t.scopes.some(s => s.startsWith('support.function.'))), `${sample.source}: ${name}`);
+    for (const declaration of sample.declarations || []) {
+      const matches = tokens.filter(t => t.text === declaration);
+      assert(matches.length > 0 && matches[0].scopes.includes('variable.other.definition.expressif'), `${sample.source}: declaration ${declaration}`);
+      assert(!matches[0].scopes.some(s => s.startsWith('support.function.')), `${sample.source}: declaration classified as callable ${declaration}`);
+    }
+    for (const variable of sample.variables || []) {
+      assert(tokens.some(t => t.text === variable && t.scopes.includes('variable.other.expressif')), `${sample.source}: variable ${variable}`);
+    }
   }
   console.log(`TextMate: ${samples.length} tokenization cases passed`);
 })().catch(error => { console.error(error); process.exitCode = 1; });

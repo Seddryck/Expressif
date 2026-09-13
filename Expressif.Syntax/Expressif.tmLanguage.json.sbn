@@ -4,6 +4,37 @@
   "scopeName": "source.expressif",
   "fileTypes": ["expressif", "expr"],
   "patterns": [
+    {
+      "begin": "(\\()(?=\\s*[A-Za-z][A-Za-z0-9]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9]*)+\\s*\\)\\s*:>)",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.binding.begin.expressif" }
+      },
+      "end": "(:>)",
+      "endCaptures": {
+        "1": { "name": "keyword.operator.expressif" }
+      },
+      "patterns": [
+        {
+          "name": "variable.other.definition.expressif",
+          "match": "[A-Za-z][A-Za-z0-9]*"
+        },
+        {
+          "name": "punctuation.separator.binding.expressif",
+          "match": "[,)]"
+        }
+      ]
+    },
+    {
+      "match": "(?<![\\w-])([A-Za-z][A-Za-z0-9]*)(\\s*)(:>)",
+      "captures": {
+        "1": { "name": "variable.other.definition.expressif" },
+        "3": { "name": "keyword.operator.expressif" }
+      }
+    },
+    {
+      "name": "variable.other.expressif",
+      "match": "@(?:_|[A-Za-z][A-Za-z0-9]*)"
+    },
 {{~ for function in model.functions ~}}
     {
       "name": "support.function.expressif.{{ function.scope | string.downcase }}",

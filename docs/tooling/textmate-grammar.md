@@ -107,6 +107,7 @@ This means that:
 - functions, predicates, and accumulators are highlighted;
 - strings, dates, and numbers are styled automatically;
 - constants such as `null`, `empty`, and `blank` are recognized;
-- references, brackets, and quotes benefit from editor support.
+- input-binding declarations such as `(a, b) :>` and named references such as `@a` are recognized;
+- other references, brackets, and quotes benefit from editor support.
 
 For example, a file named `calculation.expr` automatically uses the Expressif language mode when opened in Visual Studio Code.

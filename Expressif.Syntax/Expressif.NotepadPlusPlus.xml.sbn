@@ -29,7 +29,7 @@
       <Keywords name="Keywords2">{{ model.predicates }}</Keywords>
       <Keywords name="Keywords3">{{ model.accumulators }}</Keywords>
       <Keywords name="Keywords4">{{ model.constants }}</Keywords>
-      <Keywords name="Keywords5">. ^. $</Keywords>
+      <Keywords name="Keywords5">. ^. $ @</Keywords>
       <Keywords name="Keywords6">{{ model.types }}</Keywords>
       <Keywords name="Keywords7"></Keywords>
       <Keywords name="Keywords8"></Keywords>
