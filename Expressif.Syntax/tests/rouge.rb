@@ -19,5 +19,14 @@ samples.each do |sample|
   sample['names'].each do |name|
     raise TokenizationError, "Callable #{name}: #{sample['source']}" unless tokens.any? { |token, value| token == Rouge::Token['Name.Function'] && value == name }
   end
+  (sample['declarations'] || []).each do |declaration|
+    matching = tokens.select { |_, value| value == declaration }
+    unless matching.any? && matching.first.first == Rouge::Token['Name.Variable']
+      raise TokenizationError, "Binding declaration #{declaration}: #{sample['source']}"
+    end
+  end
+  (sample['variables'] || []).each do |variable|
+    raise TokenizationError, "Variable #{variable}: #{sample['source']}" unless tokens.any? { |token, value| token == Rouge::Token['Name.Variable'] && value == variable }
+  end
 end
 puts "Rouge: #{samples.length} tokenization cases passed"

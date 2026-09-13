@@ -62,3 +62,10 @@ quoted string forms protect embedded tildes, including escaped delimiters. Unkno
 target names retain lexical fallback styling; runtime eligibility is semantic.
 
 These forms require Expressif.Syntax 0.42.0 and a runtime with tuple binding support.
+
+## Input-binding notation
+
+The `:>` marker is an `Operator` token. Names declared by either `input :>` or a
+positional pattern such as `(previous, current) :>` are `Name::Variable` tokens,
+even when a declared name is also present in the callable catalog. References
+such as `@input` retain the same variable classification.

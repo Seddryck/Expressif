@@ -15,5 +15,10 @@
   {"source":"`subtract~` | upper", "names":["upper"],"quoted":true},
   {"source":"\"a\\\"~subtract\" | upper", "names":["upper"],"quoted":true},
   {"source":"`a\\`subtract~` | upper", "names":["upper"],"quoted":true},
-  {"source":"!greater-than(2) | lower", "names":["greater-than","lower"], "operators":["!","|"]}
+  {"source":"!greater-than(2) | lower", "names":["greater-than","lower"], "operators":["!","|"]},
+  {"source":":> $0 | add(1)", "names":["add"], "operators":[":>","|"]},
+  {"source":"input :> @input | add(1)", "names":["add"], "declarations":["input"], "variables":["@input"], "operators":[":>","|"]},
+  {"source":"source:> @source | upper", "names":["upper"], "declarations":["source"], "variables":["@source"], "operators":[":>","|"]},
+  {"source":"(a, b) :> @a | add(@b)", "names":["add"], "declarations":["a","b"], "variables":["@a","@b"], "operators":[":>","|"]},
+  {"source":"(add, map) :> @add | add(@map)", "names":["add"], "declarations":["add","map"], "variables":["@add","@map"], "operators":[":>","|"]}
 ]

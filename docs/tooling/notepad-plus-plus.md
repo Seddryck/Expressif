@@ -19,7 +19,7 @@ Download `expressif-syntax-<version>-notepadpp.xml` from the matching version on
 
 Notepad++ automatically applies the language definition to `.expr` and `.expressif` files. You can also select **Expressif** from the **Language** menu for a file with another extension.
 
-The UDL highlights functions, predicates, accumulators, constants, operators, strings, and numbers. Its colors follow your Notepad++ theme and can be customized from the user-defined language dialog.
+The UDL highlights functions, predicates, accumulators, constants, operators, strings, and numbers. This includes the `:>` input-binding operator and named references such as `@value`. Because a Notepad++ UDL cannot classify a word from a marker that follows it, bare names declared before `:>` retain the default text style. Its colors follow your Notepad++ theme and can be customized from the user-defined language dialog.
 
 ## Example
 
