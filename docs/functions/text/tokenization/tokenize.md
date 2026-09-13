@@ -29,7 +29,7 @@ Returns all tokens in the argument value in source order. By default, tokenizati
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `separator` | `text` | No | A character that delimits the tokens in the argument value. Omission is preserved for operator-specific handling. |
+| `separator` | `text` | No | A character that delimits the tokens in the argument value. When omitted, whitespace characters delimit tokens. |
 
 ## Argument evaluation
 

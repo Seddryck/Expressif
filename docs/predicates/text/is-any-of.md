@@ -28,7 +28,7 @@ Returns `true` if the list of text values passed as parameter contains the text 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `references` | `array` | Yes | An array of text values. |
-| `comparer` | `any` | No |  Omission is preserved for operator-specific handling. |
+| `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
 
 ## Argument evaluation
 

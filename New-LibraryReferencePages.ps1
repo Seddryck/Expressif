@@ -480,7 +480,11 @@ foreach ($member in $members) {
                 }
             }
             "empty-variadic" { $summary += " Omission supplies an empty variadic sequence." }
-            "absent" { $summary += " Omission is preserved for operator-specific handling." }
+            "absent" {
+                if ($summary -notmatch '(?i)\b(omission|omitted|without)\b') {
+                    $summary += " Omission is preserved for operator-specific handling."
+                }
+            }
             "environment-derived" { $summary += " When omitted, the value is derived from $($parameter.omission_source)." }
         }
         if ($hasParameterTypes) {

@@ -29,7 +29,7 @@ Returns a new record by renaming selected private fields by removing one leading
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `names` | `array` | No | Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields. Omission is preserved for operator-specific handling. |
+| `names` | `array` | No | Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields. |
 
 
 

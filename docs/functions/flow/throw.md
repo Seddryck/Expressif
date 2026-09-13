@@ -29,7 +29,7 @@ Raises an evaluation exception when the input is rejected; otherwise, passes the
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `predicate` | `predicate` | No | Predicate that rejects the input when true; defaults to is-null when omitted. Omission is preserved for operator-specific handling. |
+| `predicate` | `predicate` | No | Predicate that rejects the input when true; defaults to is-null when omitted. |
 
 
 

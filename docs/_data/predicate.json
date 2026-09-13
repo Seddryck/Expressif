@@ -1734,7 +1734,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1776,7 +1776,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1819,7 +1819,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1894,7 +1894,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)..",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1953,7 +1953,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1996,7 +1996,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2039,7 +2039,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2082,7 +2082,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2185,7 +2185,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2242,7 +2242,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
