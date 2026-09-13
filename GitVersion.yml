@@ -30,7 +30,7 @@ branches:
   feature:
     label: beta.{BranchName}
     regex: ^(feat(ure)?s?)[/-](?!v3\.0$)(?<BranchName>.+)
-    increment: Minor
+    increment: Inherit
     source-branches:
     - main
     - v3
