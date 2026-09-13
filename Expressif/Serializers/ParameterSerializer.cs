@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Values;
+using Expressif.Types;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -11,7 +12,14 @@ namespace Expressif.Serializers;
 
 public class ParameterSerializer
 {
+    private readonly QuotedLiteralRegistry quotedLiteralRegistry;
     private FunctionSerializer? functionSerializer;
+
+    public ParameterSerializer()
+        : this(QuotedLiteralRegistry.Default) { }
+
+    public ParameterSerializer(QuotedLiteralRegistry quotedLiteralRegistry)
+        => this.quotedLiteralRegistry = quotedLiteralRegistry ?? throw new ArgumentNullException(nameof(quotedLiteralRegistry));
 
     private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
 
@@ -36,7 +44,7 @@ public class ParameterSerializer
             InputExpressionParameter input => new ExpressionSerializer().Serialize(input.Expression),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
-            LiteralParameter l => SerializeLiteral(l.Value),
+            LiteralParameter l => SerializeLiteral(l.Value, l.LiteralType),
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"^.{op.Name}",
             EnclosingObjectPropertyParameter op => $"^^.{op.Name}",
@@ -109,12 +117,14 @@ public class ParameterSerializer
             ? name
             : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
 
-    private static string SerializeLiteral(object? value)
+    private string SerializeLiteral(object? value, string? literalType = null, bool canonicalQuoted = true)
         => value switch
         {
             null => "#null",
             bool boolean => boolean ? "#true" : "#false",
             decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            { } typed when literalType is not null || (canonicalQuoted && quotedLiteralRegistry.CanSerialize(typed))
+                => quotedLiteralRegistry.Serialize(typed, literalType),
             DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",
             DateTime dateTime => $"#\"{dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)}\"",
             TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",
@@ -123,14 +133,14 @@ public class ParameterSerializer
             _ => throw new NotSupportedException($"Literal value type '{value.GetType().Name}' cannot be serialized."),
         };
 
-    private static string SerializeInterval(IntervalBinding interval)
+    private string SerializeInterval(IntervalBinding interval)
         => $"I{(interval.IsLowerInclusive ? '[' : '(')}{SerializeBound(interval.LowerBound)}, {SerializeBound(interval.UpperBound)}{(interval.IsUpperInclusive ? ']' : ')')}";
 
-    private static string SerializeBound(IntervalBoundBinding bound) => bound.Kind switch
+    private string SerializeBound(IntervalBoundBinding bound) => bound.Kind switch
     {
         IntervalBoundBindingKind.NegativeInfinity => "-INF",
         IntervalBoundBindingKind.PositiveInfinity => "+INF",
-        IntervalBoundBindingKind.Finite => SerializeLiteral(bound.Value),
+        IntervalBoundBindingKind.Finite => SerializeLiteral(bound.Value, canonicalQuoted: false),
         _ => throw new NotSupportedException($"Interval bound kind '{bound.Kind}' cannot be serialized."),
     };
 }
