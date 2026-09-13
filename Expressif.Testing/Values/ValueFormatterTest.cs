@@ -65,7 +65,7 @@ public class ValueFormatterTest
 
         Assert.That(
             ValueFormatter.Format(array),
-            Is.EqualTo("{#true, \"Ada\", 10.5, #\"2026-08-28\", #\"2026-08-28T14:30:45\"}"));
+            Is.EqualTo("{#true, \"Ada\", 10.5, #\"2026-08-28\":date, #\"2026-08-28T14:30:45\":datetime}"));
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class ValueFormatterTest
 
         Assert.That(
             ValueFormatter.Format(tuple),
-            Is.EqualTo("T(#true, \"Ada\", 10.5, #\"2026-08-28\", #\"2026-08-28T14:30:45\")"));
+            Is.EqualTo("T(#true, \"Ada\", 10.5, #\"2026-08-28\":date, #\"2026-08-28T14:30:45\":datetime)"));
     }
 
     [Test]
@@ -90,7 +90,7 @@ public class ValueFormatterTest
 
         Assert.That(
             ValueFormatter.Format(record),
-            Is.EqualTo("{boolean := #true, string := \"Ada\", numeric := 10.5, date := #\"2026-08-28\", datetime := #\"2026-08-28T14:30:45\"}"));
+            Is.EqualTo("{boolean := #true, string := \"Ada\", numeric := 10.5, date := #\"2026-08-28\":date, datetime := #\"2026-08-28T14:30:45\":datetime}"));
     }
 
     [Test]
