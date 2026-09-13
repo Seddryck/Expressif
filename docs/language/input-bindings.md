@@ -7,6 +7,29 @@ description: Bind an expression's input to a name that remains available through
 
 An input binding gives a nested expression stable access to the value supplied to it.
 
+Use `^.` and `^^.` for short, local navigation between expression scopes. When a
+deeply nested expression deliberately depends on outer data, prefer a named input
+binding: `value | name :> body`, referenced as `@name`. Unlike a caret reference,
+the name remains stable across nested `map`, function-argument, and grouping
+boundaries. Carets navigate expression scopes; they do not navigate to a value's
+data parent.
+
+For example, bind an outer record when a calculation uses more than one of its
+fields inside a nested transformation:
+
+```expressif
+{taxRate := 0.20, prices := {100, 200, 50}}
+| source :> .prices
+| map(
+    multiply(
+        @source | .taxRate | add(1) | add(@source | .prices | cardinality)
+    )
+)
+```
+
+The result is `{420.00, 840.00, 210.00}`. `@source` remains the original record
+regardless of the nested `map`, `multiply`, `add`, or grouping boundaries.
+
 ```expressif
 10 | apply(@_ | input :> @input | add(5) | multiply(@input))
 ```
@@ -41,7 +64,9 @@ retain their existing behavior, including callable shorthands.
 
 ## Anonymous binding
 
-Use `@_ | :> body` when a name would add no information:
+The anonymous form is `value | :> body`: it establishes the binding behavior but
+does not declare a name or make an `@name` reference available. Use `@_ | :> body`
+when the surrounding call's input is the value and a name would add no information:
 
 ```expressif
 adjacent(@_ | :> $1 | subtract($0) | multiply($1))
