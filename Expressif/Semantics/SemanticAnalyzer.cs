@@ -310,9 +310,14 @@ public sealed class SemanticAnalyzer
                     return new(SemanticSourceKind.ExternalInput, Reason: "The value is supplied by a variable provider.");
                 case OpenExpressionParameter open:
                     var argument = ArgumentScope.Root(contextInput, input);
-                    return Pipeline(open.Expression.Members, argument, frame.Derive(argument));
+                    var argumentFrame = FunctionFactory.IsExplicitlyRooted(open)
+                        ? frame
+                        : frame.Derive(argument);
+                    return Pipeline(open.Expression.Members, argument, argumentFrame);
                 case InputExpressionParameter closed:
-                    return Closed(closed.Expression, input, frame);
+                    return FunctionFactory.IsExplicitlyRooted(closed.Expression.Parameter)
+                        ? ValueParameter(closed, input, frame)
+                        : Closed(closed.Expression, input, frame);
             }
             foreach (var child in ParameterChildren(parameter))
                 Parameter(child, input, frame);
