@@ -33,9 +33,9 @@
     "Summary": "A calendar date without a time component.",
     "Parent": "temporal",
     "Literal": {
-      "Syntax": "#\"yyyy-MM-dd\"",
+      "Syntax": "#\"yyyy-MM-dd\":date",
       "Examples": [
-        "#\"2025-12-16\""
+        "#\"2025-12-16\":date"
       ]
     },
     "Bindings": {
@@ -47,9 +47,9 @@
     "Summary": "A calendar date and time.",
     "Parent": "temporal",
     "Literal": {
-      "Syntax": "#\"yyyy-MM-ddTHH:mm:ss\"",
+      "Syntax": "#\"yyyy-MM-ddTHH:mm:ss\":datetime",
       "Examples": [
-        "#\"2025-12-16T14:30:00\""
+        "#\"2025-12-16T14:30:00\":datetime"
       ]
     },
     "Bindings": {
@@ -229,9 +229,9 @@
     "Summary": "A time of day without a date component.",
     "Parent": "temporal",
     "Literal": {
-      "Syntax": "#\"HH:mm:ss\"",
+      "Syntax": "#\"HH:mm:ss\":time",
       "Examples": [
-        "#\"14:30:00\""
+        "#\"14:30:00\":time"
       ]
     },
     "Bindings": {
