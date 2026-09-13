@@ -9,8 +9,11 @@ description: Apply one open expression to repeated values, a batch, a CSV file, 
 `run` parses and binds an expression as open once, then evaluates it for every generated input row.
 
 Each compact result is written on its own line. Processing stops at the first source or evaluation failure.
+Results use Expressif's raw display syntax by default. Pass `--output json` to serialize each
+result as a valid JSON value; `--raw` is a shortcut for the default `--output raw` mode.
 Use `--output-style pretty` to render structured results across lines indented with two spaces per nesting level;
-`--output-style compact` is the default.
+`--output-style compact` is the default. Output format and style are independent, so
+`--output json --pretty --indent 2` produces indented JSON.
 
 ```mermaid
 flowchart LR
@@ -27,6 +30,8 @@ flowchart LR
 | `--batch` | Each direct element of one enumerable becomes a row. | Can be combined with `--input`. |
 | `--source` / `-s` | Rows are read from a CSV, JSON, or source-expression file. | Cannot be combined with `--input` or `--batch`. |
 | `--format` | Overrides source format detection with `csv` or `json`. | Requires `--source`. |
+| `--output` | Serializes results as `raw` or `json`. | Defaults to `raw`. |
+| `--raw` | Shortcut for `--output raw`. | Mutually exclusive with `--output`. |
 | `--output-style` | Formats results as `compact` or `pretty`. | Defaults to `compact`. |
 | `--pretty` | Shortcut for `--output-style pretty`. | Mutually exclusive with other style selectors. |
 | `--compact` | Shortcut for `--output-style compact`. | Mutually exclusive with other style selectors. |

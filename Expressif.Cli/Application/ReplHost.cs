@@ -1,3 +1,4 @@
+using Expressif.Serialization;
 using Expressif.Values;
 
 namespace Expressif.Cli.Application;
@@ -18,15 +19,17 @@ internal interface IReplInterruptSource
 
 internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
 {
-    public int Run(CancellationToken cancellationToken = default, ValueFormat outputStyle = ValueFormat.Compact, string indentation = "  ")
+    public int Run(CancellationToken cancellationToken = default, IValueSerializer? serializer = null,
+        ValueFormat outputStyle = ValueFormat.Compact, string indentation = "  ")
     {
+        serializer ??= ValueSerializers.Resolve(ValueSerializationFormat.Raw);
         try
         {
             while (terminal.ReadLine("> ", cancellationToken) is { } source)
             {
                 var result = session.Execute(source);
                 if (result is ReplEvaluationResult evaluation)
-                    terminal.WriteResult(ValueFormatter.Format(evaluation.Value, outputStyle, indentation));
+                    terminal.WriteResult(serializer.Serialize(evaluation.Value, outputStyle, indentation));
                 else if (result is ReplMessageResult message)
                     terminal.WriteResult(message.Message);
                 else if (result is ReplErrorResult error)

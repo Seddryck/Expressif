@@ -63,6 +63,55 @@ public class CliCommandTests
         });
     }
 
+    [TestCase("\"Alice\"", "\"Alice\"")]
+    [TestCase("42", "42")]
+    [TestCase("#true", "true")]
+    [TestCase("{} | first", "null")]
+    public async Task Evaluate_JsonOutput_SerializesScalarAsRootValue(string expression, string expected)
+    {
+        var result = await InvokeAsync("evaluate", expression, "--output", "json");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_JsonPrettyOutput_UsesExistingStyleAndIndentOptions()
+    {
+        var result = await InvokeAsync("evaluate", "{1, 2}", "--output", "json", "--pretty", "--indent", "4");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("[\n    1,\n    2\n]"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_RawShortcut_PreservesDefaultOutput()
+    {
+        var result = await InvokeAsync("evaluate", "{1, 2}", "--raw");
+
+        Assert.That(result.StdOut.Trim(), Is.EqualTo("{1, 2}"));
+    }
+
+    [Test]
+    public async Task Evaluate_OutputAndRawTogether_ReturnsError()
+    {
+        var result = await InvokeAsync("evaluate", "42", "--output", "json", "--raw");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdErr, Does.Contain("mutually exclusive"));
+        });
+    }
+
     [Test]
     public async Task Evaluate_PrettyOutputStyle_FormatsStructuredResultAcrossLines()
     {
@@ -708,6 +757,19 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(outputs, Is.EqualTo(new[] { "1", "2", "3" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_JsonOutput_SerializesEachResultIndependently()
+    {
+        var result = await InvokeAsync("run", "record(...)", "--batch", "{{name := \"Alice\"}, {age := 42}}", "--output", "json");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Replace("\r", string.Empty), Is.EqualTo("{\"name\":\"Alice\"}\n{\"age\":42}\n"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
