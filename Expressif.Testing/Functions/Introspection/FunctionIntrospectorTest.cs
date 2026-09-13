@@ -10,6 +10,7 @@ using Expressif.Functions.Introspection;
 namespace Expressif.Testing.Functions.Introspection;
 
 [TestFixture]
+[Category("MetadataConsistency")]
 [FixtureLifeCycle(LifeCycle.SingleInstance)]
 [NonParallelizable]
 public class FunctionIntrospectorTest
