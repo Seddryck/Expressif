@@ -18,7 +18,8 @@ public sealed record FunctionDocumentation(
     string? Replacement = null,
     string? Sunset = null,
     bool ReplacementIsEquivalent = false,
-    string? MigrationNotes = null);
+    string? MigrationNotes = null,
+    FunctionTraversalDocumentation? Traversal = null);
 
 public sealed record FunctionParameterDocumentation(
     string Name,
@@ -28,10 +29,19 @@ public sealed record FunctionParameterDocumentation(
     bool Variadic = false,
     int MinimumCardinality = 1,
     string? Kind = null,
-    ParameterOmissionDocumentation? Omission = null)
+    ParameterOmissionDocumentation? Omission = null,
+    ParameterEvaluationDocumentation? Evaluation = null)
 {
     public string TypeOrKind => Type ?? Kind ?? "any";
 }
+
+public sealed record FunctionTraversalDocumentation(string Source, string Selection, string Summary);
+
+public sealed record ParameterEvaluationDocumentation(
+    string Frequency,
+    string Summary,
+    string? Source = null,
+    string? Context = null);
 
 [JsonConverter(typeof(ParameterOmissionModeJsonConverter))]
 public enum ParameterOmissionMode
