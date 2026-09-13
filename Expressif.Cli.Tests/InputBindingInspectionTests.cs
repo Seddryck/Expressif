@@ -8,7 +8,7 @@ public class InputBindingInspectionTests
 {
     [TestCase("apply(@_ | input:> @input | add(1))", "BindingName")]
     [TestCase("apply(@_ | :> $0 | add($1))", "TupleProjection")]
-    [TestCase("apply(@_ | (input, other) :> @input | add(@other))", "PositionalBindingPattern")]
+    [TestCase("apply((input, other) :> @input | add(@other))", "PositionalBindingPattern")]
     public void Binding_PreservesCanonicalSyntaxAndBoundBody(string source, string bindingKind)
     {
         var syntax = ExpressionParser.Parse(source);

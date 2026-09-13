@@ -38,6 +38,19 @@ public class ExpressionParserTest
         });
     }
 
+    [Test]
+    public void Parse_LeadingTupleReceiver_ReturnsOpenInputBinding()
+    {
+        var syntax = (OpenExpressionSyntax)ExpressionParser.Parse("(left, right) :> @left | add(@right)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(syntax.Source, Is.Null);
+            Assert.That(syntax.Pipeline, Has.Count.EqualTo(1));
+            Assert.That(syntax.Pipeline.Single(), Is.TypeOf<InputBindingExpressionSyntax>());
+        });
+    }
+
     private static IEnumerable<SyntaxNode> DescendantsAndSelf(SyntaxNode node)
         => new[] { node }.Concat(node.Children.SelectMany(DescendantsAndSelf));
 }

@@ -35,7 +35,10 @@ regardless of the nested `map`, `multiply`, `add`, or grouping boundaries.
 ```
 
 This returns `150`: the pipeline reaches `15`, while `@input` remains `10`.
-The form `@_ | input:> body` is also accepted. A binding requires a preceding pipeline input; `@_` supplies the input of the surrounding call. The `:>` operator must be contiguous.
+The form `@_ | input:> body` is also accepted. Named and anonymous bindings
+require a preceding pipeline input; `@_` supplies the input of the surrounding
+call. A positional receiver can omit that forwarding step when it begins an open
+expression. The `:>` operator must be contiguous.
 
 The name binds the whole input, including scalars, records, arrays, tuples, pairs,
 groups, vectors, and null. It does not imply a type or destructure the input.
@@ -87,9 +90,14 @@ traverses its fields normally. Use explicit functions such as `field(last)` or
 A parenthesized list binds names to positional components:
 
 ```expressif
-adjacent(@_ | (previous, current) :> @current | subtract(@previous))
-V(2, 3, 4) | apply(@_ | (x, y, z) :> @x | multiply(@y) | add(@z))
+adjacent((previous, current) :> @current | subtract(@previous))
+V(2, 3, 4) | apply((x, y, z) :> @x | multiply(@y) | add(@z))
 ```
+
+At the start of an open expression, `(a, b) :> body` is syntactic sugar for
+`@_ | (a, b) :> body`. Both forms bind the current input with identical scope,
+shadowing, and evaluation behavior. Named and anonymous bindings retain their
+explicit preceding-input requirement.
 
 Tuples and vectors expose their components from left to right. Pairs expose
 `(key, value)`. Groups expose `(key, values)`, where `values` is the whole group

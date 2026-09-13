@@ -74,36 +74,39 @@ tests:
   - id: input-binding.destructuring
     cases:
       - id: input-binding.destructuring.tuple
-        value: 'T(2, 3, 4) | apply(@_ | (a, b, c) :> @c | subtract(@a) | multiply(@b))'
+        value: 'T(2, 3, 4) | apply((a, b, c) :> @c | subtract(@a) | multiply(@b))'
         expected: 6
       - id: input-binding.destructuring.pair
-        value: '(10 => 20) | apply(@_ | (key, value) :> @value | subtract(@key))'
+        value: '(10 => 20) | apply((key, value) :> @value | subtract(@key))'
         expected: 10
       - id: input-binding.destructuring.vector
-        value: 'V(2, 3, 4) | apply(@_ | (x, y, z) :> @x | multiply(@y) | add(@z))'
+        value: 'V(2, 3, 4) | apply((x, y, z) :> @x | multiply(@y) | add(@z))'
         expected: 10
       - id: input-binding.destructuring.adjacent
-        value: '{100, 105, 120} | adjacent(@_ | (previous, current) :> @current | subtract(@previous) | multiply(@current))'
+        value: '{100, 105, 120} | adjacent((previous, current) :> @current | subtract(@previous) | multiply(@current))'
         expected: [525, 1800]
       - id: input-binding.destructuring.reduce
-        value: '{1, 2, 3} | reduce(@_ | (total, item) :> @total | add(@item))'
+        value: '{1, 2, 3} | reduce((total, item) :> @total | add(@item))'
         expected: 6
       - id: input-binding.destructuring.nested
-        value: 'T(10, 20) | apply(@_ | (a, b) :> @a | apply(@_ | inner :> @inner | add(@b)))'
+        value: 'T(10, 20) | apply((a, b) :> @a | apply(@_ | inner :> @inner | add(@b)))'
         expected: 30
       - id: input-binding.destructuring.null-component
-        value: 'T(10, #null) | apply(@_ | (a, b) :> @b)'
+        value: 'T(10, #null) | apply((a, b) :> @b)'
         expected: null
       - id: input-binding.destructuring.shadow-and-restore
-        value: 'T(10, 20) | apply(@_ | (a, b) :> T(1, 2) | apply(@_ | (a, b) :> @a | add(@b)) | add(@a))'
+        value: 'T(10, 20) | apply((a, b) :> T(1, 2) | apply((a, b) :> @a | add(@b)) | add(@a))'
         expected: 13
+      - id: input-binding.destructuring.shadowed-tuple-references
+        value: 'T(10, 20) | apply((outerA, outerB) :> T(1, 2) | apply((innerA, innerB) :> $0 | add($1) | add(@outerA) | add(@outerB)))'
+        expected: 33
       - id: input-binding.destructuring.case-sensitive
-        value: 'T(10, 20) | apply(@_ | (a, A) :> @A | subtract(@a))'
+        value: 'T(10, 20) | apply((a, A) :> @A | subtract(@a))'
         expected: 10
       - id: input-binding.destructuring.sibling-argument
-        value: '{1, 2, 3} | reduce(@_ | (total, item) :> @total | add(@item), 10)'
+        value: '{1, 2, 3} | reduce((total, item) :> @total | add(@item), 10)'
         expected: 16
 
       - id: input-binding.destructuring.deferred-body
-        value: 'T(100, {1, 2, 3}) | apply(@_ | (factor, items) :> @items | adjacent(@_ | (previous, current) :> @current | multiply(@factor)))'
+        value: 'T(100, {1, 2, 3}) | apply((factor, items) :> @items | adjacent((previous, current) :> @current | multiply(@factor)))'
         expected: [200, 300]

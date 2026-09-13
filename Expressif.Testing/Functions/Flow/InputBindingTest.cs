@@ -38,13 +38,13 @@ public class InputBindingTest
     public void Destructuring_GroupBindsKeyAndValueCollection()
     {
         var group = new Expressif.Values.Group("BE", new[] { 10, 20, 30 });
-        var expression = Expression.Create("apply(@_ | (key, values) :> @values | count)");
+        var expression = Expression.Create("apply((key, values) :> @values | count)");
         Assert.That(expression.Evaluate(group), Is.EqualTo(3));
-        Assert.That(Expression.Create("apply(@_ | (key, values) :> @key)").Evaluate(group), Is.EqualTo("BE"));
+        Assert.That(Expression.Create("apply((key, values) :> @key)").Evaluate(group), Is.EqualTo("BE"));
     }
 
-    [TestCase("apply(@_ | (a, a) :> @a)")]
-    [TestCase("apply(@_ | (a, b, a) :> @b)")]
+    [TestCase("apply((a, a) :> @a)")]
+    [TestCase("apply((a, b, a) :> @b)")]
     public void Destructuring_RejectsDuplicateNames(string source)
         => Assert.That(() => Expression.Create(source), Throws.TypeOf<BindingException>()
             .With.Message.Contains("Duplicate input binding name 'a'").And.Message.Contains("offset"));
@@ -59,7 +59,7 @@ public class InputBindingTest
     [Test]
     public void Destructuring_RequiresExactArityAndPositionalInput()
     {
-        var expression = Expression.Create("apply(@_ | (a, b) :> @a)");
+        var expression = Expression.Create("apply((a, b) :> @a)");
         foreach (var input in new object?[] { null, 42, "ab", new[] { 1, 2 }, new Expressif.Values.RecordValue() })
             Assert.That(() => expression.Evaluate(input), Throws.ArgumentException.With.Message.Contains("requires a tuple"));
         foreach (var input in new[] { new Expressif.Values.Tuple(1), new Expressif.Values.Tuple(1, 2, 3) })
@@ -69,9 +69,20 @@ public class InputBindingTest
     [Test]
     public void Destructuring_SerializationPreservesNamesAndOrder()
     {
-        const string source = "apply(@_ | (a, b, c) :> @c | subtract(@a) | add(@b))";
+        const string source = "apply((a, b, c) :> @c | subtract(@a) | add(@b))";
         var function = new ExpressifBinder().BindFunction(ExpressionParser.Parse(source));
-        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(source));
+        Assert.That(new FunctionSerializer().Serialize(function),
+            Is.EqualTo("apply(@_ | (a, b, c) :> @c | subtract(@a) | add(@b))"));
+    }
+
+    [Test]
+    public void Destructuring_ShorthandAndExplicitForwardingAreEquivalent()
+    {
+        var shorthand = Expression.Create("apply((a, b) :> @a | subtract(@b))");
+        var explicitForwarding = Expression.Create("apply(@_ | (a, b) :> @a | subtract(@b))");
+        var input = new Expressif.Values.Tuple(20, 5);
+
+        Assert.That(shorthand.Evaluate(input), Is.EqualTo(explicitForwarding.Evaluate(input)));
     }
 
     private static object? NormalizeExpected(object? value) => value switch
@@ -154,7 +165,6 @@ public class InputBindingTest
 
     [TestCase("apply(input :> @input)")]
     [TestCase("apply(:> $0)")]
-    [TestCase("apply((a, b) :> @a)")]
     [TestCase("input :> @input")]
     [TestCase(":> identity")]
     public void Binding_RequiresPrecedingPipelineInput(string source)
