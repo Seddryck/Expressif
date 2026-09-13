@@ -34,7 +34,7 @@ public class ReplSessionTests
             : [option, value!];
 
         Assert.That(command.Parse(options).Invoke(), Is.EqualTo(ExitCodes.Success));
-        var tuple = $"T(\n{indentation}{indentation}2,\n{indentation}{indentation}3\n{indentation})";
+        const string tuple = "T(2, 3)";
         var original = $"{{\n{indentation}1,\n{indentation}{tuple}\n}}";
         var reversed = $"{{\n{indentation}{tuple},\n{indentation}1\n}}";
         Assert.That(terminal.Results, Is.EqualTo(new[] { original, reversed, original }));

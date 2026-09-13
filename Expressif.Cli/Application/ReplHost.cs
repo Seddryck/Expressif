@@ -1,5 +1,6 @@
 using Expressif.Serialization;
 using Expressif.Values;
+using Expressif.Cli.Commands;
 
 namespace Expressif.Cli.Application;
 
@@ -23,17 +24,26 @@ internal sealed class ReplHost(ReplSession session, IReplTerminal terminal)
         ValueFormat outputStyle = ValueFormat.Compact, string indentation = "  ")
     {
         serializer ??= ValueSerializers.Resolve(ValueSerializationFormat.Raw);
+        var formatting = CliValueFormatting.Create(outputStyle, indentation);
         try
         {
             while (terminal.ReadLine("> ", cancellationToken) is { } source)
             {
                 var result = session.Execute(source);
                 if (result is ReplEvaluationResult evaluation)
-                    terminal.WriteResult(serializer.Serialize(evaluation.Value, outputStyle, indentation));
+                {
+                    terminal.WriteResult(serializer.Serialize(
+                        evaluation.Value,
+                        formatting));
+                }
                 else if (result is ReplMessageResult message)
+                {
                     terminal.WriteResult(message.Message);
+                }
                 else if (result is ReplErrorResult error)
+                {
                     terminal.WriteError(error.Message);
+                }
             }
         }
         catch (OperationCanceledException)

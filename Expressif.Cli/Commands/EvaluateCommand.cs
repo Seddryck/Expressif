@@ -104,7 +104,7 @@ internal static class EvaluateCommand
 
     private static int WriteSuccess(object? value, IValueSerializer serializer, ValueFormat outputStyle, string indentation)
     {
-        Console.Out.WriteLine(serializer.Serialize(value, outputStyle, indentation));
+        Console.Out.WriteLine(serializer.Serialize(value, CliValueFormatting.Create(outputStyle, indentation)));
         return ExitCodes.Success;
     }
 
