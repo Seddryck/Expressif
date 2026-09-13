@@ -77,3 +77,5 @@ https://github.com/Seddryck/Expressif
 ## Development
 
 The grammar and package manifest are generated from `Expressif.Syntax`. To verify generated artifacts, restore local .NET tools, run `npm ci --prefix tests`, install Rouge 4.6.1, and run `./Test-Highlighters.ps1`. Run `./Test-VsCodeExtension.ps1 -PackagePath <path-to-vsix>` to verify the packaged extension contract.
+
+Marketplace publication is currently manual and is not performed by CI. Maintainers should follow the [publishing guide](https://github.com/Seddryck/Expressif/blob/main/Expressif.Syntax/PUBLISHING.md).
