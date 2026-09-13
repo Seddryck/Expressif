@@ -134,6 +134,28 @@ public class SemanticAnalyzerTest
     }
 
     [Test]
+    public void Analyze_EnclosingRootReferencesInScalarPipelines_UseSameOuterSource()
+    {
+        const string text = """
+            {taxRate := 0.20, prices := {100, 200, 50}}
+            | .prices
+            | map(multiply((^^.taxRate | add(1) | add(^^.prices | cardinality))))
+            """;
+        var references = Analyze(text).References
+            .Where(reference => reference.Kind == FieldReferenceKind.EnclosingExpressionRoot)
+            .ToArray();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(references, Has.Length.EqualTo(2));
+            Assert.That(references.Select(reference => reference.Source),
+                Is.All.EqualTo(references[0].Source));
+            Assert.That(Expression.Create(text).Evaluate(null),
+                Is.EqualTo(new object?[] { 420m, 840m, 210m }));
+        });
+    }
+
+    [Test]
     public void Analyze_VariableInput_DoesNotRequireProvider()
     {
         var source = Analyze("@missing | .name | divide(0)").References.Single().Source;
