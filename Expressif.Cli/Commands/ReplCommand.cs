@@ -28,13 +28,13 @@ internal static class ReplCommand
         {
             if (!ConfiguredOutput.TryResolve(configuration ?? CliConfiguration.CreateDefault(), "repl",
                     result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
-                    out var serializer, out var style, out var indentation, out var error))
+                    out var serializer, out var formatting, out var error))
             {
                 Console.Error.WriteLine(error);
                 return ExitCodes.InvalidExpressionOrInput;
             }
 
-            return hostFactory().Run(serializer: serializer, outputStyle: style, indentation: indentation);
+            return hostFactory().Run(serializer: serializer, formatting: formatting);
         });
         return command;
     }

@@ -7,6 +7,11 @@ internal sealed class CliConfiguration(string path)
 {
     public const string FileName = "expressif.config.json";
     public static readonly string[] Commands = ["repl", "run", "evaluate"];
+    public static readonly string[] Settings = ["output-style", "indent", "preferred-line-width", "inline-types"];
+    private static readonly HashSet<string> InlineTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "array", "tuple", "vector", "pair", "group", "record", "dictionary", "grouping",
+    };
     public string Path { get; } = path;
 
     public static CliConfiguration CreateDefault() => new(System.IO.Path.Combine(AppContext.BaseDirectory, FileName));
@@ -41,9 +46,13 @@ internal sealed class CliConfiguration(string path)
             target = document[command] as JsonObject ?? throw new FormatException($"Configuration section '{command}' must be an object.");
         }
 
-        target[setting] = setting == "indent" && normalized != "tab"
-            ? JsonValue.Create(int.Parse(normalized, System.Globalization.CultureInfo.InvariantCulture))
-            : JsonValue.Create(normalized);
+        target[setting] = setting switch
+        {
+            "indent" when normalized != "tab" => JsonValue.Create(ParseInteger(normalized)),
+            "preferred-line-width" => JsonValue.Create(ParseInteger(normalized)),
+            "inline-types" => CreateInlineTypes(normalized),
+            _ => JsonValue.Create(normalized),
+        };
         Write(document);
     }
 
@@ -59,9 +68,9 @@ internal sealed class CliConfiguration(string path)
     private static (string? Command, string Setting) ParseKey(string key)
     {
         var parts = key.Split('.');
-        if (parts.Length == 1 && parts[0] is "output-style" or "indent")
+        if (parts.Length == 1 && Settings.Contains(parts[0]))
             return (null, parts[0]);
-        if (parts.Length == 2 && Commands.Contains(parts[0]) && parts[1] is "output-style" or "indent")
+        if (parts.Length == 2 && Commands.Contains(parts[0]) && Settings.Contains(parts[1]))
             return (parts[0], parts[1]);
         throw new FormatException($"Unknown configuration key '{key}'.");
     }
@@ -79,9 +88,29 @@ internal sealed class CliConfiguration(string path)
                 return spaces.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        throw new FormatException(setting == "indent"
-            ? "Configuration indent must be 'tab' or an integer from 0 to 8."
-            : "Configuration output-style must be 'compact' or 'pretty'.");
+        if (setting == "preferred-line-width"
+            && int.TryParse(value, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var width)
+            && width > 0)
+        {
+            return width.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        if (setting == "inline-types")
+        {
+            var types = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (types.Length == 1 && types[0].Equals("none", StringComparison.OrdinalIgnoreCase))
+                return "none";
+            if (types.Length > 0 && types.All(InlineTypes.Contains))
+                return string.Join(',', types.Select(type => type.ToLowerInvariant()).Distinct());
+        }
+
+        throw new FormatException(setting switch
+        {
+            "indent" => "Configuration indent must be 'tab' or an integer from 0 to 8.",
+            "preferred-line-width" => "Configuration preferred-line-width must be a positive integer.",
+            "inline-types" => "Configuration inline-types must be 'none' or a comma-separated list of: array, tuple, vector, pair, group, record, dictionary, grouping.",
+            _ => "Configuration output-style must be 'compact' or 'pretty'.",
+        });
     }
 
     private static bool HasValue(JsonNode? value)
@@ -89,7 +118,29 @@ internal sealed class CliConfiguration(string path)
             && scalar.TryGetValue<string>(out var text) && string.IsNullOrWhiteSpace(text));
 
     private static string ReadValue(JsonNode? value, string setting)
-        => HasValue(value) ? ValidateValue(setting, value!.ToString()) : setting == "indent" ? "2" : "compact";
+    {
+        if (!HasValue(value))
+        {
+            return setting switch
+            {
+                "indent" => "2",
+                "preferred-line-width" => "80",
+                "inline-types" => "tuple",
+                _ => "compact",
+            };
+        }
+
+        if (setting == "inline-types" && value is JsonArray types)
+        {
+            if (types.Count == 0)
+                return "none";
+            if (types.Any(type => type is not JsonValue scalar || !scalar.TryGetValue<string>(out _)))
+                throw new FormatException("Configuration inline-types must be an array of type names.");
+            return ValidateValue(setting, string.Join(',', types.Select(type => type!.GetValue<string>())));
+        }
+
+        return ValidateValue(setting, value!.ToString());
+    }
 
     private JsonObject Read()
     {
@@ -102,7 +153,7 @@ internal sealed class CliConfiguration(string path)
                 return new JsonObject();
             var document = JsonNode.Parse(content) as JsonObject
                 ?? throw new FormatException("Configuration must be a JSON object.");
-            foreach (var setting in new[] { "output-style", "indent" })
+            foreach (var setting in Settings)
             {
                 _ = ReadValue(document[setting], setting);
                 foreach (var command in Commands)
@@ -123,6 +174,14 @@ internal sealed class CliConfiguration(string path)
             throw new FormatException($"Invalid configuration JSON: {exception.Message}", exception);
         }
     }
+
+    private static int ParseInteger(string value)
+        => int.Parse(value, System.Globalization.CultureInfo.InvariantCulture);
+
+    private static JsonArray CreateInlineTypes(string value)
+        => value == "none"
+            ? []
+            : new JsonArray(value.Split(',').Select(type => (JsonNode?)JsonValue.Create(type)).ToArray());
 
     private void Write(JsonObject document)
     {

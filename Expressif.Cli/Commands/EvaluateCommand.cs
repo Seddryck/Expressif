@@ -70,9 +70,9 @@ internal static class EvaluateCommand
             result.GetValue(sourceOptions) ?? [], result.GetValue(scalar));
         if (!ConfiguredOutput.TryResolve(configuration, "evaluate",
                 result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
-                out var serializer, out var style, out var indentation, out var outputError))
+                out var serializer, out var formatting, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
-        return WriteResult(handler.Execute(request), code, fromFile, filePath, serializer, style, indentation);
+        return WriteResult(handler.Execute(request), code, fromFile, filePath, serializer, formatting);
     }
 
     private static EvaluateInputKind ResolveInputKind(bool hasInput, bool hasSource)
@@ -90,10 +90,10 @@ internal static class EvaluateCommand
     }
 
     private static int WriteResult(ExpressionOperationResult result, string code, bool fromFile, string? filePath,
-        IValueSerializer serializer, ValueFormat outputStyle, string indentation)
+        IValueSerializer serializer, ValueFormattingOptions formatting)
         => result switch
         {
-            ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value, serializer, outputStyle, indentation),
+            ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value, serializer, formatting),
             ExpressionValidationFailure failure => ExpressionCommandCommon.WriteValidationError(failure.Exception, code, fromFile, filePath),
             ExpressionInputRequiredFailure failure => WriteInputRequired(failure.Exception),
             ExpressionInputFailure failure => WriteError(failure.Message, ExitCodes.InvalidExpressionOrInput),
@@ -102,9 +102,9 @@ internal static class EvaluateCommand
             _ => throw new InvalidOperationException($"Unexpected evaluation result '{result.GetType().Name}'.")
         };
 
-    private static int WriteSuccess(object? value, IValueSerializer serializer, ValueFormat outputStyle, string indentation)
+    private static int WriteSuccess(object? value, IValueSerializer serializer, ValueFormattingOptions formatting)
     {
-        Console.Out.WriteLine(serializer.Serialize(value, CliValueFormatting.Create(outputStyle, indentation)));
+        Console.Out.WriteLine(serializer.Serialize(value, formatting));
         return ExitCodes.Success;
     }
 

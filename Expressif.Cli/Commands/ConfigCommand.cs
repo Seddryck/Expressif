@@ -37,7 +37,7 @@ internal static class ConfigCommand
         list.SetAction(result => Execute(() =>
         {
             var selected = result.GetValue(scope);
-            foreach (var setting in new[] { "output-style", "indent" })
+            foreach (var setting in CliConfiguration.Settings)
             {
                 var key = selected is null ? setting : selected + "." + setting;
                 Console.Out.WriteLine($"{key}={configuration.Get(key)} (source: {configuration.GetSource(key)})");
