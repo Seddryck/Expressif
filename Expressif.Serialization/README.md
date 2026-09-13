@@ -14,6 +14,30 @@ foreach (var row in CsvValueReader.Read(input, [new("delimiter", ";")]))
     Console.WriteLine(row);
 ```
 
+## Serialize values
+
+`ValueSerializers.Resolve` selects raw Expressif or JSON output. Existing compact
+and pretty overloads remain available. Pass `ValueFormattingOptions` when selected
+runtime types should remain inline in otherwise pretty output:
+
+```csharp
+var serializer = ValueSerializers.Resolve(ValueSerializationFormat.Json);
+var output = serializer.Serialize(value, new ValueFormattingOptions
+{
+    Format = ValueFormat.Pretty,
+    InlineValueTypes = new HashSet<Type> { typeof(TupleValue) },
+    PreferredLineWidth = 100,
+});
+```
+
+Eligibility is determined from the original value's exact runtime type before the
+serializer maps it to raw or JSON syntax. An eligible value stays inline only when
+its complete compact subtree fits on the current line, including indentation and
+any preceding field text. Otherwise it uses normal pretty layout and eligible
+descendants are evaluated independently. Inlined subtrees are atomic. The policy
+does not affect compact output, and an empty `InlineValueTypes` set preserves the
+existing pretty output.
+
 `JsonValueReader.Read` accepts text, a `TextReader`, or a UTF-8 stream. Objects
 become `RecordValue`, arrays become `object?[]`, and JSON null becomes null.
 Numbers use `int`, then `decimal`, then `double`, in that order when representable.

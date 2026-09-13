@@ -150,4 +150,78 @@ public class ValueFormatterTest
         => Assert.That(
             () => ValueFormatter.Format(42, ValueFormat.Pretty, "\n"),
             Throws.ArgumentException);
+
+    [TestCase(7, "T(1, 2)")]
+    [TestCase(6, "T(\n  1,\n  2\n)")]
+    public void Format_PrettyInlineTuple_UsesInclusivePreferredWidth(int width, string expected)
+        => Assert.That(
+            ValueFormatter.Format(new TupleValue(1, 2), PrettyWithInlineTuples(width)),
+            Is.EqualTo(expected));
+
+    [Test]
+    public void Format_PrettyInlineTuple_CountsCurrentColumn()
+    {
+        var value = new object?[] { new TupleValue(1, 2) };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ValueFormatter.Format(value, PrettyWithInlineTuples(9)),
+                Is.EqualTo("{\n  T(1, 2)\n}"));
+            Assert.That(ValueFormatter.Format(value, PrettyWithInlineTuples(8)),
+                Is.EqualTo("{\n  T(\n    1,\n    2\n  )\n}"));
+        });
+    }
+
+    [Test]
+    public void Format_PrettyInlineTuple_TreatsFittingStructuredSubtreeAsAtomic()
+    {
+        var value = new TupleValue(1, new object?[] { 2, 3 });
+
+        Assert.That(
+            ValueFormatter.Format(value, PrettyWithInlineTuples(14)),
+            Is.EqualTo("T(1, {2, 3})"));
+    }
+
+    [Test]
+    public void Format_PrettyInlineTuple_FormatsEligibleDescendantsWhenParentDoesNotFit()
+    {
+        var value = new TupleValue(new object?[] { 12345 }, new TupleValue(2, 3));
+
+        Assert.That(
+            ValueFormatter.Format(value, PrettyWithInlineTuples(12)),
+            Is.EqualTo("T(\n  {\n    12345\n  },\n  T(2, 3)\n)"));
+    }
+
+    [Test]
+    public void Format_PrettyInlineTuple_DoesNotInlineUnselectedStructuredTypes()
+        => Assert.That(
+            ValueFormatter.Format(new object?[] { 1, 2 }, PrettyWithInlineTuples(80)),
+            Is.EqualTo("{\n  1,\n  2\n}"));
+
+    [Test]
+    public void Format_Compact_IgnoresInlinePolicy()
+    {
+        var options = new ValueFormattingOptions
+        {
+            InlineValueTypes = new HashSet<Type> { typeof(TupleValue) },
+            PreferredLineWidth = 1,
+        };
+
+        Assert.That(ValueFormatter.Format(new TupleValue(1, 2), options), Is.EqualTo("T(1, 2)"));
+    }
+
+    [TestCase(0)]
+    [TestCase(-1)]
+    public void Format_NonPositivePreferredWidth_Throws(int width)
+        => Assert.That(
+            () => ValueFormatter.Format(42, new ValueFormattingOptions { PreferredLineWidth = width }),
+            Throws.TypeOf<ArgumentOutOfRangeException>());
+
+    private static ValueFormattingOptions PrettyWithInlineTuples(int width)
+        => new()
+        {
+            Format = ValueFormat.Pretty,
+            InlineValueTypes = new HashSet<Type> { typeof(TupleValue) },
+            PreferredLineWidth = width,
+        };
 }

@@ -106,4 +106,23 @@ Pretty output writes each structured element on its own line and uses two spaces
 nesting level. Empty structures remain on one line. Formatting does not change the
 underlying result.
 
+Use `ValueFormattingOptions` for hybrid pretty output. `InlineValueTypes` contains
+the exact runtime types that may remain inline, and `PreferredLineWidth` includes
+the indentation and other text already written on the current line:
+
+```csharp
+var hybrid = ValueFormatter.Format(result, new ValueFormattingOptions
+{
+    Format = ValueFormat.Pretty,
+    InlineValueTypes = new HashSet<Type> { typeof(TupleValue) },
+    PreferredLineWidth = 100,
+});
+```
+
+For each eligible value, the formatter measures the complete compact subtree. If it
+fits, the subtree is emitted atomically on one line. If it does not, that value uses
+the normal pretty layout and eligible descendants are considered independently.
+Compact formatting ignores the inline policy. Leaving `InlineValueTypes` empty
+preserves the standard pretty output.
+
 See [References](../language/references.md) for field, variable, and expression-root syntax. See [Advanced expressions](../language/advanced.md) for nested expressions and other language features.
