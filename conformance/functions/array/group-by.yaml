@@ -8,6 +8,18 @@ tests:
         value: (null)
         parameters: ['{{name := "Alice", country := "BE"}, {name := "Charlie", country := "FR"}, {name := "Bob", country := "BE"}} | group-by(.country)']
         expected: '#{("BE" => {{name := "Alice", country := "BE"}, {name := "Bob", country := "BE"}}), ("FR" => {{name := "Charlie", country := "FR"}})}'
+      - id: group-by.valid.scalar.first-tuple-position
+        value: (null)
+        parameters: ['{T("BE", 2025, 16), T("BE", 2026, 17), T("FR", 2025, 30), T("FR", 2026, 33)} | group-by($0)']
+        expected: '#{("BE" => {T("BE", 2025, 16), T("BE", 2026, 17)}), ("FR" => {T("FR", 2025, 30), T("FR", 2026, 33)})}'
+      - id: group-by.valid.scalar.second-tuple-position
+        value: (null)
+        parameters: ['{T("BE", 2025, 16), T("BE", 2026, 17), T("FR", 2025, 30), T("FR", 2026, 33)} | group-by($1)']
+        expected: '#{(2025 => {T("BE", 2025, 16), T("FR", 2025, 30)}), (2026 => {T("BE", 2026, 17), T("FR", 2026, 33)})}'
+      - id: group-by.valid.scalar.third-tuple-position
+        value: (null)
+        parameters: ['{T("BE", 2025, 16), T("BE", 2026, 16), T("FR", 2025, 30), T("FR", 2026, 30)} | group-by($2)']
+        expected: '#{(16 => {T("BE", 2025, 16), T("BE", 2026, 16)}), (30 => {T("FR", 2025, 30), T("FR", 2026, 30)})}'
   - id: group-by.valid.tuple
     cases:
       - id: group-by.valid.tuple.multiple-expressions
