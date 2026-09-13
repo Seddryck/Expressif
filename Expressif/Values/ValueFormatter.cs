@@ -54,7 +54,7 @@ public static class ValueFormatter
 
         public void Write(object? value, bool structuredValue, int depth = 0)
         {
-            if (TryWriteInline(value, structuredValue))
+            if (InlineValueWriter.TryWrite(builder, value, options, () => FormatCompact(value, structuredValue)))
                 return;
 
             if (IsNullLike(value))
@@ -93,35 +93,15 @@ public static class ValueFormatter
         }
         public override string ToString() => builder.ToString();
 
-        private bool TryWriteInline(object? value, bool structuredValue)
+        private string FormatCompact(object? value, bool structuredValue)
         {
-            if (!pretty || value is null || !options.InlineValueTypes.Contains(value.GetType()))
-                return false;
-
             var compactWriter = new Writer(new ValueFormattingOptions
             {
                 Format = ValueFormat.Compact,
                 Indentation = options.Indentation,
             });
             compactWriter.Write(value, structuredValue);
-            var compact = compactWriter.ToString();
-            if (compact.Contains('\r') || compact.Contains('\n')
-                || compact.Length > options.PreferredLineWidth - CurrentLineLength())
-                return false;
-
-            builder.Append(compact);
-            return true;
-        }
-
-        private int CurrentLineLength()
-        {
-            for (var index = builder.Length - 1; index >= 0; index--)
-            {
-                if (builder[index] == '\n')
-                    return builder.Length - index - 1;
-            }
-
-            return builder.Length;
+            return compactWriter.ToString();
         }
 
         private void WriteScalarOrEnumerable(object value, bool structuredValue, int depth)

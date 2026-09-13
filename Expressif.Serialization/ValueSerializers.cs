@@ -71,7 +71,7 @@ public static class ValueSerializers
 
         public void Write(object? value, int depth = 0)
         {
-            if (TryWriteInline(value))
+            if (InlineValueWriter.TryWrite(builder, value, options, () => FormatCompact(value)))
                 return;
 
             if (value is null || value == DBNull.Value)
@@ -126,31 +126,11 @@ public static class ValueSerializers
 
         public override string ToString() => builder.ToString();
 
-        private bool TryWriteInline(object? value)
+        private static string FormatCompact(object? value)
         {
-            if (!pretty || value is null || !options.InlineValueTypes.Contains(value.GetType()))
-                return false;
-
             var compactWriter = new JsonWriter(new ValueFormattingOptions { Format = ValueFormat.Compact });
             compactWriter.Write(value);
-            var compact = compactWriter.ToString();
-            if (compact.Contains('\r') || compact.Contains('\n')
-                || compact.Length > options.PreferredLineWidth - CurrentLineLength())
-                return false;
-
-            builder.Append(compact);
-            return true;
-        }
-
-        private int CurrentLineLength()
-        {
-            for (var index = builder.Length - 1; index >= 0; index--)
-            {
-                if (builder[index] == '\n')
-                    return builder.Length - index - 1;
-            }
-
-            return builder.Length;
+            return compactWriter.ToString();
         }
 
         private void WriteObject(IReadOnlyList<KeyValuePair<string, object?>> fields, int depth)
