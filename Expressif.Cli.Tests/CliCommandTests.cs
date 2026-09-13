@@ -1,4 +1,5 @@
 using System.Data;
+using System.Text.Json;
 using Expressif.Cli.Application;
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
@@ -1899,6 +1900,23 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("Pipeline"));
             Assert.That(result.StdOut, Does.Contain("Call: trim"));
             Assert.That(result.StdOut, Does.Contain("Call: upper"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Plan_JsonOutput_ReturnsVersionedPortablePlan()
+    {
+        var result = await InvokeAsync("plan", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(), Is.EqualTo("expressif.logical-plan"));
+            Assert.That(document.RootElement.GetProperty("version").GetInt32(), Is.EqualTo(1));
+            Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
+                .GetProperty("operator").GetProperty("name").GetString(), Is.EqualTo("trim"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
