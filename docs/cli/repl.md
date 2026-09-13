@@ -45,6 +45,9 @@ exclusive. Format selection is independent of the style and indentation options.
 output. Pretty output defaults to two-space indentation. These settings apply
 throughout the session, including standalone expressions, subsequent pipelines,
 and values restored by undo.
+Tuples remain inline in pretty output when their complete compact form fits within
+the default preferred line width of 80 characters. Longer tuples fall back to the
+multiline layout. The same policy applies to raw and JSON sessions.
 
 ```text
 > 2

@@ -120,7 +120,37 @@ public class CliCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n  1,\n  T(\n    2,\n    3\n  )\n}"));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\n  1,\n  T(2, 3)\n}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("raw", "T(1, 2)")]
+    [TestCase("json", "[1,2]")]
+    public async Task Evaluate_PrettyOutput_InlinesFittingTuple(string output, string expected)
+    {
+        var result = await InvokeAsync("evaluate", "T(1, 2)", "--output", output, "--pretty");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("raw", "T(\n  \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  2\n)")]
+    [TestCase("json", "[\n  \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\n  2\n]")]
+    public async Task Evaluate_PrettyOutput_ExpandsTupleBeyondPreferredWidth(string output, string expected)
+    {
+        var expression = "T(\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\", 2)";
+
+        var result = await InvokeAsync("evaluate", expression, "--output", output, "--pretty");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo(expected));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

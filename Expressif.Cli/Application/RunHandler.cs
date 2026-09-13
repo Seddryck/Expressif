@@ -90,8 +90,9 @@ internal sealed class RunHandler(
 
         try
         {
+            var formatting = CliValueFormatting.Create(outputStyle, indentation);
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
-                Console.Out.WriteLine(serializer.Serialize(result, outputStyle, indentation));
+                Console.Out.WriteLine(serializer.Serialize(result, formatting));
             return ExitCodes.Success;
         }
         catch (FormatException exception)

@@ -20,6 +20,12 @@ Structured results use compact, single-line formatting by default. Pass
 expressif evaluate '{1, T(2, 3)}' --output-style pretty
 ```
 
+Pretty output keeps tuple values inline when their complete compact form fits within
+the default preferred line width of 80 characters. A longer tuple falls back to the
+normal multiline layout, and nested tuples are considered independently. Other
+structured values remain multiline. The same policy applies to raw and JSON output;
+in JSON, an eligible tuple is represented by an inline array.
+
 Use `--output-style compact` to select the default behavior explicitly.
 `--pretty` and `--compact` are shortcuts for the corresponding styles. These
 shortcuts and `--output-style` are mutually exclusive.
