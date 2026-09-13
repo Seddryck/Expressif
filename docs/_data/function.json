@@ -6471,7 +6471,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A character that delimits the substrings in this instance.",
+        "Summary": "A character that delimits the substrings in this instance. When omitted, whitespace characters delimit tokens.",
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
@@ -6544,7 +6544,7 @@
         "Omission": {
           "Mode": "absent"
         },
-        "Summary": "A character that delimits the tokens in the argument value.",
+        "Summary": "A character that delimits the tokens in the argument value. When omitted, whitespace characters delimit tokens.",
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
@@ -6953,7 +6953,7 @@
         },
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the expression that produces the value appended for the current seed.",
+        "Summary": "Specifies the expression that produces the value appended for the current seed. When omitted, the current seed is appended unchanged.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
