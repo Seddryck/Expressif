@@ -65,7 +65,7 @@ public class ClosedExpression(IParameter parameter, IEnumerable<Function> member
 }
 
 public interface IParameter { }
-public sealed record LiteralParameter(object? Value) : IParameter;
+public sealed record LiteralParameter(object? Value, string? LiteralType = null) : IParameter;
 public sealed record CallableReferenceParameter(string Name) : IParameter;
 public sealed record SortCriterionParameter(IParameter Selector, TypeDescriptor Type, bool Ascending, bool NullsFirst) : IParameter;
 public abstract record CoercionSpecificationParameter(Type TargetType) : IParameter;

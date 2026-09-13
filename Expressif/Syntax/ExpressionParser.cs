@@ -10,7 +10,8 @@ public sealed class ExpressionParser : IExpressionParser
     /// </summary>
     public static RootExpressionSyntax Parse(string text)
     {
-        return ExpressifSyntax.Parse(NormalizeValueReferenceStages(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(ControlFlowSyntax.Normalize(ConditionalSyntax.Normalize(OrderingSyntax.Normalize(text))))))));
+        return ExpressifSyntax.Parse(NormalizeValueReferenceStages(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(
+            QuotedTypedLiteralSyntax.Normalize(ControlFlowSyntax.Normalize(ConditionalSyntax.Normalize(OrderingSyntax.Normalize(text)))))))));
     }
 
     private static string NormalizeValueReferenceStages(string text)

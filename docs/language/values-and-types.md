@@ -24,9 +24,9 @@ Common values can be written directly in an expression.
 | ordering | `#less`, `#equal`, or `#greater` | `#less` |
 | null | `#null` | `#null` |
 | aggregated dimension | `#all` | `#all` |
-| date | `#"yyyy-MM-dd"` | `#"2025-12-16"` |
-| datetime | `#"yyyy-MM-ddTHH:mm:ss"` | `#"2025-12-16T14:30:00"` |
-| time | `#"HH:mm:ss"` | `#"14:30:00"` |
+| date | `#"yyyy-MM-dd":date` | `#"2025-12-16":date` |
+| datetime | `#"yyyy-MM-ddTHH:mm:ss":datetime` | `#"2025-12-16T14:30:00":datetime` |
+| time | `#"HH:mm:ss":time` | `#"14:30:00":time` |
 | duration | `#"P[nD][T[nH][nM][nS]]"` | `#"P2DT3H30M"` |
 
 Numeric and temporal literals use invariant notation: the decimal separator is always `.`, and temporal components use the formats shown above. Quotation marks are part of the syntax for text and temporal literals.
@@ -121,16 +121,18 @@ datetime
 time
 ```
 
-Prefix temporal literals with `#` and enclose their value in double quotes:
+Prefix temporal literals with `#`, enclose their representation in double quotes, and add the type after a colon:
 
 ```expressif
-#"2025-12-16"
-#"2025-12-16T14:30:00"
-#"14:30:00"
+#"2025-12-16":date
+#"2025-12-16T14:30:00":datetime
+#"14:30:00":time
 #"P2DT3H30M"
 ```
 
-These values represent a date, datetime, time, and duration respectively. Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function.
+The explicit suffix selects the corresponding literal parser before the quoted representation is interpreted. Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function.
+
+The suffix can be omitted for compatibility, as in `#"2025-12-16"`. Expressif then tries every registered quoted-literal parser. Exactly one parser must accept the representation. If more than one type accepts it, the literal is ambiguous and must be disambiguated with an explicit suffix. Adding a new registered parser can therefore make an existing unsuffixed literal ambiguous; adding `:date`, `:datetime`, or another intended type is the remedy. Ordinary quoted values such as `"2025-12-16"` remain text.
 
 ### Null
 

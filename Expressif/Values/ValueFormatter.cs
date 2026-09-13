@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
@@ -133,11 +134,8 @@ public static class ValueFormatter
                 case string text:
                     builder.Append(structuredValue ? QuoteString(text) : text);
                     break;
-                case DateOnly date:
-                    builder.Append('#').Append(QuoteString(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
-                    break;
-                case DateTime dateTime:
-                    builder.Append('#').Append(QuoteString(dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)));
+                case DateOnly or DateTime or TimeOnly:
+                    builder.Append(QuotedLiteralRegistry.Default.Serialize(value));
                     break;
                 case IEnumerable enumerable:
                     WriteCollection("{", "}", enumerable.Cast<object?>(), depth);

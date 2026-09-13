@@ -25,9 +25,9 @@ public class ParameterSerializerTest
             Assert.That(serializer.Serialize(new LiteralParameter(OrderingValue.Less)), Is.EqualTo("#less"));
             Assert.That(serializer.Serialize(new LiteralParameter(OrderingValue.Equal)), Is.EqualTo("#equal"));
             Assert.That(serializer.Serialize(new LiteralParameter(OrderingValue.Greater)), Is.EqualTo("#greater"));
-            Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\""));
-            Assert.That(serializer.Serialize(new LiteralParameter(new DateTime(2026, 8, 17, 14, 30, 0))), Is.EqualTo("#\"2026-08-17T14:30:00\""));
-            Assert.That(serializer.Serialize(new LiteralParameter(new TimeOnly(14, 30, 0))), Is.EqualTo("#\"14:30:00\""));
+            Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\":date"));
+            Assert.That(serializer.Serialize(new LiteralParameter(new DateTime(2026, 8, 17, 14, 30, 0))), Is.EqualTo("#\"2026-08-17T14:30:00\":datetime"));
+            Assert.That(serializer.Serialize(new LiteralParameter(new TimeOnly(14, 30, 0))), Is.EqualTo("#\"14:30:00\":time"));
         });
     }
 
