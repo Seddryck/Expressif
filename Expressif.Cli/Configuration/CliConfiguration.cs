@@ -76,41 +76,57 @@ internal sealed class CliConfiguration(string path)
     }
 
     private static string ValidateValue(string setting, string value)
-    {
-        if (setting == "output-style" && value.ToLowerInvariant() is "compact" or "pretty")
-            return value.ToLowerInvariant();
-        if (setting == "indent")
+        => setting switch
         {
-            if (value.Equals("tab", StringComparison.OrdinalIgnoreCase))
-                return "tab";
-            if (int.TryParse(value, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var spaces)
-                && spaces is >= 0 and <= 8)
-                return spaces.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            "output-style" => ValidateOutputStyle(value),
+            "indent" => ValidateIndent(value),
+            "preferred-line-width" => ValidatePreferredLineWidth(value),
+            "inline-types" => ValidateInlineTypes(value),
+            _ => throw new FormatException($"Unknown configuration setting '{setting}'."),
+        };
+
+    private static string ValidateOutputStyle(string value)
+    {
+        if (value.ToLowerInvariant() is "compact" or "pretty")
+            return value.ToLowerInvariant();
+
+        throw new FormatException("Configuration output-style must be 'compact' or 'pretty'.");
+    }
+
+    private static string ValidateIndent(string value)
+    {
+        if (value.Equals("tab", StringComparison.OrdinalIgnoreCase))
+            return "tab";
+        if (int.TryParse(value, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var spaces)
+            && spaces is >= 0 and <= 8)
+        {
+            return spaces.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        if (setting == "preferred-line-width"
-            && int.TryParse(value, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var width)
+        throw new FormatException("Configuration indent must be 'tab' or an integer from 0 to 8.");
+    }
+
+    private static string ValidatePreferredLineWidth(string value)
+    {
+        if (int.TryParse(value, System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var width)
             && width > 0)
         {
             return width.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        if (setting == "inline-types")
-        {
-            var types = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            if (types.Length == 1 && types[0].Equals("none", StringComparison.OrdinalIgnoreCase))
-                return "none";
-            if (types.Length > 0 && types.All(InlineTypes.Contains))
-                return string.Join(',', types.Select(type => type.ToLowerInvariant()).Distinct());
-        }
+        throw new FormatException("Configuration preferred-line-width must be a positive integer.");
+    }
 
-        throw new FormatException(setting switch
-        {
-            "indent" => "Configuration indent must be 'tab' or an integer from 0 to 8.",
-            "preferred-line-width" => "Configuration preferred-line-width must be a positive integer.",
-            "inline-types" => "Configuration inline-types must be 'none' or a comma-separated list of: array, tuple, vector, pair, group, record, dictionary, grouping.",
-            _ => "Configuration output-style must be 'compact' or 'pretty'.",
-        });
+    private static string ValidateInlineTypes(string value)
+    {
+        var types = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (types.Length == 1 && types[0].Equals("none", StringComparison.OrdinalIgnoreCase))
+            return "none";
+        if (types.Length > 0 && types.All(InlineTypes.Contains))
+            return string.Join(',', types.Select(type => type.ToLowerInvariant()).Distinct());
+
+        throw new FormatException(
+            "Configuration inline-types must be 'none' or a comma-separated list of: array, tuple, vector, pair, group, record, dictionary, grouping.");
     }
 
     private static bool HasValue(JsonNode? value)
