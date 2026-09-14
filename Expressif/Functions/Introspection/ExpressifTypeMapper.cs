@@ -64,6 +64,7 @@ internal static class ExpressifTypeMapper
             [("CompareTime", "right")] = "time",
             [("CompareDateTime", "right")] = "date-time",
             [("SortTerm", "comparer")] = "expression",
+            [("SortKey", ValuesParameter)] = "sort-term",
         };
 
     public static string ToExpressifType(
@@ -114,6 +115,8 @@ internal static class ExpressifTypeMapper
             return "ordering";
         if (type == typeof(SortTermValue))
             return "sort-term";
+        if (type == typeof(SortKeyValue))
+            return "sort-key";
         if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
         if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))

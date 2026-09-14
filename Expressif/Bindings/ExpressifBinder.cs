@@ -345,7 +345,7 @@ public sealed class ExpressifBinder
             "conditional-forward" or "conditional-backward" => BindConditionalFunction(syntax),
             "switch" or "try" => BindControlFlowFunction(syntax),
             "coerce" => BindCoerceFunction(syntax),
-            "sort-term" => BindSortTermFunction(syntax),
+            "sort-term" or "sortterm" => BindSortTermFunction(syntax),
             "field" => BindFieldFunction(syntax),
             "is-present" or "is-absent" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
@@ -356,8 +356,11 @@ public sealed class ExpressifBinder
 
     private Function BindSortTermFunction(FunctionCallSyntax syntax)
     {
-        if (syntax.Arguments.Count != 2)
+        if (syntax.Arguments.Count is not (2 or 4))
             throw new BindingException("Function 'sort-term' expects a value and a tuple-bound comparer reference.");
+        if (syntax.Arguments.Count == 4
+            && syntax.Arguments.Skip(2).Select(RequireArgumentValue).Any(value => value is not BooleanLiteralSyntax))
+            throw new BindingException("The canonical four-position SortTerm form requires literal direction and null-placement flags.");
 
         var arguments = new List<FunctionArgument>();
         for (var index = 0; index < syntax.Arguments.Count; index++)

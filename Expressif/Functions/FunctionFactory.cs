@@ -474,9 +474,12 @@ public partial class FunctionFactory : BaseExpressionFactory
 
     private IFunction BuildSortTermFunction(Bindings.Function function, IContext context)
     {
-        var bound = ParameterArgumentBinder.Bind(typeof(Sorting.SortTerm), function.Arguments).Parameters;
-        if (bound is not [var value, CallableReferenceParameter reference])
+        if (function.Parameters.Length is not (2 or 4)
+            || function.Parameters[1] is not CallableReferenceParameter)
             throw new BindingException("The comparer for 'sort-term' must be a tuple-bound callable reference.");
+
+        var value = function.Parameters[0];
+        var reference = (CallableReferenceParameter)function.Parameters[1];
 
         var target = ResolveTupleTarget(reference.Name, function.SourceSpan);
         var outputs = target.GetInterfaces()
@@ -492,6 +495,17 @@ public partial class FunctionFactory : BaseExpressionFactory
             target,
             (left, right) => InvokeTuple(canonicalName, new Values.Tuple(left, right)) as OrderingValue);
         var evaluator = BuildValueEvaluator(value, context);
+        if (function.Parameters is [_, _, var ascendingParameter, var nullsFirstParameter])
+        {
+            var ascending = (Func<bool>)CreateParameter(ascendingParameter, typeof(bool), context);
+            var nullsFirst = (Func<bool>)CreateParameter(nullsFirstParameter, typeof(bool), context);
+            return new DelegatedFunction(input => new Values.SortTerm(
+                evaluator.Invoke(input),
+                comparer,
+                ascending.Invoke(),
+                nullsFirst.Invoke()));
+        }
+
         return new Sorting.SortTerm(
             () => evaluator.Invoke(EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value),
             () => comparer);
