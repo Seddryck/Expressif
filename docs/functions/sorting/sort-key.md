@@ -3,7 +3,7 @@ layout: docs
 title: "sort-key"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/sorting/sort-key/
 tags:

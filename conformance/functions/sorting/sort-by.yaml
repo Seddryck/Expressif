@@ -1,0 +1,38 @@
+suite: sorting
+kind: function
+operator: sort-by
+tests:
+  - id: sort-by.valid.criteria
+    cases:
+      - id: sort-by.valid.criteria.empty
+        value: (null)
+        parameters: ['array() | sort-by(.value -> :numeric)']
+        expected: '{}'
+      - id: sort-by.valid.criteria.numeric-defaults
+        value: (null)
+        parameters: ['array({value := 2}, {value := 1}) | sort-by(.value -> :numeric)']
+        expected: '{{value := 1}, {value := 2}}'
+      - id: sort-by.valid.criteria.descending
+        value: (null)
+        parameters: ['array({value := 1}, {value := 2}) | sort-by(.value -> :integer | desc)']
+        expected: '{{value := 2}, {value := 1}}'
+      - id: sort-by.valid.criteria.nulls-first
+        value: (null)
+        parameters: ['array({value := 1}, {value := #null}) | sort-by(.value -> :numeric | nulls-first)']
+        expected: '{{value := null}, {value := 1}}'
+      - id: sort-by.valid.criteria.multiple
+        value: (null)
+        parameters: ['array({group := "b", value := 1}, {group := "a", value := 1}, {group := "a", value := 2}) | sort-by(.group -> :text, .value -> :numeric | desc)']
+        expected: '{{group := "a", value := 2}, {group := "a", value := 1}, {group := "b", value := 1}}'
+      - id: sort-by.valid.criteria.date
+        value: (null)
+        parameters: ['array(#"2026-02-01", #"2026-01-01") | sort-by(neutral -> :date)']
+        expected: '{#"2026-01-01", #"2026-02-01"}'
+      - id: sort-by.valid.criteria.time
+        value: (null)
+        parameters: ['array(#"10:00:00", #"09:00:00") | sort-by(neutral -> :time)']
+        expected: '{09:00, 10:00}'
+      - id: sort-by.valid.criteria.datetime
+        value: (null)
+        parameters: ['array(#"2026-01-01T10:00:00", #"2026-01-01T09:00:00") | sort-by(neutral -> :datetime)']
+        expected: '{#"2026-01-01T09:00:00", #"2026-01-01T10:00:00"}'

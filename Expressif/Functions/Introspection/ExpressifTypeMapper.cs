@@ -65,6 +65,7 @@ internal static class ExpressifTypeMapper
             [("CompareDateTime", "right")] = "date-time",
             [("SortTerm", "comparer")] = "expression",
             [("SortKey", ValuesParameter)] = "sort-term",
+            [("SortBy", "criteria")] = "expression",
         };
 
     public static string ToExpressifType(
