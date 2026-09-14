@@ -38,6 +38,7 @@ public static class DocumentationExtensions
         (typeof(Text.SplitLengths), "lengths"),
         (typeof(Array.Key), "expressions"),
         (typeof(Array.GroupBy), "expressions"),
+        (typeof(Sorting.SortBy), "criteria"),
         (typeof(Grouping.DrillDown), "expressions"),
         (typeof(Predicates.Boolean.Majority), "predicates"),
         (typeof(Predicates.Boolean.SatisfiesExactly), "predicates"),
@@ -187,6 +188,7 @@ public static class DocumentationExtensions
             [(typeof(Flow.TransformWith), "expressions")] = 1,
             [(typeof(Flow.TransformAs), "expressions")] = 1,
             [(typeof(Sorting.SortKey), "values")] = 1,
+            [(typeof(Sorting.SortBy), "criteria")] = 1,
         };
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)

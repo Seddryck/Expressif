@@ -469,8 +469,35 @@ public partial class FunctionFactory : BaseExpressionFactory
             FunctionConstructionKind.MapWith => BuildDirectionalMap(function, context, mapOver: false),
             FunctionConstructionKind.Reduce => BuildReduceFunction(function, context),
             FunctionConstructionKind.SortTerm => BuildSortTermFunction(function, context),
+            FunctionConstructionKind.SortBy => BuildSortByFunction(function, context),
             _ => null,
         };
+
+    private IFunction BuildSortByFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters.Length == 0 || function.Parameters.Any(parameter => parameter is not SortCriterionParameter))
+            throw new BindingException("Function 'sort-by' requires one or more typed criteria.");
+        var criteria = function.Parameters.Cast<SortCriterionParameter>().Select(criterion =>
+        {
+            var evaluator = BuildValueEvaluator(criterion.Selector, context);
+            var comparerName = criterion.Type.Name.ToLowerInvariant() switch
+            {
+                "text" => "compare-ordinal",
+                "integer" or "decimal" or "numeric" => "compare-numeric",
+                "date" => "compare-date",
+                "time" => "compare-time",
+                "datetime" or "date-time" => "compare-datetime",
+                var name => throw new BindingException($"Type ':{name}' is not supported by sort-by."),
+            };
+            var target = ResolveTupleTarget(comparerName, function.SourceSpan);
+            var comparer = new SortComparer(
+                comparerName,
+                target,
+                (left, right) => InvokeTuple(comparerName, new Values.Tuple(left, right)) as OrderingValue);
+            return new Sorting.SortByCriterion(evaluator, comparer, criterion.Ascending, criterion.NullsFirst);
+        }).ToArray();
+        return new Sorting.SortBy(criteria);
+    }
 
     private IFunction BuildSortTermFunction(Bindings.Function function, IContext context)
     {
