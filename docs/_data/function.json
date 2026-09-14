@@ -3012,6 +3012,17 @@
     "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
   },
   {
+    "Name": "sort",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-table",
+    "Output": "array",
+    "Summary": "Stably sorts a normalized sort table and returns its original row values.",
+    "Parameters": [],
+    "Behavior": "Rows are compared lexicographically by headers. Null placement is resolved before invoking a comparer; descending direction reverses only non-equal ordering results. Comparers are invoked only for two non-null values and must return a non-null ordering value. Equal keys preserve original row order."
+  },
+  {
     "Name": "sort-table",
     "IsPublic": true,
     "Aliases": [],

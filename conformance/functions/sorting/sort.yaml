@@ -1,0 +1,26 @@
+suite: sorting
+kind: function
+operator: sort
+tests:
+  - id: sort.valid.rows
+    cases:
+      - id: sort.valid.rows.empty
+        value: (null)
+        parameters: ['array() | sort-table | sort']
+        expected: '{}'
+      - id: sort.valid.rows.numeric-ascending
+        value: (null)
+        parameters: ['array((sort-key(sort-term(2, compare-numeric~)) => "b"), (sort-key(sort-term(1, compare-numeric~)) => "a")) | sort-table | sort']
+        expected: '{"a", "b"}'
+      - id: sort.valid.rows.numeric-descending
+        value: (null)
+        parameters: ['array((sort-key(sort-term(1, compare-numeric~) | desc) => "a"), (sort-key(sort-term(2, compare-numeric~) | desc) => "b")) | sort-table | sort']
+        expected: '{"b", "a"}'
+      - id: sort.valid.rows.nulls-first
+        value: (null)
+        parameters: ['array((sort-key(sort-term(1, compare-numeric~) | nulls-first) => "one"), (sort-key(sort-term(#null, compare-numeric~) | nulls-first) => "null")) | sort-table | sort']
+        expected: '{"null", "one"}'
+      - id: sort.valid.rows.lexicographic
+        value: (null)
+        parameters: ['array((sort-key(sort-term("b", compare-ordinal~), sort-term(1, compare-numeric~)) => "b1"), (sort-key(sort-term("a", compare-ordinal~), sort-term(2, compare-numeric~)) => "a2"), (sort-key(sort-term("a", compare-ordinal~), sort-term(1, compare-numeric~)) => "a1")) | sort-table | sort']
+        expected: '{"a1", "a2", "b1"}'
