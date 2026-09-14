@@ -64,6 +64,7 @@ public class ClosedExpression(IParameter parameter, IEnumerable<Function> member
 
 public interface IParameter { }
 public sealed record LiteralParameter(object? Value) : IParameter;
+public sealed record CallableReferenceParameter(string Name) : IParameter;
 public abstract record CoercionSpecificationParameter(Type TargetType) : IParameter;
 public sealed record PositionalCoercionParameter(Type TargetType) : CoercionSpecificationParameter(TargetType);
 public sealed record FieldCoercionParameter(string Field, Type TargetType) : CoercionSpecificationParameter(TargetType);

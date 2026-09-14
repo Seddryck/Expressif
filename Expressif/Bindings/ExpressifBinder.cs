@@ -345,6 +345,7 @@ public sealed class ExpressifBinder
             "conditional-forward" or "conditional-backward" => BindConditionalFunction(syntax),
             "switch" or "try" => BindControlFlowFunction(syntax),
             "coerce" => BindCoerceFunction(syntax),
+            "sort-term" => BindSortTermFunction(syntax),
             "field" => BindFieldFunction(syntax),
             "is-present" or "is-absent" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
@@ -352,6 +353,40 @@ public sealed class ExpressifBinder
             "array" or "text" or "tuple" or "grouping" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
+
+    private Function BindSortTermFunction(FunctionCallSyntax syntax)
+    {
+        if (syntax.Arguments.Count != 2)
+            throw new BindingException("Function 'sort-term' expects a value and a tuple-bound comparer reference.");
+
+        var arguments = new List<FunctionArgument>();
+        for (var index = 0; index < syntax.Arguments.Count; index++)
+        {
+            var argument = syntax.Arguments[index];
+            var name = argument is NamedArgumentSyntax named ? named.Name.Value : null;
+            var value = RequireArgumentValue(argument);
+            var isComparer = name?.Equals("comparer", StringComparison.OrdinalIgnoreCase) == true
+                || (name is null && index == 1);
+            if (isComparer)
+            {
+                var reference = value switch
+                {
+                    TupleBindingShorthandSyntax direct => direct,
+                    OpenExpressionSyntax { Source: null, Pipeline: [TupleBindingShorthandSyntax nested] } => nested,
+                    _ => null,
+                };
+                if (reference is null || reference.Direction == TupleBindingDirection.Prefix)
+                    throw new BindingException("The comparer for 'sort-term' must be a tuple-bound callable reference such as compare-numeric~.");
+                arguments.Add(new FunctionArgument(name, new CallableReferenceParameter(reference.Name)));
+            }
+            else
+            {
+                arguments.Add(new FunctionArgument(name, BindArgument(value)));
+            }
+        }
+
+        return Function.FromArguments(syntax.Name, arguments.ToArray());
+    }
 
     private Function BindConditionalFunction(FunctionCallSyntax syntax)
     {

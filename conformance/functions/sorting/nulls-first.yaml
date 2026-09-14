@@ -1,0 +1,10 @@
+suite: sorting
+kind: function
+operator: nulls-first
+tests:
+  - id: nulls-first.valid.modifier
+    cases:
+      - id: nulls-first.valid.modifier.composable
+        value: (null)
+        parameters: ['sort-term(42, compare-numeric~) | descending | nulls-first | nulls-first']
+        expected: 'SortTerm(42, compare-numeric~, #false, #true)'

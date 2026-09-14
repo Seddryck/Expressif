@@ -1,0 +1,14 @@
+suite: sorting
+kind: function
+operator: sort-term
+tests:
+  - id: sort-term.valid.construction
+    cases:
+      - id: sort-term.valid.construction.defaults
+        value: (null)
+        parameters: ['sort-term(42, compare-numeric~)']
+        expected: 'SortTerm(42, compare-numeric~, #true, #false)'
+      - id: sort-term.valid.construction.null-value
+        value: (null)
+        parameters: ['sort-term(#null, compare-ordinal~)']
+        expected: 'SortTerm(null, compare-ordinal~, #true, #false)'

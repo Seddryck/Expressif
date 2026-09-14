@@ -83,6 +83,9 @@ public static class ValueFormatter
                 case VectorValue vector:
                     WriteCollection("V(", ")", vector, depth);
                     break;
+                case SortTermValue sortTerm:
+                    WriteCollection("SortTerm(", ")", sortTerm, depth);
+                    break;
                 case TupleValue tuple:
                     WriteCollection("T(", ")", tuple, depth);
                     break;
@@ -113,6 +116,9 @@ public static class ValueFormatter
                     break;
                 case OrderingValue ordering:
                     builder.Append(ordering);
+                    break;
+                case SortComparer comparer:
+                    builder.Append(comparer);
                     break;
                 case string text:
                     builder.Append(structuredValue ? QuoteString(text) : text);

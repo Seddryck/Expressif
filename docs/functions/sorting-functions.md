@@ -18,9 +18,14 @@ Reference documentation for Expressif functions in the `sorting` scope.
 
 | Name | Overview |
 |:-----|:---------|
+| [`ascending`]({{ '/functions/sorting/ascending/' | relative_url }}) | Returns the sort term with ascending direction enabled. |
 | [`compare`]({{ '/functions/sorting/compare/' | relative_url }}) | Compares two values in a selected supported domain and returns their relative ordering. |
 | [`compare-date`]({{ '/functions/sorting/compare-date/' | relative_url }}) | Compares two values after date coercion and returns their relative ordering. |
 | [`compare-datetime`]({{ '/functions/sorting/compare-datetime/' | relative_url }}) | Compares two values after datetime coercion and returns their relative ordering. |
 | [`compare-numeric`]({{ '/functions/sorting/compare-numeric/' | relative_url }}) | Compares two values after numeric coercion and returns their relative ordering. |
 | [`compare-ordinal`]({{ '/functions/sorting/compare-ordinal/' | relative_url }}) | Compares two values as text using deterministic ordinal ordering. |
 | [`compare-time`]({{ '/functions/sorting/compare-time/' | relative_url }}) | Compares two values after time coercion and returns their relative ordering. |
+| [`descending`]({{ '/functions/sorting/descending/' | relative_url }}) | Returns the sort term with descending direction enabled. |
+| [`nulls-first`]({{ '/functions/sorting/nulls-first/' | relative_url }}) | Returns the sort term with nulls ordered first. |
+| [`nulls-last`]({{ '/functions/sorting/nulls-last/' | relative_url }}) | Returns the sort term with nulls ordered last. |
+| [`sort-term`]({{ '/functions/sorting/sort-term/' | relative_url }}) | Creates a sort term from a value and a tuple-bound ordering comparer. |

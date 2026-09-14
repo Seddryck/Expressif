@@ -468,8 +468,34 @@ public partial class FunctionFactory : BaseExpressionFactory
             FunctionConstructionKind.MapOver => BuildDirectionalMap(function, context, mapOver: true),
             FunctionConstructionKind.MapWith => BuildDirectionalMap(function, context, mapOver: false),
             FunctionConstructionKind.Reduce => BuildReduceFunction(function, context),
+            FunctionConstructionKind.SortTerm => BuildSortTermFunction(function, context),
             _ => null,
         };
+
+    private IFunction BuildSortTermFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(Sorting.SortTerm), function.Arguments).Parameters;
+        if (bound is not [var value, CallableReferenceParameter reference])
+            throw new BindingException("The comparer for 'sort-term' must be a tuple-bound callable reference.");
+
+        var target = ResolveTupleTarget(reference.Name, function.SourceSpan);
+        var outputs = target.GetInterfaces()
+            .Where(contract => contract.IsGenericType && contract.GetGenericTypeDefinition() == typeof(IFunction<,>))
+            .Select(contract => Nullable.GetUnderlyingType(contract.GetGenericArguments()[1]) ?? contract.GetGenericArguments()[1])
+            .ToArray();
+        if (!outputs.Contains(typeof(OrderingValue)))
+            throw new BindingException($"Callable '{reference.Name}' does not return an ordering value.");
+
+        var canonicalName = target.Name.ToKebabCase();
+        var comparer = new SortComparer(
+            canonicalName,
+            target,
+            (left, right) => InvokeTuple(canonicalName, new Values.Tuple(left, right)) as OrderingValue);
+        var evaluator = BuildValueEvaluator(value, context);
+        return new Sorting.SortTerm(
+            () => evaluator.Invoke(EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value),
+            () => comparer);
+    }
 
     private Func<IAccumulator> BuildClosestProvider(Bindings.Function function, IContext context)
     {
