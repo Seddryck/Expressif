@@ -1,0 +1,14 @@
+suite: sorting
+kind: function
+operator: sort-table
+tests:
+  - id: sort-table.valid.normalization
+    cases:
+      - id: sort-table.valid.normalization.empty
+        value: (null)
+        parameters: ['array() | sort-table']
+        expected: 'SortTable{headers := {}, rows := {}}'
+      - id: sort-table.valid.normalization.rows
+        value: (null)
+        parameters: ['array((sort-key(sort-term(2, compare-numeric~) | desc) => "b"), (sort-key(sort-term(1, compare-numeric~) | desc) => "a")) | sort-table']
+        expected: 'SortTable{headers := {T(compare-numeric~, #false, #false)}, rows := {T(T(2), "b"), T(T(1), "a")}}'

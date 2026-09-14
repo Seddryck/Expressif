@@ -63,6 +63,13 @@ public static class ValueFormatter
                 return;
             }
 
+            if (value is SortTableValue sortTable)
+            {
+                builder.Append("SortTable");
+                WriteNamedCollection(sortTable.ToArray(), depth);
+                return;
+            }
+
             if (TryGetNamedCollection(value!, out var fields))
             {
                 WriteNamedCollection(fields, depth);

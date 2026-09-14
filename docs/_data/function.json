@@ -3012,6 +3012,17 @@
     "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
   },
   {
+    "Name": "sort-table",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "array",
+    "Output": "sort-table",
+    "Summary": "Normalizes pairs of sort keys and original values into shared headers and data rows.",
+    "Parameters": [],
+    "Behavior": "Every input item must be a pair whose key is a SortKey. All keys must have equal arity and matching comparer identity, direction, and null policy at each position. Header metadata is hoisted once; rows retain key values and original values. Empty input produces a headerless, rowless SortTable. No sorting is performed."
+  },
+  {
     "Name": "sort-key",
     "IsPublic": true,
     "Aliases": [],

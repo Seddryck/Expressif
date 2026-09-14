@@ -29,4 +29,5 @@ Reference documentation for Expressif functions in the `sorting` scope.
 | [`nulls-first`]({{ '/functions/sorting/nulls-first/' | relative_url }}) | Returns the sort term with nulls ordered first. |
 | [`nulls-last`]({{ '/functions/sorting/nulls-last/' | relative_url }}) | Returns the sort term with nulls ordered last. |
 | [`sort-key`]({{ '/functions/sorting/sort-key/' | relative_url }}) | Creates a non-empty ordered sort key from one or more sort terms. |
+| [`sort-table`]({{ '/functions/sorting/sort-table/' | relative_url }}) | Normalizes pairs of sort keys and original values into shared headers and data rows. |
 | [`sort-term`]({{ '/functions/sorting/sort-term/' | relative_url }}) | Creates a sort term from a value and a tuple-bound ordering comparer. |
