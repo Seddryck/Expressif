@@ -60,13 +60,15 @@ internal sealed class ConsoleReplTerminal(
     TextWriter output,
     TextWriter error,
     IReplInterruptSource interrupts,
-    Func<CancellationToken, ConsoleKeyInfo>? readKey = null) : IReplTerminal
+    Func<CancellationToken, ConsoleKeyInfo>? readKey = null,
+    Func<int>? getTerminalWidth = null) : IReplTerminal
 {
     private readonly ReplLineEditor editor = new();
 
     public ConsoleReplTerminal()
         : this(Console.In, Console.Out, Console.Error, new ConsoleReplInterruptSource(),
-            Console.IsInputRedirected || Console.IsOutputRedirected ? null : ReadConsoleKey) { }
+            Console.IsInputRedirected || Console.IsOutputRedirected ? null : ReadConsoleKey,
+            () => Console.BufferWidth) { }
 
     public string? ReadLine(string prompt, CancellationToken cancellationToken)
     {
@@ -74,7 +76,10 @@ internal sealed class ConsoleReplTerminal(
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         using var registration = interrupts.Register(cancellation.Cancel);
         if (readKey is not null)
-            return editor.Read(readKey, output, cancellation.Token);
+        {
+            return editor.Read(readKey, output, cancellation.Token, prompt.Length,
+                getTerminalWidth?.Invoke() ?? int.MaxValue);
+        }
 
         var read = input.ReadLineAsync();
         var interrupted = Task.Delay(Timeout.InfiniteTimeSpan, cancellation.Token);

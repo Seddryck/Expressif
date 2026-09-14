@@ -71,6 +71,62 @@ public class ReplLineEditorTests
     }
 
     [Test]
+    public void Read_HistoryNavigation_ClearsAllRowsOfWrappedInput()
+    {
+        var editor = new ReplLineEditor();
+        _ = Read(editor, Characters("abcdefghij").Append(Key(ConsoleKey.Enter)).ToArray());
+        var output = new StringWriter();
+
+        var result = Read(editor, output, 2, 8,
+            Key(ConsoleKey.UpArrow), Key(ConsoleKey.DownArrow),
+            Key(ConsoleKey.UpArrow), Key(ConsoleKey.DownArrow), Key(ConsoleKey.Enter));
+
+        const string escape = "\u001b[";
+        var recall = $"\r{escape}2C{escape}K\r{escape}2Cabcdefghij";
+        var clear = $"\r{escape}1A{escape}2C{escape}K{escape}1B\r{escape}2K{escape}1A\r{escape}2C";
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.Empty);
+            Assert.That(output.ToString(), Is.EqualTo(recall + clear + recall + clear + Environment.NewLine));
+        });
+    }
+
+    [Test]
+    public void Read_WrappedInput_RestoresCursorToLogicalPosition()
+    {
+        var output = new StringWriter();
+
+        var result = Read(new ReplLineEditor(), output, 2, 8,
+            Characters("abcdefghij")
+                .Append(Key(ConsoleKey.Home))
+                .Append(Key(ConsoleKey.RightArrow))
+                .Append(Character('X'))
+                .Append(Key(ConsoleKey.Enter))
+                .ToArray());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo("aXbcdefghij"));
+            Assert.That(output.ToString(), Does.Contain("\u001b[3C"));
+        });
+    }
+
+    [Test]
+    public void Read_SingleLineInput_PreservesBackspaceRedraw()
+    {
+        var output = new StringWriter();
+
+        var result = Read(new ReplLineEditor(), output, 2, 80,
+            Character('a'), Character('b'), Key(ConsoleKey.LeftArrow), Character('c'), Key(ConsoleKey.Enter));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo("acb"));
+            Assert.That(output.ToString().Contains('\u001b'), Is.False);
+        });
+    }
+
+    [Test]
     public void Read_ControlZWhileTyping_UndoesTextEdit()
     {
         Assert.That(Read(Character('a'), Character('b'), Control(ConsoleKey.Z), Key(ConsoleKey.Enter)), Is.EqualTo("a"));
@@ -114,6 +170,19 @@ public class ReplLineEditorTests
         var queue = new Queue<ConsoleKeyInfo>(keys);
         return editor.Read(_ => queue.Dequeue(), TextWriter.Null, CancellationToken.None);
     }
+
+    private static string? Read(
+        ReplLineEditor editor,
+        TextWriter output,
+        int promptWidth,
+        int terminalWidth,
+        params ConsoleKeyInfo[] keys)
+    {
+        var queue = new Queue<ConsoleKeyInfo>(keys);
+        return editor.Read(_ => queue.Dequeue(), output, CancellationToken.None, promptWidth, terminalWidth);
+    }
+
+    private static IEnumerable<ConsoleKeyInfo> Characters(string value) => value.Select(Character);
 
     private static ConsoleKeyInfo Character(char value) => new(value, ConsoleKey.NoName, false, false, false);
 
