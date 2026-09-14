@@ -1,0 +1,26 @@
+suite: sorting
+kind: function
+operator: compare-numeric
+tests:
+  - id: compare-numeric.valid.ordering
+    cases:
+      - id: compare-numeric.valid.ordering.less
+        value: 1
+        parameters: ['compare-numeric(2)']
+        expected: '#less'
+      - id: compare-numeric.valid.ordering.equal
+        value: "1.0"
+        parameters: ['compare-numeric(1)']
+        expected: '#equal'
+      - id: compare-numeric.valid.ordering.greater
+        value: 2
+        parameters: ['compare-numeric(1)']
+        expected: '#greater'
+      - id: compare-numeric.valid.ordering.null
+        value: (null)
+        parameters: ['compare-numeric(1)']
+        expected: 'null'
+      - id: compare-numeric.valid.ordering.invalid
+        value: "invalid"
+        parameters: ['compare-numeric(1)']
+        expected: 'null'
