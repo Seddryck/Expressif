@@ -3012,6 +3012,19 @@
     "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
   },
   {
+    "Name": "sort-key",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "any",
+    "Output": "sort-key",
+    "Summary": "Creates a non-empty ordered sort key from one or more sort terms.",
+    "Parameters": [
+      { "Name": "values", "Type": "sort-term", "Optional": false, "Variadic": true, "MinimumCardinality": 1, "Summary": "One or more sort terms in lexicographic comparison order." }
+    ],
+    "Behavior": "Every value must be a SortTerm. Declaration order is significant, nested SortKey values are rejected, and no implicit flattening occurs."
+  },
+  {
     "Name": "sort-term",
     "IsPublic": true,
     "Aliases": [],

@@ -1,0 +1,18 @@
+suite: sorting
+kind: function
+operator: sort-key
+tests:
+  - id: sort-key.valid.construction
+    cases:
+      - id: sort-key.valid.construction.single
+        value: (null)
+        parameters: ['sort-key(sort-term(42, compare-numeric~))']
+        expected: 'SortKey(SortTerm(42, compare-numeric~, #true, #false))'
+      - id: sort-key.valid.construction.multiple
+        value: (null)
+        parameters: ['sort-key(sort-term("Ada", compare-ordinal~) | asc, sort-term(42, compare-numeric~) | desc | nulls-first)']
+        expected: 'SortKey(SortTerm("Ada", compare-ordinal~, #true, #false), SortTerm(42, compare-numeric~, #false, #true))'
+      - id: sort-key.valid.construction.round-trip
+        value: (null)
+        parameters: ['sort-key(sort-term(1, compare-numeric~), sort-term("x", compare-ordinal~))']
+        expected: 'SortKey(SortTerm(1, compare-numeric~, #true, #false), SortTerm("x", compare-ordinal~, #true, #false))'

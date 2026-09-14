@@ -86,6 +86,9 @@ public static class ValueFormatter
                 case SortTermValue sortTerm:
                     WriteCollection("SortTerm(", ")", sortTerm, depth);
                     break;
+                case SortKeyValue sortKey:
+                    WriteCollection("SortKey(", ")", sortKey, depth);
+                    break;
                 case TupleValue tuple:
                     WriteCollection("T(", ")", tuple, depth);
                     break;

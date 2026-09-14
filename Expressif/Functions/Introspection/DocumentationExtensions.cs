@@ -186,6 +186,7 @@ public static class DocumentationExtensions
             [(typeof(Grouping.DrillDown), "expressions")] = 1,
             [(typeof(Flow.TransformWith), "expressions")] = 1,
             [(typeof(Flow.TransformAs), "expressions")] = 1,
+            [(typeof(Sorting.SortKey), "values")] = 1,
         };
 
     private static int GetMinimumCardinality(Type declaringType, string parameterName)
