@@ -114,6 +114,7 @@ public class ParameterSerializer
         {
             null => "#null",
             AllDimension => "#all",
+            OrderingValue ordering => ordering.ToString(),
             bool boolean => boolean ? "#true" : "#false",
             decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
             DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",

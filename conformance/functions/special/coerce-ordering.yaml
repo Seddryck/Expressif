@@ -1,0 +1,12 @@
+suite: special
+kind: function
+operator: coerce-ordering
+tests:
+  - id: coerce-ordering.valid
+    cases:
+      - {id: coerce-ordering.valid.numeric.less, value: -1, expected: '#less'}
+      - {id: coerce-ordering.valid.numeric.equal, value: 0, expected: '#equal'}
+      - {id: coerce-ordering.valid.numeric.greater, value: 1, expected: '#greater'}
+      - {id: coerce-ordering.valid.numeric.below-range, value: -2, expected: 'null'}
+      - {id: coerce-ordering.valid.numeric.above-range, value: 2, expected: 'null'}
+      - {id: coerce-ordering.valid.numeric.fractional, value: 0.5, expected: 'null'}

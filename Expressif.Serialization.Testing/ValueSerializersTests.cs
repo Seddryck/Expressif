@@ -102,6 +102,18 @@ public class ValueSerializersTests
     }
 
     [Test]
+    public void OrderingValues_SerializeWithoutNumericRepresentation()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(Raw.Serialize(OrderingValue.Less), Is.EqualTo("#less"));
+            Assert.That(Raw.Serialize(OrderingValue.Equal), Is.EqualTo("#equal"));
+            Assert.That(Raw.Serialize(OrderingValue.Greater), Is.EqualTo("#greater"));
+            Assert.That(Json.Serialize(OrderingValue.Less), Is.EqualTo("\"#less\""));
+        });
+    }
+
+    [Test]
     public void Raw_AllDimensionValues_RoundTripThroughExpressifSource()
     {
         var source = new DictionaryValue([

@@ -809,6 +809,24 @@ public class ExpressionTest
         });
     }
 
+    [TestCase("#less", nameof(OrderingValue.Less))]
+    [TestCase("#equal", nameof(OrderingValue.Equal))]
+    [TestCase("#greater", nameof(OrderingValue.Greater))]
+    public void Evaluate_OrderingLiteral_ReturnsCanonicalValue(string source, string expected)
+        => Assert.That(
+            Expression.CreateClosed(source).Evaluate(null),
+            Is.SameAs(typeof(OrderingValue).GetProperty(expected)!.GetValue(null)));
+
+    [Test]
+    public void Evaluate_OrderingLikeText_RemainsText()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(Expression.CreateClosed("\"#less\"").Evaluate(null), Is.EqualTo("#less"));
+            Assert.That(Expression.CreateClosed("`#less`").Evaluate(null), Is.EqualTo("#less"));
+        });
+    }
+
     [Test]
     public void Evaluate_EmptyArrayPipeFilter_EmptyArray()
     {

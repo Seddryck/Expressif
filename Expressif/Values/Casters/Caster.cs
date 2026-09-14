@@ -27,6 +27,7 @@ public class Caster
             { typeof(DateTime), () => new DateTimeCaster().Cast(value) },
             { typeof(int), () => new IntegerCaster().Cast(value) },
             { typeof(decimal), () => new NumericCaster().Cast(value) },
+            { typeof(OrderingValue), () => new OrderingCaster().Cast(value) },
             { typeof(string), () => new TextCaster().Cast(value) },
             { typeof(TimeOnly), () => new TimeOnlyCaster().Cast(value) },
             { typeof(YearMonth), () => new YearMonthCaster().Cast(value) },
@@ -93,7 +94,15 @@ public class Caster
     private static bool TryCastCore(object value, Type targetType, out object? result)
     {
         result = null;
-        if (targetType == typeof(bool) && new BooleanCaster().TryCast(value, out var boolean))
+        if (targetType == typeof(OrderingValue) && new OrderingCaster().TryCast(value, out var ordering))
+            result = ordering;
+        else if (value is OrderingValue orderingValue && targetType == typeof(int))
+            result = orderingValue.NumericValue;
+        else if (value is OrderingValue numericOrdering && targetType == typeof(decimal))
+            result = (decimal)numericOrdering.NumericValue;
+        else if (value is OrderingValue)
+            return false;
+        else if (targetType == typeof(bool) && new BooleanCaster().TryCast(value, out var boolean))
             result = boolean;
         else if (targetType == typeof(DateOnly) && new DateOnlyCaster().TryCast(value, out var date))
             result = date;

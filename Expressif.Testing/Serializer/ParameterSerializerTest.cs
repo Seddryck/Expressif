@@ -22,11 +22,26 @@ public class ParameterSerializerTest
             Assert.That(serializer.Serialize(new LiteralParameter(true)), Is.EqualTo("#true"));
             Assert.That(serializer.Serialize(new LiteralParameter(null)), Is.EqualTo("#null"));
             Assert.That(serializer.Serialize(new LiteralParameter(AllDimension.Instance)), Is.EqualTo("#all"));
+            Assert.That(serializer.Serialize(new LiteralParameter(OrderingValue.Less)), Is.EqualTo("#less"));
+            Assert.That(serializer.Serialize(new LiteralParameter(OrderingValue.Equal)), Is.EqualTo("#equal"));
+            Assert.That(serializer.Serialize(new LiteralParameter(OrderingValue.Greater)), Is.EqualTo("#greater"));
             Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new DateTime(2026, 8, 17, 14, 30, 0))), Is.EqualTo("#\"2026-08-17T14:30:00\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new TimeOnly(14, 30, 0))), Is.EqualTo("#\"14:30:00\""));
         });
     }
+
+    [TestCaseSource(nameof(OrderingValues))]
+    public void Serialize_OrderingLiteral_RoundTripsCanonicalSingleton(OrderingValue value)
+    {
+        var serialized = new ParameterSerializer().Serialize(new LiteralParameter(value));
+        var parsed = new ExpressifBinder().BindParameter(ExpressionParser.Parse(serialized));
+
+        Assert.That(((LiteralParameter)parsed).Value, Is.SameAs(value));
+    }
+
+    private static IEnumerable<OrderingValue> OrderingValues()
+        => [OrderingValue.Less, OrderingValue.Equal, OrderingValue.Greater];
 
     [Test]
     public void Serialize_AllDimensionLiteral_RoundTripsSingleton()

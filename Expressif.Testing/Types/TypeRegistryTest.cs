@@ -13,7 +13,7 @@ namespace Expressif.Testing.Types;
 public class TypeRegistryTest
 {
     private static readonly string[] RequiredNames =
-        ["boolean", "integer", "text", "numeric", "date", "datetime", "time"];
+        ["boolean", "integer", "text", "numeric", "date", "datetime", "time", "ordering"];
 
     [Test]
     public void GeneratedCatalog_MatchesCanonicalRegistry()
@@ -35,7 +35,8 @@ public class TypeRegistryTest
         {
             Assert.That(names, Does.Contain(RequiredNames[0]).And.Contain(RequiredNames[1])
                 .And.Contain(RequiredNames[2]).And.Contain(RequiredNames[3])
-                .And.Contain(RequiredNames[4]).And.Contain(RequiredNames[5]).And.Contain(RequiredNames[6]));
+                .And.Contain(RequiredNames[4]).And.Contain(RequiredNames[5]).And.Contain(RequiredNames[6])
+                .And.Contain(RequiredNames[7]));
             Assert.That(names, Does.Not.Contain("expression").And.Not.Contain("predicate").And.Not.Contain("accumulator"));
         });
     }
@@ -56,6 +57,7 @@ public class TypeRegistryTest
     [TestCase("date", typeof(DateOnly))]
     [TestCase("datetime", typeof(DateTime))]
     [TestCase("time", typeof(TimeOnly))]
+    [TestCase("ordering", typeof(OrderingValue))]
     public void Registry_DotNetBindingMatchesCanonicalRuntimeType(string name, Type expected)
         => Assert.That(TypeRegistry.Resolve(name).Bindings["dotnet"], Is.EqualTo(expected.FullName));
 
@@ -69,6 +71,7 @@ public class TypeRegistryTest
     [TestCase("tuple", typeof(TupleValue))]
     [TestCase("vector", typeof(VectorValue))]
     [TestCase("record", typeof(RecordValue))]
+    [TestCase("ordering", typeof(OrderingValue))]
     public void RuntimeRegistry_ResolvesImplementationTypeDirectly(string name, Type expected)
         => Assert.That(RuntimeTypeRegistry.Resolve(name), Is.EqualTo(expected));
 

@@ -91,6 +91,9 @@ public static class ValueSerializers
                 case bool boolean:
                     builder.Append(boolean ? "true" : "false");
                     break;
+                case OrderingValue ordering:
+                    WriteString(ordering.ToString());
+                    break;
                 case string text:
                     WriteString(text);
                     break;

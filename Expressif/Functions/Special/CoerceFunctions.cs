@@ -1,6 +1,5 @@
 using Expressif.Values.Casters;
 using Expressif.Values;
-using System.Numerics;
 
 namespace Expressif.Functions.Special;
 
@@ -25,13 +24,15 @@ public abstract class BaseCoerceValueFunction<T> : IFunction<object?, T?>
 [Function]
 public sealed class CoerceNumeric : BaseCoerceValueFunction<decimal>,
     IFunction<bool, decimal?>,
-    IFunction<string, decimal?>
+    IFunction<string, decimal?>,
+    IFunction<OrderingValue, decimal?>
 {
     public override decimal? Evaluate(object? value)
         => NumericCoercion.TryToDecimal(value, out var result) ? result : null;
 
     decimal? IFunction<bool, decimal?>.Evaluate(bool value) => EvaluateTyped(value);
     decimal? IFunction<string, decimal?>.Evaluate(string value) => EvaluateTyped(value);
+    decimal? IFunction<OrderingValue, decimal?>.Evaluate(OrderingValue value) => value.NumericValue;
 }
 
 public sealed class CoerceNumeric<T> : Function<T, decimal?>
@@ -46,19 +47,42 @@ public sealed class CoerceNumeric<T> : Function<T, decimal?>
 [Function]
 public sealed class CoerceInt : BaseCoerceValueFunction<int>,
     IFunction<bool, int?>,
-    IFunction<string, int?>
+    IFunction<string, int?>,
+    IFunction<OrderingValue, int?>
 {
     public override int? Evaluate(object? value)
         => NumericCoercion.TryToInt(value, out var result) ? result : null;
 
     int? IFunction<bool, int?>.Evaluate(bool value) => EvaluateTyped(value);
     int? IFunction<string, int?>.Evaluate(string value) => EvaluateTyped(value);
+    int? IFunction<OrderingValue, int?>.Evaluate(OrderingValue value) => value.NumericValue;
 }
 
 public sealed class CoerceInt<T> : Function<T, int?>
 {
     public override int? Evaluate(T value)
         => NumericCoercion.TryToInt((object?)value, out var result) ? result : null;
+}
+
+/// <summary>
+/// Attempts to convert a numeric input to an ordering value. Returns `null` unless the input is exactly -1, 0, or 1.
+/// </summary>
+public sealed class CoerceOrdering : IFunction<object?, OrderingValue?>
+{
+    private OrderingCaster Caster { get; } = new();
+
+    public OrderingValue? Evaluate(object? value)
+        => value is not null && Caster.TryCast(value, out var result) ? result : null;
+
+    object? IFunction.Evaluate(object? value) => Evaluate(value);
+}
+
+public sealed class CoerceOrdering<T> : Function<T, OrderingValue?>
+{
+    private OrderingCaster Caster { get; } = new();
+
+    public override OrderingValue? Evaluate(T value)
+        => value is not null && Caster.TryCast(value, out var result) ? result : null;
 }
 
 /// <summary>

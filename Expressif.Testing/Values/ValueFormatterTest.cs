@@ -6,6 +6,17 @@ namespace Expressif.Testing.Values;
 public class ValueFormatterTest
 {
     [Test]
+    public void Format_OrderingValues_UsesCanonicalLiterals()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(ValueFormatter.Format(OrderingValue.Less), Is.EqualTo("#less"));
+            Assert.That(ValueFormatter.Format(OrderingValue.Equal), Is.EqualTo("#equal"));
+            Assert.That(ValueFormatter.Format(OrderingValue.Greater), Is.EqualTo("#greater"));
+        });
+    }
+
+    [Test]
     public void Format_Record_QuotesStringsWithoutTypeAmbiguity()
     {
         var record = new RecordValue();
