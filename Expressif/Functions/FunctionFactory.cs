@@ -479,7 +479,12 @@ public partial class FunctionFactory : BaseExpressionFactory
             throw new BindingException("Function 'sort-by' requires one or more typed criteria.");
         var criteria = function.Parameters.Cast<SortCriterionParameter>().Select(criterion =>
         {
-            var evaluator = BuildValueEvaluator(criterion.Selector, context);
+            var selector = BuildValueEvaluator(criterion.Selector, context);
+            object? EvaluateCriterion(object? input)
+            {
+                using var scope = EvaluationRuntime.Derive(input);
+                return selector.Invoke(input);
+            }
             var comparerName = criterion.Type.Name.ToLowerInvariant() switch
             {
                 "text" => "compare-ordinal",
@@ -494,7 +499,7 @@ public partial class FunctionFactory : BaseExpressionFactory
                 comparerName,
                 target,
                 (left, right) => InvokeTuple(comparerName, new Values.Tuple(left, right)) as OrderingValue);
-            return new Sorting.SortByCriterion(evaluator, comparer, criterion.Ascending, criterion.NullsFirst);
+            return new Sorting.SortByCriterion(EvaluateCriterion, comparer, criterion.Ascending, criterion.NullsFirst);
         }).ToArray();
         return new Sorting.SortBy(criteria);
     }

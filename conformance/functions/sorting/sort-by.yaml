@@ -24,6 +24,10 @@ tests:
         value: (null)
         parameters: ['array({group := "b", value := 1}, {group := "a", value := 1}, {group := "a", value := 2}) | sort-by(.group -> :text, .value -> :numeric | desc)']
         expected: '{{group := "a", value := 2}, {group := "a", value := 1}, {group := "b", value := 1}}'
+      - id: sort-by.valid.criteria.tuple-position
+        value: (null)
+        parameters: ['array(T(1, 100), T(2, 120), T(4, 75), T(3, 110)) | sort-by($0 -> :integer)']
+        expected: '{T(1, 100), T(2, 120), T(3, 110), T(4, 75)}'
       - id: sort-by.valid.criteria.date
         value: (null)
         parameters: ['array(#"2026-02-01", #"2026-01-01") | sort-by(neutral -> :date)']
