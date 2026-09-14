@@ -1,0 +1,22 @@
+suite: sorting
+kind: function
+operator: compare-time
+tests:
+  - id: compare-time.valid.ordering
+    cases:
+      - id: compare-time.valid.ordering.less
+        value: "09:00:00"
+        parameters: ['compare-time(#"10:00:00")']
+        expected: '#less'
+      - id: compare-time.valid.ordering.equal
+        value: "09:00:00"
+        parameters: ['compare-time(#"09:00:00")']
+        expected: '#equal'
+      - id: compare-time.valid.ordering.greater
+        value: "10:00:00"
+        parameters: ['compare-time(#"09:00:00")']
+        expected: '#greater'
+      - id: compare-time.valid.ordering.invalid
+        value: "invalid"
+        parameters: ['compare-time(#"09:00:00")']
+        expected: 'null'

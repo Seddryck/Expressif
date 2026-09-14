@@ -1,0 +1,22 @@
+suite: sorting
+kind: function
+operator: compare-datetime
+tests:
+  - id: compare-datetime.valid.ordering
+    cases:
+      - id: compare-datetime.valid.ordering.less
+        value: "2026-01-01T09:00:00"
+        parameters: ['compare-datetime(#"2026-01-01T10:00:00")']
+        expected: '#less'
+      - id: compare-datetime.valid.ordering.equal
+        value: "2026-01-01T09:00:00"
+        parameters: ['compare-datetime(#"2026-01-01T09:00:00")']
+        expected: '#equal'
+      - id: compare-datetime.valid.ordering.greater
+        value: "2026-01-01T10:00:00"
+        parameters: ['compare-datetime(#"2026-01-01T09:00:00")']
+        expected: '#greater'
+      - id: compare-datetime.valid.ordering.invalid
+        value: "invalid"
+        parameters: ['compare-datetime(#"2026-01-01T09:00:00")']
+        expected: 'null'

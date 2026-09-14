@@ -1,0 +1,38 @@
+suite: sorting
+kind: function
+operator: compare
+tests:
+  - id: compare.valid.routing
+    cases:
+      - id: compare.valid.routing.default-text
+        value: "10"
+        parameters: ['compare("2")']
+        expected: '#less'
+      - id: compare.valid.routing.text
+        value: "10"
+        parameters: ['compare("2", :text)']
+        expected: '#less'
+      - id: compare.valid.routing.integer
+        value: "10"
+        parameters: ['compare("2", :integer)']
+        expected: '#greater'
+      - id: compare.valid.routing.decimal
+        value: "1.5"
+        parameters: ['compare(1, :decimal)']
+        expected: '#greater'
+      - id: compare.valid.routing.numeric
+        value: 1
+        parameters: ['compare(1.0, :numeric)']
+        expected: '#equal'
+      - id: compare.valid.routing.date
+        value: "2026-01-01"
+        parameters: ['compare(#"2026-01-02", :date)']
+        expected: '#less'
+      - id: compare.valid.routing.time
+        value: "10:00:00"
+        parameters: ['compare(#"09:00:00", :time)']
+        expected: '#greater'
+      - id: compare.valid.routing.datetime
+        value: "2026-01-01T10:00:00"
+        parameters: ['compare(#"2026-01-01T10:00:00", :datetime)']
+        expected: '#equal'

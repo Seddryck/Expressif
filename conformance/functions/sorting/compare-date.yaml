@@ -1,0 +1,22 @@
+suite: sorting
+kind: function
+operator: compare-date
+tests:
+  - id: compare-date.valid.ordering
+    cases:
+      - id: compare-date.valid.ordering.less
+        value: "2026-01-01"
+        parameters: ['compare-date(#"2026-01-02")']
+        expected: '#less'
+      - id: compare-date.valid.ordering.equal
+        value: "2026-01-01"
+        parameters: ['compare-date(#"2026-01-01")']
+        expected: '#equal'
+      - id: compare-date.valid.ordering.greater
+        value: "2026-01-02"
+        parameters: ['compare-date(#"2026-01-01")']
+        expected: '#greater'
+      - id: compare-date.valid.ordering.invalid
+        value: "invalid"
+        parameters: ['compare-date(#"2026-01-01")']
+        expected: 'null'

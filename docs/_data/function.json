@@ -2898,6 +2898,120 @@
     ]
   },
   {
+    "Name": "compare-numeric",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "numeric",
+    "Output": "ordering",
+    "Summary": "Compares two values after numeric coercion and returns their relative ordering.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "numeric",
+        "Optional": false,
+        "Summary": "The value compared with the input value."
+      }
+    ],
+    "Behavior": "Both values are coerced to numeric. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+  },
+  {
+    "Name": "compare-ordinal",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "text",
+    "Output": "ordering",
+    "Summary": "Compares two values as text using deterministic ordinal ordering.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "text",
+        "Optional": false,
+        "Summary": "The value compared with the input value."
+      }
+    ],
+    "Behavior": "Both values are coerced to text and compared with ordinal, non-locale-sensitive semantics. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+  },
+  {
+    "Name": "compare-date",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "date",
+    "Output": "ordering",
+    "Summary": "Compares two values after date coercion and returns their relative ordering.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "date",
+        "Optional": false,
+        "Summary": "The value compared with the input value."
+      }
+    ],
+    "Behavior": "Both values are coerced to date. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+  },
+  {
+    "Name": "compare-time",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "time",
+    "Output": "ordering",
+    "Summary": "Compares two values after time coercion and returns their relative ordering.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "time",
+        "Optional": false,
+        "Summary": "The value compared with the input value."
+      }
+    ],
+    "Behavior": "Both values are coerced to time. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+  },
+  {
+    "Name": "compare-datetime",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "date-time",
+    "Output": "ordering",
+    "Summary": "Compares two values after datetime coercion and returns their relative ordering.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "date-time",
+        "Optional": false,
+        "Summary": "The value compared with the input value."
+      }
+    ],
+    "Behavior": "Both values are coerced to datetime. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+  },
+  {
+    "Name": "compare",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "any",
+    "Output": "ordering",
+    "Summary": "Compares two values in a selected supported domain and returns their relative ordering.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "any",
+        "Optional": false,
+        "Summary": "The value compared with the input value."
+      },
+      {
+        "Name": "type",
+        "Type": "type",
+        "Optional": true,
+        "Summary": "The comparison domain; defaults to :text."
+      }
+    ],
+    "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
+  },
+  {
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],
@@ -3049,7 +3163,7 @@
       "special-to-coerce-int"
     ],
     "Scope": "special",
-    "Input": "boolean | integer | numeric | text",
+    "Input": "boolean | integer | numeric | ordering | text",
     "Output": "integer",
     "Summary": "Attempts to convert the input to an integer value. Returns `null` when the input cannot be converted without loss.",
     "Parameters": [],
@@ -3064,7 +3178,7 @@
       "special-to-coerce-numeric"
     ],
     "Scope": "special",
-    "Input": "boolean | integer | numeric | text",
+    "Input": "boolean | integer | numeric | ordering | text",
     "Output": "numeric",
     "Summary": "Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted.",
     "Parameters": [],

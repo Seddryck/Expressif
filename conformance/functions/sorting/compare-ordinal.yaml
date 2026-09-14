@@ -1,0 +1,22 @@
+suite: sorting
+kind: function
+operator: compare-ordinal
+tests:
+  - id: compare-ordinal.valid.ordering
+    cases:
+      - id: compare-ordinal.valid.ordering.less
+        value: "A"
+        parameters: ['compare-ordinal("a")']
+        expected: '#less'
+      - id: compare-ordinal.valid.ordering.equal
+        value: "same"
+        parameters: ['compare-ordinal("same")']
+        expected: '#equal'
+      - id: compare-ordinal.valid.ordering.greater
+        value: "z"
+        parameters: ['compare-ordinal("a")']
+        expected: '#greater'
+      - id: compare-ordinal.valid.ordering.null
+        value: (null)
+        parameters: ['compare-ordinal("a")']
+        expected: 'null'

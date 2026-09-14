@@ -58,6 +58,11 @@ internal static class ExpressifTypeMapper
             [("MapOver", ValuesParameter)] = "array",
             [("MapWith", "expression")] = "expression",
             [("MapWith", ValuesParameter)] = "array",
+            [("CompareNumeric", "right")] = "numeric",
+            [("CompareOrdinal", "right")] = "text",
+            [("CompareDate", "right")] = "date",
+            [("CompareTime", "right")] = "time",
+            [("CompareDateTime", "right")] = "date-time",
         };
 
     public static string ToExpressifType(
@@ -104,6 +109,8 @@ internal static class ExpressifTypeMapper
             return "year-month";
         if (type == typeof(Weekday))
             return "weekday";
+        if (type == typeof(OrderingValue))
+            return "ordering";
         if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
         if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))
