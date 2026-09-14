@@ -37,6 +37,7 @@ public class ParameterSerializer
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
             LiteralParameter l => SerializeLiteral(l.Value),
+            CallableReferenceParameter reference => $"{reference.Name}~",
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"^.{op.Name}",
             EnclosingObjectPropertyParameter op => $"^^.{op.Name}",

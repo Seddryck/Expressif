@@ -1,0 +1,14 @@
+suite: sorting
+kind: function
+operator: descending
+tests:
+  - id: descending.valid.modifier
+    cases:
+      - id: descending.valid.modifier.canonical
+        value: (null)
+        parameters: ['sort-term(42, compare-numeric~) | descending | descending']
+        expected: 'SortTerm(42, compare-numeric~, #false, #false)'
+      - id: descending.valid.modifier.alias
+        value: (null)
+        parameters: ['sort-term(42, compare-numeric~) | desc']
+        expected: 'SortTerm(42, compare-numeric~, #false, #false)'

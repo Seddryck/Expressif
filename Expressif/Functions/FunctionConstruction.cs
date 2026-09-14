@@ -37,6 +37,7 @@ internal enum FunctionConstructionKind
     Apply,
     TransformWith,
     TransformAs,
+    SortTerm,
 }
 
 internal static class FunctionConstruction
@@ -82,6 +83,7 @@ internal static class FunctionConstruction
             "apply" => FunctionConstructionKind.Apply,
             "transform-with" => FunctionConstructionKind.TransformWith,
             "transform-as" => FunctionConstructionKind.TransformAs,
+            "sort-term" => FunctionConstructionKind.SortTerm,
             _ => FunctionConstructionKind.Standard,
         };
 }

@@ -3012,6 +3012,64 @@
     "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
   },
   {
+    "Name": "sort-term",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "any",
+    "Output": "sort-term",
+    "Summary": "Creates a sort term from a value and a tuple-bound ordering comparer.",
+    "Parameters": [
+      { "Name": "value", "Type": "any", "Optional": false, "Summary": "The value to compare." },
+      { "Name": "comparer", "Type": "expression", "Optional": false, "Summary": "A tuple-bound callable reference that returns an ordering value." }
+    ],
+    "Behavior": "Creates SortTerm(value, comparer, #true, #false), corresponding to ascending order with nulls last. The comparer is retained as a callable reference and is not invoked during construction."
+  },
+  {
+    "Name": "ascending",
+    "IsPublic": true,
+    "Aliases": ["asc"],
+    "Scope": "sorting",
+    "Input": "sort-term",
+    "Output": "sort-term",
+    "Summary": "Returns the sort term with ascending direction enabled.",
+    "Parameters": [],
+    "Behavior": "Only the ascending flag is changed; applying the modifier repeatedly is idempotent."
+  },
+  {
+    "Name": "descending",
+    "IsPublic": true,
+    "Aliases": ["desc"],
+    "Scope": "sorting",
+    "Input": "sort-term",
+    "Output": "sort-term",
+    "Summary": "Returns the sort term with descending direction enabled.",
+    "Parameters": [],
+    "Behavior": "Only the ascending flag is changed; applying the modifier repeatedly is idempotent."
+  },
+  {
+    "Name": "nulls-first",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-term",
+    "Output": "sort-term",
+    "Summary": "Returns the sort term with nulls ordered first.",
+    "Parameters": [],
+    "Behavior": "Only the null-placement flag is changed; applying the modifier repeatedly is idempotent."
+  },
+  {
+    "Name": "nulls-last",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-term",
+    "Output": "sort-term",
+    "Summary": "Returns the sort term with nulls ordered last.",
+    "Parameters": [],
+    "Behavior": "Only the null-placement flag is changed; applying the modifier repeatedly is idempotent."
+  },
+  {
     "Name": "any-to-any",
     "IsPublic": true,
     "Aliases": [],

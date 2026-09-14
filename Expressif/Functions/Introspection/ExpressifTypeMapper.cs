@@ -63,6 +63,7 @@ internal static class ExpressifTypeMapper
             [("CompareDate", "right")] = "date",
             [("CompareTime", "right")] = "time",
             [("CompareDateTime", "right")] = "date-time",
+            [("SortTerm", "comparer")] = "expression",
         };
 
     public static string ToExpressifType(
@@ -111,6 +112,8 @@ internal static class ExpressifTypeMapper
             return "weekday";
         if (type == typeof(OrderingValue))
             return "ordering";
+        if (type == typeof(SortTermValue))
+            return "sort-term";
         if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
         if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))
