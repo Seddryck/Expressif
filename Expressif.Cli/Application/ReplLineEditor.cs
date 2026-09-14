@@ -7,8 +7,11 @@ internal sealed class ReplLineEditor
     public string? Read(
         Func<CancellationToken, ConsoleKeyInfo> readKey,
         TextWriter output,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        int promptWidth = 0,
+        int terminalWidth = int.MaxValue)
     {
+        terminalWidth = Math.Max(1, terminalWidth);
         var text = string.Empty;
         var cursor = 0;
         var edits = new Stack<(string Text, int Cursor)>();
@@ -91,11 +94,68 @@ internal sealed class ReplLineEditor
                     edits.Push((previousText, previousCursor));
             }
 
+            Redraw(output, previousText, previousCursor, text, cursor, promptWidth, terminalWidth);
+        }
+    }
+
+    private static void Redraw(
+        TextWriter output,
+        string previousText,
+        int previousCursor,
+        string text,
+        int cursor,
+        int promptWidth,
+        int terminalWidth)
+    {
+        if (promptWidth + Math.Max(previousText.Length, text.Length) < terminalWidth)
+        {
             output.Write(new string('\b', previousCursor));
             output.Write(text);
             var padding = Math.Max(0, previousText.Length - text.Length);
             output.Write(new string(' ', padding));
             output.Write(new string('\b', text.Length + padding - cursor));
+            return;
         }
+
+        var previousLastRow = LastOccupiedRow(promptWidth + previousText.Length, terminalWidth);
+        var currentRow = CursorRow(promptWidth, previousText.Length, previousCursor, terminalWidth);
+
+        output.Write('\r');
+        Move(output, currentRow, 'A');
+        Move(output, promptWidth, 'C');
+        output.Write("\u001b[K");
+        for (var row = 1; row <= previousLastRow; row++)
+        {
+            Move(output, 1, 'B');
+            output.Write("\r\u001b[2K");
+        }
+
+        Move(output, previousLastRow, 'A');
+        output.Write('\r');
+        Move(output, promptWidth, 'C');
+        output.Write(text);
+
+        if (cursor == text.Length)
+            return;
+
+        output.Write('\r');
+        Move(output, LastOccupiedRow(promptWidth + text.Length, terminalWidth), 'A');
+        var cursorOffset = promptWidth + cursor;
+        Move(output, cursorOffset / terminalWidth, 'B');
+        Move(output, cursorOffset % terminalWidth, 'C');
+    }
+
+    private static int LastOccupiedRow(int displayedLength, int terminalWidth)
+        => Math.Max(0, displayedLength - 1) / terminalWidth;
+
+    private static int CursorRow(int promptWidth, int textLength, int cursor, int terminalWidth)
+        => cursor == textLength
+            ? LastOccupiedRow(promptWidth + textLength, terminalWidth)
+            : (promptWidth + cursor) / terminalWidth;
+
+    private static void Move(TextWriter output, int count, char direction)
+    {
+        if (count > 0)
+            output.Write($"\u001b[{count}{direction}");
     }
 }
