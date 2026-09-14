@@ -213,6 +213,48 @@
     "Bindings": {}
   },
   {
+    "Name": "sort-key",
+    "Summary": "Represents a non-empty sequence of sort terms applied lexicographically.",
+    "Parent": "tuple",
+    "Literal": {
+      "Syntax": "SortKey followed by parenthesized comma-separated SortTerm values",
+      "Examples": [
+        "SortKey(SortTerm(42, compare-numeric~, #true, #false))"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.SortKeyValue"
+    }
+  },
+  {
+    "Name": "sort-table",
+    "Summary": "Represents normalized sort metadata and rows.",
+    "Parent": "record",
+    "Literal": {
+      "Syntax": "SortTable{headers := {...}, rows := {...}}",
+      "Examples": [
+        "SortTable{headers := {}, rows := {}}"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.SortTableValue"
+    }
+  },
+  {
+    "Name": "sort-term",
+    "Summary": "Represents a value and the metadata needed to compare it while sorting.",
+    "Parent": "tuple",
+    "Literal": {
+      "Syntax": "SortTerm(value, comparer~, ascending, nulls-first)",
+      "Examples": [
+        "SortTerm(42, compare-numeric~, #true, #false)"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.SortTermValue"
+    }
+  },
+  {
     "Name": "structured",
     "Summary": "The common type family for values containing other values.",
     "Parent": null,
