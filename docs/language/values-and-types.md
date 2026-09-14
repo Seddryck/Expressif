@@ -21,6 +21,7 @@ Common values can be written directly in an expression.
 | integer | Digits, optionally preceded by a sign | `10` or `-10` |
 | decimal | Digits with a `.` decimal separator, optionally preceded by a sign | `10.1` or `-10.1` |
 | boolean | `#true` or `#false` | `#true` |
+| ordering | `#less`, `#equal`, or `#greater` | `#less` |
 | null | `#null` | `#null` |
 | aggregated dimension | `#all` | `#all` |
 | date | `#"yyyy-MM-dd"` | `#"2025-12-16"` |
@@ -38,6 +39,7 @@ The main scalar type families can be viewed as:
 flowchart TD
     A[Scalar] --> B[text]
     A --> C[boolean]
+    A --> L[ordering]
     A --> D[numeric]
     D --> E[integer]
     D --> F[decimal]
@@ -94,6 +96,18 @@ Write an integer without a decimal separator and a decimal with a `.` decimal se
 ```
 
 The literals `10` and `-10` have type `integer`; `10.1` and `-10.1` have type `decimal`. A function may accept any numeric value or require one of these more specific numeric types.
+
+### Ordering
+
+An ordering value represents the relative order of a left-hand value compared with a right-hand value:
+
+```expressif
+#less
+#equal
+#greater
+```
+
+Ordering values coerce to numeric values `-1`, `0`, and `1`, respectively. The reverse coercion accepts only those three numeric values; every other value produces `#null`. Ordering values do not coerce to or from text, booleans, or temporal values.
 
 ### Temporal
 

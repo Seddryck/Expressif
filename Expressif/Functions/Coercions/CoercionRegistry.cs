@@ -13,6 +13,9 @@ public sealed class CoercionRegistry
     private static readonly Type[] NumericAndBooleanTextSources =
         NumericSourceTypes.Concat([typeof(bool), typeof(string)]).ToArray();
 
+    private static readonly Type[] NumericAndOrderingBooleanTextSources =
+        NumericAndBooleanTextSources.Concat([typeof(OrderingValue)]).ToArray();
+
     private static readonly Type[] TextSources =
         NumericSourceTypes
             .Concat([typeof(string), typeof(bool), typeof(DateOnly), typeof(DateTime), typeof(YearMonth)])
@@ -56,12 +59,12 @@ public sealed class CoercionRegistry
             new CoercionDescriptor(
                 "coerce-numeric",
                 typeof(decimal?),
-                NumericAndBooleanTextSources,
+                NumericAndOrderingBooleanTextSources,
                 sourceType => CreateNumericOrFallback(typeof(CoerceNumeric<>), sourceType, () => new CoerceNumeric())),
             new CoercionDescriptor(
                 "coerce-int",
                 typeof(int?),
-                NumericAndBooleanTextSources,
+                NumericAndOrderingBooleanTextSources,
                 sourceType => CreateNumericOrFallback(typeof(CoerceInt<>), sourceType, () => new CoerceInt())),
             new CoercionDescriptor(
                 "coerce-boolean",
@@ -88,6 +91,12 @@ public sealed class CoercionRegistry
                 typeof(DateTime?),
                 [typeof(DateTime), typeof(DateOnly), typeof(YearMonth), typeof(string)],
                 _ => new CoerceDateTime()),
+            new CoercionDescriptor(
+                "coerce-ordering",
+                typeof(OrderingValue),
+                NumericSourceTypes,
+                sourceType => (IFunction)Activator.CreateInstance(
+                    typeof(CoerceOrdering<>).MakeGenericType(sourceType))!),
         ];
 
     private static IFunction CreateNumericOrFallback(

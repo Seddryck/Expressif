@@ -111,6 +111,9 @@ public static class ValueFormatter
                 case bool boolean:
                     builder.Append(boolean ? "#true" : "#false");
                     break;
+                case OrderingValue ordering:
+                    builder.Append(ordering);
+                    break;
                 case string text:
                     builder.Append(structuredValue ? QuoteString(text) : text);
                     break;

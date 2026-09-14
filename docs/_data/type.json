@@ -162,6 +162,22 @@
     }
   },
   {
+    "Name": "ordering",
+    "Summary": "Represents the relative ordering of a left-hand value compared with a right-hand value.",
+    "Parent": "scalar",
+    "Literal": {
+      "Syntax": "#less, #equal, or #greater",
+      "Examples": [
+        "#less",
+        "#equal",
+        "#greater"
+      ]
+    },
+    "Bindings": {
+      "dotnet": "Expressif.Values.OrderingValue"
+    }
+  },
+  {
     "Name": "pair",
     "Summary": "Represents an immutable key/value association and specialized tuple of arity two.",
     "Parent": "tuple",

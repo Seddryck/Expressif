@@ -15,7 +15,9 @@ public class CoerceFunctionsTest
     public void Coerce_Valid_TypeDirected(object? value, string expression, string expected)
     {
         var input = value is string text
-            ? text.Contains("=>")
+            ? text is "#less" or "#equal" or "#greater"
+                ? Expression.CreateClosed(text).Evaluate(null)
+                : text.Contains("=>")
                 ? Expression.CreateClosed(text).Evaluate(null)
                 : text.StartsWith("T(") || text.StartsWith('{')
                     ? new ParameterValueConverter().Parse(text)
@@ -63,6 +65,46 @@ public class CoerceFunctionsTest
     [Test]
     public void Coerce_FailedConversion_ReturnsNull()
         => Assert.That(Expression.Create("coerce(:integer)").Evaluate("abc"), Is.Null);
+
+    [TestCase(-1, "#less")]
+    [TestCase(0, "#equal")]
+    [TestCase(1, "#greater")]
+    [TestCase(-1.0, "#less")]
+    [TestCase(1.0, "#greater")]
+    public void CoerceOrdering_ExactNumericValue_ReturnsOrdering(object value, string expected)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(ValueFormatter.Format(new CoerceOrdering().Evaluate(value)), Is.EqualTo(expected));
+            Assert.That(
+                ValueFormatter.Format(new Coerce(typeof(OrderingValue)).Evaluate(value)),
+                Is.EqualTo(expected));
+        });
+    }
+
+    [Conformance]
+    public void CoerceOrdering_Valid(decimal value, string expected)
+        => Assert.That(ValueFormatter.Format(new CoerceOrdering().Evaluate(value)), Is.EqualTo(expected));
+
+    [TestCase(-2)]
+    [TestCase(2)]
+    [TestCase(0.5)]
+    [TestCase("1")]
+    [TestCase(true)]
+    [TestCase(null)]
+    public void CoerceOrdering_OtherValue_ReturnsNull(object? value)
+        => Assert.That(new CoerceOrdering().Evaluate(value), Is.Null);
+
+    [Test]
+    public void CoerceOrdering_UnrelatedSemanticTargets_ReturnNull()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(Expression.Create("coerce(:text)").Evaluate(OrderingValue.Less), Is.Null);
+            Assert.That(Expression.Create("coerce(:boolean)").Evaluate(OrderingValue.Equal), Is.Null);
+            Assert.That(Expression.Create("coerce(:date)").Evaluate(OrderingValue.Greater), Is.Null);
+        });
+    }
 
     [TestCase("coerce(:integer, :text)", "42")]
     [TestCase("coerce(:integer)", "{name := \"Bob\"}")]

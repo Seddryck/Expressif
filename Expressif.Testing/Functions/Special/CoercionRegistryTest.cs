@@ -3,6 +3,7 @@ using Expressif.Functions.Coercions;
 using Expressif.Functions.Introspection;
 using Expressif.Functions.Special;
 using Expressif.Values;
+using Expressif.Values.Casters;
 using System.Numerics;
 
 namespace Expressif.Testing.Functions.Special;
@@ -90,6 +91,8 @@ public class CoercionRegistryTest
         AssertPair<string, decimal?>(new CoerceNumeric(), "42.5");
         AssertPair<bool, int?>(new CoerceInt(), false);
         AssertPair<string, int?>(new CoerceInt(), "42");
+        AssertPair<OrderingValue, int?>(new CoerceInt(), OrderingValue.Less);
+        AssertPair<OrderingValue, decimal?>(new CoerceNumeric(), OrderingValue.Greater);
         AssertPair<bool, bool?>(new CoerceBoolean(), true);
         AssertPair<string, bool?>(new CoerceBoolean(), "yes");
         AssertPair<string, string?>(new CoerceText(), "text");
@@ -109,6 +112,21 @@ public class CoercionRegistryTest
         AssertPair<DateOnly, DateTime?>(new CoerceDateTime(), new DateOnly(2026, 8, 22));
         AssertPair<YearMonth, DateTime?>(new CoerceDateTime(), new YearMonth(2026, 8));
         AssertPair<string, DateTime?>(new CoerceDateTime(), "2026-08-22 12:30:00");
+    }
+
+    [Test]
+    public void OrderingDescriptor_AcceptsOnlyNumericSources()
+    {
+        var descriptor = new CoercionRegistry().Descriptors.Single(x => x.Name == "coerce-ordering");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(descriptor.SourceTypes, Is.EquivalentTo(NumericCoercion.SupportedSourceTypes
+                .SelectMany(type => new[] { type, typeof(Nullable<>).MakeGenericType(type) })));
+            Assert.That(descriptor.SourceTypes, Does.Not.Contain(typeof(string))
+                .And.Not.Contain(typeof(bool))
+                .And.Not.Contain(typeof(DateOnly)));
+        });
     }
 
     [TestCase("(null)")]

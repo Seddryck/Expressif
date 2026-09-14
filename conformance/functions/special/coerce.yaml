@@ -16,3 +16,7 @@ tests:
       - {id: coerce.valid.type-directed.pair.tuple, value: '("USA" => 42)', parameters: ["coerce(:tuple)"], expected: 'T("USA", 42)'}
       - {id: coerce.valid.type-directed.record.selective, value: '{name := "bob", age := "42"}', parameters: ["coerce(age -> :integer)"], expected: '{name := "bob", age := 42}'}
       - {id: coerce.valid.type-directed.record.multiple, value: '{name := "bob", age := "42"}', parameters: ["coerce(name -> :text, age -> :integer)"], expected: '{name := "bob", age := 42}'}
+      - {id: coerce.valid.type-directed.ordering.less-to-integer, value: '#less', parameters: ["coerce(:integer)"], expected: '-1'}
+      - {id: coerce.valid.type-directed.ordering.equal-to-numeric, value: '#equal', parameters: ["coerce(:numeric)"], expected: '0'}
+      - {id: coerce.valid.type-directed.ordering.greater-to-integer, value: '#greater', parameters: ["coerce(:integer)"], expected: '1'}
+      - {id: coerce.valid.type-directed.ordering.invalid-text, value: '1', parameters: ["coerce(:ordering)"], expected: 'null'}
