@@ -117,6 +117,8 @@ internal static class ExpressifTypeMapper
             return "sort-term";
         if (type == typeof(SortKeyValue))
             return "sort-key";
+        if (type == typeof(SortTableValue))
+            return "sort-table";
         if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
         if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))
