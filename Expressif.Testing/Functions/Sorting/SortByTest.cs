@@ -18,6 +18,15 @@ public class SortByTest
     }
 
     [Test]
+    public void SortBy_DirectTupleProjection_EvaluatesAgainstEachItem()
+    {
+        var source = "array(T(1, 100), T(2, 120), T(4, 75), T(3, 110)) | sort-by($0 -> :integer)";
+        Assert.That(
+            ValueFormatter.Format(Expression.Create(source).Evaluate(null)),
+            Is.EqualTo("{T(1, 100), T(2, 120), T(3, 110), T(4, 75)}"));
+    }
+
+    [Test]
     public void SortBy_MissingCriteria_Throws()
         => Assert.That(() => Expression.Create("array() | sort-by()").Evaluate(null), Throws.TypeOf<BindingException>());
 
