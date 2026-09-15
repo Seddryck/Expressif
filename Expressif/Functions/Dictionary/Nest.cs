@@ -16,17 +16,19 @@ public sealed class Nest : IFunction<DictionaryValueType, DictionaryValueType>
         if (value.Count == 0)
             return new Expressif.Values.Dictionary([]);
 
+        if (value[0].Key is not IPositionalValue first || first.Arity < 2)
+            throw new ArgumentException("Every nest key must be a tuple of the same arity, at least two.", nameof(value));
+
         var entries = new List<(IPositionalValue Key, object? Value)>();
-        int? arity = null;
+        var arity = first.Arity;
         foreach (var entry in value)
         {
-            if (entry.Key is not IPositionalValue tuple || tuple.Arity < 2 || (arity is not null && tuple.Arity != arity))
+            if (entry.Key is not IPositionalValue tuple || tuple.Arity != arity)
                 throw new ArgumentException("Every nest key must be a tuple of the same arity, at least two.", nameof(value));
-            arity = tuple.Arity;
             entries.Add((tuple, entry.Value));
         }
 
-        return Build(entries, 0, arity!.Value);
+        return Build(entries, 0, arity);
     }
 
     object? IFunction.Evaluate(object? value) => value is DictionaryValueType dictionary ? Evaluate(dictionary) : null;
