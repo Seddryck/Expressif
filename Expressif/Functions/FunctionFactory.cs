@@ -384,6 +384,9 @@ public partial class FunctionFactory : BaseExpressionFactory
         if (typeof(IValueSpreadAware).IsAssignableFrom(type))
             return InstantiateValueSpreadAware(type, function, context);
 
+        if (type == typeof(Grouping.SummarizeAgainst))
+            return BuildSummarizeAgainst(function, context);
+
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
 
@@ -1330,6 +1333,22 @@ public partial class FunctionFactory : BaseExpressionFactory
     {
         var nameProvider = BuildAccumulatorNameProvider(parameter, context);
         return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
+    }
+
+    private IFunction BuildSummarizeAgainst(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(Grouping.SummarizeAgainst), function.Arguments).Parameters;
+        if (!TryGetOpenExpression(bound[2], out var operation))
+        {
+            throw new ArgumentException(
+                $"The function named '{function.Name}' expects a combine expression.",
+                nameof(function));
+        }
+
+        return new Grouping.SummarizeAgainst(
+            BuildAccumulatorProvider(bound[0], context),
+            BuildAccumulatorProvider(bound[1], context),
+            BuildTransformationProvider(operation, context));
     }
 
     private bool TryInstantiateWithTransformationProvider(
