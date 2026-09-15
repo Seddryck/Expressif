@@ -3527,6 +3527,25 @@
     ]
   },
   {
+    "Name": "nest",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "dictionary",
+    "Input": "dictionary",
+    "Output": "dictionary",
+    "Summary": "Restructures a dictionary with tuple keys into nested dictionaries, one level per tuple position, preserving key types and source insertion order.",
+    "Parameters": [],
+    "Behavior": "An empty dictionary remains empty. Every key in a nonempty dictionary must be a tuple of the same arity, at least two; other keys cause an evaluation error. Each tuple's last position maps to its original value. Keys at every level use dictionary structural equality.",
+    "Examples": [
+      "!{(T(\"BE\", 2025) => 100), (T(\"BE\", 2026) => 120), (T(\"FR\", 2025) => 80)} | nest → !{(\"BE\" => !{(2025 => 100), (2026 => 120)}), (\"FR\" => !{(2025 => 80)})}"
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "dictionary-entries",
+      "Summary": "Visits each entry of the dictionary supplied as pipeline input to this nest call in insertion order, using its tuple key positions to form nested dictionary levels."
+    }
+  },
+  {
     "Name": "key",
     "IsPublic": true,
     "Aliases": [],
