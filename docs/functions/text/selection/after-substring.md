@@ -16,7 +16,7 @@ generated: true
 text →
 after-substring(
     substring: text,
-    count?: integer
+    count: integer = 0
 ) → text
 ```
 
@@ -31,7 +31,7 @@ Returns the substring of the argument string, containing all the characters imme
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `substring` | `text` | Yes | The string to seek. |
-| `count` | `integer` | No | The number of character positions to examine. |
+| `count` | `integer` | No | The number of character positions to examine. Defaults to `0`. |
 
 ## Argument evaluation
 

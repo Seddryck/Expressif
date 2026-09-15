@@ -1,4 +1,5 @@
 using System.Data;
+using System.Text.Json;
 using Expressif.Cli.Application;
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
@@ -1910,9 +1911,42 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("evaluate"));
             Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
+            Assert.That(result.StdOut, Does.Contain("plan"));
             Assert.That(result.StdOut, Does.Contain("help"));
             Assert.That(result.StdOut, Does.Contain("repl"));
             Assert.That(result.StdOut, Does.Contain("version"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Plan_Expression_DisplaysCanonicalLogicalTree()
+    {
+        var result = await InvokeAsync("plan", "trim | upper");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Pipeline"));
+            Assert.That(result.StdOut, Does.Contain("Call: trim"));
+            Assert.That(result.StdOut, Does.Contain("Call: upper"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Plan_JsonOutput_ReturnsVersionedPortablePlan()
+    {
+        var result = await InvokeAsync("plan", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(), Is.EqualTo("expressif.logical-plan"));
+            Assert.That(document.RootElement.GetProperty("version").GetInt32(), Is.EqualTo(1));
+            Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
+                .GetProperty("operator").GetProperty("name").GetString(), Is.EqualTo("trim"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -1983,8 +2017,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith(
-                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count?: integer{Environment.NewLine}) → text"));
-            Assert.That(result.StdOut, Does.Contain("count?"));
+                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count: integer = 0{Environment.NewLine}) → text"));
+            Assert.That(result.StdOut, Does.Contain("count: integer = 0"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -2042,7 +2076,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith(
-                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times?: integer{Environment.NewLine}) → numeric"));
+                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times: integer = 1{Environment.NewLine}) → numeric"));
             Assert.That(result.StdOut, Does.Contain("Returns the sum of the input value and the parameter value."));
             Assert.That(result.StdOut, Does.Contain("times  integer (optional)"));
             Assert.That(result.StdOut, Does.Contain("  10 | add(5)      → 15"));
@@ -2205,6 +2239,7 @@ public class CliCommandTests
             var composition = new CliComposition(
                 new ParseHandler(new SyntaxService()),
                 new BindHandler(new SyntaxService()),
+                new PlanHandler(new SyntaxService()),
                 new EvaluateHandler(expressions, values, sources),
                 new RunHandler(expressions, values, textFiles, sources),
                 new ValidateHandler(expressions),

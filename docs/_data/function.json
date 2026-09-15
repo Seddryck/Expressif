@@ -37,6 +37,9 @@
         "Name": "predicate",
         "Type": "predicate",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "Predicate that rejects the input when true; defaults to is-null when omitted.",
         "Evaluation": {
           "Frequency": "once",
@@ -97,6 +100,9 @@
         "Name": "values",
         "Type": "any",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more expressions whose evaluated values become the elements of the resulting array.",
@@ -429,6 +435,10 @@
         "Name": "seed",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "environment-derived",
+          "Source": "the runtime's shared random-number generator"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies an optional seed that makes assignments reproducible on the same runtime version.",
@@ -1708,13 +1718,16 @@
         "Name": "times",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 1
+        },
         "Summary": "Number of times the addition is applied.",
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
           "Summary": "Evaluated once in the enclosing context."
-        },
-        "Default": 1
+        }
       }
     ],
     "Examples": [
@@ -2198,6 +2211,10 @@
         "Name": "decimals",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 2
+        },
         "Summary": "Number of decimal places from 0 to 28; defaults to 2.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2209,6 +2226,10 @@
         "Name": "separator",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": "."
+        },
         "Summary": "Nonempty decimal separator; defaults to a point.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2220,6 +2241,10 @@
         "Name": "grouping",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": ","
+        },
         "Summary": "Thousands separator; defaults to a comma. An empty string disables grouping.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2231,6 +2256,10 @@
         "Name": "negative",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": "-"
+        },
         "Summary": "One character prepended to negative amounts, or two characters enclosing them; defaults to a minus sign.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2269,6 +2298,10 @@
         "Name": "decimals",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 2
+        },
         "Summary": "Number of decimal places from 0 to 28; defaults to 2.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2280,6 +2313,10 @@
         "Name": "separator",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": "."
+        },
         "Summary": "Nonempty decimal separator; defaults to a point.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2291,6 +2328,10 @@
         "Name": "grouping",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": ","
+        },
         "Summary": "Thousands separator; defaults to a comma. An empty string disables grouping.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2302,6 +2343,10 @@
         "Name": "negative",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": "-"
+        },
         "Summary": "One character prepended to negative amounts, or two characters enclosing them; defaults to a minus sign.",
         "Evaluation": {
           "Frequency": "custom",
@@ -2544,6 +2589,9 @@
         "Name": "filter",
         "Type": "predicate",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "An optional predicate selecting field names to transform. Omission selects every field.",
         "Evaluation": {
           "Frequency": "per-element",
@@ -2652,6 +2700,9 @@
         "Name": "names",
         "Type": "array",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields.",
         "Evaluation": {
           "Frequency": "once",
@@ -2677,6 +2728,9 @@
         "Name": "names",
         "Type": "array",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields.",
         "Evaluation": {
           "Frequency": "once",
@@ -2702,6 +2756,9 @@
         "Name": "entries",
         "Kind": "entry",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value.",
@@ -3437,10 +3494,13 @@
         "Name": "offset",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 1
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the rotation offset: positive values rotate right and negative values rotate left, wrapping modulo tuple length. Defaults to 1; zero leaves the order unchanged.",
-        "Default": 1,
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
@@ -3570,6 +3630,9 @@
         "Name": "values",
         "Type": "pair",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more pairs whose unique keys and values become dictionary entries.",
@@ -3738,6 +3801,9 @@
         "Name": "values",
         "Type": "pair",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more pairs whose keys and grouped value collections become groups.",
@@ -3894,6 +3960,9 @@
         "Name": "values",
         "Type": "any",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more expressions whose evaluated values become the positions of the resulting tuple.",
@@ -4024,6 +4093,10 @@
         "Name": "times",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 1
+        },
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction",
         "Evaluation": {
           "Frequency": "once",
@@ -4334,6 +4407,10 @@
         "Name": "times",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 1
+        },
         "Summary": "An integer between 0 and +Infinity, indicating the number of times to repeat the addition",
         "Evaluation": {
           "Frequency": "once",
@@ -5217,6 +5294,10 @@
         "Name": "count",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 0
+        },
         "Summary": "The number of character positions to examine.",
         "Evaluation": {
           "Frequency": "custom",
@@ -5340,6 +5421,10 @@
         "Name": "count",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": 0
+        },
         "Summary": "The number of character positions to examine.",
         "Evaluation": {
           "Frequency": "custom",
@@ -6304,6 +6389,9 @@
         "Name": "lengths",
         "Type": "integer",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place."
@@ -6538,6 +6626,9 @@
         "Name": "values",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.",
@@ -6675,7 +6766,10 @@
         "Name": "separator",
         "Type": "text",
         "Optional": true,
-        "Summary": "A character that delimits the substrings in this instance.",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "A character that delimits the substrings in this instance. When omitted, whitespace characters delimit tokens.",
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
@@ -6745,7 +6839,10 @@
         "Name": "separator",
         "Type": "text",
         "Optional": true,
-        "Summary": "A character that delimits the tokens in the argument value.",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "A character that delimits the tokens in the argument value. When omitted, whitespace characters delimit tokens.",
         "Evaluation": {
           "Frequency": "once",
           "Source": "enclosing",
@@ -6970,6 +7067,10 @@
         "Name": "culture",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": ""
+        },
         "Summary": "A string representing a pre-defined culture.",
         "Evaluation": {
           "Frequency": "once",
@@ -7145,9 +7246,12 @@
         "Name": "result",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
-        "Summary": "Specifies the expression that produces the value appended for the current seed.",
+        "Summary": "Specifies the expression that produces the value appended for the current seed. When omitted, the current seed is appended unchanged.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",

@@ -29,7 +29,7 @@ Creates a record by evaluating its named and spread entries against the input va
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `entries` | `entry` | Variadic (zero or more) | Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value. |
+| `entries` | `entry` | Variadic (zero or more) | Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value. Omission supplies an empty variadic sequence. |
 
 ## Argument evaluation
 

@@ -29,7 +29,7 @@ Returns a tuple with its positions rotated cyclically, preserving arity and item
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `offset` | `integer` | No | Specifies the rotation offset: positive values rotate right and negative values rotate left, wrapping modulo tuple length. Defaults to 1; zero leaves the order unchanged. Defaults to `1`. |
+| `offset` | `integer` | No | Specifies the rotation offset: positive values rotate right and negative values rotate left, wrapping modulo tuple length. Defaults to 1; zero leaves the order unchanged. |
 
 
 
