@@ -19,3 +19,4 @@ Reference documentation for Expressif functions in the `dictionary` scope.
 | Name | Overview |
 |:-----|:---------|
 | [`dictionary`]({{ '/functions/dictionary/dictionary/' | relative_url }}) | Constructs a dictionary from zero or more pairs. Spread arguments expand arrays of pairs in place. |
+| [`nest`]({{ '/functions/dictionary/nest/' | relative_url }}) | Restructures a dictionary with tuple keys into nested dictionaries, one level per tuple position, preserving key types and source insertion order. |

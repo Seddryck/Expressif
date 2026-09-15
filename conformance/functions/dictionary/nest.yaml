@@ -1,0 +1,22 @@
+suite: nest
+kind: function
+operator: nest
+tests:
+  - id: nest.valid.dictionary
+    cases:
+      - id: nest.valid.dictionary.two-dimensions
+        value: (null)
+        parameters: ['!{(T("BE", 2025) => 100), (T("BE", 2026) => 120), (T("FR", 2025) => 80)} | nest']
+        expected: '!{("BE" => !{(2025 => 100), (2026 => 120)}), ("FR" => !{(2025 => 80)})}'
+      - id: nest.valid.dictionary.three-dimensions
+        value: (null)
+        parameters: ['!{(T("BE", 2025, "A") => 1), (T("FR", 2025, "A") => 2), (T("BE", 2025, "B") => 3)} | nest']
+        expected: '!{("BE" => !{(2025 => !{("A" => 1), ("B" => 3)})}), ("FR" => !{(2025 => !{("A" => 2)})})}'
+      - id: nest.valid.dictionary.empty
+        value: (null)
+        parameters: ['!{} | nest']
+        expected: '!{}'
+      - id: nest.valid.dictionary.null-key-and-value
+        value: (null)
+        parameters: ['!{(T(#null, 1) => #null), (T(#null, 2) => 5)} | nest']
+        expected: '!{(null => !{(1 => null), (2 => 5)})}'
