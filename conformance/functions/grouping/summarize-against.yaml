@@ -1,0 +1,40 @@
+suite: summarize-against
+kind: function
+operator: summarize-against
+tests:
+  - id: summarize-against.valid.results
+    cases:
+      - id: summarize-against.valid.results.share-of-total
+        value: (null)
+        parameters: ['#{("BE" => {100, 50}), ("FR" => {50}), ("DE" => {100})} | summarize-against(sum, sum, divide~)']
+        expected: '!{("BE" => 0.5), ("FR" => 0.1666666666666666666666666667), ("DE" => 0.3333333333333333333333333333)}'
+      - id: summarize-against.valid.results.relative-to-maximum
+        value: (null)
+        parameters: ['#{("BE" => {100, 50}), ("FR" => {50}), ("DE" => {100})} | summarize-against(sum, max, divide~)']
+        expected: '!{("BE" => 1.5), ("FR" => 0.5), ("DE" => 1)}'
+      - id: summarize-against.valid.results.heterogeneous
+        value: (null)
+        parameters: ['#{("BE" => {1, 2}), ("FR" => {3})} | summarize-against(count, sum, add~)']
+        expected: '!{("BE" => 8), ("FR" => 7)}'
+      - id: summarize-against.valid.results.named-arguments
+        value: (null)
+        parameters: ['#{("FR" => {2}), ("BE" => {3, 4})} | summarize-against(combine := subtract~, global := sum, local := count)']
+        expected: '!{("FR" => -8), ("BE" => -7)}'
+  - id: summarize-against.valid.empty
+    cases:
+      - id: summarize-against.valid.empty.grouping
+        value: (null)
+        parameters: ['#{} | summarize-against(sum, max, divide~)']
+        expected: '!{}'
+      - id: summarize-against.valid.empty.group
+        value: (null)
+        parameters: ['#{("BE" => {}), ("FR" => {2})} | summarize-against(count, count, subtract~)']
+        expected: '!{("BE" => -1), ("FR" => 0)}'
+      - id: summarize-against.valid.empty.null-local
+        value: (null)
+        parameters: ['#{("BE" => {}), ("FR" => {2})} | summarize-against(first, count, first)']
+        expected: '!{("BE" => null), ("FR" => 2)}'
+      - id: summarize-against.valid.empty.null-global
+        value: (null)
+        parameters: ['#{("BE" => {})} | summarize-against(count, max, last)']
+        expected: '!{("BE" => null)}'
