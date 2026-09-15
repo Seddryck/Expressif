@@ -339,6 +339,9 @@ public partial class FunctionFactory : BaseExpressionFactory
             return new Array.GroupBy(expressions);
         }
 
+        if (construction == FunctionConstructionKind.Join)
+            return BuildJoinFunction(function, context);
+
         if (construction == FunctionConstructionKind.Pick)
         {
             var positions = function.Arguments
@@ -649,6 +652,23 @@ public partial class FunctionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         return function.Arguments.Select(argument => BuildValueEvaluator(argument.Value, context)).ToArray();
+    }
+
+    private IFunction BuildJoinFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(Array.Join), function.Arguments).Parameters;
+        if (bound.Length is < 2 or > 3)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+
+        var rightEvaluator = BuildValueEvaluator(bound[0], context);
+        Func<object?> right = () => rightEvaluator.Invoke(EvaluationRuntime.Frame?.Current);
+        Func<object?, object?> BuildKey(IParameter parameter)
+        {
+            var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+            return value => EvaluateNested(evaluator, value);
+        }
+
+        return new Array.Join(right, BuildKey(bound[1]), bound.Length == 3 ? BuildKey(bound[2]) : null);
     }
 
     private IFunction BuildTransformWithFunction(Bindings.Function function, IContext context)

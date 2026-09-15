@@ -1026,6 +1026,65 @@
     }
   },
   {
+    "Name": "join",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/combination",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Emits a pair for every matching left and right value, omitting left values without a match. Array right-hand values are grouped by key before lookup.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "array | grouping | dictionary",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The array, grouping, or dictionary supplying matching right-hand values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression."
+        }
+      },
+      {
+        "Name": "left-key",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Selects the lookup key of each left value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once with each left element as its context; when right-key is omitted for an array right-hand side, also evaluated once with each right element as its context while building the grouping."
+        }
+      },
+      {
+        "Name": "right-key",
+        "Type": "expression",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary."
+        }
+      }
+    ],
+    "Examples": [
+      "{{id := 1}, {id := 2}} | join({{id := 1, order := \"A\"}, {id := 1, order := \"B\"}}, .id) → {({id := 1} => {id := 1, order := \"A\"}), ({id := 1} => {id := 1, order := \"B\"})}",
+      "{1, 2} | join(!{(1 => \"one\")}, @_) → {(1 => \"one\")}"
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array entering this join call in order; each matching group contributes its right values in their original order."
+    }
+  },
+  {
     "Name": "zip",
     "IsPublic": true,
     "Aliases": [],

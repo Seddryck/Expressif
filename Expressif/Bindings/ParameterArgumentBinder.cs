@@ -24,14 +24,14 @@ internal static class ParameterArgumentBinder
         var suppliedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var argument in named)
         {
-            if (!suppliedNames.Add(argument.Name!))
+            if (!suppliedNames.Add(argument.Name!.ToKebabCase()))
                 throw new DuplicateNamedArgumentException(argument.Name!);
 
-            if (!allParameters.Any(x => x.Name!.Equals(argument.Name, StringComparison.OrdinalIgnoreCase)))
+            if (!allParameters.Any(x => NamesMatch(x.Name!, argument.Name!)))
                 throw new UnknownParameterNameException(functionName, argument.Name!);
 
             if (constructors.Any(x => x.GetParameters().Take(positionalCount)
-                .Any(p => p.Name!.Equals(argument.Name, StringComparison.OrdinalIgnoreCase))))
+                .Any(p => NamesMatch(p.Name!, argument.Name!))))
                 throw new PositionallySuppliedParameterException(argument.Name!);
         }
 
@@ -45,7 +45,7 @@ internal static class ParameterArgumentBinder
         var candidate = constructors.Where(x => x.GetParameters().Length >= positionalCount)
             .OrderByDescending(x => x.GetParameters().Length).First();
         var missing = candidate.GetParameters().Skip(positionalCount)
-            .FirstOrDefault(x => !x.IsOptional && !suppliedNames.Contains(x.Name!));
+            .FirstOrDefault(x => !x.IsOptional && !suppliedNames.Contains(x.Name!.ToKebabCase()));
         if (missing is not null)
             throw new MissingRequiredParameterException(missing.Name!);
         throw new AmbiguousParameterBindingException(functionName);
@@ -62,7 +62,7 @@ internal static class ParameterArgumentBinder
             values[i] = arguments[i].Value;
         foreach (var argument in arguments.Skip(positionalCount))
         {
-            var index = Array.FindIndex(metadata, x => x.Name!.Equals(argument.Name, StringComparison.OrdinalIgnoreCase));
+            var index = Array.FindIndex(metadata, x => NamesMatch(x.Name!, argument.Name!));
             if (index < 0)
                 return null;
             values[index] = argument.Value;
@@ -73,4 +73,7 @@ internal static class ParameterArgumentBinder
             values[i] ??= new LiteralParameter(metadata[i].DefaultValue);
         return new ParameterArgumentBinding(constructor, values!);
     }
+
+    private static bool NamesMatch(string parameter, string supplied)
+        => parameter.ToKebabCase().Equals(supplied.ToKebabCase(), StringComparison.OrdinalIgnoreCase);
 }
