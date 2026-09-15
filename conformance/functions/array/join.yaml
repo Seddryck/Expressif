@@ -1,0 +1,48 @@
+suite: join
+kind: function
+operator: join
+tests:
+  - id: join.valid.array
+    cases:
+      - id: join.valid.array.shared-key-and-duplicates
+        value: (null)
+        parameters: ['{{id := 1}, {id := 2}, {id := 3}} | join({{id := 1, order := "A"}, {id := 1, order := "B"}, {id := 3, order := "C"}}, .id)']
+        expected: '{({id := 1} => {id := 1, order := "A"}), ({id := 1} => {id := 1, order := "B"}), ({id := 3} => {id := 3, order := "C"})}'
+      - id: join.valid.array.asymmetric-keys
+        value: (null)
+        parameters: ['{{customer-id := 2}, {customer-id := 1}} | join({{id := 1, name := "A"}, {id := 2, name := "B"}}, .customer-id, .id)']
+        expected: '{({customer-id := 2} => {id := 2, name := "B"}), ({customer-id := 1} => {id := 1, name := "A"})}'
+      - id: join.valid.array.composite-key
+        value: (null)
+        parameters: ['{{country := "BE", year := 2025}} | join({{country := "BE", year := 2025, name := "A"}, {country := "BE", year := 2026, name := "B"}}, T(.country, .year))']
+        expected: '{({country := "BE", year := 2025} => {country := "BE", year := 2025, name := "A"})}'
+      - id: join.valid.array.named-keys
+        value: (null)
+        parameters: ['{{customer-id := 1}} | join(left-key := .customer-id, right := {{id := 1, name := "A"}}, right-key := .id)']
+        expected: '{({customer-id := 1} => {id := 1, name := "A"})}'
+  - id: join.valid.grouping
+    cases:
+      - id: join.valid.grouping.duplicate-values
+        value: (null)
+        parameters: ['{1, 2} | join(#{(1 => {"A", "B"})}, @_)']
+        expected: '{(1 => "A"), (1 => "B")}'
+      - id: join.valid.grouping.group-by-pipeline
+        value: (null)
+        parameters: ['{{id := 1}, {id := 2}} | join({{customer-id := 1, order := "A"}, {customer-id := 1, order := "B"}} | group-by(.customer-id), .id)']
+        expected: '{({id := 1} => {customer-id := 1, order := "A"}), ({id := 1} => {customer-id := 1, order := "B"})}'
+  - id: join.valid.dictionary
+    cases:
+      - id: join.valid.dictionary.single-value
+        value: (null)
+        parameters: ['{1, 2} | join(!{(1 => "A")}, @_)']
+        expected: '{(1 => "A")}'
+  - id: join.valid.empty
+    cases:
+      - id: join.valid.empty.left-array
+        value: (null)
+        parameters: ['{} | join({1}, @_)']
+        expected: '{}'
+      - id: join.valid.empty.right-array
+        value: (null)
+        parameters: ['{1} | join({}, @_)']
+        expected: '{}'

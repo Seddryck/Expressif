@@ -147,7 +147,7 @@ public static class DocumentationExtensions
             for (var i = 0; i < paramNodes.Length; i++)
             {
                 paramInfos.Add(new ParamInfo(
-                    names[i],
+                    type == typeof(Array.Join) ? names[i].ToKebabCase() : names[i],
                     type == typeof(Tuple.Pick) && names[i] == "positions"
                         ? "integer"
                         : ExpressifTypeMapper.ToExpressifType(
