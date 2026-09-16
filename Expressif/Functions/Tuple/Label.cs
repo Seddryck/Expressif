@@ -2,19 +2,14 @@ using Expressif.Values;
 
 namespace Expressif.Functions.Tuple;
 
-/// <summary>Shared implementation for tuple-to-record labeling functions.</summary>
-public abstract class TupleLabeler : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
+internal static class TupleLabeling
 {
-    private Func<ValueArgumentEvaluator[]> Labels { get; }
-
-    protected TupleLabeler(Func<ValueArgumentEvaluator[]> labels)
-        => Labels = labels;
-
-    protected abstract bool QualifyOnlyConflicts { get; }
-
-    public RecordValue Evaluate(IPositionalValue value)
+    public static RecordValue Evaluate(
+        IPositionalValue value,
+        Func<ValueArgumentEvaluator[]> labelsProvider,
+        bool qualifyOnlyConflicts)
     {
-        var labels = ValueArguments.Evaluate(Labels.Invoke(), value).ToArray();
+        var labels = ValueArguments.Evaluate(labelsProvider.Invoke(), value).ToArray();
         if (labels.Any(label => label is not string))
             throw new ArgumentException("Every label must be text.", "labels");
         if (labels.Length != value.Arity)
@@ -39,7 +34,7 @@ public abstract class TupleLabeler : IFunction<IPositionalValue, RecordValue>, I
         }
 
         IReadOnlyDictionary<string, int>? occurrences = null;
-        if (QualifyOnlyConflicts)
+        if (qualifyOnlyConflicts)
         {
             occurrences = fields
                 .GroupBy(field => field.Name, StringComparer.Ordinal)
@@ -50,7 +45,7 @@ public abstract class TupleLabeler : IFunction<IPositionalValue, RecordValue>, I
         foreach (var field in fields)
         {
             var name = field.IsRecordField
-                && (!QualifyOnlyConflicts || occurrences![field.Name] > 1)
+                && (!qualifyOnlyConflicts || occurrences![field.Name] > 1)
                     ? $"{field.Label}.{field.Name}"
                     : field.Name;
 
@@ -61,32 +56,41 @@ public abstract class TupleLabeler : IFunction<IPositionalValue, RecordValue>, I
         return result;
     }
 
-    object? IFunction.Evaluate(object? value)
-        => value is IPositionalValue positional ? Evaluate(positional) : null;
-
     private readonly record struct LabeledField(string Label, string Name, object? Value, bool IsRecordField);
 }
 
 /// <summary>Turns tuple positions into an ordered record, qualifying fields expanded from record positions with their position label.</summary>
 [Function(prefix: "")]
 [Scope("tuple")]
-public sealed class Label : TupleLabeler
+public sealed class Label : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
 {
+    private Func<ValueArgumentEvaluator[]> Labels { get; }
+
     /// <param name="labels">One text label per tuple position. Spread arguments expand arrays of labels in place.</param>
     public Label(Func<ValueArgumentEvaluator[]> labels)
-        : base(labels) { }
+        => Labels = labels;
 
-    protected override bool QualifyOnlyConflicts => false;
+    public RecordValue Evaluate(IPositionalValue value)
+        => TupleLabeling.Evaluate(value, Labels, qualifyOnlyConflicts: false);
+
+    object? IFunction.Evaluate(object? value)
+        => value is IPositionalValue positional ? Evaluate(positional) : null;
 }
 
 /// <summary>Turns tuple positions into an ordered record, qualifying expanded record fields only when their unqualified names conflict.</summary>
 [Function(prefix: "")]
 [Scope("tuple")]
-public sealed class LabelConflicts : TupleLabeler
+public sealed class LabelConflicts : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
 {
+    private Func<ValueArgumentEvaluator[]> Labels { get; }
+
     /// <param name="labels">One text label per tuple position. Spread arguments expand arrays of labels in place.</param>
     public LabelConflicts(Func<ValueArgumentEvaluator[]> labels)
-        : base(labels) { }
+        => Labels = labels;
 
-    protected override bool QualifyOnlyConflicts => true;
+    public RecordValue Evaluate(IPositionalValue value)
+        => TupleLabeling.Evaluate(value, Labels, qualifyOnlyConflicts: true);
+
+    object? IFunction.Evaluate(object? value)
+        => value is IPositionalValue positional ? Evaluate(positional) : null;
 }
