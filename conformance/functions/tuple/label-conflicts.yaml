@@ -1,0 +1,26 @@
+suite: tuple
+kind: function
+operator: label-conflicts
+tests:
+  - id: label-conflicts.valid
+    cases:
+      - id: label-conflicts.valid.mixed
+        value: 'T(42, {key := 1, value := "Brol"}, "A", {key := 2, score := 10})'
+        parameters: [id, left, grade, right]
+        expected: '{id := 42, left.key := 1, value := "Brol", grade := "A", right.key := 2, score := 10}'
+      - id: label-conflicts.valid.nested-tuple
+        value: 'T(T(1, 2), {name := "Alice"})'
+        parameters: [coordinates, customer]
+        expected: '{coordinates := T(1, 2), name := "Alice"}'
+      - id: label-conflicts.valid.scalar-record-conflict
+        value: 'T(1, {id := 2, name := "Alice"})'
+        parameters: [id, customer]
+        expected: '{id := 1, customer.id := 2, name := "Alice"}'
+      - id: label-conflicts.valid.pair
+        value: '({id := 1, left := "L"} => {id := 2, right := "R"})'
+        parameters: [left, right]
+        expected: '{left.id := 1, left := "L", right.id := 2, right := "R"}'
+      - id: label-conflicts.valid.empty
+        value: 'T()'
+        parameters: []
+        expected: '{}'
