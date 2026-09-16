@@ -1,0 +1,22 @@
+suite: tuple
+kind: function
+operator: label
+tests:
+  - id: label.valid
+    cases:
+      - id: label.valid.mixed
+        value: 'T(42, {key := 1, value := "Brol"}, "A", {key := 2, score := 10})'
+        parameters: [id, left, grade, right]
+        expected: '{id := 42, "left.key" := 1, "left.value" := "Brol", grade := "A", "right.key" := 2, "right.score" := 10}'
+      - id: label.valid.nested-tuple
+        value: 'T(T(1, 2), {name := "Alice"})'
+        parameters: [coordinates, customer]
+        expected: '{coordinates := T(1, 2), "customer.name" := "Alice"}'
+      - id: label.valid.pair
+        value: '({key := 1, value := "Brol"} => {key := 1, value := "A"})'
+        parameters: [left, right]
+        expected: '{"left.key" := 1, "left.value" := "Brol", "right.key" := 1, "right.value" := "A"}'
+      - id: label.valid.empty
+        value: 'tuple()'
+        parameters: [[]]
+        expected: '{}'

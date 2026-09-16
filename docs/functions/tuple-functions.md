@@ -21,6 +21,8 @@ Reference documentation for Expressif functions in the `tuple` scope.
 | [`arity`]({{ '/functions/tuple/arity/' | relative_url }}) | Returns the number of positional elements in the input tuple. |
 | [`bind`]({{ '/functions/tuple/bind/' | relative_url }}) | Invokes a named callable using the first tuple position as pipeline input and the remaining positions as already-evaluated argument values. |
 | [`extend`]({{ '/functions/tuple/extend/' | relative_url }}) | Returns a new tuple with a value appended, expanding tuple values into their positions. |
+| [`label`]({{ '/functions/tuple/label/' | relative_url }}) | Returns a flat record by assigning one positional label to each tuple item and qualifying every field expanded from a record item. |
+| [`label-conflicts`]({{ '/functions/tuple/label-conflicts/' | relative_url }}) | Returns a flat record whose expanded record fields receive positional labels only when their unqualified names conflict. |
 | [`pick`]({{ '/functions/tuple/pick/' | relative_url }}) | Returns a tuple containing selected positions in the requested order. |
 | [`rotate`]({{ '/functions/tuple/rotate/' | relative_url }}) | Returns a tuple with its positions rotated cyclically, preserving arity and item values, including nulls. |
 | [`swap`]({{ '/functions/tuple/swap/' | relative_url }}) | Returns a tuple with two positions exchanged, defaulting to the first and last positions. |
