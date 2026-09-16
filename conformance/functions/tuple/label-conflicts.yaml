@@ -1,0 +1,36 @@
+suite: tuple
+kind: function
+operator: label-conflicts
+tests:
+  - id: label-conflicts.valid
+    cases:
+      - id: label-conflicts.valid.no-conflicts
+        value:
+        parameters:
+          - 'T({key := "BE", value := 100}, {country := "FR", population := 68}) | label-conflicts("left", "right")'
+        expected: '{key := "BE", value := 100, country := "FR", population := 68}'
+      - id: label-conflicts.valid.record-conflict
+        value:
+        parameters:
+          - 'T({key := "BE", value := 100}, {key := "FR", population := 68}) | label-conflicts("left", "right")'
+        expected: '{left.key := "BE", value := 100, right.key := "FR", population := 68}'
+      - id: label-conflicts.valid.scalar-record-conflict
+        value:
+        parameters:
+          - 'T("BE", {key := "FR", population := 68}) | label-conflicts("key", "right")'
+        expected: '{key := "BE", right.key := "FR", population := 68}'
+      - id: label-conflicts.valid.nested-tuple
+        value:
+        parameters:
+          - 'T(T(1, 2), {value := 3}) | label-conflicts("coordinates", "payload")'
+        expected: '{coordinates := T(1, 2), value := 3}'
+      - id: label-conflicts.valid.spread
+        value:
+        parameters:
+          - 'T(1, 2) | label-conflicts(...{"left", "right"})'
+        expected: '{left := 1, right := 2}'
+      - id: label-conflicts.valid.empty
+        value:
+        parameters:
+          - 'T() | label-conflicts()'
+        expected: '{}'
