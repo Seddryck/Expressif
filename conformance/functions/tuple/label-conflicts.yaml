@@ -13,12 +13,12 @@ tests:
         value:
         parameters:
           - 'T({key := "BE", value := 100}, {key := "FR", population := 68}) | label-conflicts("left", "right")'
-        expected: '{left.key := "BE", value := 100, right.key := "FR", population := 68}'
+        expected: '{"left.key" := "BE", value := 100, "right.key" := "FR", population := 68}'
       - id: label-conflicts.valid.scalar-record-conflict
         value:
         parameters:
           - 'T("BE", {key := "FR", population := 68}) | label-conflicts("key", "right")'
-        expected: '{key := "BE", right.key := "FR", population := 68}'
+        expected: '{key := "BE", "right.key" := "FR", population := 68}'
       - id: label-conflicts.valid.nested-tuple
         value:
         parameters:
