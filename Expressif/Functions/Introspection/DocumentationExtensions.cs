@@ -40,6 +40,8 @@ public static class DocumentationExtensions
         (typeof(Array.GroupBy), "expressions"),
         (typeof(Sorting.SortBy), "criteria"),
         (typeof(Grouping.DrillDown), "expressions"),
+        (typeof(Tuple.Label), "names"),
+        (typeof(Tuple.LabelConflicts), "names"),
         (typeof(Predicates.Boolean.Majority), "predicates"),
         (typeof(Predicates.Boolean.SatisfiesExactly), "predicates"),
         (typeof(Predicates.Boolean.SatisfiesAtLeast), "predicates"),
@@ -150,6 +152,8 @@ public static class DocumentationExtensions
                     type == typeof(Array.Join) ? names[i].ToKebabCase() : names[i],
                     type == typeof(Tuple.Pick) && names[i] == "positions"
                         ? "integer"
+                        : (type == typeof(Tuple.Label) || type == typeof(Tuple.LabelConflicts)) && names[i] == "names"
+                            ? "text"
                         : ExpressifTypeMapper.ToExpressifType(
                             parameters[i].ParameterType,
                             unwrapProvider: true,

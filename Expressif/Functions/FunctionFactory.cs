@@ -350,6 +350,22 @@ public partial class FunctionFactory : BaseExpressionFactory
             return new Tuple.Pick(() => positions.Select(position => position.Invoke()).ToArray());
         }
 
+        if (construction == FunctionConstructionKind.Label)
+        {
+            if (function.Arguments.FirstOrDefault(argument => argument.Name is not null) is { } named)
+                throw new UnknownParameterNameException(function.Name, named.Name!);
+            if (function.Arguments.Any(argument => argument.IsSpread))
+                throw new SpreadArgumentException($"Spread arguments are not supported by {name}.");
+
+            var names = function.Arguments
+                .Select(argument => (Func<string>)CreateParameter(argument.Value, typeof(string), context))
+                .ToArray();
+            Func<string[]> labels = () => names.Select(provider => provider.Invoke()).ToArray();
+            return name == "label"
+                ? new Tuple.Label(labels)
+                : new Tuple.LabelConflicts(labels);
+        }
+
         if (construction == FunctionConstructionKind.Apply)
         {
             if (function.Parameters.Length != 1)

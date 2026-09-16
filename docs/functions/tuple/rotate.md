@@ -3,7 +3,7 @@ layout: docs
 title: "rotate"
 parent: "Tuple functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 70
 has_toc: false
 permalink: /functions/tuple/rotate/
 tags:
