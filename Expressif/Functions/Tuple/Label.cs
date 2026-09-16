@@ -66,6 +66,10 @@ public sealed class Label : IFunction<IPositionalValue, RecordValue>, IValueSpre
 {
     private Func<ValueArgumentEvaluator[]> Labels { get; }
 
+    /// <summary>Creates a label operation with no labels, valid for an empty tuple.</summary>
+    public Label()
+        : this(() => []) { }
+
     /// <param name="labels">One text label per tuple position. Spread arguments expand arrays of labels in place.</param>
     public Label(Func<ValueArgumentEvaluator[]> labels)
         => Labels = labels;
@@ -83,6 +87,10 @@ public sealed class Label : IFunction<IPositionalValue, RecordValue>, IValueSpre
 public sealed class LabelConflicts : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
 {
     private Func<ValueArgumentEvaluator[]> Labels { get; }
+
+    /// <summary>Creates a conflict-aware label operation with no labels, valid for an empty tuple.</summary>
+    public LabelConflicts()
+        : this(() => []) { }
 
     /// <param name="labels">One text label per tuple position. Spread arguments expand arrays of labels in place.</param>
     public LabelConflicts(Func<ValueArgumentEvaluator[]> labels)
