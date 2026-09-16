@@ -19,6 +19,8 @@ internal static class ExpressifTypeMapper
             [("DurationBetween", "previous")] = "date | date-time | year-month",
             [("Array", ValuesParameter)] = "any",
             [("Tuple", ValuesParameter)] = "any",
+            [("Label", "labels")] = "text",
+            [("LabelConflicts", "labels")] = "text",
             [("Pair", "key")] = "any",
             [("Pair", "value")] = "any",
             [("Grouping", ValuesParameter)] = "pair",
