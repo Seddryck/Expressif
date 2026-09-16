@@ -2,7 +2,8 @@ using Expressif.Values;
 
 namespace Expressif.Functions.Tuple;
 
-internal abstract class TupleLabeler : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
+/// <summary>Shared implementation for tuple-to-record labeling functions.</summary>
+public abstract class TupleLabeler : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
 {
     private Func<ValueArgumentEvaluator[]> Labels { get; }
 
