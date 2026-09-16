@@ -34,6 +34,8 @@ public static class DocumentationExtensions
         (typeof(Special.Coerce), "specifications"),
         (typeof(Flow.TransformWith), "expressions"),
         (typeof(Flow.TransformAs), "expressions"),
+        (typeof(Tuple.Label), "labels"),
+        (typeof(Tuple.LabelConflicts), "labels"),
         (typeof(Tuple.Pick), "positions"),
         (typeof(Text.SplitLengths), "lengths"),
         (typeof(Array.Key), "expressions"),
@@ -201,7 +203,7 @@ public static class DocumentationExtensions
     /// <param name="type">The type or parent type, used to fetch the assembly.</param>
     /// <param name="prefix">The prefix as seen in the name attribute in the documentation XML.</param>
     /// <param name="name">Where relevant, the full name qualifier for the element.</param>
-    /// <returns>The member that has a name that describes the specified reflection element.</returns>
+    /// <returns>The member that has a name that describes the specified element.</returns>
     private static XmlElement? XmlFromName(this Type type, char prefix, string name)
     {
         string fullName = string.IsNullOrEmpty(name)
@@ -218,10 +220,10 @@ public static class DocumentationExtensions
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the members for a member that is starting by .
     /// </summary>
-    /// <param name="type">The type or parent type, used to fetch the assembly.</param>
+    /// <param name="type">Type or parent type, used to fetch the assembly.</param>
     /// <param name="prefix">The prefix as seen in the name attribute in the documentation XML.</param>
     /// <param name="pattern">Where relevant, the full name qualifier for the element.</param>
-    /// <returns>The member that has a name that describes the specified reflection element.</returns>
+    /// <returns>The member that has a name that describes the specified element.</returns>
     private static XmlElement[] XmlFromPattern(this Type type, char prefix, string pattern)
     {
         string fullName = string.IsNullOrEmpty(pattern)
@@ -246,12 +248,10 @@ public static class DocumentationExtensions
     private static readonly Dictionary<Assembly, Exception> failCache = [];
 
     /// <summary>
-    /// Obtains the documentation file for the specified assembly.
+    /// Obtains the XML Element that describes a reflection element by searching the members for a member that is starting by .
     /// </summary>
     /// <param name="assembly">The assembly to find the XML document for.</param>
-    /// <returns>The XML document.</returns>
-    /// <remarks>This version uses a cache to preserve the assemblies, so that
-    /// the XML file is not loaded and parsed on every single lookup.</remarks>
+    /// <returns>The member that has a name that describes the specified element.</returns>
     public static XmlDocument XmlFromAssembly(this Assembly assembly)
     {
         if (failCache.TryGetValue(assembly, out var value))
