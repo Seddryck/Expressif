@@ -9,12 +9,12 @@ namespace Expressif.Testing.Functions.Tuple;
 public class LabelTest
 {
     [Conformance]
-    public void Label_Valid(string expression, string expected)
-        => Assert.That(Expression.Create(expression).Evaluate(null)?.ToString(), Is.EqualTo(expected));
+    public void Label_Valid(object? input, string expression, string expected)
+        => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
 
     [Conformance]
-    public void LabelConflicts_Valid(string expression, string expected)
-        => Assert.That(Expression.Create(expression).Evaluate(null)?.ToString(), Is.EqualTo(expected));
+    public void LabelConflicts_Valid(object? input, string expression, string expected)
+        => Assert.That(ValueFormatter.Format(Expression.Create(expression).Evaluate(input)), Is.EqualTo(expected));
 
     [TestCase("T(1, 2) | label(\"only\")")]
     [TestCase("T(1) | label(\"one\", \"two\")")]
