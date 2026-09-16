@@ -68,10 +68,10 @@ public static class DocumentationExtensions
     /// Provides the documentation comments for a specific member.
     /// </summary>
     /// <param name="memberInfo">The MemberInfo (reflection data) or the member to find documentation for.</param>
-    /// <returns>The XML fragment that describes the member.</returns>
+    /// <returns>The XML fragment describing the member.</returns>
     public static XmlElement? GetDocumentation(this MemberInfo memberInfo)
     {
-        // First character [0] of member type is prefix character in the name attribute in the XML
+        // First character [0] of member type is prefix character in the name in the XML
         return XmlFromName(memberInfo.DeclaringType!, memberInfo.MemberType.ToString()[0], memberInfo.Name);
     }
 
@@ -205,7 +205,7 @@ public static class DocumentationExtensions
     /// <param name="type">The type or parent type, used to fetch the assembly.</param>
     /// <param name="prefix">The prefix as seen in the name attribute in the documentation XML.</param>
     /// <param name="name">Where relevant, the full name qualifier for the element.</param>
-    /// <returns>The member that describes the specified reflection element.</returns>
+    /// <returns>The member that has a name that describes the specified reflection element.</returns>
     private static XmlElement? XmlFromName(this Type type, char prefix, string name)
     {
         string fullName = string.IsNullOrEmpty(name)
@@ -223,9 +223,9 @@ public static class DocumentationExtensions
     /// Obtains the XML Element that describes a reflection element by searching the members for a member that is starting by .
     /// </summary>
     /// <param name="type">The type or parent type, used to fetch the assembly.</param>
-    /// <param name="prefix">The prefix as seen in the name attribute in the XML.</param>
+    /// <param name="prefix">The prefix as seen in the name attribute in the documentation XML.</param>
     /// <param name="pattern">Where relevant, the full name qualifier for the element.</param>
-    /// <returns>The member that describes the specified reflection element.</returns>
+    /// <returns>The member that has a name that describes the specified reflection element.</returns>
     private static XmlElement[] XmlFromPattern(this Type type, char prefix, string pattern)
     {
         string fullName = string.IsNullOrEmpty(pattern)
@@ -250,10 +250,12 @@ public static class DocumentationExtensions
     private static readonly Dictionary<Assembly, Exception> failCache = [];
 
     /// <summary>
-    /// Obtains the XML Element that describes a specific assembly by loading the XML documentation file for that assembly.
+    /// Obtains the documentation file for the specified assembly.
     /// </summary>
-    /// <param name="assembly">Assembly to load documentation for.</param>
-    /// <returns>The loaded XML documentation.</returns>
+    /// <param name="assembly">The assembly to find the XML document for.</param>
+    /// <returns>The XML document.</returns>
+    /// <remarks>This version uses a cache to preserve the assemblies, so that
+    /// the XML file is not loaded and parsed on every single lookup.</remarks>
     public static XmlDocument XmlFromAssembly(this Assembly assembly)
     {
         if (failCache.TryGetValue(assembly, out var value))
@@ -276,8 +278,8 @@ public static class DocumentationExtensions
     /// <summary>
     /// Loads and parses the documentation file for the specified assembly.
     /// </summary>
-    /// <param name="assembly">The assembly to find the documentation for.</param>
-    /// <returns>The XML documentation file.</returns>
+    /// <param name="assembly">The assembly to find the XML document for.</param>
+    /// <returns>The XML document.</returns>
     private static XmlDocument XmlFromAssemblyNonCached(Assembly assembly)
     {
         var assemblyFilename = assembly.Location;
