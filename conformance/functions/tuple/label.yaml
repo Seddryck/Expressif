@@ -1,0 +1,31 @@
+suite: tuple
+kind: function
+operator: label
+tests:
+  - id: label.valid
+    cases:
+      - id: label.valid.pair
+        value:
+        parameters:
+          - '("Alice" => "Smith") | label("first-name", "last-name")'
+        expected: '{first-name := "Alice", last-name := "Smith"}'
+      - id: label.valid.mixed
+        value:
+        parameters:
+          - 'T(42, {key := "BE", value := 100}, "ok") | label("id", "payload", "status")'
+        expected: '{id := 42, payload.key := "BE", payload.value := 100, status := "ok"}'
+      - id: label.valid.nested-tuple
+        value:
+        parameters:
+          - 'T(T(1, 2), {name := "Ada"}) | label("coordinates", "person")'
+        expected: '{coordinates := T(1, 2), person.name := "Ada"}'
+      - id: label.valid.spread
+        value:
+        parameters:
+          - 'T(1, 2) | label(...{"left", "right"})'
+        expected: '{left := 1, right := 2}'
+      - id: label.valid.empty
+        value:
+        parameters:
+          - 'T() | label()'
+        expected: '{}'
