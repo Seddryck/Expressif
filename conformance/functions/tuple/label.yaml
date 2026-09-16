@@ -13,12 +13,12 @@ tests:
         value:
         parameters:
           - 'T(42, {key := "BE", value := 100}, "ok") | label("id", "payload", "status")'
-        expected: '{id := 42, payload.key := "BE", payload.value := 100, status := "ok"}'
+        expected: '{id := 42, "payload.key" := "BE", "payload.value" := 100, status := "ok"}'
       - id: label.valid.nested-tuple
         value:
         parameters:
           - 'T(T(1, 2), {name := "Ada"}) | label("coordinates", "person")'
-        expected: '{coordinates := T(1, 2), person.name := "Ada"}'
+        expected: '{coordinates := T(1, 2), "person.name" := "Ada"}'
       - id: label.valid.spread
         value:
         parameters:
