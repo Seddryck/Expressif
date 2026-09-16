@@ -109,15 +109,15 @@ public sealed class Pick : IFunction<IPositionalValue, TupleValue?>, IFunction<V
 /// <summary>Returns a flat record by applying one positional label to each tuple item and qualifying every field expanded from a record item.</summary>
 [Function(prefix: "")]
 [Scope("tuple")]
-public sealed class Label : IFunction<IPositionalValue, RecordValue>
+public sealed class Label : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
 {
-    private Func<string[]> Names { get; }
+    private Func<ValueArgumentEvaluator[]> Names { get; }
 
-    /// <param name="names">One label for each tuple position, in positional order.</param>
-    public Label(Func<string[]> names) => Names = names;
+    /// <param name="names">One label expression for each tuple position, in positional order. Spread arrays expand labels in place.</param>
+    public Label(Func<ValueArgumentEvaluator[]> names) => Names = names;
 
     public RecordValue Evaluate(IPositionalValue value)
-        => TupleLabeling.Create(value, Names.Invoke(), qualifyConflictsOnly: false);
+        => TupleLabeling.Create(value, ValueArguments.Evaluate(Names.Invoke(), value).ToArray(), qualifyConflictsOnly: false);
 
     object? IFunction.Evaluate(object? value) => value is IPositionalValue tuple ? Evaluate(tuple) : null;
 }
@@ -125,30 +125,31 @@ public sealed class Label : IFunction<IPositionalValue, RecordValue>
 /// <summary>Returns a flat record by applying positional labels only to record fields whose unqualified names would conflict.</summary>
 [Function(prefix: "")]
 [Scope("tuple")]
-public sealed class LabelConflicts : IFunction<IPositionalValue, RecordValue>
+public sealed class LabelConflicts : IFunction<IPositionalValue, RecordValue>, IValueSpreadAware
 {
-    private Func<string[]> Names { get; }
+    private Func<ValueArgumentEvaluator[]> Names { get; }
 
-    /// <param name="names">One label for each tuple position, in positional order.</param>
-    public LabelConflicts(Func<string[]> names) => Names = names;
+    /// <param name="names">One label expression for each tuple position, in positional order. Spread arrays expand labels in place.</param>
+    public LabelConflicts(Func<ValueArgumentEvaluator[]> names) => Names = names;
 
     public RecordValue Evaluate(IPositionalValue value)
-        => TupleLabeling.Create(value, Names.Invoke(), qualifyConflictsOnly: true);
+        => TupleLabeling.Create(value, ValueArguments.Evaluate(Names.Invoke(), value).ToArray(), qualifyConflictsOnly: true);
 
     object? IFunction.Evaluate(object? value) => value is IPositionalValue tuple ? Evaluate(tuple) : null;
 }
 
 internal static class TupleLabeling
 {
-    public static RecordValue Create(IPositionalValue value, string[] labels, bool qualifyConflictsOnly)
+    public static RecordValue Create(IPositionalValue value, object?[] labels, bool qualifyConflictsOnly)
     {
         ArgumentNullException.ThrowIfNull(labels);
         if (labels.Length != value.Arity)
             throw new ArgumentException("Number of labels must match tuple arity.", nameof(labels));
-        if (labels.Any(label => label is null))
-            throw new ArgumentException("Labels must not be null.", nameof(labels));
+        if (labels.Any(label => label is not string))
+            throw new ArgumentException("Every label must be text.", nameof(labels));
 
-        var conflicts = qualifyConflictsOnly ? CountUnqualifiedNames(value, labels) : null;
+        var names = labels.Cast<string>().ToArray();
+        var conflicts = qualifyConflictsOnly ? CountUnqualifiedNames(value, names) : null;
         var result = new RecordValue();
         for (var index = 0; index < value.Arity; index++)
         {
@@ -159,13 +160,13 @@ internal static class TupleLabeling
                 {
                     var name = conflicts is not null && conflicts[field.Key] == 1
                         ? field.Key
-                        : $"{labels[index]}.{field.Key}";
+                        : $"{names[index]}.{field.Key}";
                     SetUnique(result, name, field.Value);
                 }
             }
             else
             {
-                SetUnique(result, labels[index], item);
+                SetUnique(result, names[index], item);
             }
         }
         return result;
