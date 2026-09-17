@@ -1,0 +1,50 @@
+suite: join-right
+kind: function
+operator: join-right
+tests:
+  - id: join-right.valid
+    cases:
+      - id: join-right.valid.ordering
+        value: (null)
+        parameters: ['{1, 2, 2, 4} | join-right({3, 2, 1, 2, 5}, @_)']
+        expected: '{(1 => 1), (2 => 2), (2 => 2), (2 => 2), (2 => 2), (null => 3), (null => 5)}'
+      - id: join-right.valid.empty-left
+        value: (null)
+        parameters: ['{} | join-right({1}, @_)']
+        expected: '{(null => 1)}'
+      - id: join-right.valid.empty-right
+        value: (null)
+        parameters: ['{1} | join-right({}, @_)']
+        expected: '{}'
+      - id: join-right.valid.empty-both
+        value: (null)
+        parameters: ['{} | join-right({}, @_)']
+        expected: '{}'
+      - id: join-right.valid.null-keys
+        value: (null)
+        parameters: ['{#null, 1} | join-right({#null, 2}, @_)']
+        expected: '{(null => null), (null => 2)}'
+      - id: join-right.valid.grouping
+        value: (null)
+        parameters: ['{1, 2} | join-right(#{(1 => {"A", "B"}), (3 => {"C"}), (2 => {})}, @_)']
+        expected: '{(1 => "A"), (1 => "B"), (null => "C")}'
+      - id: join-right.valid.dictionary
+        value: (null)
+        parameters: ['{1, 2} | join-right(!{(1 => #null), (3 => "C")}, @_)']
+        expected: '{(1 => null), (null => "C")}'
+      - id: join-right.valid.composite
+        value: (null)
+        parameters: ['{T(1, 2)} | join-right({T(1, 2)}, @_)']
+        expected: '{(T(1, 2) => T(1, 2))}'
+      - id: join-right.valid.asymmetric
+        value: (null)
+        parameters: ['{{customer-id := 1}} | join-right({{id := 1}}, .customer-id, .id)']
+        expected: '{({customer-id := 1} => {id := 1})}'
+      - id: join-right.valid.named
+        value: (null)
+        parameters: ['{{customer-id := 1}} | join-right(right-key := .id, left-key := .customer-id, right := {{id := 1}})']
+        expected: '{({customer-id := 1} => {id := 1})}'
+      - id: join-right.valid.group-by
+        value: (null)
+        parameters: ['{1} | join-right({1, 1} | group-by(@_), @_)']
+        expected: '{(1 => 1), (1 => 1)}'

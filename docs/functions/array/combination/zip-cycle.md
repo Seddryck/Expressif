@@ -3,7 +3,7 @@ layout: docs
 title: "zip-cycle"
 parent: "Combination functions"
 grand_parent: "Array functions"
-nav_order: 20
+nav_order: 60
 has_toc: false
 permalink: /functions/array/combination/zip-cycle/
 tags:

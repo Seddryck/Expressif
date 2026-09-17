@@ -675,7 +675,14 @@ public partial class FunctionFactory : BaseExpressionFactory
 
     private IFunction BuildJoinFunction(Bindings.Function function, IContext context)
     {
-        var bound = ParameterArgumentBinder.Bind(typeof(Array.Join), function.Arguments).Parameters;
+        var type = function.Name switch
+        {
+            "join-left" => typeof(Array.JoinLeft),
+            "join-right" => typeof(Array.JoinRight),
+            "join-full" => typeof(Array.JoinFull),
+            _ => typeof(Array.Join),
+        };
+        var bound = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
         if (bound.Length is < 2 or > 3)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
@@ -687,7 +694,15 @@ public partial class FunctionFactory : BaseExpressionFactory
             return value => EvaluateNested(evaluator, value);
         }
 
-        return new Array.Join(right, BuildKey(bound[1]), bound.Length == 3 ? BuildKey(bound[2]) : null);
+        var leftKey = BuildKey(bound[1]);
+        var rightKey = bound.Length == 3 ? BuildKey(bound[2]) : null;
+        return function.Name switch
+        {
+            "join-left" => new Array.JoinLeft(right, leftKey, rightKey),
+            "join-right" => new Array.JoinRight(right, leftKey, rightKey),
+            "join-full" => new Array.JoinFull(right, leftKey, rightKey),
+            _ => new Array.Join(right, leftKey, rightKey),
+        };
     }
 
     private IFunction BuildTransformWithFunction(Bindings.Function function, IContext context)

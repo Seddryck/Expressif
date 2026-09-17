@@ -3,7 +3,7 @@ layout: docs
 title: "zip-padded"
 parent: "Combination functions"
 grand_parent: "Array functions"
-nav_order: 30
+nav_order: 70
 has_toc: false
 permalink: /functions/array/combination/zip-padded/
 tags:
