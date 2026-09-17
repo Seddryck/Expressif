@@ -1,0 +1,38 @@
+suite: record
+kind: function
+operator: from-pairs
+tests:
+  - id: from-pairs.valid.record
+    cases:
+      - id: from-pairs.valid.record.ordered-fields
+        value:
+        parameters: ['{("foo" => 1), ("bar" => 2)} | from-pairs']
+        expected: '{foo := 1, bar := 2}'
+      - id: from-pairs.valid.record.numeric-keys
+        value:
+        parameters: ['{(2025 => 100), (2026 => 120)} | from-pairs']
+        expected: '{2025 := 100, 2026 := 120}'
+      - id: from-pairs.valid.record.empty-array
+        value:
+        parameters: ['{} | from-pairs']
+        expected: '{}'
+      - id: from-pairs.valid.record.private-null-nested-round-trip
+        value:
+        parameters: ['{_id := 42, missing := #null, nested := {items := {1, 2}}} | pairs | from-pairs']
+        expected: '{_id := 42, missing := null, nested := {items := {1, 2}}}'
+      - id: from-pairs.valid.record.quoted-keys
+        value:
+        parameters: ['{("first name" => "Alice"), ("a.b" => 42), ("Name" => 1), ("name" => 2)} | from-pairs']
+        expected: '{"first name" := "Alice", "a.b" := 42, Name := 1, name := 2}'
+      - id: from-pairs.valid.record.private-visibility
+        value:
+        parameters: ['{("_id" => 42), ("name" => "Cedric")} | from-pairs | public']
+        expected: '{name := "Cedric"}'
+      - id: from-pairs.valid.record.empty-and-whitespace-keys
+        value:
+        parameters: ['{("" => 1), (" " => #null)} | from-pairs']
+        expected: '{"" := 1, " " := null}'
+      - id: from-pairs.valid.record.unusual-field-round-trip
+        value:
+        parameters: ['{"" := 1, " " := 2, "a.b" := 3} | pairs | from-pairs']
+        expected: '{"" := 1, " " := 2, "a.b" := 3}'
