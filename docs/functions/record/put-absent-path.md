@@ -3,7 +3,7 @@ layout: docs
 title: "put-absent-path"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /functions/record/put-absent-path/
 tags:
@@ -33,10 +33,14 @@ Assigns the field at a dynamic path only when the final segment is absent, creat
 | `path` | `expression` | Yes | An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments. |
 | `value` | `expression` | Yes | The expression producing the assigned value from the original input record. |
 
+
+
 ## Argument evaluation
 
 - **`path`:** Evaluated once against the value entering this call.
 - **`value`:** Evaluated against the original incoming record only if the target path is absent.
+
+
 
 ## Examples
 

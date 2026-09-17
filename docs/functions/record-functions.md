@@ -22,6 +22,7 @@ Reference documentation for Expressif functions in the `record` scope.
 | [`exclude-fields`]({{ '/functions/record/exclude-fields/' | relative_url }}) | Returns all fields except those whose names appear in the supplied array, preserving input field order and ignoring unknown names. |
 | [`expand`]({{ '/functions/record/expand/' | relative_url }}) | Flattens a selected nested record into its parent, qualifying conflicts or every expanded field when a label is supplied. |
 | [`explode`]({{ '/functions/record/explode/' | relative_url }}) | Emits one record per element of a selected collection-valued field, preserving other fields and field order. |
+| [`explode-outer`]({{ '/functions/record/explode-outer/' | relative_url }}) | Emits one record per selected collection element, preserving parents with empty or null fields. |
 | [`field`]({{ '/functions/record/field/' | relative_url }}) | Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values. |
 | [`field-names`]({{ '/functions/record/field-names/' | relative_url }}) | Returns the names of all fields in the input record, preserving field order. |
 | [`from-pairs`]({{ '/functions/record/from-pairs/' | relative_url }}) | Converts an array of pairs to a record, coercing keys to text and preserving values and order. |

@@ -3,7 +3,7 @@ layout: docs
 title: "put-present"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /functions/record/put-present/
 tags:
@@ -31,9 +31,13 @@ Assigns statically named fields only when they are present, including fields who
 |:-----|:-----|:---------|:------------|
 | `assignments` | `entry` | Variadic (one or more) | One or more named assignments applied only to fields already present. |
 
+
+
 ## Argument evaluation
 
 - **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is present.
+
+
 
 ## Examples
 

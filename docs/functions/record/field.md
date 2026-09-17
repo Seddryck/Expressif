@@ -3,7 +3,7 @@ layout: docs
 title: "field"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /functions/record/field/
 tags:
@@ -31,9 +31,13 @@ Returns the value of the named field from the input record or object. Returns `n
 |:-----|:-----|:---------|:------------|
 | `name` | `text` | Yes | Name of the field to retrieve from the input. |
 
+
+
 ## Argument evaluation
 
 - **`name`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

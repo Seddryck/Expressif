@@ -3,7 +3,7 @@ layout: docs
 title: "record"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 170
+nav_order: 180
 has_toc: false
 permalink: /functions/record/record/
 tags:
@@ -31,9 +31,13 @@ Creates a record by evaluating its named and spread entries against the input va
 |:-----|:-----|:---------|:------------|
 | `entries` | `entry` | Variadic (zero or more) | Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value. |
 
+
+
 ## Argument evaluation
 
 - **`entries`:** Each entry is evaluated once against the value entering this call.
+
+
 
 ## Examples
 

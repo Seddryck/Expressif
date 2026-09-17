@@ -2780,6 +2780,37 @@
     ]
   },
   {
+    "Name": "explode-outer",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "array | record",
+    "Output": "array",
+    "Summary": "Emits one record per selected collection element, preserving parents with empty or null fields.",
+    "Behavior": "Matches explode for non-empty collections, preserving field position, child order, duplicates, and one-level expansion. Empty, null, or missing selected fields emit one parent with a null selected field; a missing field is appended. Non-collection selected values and non-record parents cause an evaluation error. Null pipeline input returns null. The selector must be a direct field reference; computed expressions and nested paths fail during binding. Empty and originally null collections become indistinguishable. expand changes record shape without expanding cardinality.",
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "custom",
+      "Summary": "Visits the record supplied as pipeline input to this explode-outer call, or each parent record of its input array in source order. Visits selected children in source order, retaining a parent with no children."
+    },
+    "Parameters": [
+      {
+        "Name": "selector",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "A direct field selector identifying the collection-valued field to replace.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once per parent record before visiting its children, with that parent as context. .field reads that parent's field, without retaining the surrounding context; an empty source array evaluates no selector."
+        }
+      }
+    ],
+    "Examples": [
+      "{id := 1, tags := {}} | explode-outer(.tags) → {{id := 1, tags := #null}}"
+    ]
+  },
+  {
     "Name": "explode",
     "IsPublic": true,
     "Aliases": [],

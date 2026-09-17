@@ -3,7 +3,7 @@ layout: docs
 title: "put-absent"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/record/put-absent/
 tags:
@@ -31,9 +31,13 @@ Assigns statically named fields only when they are absent; a present field conta
 |:-----|:-----|:---------|:------------|
 | `assignments` | `entry` | Variadic (one or more) | One or more named assignments applied only to fields that are absent. |
 
+
+
 ## Argument evaluation
 
 - **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is absent.
+
+
 
 ## Examples
 

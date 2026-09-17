@@ -1,0 +1,60 @@
+suite: record
+kind: function
+operator: explode-outer
+tests:
+  - id: explode-outer.valid.rows
+    cases:
+      - id: explode-outer.valid.rows.single
+        value:
+        parameters: ['{id := 1, tags := {"A"}} | explode-outer(.tags)']
+        expected: '{{id := 1, tags := "A"}}'
+      - id: explode-outer.valid.rows.many
+        value:
+        parameters: ['{id := 1, tags := {"A", "B", "C"}, tail := 2} | explode-outer(.tags)']
+        expected: '{{id := 1, tags := "A", tail := 2}, {id := 1, tags := "B", tail := 2}, {id := 1, tags := "C", tail := 2}}'
+      - id: explode-outer.valid.rows.empty
+        value:
+        parameters: ['{id := 1, tags := {}} | explode-outer(.tags)']
+        expected: '{{id := 1, tags := null}}'
+      - id: explode-outer.valid.rows.parents
+        value:
+        parameters: ['{{id := 1, tags := {"A", "B"}}, {id := 2, tags := {}}, {id := 3, tags := {"C"}}} | explode-outer(.tags)']
+        expected: '{{id := 1, tags := "A"}, {id := 1, tags := "B"}, {id := 2, tags := null}, {id := 3, tags := "C"}}'
+      - id: explode-outer.valid.rows.duplicates
+        value:
+        parameters: ['{tags := {"A", "A"}} | explode-outer(.tags)']
+        expected: '{{tags := "A"}, {tags := "A"}}'
+      - id: explode-outer.valid.rows.nested
+        value:
+        parameters: ['{tags := {{"A", "B"}, {"C"}}} | explode-outer(.tags)']
+        expected: '{{tags := {"A", "B"}}, {tags := {"C"}}}'
+      - id: explode-outer.valid.rows.twice
+        value:
+        parameters: ['{tags := {{"A", "B"}, {"C"}}} | explode-outer(.tags) | explode-outer(.tags)']
+        expected: '{{tags := "A"}, {tags := "B"}, {tags := "C"}}'
+      - id: explode-outer.valid.rows.null
+        value:
+        parameters: ['{tags := #null} | explode-outer(.tags)']
+        expected: '{{tags := null}}'
+      - id: explode-outer.valid.rows.missing
+        value:
+        parameters: ['{id := 1} | explode-outer(.tags)']
+        expected: '{{id := 1, tags := null}}'
+      - id: explode-outer.valid.rows.null-child
+        value:
+        parameters: ['{tags := {#null, "A"}} | explode-outer(.tags)']
+        expected: '{{tags := null}, {tags := "A"}}'
+      - id: explode-outer.valid.rows.empty-source
+        value:
+        parameters: ['{} | explode-outer(.tags)']
+        expected: '{}'
+      - id: explode-outer.valid.rows.named
+        value:
+        parameters: ['{tags := {"A"}} | explode-outer(selector := .tags)']
+        expected: '{{tags := "A"}}'
+  - id: explode-outer.valid.null
+    cases:
+      - id: explode-outer.valid.null.input
+        value:
+        parameters: ['#null | explode-outer(.tags)']
+        expected:
