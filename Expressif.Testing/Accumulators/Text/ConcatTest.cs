@@ -4,8 +4,16 @@ using Expressif.Testing.Conformance;
 namespace Expressif.Testing.Accumulators.Text;
 
 [TestFixture]
-public class ImplodeTest
+public class ConcatTest
 {
+    [Conformance]
+    public void Concat_WithoutSeparator(object? value, string expected)
+        => Assert.That(Evaluate(value, "concat"), Is.EqualTo(expected));
+
+    [Conformance]
+    public void Concat_WithSeparator(object? value, string separator, string expected)
+        => Assert.That(Evaluate(value, $"concat(\"{separator}\")"), Is.EqualTo(expected));
+
     [Conformance]
     public void Implode_WithoutSeparator(object? value, string expected)
         => Assert.That(Evaluate(value, "implode"), Is.EqualTo(expected));
@@ -17,17 +25,17 @@ public class ImplodeTest
     [Test]
     public void Evaluate_NamedSeparator_Valid()
         => Assert.That(
-            Expression.CreateClosed("{\"a\", \"b\"} | implode(separator := \"-\")").Evaluate(null),
+            Expression.CreateClosed("{\"a\", \"b\"} | concat(separator := \"-\")").Evaluate(null),
             Is.EqualTo("a-b"));
 
     [Test]
     public void Evaluate_AfterChars_ReassemblesText()
-        => Assert.That(Expression.Create("chars | implode").Evaluate("abc"), Is.EqualTo("abc"));
+        => Assert.That(Expression.Create("chars | concat").Evaluate("abc"), Is.EqualTo("abc"));
 
     [Test]
     public void Initialize_AfterAccumulation_ResetsState()
     {
-        var accumulator = new ImplodeAccumulator(() => "-");
+        var accumulator = new ConcatAccumulator(() => "-");
         accumulator.Initialize();
         accumulator.Accumulate("a");
         accumulator.Accumulate("b");
@@ -40,11 +48,21 @@ public class ImplodeTest
     [Test]
     public void Accumulate_Null_ThrowsInvalidCastException()
     {
-        var accumulator = new ImplodeAccumulator();
+        var accumulator = new ConcatAccumulator();
         accumulator.Initialize();
 
         Assert.That(() => accumulator.Accumulate(null), Throws.TypeOf<InvalidCastException>());
     }
+
+    [TestCase("implode")]
+    [TestCase("implode(\"-\")")]
+    [TestCase("implode(separator := \"-\")")]
+    [TestCase("fold(implode)")]
+    [TestCase("fold(\"implode\")")]
+    [TestCase("fold(concat)")]
+    public void Evaluate_CompatibilityAlias_MatchesCanonical(string expression)
+        => Assert.That(Evaluate("{\"a\", \"\", \"b\"}", expression),
+            Is.EqualTo(Evaluate("{\"a\", \"\", \"b\"}", expression.Replace("implode", "concat"))));
 
     private static object? Evaluate(object? value, string expression)
     {

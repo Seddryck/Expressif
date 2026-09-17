@@ -67,6 +67,20 @@ public class AccumulatorIntrospectorTest
     }
 
     [Test]
+    public void Describe_Concat_ExposesDeprecatedAlias()
+    {
+        var info = Infos.Single(x => x.Name == "concat");
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(Infos.Any(x => x.Name == "implode"), Is.False);
+            Assert.That(info.Aliases, Does.Contain("implode"));
+            Assert.That(info.DeprecatedAliases.Single().Name, Is.EqualTo("implode"));
+            Assert.That(info.DeprecatedAliases.Single().Replacement, Is.EqualTo("concat"));
+            Assert.That(info.DeprecatedAliases.Single().Message, Does.Contain("use concat"));
+        }
+    }
+
+    [Test]
     public void Locate_ExpressifAssembly_ArrayAccumulatorsExposed()
     {
         using (Assert.EnterMultipleScope())
@@ -79,7 +93,7 @@ public class AccumulatorIntrospectorTest
             Assert.That(Infos.Any(x => x.Name == "last"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "every"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "any"), Is.True);
-            Assert.That(Infos.Any(x => x.Name == "implode"), Is.True);
+            Assert.That(Infos.Any(x => x.Name == "concat"), Is.True);
             Assert.That(Infos.Any(x => x.Name == "reduce"), Is.True);
         }
     }

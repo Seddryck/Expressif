@@ -12,4 +12,9 @@ public record AccumulatorInfo
     Type ImplementationType,
     string Summary,
     ParameterInfo[] Parameters
-);
+)
+{
+    public AccumulatorAliasLifecycleInfo[] DeprecatedAliases { get; init; } = [];
+}
+
+public sealed record AccumulatorAliasLifecycleInfo(string Name, string Replacement, string Message);

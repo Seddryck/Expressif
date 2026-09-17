@@ -135,6 +135,15 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
                 Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters)
         }
 
+        if ($class -eq "accumulator") {
+            foreach ($entry in $functions) {
+                $aliases = @($described | Where-Object Name -EQ $entry.Name | ForEach-Object DeprecatedAliases)
+                if ($aliases.Count -gt 0) {
+                    $entry | Add-Member -NotePropertyName DeprecatedAliases -NotePropertyValue $aliases
+                }
+            }
+        }
+
         $missingNames = @($names | Where-Object { $_ -notin $functions.Name })
         if ($missingNames.Count -gt 0) {
             throw "Unknown $class name(s): $($missingNames -join ', ')."

@@ -127,10 +127,18 @@
     ]
   },
   {
-    "Name": "implode",
+    "Name": "concat",
     "IsPublic": true,
     "Aliases": [
+      "concat",
       "implode"
+    ],
+    "DeprecatedAliases": [
+      {
+        "Name": "implode",
+        "Replacement": "concat",
+        "Message": "implode is deprecated; use concat instead."
+      }
     ],
     "Scope": "Text",
     "Input": "text",
@@ -154,7 +162,7 @@
       }
     ],
     "Examples": [
-      "{\"a\", \"b\", \"c\"} | implode(\"-\") → \"a-b-c\""
+      "{\"a\", \"b\", \"c\"} | concat(\"-\") → \"a-b-c\""
     ]
   },
   {

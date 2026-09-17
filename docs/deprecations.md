@@ -35,6 +35,18 @@ Deprecation means that a callable or usage pattern remains available for compati
 There are currently no deprecated public language callables.
 {% endif %}
 
+## Deprecated aliases
+
+Deprecated aliases resolve to the same implementation as their canonical name. Replace `implode` with `concat`, for example `{"a", "b"} | implode("-")` becomes `{"a", "b"} | concat("-")`, with the same result `"a-b"`.
+
+{% for member in site.data.accumulator %}
+{% if member.IsPublic %}
+{% for alias in member.DeprecatedAliases %}
+- **`{{ alias.Name }}`:** {{ alias.Message }} Removal follows the normal deprecation window; no sunset version is scheduled yet.
+{% endfor %}
+{% endif %}
+{% endfor %}
+
 ## Deprecated usage patterns
 
 These forms implicitly supply arguments to a nested callable. Replace that usage with explicit tuple binding; the surrounding operators and target callable names remain supported. Removal planned for v3.0.
