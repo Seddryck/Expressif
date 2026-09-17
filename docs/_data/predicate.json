@@ -2284,7 +2284,9 @@
   {
     "Name": "is-not-null",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "not-null"
+    ],
     "Scope": "Special",
     "Input": "any",
     "Output": "boolean",
