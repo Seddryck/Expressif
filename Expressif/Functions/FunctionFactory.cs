@@ -509,6 +509,7 @@ public partial class FunctionFactory : BaseExpressionFactory
             FunctionConstructionKind.Adjacent => BuildAdjacentFunction(function, context),
             FunctionConstructionKind.ChunkWhile => BuildChunkWhileFunction(function, context),
             FunctionConstructionKind.Generate => BuildGenerateFunction(function, context),
+            FunctionConstructionKind.Only => new Fold(BuildOnlyProvider(function, context)),
             FunctionConstructionKind.Closest => new Fold(BuildClosestProvider(function, context)),
             FunctionConstructionKind.Concat => BuildConcatFunction(function, context),
             FunctionConstructionKind.MapOver => BuildDirectionalMap(function, context, mapOver: true),
@@ -1440,8 +1441,33 @@ public partial class FunctionFactory : BaseExpressionFactory
         return true;
     }
 
+    private Func<IAccumulator> BuildOnlyProvider(Bindings.Function function, IContext context)
+    {
+        if (function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException("Spread arguments are not supported by only.");
+        var bound = ParameterArgumentBinder.Bind(typeof(OnlyAccumulator), function.Arguments).Parameters;
+        var predicate = BuildPredicateProvider(bound[0], context, function.Name);
+        var accumulator = BuildAccumulatorProvider(bound[1], context);
+        return () => new OnlyAccumulator(predicate.Invoke(), accumulator.Invoke());
+    }
+
     private Func<IAccumulator> BuildAccumulatorProvider(IParameter parameter, IContext context)
     {
+        if (parameter is OpenExpressionParameter open && open.Expression.Members.Count() == 1)
+        {
+            var call = open.Expression.Members.Single();
+            var construction = FunctionConstruction.Classify(call.Name);
+            if (construction == FunctionConstructionKind.Only)
+                return BuildOnlyProvider(call, context);
+            if (construction == FunctionConstructionKind.Closest)
+                return BuildClosestProvider(call, context);
+            if (construction == FunctionConstructionKind.Concat)
+                return ((Fold)BuildConcatFunction(call, context)).Accumulator;
+            if (construction == FunctionConstructionKind.Reduce)
+                return ((Fold)BuildReduceFunction(call, context)).Accumulator;
+            if (call.Arguments.Length != 0)
+                throw new MissingOrUnexpectedParametersFunctionException(call.Name, call.Parameters.Length);
+        }
         var nameProvider = BuildAccumulatorNameProvider(parameter, context);
         return () => AccumulatorFactory.Instantiate(nameProvider.Invoke());
     }

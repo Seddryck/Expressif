@@ -2280,5 +2280,19 @@
       "\"FirstName\" | is-pascal-case → #true",
       "\"first--name\" | is-pascal-case → #false"
     ]
+  },
+  {
+    "Name": "is-not-null",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "Special",
+    "Input": "any",
+    "Output": "boolean",
+    "Summary": "Returns true when the input does not satisfy is-null.",
+    "Parameters": [],
+    "Examples": [
+      "#null | is-not-null → #false",
+      "10 | is-not-null → #true"
+    ]
   }
 ]

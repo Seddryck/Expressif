@@ -18,5 +18,6 @@ Reference documentation for Expressif predicates in the `special` scope.
 
 | Name | Overview |
 |:-----|:---------|
+| [`is-not-null`]({{ '/predicates/special/is-not-null/' | relative_url }}) | Returns true when the input does not satisfy is-null. |
 | [`is-null`]({{ '/predicates/special/is-null/' | relative_url }}) | Returns `true` if the argument is effectively `null` else return `false`. |
 | [`is-type`]({{ '/predicates/special/is-type/' | relative_url }}) | Returns whether the input has the requested Expressif runtime type or belongs to the requested type family, without coercion. |

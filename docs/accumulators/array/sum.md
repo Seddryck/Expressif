@@ -3,7 +3,7 @@ layout: docs
 title: "sum"
 parent: "Array accumulators"
 grand_parent: "Accumulators library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /accumulators/array/sum/
 tags:

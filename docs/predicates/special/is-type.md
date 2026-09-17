@@ -3,7 +3,7 @@ layout: docs
 title: "is-type"
 parent: "Special predicates"
 grand_parent: "Predicates library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /predicates/special/is-type/
 tags:
@@ -21,6 +21,8 @@ is-type(
 
 Returns whether the input has the requested Expressif runtime type or belongs to the requested type family, without coercion.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns whether the input has the requested Expressif runtime type or belongs to
 |:-----|:-----|:---------|:------------|
 | `type` | `type` | Yes | Specifies the Expressif type descriptor to test. |
 
+
+
 ## Argument evaluation
 
 - **`type`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 
