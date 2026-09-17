@@ -26,6 +26,7 @@ Reference documentation for Expressif functions in the `record` scope.
 | [`field`]({{ '/functions/record/field/' | relative_url }}) | Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values. |
 | [`field-names`]({{ '/functions/record/field-names/' | relative_url }}) | Returns the names of all fields in the input record, preserving field order. |
 | [`from-pairs`]({{ '/functions/record/from-pairs/' | relative_url }}) | Converts an array of pairs to a record, coercing keys to text and preserving values and order. |
+| [`implode-inner`]({{ '/functions/record/implode-inner/' | relative_url }}) | Groups records by all non-selected fields and collects non-null selected values in source order. |
 | [`nested-field`]({{ '/functions/record/nested-field/' | relative_url }}) | Returns the value at a nested field path in the input record or object, or null when the path cannot be resolved. |
 | [`pairs`]({{ '/functions/record/pairs/' | relative_url }}) | Converts all record fields to pairs, preserving field names, values, and order. |
 | [`public`]({{ '/functions/record/public/' | relative_url }}) | Returns a new record without fields whose names start with an underscore, preserving public field order and values. Unlike set-public and set-private, this function removes fields rather than renaming them. |

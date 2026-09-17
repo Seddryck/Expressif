@@ -3,7 +3,7 @@ layout: docs
 title: "select-fields"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 200
+nav_order: 210
 has_toc: false
 permalink: /functions/record/select-fields/
 tags:
