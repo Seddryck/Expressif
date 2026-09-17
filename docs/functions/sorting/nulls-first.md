@@ -3,7 +3,7 @@ layout: docs
 title: "nulls-first"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/sorting/nulls-first/
 tags:

@@ -6,7 +6,7 @@ internal static class SortSelection
 {
     private sealed record IndexedRow(SortRow Row, int Position);
 
-    internal static object?[] Evaluate(SortTableValue table, int count, bool bottom)
+    internal static object?[] Evaluate(SortTableValue table, int count, bool bottom, bool withTies = false)
     {
         ArgumentNullException.ThrowIfNull(table);
         ArgumentOutOfRangeException.ThrowIfNegative(count);
@@ -32,7 +32,19 @@ internal static class SortSelection
                 selected.DequeueEnqueue(row, row);
         }
 
-        return selected.UnorderedItems.Select(item => item.Element)
+        var rows = selected.UnorderedItems.Select(item => item.Element).ToList();
+        if (withTies)
+        {
+            var boundary = selected.Peek().Row;
+            var positions = rows.Select(row => row.Position).ToHashSet();
+            for (var index = 0; index < table.Rows.Count; index++)
+            {
+                if (!positions.Contains(index) && semantic.Compare(table.Rows[index], boundary) == 0)
+                    rows.Add(new IndexedRow(table.Rows[index], index));
+            }
+        }
+
+        return rows
             .OrderBy(row => row, stable).Select(row => row.Row.Value).ToArray();
     }
 }
