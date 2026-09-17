@@ -1,5 +1,59 @@
 [
   {
+    "Name": "exists",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/combination",
+    "Input": "any",
+    "Output": "boolean",
+    "Summary": "Returns whether the input value has a matching key in the supplied array or grouping.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "array | grouping",
+        "Optional": false,
+        "Summary": "The array or grouping supplying matching keys.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context of this exists call, before evaluating the input key."
+        }
+      },
+      {
+        "Name": "left-key",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "Selects the lookup key of the input value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once with the pipeline input to this exists call as its context. When right-key is omitted for an array, the same expression is also evaluated with each visited right element as its context."
+        }
+      },
+      {
+        "Name": "right-key",
+        "Type": "expression",
+        "Optional": true,
+        "Summary": "Selects each right array value’s key; when omitted, the left-key expression is reused. It is skipped for a grouping.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated with each visited element of the array supplied as right as its context, stopping at the first match. Skipped when right is a grouping."
+        }
+      }
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "array-element",
+      "Summary": "Visits elements of the array supplied as right in order until a matching key is found. For a grouping, checks bucket keys without visiting bucket values."
+    },
+    "Behavior": "Uses structural key equality, including null keys. Empty arrays and groupings return false; a grouping key exists even when its bucket is empty. A null or unsupported right value returns false.",
+    "Examples": [
+      "{{id := 1}, {id := 2}} | filter(exists({{customer-id := 1}}, .id, .customer-id)) → {{id := 1}}",
+      "1 | exists(#{(1 => {})}, @_) → #true"
+    ]
+  },
+  {
     "Name": "is-single",
     "IsPublic": true,
     "Aliases": [],

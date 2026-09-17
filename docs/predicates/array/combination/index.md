@@ -1,20 +1,20 @@
 ---
 layout: docs
-title: "Array predicates"
-parent: "Predicates library"
-
+title: "Combination predicates"
+parent: "Array predicates"
+grand_parent: "Predicates library"
 nav_order: 10
 has_children: true
 has_toc: false
-permalink: /predicates/array-predicates/
+permalink: /predicates/array/combination/
 tags:
   - predicates
   - array
-
+  - combination
 generated: true
 ---
 
-Reference documentation for Expressif predicates in the `array` scope.
+Reference documentation for Expressif predicates in the `array/combination` scope.
 
 | Name | Overview |
 |:-----|:---------|

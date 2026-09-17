@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,7 +42,7 @@ public class PredicateIntrospectorTest
                 info.Name.StartsWith("is-", StringComparison.Ordinal)
                     || info.Name.StartsWith("has-", StringComparison.Ordinal)
                     || BooleanCombinatorNames.Contains(info.Name, StringComparer.Ordinal)
-                    || info.Name is "contains" or "starts-with" or "ends-with"
+                    || info.Name is "contains" or "starts-with" or "ends-with" or "exists"
                     || info.Name.StartsWith("matches-", StringComparison.Ordinal),
                 Is.True,
                 $"Predicate '{info.Name}' does not follow the naming convention.");

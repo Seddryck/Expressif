@@ -713,6 +713,7 @@ public partial class FunctionFactory : BaseExpressionFactory
     {
         var type = function.Name switch
         {
+            "exists" => typeof(Predicates.Array.Exists),
             "join-left" => typeof(Array.JoinLeft),
             "join-right" => typeof(Array.JoinRight),
             "join-full" => typeof(Array.JoinFull),
@@ -734,6 +735,7 @@ public partial class FunctionFactory : BaseExpressionFactory
         var rightKey = bound.Length == 3 ? BuildKey(bound[2]) : null;
         return function.Name switch
         {
+            "exists" => new Predicates.Array.Exists(right, leftKey, rightKey),
             "join-left" => new Array.JoinLeft(right, leftKey, rightKey),
             "join-right" => new Array.JoinRight(right, leftKey, rightKey),
             "join-full" => new Array.JoinFull(right, leftKey, rightKey),

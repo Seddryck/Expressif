@@ -80,7 +80,7 @@ internal static class FunctionConstruction
             "rename-fields" => FunctionConstructionKind.RenameFields,
             "key" => FunctionConstructionKind.Key,
             "group-by" => FunctionConstructionKind.GroupBy,
-            "join" or "join-left" or "join-right" or "join-full" => FunctionConstructionKind.Join,
+            "exists" or "join" or "join-left" or "join-right" or "join-full" => FunctionConstructionKind.Join,
             "drill-down" => FunctionConstructionKind.DrillDown,
             "drill-up" => FunctionConstructionKind.DrillUp,
             "pick" => FunctionConstructionKind.Pick,
