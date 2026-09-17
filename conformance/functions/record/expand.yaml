@@ -1,0 +1,108 @@
+suite: record
+kind: function
+operator: expand
+tests:
+  - id: expand.valid.record
+    cases:
+      - id: expand.valid.record.unique
+        value:
+        parameters:
+          - "{id := 1, customer := {name := \"Alice\", country := \"BE\"}, tail := 2} | expand(.customer)"
+        expected: "{id := 1, name := \"Alice\", country := \"BE\", tail := 2}"
+      - id: expand.valid.record.conflict
+        value:
+        parameters:
+          - "{name := \"Order\", customer := {name := \"Alice\", country := \"BE\"}} | expand(.customer)"
+        expected: "{name := \"Order\", \"customer.name\" := \"Alice\", country := \"BE\"}"
+      - id: expand.valid.record.explicit
+        value:
+        parameters:
+          - "{customer := {name := \"Alice\", country := \"BE\"}} | expand(.customer, \"buyer\")"
+        expected: "{\"buyer.name\" := \"Alice\", \"buyer.country\" := \"BE\"}"
+      - id: expand.valid.record.multiple
+        value:
+        parameters:
+          - "{name := 1, country := 2, customer := {name := 3, country := 4}} | expand(.customer)"
+        expected: "{name := 1, country := 2, \"customer.name\" := 3, \"customer.country\" := 4}"
+      - id: expand.valid.record.shallow
+        value:
+        parameters:
+          - "{customer := {address := {country := \"BE\"}}} | expand(.customer)"
+        expected: "{address := {country := \"BE\"}}"
+      - id: expand.valid.record.chained
+        value:
+        parameters:
+          - "{customer := {address := {country := \"BE\"}}} | expand(.customer) | expand(.address)"
+        expected: "{country := \"BE\"}"
+      - id: expand.valid.record.null
+        value:
+        parameters:
+          - "{id := 1, customer := #null, tail := 2} | expand(.customer)"
+        expected: "{id := 1, tail := 2}"
+      - id: expand.valid.record.missing
+        value:
+        parameters:
+          - "{id := 1} | expand(.customer)"
+        expected: "{id := 1}"
+      - id: expand.valid.record.empty
+        value:
+        parameters:
+          - "{id := 1} | put(customer := record()) | expand(.customer)"
+        expected: "{id := 1}"
+      - id: expand.valid.record.named
+        value:
+        parameters:
+          - "{customer := {name := 1}} | expand(label := \"buyer\", selector := .customer)"
+        expected: "{\"buyer.name\" := 1}"
+      - id: expand.valid.record.computed
+        value:
+        parameters:
+          - "{customer := {name := 1, age := 2}} | expand(.customer | select-fields({\"name\"}), \"buyer\")"
+        expected: "{\"buyer.name\" := 1}"
+      - id: expand.valid.record.append
+        value:
+        parameters:
+          - "{id := 1} | expand({name := 2}, \"buyer\")"
+        expected: "{id := 1, \"buyer.name\" := 2}"
+      - id: expand.valid.record.secondary
+        value:
+        parameters:
+          - "{name := 1, \"customer.name\" := 2, customer := {name := 3, \"customer.customer.name\" := 4}} | expand(.customer)"
+        expected: "{name := 1, \"customer.name\" := 2, \"customer.customer.customer.name\" := 3, \"customer.customer.name\" := 4}"
+      - id: expand.valid.record.explicit-collision
+        value:
+        parameters:
+          - "{\"buyer.name\" := 1, customer := {name := 2}} | expand(.customer, \"buyer\")"
+        expected: "{\"buyer.name\" := 1, \"buyer.buyer.name\" := 2}"
+      - id: expand.valid.record.case
+        value:
+        parameters:
+          - "{Name := 1, customer := {name := 2}} | expand(.customer)"
+        expected: "{Name := 1, name := 2}"
+      - id: expand.valid.record.incoming
+        value:
+        parameters:
+          - "{customer := {name := 1}} | put(customer := {name := 2}) | expand(.customer)"
+        expected: "{name := 2}"
+  - id: expand.invalid.selection
+    cases:
+      - id: expand.invalid.selection.number
+        value:
+        parameters:
+          - "{customer := 42} | expand(.customer)"
+        expected:
+      - id: expand.invalid.selection.text
+        value:
+        parameters:
+          - "{customer := \"Alice\"} | expand(.customer)"
+        expected:
+      - id: expand.invalid.selection.array
+        value:
+        parameters:
+          - "{customer := {1, 2}} | expand(.customer)"
+        expected:
+      - id: expand.invalid.selection.tuple
+        value:
+        parameters:
+          - "{customer := T(1, 2)} | expand(.customer)"
+        expected:

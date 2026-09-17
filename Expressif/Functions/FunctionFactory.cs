@@ -301,6 +301,24 @@ public partial class FunctionFactory : BaseExpressionFactory
         if (construction == FunctionConstructionKind.PutPath)
             return BuildPutPathFunction(name, function, context);
 
+        if (construction == FunctionConstructionKind.Expand)
+        {
+            if (function.Arguments.Any(argument => argument.IsSpread))
+                throw new SpreadArgumentException("Spread arguments are not supported by expand.");
+            var bound = ParameterArgumentBinder.Bind(typeof(Record.Expand), function.Arguments).Parameters;
+            var members = bound[0] is OpenExpressionParameter open ? open.Expression.Members.ToArray() : [];
+            var field = members.FirstOrDefault() is
+                { Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string fieldName }] }
+                ? fieldName : null;
+            if (bound.Length == 1 && (field is null || members.Length != 1))
+                throw new BindingException("The expand selector must be a direct field selector such as .customer when no explicit label is supplied.");
+            var selector = new DelegatedFunction(BuildValueEvaluator(bound[0], context));
+            var label = bound.Length == 2 ? BuildValueEvaluator(bound[1], context) : null;
+            return new Record.Expand(new RecordExpansionSelector(field, value => EvaluateNested(selector, value)),
+                label is null ? null : value => label.Invoke(value)
+                    as string ?? throw new InvalidOperationException("The expand label must return text."));
+        }
+
         if (construction == FunctionConstructionKind.RenameFields)
         {
             var bound = ParameterArgumentBinder.Bind(typeof(Record.RenameFields), function.Arguments).Parameters;

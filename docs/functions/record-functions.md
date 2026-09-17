@@ -20,6 +20,7 @@ Reference documentation for Expressif functions in the `record` scope.
 |:-----|:---------|
 | [`drop-null-fields`]({{ '/functions/record/drop-null-fields/' | relative_url }}) | Removes null-valued fields from the input record without traversing nested records or collections. |
 | [`exclude-fields`]({{ '/functions/record/exclude-fields/' | relative_url }}) | Returns all fields except those whose names appear in the supplied array, preserving input field order and ignoring unknown names. |
+| [`expand`]({{ '/functions/record/expand/' | relative_url }}) | Flattens a selected nested record into its parent, qualifying conflicts or every expanded field when a label is supplied. |
 | [`field`]({{ '/functions/record/field/' | relative_url }}) | Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values. |
 | [`field-names`]({{ '/functions/record/field-names/' | relative_url }}) | Returns the names of all fields in the input record, preserving field order. |
 | [`from-pairs`]({{ '/functions/record/from-pairs/' | relative_url }}) | Converts an array of pairs to a record, coercing keys to text and preserving values and order. |
