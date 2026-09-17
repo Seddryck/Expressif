@@ -1,0 +1,60 @@
+suite: record
+kind: function
+operator: explode
+tests:
+  - id: explode.valid.rows
+    cases:
+      - id: explode.valid.rows.single
+        value:
+        parameters: ['{id := 1, tags := {"A"}} | explode(.tags)']
+        expected: '{{id := 1, tags := "A"}}'
+      - id: explode.valid.rows.many
+        value:
+        parameters: ['{id := 1, tags := {"A", "B", "C"}, tail := 2} | explode(.tags)']
+        expected: '{{id := 1, tags := "A", tail := 2}, {id := 1, tags := "B", tail := 2}, {id := 1, tags := "C", tail := 2}}'
+      - id: explode.valid.rows.empty
+        value:
+        parameters: ['{id := 1, tags := {}} | explode(.tags)']
+        expected: '{}'
+      - id: explode.valid.rows.parents
+        value:
+        parameters: ['{{id := 1, tags := {"A", "B"}}, {id := 2, tags := {}}, {id := 3, tags := {"C"}}} | explode(.tags)']
+        expected: '{{id := 1, tags := "A"}, {id := 1, tags := "B"}, {id := 3, tags := "C"}}'
+      - id: explode.valid.rows.duplicates
+        value:
+        parameters: ['{tags := {"A", "A"}} | explode(.tags)']
+        expected: '{{tags := "A"}, {tags := "A"}}'
+      - id: explode.valid.rows.nested
+        value:
+        parameters: ['{tags := {{"A", "B"}, {"C"}}} | explode(.tags)']
+        expected: '{{tags := {"A", "B"}}, {tags := {"C"}}}'
+      - id: explode.valid.rows.twice
+        value:
+        parameters: ['{tags := {{"A", "B"}, {"C"}}} | explode(.tags) | explode(.tags)']
+        expected: '{{tags := "A"}, {tags := "B"}, {tags := "C"}}'
+      - id: explode.valid.rows.null
+        value:
+        parameters: ['{tags := #null} | explode(.tags)']
+        expected: '{}'
+      - id: explode.valid.rows.missing
+        value:
+        parameters: ['{id := 1} | explode(.tags)']
+        expected: '{}'
+      - id: explode.valid.rows.null-child
+        value:
+        parameters: ['{tags := {#null, "A"}} | explode(.tags)']
+        expected: '{{tags := null}, {tags := "A"}}'
+      - id: explode.valid.rows.empty-source
+        value:
+        parameters: ['{} | explode(.tags)']
+        expected: '{}'
+      - id: explode.valid.rows.named
+        value:
+        parameters: ['{tags := {"A"}} | explode(selector := .tags)']
+        expected: '{{tags := "A"}}'
+  - id: explode.valid.null
+    cases:
+      - id: explode.valid.null.input
+        value:
+        parameters: ['#null | explode(.tags)']
+        expected:

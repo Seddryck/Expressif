@@ -418,6 +418,9 @@ public partial class FunctionFactory : BaseExpressionFactory
         if (typeof(IValueSpreadAware).IsAssignableFrom(type))
             return InstantiateValueSpreadAware(type, function, context);
 
+        if (type == typeof(Record.Explode))
+            return BuildExplodeFunction(function, context);
+
         if (type == typeof(Array.Pivot))
             return BuildPivotFunction(function, context);
 
@@ -692,6 +695,19 @@ public partial class FunctionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         return function.Arguments.Select(argument => BuildValueEvaluator(argument.Value, context)).ToArray();
+    }
+
+    private IFunction BuildExplodeFunction(Bindings.Function function, IContext context)
+    {
+        var bound = ParameterArgumentBinder.Bind(typeof(Record.Explode), function.Arguments).Parameters;
+        var field = bound[0] is OpenExpressionParameter open
+            ? open.Expression.Members.ToArray()
+            : [];
+        if (field is not [{ Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string name }] }])
+            throw new BindingException("The explode selector must be a direct field selector such as .tags; computed expressions and nested paths are not supported.");
+
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(bound[0], context));
+        return new Record.Explode(new NamedFieldSelector(name, value => EvaluateNested(evaluator, value)));
     }
 
     private IFunction BuildPivotFunction(Bindings.Function function, IContext context)
