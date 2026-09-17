@@ -251,6 +251,21 @@ jobs:
             framework: net10.0
             coverage: expressif-serialization-net10.0
             suite: coverage
+          - name: OpenLineage, net8.0
+            project: Expressif.OpenLineage.Testing/Expressif.OpenLineage.Testing.csproj
+            framework: net8.0
+            coverage: expressif-openlineage-net8.0
+            suite: coverage
+          - name: OpenLineage, net9.0
+            project: Expressif.OpenLineage.Testing/Expressif.OpenLineage.Testing.csproj
+            framework: net9.0
+            coverage: expressif-openlineage-net9.0
+            suite: coverage
+          - name: OpenLineage, net10.0
+            project: Expressif.OpenLineage.Testing/Expressif.OpenLineage.Testing.csproj
+            framework: net10.0
+            coverage: expressif-openlineage-net10.0
+            suite: coverage
           - name: CLI, net10.0
             project: Expressif.Cli.Tests/Expressif.Cli.Tests.csproj
             framework: net10.0
@@ -400,6 +415,13 @@ jobs:
             paths: |
               Expressif.Serialization/bin/Release/*.nupkg
               Expressif.Serialization/bin/Release/*.snupkg
+          - name: OpenLineage NuGet
+            project: Expressif.OpenLineage/Expressif.OpenLineage.csproj
+            pack_arguments: --include-symbols
+            artifact: expressif-openlineage-nuget-package
+            paths: |
+              Expressif.OpenLineage/bin/Release/*.nupkg
+              Expressif.OpenLineage/bin/Release/*.snupkg
           - name: CLI NuGet
             project: Expressif.Cli/Expressif.Cli.csproj
             pack_arguments: ''
@@ -852,6 +874,12 @@ jobs:
           name: expressif-serialization-nuget-package
           path: packages/serialization
 
+      - name: Download OpenLineage package
+        uses: actions/download-artifact@v8
+        with:
+          name: expressif-openlineage-nuget-package
+          path: packages/openlineage
+
       - name: Download CLI package
         uses: actions/download-artifact@v8
         with:
@@ -866,6 +894,8 @@ jobs:
             @{ Name = 'Expressif symbol package'; Path = 'packages/expressif'; Filter = '*.snupkg'; Count = 1 },
             @{ Name = 'Serialization package'; Path = 'packages/serialization'; Filter = '*.nupkg'; Count = 1 },
             @{ Name = 'Serialization symbol package'; Path = 'packages/serialization'; Filter = '*.snupkg'; Count = 1 },
+            @{ Name = 'OpenLineage package'; Path = 'packages/openlineage'; Filter = '*.nupkg'; Count = 1 },
+            @{ Name = 'OpenLineage symbol package'; Path = 'packages/openlineage'; Filter = '*.snupkg'; Count = 1 },
             @{ Name = 'Expressif CLI packages'; Path = 'packages/cli'; Filter = '*.nupkg'; Count = 5 }
           )
 

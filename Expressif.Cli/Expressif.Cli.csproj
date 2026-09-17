@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Expressif\Expressif.csproj" />
     <ProjectReference Include="..\Expressif.Serialization\Expressif.Serialization.csproj" />
+    <ProjectReference Include="..\Expressif.OpenLineage\Expressif.OpenLineage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

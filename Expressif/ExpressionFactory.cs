@@ -37,14 +37,35 @@ public sealed class ExpressionFactory
     private RootExpressionSyntax Parse(string text)
     {
         using var observation = Observer.Begin(ExpressionObservationStage.Parse);
-        return Parser.Parse(text);
+        try
+        {
+            var syntax = Parser.Parse(text);
+            observation.Complete();
+            return syntax;
+        }
+        catch (Exception exception)
+        {
+            observation.Fail(exception);
+            throw;
+        }
     }
 
     private IExpression ObserveBinding(Func<IExpression> bind)
     {
         IExpression expression;
-        using (Observer.Begin(ExpressionObservationStage.Bind))
-            expression = bind();
+        using (var observation = Observer.Begin(ExpressionObservationStage.Bind))
+        {
+            try
+            {
+                expression = bind();
+                observation.Complete();
+            }
+            catch (Exception exception)
+            {
+                observation.Fail(exception);
+                throw;
+            }
+        }
 
         return ReferenceEquals(Observer, NoOpExpressionObserver.Instance)
             ? expression

@@ -65,6 +65,7 @@ internal sealed class RunHandler(
             return ExitCodes.InvalidExpressionOrInput;
         }
 
+        using var observation = CliLineage.Begin(expressionCode, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat);
         var inputs = request.HasSource
             ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar, request.SourceFormat)
             : BuildInputSource(request).Read();
@@ -79,11 +80,13 @@ internal sealed class RunHandler(
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
+            observation.Fail(exception);
             return ExpressionCommandCommon.WriteValidationError(
                 exception, expressionCode, hasExpressionFile, request.ExpressionFilePath);
         }
         catch (Exception exception)
         {
+            observation.Fail(exception);
             Console.Error.WriteLine($"Unexpected error: {exception.Message}");
             return ExitCodes.UnexpectedInternalError;
         }
@@ -92,15 +95,18 @@ internal sealed class RunHandler(
         {
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
                 Console.Out.WriteLine(serializer.Serialize(result, formatting));
+            observation.Complete();
             return ExitCodes.Success;
         }
         catch (FormatException exception)
         {
+            observation.Fail(exception);
             Console.Error.WriteLine(exception.Message);
             return ExitCodes.InvalidExpressionOrInput;
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
+            observation.Fail(exception);
             CommandDiagnosticWriter.WriteLine(exception.Message);
             return ExitCodes.EvaluationFailed;
         }

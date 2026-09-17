@@ -58,6 +58,7 @@ internal sealed class ReplSession
                 ? trimmed
                 : trimmed[1..].TrimStart()
             : source;
+        using var observation = CliLineage.Begin(code, "repl");
         IExpression expression;
         try
         {
@@ -68,16 +69,19 @@ internal sealed class ReplSession
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
         {
+            observation.Fail(exception);
             return new ReplErrorResult(
                 ReplErrorKind.Validation,
                 CommandErrorFormatter.FormatValidationError(exception, code));
         }
         catch (ExpressionRequiresInputException exception)
         {
+            observation.Fail(exception);
             return new ReplErrorResult(ReplErrorKind.Input, exception.Message);
         }
         catch (Exception exception)
         {
+            observation.Fail(exception);
             return new ReplErrorResult(ReplErrorKind.Unexpected, $"Unexpected error: {exception.Message}");
         }
 
@@ -87,10 +91,12 @@ internal sealed class ReplSession
             history.Push((HasCurrentInput, currentInput));
             currentInput = value;
             HasCurrentInput = true;
+            observation.Complete();
             return new ReplEvaluationResult(value);
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
+            observation.Fail(exception);
             return new ReplErrorResult(
                 ReplErrorKind.Evaluation,
                 CommandErrorFormatter.FormatEvaluationError(exception));
