@@ -21,3 +21,4 @@ Reference documentation for Expressif functions in the `array/grouping` scope.
 | [`group`]({{ '/functions/array/grouping/group/' | relative_url }}) | Groups pairs by structurally equal keys while preserving first-seen group and value order. |
 | [`group-by`]({{ '/functions/array/grouping/group-by/' | relative_url }}) | Groups input values by keys calculated from one or more expressions. |
 | [`key`]({{ '/functions/array/grouping/key/' | relative_url }}) | Associates the input value with a key calculated by one or more expressions. |
+| [`pivot`]({{ '/functions/array/grouping/pivot/' | relative_url }}) | Groups values by row and column, applies a grouping summary, and reshapes the cells into records. |

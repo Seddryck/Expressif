@@ -400,6 +400,9 @@ public partial class FunctionFactory : BaseExpressionFactory
         if (typeof(IValueSpreadAware).IsAssignableFrom(type))
             return InstantiateValueSpreadAware(type, function, context);
 
+        if (type == typeof(Array.Pivot))
+            return BuildPivotFunction(function, context);
+
         if (type == typeof(Grouping.SummarizeAgainst))
             return BuildSummarizeAgainst(function, context);
 
@@ -671,6 +674,27 @@ public partial class FunctionFactory : BaseExpressionFactory
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         return function.Arguments.Select(argument => BuildValueEvaluator(argument.Value, context)).ToArray();
+    }
+
+    private IFunction BuildPivotFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException("Spread arguments are not supported by pivot.");
+
+        var bound = ParameterArgumentBinder.Bind(typeof(Array.Pivot), function.Arguments).Parameters;
+        var field = bound[0] is OpenExpressionParameter open
+            ? open.Expression.Members.ToArray()
+            : [];
+        if (field is not [{ Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string name }] }])
+            throw new BindingException("The pivot row must be a direct field selector such as .country; computed or unnamed row expressions are not supported.");
+
+        Func<object?, object?> BuildExpression(IParameter parameter)
+        {
+            var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+            return value => EvaluateNested(evaluator, value);
+        }
+
+        return new Array.Pivot(new NamedFieldSelector(name, BuildExpression(bound[0])), BuildExpression(bound[1]), BuildExpression(bound[2]));
     }
 
     private IFunction BuildJoinFunction(Bindings.Function function, IContext context)

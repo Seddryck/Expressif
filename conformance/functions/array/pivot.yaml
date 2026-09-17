@@ -1,0 +1,33 @@
+suite: pivot
+kind: function
+operator: pivot
+tests:
+  - id: pivot.valid.records
+    cases:
+      - id: pivot.valid.records.sales
+        value: (null)
+        parameters: ['{{country := "BE", year := 2025, amount := 30}, {country := "BE", year := 2025, amount := 70}, {country := "BE", year := 2026, amount := 120}, {country := "FR", year := 2025, amount := 80}, {country := "FR", year := 2026, amount := 90}} | pivot(.country, .year, summarize(|> .amount | sum))']
+        expected: '{{country := "BE", 2025 := 100, 2026 := 120}, {country := "FR", 2025 := 80, 2026 := 90}}'
+      - id: pivot.valid.records.sparse.order
+        value: (null)
+        parameters: ['{{r := "FR", c := "b"}, {r := "BE", c := "a"}, {r := "FR", c := "a"}, {r := "FR", c := "b"}} | pivot(.r, .c, summarize(cardinality))']
+        expected: '{{r := "FR", b := 2, a := 1}, {r := "BE", a := 1}}'
+      - id: pivot.valid.records.named
+        value: (null)
+        parameters: ['{{r := "BE", c := "a", v := 3}} | pivot(summary := summarize(|> .v | first), column := .c, row := .r)']
+        expected: '{{r := "BE", a := 3}}'
+      - id: pivot.valid.records.against
+        value: (null)
+        parameters: ['{{r := "BE", c := "a", v := 2}, {r := "BE", c := "b", v := 4}} | pivot(.r, .c, summarize-against(count, count, divide~))']
+        expected: '{{r := "BE", a := 0.5, b := 0.5}}'
+      - id: pivot.valid.records.custom.dictionary.order
+        value: (null)
+        parameters: ['{{r := "BE", c := "a"}, {r := "FR", c := "b"}} | pivot(.r, .c, !{(T("FR", "b") => 42), (T("BE", "a") => #null)})']
+        expected: '{{r := "FR", b := 42}, {r := "BE", a := null}}'
+  - id: pivot.valid.empty
+    cases:
+      - id: pivot.valid.empty.array
+        value: (null)
+        parameters: ['{} | pivot(.r, .c, summarize(cardinality))']
+        expected: '{}'
+
