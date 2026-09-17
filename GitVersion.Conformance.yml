@@ -23,8 +23,3 @@ major-version-bump-message: '\+semver:\s?(breaking|major)'
 minor-version-bump-message: '\+semver:\s?(feature|minor)'
 patch-version-bump-message: '^(fix|feat|test|chore)\(conformance\):'
 no-bump-message: '\+semver:\s?(none|skip)'
-
-ignore:
-  paths:
-    # Ignore commits whose changes are entirely outside conformance/.
-    - '^(?!conformance/).*'
