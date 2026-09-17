@@ -14,7 +14,17 @@ internal sealed class ObservedExpression : IExpression
     {
         using var observation = observer.Begin(ExpressionObservationStage.Evaluate);
         var frame = new EvaluationFrame(value, value, observation);
-        return expression.Evaluate(frame.Current);
+        try
+        {
+            var result = expression.Evaluate(frame.Current);
+            observation.Complete();
+            return result;
+        }
+        catch (Exception exception)
+        {
+            observation.Fail(exception);
+            throw;
+        }
     }
 
     public IExpression WithContext(EvaluationContext context)

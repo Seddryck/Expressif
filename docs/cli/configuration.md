@@ -6,6 +6,46 @@ nav_order: 9
 permalink: /cli/configuration/
 ---
 
+## OpenLineage reporting
+
+Reporting is disabled by default. Set `OPENLINEAGE_URL` to a backend base URL to
+report `run`, `evaluate`, and REPL executions through `Expressif.OpenLineage`.
+
+```bash
+OPENLINEAGE_URL=http://localhost:5000 \
+OPENLINEAGE_NAMESPACE=my-application \
+OPENLINEAGE_JOB_NAME=customers \
+expressif run 'upper' --source customers.json
+```
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `OPENLINEAGE_URL` | unset | HTTP/HTTPS backend base URL; enables reporting. |
+| `OPENLINEAGE_ENDPOINT` | `api/v1/lineage` | Relative endpoint appended to the base URL. |
+| `OPENLINEAGE_API_KEY` | unset | Optional Bearer authentication token. |
+| `OPENLINEAGE_NAMESPACE` | `expressif` | Stable job namespace. |
+| `OPENLINEAGE_JOB_NAME` | command name | Stable job name (`run`, `evaluate`, or `repl`). |
+| `OPENLINEAGE_DISABLED` | `false` | Set to `true` to disable reporting even with a URL. |
+
+The HTTP variables follow the [OpenLineage simple HTTP configuration conventions](https://openlineage.io/docs/client/python/configuration/).
+This minimal integration does not read `openlineage.yml` or the full nested
+transport configuration supported by other OpenLineage clients.
+
+Each command execution generates one `START` followed by `COMPLETE` or `FAIL`;
+`run` reports one run for its entire row sequence. REPL reports each expression
+evaluation. Events include the expression and Expressif version in a custom job
+facet. JSON/CSV source files are identified by absolute file URIs, including
+files selected using a format override. Expression-backed sources are not
+identified as datasets because their underlying data locations are unknown.
+Inline input, anonymous values, and stdout have no dataset identity. The CLI
+cannot infer a shell redirection destination.
+
+Events never appear on stdout. Configuration or delivery failures are reported
+on stderr and preserve execution results and exit codes. Delivery is best effort
+with a five-second timeout per HTTP request and no retries.
+
+## Output configuration
+
 Expressif reads `expressif.config.json` beside its executable. Use `expressif config path` to locate it. The packaged file contains the same defaults used when the file is absent:
 
 ```json

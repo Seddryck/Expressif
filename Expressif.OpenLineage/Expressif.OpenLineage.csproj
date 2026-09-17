@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>OpenLineage execution reporting for Expressif.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Expressif\Expressif.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="..\README.md" />
+    <None Remove="README.md" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

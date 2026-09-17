@@ -24,12 +24,43 @@ public class ExpressionObserverTest
         Assert.Multiple(() =>
         {
             Assert.That(result, Is.EqualTo("FOO"));
+            Assert.That(observer.Observations, Has.All.Matches<TrackingObservation>(x => x.IsComplete && x.Failure is null));
             Assert.That(observer.Events, Is.EqualTo(new[]
             {
                 "begin:Parse", "end:Parse",
                 "begin:Bind", "end:Bind",
                 "begin:Evaluate", "end:Evaluate",
             }));
+        });
+    }
+
+    [Test]
+    public void FailedEvaluation_ReportsOriginalFailureAndDisposesScope()
+    {
+        var observer = new TrackingObserver();
+        var expression = new ExpressionFactory(observer: observer).Create("fold(sum)");
+        var exception = Assert.Catch(() => expression.Evaluate(new[] { "unknown" }));
+        var evaluation = observer.Observations.Single(x => x.Stage == ExpressionObservationStage.Evaluate);
+        Assert.Multiple(() =>
+        {
+            Assert.That(evaluation.Failure, Is.SameAs(exception));
+            Assert.That(evaluation.IsComplete, Is.False);
+            Assert.That(evaluation.IsDisposed, Is.True);
+        });
+    }
+
+    [Test]
+    public void FailedParsing_ReportsFailureAndDisposesScope()
+    {
+        var observer = new TrackingObserver();
+        var exception = Assert.Catch(() => new ExpressionFactory(observer: observer).Create("upper("));
+        var parsing = observer.Observations.Single();
+        Assert.Multiple(() =>
+        {
+            Assert.That(parsing.Stage, Is.EqualTo(ExpressionObservationStage.Parse));
+            Assert.That(parsing.Failure, Is.SameAs(exception));
+            Assert.That(parsing.IsComplete, Is.False);
+            Assert.That(parsing.IsDisposed, Is.True);
         });
     }
 
@@ -83,6 +114,12 @@ public class ExpressionObserverTest
         public int Id { get; } = id;
         public ExpressionObservationStage Stage { get; } = stage;
         public bool IsDisposed => disposed != 0;
+        public bool IsComplete { get; private set; }
+        public Exception? Failure { get; private set; }
+
+        public void Complete() => IsComplete = true;
+
+        public void Fail(Exception exception) => Failure = exception;
 
         public void Dispose()
         {
