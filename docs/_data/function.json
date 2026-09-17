@@ -1085,6 +1085,180 @@
     }
   },
   {
+    "Name": "join-left",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/combination",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Emits every matching pair and preserves unmatched left values with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "array | grouping | dictionary",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The array, grouping, or dictionary supplying matching right-hand values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression."
+        }
+      },
+      {
+        "Name": "left-key",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Selects the lookup key of each left value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once with each element of the array supplied as pipeline input to this call as its context; .field reads that element. When right-key is omitted for a right array, also evaluated once with each right element as its context before visiting left elements."
+        }
+      },
+      {
+        "Name": "right-key",
+        "Type": "expression",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary."
+        }
+      }
+    ],
+    "Examples": [
+      "{1, 2} | join-left({2, 3}, @_) → {(1 => #null), (2 => 2)}"
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array supplied as pipeline input to this join-left call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
+    }
+  },
+  {
+    "Name": "join-right",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/combination",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Emits every matching pair and preserves unmatched right values with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "array | grouping | dictionary",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The array, grouping, or dictionary supplying matching right-hand values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression."
+        }
+      },
+      {
+        "Name": "left-key",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Selects the lookup key of each left value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once with each element of the array supplied as pipeline input to this call as its context; .field reads that element. When right-key is omitted for a right array, also evaluated once with each right element as its context before visiting left elements."
+        }
+      },
+      {
+        "Name": "right-key",
+        "Type": "expression",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary."
+        }
+      }
+    ],
+    "Examples": [
+      "{1, 2} | join-right({2, 3}, @_) → {(2 => 2), (#null => 3)}"
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array supplied as pipeline input to this join-right call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
+    }
+  },
+  {
+    "Name": "join-full",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array/combination",
+    "Input": "array",
+    "Output": "array",
+    "Summary": "Emits every matching pair and preserves unmatched values from both sides with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "array | grouping | dictionary",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "The array, grouping, or dictionary supplying matching right-hand values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression."
+        }
+      },
+      {
+        "Name": "left-key",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Selects the lookup key of each left value.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once with each element of the array supplied as pipeline input to this call as its context; .field reads that element. When right-key is omitted for a right array, also evaluated once with each right element as its context before visiting left elements."
+        }
+      },
+      {
+        "Name": "right-key",
+        "Type": "expression",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary."
+        }
+      }
+    ],
+    "Examples": [
+      "{1, 2} | join-full({2, 3}, @_) → {(1 => #null), (2 => 2), (#null => 3)}"
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "array-element",
+      "Summary": "Visits each element of the array supplied as pipeline input to this join-full call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
+    }
+  },
+  {
     "Name": "zip",
     "IsPublic": true,
     "Aliases": [],

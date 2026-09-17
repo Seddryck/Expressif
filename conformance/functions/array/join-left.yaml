@@ -1,0 +1,50 @@
+suite: join-left
+kind: function
+operator: join-left
+tests:
+  - id: join-left.valid
+    cases:
+      - id: join-left.valid.ordering
+        value: (null)
+        parameters: ['{1, 2, 2, 4} | join-left({3, 2, 1, 2, 5}, @_)']
+        expected: '{(1 => 1), (2 => 2), (2 => 2), (2 => 2), (2 => 2), (4 => null)}'
+      - id: join-left.valid.empty-left
+        value: (null)
+        parameters: ['{} | join-left({1}, @_)']
+        expected: '{}'
+      - id: join-left.valid.empty-right
+        value: (null)
+        parameters: ['{1} | join-left({}, @_)']
+        expected: '{(1 => null)}'
+      - id: join-left.valid.empty-both
+        value: (null)
+        parameters: ['{} | join-left({}, @_)']
+        expected: '{}'
+      - id: join-left.valid.null-keys
+        value: (null)
+        parameters: ['{#null, 1} | join-left({#null, 2}, @_)']
+        expected: '{(null => null), (1 => null)}'
+      - id: join-left.valid.grouping
+        value: (null)
+        parameters: ['{1, 2} | join-left(#{(1 => {"A", "B"}), (3 => {"C"}), (2 => {})}, @_)']
+        expected: '{(1 => "A"), (1 => "B"), (2 => null)}'
+      - id: join-left.valid.dictionary
+        value: (null)
+        parameters: ['{1, 2} | join-left(!{(1 => #null), (3 => "C")}, @_)']
+        expected: '{(1 => null), (2 => null)}'
+      - id: join-left.valid.composite
+        value: (null)
+        parameters: ['{T(1, 2)} | join-left({T(1, 2)}, @_)']
+        expected: '{(T(1, 2) => T(1, 2))}'
+      - id: join-left.valid.asymmetric
+        value: (null)
+        parameters: ['{{customer-id := 1}} | join-left({{id := 1}}, .customer-id, .id)']
+        expected: '{({customer-id := 1} => {id := 1})}'
+      - id: join-left.valid.named
+        value: (null)
+        parameters: ['{{customer-id := 1}} | join-left(right-key := .id, left-key := .customer-id, right := {{id := 1}})']
+        expected: '{({customer-id := 1} => {id := 1})}'
+      - id: join-left.valid.group-by
+        value: (null)
+        parameters: ['{1} | join-left({1, 1} | group-by(@_), @_)']
+        expected: '{(1 => 1), (1 => 1)}'
