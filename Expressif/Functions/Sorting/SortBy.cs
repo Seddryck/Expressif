@@ -22,16 +22,16 @@ public sealed class SortBy : IFunction<IEnumerable, object?[]>
 
     public object?[] Evaluate(IEnumerable value)
     {
-        var source = value.Cast<object?>().ToArray();
-        if (source.Length == 0)
-            return [];
+        return new Sort().Evaluate(BuildTable(value, criteria));
+    }
 
-        var pairs = source.Select(item => new Values.Pair(
+    internal static SortTableValue BuildTable(IEnumerable value, IReadOnlyList<SortByCriterion> criteria)
+    {
+        var pairs = value.Cast<object?>().Select(item => new Values.Pair(
             new Values.SortKey(criteria.Select(criterion => new Values.SortTerm(
                 criterion.Evaluate(item), criterion.Comparer, criterion.Ascending, criterion.NullsFirst)).ToArray()),
             item));
-        var table = (SortTableValue)new SortTable().Evaluate(pairs)!;
-        return new Sort().Evaluate(table);
+        return (SortTableValue)new SortTable().Evaluate(pairs)!;
     }
 
     object? IFunction.Evaluate(object? value)

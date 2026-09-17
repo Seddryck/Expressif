@@ -91,7 +91,7 @@ internal static class FunctionConstruction
             "transform-with" => FunctionConstructionKind.TransformWith,
             "transform-as" => FunctionConstructionKind.TransformAs,
             "sort-term" => FunctionConstructionKind.SortTerm,
-            "sort-by" => FunctionConstructionKind.SortBy,
+            "sort-by" or "rank-by" or "dense-rank-by" => FunctionConstructionKind.SortBy,
             _ => FunctionConstructionKind.Standard,
         };
 }

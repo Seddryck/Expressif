@@ -87,6 +87,8 @@ internal static class ExpressifTypeMapper
             [("SortTerm", "comparer")] = "expression",
             [("SortKey", ValuesParameter)] = "sort-term",
             [("SortBy", "criteria")] = "expression",
+            [("RankBy", "criteria")] = "expression",
+            [("DenseRankBy", "criteria")] = "expression",
         };
 
     public static string ToExpressifType(

@@ -31,10 +31,10 @@ public class SortByTest
         => Assert.That(() => Expression.Create("array() | sort-by()").Evaluate(null), Throws.TypeOf<BindingException>());
 
     [Test]
-    public void SortBy_InvalidCoercion_ThrowsWhenCompared()
+    public void SortBy_InvalidCoercion_BecomesNullKey()
         => Assert.That(
-            () => Expression.Create("array({v := \"bad\"}, {v := 1}) | sort-by(.v -> :numeric)").Evaluate(null),
-            Throws.TypeOf<InvalidOperationException>());
+            ValueFormatter.Format(Expression.Create("array({v := \"bad\"}, {v := 1}) | sort-by(.v -> :numeric)").Evaluate(null)),
+            Is.EqualTo("{{v := 1}, {v := \"bad\"}}"));
 
     [Test]
     public void SortBy_UnsupportedType_ThrowsClearly()
