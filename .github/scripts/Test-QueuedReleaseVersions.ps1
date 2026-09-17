@@ -65,6 +65,8 @@ try {
         throw "Invalid reference was not rejected: $failure"
     }
     Write-Host 'PASS: Invalid explicit reference is rejected'
+    # The expected mocked Git failure must not fail the PowerShell CI step.
+    $global:LASTEXITCODE = 0
 }
 finally {
     $env:APPVEYOR_REPO_COMMIT = $originalCommit
