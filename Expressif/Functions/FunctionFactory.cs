@@ -418,8 +418,8 @@ public partial class FunctionFactory : BaseExpressionFactory
         if (typeof(IValueSpreadAware).IsAssignableFrom(type))
             return InstantiateValueSpreadAware(type, function, context);
 
-        if (type == typeof(Record.Explode))
-            return BuildExplodeFunction(function, context);
+        if (type == typeof(Record.Explode) || type == typeof(Record.ExplodeOuter))
+            return BuildExplodeFunction(type, function, context);
 
         if (type == typeof(Array.Pivot))
             return BuildPivotFunction(function, context);
@@ -697,9 +697,9 @@ public partial class FunctionFactory : BaseExpressionFactory
         return function.Arguments.Select(argument => BuildValueEvaluator(argument.Value, context)).ToArray();
     }
 
-    private IFunction BuildExplodeFunction(Bindings.Function function, IContext context)
+    private IFunction BuildExplodeFunction(Type type, Bindings.Function function, IContext context)
     {
-        var bound = ParameterArgumentBinder.Bind(typeof(Record.Explode), function.Arguments).Parameters;
+        var bound = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
         var field = bound[0] is OpenExpressionParameter open
             ? open.Expression.Members.ToArray()
             : [];
@@ -707,7 +707,8 @@ public partial class FunctionFactory : BaseExpressionFactory
             throw new BindingException("The explode selector must be a direct field selector such as .tags; computed expressions and nested paths are not supported.");
 
         var evaluator = new DelegatedFunction(BuildValueEvaluator(bound[0], context));
-        return new Record.Explode(new NamedFieldSelector(name, value => EvaluateNested(evaluator, value)));
+        var selector = new NamedFieldSelector(name, value => EvaluateNested(evaluator, value));
+        return type == typeof(Record.ExplodeOuter) ? new Record.ExplodeOuter(selector) : new Record.Explode(selector);
     }
 
     private IFunction BuildPivotFunction(Bindings.Function function, IContext context)

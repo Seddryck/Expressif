@@ -10,12 +10,19 @@ namespace Expressif.Functions.Record;
 /// <summary>Emits one record per element of a selected collection-valued field, preserving other fields and field order.</summary>
 [Function(prefix: "")]
 [Scope("record")]
-public sealed class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<IEnumerable, ValueRecord[]>
+public class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<IEnumerable, ValueRecord[]>
 {
     private readonly NamedFieldSelector selector;
+    private readonly bool preserveParent;
 
     /// <param name="selector">A direct field selector identifying the collection-valued field to replace.</param>
     public Explode(NamedFieldSelector selector) => this.selector = selector;
+
+    protected Explode(NamedFieldSelector selector, bool preserveParent)
+    {
+        this.selector = selector;
+        this.preserveParent = preserveParent;
+    }
 
     public ValueRecord[] Evaluate(ValueRecord value) => ExplodeParent(value).ToArray();
 
@@ -39,16 +46,31 @@ public sealed class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<I
         var fields = RecordOperations.Enumerate(parent);
         var children = selector.Evaluate(parent);
         if (children is null or DBNull)
+        {
+            if (preserveParent)
+                yield return Replace(null);
             yield break;
+        }
         if (!IsCollection(children))
             throw new ArgumentException("The field selected by explode must contain an array or supported enumerable.", nameof(parent));
 
+        var any = false;
         foreach (var child in (IEnumerable)children)
+        {
+            any = true;
+            yield return Replace(child);
+        }
+        if (!any && preserveParent)
+            yield return Replace(null);
+
+        ValueRecord Replace(object? child)
         {
             var result = new ValueRecord();
             foreach (var field in fields)
                 result.Set(field.Key, field.Key == selector.Name ? child : field.Value);
-            yield return result;
+            if (!result.ContainsKey(selector.Name))
+                result.Set(selector.Name, child);
+            return result;
         }
     }
 

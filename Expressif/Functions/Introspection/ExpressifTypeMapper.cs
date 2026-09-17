@@ -28,6 +28,7 @@ internal static class ExpressifTypeMapper
             [("Expand", "selector")] = "expression",
             [("Expand", "label")] = "text",
             [("Explode", "selector")] = "expression",
+            [("ExplodeOuter", "selector")] = "expression",
             [("Pivot", "row")] = "expression",
             [("Pivot", "column")] = "expression",
             [("Pivot", "summary")] = "expression",

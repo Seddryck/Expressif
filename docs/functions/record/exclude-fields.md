@@ -31,9 +31,13 @@ Returns all fields except those whose names appear in the supplied array, preser
 |:-----|:-----|:---------|:------------|
 | `names` | `array` | Yes | Field names to remove. Unknown and duplicate names are ignored. |
 
+
+
 ## Argument evaluation
 
 - **`names`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 
