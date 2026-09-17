@@ -32,6 +32,7 @@ permissions:
 concurrency:
   group: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'ci-main-release' || github.run_id }}
   cancel-in-progress: false
+  queue: max
 
 env:
   DOTNET_NO_WORKLOAD_UPDATE_NOTIFICATION: true
