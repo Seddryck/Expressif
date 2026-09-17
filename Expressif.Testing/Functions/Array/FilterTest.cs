@@ -13,6 +13,12 @@ public class FilterTest
         => Assert.That(Expression.CreateClosed(code).Evaluate(value),
             Is.EqualTo(Expression.CreateClosed(expected).Evaluate(null)));
 
+    [Conformance.Conformance]
+    public void Filter_Valid_Dictionary(object? input, string expression, string expected)
+        => Assert.That(
+            Expressif.Values.ValueFormatter.Format(Expression.CreateClosed(expression).Evaluate(input)),
+            Is.EqualTo(expected));
+
     [Test]
     public void Evaluate_GreaterThan_Valid()
         => Assert.That(new Filter(() => new GreaterThan(() => 2)).Evaluate(new object[] { 1, 2, 3, 4 }), Is.EqualTo(new object?[] { 3, 4 }));

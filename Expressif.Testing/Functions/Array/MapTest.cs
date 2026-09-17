@@ -85,6 +85,44 @@ public class MapTest
         Assert.That(source.GetEnumeratorCalls, Is.EqualTo(1));
     }
 
+    [Conformance.Conformance]
+    public void Map_Valid_Dictionary(object? input, string expression, string expected)
+        => Assert.That(
+            Expressif.Values.ValueFormatter.Format(Expression.CreateClosed(expression).Evaluate(input)),
+            Is.EqualTo(expected));
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void Evaluate_Dictionary_VisitsUnchangedPairsOnceInOrder(bool empty)
+    {
+        var key = new Expressif.Values.TupleValue("BE", 2025m);
+        var value = new object?[] { 100m, null };
+        var input = new Expressif.Values.DictionaryValue(empty
+            ? []
+            : [new Expressif.Values.PairValue(key, value), new Expressif.Values.PairValue(null, null)]);
+        var visited = new List<object?>();
+        var map = new Map(() => new DelegatedFunction(pair =>
+        {
+            visited.Add(pair);
+            return pair;
+        }));
+
+        var result = map.Evaluate(input);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.TypeOf<object?[]>());
+            Assert.That(visited.Count, Is.EqualTo(input.Count));
+            for (var index = 0; index < input.Count; index++)
+                Assert.That(visited[index], Is.SameAs(input[index]));
+            if (!empty)
+            {
+                Assert.That(input[0].Key, Is.SameAs(key));
+                Assert.That(input[0].Value, Is.SameAs(value));
+            }
+        }
+    }
+
     private sealed class DelegatedFunction : IFunction
     {
         private readonly Func<object?, object?> implementation;

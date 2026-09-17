@@ -327,19 +327,20 @@
         "Evaluation": {
           "Frequency": "per-element",
           "Context": "traversal",
-          "Summary": "Evaluated once per visited element, with that element as its context."
+          "Summary": "Evaluated once per visited element, with that element as its context. For dictionary input, $key and $value resolve to the key and value of the visited pair."
         }
       }
     ],
     "Examples": [
       "{1, 2, 3} | filter(greater-than(1)) → {2, 3}",
-      "{{active:=#true}, {active:=#false}} | filter(.active) → {{active:=#true}}"
+      "{{active:=#true}, {active:=#false}} | filter(.active) → {{active:=#true}}",
+      "!{\"BE\" => 100, \"FR\" => 80} | filter($value | greater-than(90)) → {(\"BE\" => 100)}"
     ],
-    "Behavior": "**Argument form — `predicate`:** A predicate call, such as `greater-than(1)`, or an open expression that produces a Boolean, such as `.active`. A bare Boolean literal such as `#true` is not accepted.\n\n**Element binding:** The predicate runs once for each element of the array supplied as pipeline input to this `filter` call. At the start of the predicate, `.field` reads that element's field. In `.lines | filter(.active)`, the inner predicate receives a line from the `.lines` array, not the surrounding record.",
+    "Behavior": "**Argument form — `predicate`:** A predicate call, such as `greater-than(1)`, or an open expression that produces a Boolean, such as `.active`. A bare Boolean literal such as `#true` is not accepted.\n\n**Element binding:** The predicate runs once for each element of the array supplied as pipeline input to this `filter` call. At the start of the predicate, `.field` reads that element's field. In `.lines | filter(.active)`, the inner predicate receives a line from the `.lines` array, not the surrounding record.\n\n**Dictionary traversal:** A dictionary supplies its pairs directly, in dictionary order. The predicate receives each pair as its context; $key and $value access that pair. The result is an ordinary array of unchanged selected pairs. An empty dictionary produces an empty array.",
     "Traversal": {
       "Source": "incoming",
       "Selection": "array-element",
-      "Summary": "Visits each element of the array entering this call."
+      "Summary": "Visits each element of the array or each pair of the dictionary supplied as pipeline input to this filter call, in enumeration order."
     }
   },
   {
@@ -773,17 +774,19 @@
         "Evaluation": {
           "Frequency": "per-element",
           "Context": "traversal",
-          "Summary": "Evaluated once per visited element, with that element as its context."
+          "Summary": "Evaluated once per visited element, with that element as its context. For dictionary input, $key and $value resolve to the key and value of the visited pair, rather than a surrounding record."
         }
       }
     ],
     "Examples": [
-      "{1, 2, 3} | map(add(1)) → {2, 3, 4}"
+      "{1, 2, 3} | map(add(1)) → {2, 3, 4}",
+      "!{\"BE\" => 100, \"FR\" => 80} | map(tuple($key, $value)) → {T(\"BE\", 100), T(\"FR\", 80)}"
     ],
+    "Behavior": "Dictionaries participate directly as ordered collections of first-class pairs. Keys and values are preserved without coercion. The result is an ordinary array, and an empty dictionary produces an empty array. Records require pairs to expose their fields as pairs.",
     "Traversal": {
       "Source": "incoming",
       "Selection": "array-element",
-      "Summary": "Visits each element of the array entering this call."
+      "Summary": "Visits each element of the array or each pair of the dictionary supplied as pipeline input to this map call, in enumeration order."
     }
   },
   {

@@ -1,0 +1,30 @@
+suite: array
+kind: function
+operator: map
+tests:
+  - id: map.valid.dictionary
+    cases:
+      - id: map.valid.dictionary.ordered-pairs
+        value: (null)
+        parameters: ['!{"BE" => 100, "FR" => 80} | map(tuple($key, $value))']
+        expected: '{T("BE", 100), T("FR", 80)}'
+      - id: map.valid.dictionary.mixed-keys-and-null-values
+        value: (null)
+        parameters: ['!{2025 => #null, "BE" => {1, 2}, #null => 42} | map(pair($key, $value))']
+        expected: '{(2025 => null), ("BE" => {1, 2}), (null => 42)}'
+      - id: map.valid.dictionary.empty
+        value: (null)
+        parameters: ['!{} | map($value)']
+        expected: '{}'
+      - id: map.valid.dictionary.record-projection
+        value: (null)
+        parameters: ['!{"BE" => 100, "FR" => 80} | map(record(country := $key, amount := $value))']
+        expected: '{{country := "BE", amount := 100}, {country := "FR", amount := 80}}'
+      - id: map.valid.dictionary.nested-record-projection
+        value: (null)
+        parameters: ['!{"BE" => !{"sales" => 100, "tax" => #null}} | map(record(country := $key, ...($value | from-pairs)))']
+        expected: '{{country := "BE", sales := 100, tax := null}}'
+      - id: map.valid.dictionary.shared-array-traversal
+        value: (null)
+        parameters: ['!{"BE" => 100, "FR" => 80} | reverse | map($key)']
+        expected: '{"FR", "BE"}'

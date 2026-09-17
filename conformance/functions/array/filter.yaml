@@ -29,3 +29,17 @@ tests:
         parameters:
           - '{{date := #"2025-01-01", minimum := #"2024-01-01"}, {date := #"2023-01-01", minimum := #"2024-01-01"}} | filter(.date | is-after(.minimum))'
         expected: '{{date := #"2025-01-01", minimum := #"2024-01-01"}}'
+  - id: filter.valid.dictionary
+    cases:
+      - id: filter.valid.dictionary.pair-values
+        value: (null)
+        parameters: ['!{"BE" => 100, "FR" => 80, "DE" => 120} | filter($value | greater-than(90))']
+        expected: '{("BE" => 100), ("DE" => 120)}'
+      - id: filter.valid.dictionary.pair-keys
+        value: (null)
+        parameters: ['!{"BE" => 100, "FR" => 80} | filter($key | is-equivalent-to("FR")) | map($value)']
+        expected: '{80}'
+      - id: filter.valid.dictionary.empty
+        value: (null)
+        parameters: ['!{} | filter($value | greater-than(90))']
+        expected: '{}'
