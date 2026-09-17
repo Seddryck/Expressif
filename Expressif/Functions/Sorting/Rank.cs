@@ -9,6 +9,9 @@ namespace Expressif.Functions.Sorting;
 public sealed class Rank : IFunction<SortTableValue, GroupingValue>
 {
     public GroupingValue Evaluate(SortTableValue value)
+        => EvaluateGroups(value, dense: false);
+
+    internal static GroupingValue EvaluateGroups(SortTableValue value, bool dense)
     {
         ArgumentNullException.ThrowIfNull(value);
         SortRowComparer.Validate(value);
@@ -23,7 +26,7 @@ public sealed class Rank : IFunction<SortTableValue, GroupingValue>
             {
                 groups.Add(new PairValue(rank, values.ToArray()));
                 values.Clear();
-                rank = index + 1;
+                rank = dense ? rank + 1 : index + 1;
             }
             values.Add(rows[index].Value);
         }

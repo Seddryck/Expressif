@@ -3372,6 +3372,17 @@
     "Behavior": "Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercion fails during comparison, and equal keys preserve source order."
   },
   {
+    "Name": "dense-rank",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-table",
+    "Output": "grouping",
+    "Summary": "Groups original sort table row values by their one-based dense rank without gaps.",
+    "Parameters": [],
+    "Behavior": "Uses the same stable ordering and adjacent comparer-based tie detection as rank. Each changed key increments the rank by one. Returns original values in stable order and an empty grouping for empty input. Invalid comparer results fail as for sort."
+  },
+  {
     "Name": "rank",
     "IsPublic": true,
     "Aliases": [],

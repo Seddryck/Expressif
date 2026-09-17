@@ -3,7 +3,7 @@ layout: docs
 title: "rank"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 110
+nav_order: 120
 has_toc: false
 permalink: /functions/sorting/rank/
 tags:
