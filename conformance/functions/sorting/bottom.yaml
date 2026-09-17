@@ -1,0 +1,186 @@
+suite: sorting
+kind: function
+operator: bottom
+tests:
+  - id: bottom.valid.rows
+    cases:
+      - id: bottom.valid.rows.empty.count-0
+        value: (null)
+        parameters: ["array() | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.empty.count-1
+        value: (null)
+        parameters: ["array() | sort-table | bottom(1)"]
+        expected: '{}'
+      - id: bottom.valid.rows.empty.count-2
+        value: (null)
+        parameters: ["array() | sort-table | bottom(2)"]
+        expected: '{}'
+      - id: bottom.valid.rows.empty.count-3
+        value: (null)
+        parameters: ["array() | sort-table | bottom(3)"]
+        expected: '{}'
+      - id: bottom.valid.rows.empty.count-20
+        value: (null)
+        parameters: ["array() | sort-table | bottom(20)"]
+        expected: '{}'
+      - id: bottom.valid.rows.single.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(7, compare-numeric~)) => \"only\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.single.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(7, compare-numeric~)) => \"only\")) | sort-table | bottom(1)"]
+        expected: '{"only"}'
+      - id: bottom.valid.rows.single.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(7, compare-numeric~)) => \"only\")) | sort-table | bottom(2)"]
+        expected: '{"only"}'
+      - id: bottom.valid.rows.single.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(7, compare-numeric~)) => \"only\")) | sort-table | bottom(3)"]
+        expected: '{"only"}'
+      - id: bottom.valid.rows.single.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(7, compare-numeric~)) => \"only\")) | sort-table | bottom(20)"]
+        expected: '{"only"}'
+      - id: bottom.valid.rows.no-ties.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(3, compare-numeric~)) => \"c\"), (sort-key(sort-term(1, compare-numeric~)) => \"a\"), (sort-key(sort-term(2, compare-numeric~)) => \"b\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.no-ties.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(3, compare-numeric~)) => \"c\"), (sort-key(sort-term(1, compare-numeric~)) => \"a\"), (sort-key(sort-term(2, compare-numeric~)) => \"b\")) | sort-table | bottom(1)"]
+        expected: '{"c"}'
+      - id: bottom.valid.rows.no-ties.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(3, compare-numeric~)) => \"c\"), (sort-key(sort-term(1, compare-numeric~)) => \"a\"), (sort-key(sort-term(2, compare-numeric~)) => \"b\")) | sort-table | bottom(2)"]
+        expected: '{"b", "c"}'
+      - id: bottom.valid.rows.no-ties.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(3, compare-numeric~)) => \"c\"), (sort-key(sort-term(1, compare-numeric~)) => \"a\"), (sort-key(sort-term(2, compare-numeric~)) => \"b\")) | sort-table | bottom(3)"]
+        expected: '{"a", "b", "c"}'
+      - id: bottom.valid.rows.no-ties.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(3, compare-numeric~)) => \"c\"), (sort-key(sort-term(1, compare-numeric~)) => \"a\"), (sort-key(sort-term(2, compare-numeric~)) => \"b\")) | sort-table | bottom(20)"]
+        expected: '{"a", "b", "c"}'
+      - id: bottom.valid.rows.ties.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(80, compare-numeric~) | desc) => \"Dave\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Alice\"), (sort-key(sort-term(100, compare-numeric~) | desc) => \"Bob\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Carol\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.ties.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(80, compare-numeric~) | desc) => \"Dave\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Alice\"), (sort-key(sort-term(100, compare-numeric~) | desc) => \"Bob\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Carol\")) | sort-table | bottom(1)"]
+        expected: '{"Dave"}'
+      - id: bottom.valid.rows.ties.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(80, compare-numeric~) | desc) => \"Dave\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Alice\"), (sort-key(sort-term(100, compare-numeric~) | desc) => \"Bob\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Carol\")) | sort-table | bottom(2)"]
+        expected: '{"Carol", "Dave"}'
+      - id: bottom.valid.rows.ties.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(80, compare-numeric~) | desc) => \"Dave\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Alice\"), (sort-key(sort-term(100, compare-numeric~) | desc) => \"Bob\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Carol\")) | sort-table | bottom(3)"]
+        expected: '{"Alice", "Carol", "Dave"}'
+      - id: bottom.valid.rows.ties.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(80, compare-numeric~) | desc) => \"Dave\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Alice\"), (sort-key(sort-term(100, compare-numeric~) | desc) => \"Bob\"), (sort-key(sort-term(90, compare-numeric~) | desc) => \"Carol\")) | sort-table | bottom(20)"]
+        expected: '{"Bob", "Alice", "Carol", "Dave"}'
+      - id: bottom.valid.rows.all-tied.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(1, compare-numeric~)) => \"first\"), (sort-key(sort-term(1, compare-numeric~)) => \"second\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.all-tied.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(1, compare-numeric~)) => \"first\"), (sort-key(sort-term(1, compare-numeric~)) => \"second\")) | sort-table | bottom(1)"]
+        expected: '{"second"}'
+      - id: bottom.valid.rows.all-tied.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(1, compare-numeric~)) => \"first\"), (sort-key(sort-term(1, compare-numeric~)) => \"second\")) | sort-table | bottom(2)"]
+        expected: '{"first", "second"}'
+      - id: bottom.valid.rows.all-tied.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(1, compare-numeric~)) => \"first\"), (sort-key(sort-term(1, compare-numeric~)) => \"second\")) | sort-table | bottom(3)"]
+        expected: '{"first", "second"}'
+      - id: bottom.valid.rows.all-tied.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(1, compare-numeric~)) => \"first\"), (sort-key(sort-term(1, compare-numeric~)) => \"second\")) | sort-table | bottom(20)"]
+        expected: '{"first", "second"}'
+      - id: bottom.valid.rows.numeric-equivalence.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(0, compare-numeric~)) => \"integer\"), (sort-key(sort-term(0.0, compare-numeric~)) => \"decimal\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.numeric-equivalence.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(0, compare-numeric~)) => \"integer\"), (sort-key(sort-term(0.0, compare-numeric~)) => \"decimal\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\")) | sort-table | bottom(1)"]
+        expected: '{"one"}'
+      - id: bottom.valid.rows.numeric-equivalence.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(0, compare-numeric~)) => \"integer\"), (sort-key(sort-term(0.0, compare-numeric~)) => \"decimal\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\")) | sort-table | bottom(2)"]
+        expected: '{"decimal", "one"}'
+      - id: bottom.valid.rows.numeric-equivalence.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(0, compare-numeric~)) => \"integer\"), (sort-key(sort-term(0.0, compare-numeric~)) => \"decimal\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\")) | sort-table | bottom(3)"]
+        expected: '{"integer", "decimal", "one"}'
+      - id: bottom.valid.rows.numeric-equivalence.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(0, compare-numeric~)) => \"integer\"), (sort-key(sort-term(0.0, compare-numeric~)) => \"decimal\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\")) | sort-table | bottom(20)"]
+        expected: '{"integer", "decimal", "one"}'
+      - id: bottom.valid.rows.nulls-last.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~)) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\"), (sort-key(sort-term(#null, compare-numeric~)) => \"second-null\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.nulls-last.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~)) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\"), (sort-key(sort-term(#null, compare-numeric~)) => \"second-null\")) | sort-table | bottom(1)"]
+        expected: '{"second-null"}'
+      - id: bottom.valid.rows.nulls-last.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~)) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\"), (sort-key(sort-term(#null, compare-numeric~)) => \"second-null\")) | sort-table | bottom(2)"]
+        expected: '{"first-null", "second-null"}'
+      - id: bottom.valid.rows.nulls-last.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~)) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\"), (sort-key(sort-term(#null, compare-numeric~)) => \"second-null\")) | sort-table | bottom(3)"]
+        expected: '{"one", "first-null", "second-null"}'
+      - id: bottom.valid.rows.nulls-last.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~)) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~)) => \"one\"), (sort-key(sort-term(#null, compare-numeric~)) => \"second-null\")) | sort-table | bottom(20)"]
+        expected: '{"one", "first-null", "second-null"}'
+      - id: bottom.valid.rows.nulls-first-descending.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~) | desc | nulls-first) => \"one\"), (sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"second-null\"), (sort-key(sort-term(2, compare-numeric~) | desc | nulls-first) => \"two\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.nulls-first-descending.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~) | desc | nulls-first) => \"one\"), (sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"second-null\"), (sort-key(sort-term(2, compare-numeric~) | desc | nulls-first) => \"two\")) | sort-table | bottom(1)"]
+        expected: '{"one"}'
+      - id: bottom.valid.rows.nulls-first-descending.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~) | desc | nulls-first) => \"one\"), (sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"second-null\"), (sort-key(sort-term(2, compare-numeric~) | desc | nulls-first) => \"two\")) | sort-table | bottom(2)"]
+        expected: '{"two", "one"}'
+      - id: bottom.valid.rows.nulls-first-descending.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~) | desc | nulls-first) => \"one\"), (sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"second-null\"), (sort-key(sort-term(2, compare-numeric~) | desc | nulls-first) => \"two\")) | sort-table | bottom(3)"]
+        expected: '{"second-null", "two", "one"}'
+      - id: bottom.valid.rows.nulls-first-descending.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"first-null\"), (sort-key(sort-term(1, compare-numeric~) | desc | nulls-first) => \"one\"), (sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => \"second-null\"), (sort-key(sort-term(2, compare-numeric~) | desc | nulls-first) => \"two\")) | sort-table | bottom(20)"]
+        expected: '{"first-null", "second-null", "two", "one"}'
+      - id: bottom.valid.rows.lexicographic.count-0
+        value: (null)
+        parameters: ["array((sort-key(sort-term(\"b\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"b1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-first\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"a1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-second\")) | sort-table | bottom(0)"]
+        expected: '{}'
+      - id: bottom.valid.rows.lexicographic.count-1
+        value: (null)
+        parameters: ["array((sort-key(sort-term(\"b\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"b1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-first\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"a1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-second\")) | sort-table | bottom(1)"]
+        expected: '{"b1"}'
+      - id: bottom.valid.rows.lexicographic.count-2
+        value: (null)
+        parameters: ["array((sort-key(sort-term(\"b\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"b1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-first\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"a1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-second\")) | sort-table | bottom(2)"]
+        expected: '{"a1", "b1"}'
+      - id: bottom.valid.rows.lexicographic.count-3
+        value: (null)
+        parameters: ["array((sort-key(sort-term(\"b\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"b1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-first\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"a1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-second\")) | sort-table | bottom(3)"]
+        expected: '{"a2-second", "a1", "b1"}'
+      - id: bottom.valid.rows.lexicographic.count-20
+        value: (null)
+        parameters: ["array((sort-key(sort-term(\"b\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"b1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-first\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => \"a1\"), (sort-key(sort-term(\"a\", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => \"a2-second\")) | sort-table | bottom(20)"]
+        expected: '{"a2-first", "a2-second", "a1", "b1"}'
