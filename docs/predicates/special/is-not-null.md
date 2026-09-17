@@ -44,5 +44,5 @@ This predicate has no parameters.
 
 **Kind:** Predicate  
 **Scope:** `special`  
-**Aliases:** None
+**Aliases:** `not-null`
 {: .member-reference }
