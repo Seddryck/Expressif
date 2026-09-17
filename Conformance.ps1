@@ -1038,13 +1038,27 @@ function Get-ConformanceVersion {
         Sort-Object Version -Descending |
         Select-Object -First 1
 
+    if ($null -ne $latestRelease) {
+        # A release covers all selected changes since its tag, not only HEAD.
+        $changedSinceRelease = @(git diff --name-only $latestRelease.Tag $versionedCommit -- "$pathSpec/")
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to compare conformance files with $($latestRelease.Tag)."
+        }
+        $selectedChangedConformanceFiles = @(
+            $changedSinceRelease | Where-Object {
+                $relativePath = $_.Replace('\', '/').Substring("$pathSpec/".Length)
+                -not (Test-ConformanceExclude -RelativePath $relativePath -Exclude $effectiveExclude)
+            }
+        )
+    }
+
     if ($selectedChangedConformanceFiles.Count -eq 0) {
         if ($null -ne $latestRelease) {
             $conformanceVersion = $latestRelease.Version.ToString()
             $script:ConformanceVersionCache = $conformanceVersion
 
             Write-Host (
-                "No files changed under '{2}/' for commit '{0}'. Reusing latest conformance release version: {1}" -f
+                "Selected files under '{2}/' are unchanged since the latest release at commit '{0}'. Reusing conformance release version: {1}" -f
                 $versionedCommit,
                 $conformanceVersion,
                 $pathSpec
@@ -1089,7 +1103,7 @@ function Get-ConformanceVersion {
 
         $arguments += @(
             "/overrideconfig"
-            "next-version=$calendarBaseVersion"
+            "next-version=conformance-$calendarBaseVersion"
         )
     }
     else {
@@ -1099,7 +1113,7 @@ function Get-ConformanceVersion {
         # repository history in CI is incomplete (for example, shallow fetch).
         $arguments += @(
             "/overrideconfig"
-            "next-version=$($latestRelease.Version.ToString())"
+            "next-version=conformance-$($latestRelease.Version.ToString())"
         )
     }
 

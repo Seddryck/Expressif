@@ -724,10 +724,11 @@ jobs:
         shell: pwsh
         run: ./install-gitversion.ps1
 
-      - name: Revalidate version and create tag
+      - name: Revalidate versions and create tags
         shell: pwsh
         env:
           BUILT_VERSION: ${{ needs.calculate-version.outputs.semver }}
+          BUILT_CONFORMANCE_VERSION: ${{ needs.calculate-version.outputs.conformance-semver }}
           EXPECTED_SHA: ${{ github.sha }}
         run: |
           git fetch origin +refs/heads/main:refs/remotes/origin/main --tags
@@ -740,12 +741,22 @@ jobs:
             throw "origin/main moved from $env:EXPECTED_SHA to $mainSha before publication."
           }
 
-          $currentVersion = (gitversion /output json | ConvertFrom-Json).SemVer
+          $versionJson = gitversion /output json
+          if ($LASTEXITCODE -ne 0) {
+            throw 'Failed to revalidate Expressif version.'
+          }
+          $currentVersion = ($versionJson | ConvertFrom-Json).SemVer
           if ($currentVersion -ne $env:BUILT_VERSION) {
             throw "Version changed after packaging: artifacts use $env:BUILT_VERSION, but GitVersion calculates $currentVersion."
           }
 
-          $tag = "v$currentVersion"
+          . ./Conformance.ps1
+          $currentConformanceVersion = Get-ConformanceVersion -Refresh -NoEnv
+          if ($currentConformanceVersion -ne $env:BUILT_CONFORMANCE_VERSION) {
+            throw "Conformance version changed after packaging: artifacts use $env:BUILT_CONFORMANCE_VERSION, but calculation returns $currentConformanceVersion."
+          }
+
+          $tags = @("v$currentVersion", "conformance-$currentConformanceVersion")
 
           function Get-RemoteTagCommit([string] $Name) {
             $refs = @(git ls-remote origin "refs/tags/$Name" "refs/tags/$Name^{}")
@@ -761,28 +772,55 @@ jobs:
             return ($ref -split '\s+')[0]
           }
 
-          $tagSha = Get-RemoteTagCommit $tag
-          if ($null -ne $tagSha) {
-            if ($tagSha -ne $env:EXPECTED_SHA) {
+          # Check both namespaces before publishing either tag.
+          foreach ($tag in $tags) {
+            $tagSha = Get-RemoteTagCommit $tag
+            if ($null -ne $tagSha -and $tagSha -ne $env:EXPECTED_SHA) {
+              if ($tag -eq "conformance-$currentConformanceVersion") {
+                # Unchanged conformance packages retain their original release tag.
+                git merge-base --is-ancestor $tagSha $env:EXPECTED_SHA
+                if ($LASTEXITCODE -ne 0) {
+                  throw "Conformance tag $tag is not an ancestor of $env:EXPECTED_SHA."
+                }
+                git diff --quiet $tagSha $env:EXPECTED_SHA -- conformance/ ':(exclude)conformance/bin/**'
+                if ($LASTEXITCODE -ne 0) {
+                  throw "Conformance files changed since tag $tag at $tagSha."
+                }
+                Write-Host "Unchanged conformance release retains tag $tag at $tagSha."
+                $tags = @($tags | Where-Object { $_ -ne $tag })
+                continue
+              }
               throw "Tag $tag points to $tagSha instead of $env:EXPECTED_SHA."
             }
-            Write-Host "Tag $tag already identifies $env:EXPECTED_SHA; continuing."
-            exit 0
           }
 
-          git tag $tag $env:EXPECTED_SHA
-          git push origin "refs/tags/$tag"
-          if ($LASTEXITCODE -eq 0) {
-            Write-Host "Created tag $tag at $env:EXPECTED_SHA."
-            exit 0
-          }
+          foreach ($tag in $tags) {
+            $tagSha = Get-RemoteTagCommit $tag
+            if ($null -ne $tagSha) {
+              if ($tagSha -ne $env:EXPECTED_SHA) {
+                throw "Tag $tag points to $tagSha instead of $env:EXPECTED_SHA."
+              }
+              Write-Host "Tag $tag already identifies $env:EXPECTED_SHA; continuing."
+              continue
+            }
 
-          $tagSha = Get-RemoteTagCommit $tag
-          if ($tagSha -eq $env:EXPECTED_SHA) {
-            Write-Host "Tag $tag was concurrently created at the expected commit; continuing."
-            exit 0
+            git tag $tag $env:EXPECTED_SHA
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to create local tag $tag."
+            }
+            git push origin "refs/tags/$tag"
+            if ($LASTEXITCODE -eq 0) {
+              Write-Host "Created tag $tag at $env:EXPECTED_SHA."
+              continue
+            }
+
+            $tagSha = Get-RemoteTagCommit $tag
+            if ($tagSha -eq $env:EXPECTED_SHA) {
+              Write-Host "Tag $tag was concurrently created at the expected commit; continuing."
+              continue
+            }
+            throw "Failed to reserve tag $tag for $env:EXPECTED_SHA; remote tag points to $tagSha."
           }
-          throw "Failed to reserve tag $tag for $env:EXPECTED_SHA; remote tag points to $tagSha."
 
   publish-nuget:
     needs:
