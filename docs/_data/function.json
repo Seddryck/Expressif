@@ -3939,17 +3939,17 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Groups values by row and column, applies a grouping summary, and reshapes the cells into records.",
-    "Behavior": "Equivalent to group-by(row, column), followed by summary, nest, and conversion of each inner dictionary through from-pairs with the row field prepended. The row must be a direct field selector such as .country; computed or unnamed row expressions fail during binding. The summary must return a dictionary preserving every generated composite key; incompatible output fails during evaluation. Row and column order follow the summary dictionary and nest insertion order. Missing combinations produce absent fields. Column keys use from-pairs text coercion; uncoercible keys, duplicate coerced names, and collisions with the row field fail during evaluation.",
+    "Behavior": "Equivalent to grouping by each row dimension followed by column, applying summary, nesting, and converting the innermost dictionaries through from-pairs with row fields prepended. The row must be a direct field selector such as .country or a nonempty tuple of direct field selectors such as T(.country, .category). Tuple positions become separate named row dimensions in declaration order; computed, unnamed, spread, or duplicate row dimensions fail during binding. Arrays and records selected as row fields remain single structural keys. Tuple-valued individual row fields and tuple-valued columns fail during evaluation. The summary must return a dictionary preserving every generated composite key; incompatible output fails during evaluation. Row and column order follow the summary dictionary and nest insertion order. Missing combinations produce absent fields. Column keys use from-pairs text coercion; uncoercible keys, duplicate coerced names, and collisions with any row field fail during evaluation.",
     "Parameters": [
       {
         "Name": "row",
         "Type": "expression",
         "Optional": false,
-        "Summary": "A direct field selector defining row keys and the output row field name.",
+        "Summary": "A direct field selector or tuple of direct field selectors defining row dimensions and their output field names.",
         "Evaluation": {
           "Frequency": "per-element",
           "Context": "traversal",
-          "Summary": "Evaluated once per visited element before column, with that element as its context. The selected field is read from that element."
+          "Summary": "Evaluated once per visited element before column, with that element as its context. Each selected field is read from that element; tuple dimensions are evaluated in declaration order."
         }
       },
       {
@@ -3971,7 +3971,7 @@
         "Evaluation": {
           "Frequency": "once",
           "Source": "custom",
-          "Summary": "Evaluated once after all grouping keys have been evaluated, with the complete generated grouping as its context, including for an empty array. Each grouping key is T(row, column), in that order; summarize defines its own group selector and accumulator contexts."
+          "Summary": "Evaluated once after all grouping keys have been evaluated, with the complete generated grouping as its context, including for an empty array. Each grouping key contains the row dimensions followed by the column, such as T(country, category, year) for row T(.country, .category) and column .year; summarize defines its own group selector and accumulator contexts."
         }
       }
     ],
@@ -3981,6 +3981,8 @@
       "Summary": "Visits each element of the array supplied as pipeline input to this pivot call, in source order."
     },
     "Examples": [
+      "{{country := \"BE\", category := \"Retail\", year := 2025, amount := 100}} | pivot(T(.country, .category), .year, summarize(|> .amount | sum)) → {{country := \"BE\", category := \"Retail\", \"2025\" := 100}}",
+      "{{country := \"BE\", category := \"Retail\", city := \"Brussels\", year := 2025}} | pivot(T(.country, .category, .city), .year, summarize(cardinality)) → {{country := \"BE\", category := \"Retail\", city := \"Brussels\", \"2025\" := 1}}",
       "{{country := \"BE\", year := 2025, amount := 30}, {country := \"BE\", year := 2025, amount := 70}, {country := \"BE\", year := 2026, amount := 120}, {country := \"FR\", year := 2025, amount := 80}} | pivot(.country, .year, summarize(|> .amount | sum)) → {{country := \"BE\", \"2025\" := 100, \"2026\" := 120}, {country := \"FR\", \"2025\" := 80}}"
     ]
   },

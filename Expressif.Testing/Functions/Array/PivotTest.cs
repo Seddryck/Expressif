@@ -23,9 +23,28 @@ public class PivotTest
     [TestCase(".r.nested")]
     [TestCase("$0")]
     [TestCase("upper")]
+    [TestCase("T(.r, .c | upper)")]
+    [TestCase("T(.r, 42)")]
+    [TestCase("T(.r, .c.nested)")]
     public void ComputedRows_RejectDuringBinding(string row)
         => Assert.That(() => Expression.Create($"pivot({row}, .c, summarize(first))"),
             Throws.TypeOf<BindingException>().With.Message.Contains("direct field selector"));
+
+    [Test]
+    public void DuplicateDimensions_RejectDuringBinding()
+        => Assert.That(() => Expression.Create("pivot(T(.r, .r), .c, summarize(first))"),
+            Throws.TypeOf<BindingException>().With.Message.Contains("Duplicate pivot row"));
+
+    [TestCase("{{r := 1, c := T(2, 3)}}")]
+    [TestCase("{{r := T(1, 2), c := 3}}")]
+    public void UnnamedTupleKeys_RejectDuringEvaluation(string input)
+        => Assert.That(() => Expression.Create($"{input} | pivot(.r, .c, summarize(first))").Evaluate(null),
+            Throws.ArgumentException.With.Message.Contains("Tuple-valued pivot keys"));
+
+    [Test]
+    public void MultidimensionalRows_CheckEveryFieldCollision()
+        => Assert.That(() => Expression.Create("{{a := 1, b := 2, c := \"b\"}} | pivot(T(.a, .b), .c, summarize(first))").Evaluate(null),
+            Throws.ArgumentException.With.Message.StartsWith("Duplicate record field name"));
 
     [TestCase("summarize(first) | map($value)")]
     [TestCase("!{}")]
@@ -46,7 +65,7 @@ public class PivotTest
     {
         var calls = new List<string>();
         IFunction<IEnumerable, RecordValue[]?> function = new PivotFunction(
-            new NamedFieldSelector("r", value => { calls.Add($"row:{value}"); return value; }),
+            [new NamedFieldSelector("r", value => { calls.Add($"row:{value}"); return value; })],
             value => { calls.Add($"column:{value}"); return "c"; },
             value =>
             {
@@ -67,7 +86,7 @@ public class PivotTest
     public void EmptyInput_StillEvaluatesSummary()
     {
         var calls = 0;
-        var function = new PivotFunction(new NamedFieldSelector("r", _ => throw new InvalidOperationException()),
+        var function = new PivotFunction([new NamedFieldSelector("r", _ => throw new InvalidOperationException())],
             _ => throw new InvalidOperationException(), value =>
             {
                 calls++;
