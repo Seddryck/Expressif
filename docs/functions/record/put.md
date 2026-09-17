@@ -3,7 +3,7 @@ layout: docs
 title: "put"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 100
 has_toc: false
 permalink: /functions/record/put/
 tags:

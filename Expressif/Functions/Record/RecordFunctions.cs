@@ -430,7 +430,7 @@ public class RecordEntryEvaluator
         throw new SpreadArgumentException("Spread argument must evaluate to a record.");
     }
 
-    private static bool IsRecord(object? value)
+    internal static bool IsRecord(object? value)
         => value is ValueRecord
             or IReadOnlyDictionary<string, object?>
             or IDictionary<string, object?>

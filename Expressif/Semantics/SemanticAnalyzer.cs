@@ -165,6 +165,12 @@ public sealed class SemanticAnalyzer
         private bool StructuredArguments(BoundFunction function, SemanticSource input, ScopeFrame<SemanticSource> frame)
         {
             var construction = FunctionConstruction.Classify(function.Name);
+            if (construction == FunctionConstructionKind.Expand)
+            {
+                foreach (var parameter in ParameterArgumentBinder.Bind(typeof(Functions.Record.Expand), function.Arguments).Parameters)
+                    ValueParameter(parameter, input, frame.Derive(input));
+                return true;
+            }
             if (construction is FunctionConstructionKind.Catch or FunctionConstructionKind.Throw)
             {
                 var type = construction == FunctionConstructionKind.Catch
