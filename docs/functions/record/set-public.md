@@ -3,7 +3,7 @@ layout: docs
 title: "set-public"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 220
+nav_order: 230
 has_toc: false
 permalink: /functions/record/set-public/
 tags:

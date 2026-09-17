@@ -1,0 +1,88 @@
+suite: record
+kind: function
+operator: implode-inner
+tests:
+- id: implode-inner.valid.rows
+  cases:
+  - id: implode-inner.valid.rows.empty
+    value: null
+    parameters:
+    - '{} | implode-inner(.tags)'
+    expected: '{}'
+  - id: implode-inner.valid.rows.single
+    value: null
+    parameters:
+    - '{{id := 1, tags := "A"}} | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {"A"}}}'
+  - id: implode-inner.valid.rows.null
+    value: null
+    parameters:
+    - '{{id := 1, tags := #null}} | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {}}}'
+  - id: implode-inner.valid.rows.mixed
+    value: null
+    parameters:
+    - '{{id := 1, tags := "A"}, {id := 1, tags := #null}, {id := 1, tags := "B"}, {id := 2, tags := #null}} | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {"A", "B"}}, {id := 2, tags := {}}}'
+  - id: implode-inner.valid.rows.all-null
+    value: null
+    parameters:
+    - '{{id := 1, tags := #null}, {id := 1, tags := #null}} | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {}}}'
+  - id: implode-inner.valid.rows.duplicates-order
+    value: null
+    parameters:
+    - '{{id := 2, tags := "B", tail := 9}, {id := 1, tags := "A", tail := 9}, {id := 2, tags := "B", tail := 9}, {id := 1, tags := "C", tail := 9}} | implode-inner(.tags)'
+    expected: '{{id := 2, tags := {"B", "B"}, tail := 9}, {id := 1, tags := {"A", "C"}, tail := 9}}'
+  - id: implode-inner.valid.rows.complete-parent
+    value: null
+    parameters:
+    - '{{id := 1, kind := "x", tags := "A"}, {id := 1, kind := "y", tags := "B"}} | implode-inner(.tags)'
+    expected: '{{id := 1, kind := "x", tags := {"A"}}, {id := 1, kind := "y", tags := {"B"}}}'
+  - id: implode-inner.valid.rows.nested-parent
+    value: null
+    parameters:
+    - '{{parent := {id := 1, nested := {1, 2}}, tags := "A"}, {parent := {id := 1, nested := {1, 2}}, tags := "B"}, {parent := {id := 1, nested := {2, 1}}, tags := "C"}} | implode-inner(.tags)'
+    expected: '{{parent := {id := 1, nested := {1, 2}}, tags := {"A", "B"}}, {parent := {id := 1, nested := {2, 1}}, tags := {"C"}}}'
+  - id: implode-inner.valid.rows.nested-child
+    value: null
+    parameters:
+    - '{{id := 1, tags := {"A", "B"}}, {id := 1, tags := {"C"}}} | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {{"A", "B"}, {"C"}}}}'
+  - id: implode-inner.valid.rows.missing
+    value: null
+    parameters:
+    - '{{id := 1}} | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {}}}'
+  - id: implode-inner.valid.rows.no-parent-fields
+    value: null
+    parameters:
+    - '{{tags := "A"}, {tags := "B"}} | implode-inner(.tags)'
+    expected: '{{tags := {"A", "B"}}}'
+  - id: implode-inner.valid.rows.named
+    value: null
+    parameters:
+    - '{{tags := "A"}} | implode-inner(selector := .tags)'
+    expected: '{{tags := {"A"}}}'
+  - id: implode-inner.valid.rows.outer-empty
+    value: null
+    parameters:
+    - '{id := 1, tags := {}} | explode-outer(.tags) | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {}}}'
+  - id: implode-inner.valid.rows.outer-null-child
+    value: null
+    parameters:
+    - '{id := 1, tags := {#null}} | explode-outer(.tags) | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {}}}'
+  - id: implode-inner.valid.rows.outer-null
+    value: null
+    parameters:
+    - '{id := 1, tags := #null} | explode-outer(.tags) | implode-inner(.tags)'
+    expected: '{{id := 1, tags := {}}}'
+- id: implode-inner.valid.null
+  cases:
+  - id: implode-inner.valid.null.input
+    value: null
+    parameters:
+    - '#null | implode-inner(.tags)'
+    expected: null
