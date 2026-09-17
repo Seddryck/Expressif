@@ -24,6 +24,30 @@ tests:
         value: (null)
         parameters: ['{{r := "BE", c := "a"}, {r := "FR", c := "b"}} | pivot(.r, .c, !{(T("FR", "b") => 42), (T("BE", "a") => #null)})']
         expected: '{{r := "FR", b := 42}, {r := "BE", a := null}}'
+      - id: pivot.valid.records.two.dimensions
+        value: (null)
+        parameters: ['{{country := "BE", category := "Retail", year := 2025, amount := 30}, {country := "BE", category := "Retail", year := 2025, amount := 70}, {country := "BE", category := "Industry", year := 2026, amount := 250}, {country := "FR", category := "Retail", year := 2025, amount := 80}} | pivot(T(.country, .category), .year, summarize(|> .amount | sum))']
+        expected: '{{country := "BE", category := "Retail", 2025 := 100}, {country := "BE", category := "Industry", 2026 := 250}, {country := "FR", category := "Retail", 2025 := 80}}'
+      - id: pivot.valid.records.three.dimensions
+        value: (null)
+        parameters: ['{{a := 1, b := 2, d := 3, c := "x"}, {a := 1, b := 2, d := 4, c := "y"}, {a := 1, b := 2, d := 3, c := "x"}} | pivot(T(.a, .b, .d), .c, summarize(cardinality))']
+        expected: '{{a := 1, b := 2, d := 3, x := 2}, {a := 1, b := 2, d := 4, y := 1}}'
+      - id: pivot.valid.records.array.key
+        value: (null)
+        parameters: ['{{r := {1, 2}, c := "a"}, {r := {1, 2}, c := "a"}, {r := {2, 1}, c := "b"}} | pivot(.r, .c, summarize(cardinality))']
+        expected: '{{r := {1, 2}, a := 2}, {r := {2, 1}, b := 1}}'
+      - id: pivot.valid.records.record.key
+        value: (null)
+        parameters: ['{{r := {id := 1}, c := "a"}, {r := {id := 1}, c := "a"}} | pivot(.r, .c, summarize(cardinality))']
+        expected: '{{r := {id := 1}, a := 2}}'
+      - id: pivot.valid.records.flattened.keys
+        value: (null)
+        parameters: ['{{a := 1, b := 2, c := "x"}} | pivot(T(.a, .b), .c, !{(T(1, 2, "x") => 42)})']
+        expected: '{{a := 1, b := 2, x := 42}}'
+      - id: pivot.valid.records.tuple.array.key
+        value: (null)
+        parameters: ['{{a := {1, 2}, b := #null, c := "x"}, {a := {1, 2}, b := #null, c := "x"}} | pivot(T(.a, .b), .c, summarize(cardinality))']
+        expected: '{{a := {1, 2}, b := null, x := 2}}'
   - id: pivot.valid.empty
     cases:
       - id: pivot.valid.empty.array
@@ -31,3 +55,7 @@ tests:
         parameters: ['{} | pivot(.r, .c, summarize(cardinality))']
         expected: '{}'
 
+      - id: pivot.valid.empty.tuple
+        value: (null)
+        parameters: ['{} | pivot(T(.a, .b), .c, summarize(cardinality))']
+        expected: '{}'

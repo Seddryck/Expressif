@@ -682,11 +682,23 @@ public partial class FunctionFactory : BaseExpressionFactory
             throw new SpreadArgumentException("Spread arguments are not supported by pivot.");
 
         var bound = ParameterArgumentBinder.Bind(typeof(Array.Pivot), function.Arguments).Parameters;
-        var field = bound[0] is OpenExpressionParameter open
-            ? open.Expression.Members.ToArray()
-            : [];
-        if (field is not [{ Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string name }] }])
-            throw new BindingException("The pivot row must be a direct field selector such as .country; computed or unnamed row expressions are not supported.");
+        var dimensions = bound[0] is TupleParameter tuple
+            ? tuple.Elements.All(element => !element.IsSpread) ? tuple.Values : []
+            : new[] { bound[0] };
+        if (dimensions.Length == 0)
+            throw new BindingException("The pivot row must contain at least one direct field selector; spread and unnamed dimensions are not supported.");
+
+        NamedFieldSelector BuildRow(IParameter parameter)
+        {
+            var field = parameter is OpenExpressionParameter open ? open.Expression.Members.ToArray() : [];
+            if (field is not [{ Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string name }] }])
+                throw new BindingException("Each pivot row dimension must be a direct field selector such as .country; computed or unnamed row expressions are not supported.");
+            return new NamedFieldSelector(name, BuildExpression(parameter));
+        }
+
+        var rows = dimensions.Select(BuildRow).ToArray();
+        if (rows.Select(row => row.Name).Distinct(StringComparer.Ordinal).Count() != rows.Length)
+            throw new BindingException("Duplicate pivot row field names are not supported.");
 
         Func<object?, object?> BuildExpression(IParameter parameter)
         {
@@ -694,7 +706,7 @@ public partial class FunctionFactory : BaseExpressionFactory
             return value => EvaluateNested(evaluator, value);
         }
 
-        return new Array.Pivot(new NamedFieldSelector(name, BuildExpression(bound[0])), BuildExpression(bound[1]), BuildExpression(bound[2]));
+        return new Array.Pivot(rows, BuildExpression(bound[1]), BuildExpression(bound[2]));
     }
 
     private IFunction BuildJoinFunction(Bindings.Function function, IContext context)
