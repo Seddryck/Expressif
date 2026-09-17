@@ -25,6 +25,7 @@ Reference documentation for Expressif functions in the `sorting` scope.
 | [`compare-numeric`]({{ '/functions/sorting/compare-numeric/' | relative_url }}) | Compares two values after numeric coercion and returns their relative ordering. |
 | [`compare-ordinal`]({{ '/functions/sorting/compare-ordinal/' | relative_url }}) | Compares two values as text using deterministic ordinal ordering. |
 | [`compare-time`]({{ '/functions/sorting/compare-time/' | relative_url }}) | Compares two values after time coercion and returns their relative ordering. |
+| [`dense-rank`]({{ '/functions/sorting/dense-rank/' | relative_url }}) | Groups original sort table row values by their one-based dense rank without gaps. |
 | [`descending`]({{ '/functions/sorting/descending/' | relative_url }}) | Returns the sort term with descending direction enabled. |
 | [`nulls-first`]({{ '/functions/sorting/nulls-first/' | relative_url }}) | Returns the sort term with nulls ordered first. |
 | [`nulls-last`]({{ '/functions/sorting/nulls-last/' | relative_url }}) | Returns the sort term with nulls ordered last. |

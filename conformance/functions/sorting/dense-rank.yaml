@@ -1,0 +1,42 @@
+suite: sorting
+kind: function
+operator: dense-rank
+tests:
+  - id: dense-rank.valid.rows
+    cases:
+      - id: dense-rank.valid.rows.empty
+        value: (null)
+        parameters: ['array() | sort-table | dense-rank']
+        expected: '#{}'
+      - id: dense-rank.valid.rows.single
+        value: (null)
+        parameters: ['array((sort-key(sort-term(7, compare-numeric~)) => "only")) | sort-table | dense-rank']
+        expected: '#{(1 => {"only"})}'
+      - id: dense-rank.valid.rows.no-ties
+        value: (null)
+        parameters: ['array((sort-key(sort-term(3, compare-numeric~)) => "c"), (sort-key(sort-term(1, compare-numeric~)) => "a"), (sort-key(sort-term(2, compare-numeric~)) => "b")) | sort-table | dense-rank']
+        expected: '#{(1 => {"a"}), (2 => {"b"}), (3 => {"c"})}'
+      - id: dense-rank.valid.rows.ties
+        value: (null)
+        parameters: ['array((sort-key(sort-term(80, compare-numeric~) | desc) => "Dave"), (sort-key(sort-term(90, compare-numeric~) | desc) => "Alice"), (sort-key(sort-term(100, compare-numeric~) | desc) => "Bob"), (sort-key(sort-term(90, compare-numeric~) | desc) => "Carol")) | sort-table | dense-rank']
+        expected: '#{(1 => {"Bob"}), (2 => {"Alice", "Carol"}), (3 => {"Dave"})}'
+      - id: dense-rank.valid.rows.all-tied
+        value: (null)
+        parameters: ['array((sort-key(sort-term(1, compare-numeric~)) => "first"), (sort-key(sort-term(1, compare-numeric~)) => "second")) | sort-table | dense-rank']
+        expected: '#{(1 => {"first", "second"})}'
+      - id: dense-rank.valid.rows.numeric-equivalence
+        value: (null)
+        parameters: ['array((sort-key(sort-term(0, compare-numeric~)) => "integer"), (sort-key(sort-term(0.0, compare-numeric~)) => "decimal"), (sort-key(sort-term(1, compare-numeric~)) => "one")) | sort-table | dense-rank']
+        expected: '#{(1 => {"integer", "decimal"}), (2 => {"one"})}'
+      - id: dense-rank.valid.rows.nulls-last
+        value: (null)
+        parameters: ['array((sort-key(sort-term(#null, compare-numeric~)) => "first-null"), (sort-key(sort-term(1, compare-numeric~)) => "one"), (sort-key(sort-term(#null, compare-numeric~)) => "second-null")) | sort-table | dense-rank']
+        expected: '#{(1 => {"one"}), (2 => {"first-null", "second-null"})}'
+      - id: dense-rank.valid.rows.nulls-first-descending
+        value: (null)
+        parameters: ['array((sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => "first-null"), (sort-key(sort-term(1, compare-numeric~) | desc | nulls-first) => "one"), (sort-key(sort-term(#null, compare-numeric~) | desc | nulls-first) => "second-null"), (sort-key(sort-term(2, compare-numeric~) | desc | nulls-first) => "two")) | sort-table | dense-rank']
+        expected: '#{(1 => {"first-null", "second-null"}), (2 => {"two"}), (3 => {"one"})}'
+      - id: dense-rank.valid.rows.lexicographic
+        value: (null)
+        parameters: ['array((sort-key(sort-term("b", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => "b1"), (sort-key(sort-term("a", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => "a2-first"), (sort-key(sort-term("a", compare-ordinal~), sort-term(1, compare-numeric~) | desc) => "a1"), (sort-key(sort-term("a", compare-ordinal~), sort-term(2, compare-numeric~) | desc) => "a2-second")) | sort-table | dense-rank']
+        expected: '#{(1 => {"a2-first", "a2-second"}), (2 => {"a1"}), (3 => {"b1"})}'
