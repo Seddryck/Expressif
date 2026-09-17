@@ -14,7 +14,16 @@ function Get-IntrospectionEntries {
         Where-Object { $_.IsPublic -eq $true }) {
         foreach ($name in @($item.Name) + @($item.Aliases)) {
             if (-not [string]::IsNullOrWhiteSpace($name) -and -not $entries.ContainsKey($name)) {
-                $entries.Add($name, [ordered]@{ name = $name; scope = $item.Scope })
+                $entry = [ordered]@{ name = $name; scope = $item.Scope }
+                if ($null -ne $item.PSObject.Properties["DeprecatedAliases"]) {
+                    $lifecycle = @($item.DeprecatedAliases | Where-Object Name -EQ $name)
+                    if ($lifecycle.Count -gt 0) {
+                        $entry["deprecated"] = $true
+                        $entry["replacement"] = $lifecycle[0].Replacement
+                        $entry["message"] = $lifecycle[0].Message
+                    }
+                }
+                $entries.Add($name, $entry)
             }
         }
     }

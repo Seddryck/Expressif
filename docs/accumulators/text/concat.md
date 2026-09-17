@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "implode"
+title: "concat"
 parent: "Text accumulators"
 grand_parent: "Accumulators library"
 nav_order: 10
 has_toc: false
-permalink: /accumulators/text/implode/
+permalink: /accumulators/text/concat/
 tags:
   - accumulators
   - text
@@ -14,8 +14,8 @@ generated: true
 
 ```
 text →
-implode(
-    separator?: text
+concat(
+    separator: text = ""
 ) → text
 ```
 
@@ -29,11 +29,14 @@ Combines accumulated text values in source order, inserting the separator only b
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `separator` | `text` | No | Specifies the text inserted between consecutive accumulated values. |
+| `separator` | `text` | No | Specifies the text inserted between consecutive accumulated values. Defaults to `""`. |
+
+
 
 ## Argument evaluation
 
 - **`separator`:** Evaluated once in the enclosing context before accumulation. The result is reused between accumulated values.
+
 
 ## Behavior
 
@@ -45,12 +48,12 @@ The separator defaults to the empty string. Empty input returns empty text. Empt
 
 {% raw %}
 ```expressif
-{"a", "b", "c"} | implode("-") → "a-b-c"
+{"a", "b", "c"} | concat("-") → "a-b-c"
 ```
 {% endraw %}
 
 
 **Kind:** Accumulator  
 **Scope:** `text`  
-**Aliases:** `implode`
+**Aliases:** `concat`, `implode` (`implode` is deprecated; use `concat` instead)
 {: .member-reference }

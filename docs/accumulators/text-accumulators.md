@@ -18,4 +18,4 @@ Reference documentation for Expressif accumulators in the `text` scope.
 
 | Name | Overview |
 |:-----|:---------|
-| [`implode`]({{ '/accumulators/text/implode/' | relative_url }}) | Combines accumulated text values in source order, inserting the separator only between values. |
+| [`concat`]({{ '/accumulators/text/concat/' | relative_url }}) | Combines accumulated text values in source order, inserting the separator only between values. |

@@ -36,7 +36,11 @@ public class AccumulatorIntrospector : BaseIntrospector
                     , accumulator.Type
                     , fast ? "" : accumulator.Type.GetSummary()
                     , fast ? [] : BuildParameters(accumulator.Type.GetInfoConstructors()).ToArray()
-                );
+                )
+            {
+                DeprecatedAliases = accumulator.Type.GetCustomAttributes<AccumulatorAliasLifecycleAttribute>()
+                    .Select(alias => new AccumulatorAliasLifecycleInfo(alias.Name, alias.Replacement, alias.Message)).ToArray(),
+            };
         }
     }
 

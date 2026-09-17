@@ -20,7 +20,7 @@ internal enum FunctionConstructionKind
     ChunkWhile,
     Generate,
     Closest,
-    Implode,
+    Concat,
     MapOver,
     MapWith,
     Reduce,
@@ -54,7 +54,7 @@ internal static class FunctionConstruction
         => members.Count == 1 && isPredicate(members[0]);
 
     public static FunctionConstructionKind Classify(string name)
-        => name.ToKebabCase() switch
+        => Accumulators.AccumulatorNames.Resolve(name.ToKebabCase()) switch
         {
             "bind" => FunctionConstructionKind.TupleBind,
             "conditional-forward" or "conditional-backward" => FunctionConstructionKind.Conditional,
@@ -69,7 +69,7 @@ internal static class FunctionConstruction
             "chunk-while" => FunctionConstructionKind.ChunkWhile,
             "generate" => FunctionConstructionKind.Generate,
             "closest" => FunctionConstructionKind.Closest,
-            "implode" => FunctionConstructionKind.Implode,
+            "concat" => FunctionConstructionKind.Concat,
             "map-over" => FunctionConstructionKind.MapOver,
             "map-with" => FunctionConstructionKind.MapWith,
             "reduce" => FunctionConstructionKind.Reduce,

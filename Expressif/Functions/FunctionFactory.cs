@@ -419,7 +419,7 @@ public partial class FunctionFactory : BaseExpressionFactory
     }
 
     internal static bool IsImplicitFoldAccumulator(Bindings.Function function)
-        => ImplicitFoldAccumulators.Contains(function.Name.ToKebabCase()) && function.Parameters.Length == 0;
+        => ImplicitFoldAccumulators.Contains(AccumulatorNames.Resolve(function.Name.ToKebabCase())) && function.Parameters.Length == 0;
 
     private static IFunction? BuildReferenceFunction(Bindings.Function function)
     {
@@ -489,7 +489,7 @@ public partial class FunctionFactory : BaseExpressionFactory
             FunctionConstructionKind.ChunkWhile => BuildChunkWhileFunction(function, context),
             FunctionConstructionKind.Generate => BuildGenerateFunction(function, context),
             FunctionConstructionKind.Closest => new Fold(BuildClosestProvider(function, context)),
-            FunctionConstructionKind.Implode => BuildImplodeFunction(function, context),
+            FunctionConstructionKind.Concat => BuildConcatFunction(function, context),
             FunctionConstructionKind.MapOver => BuildDirectionalMap(function, context, mapOver: true),
             FunctionConstructionKind.MapWith => BuildDirectionalMap(function, context, mapOver: false),
             FunctionConstructionKind.Reduce => BuildReduceFunction(function, context),
@@ -575,14 +575,14 @@ public partial class FunctionFactory : BaseExpressionFactory
         return () => new ClosestAccumulator(() => target.Invoke(EvaluationRuntime.Frame?.Current));
     }
 
-    private IFunction BuildImplodeFunction(Bindings.Function function, IContext context)
+    private IFunction BuildConcatFunction(Bindings.Function function, IContext context)
     {
-        var bound = ParameterArgumentBinder.Bind(typeof(ImplodeAccumulator), function.Arguments).Parameters;
+        var bound = ParameterArgumentBinder.Bind(typeof(ConcatAccumulator), function.Arguments).Parameters;
         if (bound.Length == 0)
-            return new Fold(() => new ImplodeAccumulator());
+            return new Fold(() => new ConcatAccumulator());
 
         var separator = (Func<string>)CreateParameter(bound[0], typeof(string), context);
-        return new Fold(() => new ImplodeAccumulator(separator));
+        return new Fold(() => new ConcatAccumulator(separator));
     }
 
     private IFunction BuildReduceFunction(Bindings.Function function, IContext context)

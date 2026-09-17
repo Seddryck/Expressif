@@ -7,8 +7,9 @@ namespace Expressif.Accumulators;
 /// <summary>
 /// Combines accumulated text values in source order, inserting the separator only between values.
 /// </summary>
-[Accumulator(prefix: "", aliases: ["implode"])]
-public class ImplodeAccumulator : BaseAccumulator
+[Accumulator(prefix: "", aliases: ["concat", "implode"])]
+[AccumulatorAliasLifecycle("implode", "concat")]
+public class ConcatAccumulator : BaseAccumulator
 {
     private readonly Func<string> separatorProvider;
     private readonly StringBuilder value = new();
@@ -16,11 +17,11 @@ public class ImplodeAccumulator : BaseAccumulator
     private string separator = string.Empty;
     private bool hasValue;
 
-    public ImplodeAccumulator()
+    public ConcatAccumulator()
         : this(() => string.Empty) { }
 
     /// <param name="separator">Specifies the text inserted between consecutive accumulated values.</param>
-    public ImplodeAccumulator(Func<string> separator)
+    public ConcatAccumulator(Func<string> separator)
         => separatorProvider = separator;
 
     public override void Initialize()
@@ -33,7 +34,7 @@ public class ImplodeAccumulator : BaseAccumulator
     public override void Accumulate(object? item)
     {
         if (item is null)
-            throw new InvalidCastException("Cannot cast null value to text for implode aggregation.");
+            throw new InvalidCastException("Cannot cast null value to text for concat aggregation.");
 
         if (hasValue)
             value.Append(separator);

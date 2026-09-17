@@ -1,39 +1,38 @@
-# Deprecated alias compatibility; canonical text concatenation cases are in concat.yaml.
 suite: text
 kind: accumulator
-operator: implode
+operator: concat
 tests:
-  - id: implode.without-separator
+  - id: concat.without-separator
     cases:
-      - id: implode.without-separator.multiple
+      - id: concat.without-separator.multiple
         value: '{"a", "b", "c"}'
         expected: abc
-      - id: implode.without-separator.single
+      - id: concat.without-separator.single
         value: '{"a"}'
         expected: a
-      - id: implode.without-separator.empty
+      - id: concat.without-separator.empty
         value: (empty)
         expected: ''
-  - id: implode.with-separator
+  - id: concat.with-separator
     parameters:
       - separator
     cases:
-      - id: implode.with-separator.multiple
+      - id: concat.with-separator.multiple
         value: '{"a", "b", "c"}'
         parameters:
           - '-'
         expected: a-b-c
-      - id: implode.with-separator.single
+      - id: concat.with-separator.single
         value: '{"a"}'
         parameters:
           - '-'
         expected: a
-      - id: implode.with-separator.empty
+      - id: concat.with-separator.empty
         value: (empty)
         parameters:
           - '-'
         expected: ''
-      - id: implode.with-separator.empty-value
+      - id: concat.with-separator.empty-value
         value: '{"a", "", "b"}'
         parameters:
           - '-'
