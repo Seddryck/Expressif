@@ -3,7 +3,7 @@ layout: docs
 title: "compare-ordinal"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /functions/sorting/compare-ordinal/
 tags:

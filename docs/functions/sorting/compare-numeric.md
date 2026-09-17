@@ -3,7 +3,7 @@ layout: docs
 title: "compare-numeric"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /functions/sorting/compare-numeric/
 tags:
