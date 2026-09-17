@@ -3359,6 +3359,66 @@
     "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
   },
   {
+    "Name": "rank-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "array",
+    "Output": "grouping",
+    "Summary": "Groups array elements by their one-based SQL rank using typed criteria.",
+    "Parameters": [
+      {
+        "Name": "criteria",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element in declaration order, with that element as context; .field reads its field and $0 reads its first tuple component."
+        }
+      }
+    ],
+    "Behavior": "Builds a SortTable using the same criterion lowering as sort-by and delegates to rank. Comparer-equal keys share a group. Empty input returns an empty grouping. Invalid coercions become null keys.",
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "all",
+      "Summary": "Visits each element of the array supplied as pipeline input to this rank-by call."
+    }
+  },
+  {
+    "Name": "dense-rank-by",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "array",
+    "Output": "grouping",
+    "Summary": "Groups array elements by their one-based dense rank using typed criteria.",
+    "Parameters": [
+      {
+        "Name": "criteria",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": true,
+        "MinimumCardinality": 1,
+        "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited element in declaration order, with that element as context; .field reads its field and $0 reads its first tuple component."
+        }
+      }
+    ],
+    "Behavior": "Builds a SortTable using the same criterion lowering as sort-by and delegates to dense-rank. Comparer-equal keys share a group. Empty input returns an empty grouping. Invalid coercions become null keys.",
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "all",
+      "Summary": "Visits each element of the array supplied as pipeline input to this dense-rank-by call."
+    }
+  },
+  {
     "Name": "sort-by",
     "IsPublic": true,
     "Aliases": [],
@@ -3369,7 +3429,7 @@
     "Parameters": [
       { "Name": "criteria", "Type": "expression", "Optional": false, "Variadic": true, "MinimumCardinality": 1, "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers." }
     ],
-    "Behavior": "Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercion fails during comparison, and equal keys preserve source order."
+    "Behavior": "Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercions become null keys, and equal keys preserve source order."
   },
   {
     "Name": "dense-rank",

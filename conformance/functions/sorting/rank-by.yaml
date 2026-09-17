@@ -1,0 +1,46 @@
+suite: sorting
+kind: function
+operator: rank-by
+tests:
+  - id: rank-by.valid.criteria
+    cases:
+      - id: rank-by.valid.criteria.empty
+        value: (null)
+        parameters: ["array() | rank-by(.v -> :numeric)"]
+        expected: '#{}'
+      - id: rank-by.valid.criteria.numeric
+        value: (null)
+        parameters: ["array(3, 1, 2) | rank-by(neutral -> :numeric)"]
+        expected: '#{(1 => {1}), (2 => {2}), (3 => {3})}'
+      - id: rank-by.valid.criteria.text
+        value: (null)
+        parameters: ["array(\"b\", \"a\") | rank-by(neutral -> :text)"]
+        expected: '#{(1 => {"a"}), (2 => {"b"})}'
+      - id: rank-by.valid.criteria.ties
+        value: (null)
+        parameters: ["array(1, 1, 2) | rank-by(neutral -> :numeric)"]
+        expected: '#{(1 => {1, 1}), (3 => {2})}'
+      - id: rank-by.valid.criteria.nulls
+        value: (null)
+        parameters: ["array(1, #null) | rank-by(neutral -> :numeric | nulls-first)"]
+        expected: '#{(1 => {null}), (2 => {1})}'
+      - id: rank-by.valid.criteria.coercion
+        value: (null)
+        parameters: ["array(\"bad\", \"2\", \"1\") | rank-by(neutral -> :numeric | desc)"]
+        expected: '#{(1 => {"2"}), (2 => {"1"}), (3 => {"bad"})}'
+      - id: rank-by.valid.criteria.multiple
+        value: (null)
+        parameters: ["array(T(\"a\", 1), T(\"b\", 1), T(\"a\", 2)) | rank-by($0 -> :text, $1 -> :numeric | desc)"]
+        expected: '#{(1 => {T("a", 2)}), (2 => {T("a", 1)}), (3 => {T("b", 1)})}'
+      - id: rank-by.valid.criteria.date
+        value: (null)
+        parameters: ["array(#\"2026-02-01\", #\"2026-01-01\") | rank-by(neutral -> :date)"]
+        expected: '#{(1 => {#"2026-01-01"}), (2 => {#"2026-02-01"})}'
+      - id: rank-by.valid.criteria.time
+        value: (null)
+        parameters: ["array(#\"10:00:00\", #\"09:00:00\") | rank-by(neutral -> :time)"]
+        expected: '#{(1 => {09:00}), (2 => {10:00})}'
+      - id: rank-by.valid.criteria.datetime
+        value: (null)
+        parameters: ["array(#\"2026-01-01T10:00:00\", #\"2026-01-01T09:00:00\") | rank-by(neutral -> :datetime)"]
+        expected: '#{(1 => {#"2026-01-01T09:00:00"}), (2 => {#"2026-01-01T10:00:00"})}'

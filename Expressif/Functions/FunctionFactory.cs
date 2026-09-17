@@ -529,7 +529,10 @@ public partial class FunctionFactory : BaseExpressionFactory
             object? EvaluateCriterion(object? input)
             {
                 using var scope = EvaluationRuntime.Derive(input);
-                return selector.Invoke(input);
+                var selected = selector.Invoke(input);
+                var targetType = criterion.Type.RuntimeType
+                    ?? throw new BindingException($"Type ':{criterion.Type.Name}' has no coercion target.");
+                return new Values.Casters.Caster().TryCast(selected, targetType, out var converted) ? converted : null;
             }
             var comparerName = criterion.Type.Name.ToLowerInvariant() switch
             {
@@ -547,7 +550,12 @@ public partial class FunctionFactory : BaseExpressionFactory
                 (left, right) => InvokeTuple(comparerName, new Values.Tuple(left, right)) as OrderingValue);
             return new Sorting.SortByCriterion(EvaluateCriterion, comparer, criterion.Ascending, criterion.NullsFirst);
         }).ToArray();
-        return new Sorting.SortBy(criteria);
+        return function.Name.ToLowerInvariant() switch
+        {
+            "rank-by" => new Sorting.RankBy(criteria),
+            "dense-rank-by" => new Sorting.DenseRankBy(criteria),
+            _ => new Sorting.SortBy(criteria),
+        };
     }
 
     private IFunction BuildSortTermFunction(Bindings.Function function, IContext context)

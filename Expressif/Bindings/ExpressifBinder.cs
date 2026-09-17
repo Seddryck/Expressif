@@ -346,7 +346,7 @@ public sealed class ExpressifBinder
             "switch" or "try" => BindControlFlowFunction(syntax),
             "coerce" => BindCoerceFunction(syntax),
             "sort-term" or "sortterm" => BindSortTermFunction(syntax),
-            "sort-by" => BindSortByFunction(syntax),
+            "sort-by" or "rank-by" or "dense-rank-by" => BindSortByFunction(syntax),
             "field" => BindFieldFunction(syntax),
             "is-present" or "is-absent" => BindFieldFunction(syntax),
             "record" => BindRecordFunction(syntax),
@@ -361,7 +361,7 @@ public sealed class ExpressifBinder
         {
             throw new BindingException("Function 'sort-by' requires one or more positional typed criteria.");
         }
-        return new Function("sort-by", syntax.Arguments
+        return new Function(syntax.Name.ToLowerInvariant(), syntax.Arguments
             .Select(argument => BindSortCriterion(RequireArgumentValue(argument)))
             .Cast<IParameter>()
             .ToArray());

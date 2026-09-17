@@ -3,7 +3,7 @@ layout: docs
 title: "sort-by"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 140
+nav_order: 160
 has_toc: false
 permalink: /functions/sorting/sort-by/
 tags:
@@ -37,7 +37,7 @@ Stably sorts an array by one or more typed criteria while preserving original el
 
 ## Behavior
 
-Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercion fails during comparison, and equal keys preserve source order.
+Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercions become null keys, and equal keys preserve source order.
 
 
 
