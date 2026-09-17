@@ -1,0 +1,15 @@
+suite: special
+kind: predicate
+operator: is-not-null
+tests:
+  - id: is-not-null.valid
+    cases:
+      - id: is-not-null.valid.null
+        value: '(null)'
+        expected: false
+      - id: is-not-null.valid.number
+        value: 10
+        expected: true
+      - id: is-not-null.valid.text
+        value: 'hello'
+        expected: true

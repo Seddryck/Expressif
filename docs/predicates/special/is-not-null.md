@@ -1,11 +1,11 @@
 ---
 layout: docs
-title: "is-null"
+title: "is-not-null"
 parent: "Special predicates"
 grand_parent: "Predicates library"
-nav_order: 20
+nav_order: 10
 has_toc: false
-permalink: /predicates/special/is-null/
+permalink: /predicates/special/is-not-null/
 tags:
   - predicates
   - special
@@ -13,10 +13,11 @@ generated: true
 ---
 
 ```
-is-null()
+any →
+is-not-null() → boolean
 ```
 
-Returns `true` if the argument is effectively `null` else return `false`.
+Returns true when the input does not satisfy is-null.
 
 
 
@@ -35,12 +36,13 @@ This predicate has no parameters.
 
 {% raw %}
 ```expressif
-#null | is-null → #true
+#null | is-not-null → #false
+10 | is-not-null → #true
 ```
 {% endraw %}
 
 
 **Kind:** Predicate  
 **Scope:** `special`  
-**Aliases:** `null`
+**Aliases:** None
 {: .member-reference }

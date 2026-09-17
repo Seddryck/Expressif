@@ -457,7 +457,7 @@ foreach ($member in $members) {
         ($aliases | ForEach-Object { "``$_``" }) -join ", "
     }
 
-    $deprecatedAliases = if ($null -ne $member.PSObject.Properties["DeprecatedAliases"]) { @($member.DeprecatedAliases) } else { @() }
+    $deprecatedAliases = @(if ($null -ne $member.PSObject.Properties["DeprecatedAliases"]) { $member.DeprecatedAliases })
     if ($deprecatedAliases.Count -gt 0) {
         $aliasesText += " (" + (($deprecatedAliases | ForEach-Object { "``$($_.Name)`` is deprecated; use ``$($_.Replacement)`` instead" }) -join "; ") + ")"
     }

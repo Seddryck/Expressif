@@ -1,0 +1,69 @@
+suite: array
+kind: accumulator
+operator: only
+tests:
+  - id: only.selection
+    parameters:
+      - predicate
+      - accumulator
+    cases:
+      - id: only.selection.count
+        value: '{1, 2, 3, 4}'
+        parameters:
+          - 'is-even'
+          - 'count'
+        expected: '2'
+      - id: only.selection.sum
+        value: '{1, -2, 3, -4}'
+        parameters:
+          - 'is-positive'
+          - 'sum'
+        expected: '4'
+      - id: only.selection.null
+        value: '{10, #null, 30}'
+        parameters:
+          - 'is-not-null'
+          - 'count'
+        expected: '2'
+      - id: only.selection.all
+        value: '{2, 4}'
+        parameters:
+          - 'is-even'
+          - 'sum'
+        expected: '6'
+      - id: only.selection.none
+        value: '{1, 3}'
+        parameters:
+          - 'is-even'
+          - 'count'
+        expected: '0'
+      - id: only.selection.empty
+        value: '{}'
+        parameters:
+          - 'is-even'
+          - 'sum'
+        expected: '0'
+      - id: only.selection.empty.min
+        value: '{}'
+        parameters:
+          - 'is-even'
+          - 'min'
+        expected:
+      - id: only.selection.none.first
+        value: '{1, 3}'
+        parameters:
+          - 'is-even'
+          - 'first'
+        expected:
+      - id: only.selection.order
+        value: '{4, 2, 6}'
+        parameters:
+          - 'is-even'
+          - 'first'
+        expected: '4'
+      - id: only.selection.null.forward
+        value: '{10, #null, 30}'
+        parameters:
+          - 'is-null'
+          - 'count'
+        expected: '1'
