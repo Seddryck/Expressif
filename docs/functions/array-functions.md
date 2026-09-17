@@ -40,3 +40,4 @@ Reference documentation for Expressif functions in the `array` scope.
 | [`zip-strict`]({{ '/functions/array/combination/zip-strict/' | relative_url }}) | Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array. |
 | [`zip`]({{ '/functions/array/combination/zip/' | relative_url }}) | Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array. |
 | [`pivot`]({{ '/functions/array/grouping/pivot/' | relative_url }}) | Groups values by row and column, applies a grouping summary, and reshapes the cells into records. |
+| [`unpivot`]({{ '/functions/array/grouping/unpivot/' | relative_url }}) | Converts selected present record fields into rows, preserving retained fields and source order. |

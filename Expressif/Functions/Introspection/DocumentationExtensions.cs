@@ -149,7 +149,7 @@ public static class DocumentationExtensions
             for (var i = 0; i < paramNodes.Length; i++)
             {
                 paramInfos.Add(new ParamInfo(
-                    (type == typeof(Expressif.Predicates.Array.Exists) || type == typeof(Array.Join) || typeof(Array.BaseOuterJoin).IsAssignableFrom(type)) ? names[i].ToKebabCase() : names[i],
+                    (type == typeof(Expressif.Predicates.Array.Exists) || type == typeof(Array.Join) || typeof(Array.BaseOuterJoin).IsAssignableFrom(type) || type == typeof(Array.Unpivot)) ? names[i].ToKebabCase() : names[i],
                     type == typeof(Tuple.Pick) && names[i] == "positions"
                         ? "integer"
                         : (type == typeof(Tuple.Label) || type == typeof(Tuple.LabelConflicts)) && names[i] == "names"

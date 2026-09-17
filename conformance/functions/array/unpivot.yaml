@@ -1,0 +1,48 @@
+suite: unpivot
+kind: function
+operator: unpivot
+tests:
+  - id: unpivot.valid.records
+    cases:
+      - id: unpivot.valid.records.sales
+        value: (null)
+        parameters: ['{{country := "BE", "2025" := 100, "2026" := 120}, {country := "FR", "2025" := 80}} | unpivot({"2025", "2026"}, "year", "amount")']
+        expected: '{{country := "BE", year := "2025", amount := 100}, {country := "BE", year := "2026", amount := 120}, {country := "FR", year := "2025", amount := 80}}'
+      - id: unpivot.valid.records.presence
+        value: (null)
+        parameters: ['{{id := 1, x := #null, y := {1, 2}}, {id := 2, y := {nested := 3}}, {id := 3}} | unpivot({"x", "y"}, "name", "value")']
+        expected: '{{id := 1, name := "x", value := null}, {id := 1, name := "y", value := {1, 2}}, {id := 2, name := "y", value := {nested := 3}}}'
+      - id: unpivot.valid.records.order
+        value: (null)
+        parameters: ['{{b := 2, x := 10, a := 1, y := 20}} | unpivot({"y", "x"}, "name", "value")']
+        expected: '{{b := 2, a := 1, name := "y", value := 20}, {b := 2, a := 1, name := "x", value := 10}}'
+      - id: unpivot.valid.records.reuse
+        value: (null)
+        parameters: ['{{x := 1, y := 2}} | unpivot({"x", "y"}, "x", "y")']
+        expected: '{{x := "x", y := 1}, {x := "y", y := 2}}'
+      - id: unpivot.valid.records.named
+        value: (null)
+        parameters: ['{{x := 1}} | unpivot(value-field := "v", name-field := "n", fields := {"x"})']
+        expected: '{{n := "x", v := 1}}'
+      - id: unpivot.valid.records.roundtrip
+        value: (null)
+        parameters: ['{{country := "BE", year := "2025", amount := 100}, {country := "BE", year := "2026", amount := 120}} | pivot(.country, .year, summarize(|> .amount | first)) | unpivot({"2025", "2026"}, "year", "amount")']
+        expected: '{{country := "BE", year := "2025", amount := 100}, {country := "BE", year := "2026", amount := 120}}'
+  - id: unpivot.valid.empty
+    cases:
+      - id: unpivot.valid.empty.input
+        value: (null)
+        parameters: ['{} | unpivot({"x"}, "n", "v")']
+        expected: '{}'
+      - id: unpivot.valid.empty.selection
+        value: (null)
+        parameters: ['{{x := 1}} | unpivot({}, "n", "v")']
+        expected: '{}'
+      - id: unpivot.valid.empty.absent
+        value: (null)
+        parameters: ['{{x := 1}} | unpivot({"missing"}, "n", "v")']
+        expected: '{}'
+      - id: unpivot.valid.empty.selection.retained
+        value: (null)
+        parameters: ['{{n := 1, v := 2}} | unpivot({}, "n", "v")']
+        expected: '{}'
