@@ -2564,6 +2564,46 @@
     ]
   },
   {
+    "Name": "pairs",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "record",
+    "Output": "array",
+    "Summary": "Converts all record fields to pairs, preserving field names, values, and order.",
+    "Parameters": [],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "record-field",
+      "Summary": "Visits every field of the record supplied as pipeline input to this pairs call, in field order, including private fields."
+    },
+    "Behavior": "Each pair has the original field name as its key and the unchanged field value as its value, including null. An empty record produces an empty array. Non-record input is rejected.",
+    "Examples": [
+      "{foo := 1, bar := 2} | pairs → {(\"foo\" => 1), (\"bar\" => 2)}",
+      "{_id := 42, name := \"Cedric\"} | pairs | from-pairs → {_id := 42, name := \"Cedric\"}"
+    ]
+  },
+  {
+    "Name": "from-pairs",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "record",
+    "Input": "array",
+    "Output": "record",
+    "Summary": "Converts an array of pairs to a record, coercing keys to text and preserving values and order.",
+    "Parameters": [],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "all-elements",
+      "Summary": "Visits each element of the array supplied as pipeline input to this from-pairs call, in enumeration order."
+    },
+    "Behavior": "Every element must be a pair; ordinary two-element tuples and key/value records are rejected. Keys must coerce to text, and duplicate field names after coercion are rejected using case-sensitive comparison. Values, including null, are preserved without coercion. All text field names are supported, including empty and whitespace names. Leading underscores preserve private visibility. An empty array produces an empty record. Non-enumerable input is rejected.",
+    "Examples": [
+      "{(\"foo\" => 1), (\"bar\" => 2)} | from-pairs → {foo := 1, bar := 2}",
+      "{(2025 => 100), (2026 => 120)} | from-pairs → {\"2025\" := 100, \"2026\" := 120}"
+    ]
+  },
+  {
     "Name": "field-names",
     "IsPublic": true,
     "Aliases": [],

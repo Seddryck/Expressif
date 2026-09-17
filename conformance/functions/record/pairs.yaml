@@ -1,0 +1,26 @@
+suite: record
+kind: function
+operator: pairs
+tests:
+  - id: pairs.valid.array
+    cases:
+      - id: pairs.valid.array.ordered-fields
+        value:
+        parameters: ['{foo := 1, bar := 2} | pairs']
+        expected: '{("foo" => 1), ("bar" => 2)}'
+      - id: pairs.valid.array.private-null-nested
+        value:
+        parameters: ['{_id := 42, missing := #null, nested := {items := {1, 2}}} | pairs']
+        expected: '{("_id" => 42), ("missing" => null), ("nested" => {items := {1, 2}})}'
+      - id: pairs.valid.array.empty-record
+        value:
+        parameters: ['record() | pairs']
+        expected: '{}'
+      - id: pairs.valid.array.pair-round-trip
+        value:
+        parameters: ['{(2025 => 100), ("2026" => #null)} | from-pairs | pairs']
+        expected: '{("2025" => 100), ("2026" => null)}'
+      - id: pairs.valid.array.semantic-accessors
+        value:
+        parameters: ['{foo := 1, bar := 2} | pairs | map(tuple($key, $value))']
+        expected: '{T("foo", 1), T("bar", 2)}'
