@@ -3,7 +3,7 @@ layout: docs
 title: "dense-rank-by"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/sorting/dense-rank-by/
 tags:

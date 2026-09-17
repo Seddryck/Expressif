@@ -20,6 +20,7 @@ Reference documentation for Expressif functions in the `sorting` scope.
 |:-----|:---------|
 | [`ascending`]({{ '/functions/sorting/ascending/' | relative_url }}) | Returns the sort term with ascending direction enabled. |
 | [`bottom`]({{ '/functions/sorting/bottom/' | relative_url }}) | Returns up to count original values from the last rows in sort table order. |
+| [`bottom-with-ties`]({{ '/functions/sorting/bottom-with-ties/' | relative_url }}) | Returns the last count rows and all comparer-equal boundary ties in sort table order. |
 | [`compare`]({{ '/functions/sorting/compare/' | relative_url }}) | Compares two values in a selected supported domain and returns their relative ordering. |
 | [`compare-date`]({{ '/functions/sorting/compare-date/' | relative_url }}) | Compares two values after date coercion and returns their relative ordering. |
 | [`compare-datetime`]({{ '/functions/sorting/compare-datetime/' | relative_url }}) | Compares two values after datetime coercion and returns their relative ordering. |
@@ -39,3 +40,4 @@ Reference documentation for Expressif functions in the `sorting` scope.
 | [`sort-table`]({{ '/functions/sorting/sort-table/' | relative_url }}) | Normalizes pairs of sort keys and original values into shared headers and data rows. |
 | [`sort-term`]({{ '/functions/sorting/sort-term/' | relative_url }}) | Creates a sort term from a value and a tuple-bound ordering comparer. |
 | [`top`]({{ '/functions/sorting/top/' | relative_url }}) | Returns up to count original values from the first rows in sort table order. |
+| [`top-with-ties`]({{ '/functions/sorting/top-with-ties/' | relative_url }}) | Returns the first count rows and all comparer-equal boundary ties in sort table order. |

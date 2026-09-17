@@ -3434,7 +3434,7 @@
         "Summary": "The maximum number of rows to select.",
         "Evaluation": {
           "Frequency": "once",
-          "Source": "incoming",
+          "Source": "enclosing",
           "Summary": "Evaluated once in the surrounding evaluation context of this top call; the SortTable supplied as pipeline input is used only for row selection."
         }
       }
@@ -3457,12 +3457,58 @@
         "Summary": "The maximum number of rows to select.",
         "Evaluation": {
           "Frequency": "once",
-          "Source": "incoming",
+          "Source": "enclosing",
           "Summary": "Evaluated once in the surrounding evaluation context of this bottom call; the SortTable supplied as pipeline input is used only for row selection."
         }
       }
     ],
     "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort."
+  },
+  {
+    "Name": "top-with-ties",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-table",
+    "Output": "array",
+    "Summary": "Returns the first count rows and all comparer-equal boundary ties in sort table order.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "The requested row count before including boundary ties.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the surrounding evaluation context of this top-with-ties call; the SortTable supplied as pipeline input is used only for row selection."
+        }
+      }
+    ],
+    "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort."
+  },
+  {
+    "Name": "bottom-with-ties",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-table",
+    "Output": "array",
+    "Summary": "Returns the last count rows and all comparer-equal boundary ties in sort table order.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "The requested row count before including boundary ties.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the surrounding evaluation context of this bottom-with-ties call; the SortTable supplied as pipeline input is used only for row selection."
+        }
+      }
+    ],
+    "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort."
   },
   {
     "Name": "sort-by",

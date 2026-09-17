@@ -3,7 +3,7 @@ layout: docs
 title: "compare-time"
 parent: "Sorting functions"
 grand_parent: "Functions library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /functions/sorting/compare-time/
 tags:
