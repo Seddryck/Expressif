@@ -862,6 +862,10 @@ Glob patterns used to exclude changed files from version-impact detection.
 .PARAMETER Configuration
 GitVersion configuration file path.
 
+.PARAMETER TagReference
+Git reference used to select reachable release tags. Defaults to the main branch.
+Use HEAD when calculating a queued release for the checked-out commit.
+
 .PARAMETER Warn
 Emits additional warnings for tag visibility conditions.
 
@@ -881,6 +885,7 @@ function Get-ConformanceVersion {
         [string] $Path = "conformance",
         [string[]] $Exclude = @("bin/**"),
         [string] $Configuration = "GitVersion.Conformance.yml",
+        [string] $TagReference,
         [switch] $Warn,
         [switch] $Refresh,
         [switch] $NoEnv
@@ -888,7 +893,7 @@ function Get-ConformanceVersion {
 
     Write-Host "=== Calculating conformance version ==="
 
-    if (-not $Refresh -and -not [string]::IsNullOrWhiteSpace($script:ConformanceVersionCache)) {
+    if (-not $Refresh -and [string]::IsNullOrWhiteSpace($TagReference) -and -not [string]::IsNullOrWhiteSpace($script:ConformanceVersionCache)) {
         $conformanceVersion = $script:ConformanceVersionCache
 
         Write-Host "Conformance version (cached): $conformanceVersion"
@@ -985,7 +990,16 @@ function Get-ConformanceVersion {
     $tagPattern =
         "^conformance-(?<year>\d{4})\.(?<month>\d{1,2})\.(?<patch>\d+)$"
 
-    $mainReference = Resolve-MainReference
+    $mainReference = if ([string]::IsNullOrWhiteSpace($TagReference)) {
+        Resolve-MainReference
+    }
+    else {
+        & git rev-parse --verify --quiet "$TagReference^{commit}" *> $null
+        if ($LASTEXITCODE -ne 0) {
+            throw "Cannot resolve conformance tag reference '$TagReference'."
+        }
+        $TagReference
+    }
 
     if ($null -ne $mainReference) {
         $conformanceTags =
@@ -1055,7 +1069,9 @@ function Get-ConformanceVersion {
     if ($selectedChangedConformanceFiles.Count -eq 0) {
         if ($null -ne $latestRelease) {
             $conformanceVersion = $latestRelease.Version.ToString()
-            $script:ConformanceVersionCache = $conformanceVersion
+            if ([string]::IsNullOrWhiteSpace($TagReference)) {
+                $script:ConformanceVersionCache = $conformanceVersion
+            }
 
             Write-Host (
                 "Selected files under '{2}/' are unchanged since the latest release at commit '{0}'. Reusing conformance release version: {1}" -f
@@ -1158,7 +1174,9 @@ $gitVersionJson
         throw "GitVersion returned an empty SemVer value."
     }
 
-    $script:ConformanceVersionCache = $conformanceVersion
+    if ([string]::IsNullOrWhiteSpace($TagReference)) {
+        $script:ConformanceVersionCache = $conformanceVersion
+    }
 
     Write-Host "Conformance version: $conformanceVersion"
 

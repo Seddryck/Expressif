@@ -70,12 +70,18 @@ jobs:
           "patch=$($version.Patch)" >> $env:GITHUB_OUTPUT
           Write-Host "Building Expressif version $($version.SemVer)"
 
+      - name: Verify release version guards
+        shell: pwsh
+        run: |
+          ./.github/scripts/Test-VersionTagReservation.ps1
+          ./.github/scripts/Test-QueuedReleaseVersions.ps1
+
       - name: Calculate conformance version
         id: conformance-version
         shell: pwsh
         run: |
           . ./Conformance.ps1
-          $version = Get-ConformanceVersion -Warn
+          $version = Get-ConformanceVersion -Warn -TagReference HEAD
           "semver=$version" >> $env:GITHUB_OUTPUT
 
   package-branding:
@@ -737,9 +743,10 @@ jobs:
             throw 'Failed to refresh main and version tags.'
           }
 
-          $mainSha = git rev-parse refs/remotes/origin/main
-          if ($mainSha -ne $env:EXPECTED_SHA) {
-            throw "origin/main moved from $env:EXPECTED_SHA to $mainSha before publication."
+          # Queued releases publish their tested commit even when main advances.
+          $headSha = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0 -or $headSha -ne $env:EXPECTED_SHA) {
+            throw "Release checkout does not identify $env:EXPECTED_SHA."
           }
 
           $versionJson = gitversion /output json
@@ -752,7 +759,7 @@ jobs:
           }
 
           . ./Conformance.ps1
-          $currentConformanceVersion = Get-ConformanceVersion -Refresh -NoEnv
+          $currentConformanceVersion = Get-ConformanceVersion -Refresh -NoEnv -TagReference HEAD
           if ($currentConformanceVersion -ne $env:BUILT_CONFORMANCE_VERSION) {
             throw "Conformance version changed after packaging: artifacts use $env:BUILT_CONFORMANCE_VERSION, but calculation returns $currentConformanceVersion."
           }
