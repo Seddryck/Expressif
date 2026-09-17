@@ -3301,6 +3301,17 @@
     "Behavior": "Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercion fails during comparison, and equal keys preserve source order."
   },
   {
+    "Name": "rank",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "sorting",
+    "Input": "sort-table",
+    "Output": "grouping",
+    "Summary": "Groups original sort table row values by their one-based SQL rank.",
+    "Parameters": [],
+    "Behavior": "Rows use the same stable lexicographic ordering and comparer failure contract as sort. Adjacent ordered keys that compare equal share a rank; each changed key starts a rank equal to its one-based row position, leaving gaps after ties. Groups appear in ascending rank order and retain stable original-value order. Empty input returns an empty grouping. Ranking assumes a coherent comparer relation with transitive comparison equality; invalid relations are not normalized."
+  },
+  {
     "Name": "sort",
     "IsPublic": true,
     "Aliases": [],
