@@ -39,6 +39,8 @@ Visits each group of the grouping supplied as pipeline input to this cube call i
 
 Generates all 2^N grouping levels for N dimensions, starting with the original level and ending with the grand total. Levels follow binary mask order, with the rightmost dimension changing fastest: for two dimensions, (a, b), (a, #all), (#all, b), then (#all, #all). The number of levels grows exponentially with the number of dimensions. Within each level, keys retain first-seen order and values concatenate in source-group order, including duplicates, nulls and empty groups. Values are never aggregated; compose with summarize to calculate totals.
 
+For two dimensions, the equivalent explicit pattern is grouping-sets(T(0, 1), tuple(0), tuple(1), tuple()).
+
 Uses the same AllDimension.Instance marker as roll-up, whose source literal is #all and which is distinct from null and the string "#all". Reading #all represents an already-aggregated dimension; it does not aggregate values or act as a wildcard. Scalar keys have one dimension and a scalar total key; arrays and records are scalar dimensions. Tuple arity is retained, with nested tuples treated as single dimensions. Empty groupings remain empty; zero-component tuples have only their original level. All keys must be scalar or all tuples of the same arity. Mixed shapes and keys already containing the aggregated marker as a dimension fail with an argument error, preventing ambiguous dimensions and double-counting.
 
 

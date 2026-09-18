@@ -352,7 +352,7 @@ public sealed class ExpressifBinder
             "record" => BindRecordFunction(syntax),
             "with" => BindWithFunction(syntax),
             "let" => BindLetFunction(syntax),
-            "array" or "text" or "tuple" or "grouping" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
+            "array" or "text" or "tuple" or "grouping" or "grouping-sets" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
             _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
         };
 

@@ -3,7 +3,7 @@ layout: docs
 title: "top-groups"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 110
+nav_order: 120
 has_toc: false
 permalink: /functions/grouping/top-groups/
 tags:

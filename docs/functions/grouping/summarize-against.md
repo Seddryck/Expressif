@@ -3,7 +3,7 @@ layout: docs
 title: "summarize-against"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/grouping/summarize-against/
 tags:
