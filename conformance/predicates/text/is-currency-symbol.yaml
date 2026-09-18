@@ -1,0 +1,25 @@
+suite: text
+kind: predicate
+operator: is-currency-symbol
+tests:
+  - id: is-currency-symbol.valid
+    cases:
+      - {id: is-currency-symbol.valid.dollar, value: '$', expected: true}
+      - {id: is-currency-symbol.valid.pound, value: '£', expected: true}
+      - {id: is-currency-symbol.valid.yen, value: '¥', expected: true}
+      - {id: is-currency-symbol.valid.euro, value: '€', expected: true}
+      - {id: is-currency-symbol.valid.rupee, value: '₹', expected: true}
+      - {id: is-currency-symbol.valid.bitcoin, value: '₿', expected: true}
+      - {id: is-currency-symbol.valid.fullwidth-dollar, value: '＄', expected: true}
+      - {id: is-currency-symbol.valid.supplementary-currency, value: '𞲰', expected: true}
+      - {id: is-currency-symbol.valid.currency-code, value: 'USD', expected: false}
+      - {id: is-currency-symbol.valid.repeated-symbol, value: '$$', expected: false}
+      - {id: is-currency-symbol.valid.amount, value: '$1', expected: false}
+      - {id: is-currency-symbol.valid.leading-space, value: ' $', expected: false}
+      - {id: is-currency-symbol.valid.trailing-space, value: '$ ', expected: false}
+      - {id: is-currency-symbol.valid.digit, value: '1', expected: false}
+      - {id: is-currency-symbol.valid.sign, value: '+', expected: false}
+      - {id: is-currency-symbol.valid.generic-currency, value: '¤', expected: true}
+      - {id: is-currency-symbol.valid.null, value: '(null)', expected: false}
+      - {id: is-currency-symbol.valid.empty, value: '(empty)', expected: false}
+      - {id: is-currency-symbol.valid.blank, value: '(blank)', expected: false}
