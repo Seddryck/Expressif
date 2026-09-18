@@ -114,7 +114,7 @@ public sealed class SemanticAnalyzer
                     Arguments(member, current, frame);
                 }
                 if (current.Kind != SemanticSourceKind.Unresolved)
-                    current = Source(member);
+                    current = FunctionConstruction.Classify(member.Name) == FunctionConstructionKind.Let ? current : Source(member);
             }
             return current;
         }
@@ -178,6 +178,12 @@ public sealed class SemanticAnalyzer
                 var source = construction == FunctionConstructionKind.Catch ? frame.Current : input;
                 foreach (var parameter in ParameterArgumentBinder.Bind(type, function.Arguments).Parameters)
                     ValueParameter(parameter, source, frame);
+                return true;
+            }
+            if (function.Parameters is [LetDefinitionParameter bindings])
+            {
+                foreach (var binding in bindings.Bindings)
+                    ValueParameter(binding.Value, input, frame);
                 return true;
             }
             if (function.Parameters is [WithDefinitionParameter definition])

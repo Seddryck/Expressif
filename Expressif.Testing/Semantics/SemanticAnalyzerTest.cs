@@ -5,6 +5,17 @@ namespace Expressif.Testing.Semantics;
 public class SemanticAnalyzerTest
 {
     [Test]
+    public void Analyze_Let_PreservesInputAndEvaluatesBindingsAgainstIt()
+    {
+        const string text = ".order | let(label := .name) | .customer";
+        var references = Analyze(text).References;
+        Assert.That(references.Select(reference => Slice(text, reference.Span)),
+            Is.EqualTo(new[] { ".order", ".name", ".customer" }));
+        Assert.That(references.Skip(1).Select(reference => Slice(text, reference.Source.Span!.Value)),
+            Is.EqualTo(new[] { ".order", ".order" }));
+    }
+
+    [Test]
     public void Analyze_ExpandArguments_ReadIncomingRecord()
     {
         const string text = ".order | expand(.customer, .label)";

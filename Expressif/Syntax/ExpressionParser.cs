@@ -10,7 +10,51 @@ public sealed class ExpressionParser : IExpressionParser
     /// </summary>
     public static RootExpressionSyntax Parse(string text)
     {
-        return ExpressifSyntax.Parse(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(ControlFlowSyntax.Normalize(ConditionalSyntax.Normalize(OrderingSyntax.Normalize(text)))))));
+        return ExpressifSyntax.Parse(NormalizeValueReferenceStages(NormalizeGroupingMapOperators(NormalizeBinaryOperators(NormalizeVectorConstructors(ControlFlowSyntax.Normalize(ConditionalSyntax.Normalize(OrderingSyntax.Normalize(text))))))));
+    }
+
+    private static string NormalizeValueReferenceStages(string text)
+    {
+        var result = new System.Text.StringBuilder(text.Length);
+        for (var index = 0; index < text.Length; index++)
+        {
+            var triviaEnd = text[index] == '`'
+                ? text.IndexOf('`', index + 1) is var closing && closing >= 0 ? closing + 1 : text.Length
+                : ControlFlowSyntax.SkipTriviaOrString(text, index);
+            if (triviaEnd > index)
+            {
+                result.Append(text.AsSpan(index, triviaEnd - index));
+                index = triviaEnd - 1;
+                continue;
+            }
+            result.Append(text[index]);
+            if (text[index] != '|')
+                continue;
+            var start = index + 1;
+            while (start < text.Length)
+            {
+                if (char.IsWhiteSpace(text[start]))
+                {
+                    start++;
+                    continue;
+                }
+                var commentEnd = text[start] == '/' ? ControlFlowSyntax.SkipTriviaOrString(text, start) : start;
+                if (commentEnd == start)
+                    break;
+                start = commentEnd;
+            }
+            if (start >= text.Length || text[start] != '@')
+                continue;
+            var end = start + 1;
+            while (end < text.Length && (char.IsLetterOrDigit(text[end]) || text[end] is '-' or '_'))
+                end++;
+            if (end == start + 1)
+                continue;
+            result.Append(text.AsSpan(index + 1, start - index - 1));
+            result.Append("apply(").Append(text.AsSpan(start, end - start)).Append(')');
+            index = end - 1;
+        }
+        return result.ToString();
     }
 
     private static string NormalizeVectorConstructors(string text)

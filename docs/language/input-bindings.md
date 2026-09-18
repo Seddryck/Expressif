@@ -113,3 +113,36 @@ trailing commas, nested patterns, and rest patterns are not supported. Duplicate
 names are rejected during binding with the duplicate's source offset. Commas
 inside the list do not terminate the function argument. To bind a whole value,
 including a one-element tuple, use an unparenthesized name instead.
+
+## Computed lexical values
+
+Use [`let`]({{ '/functions/flow/let/' | relative_url }}) to capture a computed
+value while preserving the pipeline input:
+
+```expressif
+10 | let(double := multiply(2)) | add(@double)
+```
+
+This returns `30`: the binding expression receives `10`, stores `20` as
+`@double`, and passes the original `10` to `add`. `let(original := @_)` captures
+the value entering that particular call, even after earlier stages have changed
+it. In comparison, `:>` binds the input of its expression body.
+
+Each binding expression runs once in declaration order against the same input
+and the environment visible before that `let` call. New bindings become visible
+together after all expressions succeed. Use consecutive calls when one computed
+value depends on another. Null is a valid binding; an unknown name raises the
+usual unresolved-variable error.
+
+Both forms share the `@name` namespace with context variables. Inner inline
+expressions can read outer bindings and shadow them; their local bindings are
+restored when the invocation returns or fails. Pipeline stages and grouping
+parentheses do not delimit `let` bindings, and `let` adds no expression-root
+scope. Context variables remain unchanged. Separately invoked expressions have
+their own environment; named expression bodies require explicit value arguments
+rather than inheriting caller-local bindings. `&name` denotes an executable
+expression, not a computed local value.
+
+`with` instead constructs a temporary record and invokes its body against that
+record. Use `.field` to access those projections, and `@name` to access lexical
+values established by `let` or `:>`.
