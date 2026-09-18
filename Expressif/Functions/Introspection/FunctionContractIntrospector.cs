@@ -59,7 +59,9 @@ internal static class FunctionContractIntrospector
             JoinTypes(contracts.Select(x => x[0])),
             OutputOverrides.GetValueOrDefault(name, output),
             true,
-            "Exposes at least one closed IFunction<TIn, TOut> contract.");
+            implementationType.GetCustomAttributes(typeof(FunctionAttribute), true)
+                .OfType<FunctionAttribute>().FirstOrDefault()?.DynamicReason
+            ?? "Exposes at least one closed IFunction<TIn, TOut> contract.");
     }
 
     private static string JoinTypes(IEnumerable<Type> types)
