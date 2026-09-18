@@ -38,7 +38,7 @@ internal sealed record CliComposition(
             new RunHandler(expressions, values, textFiles, sources, configuration),
             new ValidateHandler(expressions),
             new HelpHandler(new FunctionCatalogService(FunctionCatalog.Default)),
-            () => new ReplHost(new ReplSession(expressions), new ConsoleReplTerminal()),
+            () => new ReplHost(new ReplSession(expressions, configuration), new ConsoleReplTerminal()),
             textFiles);
     }
 }

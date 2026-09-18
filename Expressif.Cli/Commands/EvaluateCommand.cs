@@ -72,7 +72,7 @@ internal static class EvaluateCommand
                 result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
                 out var serializer, out var formatting, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
-        using var observation = CliLineage.Begin(code, "evaluate", hasSource ? request.SourcePath : null);
+        using var observation = CliLineage.Begin(code, "evaluate", hasSource ? request.SourcePath : null, configuration: configuration);
         var exitCode = WriteResult(handler.Execute(request), code, fromFile, filePath, serializer, formatting);
         if (exitCode == ExitCodes.Success)
             observation.Complete();

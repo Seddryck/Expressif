@@ -1,5 +1,6 @@
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
+using Expressif.Cli.Configuration;
 
 namespace Expressif.Cli.Application;
 
@@ -25,10 +26,12 @@ internal sealed class ReplSession
     private readonly Context bindingContext;
     private readonly EvaluationContext evaluationContext;
     private readonly Stack<(bool HasInput, object? Value)> history = new();
+    private readonly CliConfiguration? configuration;
     private object? currentInput;
 
-    public ReplSession(IExpressionService expressions)
-        : this(expressions, new Context(), new EvaluationContext()) { }
+    public ReplSession(IExpressionService expressions, CliConfiguration? configuration = null)
+        : this(expressions, new Context(), new EvaluationContext())
+        => this.configuration = configuration;
 
     internal ReplSession(
         IExpressionService expressions,
@@ -58,7 +61,7 @@ internal sealed class ReplSession
                 ? trimmed
                 : trimmed[1..].TrimStart()
             : source;
-        using var observation = CliLineage.Begin(code, "repl");
+        using var observation = CliLineage.Begin(code, "repl", configuration: configuration);
         IExpression expression;
         try
         {

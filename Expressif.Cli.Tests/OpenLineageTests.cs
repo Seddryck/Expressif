@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using Expressif.Cli.Application;
+using Expressif.Cli.Configuration;
 
 namespace Expressif.Cli.Tests;
 
@@ -169,6 +170,154 @@ public class OpenLineageTests
     }
 
     [Test]
+    public async Task ConfigCommands_PersistReadListAndUnsetLineageSettings()
+    {
+        var configuration = CreateConfiguration();
+        Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.url", "http://localhost:5000")).Code, Is.Zero);
+        Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.api-key", "secret-token")).Code, Is.Zero);
+        Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.disabled", "true")).Code, Is.Zero);
+        var read = await InvokeConfiguredAsync(configuration, "config", "get", "openlineage.url");
+        var listed = await InvokeConfiguredAsync(configuration, "config", "list", "--command", "run");
+        using var document = JsonDocument.Parse(File.ReadAllText(configuration.Path));
+        Assert.Multiple(() =>
+        {
+            Assert.That(read.Output.Trim(), Is.EqualTo("http://localhost:5000"));
+            Assert.That(listed.Code, Is.Zero);
+            Assert.That(listed.Output, Does.Contain("openlineage.url=http://localhost:5000 (source: openlineage.url)"));
+            Assert.That(listed.Output, Does.Contain("openlineage.api-key=[redacted]"));
+            Assert.That(listed.Output, Does.Not.Contain("secret-token"));
+            Assert.That(document.RootElement.GetProperty("openlineage").GetProperty("disabled").GetBoolean(), Is.True);
+        });
+        Assert.That((await InvokeConfiguredAsync(configuration, "config", "unset", "openlineage.url")).Code, Is.Zero);
+        Assert.That(configuration.Get("openlineage.url"), Is.Empty);
+        Assert.That(configuration.GetSource("openlineage.url"), Is.EqualTo("built-in default"));
+    }
+
+    [TestCase("run")]
+    [TestCase("evaluate")]
+    public async Task JsonConfiguration_EnablesReportingForCommands(string command)
+    {
+        var configuration = CreateConfiguration();
+        using var backend = new Backend();
+        configuration.Set("openlineage.url", backend.Url);
+        configuration.Set("openlineage.namespace", "json-tests");
+        configuration.Set("openlineage.job-name", "json-job");
+        configuration.Set("openlineage.endpoint", "/json/events");
+        configuration.Set("openlineage.api-key", "json-token");
+        var receiving = backend.ReceiveAsync(2);
+        var result = await InvokeConfiguredAsync(configuration, command, "upper", "--input", "\"alice\"");
+        var events = await receiving;
+        using var document = JsonDocument.Parse(events[0]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Code, Is.Zero);
+            Assert.That(result.Output.Trim(), Is.EqualTo("ALICE"));
+            Assert.That(result.Error, Is.Empty);
+            Assert.That(events.Select(EventType), Is.EqualTo(new[] { "START", "COMPLETE" }));
+            Assert.That(document.RootElement.GetProperty("job").GetProperty("namespace").GetString(), Is.EqualTo("json-tests"));
+            Assert.That(document.RootElement.GetProperty("job").GetProperty("name").GetString(), Is.EqualTo("json-job"));
+            Assert.That(backend.Paths, Has.All.EqualTo("/json/events"));
+            Assert.That(backend.Authorization, Has.All.EqualTo("Bearer json-token"));
+        });
+    }
+
+    [Test]
+    public async Task JsonConfiguration_EnablesReportingForRepl()
+    {
+        var configuration = CreateConfiguration();
+        using var backend = new Backend();
+        configuration.Set("openlineage.url", backend.Url);
+        var receiving = backend.ReceiveAsync(2);
+        var terminal = new SingleExpressionTerminal();
+        var composition = CliComposition.CreateDefault(configuration) with
+        {
+            Repl = () => new ReplHost(new ReplSession(new Expressions.ExpressionService(), configuration), terminal),
+        };
+        var code = await CliInvoker.InvokeAsync(CliRootCommandFactory.Create(composition, configuration).Parse(["repl"]));
+        Assert.That(code, Is.Zero);
+        Assert.That((await receiving).Select(EventType), Is.EqualTo(new[] { "START", "COMPLETE" }));
+    }
+
+    [Test]
+    public void EnvironmentOverridesJson_EmptyValuesFallBackPerSetting()
+    {
+        var configuration = CreateConfiguration();
+        configuration.Set("openlineage.url", "http://localhost:5000");
+        configuration.Set("openlineage.namespace", "json-namespace");
+        configuration.Set("openlineage.disabled", "true");
+        Environment.SetEnvironmentVariable("OPENLINEAGE_URL", "http://localhost:6000");
+        Environment.SetEnvironmentVariable("OPENLINEAGE_NAMESPACE", " ");
+        Environment.SetEnvironmentVariable("OPENLINEAGE_DISABLED", "false");
+        Assert.Multiple(() =>
+        {
+            Assert.That(configuration.Get("openlineage.url"), Is.EqualTo("http://localhost:6000"));
+            Assert.That(configuration.GetSource("openlineage.url"), Is.EqualTo("OPENLINEAGE_URL"));
+            Assert.That(configuration.Get("openlineage.namespace"), Is.EqualTo("json-namespace"));
+            Assert.That(configuration.GetSource("openlineage.namespace"), Is.EqualTo("openlineage.namespace"));
+            Assert.That(configuration.Get("openlineage.disabled"), Is.EqualTo("false"));
+        });
+    }
+
+    [Test]
+    public void EmptyJsonValues_UseDefaultsAndPreserveFalse()
+    {
+        var configuration = CreateConfiguration();
+        File.WriteAllText(configuration.Path, "{\"openlineage\":{\"url\":null,\"endpoint\":\" \",\"namespace\":\"\",\"disabled\":false}}");
+        Assert.Multiple(() =>
+        {
+            Assert.That(configuration.Get("openlineage.url"), Is.Empty);
+            Assert.That(configuration.Get("openlineage.endpoint"), Is.EqualTo("api/v1/lineage"));
+            Assert.That(configuration.Get("openlineage.namespace"), Is.EqualTo("expressif"));
+            Assert.That(configuration.Get("openlineage.disabled"), Is.EqualTo("false"));
+            Assert.That(configuration.GetSource("openlineage.disabled"), Is.EqualTo("openlineage.disabled"));
+        });
+    }
+
+    [TestCase("openlineage.url", "file:///customers.json")]
+    [TestCase("openlineage.endpoint", "https://other-host/events")]
+    [TestCase("openlineage.disabled", "sometimes")]
+    public async Task ConfigSet_InvalidValuesAreRejected(string key, string value)
+    {
+        var configuration = CreateConfiguration();
+        var result = await InvokeConfiguredAsync(configuration, "config", "set", key, value);
+        Assert.That(result.Code, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+        Assert.That(result.Error, Does.Contain("Configuration error:"));
+    }
+
+    [TestCase("{\"openlineage\":42}")]
+    [TestCase("{\"openlineage\":{\"disabled\":[]}}")]
+    public async Task InvalidLineageSection_OnlyAddsReportingDiagnostic(string json)
+    {
+        var configuration = CreateConfiguration();
+        File.WriteAllText(configuration.Path, json);
+        var result = await InvokeConfiguredAsync(configuration, "run", "upper", "--input", "\"alice\"");
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Code, Is.Zero);
+            Assert.That(result.Output.Trim(), Is.EqualTo("ALICE"));
+            Assert.That(result.Error, Does.Contain("OpenLineage reporting failed:"));
+        });
+    }
+
+    [Test]
+    public async Task JsonDisabled_PreventsReporting()
+    {
+        var configuration = CreateConfiguration();
+        configuration.Set("openlineage.url", "http://localhost:1");
+        configuration.Set("openlineage.disabled", "true");
+        var result = await InvokeConfiguredAsync(configuration, "run", "upper", "--input", "\"alice\"");
+        Assert.That(result.Code, Is.Zero);
+        Assert.That(result.Error, Is.Empty);
+    }
+
+    private CliConfiguration CreateConfiguration()
+    {
+        var path = Path.GetTempFileName();
+        files.Add(path);
+        return new CliConfiguration(path);
+    }
+
+    [Test]
     public async Task Repl_ReportsEvaluations()
     {
         using var backend = new Backend();
@@ -185,7 +334,10 @@ public class OpenLineageTests
         return document.RootElement.GetProperty("eventType").GetString();
     }
 
-    private static async Task<(int Code, string Output, string Error)> InvokeAsync(params string[] args)
+    private static Task<(int Code, string Output, string Error)> InvokeAsync(params string[] args)
+        => InvokeConfiguredAsync(null, args);
+
+    private static async Task<(int Code, string Output, string Error)> InvokeConfiguredAsync(CliConfiguration? configuration, params string[] args)
     {
         var originalOutput = Console.Out;
         var originalError = Console.Error;
@@ -195,7 +347,9 @@ public class OpenLineageTests
         Console.SetError(error);
         try
         {
-            var code = await CliInvoker.InvokeAsync(args);
+            var code = configuration is null
+                ? await CliInvoker.InvokeAsync(args)
+                : await CliInvoker.InvokeAsync(CliRootCommandFactory.Create(configuration: configuration).Parse(args));
             return (code, output.ToString(), error.ToString());
         }
         finally
@@ -203,6 +357,19 @@ public class OpenLineageTests
             Console.SetOut(originalOutput);
             Console.SetError(originalError);
         }
+    }
+
+    private sealed class SingleExpressionTerminal : IReplTerminal
+    {
+        private bool read;
+        public string? ReadLine(string prompt, CancellationToken cancellationToken)
+        {
+            if (read) return null;
+            read = true;
+            return "\"alice\" | upper";
+        }
+        public void WriteResult(string value) => Assert.That(value, Does.Contain("ALICE"));
+        public void WriteError(string message) => Assert.Fail(message);
     }
 
     private sealed class Backend : IDisposable

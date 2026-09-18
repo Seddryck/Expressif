@@ -8,6 +8,7 @@ internal sealed class CliConfiguration(string path)
     public const string FileName = "expressif.config.json";
     public static readonly string[] Commands = ["repl", "run", "evaluate"];
     public static readonly string[] Settings = ["output-style", "indent", "preferred-line-width", "inline-types"];
+    public static readonly string[] LineageSettings = ["url", "endpoint", "api-key", "namespace", "job-name", "disabled"];
     private static readonly HashSet<string> InlineTypes = new(StringComparer.OrdinalIgnoreCase)
     {
         "array", "tuple", "vector", "pair", "group", "record", "dictionary", "grouping",
@@ -20,6 +21,13 @@ internal sealed class CliConfiguration(string path)
     {
         var (command, setting) = ParseKey(key);
         var document = Read();
+        if (command == "openlineage")
+        {
+            var environment = Environment.GetEnvironmentVariable(LineageEnvironment(setting));
+            if (!string.IsNullOrWhiteSpace(environment))
+                return ValidateLineageValue(setting, environment);
+            return ReadLineageValue(document, setting);
+        }
         var value = command is null ? null : (document[command] as JsonObject)?[setting];
         return ReadValue(HasValue(value) ? value : document[setting], setting);
     }
@@ -28,6 +36,14 @@ internal sealed class CliConfiguration(string path)
     {
         var (command, setting) = ParseKey(key);
         var document = Read();
+        if (command == "openlineage")
+        {
+            var environment = LineageEnvironment(setting);
+            if (!string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(environment)))
+                return environment;
+            _ = ReadLineageValue(document, setting);
+            return HasValue((document[command] as JsonObject)?[setting]) ? command + "." + setting : "built-in default";
+        }
         if (command is not null && HasValue((document[command] as JsonObject)?[setting]))
             return command + "." + setting;
         return HasValue(document[setting]) ? setting : "built-in default";
@@ -36,7 +52,7 @@ internal sealed class CliConfiguration(string path)
     public void Set(string key, string value)
     {
         var (command, setting) = ParseKey(key);
-        var normalized = ValidateValue(setting, value);
+        var normalized = command == "openlineage" ? ValidateLineageValue(setting, value) : ValidateValue(setting, value);
         var document = Read();
         var target = document;
         if (command is not null)
@@ -46,7 +62,9 @@ internal sealed class CliConfiguration(string path)
             target = document[command] as JsonObject ?? throw new FormatException($"Configuration section '{command}' must be an object.");
         }
 
-        target[setting] = setting switch
+        target[setting] = command == "openlineage" && setting == "disabled"
+            ? JsonValue.Create(bool.Parse(normalized))
+            : setting switch
         {
             "indent" when normalized != "tab" => JsonValue.Create(ParseInteger(normalized)),
             "preferred-line-width" => JsonValue.Create(ParseInteger(normalized)),
@@ -72,6 +90,8 @@ internal sealed class CliConfiguration(string path)
             return (null, parts[0]);
         if (parts.Length == 2 && Commands.Contains(parts[0]) && Settings.Contains(parts[1]))
             return (parts[0], parts[1]);
+        if (parts.Length == 2 && parts[0] == "openlineage" && LineageSettings.Contains(parts[1]))
+            return (parts[0], parts[1]);
         throw new FormatException($"Unknown configuration key '{key}'.");
     }
 
@@ -84,6 +104,47 @@ internal sealed class CliConfiguration(string path)
             "inline-types" => ValidateInlineTypes(value),
             _ => throw new FormatException($"Unknown configuration setting '{setting}'."),
         };
+
+    private static string LineageEnvironment(string setting)
+        => "OPENLINEAGE_" + setting.Replace('-', '_').ToUpperInvariant();
+
+    private static string ReadLineageValue(JsonObject document, string setting)
+    {
+        if (document["openlineage"] is { } section && section is not JsonObject)
+            throw new FormatException("Configuration section 'openlineage' must be an object.");
+        var value = (document["openlineage"] as JsonObject)?[setting];
+        if (!HasValue(value))
+        {
+            return setting switch
+            {
+                "endpoint" => "api/v1/lineage",
+                "namespace" => "expressif",
+                "disabled" => "false",
+                _ => string.Empty,
+            };
+        }
+
+        if (value is not JsonValue scalar || !(scalar.TryGetValue<string>(out _) || (setting == "disabled" && scalar.TryGetValue<bool>(out _))))
+            throw new FormatException($"Configuration openlineage.{setting} has an invalid value type.");
+        return ValidateLineageValue(setting, value!.ToString());
+    }
+
+    private static string ValidateLineageValue(string setting, string value)
+    {
+        if (setting == "disabled")
+        {
+            if (bool.TryParse(value, out var disabled))
+                return disabled ? "true" : "false";
+            throw new FormatException("Configuration openlineage.disabled must be true or false.");
+        }
+        if (string.IsNullOrWhiteSpace(value))
+            throw new FormatException($"Configuration openlineage.{setting} must not be blank. Use config unset to remove it.");
+        if (setting == "url" && (!Uri.TryCreate(value, UriKind.Absolute, out var url) || url.Scheme is not ("http" or "https")))
+            throw new FormatException("Configuration openlineage.url must be an absolute HTTP or HTTPS URL.");
+        if (setting == "endpoint" && (Uri.TryCreate(value.TrimStart('/'), UriKind.Absolute, out _) || value.StartsWith("//", StringComparison.Ordinal)))
+            throw new FormatException("Configuration openlineage.endpoint must be a relative path.");
+        return value;
+    }
 
     private static string ValidateOutputStyle(string value)
     {
