@@ -1,0 +1,56 @@
+suite: text
+kind: function
+operator: parse-json
+tests:
+  - id: parse-json.valid
+    cases:
+      - id: parse-json.valid.text.string
+        value: '"hello"'
+        expected: hello
+  - id: parse-json.number
+    cases:
+      - id: parse-json.number.text.integer
+        value: '42'
+        expected: 42
+      - id: parse-json.number.text.decimal
+        value: '12.5'
+        expected: 12.5
+  - id: parse-json.boolean
+    cases:
+      - id: parse-json.boolean.text.true
+        value: 'true'
+        expected: true
+      - id: parse-json.boolean.text.false
+        value: 'false'
+        expected: false
+  - id: parse-json.null
+    cases:
+      - id: parse-json.null.text.json-null
+        value: 'null'
+        expected:
+      - id: parse-json.null.text.null-input
+        value:
+        expected:
+  - id: parse-json.array
+    cases:
+      - id: parse-json.array.text.array
+        value: '[1,2,3]'
+        expected: [1,2,3]
+  - id: parse-json.fields
+    cases:
+      - id: parse-json.fields.text.object
+        value: '{"name":"Ada"}'
+        parameters: ['parse-json | field("name")']
+        expected: Ada
+      - id: parse-json.fields.text.nested
+        value: '{"child":{"name":"Ada"}}'
+        parameters: ['parse-json | nested-field("child", "name")']
+        expected: Ada
+      - id: parse-json.fields.text.missing
+        value: '{}'
+        parameters: ['parse-json | field("name")']
+        expected:
+      - id: parse-json.fields.text.duplicate
+        value: '{"name":"first","name":"last"}'
+        parameters: ['parse-json | field("name")']
+        expected: last

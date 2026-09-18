@@ -1,5 +1,17 @@
 [
   {
+    "Name": "parse-json",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "text",
+    "Input": "text",
+    "Output": "any",
+    "Summary": "Parses JSON text into native records, arrays, and scalar values.",
+    "Behavior": "The output type depends on the JSON value at runtime. Objects become ordered records recursively; arrays become native arrays. Null input returns null. Empty, blank, and malformed JSON raise an evaluation error. Comments, trailing commas, and multiple root values are rejected. Numbers follow JSON source conversion rules; duplicate object properties retain the last value.",
+    "Parameters": [],
+    "Examples": ["{payload := \"{\\\"name\\\":\\\"Ada\\\"}\"} | .payload | parse-json | field(\"name\") → \"Ada\""]
+  },
+  {
     "Name": "catch",
     "IsPublic": true,
     "Aliases": [],
