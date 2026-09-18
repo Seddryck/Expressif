@@ -42,6 +42,14 @@ internal static class ConfigCommand
                 var key = selected is null ? setting : selected + "." + setting;
                 Console.Out.WriteLine($"{key}={configuration.Get(key)} (source: {configuration.GetSource(key)})");
             }
+            foreach (var setting in CliConfiguration.LineageSettings)
+            {
+                var key = "openlineage." + setting;
+                var effective = configuration.Get(key);
+                if (setting == "api-key" && effective.Length > 0)
+                    effective = "[redacted]";
+                Console.Out.WriteLine($"{key}={effective} (source: {configuration.GetSource(key)})");
+            }
         }));
         command.Subcommands.Add(list);
         return command;

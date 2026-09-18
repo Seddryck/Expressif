@@ -4,5 +4,6 @@
   "preferred-line-width": 80,
   "inline-types": [
     "tuple"
-  ]
+  ],
+  "openlineage": {}
 }

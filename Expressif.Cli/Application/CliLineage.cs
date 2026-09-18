@@ -1,6 +1,7 @@
 using Expressif.Observability;
 using Expressif.OpenLineage;
 using Expressif.Cli.Inputs;
+using Expressif.Cli.Configuration;
 
 namespace Expressif.Cli.Application;
 
@@ -8,26 +9,28 @@ internal static class CliLineage
 {
     private static readonly HttpClient Client = new() { Timeout = TimeSpan.FromSeconds(5) };
 
-    public static IExpressionObservation Begin(string expression, string command, string? sourcePath = null, SourceFormat? format = null)
+    public static IExpressionObservation Begin(string expression, string command, string? sourcePath = null, SourceFormat? format = null, CliConfiguration? configuration = null)
     {
-        var url = Environment.GetEnvironmentVariable("OPENLINEAGE_URL");
-        if (string.IsNullOrWhiteSpace(url) || string.Equals(Environment.GetEnvironmentVariable("OPENLINEAGE_DISABLED"), "true", StringComparison.OrdinalIgnoreCase))
-            return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
-
         try
         {
+            configuration ??= CliConfiguration.CreateDefault();
+            if (configuration.Get("openlineage.disabled") == "true")
+                return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
+            var url = configuration.Get("openlineage.url");
+            if (string.IsNullOrWhiteSpace(url))
+                return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
             var inputs = IsDataFile(sourcePath, format)
                 ? new[] { OpenLineageDataset.FromFile(sourcePath!) }
                 : [];
             var options = new OpenLineageOptions
             {
                 Expression = expression,
-                Namespace = Setting("OPENLINEAGE_NAMESPACE", "expressif"),
-                JobName = Setting("OPENLINEAGE_JOB_NAME", command),
+                Namespace = configuration.Get("openlineage.namespace"),
+                JobName = configuration.Get("openlineage.job-name") is { Length: > 0 } name ? name : command,
                 Inputs = inputs,
             };
             var transport = new HttpOpenLineageTransport(Client, new Uri(url),
-                Setting("OPENLINEAGE_ENDPOINT", "api/v1/lineage"), Environment.GetEnvironmentVariable("OPENLINEAGE_API_KEY"));
+                configuration.Get("openlineage.endpoint"), configuration.Get("openlineage.api-key"));
             return new OpenLineageObserver(options, transport, Report).Begin(ExpressionObservationStage.Evaluate);
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
@@ -36,9 +39,6 @@ internal static class CliLineage
             return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
         }
     }
-
-    private static string Setting(string name, string fallback)
-        => Environment.GetEnvironmentVariable(name) is { } value && !string.IsNullOrWhiteSpace(value) ? value : fallback;
 
     private static bool IsDataFile(string? path, SourceFormat? format)
         => !string.IsNullOrWhiteSpace(path) && (format is not null

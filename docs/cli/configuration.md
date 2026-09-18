@@ -8,8 +8,38 @@ permalink: /cli/configuration/
 
 ## OpenLineage reporting
 
-Reporting is disabled by default. Set `OPENLINEAGE_URL` to a backend base URL to
-report `run`, `evaluate`, and REPL executions through `Expressif.OpenLineage`.
+Reporting is disabled by default. Configure a backend URL in the `openlineage`
+section of `expressif.config.json`, or set `OPENLINEAGE_URL`, to report `run`,
+`evaluate`, and REPL executions through `Expressif.OpenLineage`.
+
+```json
+{
+  "openlineage": {
+    "url": "http://localhost:5000",
+    "namespace": "my-application",
+    "job-name": "customers",
+    "disabled": false
+  }
+}
+```
+
+Use the existing configuration commands:
+
+```bash
+expressif config set openlineage.url http://localhost:5000
+expressif config set openlineage.namespace my-application
+expressif config get openlineage.url
+expressif config list
+expressif config unset openlineage.url
+```
+
+Supported section keys are `url`, `endpoint`, `api-key`, `namespace`, `job-name`,
+and `disabled`. They are shared by all execution commands. Each setting resolves
+independently: a nonblank matching environment variable overrides its JSON value,
+then the built-in default applies. Missing, null, and blank JSON values inherit
+defaults; Boolean `false` is an explicit value. `config get` and `config list`
+show effective values, and `list` identifies their sources. `list` redacts API
+keys; an explicit `config get openlineage.api-key` returns the token.
 
 ```bash
 OPENLINEAGE_URL=http://localhost:5000 \
@@ -29,7 +59,8 @@ expressif run 'upper' --source customers.json
 
 The HTTP variables follow the [OpenLineage simple HTTP configuration conventions](https://openlineage.io/docs/client/python/configuration/).
 This minimal integration does not read `openlineage.yml` or the full nested
-transport configuration supported by other OpenLineage clients.
+transport configuration supported by other OpenLineage clients. Support for
+those sources is tracked in [issue #1189](https://github.com/Seddryck/Expressif/issues/1189).
 
 Each command execution generates one `START` followed by `COMPLETE` or `FAIL`;
 `run` reports one run for its entire row sequence. REPL reports each expression

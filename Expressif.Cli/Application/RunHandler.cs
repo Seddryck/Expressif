@@ -65,7 +65,7 @@ internal sealed class RunHandler(
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        using var observation = CliLineage.Begin(expressionCode, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat);
+        using var observation = CliLineage.Begin(expressionCode, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat, configuration);
         var inputs = request.HasSource
             ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar, request.SourceFormat)
             : BuildInputSource(request).Read();
