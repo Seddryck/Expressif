@@ -52,6 +52,23 @@ internal static class EvaluationRuntime
         return new Scope(previous);
     }
 
+    public static IDisposable IsolateBindings()
+        => new Scope(CurrentState.Value);
+
+    public static void ExtendBindings(IReadOnlyDictionary<string, object?> names)
+    {
+        var current = CurrentState.Value ?? throw new InvalidOperationException("Lexical bindings require an expression invocation.");
+        var bindings = new Dictionary<string, object?>(StringComparer.Ordinal);
+        if (current.Bindings is { } inherited)
+        {
+            foreach (var binding in inherited)
+                bindings.Add(binding.Key, binding.Value);
+        }
+        foreach (var binding in names)
+            bindings[binding.Key] = binding.Value;
+        CurrentState.Value = current with { Bindings = bindings };
+    }
+
     public static bool TryGetBinding(string name, out object? value)
     {
         value = null;

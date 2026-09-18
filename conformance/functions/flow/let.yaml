@@ -1,0 +1,30 @@
+suite: flow
+kind: function
+operator: let
+tests:
+  - id: let.valid
+    cases:
+      - id: let.valid.pass-through
+        value: '10 | let(double := multiply(2)) | add(1)'
+        expected: 11
+      - id: let.valid.computed
+        value: '10 | let(double := multiply(2)) | add(@double)'
+        expected: 30
+      - id: let.valid.capture
+        value: '10 | let(original := @_) | add(1) | add(@original)'
+        expected: 21
+      - id: let.valid.multiple
+        value: '10 | let(a := add(1), b := multiply(2)) | @a | add(@b)'
+        expected: 31
+      - id: let.valid.dependent
+        value: '10 | let(a := add(1)) | let(b := @a | multiply(2)) | @b'
+        expected: 22
+      - id: let.valid.parentheses
+        value: '10 | let(a := 2) | (add(@a)) | multiply(@a)'
+        expected: 24
+      - id: let.valid.null
+        value: '10 | let(a := #null) | @a'
+        expected:
+      - id: let.valid.record
+        value: '{quantity := 4, unit-price := 5} | let(total := .quantity | multiply(.unit-price)) | @total'
+        expected: 20

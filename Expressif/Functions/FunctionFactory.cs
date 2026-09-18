@@ -500,6 +500,7 @@ public partial class FunctionFactory : BaseExpressionFactory
             FunctionConstructionKind.TupleBind => BuildTupleBind(function, context),
             FunctionConstructionKind.Record => BuildRecordFunction(function, context),
             FunctionConstructionKind.With => BuildWithFunction(function, context),
+            FunctionConstructionKind.Let => BuildLetFunction(function, context),
             FunctionConstructionKind.Conditional => BuildConditionalFunction(function, context),
             FunctionConstructionKind.ControlFlow => BuildControlFlowFunction(function, context),
             FunctionConstructionKind.Catch => BuildCatchFunction(function, context),
@@ -1342,6 +1343,15 @@ public partial class FunctionFactory : BaseExpressionFactory
         }
 
         return new RecordFunction(() => [.. evaluators]);
+    }
+
+    private IFunction BuildLetFunction(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters is not [LetDefinitionParameter definition])
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        var bindings = definition.Bindings.Select(binding => new Flow.NamedExpressionEvaluator(
+            binding.Name, BuildValueEvaluator(binding.Value, context))).ToArray();
+        return new Flow.Let(() => bindings);
     }
 
     private IFunction BuildWithFunction(Bindings.Function function, IContext context)
