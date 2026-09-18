@@ -1,0 +1,38 @@
+suite: top-groups
+kind: function
+operator: top-groups
+tests:
+  - id: top-groups.valid.groups
+    cases:
+      - id: top-groups.valid.groups.count
+        value: (null)
+        parameters: ['#{("B" => {1}), ("A" => {2, 3}), ("C" => {4, 5})} | top-groups(2, $value | cardinality)']
+        expected: '#{("A" => {2, 3}), ("C" => {4, 5})}'
+      - id: top-groups.valid.groups.key
+        value: (null)
+        parameters: ['#{("B" => {1}), ("A" => {}), ("C" => {#null})} | top-groups(10, $key)']
+        expected: '#{("C" => {null}), ("B" => {1}), ("A" => {})}'
+      - id: top-groups.valid.groups.zero
+        value: (null)
+        parameters: ['#{("A" => {1})} | top-groups(0, $value)']
+        expected: '#{}'
+      - id: top-groups.valid.groups.empty
+        value: (null)
+        parameters: ['#{} | top-groups(2, $key)']
+        expected: '#{}'
+      - id: top-groups.valid.groups.null
+        value: (null)
+        parameters: ['#{(#null => {1}), (2 => {2}), (1 => {3})} | top-groups(3, $key)']
+        expected: '#{(2 => {2}), (1 => {3}), (null => {1})}'
+      - id: top-groups.valid.groups.all-null
+        value: (null)
+        parameters: ['#{("B" => {1}), ("A" => {})} | top-groups(1, #null)']
+        expected: '#{("B" => {1})}'
+      - id: top-groups.valid.groups.named
+        value: (null)
+        parameters: ['#{("A" => {1}), ("B" => {2})} | top-groups(expression := $key, count := 1)']
+        expected: '#{("B" => {2})}'
+      - id: top-groups.valid.groups.summary
+        value: (null)
+        parameters: ['#{("A" => {1, 2}), ("B" => {4})} | top-groups(1, $value | sum) | summarize(sum)']
+        expected: '!{("B" => 4)}'

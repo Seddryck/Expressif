@@ -8319,5 +8319,47 @@
     "Examples": [
       "{{id := 1, tags := \"A\"}, {id := 1, tags := #null}} | implode-inner(.tags) → {{id := 1, tags := {\"A\"}}}"
     ]
+  },
+  {
+    "Name": "top-groups",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "grouping",
+    "Input": "grouping",
+    "Output": "grouping",
+    "Summary": "Keeps up to count complete groups in descending ranking order.",
+    "Behavior": "Ranks comparable scalar scores using the same numeric normalization and ordinal text ordering as min-by and max-by. Null scores sort last, as in normal descending sorting. Equal scores retain source-group order. Zero count returns an empty grouping without evaluating scores; negative counts fail with an argument error. Oversized counts return all groups in ranking order. Values are preserved without summarization.",
+    "Parameters": [
+      {
+        "Name": "count",
+        "Type": "integer",
+        "Optional": false,
+        "Summary": "The maximum number of groups to select.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "surrounding",
+          "Summary": "Evaluated once in the surrounding context before any ranking expressions."
+        }
+      },
+      {
+        "Name": "expression",
+        "Type": "expression",
+        "Optional": false,
+        "Summary": "The expression that supplies each group's ranking score.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "For a positive count, evaluated once per group in source order with that Group as context: $key reads its existing key and $value reads its complete value collection. It is not evaluated for zero count."
+        }
+      }
+    ],
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "group",
+      "Summary": "Visits each group of the grouping supplied as pipeline input to this top-groups call, including empty groups, when count is positive."
+    },
+    "Examples": [
+      "#{(\"BE\" => {1}), (\"FR\" => {2, 3})} | top-groups(1, $value | cardinality) → #{(\"FR\" => {2, 3})}"
+    ]
   }
 ]

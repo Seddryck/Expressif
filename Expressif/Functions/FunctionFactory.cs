@@ -340,6 +340,15 @@ public partial class FunctionFactory : BaseExpressionFactory
             return new Grouping.DrillDown(expressions);
         }
 
+        if (construction == FunctionConstructionKind.TopGroups)
+        {
+            if (function.Arguments.Any(argument => argument.IsSpread))
+                throw new SpreadArgumentException("Spread arguments are not supported by top-groups.");
+            var bound = ParameterArgumentBinder.Bind(typeof(Grouping.TopGroups), function.Arguments).Parameters;
+            var count = (Func<int>)CreateParameter(bound[0], typeof(int), context);
+            var evaluator = new DelegatedFunction(BuildValueEvaluator(bound[1], context));
+            return new Grouping.TopGroups(count, () => evaluator);
+        }
         if (construction == FunctionConstructionKind.DrillUp)
         {
             var bound = ParameterArgumentBinder.Bind(TypeMapper.Execute(name), function.Arguments).Parameters;

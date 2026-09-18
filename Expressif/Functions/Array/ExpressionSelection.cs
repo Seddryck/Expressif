@@ -104,7 +104,7 @@ internal static class ExpressionSelection
         return (bits[3] < 0 ? -coefficient : coefficient) * BigInteger.Pow(10, 28 - scale);
     }
 
-    private static object Validate(object value)
+    internal static object Validate(object value)
     {
         if (IsNumeric(value))
             return Numeric(value);
