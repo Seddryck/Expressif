@@ -3,7 +3,7 @@ layout: docs
 title: "map-groups"
 parent: "Grouping functions"
 grand_parent: "Functions library"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/grouping/map-groups/
 tags:

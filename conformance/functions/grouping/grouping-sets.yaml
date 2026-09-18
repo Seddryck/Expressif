@@ -1,0 +1,46 @@
+suite: grouping-sets
+kind: function
+operator: grouping-sets
+tests:
+  - id: grouping-sets.valid.groups
+    cases:
+      - id: grouping-sets.valid.groups.levels
+        value: (null)
+        parameters: ['#{(T("BE", 2025) => {1, 2}), (T("FR", 2025) => {3}), (T("BE", 2026) => {4})} | grouping-sets(tuple(1), tuple(0), tuple())']
+        expected: '#{(T(#all, 2025) => {1, 2, 3}), (T(#all, 2026) => {4}), (T("BE", #all) => {1, 2, 4}), (T("FR", #all) => {3}), (T(#all, #all) => {1, 2, 3, 4})}'
+      - id: grouping-sets.valid.groups.duplicates
+        value: (null)
+        parameters: ['#{(T(1, 2) => {3})} | grouping-sets(T(1, 0), T(0, 1), T(0, 0), tuple(0), tuple(), tuple())']
+        expected: '#{(T(1, 2) => {3}), (T(1, #all) => {3}), (T(#all, #all) => {3})}'
+      - id: grouping-sets.valid.groups.scalar
+        value: (null)
+        parameters: ['#{("B" => {2, #null, 2}), ("A" => {})} | grouping-sets(tuple(), tuple(0))']
+        expected: '#{(#all => {2, null, 2}), ("B" => {2, null, 2}), ("A" => {})}'
+      - id: grouping-sets.valid.groups.no-sets
+        value: (null)
+        parameters: ['#{(1 => {2})} | grouping-sets()']
+        expected: '#{}'
+      - id: grouping-sets.valid.groups.empty
+        value: (null)
+        parameters: ['#{} | grouping-sets(tuple())']
+        expected: '#{}'
+      - id: grouping-sets.valid.groups.null
+        value: (null)
+        parameters: ['#{(T(#null, 1) => {1}), (T("#all", 1) => {2})} | grouping-sets(tuple(0), tuple())']
+        expected: '#{(T(null, #all) => {1}), (T("#all", #all) => {2}), (T(#all, #all) => {1, 2})}'
+      - id: grouping-sets.valid.groups.nested
+        value: (null)
+        parameters: ['#{(T(T(1, 2), 3) => {4})} | grouping-sets(tuple(0))']
+        expected: '#{(T(T(1, 2), #all) => {4})}'
+      - id: grouping-sets.valid.groups.zero-dimensions
+        value: (null)
+        parameters: ['#{(tuple() => {1})} | grouping-sets(tuple(), tuple())']
+        expected: '#{(T() => {1})}'
+      - id: grouping-sets.valid.groups.spread
+        value: (null)
+        parameters: ['#{(T(1, 2) => {3})} | grouping-sets(...{T(0, 1), T(1, 0)}, tuple(), tuple(0))']
+        expected: '#{(T(1, 2) => {3}), (T(#all, #all) => {3}), (T(1, #all) => {3})}'
+      - id: grouping-sets.valid.groups.summary
+        value: (null)
+        parameters: ['#{(T(1, 2) => {3, 4})} | grouping-sets(tuple(0), tuple()) | summarize(sum)']
+        expected: '!{(T(1, #all) => 7), (T(#all, #all) => 7)}'

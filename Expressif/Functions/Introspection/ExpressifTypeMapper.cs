@@ -22,6 +22,7 @@ internal static class ExpressifTypeMapper
             [("Pair", "key")] = "any",
             [("Pair", "value")] = "any",
             [("Grouping", ValuesParameter)] = "pair",
+            [("GroupingSets", ValuesParameter)] = "tuple",
             [("Dictionary", ValuesParameter)] = "pair",
             [("Key", "expressions")] = "expression",
             [("GroupBy", "expressions")] = "expression",
