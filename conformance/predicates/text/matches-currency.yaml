@@ -1,0 +1,51 @@
+suite: text
+kind: predicate
+operator: matches-currency
+tests:
+  - id: matches-currency.valid
+    cases:
+      - {id: matches-currency.valid.single-digit, value: '$1', expected: true}
+      - {id: matches-currency.valid.three-digits, value: '$100', expected: true}
+      - {id: matches-currency.valid.ungrouped-thousands, value: '$1000', expected: true}
+      - {id: matches-currency.valid.one-group, value: '$1,000', expected: true}
+      - {id: matches-currency.valid.two-groups, value: '$1,000,000', expected: true}
+      - {id: matches-currency.valid.three-digit-first-group, value: '$100,000,000', expected: true}
+      - {id: matches-currency.valid.grouped-decimal, value: '$100,000.01', expected: true}
+      - {id: matches-currency.valid.fraction, value: '$0.01', expected: true}
+      - {id: matches-currency.valid.embedded-symbol, value: '1$10', expected: false}
+      - {id: matches-currency.valid.short-group, value: '$5,00', expected: false}
+      - {id: matches-currency.valid.long-first-group, value: '$1000,100', expected: false}
+      - {id: matches-currency.valid.missing-integer-prefix, value: '$.10', expected: false}
+      - {id: matches-currency.valid.missing-integer-suffix, value: '.10$', expected: false}
+      - {id: matches-currency.valid.missing-integer-and-group, value: ',.10$', expected: false}
+      - {id: matches-currency.valid.suffix-symbol, value: '1€', expected: true}
+      - {id: matches-currency.valid.surrounding-spaces, value: '  £ 1,234.50  ', expected: true}
+      - {id: matches-currency.valid.negative-suffix, value: '-123.45 ¥', expected: true}
+      - {id: matches-currency.valid.positive-prefix, value: '$+1', expected: true}
+      - {id: matches-currency.valid.negative-prefix, value: '$-1', expected: true}
+      - {id: matches-currency.valid.supplementary-prefix, value: '𞲰1', expected: true}
+      - {id: matches-currency.valid.supplementary-suffix, value: '1𞲰', expected: true}
+      - {id: matches-currency.valid.missing-symbol, value: '123', expected: false}
+      - {id: matches-currency.valid.currency-code, value: 'USD1', expected: false}
+      - {id: matches-currency.valid.two-different-symbols, value: '$1€', expected: false}
+      - {id: matches-currency.valid.repeated-symbol, value: '$$1', expected: false}
+      - {id: matches-currency.valid.missing-fraction, value: '$1.', expected: false}
+      - {id: matches-currency.valid.repeated-decimal, value: '$1.2.3', expected: false}
+      - {id: matches-currency.valid.long-group, value: '$1,0000', expected: false}
+      - {id: matches-currency.valid.missing-first-group, value: '$,100', expected: false}
+      - {id: matches-currency.valid.internal-space, value: '$1 000', expected: false}
+      - {id: matches-currency.valid.exponent, value: '$1e3', expected: false}
+      - {id: matches-currency.valid.parentheses, value: '($1)', expected: false}
+      - {id: matches-currency.valid.sign-before-symbol, value: '-$1', expected: false}
+      - {id: matches-currency.valid.trailing-sign, value: '$1-', expected: false}
+      - {id: matches-currency.valid.repeated-sign, value: '$--1', expected: false}
+      - {id: matches-currency.valid.non-ascii-digits, value: '$١٢', expected: false}
+      - {id: matches-currency.valid.beyond-decimal-range, value: '$1234567890123456789012345678901234567890.1', expected: true}
+      - {id: matches-currency.valid.zero-first-group, value: '$0,001', expected: true}
+      - {id: matches-currency.valid.short-final-group, value: '$1,000,00', expected: false}
+      - {id: matches-currency.valid.group-after-decimal, value: '$1.00,000', expected: false}
+      - {id: matches-currency.valid.null, value: '(null)', expected: false}
+      - {id: matches-currency.valid.empty, value: '(empty)', expected: false}
+      - {id: matches-currency.valid.blank, value: '(blank)', expected: false}
+      - {id: matches-currency.valid.symbol-only, value: '$', expected: false}
+      - {id: matches-currency.valid.blank-amount, value: '$  ', expected: false}
