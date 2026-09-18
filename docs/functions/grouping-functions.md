@@ -28,3 +28,4 @@ Reference documentation for Expressif functions in the `grouping` scope.
 | [`roll-up`]({{ '/functions/grouping/roll-up/' | relative_url }}) | Expands a grouping into its original level and progressively coarser prefix levels. |
 | [`summarize`]({{ '/functions/grouping/summarize/' | relative_url }}) | Evaluates an expression once for each group and returns a dictionary from group keys to summary values. |
 | [`summarize-against`]({{ '/functions/grouping/summarize-against/' | relative_url }}) | Summarizes each group against one summary of all grouped values and returns an ordered dictionary. |
+| [`top-groups`]({{ '/functions/grouping/top-groups/' | relative_url }}) | Keeps up to count complete groups in descending ranking order. |
