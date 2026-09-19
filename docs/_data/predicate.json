@@ -34,6 +34,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "Selects each right array value’s key; when omitted, the left-key expression is reused. It is skipped for a grouping.",
         "Evaluation": {
           "Frequency": "custom",
