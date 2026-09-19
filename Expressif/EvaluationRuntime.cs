@@ -80,7 +80,7 @@ internal static class EvaluationRuntime
 
     public static object? EvaluateNested(Functions.IFunction expression, object? input, object? currentInput)
     {
-        if (expression is Functions.InputBoundFunction or Predicates.BooleanFunctionPredicate { IsInputBound: true })
+        if (expression is Functions.IInputBoundFunction { IsInputBound: true })
             return expression.Evaluate(input);
         using var scope = Derive(input, currentInput);
         return expression.Evaluate(input);

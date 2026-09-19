@@ -1,5 +1,8 @@
 using Expressif.Functions.Introspection;
+using System.Net;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace Expressif.Types;
 
@@ -125,8 +128,12 @@ public static class RuntimeTypeRegistry
     }
 }
 
-public sealed class TypeIntrospector : BaseIntrospector
+public sealed class TypeIntrospector
 {
+    private readonly ITypesProbe probe;
+    private Type[]? types;
+    private Type[] Types => types ??= probe.Locate().ToArray();
+
     public TypeIntrospector()
         : this(new AssemblyTypesProbe()) { }
 
@@ -134,7 +141,7 @@ public sealed class TypeIntrospector : BaseIntrospector
         : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
 
     public TypeIntrospector(ITypesProbe probe)
-        : base(probe) { }
+        => this.probe = probe;
 
     public IEnumerable<TypeDescriptor> Describe()
         => Types
@@ -155,7 +162,7 @@ public sealed class TypeIntrospector : BaseIntrospector
 
         return new TypeDescriptor(
             ExpressifTypeName.Get(implementationType),
-            implementationType.GetSummary(),
+            TypeDocumentation.GetSummary(implementationType),
             metadata.Parent,
             metadata.LiteralExamples.Length == 0
                 ? null
@@ -164,6 +171,48 @@ public sealed class TypeIntrospector : BaseIntrospector
                 ? new Dictionary<string, string>()
                 : new Dictionary<string, string> { ["dotnet"] = runtimeType.FullName! },
             runtimeType);
+    }
+}
+
+internal static class TypeDocumentation
+{
+    private static readonly Dictionary<Assembly, XmlDocument> Cache = [];
+    private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
+
+    public static string GetSummary(Type type)
+    {
+        var document = GetDocument(type.Assembly);
+        var memberName = $"T:{type.FullName}";
+        var summary = document["doc"]?["members"]?
+            .SelectSingleNode($"member[@name='{memberName}']/summary");
+        if (summary is null)
+            return string.Empty;
+
+        var text = Regex.Replace(
+            summary.InnerXml,
+            "<see\\s+langword\\s*=\\s*\"([^\"]+)\"\\s*/>",
+            "`$1`",
+            RegexOptions.IgnoreCase,
+            RegexTimeout);
+        text = Regex.Replace(text, "<.*?>", string.Empty, RegexOptions.None, RegexTimeout);
+        return Regex.Replace(
+            WebUtility.HtmlDecode(text),
+            "\\s+",
+            " ",
+            RegexOptions.None,
+            RegexTimeout).Trim();
+    }
+
+    private static XmlDocument GetDocument(Assembly assembly)
+    {
+        if (Cache.TryGetValue(assembly, out var document))
+            return document;
+
+        var path = Path.ChangeExtension(assembly.Location, ".xml");
+        document = new XmlDocument();
+        document.Load(path);
+        Cache[assembly] = document;
+        return document;
     }
 }
 

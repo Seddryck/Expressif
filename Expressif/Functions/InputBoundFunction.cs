@@ -2,8 +2,10 @@ using Expressif.Bindings;
 
 namespace Expressif.Functions;
 
-internal sealed class InputBoundFunction(InputBoundExpression binding, Func<object?, object?> body) : IFunction
+internal sealed class InputBoundFunction(InputBoundExpression binding, Func<object?, object?> body) : IFunction, IInputBoundFunction
 {
+    public bool IsInputBound => true;
+
     public object? Evaluate(object? value)
     {
         var names = new Dictionary<string, object?>(StringComparer.Ordinal);

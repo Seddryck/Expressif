@@ -10,7 +10,7 @@ namespace Expressif.Functions.Introspection;
 public class FunctionIntrospector : BaseIntrospector
 {
     public FunctionIntrospector()
-        : this(new AssemblyTypesProbe()) { }
+        : this(new AssemblyTypesProbe([typeof(FunctionIntrospector).Assembly])) { }
     public FunctionIntrospector(Assembly[] assemblies)
         : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
     public FunctionIntrospector(ITypesProbe probe)

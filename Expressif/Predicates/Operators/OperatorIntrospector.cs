@@ -11,7 +11,7 @@ namespace Expressif.Predicates.Operators;
 internal class OperatorIntrospector : BaseIntrospector
 {
     public OperatorIntrospector()
-            : this(new AssemblyTypesProbe()) { }
+            : this(new AssemblyTypesProbe([typeof(OperatorIntrospector).Assembly])) { }
     public OperatorIntrospector(Assembly[] assemblies)
         : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
     public OperatorIntrospector(ITypesProbe probe)
