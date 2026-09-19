@@ -2,13 +2,6 @@ using Expressif.Syntax;
 
 namespace Expressif.Semantics;
 
-public enum FieldReferenceKind
-{
-    CurrentInput,
-    ExpressionRoot,
-    EnclosingExpressionRoot,
-}
-
 public enum SemanticSourceKind
 {
     ExternalInput,
