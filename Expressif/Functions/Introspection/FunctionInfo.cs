@@ -21,7 +21,9 @@ public record FunctionInfo
     ParameterInfo[] Parameters,
     bool Deprecated,
     string? Replacement,
-    string? Sunset
+    string? Sunset,
+    bool ReplacementIsEquivalent,
+    string? MigrationNotes
 )
 {
     public IReadOnlyList<TupleBindingSignature> Signatures => TupleBindingCapabilities.Describe(ImplementationType);

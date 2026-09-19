@@ -13,7 +13,9 @@ public sealed record FunctionDocumentation(
     string? Behavior = null,
     bool Deprecated = false,
     string? Replacement = null,
-    string? Sunset = null);
+    string? Sunset = null,
+    bool ReplacementIsEquivalent = false,
+    string? MigrationNotes = null);
 
 public sealed record FunctionParameterDocumentation(
     string Name,

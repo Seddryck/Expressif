@@ -38,6 +38,10 @@ public class FunctionCatalogTest
                 Assert.That(documentation.Deprecated, Is.EqualTo(implementation.Deprecated), $"Deprecation for {name}");
                 Assert.That(documentation.Replacement, Is.EqualTo(implementation.Replacement), $"Replacement for {name}");
                 Assert.That(documentation.Sunset, Is.EqualTo(implementation.Sunset), $"Sunset for {name}");
+                Assert.That(documentation.ReplacementIsEquivalent, Is.EqualTo(implementation.ReplacementIsEquivalent),
+                    $"Replacement equivalence for {name}");
+                Assert.That(documentation.MigrationNotes, Is.EqualTo(implementation.MigrationNotes),
+                    $"Migration notes for {name}");
                 Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic)),
                     Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic))),
                     $"Parameters for {name}");
@@ -58,6 +62,10 @@ public class FunctionCatalogTest
                     $"Replacement for {function.Name} requires deprecation.");
                 Assert.That(function.Sunset is null || function.Deprecated, Is.True,
                     $"Sunset for {function.Name} requires deprecation.");
+                Assert.That(!function.ReplacementIsEquivalent || function.Replacement is not null, Is.True,
+                    $"Equivalent replacement for {function.Name} requires a replacement.");
+                Assert.That(function.MigrationNotes is null || function.Replacement is not null, Is.True,
+                    $"Migration notes for {function.Name} require a replacement.");
                 Assert.That(function.Replacement is null || FunctionCatalog.Default.Find(function.Replacement)?.IsPublic == true,
                     Is.True, $"Replacement for {function.Name} must resolve to a public callable.");
             }
@@ -82,19 +90,24 @@ public class FunctionCatalogTest
             Assert.That(function?.Deprecated, Is.True);
             Assert.That(function?.Replacement, Is.EqualTo(replacement));
             Assert.That(function?.Sunset, Is.EqualTo(sunset));
+            Assert.That(function?.ReplacementIsEquivalent, Is.False);
+            Assert.That(function?.MigrationNotes, Does.Contain("preserves null input"));
         }
     }
 
     [Test]
     public void LifecycleAttribute_Values_ExposesDeprecationMetadata()
     {
-        var lifecycle = new FunctionLifecycleAttribute("replacement", "3.0");
+        var lifecycle = new FunctionLifecycleAttribute(
+            "replacement", "3.0", replacementIsEquivalent: true, migrationNotes: "No behavior change.");
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(lifecycle.Deprecated, Is.True);
             Assert.That(lifecycle.Replacement, Is.EqualTo("replacement"));
             Assert.That(lifecycle.Sunset, Is.EqualTo("3.0"));
+            Assert.That(lifecycle.ReplacementIsEquivalent, Is.True);
+            Assert.That(lifecycle.MigrationNotes, Is.EqualTo("No behavior change."));
         }
     }
 
@@ -103,19 +116,24 @@ public class FunctionCatalogTest
     {
         var documentation = new FunctionDocumentation(
             "sample", true, [], "special", "any", "any", "Summary.", [],
-            Deprecated: true, Replacement: "replacement", Sunset: "3.0");
+            Deprecated: true, Replacement: "replacement", Sunset: "3.0",
+            ReplacementIsEquivalent: true, MigrationNotes: "No behavior change.");
         var implementation = new FunctionInfo(
             "sample", true, [], "special", "any", "any", false, "Reason.",
-            typeof(object), "Summary.", [], true, "replacement", "3.0");
+            typeof(object), "Summary.", [], true, "replacement", "3.0", true, "No behavior change.");
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(documentation.Deprecated, Is.True);
             Assert.That(documentation.Replacement, Is.EqualTo("replacement"));
             Assert.That(documentation.Sunset, Is.EqualTo("3.0"));
+            Assert.That(documentation.ReplacementIsEquivalent, Is.True);
+            Assert.That(documentation.MigrationNotes, Is.EqualTo("No behavior change."));
             Assert.That(implementation.Deprecated, Is.True);
             Assert.That(implementation.Replacement, Is.EqualTo("replacement"));
             Assert.That(implementation.Sunset, Is.EqualTo("3.0"));
+            Assert.That(implementation.ReplacementIsEquivalent, Is.True);
+            Assert.That(implementation.MigrationNotes, Is.EqualTo("No behavior change."));
         }
     }
 

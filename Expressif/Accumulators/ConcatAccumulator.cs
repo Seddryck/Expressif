@@ -8,7 +8,7 @@ namespace Expressif.Accumulators;
 /// Combines accumulated text values in source order, inserting the separator only between values.
 /// </summary>
 [Accumulator(prefix: "", aliases: ["concat", "implode"])]
-[AccumulatorAliasLifecycle("implode", "concat")]
+[AccumulatorAliasLifecycle("implode", "concat", "3.0")]
 public class ConcatAccumulator : BaseAccumulator
 {
     private readonly Func<string> separatorProvider;

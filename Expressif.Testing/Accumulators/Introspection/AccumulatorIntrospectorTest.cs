@@ -77,6 +77,8 @@ public class AccumulatorIntrospectorTest
             Assert.That(info.DeprecatedAliases.Single().Name, Is.EqualTo("implode"));
             Assert.That(info.DeprecatedAliases.Single().Replacement, Is.EqualTo("concat"));
             Assert.That(info.DeprecatedAliases.Single().Message, Does.Contain("use concat"));
+            Assert.That(info.DeprecatedAliases.Single().Sunset, Is.EqualTo("3.0"));
+            Assert.That(info.DeprecatedAliases.Single().ReplacementIsEquivalent, Is.True);
         }
     }
 

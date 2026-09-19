@@ -10,7 +10,7 @@ source_rules = JSON.parse(File.read(File.join(catalog, 'usage-lifecycle.json')))
 expected_ids = %w[implicit-tuple-binding-adjacent implicit-tuple-binding-chunk-while implicit-tuple-binding-map-over implicit-tuple-binding-map-with]
 raise 'Unexpected lifecycle rule identities' unless source_rules.map { |rule| rule['Id'] }.sort == expected_ids.sort
 
-%w[actual empty callable-only usage-only escaping].each do |scenario|
+%w[actual empty callable-only alias-only usage-only escaping].each do |scenario|
   Dir.mktmpdir('expressif-deprecations-') do |directory|
     source = File.join(directory, 'source')
     data = File.join(source, '_data')
@@ -21,16 +21,26 @@ raise 'Unexpected lifecycle rule identities' unless source_rules.map { |rule| ru
     %w[function predicate accumulator usage-lifecycle].each do |name|
       FileUtils.cp(File.join(catalog, "#{name}.json"), data)
     end
-    if %w[empty usage-only escaping].include?(scenario)
+    if %w[empty alias-only usage-only escaping].include?(scenario)
       %w[function predicate accumulator].each { |kind| File.write(File.join(data, "#{kind}.json"), '[]') }
     end
     rules = Marshal.load(Marshal.dump(source_rules))
-    rules = [] if %w[empty callable-only].include?(scenario)
+    rules = [] if %w[empty callable-only alias-only].include?(scenario)
     if scenario == 'callable-only'
       File.write(File.join(data, 'function.json'), JSON.generate([
-        { 'Name' => 'old', 'Scope' => 'array', 'IsPublic' => true, 'Deprecated' => true, 'Replacement' => 'new', 'Sunset' => nil },
+        { 'Name' => 'old', 'Scope' => 'array', 'IsPublic' => true, 'Deprecated' => true, 'Replacement' => 'new',
+          'Sunset' => nil, 'ReplacementIsEquivalent' => false, 'MigrationNotes' => 'Review required.' },
         { 'Name' => 'new', 'Scope' => 'array', 'IsPublic' => true }
       ]))
+    end
+    if scenario == 'alias-only'
+      File.write(File.join(data, 'accumulator.json'), JSON.generate([{
+        'Name' => 'new', 'Scope' => 'array', 'IsPublic' => true,
+        'DeprecatedAliases' => [{
+          'Name' => 'old', 'Replacement' => 'new', 'Message' => 'old is deprecated; use new instead.',
+          'Sunset' => '3.0', 'ReplacementIsEquivalent' => true
+        }]
+      }]))
     end
     if scenario == 'escaping'
       rules = [rules.first]

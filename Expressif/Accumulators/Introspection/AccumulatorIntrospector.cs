@@ -39,7 +39,7 @@ public class AccumulatorIntrospector : BaseIntrospector
                 )
             {
                 DeprecatedAliases = accumulator.Type.GetCustomAttributes<AccumulatorAliasLifecycleAttribute>()
-                    .Select(alias => new AccumulatorAliasLifecycleInfo(alias.Name, alias.Replacement, alias.Message)).ToArray(),
+                    .Select(alias => new AccumulatorAliasLifecycleInfo(alias.Name, alias.Replacement, alias.Message, alias.Sunset)).ToArray(),
             };
         }
     }

@@ -19,6 +19,21 @@ $expected = @{}
                 Key         = "$kind|$($member.Name)"
                 Replacement = if ($null -ne $member.Replacement) { [string] $member.Replacement } else { "" }
                 Sunset      = if ($null -ne $member.Sunset) { [string] $member.Sunset } else { "" }
+                Equivalent  = ([bool] $member.ReplacementIsEquivalent).ToString().ToLowerInvariant()
+                Notes       = if ($null -ne $member.MigrationNotes) { [string] $member.MigrationNotes } else { "" }
+            }
+        }
+        if ($kind -eq "accumulator") {
+            foreach ($member in @($catalog | Where-Object { $_.IsPublic -eq $true })) {
+                foreach ($alias in @($member.DeprecatedAliases | Where-Object { $null -ne $_ })) {
+                    [ordered] @{
+                        Key         = "accumulator alias|$($alias.Name)"
+                        Replacement = [string] $alias.Replacement
+                        Sunset      = if ($null -ne $alias.Sunset) { [string] $alias.Sunset } else { "" }
+                        Equivalent  = ([bool] $alias.ReplacementIsEquivalent).ToString().ToLowerInvariant()
+                        Notes       = ""
+                    }
+                }
             }
         }
     }
@@ -33,13 +48,15 @@ $content = Get-Content -LiteralPath $pagePath -Raw
 $actual = @{}
 [regex]::Matches(
     $content,
-    '<tr data-kind="(function|predicate|accumulator)" data-name="([^"]+)" data-replacement="([^"]*)" data-sunset="([^"]*)">'
+    '<tr data-kind="(function|predicate|accumulator|accumulator alias)" data-name="([^"]+)" data-replacement="([^"]*)" data-equivalent="([^"]*)" data-migration-notes="([^"]*)" data-sunset="([^"]*)">'
 ) | ForEach-Object {
     $key = "$($_.Groups[1].Value)|$($_.Groups[2].Value)"
     $actual[$key] = [ordered] @{
         Key         = $key
         Replacement = [System.Net.WebUtility]::HtmlDecode($_.Groups[3].Value)
-        Sunset      = [System.Net.WebUtility]::HtmlDecode($_.Groups[4].Value)
+        Equivalent  = [System.Net.WebUtility]::HtmlDecode($_.Groups[4].Value)
+        Notes       = [System.Net.WebUtility]::HtmlDecode($_.Groups[5].Value)
+        Sunset      = [System.Net.WebUtility]::HtmlDecode($_.Groups[6].Value)
     }
 }
 
@@ -53,7 +70,7 @@ if ($difference.Count -gt 0) {
 }
 
 foreach ($key in $expected.Keys) {
-    foreach ($property in @("Replacement", "Sunset")) {
+    foreach ($property in @("Replacement", "Equivalent", "Notes", "Sunset")) {
         if ($actual[$key][$property] -ne $expected[$key][$property]) {
             throw "Rendered $property for '$key' is '$($actual[$key][$property])'; expected '$($expected[$key][$property])'."
         }
@@ -97,7 +114,7 @@ foreach ($rule in $rules) {
     }
 }
 foreach ($state in @(
-    @('There are currently no deprecated public language callables.', $expected.Count),
+    @('There are currently no deprecated public language names.', $expected.Count),
     @('There are currently no deprecated usage patterns.', $rules.Count)
 )) {
     if ($content.Contains($state[0]) -ne ($state[1] -eq 0)) { throw "Incorrect empty state: $($state[0])" }
