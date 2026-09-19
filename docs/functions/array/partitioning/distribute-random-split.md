@@ -22,6 +22,8 @@ distribute-random-split(
 
 Randomly distributes array values among output arrays according to relative output weights. Returns `null` when the input, weights, or seed cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -31,10 +33,21 @@ Randomly distributes array values among output arrays according to relative outp
 | `weights` | `array` | Yes | Specifies a non-empty array of finite, non-negative output weights with a positive total. |
 | `seed` | `integer` | No | Specifies an optional seed that makes assignments reproducible on the same runtime version. When omitted, the value is derived from the runtime's shared random-number generator. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`weights`:** Evaluated once in the enclosing context.
 - **`seed`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 

@@ -21,6 +21,8 @@ intersection(
 
 Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,21 @@ Returns the distinct values found in both the pipeline input and the specified a
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the array to compare with the pipeline input. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

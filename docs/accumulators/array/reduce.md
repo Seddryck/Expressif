@@ -35,6 +35,14 @@ Combines array elements in source order by repeatedly evaluating an expression a
 
 
 
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits the array supplied to this reduce call in source order, starting with the second element when initial is omitted and with the first when initial is supplied.

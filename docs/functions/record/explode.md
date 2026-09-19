@@ -33,6 +33,14 @@ Emits one record per element of a selected collection-valued field, preserving o
 
 
 
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits the record supplied as pipeline input to this explode call, or each parent record of its input array in source order. Visits the selected collection children in their order, removing one collection level.

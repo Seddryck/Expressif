@@ -19,6 +19,8 @@ to-tuple() → tuple
 
 Returns a tuple containing the input array's elements in order. Returns `null` when the input is not an array.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,13 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 
 ## Behavior
