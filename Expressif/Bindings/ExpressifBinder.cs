@@ -10,16 +10,24 @@ public sealed class ExpressifBinder
 {
     private readonly FunctionTypeMapper functionTypeMapper = new();
     private readonly CoercionRegistry coercionRegistry = new();
+    private readonly QuotedLiteralRegistry quotedLiteralRegistry;
     private bool inputBoundBody;
     public bool ApplyCoercion { get; }
 
     internal BindingSourceMap Sources { get; }
 
     public ExpressifBinder(bool applyCoercion = true)
-        : this(applyCoercion, false) { }
+        : this(QuotedLiteralRegistry.Default, applyCoercion, false) { }
+
+    public ExpressifBinder(QuotedLiteralRegistry quotedLiteralRegistry, bool applyCoercion = true)
+        : this(quotedLiteralRegistry, applyCoercion, false) { }
 
     internal ExpressifBinder(bool applyCoercion, bool trackSources)
-        => (ApplyCoercion, Sources) = (applyCoercion, new(trackSources));
+        : this(QuotedLiteralRegistry.Default, applyCoercion, trackSources) { }
+
+    private ExpressifBinder(QuotedLiteralRegistry quotedLiteralRegistry, bool applyCoercion, bool trackSources)
+        => (this.quotedLiteralRegistry, ApplyCoercion, Sources) =
+            (quotedLiteralRegistry ?? throw new ArgumentNullException(nameof(quotedLiteralRegistry)), applyCoercion, new(trackSources));
 
     public IRootExpression Bind(RootExpressionSyntax syntax)
     {
@@ -786,9 +794,9 @@ public sealed class ExpressifBinder
         QuotedLiteralSyntax quoted when OrderingSyntax.Bind(quoted.Value) is { } ordering
             => new LiteralParameter(ordering),
         QuotedLiteralSyntax quoted => new QuotedLiteralParameter(quoted.Value),
-        DateLiteralSyntax date => new LiteralParameter(date.Value),
-        DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),
-        TimeLiteralSyntax time => new LiteralParameter(time.Value),
+        DateLiteralSyntax date => new LiteralParameter(date.Value, "date"),
+        DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value, "datetime"),
+        TimeLiteralSyntax time => new LiteralParameter(time.Value, "time"),
         TypeLiteralSyntax type => new LiteralParameter(TypeRegistry.Resolve(type.Name)),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
@@ -843,6 +851,17 @@ public sealed class ExpressifBinder
     private IParameter BindTupleLike(TupleLiteralSyntax tuple)
     {
         var elements = tuple.Elements.Select(BindTupleElement).ToArray();
+        if (elements is
+            [
+                { IsSpread: false, Value: QuotedLiteralParameter { Value: QuotedTypedLiteralSyntax.Marker } },
+                { IsSpread: false, Value: QuotedLiteralParameter { Value: QuotedTypedLiteralSyntax.MarkerEnd } },
+                { IsSpread: false, Value: QuotedLiteralParameter representation },
+                { IsSpread: false, Value: QuotedLiteralParameter type }
+            ])
+        {
+            var literal = quotedLiteralRegistry.Parse(representation.Value, type.Value);
+            return new LiteralParameter(literal.Value, literal.TypeName, !string.IsNullOrEmpty(type.Value));
+        }
         const string marker = "__expressif_internal_vector_literal__";
         const string markerEnd = "__expressif_internal_vector_literal_end__";
         return elements is

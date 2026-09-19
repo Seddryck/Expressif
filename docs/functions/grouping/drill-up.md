@@ -33,6 +33,14 @@ Derives keys from existing grouping keys and merges matching groups into one gro
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each existing key of the grouping supplied as pipeline input to this drill-up call, in group order, including keys of empty groups.

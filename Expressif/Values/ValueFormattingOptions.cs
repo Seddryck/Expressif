@@ -25,4 +25,8 @@ public sealed class ValueFormattingOptions
     /// </summary>
     /// <value>The preferred line width. The default is 80.</value>
     public int PreferredLineWidth { get; init; } = 80;
+
+    /// <summary>Gets or sets whether built-in quoted literals include their type suffix.</summary>
+    /// <value><see langword="true"/> to emit suffixes such as <c>:date</c>; otherwise, <see langword="false"/>.</value>
+    public bool IncludeBuiltInQuotedLiteralTypeSuffixes { get; init; }
 }

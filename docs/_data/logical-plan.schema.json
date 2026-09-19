@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://seddryck.github.io/Expressif/schemas/logical-plan-v1.schema.json",
+  "title": "Expressif logical plan version 1",
+  "type": "object",
+  "required": ["format", "version", "catalogCompatibility", "plan"],
+  "additionalProperties": false,
+  "properties": {
+    "format": { "const": "expressif.logical-plan" },
+    "version": { "const": 1 },
+    "catalogCompatibility": { "type": "string", "minLength": 1 },
+    "plan": { "$ref": "#/$defs/pipeline" }
+  },
+  "$defs": {
+    "value": {
+      "oneOf": [
+        { "$ref": "#/$defs/pipeline" },
+        { "$ref": "#/$defs/call" },
+        { "$ref": "#/$defs/literal" }
+      ]
+    },
+    "pipeline": {
+      "type": "object",
+      "required": ["kind", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "pipeline" },
+        "items": { "type": "array", "items": { "$ref": "#/$defs/value" } }
+      }
+    },
+    "call": {
+      "type": "object",
+      "required": ["kind", "operator", "contextDepth", "arguments"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "call" },
+        "operator": { "$ref": "#/$defs/operator" },
+        "contextDepth": { "type": "integer", "minimum": 0 },
+        "arguments": { "type": "array", "items": { "$ref": "#/$defs/argument" } }
+      }
+    },
+    "operator": {
+      "type": "object",
+      "required": ["name", "input", "output"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "input": { "type": "string", "minLength": 1 },
+        "output": { "type": "string", "minLength": 1 },
+        "traversal": { "$ref": "#/$defs/traversal" },
+        "semantics": { "$ref": "#/$defs/semantics" }
+      }
+    },
+    "traversal": {
+      "type": "object",
+      "required": ["source", "selection"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "selection": { "type": "string", "minLength": 1 }
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "required": ["cardinality", "dependency", "ordering"],
+      "additionalProperties": false,
+      "properties": {
+        "cardinality": {
+          "enum": ["preserved", "non-increasing", "collapsed", "expanded", "partitioned", "unknown"]
+        },
+        "dependency": {
+          "enum": ["per-element", "prefix", "whole-input", "partition", "unknown"]
+        },
+        "ordering": {
+          "enum": ["preserved", "reordered", "unordered", "not-applicable", "unknown"]
+        }
+      }
+    },
+    "argument": {
+      "type": "object",
+      "required": ["parameter", "explicit", "spread"],
+      "additionalProperties": false,
+      "properties": {
+        "parameter": { "$ref": "#/$defs/parameter" },
+        "explicit": { "type": "boolean" },
+        "spread": { "type": "boolean" },
+        "omission": { "$ref": "#/$defs/omission" },
+        "value": { "$ref": "#/$defs/value" }
+      },
+      "oneOf": [
+        {
+          "properties": { "explicit": { "const": true } },
+          "required": ["value"],
+          "not": { "required": ["omission"] }
+        },
+        {
+          "properties": { "explicit": { "const": false }, "spread": { "const": false } },
+          "required": ["omission"],
+          "not": { "required": ["value"] }
+        }
+      ]
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["name", "type", "optional", "variadic", "minimumCardinality"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "minLength": 1 },
+        "optional": { "type": "boolean" },
+        "variadic": { "type": "boolean" },
+        "minimumCardinality": { "type": "integer", "minimum": 0 },
+        "evaluation": { "$ref": "#/$defs/evaluation" }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["frequency"],
+      "additionalProperties": false,
+      "properties": {
+        "frequency": { "enum": ["once", "per-element", "custom"] },
+        "source": { "type": "string", "minLength": 1 },
+        "context": { "type": "string", "minLength": 1 }
+      }
+    },
+    "omission": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["mode", "value"],
+          "additionalProperties": false,
+          "properties": { "mode": { "const": "constant" }, "value": true }
+        },
+        {
+          "type": "object",
+          "required": ["mode"],
+          "additionalProperties": false,
+          "properties": { "mode": { "enum": ["empty-variadic", "absent"] } }
+        },
+        {
+          "type": "object",
+          "required": ["mode", "source"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "const": "environment-derived" },
+            "source": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "literal": {
+      "type": "object",
+      "required": ["kind", "type", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "literal" },
+        "type": { "enum": ["null", "boolean", "text", "decimal", "integer", "date", "datetime", "time", "duration", "type"] },
+        "value": true
+      },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "null" } } }, "then": { "properties": { "value": { "type": "null" } } } },
+        { "if": { "properties": { "type": { "const": "boolean" } } }, "then": { "properties": { "value": { "type": "boolean" } } } },
+        { "if": { "properties": { "type": { "enum": ["text", "date", "datetime", "time", "duration", "type"] } } }, "then": { "properties": { "value": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "const": "decimal" } } }, "then": { "properties": { "value": { "type": "number" } } } },
+        { "if": { "properties": { "type": { "const": "integer" } } }, "then": { "properties": { "value": { "type": "integer" } } } }
+      ]
+    }
+  }
+}

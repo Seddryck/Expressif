@@ -17,6 +17,9 @@ param(
     [string] $CategoryTemplatePath = "docs/_templates/library-category.md.sbn",
 
     [Parameter()]
+    [string] $SchemaPath = "docs/_data/catalog.schema.json",
+
+    [Parameter()]
     [string] $DestinationRoot = "docs",
 
     [Parameter()]
@@ -25,6 +28,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $generationStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
 function Resolve-ProjectPath {
@@ -88,6 +92,7 @@ if ([string]::IsNullOrWhiteSpace($DataPath)) {
 $resolvedDataPath = Resolve-ProjectPath $DataPath
 $resolvedTemplatePath = Resolve-ProjectPath $TemplatePath
 $resolvedCategoryTemplatePath = Resolve-ProjectPath $CategoryTemplatePath
+$resolvedSchemaPath = Resolve-ProjectPath $SchemaPath
 $resolvedDestinationRoot = Resolve-ProjectPath $DestinationRoot
 
 if (-not (Test-Path -LiteralPath $resolvedDataPath -PathType Leaf)) {
@@ -102,7 +107,16 @@ if (-not (Test-Path -LiteralPath $resolvedCategoryTemplatePath -PathType Leaf)) 
     throw "Scriban category template not found: $resolvedCategoryTemplatePath"
 }
 
-$allMembers = Get-Content -LiteralPath $resolvedDataPath -Raw | ConvertFrom-Json
+if (-not (Test-Path -LiteralPath $resolvedSchemaPath -PathType Leaf)) {
+    throw "Catalog schema file not found: $resolvedSchemaPath"
+}
+
+$catalogJson = Get-Content -LiteralPath $resolvedDataPath -Raw
+if (-not ($catalogJson | Test-Json -SchemaFile $resolvedSchemaPath)) {
+    throw "Catalog '$resolvedDataPath' does not conform to '$resolvedSchemaPath'."
+}
+
+$allMembers = $catalogJson | ConvertFrom-Json
 $members = @($allMembers | Where-Object { $_.IsPublic -eq $true })
 $selectedScopes = @()
 
@@ -289,6 +303,14 @@ foreach ($member in $members) {
         }
     }
 
+    $semantics = $null
+    if ($null -ne $member.PSObject.Properties["Semantics"] -and $null -ne $member.Semantics) {
+        $semantics = $member.Semantics
+        foreach ($propertyName in @("Cardinality", "Dependency", "Ordering")) {
+            Assert-RequiredProperty -InputObject $semantics -PropertyName $propertyName -MemberName "$memberName semantics"
+        }
+    }
+
     $parameters = @(
         foreach ($parameter in @($member.Parameters)) {
             foreach ($propertyName in @("Name", "Optional")) {
@@ -358,8 +380,29 @@ foreach ($member in $members) {
                     default { throw "Library member '$memberName' has unsupported evaluation frequency '$evaluationFrequency'." }
                 }
             }
-            $hasDefault = $null -ne $parameter.PSObject.Properties["Default"]
-            $defaultValue = if ($hasDefault) { ConvertTo-Json -InputObject $parameter.Default -Compress -Depth 20 } else { "" }
+            $omissionMode = ""
+            $omissionSource = ""
+            $hasConstantOmission = $false
+            $omissionValue = ""
+            if ($null -ne $parameter.PSObject.Properties["Omission"]) {
+                $omission = $parameter.Omission
+                Assert-RequiredProperty -InputObject $omission -PropertyName "Mode" -MemberName "$memberName parameter omission"
+                $omissionMode = [string] $omission.Mode
+                if ($omissionMode -eq "constant") {
+                    if ($null -eq $omission.PSObject.Properties["Value"]) {
+                        throw "Library member '$memberName parameter omission' is missing 'Value'."
+                    }
+                    $hasConstantOmission = $true
+                    $omissionValue = if ($parameterType -eq "type" -and $omission.Value -is [string]) {
+                        ":$($omission.Value)"
+                    } else {
+                        ConvertTo-Json -InputObject $omission.Value -Compress -Depth 20
+                    }
+                } elseif ($omissionMode -eq "environment-derived") {
+                    Assert-RequiredProperty -InputObject $omission -PropertyName "Source" -MemberName "$memberName parameter omission"
+                    $omissionSource = [string] $omission.Source
+                }
+            }
 
             [ordered] @{
                 name     = [string] $parameter.Name
@@ -369,8 +412,10 @@ foreach ($member in $members) {
                 variadic = $parameterVariadic
                 minimum_cardinality = $minimumCardinality
                 summary  = $parameterSummary
-                has_default = $hasDefault
-                default_value = $defaultValue
+                omission_mode = $omissionMode
+                omission_source = $omissionSource
+                has_constant_omission = $hasConstantOmission
+                omission_value = $omissionValue
                 evaluation_frequency = $evaluationFrequency
                 evaluation_summary = $evaluationSummary
             }
@@ -418,11 +463,11 @@ foreach ($member in $members) {
         $signatureLines.Add("$memberName(")
         for ($index = 0; $index -lt $parameters.Count; $index++) {
             $parameter = $parameters[$index]
-            $optionalMarker = if ($parameter.optional -and -not $parameter.variadic -and -not $parameter.has_default) { "?" } else { "" }
+            $optionalMarker = if ($parameter.optional -and -not $parameter.variadic -and -not $parameter.has_constant_omission) { "?" } else { "" }
             $variadicMarker = if ($parameter.variadic) { "..." } else { "" }
             $typeAnnotation = if ($parameter.has_type) { ": $($parameter.type)" } else { "" }
             $separator = if ($index -lt $parameters.Count - 1) { "," } else { "" }
-            $defaultAnnotation = if ($parameter.has_default) { " = $($parameter.default_value)" } else { "" }
+            $defaultAnnotation = if ($parameter.has_constant_omission) { " = $($parameter.omission_value)" } else { "" }
             $signatureLines.Add("    $variadicMarker$($parameter.name)$optionalMarker$typeAnnotation$defaultAnnotation$separator")
         }
 
@@ -440,8 +485,19 @@ foreach ($member in $members) {
             "Variadic ($minimumLabel or more)"
         } elseif ($parameter.optional) { "No" } else { "Yes" }
         $summary = ([string] $parameter.summary) -replace '\|', '\|' -replace '[\r\n]+', ' '
-        if ($parameter.has_default) {
-            $summary += " Defaults to ``$($parameter.default_value)``."
+        switch ($parameter.omission_mode) {
+            "constant" {
+                if ($summary -notmatch '(?i)\bdefaults? to\b') {
+                    $summary += " Defaults to ``$($parameter.omission_value)``."
+                }
+            }
+            "empty-variadic" { $summary += " Omission supplies an empty variadic sequence." }
+            "absent" {
+                if ($summary -notmatch '(?i)\b(omission|omitted|without)\b') {
+                    $summary += " Omission is preserved for operator-specific handling."
+                }
+            }
+            "environment-derived" { $summary += " When omitted, the value is derived from $($parameter.omission_source)." }
         }
         if ($hasParameterTypes) {
             $type = if ($parameter.has_type) { "``$($parameter.type)``" } else { "Not specified" }
@@ -490,6 +546,10 @@ foreach ($member in $members) {
         has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
         has_traversal       = $null -ne $traversal
         traversal_summary  = if ($null -ne $traversal) { [string] $traversal.Summary } else { "" }
+        has_semantics       = $null -ne $semantics
+        semantics_cardinality = if ($null -ne $semantics) { [string] $semantics.Cardinality } else { "" }
+        semantics_dependency = if ($null -ne $semantics) { [string] $semantics.Dependency } else { "" }
+        semantics_ordering  = if ($null -ne $semantics) { [string] $semantics.Ordering } else { "" }
         has_evaluation     = @($parameters | Where-Object { $_.evaluation_frequency -ne "" }).Count -gt 0
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes

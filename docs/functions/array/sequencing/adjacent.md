@@ -33,11 +33,19 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `prefix`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits consecutive elements of the array supplied as pipeline input to this adjacent call, in source order, starting with the second element.
 
-- **`operation`:** Evaluated once per consecutive pair, with T(previous, current) as its input and argument context; $0 resolves to the previous element and $1 to the current element. Empty and singleton arrays do not evaluate the operation.
+- **`operation`:** Evaluated once for each candidate after the first element, with T(currentChunk, candidate) as its input and argument context; $0 resolves to a stable array of elements already accepted into this chunk, excluding the candidate, and $1 to the candidate. Empty and singleton arrays do not evaluate the operation.
 
 
 ## Behavior
