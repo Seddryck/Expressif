@@ -13,13 +13,17 @@ namespace Expressif.Serializers;
 public class ParameterSerializer
 {
     private readonly QuotedLiteralRegistry quotedLiteralRegistry;
+    private readonly bool includeBuiltInQuotedLiteralTypeSuffixes;
     private FunctionSerializer? functionSerializer;
 
     public ParameterSerializer()
-        : this(QuotedLiteralRegistry.Default) { }
+        : this(QuotedLiteralRegistry.Default, false) { }
 
-    public ParameterSerializer(QuotedLiteralRegistry quotedLiteralRegistry)
-        => this.quotedLiteralRegistry = quotedLiteralRegistry ?? throw new ArgumentNullException(nameof(quotedLiteralRegistry));
+    public ParameterSerializer(
+        QuotedLiteralRegistry quotedLiteralRegistry,
+        bool includeBuiltInQuotedLiteralTypeSuffixes = false)
+        => (this.quotedLiteralRegistry, this.includeBuiltInQuotedLiteralTypeSuffixes) =
+            (quotedLiteralRegistry ?? throw new ArgumentNullException(nameof(quotedLiteralRegistry)), includeBuiltInQuotedLiteralTypeSuffixes);
 
     private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
 
@@ -45,7 +49,7 @@ public class ParameterSerializer
             InputExpressionParameter input => new ExpressionSerializer().Serialize(input.Expression),
             IncomingValueParameter => "...",
             QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
-            LiteralParameter l => SerializeLiteral(l.Value, l.LiteralType),
+            LiteralParameter l => SerializeLiteral(l.Value, l.LiteralType, l.IsLiteralTypeExplicit),
             CallableReferenceParameter reference => $"{reference.Name}~",
             VariableParameter v => $"@{v.Name}",
             ObjectPropertyParameter op => $"^.{op.Name}",
@@ -119,7 +123,11 @@ public class ParameterSerializer
             ? name
             : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
 
-    private string SerializeLiteral(object? value, string? literalType = null, bool canonicalQuoted = true)
+    private string SerializeLiteral(
+        object? value,
+        string? literalType = null,
+        bool literalTypeIsExplicit = false,
+        bool canonicalQuoted = true)
         => value switch
         {
             null => "#null",
@@ -128,7 +136,13 @@ public class ParameterSerializer
             bool boolean => boolean ? "#true" : "#false",
             decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
             { } typed when literalType is not null || (canonicalQuoted && quotedLiteralRegistry.CanSerialize(typed))
-                => quotedLiteralRegistry.Serialize(typed, literalType),
+                => quotedLiteralRegistry.Serialize(
+                    typed,
+                    literalType,
+                    literalTypeIsExplicit
+                        || includeBuiltInQuotedLiteralTypeSuffixes
+                        || !IsBuiltInQuotedLiteral(typed)
+                        || !quotedLiteralRegistry.CanInferWithoutTypeSuffix(typed, literalType)),
             DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",
             DateTime dateTime => $"#\"{dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)}\"",
             TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",
@@ -147,4 +161,7 @@ public class ParameterSerializer
         IntervalBoundBindingKind.Finite => SerializeLiteral(bound.Value, canonicalQuoted: false),
         _ => throw new NotSupportedException($"Interval bound kind '{bound.Kind}' cannot be serialized."),
     };
+
+    private static bool IsBuiltInQuotedLiteral(object value)
+        => value is DateOnly or DateTime or TimeOnly;
 }
