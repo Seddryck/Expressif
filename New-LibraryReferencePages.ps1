@@ -303,6 +303,14 @@ foreach ($member in $members) {
         }
     }
 
+    $semantics = $null
+    if ($null -ne $member.PSObject.Properties["Semantics"] -and $null -ne $member.Semantics) {
+        $semantics = $member.Semantics
+        foreach ($propertyName in @("Cardinality", "Dependency", "Ordering")) {
+            Assert-RequiredProperty -InputObject $semantics -PropertyName $propertyName -MemberName "$memberName semantics"
+        }
+    }
+
     $parameters = @(
         foreach ($parameter in @($member.Parameters)) {
             foreach ($propertyName in @("Name", "Optional")) {
@@ -538,6 +546,10 @@ foreach ($member in $members) {
         has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
         has_traversal       = $null -ne $traversal
         traversal_summary  = if ($null -ne $traversal) { [string] $traversal.Summary } else { "" }
+        has_semantics       = $null -ne $semantics
+        semantics_cardinality = if ($null -ne $semantics) { [string] $semantics.Cardinality } else { "" }
+        semantics_dependency = if ($null -ne $semantics) { [string] $semantics.Dependency } else { "" }
+        semantics_ordering  = if ($null -ne $semantics) { [string] $semantics.Ordering } else { "" }
         has_evaluation     = @($parameters | Where-Object { $_.evaluation_frequency -ne "" }).Count -gt 0
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes

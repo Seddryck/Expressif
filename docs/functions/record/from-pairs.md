@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `whole-input`
+- **Ordering:** `unordered`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array supplied as pipeline input to this from-pairs call, in enumeration order.

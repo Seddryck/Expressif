@@ -21,6 +21,8 @@ distribute-weight(
 
 Distributes array values into two groups whose aggregate evaluated weights are approximately balanced. Returns `null` when the input or a weight cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,11 +31,22 @@ Distributes array values into two groups whose aggregate evaluated weights are a
 |:-----|:-----|:---------|:------------|
 | `weight` | `expression` | Yes | Specifies the expression that produces a finite, non-negative numeric weight for each input value. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array entering this call.
 
 - **`weight`:** Evaluated once per visited element, with that element as its context.
+
 
 ## Behavior
 

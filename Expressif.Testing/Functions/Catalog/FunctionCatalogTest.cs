@@ -179,6 +179,23 @@ public class FunctionCatalogTest
             FunctionCatalog.Default.Find("adjacent")?.Behavior,
             Does.StartWith("The operation receives T(previous, current)."));
 
+    [TestCase("map", "preserved", "per-element", "preserved")]
+    [TestCase("filter", "non-increasing", "per-element", "preserved")]
+    [TestCase("fold", "collapsed", "whole-input", "not-applicable")]
+    [TestCase("broadcast", "preserved", "whole-input", "preserved")]
+    [TestCase("scan", "preserved", "prefix", "preserved")]
+    [TestCase("group-by", "partitioned", "partition", "preserved")]
+    public void Default_StructuralFunction_DeserializesSemantics(
+        string function,
+        string cardinality,
+        string dependency,
+        string ordering)
+    {
+        var semantics = FunctionCatalog.Default.Find(function)?.Semantics;
+
+        Assert.That(semantics, Is.EqualTo(new FunctionSemanticsDocumentation(cardinality, dependency, ordering)));
+    }
+
     [TestCase("add", "times", ParameterOmissionMode.Constant)]
     [TestCase("array", "values", ParameterOmissionMode.EmptyVariadic)]
     [TestCase("throw", "predicate", ParameterOmissionMode.Absent)]
@@ -228,5 +245,23 @@ public class FunctionCatalogTest
         Assert.That(
             () => FunctionCatalog.ValidateOmissions([function]),
             Throws.InvalidOperationException.With.Message.Contains(message));
+    }
+
+    [TestCase("invalid", "per-element", "preserved", "cardinality")]
+    [TestCase("preserved", "invalid", "preserved", "dependency")]
+    [TestCase("preserved", "per-element", "invalid", "ordering")]
+    public void ValidateSemantics_UnsupportedChoice_Throws(
+        string cardinality,
+        string dependency,
+        string ordering,
+        string dimension)
+    {
+        var semantics = new FunctionSemanticsDocumentation(cardinality, dependency, ordering);
+        var function = new FunctionDocumentation(
+            "sample", true, [], "special", "any", "any", "Summary.", [], Semantics: semantics);
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSemantics([function]),
+            Throws.InvalidOperationException.With.Message.Contains($"semantics {dimension}"));
     }
 }

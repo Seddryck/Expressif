@@ -29,9 +29,17 @@ Expands a grouping into explicitly declared sets of retained key dimensions.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `tuple` | Variadic (zero or more) | Zero or more tuples of zero-based key dimension positions to retain. |
+| `values` | `tuple` | Variadic (zero or more) | Zero or more tuples of zero-based key dimension positions to retain. Omission supplies an empty variadic sequence. |
 
 
+
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 ## Argument evaluation
 
