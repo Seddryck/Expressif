@@ -47,17 +47,33 @@
         "name": { "type": "string", "minLength": 1 },
         "input": { "type": "string", "minLength": 1 },
         "output": { "type": "string", "minLength": 1 },
-        "traversal": { "$ref": "#/$defs/traversal" }
+        "traversal": { "$ref": "#/$defs/traversal" },
+        "semantics": { "$ref": "#/$defs/semantics" }
       }
     },
     "traversal": {
       "type": "object",
-      "required": ["source", "selection", "summary"],
+      "required": ["source", "selection"],
       "additionalProperties": false,
       "properties": {
         "source": { "type": "string", "minLength": 1 },
-        "selection": { "type": "string", "minLength": 1 },
-        "summary": { "type": "string", "minLength": 1 }
+        "selection": { "type": "string", "minLength": 1 }
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "required": ["cardinality", "dependency", "ordering"],
+      "additionalProperties": false,
+      "properties": {
+        "cardinality": {
+          "enum": ["preserved", "non-increasing", "collapsed", "expanded", "partitioned", "unknown"]
+        },
+        "dependency": {
+          "enum": ["per-element", "prefix", "whole-input", "partition", "unknown"]
+        },
+        "ordering": {
+          "enum": ["preserved", "reordered", "unordered", "not-applicable", "unknown"]
+        }
       }
     },
     "argument": {
@@ -99,13 +115,12 @@
     },
     "evaluation": {
       "type": "object",
-      "required": ["frequency", "summary"],
+      "required": ["frequency"],
       "additionalProperties": false,
       "properties": {
         "frequency": { "enum": ["once", "per-element", "custom"] },
         "source": { "type": "string", "minLength": 1 },
-        "context": { "type": "string", "minLength": 1 },
-        "summary": { "type": "string", "minLength": 1 }
+        "context": { "type": "string", "minLength": 1 }
       }
     },
     "omission": {

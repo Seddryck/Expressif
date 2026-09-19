@@ -44,11 +44,7 @@ public sealed class LogicalPlanner
         var documentation = catalog.Find(function.Name);
         var descriptor = documentation is null
             ? SyntheticFunction(function.Name)
-            : new PlannerFunctionDescriptor(
-                documentation.Name,
-                documentation.Input,
-                documentation.Output,
-                documentation.Traversal);
+            : Descriptor(documentation);
         var parameters = documentation?.Parameters
             ?? SyntheticParameters(function.Arguments.Length);
         var arguments = NormalizeArguments(descriptor.Name, parameters, function.Arguments);
@@ -163,7 +159,7 @@ public sealed class LogicalPlanner
     {
         var documentation = catalog.Find(name)!;
         return new LogicalCall(
-            new PlannerFunctionDescriptor(documentation.Name, documentation.Input, documentation.Output, documentation.Traversal),
+            Descriptor(documentation),
             [new LogicalArgument(Descriptor(documentation.Parameters[0]), Literal(value), false, true)],
             depth);
     }
@@ -173,7 +169,7 @@ public sealed class LogicalPlanner
         var documentation = catalog.Find(name);
         var descriptor = documentation is null
             ? SyntheticFunction(name)
-            : new PlannerFunctionDescriptor(documentation.Name, documentation.Input, documentation.Output, documentation.Traversal);
+            : Descriptor(documentation);
         var parameter = documentation?.Parameters.SingleOrDefault() ?? SyntheticParameter("values", variadic: true);
         var arguments = elements.Select(element => new LogicalArgument(
             Descriptor(parameter), Value(element.Value), element.Spread, true)).ToList();
@@ -199,7 +195,7 @@ public sealed class LogicalPlanner
         if (arguments.Count == 0)
             arguments.Add(new LogicalArgument(Descriptor(parameter), null, false, false, parameter.Omission));
         return new LogicalCall(
-            new PlannerFunctionDescriptor(documentation.Name, documentation.Input, documentation.Output, documentation.Traversal),
+            Descriptor(documentation),
             arguments);
     }
 
@@ -272,8 +268,34 @@ public sealed class LogicalPlanner
     private static FunctionParameterDocumentation SyntheticParameter(string name, bool variadic = false)
         => new(name, "any", Optional: false, string.Empty, variadic, variadic ? 0 : 1);
 
+    private static PlannerFunctionDescriptor Descriptor(FunctionDocumentation function)
+        => new(
+            function.Name,
+            function.Input,
+            function.Output,
+            function.Traversal is null
+                ? null
+                : new PlannerTraversalDescriptor(function.Traversal.Source, function.Traversal.Selection),
+            function.Semantics is null
+                ? null
+                : new PlannerSemanticsDescriptor(
+                    function.Semantics.Cardinality,
+                    function.Semantics.Dependency,
+                    function.Semantics.Ordering));
+
     private static PlannerParameterDescriptor Descriptor(FunctionParameterDocumentation parameter)
-        => new(parameter.Name, parameter.TypeOrKind, parameter.Optional, parameter.Variadic, parameter.MinimumCardinality, parameter.Evaluation);
+        => new(
+            parameter.Name,
+            parameter.TypeOrKind,
+            parameter.Optional,
+            parameter.Variadic,
+            parameter.MinimumCardinality,
+            parameter.Evaluation is null
+                ? null
+                : new PlannerEvaluationDescriptor(
+                    parameter.Evaluation.Frequency,
+                    parameter.Evaluation.Source,
+                    parameter.Evaluation.Context));
 
     private static int ContextDepth(FunctionSyntax syntax) => syntax switch
     {

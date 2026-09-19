@@ -128,7 +128,15 @@ public static class LogicalPlanJson
             writer.WriteStartObject();
             writer.WriteString("source", function.Traversal.Source);
             writer.WriteString("selection", function.Traversal.Selection);
-            writer.WriteString("summary", function.Traversal.Summary);
+            writer.WriteEndObject();
+        }
+        if (function.Semantics is not null)
+        {
+            writer.WritePropertyName("semantics");
+            writer.WriteStartObject();
+            writer.WriteString("cardinality", function.Semantics.Cardinality);
+            writer.WriteString("dependency", function.Semantics.Dependency);
+            writer.WriteString("ordering", function.Semantics.Ordering);
             writer.WriteEndObject();
         }
         writer.WriteEndObject();
@@ -171,7 +179,6 @@ public static class LogicalPlanJson
                 writer.WriteString("source", parameter.Evaluation.Source);
             if (parameter.Evaluation.Context is not null)
                 writer.WriteString("context", parameter.Evaluation.Context);
-            writer.WriteString("summary", parameter.Evaluation.Summary);
             writer.WriteEndObject();
         }
         writer.WriteEndObject();
@@ -264,22 +271,25 @@ public static class LogicalPlanJson
     private static PlannerFunctionDescriptor ReadFunction(JsonElement element)
     {
         var function = RequireObject(element, "operator descriptor");
-        EnsureProperties(function, "name", "input", "output", "traversal");
-        FunctionTraversalDocumentation? traversal = null;
+        EnsureProperties(function, "name", "input", "output", "traversal", "semantics");
+        PlannerTraversalDescriptor? traversal = null;
         if (function.TryGetProperty("traversal", out var traversalElement))
         {
             var value = RequireObject(traversalElement, "traversal descriptor");
-            EnsureProperties(value, "source", "selection", "summary");
-            traversal = new FunctionTraversalDocumentation(
+            EnsureProperties(value, "source", "selection");
+            traversal = new PlannerTraversalDescriptor(
                 RequireString(value, "source"),
-                RequireString(value, "selection"),
-                RequireString(value, "summary"));
+                RequireString(value, "selection"));
         }
+        var semantics = function.TryGetProperty("semantics", out var semanticsElement)
+            ? ReadSemantics(semanticsElement)
+            : null;
         return new PlannerFunctionDescriptor(
             RequireString(function, "name"),
             RequireString(function, "input"),
             RequireString(function, "output"),
-            traversal);
+            traversal,
+            semantics);
     }
 
     private static LogicalArgument ReadArgument(JsonElement element)
@@ -313,17 +323,16 @@ public static class LogicalPlanJson
     {
         var parameter = RequireObject(element, "parameter descriptor");
         EnsureProperties(parameter, "name", "type", "optional", "variadic", "minimumCardinality", "evaluation");
-        ParameterEvaluationDocumentation? evaluation = null;
+        PlannerEvaluationDescriptor? evaluation = null;
         if (parameter.TryGetProperty("evaluation", out var evaluationElement))
         {
             var value = RequireObject(evaluationElement, "evaluation descriptor");
-            EnsureProperties(value, "frequency", "source", "context", "summary");
+            EnsureProperties(value, "frequency", "source", "context");
             var frequency = RequireString(value, "frequency");
             if (frequency is not ("once" or "per-element" or "custom"))
                 throw new LogicalPlanFormatException($"Unsupported evaluation frequency '{frequency}'.");
-            evaluation = new ParameterEvaluationDocumentation(
+            evaluation = new PlannerEvaluationDescriptor(
                 frequency,
-                RequireString(value, "summary"),
                 OptionalString(value, "source"),
                 OptionalString(value, "context"));
         }
@@ -337,6 +346,22 @@ public static class LogicalPlanJson
             RequireBoolean(parameter, "variadic"),
             minimumCardinality,
             evaluation);
+    }
+
+    private static PlannerSemanticsDescriptor ReadSemantics(JsonElement element)
+    {
+        var semantics = RequireObject(element, "semantics descriptor");
+        EnsureProperties(semantics, "cardinality", "dependency", "ordering");
+        var cardinality = RequireString(semantics, "cardinality");
+        if (cardinality is not ("preserved" or "non-increasing" or "collapsed" or "expanded" or "partitioned" or "unknown"))
+            throw new LogicalPlanFormatException($"Unsupported semantics cardinality '{cardinality}'.");
+        var dependency = RequireString(semantics, "dependency");
+        if (dependency is not ("per-element" or "prefix" or "whole-input" or "partition" or "unknown"))
+            throw new LogicalPlanFormatException($"Unsupported semantics dependency '{dependency}'.");
+        var ordering = RequireString(semantics, "ordering");
+        if (ordering is not ("preserved" or "reordered" or "unordered" or "not-applicable" or "unknown"))
+            throw new LogicalPlanFormatException($"Unsupported semantics ordering '{ordering}'.");
+        return new PlannerSemanticsDescriptor(cardinality, dependency, ordering);
     }
 
     private static ParameterOmissionDocumentation ReadOmission(JsonElement element)

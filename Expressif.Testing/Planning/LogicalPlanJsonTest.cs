@@ -149,25 +149,54 @@ public class LogicalPlanJsonTest
                 Is.EqualTo(LogicalPlanJson.FormatVersion));
             Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("value").GetProperty("oneOf").GetArrayLength(),
                 Is.EqualTo(3));
+            Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("semantics")
+                    .GetProperty("properties").GetProperty("cardinality").GetProperty("enum").GetArrayLength(),
+                Is.EqualTo(6));
+            Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("traversal")
+                    .GetProperty("properties").TryGetProperty("summary", out _),
+                Is.False);
+            Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("evaluation")
+                    .GetProperty("properties").TryGetProperty("summary", out _),
+                Is.False);
         });
     }
 
     [Test]
-    public void Serialize_PlanCarriesEvaluationScopeAndOmissionMetadata()
+    public void Serialize_PlanCarriesStructuredSemanticsEvaluationScopeAndOmissionMetadata()
     {
-        using var document = JsonDocument.Parse(LogicalPlanJson.Serialize(Plan("{1, 2} | map(.age) | add(5)")));
+        var json = LogicalPlanJson.Serialize(Plan("{1, 2} | map(.age) | add(5)"));
+        using var document = JsonDocument.Parse(json);
         var calls = document.RootElement.GetProperty("plan").GetProperty("items");
+        var mapOperator = calls[1].GetProperty("operator");
         var mapArgument = calls[1].GetProperty("arguments")[0];
         var omitted = calls[2].GetProperty("arguments")[1];
 
         Assert.Multiple(() =>
         {
+            Assert.That(mapOperator.GetProperty("semantics").GetProperty("cardinality").GetString(),
+                Is.EqualTo("preserved"));
+            Assert.That(mapOperator.GetProperty("semantics").GetProperty("dependency").GetString(),
+                Is.EqualTo("per-element"));
+            Assert.That(mapOperator.GetProperty("semantics").GetProperty("ordering").GetString(),
+                Is.EqualTo("preserved"));
             Assert.That(mapArgument.GetProperty("parameter").GetProperty("evaluation").GetProperty("context").GetString(),
                 Is.EqualTo("traversal"));
             Assert.That(mapArgument.GetProperty("value").GetProperty("items")[0].GetProperty("operator").GetProperty("name").GetString(),
                 Is.EqualTo("field"));
             Assert.That(omitted.GetProperty("omission").GetProperty("mode").GetString(), Is.EqualTo("constant"));
+            Assert.That(json, Does.Not.Contain("\"summary\""));
         });
+    }
+
+    [Test]
+    public void Deserialize_UnsupportedStructuralSemantics_ThrowsFormatException()
+    {
+        var json = LogicalPlanJson.Serialize(Plan("map(upper)"), indented: false)
+            .Replace("\"cardinality\":\"preserved\"", "\"cardinality\":\"invalid\"", StringComparison.Ordinal);
+
+        var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
+
+        Assert.That(exception!.Message, Is.EqualTo("Unsupported semantics cardinality 'invalid'."));
     }
 
     private static LogicalPlan Plan(string source)

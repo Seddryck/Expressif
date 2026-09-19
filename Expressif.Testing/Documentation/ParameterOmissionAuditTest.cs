@@ -79,7 +79,7 @@ public class ParameterOmissionAuditTest
         new("predicate", "is-sorted-before-or-equivalent-to", "comparer", "absent"),
         new("predicate", "matches-regex", "comparer", "absent"),
         new("predicate", "starts-with", "comparer", "absent"),
-        new("accumulator", "implode", "separator", "constant", ""),
+        new("accumulator", "concat", "separator", "constant", ""),
         new("accumulator", "reduce", "initial", "absent"),
     ];
 

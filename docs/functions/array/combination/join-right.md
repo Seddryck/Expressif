@@ -64,7 +64,7 @@ Visits each element of the array supplied as pipeline input to this join-right c
 {% endraw %}
 
 
-**Kind:** Function  
-**Scope:** `array/combination`  
+**Kind:** Function<br>
+**Scope:** `array/combination`<br>
 **Aliases:** None
 {: .member-reference }
