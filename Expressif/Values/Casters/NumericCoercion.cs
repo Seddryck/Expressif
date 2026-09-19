@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Expressif.Values.Casters;
 
@@ -164,9 +165,9 @@ public static class NumericCoercion
         }
     }
 
-    private static bool Fail<T>(out T result)
+    private static bool Fail<T>([MaybeNull] out T result)
     {
-        result = default!;
+        result = default;
         return false;
     }
 }

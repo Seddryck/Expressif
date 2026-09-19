@@ -177,6 +177,7 @@ public sealed class TypeIntrospector
 internal static class TypeDocumentation
 {
     private static readonly Dictionary<Assembly, XmlDocument> Cache = [];
+    private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
     public static string GetSummary(Type type)
     {
@@ -191,9 +192,15 @@ internal static class TypeDocumentation
             summary.InnerXml,
             "<see\\s+langword\\s*=\\s*\"([^\"]+)\"\\s*/>",
             "`$1`",
-            RegexOptions.IgnoreCase);
-        text = Regex.Replace(text, "<.*?>", string.Empty);
-        return Regex.Replace(WebUtility.HtmlDecode(text), "\\s+", " ").Trim();
+            RegexOptions.IgnoreCase,
+            RegexTimeout);
+        text = Regex.Replace(text, "<.*?>", string.Empty, RegexOptions.None, RegexTimeout);
+        return Regex.Replace(
+            WebUtility.HtmlDecode(text),
+            "\\s+",
+            " ",
+            RegexOptions.None,
+            RegexTimeout).Trim();
     }
 
     private static XmlDocument GetDocument(Assembly assembly)
