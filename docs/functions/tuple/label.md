@@ -29,9 +29,17 @@ Returns a flat record by assigning one positional label to each tuple item and q
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `names` | `text` | Variadic (zero or more) | One label for each tuple position, in positional order. |
+| `names` | `text` | Variadic (zero or more) | One label for each tuple position, in positional order. Omission supplies an empty variadic sequence. |
 
 
+
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 ## Argument evaluation
 

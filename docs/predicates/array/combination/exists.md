@@ -37,6 +37,14 @@ Returns whether the input value has a matching key in the supplied array or grou
 
 
 
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits elements of the array supplied as right in order until a matching key is found. For a grouping, checks bucket keys without visiting bucket values.

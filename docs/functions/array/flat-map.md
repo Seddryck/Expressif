@@ -33,6 +33,14 @@ Evaluates an array-producing expression for each input element and concatenates 
 
 
 
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array supplied as pipeline input to this flat-map call.

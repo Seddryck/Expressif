@@ -33,6 +33,14 @@ Keeps whole groups whose group-level predicate evaluates to true.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each group, including its key and values, in the grouping entering this call.

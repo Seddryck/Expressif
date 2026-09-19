@@ -29,6 +29,13 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 
 ## Behavior

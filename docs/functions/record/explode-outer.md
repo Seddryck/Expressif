@@ -33,6 +33,14 @@ Emits one record per selected collection element, preserving parents with empty 
 
 
 
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits the record supplied as pipeline input to this explode-outer call, or each parent record of its input array in source order. Visits selected children in source order, retaining a parent with no children.

@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each group of the grouping supplied as pipeline input to this cube call in source order for each subset of dimensions, including empty groups. Existing keys determine dimensions; grouped values are copied without evaluating expressions against them.

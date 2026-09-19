@@ -19,6 +19,8 @@ lead() → array
 
 Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,13 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `unknown`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 
 

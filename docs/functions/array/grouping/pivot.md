@@ -37,6 +37,14 @@ Groups values by row and column, applies a grouping summary, and reshapes the ce
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array supplied as pipeline input to this pivot call, in source order.

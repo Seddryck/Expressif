@@ -33,6 +33,14 @@ Transforms each group's value collection while preserving its key and position.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each group in the incoming grouping and supplies its entire value collection to the expression.

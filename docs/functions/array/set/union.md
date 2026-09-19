@@ -21,6 +21,8 @@ union(
 
 Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,21 @@ Returns the distinct values appearing in either the pipeline input or the specif
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the second array whose values are combined with the pipeline input. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

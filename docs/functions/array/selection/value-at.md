@@ -31,9 +31,21 @@ Returns the input item at the specified zero-based position. Returns `null` when
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | Specifies the zero-based position of the item to return. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

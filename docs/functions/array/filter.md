@@ -33,6 +33,14 @@ Applies a predicate expression to each input item and returns only items for whi
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array or each pair of the dictionary supplied as pipeline input to this filter call, in enumeration order.

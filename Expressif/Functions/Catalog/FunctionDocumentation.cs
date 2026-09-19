@@ -19,7 +19,8 @@ public sealed record FunctionDocumentation(
     string? Sunset = null,
     bool ReplacementIsEquivalent = false,
     string? MigrationNotes = null,
-    FunctionTraversalDocumentation? Traversal = null);
+    FunctionTraversalDocumentation? Traversal = null,
+    FunctionSemanticsDocumentation? Semantics = null);
 
 public sealed record FunctionParameterDocumentation(
     string Name,
@@ -36,6 +37,8 @@ public sealed record FunctionParameterDocumentation(
 }
 
 public sealed record FunctionTraversalDocumentation(string Source, string Selection, string Summary);
+
+public sealed record FunctionSemanticsDocumentation(string Cardinality, string Dependency, string Ordering);
 
 public sealed record ParameterEvaluationDocumentation(
     string Frequency,

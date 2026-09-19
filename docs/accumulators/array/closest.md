@@ -33,6 +33,14 @@ Returns the first non-null input value with the smallest absolute distance to th
 
 
 
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`target`:** Evaluated once before accumulation, using the incoming collection as its context. The result is reused for every comparison.

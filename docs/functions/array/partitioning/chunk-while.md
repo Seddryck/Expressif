@@ -33,6 +33,14 @@ Groups consecutive values while an operation over the complete current chunk and
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits consecutive elements of the array supplied as pipeline input to this chunk-while call, in source order, starting with the second element.

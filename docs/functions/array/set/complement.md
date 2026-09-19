@@ -21,6 +21,8 @@ complement(
 
 Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,21 @@ Returns the distinct values from the specified array that do not appear in the p
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the reference array from which values present in the pipeline input are excluded. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

@@ -19,6 +19,8 @@ pairwise() → array
 
 Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,13 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `prefix`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 
 

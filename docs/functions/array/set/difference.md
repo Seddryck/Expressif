@@ -21,6 +21,8 @@ difference(
 
 Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,21 @@ Returns the distinct values from the pipeline input that do not appear in the sp
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the array containing values to exclude from the pipeline input. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

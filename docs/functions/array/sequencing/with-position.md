@@ -19,6 +19,8 @@ with-position() → array
 
 Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,13 @@ This function has no parameters.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 
 

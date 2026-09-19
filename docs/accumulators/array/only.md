@@ -35,6 +35,14 @@ Forwards only items satisfying the predicate to the wrapped accumulator.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each item of the collection supplied as pipeline input to this only call in source order.

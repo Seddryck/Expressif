@@ -33,6 +33,14 @@ Refines each existing group by appending dimensions derived from its values.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each value within each group of the grouping supplied as pipeline input to this drill-down call, in parent-group and value order.

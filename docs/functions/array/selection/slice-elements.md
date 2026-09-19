@@ -33,10 +33,21 @@ Returns the elements in the zero-based half-open range from start, inclusive, to
 | `start` | `integer` | Yes | Zero-based index of the first element to return. |
 | `end` | `integer` | Yes | Zero-based exclusive index at which to stop returning elements. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`start`:** Evaluated once in the enclosing context.
 - **`end`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 

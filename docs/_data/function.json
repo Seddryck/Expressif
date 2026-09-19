@@ -72,6 +72,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Evaluates an operation against every consecutive pair of input values. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "operation",
@@ -169,6 +174,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Executes an accumulator once over the full input enumerable, then returns the final accumulated value repeated once for each input element. Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "accumulator",
@@ -201,6 +211,11 @@
     "Input": "array",
     "Output": "integer",
     "Summary": "Returns the number of elements in the input array.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [],
     "Examples": [
       "{} | cardinality → 0",
@@ -217,6 +232,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "size",
@@ -244,6 +264,11 @@
     "Input": "array",
     "Output": "tuple",
     "Summary": "Separates the element at a zero-based position from the elements before and after it, returning the three parts as a tuple. Returns `null` when the position is invalid or the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "position",
@@ -272,6 +297,11 @@
     "Input": "array",
     "Output": "tuple",
     "Summary": "Splits an array on a zero-based boundary and returns the elements before and from that position as a tuple. Positions beyond the end use the end boundary. Returns `null` when the position is negative or the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "position",
@@ -300,6 +330,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Groups consecutive values while an operation over the complete current chunk and next candidate evaluates to `true`. Returns `null` when the operation does not produce a Boolean value or the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "operation",
@@ -336,6 +371,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "predicate",
@@ -369,6 +409,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Distributes array values into two groups whose aggregate evaluated weights are approximately balanced. Returns `null` when the input or a weight cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "weight",
@@ -402,6 +447,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Distributes successive array values cyclically among a requested number of output arrays. Returns `null` when the count is not strictly positive or the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -430,6 +480,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Randomly distributes array values among output arrays according to relative output weights. Returns `null` when the input, weights, or seed cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "weights",
@@ -475,6 +530,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Distributes array values into matching and non-matching groups by evaluating a predicate once for each value. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "condition",
@@ -510,6 +570,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the start of the input enumerable. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -541,6 +606,11 @@
     "Input": "array",
     "Output": "any",
     "Summary": "Executes an accumulator once over the full input enumerable and returns the final accumulated value. Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "accumulator",
@@ -757,6 +827,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | lag → {#null, 1, 2}"
@@ -772,6 +847,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns up to the requested number of elements from the end of the input enumerable, preserving their order. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -803,6 +883,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the next value for each input element. The last output value is `null` because there is no next element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "unknown",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | lead → {2, 3, #null}"
@@ -818,6 +903,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "transformation",
@@ -850,6 +940,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Evaluates an array-producing expression for each input element and concatenates the resulting arrays in order. Flattens one level, preserving nested arrays and null elements. Empty arrays contribute no elements. Throws an argument error when an expression result is not an array, including null or text.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -881,6 +976,11 @@
     "Input": "any",
     "Output": "array",
     "Summary": "Evaluates an expression once for every supplied value while preserving the pipeline input as the expression input. Tuple values are expanded into positional arguments for a bare callable. Returns `null` when values is not enumerable or is text.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -924,6 +1024,11 @@
     "Input": "any",
     "Output": "array",
     "Summary": "Evaluates an expression once for every supplied value, using that value as the pipeline input and the outer input as its argument. Tuple values remain ordinary pipeline values and are not expanded. Returns `null` when values is not enumerable or is text.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -968,6 +1073,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | pairwise → {T(1, 2), T(2, 3)}"
@@ -983,6 +1093,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns each input item paired with its zero-based position as a tuple in `(position, value)` order. Preserves input order and cardinality. Position terminology distinguishes sequence locations from indexes used to accelerate searches. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{\"a\", \"b\", \"c\"} | with-position | value-at(2) | tuple-first → 2"
@@ -998,6 +1113,11 @@
     "Input": "array",
     "Output": "integer",
     "Summary": "Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "value",
@@ -1027,6 +1147,11 @@
     "Input": "array",
     "Output": "any",
     "Summary": "Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "position",
@@ -1056,6 +1181,11 @@
     "Input": "any",
     "Output": "any",
     "Summary": "Recursively traverses arrays, tuples, and records and evaluates an expression against each leaf value while preserving container shape.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "transformation",
@@ -1089,6 +1219,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Emits a pair for every matching left and right value, omitting left values without a match. Array right-hand values are grouped by key before lookup.",
+    "Semantics": {
+      "Cardinality": "unknown",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "right",
@@ -1151,6 +1286,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Emits every matching pair and preserves unmatched left values with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.",
+    "Semantics": {
+      "Cardinality": "unknown",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "right",
@@ -1212,6 +1352,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Emits every matching pair and preserves unmatched right values with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.",
+    "Semantics": {
+      "Cardinality": "unknown",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "right",
@@ -1273,6 +1418,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Emits every matching pair and preserves unmatched values from both sides with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.",
+    "Semantics": {
+      "Cardinality": "unknown",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "right",
@@ -1334,6 +1484,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1361,6 +1516,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Combines values from two arrays into two-element tuples until the longer array is exhausted, cycling each non-empty shorter array from its beginning. Returns an empty array when both inputs are empty and `null` when exactly one input is empty or either value cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1389,6 +1549,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1416,6 +1581,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1445,6 +1615,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "whole-input",
+      "Ordering": "reordered"
+    },
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | reverse → {3, 2, 1}"
@@ -1458,6 +1633,11 @@
     "Input": "array",
     "Output": "tuple",
     "Summary": "Returns a tuple containing the input array's elements in order. Returns `null` when the input is not an array.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Behavior": "`to-tuple` materializes the input array as a tuple without changing its elements. Null values and nested arrays, records, and tuples are preserved without recursive conversion.",
     "Examples": [
@@ -1474,6 +1654,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Executes an accumulator progressively over the input enumerable and returns the intermediate accumulated value after each input element. Preserves input cardinality (one output item per input item). This differs from fold (final value only) and broadcast (final value repeated). Returns `null` when the input is not an enumerable or is a string.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "accumulator",
@@ -1506,6 +1691,11 @@
     "Input": "array",
     "Output": "any",
     "Summary": "Returns the only element of the input array without transforming it. Returns `null` when the input is empty, contains more than one element, or cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [],
     "Behavior": "`single` expresses an exact-cardinality requirement: the input must contain exactly one element. A sole `null` value is still the only element and therefore returns `null`; scalar and structured values retain their runtime type and value. Unlike `first-elements(1)`, `single` returns an element rather than an array and rejects additional elements by returning `null`.",
     "Examples": [
@@ -1524,6 +1714,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Omits the requested number of elements from the start of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -1555,6 +1750,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Omits the requested number of elements from the end of the input enumerable and returns the remainder. Returns `null` when the input is not an enumerable, is a string, or the count is negative.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -1586,6 +1786,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "start",
@@ -1630,6 +1835,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values from the specified array that do not appear in the pipeline input, preserving the specified array order. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1657,6 +1867,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1684,6 +1899,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "prefix",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | distinct → {1, 2, 3}"
@@ -1699,6 +1919,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values found in both the pipeline input and the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1726,6 +1951,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -1753,6 +1983,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Returns the distinct values appearing in either the pipeline input or the specified array, listing pipeline-input values first and argument-only values second while preserving order within each source. Returns `null` when the input cannot be evaluated.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "array",
@@ -2847,6 +3082,11 @@
     "Input": "record",
     "Output": "record",
     "Summary": "Transforms selected field names while preserving field values and order. Duplicate resulting names cause an evaluation error.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "transform",
@@ -2899,6 +3139,11 @@
       "Selection": "custom",
       "Summary": "Visits the record supplied as pipeline input to this explode-outer call, or each parent record of its input array in source order. Visits selected children in source order, retaining a parent with no children."
     },
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "selector",
@@ -2930,6 +3175,11 @@
       "Selection": "custom",
       "Summary": "Visits the record supplied as pipeline input to this explode call, or each parent record of its input array in source order. Visits the selected collection children in their order, removing one collection level."
     },
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "selector",
@@ -2956,6 +3206,11 @@
     "Input": "record",
     "Output": "array",
     "Summary": "Converts all record fields to pairs, preserving field names, values, and order.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Traversal": {
       "Source": "incoming",
@@ -2976,6 +3231,11 @@
     "Input": "array",
     "Output": "record",
     "Summary": "Converts an array of pairs to a record, coercing keys to text and preserving values and order.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "unordered"
+    },
     "Parameters": [],
     "Traversal": {
       "Source": "incoming",
@@ -2996,6 +3256,11 @@
     "Input": "record",
     "Output": "array",
     "Summary": "Returns the names of all fields in the input record, preserving field order.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{name := \"Mons\", temp := 18, pressure := 1012} | field-names → {\"name\", \"temp\", \"pressure\"}"
@@ -3516,6 +3781,11 @@
     "Input": "array",
     "Output": "grouping",
     "Summary": "Groups array elements by their one-based SQL rank using typed criteria.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "criteria",
@@ -3546,6 +3816,11 @@
     "Input": "array",
     "Output": "grouping",
     "Summary": "Groups array elements by their one-based dense rank using typed criteria.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "criteria",
@@ -3576,6 +3851,11 @@
     "Input": "sort-table",
     "Output": "array",
     "Summary": "Returns up to count original values from the first rows in sort table order.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -3599,6 +3879,11 @@
     "Input": "sort-table",
     "Output": "array",
     "Summary": "Returns up to count original values from the last rows in sort table order.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -3622,6 +3907,11 @@
     "Input": "sort-table",
     "Output": "array",
     "Summary": "Returns the first count rows and all comparer-equal boundary ties in sort table order.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -3645,6 +3935,11 @@
     "Input": "sort-table",
     "Output": "array",
     "Summary": "Returns the last count rows and all comparer-equal boundary ties in sort table order.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -3668,6 +3963,11 @@
     "Input": "array",
     "Output": "array",
     "Summary": "Stably sorts an array by one or more typed criteria while preserving original elements.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "whole-input",
+      "Ordering": "reordered"
+    },
     "Parameters": [
       { "Name": "criteria", "Type": "expression", "Optional": false, "Variadic": true, "MinimumCardinality": 1, "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers." }
     ],
@@ -3681,6 +3981,11 @@
     "Input": "sort-table",
     "Output": "grouping",
     "Summary": "Groups original sort table row values by their one-based dense rank without gaps.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Behavior": "Uses the same stable ordering and adjacent comparer-based tie detection as rank. Each changed key increments the rank by one. Returns original values in stable order and an empty grouping for empty input. Invalid comparer results fail as for sort."
   },
@@ -3692,6 +3997,11 @@
     "Input": "sort-table",
     "Output": "grouping",
     "Summary": "Groups original sort table row values by their one-based SQL rank.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Behavior": "Rows use the same stable lexicographic ordering and comparer failure contract as sort. Adjacent ordered keys that compare equal share a rank; each changed key starts a rank equal to its one-based row position, leaving gaps after ties. Groups appear in ascending rank order and retain stable original-value order. Empty input returns an empty grouping. Ranking assumes a coherent comparer relation with transitive comparison equality; invalid relations are not normalized."
   },
@@ -3703,6 +4013,11 @@
     "Input": "sort-table",
     "Output": "array",
     "Summary": "Stably sorts a normalized sort table and returns its original row values.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "whole-input",
+      "Ordering": "reordered"
+    },
     "Parameters": [],
     "Behavior": "Rows are compared lexicographically by headers. Null placement is resolved before invoking a comparer; descending direction reverses only non-equal ordering results. Comparers are invoked only for two non-null values and must return a non-null ordering value. Equal keys preserve original row order."
   },
@@ -4180,6 +4495,11 @@
     "Input": "tuple",
     "Output": "record",
     "Summary": "Returns a flat record by assigning one positional label to each tuple item and qualifying every field expanded from a record item.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "names",
@@ -4217,6 +4537,11 @@
     "Input": "tuple",
     "Output": "record",
     "Summary": "Returns a flat record whose expanded record fields receive positional labels only when their unqualified names conflict.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "names",
@@ -4332,6 +4657,11 @@
     "Input": "array",
     "Output": "grouping",
     "Summary": "Groups pairs by structurally equal keys while preserving first-seen group and value order.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "{(\"BE\" => \"Alice\"), (\"FR\" => \"Charlie\"), (\"BE\" => \"Bob\")} | group → #{(\"BE\" => {\"Alice\", \"Bob\"}), (\"FR\" => {\"Charlie\"})}",
@@ -4347,6 +4677,11 @@
     "Output": "array",
     "Summary": "Converts selected present record fields into rows, preserving retained fields and source order.",
     "Behavior": "Removes all selected fields from each source record and emits one row per present selected field in selection order. Retained fields keep their order, followed by name-field and value-field. Explicit nulls produce rows; absent fields do not. Empty input or selection returns an empty array. Source items must be records. Selected names must be distinct text values; output names must be non-null and distinct. Output names may reuse selected names but must not collide with retained fields; conflicts use the from-pairs duplicate-field diagnostic. Names are case-sensitive. This is the tabular counterpart of pivot, subject to its aggregation and field-name coercion. Unlike expand, which flattens nested records, unpivot reshapes fields into rows. Like flat-map, it is a one-to-many transformation.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "fields",
@@ -4400,6 +4735,11 @@
     "Output": "array",
     "Summary": "Groups values by row and column, applies a grouping summary, and reshapes the cells into records.",
     "Behavior": "Equivalent to grouping by each row dimension followed by column, applying summary, nesting, and converting the innermost dictionaries through from-pairs with row fields prepended. The row must be a direct field selector such as .country or a nonempty tuple of direct field selectors such as T(.country, .category). Tuple positions become separate named row dimensions in declaration order; computed, unnamed, spread, or duplicate row dimensions fail during binding. Arrays and records selected as row fields remain single structural keys. Tuple-valued individual row fields and tuple-valued columns fail during evaluation. The summary must return a dictionary preserving every generated composite key; incompatible output fails during evaluation. Row and column order follow the summary dictionary and nest insertion order. Missing combinations produce absent fields. Column keys use from-pairs text coercion; uncoercible keys, duplicate coerced names, and collisions with any row field fail during evaluation.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "row",
@@ -4454,6 +4794,11 @@
     "Input": "array",
     "Output": "grouping",
     "Summary": "Groups input values by keys calculated from one or more expressions.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expressions",
@@ -4486,6 +4831,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Removes groups whose value collection contains no items.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Examples": [
       "#{(\"BE\" => {}), (\"FR\" => {15})} | drop-empty-groups → #{(\"FR\" => {15})}",
@@ -4502,6 +4852,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Keeps whole groups whose group-level predicate evaluates to true.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "predicate",
@@ -4565,6 +4920,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Transforms each group's value collection while preserving its key and position.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -8162,6 +8522,11 @@
     "Input": "array",
     "Output": "any",
     "Summary": "Returns the original source element whose expression result is smallest. Preserves the first match on ties and skips null criteria. Returns `null` for empty arrays, all-null criteria, or non-array input.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -8194,6 +8559,11 @@
     "Input": "array",
     "Output": "any",
     "Summary": "Returns the original source element whose expression result is greatest. Preserves the first match on ties and skips null criteria. Returns `null` for empty arrays, all-null criteria, or non-array input.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -8226,6 +8596,11 @@
     "Input": "array",
     "Output": "any",
     "Summary": "Returns the original source element whose expression result is nearest to the numeric target. Preserves the first match on ties and skips null criteria. Returns `null` for empty arrays, all-null criteria, or non-array input.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -8322,6 +8697,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Refines each existing group by appending dimensions derived from its values.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expressions",
@@ -8356,6 +8736,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Derives keys from existing grouping keys and merges matching groups into one grouping level.",
+    "Semantics": {
+      "Cardinality": "partitioned",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "expression",
@@ -8388,6 +8773,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Expands a grouping into its original level and progressively coarser prefix levels.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Behavior": "Removes dimensions from right to left, retaining tuple arity. Scalar keys have one dimension and produce a scalar total key; arrays and records are scalar dimensions. Empty groupings remain empty, and zero-component tuples have only their original level. All keys must be scalar or all tuples of the same arity; mixed shapes fail with an argument error. Nested tuples remain single dimensions. The dedicated AllDimension.Instance value represents an aggregated dimension and has the source literal #all, distinct from null and the string \"#all\". Reading #all represents an already-aggregated dimension; it does not aggregate values or act as a wildcard. Keys already containing this marker as a dimension are rejected to prevent double-counting. Original groups come first, then successive prefix levels, ending with the grand total. Within each level, keys retain first-seen order and values concatenate in source-group order, including duplicates, nulls and empty groups. Values are never aggregated; compose with summarize to calculate totals. The equivalent grouping-sets pattern for three dimensions is grouping-sets(T(0, 1, 2), T(0, 1), tuple(0), tuple()).",
     "Examples": [
@@ -8407,6 +8797,11 @@
     "Input": "grouping",
     "Output": "grouping",
     "Summary": "Expands a grouping into all combinations of retained and aggregated dimensions.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [],
     "Behavior": "Generates all 2^N grouping levels for N dimensions, starting with the original level and ending with the grand total. Levels follow binary mask order, with the rightmost dimension changing fastest: for two dimensions, (a, b), (a, #all), (#all, b), then (#all, #all). The number of levels grows exponentially with the number of dimensions. Within each level, keys retain first-seen order and values concatenate in source-group order, including duplicates, nulls and empty groups. Values are never aggregated; compose with summarize to calculate totals.\n\nFor two dimensions, the equivalent explicit pattern is grouping-sets(T(0, 1), tuple(0), tuple(1), tuple()).\n\nUses the same AllDimension.Instance marker as roll-up, whose source literal is #all and which is distinct from null and the string \"#all\". Reading #all represents an already-aggregated dimension; it does not aggregate values or act as a wildcard. Scalar keys have one dimension and a scalar total key; arrays and records are scalar dimensions. Tuple arity is retained, with nested tuples treated as single dimensions. Empty groupings remain empty; zero-component tuples have only their original level. All keys must be scalar or all tuples of the same arity. Mixed shapes and keys already containing the aggregated marker as a dimension fail with an argument error, preventing ambiguous dimensions and double-counting.",
     "Examples": [
@@ -8431,6 +8826,11 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each record of the array supplied as pipeline input to this implode-inner call in source order, grouping by every non-selected field."
+    },
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
     },
     "Parameters": [
       {
@@ -8458,6 +8858,11 @@
     "Output": "grouping",
     "Summary": "Keeps up to count complete groups in descending ranking order.",
     "Behavior": "Ranks comparable scalar scores using the same numeric normalization and ordinal text ordering as min-by and max-by. Null scores sort last, as in normal descending sorting. Equal scores retain source-group order. Zero count returns an empty grouping without evaluating scores; negative counts fail with an argument error. Oversized counts return all groups in ranking order. Values are preserved without summarization.",
+    "Semantics": {
+      "Cardinality": "non-increasing",
+      "Dependency": "whole-input",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "count",
@@ -8500,6 +8905,11 @@
     "Output": "grouping",
     "Summary": "Expands a grouping into explicitly declared sets of retained key dimensions.",
     "Behavior": "Each set is a tuple of zero-based integer dimension positions: T(0, 1) retains the first two dimensions, tuple(0) retains only the first, and tuple() requests the grand total. Positions describe existing key components, not expressions evaluated against grouped values. Declaration order determines level order; component order stays unchanged. Equivalent sets, including reordered or repeated positions, are emitted once at their first declaration. No arguments returns an empty grouping. Spread accepts an array of set tuples in place. Named arguments are not supported. Negative, fractional, nonnumeric and out-of-range positions fail with an argument error; non-tuple sets also fail. For an empty grouping there are no dimensions, so only empty sets are valid. Scalar keys have one dimension at position zero; arrays and records are scalar dimensions, and nested tuples remain single dimensions. Keys must have consistent scalar/tuple shape and tuple arity and must not already contain #all as a dimension. Unretained dimensions use the same #all marker as roll-up and cube, distinct from real null keys. Within each level, keys retain first-seen order and values concatenate in source-group order, including duplicates, nulls and empty groups. Values are preserved without summarization.",
+    "Semantics": {
+      "Cardinality": "expanded",
+      "Dependency": "partition",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "values",

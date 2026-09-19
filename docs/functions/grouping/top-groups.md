@@ -35,6 +35,14 @@ Keeps up to count complete groups in descending ranking order.
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each group of the grouping supplied as pipeline input to this top-groups call, including empty groups, when count is positive.

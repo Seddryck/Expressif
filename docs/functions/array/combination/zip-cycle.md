@@ -31,9 +31,20 @@ Combines values from two arrays into two-element tuples until the longer array i
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the second array whose values form the second element of each tuple. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 
