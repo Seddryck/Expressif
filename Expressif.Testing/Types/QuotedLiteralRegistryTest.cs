@@ -8,15 +8,15 @@ namespace Expressif.Testing.Types;
 
 public class QuotedLiteralRegistryTest
 {
-    [TestCase("#\"2025-12-16\"", typeof(DateOnly), "date")]
-    [TestCase("#\"2025-12-16T14:30:00\"", typeof(DateTime), "datetime")]
-    [TestCase("#\"14:30:00\"", typeof(TimeOnly), "time")]
-    [TestCase("#\"2025-12-16\":date", typeof(DateOnly), "date")]
-    [TestCase("#\"2025-12-16T14:30:00\":datetime", typeof(DateTime), "datetime")]
-    [TestCase("#\"14:30:00\":time", typeof(TimeOnly), "time")]
-    [TestCase("#\"2025-12-16 14:30:00\":date-time", typeof(DateTime), "datetime")]
+    [TestCase("#\"2025-12-16\"", typeof(DateOnly), "date", false)]
+    [TestCase("#\"2025-12-16T14:30:00\"", typeof(DateTime), "datetime", false)]
+    [TestCase("#\"14:30:00\"", typeof(TimeOnly), "time", false)]
+    [TestCase("#\"2025-12-16\":date", typeof(DateOnly), "date", true)]
+    [TestCase("#\"2025-12-16T14:30:00\":datetime", typeof(DateTime), "datetime", true)]
+    [TestCase("#\"14:30:00\":time", typeof(TimeOnly), "time", true)]
+    [TestCase("#\"2025-12-16 14:30:00\":date-time", typeof(DateTime), "datetime", true)]
     public void Binder_BuiltInQuotedLiteral_ReturnsSelectedTypedValue(
-        string source, Type runtimeType, string typeName)
+        string source, Type runtimeType, string typeName, bool isTypeExplicit)
     {
         var parameter = Bind(source, QuotedLiteralRegistry.Default);
 
@@ -24,6 +24,7 @@ public class QuotedLiteralRegistryTest
         {
             Assert.That(parameter.Value, Is.TypeOf(runtimeType));
             Assert.That(parameter.LiteralType, Is.EqualTo(typeName));
+            Assert.That(parameter.IsLiteralTypeExplicit, Is.EqualTo(isTypeExplicit));
         });
     }
 
@@ -86,7 +87,7 @@ public class QuotedLiteralRegistryTest
                 new TestParser("text", typeof(string), value => value),
             ]);
         var serializer = new ParameterSerializer(registry);
-        var original = new LiteralParameter(new DateOnly(2025, 12, 16), "date");
+        var original = new LiteralParameter(new DateOnly(2025, 12, 16), "date", IsLiteralTypeExplicit: true);
 
         var serialized = serializer.Serialize(original);
         var roundTrip = Bind(serialized, registry);
@@ -96,6 +97,21 @@ public class QuotedLiteralRegistryTest
             Assert.That(serialized, Is.EqualTo("#\"2025-12-16\":date"));
             Assert.That(roundTrip, Is.EqualTo(original));
         });
+    }
+
+    [Test]
+    public void Serialize_ImplicitBuiltInType_AddsSuffixWhenRepresentationIsAmbiguous()
+    {
+        var registry = new QuotedLiteralRegistry(
+            [
+                new DateParser(),
+                new TestParser("text", typeof(string), value => value),
+            ]);
+        var serializer = new ParameterSerializer(registry);
+
+        var serialized = serializer.Serialize(new LiteralParameter(new DateOnly(2025, 12, 16), "date"));
+
+        Assert.That(serialized, Is.EqualTo("#\"2025-12-16\":date"));
     }
 
     private static LiteralParameter Bind(string source, QuotedLiteralRegistry registry)
