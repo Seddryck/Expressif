@@ -24,12 +24,13 @@ Common values can be written directly in an expression.
 | ordering | `#less`, `#equal`, or `#greater` | `#less` |
 | null | `#null` | `#null` |
 | aggregated dimension | `#all` | `#all` |
-| date | `#"yyyy-MM-dd":date` | `#"2025-12-16":date` |
-| datetime | `#"yyyy-MM-ddTHH:mm:ss":datetime` | `#"2025-12-16T14:30:00":datetime` |
-| time | `#"HH:mm:ss":time` | `#"14:30:00":time` |
+| date | `#"yyyy-MM-dd"` or `#"yyyy-MM-dd":date` | `#"2025-12-16"` |
+| datetime | `#"yyyy-MM-ddTHH:mm:ss"` or `#"yyyy-MM-ddTHH:mm:ss":datetime` | `#"2025-12-16T14:30:00"` |
+| time | `#"HH:mm:ss"` or `#"HH:mm:ss":time` | `#"14:30:00"` |
 | duration | `#"P[nD][T[nH][nM][nS]]"` | `#"P2DT3H30M"` |
 
 Numeric and temporal literals use invariant notation: the decimal separator is always `.`, and temporal components use the formats shown above. Quotation marks are part of the syntax for text and temporal literals.
+The `:date`, `:datetime`, and `:time` suffixes are optional for these built-in formats. An explicit suffix is preserved when an expression is serialized; custom or ambiguous quoted literals require a suffix.
 
 ## Scalar types
 

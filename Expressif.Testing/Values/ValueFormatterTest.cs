@@ -65,7 +65,7 @@ public class ValueFormatterTest
 
         Assert.That(
             ValueFormatter.Format(array),
-            Is.EqualTo("{#true, \"Ada\", 10.5, #\"2026-08-28\":date, #\"2026-08-28T14:30:45\":datetime}"));
+            Is.EqualTo("{#true, \"Ada\", 10.5, #\"2026-08-28\", #\"2026-08-28T14:30:45\"}"));
     }
 
     [Test]
@@ -75,7 +75,7 @@ public class ValueFormatterTest
 
         Assert.That(
             ValueFormatter.Format(tuple),
-            Is.EqualTo("T(#true, \"Ada\", 10.5, #\"2026-08-28\":date, #\"2026-08-28T14:30:45\":datetime)"));
+            Is.EqualTo("T(#true, \"Ada\", 10.5, #\"2026-08-28\", #\"2026-08-28T14:30:45\")"));
     }
 
     [Test]
@@ -90,7 +90,23 @@ public class ValueFormatterTest
 
         Assert.That(
             ValueFormatter.Format(record),
-            Is.EqualTo("{boolean := #true, string := \"Ada\", numeric := 10.5, date := #\"2026-08-28\":date, datetime := #\"2026-08-28T14:30:45\":datetime}"));
+            Is.EqualTo("{boolean := #true, string := \"Ada\", numeric := 10.5, date := #\"2026-08-28\", datetime := #\"2026-08-28T14:30:45\"}"));
+    }
+
+    [Test]
+    public void Format_BuiltInQuotedLiterals_CanIncludeTypeSuffixes()
+    {
+        var values = new object[]
+        {
+            new DateOnly(2026, 8, 28),
+            new DateTime(2026, 8, 28, 14, 30, 45),
+            new TimeOnly(14, 30, 45),
+        };
+        var options = new ValueFormattingOptions { IncludeBuiltInQuotedLiteralTypeSuffixes = true };
+
+        Assert.That(
+            ValueFormatter.Format(values, options),
+            Is.EqualTo("{#\"2026-08-28\":date, #\"2026-08-28T14:30:45\":datetime, #\"14:30:45\":time}"));
     }
 
     [Test]

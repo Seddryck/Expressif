@@ -860,7 +860,7 @@ public sealed class ExpressifBinder
             ])
         {
             var literal = quotedLiteralRegistry.Parse(representation.Value, type.Value);
-            return new LiteralParameter(literal.Value, literal.TypeName);
+            return new LiteralParameter(literal.Value, literal.TypeName, !string.IsNullOrEmpty(type.Value));
         }
         const string marker = "__expressif_internal_vector_literal__";
         const string markerEnd = "__expressif_internal_vector_literal_end__";

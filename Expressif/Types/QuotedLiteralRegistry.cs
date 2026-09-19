@@ -46,7 +46,7 @@ public sealed class QuotedLiteralRegistry
         };
     }
 
-    public string Serialize(object value, string? typeName = null)
+    public string Serialize(object value, string? typeName = null, bool includeTypeSuffix = true)
     {
         ArgumentNullException.ThrowIfNull(value);
         var parser = string.IsNullOrEmpty(typeName)
@@ -57,11 +57,30 @@ public sealed class QuotedLiteralRegistry
         if (!parser.RuntimeType.IsInstanceOfType(value))
             throw new ArgumentException($"Value is not compatible with quoted literal type ':{parser.TypeName}'.", nameof(value));
 
-        return $"#\"{RecordSyntax.EscapeDoubleQuoted(parser.Format(value))}\":{parser.TypeName}";
+        var suffix = includeTypeSuffix ? $":{parser.TypeName}" : string.Empty;
+        return $"#\"{RecordSyntax.EscapeDoubleQuoted(parser.Format(value))}\"{suffix}";
     }
 
     public bool CanSerialize(object value)
         => parsers.Values.Any(parser => parser.RuntimeType == value.GetType());
+
+    internal bool CanInferWithoutTypeSuffix(object value, string? typeName = null)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        var selected = string.IsNullOrEmpty(typeName)
+            ? parsers.Values.SingleOrDefault(candidate => candidate.RuntimeType == value.GetType())
+            : ResolveParser(typeName);
+        if (selected is null)
+            return false;
+
+        var representation = selected.Format(value);
+        var matches = parsers.Values
+            .Where(parser => parser.TryParse(representation, out _))
+            .Take(2)
+            .ToArray();
+        return matches.Length == 1
+            && string.Equals(matches[0].TypeName, selected.TypeName, StringComparison.OrdinalIgnoreCase);
+    }
 
     private (object? Value, string TypeName) ParseExplicit(string representation, string typeName)
     {
