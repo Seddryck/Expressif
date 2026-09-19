@@ -2,9 +2,9 @@ using Expressif.Functions;
 
 namespace Expressif.Predicates;
 
-internal sealed class BooleanFunctionPredicate(IFunction function, bool preserveCurrentInput = false) : IPredicate
+internal sealed class BooleanFunctionPredicate(IFunction function, bool preserveCurrentInput = false) : IPredicate, IInputBoundFunction
 {
-    internal bool IsInputBound => function is InputBoundFunction;
+    public bool IsInputBound => function is IInputBoundFunction { IsInputBound: true };
 
     public bool Evaluate(object? value)
     {

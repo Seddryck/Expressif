@@ -22,7 +22,7 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(MSBuildProjectName)' == 'Expressif' Or '$(MSBuildProjectName)' == 'Expressif.Cli' Or '$(MSBuildProjectName)' == 'Expressif.Testing' Or '$(MSBuildProjectName)' == 'Expressif.Cli.Tests' Or '$(MSBuildProjectName)' == 'Expressif.Serialization' Or '$(MSBuildProjectName)' == 'Expressif.Serialization.Testing' Or '$(MSBuildProjectName)' == 'Expressif.OpenLineage' Or '$(MSBuildProjectName)' == 'Expressif.OpenLineage.Testing'">
+	<ItemGroup Condition="'$(MSBuildProjectName)' == 'Expressif' Or '$(MSBuildProjectName)' == 'Expressif.Core' Or '$(MSBuildProjectName)' == 'Expressif.Library' Or '$(MSBuildProjectName)' == 'Expressif.Cli' Or '$(MSBuildProjectName)' == 'Expressif.Testing' Or '$(MSBuildProjectName)' == 'Expressif.Cli.Tests' Or '$(MSBuildProjectName)' == 'Expressif.Serialization' Or '$(MSBuildProjectName)' == 'Expressif.Serialization.Testing' Or '$(MSBuildProjectName)' == 'Expressif.OpenLineage' Or '$(MSBuildProjectName)' == 'Expressif.OpenLineage.Testing'">
 		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

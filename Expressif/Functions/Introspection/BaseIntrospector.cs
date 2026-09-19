@@ -46,25 +46,3 @@ public abstract class BaseIntrospector
                             parameters.First().Summary);
                     });
 }
-
-public class AssemblyTypesProbe : ITypesProbe
-{
-    public Assembly[] Assemblies { get; } = [typeof(Expression).Assembly];
-
-    public AssemblyTypesProbe()
-    { }
-
-    public AssemblyTypesProbe(Assembly[] assemblies)
-        => Assemblies = assemblies;
-
-    public virtual IEnumerable<Type> Locate()
-        => Assemblies.Aggregate(
-                System.Array.Empty<Type>(), (types, asm)
-                => types.Concat(asm.GetTypes().Where(x => x.IsClass && !x.IsAbstract)).ToArray()
-            );
-}
-
-public interface ITypesProbe
-{
-    IEnumerable<Type> Locate();
-}

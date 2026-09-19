@@ -9,7 +9,7 @@ namespace Expressif.Accumulators.Introspection;
 public class AccumulatorIntrospector : BaseIntrospector
 {
     public AccumulatorIntrospector()
-        : this(new AssemblyTypesProbe()) { }
+        : this(new AssemblyTypesProbe([typeof(AccumulatorIntrospector).Assembly])) { }
     public AccumulatorIntrospector(Assembly[] assemblies)
         : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
     public AccumulatorIntrospector(ITypesProbe probe)

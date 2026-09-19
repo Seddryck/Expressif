@@ -64,7 +64,7 @@ See the language guide for [expressions](https://seddryck.github.io/Expressif/la
 
 ### .NET SDK
 
-The `Expressif` NuGet package targets .NET 8, .NET 9, and .NET 10.
+The `Expressif` NuGet package targets .NET 8, .NET 9, and .NET 10. It is the recommended umbrella package and installs both `Expressif.Core` and the official `Expressif.Library` vocabulary.
 
 ```bash
 dotnet add package Expressif
@@ -80,6 +80,8 @@ var result = expression.Evaluate("  Alice  ");
 ```
 
 The .NET SDK also provides APIs for predications, typed builders, runtime context, and serialization. Continue with the [.NET SDK guide](https://seddryck.github.io/Expressif/dotnet-sdk/).
+
+Advanced hosts that supply their own vocabulary can reference `Expressif.Core` without installing the official library. `Expressif`, `Expressif.Core`, and `Expressif.Library` are released in lockstep and should always use the same version. See the [installation guide](https://seddryck.github.io/Expressif/dotnet-sdk/installation/) for the package responsibilities and dependency graph.
 
 ### Command-line interface
 

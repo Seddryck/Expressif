@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Expressif.Core</PackageId>
+    <AssemblyName>Expressif.Core</AssemblyName>
+    <RootNamespace>Expressif</RootNamespace>
+    <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
+    <PackageTags>expression-language;runtime;variable-binding;extension-points</PackageTags>
+    <Description>Core language, binding, evaluation, and extension contracts for Expressif.</Description>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Expressif.Syntax" Version="0.47.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Expressif.Library" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Expressif\**\*.cs"
+             Exclude="..\Expressif\bin\**;..\Expressif\obj\**;
+                      ..\Expressif\Accumulators\**;
+                      ..\Expressif\Bindings\ExpressionBinder.cs;..\Expressif\Bindings\ExpressifBinder.cs;..\Expressif\Bindings\LegacyTupleBindingRules.cs;
+                      ..\Expressif\Functions\Array\**;..\Expressif\Functions\Catalog\**;..\Expressif\Functions\Coercions\**;..\Expressif\Functions\Dictionary\**;..\Expressif\Functions\Flow\**;..\Expressif\Functions\Grouping\**;..\Expressif\Functions\Introspection\**;..\Expressif\Functions\IO\**;..\Expressif\Functions\Numeric\**;..\Expressif\Functions\Pair\**;..\Expressif\Functions\Record\**;..\Expressif\Functions\Sorting\**;..\Expressif\Functions\Special\**;..\Expressif\Functions\Structure\**;..\Expressif\Functions\Temporal\**;..\Expressif\Functions\Text\**;..\Expressif\Functions\Tuple\**;..\Expressif\Functions\Vector\**;
+                      ..\Expressif\Functions\BaseExpressionFactory.cs;..\Expressif\Functions\FunctionConstruction.cs;..\Expressif\Functions\FunctionFactory.cs;..\Expressif\Functions\FunctionFactory.TupleBinding.cs;..\Expressif\Functions\FunctionTypeMapper.cs;..\Expressif\Functions\TupleBindingCapabilities.cs;..\Expressif\Functions\ValueSpreadAware.cs;
+                      ..\Expressif\Predicates\Array\**;..\Expressif\Predicates\Boolean\**;..\Expressif\Predicates\Introspection\**;..\Expressif\Predicates\Numeric\**;..\Expressif\Predicates\Operators\**;..\Expressif\Predicates\Record\**;..\Expressif\Predicates\Special\**;..\Expressif\Predicates\Temporal\**;..\Expressif\Predicates\Text\**;..\Expressif\Predicates\Tuple\**;
+                      ..\Expressif\Predicates\BooleanFunctionPredicate.cs;..\Expressif\Predicates\PredicateCombiner.cs;..\Expressif\Predicates\PredicationFactory.cs;..\Expressif\Predicates\PredicateTypeMapper.cs;
+                      ..\Expressif\Semantics\**;..\Expressif\Serializers\**;
+                      ..\Expressif\Values\Casters\ArrayCaster.cs;..\Expressif\Values\Casters\Caster.cs;..\Expressif\Values\IntervalBuilder.cs;..\Expressif\Values\ParameterValueConverter.cs;
+                      ..\Expressif\Expression.cs;..\Expressif\ExpressionBuilder.cs;..\Expressif\ExpressionFactory.cs;..\Expressif\Predication.cs;..\Expressif\PredicationBuilder.cs" />
+    <Compile Include="..\Expressif\Accumulators\AccumulatorAliasLifecycleAttribute.cs" />
+    <Compile Include="..\Expressif\Accumulators\AccumulatorAttribute.cs" />
+    <Compile Include="..\Expressif\Accumulators\BaseAccumulator.cs" />
+    <Compile Include="..\Expressif\Accumulators\IAccumulator.cs" />
+    <Compile Include="..\Expressif\Semantics\ScopeRules.cs" />
+    <Compile Include="..\Expressif\Semantics\FieldReferenceKind.cs" />
+  </ItemGroup>
+</Project>

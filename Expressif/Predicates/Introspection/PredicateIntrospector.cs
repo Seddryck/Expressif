@@ -12,7 +12,7 @@ namespace Expressif.Predicates.Introspection;
 public class PredicateIntrospector : BaseIntrospector
 {
     public PredicateIntrospector()
-        : this(new AssemblyTypesProbe()) { }
+        : this(new AssemblyTypesProbe([typeof(PredicateIntrospector).Assembly])) { }
     public PredicateIntrospector(Assembly[] assemblies)
         : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
     public PredicateIntrospector(ITypesProbe probe)
