@@ -47,7 +47,18 @@ public sealed record PlannerFunctionDescriptor(
     string Name,
     string Input,
     string Output,
-    FunctionTraversalDocumentation? Traversal = null);
+    PlannerTraversalDescriptor? Traversal = null,
+    PlannerSemanticsDescriptor? Semantics = null);
+
+/// <summary>
+/// The machine-readable traversal contract of a planned operator.
+/// </summary>
+public sealed record PlannerTraversalDescriptor(string Source, string Selection);
+
+/// <summary>
+/// The machine-readable structural effect of a planned operator.
+/// </summary>
+public sealed record PlannerSemanticsDescriptor(string Cardinality, string Dependency, string Ordering);
 
 /// <summary>
 /// The planner-relevant part of a catalog parameter.
@@ -58,4 +69,12 @@ public sealed record PlannerParameterDescriptor(
     bool Optional,
     bool Variadic,
     int MinimumCardinality,
-    ParameterEvaluationDocumentation? Evaluation = null);
+    PlannerEvaluationDescriptor? Evaluation = null);
+
+/// <summary>
+/// The machine-readable evaluation contract of a planned argument.
+/// </summary>
+public sealed record PlannerEvaluationDescriptor(
+    string Frequency,
+    string? Source = null,
+    string? Context = null);

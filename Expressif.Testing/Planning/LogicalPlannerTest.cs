@@ -68,6 +68,22 @@ public class LogicalPlannerTest
     }
 
     [Test]
+    public void Plan_StructuralOperator_CopiesMachineReadableSemanticsWithoutCatalogProse()
+    {
+        var call = SingleCall("map(upper)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Function.Semantics,
+                Is.EqualTo(new PlannerSemanticsDescriptor("preserved", "per-element", "preserved")));
+            Assert.That(call.Function.Traversal,
+                Is.EqualTo(new PlannerTraversalDescriptor("incoming", "array-element")));
+            Assert.That(call.Arguments.Single().Parameter.Evaluation,
+                Is.EqualTo(new PlannerEvaluationDescriptor("per-element", Context: "traversal")));
+        });
+    }
+
+    [Test]
     public void Plan_NamedArguments_AreOrderedByCanonicalParameters()
     {
         var call = SingleCall("add(times := 2, value := 5)");
