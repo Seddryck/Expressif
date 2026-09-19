@@ -1120,6 +1120,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
@@ -1179,6 +1182,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
@@ -1237,6 +1243,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
@@ -1295,6 +1304,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Variadic": false,
         "MinimumCardinality": 0,
         "Summary": "Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.",
@@ -2809,6 +2821,9 @@
         "Name": "label",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "An optional qualifier for every expanded field. Omission derives the qualifier from a direct field selector and qualifies only conflicts.",
         "Evaluation": {
           "Frequency": "once",
@@ -3484,6 +3499,10 @@
         "Name": "type",
         "Type": "type",
         "Optional": true,
+        "Omission": {
+          "Mode": "constant",
+          "Value": "text"
+        },
         "Summary": "The comparison domain; defaults to :text."
       }
     ],
@@ -4166,6 +4185,9 @@
         "Name": "names",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "One label for each tuple position, in positional order.",
@@ -4200,6 +4222,9 @@
         "Name": "names",
         "Type": "text",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "One label for each tuple position, in positional order.",
@@ -8480,6 +8505,9 @@
         "Name": "values",
         "Type": "tuple",
         "Optional": true,
+        "Omission": {
+          "Mode": "empty-variadic"
+        },
         "Variadic": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more tuples of zero-based key dimension positions to retain.",

@@ -385,7 +385,11 @@ foreach ($member in $members) {
                         throw "Library member '$memberName parameter omission' is missing 'Value'."
                     }
                     $hasConstantOmission = $true
-                    $omissionValue = ConvertTo-Json -InputObject $omission.Value -Compress -Depth 20
+                    $omissionValue = if ($parameterType -eq "type" -and $omission.Value -is [string]) {
+                        ":$($omission.Value)"
+                    } else {
+                        ConvertTo-Json -InputObject $omission.Value -Compress -Depth 20
+                    }
                 } elseif ($omissionMode -eq "environment-derived") {
                     Assert-RequiredProperty -InputObject $omission -PropertyName "Source" -MemberName "$memberName parameter omission"
                     $omissionSource = [string] $omission.Source
