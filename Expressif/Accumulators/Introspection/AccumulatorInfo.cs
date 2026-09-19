@@ -17,4 +17,9 @@ public record AccumulatorInfo
     public AccumulatorAliasLifecycleInfo[] DeprecatedAliases { get; init; } = [];
 }
 
-public sealed record AccumulatorAliasLifecycleInfo(string Name, string Replacement, string Message);
+public sealed record AccumulatorAliasLifecycleInfo(
+    string Name,
+    string Replacement,
+    string Message,
+    string? Sunset = null,
+    bool ReplacementIsEquivalent = true);

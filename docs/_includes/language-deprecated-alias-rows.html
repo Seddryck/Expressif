@@ -1,0 +1,27 @@
+{% for member in include.catalog %}
+  {% if member.IsPublic %}
+    {% assign member_scope = member.Scope | downcase %}
+    {% capture member_path %}/{{ include.kind_plural }}/{{ member_scope }}/{{ member.Name }}/{% endcapture %}
+    {% for alias in member.DeprecatedAliases %}
+      <tr data-kind="{{ include.kind | downcase }}" data-name="{{ alias.Name | escape }}" data-replacement="{{ alias.Replacement | escape }}" data-equivalent="{{ alias.ReplacementIsEquivalent }}" data-migration-notes="" data-sunset="{{ alias.Sunset | escape }}">
+        <td>{{ include.kind }}</td>
+        <td><a href="{{ member_path | relative_url }}"><code>{{ alias.Name }}</code></a></td>
+        <td><a href="{{ member_path | relative_url }}"><code>{{ alias.Replacement }}</code></a></td>
+        <td>
+          {% if alias.ReplacementIsEquivalent %}
+            Yes — same implementation
+          {% else %}
+            No — review the replacement before migrating
+          {% endif %}
+        </td>
+        <td>
+          {% if alias.Sunset %}
+            Expressif {{ alias.Sunset }}
+          {% else %}
+            Not scheduled
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  {% endif %}
+{% endfor %}

@@ -6024,6 +6024,8 @@
     "Deprecated": true,
     "Replacement": "suffix",
     "Sunset": "3.0",
+    "ReplacementIsEquivalent": false,
+    "MigrationNotes": "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.",
     "Behavior": "Deprecated in favor of `suffix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix` preserves `null`. Use `null-to-empty | suffix(...)` to retain the existing behavior for null input.",
     "Parameters": [
       {
@@ -6055,6 +6057,8 @@
     "Deprecated": true,
     "Replacement": "suffix-new-line",
     "Sunset": "3.0",
+    "ReplacementIsEquivalent": false,
+    "MigrationNotes": "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.",
     "Behavior": "Deprecated in favor of `suffix-new-line` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-new-line` preserves `null`. Use `null-to-empty | suffix-new-line` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
@@ -6074,6 +6078,8 @@
     "Deprecated": true,
     "Replacement": "suffix-space",
     "Sunset": "3.0",
+    "ReplacementIsEquivalent": false,
+    "MigrationNotes": "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.",
     "Behavior": "Deprecated in favor of `suffix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-space` preserves `null`. Use `null-to-empty | suffix-space` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
@@ -6782,6 +6788,8 @@
     "Deprecated": true,
     "Replacement": "prefix",
     "Sunset": "3.0",
+    "ReplacementIsEquivalent": false,
+    "MigrationNotes": "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.",
     "Behavior": "Deprecated in favor of `prefix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix` preserves `null`. Use `null-to-empty | prefix(...)` to retain the existing behavior for null input.",
     "Parameters": [
       {
@@ -6813,6 +6821,8 @@
     "Deprecated": true,
     "Replacement": "prefix-new-line",
     "Sunset": "3.0",
+    "ReplacementIsEquivalent": false,
+    "MigrationNotes": "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.",
     "Behavior": "Deprecated in favor of `prefix-new-line` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix-new-line` preserves `null`. Use `null-to-empty | prefix-new-line` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [
@@ -6832,6 +6842,8 @@
     "Deprecated": true,
     "Replacement": "prefix-space",
     "Sunset": "3.0",
+    "ReplacementIsEquivalent": false,
+    "MigrationNotes": "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.",
     "Behavior": "Deprecated in favor of `prefix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix-space` preserves `null`. Use `null-to-empty | prefix-space` to retain the existing behavior for null input.",
     "Parameters": [],
     "Examples": [

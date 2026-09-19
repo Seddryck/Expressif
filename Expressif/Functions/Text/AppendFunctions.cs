@@ -101,9 +101,12 @@ public abstract class BaseSuffixIfMissing : BaseTextAffixIfMissing
 /// <summary>
 /// Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
-[FunctionLifecycle("suffix", "3.0")]
+[FunctionLifecycle("suffix", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
 public class Append : BaseTextAppendNonNullable
 {
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
     /// <param name="text">The text to append</param>
     public Append(Func<string> text)
         : base(text) { }
@@ -113,9 +116,12 @@ public class Append : BaseTextAppendNonNullable
 /// <summary>
 /// Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
-[FunctionLifecycle("prefix", "3.0")]
+[FunctionLifecycle("prefix", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
 public class Prepend : BaseTextAppendNonNullable
 {
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
     /// <param name="text">The text to prepend</param>
     public Prepend(Func<string> text)
         : base(text) { }
@@ -163,9 +169,12 @@ public class SuffixSpaceIfMissing : BaseSuffixIfMissing
 /// <summary>
 /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
-[FunctionLifecycle("suffix-space", "3.0")]
+[FunctionLifecycle("suffix-space", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
 public class AppendSpace : Append
 {
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
     public AppendSpace()
         : base(() => ((char)32).ToString()) { }
 }
@@ -173,9 +182,12 @@ public class AppendSpace : Append
 /// <summary>
 /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
-[FunctionLifecycle("prefix-space", "3.0")]
+[FunctionLifecycle("prefix-space", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
 public class PrependSpace : Prepend
 {
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
     public PrependSpace()
         : base(() => ((char)32).ToString()) { }
 }
@@ -223,9 +235,12 @@ public class SuffixNewLineIfMissing : BaseSuffixIfMissing
 /// <summary>
 /// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
-[FunctionLifecycle("suffix-new-line", "3.0")]
+[FunctionLifecycle("suffix-new-line", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
 public class AppendNewLine : Append
 {
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
     public AppendNewLine()
         : base(() => Environment.NewLine) { }
 }
@@ -233,9 +248,12 @@ public class AppendNewLine : Append
 /// <summary>
 /// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
 /// </summary>
-[FunctionLifecycle("prefix-new-line", "3.0")]
+[FunctionLifecycle("prefix-new-line", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
 public class PrependNewLine : Prepend
 {
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
     public PrependNewLine()
         : base(() => Environment.NewLine) { }
 }

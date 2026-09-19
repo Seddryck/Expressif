@@ -53,6 +53,8 @@ public class FunctionIntrospector : BaseIntrospector
                     , lifecycle?.Deprecated ?? false
                     , lifecycle?.Replacement
                     , lifecycle?.Sunset
+                    , lifecycle?.ReplacementIsEquivalent ?? false
+                    , lifecycle?.MigrationNotes
                 );
         }
     }

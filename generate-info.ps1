@@ -135,6 +135,17 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
                 Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters)
         }
 
+        if ($class -eq "function") {
+            foreach ($entry in $functions) {
+                $lifecycle = $described | Where-Object Name -EQ $entry.Name
+                if ($lifecycle.Deprecated) {
+                    foreach ($propertyName in @("Deprecated", "Replacement", "Sunset", "ReplacementIsEquivalent", "MigrationNotes")) {
+                        $entry | Add-Member -NotePropertyName $propertyName -NotePropertyValue $lifecycle.$propertyName
+                    }
+                }
+            }
+        }
+
         if ($class -eq "accumulator") {
             foreach ($entry in $functions) {
                 $aliases = @($described | Where-Object Name -EQ $entry.Name | ForEach-Object DeprecatedAliases)

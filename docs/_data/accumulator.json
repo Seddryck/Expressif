@@ -137,7 +137,9 @@
       {
         "Name": "implode",
         "Replacement": "concat",
-        "Message": "implode is deprecated; use concat instead."
+        "Message": "implode is deprecated; use concat instead.",
+        "Sunset": "3.0",
+        "ReplacementIsEquivalent": true
       }
     ],
     "Scope": "Text",
