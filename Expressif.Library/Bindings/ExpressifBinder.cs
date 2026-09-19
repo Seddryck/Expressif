@@ -1,14 +1,17 @@
 using Expressif.Syntax;
 using Expressif.Functions;
 using Expressif.Functions.Coercions;
+using Expressif.Predicates;
 using Expressif.Types;
 using Expressif.Values;
 
 namespace Expressif.Bindings;
 
-public sealed class ExpressifBinder
+public sealed class ExpressifBinder : IFunctionBindingContext
 {
-    private readonly FunctionTypeMapper functionTypeMapper = new();
+    private static readonly FunctionBinderRegistry BuiltInFunctionBinders = new(typeof(ExpressifBinder).Assembly);
+    private readonly BaseTypeMapper[] typeMappers;
+    private readonly FunctionBinderRegistry functionBinders;
     private readonly CoercionRegistry coercionRegistry = new();
     private bool inputBoundBody;
     public bool ApplyCoercion { get; }
@@ -16,10 +19,24 @@ public sealed class ExpressifBinder
     internal BindingSourceMap Sources { get; }
 
     public ExpressifBinder(bool applyCoercion = true)
-        : this(applyCoercion, false) { }
+        : this([new FunctionTypeMapper(), new PredicateTypeMapper()], BuiltInFunctionBinders, applyCoercion, false) { }
+
+    public ExpressifBinder(
+        IEnumerable<BaseTypeMapper> typeMappers,
+        FunctionBinderRegistry functionBinders,
+        bool applyCoercion = true)
+        : this(typeMappers, functionBinders, applyCoercion, false) { }
 
     internal ExpressifBinder(bool applyCoercion, bool trackSources)
-        => (ApplyCoercion, Sources) = (applyCoercion, new(trackSources));
+        : this([new FunctionTypeMapper(), new PredicateTypeMapper()], BuiltInFunctionBinders, applyCoercion, trackSources) { }
+
+    private ExpressifBinder(
+        IEnumerable<BaseTypeMapper> typeMappers,
+        FunctionBinderRegistry functionBinders,
+        bool applyCoercion,
+        bool trackSources)
+        => (this.typeMappers, this.functionBinders, ApplyCoercion, Sources) =
+            (typeMappers.ToArray(), functionBinders, applyCoercion, new(trackSources));
 
     public IRootExpression Bind(RootExpressionSyntax syntax)
     {
@@ -209,7 +226,7 @@ public sealed class ExpressifBinder
         outputType = null!;
         if (function.Syntax is FunctionSyntax.ScopedTupleProjectionShorthand or FunctionSyntax.InputFieldShorthand or FunctionSyntax.InputTupleProjectionShorthand)
             return false;
-        if (!functionTypeMapper.TryExecute(function.Name, out var implementationType))
+        if (!TryResolveFunctionType(function.Name, out var implementationType))
             return false;
 
         var contracts = implementationType.GetInterfaces()
@@ -340,231 +357,22 @@ public sealed class ExpressifBinder
     }
 
     private Function BindFunctionCore(FunctionCallSyntax syntax)
-        => syntax.Name.ToLowerInvariant() switch
-        {
-            "conditional-forward" or "conditional-backward" => BindConditionalFunction(syntax),
-            "switch" or "try" => BindControlFlowFunction(syntax),
-            "coerce" => BindCoerceFunction(syntax),
-            "sort-term" or "sortterm" => BindSortTermFunction(syntax),
-            "sort-by" or "rank-by" or "dense-rank-by" => BindSortByFunction(syntax),
-            "field" => BindFieldFunction(syntax),
-            "is-present" or "is-absent" => BindFieldFunction(syntax),
-            "record" => BindRecordFunction(syntax),
-            "with" => BindWithFunction(syntax),
-            "let" => BindLetFunction(syntax),
-            "array" or "text" or "tuple" or "grouping" or "grouping-sets" or "dictionary" or "nested-field" or "split-lengths" => Function.FromArguments(syntax.Name, BindSpreadFunctionArguments(syntax)),
-            _ => Function.FromArguments(syntax.Name, BindFunctionArguments(syntax)),
-        };
-
-    private Function BindSortByFunction(FunctionCallSyntax syntax)
     {
-        if (syntax.Arguments.Count == 0 || syntax.Arguments.Any(argument => argument is not PositionalArgumentSyntax))
+        return TryResolveFunctionType(syntax.Name, out var functionType)
+            && functionBinders.TryGet(functionType, out var binder)
+            ? binder.Bind(syntax, this)
+            : Function.FromArguments(syntax.Name, BindFunctionArguments(syntax));
+    }
+
+    private bool TryResolveFunctionType(string name, out Type functionType)
+    {
+        foreach (var mapper in typeMappers)
         {
-            throw new BindingException("Function 'sort-by' requires one or more positional typed criteria.");
+            if (mapper.TryExecute(name, out functionType))
+                return true;
         }
-        return new Function(syntax.Name.ToLowerInvariant(), syntax.Arguments
-            .Select(argument => BindSortCriterion(RequireArgumentValue(argument)))
-            .Cast<IParameter>()
-            .ToArray());
-    }
-
-    private SortCriterionParameter BindSortCriterion(ExpressionSyntax syntax)
-    {
-        BinaryExpressionSyntax? mapping = null;
-        IReadOnlyList<ExpressionSyntax> modifiers = [];
-        if (syntax is BinaryExpressionSyntax direct)
-        {
-            mapping = direct;
-        }
-        else if (syntax is OpenExpressionSyntax { Source: BinaryExpressionSyntax source } open)
-        {
-            mapping = source;
-            modifiers = open.Pipeline.ToArray();
-        }
-        else if (syntax is OpenExpressionSyntax { Source: null } openWithoutSource
-            && openWithoutSource.Pipeline.FirstOrDefault() is BinaryExpressionSyntax first)
-        {
-            mapping = first;
-            modifiers = openWithoutSource.Pipeline.Skip(1).ToArray();
-        }
-
-        if (mapping is not { Operator.Text: "->", Right: TypeLiteralSyntax type })
-            throw new BindingException("A sort-by criterion must use the form expression -> :type.");
-
-        var ascending = true;
-        var nullsFirst = false;
-        foreach (var modifier in modifiers)
-        {
-            if (modifier is not FunctionCallSyntax { Arguments.Count: 0 } call)
-                throw new BindingException("Sort-by criteria accept only direction and null-placement modifiers.");
-            switch (call.Name.ToLowerInvariant())
-            {
-                case "ascending" or "asc": ascending = true; break;
-                case "descending" or "desc": ascending = false; break;
-                case "nulls-first": nullsFirst = true; break;
-                case "nulls-last": nullsFirst = false; break;
-                default: throw new BindingException($"Unsupported sort-by modifier '{call.Name}'.");
-            }
-        }
-
-        return new SortCriterionParameter(BindArgument(mapping.Left), TypeRegistry.Resolve(type.Name), ascending, nullsFirst);
-    }
-
-    private Function BindSortTermFunction(FunctionCallSyntax syntax)
-    {
-        if (syntax.Arguments.Count is not (2 or 4))
-            throw new BindingException("Function 'sort-term' expects a value and a tuple-bound comparer reference.");
-        if (syntax.Arguments.Count == 4
-            && syntax.Arguments.Skip(2).Select(RequireArgumentValue).Any(value => value is not BooleanLiteralSyntax))
-            throw new BindingException("The canonical four-position SortTerm form requires literal direction and null-placement flags.");
-
-        var arguments = new List<FunctionArgument>();
-        for (var index = 0; index < syntax.Arguments.Count; index++)
-        {
-            var argument = syntax.Arguments[index];
-            var name = argument is NamedArgumentSyntax named ? named.Name.Value : null;
-            var value = RequireArgumentValue(argument);
-            var isComparer = name?.Equals("comparer", StringComparison.OrdinalIgnoreCase) == true
-                || (name is null && index == 1);
-            if (isComparer)
-            {
-                var reference = value switch
-                {
-                    TupleBindingShorthandSyntax direct => direct,
-                    OpenExpressionSyntax { Source: null, Pipeline: [TupleBindingShorthandSyntax nested] } => nested,
-                    _ => null,
-                };
-                if (reference is null || reference.Direction == TupleBindingDirection.Prefix)
-                    throw new BindingException("The comparer for 'sort-term' must be a tuple-bound callable reference such as compare-numeric~.");
-                arguments.Add(new FunctionArgument(name, new CallableReferenceParameter(reference.Name)));
-            }
-            else
-            {
-                arguments.Add(new FunctionArgument(name, BindArgument(value)));
-            }
-        }
-
-        return Function.FromArguments(syntax.Name, arguments.ToArray());
-    }
-
-    private Function BindConditionalFunction(FunctionCallSyntax syntax)
-    {
-        if (syntax.Arguments.Count != 2 || syntax.Arguments.Any(argument => argument is not PositionalArgumentSyntax))
-            throw new BindingException("A conditional operator requires two positional operands.");
-        return new Function(
-            syntax.Name,
-            syntax.Arguments.Select(argument => BindArgument(RequireArgumentValue(argument))).ToArray(),
-            syntax.Name.Equals("conditional-forward", StringComparison.OrdinalIgnoreCase) ? FunctionSyntax.ConditionalForward : FunctionSyntax.ConditionalBackward);
-    }
-
-    private Function BindControlFlowFunction(FunctionCallSyntax syntax)
-    {
-        var isTry = syntax.Name.Equals("try", StringComparison.OrdinalIgnoreCase);
-        if (syntax.Arguments.Count < (isTry ? 2 : 1))
-            throw new BindingException($"Function '{syntax.Name}' has too few branches.");
-        var branches = new List<IParameter>();
-        for (var index = 0; index < syntax.Arguments.Count; index++)
-        {
-            var argument = syntax.Arguments[index];
-            if (argument is NamedArgumentSyntax { Name.Value: "fallback" } fallback)
-            {
-                if (index == 0 || index != syntax.Arguments.Count - 1)
-                    throw new BindingException("A catch-all fallback must follow ordinary branches and be final.");
-                branches.Add(new ControlFlowBranchParameter(BindArgument(fallback.Value), null));
-            }
-            else if (argument is PositionalArgumentSyntax { Value: OpenExpressionSyntax { Source: null, Pipeline: [FunctionCallSyntax { Name: "branch", Arguments.Count: 2 } pair] } })
-            {
-                branches.Add(new ControlFlowBranchParameter(
-                    BindArgument(RequireArgumentValue(pair.Arguments[isTry ? 0 : 1])),
-                    BindArgument(RequireArgumentValue(pair.Arguments[isTry ? 1 : 0]))));
-            }
-            else
-            {
-                throw new BindingException("Invalid control-flow branch.");
-            }
-        }
-        return new Function(syntax.Name.ToLowerInvariant(), branches.ToArray());
-    }
-
-    private static Function BindCoerceFunction(FunctionCallSyntax syntax)
-    {
-        if (syntax.Arguments.Count == 0)
-            throw new BindingException("Function 'coerce' expects one or more coercion specifications.");
-        if (syntax.Arguments.Any(argument => argument is not PositionalArgumentSyntax))
-            throw new BindingException("Function 'coerce' accepts positional coercion specifications only.");
-
-        var specifications = syntax.Arguments
-            .Select(argument => BindCoercionSpecification(RequireArgumentValue(argument)))
-            .ToArray();
-        ValidateCoercionModes(specifications);
-        ValidateDuplicateCoercionSelectors(specifications);
-
-        return new Function(syntax.Name, specifications);
-    }
-
-    private static void ValidateCoercionModes(CoercionSpecificationParameter[] specifications)
-    {
-        if (specifications.OfType<PositionalCoercionParameter>().Any()
-            && specifications.Any(specification => specification is not PositionalCoercionParameter))
-            throw new BindingException("Function 'coerce' cannot mix positional type descriptors and selector mappings.");
-        if (specifications.Any(specification => specification is FieldCoercionParameter)
-            && specifications.Any(specification => specification is TupleCoercionParameter))
-            throw new BindingException("Function 'coerce' cannot mix field and tuple-position selector mappings.");
-    }
-
-    private static void ValidateDuplicateCoercionSelectors(CoercionSpecificationParameter[] specifications)
-    {
-        var duplicateField = specifications.OfType<FieldCoercionParameter>()
-            .GroupBy(specification => specification.Field, StringComparer.Ordinal)
-            .FirstOrDefault(group => group.Count() > 1);
-        if (duplicateField is not null)
-            throw new BindingException($"Duplicate coercion selector '{duplicateField.Key}'.");
-
-        var duplicatePosition = specifications.OfType<TupleCoercionParameter>()
-            .GroupBy(specification => specification.Position)
-            .FirstOrDefault(group => group.Count() > 1);
-        if (duplicatePosition is not null)
-            throw new BindingException($"Duplicate coercion selector '${duplicatePosition.Key}'.");
-    }
-
-    private static CoercionSpecificationParameter BindCoercionSpecification(ExpressionSyntax syntax)
-        => syntax switch
-        {
-            TypeLiteralSyntax type => new PositionalCoercionParameter(ResolveCoercionType(type)),
-            BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: TupleProjectionSyntax selector }
-                when selector.Direction is TupleProjectionDirection.FromStart && selector.RootDepth == 0
-                => new TupleCoercionParameter(selector.Index, ResolveCoercionType(type)),
-            BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: FunctionCallSyntax selector }
-                when selector.Arguments.Count == 0
-                => new FieldCoercionParameter(selector.Name, ResolveCoercionType(type)),
-            _ => throw new BindingException("A coerce specification must be ':type' or 'selector -> :type'."),
-        };
-
-    private static Type ResolveCoercionType(TypeLiteralSyntax syntax)
-    {
-        var targetType = RuntimeTypeRegistry.Resolve(syntax.Name);
-        return targetType
-            ?? throw new BindingException(
-                $"Expressif type ':{syntax.Name}' cannot be used as a coercion target.");
-    }
-
-    private FunctionArgument[] BindSpreadFunctionArguments(FunctionCallSyntax syntax)
-    {
-        var arguments = new List<FunctionArgument>();
-        foreach (var argument in syntax.Arguments)
-        {
-            if (argument is NamedArgumentSyntax)
-                throw new BindingException($"Function '{syntax.Name}' does not support named arguments.");
-
-            arguments.Add(new FunctionArgument(
-                null,
-                argument is SpreadArgumentSyntax { IsImplicitSpread: true }
-                    ? new IncomingValueParameter()
-                    : BindArgument(argument.Value
-                        ?? throw new BindingException("An explicit spread argument must include an expression.")),
-                argument is SpreadArgumentSyntax));
-        }
-        return arguments.ToArray();
+        functionType = null!;
+        return false;
     }
 
     private FunctionArgument[] BindFunctionArguments(FunctionCallSyntax syntax)
@@ -594,96 +402,14 @@ public sealed class ExpressifBinder
         return arguments.ToArray();
     }
 
-    private Function BindFieldFunction(FunctionCallSyntax syntax)
-    {
-        if (syntax.Arguments is [PositionalArgumentSyntax positional]
-            && TryGetBareFunctionName(positional.Value, out var fieldName))
-            return new Function(syntax.Name, [new LiteralParameter(fieldName)]);
-
-        return new Function(syntax.Name, syntax.Arguments.Select(argument => BindArgument(RequireArgumentValue(argument))).ToArray());
-    }
-
     private static ExpressionSyntax RequireArgumentValue(ArgumentSyntax argument)
         => argument.Value ?? throw new BindingException("A non-spread argument must include an expression.");
 
-    private static bool TryGetBareFunctionName(ExpressionSyntax syntax, out string name)
-    {
-        var function = syntax switch
-        {
-            FunctionCallSyntax { Arguments.Count: 0 } call => call,
-            OpenExpressionSyntax { Pipeline: [FunctionCallSyntax { Arguments.Count: 0 } call] } => call,
-            _ => null,
-        };
-        name = function?.Name ?? string.Empty;
-        return function is not null;
-    }
-
-    private Function BindRecordFunction(FunctionCallSyntax syntax)
-        => syntax.Arguments.Count == 0
-            ? new Function(syntax.Name, [])
-            : new Function(syntax.Name, [new RecordDefinitionParameter(syntax.Arguments.Select(BindRecordEntry).ToArray())]);
-
-    private Function BindLetFunction(FunctionCallSyntax syntax)
-    {
-        if (syntax.Arguments.Count == 0 || syntax.Arguments.Any(argument => argument is not NamedArgumentSyntax))
-            throw new BindingException("Function 'let' expects one or more named assignments.");
-        var names = new HashSet<string>(StringComparer.Ordinal);
-        var bindings = syntax.Arguments.Cast<NamedArgumentSyntax>().Select(named =>
-        {
-            if (named.Name.QuotingStyle is not null || named.Name.IsPrivate)
-                throw new BindingException("Let binding names must be unquoted value identifiers.");
-            // Reuse the explicit input-binding grammar for the shared value namespace.
-            try
-            {
-                ExpressifSyntax.Parse($"@_ | {named.Name.Value} :> identity");
-            }
-            catch (ExpressifSyntaxException exception)
-            {
-                throw new BindingException($"Invalid let binding name '{named.Name.Value}': {exception.Message}");
-            }
-            if (!names.Add(named.Name.Value))
-                throw new BindingException($"Duplicate let binding name '{named.Name.Value}'.");
-            return new LetBinding(named.Name.Value, BindArgument(named.Value));
-        }).ToArray();
-        return new Function(syntax.Name, [new LetDefinitionParameter(bindings)]);
-    }
-
-    private Function BindWithFunction(FunctionCallSyntax syntax)
-    {
-        if (syntax.Arguments.Count < 2
-            || syntax.Arguments[^1] is not PositionalArgumentSyntax { Value: { } body }
-            || syntax.Arguments.Take(syntax.Arguments.Count - 1).Any(argument => argument is not NamedArgumentSyntax))
-            throw new BindingException("Function 'with' expects one or more named projections followed by a body expression.");
-
-        var names = new HashSet<string>(StringComparer.Ordinal);
-        var projections = syntax.Arguments
-            .Take(syntax.Arguments.Count - 1)
-            .Cast<NamedArgumentSyntax>()
-            .Select(named =>
-            {
-                if (!names.Add(named.Name.Value))
-                    throw new BindingException($"Duplicate projection '{named.Name.Value}' in with(...).");
-                return new WithProjection(named.Name.Value, BindArgument(named.Value));
-            })
-            .ToArray();
-
-        return new Function(syntax.Name, [new WithDefinitionParameter(projections, BindArgument(body))]);
-    }
-
-    private IRecordDefinitionEntry BindRecordEntry(ArgumentSyntax syntax) => syntax switch
-    {
-        NamedArgumentSyntax named => new RecordNamedEntry(named.Name.Value, BindArgument(named.Value)),
-        SpreadArgumentSyntax spread => new RecordSpreadEntry(
-            spread.IsImplicitSpread
-                ? new IncomingValueParameter()
-                : BindArgument(spread.Value
-                    ?? throw new BindingException("An explicit record spread must include an expression."))),
-        PositionalArgumentSyntax { Value: IncomingValueSyntax } => new RecordSpreadEntry(new IncomingValueParameter()),
-        _ => throw Unsupported(syntax),
-    };
-
     private IParameter BindArgument(ExpressionSyntax syntax)
         => Sources.Add(BindArgumentCore(syntax), syntax);
+
+    IParameter IFunctionBindingContext.BindArgument(ExpressionSyntax syntax)
+        => BindArgument(syntax);
 
     private IParameter BindArgumentCore(ExpressionSyntax syntax) => syntax switch
     {

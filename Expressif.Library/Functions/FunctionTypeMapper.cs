@@ -24,6 +24,8 @@ public class FunctionTypeMapper : BaseTypeMapper
                     mapping.Add(alias, info.ImplementationType);
             }
         }
+        mapping.Add("conditional-forward", typeof(Flow.Conditional));
+        mapping.Add("conditional-backward", typeof(Flow.Conditional));
         return mapping;
     }
 }

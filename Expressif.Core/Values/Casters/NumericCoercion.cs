@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
+using Expressif.Values.Special;
 
 namespace Expressif.Values.Casters;
 
@@ -62,7 +63,7 @@ public static class NumericCoercion
             case float number: return TryToDecimal(number, out result);
             case double number: return TryToDecimal(number, out result);
             case decimal number: return TryToDecimal(number, out result);
-            default: return value is null ? Fail(out result) : new NumericCaster().TryCast(value, out result);
+            default: return IsMissing(value) ? Fail(out result) : new NumericCaster().TryCast(value, out result);
         }
     }
 
@@ -102,7 +103,7 @@ public static class NumericCoercion
             case float number: return TryToInt(number, out result);
             case double number: return TryToInt(number, out result);
             case decimal number: return TryToInt(number, out result);
-            default: return value is null ? Fail(out result) : new IntegerCaster().TryCast(value, out result);
+            default: return IsMissing(value) ? Fail(out result) : new IntegerCaster().TryCast(value, out result);
         }
     }
 
@@ -134,7 +135,7 @@ public static class NumericCoercion
             case float number: return TryToBoolean(number, out result);
             case double number: return TryToBoolean(number, out result);
             case decimal number: return TryToBoolean(number, out result);
-            default: return value is null ? Fail(out result) : new BooleanCaster().TryCast(value, out result);
+            default: return IsMissing(value) ? Fail(out result) : new BooleanCaster().TryCast(value, out result);
         }
     }
 
@@ -161,9 +162,21 @@ public static class NumericCoercion
             case float number: return TryToText(number, out result);
             case double number: return TryToText(number, out result);
             case decimal number: return TryToText(number, out result);
-            default: return value is null ? Fail(out result) : new TextCaster().TryCast(value, out result);
+            default: return IsMissing(value) ? Fail(out result) : new TextCaster().TryCast(value, out result);
         }
     }
+
+    private static bool IsMissing([NotNullWhen(false)] object? value)
+        => value is null
+            || (value is string text
+                ? IsSpecialKeyword(text)
+                : new Null().Equals(value)
+                    || new Empty().Equals(value)
+                    || new Whitespace().Equals(value));
+
+    private static bool IsSpecialKeyword(string value)
+        => new[] { new Null().Keyword, new Empty().Keyword, new Whitespace().Keyword }
+            .Contains(value.Trim(), StringComparer.OrdinalIgnoreCase);
 
     private static bool Fail<T>([MaybeNull] out T result)
     {
