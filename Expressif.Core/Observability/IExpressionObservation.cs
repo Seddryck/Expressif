@@ -13,5 +13,6 @@ public interface IExpressionObservation : IDisposable
     /// <summary>
     /// Signals that the operation failed.
     /// </summary>
+    /// <param name="exception">The exception raised by the observed operation.</param>
     void Fail(Exception exception) { }
 }
