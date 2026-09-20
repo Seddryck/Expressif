@@ -19,6 +19,8 @@ cardinality() → integer
 
 Returns the number of elements in the input array.
 
+
+
 ## Parameters
 
 

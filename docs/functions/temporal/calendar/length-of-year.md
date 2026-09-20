@@ -19,6 +19,8 @@ length-of-year() → integer
 
 Returns the count of days within the year of the dateTime value passed as the argument. If the argument is not a dateTime but an integer, returns count of days of the corresponding year. It returns 365 or 366 (for leap years).
 
+
+
 ## Parameters
 
 

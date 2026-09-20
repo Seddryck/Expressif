@@ -5344,7 +5344,7 @@
       "next-business-day",
       "add-business-days"
     ],
-    "Scope": "temporal",
+    "Scope": "temporal/calendar",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the date passed as the argument, counting forward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.",
@@ -5401,7 +5401,7 @@
     "Aliases": [
       "dateTime-to-next-weekday"
     ],
-    "Scope": "temporal",
+    "Scope": "temporal/calendar",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday, passed as a parameter, following the date passed as the argument.",
@@ -5428,7 +5428,7 @@
     "Aliases": [
       "dateTime-to-next-weekday-or-same"
     ],
-    "Scope": "temporal",
+    "Scope": "temporal/calendar",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter following the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
@@ -5472,7 +5472,7 @@
       "previous-business-day",
       "subtract-business-days"
     ],
-    "Scope": "temporal",
+    "Scope": "temporal/calendar",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the date passed as the argument, counting backward the business days (being weekdays different of Saturday and Sunday) specified as the parameter. It always returns a business day, as such if the date passed as the argument is a weekend, it considers that this date was the Friday before the argument value.",
@@ -5529,7 +5529,7 @@
     "Aliases": [
       "dateTime-to-previous-weekday"
     ],
-    "Scope": "temporal",
+    "Scope": "temporal/calendar",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument.",
@@ -5556,7 +5556,7 @@
     "Aliases": [
       "dateTime-to-previous-weekday-or-same"
     ],
-    "Scope": "temporal",
+    "Scope": "temporal/calendar",
     "Input": "date-time",
     "Output": "date",
     "Summary": "Returns a new date value corresponding to the occurrence of the weekday passed as a parameter preceding the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.",
@@ -8394,5 +8394,316 @@
     "Examples": [
       "#{(T(\"BE\", 2025) => {1}), (T(\"BE\", 2026) => {2})} | grouping-sets(tuple(0), tuple()) → #{(T(\"BE\", #all) => {1, 2}), (T(#all, #all) => {1, 2})}"
     ]
+  },
+  {
+    "Name": "common-prefix",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the longest prefix shared by all accumulated strings.",
+    "Behavior": "Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.",
+    "Parameters": [],
+    "Examples": [
+      "{\"interact\", \"internet\", \"internal\"} | fold(common-prefix) → \"inter\""
+    ],
+    "Kind": "accumulator"
+  },
+  {
+    "Name": "common-suffix",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the longest suffix shared by all accumulated strings.",
+    "Behavior": "Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.",
+    "Parameters": [],
+    "Examples": [
+      "{\"running\", \"walking\", \"talking\"} | fold(common-suffix) → \"ing\""
+    ],
+    "Kind": "accumulator"
+  },
+  {
+    "Name": "any",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Returns `true` when at least one accumulated boolean value is `true`.",
+    "Parameters": [],
+    "Examples": [
+      "{#false, #true, #false} | fold(any) → #true"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "closest",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Returns the first non-null input value with the smallest absolute distance to the target.",
+    "Behavior": "The result preserves the selected input value and its type. Numeric targets use subtract; other targets use duration-between. Compatibility and coercion follow those operations. Values whose distance is null are ignored. Ties preserve input order. A null target, empty input, or input without a valid distance returns null. Arithmetic overflow follows the underlying difference operation.",
+    "Parameters": [
+      {
+        "Name": "target",
+        "Type": "any",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the reference value used to measure numeric or temporal distance.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once before accumulation, using the incoming collection as its context. The result is reused for every comparison."
+        }
+      }
+    ],
+    "Examples": [
+      "{10, 30, 50} | closest(32) → 30",
+      "{30, 10} | closest(20) → 30",
+      "{#null, 10, 30} | closest(20) → 10"
+    ],
+    "Kind": "accumulator"
+  },
+  {
+    "Name": "count",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Counts the number of accumulated items, including `null` values.",
+    "Parameters": [],
+    "Examples": [
+      "{10, #null, 30} | fold(count) → 3"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "every",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Returns `true` only when every accumulated boolean value is `true`.",
+    "Parameters": [],
+    "Examples": [
+      "{#true, #true, #false} | fold(every) → #false"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "first",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Stores the first accumulated item and ignores all subsequent items.",
+    "Parameters": [],
+    "Examples": [
+      "{10, 20, 30} | fold(first) → 10"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "last",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Stores the most recently accumulated item.",
+    "Parameters": [],
+    "Examples": [
+      "{10, 20, 30} | fold(last) → 30"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "concat",
+    "IsPublic": true,
+    "Aliases": [
+      "implode"
+    ],
+    "DeprecatedAliases": [
+      {
+        "Name": "implode",
+        "Replacement": "concat",
+        "Message": "implode is deprecated; use concat instead.",
+        "Sunset": "3.0",
+        "ReplacementIsEquivalent": true
+      }
+    ],
+    "Scope": "text",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Combines accumulated text values in source order, inserting the separator only between values.",
+    "Behavior": "The separator defaults to the empty string. Empty input returns empty text. Empty values still participate in separator placement, and accumulating `null` is invalid.",
+    "Parameters": [
+      {
+        "Name": "separator",
+        "Type": "text",
+        "Optional": true,
+        "Default": "",
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the text inserted between consecutive accumulated values.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the enclosing context before accumulation. The result is reused between accumulated values."
+        }
+      }
+    ],
+    "Examples": [
+      "{\"a\", \"b\", \"c\"} | concat(\"-\") → \"a-b-c\""
+    ],
+    "Kind": "accumulator"
+  },
+  {
+    "Name": "max",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Tracks the greatest numeric value found during accumulation.",
+    "Parameters": [],
+    "Examples": [
+      "{10, 30, 20} | fold(max) → 30"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "min",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Tracks the smallest numeric value found during accumulation.",
+    "Parameters": [],
+    "Examples": [
+      "{10, 30, 20} | fold(min) → 10"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "reduce",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Combines array elements in source order by repeatedly evaluating an expression against the accumulated value and current element.",
+    "Behavior": "The combining expression receives a two-element tuple: `$0` is the accumulated value and `$1` is the current element. Without `initial`, the first element becomes the accumulated value and an empty array returns `null`. With `initial`, evaluation starts by combining it with the first element, and an empty array returns the initial value unchanged. `f~` invokes accumulator | f(current item); `~f` invokes current item | f(accumulator). Existing complete expressions and the normalization of an explicitly supplied leading $0 are preserved and are not deprecated.",
+    "Parameters": [
+      {
+        "Name": "operation",
+        "Type": "expression",
+        "Optional": false,
+        "Variadic": false,
+        "MinimumCardinality": 1,
+        "Summary": "Specifies the expression evaluated against each accumulated-value/current-element tuple.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "custom",
+          "Summary": "Evaluated once per visited element with T(accumulator, current item) as input and argument context; $0 is the accumulated value and $1 the current item. Tuple-valued items remain nested in their position."
+        }
+      },
+      {
+        "Name": "initial",
+        "Type": "any",
+        "Optional": true,
+        "Variadic": false,
+        "MinimumCardinality": 0,
+        "Summary": "Specifies the initial accumulated value and the result returned for an empty array.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "incoming",
+          "Summary": "Evaluated once before accumulation, using the incoming collection as its context."
+        }
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3, 4} | reduce(add($0, $1)) → 10",
+      "{1, 2, 3} | reduce(add($0, $1), 10) → 16",
+      "{20, 3, 2} | reduce(subtract~) → 15"
+    ],
+    "Traversal": {
+      "Source": "custom",
+      "Selection": "custom",
+      "Summary": "Visits the array supplied to this reduce call in source order, starting with the second element when initial is omitted and with the first when initial is supplied."
+    },
+    "Kind": "accumulator"
+  },
+  {
+    "Name": "sum",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Summary": "Computes the sum of all accumulated numeric values.",
+    "Parameters": [],
+    "Examples": [
+      "{10, 20, 30} | fold(sum) → 60"
+    ],
+    "Kind": "accumulator",
+    "Input": "array",
+    "Output": "any"
+  },
+  {
+    "Name": "only",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "array",
+    "Input": "array",
+    "Output": "any",
+    "Summary": "Forwards only items satisfying the predicate to the wrapped accumulator.",
+    "Behavior": "The input and final result types are inherited from the wrapped accumulator. Initialization, empty-input and no-match results, completion, and failures are unchanged. Null items are evaluated by the predicate like any other item. Predicate results must be Boolean. Matching items retain source order without materializing a filtered collection. Direct pipeline calls implicitly fold the wrapper.",
+    "Traversal": {
+      "Source": "incoming",
+      "Selection": "all",
+      "Summary": "Visits each item of the collection supplied as pipeline input to this only call in source order."
+    },
+    "Parameters": [
+      {
+        "Name": "predicate",
+        "Type": "predicate",
+        "Optional": false,
+        "Summary": "Specifies the predicate deciding which items participate.",
+        "Evaluation": {
+          "Frequency": "per-element",
+          "Context": "traversal",
+          "Summary": "Evaluated once per visited item, with that item as its context. Direct field selectors such as .active read that item; arguments within the predicate follow their normal evaluation rules."
+        },
+        "Variadic": false,
+        "MinimumCardinality": 1
+      },
+      {
+        "Name": "accumulator",
+        "Type": "accumulator",
+        "Optional": false,
+        "Summary": "Specifies the accumulator receiving matching items.",
+        "Evaluation": {
+          "Frequency": "custom",
+          "Source": "incoming",
+          "Summary": "Created once before accumulation, retaining the surrounding evaluation context. Receives only matching items; its arguments follow the wrapped accumulator evaluation rules."
+        },
+        "Variadic": false,
+        "MinimumCardinality": 1
+      }
+    ],
+    "Examples": [
+      "{1, 2, 3, 4} | only(is-even, count) → 2",
+      "{10, #null, 30} | fold(only(is-not-null, count)) → 2"
+    ],
+    "Kind": "accumulator"
   }
 ]

@@ -1,0 +1,140 @@
+using Expressif.Bindings;
+using Expressif.Values;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Expressif.Serialization;
+
+public class ParameterSerializer
+{
+    private FunctionSerializer? functionSerializer;
+
+    private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
+
+    public virtual string Serialize(IParameter parameter)
+    {
+        return parameter switch
+        {
+            ArrayParameter a => $"{{{string.Join(", ", a.Elements.Select(SerializeArrayElement))}}}",
+            TupleParameter t => $"T({string.Join(", ", t.Elements.Select(SerializeTupleElement))})",
+            VectorParameter v => $"V({string.Join(", ", v.Elements.Select(SerializeTupleElement))})",
+            RecordLiteralParameter r when r.Fields.Length == 0 => "{:}",
+            RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
+            LetDefinitionParameter definition => string.Join(", ", definition.Bindings.Select(binding => $"{binding.Name} := {Serialize(binding.Value)}")),
+            RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
+            OpenExpressionParameter { Expression: InputBoundExpression bound } => SerializeInputBound(bound),
+            OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
+            InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
+                when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
+                => SerializeFieldPath(input, property.Name, FunctionSyntax.RootFieldShorthand),
+            InputExpressionParameter { Expression.Parameter: EnclosingObjectPropertyParameter property } input
+                when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)
+                => SerializeFieldPath(input, property.Name, FunctionSyntax.EnclosingRootFieldShorthand),
+            InputExpressionParameter input => new ExpressionSerializer().Serialize(input.Expression),
+            IncomingValueParameter => "...",
+            QuotedLiteralParameter q => $"\"{RecordSyntax.EscapeDoubleQuoted(q.Value)}\"",
+            LiteralParameter l => SerializeLiteral(l.Value),
+            CallableReferenceParameter reference => $"{reference.Name}~",
+            VariableParameter v => $"@{v.Name}",
+            ObjectPropertyParameter op => $"^.{op.Name}",
+            EnclosingObjectPropertyParameter op => $"^^.{op.Name}",
+            ObjectIndexParameter oi => $"#{oi.Index}",
+            ScopedTupleProjectionParameter tp => $"{new string('^', tp.ScopeDepth)}${tp.Index}",
+            TupleProjectionParameter tp => tp.FromEnd ? $"$^{tp.Index}" : $"${tp.Index}",
+            IntervalParameter interval => SerializeInterval(interval.Value),
+            _ => throw new NotSupportedException()
+        };
+    }
+
+    private string SerializeInputBound(InputBoundExpression binding)
+    {
+        var prefix = binding.IsPositional ? $"({string.Join(", ", binding.Names)})" : string.Join("", binding.Names);
+        var body = binding.Body switch
+        {
+            OpenRootExpression open => string.Join(" | ", SerializeBoundPipeline(open.Expression.Members)),
+            ClosedRootExpression closed => string.Join(" | ", new[] { Serialize(closed.Expression.Parameter) }
+                .Concat(SerializeBoundPipeline(closed.Expression.Members))),
+            _ => throw new NotSupportedException(),
+        };
+        return $"@_ | {prefix}{(prefix.Length == 0 ? string.Empty : " ")}:> {body}";
+    }
+
+    private IEnumerable<string> SerializeBoundPipeline(IEnumerable<Function> members)
+    {
+        var parts = new List<string>();
+        var previousWasField = false;
+        foreach (var member in members)
+        {
+            var text = FunctionSerializer.Serialize(member);
+            if (previousWasField && member.Syntax == FunctionSyntax.FieldShorthand)
+                parts[^1] += text;
+            else
+                parts.Add(text);
+            previousWasField = member.Syntax is FunctionSyntax.FieldShorthand or FunctionSyntax.InputFieldShorthand
+                or FunctionSyntax.RootFieldShorthand or FunctionSyntax.EnclosingRootFieldShorthand;
+        }
+        return parts;
+    }
+
+    private string SerializeFieldPath(InputExpressionParameter input, string name, FunctionSyntax syntax)
+    {
+        var members = input.Expression.Members.ToArray();
+        if (members.Any(member => member.Syntax != FunctionSyntax.FieldShorthand))
+            throw new NotSupportedException();
+        return FunctionSerializer.Serialize(new Function("field", [new LiteralParameter(name)], syntax))
+            + string.Concat(members.Select(FunctionSerializer.Serialize));
+    }
+
+    private string SerializeArrayElement(ArrayElementParameter element)
+        => $"{(element.IsSpread ? "..." : string.Empty)}{Serialize(element.Value)}";
+
+    private string SerializeTupleElement(TupleElementParameter element)
+        => element is { IsSpread: true, Value: IncomingValueParameter }
+            ? "..."
+            : $"{(element.IsSpread ? "..." : string.Empty)}{Serialize(element.Value)}";
+
+    private string SerializeRecordEntry(IRecordDefinitionEntry entry)
+        => entry switch
+        {
+            RecordSpreadEntry { Value: IncomingValueParameter } => "...",
+            RecordSpreadEntry spread => $"...{Serialize(spread.Value)}",
+            RecordNamedEntry named => $"{SerializeFieldName(named.Name)} := {Serialize(named.Value)}",
+            _ => throw new NotSupportedException(),
+        };
+
+    private static string SerializeFieldName(string name)
+        => RecordSyntax.IsBareToken(name)
+            ? name
+            : $"\"{RecordSyntax.EscapeDoubleQuoted(name)}\"";
+
+    private static string SerializeLiteral(object? value)
+        => value switch
+        {
+            null => "#null",
+            AllDimension => "#all",
+            OrderingValue ordering => ordering.ToString(),
+            bool boolean => boolean ? "#true" : "#false",
+            decimal numeric => numeric.ToString(CultureInfo.InvariantCulture),
+            DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",
+            DateTime dateTime => $"#\"{dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)}\"",
+            TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",
+            string text when RecordSyntax.IsBareToken(text) => text,
+            string text => $"\"{RecordSyntax.EscapeDoubleQuoted(text)}\"",
+            _ => throw new NotSupportedException($"Literal value type '{value.GetType().Name}' cannot be serialized."),
+        };
+
+    private static string SerializeInterval(IntervalBinding interval)
+        => $"I{(interval.IsLowerInclusive ? '[' : '(')}{SerializeBound(interval.LowerBound)}, {SerializeBound(interval.UpperBound)}{(interval.IsUpperInclusive ? ']' : ')')}";
+
+    private static string SerializeBound(IntervalBoundBinding bound) => bound.Kind switch
+    {
+        IntervalBoundBindingKind.NegativeInfinity => "-INF",
+        IntervalBoundBindingKind.PositiveInfinity => "+INF",
+        IntervalBoundBindingKind.Finite => SerializeLiteral(bound.Value),
+        _ => throw new NotSupportedException($"Interval bound kind '{bound.Kind}' cannot be serialized."),
+    };
+}

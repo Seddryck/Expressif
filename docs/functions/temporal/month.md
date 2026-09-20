@@ -19,6 +19,8 @@ month() → text
 
 returns a textual value at format MM representing the month of the date passed as the argument
 
+
+
 ## Parameters
 
 

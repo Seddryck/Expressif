@@ -1,5 +1,6 @@
 using Expressif.Functions;
 using Expressif.Syntax;
+using Expressif.Values.Types;
 
 namespace Expressif.Bindings;
 
@@ -25,4 +26,6 @@ public interface IFunctionBinder<TFunction> : IFunctionBinder
 public interface IFunctionBindingContext
 {
     IParameter BindArgument(ExpressionSyntax syntax);
+    TypeDescriptor ResolveType(string name);
+    Type? ResolveRuntimeType(string name);
 }

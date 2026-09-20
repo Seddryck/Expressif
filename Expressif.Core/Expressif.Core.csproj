@@ -12,5 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Expressif.Library" />
+    <InternalsVisibleTo Include="Expressif.Testing" />
+    <InternalsVisibleTo Include="Expressif.Library.Testing" />
   </ItemGroup>
 </Project>

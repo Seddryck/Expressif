@@ -3,7 +3,7 @@ layout: docs
 title: "second-of-minute"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 480
+nav_order: 420
 has_toc: false
 permalink: /functions/temporal/second-of-minute/
 tags:
@@ -18,6 +18,8 @@ second-of-minute() → integer
 ```
 
 returns a numeric value representing the seconds of the minute of the date passed as the argument
+
+
 
 ## Parameters
 

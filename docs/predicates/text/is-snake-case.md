@@ -3,7 +3,7 @@ layout: docs
 title: "is-snake-case"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 110
+nav_order: 120
 has_toc: false
 permalink: /predicates/text/is-snake-case/
 tags:

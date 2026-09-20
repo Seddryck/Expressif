@@ -18,6 +18,8 @@ is-odd()
 
 Returns `true` if the numeric value passed as argument is odd. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 

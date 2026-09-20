@@ -3,7 +3,7 @@ layout: docs
 title: "prepend"
 parent: "Concatenation functions"
 grand_parent: "Text functions"
-nav_order: 70
+nav_order: 90
 has_toc: false
 permalink: /functions/text/concatenation/prepend/
 tags:
@@ -33,9 +33,12 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 |:-----|:-----|:---------|:------------|
 | `text` | `text` | Yes | The text to prepend |
 
+
+
 ## Argument evaluation
 
 - **`text`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 

@@ -19,6 +19,8 @@ lag() → array
 
 Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.
 
+
+
 ## Parameters
 
 

@@ -19,6 +19,8 @@ minute-of-hour() → integer
 
 returns a numeric value representing the minutes of the hour passed as the argument
 
+
+
 ## Parameters
 
 

@@ -19,6 +19,8 @@ catholic-calendar() → date-time
 
 Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.
 
+
+
 ## Parameters
 
 

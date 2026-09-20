@@ -1,5 +1,6 @@
 using Expressif.Functions;
-using Expressif.Functions.Flow;
+using Expressif.Library.Array;
+using Expressif.Library.Flow;
 using Expressif.Syntax;
 
 namespace Expressif.Bindings;

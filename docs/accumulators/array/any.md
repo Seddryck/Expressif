@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-any()
+array →
+any() → any
 ```
 
 Returns `true` when at least one accumulated boolean value is `true`.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `any`
+**Aliases:** None
 {: .member-reference }

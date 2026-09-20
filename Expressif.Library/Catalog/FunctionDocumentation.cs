@@ -1,0 +1,39 @@
+namespace Expressif.Library.Catalog;
+
+public sealed record FunctionDocumentation(
+    string Name,
+    bool IsPublic,
+    string[] Aliases,
+    string Scope,
+    string Input,
+    string Output,
+    string Summary,
+    FunctionParameterDocumentation[] Parameters,
+    string[]? Examples = null,
+    string? Behavior = null,
+    bool Deprecated = false,
+    string? Replacement = null,
+    string? Sunset = null,
+    bool ReplacementIsEquivalent = false,
+    string? MigrationNotes = null,
+    string Kind = "function",
+    FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null);
+
+public sealed record FunctionAliasLifecycleDocumentation(
+    string Name,
+    string Replacement,
+    string Message,
+    string? Sunset = null,
+    bool ReplacementIsEquivalent = true);
+
+public sealed record FunctionParameterDocumentation(
+    string Name,
+    string? Type,
+    bool Optional,
+    string Summary,
+    bool Variadic = false,
+    int MinimumCardinality = 1,
+    string? Kind = null)
+{
+    public string TypeOrKind => Type ?? Kind ?? "any";
+}

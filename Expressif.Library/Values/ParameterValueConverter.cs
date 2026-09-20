@@ -1,4 +1,4 @@
-using Expressif.Serializers;
+using Expressif.Serialization;
 using Expressif.Syntax;
 using Expressif.Bindings;
 
@@ -12,7 +12,7 @@ public sealed class ParameterValueConverter
     private readonly ParameterSerializer serializer = new();
 
     public object? Parse(string text)
-        => Convert(new ExpressifBinder().BindParameter(ExpressionParser.Parse(text)));
+        => Convert(ExpressifBinderFactory.Create().BindParameter(ExpressionParser.Parse(text)));
 
     public object? Convert(IParameter parameter)
         => parameter switch

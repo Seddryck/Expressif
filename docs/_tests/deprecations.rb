@@ -18,11 +18,11 @@ raise 'Unexpected lifecycle rule identities' unless source_rules.map { |rule| ru
     FileUtils.mkdir_p(data)
     FileUtils.cp(File.join(root, 'docs', 'deprecations.md'), source)
     FileUtils.cp_r(File.join(root, 'docs', '_includes'), source)
-    %w[function predicate accumulator usage-lifecycle].each do |name|
+    %w[function predicate usage-lifecycle].each do |name|
       FileUtils.cp(File.join(catalog, "#{name}.json"), data)
     end
     if %w[empty alias-only usage-only escaping].include?(scenario)
-      %w[function predicate accumulator].each { |kind| File.write(File.join(data, "#{kind}.json"), '[]') }
+      %w[function predicate].each { |kind| File.write(File.join(data, "#{kind}.json"), '[]') }
     end
     rules = Marshal.load(Marshal.dump(source_rules))
     rules = [] if %w[empty callable-only alias-only].include?(scenario)
@@ -34,8 +34,8 @@ raise 'Unexpected lifecycle rule identities' unless source_rules.map { |rule| ru
       ]))
     end
     if scenario == 'alias-only'
-      File.write(File.join(data, 'accumulator.json'), JSON.generate([{
-        'Name' => 'new', 'Scope' => 'array', 'IsPublic' => true,
+      File.write(File.join(data, 'function.json'), JSON.generate([{
+        'Name' => 'new', 'Scope' => 'array', 'IsPublic' => true, 'Kind' => 'accumulator',
         'DeprecatedAliases' => [{
           'Name' => 'old', 'Replacement' => 'new', 'Message' => 'old is deprecated; use new instead.',
           'Sunset' => '3.0', 'ReplacementIsEquivalent' => true

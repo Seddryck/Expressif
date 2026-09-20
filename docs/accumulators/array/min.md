@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-min()
+array →
+min() → any
 ```
 
 Tracks the smallest numeric value found during accumulation.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `min`
+**Aliases:** None
 {: .member-reference }

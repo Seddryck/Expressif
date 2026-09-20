@@ -19,6 +19,8 @@ month-day() → text
 
 returns a textual value at format MM-DD representing the month and day of the date passed as the argument
 
+
+
 ## Parameters
 
 

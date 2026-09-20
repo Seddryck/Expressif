@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Functions;
+using Expressif.Discovery;
 using Expressif.Predicates;
 using Expressif.Syntax;
 using Expressif.Values;
@@ -15,17 +16,22 @@ public sealed record TupleBindingUse(string? Name, SourceSpan? Span, Type? Imple
 /// <summary>Inspects binding targets and statically known invocations without evaluating user code.</summary>
 public sealed class TupleBindingAnalyzer
 {
-    private readonly BaseTypeMapper functions;
-    private readonly PredicateTypeMapper predicates = new();
+    private readonly IImplementationRegistry functions;
+    private readonly IImplementationRegistry predicates;
 
     public TupleBindingAnalyzer()
-        : this(new FunctionTypeMapper()) { }
-    public TupleBindingAnalyzer(BaseTypeMapper functions) => this.functions = functions;
+        : this(new AssemblyTypesProbe([typeof(TupleBindingAnalyzer).Assembly])) { }
+    public TupleBindingAnalyzer(ITypesProbe probe)
+        : this(new FunctionRegistry(probe), new PredicateRegistry(probe)) { }
+    public TupleBindingAnalyzer(IImplementationRegistry functions)
+        : this(functions, new PredicateRegistry(new AssemblyTypesProbe([typeof(TupleBindingAnalyzer).Assembly]))) { }
+    public TupleBindingAnalyzer(IImplementationRegistry functions, IImplementationRegistry predicates)
+        => (this.functions, this.predicates) = (functions, predicates);
 
     public IReadOnlyList<TupleBindingUse> Analyze(RootExpressionSyntax syntax)
     {
         var uses = new List<TupleBindingUse>();
-        try { Visit(new ExpressifBinder(applyCoercion: false).Bind(syntax), uses); }
+        try { Visit(ExpressifBinderFactory.Create(applyCoercion: false).Bind(syntax), uses); }
         catch (BindingException) { return []; }
         return uses;
     }
@@ -78,7 +84,7 @@ public sealed class TupleBindingAnalyzer
             _ => null,
         };
         if (name is null) return new(null, member.SourceSpan, null, [], null, null);
-        if (!functions.TryExecute(name, out var type) && !predicates.TryExecute(name, out type))
+        if (!functions.TryResolve(name, out var type) && !predicates.TryResolve(name, out type))
             return new(name, member.SourceSpan, null, [], TupleBindingFailure.UnknownTarget, $"Unknown tuple-binding target '{name}'.");
         var signatures = TupleBindingCapabilities.Describe(type);
         if (!signatures.Any(signature => signature.SupportsTupleBinding))

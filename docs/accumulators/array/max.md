@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-max()
+array →
+max() → any
 ```
 
 Tracks the greatest numeric value found during accumulation.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `max`
+**Aliases:** None
 {: .member-reference }

@@ -19,6 +19,8 @@ group() → grouping
 
 Groups pairs by structurally equal keys while preserving first-seen group and value order.
 
+
+
 ## Parameters
 
 

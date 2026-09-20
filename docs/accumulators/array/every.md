@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-every()
+array →
+every() → any
 ```
 
 Returns `true` only when every accumulated boolean value is `true`.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `every`
+**Aliases:** None
 {: .member-reference }

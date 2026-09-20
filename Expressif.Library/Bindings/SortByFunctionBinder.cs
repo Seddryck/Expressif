@@ -1,7 +1,8 @@
 using Expressif.Functions;
-using Expressif.Functions.Sorting;
+using Expressif.Library.Record;
+using Expressif.Library.Sorting;
 using Expressif.Syntax;
-using Expressif.Types;
+using Expressif.Values.Types;
 
 namespace Expressif.Bindings;
 
@@ -59,6 +60,6 @@ internal sealed class SortByFunctionBinder :
             }
         }
 
-        return new SortCriterionParameter(context.BindArgument(mapping.Left), TypeRegistry.Resolve(type.Name), ascending, nullsFirst);
+        return new SortCriterionParameter(context.BindArgument(mapping.Left), context.ResolveType(type.Name), ascending, nullsFirst);
     }
 }

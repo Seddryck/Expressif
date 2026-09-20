@@ -23,6 +23,8 @@ generate(
 
 Generates an array by repeatedly transforming a seed while a condition is satisfied.
 
+
+
 ## Parameters
 
 
@@ -33,6 +35,8 @@ Generates an array by repeatedly transforming a seed while a condition is satisf
 | `next` | `expression` | Yes | Specifies the expression that produces the next seed. |
 | `result` | `expression` | No | Specifies the expression that produces the value appended for the current seed. |
 
+
+
 ## Argument evaluation
 
 Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration.
@@ -40,6 +44,7 @@ Starts with the incoming seed and repeatedly evaluates the condition and next-se
 - **`while`:** Evaluated against the current seed before each iteration. A false result ends generation.
 - **`next`:** Evaluated against the current seed after an accepted iteration to produce the next seed.
 - **`result`:** Evaluated against each accepted seed to produce its output value.
+
 
 ## Behavior
 

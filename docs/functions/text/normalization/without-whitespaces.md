@@ -19,11 +19,14 @@ without-whitespaces() → text
 
 Returns the argument string without white-space characters.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

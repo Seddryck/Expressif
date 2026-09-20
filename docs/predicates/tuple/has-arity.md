@@ -21,6 +21,8 @@ has-arity(
 
 Returns whether the input tuple has exactly the expected number of positions.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns whether the input tuple has exactly the expected number of positions.
 |:-----|:-----|:---------|:------------|
 | `expected` | `integer` | Yes | Specifies the required non-negative tuple arity. |
 
+
+
 ## Argument evaluation
 
 - **`expected`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 
@@ -44,5 +50,5 @@ T(1, 2) | has-arity(2) → #true
 
 **Kind:** Predicate  
 **Scope:** `tuple`  
-**Aliases:** None
+**Aliases:** `tuple-has-arity`
 {: .member-reference }

@@ -21,6 +21,8 @@ percent-change(
 
 Returns the percentage change from the previous numeric value to the current input value. Returns `null` when the input or parameter cannot be evaluated or when the previous value is zero.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the percentage change from the previous numeric value to the current inp
 |:-----|:-----|:---------|:------------|
 | `previous` | `numeric` | Yes | Specifies the previous numeric value used as the percentage-change baseline. |
 
+
+
 ## Argument evaluation
 
 - **`previous`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

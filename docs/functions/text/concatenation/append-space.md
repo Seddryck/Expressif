@@ -19,7 +19,9 @@ append-space() → text
 
 Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
 
+
 > **Deprecated:** Use `suffix-space` instead. This function is planned for removal in Expressif 3.0.
+
 
 ## Parameters
 
@@ -28,10 +30,12 @@ Returns the argument value followed by a space character. If the argument is `nu
 This function has no parameters.
 
 
+
+
+
 ## Behavior
 
 Deprecated in favor of `suffix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-space` preserves `null`. Use `null-to-empty | suffix-space` to retain the existing behavior for null input.
-
 
 
 

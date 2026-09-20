@@ -3,7 +3,7 @@ layout: docs
 title: "is-less-than"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 40
+nav_order: 50
 has_toc: false
 permalink: /predicates/numeric/is-less-than/
 tags:
@@ -20,6 +20,8 @@ is-less-than(
 
 Returns true if the numeric value passed as argument is less than the numeric value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,13 @@ Returns true if the numeric value passed as argument is less than the numeric va
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`reference`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

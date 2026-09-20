@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-first()
+array →
+first() → any
 ```
 
 Stores the first accumulated item and ignores all subsequent items.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `first`
+**Aliases:** None
 {: .member-reference }

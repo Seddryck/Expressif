@@ -21,6 +21,8 @@ count-substring(
 
 Returns the count of non-overlapping occurrences of a substring, defined as a parameter, in the argument value.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the count of non-overlapping occurrences of a substring, defined as a pa
 |:-----|:-----|:---------|:------------|
 | `substring` | `text` | Yes | The substring to count in the argument value. |
 
+
+
 ## Argument evaluation
 
 - **`substring`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

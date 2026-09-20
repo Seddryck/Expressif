@@ -21,6 +21,8 @@ symmetric-difference(
 
 Returns the distinct values that appear in exactly one of the two arrays, listing pipeline-input exclusives first and parameter-array exclusives second while preserving order within each source. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the distinct values that appear in exactly one of the two arrays, listin
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the second array to compare against the pipeline input. |
 
+
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

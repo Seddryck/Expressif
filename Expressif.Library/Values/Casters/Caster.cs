@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -57,7 +57,7 @@ public class Caster
             return true;
         }
 
-        if (new Null().Equals(value) || new Empty().Equals(value) || new Whitespace().Equals(value))
+        if (new Expressif.Values.Special.Null().Equals(value) || new Expressif.Values.Special.Empty().Equals(value) || new Whitespace().Equals(value))
             return false;
 
         if (value is T typed)
@@ -77,7 +77,7 @@ public class Caster
     {
         ArgumentNullException.ThrowIfNull(targetType);
         result = null;
-        if (value is null || new Null().Equals(value) || new Empty().Equals(value) || new Whitespace().Equals(value))
+        if (value is null || new Expressif.Values.Special.Null().Equals(value) || new Expressif.Values.Special.Empty().Equals(value) || new Whitespace().Equals(value))
             return false;
         if (targetType.IsInstanceOfType(value))
         {
@@ -88,7 +88,7 @@ public class Caster
     }
 
     private static bool IsSpecialKeyword(string value)
-        => new[] { new Null().Keyword, new Empty().Keyword, new Whitespace().Keyword }
+        => new[] { new Expressif.Values.Special.Null().Keyword, new Expressif.Values.Special.Empty().Keyword, new Whitespace().Keyword }
             .Contains(value.Trim(), StringComparer.OrdinalIgnoreCase);
 
     private static bool TryCastCore(object value, Type targetType, out object? result)

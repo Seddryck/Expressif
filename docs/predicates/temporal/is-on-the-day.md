@@ -18,6 +18,8 @@ is-on-the-day()
 
 Returns `true` if the argument is of type `DateOnly` or of type `DateTime` but the Time part is set at exactly midnight. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-on-the-day → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

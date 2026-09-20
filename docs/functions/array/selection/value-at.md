@@ -31,9 +31,13 @@ Returns the input item at the specified zero-based position. Returns `null` when
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | Specifies the zero-based position of the item to return. |
 
+
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

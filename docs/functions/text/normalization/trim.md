@@ -19,11 +19,14 @@ trim() → text
 
 Returns the argument value without all leading or trailing white-space characters.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

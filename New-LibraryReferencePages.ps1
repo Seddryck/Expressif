@@ -82,7 +82,7 @@ $kindPlural = "$kindName`s"
 $kindPluralTitle = (Get-Culture).TextInfo.ToTitleCase($kindPlural)
 
 if ([string]::IsNullOrWhiteSpace($DataPath)) {
-    $DataPath = "docs/_data/$kindName.json"
+    $DataPath = if ($Kind -eq "Accumulator") { "docs/_data/function.json" } else { "docs/_data/$kindName.json" }
 }
 
 $resolvedDataPath = Resolve-ProjectPath $DataPath
@@ -103,7 +103,16 @@ if (-not (Test-Path -LiteralPath $resolvedCategoryTemplatePath -PathType Leaf)) 
 }
 
 $allMembers = Get-Content -LiteralPath $resolvedDataPath -Raw | ConvertFrom-Json
-$members = @($allMembers | Where-Object { $_.IsPublic -eq $true })
+$members = @($allMembers | Where-Object {
+    $memberKind = if ($null -ne $_.PSObject.Properties["Kind"]) { $_.Kind } else { $null }
+    if ($Kind -eq "Accumulator") {
+        $_.IsPublic -eq $true -and $memberKind -eq "accumulator"
+    } elseif ($Kind -eq "Function") {
+        $_.IsPublic -eq $true -and $memberKind -ne "accumulator"
+    } else {
+        $_.IsPublic -eq $true
+    }
+})
 $selectedScopes = @()
 
 if ($PSBoundParameters.ContainsKey("Scope") -and @($Scope).Count -gt 0) {

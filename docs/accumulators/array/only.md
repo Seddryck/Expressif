@@ -13,7 +13,7 @@ generated: true
 ---
 
 ```
-any →
+array →
 only(
     predicate: predicate,
     accumulator: accumulator

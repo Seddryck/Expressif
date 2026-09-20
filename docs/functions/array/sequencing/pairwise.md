@@ -19,6 +19,8 @@ pairwise() → array
 
 Returns each consecutive pair of input values as a tuple. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 

@@ -19,6 +19,8 @@ root() → text
 
 Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.
 
+
+
 ## Parameters
 
 

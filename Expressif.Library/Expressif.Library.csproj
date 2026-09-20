@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Expressif.Core\Expressif.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Expressif.Library.Testing" />
     <InternalsVisibleTo Include="Expressif.Testing" />
     <InternalsVisibleTo Include="Expressif.Serialization" />
   </ItemGroup>

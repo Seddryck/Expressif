@@ -3,7 +3,7 @@ layout: docs
 title: "next-month"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 360
+nav_order: 350
 has_toc: false
 permalink: /functions/temporal/next-month/
 tags:
@@ -18,6 +18,8 @@ next-month() → date-time
 ```
 
 Returns the dateTime that adds a month to the dateTime passed as argument value.
+
+
 
 ## Parameters
 

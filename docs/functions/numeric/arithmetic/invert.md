@@ -19,11 +19,14 @@ invert() → numeric
 
 Returns the reciprocal of the argument number, meaning the result of the division of 1 by the argument number. If the argument value is `0`, it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

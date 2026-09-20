@@ -1,13 +1,17 @@
 using Expressif.Functions;
-using Expressif.Functions.Grouping;
-using Expressif.Functions.Record;
-using Expressif.Functions.Text;
+using Expressif.Library.Flow;
+using Expressif.Library.Grouping;
+using Expressif.Library.Numeric;
+using Expressif.Library.Record;
+using Expressif.Library.Temporal;
+using Expressif.Library.Text;
 using Expressif.Syntax;
-using ArrayFunction = Expressif.Functions.Array.Array;
-using DictionaryFunction = Expressif.Functions.Dictionary.Dictionary;
-using GroupingFunction = Expressif.Functions.Grouping.Grouping;
-using TextFunction = Expressif.Functions.Text.Text;
-using TupleFunction = Expressif.Functions.Tuple.Tuple;
+using ArrayFunction = Expressif.Library.Array.Array;
+using DictionaryFunction = Expressif.Library.Dictionary.Dictionary;
+using GroupingFunction = Expressif.Library.Grouping.Grouping;
+using TextFunction = Expressif.Library.Text.Concatenation.Text;
+using TupleFunction = Expressif.Library.Tuple.Tuple;
+using SplitLengths = Expressif.Library.Text.Partitioning.SplitLengths;
 
 namespace Expressif.Bindings;
 

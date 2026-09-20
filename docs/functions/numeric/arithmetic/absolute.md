@@ -19,11 +19,14 @@ absolute() → numeric
 
 Returns the absolute value of the argument value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

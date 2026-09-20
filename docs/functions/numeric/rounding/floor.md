@@ -19,11 +19,14 @@ floor() → numeric
 
 Returns the largest integer less than or equal to the argument number.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

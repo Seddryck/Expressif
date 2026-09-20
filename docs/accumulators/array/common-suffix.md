@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-text →
-common-suffix() → text
+array →
+common-suffix() → any
 ```
 
 Returns the longest suffix shared by all accumulated strings.
@@ -48,5 +48,5 @@ Empty input returns null. A single string is returned unchanged. Nonempty input 
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `common-suffix`
+**Aliases:** None
 {: .member-reference }

@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-last()
+array →
+last() → any
 ```
 
 Stores the most recently accumulated item.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `last`
+**Aliases:** None
 {: .member-reference }

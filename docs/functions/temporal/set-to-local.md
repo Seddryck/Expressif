@@ -3,7 +3,7 @@ layout: docs
 title: "set-to-local"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 500
+nav_order: 440
 has_toc: false
 permalink: /functions/temporal/set-to-local/
 tags:
@@ -18,6 +18,8 @@ set-to-local() → date-time
 ```
 
 Returns the dateTime passed as argument without changing the current hours/minutes and sets the kind to local
+
+
 
 ## Parameters
 

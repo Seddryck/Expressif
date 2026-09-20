@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-sum()
+array →
+sum() → any
 ```
 
 Computes the sum of all accumulated numeric values.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `sum`
+**Aliases:** None
 {: .member-reference }

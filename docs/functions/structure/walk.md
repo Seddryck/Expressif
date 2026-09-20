@@ -13,13 +13,15 @@ generated: true
 ---
 
 ```
-any ΓåÆ
+any →
 walk(
     transformation: expression
-) ΓåÆ any
+) → any
 ```
 
 Recursively traverses arrays, tuples, and records and evaluates an expression against each leaf value while preserving container shape.
+
+
 
 ## Parameters
 
@@ -29,11 +31,14 @@ Recursively traverses arrays, tuples, and records and evaluates an expression ag
 |:-----|:-----|:---------|:------------|
 | `transformation` | `expression` | Yes | Expression evaluated against every leaf value. |
 
+
+
 ## Argument evaluation
 
 Recursively visits the leaf values in the incoming arrays, tuples, and records.
 
 - **`transformation`:** Evaluated once against each leaf reached in the incoming structure.
+
 
 ## Behavior
 
@@ -45,9 +50,9 @@ Recursively visits the leaf values in the incoming arrays, tuples, and records.
 
 {% raw %}
 ```expressif
-T(42, " 42 ") | walk(trim) ΓåÆ T("42", "42")
-T(42, " 42 ") | walk(*trim) ΓåÆ T(42, "42")
-{name := " Bob ", address := {city := " Brussels "}} | walk(*trim) ΓåÆ {name := "Bob", address := {city := "Brussels"}}
+T(42, " 42 ") | walk(trim) → T("42", "42")
+T(42, " 42 ") | walk(*trim) → T(42, "42")
+{name := " Bob ", address := {city := " Brussels "}} | walk(*trim) → {name := "Bob", address := {city := "Brussels"}}
 ```
 {% endraw %}
 

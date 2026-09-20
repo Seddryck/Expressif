@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-count()
+array →
+count() → any
 ```
 
 Counts the number of accumulated items, including `null` values.
@@ -42,5 +43,5 @@ This accumulator has no parameters.
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `count`
+**Aliases:** None
 {: .member-reference }

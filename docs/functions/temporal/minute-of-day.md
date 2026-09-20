@@ -19,6 +19,8 @@ minute-of-day() → integer
 
 returns a numeric value representing the minutes of the date passed as the argument
 
+
+
 ## Parameters
 
 

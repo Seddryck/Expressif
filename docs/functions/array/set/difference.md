@@ -21,6 +21,8 @@ difference(
 
 Returns the distinct values from the pipeline input that do not appear in the specified array, preserving the pipeline input order. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the distinct values from the pipeline input that do not appear in the sp
 |:-----|:-----|:---------|:------------|
 | `array` | `array` | Yes | Specifies the array containing values to exclude from the pipeline input. |
 
+
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

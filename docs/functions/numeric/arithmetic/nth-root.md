@@ -19,11 +19,14 @@ nth-root() → numeric
 
 Returns the root specified by the parameter value of the numeric argument value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

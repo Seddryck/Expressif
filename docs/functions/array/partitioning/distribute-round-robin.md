@@ -21,6 +21,8 @@ distribute-round-robin(
 
 Distributes successive array values cyclically among a requested number of output arrays. Returns `null` when the count is not strictly positive or the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,12 @@ Distributes successive array values cyclically among a requested number of outpu
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Specifies the strictly positive number of output arrays. |
 
+
+
 ## Argument evaluation
 
 - **`count`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 

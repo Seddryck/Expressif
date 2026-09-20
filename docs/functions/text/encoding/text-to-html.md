@@ -19,11 +19,14 @@ text-to-html() → text
 
 Returns the argument value converted to an HTML-encoded string
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

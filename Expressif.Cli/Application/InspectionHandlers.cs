@@ -1,6 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Cli.Expressions;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 using Expressif.Syntax;
 
 namespace Expressif.Cli.Application;

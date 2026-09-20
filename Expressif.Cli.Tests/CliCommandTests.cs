@@ -4,7 +4,7 @@ using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 
 namespace Expressif.Cli.Tests;
 
@@ -2250,10 +2250,10 @@ public class CliCommandTests
     private sealed class FakeExpressionService : IExpressionService
     {
         public Func<string, Context, IExpression> CompileOpenHandler { get; set; }
-            = static (code, context) => Expression.Create(code, context);
+            = static (code, context) => Expression.Create(code, new Expressif.Bindings.ExpressionBinder(context));
 
         public Func<string, Context, IExpression> CompileClosedHandler { get; set; }
-            = static (code, context) => Expression.CreateClosed(code, context);
+            = static (code, context) => Expression.CreateClosed(code, new Expressif.Bindings.ExpressionBinder(context));
 
         public Func<IExpression, object?, object?> EvaluateHandler { get; set; }
             = static (expression, input) => expression.Evaluate(input);

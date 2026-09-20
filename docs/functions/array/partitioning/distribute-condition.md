@@ -21,6 +21,8 @@ distribute-condition(
 
 Distributes array values into matching and non-matching groups by evaluating a predicate once for each value. Returns `null` when the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,11 +31,14 @@ Distributes array values into matching and non-matching groups by evaluating a p
 |:-----|:-----|:---------|:------------|
 | `condition` | `predicate` | Yes | Specifies the predicate used to classify each input value. |
 
+
+
 ## Argument evaluation
 
 Visits each element of the array entering this call.
 
 - **`condition`:** Evaluated once per visited element, with that element as its context.
+
 
 ## Behavior
 

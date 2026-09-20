@@ -13,11 +13,13 @@ generated: true
 ---
 
 ```
-boolean | integer | numeric | text →
+boolean | integer | numeric | ordering | text →
 coerce-int() → integer
 ```
 
 Attempts to convert the input to an integer value. Returns `null` when the input cannot be converted without loss.
+
+
 
 ## Parameters
 

@@ -1,5 +1,5 @@
 using System.Text;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 
 namespace Expressif.Cli.Commands;
 

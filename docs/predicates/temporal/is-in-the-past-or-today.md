@@ -18,6 +18,8 @@ is-in-the-past-or-today()
 
 Returns true if the date passed as argument is today or a date before. If a DateTime is passed as argument, it returns true if the date of this datetime is today or any other date before today. Returns false otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-in-the-past-or-today → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  
