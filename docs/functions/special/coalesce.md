@@ -21,6 +21,8 @@ coalesce(
 
 Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the first non-null result from two or more expressions evaluated from le
 |:-----|:-----|:---------|:------------|
 | `expressions` | `expression` | Variadic (two or more) | Two or more candidate expressions evaluated from left to right against the same input. |
 
+
+
 ## Argument evaluation
 
 - **`expressions`:** Candidates are evaluated against the same incoming value, from left to right, until one produces a non-null result. Later candidates are skipped.
+
+
 
 ## Examples
 

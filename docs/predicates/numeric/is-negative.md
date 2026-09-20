@@ -3,7 +3,7 @@ layout: docs
 title: "is-negative"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /predicates/numeric/is-negative/
 tags:
@@ -17,6 +17,8 @@ is-negative()
 ```
 
 Returns true if the numeric argument is less than 0.
+
+
 
 ## Parameters
 

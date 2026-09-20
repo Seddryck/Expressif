@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-every()
+array →
+every() → any
 ```
 
 Returns `true` only when every accumulated boolean value is `true`.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `every`
+**Aliases:** None
 {: .member-reference }

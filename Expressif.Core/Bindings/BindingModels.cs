@@ -1,4 +1,4 @@
-using Expressif.Types;
+using Expressif.Values.Types;
 
 namespace Expressif.Bindings;
 
@@ -22,6 +22,7 @@ public enum FunctionSyntax
     ScopedTupleProjectionShorthand,
     InputFieldShorthand,
     InputTupleProjectionShorthand,
+    ImplicitFoldAccumulator,
 }
 
 public sealed record FunctionArgument(string? Name, IParameter Value, bool IsSpread = false);
@@ -54,13 +55,10 @@ public class OpenExpression(IEnumerable<Function> members) : IBoundExpression
 
 public class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IBoundExpression
 {
-    private static readonly HashSet<string> ImplicitFoldAccumulators =
-        ["count", "sum", "min", "max", "first", "last", "every", "any", "concat", "implode", "reduce", "closest", "only"];
-
     public IParameter Parameter { get; } = parameter;
     public IEnumerable<Function> Members { get; } = members;
     public bool IsImplicitFoldAggregation => Members.Count() == 1
-        && ImplicitFoldAccumulators.Contains(Members.First().Name.ToKebabCase(), StringComparer.OrdinalIgnoreCase);
+        && Members.First().Syntax == FunctionSyntax.ImplicitFoldAccumulator;
     public Function? GetImplicitFoldAccumulator() => IsImplicitFoldAggregation ? Members.First() : null;
 }
 

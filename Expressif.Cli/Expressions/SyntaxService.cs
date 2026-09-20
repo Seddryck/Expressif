@@ -1,4 +1,5 @@
 using Expressif.Bindings;
+using Expressif.Discovery;
 using Expressif.Functions;
 using Expressif.Syntax;
 
@@ -17,8 +18,8 @@ internal sealed class SyntaxService : ISyntaxService
 {
     public RootExpressionSyntax Parse(string code) => ExpressionParser.Parse(code);
 
-    public IRootExpression Bind(RootExpressionSyntax syntax) => new ExpressifBinder().Bind(syntax);
+    public IRootExpression Bind(RootExpressionSyntax syntax) => ExpressifBinderFactory.Create().Bind(syntax);
 
     public void Validate(IRootExpression expression, Context context)
-        => _ = new FunctionFactory().Instantiate(expression, context);
+        => _ = new FunctionFactory(new AssemblyTypesProbe([typeof(ExpressionBinder).Assembly])).Instantiate(expression, context);
 }

@@ -19,6 +19,8 @@ filename-without-extension() → text
 
 Returns the file name without the extension of a file path provided as argument.
 
+
+
 ## Parameters
 
 

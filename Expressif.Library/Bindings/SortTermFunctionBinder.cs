@@ -1,6 +1,6 @@
 using Expressif.Functions;
 using Expressif.Syntax;
-using SortTermFunction = Expressif.Functions.Sorting.SortTerm;
+using SortTermFunction = Expressif.Library.Sorting.SortTerm;
 
 namespace Expressif.Bindings;
 

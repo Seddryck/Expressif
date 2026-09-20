@@ -1,6 +1,6 @@
 using Expressif.Functions;
 using Expressif.Syntax;
-using RecordFunction = Expressif.Functions.Record.Record;
+using RecordFunction = Expressif.Library.Record.Record;
 
 namespace Expressif.Bindings;
 

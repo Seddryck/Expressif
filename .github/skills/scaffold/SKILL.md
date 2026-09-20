@@ -108,7 +108,7 @@ Map kind to:
 
 * function: `docs/_data/function.json`;
 * predicate: `docs/_data/predicate.json`;
-* accumulator: `docs/_data/accumulator.json`.
+* accumulator: an entry with `"Kind": "accumulator"` in `docs/_data/function.json`.
 
 Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, and typed `Parameters`. Emit contract-dependency, omission, or variadic fields when applicable. Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
 

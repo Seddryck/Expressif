@@ -1,4 +1,5 @@
 using Expressif.Syntax;
+using Expressif.Discovery;
 using RuntimeExpression = Expressif.IExpression;
 using RuntimeExpressionFactory = Expressif.Functions.FunctionFactory;
 
@@ -17,7 +18,7 @@ public sealed class ExpressionBinder : IExpressionBinder
         : this(new Context()) { }
 
     public ExpressionBinder(IContext context)
-        : this(context, new ExpressifBinder(), new RuntimeExpressionFactory()) { }
+        : this(context, ExpressifBinderFactory.Create(), new RuntimeExpressionFactory(new AssemblyTypesProbe([typeof(ExpressionBinder).Assembly]))) { }
 
     internal ExpressionBinder(
         IContext context,

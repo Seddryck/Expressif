@@ -19,11 +19,14 @@ without-diacritics() → text
 
 Returns the argument string without diacritics.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

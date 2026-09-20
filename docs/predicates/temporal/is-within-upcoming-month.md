@@ -18,6 +18,8 @@ is-within-upcoming-month()
 
 Returns true if the date passed as argument is part of the month following than the current month. Returns false otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-within-upcoming-month → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

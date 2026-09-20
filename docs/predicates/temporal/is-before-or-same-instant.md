@@ -20,6 +20,8 @@ is-before-or-same-instant(
 
 Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter or if the two values represent the same instant . Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,22 @@ Returns true if the temporal value passed as argument is chronologically before 
 |:-----|:-----|:---------|:------------|
 | `reference` | `date-time` | Yes | A temporal value to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`reference`:** Evaluated once in the enclosing context.
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-before-or-same-instant(#"2024-01-14 12:30:00") → #false
+```
+{% endraw %}
+
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

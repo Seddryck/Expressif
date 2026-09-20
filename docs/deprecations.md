@@ -10,12 +10,14 @@ Deprecation means that a callable or usage pattern remains available for compati
 
 ## Deprecated language names
 
-{% assign deprecated_functions = site.data.function | where: "IsPublic", true | where: "Deprecated", true %}
+{% assign function_entries = site.data.function | where_exp: "member", "member.Kind != 'accumulator'" %}
+{% assign accumulator_entries = site.data.function | where: "Kind", "accumulator" %}
+{% assign deprecated_functions = function_entries | where: "IsPublic", true | where: "Deprecated", true %}
 {% assign deprecated_predicates = site.data.predicate | where: "IsPublic", true | where: "Deprecated", true %}
-{% assign deprecated_accumulators = site.data.accumulator | where: "IsPublic", true | where: "Deprecated", true %}
+{% assign deprecated_accumulators = accumulator_entries | where: "IsPublic", true | where: "Deprecated", true %}
 {% assign deprecated_callables = deprecated_functions | concat: deprecated_predicates | concat: deprecated_accumulators %}
 {% assign deprecated_alias_count = 0 %}
-{% for member in site.data.accumulator %}
+{% for member in accumulator_entries %}
   {% if member.IsPublic %}
     {% assign member_alias_count = member.DeprecatedAliases | size %}
     {% assign deprecated_alias_count = deprecated_alias_count | plus: member_alias_count %}
@@ -37,10 +39,10 @@ Callable and alias deprecations appear together because both are language names 
     </tr>
   </thead>
   <tbody>
-{% include language-deprecation-rows.html catalog=site.data.function kind="Function" kind_plural="functions" %}
+{% include language-deprecation-rows.html catalog=function_entries kind="Function" kind_plural="functions" %}
 {% include language-deprecation-rows.html catalog=site.data.predicate kind="Predicate" kind_plural="predicates" %}
-{% include language-deprecation-rows.html catalog=site.data.accumulator kind="Accumulator" kind_plural="accumulators" %}
-{% include language-deprecated-alias-rows.html catalog=site.data.accumulator kind="Accumulator alias" kind_plural="accumulators" %}
+{% include language-deprecation-rows.html catalog=accumulator_entries kind="Accumulator" kind_plural="accumulators" %}
+{% include language-deprecated-alias-rows.html catalog=accumulator_entries kind="Accumulator alias" kind_plural="accumulators" %}
   </tbody>
 </table>
 {% else %}
@@ -66,4 +68,4 @@ There are currently no deprecated usage patterns.
 
 Existing complete `reduce` and `split-while` expressions are not deprecated solely because those operators support shorthand binding.
 
-Callable and alias entries come from the function, predicate, and accumulator catalogs. Usage entries come from the same structured lifecycle rules embedded in the runtime and exposed by semantic diagnostics for language-server migration support. `DeprecatedSince` records the actual introducing release when published; a pending release version does not make an active deprecation pending. This page does not describe the lifecycle of the public .NET API.
+Callable and alias entries come from the function and predicate catalogs. Usage entries come from the same structured lifecycle rules embedded in the runtime and exposed by semantic diagnostics for language-server migration support. `DeprecatedSince` records the actual introducing release when published; a pending release version does not make an active deprecation pending. This page does not describe the lifecycle of the public .NET API.

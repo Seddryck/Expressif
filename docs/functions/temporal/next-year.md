@@ -3,7 +3,7 @@ layout: docs
 title: "next-year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 390
+nav_order: 360
 has_toc: false
 permalink: /functions/temporal/next-year/
 tags:
@@ -18,6 +18,8 @@ next-year() → date-time
 ```
 
 Returns the dateTime that adds a year to the dateTime passed as argument value.
+
+
 
 ## Parameters
 

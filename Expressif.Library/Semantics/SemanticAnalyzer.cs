@@ -1,6 +1,8 @@
 using Expressif.Bindings;
+using Expressif.Functions.Accumulation;
 using Expressif.Functions;
-using Expressif.Functions.Array;
+using Expressif.Discovery;
+using Expressif.Library.Array;
 using Expressif.Predicates;
 using Expressif.Syntax;
 using BoundFunction = Expressif.Bindings.Function;
@@ -36,9 +38,13 @@ public sealed class SemanticAnalyzer
     {
         private static readonly SemanticSource External = new(SemanticSourceKind.ExternalInput);
         private static readonly SemanticSource Missing = Unknown("There is no enclosing expression scope.");
-        private readonly ExpressifBinder binder = new(applyCoercion: false, trackSources: true);
-        private readonly FunctionTypeMapper functions = new();
-        private readonly PredicateTypeMapper predicates = new();
+        private readonly ExpressifBinder binder = ExpressifBinderFactory.Create(applyCoercion: false, trackSources: true);
+        private readonly IImplementationRegistry functions = new FunctionRegistry(
+            new AssemblyTypesProbe([typeof(SemanticAnalyzer).Assembly]));
+        private readonly IImplementationRegistry predicates = new PredicateRegistry(
+            new AssemblyTypesProbe([typeof(SemanticAnalyzer).Assembly]));
+        private readonly IImplementationRegistry accumulators = new AccumulatorRegistry(
+            new AssemblyTypesProbe([typeof(SemanticAnalyzer).Assembly]));
         private readonly List<FieldReference> references = [];
         private readonly List<string> diagnostics = [];
         private BindingSourceMap Sources => binder.Sources;
@@ -105,8 +111,9 @@ public sealed class SemanticAnalyzer
                 }
                 else
                 {
-                    if (!functions.TryExecute(member.Name, out _) && !predicates.TryExecute(member.Name, out _)
-                        && !FunctionFactory.IsImplicitFoldAccumulator(member))
+                    if (!IsAccumulator(member)
+                        && !functions.TryResolve(member.Name, out _)
+                        && !predicates.TryResolve(member.Name, out _))
                     {
                         current = Unknown($"The callable '{member.Name}' cannot be resolved by this analysis.");
                         continue;
@@ -121,9 +128,10 @@ public sealed class SemanticAnalyzer
 
         private void Arguments(BoundFunction function, SemanticSource input, ScopeFrame<SemanticSource> frame)
         {
-            if (FunctionFactory.IsImplicitFoldAccumulator(function))
+            if (IsAccumulator(function))
                 return;
-            if (!functions.TryExecute(function.Name, out var type))
+
+            if (!functions.TryResolve(function.Name, out var type))
             {
                 PredicateArguments(function, frame);
                 return;
@@ -146,9 +154,13 @@ public sealed class SemanticAnalyzer
                 Parameter(parameter, frame.Current, frame);
         }
 
+        private bool IsAccumulator(BoundFunction function)
+            => function.Syntax == FunctionSyntax.ImplicitFoldAccumulator
+                && accumulators.TryResolve(function.Name, out _);
+
         private void PredicateArguments(BoundFunction function, ScopeFrame<SemanticSource> frame)
         {
-            if (!predicates.TryExecute(function.Name, out _))
+            if (!predicates.TryResolve(function.Name, out _))
                 return;
             // Multi-argument combinators have additional deferred Boolean scopes.
             if (function.Parameters.Length > 1 && function.Parameters.Any(parameter => parameter is OpenExpressionParameter))
@@ -167,14 +179,14 @@ public sealed class SemanticAnalyzer
             var construction = FunctionConstruction.Classify(function.Name);
             if (construction == FunctionConstructionKind.Expand)
             {
-                foreach (var parameter in ParameterArgumentBinder.Bind(typeof(Functions.Record.Expand), function.Arguments).Parameters)
+                foreach (var parameter in ParameterArgumentBinder.Bind(typeof(Expressif.Library.Record.Expand), function.Arguments).Parameters)
                     ValueParameter(parameter, input, frame.Derive(input));
                 return true;
             }
             if (construction is FunctionConstructionKind.Catch or FunctionConstructionKind.Throw)
             {
                 var type = construction == FunctionConstructionKind.Catch
-                    ? typeof(Functions.Flow.Catch) : typeof(Functions.Flow.Throw);
+                    ? typeof(Expressif.Library.Flow.Catch) : typeof(Expressif.Library.Flow.Throw);
                 var source = construction == FunctionConstructionKind.Catch ? frame.Current : input;
                 foreach (var parameter in ParameterArgumentBinder.Bind(type, function.Arguments).Parameters)
                     ValueParameter(parameter, source, frame);
@@ -242,7 +254,7 @@ public sealed class SemanticAnalyzer
                 return;
             var item = new SemanticSource(SemanticSourceKind.Element, input.Syntax, input);
             var members = operation.Expression.Members.ToArray();
-            var nested = type == typeof(Map) || !FunctionConstruction.IsPredicatePipeline(members, member => predicates.TryExecute(member.Name, out _));
+            var nested = type == typeof(Map) || !FunctionConstruction.IsPredicatePipeline(members, member => predicates.TryResolve(member.Name, out _));
             Pipeline(members, item, nested ? frame.Derive(item) : frame);
         }
 

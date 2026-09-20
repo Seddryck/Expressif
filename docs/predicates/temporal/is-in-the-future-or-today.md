@@ -18,6 +18,8 @@ is-in-the-future-or-today()
 
 Returns true if the date passed as argument is today or a date after. If a DateTime is passed as argument, it must be today or after. Returns false otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-in-the-future-or-today → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

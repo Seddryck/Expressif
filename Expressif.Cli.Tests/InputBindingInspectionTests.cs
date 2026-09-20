@@ -13,7 +13,7 @@ public class InputBindingInspectionTests
     {
         var syntax = ExpressionParser.Parse(source);
         var syntaxOutput = SyntaxTreeFormatter.Format(syntax, "json");
-        var boundOutput = BoundTreeFormatter.Format(new ExpressifBinder().Bind(syntax), "json");
+        var boundOutput = BoundTreeFormatter.Format(ExpressifBinderFactory.Create().Bind(syntax), "json");
         Assert.Multiple(() =>
         {
             Assert.That(syntaxOutput, Does.Contain("InputBindingExpression"));

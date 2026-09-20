@@ -18,6 +18,8 @@ is-in-the-past()
 
 Returns true if the date passed as argument is before today. Returns false otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-in-the-past → #true
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

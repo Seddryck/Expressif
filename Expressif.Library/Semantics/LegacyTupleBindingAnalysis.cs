@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Functions;
+using Expressif.Discovery;
 using Expressif.Predicates;
 using Expressif.Syntax;
 using BoundFunction = Expressif.Bindings.Function;
@@ -23,17 +24,22 @@ public sealed class LegacyTupleBindingAnalyzer
 {
     private const string MapOver = "map-over";
     private const string MapWith = "map-with";
-    private readonly BaseTypeMapper functions;
-    private readonly PredicateTypeMapper predicates = new();
+    private readonly IImplementationRegistry functions;
+    private readonly IImplementationRegistry predicates;
 
     public LegacyTupleBindingAnalyzer()
-        : this(new FunctionTypeMapper()) { }
-    public LegacyTupleBindingAnalyzer(BaseTypeMapper functions) => this.functions = functions;
+        : this(new AssemblyTypesProbe([typeof(LegacyTupleBindingAnalyzer).Assembly])) { }
+    public LegacyTupleBindingAnalyzer(ITypesProbe probe)
+        : this(new FunctionRegistry(probe), new PredicateRegistry(probe)) { }
+    public LegacyTupleBindingAnalyzer(IImplementationRegistry functions)
+        : this(functions, new PredicateRegistry(new AssemblyTypesProbe([typeof(LegacyTupleBindingAnalyzer).Assembly]))) { }
+    public LegacyTupleBindingAnalyzer(IImplementationRegistry functions, IImplementationRegistry predicates)
+        => (this.functions, this.predicates) = (functions, predicates);
 
     public IReadOnlyList<LegacyTupleBindingUse> Analyze(RootExpressionSyntax syntax)
     {
         var uses = new List<LegacyTupleBindingUse>();
-        try { Visit(new ExpressifBinder(applyCoercion: false).Bind(syntax), uses); }
+        try { Visit(ExpressifBinderFactory.Create(applyCoercion: false).Bind(syntax), uses); }
         catch (BindingException) { return []; }
         return uses;
     }
@@ -66,12 +72,12 @@ public sealed class LegacyTupleBindingAnalyzer
 
     private void Inspect(BoundFunction member, string consumer, IParameter? input, List<LegacyTupleBindingUse> uses)
     {
-        if (!functions.TryExecute(consumer, out var consumerType)) return;
+        if (!functions.TryResolve(consumer, out var consumerType)) return;
         var parameters = ParameterArgumentBinder.Bind(consumerType, member.Arguments).Parameters;
         if (parameters.FirstOrDefault() is not OpenExpressionParameter operation
             || !LegacyTupleBindingRules.IsCandidate(consumer, operation.Expression)) return;
         var callable = operation.Expression.Members.First();
-        if (!functions.TryExecute(callable.Name, out var type) && !predicates.TryExecute(callable.Name, out type)) return;
+        if (!functions.TryResolve(callable.Name, out var type) && !predicates.TryResolve(callable.Name, out type)) return;
         var directional = consumer is MapOver or MapWith;
         if (!directional && !LegacyTupleBindingRules.HasBinarySignature(type)) return;
         var candidates = TupleBindingCapabilities.Describe(type).Where(signature => directional

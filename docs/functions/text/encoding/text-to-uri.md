@@ -19,6 +19,8 @@ text-to-uri() → text
 
 Returns the input text escaped as URI data using UTF-8 percent encoding. Preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 

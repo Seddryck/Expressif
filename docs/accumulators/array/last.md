@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-last()
+array →
+last() → any
 ```
 
 Stores the most recently accumulated item.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `last`
+**Aliases:** None
 {: .member-reference }

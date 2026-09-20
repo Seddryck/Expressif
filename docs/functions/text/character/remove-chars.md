@@ -21,6 +21,8 @@ remove-chars(
 
 Returns the argument value without the specified character. If the argument and the parameter values are white-space characters then it returns `empty`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the argument value without the specified character. If the argument and 
 |:-----|:-----|:---------|:------------|
 | `charToRemove` | `text` | Yes | The char to be removed from the argument string. |
 
+
+
 ## Argument evaluation
 
 - **`charToRemove`:** Evaluated in the enclosing context for each character tested; whitespace input has a separate check.
+
+
 
 ## Examples
 

@@ -19,11 +19,14 @@ retain-alpha-numeric() → text
 
 Returns the input string with all characters removed except for letters (A-Z, a-z) and digits (0-9). If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

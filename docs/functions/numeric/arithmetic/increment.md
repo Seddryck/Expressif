@@ -19,11 +19,14 @@ increment() → numeric
 
 Returns the argument number incremented of one unit.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

@@ -23,6 +23,8 @@ bucket(
 
 Classifies a numeric value into an equal-width bucket within a half-open interval. Returns `null` when the value is outside the interval or the bucket configuration is invalid.
 
+
+
 ## Parameters
 
 
@@ -33,11 +35,15 @@ Classifies a numeric value into an equal-width bucket within a half-open interva
 | `maximum` | `numeric` | Yes | Exclusive upper bound of the classified interval. |
 | `count` | `integer` | Yes | Strictly positive number of equal-width buckets. |
 
+
+
 ## Argument evaluation
 
 - **`minimum`:** Evaluated once in the enclosing context.
 - **`maximum`:** Evaluated once in the enclosing context.
 - **`count`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Expressif.Cli.Commands;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 using Expressif.Planning;
 
 namespace Expressif.Cli.Tests;

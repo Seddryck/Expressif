@@ -1,7 +1,8 @@
 using Expressif.Functions;
-using Expressif.Functions.Flow;
+using Expressif.Library.Array;
+using Expressif.Library.Flow;
 using Expressif.Syntax;
-using TryFunction = Expressif.Functions.Flow.Try;
+using TryFunction = Expressif.Library.Flow.Try;
 
 namespace Expressif.Bindings;
 

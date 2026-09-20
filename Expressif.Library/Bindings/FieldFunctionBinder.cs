@@ -1,6 +1,7 @@
 using Expressif.Functions;
-using Expressif.Functions.Record;
-using Expressif.Predicates.Record;
+using Expressif.Library.Numeric;
+using Expressif.Library.Record;
+using Expressif.Library.Operators;
 using Expressif.Syntax;
 
 namespace Expressif.Bindings;

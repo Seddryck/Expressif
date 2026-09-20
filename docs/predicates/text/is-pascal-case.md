@@ -3,7 +3,7 @@ layout: docs
 title: "is-pascal-case"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /predicates/text/is-pascal-case/
 tags:

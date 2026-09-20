@@ -21,6 +21,8 @@ text-to-mask(
 
 Returns the argument value formatted according to the mask specified as parameter. Each asterisk (`*`) of the mask is replaced by the corresponding character in the argument value. Other charachters of the mask are not substitued. If the length of the argument value is less than the count of charachetsr that must be replaced in the mask, the last asterisk characters are not replaced.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the argument value formatted according to the mask specified as paramete
 |:-----|:-----|:---------|:------------|
 | `mask` | `text` | Yes | The string representing the mask to apply to the argument string. |
 
+
+
 ## Argument evaluation
 
 - **`mask`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

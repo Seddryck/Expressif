@@ -19,6 +19,8 @@ last-of-year() → date-time
 
 Returns the 31st of December of the same year than the argument dateTime.
 
+
+
 ## Parameters
 
 

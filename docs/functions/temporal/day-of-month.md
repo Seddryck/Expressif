@@ -19,6 +19,8 @@ day-of-month() → integer
 
 returns a numeric value representing the day of the month of the date passed as the argument
 
+
+
 ## Parameters
 
 

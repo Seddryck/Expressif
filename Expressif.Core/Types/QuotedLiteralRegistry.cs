@@ -1,5 +1,6 @@
 using System.Globalization;
 using Expressif.Values;
+using Expressif.Values.Types;
 
 namespace Expressif.Types;
 
@@ -28,10 +29,22 @@ public sealed class QuotedLiteralRegistry
         [new DateLiteralParser(), new DateTimeLiteralParser(), new TimeLiteralParser()]);
 
     public (object? Value, string TypeName) Parse(string representation, string? typeName = null)
+        => ParseCore(representation, typeName, null);
+
+    internal (object? Value, string TypeName) Parse(
+        string representation,
+        string? typeName,
+        ITypeRegistry typeRegistry)
+        => ParseCore(representation, typeName, typeRegistry);
+
+    private (object? Value, string TypeName) ParseCore(
+        string representation,
+        string? typeName,
+        ITypeRegistry? typeRegistry)
     {
         ArgumentNullException.ThrowIfNull(representation);
         if (!string.IsNullOrEmpty(typeName))
-            return ParseExplicit(representation, typeName);
+            return ParseExplicit(representation, typeName, typeRegistry);
 
         var matches = parsers.Values
             .Select(parser => (Parser: parser, Accepted: parser.TryParse(representation, out var value), Value: value))
@@ -82,21 +95,30 @@ public sealed class QuotedLiteralRegistry
             && string.Equals(matches[0].TypeName, selected.TypeName, StringComparison.OrdinalIgnoreCase);
     }
 
-    private (object? Value, string TypeName) ParseExplicit(string representation, string typeName)
+    private (object? Value, string TypeName) ParseExplicit(
+        string representation,
+        string typeName,
+        ITypeRegistry? typeRegistry)
     {
-        var parser = ResolveParser(typeName);
+        var parser = ResolveParser(typeName, typeRegistry);
         return parser.TryParse(representation, out var value)
             ? (value, parser.TypeName)
             : throw new InvalidQuotedLiteralException(representation, parser.TypeName);
     }
 
-    private IQuotedLiteralParser ResolveParser(string typeName)
+    private IQuotedLiteralParser ResolveParser(string typeName, ITypeRegistry? typeRegistry = null)
     {
-        if (!TypeRegistry.TryResolve(typeName, out var descriptor))
-            throw new UnknownExpressifTypeException(typeName);
-        return parsers.TryGetValue(descriptor.Name, out var parser)
-            ? parser
-            : throw new UnsupportedQuotedLiteralTypeException(typeName);
+        if (parsers.TryGetValue(typeName, out var parser))
+            return parser;
+
+        if (typeRegistry is not null && typeRegistry.TryResolve(typeName, out var descriptor))
+        {
+            return parsers.TryGetValue(descriptor.Name, out parser)
+                ? parser
+                : throw new UnsupportedQuotedLiteralTypeException(typeName);
+        }
+
+        throw new UnknownExpressifTypeException(typeName);
     }
 
     private sealed class DateLiteralParser : IQuotedLiteralParser

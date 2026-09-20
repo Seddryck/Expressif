@@ -1,7 +1,7 @@
 using Expressif.Functions;
-using Expressif.Functions.Special;
+using Expressif.Library.Special;
 using Expressif.Syntax;
-using Expressif.Types;
+using Expressif.Values.Types;
 
 namespace Expressif.Bindings;
 
@@ -15,7 +15,7 @@ internal sealed class CoerceFunctionBinder : IFunctionBinder<Coerce>
             throw new BindingException("Function 'coerce' accepts positional coercion specifications only.");
 
         var specifications = syntax.Arguments
-            .Select(argument => BindSpecification(FunctionBinderSyntax.RequireValue(argument)))
+            .Select(argument => BindSpecification(FunctionBinderSyntax.RequireValue(argument), context))
             .ToArray();
         ValidateModes(specifications);
         ValidateDuplicateSelectors(specifications);
@@ -47,20 +47,22 @@ internal sealed class CoerceFunctionBinder : IFunctionBinder<Coerce>
             throw new BindingException($"Duplicate coercion selector '${duplicatePosition.Key}'.");
     }
 
-    private static CoercionSpecificationParameter BindSpecification(ExpressionSyntax syntax)
+    private static CoercionSpecificationParameter BindSpecification(
+        ExpressionSyntax syntax,
+        IFunctionBindingContext context)
         => syntax switch
         {
-            TypeLiteralSyntax type => new PositionalCoercionParameter(ResolveType(type)),
+            TypeLiteralSyntax type => new PositionalCoercionParameter(ResolveType(type, context)),
             BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: TupleProjectionSyntax selector }
                 when selector.Direction is TupleProjectionDirection.FromStart && selector.RootDepth == 0
-                => new TupleCoercionParameter(selector.Index, ResolveType(type)),
+                => new TupleCoercionParameter(selector.Index, ResolveType(type, context)),
             BinaryExpressionSyntax { Operator.Text: "->", Right: TypeLiteralSyntax type, Left: FunctionCallSyntax selector }
                 when selector.Arguments.Count == 0
-                => new FieldCoercionParameter(selector.Name, ResolveType(type)),
+                => new FieldCoercionParameter(selector.Name, ResolveType(type, context)),
             _ => throw new BindingException("A coerce specification must be ':type' or 'selector -> :type'."),
         };
 
-    private static Type ResolveType(TypeLiteralSyntax syntax)
-        => RuntimeTypeRegistry.Resolve(syntax.Name)
+    private static Type ResolveType(TypeLiteralSyntax syntax, IFunctionBindingContext context)
+        => context.ResolveRuntimeType(syntax.Name)
             ?? throw new BindingException($"Expressif type ':{syntax.Name}' cannot be used as a coercion target.");
 }

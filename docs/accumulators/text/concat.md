@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-text →
+array →
 concat(
     separator: text = ""
-) → text
+) → any
 ```
 
 Combines accumulated text values in source order, inserting the separator only between values.
@@ -63,5 +63,5 @@ The separator defaults to the empty string. Empty input returns empty text. Empt
 
 **Kind:** Accumulator  
 **Scope:** `text`  
-**Aliases:** `concat`, `implode` (`implode` is deprecated; use `concat` instead)
+**Aliases:** `implode` (`implode` is deprecated; use `concat` instead)
 {: .member-reference }

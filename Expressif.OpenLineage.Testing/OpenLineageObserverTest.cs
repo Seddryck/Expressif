@@ -49,7 +49,7 @@ public class OpenLineageObserverTest
         {
             Expression = "upper", Namespace = "tests", JobName = "customers", Inputs = [input], Outputs = [output],
         }, transport);
-        var expression = new ExpressionFactory(observer: observer).Create("upper");
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer).Create("upper");
 
         Assert.That(expression.Evaluate("alice"), Is.EqualTo("ALICE"));
         var events = transport.Events.ToArray();
@@ -81,7 +81,7 @@ public class OpenLineageObserverTest
     {
         var transport = new RecordingTransport();
         var observer = CreateObserver(transport);
-        var expression = new ExpressionFactory(observer: observer).Create("fold(sum)");
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer).Create("fold(sum)");
         Assert.Catch(() => expression.Evaluate(new[] { "unknown" }));
         Assert.That(transport.Events.Select(EventType), Is.EqualTo(new[] { "START", "FAIL" }));
     }
@@ -90,7 +90,7 @@ public class OpenLineageObserverTest
     public void ConcurrentEvaluations_HaveIndependentRuns()
     {
         var transport = new RecordingTransport();
-        var expression = new ExpressionFactory(observer: CreateObserver(transport)).Create("upper");
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: CreateObserver(transport)).Create("upper");
         Parallel.For(0, 30, _ => expression.Evaluate("alice"));
         var runs = transport.Events.Select(json =>
         {
@@ -128,7 +128,7 @@ public class OpenLineageObserverTest
             Interlocked.Increment(ref diagnostics);
             throw new InvalidOperationException("Diagnostic failed");
         });
-        var expression = new ExpressionFactory(observer: observer).Create("upper");
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer).Create("upper");
         Assert.Multiple(() =>
         {
             Assert.That(expression.Evaluate("alice"), Is.EqualTo("ALICE"));

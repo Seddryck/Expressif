@@ -33,10 +33,13 @@ Returns the sum of the input value and the parameter value.
 | `value` | `numeric` | Yes | The value to add to the input value. |
 | `times` | `integer` | No | Number of times the addition is applied. Defaults to `1`. |
 
+
+
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.
 - **`times`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 

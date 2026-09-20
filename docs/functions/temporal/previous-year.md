@@ -3,7 +3,7 @@ layout: docs
 title: "previous-year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 450
+nav_order: 390
 has_toc: false
 permalink: /functions/temporal/previous-year/
 tags:
@@ -18,6 +18,8 @@ previous-year() → date-time
 ```
 
 Returns the dateTime that substract a year to the dateTime passed as argument value.
+
+
 
 ## Parameters
 

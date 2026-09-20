@@ -3,7 +3,7 @@ layout: docs
 title: "suffix-space"
 parent: "Concatenation functions"
 grand_parent: "Text functions"
-nav_order: 130
+nav_order: 160
 has_toc: false
 permalink: /functions/text/concatenation/suffix-space/
 tags:
@@ -19,11 +19,14 @@ suffix-space() → text
 
 Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

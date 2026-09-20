@@ -3,7 +3,7 @@ layout: docs
 title: "utc-to-local"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 520
+nav_order: 460
 has_toc: false
 permalink: /functions/temporal/utc-to-local/
 tags:

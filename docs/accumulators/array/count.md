@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-count()
+array →
+count() → any
 ```
 
 Counts the number of accumulated items, including `null` values.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `count`
+**Aliases:** None
 {: .member-reference }

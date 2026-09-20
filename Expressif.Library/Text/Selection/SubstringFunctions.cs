@@ -1,0 +1,99 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Expressif.Values.Special;
+
+namespace Expressif.Library.Text.Selection;
+
+[Scope("text/selection")]
+public abstract class BaseSubstringFunction : BaseTextFunction
+{
+    public Func<string> Substring { get; }
+    public Func<int> Count { get; }
+    public BaseSubstringFunction(Func<string> substring, Func<int> count)
+        => (Substring, Count) = (substring, count);
+}
+
+/// <summary>
+/// Returns the substring of the argument string, containing all the characters immediately following the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the argument value is returned.
+/// </summary>
+public class AfterSubstring : BaseSubstringFunction
+{
+    /// <param name="substring">The string to seek.</param>
+    public AfterSubstring(Func<string> substring)
+        : this(substring, () => 0) { }
+
+    /// <param name="substring">The string to seek.</param>
+    /// <param name="count">The number of character positions to examine.</param>
+    public AfterSubstring(Func<string> substring, Func<int> count)
+        : base(substring, count) { }
+
+    protected override object EvaluateString(string value)
+    {
+        var substring = Substring.Invoke();
+        if (string.IsNullOrEmpty(substring) || new Expressif.Values.Special.Empty().Equals(substring) || new Expressif.Values.Special.Null().Equals(substring))
+            return value;
+
+        if (!value.Contains(substring))
+            return string.Empty;
+
+        var count = Count.Invoke();
+        var i = 0;
+        var index = substring.Length * -1;
+        do
+        {
+            index += substring.Length;
+            index = value.IndexOf(substring, index);
+            i += 1;
+        }
+        while (index != -1 && i <= count);
+
+        if (index == -1)
+            return new Expressif.Values.Special.Null().Keyword;
+
+        return value[(index + substring.Length)..value.Length];
+    }
+}
+
+/// <summary>
+/// Returns the substring of the argument string, containing all the characters immediately preceding the first occurrence of the string passed in parameter. If the parameter value is `null` or `empty` then the function returns `empty`.
+/// </summary>
+public class BeforeSubstring : BaseSubstringFunction
+{
+    /// <param name="substring">The string to seek.</param>
+    public BeforeSubstring(Func<string> substring)
+        : this(substring, () => 0) { }
+
+    /// <param name="substring">The string to seek.</param>
+    /// <param name="count">The number of character positions to examine.</param>
+    public BeforeSubstring(Func<string> substring, Func<int> count)
+        : base(substring, count) { }
+
+    protected override object EvaluateString(string value)
+    {
+        var substring = Substring.Invoke();
+        if (string.IsNullOrEmpty(substring) || new Expressif.Values.Special.Empty().Equals(substring) || new Expressif.Values.Special.Null().Equals(substring))
+            return string.Empty;
+
+        if (!value.Contains(substring))
+            return string.Empty;
+
+        var count = Count.Invoke();
+        var i = 0;
+        var index = substring.Length * -1;
+        do
+        {
+            index += substring.Length;
+            index = value.IndexOf(substring, index);
+            i += 1;
+        }
+        while (index != -1 && i <= count);
+
+        if (index == -1)
+            return new Expressif.Values.Special.Null().Keyword;
+
+        return value[..index];
+    }
+}

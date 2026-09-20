@@ -3,7 +3,7 @@ layout: docs
 title: "Conversion functions"
 parent: "Numeric functions"
 grand_parent: "Functions library"
-nav_order: 20
+nav_order: 30
 has_children: true
 has_toc: false
 permalink: /functions/numeric/conversion/

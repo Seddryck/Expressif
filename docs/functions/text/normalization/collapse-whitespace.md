@@ -19,11 +19,14 @@ collapse-whitespace() → text
 
 returns the argument with any two or more consecutive whitespaces replaced by the first whitespace in the sequence and trimming the result. `\r\n` is considered as a single character.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

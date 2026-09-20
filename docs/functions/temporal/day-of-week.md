@@ -19,6 +19,8 @@ day-of-week() → integer
 
 returns a numeric value representing the day of the week (1 being Monday and 7 being Sunday) of the date passed as the argument
 
+
+
 ## Parameters
 
 
