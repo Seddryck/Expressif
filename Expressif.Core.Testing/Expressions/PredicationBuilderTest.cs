@@ -1,12 +1,5 @@
 using Expressif.Bindings;
 using Expressif.Library.Text;
-using Expressif.Serialization;
-using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expressif.Testing.Expressions;
 
@@ -112,18 +105,6 @@ public class PredicationBuilderTest
 
         var str = builder.Serialize();
         Assert.That(str, Is.EqualTo("{{lower-case |OR {starts-with(Nik) |AND ends-with(sla)}} |OR upper-case}"));
-    }
-
-    [Test]
-    public void Serialize_SerializerCalledOnce()
-    {
-        var serializer = new Mock<PredicationSerializer>();
-        serializer.Setup(x => x.Serialize(It.IsAny<IPredication>())).Returns("serialization");
-        var builder = new TestPredicationBuilder(serializer: serializer.Object)
-            .Create<StartsWith>("ola")
-            .Or<EndsWith>("sla");
-        var str = builder.Serialize();
-        serializer.Verify(x => x.Serialize(It.IsAny<IPredication>()), Times.Once);
     }
 
     [Test]

@@ -7,23 +7,20 @@ using System.Threading.Tasks;
 
 namespace Expressif.Serialization;
 
-public class PredicationSerializer
+internal sealed class PredicationSerializer
 {
-    private SinglePredicationSerializer SingleSerializer { get; set; }
+    private SinglePredicationSerializer SingleSerializer { get; } = new();
 
-    public PredicationSerializer()
-        : this(new()) { }
-    public PredicationSerializer(SinglePredicationSerializer? singleSerializer = null)
-        => SingleSerializer = singleSerializer ?? new();
+    public PredicationSerializer() { }
 
-    public virtual string Serialize(IPredication predication)
+    public string Serialize(IPredication predication)
     {
         var stringBuilder = new StringBuilder();
         Serialize(predication, ref stringBuilder);
         return stringBuilder.ToString();
     }
 
-    protected virtual void Serialize(IPredication predication, ref StringBuilder stringBuilder)
+    private void Serialize(IPredication predication, ref StringBuilder stringBuilder)
     {
         switch (predication)
         {

@@ -8,26 +8,23 @@ using Expressif.Bindings;
 
 namespace Expressif.Serialization;
 
-public class SinglePredicationSerializer
+internal sealed class SinglePredicationSerializer
 {
-    private ParameterSerializer ParameterSerializer { get; set; }
+    private ParameterSerializer ParameterSerializer { get; } = new();
 
-    public SinglePredicationSerializer()
-        : this(new()) { }
-    public SinglePredicationSerializer(ParameterSerializer? parameterSerializer = null)
-        => ParameterSerializer = parameterSerializer ?? new();
+    public SinglePredicationSerializer() { }
 
-    internal virtual string Serialize(SinglePredication predication)
+    internal string Serialize(SinglePredication predication)
     {
         var stringBuilder = new StringBuilder();
         Serialize(predication, ref stringBuilder);
         return stringBuilder.ToString();
     }
 
-    public virtual void Serialize(SinglePredication predication, ref StringBuilder stringBuilder)
+    public void Serialize(SinglePredication predication, ref StringBuilder stringBuilder)
         => Serialize(predication.Member, ref stringBuilder);
 
-    protected virtual void Serialize(Function predicate, ref StringBuilder stringBuilder)
+    private void Serialize(Function predicate, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(predicate.Name.ToKebabCase());
         if (predicate.Parameters.Length != 0)

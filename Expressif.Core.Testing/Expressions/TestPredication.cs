@@ -1,5 +1,4 @@
 using Expressif.Predicates;
-using Expressif.Serialization;
 
 namespace Expressif.Testing.Expressions;
 
@@ -14,6 +13,6 @@ internal static class TestPredication
 
 internal sealed class TestPredicationBuilder : PredicationBuilder
 {
-    public TestPredicationBuilder(IContext? context = null, PredicationSerializer? serializer = null)
-        : base(new PredicationFactory(), context, serializer) { }
+    public TestPredicationBuilder(IContext? context = null)
+        : base(new PredicationFactory(), context) { }
 }
