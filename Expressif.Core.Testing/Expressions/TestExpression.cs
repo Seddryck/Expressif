@@ -1,6 +1,5 @@
 using Expressif.Functions;
 using Expressif.Discovery;
-using Expressif.Serialization;
 
 namespace Expressif.Testing.Expressions;
 
@@ -21,6 +20,6 @@ internal static class TestExpression
 
 internal sealed class TestExpressionBuilder : ExpressionBuilder
 {
-    public TestExpressionBuilder(IContext? context = null, ExpressionSerializer? serializer = null)
-        : base(new FunctionFactory(TestExpression.LibraryProbe), context, serializer) { }
+    public TestExpressionBuilder(IContext? context = null)
+        : base(new FunctionFactory(TestExpression.LibraryProbe), context) { }
 }

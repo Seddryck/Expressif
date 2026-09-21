@@ -17,12 +17,11 @@ public class ExpressionBuilder
 
     public ExpressionBuilder(
         FunctionFactory factory,
-        IContext? context = null,
-        ExpressionSerializer? serializer = null)
+        IContext? context)
         => (Factory, Context, Serializer) = (
             factory ?? throw new ArgumentNullException(nameof(factory)),
             context ?? new Context(),
-            serializer ?? new ExpressionSerializer());
+            new ExpressionSerializer());
 
     private Queue<IBoundExpression> Pile { get; } = new();
 
