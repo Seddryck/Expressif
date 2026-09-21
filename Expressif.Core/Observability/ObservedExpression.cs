@@ -12,7 +12,7 @@ internal sealed class ObservedExpression : IExpression
 
     public object? Evaluate(object? value)
     {
-        using var observation = observer.Begin(ExpressionObservationStage.Evaluate);
+        using var observation = ExpressionObservationScope.Begin(observer, ExpressionObservationStage.Evaluate);
         var frame = new EvaluationFrame(value, value, observation);
         try
         {

@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
+using Expressif.Bindings;
 using Expressif.Observability;
+using Expressif.Syntax;
 
 namespace Expressif.Testing.Observability;
 
@@ -85,6 +87,72 @@ public class ExpressionObserverTest
         });
     }
 
+    [Test]
+    public void BeginFailure_DoesNotChangeSuccessfulOperation()
+        => AssertSuccessfulOperationIsolatedFrom(ObserverCallback.Begin);
+
+    [Test]
+    public void CompleteFailure_DoesNotChangeSuccessfulOperation()
+        => AssertSuccessfulOperationIsolatedFrom(ObserverCallback.Complete);
+
+    [Test]
+    public void DisposeFailure_DoesNotChangeSuccessfulOperation()
+        => AssertSuccessfulOperationIsolatedFrom(ObserverCallback.Dispose);
+
+    [TestCase(ExpressionObservationStage.Parse)]
+    [TestCase(ExpressionObservationStage.Bind)]
+    [TestCase(ExpressionObservationStage.Evaluate)]
+    public void FailureCallbackFailures_PreserveOriginalOperationFailure(ExpressionObservationStage stage)
+    {
+        var expected = new InvalidOperationException($"{stage} failed");
+        var observer = new ThrowingObserver(ObserverCallback.Fail | ObserverCallback.Dispose);
+
+        var actual = Assert.Catch(CreateFailingOperation(stage, observer, expected));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(actual, Is.SameAs(expected));
+            Assert.That(observer.Failure, Is.SameAs(expected));
+            Assert.That(
+                observer.Events.Where(x => x.EndsWith($":{stage}", StringComparison.Ordinal)),
+                Is.EqualTo(new[] { $"begin:{stage}", $"fail:{stage}", $"dispose:{stage}" }));
+        });
+    }
+
+    private static void AssertSuccessfulOperationIsolatedFrom(ObserverCallback callback)
+    {
+        var observer = new ThrowingObserver(callback);
+        var factory = new ExpressionFactory(
+            new StubBinder(new PassThroughExpression()),
+            new StubParser(),
+            observer);
+
+        var expression = factory.Create("ignored");
+
+        Assert.That(expression.Evaluate("value"), Is.EqualTo("value"));
+    }
+
+    private static Action CreateFailingOperation(
+        ExpressionObservationStage stage,
+        IExpressionObserver observer,
+        Exception exception)
+        => stage switch
+        {
+            ExpressionObservationStage.Parse => () => new ExpressionFactory(
+                new StubBinder(new PassThroughExpression()),
+                new ThrowingParser(exception),
+                observer).Create("ignored"),
+            ExpressionObservationStage.Bind => () => new ExpressionFactory(
+                new ThrowingBinder(exception),
+                new StubParser(),
+                observer).Create("ignored"),
+            ExpressionObservationStage.Evaluate => () => new ExpressionFactory(
+                new StubBinder(new ThrowingExpression(exception)),
+                new StubParser(),
+                observer).Create("ignored").Evaluate("value"),
+            _ => throw new ArgumentOutOfRangeException(nameof(stage), stage, null),
+        };
+
     private sealed class TrackingObserver : IExpressionObserver
     {
         private int nextId;
@@ -126,5 +194,94 @@ public class ExpressionObserverTest
             if (Interlocked.Exchange(ref disposed, 1) == 0)
                 onDispose();
         }
+    }
+
+    [Flags]
+    private enum ObserverCallback
+    {
+        Begin = 1,
+        Complete = 2,
+        Fail = 4,
+        Dispose = 8,
+    }
+
+    private sealed class ThrowingObserver(ObserverCallback callbacks) : IExpressionObserver
+    {
+        public ConcurrentQueue<string> Events { get; } = new();
+        public Exception? Failure { get; private set; }
+
+        public IExpressionObservation Begin(ExpressionObservationStage stage)
+        {
+            Events.Enqueue($"begin:{stage}");
+            if (callbacks.HasFlag(ObserverCallback.Begin))
+                throw new ObserverException(ObserverCallback.Begin);
+
+            return new ThrowingObservation(this, stage, callbacks);
+        }
+
+        private sealed class ThrowingObservation(
+            ThrowingObserver owner,
+            ExpressionObservationStage stage,
+            ObserverCallback callbacks) : IExpressionObservation
+        {
+            public void Complete()
+            {
+                owner.Events.Enqueue($"complete:{stage}");
+                if (callbacks.HasFlag(ObserverCallback.Complete))
+                    throw new ObserverException(ObserverCallback.Complete);
+            }
+
+            public void Fail(Exception exception)
+            {
+                owner.Events.Enqueue($"fail:{stage}");
+                owner.Failure = exception;
+                if (callbacks.HasFlag(ObserverCallback.Fail))
+                    throw new ObserverException(ObserverCallback.Fail);
+            }
+
+            public void Dispose()
+            {
+                owner.Events.Enqueue($"dispose:{stage}");
+                if (callbacks.HasFlag(ObserverCallback.Dispose))
+                    throw new ObserverException(ObserverCallback.Dispose);
+            }
+        }
+    }
+
+    private sealed class ObserverException(ObserverCallback callback)
+        : Exception($"Observer callback {callback} failed.");
+
+    private sealed class StubParser : IExpressionParser
+    {
+        public RootExpressionSyntax Parse(string text) => ExpressionParser.Parse("upper");
+    }
+
+    private sealed class ThrowingParser(Exception exception) : IExpressionParser
+    {
+        public RootExpressionSyntax Parse(string text) => throw exception;
+    }
+
+    private sealed class StubBinder(IExpression expression) : IExpressionBinder
+    {
+        public IExpression Bind(RootExpressionSyntax syntax) => expression;
+        public IExpression BindClosed(RootExpressionSyntax syntax) => expression;
+    }
+
+    private sealed class ThrowingBinder(Exception exception) : IExpressionBinder
+    {
+        public IExpression Bind(RootExpressionSyntax syntax) => throw exception;
+        public IExpression BindClosed(RootExpressionSyntax syntax) => throw exception;
+    }
+
+    private sealed class PassThroughExpression : IExpression
+    {
+        public object? Evaluate(object? value) => value;
+        public IExpression WithContext(EvaluationContext context) => this;
+    }
+
+    private sealed class ThrowingExpression(Exception exception) : IExpression
+    {
+        public object? Evaluate(object? value) => throw exception;
+        public IExpression WithContext(EvaluationContext context) => this;
     }
 }
