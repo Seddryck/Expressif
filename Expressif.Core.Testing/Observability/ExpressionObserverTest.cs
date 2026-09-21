@@ -29,9 +29,9 @@ public class ExpressionObserverTest
             Assert.That(observer.Observations, Has.All.Matches<TrackingObservation>(x => x.IsComplete && x.Failure is null));
             Assert.That(observer.Events, Is.EqualTo(new[]
             {
-                "begin:Parse", "end:Parse",
-                "begin:Bind", "end:Bind",
-                "begin:Evaluate", "end:Evaluate",
+                "begin:Parse", "complete:Parse", "dispose:Parse",
+                "begin:Bind", "complete:Bind", "dispose:Bind",
+                "begin:Evaluate", "complete:Evaluate", "dispose:Evaluate",
             }));
         });
     }
@@ -83,7 +83,61 @@ public class ExpressionObserverTest
         {
             Assert.That(evaluations, Has.Length.EqualTo(50));
             Assert.That(evaluations.Select(x => x.Id), Is.Unique);
-            Assert.That(evaluations, Has.All.Matches<TrackingObservation>(x => x.IsDisposed));
+            Assert.That(evaluations, Has.All.Matches<TrackingObservation>(
+                x => x.CompletionCount == 1 && x.FailureCount == 0 && x.IsDisposed));
+        });
+    }
+
+    [Test]
+    public void Evaluate_SeparateCallsUseDistinctObservations()
+    {
+        var observer = new TrackingObserver();
+        var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer).Create("upper");
+
+        expression.Evaluate("first");
+        expression.Evaluate("second");
+
+        var evaluations = observer.Observations
+            .Where(x => x.Stage == ExpressionObservationStage.Evaluate)
+            .ToArray();
+        Assert.Multiple(() =>
+        {
+            Assert.That(evaluations, Has.Length.EqualTo(2));
+            Assert.That(evaluations.Select(x => x.Id), Is.Unique);
+        });
+    }
+
+    [Test]
+    public void CompleteAndFail_AreMutuallyExclusiveAndPrecedeDisposal()
+    {
+        var observer = new TrackingObserver();
+        var successful = new ExpressionFactory(
+            new StubBinder(new PassThroughExpression()),
+            new StubParser(),
+            observer).Create("ignored");
+        var expected = new InvalidOperationException("Evaluation failed");
+        var failing = new ExpressionFactory(
+            new StubBinder(new ThrowingExpression(expected)),
+            new StubParser(),
+            observer).Create("ignored");
+
+        successful.Evaluate("value");
+        Assert.That(Assert.Catch(() => failing.Evaluate("value")), Is.SameAs(expected));
+
+        var evaluations = observer.Observations
+            .Where(x => x.Stage == ExpressionObservationStage.Evaluate)
+            .ToArray();
+        Assert.Multiple(() =>
+        {
+            Assert.That(evaluations[0].CompletionCount, Is.EqualTo(1));
+            Assert.That(evaluations[0].FailureCount, Is.Zero);
+            Assert.That(evaluations[1].CompletionCount, Is.Zero);
+            Assert.That(evaluations[1].FailureCount, Is.EqualTo(1));
+            Assert.That(observer.Events.Where(x => x.EndsWith(":Evaluate", StringComparison.Ordinal)), Is.EqualTo(new[]
+            {
+                "begin:Evaluate", "complete:Evaluate", "dispose:Evaluate",
+                "begin:Evaluate", "fail:Evaluate", "dispose:Evaluate",
+            }));
         });
     }
 
@@ -166,7 +220,9 @@ public class ExpressionObserverTest
             var observation = new TrackingObservation(
                 Interlocked.Increment(ref nextId),
                 stage,
-                () => Events.Enqueue($"end:{stage}"));
+                () => Events.Enqueue($"complete:{stage}"),
+                () => Events.Enqueue($"fail:{stage}"),
+                () => Events.Enqueue($"dispose:{stage}"));
             Observations.Enqueue(observation);
             return observation;
         }
@@ -175,6 +231,8 @@ public class ExpressionObserverTest
     private sealed class TrackingObservation(
         int id,
         ExpressionObservationStage stage,
+        Action onComplete,
+        Action onFail,
         Action onDispose) : IExpressionObservation
     {
         private int disposed;
@@ -182,12 +240,23 @@ public class ExpressionObserverTest
         public int Id { get; } = id;
         public ExpressionObservationStage Stage { get; } = stage;
         public bool IsDisposed => disposed != 0;
-        public bool IsComplete { get; private set; }
+        public int CompletionCount { get; private set; }
+        public int FailureCount { get; private set; }
+        public bool IsComplete => CompletionCount != 0;
         public Exception? Failure { get; private set; }
 
-        public void Complete() => IsComplete = true;
+        public void Complete()
+        {
+            CompletionCount++;
+            onComplete();
+        }
 
-        public void Fail(Exception exception) => Failure = exception;
+        public void Fail(Exception exception)
+        {
+            FailureCount++;
+            Failure = exception;
+            onFail();
+        }
 
         public void Dispose()
         {
