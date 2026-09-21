@@ -11,10 +11,10 @@ namespace Expressif.Library.Operators;
 public class UnaryOperatorFactory : BaseExpressionFactory
 {
     public UnaryOperatorFactory()
-        : this(new OperatorRegistry<IUnaryOperator>(new AssemblyTypesProbe([typeof(UnaryOperatorFactory).Assembly]))) { }
+        : this(new OperatorRegistry<IUnaryOperator>(new AssemblyTypeSource([typeof(UnaryOperatorFactory).Assembly]))) { }
 
     public UnaryOperatorFactory(IImplementationRegistry registry)
-        : base(registry, new AssemblyTypesProbe([typeof(UnaryOperatorFactory).Assembly]))
+        : base(registry, new AssemblyTypeSource([typeof(UnaryOperatorFactory).Assembly]))
     { }
 
     public IUnaryOperator Instantiate(string operatorName, IPredicate predicate)

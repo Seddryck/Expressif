@@ -10,12 +10,12 @@ public sealed class AccumulatorRegistry : IImplementationRegistry
     private readonly IReadOnlyDictionary<string, string> canonicalNames;
 
     public AccumulatorRegistry(params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
-    public AccumulatorRegistry(ITypesProbe probe)
-        : this(Discover(probe).ToArray()) { }
+    public AccumulatorRegistry(ITypeSource source)
+        : this(Discover(source).ToArray()) { }
 
     private AccumulatorRegistry(AccumulatorRegistration[] accumulators)
     {
@@ -44,9 +44,10 @@ public sealed class AccumulatorRegistry : IImplementationRegistry
                 $"Accumulator '{implementationType.FullName}' must have a parameterless constructor.");
     }
 
-    private static IEnumerable<AccumulatorRegistration> Discover(ITypesProbe probe)
-        => probe.Locate()
-            .Where(type => typeof(IAccumulator).IsAssignableFrom(type))
+    private static IEnumerable<AccumulatorRegistration> Discover(ITypeSource source)
+        => source.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract
+                && typeof(IAccumulator).IsAssignableFrom(type))
             .Select(type => (Type: type, Attribute: type.GetCustomAttribute<FunctionAttribute>(true)))
             .Where(candidate => candidate.Attribute is not null)
             .Select(candidate =>

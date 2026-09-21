@@ -63,7 +63,7 @@ public class BindTest
     [Test]
     public void OptionalAndVariadic_UseSharedSignatures()
     {
-        var factory = new FunctionFactory(TestExpression.LibraryProbe);
+        var factory = new FunctionFactory(TestExpression.LibraryTypeSource);
         Assert.Multiple(() =>
         {
             Assert.That(factory.InvokeTuple("rotate", new TupleValue(new TupleValue(1, 2, 3))), Is.EqualTo(new TupleValue(3, 1, 2)));
@@ -90,7 +90,7 @@ public class BindTest
     {
         var factory = new FunctionFactory(
             new ImplementationRegistry([new("counting", typeof(Counting))]),
-            TestExpression.LibraryProbe);
+            TestExpression.LibraryTypeSource);
         var value = new object();
         Counting.Calls = 0;
         Assert.That(factory.InvokeTuple("counting", new TupleValue(value, null)), Is.SameAs(value));

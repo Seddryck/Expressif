@@ -18,8 +18,8 @@ internal sealed class TupleBindFunctionConstructor : IFunctionConstructor<Bind>,
     public TupleBindFunctionConstructor()
     { }
 
-    public TupleBindFunctionConstructor(ITypesProbe probe)
-        => (functions, predicates) = (new FunctionRegistry(probe), new PredicateRegistry(probe));
+    public TupleBindFunctionConstructor(ITypeSource source)
+        => (functions, predicates) = (new FunctionRegistry(source), new PredicateRegistry(source));
 
     public IFunction Construct(
         Bindings.Function function,
@@ -128,10 +128,10 @@ internal sealed class TupleBindFunctionConstructor : IFunctionConstructor<Bind>,
         => ResolveTarget(name, functions, predicates, sourceSpan);
 
     private IImplementationRegistry RequireFunctions()
-        => functions ?? throw new InvalidOperationException("Tuple invocation requires a type probe.");
+        => functions ?? throw new InvalidOperationException("Tuple invocation requires a type source.");
 
     private IImplementationRegistry RequirePredicates()
-        => predicates ?? throw new InvalidOperationException("Tuple invocation requires a type probe.");
+        => predicates ?? throw new InvalidOperationException("Tuple invocation requires a type source.");
 
     internal static Type ResolveTarget(
         string name,
