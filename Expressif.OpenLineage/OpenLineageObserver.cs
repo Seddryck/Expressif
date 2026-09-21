@@ -58,7 +58,7 @@ public sealed class OpenLineageObserver : IExpressionObserver
     public IExpressionObservation Begin(ExpressionObservationStage stage)
         => stage == ExpressionObservationStage.Evaluate
             ? new RunObservation(this)
-            : NoOpExpressionObserver.Instance.Begin(stage);
+            : IgnoredObservation.Instance;
 
     private static object[] Datasets(IReadOnlyList<OpenLineageDataset> datasets)
         => datasets.Select(dataset =>
@@ -114,5 +114,14 @@ public sealed class OpenLineageObserver : IExpressionObserver
             if (Interlocked.Exchange(ref ended, 1) == 0)
                 observer.Emit(runId, eventType);
         }
+    }
+
+    private sealed class IgnoredObservation : IExpressionObservation
+    {
+        public static IgnoredObservation Instance { get; } = new();
+
+        private IgnoredObservation() { }
+
+        public void Dispose() { }
     }
 }
