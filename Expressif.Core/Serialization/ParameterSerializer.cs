@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Serialization;
 
-public class ParameterSerializer
+internal sealed class ParameterSerializer
 {
     private readonly QuotedLiteralRegistry quotedLiteralRegistry;
     private FunctionSerializer? functionSerializer;
@@ -24,7 +24,7 @@ public class ParameterSerializer
 
     private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
 
-    public virtual string Serialize(IParameter parameter)
+    public string Serialize(IParameter parameter)
     {
         return parameter switch
         {

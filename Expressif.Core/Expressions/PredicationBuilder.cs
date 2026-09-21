@@ -15,12 +15,11 @@ public class AbstractPredicationBuilder
 
     protected AbstractPredicationBuilder(
         IPredicationFactory factory,
-        IContext? context = null,
-        PredicationSerializer? serializer = null)
+        IContext? context = null)
         => (Factory, Context, Serializer) = (
             factory ?? throw new ArgumentNullException(nameof(factory)),
             context ?? new Context(),
-            serializer ?? new PredicationSerializer());
+            new PredicationSerializer());
 
     protected AbstractPredicationBuilder(AbstractPredicationBuilder builder)
         => (Context, Factory, Serializer, Pile) = (builder.Context, builder.Factory, builder.Serializer, builder.Pile);
@@ -67,9 +66,8 @@ public class PredicationBuilder : AbstractPredicationBuilder
 {
     public PredicationBuilder(
         IPredicationFactory factory,
-        IContext? context = null,
-        PredicationSerializer? serializer = null)
-        : base(factory, context, serializer) { }
+        IContext? context = null)
+        : base(factory, context) { }
 
     public PredicationBuilderNext Create<T>()
         where T : IPredicate

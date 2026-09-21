@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace Expressif.Serialization;
 
-public class FunctionSerializer
+internal sealed class FunctionSerializer
 {
     private ParameterSerializer ParameterSerializer { get; }
 
     public FunctionSerializer()
         : this(new ParameterSerializer()) { }
 
-    public FunctionSerializer(ParameterSerializer? parameterSerializer = null)
-        => ParameterSerializer = parameterSerializer ?? new ParameterSerializer();
+    internal FunctionSerializer(ParameterSerializer parameterSerializer)
+        => ParameterSerializer = parameterSerializer;
 
-    public virtual string Serialize(Function function)
+    public string Serialize(Function function)
     {
         var stringBuilder = new StringBuilder();
         Serialize(function, ref stringBuilder);
         return stringBuilder.ToString();
     }
 
-    public virtual void Serialize(Function function, ref StringBuilder stringBuilder)
+    public void Serialize(Function function, ref StringBuilder stringBuilder)
     {
         if (TrySerializeReference(function, stringBuilder))
             return;

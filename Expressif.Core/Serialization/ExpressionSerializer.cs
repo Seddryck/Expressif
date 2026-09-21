@@ -7,17 +7,15 @@ using Expressif.Bindings;
 
 namespace Expressif.Serialization;
 
-public class ExpressionSerializer
+internal sealed class ExpressionSerializer
 {
     private FunctionSerializer FunctionSerializer { get; }
     private ParameterSerializer ParameterSerializer { get; }
 
     public ExpressionSerializer()
-        : this(new FunctionSerializer()) { }
-    public ExpressionSerializer(FunctionSerializer? functionSerializer = null)
-        => (FunctionSerializer, ParameterSerializer) = (functionSerializer ?? new FunctionSerializer(), new ParameterSerializer());
+        => (FunctionSerializer, ParameterSerializer) = (new FunctionSerializer(), new ParameterSerializer());
 
-    public virtual void Serialize(IBoundExpression expression, ref StringBuilder stringBuilder)
+    public void Serialize(IBoundExpression expression, ref StringBuilder stringBuilder)
     {
         switch (expression)
         {
@@ -35,16 +33,16 @@ public class ExpressionSerializer
         }
     }
 
-    public virtual void Serialize(OpenExpression expression, ref StringBuilder stringBuilder)
+    public void Serialize(OpenExpression expression, ref StringBuilder stringBuilder)
         => Serialize([.. expression.Members], ref stringBuilder);
 
-    public virtual void Serialize(Bindings.ClosedExpression expression, ref StringBuilder stringBuilder)
+    public void Serialize(Bindings.ClosedExpression expression, ref StringBuilder stringBuilder)
     {
         stringBuilder.Append(ParameterSerializer.Serialize(expression.Parameter));
         SerializeContinuations(expression.Members, ref stringBuilder);
     }
 
-    public virtual void Serialize(IBoundExpression[] expressions, ref StringBuilder stringBuilder)
+    public void Serialize(IBoundExpression[] expressions, ref StringBuilder stringBuilder)
     {
         if (expressions.Length == 0)
             return;
@@ -78,10 +76,10 @@ public class ExpressionSerializer
         }
     }
 
-    public virtual string Serialize(IBoundExpression expression)
+    public string Serialize(IBoundExpression expression)
         => Serialize([expression]);
 
-    public virtual string Serialize(IBoundExpression[] expressions)
+    public string Serialize(IBoundExpression[] expressions)
     {
         var sb = new StringBuilder();
         Serialize(expressions, ref sb);
