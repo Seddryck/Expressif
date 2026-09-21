@@ -5,8 +5,8 @@ namespace Expressif.Testing.Expressions;
 
 internal static class TestExpression
 {
-    internal static ITypesProbe LibraryProbe
-        => new AssemblyTypesProbe([typeof(ExpressionBinder).Assembly]);
+    internal static ITypeSource LibraryTypeSource
+        => new AssemblyTypeSource([typeof(ExpressionBinder).Assembly]);
 
     public static IExpression Create(string text, IContext? context = null)
         => Expression.Create(text, CreateBinder(context));
@@ -21,5 +21,5 @@ internal static class TestExpression
 internal sealed class TestExpressionBuilder : ExpressionBuilder
 {
     public TestExpressionBuilder(IContext? context = null)
-        : base(new FunctionFactory(TestExpression.LibraryProbe), context) { }
+        : base(new FunctionFactory(TestExpression.LibraryTypeSource), context) { }
 }

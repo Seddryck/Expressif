@@ -11,11 +11,11 @@ namespace Expressif.Library.Operators;
 internal class OperatorIntrospector : BaseIntrospector
 {
     public OperatorIntrospector()
-            : this(new AssemblyTypesProbe([typeof(OperatorIntrospector).Assembly])) { }
+            : this(new AssemblyTypeSource([typeof(OperatorIntrospector).Assembly])) { }
     public OperatorIntrospector(Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray())) { }
-    public OperatorIntrospector(ITypesProbe probe)
-        : base(probe) { }
+        : this(new AssemblyTypeSource(assemblies.Distinct().ToArray())) { }
+    public OperatorIntrospector(ITypeSource source)
+        : base(source) { }
 
     public IEnumerable<OperatorInfo> Locate()
         => Locate(true);

@@ -16,10 +16,10 @@ public class FunctionIntrospector : BaseIntrospector
     private FunctionContractIntrospector ContractIntrospector { get; }
 
     public FunctionIntrospector(IntrospectionOptions options, params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray()), options) { }
+        : this(new AssemblyTypeSource(assemblies.Distinct().ToArray()), options) { }
 
-    public FunctionIntrospector(ITypesProbe probe, IntrospectionOptions options)
-        : base(probe)
+    public FunctionIntrospector(ITypeSource source, IntrospectionOptions options)
+        : base(source)
     {
         Options = options;
         TypeMapper = new ExpressifTypeMapper(options);

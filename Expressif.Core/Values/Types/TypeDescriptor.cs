@@ -57,12 +57,12 @@ public sealed class TypeRegistry : ITypeRegistry
     }
 
     public TypeRegistry(params Assembly[] assemblies)
-        : this(new TypeIntrospector(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new TypeIntrospector(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))).Describe()) { }
 
-    public TypeRegistry(ITypesProbe probe)
-        : this(new TypeIntrospector(probe).Describe()) { }
+    public TypeRegistry(ITypeSource source)
+        : this(new TypeIntrospector(source).Describe()) { }
 
     public bool TryResolve(string name, out TypeDescriptor descriptor)
         => byName.TryGetValue(name, out descriptor!);
@@ -120,22 +120,23 @@ public sealed class TypeRegistry : ITypeRegistry
 
 public sealed class TypeIntrospector
 {
-    private readonly ITypesProbe probe;
+    private readonly ITypeSource source;
     private Type[]? types;
-    private Type[] Types => types ??= probe.Locate().ToArray();
+    private Type[] Types => types ??= source.GetTypes().ToArray();
 
     public TypeIntrospector(params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
-    public TypeIntrospector(ITypesProbe probe)
-        => this.probe = probe;
+    public TypeIntrospector(ITypeSource source)
+        => this.source = source;
 
     public IEnumerable<TypeDescriptor> Describe()
         => Types
-            .Where(type => typeof(ITypeDescriptor).IsAssignableFrom(type)
-                || typeof(IExpressifValueType).IsAssignableFrom(type))
+            .Where(type => type.IsClass && !type.IsAbstract
+                && (typeof(ITypeDescriptor).IsAssignableFrom(type)
+                    || typeof(IExpressifValueType).IsAssignableFrom(type)))
             .Where(type => type.IsDefined(typeof(ExpressifTypeAttribute), false))
             .Select(Describe)
             .OrderBy(descriptor => descriptor.Name);

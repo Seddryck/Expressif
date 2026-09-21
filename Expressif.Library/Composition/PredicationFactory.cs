@@ -14,7 +14,7 @@ namespace Expressif.Library.Composition;
 
 public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
 {
-    private readonly ITypesProbe probe;
+    private readonly ITypeSource source;
     private static readonly IReadOnlyDictionary<Type, Func<Func<int>, IEnumerable<Func<bool>>, IPredicate>> CardinalityFactories =
         new Dictionary<Type, Func<Func<int>, IEnumerable<Func<bool>>, IPredicate>>
         {
@@ -32,22 +32,22 @@ public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
         IImplementationRegistry registry,
         UnaryOperatorFactory unary,
         BinaryOperatorFactory binary,
-        ITypesProbe probe)
-        : base(registry, probe)
-        => (UnaryOperatorFactory, BinaryOperatorFactory, this.probe) = (unary, binary, probe);
+        ITypeSource source)
+        : base(registry, source)
+        => (UnaryOperatorFactory, BinaryOperatorFactory, this.source) = (unary, binary, source);
 
-    internal PredicationFactory(IImplementationRegistry registry, ITypesProbe probe)
+    internal PredicationFactory(IImplementationRegistry registry, ITypeSource source)
         : this(
             registry,
-            new UnaryOperatorFactory(new OperatorRegistry<IUnaryOperator>(probe)),
-            new BinaryOperatorFactory(new OperatorRegistry<IBinaryOperator>(probe)),
-            probe) { }
+            new UnaryOperatorFactory(new OperatorRegistry<IUnaryOperator>(source)),
+            new BinaryOperatorFactory(new OperatorRegistry<IBinaryOperator>(source)),
+            source) { }
 
     public PredicationFactory()
-        : this(new AssemblyTypesProbe([typeof(PredicationFactory).Assembly])) { }
+        : this(new AssemblyTypeSource([typeof(PredicationFactory).Assembly])) { }
 
-    public PredicationFactory(ITypesProbe probe)
-        : this(new PredicateRegistry(probe), probe) { }
+    public PredicationFactory(ITypeSource source)
+        : this(new PredicateRegistry(source), source) { }
 
     public virtual IPredicate Instantiate(string code, IContext context)
     {
@@ -106,7 +106,7 @@ public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
     }
 
     internal IPredicate Instantiate(PipelinePredication pipeline, IContext context)
-        => new BooleanFunctionPredicate(new FunctionFactory(probe).Instantiate(pipeline.Expression, context));
+        => new BooleanFunctionPredicate(new FunctionFactory(source).Instantiate(pipeline.Expression, context));
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
     {
@@ -115,7 +115,7 @@ public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
 
         return CreateFunctionCast(() =>
         {
-            var expression = new FunctionFactory(probe).Instantiate(open.Expression, context);
+            var expression = new FunctionFactory(source).Instantiate(open.Expression, context);
             var input = EvaluationRuntime.Frame?.Current ?? context.CurrentObject.Value;
             if (scalarType == typeof(bool))
                 return new BooleanFunctionPredicate(expression).Evaluate(input);
@@ -127,7 +127,7 @@ public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
 
     protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {
-        var expression = new FunctionFactory(probe).Instantiate(new ClosedRootExpression(input.Expression), context);
+        var expression = new FunctionFactory(source).Instantiate(new ClosedRootExpression(input.Expression), context);
         return CreateFunctionCast(() => expression.Evaluate(null), type);
     }
 

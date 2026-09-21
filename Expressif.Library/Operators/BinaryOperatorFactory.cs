@@ -11,10 +11,10 @@ namespace Expressif.Library.Operators;
 public class BinaryOperatorFactory : BaseExpressionFactory
 {
     public BinaryOperatorFactory()
-        : this(new OperatorRegistry<IBinaryOperator>(new AssemblyTypesProbe([typeof(BinaryOperatorFactory).Assembly]))) { }
+        : this(new OperatorRegistry<IBinaryOperator>(new AssemblyTypeSource([typeof(BinaryOperatorFactory).Assembly]))) { }
 
     public BinaryOperatorFactory(IImplementationRegistry registry)
-        : base(registry, new AssemblyTypesProbe([typeof(BinaryOperatorFactory).Assembly]))
+        : base(registry, new AssemblyTypeSource([typeof(BinaryOperatorFactory).Assembly]))
     { }
 
     public IBinaryOperator Instantiate(string operatorName, IPredicate left, IPredicate right)

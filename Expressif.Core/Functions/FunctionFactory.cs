@@ -24,27 +24,27 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
     private readonly IPredicationFactory predicationFactory;
     private readonly ITupleFunctionInvoker tupleBinding;
 
-    public FunctionFactory(ITypesProbe probe)
+    public FunctionFactory(ITypeSource source)
         : this(
-            new FunctionRegistry(probe),
-            new PredicateRegistry(probe),
-            new AccumulatorRegistry(probe),
-            new CoercionRegistry(probe),
-            new FunctionConstructorRegistry(probe),
-            ProbeService.Create<IPredicationFactory>(probe),
-            ProbeService.Create<ITupleFunctionInvoker>(probe),
-            probe) { }
+            new FunctionRegistry(source),
+            new PredicateRegistry(source),
+            new AccumulatorRegistry(source),
+            new CoercionRegistry(source),
+            new FunctionConstructorRegistry(source),
+            TypeSourceService.Create<IPredicationFactory>(source),
+            TypeSourceService.Create<ITupleFunctionInvoker>(source),
+            source) { }
 
-    public FunctionFactory(IImplementationRegistry registry, ITypesProbe probe)
+    public FunctionFactory(IImplementationRegistry registry, ITypeSource source)
         : this(
             registry,
-            new PredicateRegistry(probe),
-            new AccumulatorRegistry(probe),
-            new CoercionRegistry(probe),
-            new FunctionConstructorRegistry(probe),
-            ProbeService.Create<IPredicationFactory>(probe),
-            ProbeService.Create<ITupleFunctionInvoker>(probe),
-            probe) { }
+            new PredicateRegistry(source),
+            new AccumulatorRegistry(source),
+            new CoercionRegistry(source),
+            new FunctionConstructorRegistry(source),
+            TypeSourceService.Create<IPredicationFactory>(source),
+            TypeSourceService.Create<ITupleFunctionInvoker>(source),
+            source) { }
 
     public FunctionFactory(
         IImplementationRegistry registry,
@@ -54,8 +54,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         FunctionConstructorRegistry constructors,
         IPredicationFactory predicationFactory,
         ITupleFunctionInvoker tupleBinding,
-        ITypesProbe probe)
-        : base(registry, probe)
+        ITypeSource source)
+        : base(registry, source)
         => (this.predicateRegistry, this.accumulatorRegistry, this.coercionRegistry, this.constructors,
                 this.predicationFactory, this.tupleBinding)
             = (predicateRegistry, accumulatorRegistry, coercionRegistry, constructors, predicationFactory, tupleBinding);

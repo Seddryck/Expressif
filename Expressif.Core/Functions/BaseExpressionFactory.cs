@@ -17,8 +17,8 @@ public abstract class BaseExpressionFactory
     protected IImplementationRegistry Registry { get; }
     private IValueConverter Converter { get; }
 
-    protected BaseExpressionFactory(IImplementationRegistry registry, ITypesProbe probe)
-        : this(registry, ProbeService.Create<IValueConverter>(probe)) { }
+    protected BaseExpressionFactory(IImplementationRegistry registry, ITypeSource source)
+        : this(registry, TypeSourceService.Create<IValueConverter>(source)) { }
 
     protected BaseExpressionFactory(IImplementationRegistry registry, IValueConverter converter)
         => (Registry, Converter) = (registry, converter);

@@ -7,15 +7,16 @@ namespace Expressif.Predicates;
 public sealed class PredicateRegistry : ImplementationRegistry
 {
     public PredicateRegistry(params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
-    public PredicateRegistry(ITypesProbe probe)
-        : base(Discover(probe)) { }
+    public PredicateRegistry(ITypeSource source)
+        : base(Discover(source)) { }
 
-    private static IEnumerable<ImplementationRegistration> Discover(ITypesProbe probe)
-        => probe.Locate()
+    private static IEnumerable<ImplementationRegistration> Discover(ITypeSource source)
+        => source.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract)
             .Select(type => (Type: type, Attribute: type.GetCustomAttribute<PredicateAttribute>(true)))
             .Where(candidate => candidate.Attribute is not null)
             .SelectMany(candidate => Names(candidate.Type, candidate.Attribute!)

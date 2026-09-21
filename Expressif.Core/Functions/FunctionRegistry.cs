@@ -7,16 +7,17 @@ namespace Expressif.Functions;
 public sealed class FunctionRegistry : ImplementationRegistry
 {
     public FunctionRegistry(params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
-    public FunctionRegistry(ITypesProbe probe)
-        : base(Discover(probe)) { }
+    public FunctionRegistry(ITypeSource source)
+        : base(Discover(source)) { }
 
-    private static IEnumerable<ImplementationRegistration> Discover(ITypesProbe probe)
-        => probe.Locate()
-            .Where(type => !typeof(IAccumulator).IsAssignableFrom(type))
+    private static IEnumerable<ImplementationRegistration> Discover(ITypeSource source)
+        => source.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract
+                && !typeof(IAccumulator).IsAssignableFrom(type))
             .Select(type => (Type: type, Attribute: type.GetCustomAttribute<FunctionAttribute>(true)))
             .Where(candidate => candidate.Attribute is not null)
             .SelectMany(candidate => Names(candidate.Type, candidate.Attribute!)

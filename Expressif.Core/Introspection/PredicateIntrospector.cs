@@ -16,10 +16,10 @@ public class PredicateIntrospector : BaseIntrospector
     private ExpressifTypeMapper TypeMapper { get; }
 
     public PredicateIntrospector(IntrospectionOptions options, params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray()), options) { }
+        : this(new AssemblyTypeSource(assemblies.Distinct().ToArray()), options) { }
 
-    public PredicateIntrospector(ITypesProbe probe, IntrospectionOptions options)
-        : base(probe)
+    public PredicateIntrospector(ITypeSource source, IntrospectionOptions options)
+        : base(source)
         => (Options, TypeMapper) = (options, new ExpressifTypeMapper(options));
 
     public IEnumerable<PredicateInfo> Locate()

@@ -21,8 +21,8 @@ public sealed class FunctionConstructorRegistry
     public FunctionConstructorRegistry(params Assembly[] assemblies)
         : this(Discover(assemblies)) { }
 
-    public FunctionConstructorRegistry(ITypesProbe probe)
-        : this(Discover(probe.Locate())) { }
+    public FunctionConstructorRegistry(ITypeSource source)
+        : this(Discover(source.GetTypes())) { }
 
     public bool TryGet(Type functionType, out IFunctionConstructor constructor)
         => constructors.TryGetValue(functionType, out constructor!);
