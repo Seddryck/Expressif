@@ -11,13 +11,16 @@ namespace Expressif.Introspection;
 public abstract class BaseIntrospector
 {
     protected record class AttributeInfo<T>(Type Type, T Attribute) { }
-    private ITypesProbe Probe { get; }
+    private ITypeSource Source { get; }
 
     private Type[]? types;
-    protected Type[] Types { get => types ??= Probe.Locate().ToArray(); }
+    protected Type[] Types
+        => types ??= Source.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract)
+            .ToArray();
 
-    protected BaseIntrospector(ITypesProbe probe)
-        => Probe = probe;
+    protected BaseIntrospector(ITypeSource source)
+        => Source = source;
 
     protected IEnumerable<AttributeInfo<T>> LocateAttribute<T>()
         where T : Attribute

@@ -12,12 +12,12 @@ public sealed class CoercionRegistry : ICoercionRegistry
         => Descriptors = descriptors.ToArray();
 
     public CoercionRegistry(params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
-    public CoercionRegistry(ITypesProbe probe)
-        : this(Discover(probe)) { }
+    public CoercionRegistry(ITypeSource source)
+        : this(Discover(source)) { }
 
     public bool TryResolve(
         Type sourceType,
@@ -53,9 +53,10 @@ public sealed class CoercionRegistry : ICoercionRegistry
                 function.GetType());
         }));
 
-    private static IEnumerable<ICoercionDescriptor> Discover(ITypesProbe probe)
-        => probe.Locate()
-            .Where(type => typeof(ICoercionDescriptor).IsAssignableFrom(type))
+    private static IEnumerable<ICoercionDescriptor> Discover(ITypeSource source)
+        => source.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract
+                && typeof(ICoercionDescriptor).IsAssignableFrom(type))
             .Select(type => Activator.CreateInstance(type, nonPublic: true) as ICoercionDescriptor
                 ?? throw new InvalidOperationException(
                     $"Coercion descriptor '{type.FullName}' must have a parameterless constructor."));

@@ -28,11 +28,11 @@ public sealed class LegacyTupleBindingAnalyzer
     private readonly IImplementationRegistry predicates;
 
     public LegacyTupleBindingAnalyzer()
-        : this(new AssemblyTypesProbe([typeof(LegacyTupleBindingAnalyzer).Assembly])) { }
-    public LegacyTupleBindingAnalyzer(ITypesProbe probe)
-        : this(new FunctionRegistry(probe), new PredicateRegistry(probe)) { }
+        : this(new AssemblyTypeSource([typeof(LegacyTupleBindingAnalyzer).Assembly])) { }
+    public LegacyTupleBindingAnalyzer(ITypeSource source)
+        : this(new FunctionRegistry(source), new PredicateRegistry(source)) { }
     public LegacyTupleBindingAnalyzer(IImplementationRegistry functions)
-        : this(functions, new PredicateRegistry(new AssemblyTypesProbe([typeof(LegacyTupleBindingAnalyzer).Assembly]))) { }
+        : this(functions, new PredicateRegistry(new AssemblyTypeSource([typeof(LegacyTupleBindingAnalyzer).Assembly]))) { }
     public LegacyTupleBindingAnalyzer(IImplementationRegistry functions, IImplementationRegistry predicates)
         => (this.functions, this.predicates) = (functions, predicates);
 

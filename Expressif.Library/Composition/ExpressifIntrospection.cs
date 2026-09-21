@@ -10,8 +10,8 @@ namespace Expressif.Library.Composition;
 /// </summary>
 public static class ExpressifIntrospection
 {
-    private static readonly ITypesProbe Probe = new AssemblyTypesProbe([typeof(ExpressifIntrospection).Assembly]);
-    private static readonly ICoercionRegistry BuiltInCoercions = new CoercionRegistry(Probe);
+    private static readonly ITypeSource Source = new AssemblyTypeSource([typeof(ExpressifIntrospection).Assembly]);
+    private static readonly ICoercionRegistry BuiltInCoercions = new CoercionRegistry(Source);
     private static readonly IntrospectionOptions Options = new(
         ExpressifTypeRegistry.Instance,
         BuiltInCoercions,
@@ -32,8 +32,8 @@ public static class ExpressifIntrospection
         },
         TupleBindingCapabilities.Describe);
 
-    public static FunctionIntrospector Functions { get; } = new(Probe, Options);
-    public static PredicateIntrospector Predicates { get; } = new(Probe, Options);
+    public static FunctionIntrospector Functions { get; } = new(Source, Options);
+    public static PredicateIntrospector Predicates { get; } = new(Source, Options);
     public static CoercionIntrospector Coercions { get; } = new(BuiltInCoercions);
 
     private static IReadOnlyDictionary<ParameterIntrospectionKey, string> BuildParameterTypes()
