@@ -1,9 +1,6 @@
 namespace Expressif.Observability;
 
-/// <summary>
-/// Provides observation scopes that perform no work.
-/// </summary>
-public sealed class NoOpExpressionObserver : IExpressionObserver
+internal sealed class NoOpExpressionObserver : IExpressionObserver
 {
     /// <summary>
     /// Gets the shared observer instance.

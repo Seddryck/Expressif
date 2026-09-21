@@ -17,6 +17,16 @@ public class ExpressionObserverTest
     }
 
     [Test]
+    public void NoOpExpressionObserver_IsNotPublic()
+    {
+        var type = typeof(ExpressionFactory).Assembly.GetType(
+            "Expressif.Observability.NoOpExpressionObserver",
+            throwOnError: true);
+
+        Assert.That(type!.IsNotPublic, Is.True);
+    }
+
+    [Test]
     public void ConfiguredObserver_ObservesLifecycleInOrder()
     {
         var observer = new TrackingObserver();
