@@ -2,7 +2,7 @@ using Expressif.Functions.Coercions;
 
 namespace Expressif.Introspection;
 
-public sealed class CoercionIntrospector
+internal sealed class CoercionIntrospector
 {
     private ICoercionRegistry Registry { get; }
 

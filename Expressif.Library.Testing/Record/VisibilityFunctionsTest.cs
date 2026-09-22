@@ -38,7 +38,7 @@ public class VisibilityFunctionsTest
             Assert.That(info.Input, Is.EqualTo("record"));
             Assert.That(info.Output, Is.EqualTo("record"));
             Assert.That(info.Converted, Is.True);
-            Assert.That(info.Parameters, Has.Length.EqualTo(parameterCount));
+            Assert.That(info.Parameters, Has.Count.EqualTo(parameterCount));
         });
         if (parameterCount > 0)
         {

@@ -46,7 +46,7 @@ public class FunctionIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_SomeAliases()
     {
-        Assert.That(Infos.Count(x => x.Aliases.Length > 0), Is.GreaterThan(1));
+        Assert.That(Infos.Count(x => x.Aliases.Count > 0), Is.GreaterThan(1));
 
         foreach (var info in Infos)
         {
@@ -68,7 +68,7 @@ public class FunctionIntrospectorTest
     public void Locate_ExpressifAssembly_DateToAgeIsSynonymOfAge()
     {
         var info = Infos.Single(x => x.Name == "age");
-        Assert.That(info.Aliases, Has.Length.EqualTo(1));
+        Assert.That(info.Aliases, Has.Count.EqualTo(1));
         Assert.That(info.Aliases, Does.Contain("date-to-age"));
     }
 
@@ -76,7 +76,7 @@ public class FunctionIntrospectorTest
     public void Locate_ExpressifAssembly_DateTimeToDate()
     {
         var info = Infos.Single(x => x.Name == "datetime-to-date");
-        Assert.That(info.Aliases, Has.Length.EqualTo(1));
+        Assert.That(info.Aliases, Has.Count.EqualTo(1));
         Assert.That(info.Aliases, Does.Contain("dateTime-to-date"));
     }
 
@@ -91,7 +91,7 @@ public class FunctionIntrospectorTest
     public void Locate_ExpressifAssembly_CreationDateTime()
     {
         var info = Infos.Single(x => x.Name == "creation-datetime");
-        Assert.That(info.Aliases, Has.Length.EqualTo(2));
+        Assert.That(info.Aliases, Has.Count.EqualTo(2));
         Assert.That(info.Aliases, Does.Contain("file-to-creation-dateTime"));
         Assert.That(info.Aliases, Does.Contain("file-to-creation-datetime"));
     }

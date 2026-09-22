@@ -8,21 +8,21 @@ using Expressif.Discovery;
 
 namespace Expressif.Introspection;
 
-public abstract class BaseIntrospector
+internal sealed class BaseIntrospector
 {
-    protected record class AttributeInfo<T>(Type Type, T Attribute) { }
+    internal sealed record AttributeInfo<T>(Type Type, T Attribute);
     private ITypeSource Source { get; }
 
     private Type[]? types;
-    protected Type[] Types
+    private Type[] Types
         => types ??= Source.GetTypes()
             .Where(type => type.IsClass && !type.IsAbstract)
             .ToArray();
 
-    protected BaseIntrospector(ITypeSource source)
+    internal BaseIntrospector(ITypeSource source)
         => Source = source;
 
-    protected IEnumerable<AttributeInfo<T>> LocateAttribute<T>()
+    internal IEnumerable<AttributeInfo<T>> LocateAttribute<T>()
         where T : Attribute
     {
         var types = Types.Where(x => x.GetCustomAttributes(typeof(T), true).Length > 0);
@@ -34,7 +34,7 @@ public abstract class BaseIntrospector
                 ));
     }
 
-    protected IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
+    internal IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
         => ctorInfos.SelectMany(x => x.Parameters)
                     .GroupBy(x => x.Name)
                     .Select(parameters =>

@@ -14,7 +14,7 @@ public class MetadataCompletenessTest
             "function",
             ExpressifIntrospection.Functions.Describe()
                 .Where(x => x.IsPublic)
-                .Select(x => new OperatorMetadata(x.Name, x.Aliases)));
+                .Select(x => new OperatorMetadata(x.Name, x.Aliases.ToArray())));
 
     [Test]
     public void Predicates_PublicRuntimeSurfaceMatchesGeneratedCatalog()
@@ -22,7 +22,7 @@ public class MetadataCompletenessTest
             "predicate",
             ExpressifIntrospection.Predicates.Describe()
                 .Where(x => x.IsPublic)
-                .Select(x => new OperatorMetadata(x.Name, x.Aliases)));
+                .Select(x => new OperatorMetadata(x.Name, x.Aliases.ToArray())));
 
     private static void AssertComplete(string kind, IEnumerable<OperatorMetadata> runtimeOperators)
     {
