@@ -190,7 +190,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
     private IFunction BuildPipeline(OpenExpression expression, IContext context)
     {
-        if (expression is InputBoundExpression binding)
+        if (expression.InputBinding is { } binding)
             return BuildInputBoundFunction(binding, context);
 
         var members = expression.Members.ToArray();
@@ -347,7 +347,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
     {
         if (function.Syntax == FunctionSyntax.InputBindingStage
-            && function.Parameters is [OpenExpressionParameter { Expression: InputBoundExpression binding }])
+            && function.Parameters is [OpenExpressionParameter { Expression.InputBinding: { } binding }])
             return BuildInputBoundFunction(binding, context);
         var name = function.Name.ToKebabCase();
 
@@ -606,7 +606,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
     private Func<object?, object?> BuildOpenExpressionRecordEvaluator(OpenExpressionParameter open, IContext context)
     {
-        if (open.Expression is InputBoundExpression binding)
+        if (open.Expression.InputBinding is { } binding)
             return BuildInputBoundFunction(binding, context).Evaluate;
 
         if (TryBuildSingleTokenEvaluator(open, out var evaluator))

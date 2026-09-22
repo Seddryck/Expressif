@@ -62,7 +62,7 @@ internal sealed class RecordFunctionConstructor : IFunctionConstructor<Expressif
             return _ => provider.DynamicInvoke();
         }
 
-        if (open.Expression is InputBoundExpression)
+        if (open.Expression.InputBinding is not null)
             return constructionContext.CreateOpenExpression(open.Expression, context).Evaluate;
         if (TryBuildSingleTokenEvaluator(open, out var evaluator))
             return evaluator;

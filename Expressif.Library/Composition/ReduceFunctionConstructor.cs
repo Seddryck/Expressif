@@ -31,7 +31,7 @@ internal sealed class ReduceFunctionConstructor :
         IContext context,
         IFunctionConstructionContext constructionContext)
     {
-        if (operation.Expression is InputBoundExpression)
+        if (operation.Expression.InputBinding is not null)
             return () => constructionContext.CreateOpenExpression(operation.Expression, context);
 
         var members = operation.Expression.Members.ToArray();

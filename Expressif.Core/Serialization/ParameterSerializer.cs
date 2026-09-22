@@ -38,7 +38,7 @@ internal sealed class ParameterSerializer
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             LetDefinitionParameter definition => string.Join(", ", definition.Bindings.Select(binding => $"{binding.Name} := {Serialize(binding.Value)}")),
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
-            OpenExpressionParameter { Expression: InputBoundExpression bound } => SerializeInputBound(bound),
+            OpenExpressionParameter { Expression.InputBinding: { } bound } => SerializeInputBound(bound),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
                 when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)

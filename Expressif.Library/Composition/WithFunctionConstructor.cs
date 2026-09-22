@@ -23,6 +23,6 @@ internal sealed class WithFunctionConstructor : IFunctionConstructor<With>
         return new With(
             () => projections,
             body,
-            definition.Body is OpenExpressionParameter { Expression: InputBoundExpression });
+            definition.Body is OpenExpressionParameter { Expression.InputBinding: not null });
     }
 }
