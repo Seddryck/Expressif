@@ -41,7 +41,7 @@ public abstract class BaseTextCasing : BaseTextFunction
         {
             var nonNullWords = stringArray.Where(x => !string.IsNullOrWhiteSpace(x)).Cast<string>();
             if (!nonNullWords.Any())
-                return new Expressif.Values.Special.Empty();
+                return Expressif.Values.Special.Empty.Instance;
             return EvaluateString(string.Join(" ", nonNullWords));
         }
         var caster = new TextCaster();
@@ -173,7 +173,7 @@ public class TitleCase : BaseTextCasing
 /// </summary>
 public abstract class BaseTextWordCasing : BaseTextCasing
 {
-    protected override object? EvaluateBlank() => new Whitespace();
+    protected override object? EvaluateBlank() => Whitespace.Instance;
     protected override object? EvaluateNull() => null;
 
     protected override object? EvaluateString(string value)
@@ -188,7 +188,7 @@ public abstract class BaseTextWordCasing : BaseTextCasing
         {
             var nonNullWords = stringArray.Where(x => !string.IsNullOrWhiteSpace(x)).Cast<string>();
             if (!nonNullWords.Any())
-                return new Expressif.Values.Special.Empty();
+                return Expressif.Values.Special.Empty.Instance;
             return EvaluateArrayString(nonNullWords);
         }
         var caster = new TextCaster();

@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Expressif.Values.Special;
 
-public class Null : BaseSpecial
+public sealed class Null
 {
     private const string NULL_KEYWORD_DEFAULT = "(null)";
 
-    public Null()
-        : this(NULL_KEYWORD_DEFAULT) { }
-
-    public Null(string keyword)
-        : base(keyword) { }
+    public static Null Instance { get; } = new();
+    private Null() { }
+    public string Keyword => NULL_KEYWORD_DEFAULT;
+    public static bool operator ==(Null left, object? right) => left.Equals(right);
+    public static bool operator !=(Null left, object? right) => !left.Equals(right);
 
     public override bool Equals(object? value)
         => value switch
@@ -20,7 +20,7 @@ public class Null : BaseSpecial
             Null => true,
             null => true,
             DBNull _ => true,
-            string v => AdvancedMatch(v),
+            string v => SpecialValue.Matches(v, Keyword),
             _ => false,
         };
 

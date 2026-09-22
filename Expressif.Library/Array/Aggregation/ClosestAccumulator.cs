@@ -30,7 +30,7 @@ public class ClosestAccumulator : BaseArrayAccumulator
         minimumDistance = null;
         difference = null;
         var target = targetProvider.Invoke();
-        if (new Expressif.Values.Special.Null().Equals(target))
+        if (Expressif.Values.Special.Null.Instance.Equals(target))
             return;
 
         difference = new NumericCaster().TryCast(target!, out var numeric)
@@ -40,7 +40,7 @@ public class ClosestAccumulator : BaseArrayAccumulator
 
     public override void Accumulate(object? item)
     {
-        if (difference is null || new Expressif.Values.Special.Null().Equals(item))
+        if (difference is null || Expressif.Values.Special.Null.Instance.Equals(item))
             return;
 
         decimal? distance = difference.Evaluate(item) switch

@@ -53,9 +53,9 @@ public class FormatFunctionTest
         [
             null,
             DBNull.Value,
-            new Expressif.Values.Special.Null(),
-            new Expressif.Values.Special.Empty(),
-            new Expressif.Values.Special.Whitespace(),
+            Expressif.Values.Special.Null.Instance,
+            Expressif.Values.Special.Empty.Instance,
+            Expressif.Values.Special.Whitespace.Instance,
             "(null)",
             "(empty)",
             "(blank)"

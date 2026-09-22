@@ -5,17 +5,30 @@ namespace Expressif.Values;
 
 /// <summary>Represents one immutable grouping bucket.</summary>
 [ExpressifType(Parent = "pair")]
-public sealed class Group : PairValue, IReadOnlyList<object?>
+public sealed class Group : IReadOnlyList<object?>, IEquatable<Group>, IExpressifValueType, IPositionalValue
 {
     public Group(object? key, IEnumerable values)
-        : base(key, Materialize(values)) { }
+        => (Key, Values) = (key, Materialize(values));
 
-    public IReadOnlyList<object?> Values => (IReadOnlyList<object?>)Value!;
+    public object? Key { get; }
+    public IReadOnlyList<object?> Values { get; }
+    public object? Value => Values;
     public int Count => Values.Count;
     public object? this[int index] => Values[index];
+    public int Arity => 2;
+    public object? GetPosition(int index) => index switch
+    {
+        0 => Key,
+        1 => Value,
+        _ => throw new ArgumentOutOfRangeException(nameof(index)),
+    };
 
     public IEnumerator<object?> GetEnumerator() => Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public bool Equals(Group? other) => other is not null && PositionalValueEquality.Equals(this, other);
+    public override bool Equals(object? obj) => PositionalValueEquality.Equals(this, obj);
+    public override int GetHashCode() => PositionalValueEquality.GetHashCode(this);
+    public override string ToString() => ValueFormatter.Format(this);
 
     private static object?[] Materialize(IEnumerable values)
     {
@@ -33,17 +46,21 @@ public sealed class Grouping : IReadOnlyList<Group>, IEquatable<Grouping>, IExpr
     private static readonly IEqualityComparer StructuralComparer = StructuralComparisons.StructuralEqualityComparer;
     private readonly Group[] groups;
 
-    public Grouping(IEnumerable<PairValue> pairs)
+    public Grouping(IEnumerable<IPositionalValue> pairs)
     {
         ArgumentNullException.ThrowIfNull(pairs);
         var values = new List<Group>();
         foreach (var pair in pairs)
         {
-            if (values.Any(group => StructuralComparer.Equals(group.Key, pair.Key)))
-                throw new ArgumentException($"A grouping cannot contain duplicate key '{ValueFormatter.Format(pair.Key)}'.", nameof(pairs));
-            if (pair.Value is not IEnumerable collection || pair.Value is string)
+            if (pair.Arity != 2)
+                throw new ArgumentException("Every grouping entry must contain a key and a value.", nameof(pairs));
+            var key = pair.GetPosition(0);
+            var value = pair.GetPosition(1);
+            if (values.Any(group => StructuralComparer.Equals(group.Key, key)))
+                throw new ArgumentException($"A grouping cannot contain duplicate key '{ValueFormatter.Format(key)}'.", nameof(pairs));
+            if (value is not IEnumerable collection || value is string)
                 throw new ArgumentException("Every grouping entry value must be a collection.", nameof(pairs));
-            values.Add(new Group(pair.Key, collection));
+            values.Add(new Group(key, collection));
         }
         groups = values.ToArray();
     }

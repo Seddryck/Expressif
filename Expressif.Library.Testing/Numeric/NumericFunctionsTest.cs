@@ -73,7 +73,7 @@ public class NumericFunctionsTest
     public void Floor_UntypedEntryPoint_PreservesSpecialValueBehavior(Type specialType)
     {
         IFunction function = new Floor();
-        var value = Activator.CreateInstance(specialType);
+        var value = specialType.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null);
 
         Assert.That(function.Evaluate(value), Is.Null);
     }

@@ -29,7 +29,7 @@ public class EquivalentTo : BaseTextPredicateReference
         => EvaluateNull(Reference.Invoke());
 
     protected override bool EvaluateNull(string? reference)
-        => new Expressif.Values.Special.Null().Equals(reference) || base.EvaluateNull();
+        => Expressif.Values.Special.Null.Instance.Equals(reference) || base.EvaluateNull();
 
     protected override bool EvaluateText(string value, string reference)
         => Comparer.Compare(value, reference) == 0;

@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace Expressif.Values;
 
 /// <summary>Reads JSON as Expressif records, arrays, and scalar values.</summary>
-public static class JsonValueParser
+internal static class JsonValueParser
 {
     /// <summary>Reads one JSON value. Nested values remain valid after parsing completes.</summary>
     public static object? Read(string text)

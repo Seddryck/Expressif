@@ -158,7 +158,7 @@ internal abstract class BaseExpressionFactory
             {
                 if (evaluated is null)
                     throw new SpreadArgumentException("Spread argument cannot be null.");
-                if (evaluated is not VectorValue spread)
+                if (evaluated is not Vector spread)
                     throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
                 values.AddRange(spread);
             }

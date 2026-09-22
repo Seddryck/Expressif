@@ -4,7 +4,6 @@ using Expressif.Serialization;
 using Expressif.Syntax;
 using Expressif.Testing.Conformance;
 using NUnit.Framework;
-using TupleValue = Expressif.Values.Tuple;
 
 namespace Expressif.Testing.Tuple;
 

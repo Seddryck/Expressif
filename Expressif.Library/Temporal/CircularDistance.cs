@@ -33,7 +33,7 @@ public sealed class CircularDistance : IFunction<TimeOnly?, TimeSpan?>
             null => null,
             DBNull => null,
             TimeOnly time => Evaluate(time),
-            _ when new Expressif.Values.Special.Null().Equals(value) => null,
+            _ when Expressif.Values.Special.Null.Instance.Equals(value) => null,
             _ => null,
         };
 }

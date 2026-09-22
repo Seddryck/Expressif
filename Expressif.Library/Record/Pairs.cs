@@ -22,7 +22,7 @@ public sealed class Pairs : IFunction<ValueRecord, PairValue[]>
             and not IDictionary<string, object?>
             and not IDictionary
             and not DataRow
-            and not ILiteDataRow)
+            and not IReadOnlyDataRow)
             throw new ArgumentException("Input value must be a record.", nameof(value));
 
         return RecordOperations.Enumerate(value)

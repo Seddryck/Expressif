@@ -10,9 +10,9 @@ public abstract class BaseFileFunction<TOut> : BaseTextFunction<TOut>, IBasePath
 {
     private Func<string, IFileInfo> FileInfoInitializer { get; set; }
     public BaseFileFunction() => FileInfoInitializer = x => new FileInfoWrapper(x);
-    protected override object EvaluateNull() => throw new InvalidIOException(new Expressif.Values.Special.Null().Keyword);
-    protected override object EvaluateEmpty() => throw new InvalidIOException(new Expressif.Values.Special.Empty().Keyword);
-    protected override object EvaluateBlank() => throw new InvalidIOException(new Whitespace().Keyword);
+    protected override object EvaluateNull() => throw new InvalidIOException(Expressif.Values.Special.Null.Instance.Keyword);
+    protected override object EvaluateEmpty() => throw new InvalidIOException(Expressif.Values.Special.Empty.Instance.Keyword);
+    protected override object EvaluateBlank() => throw new InvalidIOException(Whitespace.Instance.Keyword);
     protected override object EvaluateSpecial(string value) => throw new InvalidIOException("special value");
     protected override object EvaluateString(string value)
     {

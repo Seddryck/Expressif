@@ -436,5 +436,5 @@ public class RecordEntryEvaluator
             or IDictionary<string, object?>
             or IDictionary
             or DataRow
-            or ILiteDataRow;
+            or IReadOnlyDataRow;
 }

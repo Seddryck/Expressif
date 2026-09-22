@@ -17,7 +17,7 @@ public class AnyTest
     [TestCase("(any)")]
     [TestCase("(value)")]
     public void Equals_Any_Valid(object? value)
-        => Assert.That(new Any().Equals(value), Is.True);
+        => Assert.That(Any.Instance.Equals(value), Is.True);
 
     [Test]
     [TestCase("foo")]
@@ -28,13 +28,13 @@ public class AnyTest
     [TestCase("(any)")]
     [TestCase("(value)")]
     public void EqualOperator_Null_Valid(object? value)
-        => Assert.That(new Any() == value, Is.True);
+        => Assert.That(Any.Instance == value, Is.True);
 
     [Test]
     public void Equals_AnyLiteral_Valid()
-        => Assert.That(new Any().Equals("(any)"), Is.True);
+        => Assert.That(Any.Instance.Equals("(any)"), Is.True);
 
     [Test]
     public void EqualOperator_AnyLiteral_Valid()
-        => Assert.That(new Any() == "(any)", Is.True);
+        => Assert.That(Any.Instance == "(any)", Is.True);
 }
