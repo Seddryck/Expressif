@@ -1,6 +1,4 @@
 using Expressif.Bindings;
-using Expressif.Library.Catalog;
-using Expressif.Types;
 using Expressif.Values;
 using Expressif.Values.Types;
 
@@ -11,21 +9,15 @@ namespace Expressif.Planning;
 /// </summary>
 public sealed class LogicalPlanner
 {
-    private readonly FunctionCatalog catalog;
+    private readonly ILogicalPlanningContext context;
 
-    public LogicalPlanner()
-        : this(FunctionCatalog.Default) { }
-
-    public LogicalPlanner(FunctionCatalog catalog)
-        => this.catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-
-    public static LogicalPlan Plan(Expressif.Syntax.RootExpressionSyntax syntax)
-        => new LogicalPlanner().Build(syntax);
+    public LogicalPlanner(ILogicalPlanningContext context)
+        => this.context = context ?? throw new ArgumentNullException(nameof(context));
 
     public LogicalPlan Build(Expressif.Syntax.RootExpressionSyntax syntax)
     {
         ArgumentNullException.ThrowIfNull(syntax);
-        var bound = ExpressifBinderFactory.Create(applyCoercion: false).Bind(syntax);
+        var bound = context.Bind(syntax);
         return new LogicalPlan(bound switch
         {
             OpenRootExpression open => Pipeline(open.Expression),
@@ -70,11 +62,9 @@ public sealed class LogicalPlanner
 
     private LogicalCall Call(Function function, string? expectedKind = null)
     {
-        var documentation = Resolve(function.Name, expectedKind);
-        var descriptor = documentation is null
-            ? SyntheticFunction(function.Name)
-            : Descriptor(documentation);
-        var parameters = documentation?.Parameters
+        var metadata = context.FindFunction(function.Name, expectedKind);
+        var descriptor = metadata?.Function ?? SyntheticFunction(function.Name);
+        var parameters = metadata?.Parameters
             ?? SyntheticParameters(function.Arguments.Length);
         var arguments = function.Parameters is [WithDefinitionParameter with] && descriptor.Name == "with"
             ? WithArguments(parameters, with)
@@ -94,14 +84,9 @@ public sealed class LogicalPlanner
         return new LogicalCall(descriptor, arguments, contextDepth);
     }
 
-    private FunctionDocumentation? Resolve(string name, string? expectedKind)
-        => expectedKind is "predicate" or "accumulator"
-            ? catalog.Find(name, expectedKind)
-            : catalog.Find(name, "function") ?? catalog.Find(name);
-
     private IReadOnlyList<LogicalArgument> NormalizeArguments(
         string functionName,
-        IReadOnlyList<FunctionParameterDocumentation> parameters,
+        IReadOnlyList<PlannerParameterMetadata> parameters,
         IReadOnlyList<FunctionArgument> supplied)
     {
         if (parameters.Count == 0)
@@ -112,37 +97,37 @@ public sealed class LogicalPlanner
         }
 
         var associated = new List<(
-            FunctionParameterDocumentation Parameter,
+            PlannerParameterMetadata Parameter,
             FunctionArgument Argument,
             string? EntryName)>();
         var positionalIndex = 0;
         foreach (var argument in supplied)
         {
-            FunctionParameterDocumentation? parameter;
+            PlannerParameterMetadata? parameter;
             string? entryName = null;
             if (argument.Name is null)
             {
                 parameter = positionalIndex < parameters.Count
                     ? parameters[positionalIndex]
-                    : parameters.LastOrDefault(candidate => candidate.Variadic);
+                    : parameters.LastOrDefault(candidate => candidate.Descriptor.Variadic);
                 if (parameter is null)
                     throw new LogicalPlanningException($"Function '{functionName}' has too many positional arguments.");
-                if (!parameter.Variadic)
+                if (!parameter.Descriptor.Variadic)
                     positionalIndex++;
             }
             else
             {
-                parameter = parameters.SingleOrDefault(candidate => candidate.Kind == "entry");
+                parameter = parameters.SingleOrDefault(candidate => candidate.Descriptor.Type == "entry");
                 if (parameter is not null)
                 {
                     entryName = argument.Name;
                 }
                 else
                 {
-                    parameter = parameters.SingleOrDefault(candidate => candidate.Name.Equals(argument.Name, StringComparison.OrdinalIgnoreCase))
+                    parameter = parameters.SingleOrDefault(candidate => candidate.Descriptor.Name.Equals(argument.Name, StringComparison.OrdinalIgnoreCase))
                         ?? throw new LogicalPlanningException($"Function '{functionName}' has no parameter named '{argument.Name}'.");
                     if (associated.Any(item => ReferenceEquals(item.Parameter, parameter)))
-                        throw new LogicalPlanningException($"Parameter '{parameter.Name}' is supplied more than once.");
+                        throw new LogicalPlanningException($"Parameter '{parameter.Descriptor.Name}' is supplied more than once.");
                 }
             }
             associated.Add((parameter, argument, entryName));
@@ -157,32 +142,32 @@ public sealed class LogicalPlanner
                 var value = match.EntryName is null
                     ? Value(match.Argument.Value, ExpectedKind(parameter))
                     : NamedEntry(match.EntryName, match.Argument.Value);
-                result.Add(new LogicalArgument(Descriptor(parameter), value, match.Argument.IsSpread, IsExplicit: true));
+                result.Add(new LogicalArgument(parameter.Descriptor, value, match.Argument.IsSpread, IsExplicit: true));
             }
             if (matches.Length == 0)
             {
-                if (!parameter.Optional)
-                    throw new LogicalPlanningException($"Required parameter '{parameter.Name}' was not supplied to '{functionName}'.");
-                result.Add(new LogicalArgument(Descriptor(parameter), null, IsSpread: false, IsExplicit: false, parameter.Omission));
+                if (!parameter.Descriptor.Optional)
+                    throw new LogicalPlanningException($"Required parameter '{parameter.Descriptor.Name}' was not supplied to '{functionName}'.");
+                result.Add(new LogicalArgument(parameter.Descriptor, null, IsSpread: false, IsExplicit: false, parameter.Omission));
             }
         }
         return result;
     }
 
     private IReadOnlyList<LogicalArgument> WithArguments(
-        IReadOnlyList<FunctionParameterDocumentation> parameters,
+        IReadOnlyList<PlannerParameterMetadata> parameters,
         WithDefinitionParameter definition)
     {
-        var projections = parameters.Single(parameter => parameter.Kind == "entry");
-        var body = parameters.Single(parameter => parameter.Name == "body");
+        var projections = parameters.Single(parameter => parameter.Descriptor.Type == "entry");
+        var body = parameters.Single(parameter => parameter.Descriptor.Name == "body");
         return [
             .. definition.Projections.Select(projection => new LogicalArgument(
-                Descriptor(projections),
+                projections.Descriptor,
                 NamedEntry(projection.Name, projection.Value),
                 IsSpread: false,
                 IsExplicit: true)),
             new LogicalArgument(
-                Descriptor(body),
+                body.Descriptor,
                 Value(definition.Body, ExpectedKind(body)),
                 IsSpread: false,
                 IsExplicit: true),
@@ -241,42 +226,40 @@ public sealed class LogicalPlanner
 
     private LogicalCall Reference(string name, object value, int depth)
     {
-        var documentation = catalog.Find(name)!;
+        var metadata = context.FindFunction(name)!;
         return new LogicalCall(
-            Descriptor(documentation),
-            [new LogicalArgument(Descriptor(documentation.Parameters[0]), Literal(value), false, true)],
+            metadata.Function,
+            [new LogicalArgument(metadata.Parameters[0].Descriptor, Literal(value), false, true)],
             depth);
     }
 
     private LogicalCall Collection(string name, IEnumerable<(IParameter Value, bool Spread)> elements)
     {
-        var documentation = catalog.Find(name);
-        var descriptor = documentation is null
-            ? SyntheticFunction(name)
-            : Descriptor(documentation);
-        var parameter = documentation?.Parameters.SingleOrDefault() ?? SyntheticParameter("values", variadic: true);
+        var metadata = context.FindFunction(name);
+        var descriptor = metadata?.Function ?? SyntheticFunction(name);
+        var parameter = metadata?.Parameters.SingleOrDefault() ?? SyntheticParameter("values", variadic: true);
         var arguments = elements.Select(element => new LogicalArgument(
-            Descriptor(parameter), Value(element.Value), element.Spread, true)).ToList();
-        if (arguments.Count == 0 && parameter.Optional)
-            arguments.Add(new LogicalArgument(Descriptor(parameter), null, false, false, parameter.Omission));
+            parameter.Descriptor, Value(element.Value), element.Spread, true)).ToList();
+        if (arguments.Count == 0 && parameter.Descriptor.Optional)
+            arguments.Add(new LogicalArgument(parameter.Descriptor, null, false, false, parameter.Omission));
         return new LogicalCall(descriptor, arguments);
     }
 
     private LogicalCall Record(IEnumerable<(string Name, IParameter Value, bool Spread)> entries)
     {
-        var documentation = catalog.Find("record")!;
-        var parameter = documentation.Parameters.Single();
+        var metadata = context.FindFunction("record")!;
+        var parameter = metadata.Parameters.Single();
         var arguments = entries.Select(entry => new LogicalArgument(
-            Descriptor(parameter),
+            parameter.Descriptor,
             entry.Spread
                 ? SyntheticCall("spread-entry", ("value", Value(entry.Value)))
                 : NamedEntry(entry.Name, entry.Value),
             entry.Spread,
             true)).ToList();
         if (arguments.Count == 0)
-            arguments.Add(new LogicalArgument(Descriptor(parameter), null, false, false, parameter.Omission));
+            arguments.Add(new LogicalArgument(parameter.Descriptor, null, false, false, parameter.Omission));
         return new LogicalCall(
-            Descriptor(documentation),
+            metadata.Function,
             arguments);
     }
 
@@ -304,7 +287,7 @@ public sealed class LogicalPlanner
 
     private LogicalCall Coercion(CoercionSpecificationParameter coercion)
     {
-        var type = ExpressifTypeRegistry.Instance.All.SingleOrDefault(candidate => candidate.RuntimeType == coercion.TargetType)?.Name
+        var type = context.FindTypeName(coercion.TargetType)
             ?? throw new LogicalPlanningException("A coercion target has no Expressif semantic type.");
         return coercion switch
         {
@@ -346,49 +329,19 @@ public sealed class LogicalPlanner
         => new(
             SyntheticFunction(name),
             arguments.Select(argument => new LogicalArgument(
-                Descriptor(SyntheticParameter(argument.Name)), argument.Value, false, true)).ToArray());
+                SyntheticParameter(argument.Name).Descriptor, argument.Value, false, true)).ToArray());
 
     private static PlannerFunctionDescriptor SyntheticFunction(string name)
         => new(name.ToLowerInvariant(), "any", "any", Kind: "extension");
 
-    private static FunctionParameterDocumentation[] SyntheticParameters(int count)
+    private static PlannerParameterMetadata[] SyntheticParameters(int count)
         => Enumerable.Range(0, count).Select(index => SyntheticParameter($"argument-{index}")).ToArray();
 
-    private static FunctionParameterDocumentation SyntheticParameter(string name, bool variadic = false)
-        => new(name, "any", Optional: false, string.Empty, variadic, variadic ? 0 : 1);
+    private static PlannerParameterMetadata SyntheticParameter(string name, bool variadic = false)
+        => new(new PlannerParameterDescriptor(name, "any", Optional: false, variadic, variadic ? 0 : 1));
 
-    private static PlannerFunctionDescriptor Descriptor(FunctionDocumentation function)
-        => new(
-            function.Name,
-            string.IsNullOrWhiteSpace(function.Input) ? "any" : function.Input,
-            string.IsNullOrWhiteSpace(function.Output) ? "any" : function.Output,
-            function.Traversal is null
-                ? null
-                : new PlannerTraversalDescriptor(function.Traversal.Source, function.Traversal.Selection),
-            function.Semantics is null
-                ? null
-                : new PlannerSemanticsDescriptor(
-                    function.Semantics.Cardinality,
-                    function.Semantics.Dependency,
-                    function.Semantics.Ordering),
-            function.Kind);
-
-    private static string? ExpectedKind(FunctionParameterDocumentation parameter)
-        => parameter.TypeOrKind is "predicate" or "accumulator" ? parameter.TypeOrKind : null;
-
-    private static PlannerParameterDescriptor Descriptor(FunctionParameterDocumentation parameter)
-        => new(
-            parameter.Name,
-            parameter.TypeOrKind,
-            parameter.Optional,
-            parameter.Variadic,
-            parameter.MinimumCardinality,
-            parameter.Evaluation is null
-                ? null
-                : new PlannerEvaluationDescriptor(
-                    parameter.Evaluation.Frequency,
-                    parameter.Evaluation.Source,
-                    parameter.Evaluation.Context));
+    private static string? ExpectedKind(PlannerParameterMetadata parameter)
+        => parameter.Descriptor.Type is "predicate" or "accumulator" ? parameter.Descriptor.Type : null;
 
     private static int ContextDepth(FunctionSyntax syntax) => syntax switch
     {
