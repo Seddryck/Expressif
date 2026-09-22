@@ -22,6 +22,8 @@ pair(
 
 Constructs a pair by evaluating a key expression and a value expression against the same input.
 
+
+
 ## Parameters
 
 
@@ -31,10 +33,14 @@ Constructs a pair by evaluating a key expression and a value expression against 
 | `key` | `any` | Yes | The expression whose evaluated result becomes the key. |
 | `value` | `any` | Yes | The expression whose evaluated result becomes the value. |
 
+
+
 ## Argument evaluation
 
 - **`key`:** Evaluated once against the value entering this call.
 - **`value`:** Evaluated once against the value entering this call.
+
+
 
 ## Examples
 

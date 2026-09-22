@@ -21,6 +21,8 @@ lowest-common-multiple(
 
 Returns the lowest common multiple (LCM) of the argument integer and the parameter integer. Returns `null` if the argument is not an integer.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the lowest common multiple (LCM) of the argument integer and the paramet
 |:-----|:-----|:---------|:------------|
 | `value` | `integer` | Yes | The integer used to compute the lowest common multiple with the argument value. |
 
+
+
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

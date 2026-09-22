@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-first()
+array →
+first() → any
 ```
 
 Stores the first accumulated item and ignores all subsequent items.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `first`
+**Aliases:** None
 {: .member-reference }

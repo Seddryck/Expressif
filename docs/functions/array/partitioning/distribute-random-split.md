@@ -43,6 +43,8 @@ Randomly distributes array values among output arrays according to relative outp
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
+
 ## Argument evaluation
 
 - **`weights`:** Evaluated once in the enclosing context.

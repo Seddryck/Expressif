@@ -21,6 +21,8 @@ array(
 
 Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Constructs a new array by evaluating zero or more positional expressions from le
 |:-----|:-----|:---------|:------------|
 | `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the elements of the resulting array. Omission supplies an empty variadic sequence. |
 
+
+
 ## Argument evaluation
 
 - **`values`:** Each supplied expression is evaluated once against the value entering this call.
+
+
 
 ## Examples
 

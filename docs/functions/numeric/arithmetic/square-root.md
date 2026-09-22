@@ -19,11 +19,14 @@ square-root() → numeric
 
 Returns square root of the numeric argument value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

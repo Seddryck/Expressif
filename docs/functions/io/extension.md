@@ -19,6 +19,8 @@ extension() → text
 
 Returns the extension of a file path provided as argument.
 
+
+
 ## Parameters
 
 

@@ -1,7 +1,10 @@
 function Get-IntrospectionEntries {
     param(
         [Parameter(Mandatory = $true)]
-        [string] $Path
+        [string] $Path,
+
+        [Parameter()]
+        [string] $Kind
     )
 
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
@@ -11,7 +14,10 @@ function Get-IntrospectionEntries {
     $entries = [System.Collections.Generic.SortedDictionary[string, object]]::new(
         [System.StringComparer]::OrdinalIgnoreCase)
     foreach ($item in @(Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json) |
-        Where-Object { $_.IsPublic -eq $true }) {
+        Where-Object {
+            $_.IsPublic -eq $true -and
+                ([string]::IsNullOrWhiteSpace($Kind) -or $_.Kind -eq $Kind)
+        }) {
         foreach ($name in @($item.Name) + @($item.Aliases)) {
             if (-not [string]::IsNullOrWhiteSpace($name) -and -not $entries.ContainsKey($name)) {
                 $entry = [ordered]@{ name = $name; scope = $item.Scope }
@@ -51,10 +57,11 @@ function Get-SyntaxModel {
 
     $resolvedInputFolder = (Resolve-Path -LiteralPath $InputFolder).Path
 
+    $functionCatalog = Join-Path $resolvedInputFolder 'function.json'
     [ordered]@{
-        functions = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'function.json'))
+        functions = @(Get-IntrospectionEntries -Path $functionCatalog)
         predicates = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'predicate.json'))
-        accumulators = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'accumulator.json'))
+        accumulators = @(Get-IntrospectionEntries -Path $functionCatalog -Kind 'accumulator')
         types = @(Get-TypeEntries -Path (Join-Path $resolvedInputFolder 'type.json'))
         constants = @('#blank', '#empty', '#false', '#null', '#true')
         operators = @('...', ':>', ':=', '->', '|>', '|?', '|OR', '|XOR', '|AND', '~', '!', '#', '$', '&', '.', '@', '|')

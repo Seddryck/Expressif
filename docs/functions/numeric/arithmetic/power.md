@@ -19,11 +19,14 @@ power() → numeric
 
 Returns the the numeric argument value raised to the power specified by the parameter value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

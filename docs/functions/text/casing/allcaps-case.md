@@ -19,6 +19,8 @@ allcaps-case() → text
 
 Returns the input text in ALLCAPS case, uppercasing words and concatenating them without separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
+
+
 ## Parameters
 
 

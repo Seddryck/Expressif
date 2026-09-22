@@ -1,0 +1,62 @@
+using System;
+using System.IO;
+using Expressif.Library.Temporal;
+using Expressif.Library.Text;
+using Expressif.Values.Special;
+
+namespace Expressif.Library.IO;
+
+[Function(prefix: "path")]
+public abstract class BasePathFunction : BaseTextFunction, IBasePathFunction
+{
+    public BasePathFunction() { }
+    protected override object EvaluateNull() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateEmpty() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateBlank() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateSpecial(string value) => new Expressif.Values.Special.Empty().Keyword;
+}
+
+/// <summary>
+/// Returns the file name and extension of a file path provided as argument.
+/// </summary>
+public class Filename : BasePathFunction
+{
+    protected override object EvaluateString(string value) => Path.GetFileName(value);
+}
+
+/// <summary>
+/// Returns the file name without the extension of a file path provided as argument.
+/// </summary>
+public class FilenameWithoutExtension : BasePathFunction
+{
+    protected override object EvaluateString(string value) => Path.GetFileNameWithoutExtension(value);
+}
+
+/// <summary>
+/// Returns the extension of a file path provided as argument.
+/// </summary>
+public class Extension : BasePathFunction
+{
+    protected override object EvaluateString(string value) => Path.GetExtension(value);
+}
+
+/// <summary>
+/// Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.
+/// </summary>
+public class Root : BasePathFunction
+{
+    protected override object EvaluateString(string value) => Path.GetPathRoot(value) ?? string.Empty;
+}
+
+/// <summary>
+/// Returns the directory information of a file path provided as argument. The value is always ending by `/` character. Returns `empty` if path does not contain root directory information or is `null`.
+/// </summary>
+public class Directory : BasePathFunction
+{
+    protected override object EvaluateString(string value)
+    {
+        return Path.GetDirectoryName(value) == null
+            ? Path.GetPathRoot(value) ?? string.Empty
+            : Path.GetDirectoryName(value) + Path.DirectorySeparatorChar;
+    }
+}

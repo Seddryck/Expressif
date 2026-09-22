@@ -22,6 +22,8 @@ subtract(
 
 Returns the difference between the argument number and the parameter value.
 
+
+
 ## Parameters
 
 
@@ -31,10 +33,14 @@ Returns the difference between the argument number and the parameter value.
 | `value` | `numeric` | Yes | The value to be subtracted to the argument value. |
 | `times` | `integer` | Yes | An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction. |
 
+
+
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.
 - **`times`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

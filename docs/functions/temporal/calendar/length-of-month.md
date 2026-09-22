@@ -19,6 +19,8 @@ length-of-month() → integer
 
 returns the count of days within the month of the dateTime value passed as the argument. If the argument is not a dateTime but a text at format "YYYY-MM", it returns count of days of the month represented by this value. It returns a value between 28 and 31 (depending of leap year and month).
 
+
+
 ## Parameters
 
 

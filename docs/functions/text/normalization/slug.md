@@ -19,11 +19,14 @@ slug() → text
 
 Returns a lowercase, separator-normalized slug, removing Latin diacritics without transliterating non-Latin scripts. Returns empty text when the input is `null`, empty, or blank.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

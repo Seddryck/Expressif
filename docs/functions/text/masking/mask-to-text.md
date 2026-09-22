@@ -21,6 +21,8 @@ mask-to-text(
 
 Returns the value that passed to the function TextToMask will return the argument value. If the length of the mask and the length of the argument value are not equal the function returns `null`. If the non-asterisk characters are not matching between the mask and the argument value then the function also returns `null`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the value that passed to the function TextToMask will return the argumen
 |:-----|:-----|:---------|:------------|
 | `mask` | `text` | Yes | The string representing the mask to be unset from the argument string. |
 
+
+
 ## Argument evaluation
 
 - **`mask`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

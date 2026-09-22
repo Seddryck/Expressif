@@ -19,6 +19,8 @@ xml-escaped-to-text() → text
 
 Returns text by decoding XML character data without requiring a containing element. Returns `null` for malformed input and preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 

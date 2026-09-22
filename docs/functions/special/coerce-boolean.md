@@ -19,6 +19,8 @@ coerce-boolean() → boolean
 
 Attempts to convert the input to a boolean value. Returns `null` when the input cannot be converted.
 
+
+
 ## Parameters
 
 

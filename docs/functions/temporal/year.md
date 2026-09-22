@@ -3,7 +3,7 @@ layout: docs
 title: "year"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 530
+nav_order: 470
 has_toc: false
 permalink: /functions/temporal/year/
 tags:
@@ -18,6 +18,8 @@ year() → text
 ```
 
 returns a textual value at format YYYY representing the year of the date passed as the argument
+
+
 
 ## Parameters
 

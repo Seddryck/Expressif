@@ -19,11 +19,14 @@ square-power() → numeric
 
 Returns the the numeric argument value raised to the square power.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

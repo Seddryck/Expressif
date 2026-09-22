@@ -19,6 +19,8 @@ first-of-year() → date-time
 
 Returns the first of January of the same year than the argument dateTime.
 
+
+
 ## Parameters
 
 

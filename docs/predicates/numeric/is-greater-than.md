@@ -3,7 +3,7 @@ layout: docs
 title: "is-greater-than"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 20
+nav_order: 30
 has_toc: false
 permalink: /predicates/numeric/is-greater-than/
 tags:
@@ -20,6 +20,8 @@ is-greater-than(
 
 Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,13 @@ Returns true if the numeric value passed as argument is greater than the numeric
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`reference`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

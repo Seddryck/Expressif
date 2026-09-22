@@ -3,7 +3,7 @@ layout: docs
 title: "swap-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 160
+nav_order: 170
 has_toc: false
 permalink: /functions/text/casing/swap-case/
 tags:
@@ -19,11 +19,14 @@ swap-case() → text
 
 Returns the input text with lowercase characters converted to uppercase and uppercase characters converted to lowercase. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

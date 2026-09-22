@@ -3,7 +3,7 @@ layout: docs
 title: "train-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 180
+nav_order: 190
 has_toc: false
 permalink: /functions/text/casing/train-case/
 tags:
@@ -18,6 +18,8 @@ train-case() → text
 ```
 
 Returns the input text in Train-Case, capitalizing each word and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
+
+
 
 ## Parameters
 

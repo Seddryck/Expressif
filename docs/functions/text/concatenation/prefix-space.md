@@ -3,7 +3,7 @@ layout: docs
 title: "prefix-space"
 parent: "Concatenation functions"
 grand_parent: "Text functions"
-nav_order: 60
+nav_order: 70
 has_toc: false
 permalink: /functions/text/concatenation/prefix-space/
 tags:
@@ -19,11 +19,14 @@ prefix-space() → text
 
 Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

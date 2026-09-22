@@ -19,6 +19,8 @@ datetime-to-date() → date
 
 Returns the date at midnight of the argument dateTime.
 
+
+
 ## Parameters
 
 

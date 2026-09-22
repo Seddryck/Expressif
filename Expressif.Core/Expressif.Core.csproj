@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Expressif.Core</PackageId>
+    <AssemblyName>Expressif.Core</AssemblyName>
+    <RootNamespace>Expressif</RootNamespace>
+    <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
+    <PackageTags>expression-language;runtime;variable-binding;extension-points</PackageTags>
+    <Description>Core language, binding, evaluation, and extension contracts for Expressif.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Expressif.Syntax" Version="0.47.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Expressif.Library" />
+    <InternalsVisibleTo Include="Expressif.Testing" />
+    <InternalsVisibleTo Include="Expressif.Library.Testing" />
+  </ItemGroup>
+</Project>

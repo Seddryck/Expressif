@@ -19,6 +19,8 @@ floor-hour() → date-time
 
 Returns the dateTime passed as argument value with the minutes, seconds and milliseconds set to zero.
 
+
+
 ## Parameters
 
 

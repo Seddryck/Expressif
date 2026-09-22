@@ -3,7 +3,7 @@ layout: docs
 title: "previous-month"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 420
+nav_order: 380
 has_toc: false
 permalink: /functions/temporal/previous-month/
 tags:
@@ -18,6 +18,8 @@ previous-month() → date-time
 ```
 
 Returns the dateTime that substract a month to the dateTime passed as argument value.
+
+
 
 ## Parameters
 

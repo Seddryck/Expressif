@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-text →
-common-prefix() → text
+array →
+common-prefix() → any
 ```
 
 Returns the longest prefix shared by all accumulated strings.
@@ -55,5 +55,5 @@ Empty input returns null. A single string is returned unchanged. Nonempty input 
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `common-prefix`
+**Aliases:** None
 {: .member-reference }

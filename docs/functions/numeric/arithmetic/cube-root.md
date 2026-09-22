@@ -19,11 +19,14 @@ cube-root() → numeric
 
 Returns cube root of the numeric argument value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Expressif.Library</PackageId>
+    <AssemblyName>Expressif.Library</AssemblyName>
+    <RootNamespace>Expressif</RootNamespace>
+    <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
+    <PackageTags>expression-language;functions;predicates;accumulators</PackageTags>
+    <Description>The official built-in functions, predicates, accumulators, constants, and default composition APIs for Expressif.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Expressif.Core\Expressif.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Expressif.Library.Testing" />
+    <InternalsVisibleTo Include="Expressif.Testing" />
+    <InternalsVisibleTo Include="Expressif.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\docs\_data\function.json" LogicalName="Expressif.FunctionCatalog.json" />
+    <EmbeddedResource Include="..\docs\_data\type.json" LogicalName="Expressif.TypeCatalog.json" />
+    <EmbeddedResource Include="..\docs\_data\usage-lifecycle.json" LogicalName="Expressif.UsageLifecycle.json" />
+    <EmbeddedResource Include="..\docs\_data\logical-plan.schema.json" LogicalName="Expressif.LogicalPlan.schema.json" />
+  </ItemGroup>
+</Project>

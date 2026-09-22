@@ -3,7 +3,7 @@ layout: docs
 title: "namespace-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /functions/text/casing/namespace-case/
 tags:
@@ -18,6 +18,8 @@ namespace-case() → text
 ```
 
 Returns the input text in namespace::case, lowercasing words and joining them with double colons. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
+
+
 
 ## Parameters
 

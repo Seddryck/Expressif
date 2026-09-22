@@ -3,7 +3,7 @@ layout: docs
 title: "text-to-datetime"
 parent: "Conversion functions"
 grand_parent: "Text functions"
-nav_order: 10
+nav_order: 30
 has_toc: false
 permalink: /functions/text/conversion/text-to-datetime/
 tags:
@@ -22,6 +22,8 @@ text-to-datetime(
 
 Returns a dateTime value matching the argument value parsed by the long format in the culture specified in parameter.
 
+
+
 ## Parameters
 
 
@@ -31,10 +33,14 @@ Returns a dateTime value matching the argument value parsed by the long format i
 | `format` | `text` | Yes | A string representing the required format. |
 | `culture` | `text` | No | A string representing a pre-defined culture. Defaults to `""`. |
 
+
+
 ## Argument evaluation
 
 - **`format`:** Evaluated once in the enclosing context.
 - **`culture`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

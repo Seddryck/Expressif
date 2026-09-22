@@ -2,7 +2,7 @@ using Expressif.Cli.Expressions;
 using Expressif.Cli.Configuration;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 
 namespace Expressif.Cli.Application;
 

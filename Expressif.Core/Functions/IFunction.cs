@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Expressif.Functions;
+
+public interface IFunction
+{
+    object? Evaluate(object? value);
+}
+
+public interface IFunction<in TIn, out TOut> : IFunction
+{
+    TOut Evaluate(TIn value);
+}
+
+public interface IInputBoundFunction
+{
+    bool IsInputBound { get; }
+}

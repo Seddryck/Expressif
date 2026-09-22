@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-max()
+array →
+max() → any
 ```
 
 Tracks the greatest numeric value found during accumulation.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `max`
+**Aliases:** None
 {: .member-reference }

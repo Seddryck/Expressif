@@ -19,11 +19,14 @@ cube-power() → numeric
 
 Returns the the numeric argument value raised to the cube power.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

@@ -31,9 +31,13 @@ Returns whether the named field does not exist in the input record, independentl
 |:-----|:-----|:---------|:------------|
 | `name` | `text` | Yes | Name of the field whose absence is tested. |
 
+
+
 ## Argument evaluation
 
 - **`name`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 
