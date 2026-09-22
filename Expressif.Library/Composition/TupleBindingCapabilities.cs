@@ -1,6 +1,7 @@
 using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Introspection;
+using System.Reflection;
 
 namespace Expressif.Library.Composition;
 
@@ -10,8 +11,8 @@ internal static class TupleBindingCapabilities
         => type.GetConstructors().Select(constructor =>
         {
             var parameters = constructor.GetParameters();
-            var variadic = typeof(IValueSpreadAware).IsAssignableFrom(type)
-                && parameters is [var values] && values.ParameterType == typeof(Func<ValueArgumentEvaluator[]>);
+            var variadic = type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true
+                && parameters is [var values] && values.ParameterType == typeof(Func<object?, object?[]>);
             var standard = FunctionConstruction.Classify(type.Name) == FunctionConstructionKind.Standard
                 && parameters.All(parameter => IsValueProvider(parameter.ParameterType));
             return new TupleBindingSignature(constructor, variadic || standard, variadic);
@@ -25,7 +26,6 @@ internal static class TupleBindingCapabilities
         => !typeof(Delegate).IsAssignableFrom(type)
             && !typeof(IFunction).IsAssignableFrom(type)
             && !typeof(IAccumulator).IsAssignableFrom(type)
-            && type != typeof(ValueArgumentEvaluator)
             && (!type.IsArray || (type.GetElementType() is { } element && IsValueType(element)))
             && (!type.IsGenericType || type.GetGenericArguments().All(IsValueType));
 

@@ -148,7 +148,8 @@ internal static class DocumentationExtensions
         Type declaringType,
         string parameterName,
         IntrospectionOptions options)
-        => (typeof(IValueSpreadAware).IsAssignableFrom(declaringType) && parameterName == "values")
+        => (declaringType.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true
+                && parameterName == "values")
             || options.VariadicParameters.ContainsKey(new(declaringType, parameterName));
 
     /// <summary>

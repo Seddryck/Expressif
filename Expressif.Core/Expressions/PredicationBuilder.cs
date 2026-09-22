@@ -10,11 +10,11 @@ namespace Expressif;
 public class AbstractPredicationBuilder
 {
     private IContext Context { get; }
-    private IPredicationFactory Factory { get; }
+    private FunctionFactory Factory { get; }
     private PredicationSerializer Serializer { get; }
 
     protected AbstractPredicationBuilder(
-        IPredicationFactory factory,
+        FunctionFactory factory,
         IContext? context = null)
         => (Factory, Context, Serializer) = (
             factory ?? throw new ArgumentNullException(nameof(factory)),
@@ -35,7 +35,7 @@ public class AbstractPredicationBuilder
     {
         if (Pile is null)
             throw new InvalidOperationException();
-        return Factory.Instantiate(Pile, Context);
+        return Factory.InstantiatePredication(Pile, Context);
     }
 
     protected virtual IParameter[] Parametrize(object?[] parameters)
@@ -65,7 +65,7 @@ public class AbstractPredicationBuilder
 public class PredicationBuilder : AbstractPredicationBuilder
 {
     public PredicationBuilder(
-        IPredicationFactory factory,
+        FunctionFactory factory,
         IContext? context = null)
         : base(factory, context) { }
 

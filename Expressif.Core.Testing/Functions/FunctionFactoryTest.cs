@@ -456,10 +456,10 @@ public class FunctionFactoryTest
         }
     }
 
-    private sealed class SpreadAwareProbe(Func<ValueArgumentEvaluator[]> arguments)
-        : IFunction, IValueSpreadAware
+    [Function(SupportsValueSpread = true)]
+    private sealed class SpreadAwareProbe(Func<object?, object?[]> arguments) : IFunction
     {
         public object? Evaluate(object? value)
-            => ValueArguments.Evaluate(arguments.Invoke(), value).ToArray();
+            => arguments.Invoke(value);
     }
 }

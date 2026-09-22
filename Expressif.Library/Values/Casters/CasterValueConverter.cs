@@ -3,7 +3,7 @@ using Expressif.Discovery;
 
 namespace Expressif.Values.Casters;
 
-public sealed class CasterValueConverter : IValueConverter
+internal sealed class CasterValueConverter : IValueConverter
 {
     private readonly Caster caster = new();
 

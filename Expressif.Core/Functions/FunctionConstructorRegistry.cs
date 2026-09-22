@@ -6,7 +6,7 @@ namespace Expressif.Functions;
 /// <summary>
 /// Associates runtime function implementations with their specialized constructors.
 /// </summary>
-public sealed class FunctionConstructorRegistry
+internal sealed class FunctionConstructorRegistry
 {
     private readonly IReadOnlyDictionary<Type, IFunctionConstructor> constructors;
 

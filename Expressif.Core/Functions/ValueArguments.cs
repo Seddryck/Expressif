@@ -1,15 +1,10 @@
 namespace Expressif.Functions;
 
-/// <summary>Identifies a function whose positional arguments support value spread.</summary>
-public interface IValueSpreadAware
-{
-}
-
-public sealed record ValueArgumentEvaluator(
+internal sealed record ValueArgumentEvaluator(
     Func<object?, object?> Evaluator,
     bool IsSpread = false);
 
-public static class ValueArguments
+internal static class ValueArguments
 {
     public static IEnumerable<object?> Evaluate(
         IEnumerable<ValueArgumentEvaluator> arguments,
@@ -29,4 +24,3 @@ public static class ValueArguments
         }
     }
 }
-

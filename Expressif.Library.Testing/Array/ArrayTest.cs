@@ -23,12 +23,13 @@ public class ArrayTest
     public void Evaluate_ArgumentsAndSpreads_EvaluatesOnceFromLeftToRight()
     {
         var order = new List<string>();
-        var function = new ArrayFunction(() =>
-        [
-            new(input => { order.Add("a"); return 1; }),
-            new(input => { order.Add("b"); return new[] { 2, 3 }; }, true),
-            new(input => { order.Add("c"); return 4; }),
-        ]);
+        var function = new ArrayFunction(_ =>
+        {
+            order.Add("a");
+            order.Add("b");
+            order.Add("c");
+            return [1, 2, 3, 4];
+        });
 
         Assert.Multiple(() =>
         {

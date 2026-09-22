@@ -4,7 +4,7 @@ using Expressif.Discovery;
 
 namespace Expressif.Functions;
 
-public sealed class FunctionRegistry : ImplementationRegistry
+internal sealed class FunctionRegistry : ImplementationRegistry
 {
     public FunctionRegistry(params Assembly[] assemblies)
         : this(new AssemblyTypeSource(assemblies.Length > 0

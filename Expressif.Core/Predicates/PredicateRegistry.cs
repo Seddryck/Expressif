@@ -4,7 +4,7 @@ using Expressif.Discovery;
 
 namespace Expressif.Predicates;
 
-public sealed class PredicateRegistry : ImplementationRegistry
+internal sealed class PredicateRegistry : ImplementationRegistry
 {
     public PredicateRegistry(params Assembly[] assemblies)
         : this(new AssemblyTypeSource(assemblies.Length > 0

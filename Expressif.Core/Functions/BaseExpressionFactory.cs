@@ -12,7 +12,7 @@ using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Functions;
 
-public abstract class BaseExpressionFactory
+internal abstract class BaseExpressionFactory
 {
     protected IImplementationRegistry Registry { get; }
     private IValueConverter Converter { get; }
