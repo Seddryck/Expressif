@@ -127,7 +127,7 @@ public class ClosestTest
         var info = ExpressifIntrospection.Functions.Describe().Single(info => info.Name == "closest");
         Assert.That(info.Scope, Is.EqualTo("array"));
         Assert.That(info.Summary, Is.EqualTo("Returns the first non-null input value with the smallest absolute distance to the target."));
-        Assert.That(info.Parameters, Has.Length.EqualTo(1));
+        Assert.That(info.Parameters, Has.Count.EqualTo(1));
         Assert.That(info.Parameters[0].Name, Is.EqualTo("target"));
         Assert.That(info.Parameters[0].Optional, Is.False);
         Assert.That(info.Parameters[0].Type, Is.EqualTo("any"));

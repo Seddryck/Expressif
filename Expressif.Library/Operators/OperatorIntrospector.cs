@@ -8,14 +8,16 @@ using Expressif.Discovery;
 
 namespace Expressif.Library.Operators;
 
-internal class OperatorIntrospector : BaseIntrospector
+internal class OperatorIntrospector
 {
+    private readonly BaseIntrospector scanner;
+
     public OperatorIntrospector()
             : this(new AssemblyTypeSource([typeof(OperatorIntrospector).Assembly])) { }
     public OperatorIntrospector(Assembly[] assemblies)
         : this(new AssemblyTypeSource(assemblies.Distinct().ToArray())) { }
     public OperatorIntrospector(ITypeSource source)
-        : base(source) { }
+        => scanner = new BaseIntrospector(source);
 
     public IEnumerable<OperatorInfo> Locate()
         => Locate(true);
@@ -25,7 +27,7 @@ internal class OperatorIntrospector : BaseIntrospector
 
     protected IEnumerable<OperatorInfo> Locate(bool fast = true)
     {
-        var operators = LocateAttribute<OperatorAttribute>();
+        var operators = scanner.LocateAttribute<OperatorAttribute>();
 
         foreach (var @operator in operators)
         {

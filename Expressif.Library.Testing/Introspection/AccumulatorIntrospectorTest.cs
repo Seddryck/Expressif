@@ -41,7 +41,7 @@ public class AccumulatorFunctionIntrospectionTest
     [Test]
     public void Locate_ExpressifAssembly_SomeAliases()
     {
-        Assert.That(Infos.Count(x => x.Aliases.Length > 0), Is.GreaterThan(0));
+        Assert.That(Infos.Count(x => x.Aliases.Count > 0), Is.GreaterThan(0));
 
         foreach (var info in Infos)
         {
