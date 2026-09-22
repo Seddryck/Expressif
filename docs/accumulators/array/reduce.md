@@ -31,9 +31,17 @@ Combines array elements in source order by repeatedly evaluating an expression a
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Specifies the expression evaluated against each accumulated-value/current-element tuple. |
-| `initial` | `any` | No | Specifies the initial accumulated value and the result returned for an empty array. |
+| `initial` | `any` | No | Specifies the initial accumulated value and the result returned for an empty array. When omitted, the first item becomes the accumulated value and an empty array returns null. |
 
 
+
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 ## Argument evaluation
 

@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace Expressif.Library.Catalog;
 
 public sealed record FunctionDocumentation(
@@ -17,7 +20,9 @@ public sealed record FunctionDocumentation(
     bool ReplacementIsEquivalent = false,
     string? MigrationNotes = null,
     string Kind = "function",
-    FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null);
+    FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null,
+    FunctionTraversalDocumentation? Traversal = null,
+    FunctionSemanticsDocumentation? Semantics = null);
 
 public sealed record FunctionAliasLifecycleDocumentation(
     string Name,
@@ -33,7 +38,56 @@ public sealed record FunctionParameterDocumentation(
     string Summary,
     bool Variadic = false,
     int MinimumCardinality = 1,
-    string? Kind = null)
+    string? Kind = null,
+    ParameterOmissionDocumentation? Omission = null,
+    ParameterEvaluationDocumentation? Evaluation = null)
 {
     public string TypeOrKind => Type ?? Kind ?? "any";
+}
+
+public sealed record FunctionTraversalDocumentation(string Source, string Selection, string Summary);
+
+public sealed record FunctionSemanticsDocumentation(string Cardinality, string Dependency, string Ordering);
+
+public sealed record ParameterEvaluationDocumentation(
+    string Frequency,
+    string Summary,
+    string? Source = null,
+    string? Context = null);
+
+[JsonConverter(typeof(ParameterOmissionModeJsonConverter))]
+public enum ParameterOmissionMode
+{
+    Constant,
+    EmptyVariadic,
+    Absent,
+    EnvironmentDerived,
+}
+
+public sealed record ParameterOmissionDocumentation(
+    ParameterOmissionMode Mode,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)] JsonElement Value = default,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? Source = null);
+
+public sealed class ParameterOmissionModeJsonConverter : JsonConverter<ParameterOmissionMode>
+{
+    public override ParameterOmissionMode Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        => reader.GetString() switch
+        {
+            "constant" => ParameterOmissionMode.Constant,
+            "empty-variadic" => ParameterOmissionMode.EmptyVariadic,
+            "absent" => ParameterOmissionMode.Absent,
+            "environment-derived" => ParameterOmissionMode.EnvironmentDerived,
+            var value => throw new JsonException($"Unsupported parameter omission mode '{value}'."),
+        };
+
+    public override void Write(Utf8JsonWriter writer, ParameterOmissionMode value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value switch
+        {
+            ParameterOmissionMode.Constant => "constant",
+            ParameterOmissionMode.EmptyVariadic => "empty-variadic",
+            ParameterOmissionMode.Absent => "absent",
+            ParameterOmissionMode.EnvironmentDerived => "environment-derived",
+            _ => throw new JsonException($"Unsupported parameter omission mode '{value}'."),
+        });
 }

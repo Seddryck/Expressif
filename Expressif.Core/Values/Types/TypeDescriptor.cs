@@ -227,7 +227,7 @@ internal static class ExpressifTypeName
     }
 }
 
-public sealed class UnknownExpressifTypeException : Exception
+public sealed class UnknownExpressifTypeException : ExpressifException
 {
     public UnknownExpressifTypeException(string name)
         : base($"Unknown Expressif type literal ':{name}'.") { }

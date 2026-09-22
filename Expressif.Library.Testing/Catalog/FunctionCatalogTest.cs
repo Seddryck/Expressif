@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Expressif.Introspection;
 using Expressif.Library.Catalog;
 using Expressif.Discovery;
@@ -178,4 +179,90 @@ public class FunctionCatalogTest
         => Assert.That(
             FunctionCatalog.Default.Find("adjacent")?.Behavior,
             Does.StartWith("The operation receives T(previous, current)."));
+
+    [TestCase("map", "preserved", "per-element", "preserved")]
+    [TestCase("filter", "non-increasing", "per-element", "preserved")]
+    [TestCase("fold", "collapsed", "whole-input", "not-applicable")]
+    [TestCase("broadcast", "preserved", "whole-input", "preserved")]
+    [TestCase("scan", "preserved", "prefix", "preserved")]
+    [TestCase("group-by", "partitioned", "partition", "preserved")]
+    public void Default_StructuralFunction_DeserializesSemantics(
+        string function,
+        string cardinality,
+        string dependency,
+        string ordering)
+    {
+        var semantics = FunctionCatalog.Default.Find(function)?.Semantics;
+
+        Assert.That(semantics, Is.EqualTo(new FunctionSemanticsDocumentation(cardinality, dependency, ordering)));
+    }
+
+    [TestCase("add", "times", ParameterOmissionMode.Constant)]
+    [TestCase("array", "values", ParameterOmissionMode.EmptyVariadic)]
+    [TestCase("throw", "predicate", ParameterOmissionMode.Absent)]
+    [TestCase("distribute-random-split", "seed", ParameterOmissionMode.EnvironmentDerived)]
+    public void Default_OptionalParameter_DeserializesOmissionMode(
+        string function,
+        string parameter,
+        ParameterOmissionMode expected)
+        => Assert.That(
+            FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).Omission?.Mode,
+            Is.EqualTo(expected));
+
+    [TestCase("{\"Mode\":\"constant\",\"Value\":1}", JsonValueKind.Number, "1")]
+    [TestCase("{\"Mode\":\"constant\",\"Value\":\"text\"}", JsonValueKind.String, "\"text\"")]
+    [TestCase("{\"Mode\":\"constant\",\"Value\":true}", JsonValueKind.True, "true")]
+    [TestCase("{\"Mode\":\"constant\",\"Value\":null}", JsonValueKind.Null, "null")]
+    public void ParameterOmission_ConstantValue_RoundTripsWithJsonType(
+        string json,
+        JsonValueKind expectedKind,
+        string expectedValue)
+    {
+        var omission = JsonSerializer.Deserialize<ParameterOmissionDocumentation>(json)!;
+        var serialized = JsonSerializer.Serialize(omission);
+        using var document = JsonDocument.Parse(serialized);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(omission.Value.ValueKind, Is.EqualTo(expectedKind));
+            Assert.That(document.RootElement.GetProperty("Mode").GetString(), Is.EqualTo("constant"));
+            Assert.That(document.RootElement.GetProperty("Value").GetRawText(), Is.EqualTo(expectedValue));
+        }
+    }
+
+    [TestCase(true, false, "is optional and must declare omission behavior")]
+    [TestCase(false, true, "is required and cannot declare omission behavior")]
+    public void ValidateOmissions_InconsistentOptionality_Throws(
+        bool optional,
+        bool hasOmission,
+        string message)
+    {
+        var omission = hasOmission
+            ? new ParameterOmissionDocumentation(ParameterOmissionMode.Absent)
+            : null;
+        var parameter = new FunctionParameterDocumentation("value", "any", optional, "Summary.", Omission: omission);
+        var function = new FunctionDocumentation("sample", true, [], "special", "any", "any", "Summary.", [parameter]);
+
+        Assert.That(
+            () => FunctionCatalog.ValidateOmissions([function]),
+            Throws.InvalidOperationException.With.Message.Contains(message));
+    }
+
+    [TestCase("invalid", "per-element", "preserved", "cardinality")]
+    [TestCase("preserved", "invalid", "preserved", "dependency")]
+    [TestCase("preserved", "per-element", "invalid", "ordering")]
+    public void ValidateSemantics_UnsupportedChoice_Throws(
+        string cardinality,
+        string dependency,
+        string ordering,
+        string dimension)
+    {
+        var semantics = new FunctionSemanticsDocumentation(cardinality, dependency, ordering);
+        var function = new FunctionDocumentation(
+            "sample", true, [], "special", "any", "any", "Summary.", [], Semantics: semantics);
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSemantics([function]),
+            Throws.InvalidOperationException.With.Message.Contains($"semantics {dimension}"));
+    }
 }

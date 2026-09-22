@@ -33,6 +33,14 @@ Splits an array on a zero-based boundary and returns the elements before and fro
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.

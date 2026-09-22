@@ -33,6 +33,14 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array entering this call.

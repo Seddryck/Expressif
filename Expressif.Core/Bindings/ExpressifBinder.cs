@@ -4,6 +4,7 @@ using Expressif.Functions.Coercions;
 using Expressif.Values.Types;
 using Expressif.Values;
 using Expressif.Functions.Accumulation;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 
@@ -13,6 +14,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
     private readonly FunctionBinderRegistry functionBinders;
     private readonly ITypeRegistry typeRegistry;
     private readonly ICoercionRegistry? coercionRegistry;
+    private readonly QuotedLiteralRegistry quotedLiteralRegistry;
     private bool inputBoundBody;
     public bool ApplyCoercion { get; }
 
@@ -23,8 +25,16 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         FunctionBinderRegistry functionBinders,
         ITypeRegistry typeRegistry,
         ICoercionRegistry? coercionRegistry = null,
-        bool applyCoercion = true)
-        : this(implementationRegistries, functionBinders, typeRegistry, coercionRegistry, applyCoercion, false) { }
+        bool applyCoercion = true,
+        QuotedLiteralRegistry? quotedLiteralRegistry = null)
+        : this(
+            implementationRegistries,
+            functionBinders,
+            typeRegistry,
+            coercionRegistry,
+            applyCoercion,
+            false,
+            quotedLiteralRegistry) { }
 
     internal ExpressifBinder(
         IEnumerable<IImplementationRegistry> implementationRegistries,
@@ -32,9 +42,12 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         ITypeRegistry typeRegistry,
         ICoercionRegistry? coercionRegistry,
         bool applyCoercion,
-        bool trackSources)
-        => (this.implementationRegistries, this.functionBinders, this.typeRegistry, this.coercionRegistry, ApplyCoercion, Sources) =
-            (implementationRegistries.ToArray(), functionBinders, typeRegistry, coercionRegistry, applyCoercion, new(trackSources));
+        bool trackSources,
+        QuotedLiteralRegistry? quotedLiteralRegistry = null)
+        => (this.implementationRegistries, this.functionBinders, this.typeRegistry, this.coercionRegistry,
+            this.quotedLiteralRegistry, ApplyCoercion, Sources) =
+            (implementationRegistries.ToArray(), functionBinders, typeRegistry, coercionRegistry,
+                quotedLiteralRegistry ?? QuotedLiteralRegistry.Default, applyCoercion, new(trackSources));
 
     TypeDescriptor IFunctionBindingContext.ResolveType(string name)
         => typeRegistry.Resolve(name);
@@ -524,9 +537,9 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         QuotedLiteralSyntax quoted when OrderingSyntax.Bind(quoted.Value) is { } ordering
             => new LiteralParameter(ordering),
         QuotedLiteralSyntax quoted => new QuotedLiteralParameter(quoted.Value),
-        DateLiteralSyntax date => new LiteralParameter(date.Value),
-        DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value),
-        TimeLiteralSyntax time => new LiteralParameter(time.Value),
+        DateLiteralSyntax date => new LiteralParameter(date.Value, "date"),
+        DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value, "datetime"),
+        TimeLiteralSyntax time => new LiteralParameter(time.Value, "time"),
         TypeLiteralSyntax type => new LiteralParameter(typeRegistry.Resolve(type.Name)),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
@@ -581,6 +594,17 @@ public sealed class ExpressifBinder : IFunctionBindingContext
     private IParameter BindTupleLike(TupleLiteralSyntax tuple)
     {
         var elements = tuple.Elements.Select(BindTupleElement).ToArray();
+        if (elements is
+            [
+                { IsSpread: false, Value: QuotedLiteralParameter { Value: QuotedTypedLiteralSyntax.Marker } },
+                { IsSpread: false, Value: QuotedLiteralParameter { Value: QuotedTypedLiteralSyntax.MarkerEnd } },
+                { IsSpread: false, Value: QuotedLiteralParameter representation },
+                { IsSpread: false, Value: QuotedLiteralParameter type }
+            ])
+        {
+            var literal = quotedLiteralRegistry.Parse(representation.Value, type.Value, typeRegistry);
+            return new LiteralParameter(literal.Value, literal.TypeName, !string.IsNullOrEmpty(type.Value));
+        }
         const string marker = "__expressif_internal_vector_literal__";
         const string markerEnd = "__expressif_internal_vector_literal_end__";
         return elements is

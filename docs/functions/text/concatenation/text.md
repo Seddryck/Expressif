@@ -29,7 +29,7 @@ Constructs text by evaluating zero or more positional expressions from left to r
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `expression` | Variadic (zero or more) | Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place. |
+| `values` | `expression` | Variadic (zero or more) | Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place. Omission supplies an empty variadic sequence. |
 
 
 
