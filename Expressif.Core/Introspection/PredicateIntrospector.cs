@@ -52,15 +52,17 @@ public sealed class PredicateIntrospector
                 .Where(alias => !string.Equals(alias, canonicalName, StringComparison.OrdinalIgnoreCase))
                 .Distinct(StringComparer.OrdinalIgnoreCase);
 
-            yield return new PredicateInfo(
-                canonicalName,
-                predicate.Type.IsPublic,
-                aliases,
-                scope,
-                predicate.Type,
-                predicate.Type.GetSummary(),
-                scanner.BuildParameters(predicate.Type.GetInfoConstructors(typeMapper, options)),
-                options.TupleBindingSignatures(predicate.Type).Select(signature => signature.ToInfo()));
+            yield return new PredicateInfo(new PredicateInfoDefinition
+            {
+                Name = canonicalName,
+                IsPublic = predicate.Type.IsPublic,
+                Aliases = aliases,
+                Scope = scope,
+                ImplementationType = predicate.Type,
+                Summary = predicate.Type.GetSummary(),
+                Parameters = BaseIntrospector.BuildParameters(predicate.Type.GetInfoConstructors(typeMapper, options)),
+                Signatures = options.TupleBindingSignatures(predicate.Type).Select(signature => signature.ToInfo()),
+            });
         }
     }
 

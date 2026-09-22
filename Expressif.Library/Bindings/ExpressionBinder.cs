@@ -18,7 +18,7 @@ public sealed class ExpressionBinder : IExpressionBinder
         : this(new Context()) { }
 
     public ExpressionBinder(IContext context)
-        : this(context, ExpressifBinderFactory.Create(), new RuntimeExpressionFactory(new AssemblyTypeSource([typeof(ExpressionBinder).Assembly]))) { }
+        : this(context, ExpressifBinderFactory.Create(), new RuntimeExpressionFactory(new AssemblyTypeSource(typeof(ExpressionBinder).Assembly))) { }
 
     internal ExpressionBinder(
         IContext context,

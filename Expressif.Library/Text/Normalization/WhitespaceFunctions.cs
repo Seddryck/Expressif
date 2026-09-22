@@ -28,7 +28,7 @@ public class CollapseWhitespace : BaseTextFunction
     }
 
     protected override object? EvaluateBlank()
-        => Expressif.Values.Special.Empty.Instance.Keyword;
+        => Expressif.Values.Special.Empty.Keyword;
 }
 
 /// <summary>
@@ -51,5 +51,5 @@ public class CleanWhitespace : BaseTextFunction
         return stringBuilder.ToString();
     }
     protected override object? EvaluateBlank()
-        => Whitespace.Instance.Keyword;
+        => Whitespace.Keyword;
 }

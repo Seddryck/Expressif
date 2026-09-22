@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Expressif.Values.Types;
 
@@ -242,6 +243,7 @@ internal static class ExpressifTypeName
     }
 }
 
+[SuppressMessage("Design", "S3871:Exception types should be public", Justification = "Type resolution is internal and this exception must not expand the public API surface.")]
 internal sealed class UnknownExpressifTypeException : Exception
 {
     public UnknownExpressifTypeException(string name)

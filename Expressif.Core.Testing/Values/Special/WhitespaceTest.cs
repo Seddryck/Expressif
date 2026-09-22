@@ -26,7 +26,7 @@ public class WhitespaceTest
     [TestCase("\t \t ")]
     [TestCase("\t \r \n")]
     public void EqualOperator_Whitespace_Valid(string value)
-        => Assert.That(Whitespace.Instance == value, Is.True);
+        => Assert.That(Whitespace.Instance.Equals(value), Is.True);
 
     [Test]
     public void Equals_WhitespaceLiteral_Valid()
@@ -34,5 +34,5 @@ public class WhitespaceTest
 
     [Test]
     public void EqualOperator_WhitespaceLiteral_Valid()
-        => Assert.That(Whitespace.Instance == "(blank)", Is.True);
+        => Assert.That(Whitespace.Instance.Equals("(blank)"), Is.True);
 }
