@@ -11,6 +11,8 @@ internal sealed class CoerceTextDescriptor : CoercionDescriptor
             typeof(string),
             CoercionDescriptorSupport.NumericSourceTypes.Concat(
                 [typeof(string), typeof(bool), typeof(DateOnly), typeof(DateTime), typeof(YearMonth)]),
+            sourceType => CoercionDescriptorSupport.GetNumericOrFallbackType(
+                typeof(CoerceText<>), typeof(CoerceText), sourceType),
             sourceType => CoercionDescriptorSupport.CreateNumericOrFallback(
                 typeof(CoerceText<>), sourceType, () => new CoerceText())) { }
 }

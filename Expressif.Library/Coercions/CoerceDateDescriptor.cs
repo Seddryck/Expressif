@@ -10,5 +10,6 @@ internal sealed class CoerceDateDescriptor : CoercionDescriptor
             "coerce-date",
             typeof(DateOnly?),
             [typeof(DateOnly), typeof(DateTime), typeof(YearMonth), typeof(string)],
+            _ => typeof(CoerceDate),
             _ => new CoerceDate()) { }
 }

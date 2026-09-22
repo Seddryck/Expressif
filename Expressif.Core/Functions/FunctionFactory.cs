@@ -230,10 +230,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         var outputType = initial.Output;
         for (var index = 1; index < functions.Count; index++)
         {
-            var descriptor = coercionRegistry.Descriptors.SingleOrDefault(
-                candidate => candidate.Name.Equals(members[index].Name, StringComparison.OrdinalIgnoreCase));
-            if (descriptor is not null
-                && coercionRegistry.TryCreate(outputType, descriptor.TargetType, out var coercion))
+            if (coercionRegistry.TryResolve(members[index].Name, out var targetType)
+                && coercionRegistry.TryCreate(outputType, targetType, out var coercion))
             {
                 functions[index] = coercion;
             }

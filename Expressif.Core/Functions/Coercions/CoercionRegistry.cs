@@ -6,7 +6,7 @@ namespace Expressif.Functions.Coercions;
 
 public sealed class CoercionRegistry : ICoercionRegistry
 {
-    public IReadOnlyList<ICoercionDescriptor> Descriptors { get; }
+    private IReadOnlyList<ICoercionDescriptor> Descriptors { get; }
 
     public CoercionRegistry(IEnumerable<ICoercionDescriptor> descriptors)
         => Descriptors = descriptors.ToArray();
@@ -17,7 +17,7 @@ public sealed class CoercionRegistry : ICoercionRegistry
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
     public CoercionRegistry(ITypeSource source)
-        : this(Discover(source)) { }
+        : this(CoercionDescriptorDiscovery.Discover(source)) { }
 
     public bool TryResolve(
         Type sourceType,
@@ -26,6 +26,16 @@ public sealed class CoercionRegistry : ICoercionRegistry
     {
         var descriptor = Descriptors.SingleOrDefault(candidate => candidate.Supports(sourceType, targetType));
         functionName = descriptor?.Name;
+        return descriptor is not null;
+    }
+
+    public bool TryResolve(
+        string functionName,
+        [NotNullWhen(true)] out Type? targetType)
+    {
+        var descriptor = Descriptors.SingleOrDefault(candidate =>
+            candidate.Name.Equals(functionName, StringComparison.OrdinalIgnoreCase));
+        targetType = descriptor?.TargetType;
         return descriptor is not null;
     }
 
@@ -41,23 +51,4 @@ public sealed class CoercionRegistry : ICoercionRegistry
         coercion = descriptor.Create(sourceType);
         return true;
     }
-
-    public IEnumerable<CoercionInfo> Describe()
-        => Descriptors.SelectMany(descriptor => descriptor.SourceTypes.Select(sourceType =>
-        {
-            var function = descriptor.Create(sourceType);
-            return new CoercionInfo(
-                descriptor.Name,
-                sourceType,
-                descriptor.TargetType,
-                function.GetType());
-        }));
-
-    private static IEnumerable<ICoercionDescriptor> Discover(ITypeSource source)
-        => source.GetTypes()
-            .Where(type => type.IsClass && !type.IsAbstract
-                && typeof(ICoercionDescriptor).IsAssignableFrom(type))
-            .Select(type => Activator.CreateInstance(type, nonPublic: true) as ICoercionDescriptor
-                ?? throw new InvalidOperationException(
-                    $"Coercion descriptor '{type.FullName}' must have a parameterless constructor."));
 }

@@ -88,8 +88,10 @@ public sealed class TupleBindingAnalyzer
             return new(name, member.SourceSpan, null, [], TupleBindingFailure.UnknownTarget, $"Unknown tuple-binding target '{name}'.");
         var signatures = TupleBindingCapabilities.Describe(type);
         if (!signatures.Any(signature => signature.SupportsTupleBinding))
+        {
             return new(name, member.SourceSpan, type, signatures.Select(signature => signature.ToInfo()).ToArray(),
                 TupleBindingFailure.IneligibleTarget, $"Callable '{name}' does not support tuple binding.");
+        }
         try
         {
             ValidateInvocation(input, type, signatures);

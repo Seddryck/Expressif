@@ -15,7 +15,7 @@ internal sealed class FunctionContractIntrospector
     {
         this.options = options;
         this.typeMapper = typeMapper;
-        coercions = options.Coercions.Descriptors.ToDictionary(x => x.Name, StringComparer.Ordinal);
+        coercions = options.Coercions.ToDictionary(x => x.Name, StringComparer.Ordinal);
     }
 
     public FunctionContract Describe(Type implementationType, string name)

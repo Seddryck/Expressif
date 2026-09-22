@@ -15,7 +15,6 @@ public class IntrospectionApiTest
     [TestCase("Expressif.Introspection.ParamInfo")]
     [TestCase("Expressif.Introspection.IntrospectionOptions")]
     [TestCase("Expressif.Introspection.ParameterIntrospectionKey")]
-    [TestCase("Expressif.Introspection.CoercionIntrospector")]
     public void InfrastructureType_IsNotPublic(string typeName)
     {
         var type = typeof(FunctionIntrospector).Assembly.GetType(typeName);
@@ -26,6 +25,7 @@ public class IntrospectionApiTest
 
     [TestCase(typeof(FunctionIntrospector))]
     [TestCase(typeof(PredicateIntrospector))]
+    [TestCase(typeof(CoercionIntrospector))]
     public void Introspector_PublicSurfaceIsSealedAndOnlyDescribes(Type type)
     {
         Assert.Multiple(() =>
@@ -48,6 +48,7 @@ public class IntrospectionApiTest
     [TestCase(typeof(Expressif.Introspection.ParameterInfo))]
     [TestCase(typeof(FunctionAliasLifecycleInfo))]
     [TestCase(typeof(TupleBindingInfo))]
+    [TestCase(typeof(CoercionInfo))]
     public void ReadModel_IsSealedImmutableAndCannotBeConstructedPublicly(Type type)
     {
         Assert.Multiple(() =>
