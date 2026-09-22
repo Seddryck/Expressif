@@ -4,7 +4,7 @@ using Expressif.Introspection;
 
 namespace Expressif.Library.Composition;
 
-public static class TupleBindingCapabilities
+internal static class TupleBindingCapabilities
 {
     public static IReadOnlyList<TupleBindingSignature> Describe(Type type)
         => type.GetConstructors().Select(constructor =>

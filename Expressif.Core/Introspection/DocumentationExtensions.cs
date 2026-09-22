@@ -12,14 +12,14 @@ using Expressif.Functions;
 
 namespace Expressif.Introspection;
 
-public record CtorInfo(ParamInfo[] Parameters);
+internal sealed record CtorInfo(ParamInfo[] Parameters);
 
-public record ParamInfo(string Name, string Type, bool Variadic, int MinimumCardinality, string Summary);
+internal sealed record ParamInfo(string Name, string Type, bool Variadic, int MinimumCardinality, string Summary);
 
 /// <summary>
 /// Utility class to provide documentation for various types where available with the assembly.
 /// </summary>
-public static class DocumentationExtensions
+internal static class DocumentationExtensions
 {
     /// <summary>
     /// Provides the documentation comments for a specific method.

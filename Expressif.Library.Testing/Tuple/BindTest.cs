@@ -76,7 +76,7 @@ public class BindTest
     [Test]
     public void Introspection_ExposesSignatureEligibility()
     {
-        var catalog = ExpressifIntrospection.Functions.Locate().ToDictionary(info => info.Name);
+        var catalog = ExpressifIntrospection.Functions.Describe().ToDictionary(info => info.Name);
         Assert.Multiple(() =>
         {
             Assert.That(catalog["subtract"].Signatures.All(signature => signature.SupportsTupleBinding), Is.True);

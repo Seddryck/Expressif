@@ -94,7 +94,7 @@ public class RotateTest
             Assert.That(info.Input, Is.EqualTo("tuple"));
             Assert.That(info.Output, Is.EqualTo("tuple"));
             Assert.That(info.Aliases, Is.Empty);
-            Assert.That(info.Parameters, Has.Length.EqualTo(1));
+            Assert.That(info.Parameters, Has.Count.EqualTo(1));
             Assert.That(info.Parameters[0].Name, Is.EqualTo("offset"));
             Assert.That(info.Parameters[0].Type, Is.EqualTo("integer"));
             Assert.That(info.Parameters[0].Optional, Is.True);

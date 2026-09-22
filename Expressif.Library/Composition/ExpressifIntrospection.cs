@@ -34,7 +34,8 @@ public static class ExpressifIntrospection
 
     public static FunctionIntrospector Functions { get; } = new(Source, Options);
     public static PredicateIntrospector Predicates { get; } = new(Source, Options);
-    public static CoercionIntrospector Coercions { get; } = new(BuiltInCoercions);
+    public static IReadOnlyList<CoercionInfo> Coercions { get; }
+        = BuiltInCoercions.Describe().ToList().AsReadOnly();
 
     private static IReadOnlyDictionary<ParameterIntrospectionKey, string> BuildParameterTypes()
         => new Dictionary<ParameterIntrospectionKey, string>
