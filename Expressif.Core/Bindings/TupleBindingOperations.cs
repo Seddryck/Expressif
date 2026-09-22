@@ -5,7 +5,7 @@ public static class TupleBindingOperations
 {
     public static int LeadingLength(OpenExpression expression)
     {
-        if (expression is InputBoundExpression) return 0;
+        if (expression.InputBinding is not null) return 0;
         var members = expression.Members.ToArray();
         if (members is [var first, ..] && IsBind(first)) return 1;
         return members is [var rotation, var binding, ..] && IsDefaultRotation(rotation) && IsBind(binding) ? 2 : 0;

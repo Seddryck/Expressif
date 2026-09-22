@@ -43,8 +43,6 @@ Expressif.Bindings.CallableReferenceParameter.Name.get -> string!
 Expressif.Bindings.CallableReferenceParameter.Name.init -> void
 Expressif.Bindings.ClosedExpression
 Expressif.Bindings.ClosedExpression.ClosedExpression(Expressif.Bindings.IParameter! parameter, System.Collections.Generic.IEnumerable<Expressif.Bindings.Function!>! members) -> void
-Expressif.Bindings.ClosedExpression.GetImplicitFoldAccumulator() -> Expressif.Bindings.Function?
-Expressif.Bindings.ClosedExpression.IsImplicitFoldAggregation.get -> bool
 Expressif.Bindings.ClosedExpression.Members.get -> System.Collections.Generic.IEnumerable<Expressif.Bindings.Function!>!
 Expressif.Bindings.ClosedExpression.Parameter.get -> Expressif.Bindings.IParameter!
 Expressif.Bindings.ClosedRootExpression

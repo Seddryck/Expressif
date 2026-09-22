@@ -48,18 +48,20 @@ public sealed class Function : IBoundExpression
     public FunctionSyntax Syntax { get; }
 }
 
-public class OpenExpression(IEnumerable<Function> members) : IBoundExpression
+public sealed class OpenExpression(IEnumerable<Function> members) : IBoundExpression
 {
     public IEnumerable<Function> Members { get; } = members;
+
+    internal OpenExpression(InputBoundExpression inputBinding)
+        : this([]) => InputBinding = inputBinding;
+
+    internal InputBoundExpression? InputBinding { get; }
 }
 
-public class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IBoundExpression
+public sealed class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IBoundExpression
 {
     public IParameter Parameter { get; } = parameter;
     public IEnumerable<Function> Members { get; } = members;
-    public bool IsImplicitFoldAggregation => Members.Count() == 1
-        && Members.First().Syntax == FunctionSyntax.ImplicitFoldAccumulator;
-    public Function? GetImplicitFoldAccumulator() => IsImplicitFoldAggregation ? Members.First() : null;
 }
 
 public interface IParameter { }

@@ -1,9 +1,24 @@
 using Expressif.Bindings;
+using System.Reflection;
 
 namespace Expressif.Testing.Bindings;
 
 public class ExpressionBinderTest
 {
+    [Test]
+    public void ExpressionContainers_PublicSurfaceIsSealedAndMinimal()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(typeof(OpenExpression).IsSealed, Is.True);
+            Assert.That(typeof(ClosedExpression).IsSealed, Is.True);
+            Assert.That(typeof(ClosedExpression).GetProperty(
+                "IsImplicitFoldAggregation", BindingFlags.Instance | BindingFlags.Public), Is.Null);
+            Assert.That(typeof(ClosedExpression).GetMethod(
+                "GetImplicitFoldAccumulator", BindingFlags.Instance | BindingFlags.Public), Is.Null);
+        });
+    }
+
     [Test]
     public void Bind_EnclosingRootReferenceAsArgument_CreatesEnclosingPropertyParameter()
     {
@@ -114,7 +129,7 @@ public class ExpressionBinderTest
 
         var expression = ((ClosedRootExpression)ExpressifBinderFactory.Create().Bind(syntax)).Expression;
 
-        Assert.That(expression.IsImplicitFoldAggregation, Is.True);
+        Assert.That(expression.Members.Single().Syntax, Is.EqualTo(FunctionSyntax.ImplicitFoldAccumulator));
     }
 
     [Test]
@@ -125,9 +140,13 @@ public class ExpressionBinderTest
             SyntaxFactory.Function("sum"));
         var expression = ((ClosedRootExpression)ExpressifBinderFactory.Create().Bind(syntax)).Expression;
 
-        Assert.That(expression.IsImplicitFoldAggregation, Is.True);
-        Assert.That(expression.GetImplicitFoldAccumulator(), Is.Not.Null);
-        Assert.That(expression.GetImplicitFoldAccumulator()!.Name, Is.EqualTo("sum"));
+        var accumulator = expression.Members.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(accumulator.Syntax, Is.EqualTo(FunctionSyntax.ImplicitFoldAccumulator));
+            Assert.That(accumulator.Name, Is.EqualTo("sum"));
+        });
     }
 
     [Test]
