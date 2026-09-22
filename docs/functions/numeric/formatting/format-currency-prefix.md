@@ -16,10 +16,10 @@ generated: true
 numeric →
 format-currency-prefix(
     symbol: text,
-    decimals?: integer,
-    separator?: text,
-    grouping?: text,
-    negative?: text
+    decimals: integer = 2,
+    separator: text = ".",
+    grouping: text = ",",
+    negative: text = "-"
 ) → text
 ```
 

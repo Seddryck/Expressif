@@ -33,7 +33,7 @@ Generates an array by repeatedly transforming a seed while a condition is satisf
 |:-----|:-----|:---------|:------------|
 | `while` | `predicate` | Yes | Specifies the predicate that determines whether the current seed is included. |
 | `next` | `expression` | Yes | Specifies the expression that produces the next seed. |
-| `result` | `expression` | No | Specifies the expression that produces the value appended for the current seed. |
+| `result` | `expression` | No | Specifies the expression that produces the value appended for the current seed. When omitted, the current seed is appended unchanged. |
 
 
 

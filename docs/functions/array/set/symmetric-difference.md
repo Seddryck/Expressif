@@ -33,6 +33,14 @@ Returns the distinct values that appear in exactly one of the two arrays, listin
 
 
 
+## Structural semantics
+
+- **Cardinality:** `expanded`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.

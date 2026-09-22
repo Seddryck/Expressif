@@ -21,7 +21,7 @@ public sealed class SemanticAnalyzer
         ArgumentNullException.ThrowIfNull(text);
         try
         {
-            return Analyze(ExpressifSyntax.Parse(text));
+            return Analyze(ExpressionParser.Parse(text));
         }
         catch (ExpressifSyntaxException exception)
         {

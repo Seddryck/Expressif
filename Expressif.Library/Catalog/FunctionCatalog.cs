@@ -68,7 +68,69 @@ public sealed class FunctionCatalog
         var entries = JsonSerializer.Deserialize<FunctionDocumentation[]>(stream)
             ?? throw new InvalidOperationException("The embedded function catalog could not be deserialized.");
 
+        ValidateOmissions(entries);
+        ValidateSemantics(entries);
+
         return new FunctionCatalog(entries.Where(x => x.IsPublic).ToArray());
+    }
+
+    internal static void ValidateOmissions(IEnumerable<FunctionDocumentation> entries)
+    {
+        foreach (var function in entries)
+        {
+            foreach (var parameter in function.Parameters)
+            {
+                var member = $"Function '{function.Name}' parameter '{parameter.Name}'";
+                if (parameter.Optional && parameter.Omission is null)
+                    throw new InvalidOperationException($"{member} is optional and must declare omission behavior.");
+                if (!parameter.Optional && parameter.Omission is not null)
+                    throw new InvalidOperationException($"{member} is required and cannot declare omission behavior.");
+                if (parameter.Omission is null)
+                    continue;
+
+                var hasValue = parameter.Omission.Value.ValueKind != JsonValueKind.Undefined;
+                var hasSource = !string.IsNullOrWhiteSpace(parameter.Omission.Source);
+                switch (parameter.Omission.Mode)
+                {
+                    case ParameterOmissionMode.Constant when !hasValue || hasSource:
+                        throw new InvalidOperationException($"{member} must declare exactly one constant omission value.");
+                    case ParameterOmissionMode.EmptyVariadic when !parameter.Variadic || hasValue || hasSource:
+                        throw new InvalidOperationException($"{member} can use empty-variadic omission only for a variadic parameter.");
+                    case ParameterOmissionMode.Absent when hasValue || hasSource:
+                        throw new InvalidOperationException($"{member} cannot attach a value or source to absent omission.");
+                    case ParameterOmissionMode.EnvironmentDerived when hasValue || !hasSource:
+                        throw new InvalidOperationException($"{member} must name the source of environment-derived omission.");
+                }
+            }
+        }
+    }
+
+    internal static void ValidateSemantics(IEnumerable<FunctionDocumentation> entries)
+    {
+        string[] cardinalities = ["preserved", "non-increasing", "collapsed", "expanded", "partitioned", "unknown"];
+        string[] dependencies = ["per-element", "prefix", "whole-input", "partition", "unknown"];
+        string[] orderings = ["preserved", "reordered", "unordered", "not-applicable", "unknown"];
+
+        foreach (var function in entries.Where(entry => entry.Semantics is not null))
+        {
+            var semantics = function.Semantics!;
+            ValidateSemanticsChoice(function.Name, "cardinality", semantics.Cardinality, cardinalities);
+            ValidateSemanticsChoice(function.Name, "dependency", semantics.Dependency, dependencies);
+            ValidateSemanticsChoice(function.Name, "ordering", semantics.Ordering, orderings);
+        }
+    }
+
+    private static void ValidateSemanticsChoice(
+        string function,
+        string dimension,
+        string value,
+        IEnumerable<string> choices)
+    {
+        if (choices.Contains(value, StringComparer.Ordinal))
+            return;
+
+        throw new InvalidOperationException(
+            $"Function '{function}' has unsupported semantics {dimension} '{value}'.");
     }
 
     private static bool IsExactMatch(FunctionDocumentation function, string name)

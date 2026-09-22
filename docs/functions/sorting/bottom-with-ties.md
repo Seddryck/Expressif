@@ -33,6 +33,14 @@ Returns the last count rows and all comparer-equal boundary ties in sort table o
 
 
 
+## Structural semantics
+
+- **Cardinality:** `non-increasing`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`count`:** Evaluated once in the surrounding evaluation context of this bottom-with-ties call; the SortTable supplied as pipeline input is used only for row selection.

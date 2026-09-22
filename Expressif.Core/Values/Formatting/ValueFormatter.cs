@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Expressif.Values.Types;
 
 namespace Expressif.Values.Formatting;
 
@@ -115,6 +116,7 @@ public static class ValueFormatter
             {
                 Format = ValueFormat.Compact,
                 Indentation = options.Indentation,
+                IncludeBuiltInQuotedLiteralTypeSuffixes = options.IncludeBuiltInQuotedLiteralTypeSuffixes,
             });
             compactWriter.Write(value, structuredValue);
             return compactWriter.ToString();
@@ -135,6 +137,9 @@ public static class ValueFormatter
                     break;
                 case string text:
                     builder.Append(structuredValue ? QuoteString(text) : text);
+                    break;
+                case DateOnly or DateTime or TimeOnly when options.IncludeBuiltInQuotedLiteralTypeSuffixes:
+                    builder.Append(QuotedLiteralRegistry.Default.Serialize(value));
                     break;
                 case DateOnly date:
                     builder.Append('#').Append(QuoteString(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
