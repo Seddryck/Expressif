@@ -6,9 +6,18 @@
     <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
     <PackageTags>expression-language;runtime;variable-binding;extension-points</PackageTags>
     <Description>Core language, binding, evaluation, and extension contracts for Expressif.</Description>
+    <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Expressif.Syntax" Version="0.47.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Expressif.Library" />

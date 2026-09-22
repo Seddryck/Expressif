@@ -14,10 +14,14 @@ namespace Expressif.Observability;
 public interface IExpressionObserver
 {
     /// <summary>
-    /// Begins observing one expression operation and returns its dedicated observation.
+    /// Begins observing one parse, bind, or evaluation operation.
     /// </summary>
     /// <remarks>
     /// If this method throws, the expression operation proceeds without an observation.
     /// </remarks>
+    /// <param name="stage">The lifecycle stage performed by the operation.</param>
+    /// <returns>
+    /// A dedicated observation that receives the operation outcome and is disposed when the operation ends.
+    /// </returns>
     IExpressionObservation Begin(ExpressionObservationStage stage);
 }
