@@ -11,9 +11,6 @@ public sealed class Value
     public static Value Instance { get; } = new();
     private Value() { }
     public static string Keyword => VALUE_KEYWORD_DEFAULT;
-    public static bool operator ==(Value? left, Value? right) => ReferenceEquals(left, right);
-    public static bool operator !=(Value? left, Value? right) => !(left == right);
-
     public override bool Equals(object? value)
         => value switch
         {
@@ -24,7 +21,7 @@ public sealed class Value
             _ => true,
         };
 
-    private bool AdvancedMatch(string value)
+    private static bool AdvancedMatch(string value)
         => SpecialValue.Matches(value, Keyword) || !Null.Instance.Equals(value);
 
     public override int GetHashCode() => VALUE_KEYWORD_DEFAULT.GetHashCode();
