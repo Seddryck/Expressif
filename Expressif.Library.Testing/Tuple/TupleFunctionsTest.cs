@@ -88,7 +88,7 @@ public class TupleFunctionsTest
         => value switch
         {
             "(null)" => null,
-            "(empty)" => new Expressif.Values.Special.Empty(),
+            "(empty)" => Expressif.Values.Special.Empty.Instance,
             _ => ParseTupleLike(value),
         };
 

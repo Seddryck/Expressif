@@ -81,22 +81,25 @@ public static class ValueFormatter
                 case Grouping grouping:
                     WriteCollection("#{", "}", grouping, depth);
                     break;
-                case DictionaryValue dictionary:
+                case Dictionary dictionary:
                     WriteCollection("!{", "}", dictionary, depth);
                     break;
-                case PairValue pair:
-                    WritePair(pair, depth);
+                case Group group:
+                    WritePair(group.Key, group.Value, depth);
                     break;
-                case VectorValue vector:
+                case Pair pair:
+                    WritePair(pair.Key, pair.Value, depth);
+                    break;
+                case Vector vector:
                     WriteCollection("V(", ")", vector, depth);
                     break;
-                case SortTermValue sortTerm:
+                case SortTerm sortTerm:
                     WriteCollection("SortTerm(", ")", sortTerm, depth);
                     break;
-                case SortKeyValue sortKey:
+                case SortKey sortKey:
                     WriteCollection("SortKey(", ")", sortKey, depth);
                     break;
-                case TupleValue tuple:
+                case Tuple tuple:
                     WriteCollection("T(", ")", tuple, depth);
                     break;
                 default:
@@ -183,24 +186,24 @@ public static class ValueFormatter
             builder.Append(closing);
         }
 
-        private void WritePair(PairValue pair, int depth)
+        private void WritePair(object? key, object? value, int depth)
         {
             builder.Append('(');
             if (!pretty)
             {
-                Write(pair.Key, structuredValue: true, depth);
+                Write(key, structuredValue: true, depth);
                 builder.Append(" => ");
-                Write(pair.Value, structuredValue: true, depth);
+                Write(value, structuredValue: true, depth);
                 builder.Append(')');
                 return;
             }
 
             builder.Append('\n');
             WriteIndent(depth + 1);
-            Write(pair.Key, structuredValue: true, depth + 1);
+            Write(key, structuredValue: true, depth + 1);
             builder.Append(" =>\n");
             WriteIndent(depth + 1);
-            Write(pair.Value, structuredValue: true, depth + 1);
+            Write(value, structuredValue: true, depth + 1);
             builder.Append('\n');
             WriteIndent(depth);
             builder.Append(')');
@@ -268,7 +271,7 @@ public static class ValueFormatter
             DataRow row => Enumerable.Range(0, row.Table.Columns.Count)
                 .Select(i => new KeyValuePair<string, object?>(row.Table.Columns[i].ColumnName, row[i]))
                 .ToArray(),
-            ILiteDataRow row => Enumerable.Range(0, row.ColumnCount)
+            IReadOnlyDataRow row => Enumerable.Range(0, row.ColumnCount)
                 .Select(i => new KeyValuePair<string, object?>(row.ColumnNames[i], row[i]))
                 .ToArray(),
             _ => [],
@@ -279,7 +282,7 @@ public static class ValueFormatter
             or IDictionary<string, object?>
             or IDictionary
             or DataRow
-            or ILiteDataRow;
+            or IReadOnlyDataRow;
     }
 
     private static string FormatFieldName(string name)

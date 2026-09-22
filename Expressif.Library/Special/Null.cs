@@ -26,7 +26,7 @@ public class Null : BasePredicate
 
     protected bool EvaluateText(string value)
     {
-        if (new Values.Special.Null().Equals(value))
+        if (Values.Special.Null.Instance.Equals(value))
             return true;
         return false;
     }

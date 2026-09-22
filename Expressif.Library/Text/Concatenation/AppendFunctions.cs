@@ -26,7 +26,7 @@ public abstract class BaseTextAppendNonNullable : BaseTextAppend
     protected override object EvaluateNull()
     {
         var value = Append.Invoke();
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return string.Empty;
         else
             return value;
@@ -67,10 +67,10 @@ public abstract class BaseTextAffixIfMissing : BaseTextFunction
 
     protected override object? EvaluateHighLevelString(string value)
     {
-        if (new Expressif.Values.Special.Empty().Equals(value))
+        if (Expressif.Values.Special.Empty.Instance.Equals(value))
             return EvaluateEmpty();
 
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         if (value.StartsWith('(') && value.EndsWith(')'))

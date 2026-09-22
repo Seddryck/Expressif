@@ -5,15 +5,15 @@ namespace Expressif.Values;
 
 /// <summary>Represents an immutable ordered mapping with structurally unique keys.</summary>
 [ExpressifType(Parent = "structured", LiteralSyntax = "Pair entries enclosed in !{ and }", LiteralExamples = ["!{(\"BE\" => \"Belgium\")}"])]
-public class DictionaryValue : IReadOnlyList<PairValue>, IEquatable<DictionaryValue>, IExpressifValueType
+public sealed class Dictionary : IReadOnlyList<Pair>, IEquatable<Dictionary>, IExpressifValueType
 {
     private static readonly IEqualityComparer Comparer = StructuralComparisons.StructuralEqualityComparer;
-    private readonly PairValue[] entries;
+    private readonly Pair[] entries;
 
-    public DictionaryValue(IEnumerable<PairValue> entries)
+    public Dictionary(IEnumerable<Pair> entries)
     {
         ArgumentNullException.ThrowIfNull(entries);
-        var values = new List<PairValue>();
+        var values = new List<Pair>();
         foreach (var pair in entries)
         {
             if (values.Any(entry => Comparer.Equals(entry.Key, pair.Key)))
@@ -24,7 +24,7 @@ public class DictionaryValue : IReadOnlyList<PairValue>, IEquatable<DictionaryVa
     }
 
     public int Count => entries.Length;
-    public PairValue this[int index] => entries[index];
+    public Pair this[int index] => entries[index];
     /// <summary>Finds a value using the same structural key equality as dictionary construction.</summary>
     public bool TryGetValue(object? key, out object? value)
     {
@@ -40,10 +40,10 @@ public class DictionaryValue : IReadOnlyList<PairValue>, IEquatable<DictionaryVa
         return false;
     }
 
-    public IEnumerator<PairValue> GetEnumerator() => ((IEnumerable<PairValue>)entries).GetEnumerator();
+    public IEnumerator<Pair> GetEnumerator() => ((IEnumerable<Pair>)entries).GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => entries.GetEnumerator();
-    public bool Equals(DictionaryValue? other) => other is not null && entries.SequenceEqual(other.entries);
-    public override bool Equals(object? obj) => obj is DictionaryValue other && Equals(other);
+    public bool Equals(Dictionary? other) => other is not null && entries.SequenceEqual(other.entries);
+    public override bool Equals(object? obj) => obj is Dictionary other && Equals(other);
     public override int GetHashCode()
     {
         var hash = default(HashCode);
@@ -52,11 +52,4 @@ public class DictionaryValue : IReadOnlyList<PairValue>, IEquatable<DictionaryVa
         return hash.ToHashCode();
     }
     public override string ToString() => ValueFormatter.Format(this);
-}
-
-/// <summary>Represents the public canonical dictionary value type.</summary>
-public sealed class Dictionary : DictionaryValue
-{
-    public Dictionary(IEnumerable<PairValue> entries)
-        : base(entries) { }
 }

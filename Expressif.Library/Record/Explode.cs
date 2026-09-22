@@ -76,7 +76,7 @@ public class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<IEnumera
 
     internal static bool IsRecord(object? value)
         => value is ValueRecord or IReadOnlyDictionary<string, object?> or IDictionary<string, object?>
-            or IDictionary or DataRow or ILiteDataRow;
+            or IDictionary or DataRow or IReadOnlyDataRow;
 
     private static bool IsCollection(object? value)
         => value is IEnumerable and not string and not IDictionary

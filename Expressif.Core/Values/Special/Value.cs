@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
 namespace Expressif.Values.Special;
 
-public class Value : BaseSpecial
+public sealed class Value
 {
     private const string VALUE_KEYWORD_DEFAULT = "(value)";
 
-    public Value()
-        : this(VALUE_KEYWORD_DEFAULT) { }
-
-    public Value(string keyword)
-        : base(keyword) { }
+    public static Value Instance { get; } = new();
+    private Value() { }
+    public string Keyword => VALUE_KEYWORD_DEFAULT;
+    public static bool operator ==(Value left, object? right) => left.Equals(right);
+    public static bool operator !=(Value left, object? right) => !left.Equals(right);
 
     public override bool Equals(object? value)
         => value switch
@@ -25,8 +25,8 @@ public class Value : BaseSpecial
             _ => true,
         };
 
-    protected override bool AdvancedMatch(string value)
-        => base.AdvancedMatch(value) || !new Null().Equals(value);
+    private bool AdvancedMatch(string value)
+        => SpecialValue.Matches(value, Keyword) || !Null.Instance.Equals(value);
 
     public override int GetHashCode() => VALUE_KEYWORD_DEFAULT.GetHashCode();
 }

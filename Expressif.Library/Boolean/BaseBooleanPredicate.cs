@@ -26,7 +26,7 @@ public abstract class BaseBooleanPredicate : BasePredicate
     }
     protected bool EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         var caster = new BooleanCaster();

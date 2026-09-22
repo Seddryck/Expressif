@@ -124,11 +124,11 @@ public class TextFunctionsTest
         for (int i = 0; i < tokenCount; i++)
         {
             var nextToken = new Token(() => (i));
-            Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(new Null()));
+            Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(Null.Instance));
         }
 
         var token = new Token(() => (tokenCount));
-        Assert.That(token.Evaluate(value), Is.EqualTo(new Null()));
+        Assert.That(token.Evaluate(value), Is.EqualTo(Null.Instance));
     }
 
     [Test]
@@ -146,11 +146,11 @@ public class TextFunctionsTest
         for (int i = 0; i < tokenCount; i++)
         {
             var nextToken = new Token(() => (i), () => ('-'));
-            Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(new Null()));
+            Assert.That(nextToken.Evaluate(value), Is.Not.EqualTo(Null.Instance));
         }
 
         var token = new Token(() => (tokenCount), () => ('-'));
-        Assert.That(token.Evaluate(value), Is.EqualTo(new Null()));
+        Assert.That(token.Evaluate(value), Is.EqualTo(Null.Instance));
     }
 
     [Test]
@@ -160,29 +160,29 @@ public class TextFunctionsTest
     [TestCase(" ")]
     [TestCase("\r\n")]
     public void WhitespacesToEmpty_Empty(string value)
-        => Assert.That(new WhitespacesToEmpty().Evaluate(value), Is.EqualTo(new Expressif.Values.Special.Empty()));
+        => Assert.That(new WhitespacesToEmpty().Evaluate(value), Is.EqualTo(Expressif.Values.Special.Empty.Instance));
 
     [Test]
     [TestCase(typeof(Expressif.Values.Special.Empty))]
     [TestCase(typeof(Whitespace))]
     public void WhitespacesToEmpty_SpecialType_Empty(Type type)
     {
-        var obj = type.GetConstructor([])!.Invoke(System.Array.Empty<Type>());
-        Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.EqualTo(new Expressif.Values.Special.Empty()));
+        var obj = type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null);
+        Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.EqualTo(Expressif.Values.Special.Empty.Instance));
     }
 
     [Test]
     [TestCase("foo")]
     [TestCase("(null)")]
     public void WhitespacesToEmpty_NotEmpty(string value)
-        => Assert.That(new WhitespacesToEmpty().Evaluate(value), Is.Not.EqualTo(new Expressif.Values.Special.Empty()));
+        => Assert.That(new WhitespacesToEmpty().Evaluate(value), Is.Not.EqualTo(Expressif.Values.Special.Empty.Instance));
 
     [Test]
     [TestCase(typeof(Null))]
     public void WhitespacesToEmpty_SpecialType_NotEmpty(Type type)
     {
-        var obj = type.GetConstructor([])!.Invoke(System.Array.Empty<Type>());
-        Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.Not.EqualTo(new Expressif.Values.Special.Empty()));
+        var obj = type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null);
+        Assert.That(new WhitespacesToEmpty().Evaluate(obj), Is.Not.EqualTo(Expressif.Values.Special.Empty.Instance));
     }
 
     [Test]
@@ -190,7 +190,7 @@ public class TextFunctionsTest
     public void NullToValue_DBNull_Null(Type type)
         => Assert.That(new WhitespacesToEmpty().Evaluate(
             type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
-            , Is.Not.EqualTo(new Expressif.Values.Special.Empty()));
+            , Is.Not.EqualTo(Expressif.Values.Special.Empty.Instance));
 
     [Test]
     [TestCase("")]
@@ -200,19 +200,19 @@ public class TextFunctionsTest
     [TestCase(" ")]
     [TestCase("\r\n")]
     public void BlankToNull_Null(string value)
-        => Assert.That(new WhitespacesToNull().Evaluate(value), Is.EqualTo(new Null()));
+        => Assert.That(new WhitespacesToNull().Evaluate(value), Is.EqualTo(Null.Instance));
 
     [Test]
     [TestCase("foo")]
     public void BlankToNull_NotNull(string value)
-        => Assert.That(new WhitespacesToNull().Evaluate(value), Is.Not.EqualTo(new Null()));
+        => Assert.That(new WhitespacesToNull().Evaluate(value), Is.Not.EqualTo(Null.Instance));
 
     [Test]
     [TestCase("")]
     [TestCase("(null)")]
     [TestCase("(empty)")]
     public void EmptyToNull_Null(string value)
-        => Assert.That(new EmptyToNull().Evaluate(value), Is.EqualTo(new Null()));
+        => Assert.That(new EmptyToNull().Evaluate(value), Is.EqualTo(Null.Instance));
 
     [Test]
     [TestCase("alpha")]
@@ -221,20 +221,20 @@ public class TextFunctionsTest
     [TestCase(" ")]
     [TestCase("\r\n")]
     public void EmptyToNull_NotNull(string value)
-        => Assert.That(new EmptyToNull().Evaluate(value), Is.Not.EqualTo(new Null()));
+        => Assert.That(new EmptyToNull().Evaluate(value), Is.Not.EqualTo(Null.Instance));
 
     [Test]
     [TestCase("")]
     [TestCase("(null)")]
     [TestCase("(empty)")]
     public void NullToEmpty_Null(string value)
-        => Assert.That(new NullToEmpty().Evaluate(value), Is.EqualTo(new Expressif.Values.Special.Empty()));
+        => Assert.That(new NullToEmpty().Evaluate(value), Is.EqualTo(Expressif.Values.Special.Empty.Instance));
 
     [Test]
     [TestCase("foo")]
     [TestCase("(blank)")]
     public void NullToEmpty_NotNull(string value)
-        => Assert.That(new NullToEmpty().Evaluate(value), Is.Not.EqualTo(new Null()));
+        => Assert.That(new NullToEmpty().Evaluate(value), Is.Not.EqualTo(Null.Instance));
 
     [Conformance]
     public void Trim_Valid(object value, object expected)

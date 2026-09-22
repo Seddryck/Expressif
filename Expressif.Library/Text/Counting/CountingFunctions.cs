@@ -56,7 +56,7 @@ public class CountSubstring : BaseTextCountingFunction
     protected override object? EvaluateString(string value)
     {
         var substring = Substring.Invoke();
-        if (substring is null || new Expressif.Values.Special.Null().Equals(substring) || new Expressif.Values.Special.Empty().Equals(substring))
+        if (substring is null || Expressif.Values.Special.Null.Instance.Equals(substring) || Expressif.Values.Special.Empty.Instance.Equals(substring))
             return 0;
         var index = 0;
         var count = 0;

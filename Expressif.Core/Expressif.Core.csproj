@@ -14,5 +14,9 @@
     <InternalsVisibleTo Include="Expressif.Library" />
     <InternalsVisibleTo Include="Expressif.Testing" />
     <InternalsVisibleTo Include="Expressif.Library.Testing" />
+    <InternalsVisibleTo Include="Expressif.Core.Testing" />
+    <InternalsVisibleTo Include="Expressif.Serialization" />
+    <InternalsVisibleTo Include="Expressif.Serialization.Testing" />
+    <InternalsVisibleTo Include="Expressif.Cli" />
   </ItemGroup>
 </Project>

@@ -11,9 +11,9 @@ namespace Expressif.Library.Text.Normalization;
 [Scope("text/normalization")]
 public class Slug : BaseTextFunction
 {
-    protected override object EvaluateNull() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateNull() => Expressif.Values.Special.Empty.Instance.Keyword;
 
-    protected override object EvaluateBlank() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateBlank() => Expressif.Values.Special.Empty.Instance.Keyword;
 
     protected override object EvaluateString(string value)
     {

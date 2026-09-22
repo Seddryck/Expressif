@@ -8,14 +8,14 @@ using System.Reflection;
 
 namespace Expressif.Values;
 
-public static class NamedValueAccessor
+internal static class NamedValueAccessor
 {
     public static bool Contains(object? value, string name)
         => value switch
         {
             DataRow row => row.Table.Columns.Contains(name),
             IReadOnlyDictionary<string, object?> readOnly => readOnly.ContainsKey(name),
-            ILiteDataRow row => row.ContainsColumn(name),
+            IReadOnlyDataRow row => row.ContainsColumn(name),
             IDictionary dico => dico.Contains(name),
             IList => throw new NotNameableContextObjectException(value),
             _ => TryRetrieveObjectProperty(value, name, out var _),
@@ -27,7 +27,7 @@ public static class NamedValueAccessor
         {
             DataRow row => row.Table.Columns.Contains(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
             IReadOnlyDictionary<string, object?> readOnly => readOnly.ContainsKey(name) ? readOnly[name] : throw new ArgumentOutOfRangeException(name),
-            ILiteDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
+            IReadOnlyDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
             IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
             IList => throw new NotNameableContextObjectException(value),
             _ => RetrieveObjectProperty(value, name),
@@ -58,7 +58,7 @@ public static class NamedValueAccessor
 
                 values = fromDataRow;
                 return true;
-            case ILiteDataRow row:
+            case IReadOnlyDataRow row:
                 var fromLiteRow = new List<KeyValuePair<string, object?>>(row.ColumnCount);
                 for (var i = 0; i < row.ColumnCount; i++)
                     fromLiteRow.Add(new KeyValuePair<string, object?>(row.ColumnNames[i], row[i]));

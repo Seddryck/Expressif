@@ -9,7 +9,7 @@ namespace Expressif.Values;
 /// Represents a value containing an ordered collection of named fields.
 /// </summary>
 [ExpressifType(Parent = "structured", LiteralSyntax = "Named fields enclosed in braces", LiteralExamples = ["{name := \"Alice\", age := 42}"])]
-public class RecordValue : IReadOnlyDictionary<string, object?>, IExpressifValueType
+public sealed class RecordValue : IReadOnlyDictionary<string, object?>, IExpressifValueType
 {
     private readonly List<string> order = [];
     private readonly Dictionary<string, object?> fields = [];

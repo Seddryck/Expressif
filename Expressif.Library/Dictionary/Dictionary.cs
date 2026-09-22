@@ -1,5 +1,5 @@
 using Expressif.Values;
-using DictionaryValueType = Expressif.Values.DictionaryValue;
+using DictionaryValueType = Expressif.Values.Dictionary;
 
 namespace Expressif.Library.Dictionary;
 

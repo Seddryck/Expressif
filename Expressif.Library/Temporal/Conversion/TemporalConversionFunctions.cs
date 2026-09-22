@@ -47,11 +47,11 @@ public class InvalidToDate : BaseTemporalFunction
     public InvalidToDate(Func<DateTime> @default)
         => Default = @default;
 
-    protected override object EvaluateNull() => new Expressif.Values.Special.Null();
+    protected override object EvaluateNull() => Expressif.Values.Special.Null.Instance;
     protected override object EvaluateDateTime(DateTime value) => value;
     protected override object? EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         var caster = new DateTimeCaster();

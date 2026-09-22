@@ -3,18 +3,32 @@ using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Collections.ObjectModel;
 
 namespace Expressif.Values.Types;
 
-public sealed record TypeLiteralMetadata(string? Syntax, string[] Examples);
+public sealed class TypeLiteralMetadata
+{
+    internal TypeLiteralMetadata(string? syntax, string[] examples)
+        => (Syntax, Examples) = (syntax, Array.AsReadOnly([.. examples]));
+    public string? Syntax { get; }
+    public IReadOnlyList<string> Examples { get; }
+}
 
-public sealed record TypeDescriptor(
-    string Name,
-    string Summary,
-    string? Parent,
-    TypeLiteralMetadata? Literal,
-    IReadOnlyDictionary<string, string> Bindings,
-    Type? RuntimeType);
+public sealed class TypeDescriptor
+{
+    internal TypeDescriptor(string name, string summary, string? parent, TypeLiteralMetadata? literal,
+        IReadOnlyDictionary<string, string> bindings, Type? runtimeType)
+        => (Name, Summary, Parent, Literal, Bindings, RuntimeType) =
+            (name, summary, parent, literal,
+                new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(bindings)), runtimeType);
+    public string Name { get; }
+    public string Summary { get; }
+    public string? Parent { get; }
+    public TypeLiteralMetadata? Literal { get; }
+    public IReadOnlyDictionary<string, string> Bindings { get; }
+    public Type? RuntimeType { get; }
+}
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class ExpressifTypeAttribute : Attribute
@@ -30,12 +44,12 @@ public interface ITypeDescriptor
     Type? RuntimeType { get; }
 }
 
-public abstract class TypeDescriptor<T> : ITypeDescriptor
+public abstract class ExpressifTypeDefinition<T> : ITypeDescriptor
 {
     public Type RuntimeType => typeof(T);
 }
 
-public interface ITypeRegistry
+internal interface ITypeRegistry
 {
     IReadOnlyList<TypeDescriptor> All { get; }
     bool TryResolve(string name, out TypeDescriptor descriptor);
@@ -44,7 +58,7 @@ public interface ITypeRegistry
     bool IsInstance(object? value, TypeDescriptor expected);
 }
 
-public sealed class TypeRegistry : ITypeRegistry
+internal sealed class TypeRegistry : ITypeRegistry
 {
     private readonly IReadOnlyDictionary<string, TypeDescriptor> byName;
 
@@ -118,7 +132,7 @@ public sealed class TypeRegistry : ITypeRegistry
     }
 }
 
-public sealed class TypeIntrospector
+internal sealed class TypeIntrospector
 {
     private readonly ITypeSource source;
     private Type[]? types;
@@ -228,7 +242,7 @@ internal static class ExpressifTypeName
     }
 }
 
-public sealed class UnknownExpressifTypeException : Exception
+internal sealed class UnknownExpressifTypeException : Exception
 {
     public UnknownExpressifTypeException(string name)
         : base($"Unknown Expressif type literal ':{name}'.") { }

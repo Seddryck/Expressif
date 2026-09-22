@@ -18,7 +18,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
 
     internal BindingSourceMap Sources { get; }
 
-    public ExpressifBinder(
+    internal ExpressifBinder(
         IEnumerable<IImplementationRegistry> implementationRegistries,
         FunctionBinderRegistry functionBinders,
         ITypeRegistry typeRegistry,
@@ -184,9 +184,9 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         {
             QuotedLiteralParameter => typeof(string),
             LiteralParameter { Value: { } value } => value.GetType(),
-            TupleParameter => typeof(Values.TupleValue),
-            VectorParameter => typeof(Values.VectorValue),
-            PairParameter => typeof(Values.PairValue),
+            TupleParameter => typeof(Values.Tuple),
+            VectorParameter => typeof(Values.Vector),
+            PairParameter => typeof(Values.Pair),
             GroupingParameter => typeof(Values.Grouping),
             DictionaryParameter => typeof(Values.Dictionary),
             RecordLiteralParameter => typeof(Values.RecordValue),

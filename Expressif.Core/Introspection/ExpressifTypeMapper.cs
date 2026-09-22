@@ -47,25 +47,25 @@ internal sealed class ExpressifTypeMapper
             || type == typeof(ushort) || type == typeof(int) || type == typeof(uint)
             || type == typeof(long) || type == typeof(ulong))
             return "integer";
-        if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
+        if (type == typeof(IPositionalValue) || type == typeof(Expressif.Values.Tuple))
             return "tuple";
-        if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))
+        if (type == typeof(Vector))
             return "vector";
-        if (type == typeof(PairValue) || type == typeof(Expressif.Values.Pair))
+        if (type == typeof(Pair))
             return "pair";
         if (type == typeof(Group))
             return "group";
         if (type == typeof(Expressif.Values.Grouping))
             return "grouping";
-        if (type == typeof(DictionaryValue) || type == typeof(Expressif.Values.Dictionary))
+        if (type == typeof(Dictionary))
             return "dictionary";
         if (type == typeof(RecordValue))
             return "record";
         if (type == typeof(OrderingValue))
             return "ordering";
-        if (type == typeof(SortTermValue))
+        if (type == typeof(SortTerm))
             return "sort-term";
-        if (type == typeof(SortKeyValue))
+        if (type == typeof(SortKey))
             return "sort-key";
         if (type == typeof(SortTableValue))
             return "sort-table";

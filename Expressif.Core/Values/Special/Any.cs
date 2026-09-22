@@ -1,19 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
 namespace Expressif.Values.Special;
 
-public class Any : BaseSpecial
+public sealed class Any
 {
     private const string ANY_KEYWORD_DEFAULT = "(any)";
 
-    public Any()
-        : this(ANY_KEYWORD_DEFAULT) { }
-
-    public Any(string keyword)
-        : base(keyword) { }
+    public static Any Instance { get; } = new();
+    private Any() { }
+    public string Keyword => ANY_KEYWORD_DEFAULT;
+    public static bool operator ==(Any left, object? right) => left.Equals(right);
+    public static bool operator !=(Any left, object? right) => !left.Equals(right);
 
     public override bool Equals(object? value)
         => value switch

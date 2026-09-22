@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
@@ -9,7 +9,7 @@ using Microsoft.VisualBasic;
 
 namespace Expressif.Values;
 
-public class ContextVariables
+public sealed class ContextVariables
 {
     private IDictionary<string, object?> Variables { get; }
 
@@ -45,7 +45,7 @@ public class ContextVariables
 
     public int Count => Variables.Count;
 
-    public ICollection<string> Keys => Variables.Keys;
+    public IReadOnlyCollection<string> Keys => Variables.Keys.ToArray();
 
     public object? this[string name]
         => TryGetValue(name, out var value)
@@ -59,7 +59,7 @@ public class ContextVariables
         return response;
     }
 
-    protected virtual object? Evaluate(object? value)
+    private static object? Evaluate(object? value)
     {
         if (value is null)
             return null;

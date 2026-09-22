@@ -27,7 +27,7 @@ public class ChangeOfHour : BaseTimePartChangeFunction
     {
         var newHour = Hour.Invoke();
         if (newHour < 0 || newHour > 23)
-            return new Expressif.Values.Special.Null();
+            return Expressif.Values.Special.Null.Instance;
         return new DateTime(value.Year, value.Month, value.Day, newHour, value.Minute, value.Second, value.Millisecond);
     }
 }
@@ -45,7 +45,7 @@ public class ChangeOfMinute : BaseTimePartChangeFunction
     {
         var newMinute = Minute.Invoke();
         if (newMinute < 0 || newMinute > 59)
-            return new Expressif.Values.Special.Null();
+            return Expressif.Values.Special.Null.Instance;
         return new DateTime(value.Year, value.Month, value.Day, value.Hour, newMinute, value.Second, value.Millisecond);
     }
 }
@@ -63,7 +63,7 @@ public class ChangeOfSecond : BaseTimePartChangeFunction
     {
         var newSecond = Second.Invoke();
         if (newSecond < 0 || newSecond > 59)
-            return new Expressif.Values.Special.Null();
+            return Expressif.Values.Special.Null.Instance;
         return new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, newSecond, value.Millisecond);
     }
 }

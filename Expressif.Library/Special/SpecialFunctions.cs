@@ -40,19 +40,19 @@ public abstract class BaseSpecialFunction : IFunction<object?, string>
 
     protected virtual string EvaluateHighLevelString(string value)
     {
-        if (new Expressif.Values.Special.Empty().Equals(value))
+        if (Expressif.Values.Special.Empty.Instance.Equals(value))
             return EvaluateEmpty();
 
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
-        if (new Whitespace().Equals(value))
+        if (Whitespace.Instance.Equals(value))
             return EvaluateBlank();
 
-        if (new Any().Keyword.Equals(value))
+        if (Any.Instance.Keyword.Equals(value))
             return EvaluateAny();
 
-        if (new Value().Keyword.Equals(value))
+        if (Value.Instance.Keyword.Equals(value))
             return EvaluateValue();
 
         return EvaluateString(value);
@@ -71,11 +71,11 @@ public abstract class BaseSpecialFunction : IFunction<object?, string>
 /// </summary>
 public class NullToValue : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => new Value().Keyword;
-    protected override string EvaluateEmpty() => new Expressif.Values.Special.Empty().Keyword;
-    protected override string EvaluateBlank() => new Whitespace().Keyword;
-    protected override string EvaluateAny() => new Value().Keyword;
-    protected override string EvaluateValue() => new Value().Keyword;
+    protected override string EvaluateNull() => Value.Instance.Keyword;
+    protected override string EvaluateEmpty() => Expressif.Values.Special.Empty.Instance.Keyword;
+    protected override string EvaluateBlank() => Whitespace.Instance.Keyword;
+    protected override string EvaluateAny() => Value.Instance.Keyword;
+    protected override string EvaluateValue() => Value.Instance.Keyword;
     protected override string EvaluateString(string value) => value;
 }
 
@@ -84,12 +84,12 @@ public class NullToValue : BaseSpecialFunction
 /// </summary>
 public class AnyToAny : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => new Any().Keyword;
-    protected override string EvaluateEmpty() => new Any().Keyword;
-    protected override string EvaluateBlank() => new Any().Keyword;
-    protected override string EvaluateAny() => new Any().Keyword;
-    protected override string EvaluateValue() => new Any().Keyword;
-    protected override string EvaluateString(string value) => new Any().Keyword;
+    protected override string EvaluateNull() => Any.Instance.Keyword;
+    protected override string EvaluateEmpty() => Any.Instance.Keyword;
+    protected override string EvaluateBlank() => Any.Instance.Keyword;
+    protected override string EvaluateAny() => Any.Instance.Keyword;
+    protected override string EvaluateValue() => Any.Instance.Keyword;
+    protected override string EvaluateString(string value) => Any.Instance.Keyword;
 }
 
 /// <summary>
@@ -97,12 +97,12 @@ public class AnyToAny : BaseSpecialFunction
 /// </summary>
 public class ValueToValue : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => new Expressif.Values.Special.Null().Keyword;
-    protected override string EvaluateEmpty() => new Value().Keyword;
-    protected override string EvaluateBlank() => new Value().Keyword;
-    protected override string EvaluateAny() => new Value().Keyword;
-    protected override string EvaluateValue() => new Value().Keyword;
-    protected override string EvaluateString(string value) => new Value().Keyword;
+    protected override string EvaluateNull() => Expressif.Values.Special.Null.Instance.Keyword;
+    protected override string EvaluateEmpty() => Value.Instance.Keyword;
+    protected override string EvaluateBlank() => Value.Instance.Keyword;
+    protected override string EvaluateAny() => Value.Instance.Keyword;
+    protected override string EvaluateValue() => Value.Instance.Keyword;
+    protected override string EvaluateString(string value) => Value.Instance.Keyword;
 }
 
 /// <summary>
@@ -126,7 +126,7 @@ public class Coalesce : IFunction
         foreach (var expression in Expressions)
         {
             var result = expression.Invoke(value);
-            if (result is not null && !new Expressif.Values.Special.Null().Equals(result))
+            if (result is not null && !Expressif.Values.Special.Null.Instance.Equals(result))
                 return result;
         }
 
