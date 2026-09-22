@@ -49,7 +49,7 @@ public sealed class LegacyTupleBindingAnalyzer
         if (root is ClosedRootExpression closed) Pipeline(closed.Expression.Members, closed.Expression.Parameter, uses);
         if (root is OpenRootExpression open)
         {
-            if (open.Expression is InputBoundExpression binding) Visit(binding.Body, uses);
+            if (open.Expression.InputBinding is { } binding) Visit(binding.Body, uses);
             else Pipeline(open.Expression.Members, null, uses);
         }
     }

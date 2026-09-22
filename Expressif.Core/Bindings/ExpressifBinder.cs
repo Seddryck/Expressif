@@ -543,7 +543,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         return pattern.Names.Select(name => name.Name).ToArray();
     }
 
-    private InputBoundExpression BindInputBound(InputBindingExpressionSyntax syntax)
+    private OpenExpression BindInputBound(InputBindingExpressionSyntax syntax)
     {
         var names = syntax.Binding switch
         {
@@ -556,7 +556,10 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         inputBoundBody = true;
         try
         {
-            return new InputBoundExpression(names, syntax.Binding is PositionalBindingPatternSyntax, Bind(syntax.Body));
+            return new OpenExpression(new InputBoundExpression(
+                names,
+                syntax.Binding is PositionalBindingPatternSyntax,
+                Bind(syntax.Body)));
         }
         finally
         {

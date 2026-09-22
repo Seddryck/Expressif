@@ -59,7 +59,7 @@ internal static class DirectionalMapConstruction
             });
         }
 
-        var normalized = mapOver && expression.Expression is not InputBoundExpression
+        var normalized = mapOver && expression.Expression.InputBinding is null
             ? NormalizeMapOverProjections(expression.Expression)
             : expression.Expression;
         var operation = constructionContext.CreateOpenExpression(normalized, context);

@@ -44,7 +44,7 @@ public sealed class TupleBindingAnalyzer
         }
         else if (root is OpenRootExpression open)
         {
-            if (open.Expression is InputBoundExpression bound) Visit(bound.Body, uses);
+            if (open.Expression.InputBinding is { } bound) Visit(bound.Body, uses);
             else VisitPipeline(open.Expression.Members, null, uses);
         }
     }
