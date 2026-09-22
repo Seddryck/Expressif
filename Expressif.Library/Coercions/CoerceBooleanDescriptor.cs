@@ -9,6 +9,8 @@ internal sealed class CoerceBooleanDescriptor : CoercionDescriptor
             "coerce-boolean",
             typeof(bool?),
             CoercionDescriptorSupport.NumericSourceTypes.Concat([typeof(bool), typeof(string)]),
+            sourceType => CoercionDescriptorSupport.GetNumericOrFallbackType(
+                typeof(CoerceBoolean<>), typeof(CoerceBoolean), sourceType),
             sourceType => CoercionDescriptorSupport.CreateNumericOrFallback(
                 typeof(CoerceBoolean<>), sourceType, () => new CoerceBoolean())) { }
 }

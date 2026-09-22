@@ -10,7 +10,7 @@ internal readonly record struct ParameterIntrospectionKey(Type DeclaringType, st
 /// </summary>
 internal sealed record IntrospectionOptions(
     ITypeRegistry Types,
-    ICoercionRegistry Coercions,
+    IReadOnlyList<ICoercionDescriptor> Coercions,
     IReadOnlyDictionary<ParameterIntrospectionKey, string> ParameterTypes,
     IReadOnlyDictionary<ParameterIntrospectionKey, string> ParameterNames,
     IReadOnlyDictionary<ParameterIntrospectionKey, int> VariadicParameters,
@@ -20,9 +20,9 @@ internal sealed record IntrospectionOptions(
 {
     internal static IntrospectionOptions Default { get; } = new(
         new TypeRegistry(Array.Empty<TypeDescriptor>()),
-        new CoercionRegistry(Array.Empty<ICoercionDescriptor>()));
+        Array.Empty<ICoercionDescriptor>());
 
-    public IntrospectionOptions(ITypeRegistry types, ICoercionRegistry coercions)
+    public IntrospectionOptions(ITypeRegistry types, IReadOnlyList<ICoercionDescriptor> coercions)
         : this(
             types,
             coercions,
