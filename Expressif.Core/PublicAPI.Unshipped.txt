@@ -3,7 +3,12 @@ abstract Expressif.Bindings.CoercionSpecificationParameter.<Clone>$() -> Express
 abstract Expressif.Functions.Accumulation.BaseAccumulator.Accumulate(object? item) -> void
 abstract Expressif.Functions.Accumulation.BaseAccumulator.GetValue() -> object?
 abstract Expressif.Functions.Function<TIn, TOut>.Evaluate(TIn value) -> TOut
+abstract Expressif.Planning.LogicalValue.<Clone>$() -> Expressif.Planning.LogicalValue!
 abstract Expressif.Predicates.BasePredicate.Evaluate(object? value) -> bool
+const Expressif.Planning.LogicalPlanJson.CatalogCompatibility = "3.0" -> string!
+const Expressif.Planning.LogicalPlanJson.FormatName = "expressif.logical-plan" -> string!
+const Expressif.Planning.LogicalPlanJson.FormatVersion = 1 -> int
+const Expressif.Planning.LogicalPlanJson.SchemaResourceName = "Expressif.LogicalPlan.schema.json" -> string!
 Expressif.AbstractPredicationBuilder
 Expressif.AbstractPredicationBuilder.AbstractPredicationBuilder(Expressif.AbstractPredicationBuilder! builder) -> void
 Expressif.AbstractPredicationBuilder.AbstractPredicationBuilder(Expressif.Functions.FunctionFactory! factory, Expressif.IContext? context = null) -> void
@@ -696,6 +701,165 @@ Expressif.Observability.IExpressionObservation.Complete() -> void
 Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception) -> void
 Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
+Expressif.Planning.ILogicalPlanningContext
+Expressif.Planning.ILogicalPlanningContext.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IRootExpression!
+Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name) -> Expressif.Planning.PlannerFunctionMetadata?
+Expressif.Planning.ILogicalPlanningContext.FindTypeName(System.Type! runtimeType) -> string?
+Expressif.Planning.LogicalArgument
+Expressif.Planning.LogicalArgument.<Clone>$() -> Expressif.Planning.LogicalArgument!
+Expressif.Planning.LogicalArgument.Deconstruct(out Expressif.Planning.PlannerParameterDescriptor! Parameter, out Expressif.Planning.LogicalValue? Value, out bool IsSpread, out bool IsExplicit, out Expressif.Planning.PlannerOmissionDescriptor? Omission) -> void
+Expressif.Planning.LogicalArgument.Equals(Expressif.Planning.LogicalArgument? other) -> bool
+Expressif.Planning.LogicalArgument.IsExplicit.get -> bool
+Expressif.Planning.LogicalArgument.IsExplicit.init -> void
+Expressif.Planning.LogicalArgument.IsSpread.get -> bool
+Expressif.Planning.LogicalArgument.IsSpread.init -> void
+Expressif.Planning.LogicalArgument.LogicalArgument(Expressif.Planning.PlannerParameterDescriptor! Parameter, Expressif.Planning.LogicalValue? Value, bool IsSpread, bool IsExplicit, Expressif.Planning.PlannerOmissionDescriptor? Omission = null) -> void
+Expressif.Planning.LogicalArgument.Omission.get -> Expressif.Planning.PlannerOmissionDescriptor?
+Expressif.Planning.LogicalArgument.Omission.init -> void
+Expressif.Planning.LogicalArgument.Parameter.get -> Expressif.Planning.PlannerParameterDescriptor!
+Expressif.Planning.LogicalArgument.Parameter.init -> void
+Expressif.Planning.LogicalArgument.Value.get -> Expressif.Planning.LogicalValue?
+Expressif.Planning.LogicalArgument.Value.init -> void
+Expressif.Planning.LogicalCall
+Expressif.Planning.LogicalCall.Arguments.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalArgument!>!
+Expressif.Planning.LogicalCall.Arguments.init -> void
+Expressif.Planning.LogicalCall.ContextDepth.get -> int
+Expressif.Planning.LogicalCall.ContextDepth.init -> void
+Expressif.Planning.LogicalCall.Deconstruct(out Expressif.Planning.PlannerFunctionDescriptor! Function, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalArgument!>! Arguments, out int ContextDepth) -> void
+Expressif.Planning.LogicalCall.Equals(Expressif.Planning.LogicalCall? other) -> bool
+Expressif.Planning.LogicalCall.Function.get -> Expressif.Planning.PlannerFunctionDescriptor!
+Expressif.Planning.LogicalCall.Function.init -> void
+Expressif.Planning.LogicalCall.LogicalCall(Expressif.Planning.PlannerFunctionDescriptor! Function, System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalArgument!>! Arguments, int ContextDepth = 0) -> void
+Expressif.Planning.LogicalLiteral
+Expressif.Planning.LogicalLiteral.Deconstruct(out string! Type, out object? Value) -> void
+Expressif.Planning.LogicalLiteral.Equals(Expressif.Planning.LogicalLiteral? other) -> bool
+Expressif.Planning.LogicalLiteral.LogicalLiteral(string! Type, object? Value) -> void
+Expressif.Planning.LogicalLiteral.Type.get -> string!
+Expressif.Planning.LogicalLiteral.Type.init -> void
+Expressif.Planning.LogicalLiteral.Value.get -> object?
+Expressif.Planning.LogicalLiteral.Value.init -> void
+Expressif.Planning.LogicalPipeline
+Expressif.Planning.LogicalPipeline.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalValue!>! Items) -> void
+Expressif.Planning.LogicalPipeline.Equals(Expressif.Planning.LogicalPipeline? other) -> bool
+Expressif.Planning.LogicalPipeline.Items.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalValue!>!
+Expressif.Planning.LogicalPipeline.Items.init -> void
+Expressif.Planning.LogicalPipeline.LogicalPipeline(System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalValue!>! Items) -> void
+Expressif.Planning.LogicalPlan
+Expressif.Planning.LogicalPlan.<Clone>$() -> Expressif.Planning.LogicalPlan!
+Expressif.Planning.LogicalPlan.Deconstruct(out Expressif.Planning.LogicalPipeline! Pipeline) -> void
+Expressif.Planning.LogicalPlan.Equals(Expressif.Planning.LogicalPlan? other) -> bool
+Expressif.Planning.LogicalPlan.LogicalPlan(Expressif.Planning.LogicalPipeline! Pipeline) -> void
+Expressif.Planning.LogicalPlan.Pipeline.get -> Expressif.Planning.LogicalPipeline!
+Expressif.Planning.LogicalPlan.Pipeline.init -> void
+Expressif.Planning.LogicalPlanFormatException
+Expressif.Planning.LogicalPlanFormatException.LogicalPlanFormatException(string! message, System.Exception! innerException) -> void
+Expressif.Planning.LogicalPlanFormatException.LogicalPlanFormatException(string! message) -> void
+Expressif.Planning.LogicalPlanJson
+Expressif.Planning.LogicalPlanner
+Expressif.Planning.LogicalPlanner.Build(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Planning.LogicalPlan!
+Expressif.Planning.LogicalPlanner.LogicalPlanner(Expressif.Planning.ILogicalPlanningContext! context) -> void
+Expressif.Planning.LogicalPlanningException
+Expressif.Planning.LogicalPlanningException.LogicalPlanningException(string! message) -> void
+Expressif.Planning.LogicalValue
+Expressif.Planning.LogicalValue.LogicalValue() -> void
+Expressif.Planning.LogicalValue.LogicalValue(Expressif.Planning.LogicalValue! original) -> void
+Expressif.Planning.PlannerEvaluationDescriptor
+Expressif.Planning.PlannerEvaluationDescriptor.<Clone>$() -> Expressif.Planning.PlannerEvaluationDescriptor!
+Expressif.Planning.PlannerEvaluationDescriptor.Context.get -> string?
+Expressif.Planning.PlannerEvaluationDescriptor.Context.init -> void
+Expressif.Planning.PlannerEvaluationDescriptor.Deconstruct(out string! Frequency, out string? Source, out string? Context) -> void
+Expressif.Planning.PlannerEvaluationDescriptor.Equals(Expressif.Planning.PlannerEvaluationDescriptor? other) -> bool
+Expressif.Planning.PlannerEvaluationDescriptor.Frequency.get -> string!
+Expressif.Planning.PlannerEvaluationDescriptor.Frequency.init -> void
+Expressif.Planning.PlannerEvaluationDescriptor.PlannerEvaluationDescriptor(string! Frequency, string? Source = null, string? Context = null) -> void
+Expressif.Planning.PlannerEvaluationDescriptor.Source.get -> string?
+Expressif.Planning.PlannerEvaluationDescriptor.Source.init -> void
+Expressif.Planning.PlannerFunctionDescriptor
+Expressif.Planning.PlannerFunctionDescriptor.<Clone>$() -> Expressif.Planning.PlannerFunctionDescriptor!
+Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics) -> void
+Expressif.Planning.PlannerFunctionDescriptor.Equals(Expressif.Planning.PlannerFunctionDescriptor? other) -> bool
+Expressif.Planning.PlannerFunctionDescriptor.Input.get -> string!
+Expressif.Planning.PlannerFunctionDescriptor.Input.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.Name.get -> string!
+Expressif.Planning.PlannerFunctionDescriptor.Name.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.Output.get -> string!
+Expressif.Planning.PlannerFunctionDescriptor.Output.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null) -> void
+Expressif.Planning.PlannerFunctionDescriptor.Semantics.get -> Expressif.Planning.PlannerSemanticsDescriptor?
+Expressif.Planning.PlannerFunctionDescriptor.Semantics.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.Traversal.get -> Expressif.Planning.PlannerTraversalDescriptor?
+Expressif.Planning.PlannerFunctionDescriptor.Traversal.init -> void
+Expressif.Planning.PlannerFunctionMetadata
+Expressif.Planning.PlannerFunctionMetadata.<Clone>$() -> Expressif.Planning.PlannerFunctionMetadata!
+Expressif.Planning.PlannerFunctionMetadata.Deconstruct(out Expressif.Planning.PlannerFunctionDescriptor! Function, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.PlannerParameterMetadata!>! Parameters) -> void
+Expressif.Planning.PlannerFunctionMetadata.Equals(Expressif.Planning.PlannerFunctionMetadata? other) -> bool
+Expressif.Planning.PlannerFunctionMetadata.Function.get -> Expressif.Planning.PlannerFunctionDescriptor!
+Expressif.Planning.PlannerFunctionMetadata.Function.init -> void
+Expressif.Planning.PlannerFunctionMetadata.Parameters.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.PlannerParameterMetadata!>!
+Expressif.Planning.PlannerFunctionMetadata.Parameters.init -> void
+Expressif.Planning.PlannerFunctionMetadata.PlannerFunctionMetadata(Expressif.Planning.PlannerFunctionDescriptor! Function, System.Collections.Generic.IReadOnlyList<Expressif.Planning.PlannerParameterMetadata!>! Parameters) -> void
+Expressif.Planning.PlannerOmissionDescriptor
+Expressif.Planning.PlannerOmissionDescriptor.<Clone>$() -> Expressif.Planning.PlannerOmissionDescriptor!
+Expressif.Planning.PlannerOmissionDescriptor.Deconstruct(out Expressif.Planning.PlannerOmissionMode Mode, out System.Text.Json.JsonElement Value, out string? Source) -> void
+Expressif.Planning.PlannerOmissionDescriptor.Equals(Expressif.Planning.PlannerOmissionDescriptor? other) -> bool
+Expressif.Planning.PlannerOmissionDescriptor.Mode.get -> Expressif.Planning.PlannerOmissionMode
+Expressif.Planning.PlannerOmissionDescriptor.Mode.init -> void
+Expressif.Planning.PlannerOmissionDescriptor.PlannerOmissionDescriptor(Expressif.Planning.PlannerOmissionMode Mode, System.Text.Json.JsonElement Value = default(System.Text.Json.JsonElement), string? Source = null) -> void
+Expressif.Planning.PlannerOmissionDescriptor.Source.get -> string?
+Expressif.Planning.PlannerOmissionDescriptor.Source.init -> void
+Expressif.Planning.PlannerOmissionDescriptor.Value.get -> System.Text.Json.JsonElement
+Expressif.Planning.PlannerOmissionDescriptor.Value.init -> void
+Expressif.Planning.PlannerOmissionMode
+Expressif.Planning.PlannerOmissionMode.Absent = 2 -> Expressif.Planning.PlannerOmissionMode
+Expressif.Planning.PlannerOmissionMode.Constant = 0 -> Expressif.Planning.PlannerOmissionMode
+Expressif.Planning.PlannerOmissionMode.EmptyVariadic = 1 -> Expressif.Planning.PlannerOmissionMode
+Expressif.Planning.PlannerOmissionMode.EnvironmentDerived = 3 -> Expressif.Planning.PlannerOmissionMode
+Expressif.Planning.PlannerParameterDescriptor
+Expressif.Planning.PlannerParameterDescriptor.<Clone>$() -> Expressif.Planning.PlannerParameterDescriptor!
+Expressif.Planning.PlannerParameterDescriptor.Deconstruct(out string! Name, out string! Type, out bool Optional, out bool Variadic, out int MinimumCardinality, out Expressif.Planning.PlannerEvaluationDescriptor? Evaluation) -> void
+Expressif.Planning.PlannerParameterDescriptor.Equals(Expressif.Planning.PlannerParameterDescriptor? other) -> bool
+Expressif.Planning.PlannerParameterDescriptor.Evaluation.get -> Expressif.Planning.PlannerEvaluationDescriptor?
+Expressif.Planning.PlannerParameterDescriptor.Evaluation.init -> void
+Expressif.Planning.PlannerParameterDescriptor.MinimumCardinality.get -> int
+Expressif.Planning.PlannerParameterDescriptor.MinimumCardinality.init -> void
+Expressif.Planning.PlannerParameterDescriptor.Name.get -> string!
+Expressif.Planning.PlannerParameterDescriptor.Name.init -> void
+Expressif.Planning.PlannerParameterDescriptor.Optional.get -> bool
+Expressif.Planning.PlannerParameterDescriptor.Optional.init -> void
+Expressif.Planning.PlannerParameterDescriptor.PlannerParameterDescriptor(string! Name, string! Type, bool Optional, bool Variadic, int MinimumCardinality, Expressif.Planning.PlannerEvaluationDescriptor? Evaluation = null) -> void
+Expressif.Planning.PlannerParameterDescriptor.Type.get -> string!
+Expressif.Planning.PlannerParameterDescriptor.Type.init -> void
+Expressif.Planning.PlannerParameterDescriptor.Variadic.get -> bool
+Expressif.Planning.PlannerParameterDescriptor.Variadic.init -> void
+Expressif.Planning.PlannerParameterMetadata
+Expressif.Planning.PlannerParameterMetadata.<Clone>$() -> Expressif.Planning.PlannerParameterMetadata!
+Expressif.Planning.PlannerParameterMetadata.Deconstruct(out Expressif.Planning.PlannerParameterDescriptor! Descriptor, out Expressif.Planning.PlannerOmissionDescriptor? Omission) -> void
+Expressif.Planning.PlannerParameterMetadata.Descriptor.get -> Expressif.Planning.PlannerParameterDescriptor!
+Expressif.Planning.PlannerParameterMetadata.Descriptor.init -> void
+Expressif.Planning.PlannerParameterMetadata.Equals(Expressif.Planning.PlannerParameterMetadata? other) -> bool
+Expressif.Planning.PlannerParameterMetadata.Omission.get -> Expressif.Planning.PlannerOmissionDescriptor?
+Expressif.Planning.PlannerParameterMetadata.Omission.init -> void
+Expressif.Planning.PlannerParameterMetadata.PlannerParameterMetadata(Expressif.Planning.PlannerParameterDescriptor! Descriptor, Expressif.Planning.PlannerOmissionDescriptor? Omission = null) -> void
+Expressif.Planning.PlannerSemanticsDescriptor
+Expressif.Planning.PlannerSemanticsDescriptor.<Clone>$() -> Expressif.Planning.PlannerSemanticsDescriptor!
+Expressif.Planning.PlannerSemanticsDescriptor.Cardinality.get -> string!
+Expressif.Planning.PlannerSemanticsDescriptor.Cardinality.init -> void
+Expressif.Planning.PlannerSemanticsDescriptor.Deconstruct(out string! Cardinality, out string! Dependency, out string! Ordering) -> void
+Expressif.Planning.PlannerSemanticsDescriptor.Dependency.get -> string!
+Expressif.Planning.PlannerSemanticsDescriptor.Dependency.init -> void
+Expressif.Planning.PlannerSemanticsDescriptor.Equals(Expressif.Planning.PlannerSemanticsDescriptor? other) -> bool
+Expressif.Planning.PlannerSemanticsDescriptor.Ordering.get -> string!
+Expressif.Planning.PlannerSemanticsDescriptor.Ordering.init -> void
+Expressif.Planning.PlannerSemanticsDescriptor.PlannerSemanticsDescriptor(string! Cardinality, string! Dependency, string! Ordering) -> void
+Expressif.Planning.PlannerTraversalDescriptor
+Expressif.Planning.PlannerTraversalDescriptor.<Clone>$() -> Expressif.Planning.PlannerTraversalDescriptor!
+Expressif.Planning.PlannerTraversalDescriptor.Deconstruct(out string! Source, out string! Selection) -> void
+Expressif.Planning.PlannerTraversalDescriptor.Equals(Expressif.Planning.PlannerTraversalDescriptor? other) -> bool
+Expressif.Planning.PlannerTraversalDescriptor.PlannerTraversalDescriptor(string! Source, string! Selection) -> void
+Expressif.Planning.PlannerTraversalDescriptor.Selection.get -> string!
+Expressif.Planning.PlannerTraversalDescriptor.Selection.init -> void
+Expressif.Planning.PlannerTraversalDescriptor.Source.get -> string!
+Expressif.Planning.PlannerTraversalDescriptor.Source.init -> void
 Expressif.Predicates.BasePredicate
 Expressif.Predicates.BasePredicate.BasePredicate() -> void
 Expressif.Predicates.IPredicate
@@ -1140,6 +1304,51 @@ override Expressif.Bindings.WithProjection.ToString() -> string!
 override Expressif.Discovery.ImplementationRegistration.Equals(object? obj) -> bool
 override Expressif.Discovery.ImplementationRegistration.GetHashCode() -> int
 override Expressif.Discovery.ImplementationRegistration.ToString() -> string!
+override Expressif.Planning.LogicalArgument.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalArgument.GetHashCode() -> int
+override Expressif.Planning.LogicalArgument.ToString() -> string!
+override Expressif.Planning.LogicalCall.<Clone>$() -> Expressif.Planning.LogicalCall!
+override Expressif.Planning.LogicalCall.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalCall.GetHashCode() -> int
+override Expressif.Planning.LogicalCall.ToString() -> string!
+override Expressif.Planning.LogicalLiteral.<Clone>$() -> Expressif.Planning.LogicalLiteral!
+override Expressif.Planning.LogicalLiteral.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalLiteral.GetHashCode() -> int
+override Expressif.Planning.LogicalLiteral.ToString() -> string!
+override Expressif.Planning.LogicalPipeline.<Clone>$() -> Expressif.Planning.LogicalPipeline!
+override Expressif.Planning.LogicalPipeline.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalPipeline.GetHashCode() -> int
+override Expressif.Planning.LogicalPipeline.ToString() -> string!
+override Expressif.Planning.LogicalPlan.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalPlan.GetHashCode() -> int
+override Expressif.Planning.LogicalPlan.ToString() -> string!
+override Expressif.Planning.LogicalValue.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalValue.GetHashCode() -> int
+override Expressif.Planning.LogicalValue.ToString() -> string!
+override Expressif.Planning.PlannerEvaluationDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerEvaluationDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerEvaluationDescriptor.ToString() -> string!
+override Expressif.Planning.PlannerFunctionDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerFunctionDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerFunctionDescriptor.ToString() -> string!
+override Expressif.Planning.PlannerFunctionMetadata.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerFunctionMetadata.GetHashCode() -> int
+override Expressif.Planning.PlannerFunctionMetadata.ToString() -> string!
+override Expressif.Planning.PlannerOmissionDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerOmissionDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerOmissionDescriptor.ToString() -> string!
+override Expressif.Planning.PlannerParameterDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerParameterDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerParameterDescriptor.ToString() -> string!
+override Expressif.Planning.PlannerParameterMetadata.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerParameterMetadata.GetHashCode() -> int
+override Expressif.Planning.PlannerParameterMetadata.ToString() -> string!
+override Expressif.Planning.PlannerSemanticsDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerSemanticsDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerSemanticsDescriptor.ToString() -> string!
+override Expressif.Planning.PlannerTraversalDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerTraversalDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerTraversalDescriptor.ToString() -> string!
 override Expressif.Values.AllDimension.ToString() -> string!
 override Expressif.Values.Dictionary.Equals(object? obj) -> bool
 override Expressif.Values.Dictionary.GetHashCode() -> int
@@ -1191,6 +1400,9 @@ override Expressif.Values.Vector.ToString() -> string!
 override sealed Expressif.Bindings.FieldCoercionParameter.Equals(Expressif.Bindings.CoercionSpecificationParameter? other) -> bool
 override sealed Expressif.Bindings.PositionalCoercionParameter.Equals(Expressif.Bindings.CoercionSpecificationParameter? other) -> bool
 override sealed Expressif.Bindings.TupleCoercionParameter.Equals(Expressif.Bindings.CoercionSpecificationParameter? other) -> bool
+override sealed Expressif.Planning.LogicalCall.Equals(Expressif.Planning.LogicalValue? other) -> bool
+override sealed Expressif.Planning.LogicalLiteral.Equals(Expressif.Planning.LogicalValue? other) -> bool
+override sealed Expressif.Planning.LogicalPipeline.Equals(Expressif.Planning.LogicalValue? other) -> bool
 static Expressif.Bindings.ArrayElementParameter.operator !=(Expressif.Bindings.ArrayElementParameter? left, Expressif.Bindings.ArrayElementParameter? right) -> bool
 static Expressif.Bindings.ArrayElementParameter.operator ==(Expressif.Bindings.ArrayElementParameter? left, Expressif.Bindings.ArrayElementParameter? right) -> bool
 static Expressif.Bindings.ArrayParameter.operator !=(Expressif.Bindings.ArrayParameter? left, Expressif.Bindings.ArrayParameter? right) -> bool
@@ -1292,6 +1504,37 @@ static Expressif.Discovery.ImplementationRegistry.NormalizeName(string! name) ->
 static Expressif.EvaluationContext.Empty.get -> Expressif.EvaluationContext!
 static Expressif.Expression.Create(string! text, Expressif.Bindings.IExpressionBinder! binder) -> Expressif.IExpression!
 static Expressif.Expression.CreateClosed(string! text, Expressif.Bindings.IExpressionBinder! binder) -> Expressif.IExpression!
+static Expressif.Planning.LogicalArgument.operator !=(Expressif.Planning.LogicalArgument? left, Expressif.Planning.LogicalArgument? right) -> bool
+static Expressif.Planning.LogicalArgument.operator ==(Expressif.Planning.LogicalArgument? left, Expressif.Planning.LogicalArgument? right) -> bool
+static Expressif.Planning.LogicalCall.operator !=(Expressif.Planning.LogicalCall? left, Expressif.Planning.LogicalCall? right) -> bool
+static Expressif.Planning.LogicalCall.operator ==(Expressif.Planning.LogicalCall? left, Expressif.Planning.LogicalCall? right) -> bool
+static Expressif.Planning.LogicalLiteral.operator !=(Expressif.Planning.LogicalLiteral? left, Expressif.Planning.LogicalLiteral? right) -> bool
+static Expressif.Planning.LogicalLiteral.operator ==(Expressif.Planning.LogicalLiteral? left, Expressif.Planning.LogicalLiteral? right) -> bool
+static Expressif.Planning.LogicalPipeline.operator !=(Expressif.Planning.LogicalPipeline? left, Expressif.Planning.LogicalPipeline? right) -> bool
+static Expressif.Planning.LogicalPipeline.operator ==(Expressif.Planning.LogicalPipeline? left, Expressif.Planning.LogicalPipeline? right) -> bool
+static Expressif.Planning.LogicalPlan.operator !=(Expressif.Planning.LogicalPlan? left, Expressif.Planning.LogicalPlan? right) -> bool
+static Expressif.Planning.LogicalPlan.operator ==(Expressif.Planning.LogicalPlan? left, Expressif.Planning.LogicalPlan? right) -> bool
+static Expressif.Planning.LogicalPlanJson.Deserialize(string! json) -> Expressif.Planning.LogicalPlan!
+static Expressif.Planning.LogicalPlanJson.ReadSchema() -> string!
+static Expressif.Planning.LogicalPlanJson.Serialize(Expressif.Planning.LogicalPlan! plan, bool indented = true) -> string!
+static Expressif.Planning.LogicalValue.operator !=(Expressif.Planning.LogicalValue? left, Expressif.Planning.LogicalValue? right) -> bool
+static Expressif.Planning.LogicalValue.operator ==(Expressif.Planning.LogicalValue? left, Expressif.Planning.LogicalValue? right) -> bool
+static Expressif.Planning.PlannerEvaluationDescriptor.operator !=(Expressif.Planning.PlannerEvaluationDescriptor? left, Expressif.Planning.PlannerEvaluationDescriptor? right) -> bool
+static Expressif.Planning.PlannerEvaluationDescriptor.operator ==(Expressif.Planning.PlannerEvaluationDescriptor? left, Expressif.Planning.PlannerEvaluationDescriptor? right) -> bool
+static Expressif.Planning.PlannerFunctionDescriptor.operator !=(Expressif.Planning.PlannerFunctionDescriptor? left, Expressif.Planning.PlannerFunctionDescriptor? right) -> bool
+static Expressif.Planning.PlannerFunctionDescriptor.operator ==(Expressif.Planning.PlannerFunctionDescriptor? left, Expressif.Planning.PlannerFunctionDescriptor? right) -> bool
+static Expressif.Planning.PlannerFunctionMetadata.operator !=(Expressif.Planning.PlannerFunctionMetadata? left, Expressif.Planning.PlannerFunctionMetadata? right) -> bool
+static Expressif.Planning.PlannerFunctionMetadata.operator ==(Expressif.Planning.PlannerFunctionMetadata? left, Expressif.Planning.PlannerFunctionMetadata? right) -> bool
+static Expressif.Planning.PlannerOmissionDescriptor.operator !=(Expressif.Planning.PlannerOmissionDescriptor? left, Expressif.Planning.PlannerOmissionDescriptor? right) -> bool
+static Expressif.Planning.PlannerOmissionDescriptor.operator ==(Expressif.Planning.PlannerOmissionDescriptor? left, Expressif.Planning.PlannerOmissionDescriptor? right) -> bool
+static Expressif.Planning.PlannerParameterDescriptor.operator !=(Expressif.Planning.PlannerParameterDescriptor? left, Expressif.Planning.PlannerParameterDescriptor? right) -> bool
+static Expressif.Planning.PlannerParameterDescriptor.operator ==(Expressif.Planning.PlannerParameterDescriptor? left, Expressif.Planning.PlannerParameterDescriptor? right) -> bool
+static Expressif.Planning.PlannerParameterMetadata.operator !=(Expressif.Planning.PlannerParameterMetadata? left, Expressif.Planning.PlannerParameterMetadata? right) -> bool
+static Expressif.Planning.PlannerParameterMetadata.operator ==(Expressif.Planning.PlannerParameterMetadata? left, Expressif.Planning.PlannerParameterMetadata? right) -> bool
+static Expressif.Planning.PlannerSemanticsDescriptor.operator !=(Expressif.Planning.PlannerSemanticsDescriptor? left, Expressif.Planning.PlannerSemanticsDescriptor? right) -> bool
+static Expressif.Planning.PlannerSemanticsDescriptor.operator ==(Expressif.Planning.PlannerSemanticsDescriptor? left, Expressif.Planning.PlannerSemanticsDescriptor? right) -> bool
+static Expressif.Planning.PlannerTraversalDescriptor.operator !=(Expressif.Planning.PlannerTraversalDescriptor? left, Expressif.Planning.PlannerTraversalDescriptor? right) -> bool
+static Expressif.Planning.PlannerTraversalDescriptor.operator ==(Expressif.Planning.PlannerTraversalDescriptor? left, Expressif.Planning.PlannerTraversalDescriptor? right) -> bool
 static Expressif.Syntax.ExpressionParser.Parse(string! text) -> Expressif.Syntax.RootExpressionSyntax!
 static Expressif.Values.AllDimension.Instance.get -> Expressif.Values.AllDimension!
 static Expressif.Values.Formatting.ValueFormatter.Format(object? value, Expressif.Values.Formatting.ValueFormat format, string! indentation) -> string!
@@ -1323,5 +1566,8 @@ virtual Expressif.Bindings.CoercionSpecificationParameter.PrintMembers(System.Te
 virtual Expressif.ExpressionBuilder.Parametrize(object?[]! parameters) -> Expressif.Bindings.IParameter![]!
 virtual Expressif.Functions.Accumulation.BaseAccumulator.Evaluate(object? value) -> object?
 virtual Expressif.Functions.Accumulation.BaseAccumulator.Initialize() -> void
+virtual Expressif.Planning.LogicalValue.EqualityContract.get -> System.Type!
+virtual Expressif.Planning.LogicalValue.Equals(Expressif.Planning.LogicalValue? other) -> bool
+virtual Expressif.Planning.LogicalValue.PrintMembers(System.Text.StringBuilder! builder) -> bool
 virtual Expressif.Predicates.BasePredicate.EvaluateNull() -> bool
 virtual Expressif.Predication.Evaluate(object? value) -> bool

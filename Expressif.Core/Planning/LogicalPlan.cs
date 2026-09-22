@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace Expressif.Planning;
 
 /// <summary>
-/// A language-independent logical representation of an Expressif expression.
+/// A portable logical representation of an Expressif expression.
 /// </summary>
 public sealed record LogicalPlan(LogicalPipeline Pipeline);
 
