@@ -9,6 +9,7 @@ namespace Expressif.Introspection;
 
 internal sealed class ExpressifTypeMapper
 {
+    private const string IntegerType = "integer";
     private static readonly IReadOnlyDictionary<Type, string> BuiltInTypes =
         new System.Collections.Generic.Dictionary<Type, string>
         {
@@ -22,14 +23,14 @@ internal sealed class ExpressifTypeMapper
             [typeof(decimal)] = "numeric",
             [typeof(double)] = "numeric",
             [typeof(float)] = "numeric",
-            [typeof(byte)] = "integer",
-            [typeof(sbyte)] = "integer",
-            [typeof(short)] = "integer",
-            [typeof(ushort)] = "integer",
-            [typeof(int)] = "integer",
-            [typeof(uint)] = "integer",
-            [typeof(long)] = "integer",
-            [typeof(ulong)] = "integer",
+            [typeof(byte)] = IntegerType,
+            [typeof(sbyte)] = IntegerType,
+            [typeof(short)] = IntegerType,
+            [typeof(ushort)] = IntegerType,
+            [typeof(int)] = IntegerType,
+            [typeof(uint)] = IntegerType,
+            [typeof(long)] = IntegerType,
+            [typeof(ulong)] = IntegerType,
             [typeof(IPositionalValue)] = "tuple",
             [typeof(Expressif.Values.Tuple)] = "tuple",
             [typeof(Vector)] = "vector",
@@ -83,8 +84,11 @@ internal sealed class ExpressifTypeMapper
     {
         if (declaringType is not null
             && parameterName is not null
-            && parameterTypes.TryGetValue(new(declaringType, parameterName), out parameterType!))
+            && parameterTypes.TryGetValue(new(declaringType, parameterName), out var configuredType))
+        {
+            parameterType = configuredType;
             return true;
+        }
 
         parameterType = string.Empty;
         return false;

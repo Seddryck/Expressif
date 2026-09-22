@@ -69,8 +69,8 @@ public sealed class AssemblyTypeSource : ITypeSource
         foreach (var assembly in assemblies)
         {
             foreach (var type in GetLoadableTypes(assembly)
-                .OrderBy(type => type.AssemblyQualifiedName, StringComparer.Ordinal)
-                .Where(unique.Add))
+                .Where(unique.Add)
+                .OrderBy(type => type.AssemblyQualifiedName, StringComparer.Ordinal))
             {
                 discovered.Add(type);
             }

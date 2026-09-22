@@ -10,9 +10,6 @@ public sealed class Null
     public static Null Instance { get; } = new();
     private Null() { }
     public static string Keyword => NULL_KEYWORD_DEFAULT;
-    public static bool operator ==(Null? left, Null? right) => ReferenceEquals(left, right);
-    public static bool operator !=(Null? left, Null? right) => !(left == right);
-
     public override bool Equals(object? value)
         => value switch
         {

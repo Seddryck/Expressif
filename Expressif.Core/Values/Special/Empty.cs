@@ -11,9 +11,6 @@ public sealed class Empty
     public static Empty Instance { get; } = new();
     private Empty() { }
     public static string Keyword => EMPTY_KEYWORD_DEFAULT;
-    public static bool operator ==(Empty? left, Empty? right) => ReferenceEquals(left, right);
-    public static bool operator !=(Empty? left, Empty? right) => !(left == right);
-
     public override bool Equals(object? value)
         => value switch
         {

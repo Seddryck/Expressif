@@ -11,9 +11,6 @@ public sealed class Any
     public static Any Instance { get; } = new();
     private Any() { }
     public static string Keyword => ANY_KEYWORD_DEFAULT;
-    public static bool operator ==(Any? left, Any? right) => ReferenceEquals(left, right);
-    public static bool operator !=(Any? left, Any? right) => !(left == right);
-
     public override bool Equals(object? value)
         => value switch
         {
