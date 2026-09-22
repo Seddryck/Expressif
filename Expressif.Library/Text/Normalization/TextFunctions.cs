@@ -52,9 +52,9 @@ public abstract class BaseTextFunction<TOut> : IFunction<string?, TOut?>
         return EvaluateString(value);
     }
 
-    protected virtual object? EvaluateNull() => Expressif.Values.Special.Null.Instance.Keyword;
-    protected virtual object? EvaluateEmpty() => Expressif.Values.Special.Empty.Instance.Keyword;
-    protected virtual object? EvaluateBlank() => Whitespace.Instance.Keyword;
+    protected virtual object? EvaluateNull() => Expressif.Values.Special.Null.Keyword;
+    protected virtual object? EvaluateEmpty() => Expressif.Values.Special.Empty.Keyword;
+    protected virtual object? EvaluateBlank() => Whitespace.Keyword;
     protected virtual object? EvaluateSpecial(string value) => value;
 
     protected virtual object? EvaluateArray(IEnumerable array) => null;
@@ -71,7 +71,7 @@ public abstract class BaseTextFunction : BaseTextFunction<string>
 [Scope("text/normalization")]
 public class WhitespacesToEmpty : BaseTextFunction
 {
-    protected override object EvaluateBlank() => Expressif.Values.Special.Empty.Instance.Keyword;
+    protected override object EvaluateBlank() => Expressif.Values.Special.Empty.Keyword;
     protected override object EvaluateString(string value) => value;
 }
 
@@ -82,8 +82,8 @@ public class WhitespacesToEmpty : BaseTextFunction
 [Scope("text/normalization")]
 public class WhitespacesToNull : BaseTextFunction
 {
-    protected override object EvaluateBlank() => Expressif.Values.Special.Null.Instance.Keyword;
-    protected override object EvaluateEmpty() => Expressif.Values.Special.Null.Instance.Keyword;
+    protected override object EvaluateBlank() => Expressif.Values.Special.Null.Keyword;
+    protected override object EvaluateEmpty() => Expressif.Values.Special.Null.Keyword;
     protected override object EvaluateString(string value) => value;
 }
 
@@ -94,7 +94,7 @@ public class WhitespacesToNull : BaseTextFunction
 [Scope("text/normalization")]
 public class EmptyToNull : BaseTextFunction
 {
-    protected override object EvaluateEmpty() => Expressif.Values.Special.Null.Instance.Keyword;
+    protected override object EvaluateEmpty() => Expressif.Values.Special.Null.Keyword;
     protected override object EvaluateString(string value) => value;
 }
 
@@ -105,6 +105,6 @@ public class EmptyToNull : BaseTextFunction
 [Scope("text/normalization")]
 public class NullToEmpty : BaseTextFunction
 {
-    protected override object EvaluateNull() => Expressif.Values.Special.Empty.Instance.Keyword;
+    protected override object EvaluateNull() => Expressif.Values.Special.Empty.Keyword;
     protected override object EvaluateString(string value) => value;
 }

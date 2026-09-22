@@ -44,7 +44,7 @@ internal sealed class PredicationFactory : BaseExpressionFactory, IPredicationFa
             source) { }
 
     public PredicationFactory()
-        : this(new AssemblyTypeSource([typeof(PredicationFactory).Assembly])) { }
+        : this(new AssemblyTypeSource(typeof(PredicationFactory).Assembly)) { }
 
     public PredicationFactory(ITypeSource source)
         : this(new PredicateRegistry(source), source) { }

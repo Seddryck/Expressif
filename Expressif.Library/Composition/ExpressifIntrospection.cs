@@ -10,7 +10,7 @@ namespace Expressif.Library.Composition;
 /// </summary>
 public static class ExpressifIntrospection
 {
-    private static readonly ITypeSource Source = new AssemblyTypeSource([typeof(ExpressifIntrospection).Assembly]);
+    private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(ExpressifIntrospection).Assembly);
     private static readonly IReadOnlyList<ICoercionDescriptor> BuiltInCoercions
         = CoercionDescriptorDiscovery.Discover(Source);
     private static readonly IntrospectionOptions Options = new(

@@ -88,7 +88,7 @@ public class Caster
     }
 
     private static bool IsSpecialKeyword(string value)
-        => new[] { Expressif.Values.Special.Null.Instance.Keyword, Expressif.Values.Special.Empty.Instance.Keyword, Whitespace.Instance.Keyword }
+        => new[] { Expressif.Values.Special.Null.Keyword, Expressif.Values.Special.Empty.Keyword, Whitespace.Keyword }
             .Contains(value.Trim(), StringComparer.OrdinalIgnoreCase);
 
     private static bool TryCastCore(object value, Type targetType, out object? result)

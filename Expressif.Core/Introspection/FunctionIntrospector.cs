@@ -54,25 +54,27 @@ public sealed class FunctionIntrospector
                     alias.Message,
                     alias.Sunset));
 
-            yield return new FunctionInfo(
-                name,
-                function.Type.IsPublic,
-                aliases,
-                scope,
-                contract.Input,
-                contract.Output,
-                contract.Converted,
-                contract.Reason,
-                function.Type,
-                function.Type.GetSummary(),
-                scanner.BuildParameters(function.Type.GetInfoConstructors(typeMapper, options)),
-                lifecycle?.Deprecated ?? false,
-                lifecycle?.Replacement,
-                lifecycle?.Sunset,
-                lifecycle?.ReplacementIsEquivalent ?? false,
-                lifecycle?.MigrationNotes,
-                options.TupleBindingSignatures(function.Type).Select(signature => signature.ToInfo()),
-                deprecatedAliases);
+            yield return new FunctionInfo(new FunctionInfoDefinition
+            {
+                Name = name,
+                IsPublic = function.Type.IsPublic,
+                Aliases = aliases,
+                Scope = scope,
+                Input = contract.Input,
+                Output = contract.Output,
+                Converted = contract.Converted,
+                Reason = contract.Reason,
+                ImplementationType = function.Type,
+                Summary = function.Type.GetSummary(),
+                Parameters = BaseIntrospector.BuildParameters(function.Type.GetInfoConstructors(typeMapper, options)),
+                Deprecated = lifecycle?.Deprecated ?? false,
+                Replacement = lifecycle?.Replacement,
+                Sunset = lifecycle?.Sunset,
+                ReplacementIsEquivalent = lifecycle?.ReplacementIsEquivalent ?? false,
+                MigrationNotes = lifecycle?.MigrationNotes,
+                Signatures = options.TupleBindingSignatures(function.Type).Select(signature => signature.ToInfo()),
+                DeprecatedAliases = deprecatedAliases,
+            });
         }
     }
 

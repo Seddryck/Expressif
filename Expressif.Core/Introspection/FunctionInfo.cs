@@ -5,44 +5,26 @@ namespace Expressif.Introspection;
 /// <summary>Describes a function or accumulator available to Expressif.</summary>
 public sealed class FunctionInfo
 {
-    internal FunctionInfo(
-        string name,
-        bool isPublic,
-        IEnumerable<string> aliases,
-        string scope,
-        string input,
-        string output,
-        bool converted,
-        string reason,
-        Type implementationType,
-        string summary,
-        IEnumerable<ParameterInfo> parameters,
-        bool deprecated,
-        string? replacement,
-        string? sunset,
-        bool replacementIsEquivalent,
-        string? migrationNotes,
-        IEnumerable<TupleBindingInfo> signatures,
-        IEnumerable<FunctionAliasLifecycleInfo>? deprecatedAliases = null)
+    internal FunctionInfo(FunctionInfoDefinition definition)
     {
-        Name = name;
-        IsPublic = isPublic;
-        Aliases = Array.AsReadOnly(aliases.ToArray());
-        Scope = scope;
-        Input = input;
-        Output = output;
-        Converted = converted;
-        Reason = reason;
-        ImplementationType = implementationType;
-        Summary = summary;
-        Parameters = Array.AsReadOnly(parameters.ToArray());
-        Deprecated = deprecated;
-        Replacement = replacement;
-        Sunset = sunset;
-        ReplacementIsEquivalent = replacementIsEquivalent;
-        MigrationNotes = migrationNotes;
-        Signatures = Array.AsReadOnly(signatures.ToArray());
-        DeprecatedAliases = Array.AsReadOnly((deprecatedAliases ?? []).ToArray());
+        Name = definition.Name;
+        IsPublic = definition.IsPublic;
+        Aliases = Array.AsReadOnly(definition.Aliases.ToArray());
+        Scope = definition.Scope;
+        Input = definition.Input;
+        Output = definition.Output;
+        Converted = definition.Converted;
+        Reason = definition.Reason;
+        ImplementationType = definition.ImplementationType;
+        Summary = definition.Summary;
+        Parameters = Array.AsReadOnly(definition.Parameters.ToArray());
+        Deprecated = definition.Deprecated;
+        Replacement = definition.Replacement;
+        Sunset = definition.Sunset;
+        ReplacementIsEquivalent = definition.ReplacementIsEquivalent;
+        MigrationNotes = definition.MigrationNotes;
+        Signatures = Array.AsReadOnly(definition.Signatures.ToArray());
+        DeprecatedAliases = Array.AsReadOnly(definition.DeprecatedAliases.ToArray());
     }
 
     public string Name { get; }
@@ -64,6 +46,28 @@ public sealed class FunctionInfo
     public IReadOnlyList<TupleBindingInfo> Signatures { get; }
     public IReadOnlyList<FunctionAliasLifecycleInfo> DeprecatedAliases { get; }
     public string Kind => typeof(IAccumulator).IsAssignableFrom(ImplementationType) ? "accumulator" : "function";
+}
+
+internal sealed class FunctionInfoDefinition
+{
+    public required string Name { get; init; }
+    public required bool IsPublic { get; init; }
+    public required IEnumerable<string> Aliases { get; init; }
+    public required string Scope { get; init; }
+    public required string Input { get; init; }
+    public required string Output { get; init; }
+    public required bool Converted { get; init; }
+    public required string Reason { get; init; }
+    public required Type ImplementationType { get; init; }
+    public required string Summary { get; init; }
+    public required IEnumerable<ParameterInfo> Parameters { get; init; }
+    public required bool Deprecated { get; init; }
+    public string? Replacement { get; init; }
+    public string? Sunset { get; init; }
+    public required bool ReplacementIsEquivalent { get; init; }
+    public string? MigrationNotes { get; init; }
+    public required IEnumerable<TupleBindingInfo> Signatures { get; init; }
+    public IEnumerable<FunctionAliasLifecycleInfo> DeprecatedAliases { get; init; } = [];
 }
 
 /// <summary>Describes the deprecation lifecycle of a function alias.</summary>

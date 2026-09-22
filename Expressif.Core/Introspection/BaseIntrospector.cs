@@ -34,7 +34,7 @@ internal sealed class BaseIntrospector
                 ));
     }
 
-    internal IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
+    internal static IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
         => ctorInfos.SelectMany(x => x.Parameters)
                     .GroupBy(x => x.Name)
                     .Select(parameters =>

@@ -20,11 +20,11 @@ public sealed class TupleBindingAnalyzer
     private readonly IImplementationRegistry predicates;
 
     public TupleBindingAnalyzer()
-        : this(new AssemblyTypeSource([typeof(TupleBindingAnalyzer).Assembly])) { }
+        : this(new AssemblyTypeSource(typeof(TupleBindingAnalyzer).Assembly)) { }
     public TupleBindingAnalyzer(ITypeSource source)
         : this(new FunctionRegistry(source), new PredicateRegistry(source)) { }
     public TupleBindingAnalyzer(IImplementationRegistry functions)
-        : this(functions, new PredicateRegistry(new AssemblyTypeSource([typeof(TupleBindingAnalyzer).Assembly]))) { }
+        : this(functions, new PredicateRegistry(new AssemblyTypeSource(typeof(TupleBindingAnalyzer).Assembly))) { }
     public TupleBindingAnalyzer(IImplementationRegistry functions, IImplementationRegistry predicates)
         => (this.functions, this.predicates) = (functions, predicates);
 

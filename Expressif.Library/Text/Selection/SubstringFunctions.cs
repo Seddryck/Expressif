@@ -51,7 +51,7 @@ public class AfterSubstring : BaseSubstringFunction
         while (index != -1 && i <= count);
 
         if (index == -1)
-            return Expressif.Values.Special.Null.Instance.Keyword;
+            return Expressif.Values.Special.Null.Keyword;
 
         return value[(index + substring.Length)..value.Length];
     }
@@ -92,7 +92,7 @@ public class BeforeSubstring : BaseSubstringFunction
         while (index != -1 && i <= count);
 
         if (index == -1)
-            return Expressif.Values.Special.Null.Instance.Keyword;
+            return Expressif.Values.Special.Null.Keyword;
 
         return value[..index];
     }
