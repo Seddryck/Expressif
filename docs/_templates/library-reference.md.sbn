@@ -41,6 +41,17 @@ This {{ model.kind }} has no parameters.
 {{ model.parameter_rows }}
 {{ end }}
 
+{{ if model.has_semantics -}}
+
+## Structural semantics
+
+- **Cardinality:** `{{ model.semantics_cardinality }}`
+- **Dependency:** `{{ model.semantics_dependency }}`
+- **Ordering:** `{{ model.semantics_ordering }}`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+{{ end }}
+
 {{ if model.has_traversal || model.has_evaluation -}}
 
 ## Argument evaluation

@@ -1,5 +1,6 @@
 using Expressif.Serialization;
 using Expressif.Bindings;
+using Expressif.Types;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,27 @@ public class ParameterSerializerTest
             Assert.That(serializer.Serialize(new LiteralParameter(new DateTime(2026, 8, 17, 14, 30, 0))), Is.EqualTo("#\"2026-08-17T14:30:00\""));
             Assert.That(serializer.Serialize(new LiteralParameter(new TimeOnly(14, 30, 0))), Is.EqualTo("#\"14:30:00\""));
         });
+    }
+
+    [TestCase("#\"2026-08-17\"", "#\"2026-08-17\"")]
+    [TestCase("#\"2026-08-17\":date", "#\"2026-08-17\":date")]
+    [TestCase("#\"2026-08-17T14:30:00\"", "#\"2026-08-17T14:30:00\"")]
+    [TestCase("#\"2026-08-17T14:30:00\":datetime", "#\"2026-08-17T14:30:00\":datetime")]
+    [TestCase("#\"14:30:00\"", "#\"14:30:00\"")]
+    [TestCase("#\"14:30:00\":time", "#\"14:30:00\":time")]
+    public void Serialize_QuotedLiteral_PreservesExplicitTypeSuffix(string source, string expected)
+    {
+        var parameter = ExpressifBinderFactory.Create().BindParameter(ExpressionParser.Parse(source));
+
+        Assert.That(new ParameterSerializer().Serialize(parameter), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void Serialize_BuiltInQuotedLiteral_CanIncludeCanonicalTypeSuffix()
+    {
+        var serializer = new ParameterSerializer(QuotedLiteralRegistry.Default, includeBuiltInQuotedLiteralTypeSuffixes: true);
+
+        Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\":date"));
     }
 
     [TestCaseSource(nameof(OrderingValues))]

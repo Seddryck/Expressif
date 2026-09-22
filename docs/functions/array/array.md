@@ -29,7 +29,7 @@ Constructs a new array by evaluating zero or more positional expressions from le
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the elements of the resulting array. |
+| `values` | `any` | Variadic (zero or more) | Zero or more expressions whose evaluated values become the elements of the resulting array. Omission supplies an empty variadic sequence. |
 
 
 

@@ -33,6 +33,14 @@ Executes an accumulator progressively over the input enumerable and returns the 
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `prefix`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array entering this call.

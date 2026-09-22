@@ -18,12 +18,28 @@ branches:
     increment: Major
     source-branches:
     - main
-  feature:
-    label: beta.{BranchName}
-    regex: ^(feat(ure)?s?)[/-](?<BranchName>.+)
-    increment: Minor
+  v3:
+    label: beta.v3
+    regex: ^feat/v3\.0$
+    increment: Major
     source-branches:
     - main
+    is-source-branch-for:
+    - feature
+    - pull-request
+  feature:
+    label: beta.{BranchName}
+    regex: ^(feat(ure)?s?)[/-](?!v3\.0$)(?<BranchName>.+)
+    increment: Inherit
+    source-branches:
+    - main
+    - v3
+    - feature
+  pull-request:
+    source-branches:
+    - main
+    - release
+    - v3
     - feature
 ignore:
   sha: []

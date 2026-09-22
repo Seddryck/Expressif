@@ -88,10 +88,13 @@ internal static class FunctionHelpFormatter
                 builder.Append("...");
 
             builder.Append(parameter.Name);
-            if (parameter.Optional && !parameter.Variadic)
+            if (parameter.Optional && !parameter.Variadic
+                && parameter.Omission?.Mode != ParameterOmissionMode.Constant)
                 builder.Append('?');
 
             builder.Append(": ").Append(parameter.TypeOrKind);
+            if (parameter.Omission?.Mode == ParameterOmissionMode.Constant)
+                builder.Append(" = ").Append(parameter.Omission.Value.GetRawText());
             if (i < function.Parameters.Length - 1)
                 builder.Append(',');
 

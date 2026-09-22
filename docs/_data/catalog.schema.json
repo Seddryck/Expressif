@@ -1,0 +1,158 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://seddryck.github.io/Expressif/schemas/catalog.schema.json",
+  "title": "Expressif operator catalog",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["Name", "Parameters"],
+    "properties": {
+      "Name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "Parameters": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/parameter"
+        }
+      },
+      "Semantics": {
+        "$ref": "#/definitions/semantics"
+      }
+    }
+  },
+  "definitions": {
+    "semantics": {
+      "type": "object",
+      "required": ["Cardinality", "Dependency", "Ordering"],
+      "properties": {
+        "Cardinality": {
+          "enum": ["preserved", "non-increasing", "collapsed", "expanded", "partitioned", "unknown"]
+        },
+        "Dependency": {
+          "enum": ["per-element", "prefix", "whole-input", "partition", "unknown"]
+        },
+        "Ordering": {
+          "enum": ["preserved", "reordered", "unordered", "not-applicable", "unknown"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["Name", "Optional"],
+      "properties": {
+        "Name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Optional": {
+          "type": "boolean"
+        },
+        "Variadic": {
+          "type": "boolean"
+        },
+        "Omission": {
+          "$ref": "#/definitions/omission"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "Optional": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": ["Omission"]
+          },
+          "else": {
+            "not": {
+              "required": ["Omission"]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "Omission": {
+                "properties": {
+                  "Mode": {
+                    "const": "empty-variadic"
+                  }
+                },
+                "required": ["Mode"]
+              }
+            },
+            "required": ["Omission"]
+          },
+          "then": {
+            "properties": {
+              "Variadic": {
+                "const": true
+              }
+            },
+            "required": ["Variadic"]
+          }
+        },
+        {
+          "not": {
+            "required": ["Default"]
+          }
+        }
+      ]
+    },
+    "omission": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["Mode", "Value"],
+          "properties": {
+            "Mode": {
+              "const": "constant"
+            },
+            "Value": true
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["Mode"],
+          "properties": {
+            "Mode": {
+              "const": "empty-variadic"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["Mode"],
+          "properties": {
+            "Mode": {
+              "const": "absent"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["Mode", "Source"],
+          "properties": {
+            "Mode": {
+              "const": "environment-derived"
+            },
+            "Source": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

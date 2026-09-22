@@ -33,6 +33,14 @@ Recursively traverses arrays, tuples, and records and evaluates an expression ag
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Recursively visits the leaf values in the incoming arrays, tuples, and records.

@@ -7,6 +7,11 @@
     "Input": "any",
     "Output": "boolean",
     "Summary": "Returns whether the input value has a matching key in the supplied array or grouping.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [
       {
         "Name": "right",
@@ -34,6 +39,9 @@
         "Name": "right-key",
         "Type": "expression",
         "Optional": true,
+        "Omission": {
+          "Mode": "absent"
+        },
         "Summary": "Selects each right array value’s key; when omitted, the left-key expression is reused. It is skipped for a grouping.",
         "Evaluation": {
           "Frequency": "custom",
@@ -61,6 +69,11 @@
     "Input": "array",
     "Output": "boolean",
     "Summary": "Returns whether the input array contains exactly one element. Returns false when the input cannot be evaluated as an array.",
+    "Semantics": {
+      "Cardinality": "collapsed",
+      "Dependency": "whole-input",
+      "Ordering": "not-applicable"
+    },
     "Parameters": [],
     "Behavior": "Cardinality is independent of element values: a sole null, array, or record counts as one element. Uses the same array conversion as single, including text containing an Expressif array literal. When is-single returns true, single returns the sole element.",
     "Examples": [
@@ -1731,7 +1744,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1770,7 +1786,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1810,7 +1829,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1882,7 +1904,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity)..",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1938,7 +1963,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -1978,7 +2006,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2018,7 +2049,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2058,7 +2092,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2158,7 +2195,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",
@@ -2212,7 +2252,10 @@
         "Name": "comparer",
         "Type": "any",
         "Optional": true,
-        "Summary": "A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).",
+        "Omission": {
+          "Mode": "absent"
+        },
+        "Summary": "Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case.",
         "Evaluation": {
           "Frequency": "custom",
           "Source": "custom",

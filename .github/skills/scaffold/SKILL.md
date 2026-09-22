@@ -20,7 +20,7 @@ Collect enough information to make behavior and typing unambiguous:
 * kind, canonical kebab-case name, aliases, visibility, and semantic scope;
 * concise summary and special-value behavior;
 * semantic input and output contracts;
-* parameters in canonical order, including name, semantic type, summary, optionality, omission/default semantics, and variadic status;
+* parameters in canonical order, including name, semantic type, summary, optionality, a structured omission contract when optional, and variadic status;
 * cardinality, evaluation order, materialization, short-circuit, or stateful behavior when relevant;
 * representative examples and expected results.
 
@@ -65,15 +65,23 @@ Named arguments bind against canonical metadata names. Preserve parameter order 
 
 ## Parameters
 
-Every parameter record includes the fields required by the current catalog schema, including semantic `Type`, `Optional`, and documentation summary.
+Every parameter record includes the fields required by the current catalog schema, including semantic `Type`, `Optional`, and documentation summary. Every optional parameter MUST have exactly one structured `Omission` contract. A required parameter MUST NOT contain `Omission` metadata.
 
-For an optional parameter, record its default value when the schema represents one. Otherwise document the defined omission behavior; do not invent a CLR default.
+Choose the omission mode from the public language contract:
+
+* `constant`: omitting the argument supplies one fixed semantic value. Include `Value` explicitly and preserve its JSON type; for example, use `1`, `""`, `true`, or `null`, not a string rendering of that value.
+* `empty-variadic`: omitting a variadic parameter supplies an empty argument sequence. Use this only for a variadic parameter that permits zero arguments, and do not include `Value` or `Source`.
+* `absent`: omission remains distinguishable from every explicit argument value so the operator or binder can apply documented operator-specific handling. State that handling in the parameter summary, and do not use this mode as a placeholder for an unknown default.
+* `environment-derived`: omission obtains a value from runtime state rather than a fixed literal. Include a nonempty `Source` that identifies the environment source, and do not include `Value`.
+
+Do not infer omission behavior from a CLR constructor default, overload, nullable backend field, or implementation convenience. Define it from the intended language contract. If that contract is ambiguous, stop and request an explicit language decision instead of selecting a mode or value.
 
 For a variadic parameter:
 
 * mark it with the catalog's variadic field;
 * record its element/expression semantic type;
 * define minimum cardinality and empty invocation behavior;
+* use `empty-variadic` when omission supplies zero arguments, or document why another supported mode applies;
 * state whether spread is accepted and how it preserves argument order;
 * define output inference for homogeneous, heterogeneous, and empty arguments.
 
@@ -102,9 +110,9 @@ Map kind to:
 * predicate: `docs/_data/predicate.json`;
 * accumulator: an entry with `"Kind": "accumulator"` in `docs/_data/function.json`.
 
-Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, and typed `Parameters`. Emit contract-dependency, default, or variadic fields when applicable.
+Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, and typed `Parameters`. Emit contract-dependency, omission, or variadic fields when applicable. Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
 
-Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
+Validate the updated catalog against `docs/_data/catalog.schema.json`. Treat an optional parameter without `Omission`, a required parameter with `Omission`, a constant without `Value`, or a mode with fields it does not support as a scaffolding failure.
 
 ## Conformance output
 
@@ -117,13 +125,15 @@ Use lowercase dot-separated test and case IDs whose segments describe behavior o
 Select cases from semantic partitions rather than a fixed count. Cover applicable behavior such as:
 
 * ordinary representative values and boundaries;
-* each optional/defaulted invocation form;
+* each optional invocation form and its omission behavior;
 * named and positional equivalence when it is part of the operator contract;
 * empty, single, multiple, heterogeneous, nested, and spread forms for variadic operators;
 * every supported typed input contract for coercions;
 * short-circuit or declaration-order behavior;
 * accumulator empty, null, repeated, and order-sensitive behavior;
 * null, empty, and blank only when meaningful for the declared input and semantics.
+
+When omission affects an observable result, include a case that actually omits the argument. For `constant`, cover the omitted form and its fixed semantic value; for `empty-variadic`, cover the zero-argument form; for `absent`, demonstrate the documented operator-specific path; and for `environment-derived`, assert stable observable invariants without hard-coding nondeterministic output. If omission is not observable in the conformance schema, state why and place any required coverage in a focused test.
 
 Use `(null)`, `(empty)`, and `(blank)` for the corresponding Expressif special input values. YAML null is an empty `expected:` value. Quote strings when YAML could reinterpret language syntax, arrays, records, Booleans, or special tokens.
 
@@ -168,10 +178,15 @@ Confirm that:
 1. catalog and conformance targets do not already exist unless an update was requested;
 2. names and aliases satisfy canonical naming and collision rules;
 3. semantic input, output, and parameter types are complete;
-4. dynamic relationships, optional defaults, and variadic behavior are explicit where applicable;
-5. summaries and expected results agree;
-6. YAML conforms to the schema and can map to a conformance test method;
-7. the proposed commit message describes the eventual completed change.
+4. every optional parameter has exactly one supported omission mode and every required parameter has none;
+5. every `constant` has an explicitly typed `Value`, every `environment-derived` contract names its `Source`, and modes contain no unsupported fields;
+6. omission behavior was not inferred from CLR defaults, overloads, or backend implementation details;
+7. dynamic relationships and variadic behavior are explicit where applicable;
+8. observable omission semantics have conformance coverage, including zero-argument variadic invocation where applicable;
+9. the updated catalog validates against `docs/_data/catalog.schema.json`;
+10. summaries and expected results agree;
+11. YAML conforms to the schema and can map to a conformance test method;
+12. the proposed commit message describes the eventual completed change.
 
 Show a preview when the user requests one or when unresolved choices require confirmation. Otherwise apply the scoped metadata and conformance edits without an unconditional confirmation gate.
 
@@ -182,7 +197,7 @@ Report:
 * operator kind, name, and semantic contract;
 * catalog and conformance files changed;
 * documentation reference pages regenerated;
-* optional, dynamic, or variadic semantics recorded;
+* optional omission modes and values or sources, plus dynamic or variadic semantics recorded;
 * validation performed;
 * proposed commit message;
 * whether any Git commit was actually created.

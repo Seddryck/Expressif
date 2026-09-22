@@ -35,6 +35,14 @@ Transforms selected field names while preserving field values and order. Duplica
 
 
 
+## Structural semantics
+
+- **Cardinality:** `preserved`
+- **Dependency:** `per-element`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits the original field names of the record supplied as pipeline input to this rename-fields call, in field order. Argument expressions use the field name as their context, so .field does not read the surrounding record.

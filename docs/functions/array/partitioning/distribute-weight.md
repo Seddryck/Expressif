@@ -33,6 +33,14 @@ Distributes array values into two groups whose aggregate evaluated weights are a
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array entering this call.

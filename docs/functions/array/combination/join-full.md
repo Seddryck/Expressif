@@ -37,6 +37,14 @@ Emits every matching pair and preserves unmatched values from both sides with #n
 
 
 
+## Structural semantics
+
+- **Cardinality:** `unknown`
+- **Dependency:** `whole-input`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 Visits each element of the array supplied as pipeline input to this join-full call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values.

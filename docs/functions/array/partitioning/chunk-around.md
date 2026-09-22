@@ -33,6 +33,14 @@ Separates the element at a zero-based position from the elements before and afte
 
 
 
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.
