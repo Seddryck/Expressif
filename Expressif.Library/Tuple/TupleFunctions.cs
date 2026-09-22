@@ -6,22 +6,22 @@ namespace Expressif.Library.Tuple;
 /// <summary>
 /// Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.
 /// </summary>
-[Function(prefix: "", aliases: ["tuple"])]
+[Function(prefix: "", aliases: ["tuple"], SupportsValueSpread = true)]
 [Scope("tuple")]
-public sealed class Tuple : IFunction<object?, TupleValue>, IValueSpreadAware
+public sealed class Tuple : IFunction<object?, TupleValue>
 {
-    private Func<ValueArgumentEvaluator[]> Values { get; }
+    private Func<object?, object?[]> Values { get; }
 
     /// <summary>Creates an empty tuple constructor.</summary>
     public Tuple()
-        : this(() => []) { }
+        : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose evaluated values become the positions of the resulting tuple.</param>
-    public Tuple(Func<ValueArgumentEvaluator[]> values)
+    public Tuple(Func<object?, object?[]> values)
         => Values = values;
 
     public TupleValue Evaluate(object? value)
-        => new Expressif.Values.Tuple(ValueArguments.Evaluate(Values.Invoke(), value).ToArray());
+        => new Expressif.Values.Tuple(Values.Invoke(value));
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
 }

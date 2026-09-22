@@ -4,7 +4,7 @@ using Expressif.Discovery;
 
 namespace Expressif.Functions.Accumulation;
 
-public sealed class AccumulatorRegistry : IImplementationRegistry
+internal sealed class AccumulatorRegistry : IImplementationRegistry
 {
     private readonly ImplementationRegistry implementations;
     private readonly IReadOnlyDictionary<string, string> canonicalNames;

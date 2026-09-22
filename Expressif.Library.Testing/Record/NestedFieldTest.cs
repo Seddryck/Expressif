@@ -64,7 +64,7 @@ public class NestedFieldTest
     public void SingleSegment_MatchesFieldOnObjects(string name)
     {
         var input = new { Name = "Ada" };
-        var function = new NestedField(() => [new(_ => name)]);
+        var function = new NestedField(_ => [name]);
         Assert.That(function.Evaluate(input), Is.EqualTo(new Field(() => name).Evaluate(input)));
     }
 
@@ -76,11 +76,12 @@ public class NestedFieldTest
         var input = new RecordValue();
         input.Set("child", selected);
         var seen = new List<object?>();
-        var function = new NestedField(() =>
-        [
-            new(value => { seen.Add(value); return "child"; }),
-            new(value => { seen.Add(value); return System.Array.Empty<object?>(); }, true),
-        ]);
+        var function = new NestedField(value =>
+        {
+            seen.Add(value);
+            seen.Add(value);
+            return ["child"];
+        });
 
         Assert.That(function.Evaluate(input), Is.SameAs(selected));
         Assert.That(seen, Is.EqualTo(new object?[] { input, input }));

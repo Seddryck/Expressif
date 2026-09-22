@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Library.Composition;
 
-public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
+internal sealed class PredicationFactory : BaseExpressionFactory, IPredicationFactory
 {
     private readonly ITypeSource source;
     private static readonly IReadOnlyDictionary<Type, Func<Func<int>, IEnumerable<Func<bool>>, IPredicate>> CardinalityFactories =
@@ -25,10 +25,10 @@ public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
 
     private ExpressifBinder Binder { get; } = ExpressifBinderFactory.Create();
 
-    protected UnaryOperatorFactory UnaryOperatorFactory { get; }
-    protected BinaryOperatorFactory BinaryOperatorFactory { get; }
+    private UnaryOperatorFactory UnaryOperatorFactory { get; }
+    private BinaryOperatorFactory BinaryOperatorFactory { get; }
 
-    protected internal PredicationFactory(
+    internal PredicationFactory(
         IImplementationRegistry registry,
         UnaryOperatorFactory unary,
         BinaryOperatorFactory binary,
@@ -49,7 +49,7 @@ public class PredicationFactory : BaseExpressionFactory, IPredicationFactory
     public PredicationFactory(ITypeSource source)
         : this(new PredicateRegistry(source), source) { }
 
-    public virtual IPredicate Instantiate(string code, IContext context)
+    public IPredicate Instantiate(string code, IContext context)
     {
         var predication = Binder.BindPredication(ExpressionParser.Parse(code));
         var predicate = Instantiate(predication, context);
