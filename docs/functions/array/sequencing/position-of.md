@@ -21,6 +21,8 @@ position-of(
 
 Returns the zero-based position of the first input item equal to the specified value. Returns `null` when no item matches or the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,21 @@ Returns the zero-based position of the first input item equal to the specified v
 |:-----|:-----|:---------|:------------|
 | `value` | `any` | Yes | Specifies the value to locate. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `collapsed`
+- **Dependency:** `whole-input`
+- **Ordering:** `not-applicable`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

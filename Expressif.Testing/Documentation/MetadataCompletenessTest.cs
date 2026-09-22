@@ -33,6 +33,58 @@ public class MetadataCompletenessTest
                 .Where(x => x.IsPublic)
                 .Select(x => new OperatorMetadata(x.Name, x.Aliases)));
 
+    [TestCase("function")]
+    [TestCase("predicate")]
+    [TestCase("accumulator")]
+    public void Catalog_ParameterOmissions_AreConsistent(string kind)
+    {
+        var failures = new List<string>();
+        foreach (var (member, parameter) in LoadParameters(kind))
+        {
+            var description = $"{kind} '{member}' parameter '{parameter.GetProperty("Name").GetString()}'";
+            var optional = parameter.GetProperty("Optional").GetBoolean();
+            var hasOmission = parameter.TryGetProperty("Omission", out var omission);
+            if (optional != hasOmission)
+            {
+                failures.Add(optional
+                    ? $"{description} is optional but has no omission contract."
+                    : $"{description} is required but declares an omission contract.");
+                continue;
+            }
+
+            if (parameter.TryGetProperty("Default", out _))
+                failures.Add($"{description} uses the legacy Default property.");
+            if (!hasOmission)
+                continue;
+
+            var mode = omission.GetProperty("Mode").GetString();
+            var hasValue = omission.TryGetProperty("Value", out _);
+            var hasSource = omission.TryGetProperty("Source", out var source)
+                && !string.IsNullOrWhiteSpace(source.GetString());
+            switch (mode)
+            {
+                case "constant" when !hasValue || hasSource:
+                    failures.Add($"{description} must declare exactly one constant omission value.");
+                    break;
+                case "empty-variadic" when hasValue || hasSource
+                    || !parameter.TryGetProperty("Variadic", out var variadic) || !variadic.GetBoolean():
+                    failures.Add($"{description} can use empty-variadic omission only without a value or source on a variadic parameter.");
+                    break;
+                case "absent" when hasValue || hasSource:
+                    failures.Add($"{description} cannot attach a value or source to absent omission.");
+                    break;
+                case "environment-derived" when hasValue || !hasSource:
+                    failures.Add($"{description} must name the source of environment-derived omission.");
+                    break;
+                case not ("constant" or "empty-variadic" or "absent" or "environment-derived"):
+                    failures.Add($"{description} uses unsupported omission mode '{mode}'.");
+                    break;
+            }
+        }
+
+        Assert.That(failures, Is.Empty, string.Join(Environment.NewLine, failures));
+    }
+
     private static void AssertComplete(string kind, IEnumerable<OperatorMetadata> runtimeOperators)
     {
         var runtime = runtimeOperators.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
@@ -67,6 +119,17 @@ public class MetadataCompletenessTest
             .Select(x => new OperatorMetadata(
                 x.GetProperty("Name").GetString()!,
                 x.GetProperty("Aliases").EnumerateArray().Select(alias => alias.GetString()!).ToArray()))
+            .ToArray();
+    }
+
+    private static IEnumerable<(string Member, JsonElement Parameter)> LoadParameters(string kind)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "Documentation", $"{kind}.json");
+        using var document = JsonDocument.Parse(File.ReadAllText(path));
+
+        return document.RootElement.EnumerateArray()
+            .SelectMany(member => member.GetProperty("Parameters").EnumerateArray()
+                .Select(parameter => (member.GetProperty("Name").GetString()!, parameter.Clone())))
             .ToArray();
     }
 

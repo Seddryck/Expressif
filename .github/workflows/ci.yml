@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - next-major
+      - feat/v3.0
     tags-ignore:
       - '**'
     paths-ignore:
@@ -66,6 +67,20 @@ jobs:
         shell: pwsh
         run: |
           $version = gitversion /output json | ConvertFrom-Json
+
+          $expectedVersion = switch ('${{ github.event_name }}') {
+            'push' {
+              if ('${{ github.ref }}' -eq 'refs/heads/feat/v3.0') { '3.0.0' }
+            }
+            'pull_request' {
+              if ('${{ github.base_ref }}' -eq 'feat/v3.0') { '3.0.0' }
+            }
+          }
+
+          if ($expectedVersion -and $version.MajorMinorPatch -ne $expectedVersion) {
+            throw "GitVersion calculated $($version.SemVer), but this ref requires a $expectedVersion base version."
+          }
+
           "semver=$($version.SemVer)" >> $env:GITHUB_OUTPUT
           "patch=$($version.Patch)" >> $env:GITHUB_OUTPUT
           Write-Host "Building Expressif version $($version.SemVer)"

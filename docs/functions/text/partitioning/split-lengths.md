@@ -29,7 +29,7 @@ Splits text into consecutive nonempty segments of the requested lengths, preserv
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `lengths` | `integer` | Variadic (zero or more) | Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place. |
+| `lengths` | `integer` | Variadic (zero or more) | Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place. Omission supplies an empty variadic sequence. |
 
 
 

@@ -94,6 +94,22 @@ public class ValueFormatterTest
     }
 
     [Test]
+    public void Format_BuiltInQuotedLiterals_CanIncludeTypeSuffixes()
+    {
+        var values = new object[]
+        {
+            new DateOnly(2026, 8, 28),
+            new DateTime(2026, 8, 28, 14, 30, 45),
+            new TimeOnly(14, 30, 45),
+        };
+        var options = new ValueFormattingOptions { IncludeBuiltInQuotedLiteralTypeSuffixes = true };
+
+        Assert.That(
+            ValueFormatter.Format(values, options),
+            Is.EqualTo("{#\"2026-08-28\":date, #\"2026-08-28T14:30:45\":datetime, #\"14:30:45\":time}"));
+    }
+
+    [Test]
     public void Format_DbNull_ReturnsNullLiteral()
         => Assert.That(ValueFormatter.Format(DBNull.Value), Is.EqualTo("null"));
 

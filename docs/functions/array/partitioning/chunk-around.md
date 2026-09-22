@@ -21,6 +21,8 @@ chunk-around(
 
 Separates the element at a zero-based position from the elements before and after it, returning the three parts as a tuple. Returns `null` when the position is invalid or the input cannot be evaluated.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,20 @@ Separates the element at a zero-based position from the elements before and afte
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | The zero-based position of the element to separate. |
 
+
+
+## Structural semantics
+
+- **Cardinality:** `partitioned`
+- **Dependency:** `partition`
+- **Ordering:** `preserved`
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 
