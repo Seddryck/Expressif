@@ -21,7 +21,9 @@ internal interface IFunctionConstructor
 /// <typeparam name="TFunction">The runtime function implementation.</typeparam>
 internal interface IFunctionConstructor<TFunction> : IFunctionConstructor
     where TFunction : IFunction
-{ }
+{
+    Type FunctionType => typeof(TFunction);
+}
 
 /// <summary>
 /// Provides the generic expression-construction services needed by specialized constructors.

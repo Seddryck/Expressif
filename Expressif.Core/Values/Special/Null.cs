@@ -7,12 +7,11 @@ namespace Expressif.Values.Special;
 public sealed class Null
 {
     private const string NULL_KEYWORD_DEFAULT = "(null)";
-
     public static Null Instance { get; } = new();
     private Null() { }
-    public string Keyword => NULL_KEYWORD_DEFAULT;
-    public static bool operator ==(Null left, object? right) => left.Equals(right);
-    public static bool operator !=(Null left, object? right) => !left.Equals(right);
+    public static string Keyword => NULL_KEYWORD_DEFAULT;
+    public static bool operator ==(Null? left, Null? right) => ReferenceEquals(left, right);
+    public static bool operator !=(Null? left, Null? right) => !(left == right);
 
     public override bool Equals(object? value)
         => value switch

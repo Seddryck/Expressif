@@ -8,12 +8,11 @@ namespace Expressif.Values.Special;
 public sealed class Empty
 {
     private const string EMPTY_KEYWORD_DEFAULT = "(empty)";
-
     public static Empty Instance { get; } = new();
     private Empty() { }
-    public string Keyword => EMPTY_KEYWORD_DEFAULT;
-    public static bool operator ==(Empty left, object? right) => left.Equals(right);
-    public static bool operator !=(Empty left, object? right) => !left.Equals(right);
+    public static string Keyword => EMPTY_KEYWORD_DEFAULT;
+    public static bool operator ==(Empty? left, Empty? right) => ReferenceEquals(left, right);
+    public static bool operator !=(Empty? left, Empty? right) => !(left == right);
 
     public override bool Equals(object? value)
         => value switch

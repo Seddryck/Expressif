@@ -51,6 +51,16 @@ internal sealed class ExpressionSerializer
         SerializeContinuations(expressions.Skip(1).OfType<Function>(), ref stringBuilder);
     }
 
+    public string Serialize(IBoundExpression expression)
+        => Serialize([expression]);
+
+    public string Serialize(IBoundExpression[] expressions)
+    {
+        var sb = new StringBuilder();
+        Serialize(expressions, ref sb);
+        return sb.ToString();
+    }
+
     private void SerializeContinuations(IEnumerable<Function> functions, ref StringBuilder stringBuilder)
     {
         foreach (var function in functions)
@@ -74,15 +84,5 @@ internal sealed class ExpressionSerializer
                 Serialize(function, ref stringBuilder);
             }
         }
-    }
-
-    public string Serialize(IBoundExpression expression)
-        => Serialize([expression]);
-
-    public string Serialize(IBoundExpression[] expressions)
-    {
-        var sb = new StringBuilder();
-        Serialize(expressions, ref sb);
-        return sb.ToString();
     }
 }

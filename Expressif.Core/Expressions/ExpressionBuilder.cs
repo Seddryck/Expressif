@@ -55,7 +55,7 @@ public class ExpressionBuilder
             {
                 IParameter p => p,
                 Expression<Func<IContext, object?>> expression => new ContextParameter(expression.Compile()),
-                _ => new LiteralParameter(parameter?.ToString() ?? Null.Instance.Keyword)
+                _ => new LiteralParameter(parameter?.ToString() ?? Null.Keyword)
             });
         }
         return [.. typedParameters];

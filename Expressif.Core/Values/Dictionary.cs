@@ -28,13 +28,11 @@ public sealed class Dictionary : IReadOnlyList<Pair>, IEquatable<Dictionary>, IE
     /// <summary>Finds a value using the same structural key equality as dictionary construction.</summary>
     public bool TryGetValue(object? key, out object? value)
     {
-        foreach (var entry in entries)
+        var entry = entries.FirstOrDefault(entry => Comparer.Equals(entry.Key, key));
+        if (entry is not null)
         {
-            if (Comparer.Equals(entry.Key, key))
-            {
-                value = entry.Value;
-                return true;
-            }
+            value = entry.Value;
+            return true;
         }
         value = null;
         return false;

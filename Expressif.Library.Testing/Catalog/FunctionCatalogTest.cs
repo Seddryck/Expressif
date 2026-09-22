@@ -119,9 +119,26 @@ public class FunctionCatalogTest
             "sample", true, [], "special", "any", "any", "Summary.", [],
             Deprecated: true, Replacement: "replacement", Sunset: "3.0",
             ReplacementIsEquivalent: true, MigrationNotes: "No behavior change.");
-        var implementation = new FunctionInfo(
-            "sample", true, [], "special", "any", "any", false, "Reason.",
-            typeof(object), "Summary.", [], true, "replacement", "3.0", true, "No behavior change.", []);
+        var implementation = new FunctionInfo(new FunctionInfoDefinition
+        {
+            Name = "sample",
+            IsPublic = true,
+            Aliases = [],
+            Scope = "special",
+            Input = "any",
+            Output = "any",
+            Converted = false,
+            Reason = "Reason.",
+            ImplementationType = typeof(object),
+            Summary = "Summary.",
+            Parameters = [],
+            Deprecated = true,
+            Replacement = "replacement",
+            Sunset = "3.0",
+            ReplacementIsEquivalent = true,
+            MigrationNotes = "No behavior change.",
+            Signatures = [],
+        });
 
         using (Assert.EnterMultipleScope())
         {

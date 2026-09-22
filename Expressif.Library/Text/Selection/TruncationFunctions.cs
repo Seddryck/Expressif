@@ -56,7 +56,7 @@ public class SkipFirstChars : BaseTextLength
     protected override object EvaluateString(string value)
     {
         var length = Length.Invoke();
-        return value.Length <= length ? Expressif.Values.Special.Empty.Instance.Keyword : value[length..];
+        return value.Length <= length ? Expressif.Values.Special.Empty.Keyword : value[length..];
     }
 }
 
@@ -72,6 +72,6 @@ public class SkipLastChars : BaseTextLength
     protected override object EvaluateString(string value)
     {
         var length = Length.Invoke();
-        return value.Length <= length ? Expressif.Values.Special.Empty.Instance.Keyword : value[..^length];
+        return value.Length <= length ? Expressif.Values.Special.Empty.Keyword : value[..^length];
     }
 }

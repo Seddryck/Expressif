@@ -13,7 +13,7 @@ internal class OperatorIntrospector
     private readonly BaseIntrospector scanner;
 
     public OperatorIntrospector()
-            : this(new AssemblyTypeSource([typeof(OperatorIntrospector).Assembly])) { }
+            : this(new AssemblyTypeSource(typeof(OperatorIntrospector).Assembly)) { }
     public OperatorIntrospector(Assembly[] assemblies)
         : this(new AssemblyTypeSource(assemblies.Distinct().ToArray())) { }
     public OperatorIntrospector(ITypeSource source)

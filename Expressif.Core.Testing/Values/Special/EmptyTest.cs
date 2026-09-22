@@ -14,7 +14,7 @@ public class EmptyTest
 
     [Test]
     public void EqualOperator_Null_Valid()
-        => Assert.That(Empty.Instance == string.Empty, Is.True);
+        => Assert.That(Empty.Instance.Equals(string.Empty), Is.True);
 
     [Test]
     public void Equals_EmptyLiteral_Valid()
@@ -22,5 +22,5 @@ public class EmptyTest
 
     [Test]
     public void EqualOperator_EmptyLiteral_Valid()
-        => Assert.That(Empty.Instance == "(empty)", Is.True);
+        => Assert.That(Empty.Instance.Equals("(empty)"), Is.True);
 }

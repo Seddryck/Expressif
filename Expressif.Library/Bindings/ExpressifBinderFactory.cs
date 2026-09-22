@@ -13,7 +13,7 @@ namespace Expressif.Bindings;
 /// </summary>
 public static class ExpressifBinderFactory
 {
-    private static readonly ITypeSource Source = new AssemblyTypeSource([typeof(ExpressifBinderFactory).Assembly]);
+    private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(ExpressifBinderFactory).Assembly);
     private static readonly FunctionBinderRegistry FunctionBinders = new(
         [
             new CoerceFunctionBinder(),

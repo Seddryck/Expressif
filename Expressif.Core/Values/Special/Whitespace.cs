@@ -7,12 +7,11 @@ namespace Expressif.Values.Special;
 public sealed class Whitespace
 {
     private const string WHITESPACE_KEYWORD_DEFAULT = "(blank)";
-
     public static Whitespace Instance { get; } = new();
     private Whitespace() { }
-    public string Keyword => WHITESPACE_KEYWORD_DEFAULT;
-    public static bool operator ==(Whitespace left, object? right) => left.Equals(right);
-    public static bool operator !=(Whitespace left, object? right) => !left.Equals(right);
+    public static string Keyword => WHITESPACE_KEYWORD_DEFAULT;
+    public static bool operator ==(Whitespace? left, Whitespace? right) => ReferenceEquals(left, right);
+    public static bool operator !=(Whitespace? left, Whitespace? right) => !(left == right);
 
     public override bool Equals(object? value)
         => value switch

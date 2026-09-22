@@ -8,12 +8,11 @@ namespace Expressif.Values.Special;
 public sealed class Value
 {
     private const string VALUE_KEYWORD_DEFAULT = "(value)";
-
     public static Value Instance { get; } = new();
     private Value() { }
-    public string Keyword => VALUE_KEYWORD_DEFAULT;
-    public static bool operator ==(Value left, object? right) => left.Equals(right);
-    public static bool operator !=(Value left, object? right) => !left.Equals(right);
+    public static string Keyword => VALUE_KEYWORD_DEFAULT;
+    public static bool operator ==(Value? left, Value? right) => ReferenceEquals(left, right);
+    public static bool operator !=(Value? left, Value? right) => !(left == right);
 
     public override bool Equals(object? value)
         => value switch

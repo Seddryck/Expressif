@@ -49,10 +49,10 @@ public abstract class BaseSpecialFunction : IFunction<object?, string>
         if (Whitespace.Instance.Equals(value))
             return EvaluateBlank();
 
-        if (Any.Instance.Keyword.Equals(value))
+        if (Any.Keyword.Equals(value))
             return EvaluateAny();
 
-        if (Value.Instance.Keyword.Equals(value))
+        if (Value.Keyword.Equals(value))
             return EvaluateValue();
 
         return EvaluateString(value);
@@ -71,11 +71,11 @@ public abstract class BaseSpecialFunction : IFunction<object?, string>
 /// </summary>
 public class NullToValue : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => Value.Instance.Keyword;
-    protected override string EvaluateEmpty() => Expressif.Values.Special.Empty.Instance.Keyword;
-    protected override string EvaluateBlank() => Whitespace.Instance.Keyword;
-    protected override string EvaluateAny() => Value.Instance.Keyword;
-    protected override string EvaluateValue() => Value.Instance.Keyword;
+    protected override string EvaluateNull() => Value.Keyword;
+    protected override string EvaluateEmpty() => Expressif.Values.Special.Empty.Keyword;
+    protected override string EvaluateBlank() => Whitespace.Keyword;
+    protected override string EvaluateAny() => Value.Keyword;
+    protected override string EvaluateValue() => Value.Keyword;
     protected override string EvaluateString(string value) => value;
 }
 
@@ -84,12 +84,12 @@ public class NullToValue : BaseSpecialFunction
 /// </summary>
 public class AnyToAny : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => Any.Instance.Keyword;
-    protected override string EvaluateEmpty() => Any.Instance.Keyword;
-    protected override string EvaluateBlank() => Any.Instance.Keyword;
-    protected override string EvaluateAny() => Any.Instance.Keyword;
-    protected override string EvaluateValue() => Any.Instance.Keyword;
-    protected override string EvaluateString(string value) => Any.Instance.Keyword;
+    protected override string EvaluateNull() => Any.Keyword;
+    protected override string EvaluateEmpty() => Any.Keyword;
+    protected override string EvaluateBlank() => Any.Keyword;
+    protected override string EvaluateAny() => Any.Keyword;
+    protected override string EvaluateValue() => Any.Keyword;
+    protected override string EvaluateString(string value) => Any.Keyword;
 }
 
 /// <summary>
@@ -97,12 +97,12 @@ public class AnyToAny : BaseSpecialFunction
 /// </summary>
 public class ValueToValue : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => Expressif.Values.Special.Null.Instance.Keyword;
-    protected override string EvaluateEmpty() => Value.Instance.Keyword;
-    protected override string EvaluateBlank() => Value.Instance.Keyword;
-    protected override string EvaluateAny() => Value.Instance.Keyword;
-    protected override string EvaluateValue() => Value.Instance.Keyword;
-    protected override string EvaluateString(string value) => Value.Instance.Keyword;
+    protected override string EvaluateNull() => Expressif.Values.Special.Null.Keyword;
+    protected override string EvaluateEmpty() => Value.Keyword;
+    protected override string EvaluateBlank() => Value.Keyword;
+    protected override string EvaluateAny() => Value.Keyword;
+    protected override string EvaluateValue() => Value.Keyword;
+    protected override string EvaluateString(string value) => Value.Keyword;
 }
 
 /// <summary>
