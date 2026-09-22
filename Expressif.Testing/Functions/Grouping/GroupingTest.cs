@@ -126,9 +126,12 @@ public class GroupingTest
             Expression.CreateClosed("(\"BE\" => {\"alice\"})").Evaluate(null),
             Is.TypeOf<Expressif.Values.Pair>());
 
-    [Test]
-    public void Group_IsTransparentToArrayFunctions()
+    [TestCase("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"claire\"})} | cardinality", "2")]
+    [TestCase("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"claire\"})} | map($key)", "{\"BE\", \"FR\"}")]
+    [TestCase("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"claire\"})} | map(cardinality)", "{2, 1}")]
+    [TestCase("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"claire\"})} | filter($value | cardinality | greater-than(1))", "{(\"BE\" => {\"alice\", \"bob\"})}")]
+    public void Grouping_ArrayFunctionsOperateOnGroups(string expression, string expected)
         => Assert.That(
-            Expression.CreateClosed("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"charlie\"})} | map(cardinality)").Evaluate(null),
-            Is.EqualTo(new object?[] { 2, 1 }));
+            ValueFormatter.Format(Expression.CreateClosed(expression).Evaluate(null)),
+            Is.EqualTo(expected));
 }
