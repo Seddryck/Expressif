@@ -11,7 +11,8 @@ namespace Expressif.Library.Composition;
 public static class ExpressifIntrospection
 {
     private static readonly ITypeSource Source = new AssemblyTypeSource([typeof(ExpressifIntrospection).Assembly]);
-    private static readonly ICoercionRegistry BuiltInCoercions = new CoercionRegistry(Source);
+    private static readonly IReadOnlyList<ICoercionDescriptor> BuiltInCoercions
+        = CoercionDescriptorDiscovery.Discover(Source);
     private static readonly IntrospectionOptions Options = new(
         ExpressifTypeRegistry.Instance,
         BuiltInCoercions,
@@ -35,7 +36,7 @@ public static class ExpressifIntrospection
     public static FunctionIntrospector Functions { get; } = new(Source, Options);
     public static PredicateIntrospector Predicates { get; } = new(Source, Options);
     public static IReadOnlyList<CoercionInfo> Coercions { get; }
-        = BuiltInCoercions.Describe().ToList().AsReadOnly();
+        = new CoercionIntrospector(BuiltInCoercions).Describe();
 
     private static IReadOnlyDictionary<ParameterIntrospectionKey, string> BuildParameterTypes()
         => new Dictionary<ParameterIntrospectionKey, string>
