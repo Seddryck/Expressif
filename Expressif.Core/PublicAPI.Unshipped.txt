@@ -98,7 +98,7 @@ Expressif.Bindings.ExpressifBinder.Bind(Expressif.Syntax.RootExpressionSyntax! s
 Expressif.Bindings.ExpressifBinder.BindFunction(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.Function!
 Expressif.Bindings.ExpressifBinder.BindParameter(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IParameter!
 Expressif.Bindings.ExpressifBinder.BindPredication(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IPredication!
-Expressif.Bindings.ExpressifBinder.ExpressifBinder(System.Collections.Generic.IEnumerable<Expressif.Discovery.IImplementationRegistry!>! implementationRegistries, Expressif.Bindings.FunctionBinderRegistry! functionBinders, Expressif.Values.Types.ITypeRegistry! typeRegistry, Expressif.Functions.Coercions.ICoercionRegistry? coercionRegistry = null, bool applyCoercion = true) -> void
+Expressif.Bindings.ExpressifBinder.ExpressifBinder(System.Collections.Generic.IEnumerable<Expressif.Discovery.IImplementationRegistry!>! implementationRegistries, Expressif.Bindings.FunctionBinderRegistry! functionBinders, Expressif.Values.Types.ITypeRegistry! typeRegistry, Expressif.Functions.Coercions.ICoercionRegistry? coercionRegistry = null, bool applyCoercion = true, Expressif.Types.QuotedLiteralRegistry? quotedLiteralRegistry = null) -> void
 Expressif.Bindings.FieldCoercionParameter
 Expressif.Bindings.FieldCoercionParameter.Deconstruct(out string! Field, out System.Type! TargetType) -> void
 Expressif.Bindings.FieldCoercionParameter.Equals(Expressif.Bindings.FieldCoercionParameter? other) -> bool
@@ -233,9 +233,13 @@ Expressif.Bindings.LetDefinitionParameter.Equals(Expressif.Bindings.LetDefinitio
 Expressif.Bindings.LetDefinitionParameter.LetDefinitionParameter(Expressif.Bindings.LetBinding![]! Bindings) -> void
 Expressif.Bindings.LiteralParameter
 Expressif.Bindings.LiteralParameter.<Clone>$() -> Expressif.Bindings.LiteralParameter!
-Expressif.Bindings.LiteralParameter.Deconstruct(out object? Value) -> void
+Expressif.Bindings.LiteralParameter.Deconstruct(out object? Value, out string? LiteralType, out bool IsLiteralTypeExplicit) -> void
 Expressif.Bindings.LiteralParameter.Equals(Expressif.Bindings.LiteralParameter? other) -> bool
-Expressif.Bindings.LiteralParameter.LiteralParameter(object? Value) -> void
+Expressif.Bindings.LiteralParameter.IsLiteralTypeExplicit.get -> bool
+Expressif.Bindings.LiteralParameter.IsLiteralTypeExplicit.init -> void
+Expressif.Bindings.LiteralParameter.LiteralParameter(object? Value, string? LiteralType = null, bool IsLiteralTypeExplicit = false) -> void
+Expressif.Bindings.LiteralParameter.LiteralType.get -> string?
+Expressif.Bindings.LiteralParameter.LiteralType.init -> void
 Expressif.Bindings.LiteralParameter.Value.get -> object?
 Expressif.Bindings.LiteralParameter.Value.init -> void
 Expressif.Bindings.MissingRequiredParameterException
@@ -976,6 +980,7 @@ Expressif.Serialization.FunctionSerializer.FunctionSerializer() -> void
 Expressif.Serialization.FunctionSerializer.FunctionSerializer(Expressif.Serialization.ParameterSerializer? parameterSerializer = null) -> void
 Expressif.Serialization.ParameterSerializer
 Expressif.Serialization.ParameterSerializer.ParameterSerializer() -> void
+Expressif.Serialization.ParameterSerializer.ParameterSerializer(Expressif.Types.QuotedLiteralRegistry! quotedLiteralRegistry, bool includeBuiltInQuotedLiteralTypeSuffixes = false) -> void
 Expressif.Serialization.PredicationSerializer
 Expressif.Serialization.PredicationSerializer.PredicationSerializer() -> void
 Expressif.Serialization.PredicationSerializer.PredicationSerializer(Expressif.Serialization.SinglePredicationSerializer? singleSerializer = null) -> void
@@ -990,6 +995,22 @@ Expressif.Syntax.ExpressionParser
 Expressif.Syntax.ExpressionParser.ExpressionParser() -> void
 Expressif.Syntax.IExpressionParser
 Expressif.Syntax.IExpressionParser.Parse(string! text) -> Expressif.Syntax.RootExpressionSyntax!
+Expressif.Types.AmbiguousQuotedLiteralException
+Expressif.Types.AmbiguousQuotedLiteralException.AmbiguousQuotedLiteralException(string! representation, System.Collections.Generic.IEnumerable<string!>! typeNames) -> void
+Expressif.Types.InvalidQuotedLiteralException
+Expressif.Types.InvalidQuotedLiteralException.InvalidQuotedLiteralException(string! representation, string? typeName = null) -> void
+Expressif.Types.IQuotedLiteralParser
+Expressif.Types.IQuotedLiteralParser.Format(object! value) -> string!
+Expressif.Types.IQuotedLiteralParser.RuntimeType.get -> System.Type!
+Expressif.Types.IQuotedLiteralParser.TryParse(string! representation, out object? value) -> bool
+Expressif.Types.IQuotedLiteralParser.TypeName.get -> string!
+Expressif.Types.QuotedLiteralRegistry
+Expressif.Types.QuotedLiteralRegistry.CanSerialize(object! value) -> bool
+Expressif.Types.QuotedLiteralRegistry.Parse(string! representation, string? typeName = null) -> (object? Value, string! TypeName)
+Expressif.Types.QuotedLiteralRegistry.QuotedLiteralRegistry(System.Collections.Generic.IEnumerable<Expressif.Types.IQuotedLiteralParser!>! parsers) -> void
+Expressif.Types.QuotedLiteralRegistry.Serialize(object! value, string? typeName = null, bool includeTypeSuffix = true) -> string!
+Expressif.Types.UnsupportedQuotedLiteralTypeException
+Expressif.Types.UnsupportedQuotedLiteralTypeException.UnsupportedQuotedLiteralTypeException(string! typeName) -> void
 Expressif.UnexpectedVariableException
 Expressif.UnexpectedVariableException.UnexpectedVariableException(string! name) -> void
 Expressif.Values.AllDimension
@@ -1040,6 +1061,8 @@ Expressif.Values.Formatting.ValueFormatter
 Expressif.Values.Formatting.ValueFormattingOptions
 Expressif.Values.Formatting.ValueFormattingOptions.Format.get -> Expressif.Values.Formatting.ValueFormat
 Expressif.Values.Formatting.ValueFormattingOptions.Format.init -> void
+Expressif.Values.Formatting.ValueFormattingOptions.IncludeBuiltInQuotedLiteralTypeSuffixes.get -> bool
+Expressif.Values.Formatting.ValueFormattingOptions.IncludeBuiltInQuotedLiteralTypeSuffixes.init -> void
 Expressif.Values.Formatting.ValueFormattingOptions.Indentation.get -> string!
 Expressif.Values.Formatting.ValueFormattingOptions.Indentation.init -> void
 Expressif.Values.Formatting.ValueFormattingOptions.InlineValueTypes.get -> System.Collections.Generic.IReadOnlySet<System.Type!>!
@@ -1618,6 +1641,7 @@ static Expressif.Introspection.TupleBindingSignature.operator !=(Expressif.Intro
 static Expressif.Introspection.TupleBindingSignature.operator ==(Expressif.Introspection.TupleBindingSignature? left, Expressif.Introspection.TupleBindingSignature? right) -> bool
 static Expressif.Observability.NoOpExpressionObserver.Instance.get -> Expressif.Observability.NoOpExpressionObserver!
 static Expressif.Syntax.ExpressionParser.Parse(string! text) -> Expressif.Syntax.RootExpressionSyntax!
+static Expressif.Types.QuotedLiteralRegistry.Default.get -> Expressif.Types.QuotedLiteralRegistry!
 static Expressif.Values.AllDimension.Instance.get -> Expressif.Values.AllDimension!
 static Expressif.Values.Casters.TypeChecker.IsNumericType(object! value) -> bool
 static Expressif.Values.Formatting.ValueFormatter.Format(object? value) -> string!
