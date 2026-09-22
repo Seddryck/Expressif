@@ -1,7 +1,7 @@
 ---
 title: Coercion in practice
 parent: Expressif language
-nav_order: 13
+nav_order: 14
 description: Use explicit coercion when values of the same source type can represent different kinds of information.
 ---
 
