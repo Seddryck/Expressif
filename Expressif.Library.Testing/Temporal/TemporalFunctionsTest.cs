@@ -26,7 +26,7 @@ public class TemporalFunctionsTest
             Is.EqualTo(expected));
 
     private static TimeOnly? ParseTime(object? value)
-        => value is null || new Null().Equals(value)
+        => value is null || Null.Instance.Equals(value)
             ? null
             : TimeOnly.Parse((string)value, CultureInfo.InvariantCulture);
 
@@ -185,14 +185,14 @@ public class TemporalFunctionsTest
     [Conformance]
     public void InvalidToDate_Valid(object? value, DateTime defaultValue, DateTime? expected)
         => Assert.That(new InvalidToDate(() => defaultValue).Evaluate(value)
-            , Is.EqualTo(expected == null ? new Null() : expected));
+            , Is.EqualTo(expected == null ? Null.Instance : expected));
 
     [Test]
     [TestCase(typeof(DBNull), "2001-01-01")]
     public void InvalidToDate_DBNull_Valid(Type type, DateTime? expected)
         => Assert.That(new InvalidToDate(() => new DateTime(2001, 1, 1)).Evaluate(
             type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
-            , Is.EqualTo(new Null()));
+            , Is.EqualTo(Null.Instance));
 
     [Test]
     [TestCase("2018-02-01 00:00:00", "2018-02-01")]

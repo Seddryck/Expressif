@@ -70,8 +70,8 @@ public class TypeRegistryTest
     [TestCase("date", typeof(DateOnly))]
     [TestCase("datetime", typeof(DateTime))]
     [TestCase("date-time", typeof(DateTime))]
-    [TestCase("tuple", typeof(TupleValue))]
-    [TestCase("vector", typeof(VectorValue))]
+    [TestCase("tuple", typeof(Expressif.Values.Tuple))]
+    [TestCase("vector", typeof(Vector))]
     [TestCase("record", typeof(RecordValue))]
     [TestCase("ordering", typeof(OrderingValue))]
     public void RuntimeRegistry_ResolvesImplementationTypeDirectly(string name, Type expected)
@@ -122,8 +122,8 @@ public class TypeRegistryTest
 
     [TestCase("year-month", typeof(YearMonth))]
     [TestCase("weekday", typeof(Weekday))]
-    [TestCase("tuple", typeof(TupleValue))]
-    [TestCase("vector", typeof(VectorValue))]
+    [TestCase("tuple", typeof(Expressif.Values.Tuple))]
+    [TestCase("vector", typeof(Vector))]
     [TestCase("record", typeof(RecordValue))]
     public void ValueTypeSummary_ComesFromImplementationDocumentation(string name, Type implementationType)
         => Assert.That(Registry.Resolve(name).Summary, Is.EqualTo(implementationType.GetSummary()));

@@ -13,7 +13,7 @@ namespace Expressif.Library.Text.Normalization;
 [Scope("text/normalization")]
 public class WithoutWhitespaces : BaseTextFunction
 {
-    protected override object EvaluateBlank() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateBlank() => Expressif.Values.Special.Empty.Instance.Keyword;
     protected override object EvaluateString(string value) => RemoveWhitespaces(value);
 
     private string RemoveWhitespaces(string value)

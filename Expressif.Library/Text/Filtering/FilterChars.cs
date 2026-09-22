@@ -40,5 +40,5 @@ public class FilterChars : BaseTextFunction
     }
 
     protected override object? EvaluateBlank()
-        => new Whitespace().Keyword;
+        => Whitespace.Instance.Keyword;
 }

@@ -33,7 +33,7 @@ public class RemoveChars : BaseTextFunction
     protected override object? EvaluateBlank()
     {
         if (char.IsWhiteSpace(CharToRemove.Invoke()))
-            return new Expressif.Values.Special.Empty().Keyword;
+            return Expressif.Values.Special.Empty.Instance.Keyword;
         else
             return base.EvaluateBlank();
     }
@@ -71,5 +71,5 @@ public class ReplaceChars : BaseTextFunction
     }
 
     protected override object? EvaluateBlank()
-        => new Whitespace().Keyword;
+        => Whitespace.Instance.Keyword;
 }

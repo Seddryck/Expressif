@@ -105,11 +105,11 @@ public class MapTest
     [TestCase(true)]
     public void Evaluate_Dictionary_VisitsUnchangedPairsOnceInOrder(bool empty)
     {
-        var key = new Expressif.Values.TupleValue("BE", 2025m);
+        var key = new Expressif.Values.Tuple("BE", 2025m);
         var value = new object?[] { 100m, null };
-        var input = new Expressif.Values.DictionaryValue(empty
+        var input = new Expressif.Values.Dictionary(empty
             ? []
-            : [new Expressif.Values.PairValue(key, value), new Expressif.Values.PairValue(null, null)]);
+            : [new Expressif.Values.Pair(key, value), new Expressif.Values.Pair(null, null)]);
         var visited = new List<object?>();
         var map = new Map(() => new DelegatedFunction(pair =>
         {

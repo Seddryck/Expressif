@@ -25,7 +25,7 @@ public abstract class BaseDateTimePredicate : BasePredicate
     }
     protected virtual bool EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         if (new DateTimeCaster().TryCast(value, out var dt))

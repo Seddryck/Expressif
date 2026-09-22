@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Expressif.Values;
 
-public static class RecordSyntax
+internal static class RecordSyntax
 {
     private static readonly Regex BareTokenRegex = new(
         "^[A-Za-z0-9_+\\-]+$",

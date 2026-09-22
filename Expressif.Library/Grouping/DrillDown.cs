@@ -25,7 +25,7 @@ public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
             var prefix = group.Key is TupleValue tuple ? tuple.ToArray() : new[] { group.Key };
             var subgroups = GroupingOperations.Group(group.Values.Select(item =>
                 new PairValue(new Values.Tuple([.. prefix, .. Expressions.Select(expression => expression.Invoke(item))]), item)));
-            pairs.AddRange(subgroups);
+            pairs.AddRange(subgroups.Select(group => new PairValue(group.Key, group.Values)));
         }
         return new GroupingValue(pairs);
     }

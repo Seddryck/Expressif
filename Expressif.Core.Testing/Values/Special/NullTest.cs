@@ -10,25 +10,25 @@ public class NullTest
 
     [Test]
     public void Equals_Null_Valid()
-        => Assert.That(new Null().Equals(null), Is.True);
+        => Assert.That(Null.Instance.Equals(null), Is.True);
 
     [Test]
     public void EqualOperator_Null_Valid()
-        => Assert.That(new Null() == null, Is.True);
+        => Assert.That(Null.Instance == null, Is.True);
 
     [Test]
     public void Equals_DBNull_Valid()
-        => Assert.That(new Null().Equals(DBNull.Value), Is.True);
+        => Assert.That(Null.Instance.Equals(DBNull.Value), Is.True);
 
     [Test]
     public void EqualOperator_DBNull_Valid()
-        => Assert.That(new Null() == DBNull.Value, Is.True);
+        => Assert.That(Null.Instance == DBNull.Value, Is.True);
 
     [Test]
     public void Equals_NullLiteral_Valid()
-        => Assert.That(new Null().Equals("(null)"), Is.True);
+        => Assert.That(Null.Instance.Equals("(null)"), Is.True);
 
     [Test]
     public void EqualOperator_NullLiteral_Valid()
-        => Assert.That(new Null() == "(null)", Is.True);
+        => Assert.That(Null.Instance == "(null)", Is.True);
 }

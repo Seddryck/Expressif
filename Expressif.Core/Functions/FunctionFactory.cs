@@ -542,7 +542,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 })
                 .ToArray();
             return input => new Values.Grouping(entries.Select(entry =>
-                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+                new Pair(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is DictionaryParameter dictionary)
@@ -555,7 +555,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 })
                 .ToArray();
             return input => new Values.Dictionary(entries.Select(entry =>
-                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+                new Pair(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is RecordLiteralParameter record)

@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Data;
 
 namespace Expressif.Values;
 
-public class ContextObject
+public sealed class ContextObject
 {
     public object? Value { get; private set; }
 
@@ -24,7 +24,7 @@ public class ContextObject
         => Value switch
         {
             DataRow row => index < row.Table.Columns.Count,
-            ILiteDataRow row => index < row.ColumnCount,
+            IReadOnlyDataRow row => index < row.ColumnCount,
             RecordValue record => index >= 0 && index < record.Count,
             IPositionalValue tuple => index >= 0 && index < tuple.Arity,
             IList list => index < list.Count,
@@ -38,7 +38,7 @@ public class ContextObject
             return Value switch
             {
                 DataRow row => index < row.Table.Columns.Count ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
-                ILiteDataRow row => index < row.ColumnCount ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
+                IReadOnlyDataRow row => index < row.ColumnCount ? row[index] : throw new ArgumentOutOfRangeException(index.ToString()),
                 RecordValue record => index >= 0 && index < record.Count ? record[index] : throw new ArgumentOutOfRangeException(index.ToString()),
                 IPositionalValue tuple => index >= 0 && index < tuple.Arity ? tuple.GetPosition(index) : null,
                 IList list => list[index],

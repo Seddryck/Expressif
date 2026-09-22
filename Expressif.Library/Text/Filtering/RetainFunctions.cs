@@ -11,7 +11,7 @@ namespace Expressif.Library.Text.Filtering;
 [Scope("text/filtering")]
 public abstract class BaseTextRetain : BaseTextFunction
 {
-    protected override object? EvaluateBlank() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object? EvaluateBlank() => Expressif.Values.Special.Empty.Instance.Keyword;
 
     protected override object? EvaluateString(string value)
     {
@@ -26,7 +26,7 @@ public abstract class BaseTextRetain : BaseTextFunction
         }
 
         if (index == 0)
-            return new Expressif.Values.Special.Empty().Keyword;
+            return Expressif.Values.Special.Empty.Instance.Keyword;
 
         return new string(result.Slice(0, index));
     }

@@ -7,9 +7,9 @@ namespace Expressif.Values;
 /// Represents an immutable key/value association and specialized tuple of arity two.
 /// </summary>
 [ExpressifType(Parent = "tuple", LiteralSyntax = "Key and value expressions separated by => and enclosed in parentheses", LiteralExamples = ["(\"BE\" => 42)"])]
-public class PairValue : IEquatable<PairValue>, IExpressifValueType, IPositionalValue
+public sealed class Pair : IEquatable<Pair>, IExpressifValueType, IPositionalValue
 {
-    public PairValue(object? key, object? value)
+    public Pair(object? key, object? value)
         => (Key, Value) = (key, value);
 
     public object? Key { get; }
@@ -23,7 +23,7 @@ public class PairValue : IEquatable<PairValue>, IExpressifValueType, IPositional
             _ => throw new ArgumentOutOfRangeException(nameof(index)),
         };
 
-    public bool Equals(PairValue? other)
+    public bool Equals(Pair? other)
         => other is not null && PositionalValueEquality.Equals(this, other);
 
     public override bool Equals(object? obj)
@@ -34,13 +34,4 @@ public class PairValue : IEquatable<PairValue>, IExpressifValueType, IPositional
 
     public override string ToString()
         => ValueFormatter.Format(this);
-}
-
-/// <summary>
-/// Represents the public canonical pair value type.
-/// </summary>
-public sealed class Pair : PairValue
-{
-    public Pair(object? key, object? value)
-        : base(key, value) { }
 }

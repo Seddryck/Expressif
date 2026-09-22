@@ -14,7 +14,7 @@ public abstract class BaseTemporalLengthFunction : BaseTemporalFunction<int?>
 {
     protected override object? EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         if (new IntegerCaster().TryCast(value, out var integer))
