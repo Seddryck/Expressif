@@ -16,7 +16,7 @@ public interface IFunction<in TIn, out TOut> : IFunction
     TOut Evaluate(TIn value);
 }
 
-public interface IInputBoundFunction
+internal interface IInputBoundFunction
 {
     bool IsInputBound { get; }
 }

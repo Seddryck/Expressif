@@ -11,11 +11,12 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Expressif.Functions;
 
-public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstructionContext
+internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IFunctionConstructionContext
 {
     private readonly IImplementationRegistry predicateRegistry;
     private readonly AccumulatorRegistry accumulatorRegistry;
@@ -24,7 +25,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
     private readonly IPredicationFactory predicationFactory;
     private readonly ITupleFunctionInvoker tupleBinding;
 
-    public FunctionFactory(ITypeSource source)
+    public FunctionFactoryRuntime(ITypeSource source)
         : this(
             new FunctionRegistry(source),
             new PredicateRegistry(source),
@@ -35,7 +36,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
             TypeSourceService.Create<ITupleFunctionInvoker>(source),
             source) { }
 
-    public FunctionFactory(IImplementationRegistry registry, ITypeSource source)
+    public FunctionFactoryRuntime(IImplementationRegistry registry, ITypeSource source)
         : this(
             registry,
             new PredicateRegistry(source),
@@ -46,7 +47,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
             TypeSourceService.Create<ITupleFunctionInvoker>(source),
             source) { }
 
-    public FunctionFactory(
+    public FunctionFactoryRuntime(
         IImplementationRegistry registry,
         IImplementationRegistry predicateRegistry,
         AccumulatorRegistry accumulatorRegistry,
@@ -117,6 +118,9 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         IPositionalValue tuple,
         Syntax.SourceSpan? sourceSpan)
         => InvokeTuple(name, tuple, sourceSpan);
+
+    internal IPredicate InstantiatePredication(IPredication predication, IContext context)
+        => predicationFactory.Instantiate(predication, context);
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
     {
@@ -374,8 +378,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
             throw new NotImplementedFunctionException(function.Name);
         }
 
-        if (typeof(IValueSpreadAware).IsAssignableFrom(type))
-            return InstantiateValueSpreadAware(type, function, context);
+        if (type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true)
+            return InstantiateValueSpread(type, function, context);
 
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
@@ -462,17 +466,17 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         return EvaluationRuntime.EvaluateNested(expression, input, currentInput);
     }
 
-    private IFunction InstantiateValueSpreadAware(Type type, Bindings.Function function, IContext context)
+    private IFunction InstantiateValueSpread(Type type, Bindings.Function function, IContext context)
     {
         var values = function.Arguments
             .Select(argument => new ValueArgumentEvaluator(
                 BuildValueEvaluator(argument.Value, context),
                 argument.IsSpread))
             .ToArray();
-        var arguments = (Func<ValueArgumentEvaluator[]>)(() => values);
+        var arguments = (Func<object?, object?[]>)(input => ValueArguments.Evaluate(values, input).ToArray());
         return Activator.CreateInstance(type, arguments) as IFunction
             ?? throw new InvalidOperationException(
-                $"Value-spread-aware type '{type.FullName}' must expose a constructor accepting Func<ValueArgumentEvaluator[]>.");
+                $"Value-spread function '{type.FullName}' must expose a constructor accepting Func<object?, object?[]>.");
     }
 
     private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)

@@ -4,17 +4,17 @@ using Expressif.Values;
 
 namespace Expressif.Functions;
 
-public interface IValueConverter
+internal interface IValueConverter
 {
     object? Convert(object? value, Type targetType);
 }
 
-public interface IPredicationFactory
+internal interface IPredicationFactory
 {
     Predicates.IPredicate Instantiate(IPredication predication, IContext context);
 }
 
-public interface ITupleFunctionInvoker
+internal interface ITupleFunctionInvoker
 {
     Type ResolveTarget(
         string name,

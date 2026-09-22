@@ -1,7 +1,7 @@
 namespace Expressif.Functions;
 
 /// <summary>Adapts an evaluation delegate to an Expressif function.</summary>
-public sealed class DelegatedFunction(Func<object?, object?> function) : IFunction
+internal sealed class DelegatedFunction(Func<object?, object?> function) : IFunction
 {
     public object? Evaluate(object? value) => function.Invoke(value);
 }

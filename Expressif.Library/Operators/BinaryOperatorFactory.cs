@@ -8,7 +8,7 @@ using Expressif.Discovery;
 
 namespace Expressif.Library.Operators;
 
-public class BinaryOperatorFactory : BaseExpressionFactory
+internal sealed class BinaryOperatorFactory : BaseExpressionFactory
 {
     public BinaryOperatorFactory()
         : this(new OperatorRegistry<IBinaryOperator>(new AssemblyTypeSource([typeof(BinaryOperatorFactory).Assembly]))) { }

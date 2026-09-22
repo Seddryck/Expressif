@@ -28,7 +28,7 @@ public class SplitLengthsTest
     [Test]
     public void Evaluate_TypedContract_PreservesUtf16CodeUnits()
     {
-        IFunction<string?, string[]?> function = new SplitLengths(() => [new(_ => 1)]);
+        IFunction<string?, string[]?> function = new SplitLengths(_ => [1]);
         var result = function.Evaluate("😀a");
         using (Assert.EnterMultipleScope())
         {
@@ -42,11 +42,12 @@ public class SplitLengthsTest
     public void Evaluate_Arguments_ObserveInputInDeclarationOrder()
     {
         var observed = new List<object?>();
-        var function = new SplitLengths(() =>
-        [
-            new(value => { observed.Add(value); return 2; }),
-            new(value => { observed.Add(value); return new[] { 1, 2 }; }, true),
-        ]);
+        var function = new SplitLengths(value =>
+        {
+            observed.Add(value);
+            observed.Add(value);
+            return [2, 1, 2];
+        });
         Assert.That(function.Evaluate("abcdef"), Is.EqualTo(new[] { "ab", "c", "de", "f" }));
         Assert.That(observed, Is.EqualTo(new[] { "abcdef", "abcdef" }));
     }

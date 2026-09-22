@@ -1,5 +1,6 @@
 using Expressif.Library.Numeric;
 using Expressif.Library.Record;
+using Expressif.Functions;
 using Expressif.Values;
 using Expressif.Testing.Conformance;
 using RecordFunction = Expressif.Library.Record.Record;
@@ -219,7 +220,10 @@ public class RecordFunctionsTest
 
     [Test]
     public void Record_DeclaresValueSpreadAwareness()
-        => Assert.That(new RecordFunction(), Is.InstanceOf<Expressif.Functions.IValueSpreadAware>());
+        => Assert.That(
+            typeof(RecordFunction).GetCustomAttributes(typeof(FunctionAttribute), true)
+                .Cast<FunctionAttribute>().Single().SupportsValueSpread,
+            Is.True);
 
     [Test]
     public void Record_Evaluate_NamedEntries_PreservesDeclarationOrder()

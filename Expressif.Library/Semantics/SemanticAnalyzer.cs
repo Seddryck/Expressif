@@ -5,6 +5,7 @@ using Expressif.Discovery;
 using Expressif.Library.Array;
 using Expressif.Predicates;
 using Expressif.Syntax;
+using System.Reflection;
 using BoundFunction = Expressif.Bindings.Function;
 
 namespace Expressif.Semantics;
@@ -260,7 +261,7 @@ public sealed class SemanticAnalyzer
 
         private static bool UsesScalarProviders(BoundFunction function, Type type)
             => FunctionConstruction.Classify(function.Name) == FunctionConstructionKind.Standard
-                && !typeof(IValueSpreadAware).IsAssignableFrom(type)
+                && type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread != true
                 && !type.GetConstructors().Any(constructor => constructor.GetParameters().Any(parameter =>
                     parameter.ParameterType == typeof(Func<IFunction>) || parameter.ParameterType == typeof(Func<IPredicate>)));
 

@@ -7,7 +7,7 @@ namespace Expressif.Functions;
 /// <summary>
 /// Constructs a runtime function whose arguments require specialized evaluation.
 /// </summary>
-public interface IFunctionConstructor
+internal interface IFunctionConstructor
 {
     IFunction Construct(
         Bindings.Function function,
@@ -19,14 +19,14 @@ public interface IFunctionConstructor
 /// Associates a specialized constructor with a runtime function implementation.
 /// </summary>
 /// <typeparam name="TFunction">The runtime function implementation.</typeparam>
-public interface IFunctionConstructor<TFunction> : IFunctionConstructor
+internal interface IFunctionConstructor<TFunction> : IFunctionConstructor
     where TFunction : IFunction
 { }
 
 /// <summary>
 /// Provides the generic expression-construction services needed by specialized constructors.
 /// </summary>
-public interface IFunctionConstructionContext
+internal interface IFunctionConstructionContext
 {
     Delegate CreateParameter(IParameter parameter, Type targetType, IContext context);
     IFunction CreateOpenExpression(OpenExpression expression, IContext context);

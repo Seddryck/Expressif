@@ -9,25 +9,25 @@ namespace Expressif.Library.Text.Concatenation;
 /// converting each result to text, and concatenating the converted values in order. Spread arguments expand array
 /// values in place. Returns empty text when no expressions are supplied.
 /// </summary>
-[Function(prefix: "")]
+[Function(prefix: "", SupportsValueSpread = true)]
 [Scope("text/concatenation")]
-public sealed class Text : IFunction<object?, string>, IValueSpreadAware
+public sealed class Text : IFunction<object?, string>
 {
-    private Func<ValueArgumentEvaluator[]> Values { get; }
+    private Func<object?, object?[]> Values { get; }
 
     /// <summary>Creates an empty text constructor.</summary>
     public Text()
-        : this(() => []) { }
+        : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.</param>
-    public Text(Func<ValueArgumentEvaluator[]> values)
+    public Text(Func<object?, object?[]> values)
         => Values = values;
 
     public string Evaluate(object? value)
     {
         var result = new StringBuilder();
         var coercion = new CoerceText();
-        foreach (var item in ValueArguments.Evaluate(Values.Invoke(), value))
+        foreach (var item in Values.Invoke(value))
             result.Append(coercion.Evaluate(item));
 
         return result.ToString();
