@@ -51,7 +51,6 @@ internal sealed class FunctionConstructorRegistry
                 continue;
 
             var modes = new Dictionary<string, ArgumentEvaluationMode>(StringComparer.OrdinalIgnoreCase);
-            ParameterInfo? unsupported = null;
             foreach (var target in targets)
             {
                 foreach (var parameter in target.GetParameters())
@@ -59,10 +58,13 @@ internal sealed class FunctionConstructorRegistry
                     var attribute = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>();
                     if (attribute is null)
                         throw InvalidMetadata(type, parameter, "every constructor parameter must declare an evaluation mode");
+                    if (!Enum.IsDefined(attribute.Mode))
+                        throw InvalidMetadata(type, parameter, $"unknown evaluation mode '{attribute.Mode}'");
                     var validShape = attribute.Mode switch
                     {
                         ArgumentEvaluationMode.Ambient => parameter.ParameterType.IsGenericType
-                            && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>),
+                            && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)
+                            && parameter.ParameterType.IsAssignableFrom(typeof(Func<object?>)),
                         ArgumentEvaluationMode.Incoming or ArgumentEvaluationMode.Nested =>
                             parameter.ParameterType.IsGenericType
                             && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)
@@ -81,12 +83,8 @@ internal sealed class FunctionConstructorRegistry
                     if (modes.TryGetValue(name, out var previous) && previous != attribute.Mode)
                         throw InvalidMetadata(type, parameter, "equivalent overload parameters must use the same evaluation mode");
                     modes[name] = attribute.Mode;
-                    if (attribute.Mode != ArgumentEvaluationMode.Incoming)
-                        unsupported ??= parameter;
                 }
             }
-            if (unsupported is not null)
-                throw InvalidMetadata(type, unsupported, "this evaluation mode is not supported by generic construction yet");
             result.Add(type, targets);
         }
         return result;

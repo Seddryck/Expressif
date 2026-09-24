@@ -361,11 +361,13 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return BuildAccumulatorFunction(function, accumulatorType, context);
         }
 
-        if ((Registry.TryResolve(name, out var registeredType)
-                || predicateRegistry.TryResolve(name, out registeredType))
-            && constructors.TryGet(registeredType, out var constructor))
+        if (Registry.TryResolve(name, out var registeredType)
+            || predicateRegistry.TryResolve(name, out registeredType))
         {
-            return constructor.Construct(function, context, this);
+            if (constructors.TryGet(registeredType, out var constructor))
+                return constructor.Construct(function, context, this);
+            if (constructors.TryGetAnnotated(registeredType, out var annotated))
+                return InstantiateAnnotated(registeredType, annotated, function, context);
         }
 
         if (!Registry.TryResolve(function.Name, out var type))
@@ -377,9 +379,6 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
             throw new NotImplementedFunctionException(function.Name);
         }
-
-        if (constructors.TryGetAnnotated(type, out var annotated))
-            return InstantiateAnnotated(type, annotated, function, context);
 
         if (type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true)
             return InstantiateValueSpread(type, function, context);
@@ -407,14 +406,34 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         var callbacks = new object?[metadata.Length];
         for (var index = 0; index < metadata.Length; index++)
         {
-            callbacks[index] = metadata[index].IsOptional
+            var parameter = metadata[index];
+            var mode = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>()!.Mode;
+            callbacks[index] = metadata[index].IsOptional && !binding.Supplied[index]
                 && binding.Parameters[index] is LiteralParameter { Value: null }
                     ? null
-                    : BuildValueEvaluator(binding.Parameters[index], context);
+                    : mode switch
+                    {
+                        ArgumentEvaluationMode.Incoming => BuildValueEvaluator(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Nested => BuildNestedValueEvaluator(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Ambient => BuildAmbientValueProvider(binding.Parameters[index], context),
+                        _ => throw new InvalidOperationException($"Unsupported argument evaluation mode '{mode}'."),
+                    };
         }
         return binding.Constructor.Invoke(callbacks) as IFunction
             ?? throw new InvalidOperationException(
                 $"Annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private Func<object?, object?> BuildNestedValueEvaluator(IParameter parameter, IContext context)
+    {
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return value => EvaluationRuntime.EvaluateNested(evaluator, value);
+    }
+
+    private Func<object?> BuildAmbientValueProvider(IParameter parameter, IContext context)
+    {
+        var evaluator = BuildValueEvaluator(parameter, context);
+        return () => evaluator.Invoke(EvaluationRuntime.Frame?.Current);
     }
 
     private IFunction BuildAccumulatorFunction(

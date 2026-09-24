@@ -17,13 +17,18 @@ public sealed class Exists : BasePredicate, IFunction<object, bool>
 
     /// <param name="right">The array or grouping supplying matching keys.</param>
     /// <param name="leftKey">Selects the lookup key of the input value.</param>
-    public Exists(Func<object?> right, Func<object?, object?> leftKey)
+    public Exists(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey)
         : this(right, leftKey, null) { }
 
     /// <param name="right">The array or grouping supplying matching keys.</param>
     /// <param name="leftKey">Selects the lookup key of the input value.</param>
     /// <param name="rightKey">Selects each right array value’s key; when omitted, the left-key expression is reused. It is skipped for a grouping.</param>
-    public Exists(Func<object?> right, Func<object?, object?> leftKey, Func<object?, object?>? rightKey)
+    public Exists(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
         => (this.right, this.leftKey, this.rightKey) = (right, leftKey, rightKey);
 
     public override bool Evaluate(object? value)
