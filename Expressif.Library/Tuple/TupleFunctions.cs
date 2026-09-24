@@ -94,7 +94,7 @@ public sealed class Pick : IFunction<IPositionalValue, IPositionalValue?>, IFunc
 {
     private Func<int[]> Positions { get; }
     /// <param name="positions">One or more zero-based tuple positions.</param>
-    public Pick(Func<int[]> positions) => Positions = positions;
+    public Pick([ArgumentPacking(ArgumentPackingMode.Variadic)] Func<int[]> positions) => Positions = positions;
     public IPositionalValue? Evaluate(IPositionalValue value)
     {
         var positions = Positions.Invoke();

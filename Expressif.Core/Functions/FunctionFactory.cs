@@ -372,8 +372,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 return InstantiateRoleAnnotated(registeredType, roleAnnotated, function, context);
             if (constructors.TryGetShapeAnnotated(registeredType, out var shapeAnnotated))
                 return InstantiateShapeAnnotated(registeredType, shapeAnnotated, function, context);
-            if (constructors.TryGetSpreadPacked(registeredType, out var spreadPacked))
-                return InstantiateValueSpread(registeredType, spreadPacked, function, context);
+            if (constructors.TryGetVariadicPacked(registeredType, out var variadicPacked))
+                return InstantiateVariadicPacked(registeredType, variadicPacked, function, context);
         }
 
         if (!Registry.TryResolve(function.Name, out var type))
@@ -642,17 +642,36 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return EvaluationRuntime.EvaluateNested(expression, input, currentInput);
     }
 
-    private IFunction InstantiateValueSpread(Type type, ConstructorInfo constructor, Bindings.Function function, IContext context)
+    private IFunction InstantiateVariadicPacked(Type type, ConstructorInfo constructor, Bindings.Function function, IContext context)
     {
-        var values = function.Arguments
-            .Select(argument => new ValueArgumentEvaluator(
-                BuildValueEvaluator(argument.Value, context),
-                argument.IsSpread))
-            .ToArray();
-        var arguments = (Func<object?, object?[]>)(input => ValueArguments.Evaluate(values, input).ToArray());
-        return constructor.Invoke([arguments]) as IFunction
+        var parameter = constructor.GetParameters()[0];
+        var packing = parameter.GetCustomAttribute<ArgumentPackingAttribute>()!;
+        if (!packing.AllowSpread && function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException($"Spread arguments are not supported by {function.Name}.");
+
+        object provider;
+        if (parameter.ParameterType == typeof(Func<object?, object?[]>))
+        {
+            var values = function.Arguments
+                .Select(argument => new ValueArgumentEvaluator(
+                    BuildValueEvaluator(argument.Value, context), argument.IsSpread))
+                .ToArray();
+            provider = (Func<object?, object?[]>)(input => ValueArguments.Evaluate(values, input).ToArray());
+        }
+        else
+        {
+            if (function.Arguments.FirstOrDefault(argument => argument.Name is not null) is { } named)
+                throw new UnknownParameterNameException(function.Name, named.Name!);
+            var elementType = parameter.ParameterType.GetGenericArguments()[0].GetElementType()!;
+            var evaluations = function.Arguments.Select(argument =>
+                LinqExpression.Invoke(LinqExpression.Constant(CreateParameter(argument.Value, elementType, context))));
+            var array = LinqExpression.NewArrayInit(elementType, evaluations);
+            provider = LinqExpression.Lambda(parameter.ParameterType, array).Compile();
+        }
+
+        return constructor.Invoke([provider]) as IFunction
             ?? throw new InvalidOperationException(
-                $"Spread-aware constructor for '{type.FullName}' did not create a function.");
+                $"Variadic constructor for '{type.FullName}' did not create a function.");
     }
 
     private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)

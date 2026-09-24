@@ -10,7 +10,7 @@ internal sealed class FunctionConstructorRegistry
 {
     private readonly IReadOnlyDictionary<Type, IFunctionConstructor> constructors;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> annotated;
-    private readonly IReadOnlyDictionary<Type, ConstructorInfo> spreadPacked;
+    private readonly IReadOnlyDictionary<Type, ConstructorInfo> variadicPacked;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> roleAnnotated;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> shapeAnnotated;
 
@@ -24,7 +24,7 @@ internal sealed class FunctionConstructorRegistry
             ValidateAssociation(constructor);
         this.constructors = Build(materialized);
         annotated = DiscoverAnnotated(types);
-        spreadPacked = DiscoverSpreadPacked(types);
+        variadicPacked = DiscoverVariadicPacked(types);
         roleAnnotated = DiscoverRoles(types);
         shapeAnnotated = DiscoverShapes(types);
         foreach (var type in types.Where(type => type.IsClass && !type.IsAbstract
@@ -50,11 +50,11 @@ internal sealed class FunctionConstructorRegistry
     public bool TryGetAnnotated(Type functionType, out ConstructorInfo[] targets)
         => annotated.TryGetValue(functionType, out targets!);
 
-    public bool TryGetSpreadPacked(Type functionType, out ConstructorInfo target)
+    public bool TryGetVariadicPacked(Type functionType, out ConstructorInfo target)
     {
-        if (spreadPacked.TryGetValue(functionType, out target!))
+        if (variadicPacked.TryGetValue(functionType, out target!))
             return true;
-        return DiscoverSpreadPacked([functionType]).TryGetValue(functionType, out target!);
+        return DiscoverVariadicPacked([functionType]).TryGetValue(functionType, out target!);
     }
 
     public bool TryGetRoleAnnotated(Type functionType, out ConstructorInfo[] targets)
@@ -217,7 +217,7 @@ internal sealed class FunctionConstructorRegistry
     private static InvalidOperationException InvalidRoleMetadata(Type type, ParameterInfo parameter, string reason)
         => new($"Invalid argument role metadata on '{type.FullName}.{parameter.Name}': {reason}.");
 
-    private static IReadOnlyDictionary<Type, ConstructorInfo> DiscoverSpreadPacked(IEnumerable<Type> types)
+    private static IReadOnlyDictionary<Type, ConstructorInfo> DiscoverVariadicPacked(IEnumerable<Type> types)
     {
         var result = new Dictionary<Type, ConstructorInfo>();
         foreach (var type in types.Distinct().Where(type => type.IsClass && !type.IsAbstract
@@ -241,12 +241,20 @@ internal sealed class FunctionConstructorRegistry
                     throw InvalidPackingMetadata(type, variadic[1].Parameter, "only one positional variadic parameter is permitted per constructor");
                 foreach (var (parameter, attribute) in variadic)
                 {
-                    if (parameter.ParameterType != typeof(Func<object?, object?[]>))
-                        throw InvalidPackingMetadata(type, parameter, "variadic packing requires Func<object?, object?[]> delegate");
+                    var typed = parameter.ParameterType.IsGenericType
+                        && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)
+                        && parameter.ParameterType.GetGenericArguments()[0].IsArray;
+                    if (parameter.ParameterType != typeof(Func<object?, object?[]>) && (!typed || attribute!.AllowSpread))
+                    {
+                        throw InvalidPackingMetadata(type, parameter,
+                            attribute!.AllowSpread
+                                ? "spread-aware variadic packing requires Func<object?, object?[]> delegate"
+                                : "variadic packing requires Func<object?, object?[]> or Func<T[]> delegate");
+                    }
                     if (parameters.Length != 1)
                         throw InvalidPackingMetadata(type, parameter, "variadic packing requires a single-parameter constructor");
-                    if (attribute!.AllowSpread && !result.TryAdd(type, constructor))
-                        throw InvalidPackingMetadata(type, parameter, "ambiguous spread-aware constructors");
+                    if (!result.TryAdd(type, constructor))
+                        throw InvalidPackingMetadata(type, parameter, "ambiguous variadic constructors");
                 }
             }
         }

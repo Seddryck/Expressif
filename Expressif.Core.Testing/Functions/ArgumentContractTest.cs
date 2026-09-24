@@ -14,7 +14,7 @@ public class ArgumentContractTest
         var registry = new FunctionConstructorRegistry(new FixedTypeSource(
             typeof(EmptyValues), typeof(AbsentCallback), typeof(FreshAccumulator)));
 
-        Assert.That(registry.TryGetSpreadPacked(typeof(EmptyValues), out _), Is.True);
+        Assert.That(registry.TryGetVariadicPacked(typeof(EmptyValues), out _), Is.True);
         Assert.That(registry.TryGetAnnotated(typeof(AbsentCallback), out _), Is.True);
         Assert.That(registry.TryGetRoleAnnotated(typeof(FreshAccumulator), out _), Is.True);
     }
