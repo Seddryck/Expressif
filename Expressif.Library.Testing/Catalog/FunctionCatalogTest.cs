@@ -44,8 +44,8 @@ public class FunctionCatalogTest
                     $"Replacement equivalence for {name}");
                 Assert.That(documentation.MigrationNotes, Is.EqualTo(implementation.MigrationNotes),
                     $"Migration notes for {name}");
-                Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic)),
-                    Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic))),
+                Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic, x.AllowsSpread)),
+                    Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic, x.AllowsSpread))),
                     $"Parameters for {name}");
                 Assert.That(documentation.Parameters.Select(x => x.Summary), Is.All.Not.Empty, $"Parameter summaries for {name}");
             }
@@ -173,6 +173,17 @@ public class FunctionCatalogTest
             FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).MinimumCardinality,
             Is.EqualTo(minimumCardinality));
 
+    [TestCase("array", "values", true)]
+    [TestCase("nested-field", "path", true)]
+    [TestCase("sort-key", "values", true)]
+    [TestCase("record", "entries", false)]
+    [TestCase("coalesce", "expressions", false)]
+    public void Default_VariadicParameter_DeclaresPositionalSpreadSeparately(
+        string function, string parameter, bool allowsSpread)
+        => Assert.That(
+            FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).AllowsSpread,
+            Is.EqualTo(allowsSpread));
+
     [Test]
     public void Find_CaseVariantAliasForSameFunction_ReturnsCanonicalFunction()
         => Assert.That(FunctionCatalog.Default.Find("FILE-TO-CREATION-DATETIME")?.Name, Is.EqualTo("creation-datetime"));
@@ -263,6 +274,16 @@ public class FunctionCatalogTest
         Assert.That(
             () => FunctionCatalog.ValidateOmissions([function]),
             Throws.InvalidOperationException.With.Message.Contains(message));
+    }
+
+    [Test]
+    public void ValidateOmissions_NonVariadicParameterCannotAllowSpread()
+    {
+        var parameter = new FunctionParameterDocumentation("value", "any", false, "Summary.", AllowsSpread: true);
+        var function = new FunctionDocumentation("sample", true, [], "special", "any", "any", "Summary.", [parameter]);
+
+        Assert.That(() => FunctionCatalog.ValidateOmissions([function]),
+            Throws.InvalidOperationException.With.Message.Contains("allows spread but is not variadic"));
     }
 
     [TestCase("invalid", "per-element", "preserved", "cardinality")]

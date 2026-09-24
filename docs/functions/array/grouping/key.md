@@ -29,7 +29,7 @@ Associates the input value with a key calculated by one or more expressions.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated against the input; multiple results form a tuple key. |
+| `expressions` | `expression` | Variadic (one or more); no spread | One or more expressions evaluated against the input; multiple results form a tuple key. |
 
 
 

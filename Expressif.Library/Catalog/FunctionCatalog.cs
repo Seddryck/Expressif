@@ -81,6 +81,8 @@ public sealed class FunctionCatalog
             foreach (var parameter in function.Parameters)
             {
                 var member = $"Function '{function.Name}' parameter '{parameter.Name}'";
+                if (parameter.AllowsSpread && !parameter.Variadic)
+                    throw new InvalidOperationException($"{member} allows spread but is not variadic.");
                 if (parameter.Optional && parameter.Omission is null)
                     throw new InvalidOperationException($"{member} is optional and must declare omission behavior.");
                 if (!parameter.Optional && parameter.Omission is not null)

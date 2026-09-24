@@ -29,7 +29,7 @@ Returns the value at a nested field path in the input record or object, or null 
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `path` | `text` | Variadic (one or more) | One or more literal field names in traversal order. Spread arguments expand arrays of names in place. |
+| `path` | `text` | Variadic (one or more); accepts spread | One or more literal field names in traversal order. Spread arguments expand arrays of names in place. |
 
 
 

@@ -53,6 +53,9 @@
         "Variadic": {
           "type": "boolean"
         },
+        "AllowsSpread": {
+          "type": "boolean"
+        },
         "Omission": {
           "$ref": "#/definitions/omission"
         }
@@ -95,6 +98,29 @@
                 "const": true
               }
             },
+            "required": ["Variadic"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "Variadic": { "const": true }
+            },
+            "required": ["Variadic"]
+          },
+          "then": {
+            "required": ["AllowsSpread"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "AllowsSpread": { "const": true }
+            },
+            "required": ["AllowsSpread"]
+          },
+          "then": {
+            "properties": { "Variadic": { "const": true } },
             "required": ["Variadic"]
           }
         },

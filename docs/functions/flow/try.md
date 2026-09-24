@@ -29,7 +29,7 @@ Returns the first candidate result accepted by its predicate, or the final fallb
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `branches` | `entry` | Variadic (two or more) | Ordered branches with an optional final catch-all fallback. |
+| `branches` | `entry` | Variadic (two or more); no spread | Ordered branches with an optional final catch-all fallback. |
 
 
 

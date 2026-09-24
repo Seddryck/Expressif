@@ -46,6 +46,7 @@ internal sealed class BaseIntrospector
                             string.Join(" | ", parameters.Select(x => x.Type).Distinct().OrderBy(x => x)),
                             optional,
                             variadic,
+                            parameters.Any(x => x.AllowsSpread),
                             variadic ? parameters.Max(x => x.MinimumCardinality) : optional ? 0 : 1,
                             parameters.First().Summary);
                     });

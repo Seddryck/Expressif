@@ -29,7 +29,7 @@ Refines each existing group by appending dimensions derived from its values.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `expressions` | `expression` | Variadic (one or more) | One or more expressions whose results are appended to the existing key. |
+| `expressions` | `expression` | Variadic (one or more); no spread | One or more expressions whose results are appended to the existing key. |
 
 
 

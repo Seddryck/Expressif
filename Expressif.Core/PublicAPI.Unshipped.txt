@@ -656,6 +656,7 @@ Expressif.Introspection.FunctionIntrospector.Describe() -> System.Collections.Ge
 Expressif.Introspection.FunctionIntrospector.FunctionIntrospector(Expressif.Discovery.ITypeSource! source) -> void
 Expressif.Introspection.FunctionIntrospector.FunctionIntrospector(params System.Reflection.Assembly![]! assemblies) -> void
 Expressif.Introspection.ParameterInfo
+Expressif.Introspection.ParameterInfo.AllowsSpread.get -> bool
 Expressif.Introspection.ParameterInfo.MinimumCardinality.get -> int
 Expressif.Introspection.ParameterInfo.Name.get -> string!
 Expressif.Introspection.ParameterInfo.Optional.get -> bool

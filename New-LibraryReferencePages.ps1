@@ -419,6 +419,7 @@ foreach ($member in $members) {
                 has_type = -not [string]::IsNullOrWhiteSpace($parameterType)
                 optional = [bool] $parameter.Optional
                 variadic = $parameterVariadic
+                allows_spread = $null -ne $parameter.PSObject.Properties["AllowsSpread"] -and [bool] $parameter.AllowsSpread
                 minimum_cardinality = $minimumCardinality
                 summary  = $parameterSummary
                 omission_mode = $omissionMode
@@ -493,6 +494,9 @@ foreach ($member in $members) {
             }
             "Variadic ($minimumLabel or more)"
         } elseif ($parameter.optional) { "No" } else { "Yes" }
+        if ($parameter.variadic) {
+            $required += if ($parameter.allows_spread) { "; accepts spread" } else { "; no spread" }
+        }
         $summary = ([string] $parameter.summary) -replace '\|', '\|' -replace '[\r\n]+', ' '
         switch ($parameter.omission_mode) {
             "constant" {
