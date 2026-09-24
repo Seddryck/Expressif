@@ -20,7 +20,7 @@ public sealed class Text : IFunction<object?, string>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.</param>
-    public Text([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
+    public Text([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> values)
         => Values = values;
 
     public string Evaluate(object? value)

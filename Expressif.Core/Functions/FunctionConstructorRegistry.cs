@@ -31,6 +31,7 @@ internal sealed class FunctionConstructorRegistry
             && typeof(IFunction).IsAssignableFrom(type)))
         {
             Expressif.Bindings.ParameterArgumentBinder.ValidateLayoutMetadata(type);
+            ValidateOmissionsAndLifetimes(type);
         }
     }
 
@@ -122,6 +123,54 @@ internal sealed class FunctionConstructorRegistry
 
     private static InvalidOperationException InvalidShapeMetadata(Type type, ParameterInfo parameter, string reason)
         => new($"Invalid expression shape metadata on '{type.FullName}.{parameter.Name}': {reason}.");
+
+    private static void ValidateOmissionsAndLifetimes(Type type)
+    {
+        var nullability = new NullabilityInfoContext();
+        var omissions = new Dictionary<string, ArgumentOmissionMode>(StringComparer.OrdinalIgnoreCase);
+        foreach (var parameter in type.GetConstructors().SelectMany(constructor => constructor.GetParameters()))
+        {
+            var omission = parameter.GetCustomAttribute<ArgumentOmissionAttribute>();
+            if (omission is not null)
+            {
+                if (!Enum.IsDefined(omission.Mode))
+                    throw InvalidContract(type, parameter, "unknown omission mode");
+                if (omission.Mode == ArgumentOmissionMode.EmptyVariadic
+                    && parameter.GetCustomAttribute<ArgumentPackingAttribute>() is not
+                        { Mode: ArgumentPackingMode.Variadic })
+                {
+                    throw InvalidContract(type, parameter, "empty-variadic omission requires variadic packing");
+                }
+                if (omission.Mode == ArgumentOmissionMode.Absent
+                    && (!parameter.IsOptional || nullability.Create(parameter).ReadState != NullabilityState.Nullable))
+                {
+                    throw InvalidContract(type, parameter, "absent omission requires an optional nullable parameter");
+                }
+                var name = parameter.Name!.ToKebabCase();
+                if (omissions.TryGetValue(name, out var previous) && previous != omission.Mode)
+                    throw InvalidContract(type, parameter, "equivalent overload parameters must use the same omission mode");
+                omissions[name] = omission.Mode;
+            }
+
+            var lifetime = parameter.GetCustomAttribute<ProviderLifetimeAttribute>();
+            if (lifetime is null)
+                continue;
+            if (!Enum.IsDefined(lifetime.Lifetime))
+                throw InvalidContract(type, parameter, "unknown provider lifetime");
+            var role = parameter.GetCustomAttribute<ArgumentRoleAttribute>()?.Role;
+            if (role is not (ArgumentRole.Predicate or ArgumentRole.Transformation or ArgumentRole.Accumulator)
+                || !parameter.ParameterType.IsGenericType
+                || parameter.ParameterType.GetGenericTypeDefinition() != typeof(Func<>))
+            {
+                throw InvalidContract(type, parameter, "provider lifetime requires a semantic-role provider delegate");
+            }
+            if (role == ArgumentRole.Accumulator && lifetime.Lifetime != ProviderLifetime.FreshPerRequest)
+                throw InvalidContract(type, parameter, "accumulator providers must be fresh per request");
+        }
+    }
+
+    private static InvalidOperationException InvalidContract(Type type, ParameterInfo parameter, string reason)
+        => new($"Invalid constructor contract on '{type.FullName}.{parameter.Name}': {reason}.");
 
     private static IReadOnlyDictionary<Type, ConstructorInfo[]> DiscoverRoles(IEnumerable<Type> types)
     {

@@ -29,7 +29,7 @@ public sealed class Join : BaseArrayFunction<IEnumerable>
     public Join(
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
         [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
-        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] [ArgumentOmission(ArgumentOmissionMode.Absent)] Func<object?, object?>? rightKey = null)
         => (this.right, this.leftKey, this.rightKey) = (right, leftKey, rightKey);
 
     protected override object? EvaluateArray(IEnumerable enumerable)

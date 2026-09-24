@@ -185,6 +185,33 @@ public class FunctionCatalogTest
             Is.EqualTo(allowsSpread));
 
     [Test]
+    public void Default_RuntimeOmissionContracts_AgreeWithCatalog()
+    {
+        foreach (var implementation in ExpressifIntrospection.Functions.Describe().Where(item => item.IsPublic))
+        {
+            var documentation = FunctionCatalog.Default.Find(implementation.Name)!;
+            var annotated = implementation.ImplementationType.GetConstructors()
+                .SelectMany(constructor => constructor.GetParameters())
+                .Where(parameter => parameter.IsDefined(typeof(ArgumentOmissionAttribute), false));
+            foreach (var parameter in annotated)
+            {
+                var runtime = parameter.GetCustomAttributes(typeof(ArgumentOmissionAttribute), false)
+                    .Cast<ArgumentOmissionAttribute>().Single();
+                var documented = documentation.Parameters.Single(item =>
+                    item.Name == parameter.Name!.ToKebabCase());
+                var expected = runtime.Mode switch
+                {
+                    ArgumentOmissionMode.EmptyVariadic => ParameterOmissionMode.EmptyVariadic,
+                    ArgumentOmissionMode.Absent => ParameterOmissionMode.Absent,
+                    _ => throw new InvalidOperationException($"Unsupported runtime omission mode '{runtime.Mode}'."),
+                };
+                Assert.That(documented.Omission?.Mode, Is.EqualTo(expected),
+                    $"Omission for {implementation.Name}.{documented.Name}");
+            }
+        }
+    }
+
+    [Test]
     public void Find_CaseVariantAliasForSameFunction_ReturnsCanonicalFunction()
         => Assert.That(FunctionCatalog.Default.Find("FILE-TO-CREATION-DATETIME")?.Name, Is.EqualTo("creation-datetime"));
 

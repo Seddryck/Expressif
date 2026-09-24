@@ -15,7 +15,7 @@ public sealed class Grouping : IFunction<object?, GroupingValue>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more pairs whose keys and grouped value collections become groups.</param>
-    public Grouping([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
+    public Grouping([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> values)
         => Values = values;
 
     public GroupingValue Evaluate(object? value)

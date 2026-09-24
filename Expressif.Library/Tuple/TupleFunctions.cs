@@ -17,7 +17,7 @@ public sealed class Tuple : IFunction<object?, TupleValue>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose evaluated values become the positions of the resulting tuple.</param>
-    public Tuple([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
+    public Tuple([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> values)
         => Values = values;
 
     public TupleValue Evaluate(object? value)

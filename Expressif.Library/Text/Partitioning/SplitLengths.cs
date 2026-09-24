@@ -16,7 +16,7 @@ public sealed class SplitLengths : BaseTextFunction<string[]>
         : this(_ => []) { }
 
     /// <param name="lengths">Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place.</param>
-    public SplitLengths([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> lengths)
+    public SplitLengths([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> lengths)
         => Lengths = lengths;
 
     protected override object? EvaluateHighLevelString(string value)
