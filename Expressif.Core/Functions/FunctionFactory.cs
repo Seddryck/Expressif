@@ -368,6 +368,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 return constructor.Construct(function, context, this);
             if (constructors.TryGetAnnotated(registeredType, out var annotated))
                 return InstantiateAnnotated(registeredType, annotated, function, context);
+            if (constructors.TryGetRoleAnnotated(registeredType, out var roleAnnotated))
+                return InstantiateRoleAnnotated(registeredType, roleAnnotated, function, context);
             if (constructors.TryGetSpreadPacked(registeredType, out var spreadPacked))
                 return InstantiateValueSpread(registeredType, spreadPacked, function, context);
         }
@@ -421,6 +423,34 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return binding.Constructor.Invoke(callbacks) as IFunction
             ?? throw new InvalidOperationException(
                 $"Annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private IFunction InstantiateRoleAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var providers = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = binding.Parameters[index];
+            providers[index] = metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.Role switch
+            {
+                ArgumentRole.Predicate => BuildPredicateProvider(parameter, context, function.Name),
+                ArgumentRole.Accumulator => BuildAccumulatorProvider(parameter, context),
+                ArgumentRole.Transformation => TryGetOpenExpression(parameter, out var open)
+                    ? BuildTransformationProvider(open, context)
+                    : throw new ArgumentException(
+                        $"The function named '{function.Name}' expects parameter '{metadata[index].Name}' to be an open expression.",
+                        nameof(function)),
+                _ => throw new InvalidOperationException($"Unsupported argument role on '{type.FullName}.{metadata[index].Name}'."),
+            };
+        }
+        return binding.Constructor.Invoke(providers) as IFunction
+            ?? throw new InvalidOperationException($"Role-annotated constructor for '{type.FullName}' did not create a function.");
     }
 
     private Func<object?, object?> BuildNestedValueEvaluator(IParameter parameter, IContext context)
