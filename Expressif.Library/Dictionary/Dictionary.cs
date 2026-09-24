@@ -15,7 +15,7 @@ public sealed class Dictionary : IFunction<object?, DictionaryValueType>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more pairs whose unique keys and values become dictionary entries.</param>
-    public Dictionary([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values) => Values = values;
+    public Dictionary([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> values) => Values = values;
 
     public DictionaryValueType Evaluate(object? value)
     {

@@ -14,7 +14,7 @@ public class Array : IFunction<object?, object?[]>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose evaluated values become the elements of the resulting array.</param>
-    public Array([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
+    public Array([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> values)
         => Values = values;
 
     public object?[] Evaluate(object? value)
