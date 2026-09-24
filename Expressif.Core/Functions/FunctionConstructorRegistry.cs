@@ -27,6 +27,11 @@ internal sealed class FunctionConstructorRegistry
         spreadPacked = DiscoverSpreadPacked(types);
         roleAnnotated = DiscoverRoles(types);
         shapeAnnotated = DiscoverShapes(types);
+        foreach (var type in types.Where(type => type.IsClass && !type.IsAbstract
+            && typeof(IFunction).IsAssignableFrom(type)))
+        {
+            Expressif.Bindings.ParameterArgumentBinder.ValidateLayoutMetadata(type);
+        }
     }
 
     public FunctionConstructorRegistry(params Assembly[] assemblies)

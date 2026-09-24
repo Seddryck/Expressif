@@ -29,15 +29,10 @@ internal static class FunctionConstructorSupport
         IContext context,
         IFunctionConstructionContext constructionContext)
     {
-        if (function.Arguments.Length == 0
-            || function.Arguments.Any(argument => argument.Name is not null || argument.IsSpread))
-        {
-            throw new MissingOrUnexpectedParametersFunctionException(
-                function.Name,
-                function.Parameters.Length);
-        }
-
-        return function.Arguments
+        if (!constructionContext.TryResolveImplementation(function.Name, out var type))
+            throw new NotImplementedFunctionException(function.Name);
+        var layout = ParameterArgumentBinder.BindLayout(type, function.Arguments);
+        return layout.Positional
             .Select(argument => constructionContext.CreateValueEvaluator(argument.Value, context))
             .ToArray();
     }
