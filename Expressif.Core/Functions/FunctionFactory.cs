@@ -378,6 +378,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             throw new NotImplementedFunctionException(function.Name);
         }
 
+        if (constructors.TryGetAnnotated(type, out var annotated))
+            return InstantiateAnnotated(type, annotated, function, context);
+
         if (type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true)
             return InstantiateValueSpread(type, function, context);
 
@@ -391,6 +394,27 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return filtering;
 
         return Instantiate<IFunction>(type, function.Arguments, context);
+    }
+
+    private IFunction InstantiateAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var callbacks = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            callbacks[index] = metadata[index].IsOptional
+                && binding.Parameters[index] is LiteralParameter { Value: null }
+                    ? null
+                    : BuildValueEvaluator(binding.Parameters[index], context);
+        }
+        return binding.Constructor.Invoke(callbacks) as IFunction
+            ?? throw new InvalidOperationException(
+                $"Annotated constructor for '{type.FullName}' did not create a function.");
     }
 
     private IFunction BuildAccumulatorFunction(
