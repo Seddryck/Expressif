@@ -102,7 +102,7 @@ public sealed class JoinLeft : BaseOuterJoin
     public JoinLeft(
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
         [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
-        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] [ArgumentOmission(ArgumentOmissionMode.Absent)] Func<object?, object?>? rightKey = null)
         : base(right, leftKey, rightKey, true, false) { }
 }
 
@@ -124,7 +124,7 @@ public sealed class JoinRight : BaseOuterJoin
     public JoinRight(
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
         [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
-        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] [ArgumentOmission(ArgumentOmissionMode.Absent)] Func<object?, object?>? rightKey = null)
         : base(right, leftKey, rightKey, false, true) { }
 }
 
@@ -146,6 +146,6 @@ public sealed class JoinFull : BaseOuterJoin
     public JoinFull(
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
         [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
-        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] [ArgumentOmission(ArgumentOmissionMode.Absent)] Func<object?, object?>? rightKey = null)
         : base(right, leftKey, rightKey, true, true) { }
 }

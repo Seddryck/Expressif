@@ -28,7 +28,7 @@ public sealed class Exists : BasePredicate, IFunction<object, bool>
     public Exists(
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
         [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
-        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] [ArgumentOmission(ArgumentOmissionMode.Absent)] Func<object?, object?>? rightKey = null)
         => (this.right, this.leftKey, this.rightKey) = (right, leftKey, rightKey);
 
     public override bool Evaluate(object? value)

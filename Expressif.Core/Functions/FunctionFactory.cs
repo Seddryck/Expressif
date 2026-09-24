@@ -441,10 +441,12 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             var parameter = binding.Parameters[index];
             providers[index] = metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.Role switch
             {
-                ArgumentRole.Predicate => BuildPredicateProvider(parameter, context, function.Name),
-                ArgumentRole.Accumulator => BuildAccumulatorProvider(parameter, context),
+                ArgumentRole.Predicate => ApplyProviderLifetime(
+                    BuildPredicateProvider(parameter, context, function.Name), metadata[index]),
+                ArgumentRole.Accumulator => ApplyProviderLifetime(
+                    BuildAccumulatorProvider(parameter, context), metadata[index]),
                 ArgumentRole.Transformation => TryGetOpenExpression(parameter, out var open)
-                    ? BuildTransformationProvider(open, context)
+                    ? ApplyProviderLifetime(BuildTransformationProvider(open, context), metadata[index])
                     : throw new BindingException(
                         $"Function '{function.Name}' parameter '{metadata[index].Name}' must be an open expression."),
                 _ => throw new InvalidOperationException($"Unsupported argument role on '{type.FullName}.{metadata[index].Name}'."),
@@ -452,6 +454,15 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         }
         return binding.Constructor.Invoke(providers) as IFunction
             ?? throw new InvalidOperationException($"Role-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private static Func<T> ApplyProviderLifetime<T>(Func<T> provider, ParameterInfo parameter)
+        where T : class
+    {
+        if (parameter.GetCustomAttribute<ProviderLifetimeAttribute>()?.Lifetime != ProviderLifetime.BoundExpression)
+            return provider;
+        var value = provider();
+        return () => value;
     }
 
     private IFunction InstantiateShapeAnnotated(
