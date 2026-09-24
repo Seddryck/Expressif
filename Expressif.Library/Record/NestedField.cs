@@ -3,14 +3,14 @@ using Expressif.Values;
 namespace Expressif.Library.Record;
 
 /// <summary>Returns the value at a nested field path in the input record or object, or null when the path cannot be resolved.</summary>
-[Function(prefix: "", DynamicReason = "Output depends on the value selected by the runtime field path.", SupportsValueSpread = true)]
+[Function(prefix: "", DynamicReason = "Output depends on the value selected by the runtime field path.")]
 [Scope("record")]
 public sealed class NestedField : IFunction
 {
     private Func<object?, object?[]> Path { get; }
 
     /// <param name="path">One or more literal field names in traversal order. Spread arguments expand arrays of names in place.</param>
-    public NestedField(Func<object?, object?[]> path) => Path = path;
+    public NestedField([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> path) => Path = path;
 
     public object? Evaluate(object? value)
     {

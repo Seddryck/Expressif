@@ -4,7 +4,7 @@ using DictionaryValueType = Expressif.Values.Dictionary;
 namespace Expressif.Library.Dictionary;
 
 /// <summary>Constructs a dictionary from zero or more pairs. Spread arguments expand arrays of pairs in place.</summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 [Scope("dictionary")]
 public sealed class Dictionary : IFunction<object?, DictionaryValueType>
 {
@@ -15,7 +15,7 @@ public sealed class Dictionary : IFunction<object?, DictionaryValueType>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more pairs whose unique keys and values become dictionary entries.</param>
-    public Dictionary(Func<object?, object?[]> values) => Values = values;
+    public Dictionary([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values) => Values = values;
 
     public DictionaryValueType Evaluate(object? value)
     {

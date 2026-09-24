@@ -593,8 +593,6 @@ Expressif.Functions.FunctionAttribute.FunctionAttribute(string? prefix = null, s
 Expressif.Functions.FunctionAttribute.Name.get -> string?
 Expressif.Functions.FunctionAttribute.Name.set -> void
 Expressif.Functions.FunctionAttribute.Prefix.get -> string?
-Expressif.Functions.FunctionAttribute.SupportsValueSpread.get -> bool
-Expressif.Functions.FunctionAttribute.SupportsValueSpread.set -> void
 Expressif.Functions.FunctionFactory
 Expressif.Functions.FunctionFactory.FunctionFactory(Expressif.Discovery.ITypeSource! source) -> void
 Expressif.Functions.FunctionFactory.Instantiate(Expressif.Bindings.IRootExpression! rootExpression, Expressif.IContext! context) -> Expressif.Functions.IFunction!

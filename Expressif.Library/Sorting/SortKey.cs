@@ -3,14 +3,14 @@ using Expressif.Values;
 namespace Expressif.Library.Sorting;
 
 /// <summary>Creates a non-empty ordered sort key from one or more sort terms.</summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 [Scope("sorting")]
 public sealed class SortKey : IFunction<object?, SortKeyValue>
 {
     private readonly Func<object?, object?[]> values;
 
     /// <param name="values">One or more sort terms in lexicographic comparison order.</param>
-    public SortKey(Func<object?, object?[]> values) => this.values = values;
+    public SortKey([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values) => this.values = values;
 
     public SortKeyValue Evaluate(object? input)
     {

@@ -11,8 +11,9 @@ internal static class TupleBindingCapabilities
         => type.GetConstructors().Select(constructor =>
         {
             var parameters = constructor.GetParameters();
-            var variadic = type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true
-                && parameters is [var values] && values.ParameterType == typeof(Func<object?, object?[]>);
+            var variadic = parameters is [var values]
+                && values.GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic }
+                && values.ParameterType == typeof(Func<object?, object?[]>);
             var standard = FunctionConstruction.Classify(type.Name) == FunctionConstructionKind.Standard
                 && parameters.All(parameter => IsValueProvider(parameter.ParameterType));
             return new TupleBindingSignature(constructor, variadic || standard, variadic);

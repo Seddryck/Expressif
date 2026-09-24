@@ -140,8 +140,8 @@ public class FunctionInfrastructureApiTest
         public IEnumerable<Type> GetTypes() => builtIns.GetTypes().Concat(extensions);
     }
 
-    [Function(Name = "spread-function", SupportsValueSpread = true)]
-    private sealed class SpreadFunction(Func<object?, object?[]> arguments) : IFunction
+    [Function(Name = "spread-function")]
+    private sealed class SpreadFunction([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> arguments) : IFunction
     {
         public object? Evaluate(object? value) => arguments.Invoke(value);
     }

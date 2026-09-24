@@ -4,7 +4,7 @@ using GroupingValue = Expressif.Values.Grouping;
 namespace Expressif.Library.Grouping;
 
 /// <summary>Expands a grouping into explicitly declared sets of retained key dimensions.</summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 [Scope("grouping")]
 public sealed class GroupingSets : IFunction<GroupingValue, GroupingValue>
 {
@@ -15,7 +15,7 @@ public sealed class GroupingSets : IFunction<GroupingValue, GroupingValue>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more tuples of zero-based key dimension positions to retain.</param>
-    public GroupingSets(Func<object?, object?[]> values)
+    public GroupingSets([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
         => this.values = values;
 
     public GroupingValue Evaluate(GroupingValue value)
