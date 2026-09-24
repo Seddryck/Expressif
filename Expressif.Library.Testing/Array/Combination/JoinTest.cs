@@ -77,4 +77,33 @@ public class JoinTest
 
         Assert.That(((PairValue[])join.Evaluate(new object?[] { 1 })!).Length, Is.EqualTo(2));
     }
+
+    [Test]
+    public void Join_AmbientRightSourceAndNestedSelectorsKeepSeparateScopes()
+    {
+        var left = new RecordValue();
+        left.Set("id", 1m);
+        var right = new RecordValue();
+        right.Set("id", 1m);
+        var input = new RecordValue();
+        input.Set("left", new object?[] { left });
+        input.Set("right", new object?[] { right });
+
+        var result = TestExpression.Create(".left | join(^.right, .id)").Evaluate(input);
+
+        Assert.That(ValueFormatter.Format(result), Is.EqualTo("{({id := 1} => {id := 1})}"));
+    }
+
+    [Test]
+    public void Join_OmittedRightKeyDiffersFromExplicitNullExpression()
+    {
+        var omitted = TestExpression.CreateClosed("{1} | join({1}, @_)").Evaluate(null);
+        var explicitNull = TestExpression.CreateClosed("{1} | join({1}, @_, #null)").Evaluate(null);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ValueFormatter.Format(omitted), Is.EqualTo("{(1 => 1)}"));
+            Assert.That(ValueFormatter.Format(explicitNull), Is.EqualTo("{}"));
+        });
+    }
 }

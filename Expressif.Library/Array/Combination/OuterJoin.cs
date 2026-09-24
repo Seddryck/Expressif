@@ -91,13 +91,18 @@ public sealed class JoinLeft : BaseOuterJoin
 {
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
-    public JoinLeft(Func<object?> right, Func<object?, object?> leftKey)
+    public JoinLeft(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey)
         : base(right, leftKey, null, true, false) { }
 
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
     /// <param name="rightKey">Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.</param>
-    public JoinLeft(Func<object?> right, Func<object?, object?> leftKey, Func<object?, object?>? rightKey)
+    public JoinLeft(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
         : base(right, leftKey, rightKey, true, false) { }
 }
 
@@ -108,13 +113,18 @@ public sealed class JoinRight : BaseOuterJoin
 {
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
-    public JoinRight(Func<object?> right, Func<object?, object?> leftKey)
+    public JoinRight(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey)
         : base(right, leftKey, null, false, true) { }
 
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
     /// <param name="rightKey">Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.</param>
-    public JoinRight(Func<object?> right, Func<object?, object?> leftKey, Func<object?, object?>? rightKey)
+    public JoinRight(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
         : base(right, leftKey, rightKey, false, true) { }
 }
 
@@ -125,12 +135,17 @@ public sealed class JoinFull : BaseOuterJoin
 {
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
-    public JoinFull(Func<object?> right, Func<object?, object?> leftKey)
+    public JoinFull(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey)
         : base(right, leftKey, null, true, true) { }
 
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
     /// <param name="rightKey">Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.</param>
-    public JoinFull(Func<object?> right, Func<object?, object?> leftKey, Func<object?, object?>? rightKey)
+    public JoinFull(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
         : base(right, leftKey, rightKey, true, true) { }
 }
