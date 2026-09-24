@@ -29,7 +29,7 @@ Coerces a scalar value or selected tuple and record values to requested Expressi
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `specifications` | `type | mapping` | Variadic (one or more) | One or more positional type descriptors or selector-to-type mappings. |
+| `specifications` | `type | mapping` | Variadic (one or more); no spread | One or more positional type descriptors or selector-to-type mappings. |
 
 
 

@@ -40,7 +40,8 @@ public sealed record FunctionParameterDocumentation(
     int MinimumCardinality = 1,
     string? Kind = null,
     ParameterOmissionDocumentation? Omission = null,
-    ParameterEvaluationDocumentation? Evaluation = null)
+    ParameterEvaluationDocumentation? Evaluation = null,
+    bool AllowsSpread = false)
 {
     public string TypeOrKind => Type ?? Kind ?? "any";
 }

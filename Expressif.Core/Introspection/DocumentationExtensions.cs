@@ -14,7 +14,7 @@ namespace Expressif.Introspection;
 
 internal sealed record CtorInfo(ParamInfo[] Parameters);
 
-internal sealed record ParamInfo(string Name, string Type, bool Variadic, int MinimumCardinality, string Summary);
+internal sealed record ParamInfo(string Name, string Type, bool Variadic, bool AllowsSpread, int MinimumCardinality, string Summary);
 
 /// <summary>
 /// Utility class to provide documentation for various types where available with the assembly.
@@ -135,6 +135,7 @@ internal static class DocumentationExtensions
                         declaringType: type,
                         parameterName: names[i]),
                     IsVariadicParameter(parameters[i], type, options),
+                    parameters[i].GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic, AllowSpread: true },
                     options.VariadicParameters.GetValueOrDefault(key),
                     paramNodes[i].InnerText.Trim()));
             }

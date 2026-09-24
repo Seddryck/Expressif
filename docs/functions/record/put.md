@@ -29,7 +29,7 @@ Creates or replaces statically named fields while preserving every other field. 
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `assignments` | `entry` | Variadic (one or more) | One or more named assignments evaluated against the original input record. |
+| `assignments` | `entry` | Variadic (one or more); no spread | One or more named assignments evaluated against the original input record. |
 
 
 

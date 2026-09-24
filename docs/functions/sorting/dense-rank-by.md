@@ -29,7 +29,7 @@ Groups array elements by their one-based dense rank using typed criteria.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `criteria` | `expression` | Variadic (one or more) | Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers. |
+| `criteria` | `expression` | Variadic (one or more); no spread | Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers. |
 
 
 

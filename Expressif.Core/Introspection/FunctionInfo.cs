@@ -101,13 +101,15 @@ public sealed class ParameterInfo
         string type,
         bool optional,
         bool variadic,
+        bool allowsSpread,
         int minimumCardinality,
         string summary)
-        => (Name, Type, Optional, Variadic, MinimumCardinality, Summary) = (
+        => (Name, Type, Optional, Variadic, AllowsSpread, MinimumCardinality, Summary) = (
             name,
             type,
             optional,
             variadic,
+            allowsSpread,
             minimumCardinality,
             summary);
 
@@ -115,6 +117,7 @@ public sealed class ParameterInfo
     public string Type { get; }
     public bool Optional { get; }
     public bool Variadic { get; }
+    public bool AllowsSpread { get; }
     public int MinimumCardinality { get; }
     public string Summary { get; }
 }
