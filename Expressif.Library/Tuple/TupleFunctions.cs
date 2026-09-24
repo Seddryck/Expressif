@@ -6,7 +6,7 @@ namespace Expressif.Library.Tuple;
 /// <summary>
 /// Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.
 /// </summary>
-[Function(prefix: "", aliases: ["tuple"], SupportsValueSpread = true)]
+[Function(prefix: "", aliases: ["tuple"])]
 [Scope("tuple")]
 public sealed class Tuple : IFunction<object?, TupleValue>
 {
@@ -17,7 +17,7 @@ public sealed class Tuple : IFunction<object?, TupleValue>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose evaluated values become the positions of the resulting tuple.</param>
-    public Tuple(Func<object?, object?[]> values)
+    public Tuple([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
         => Values = values;
 
     public TupleValue Evaluate(object? value)

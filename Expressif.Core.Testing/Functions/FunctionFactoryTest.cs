@@ -456,8 +456,8 @@ public class FunctionFactoryTest
         }
     }
 
-    [Function(SupportsValueSpread = true)]
-    private sealed class SpreadAwareProbe(Func<object?, object?[]> arguments) : IFunction
+    [Function]
+    private sealed class SpreadAwareProbe([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> arguments) : IFunction
     {
         public object? Evaluate(object? value)
             => arguments.Invoke(value);

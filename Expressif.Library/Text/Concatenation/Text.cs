@@ -9,7 +9,7 @@ namespace Expressif.Library.Text.Concatenation;
 /// converting each result to text, and concatenating the converted values in order. Spread arguments expand array
 /// values in place. Returns empty text when no expressions are supplied.
 /// </summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 [Scope("text/concatenation")]
 public sealed class Text : IFunction<object?, string>
 {
@@ -20,7 +20,7 @@ public sealed class Text : IFunction<object?, string>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.</param>
-    public Text(Func<object?, object?[]> values)
+    public Text([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
         => Values = values;
 
     public string Evaluate(object? value)
