@@ -10,14 +10,19 @@ public class ArgumentPackingTest
     {
         var registry = Discover(typeof(ValidSpread));
 
-        Assert.That(registry.TryGetSpreadPacked(typeof(ValidSpread), out var constructor), Is.True);
+        Assert.That(registry.TryGetVariadicPacked(typeof(ValidSpread), out var constructor), Is.True);
         Assert.That(constructor.GetParameters()[0].Name, Is.EqualTo("items"));
+        Assert.That(Discover(typeof(TypedIntegers)).TryGetVariadicPacked(typeof(TypedIntegers), out _), Is.True);
+        Assert.That(Discover(typeof(TypedStrings)).TryGetVariadicPacked(typeof(TypedStrings), out _), Is.True);
     }
 
     [TestCase(typeof(SpreadOnSingle), "spread requires variadic")]
     [TestCase(typeof(WrongDelegate), "Func<object?, object?[]>")]
     [TestCase(typeof(MultipleVariadic), "only one positional variadic")]
     [TestCase(typeof(AdditionalParameter), "single-parameter constructor")]
+    [TestCase(typeof(TypedSpread), "Func<object?, object?[]>")]
+    [TestCase(typeof(InvalidTypedProvider), "Func<T[]>")]
+    [TestCase(typeof(AmbiguousTypedProviders), "ambiguous variadic constructors")]
     public void Discovery_RejectsInvalidPacking(Type type, string reason)
         => Assert.That(() => Discover(type),
             Throws.TypeOf<InvalidOperationException>()
@@ -34,6 +39,41 @@ public class ArgumentPackingTest
         [ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> items) : IFunction
     {
         public object? Evaluate(object? input) => items(input);
+    }
+
+    public sealed class TypedIntegers(
+        [ArgumentPacking(ArgumentPackingMode.Variadic)] Func<int[]> items) : IFunction
+    {
+        public object? Evaluate(object? input) => items();
+    }
+
+    public sealed class TypedStrings(
+        [ArgumentPacking(ArgumentPackingMode.Variadic)] Func<string[]> items) : IFunction
+    {
+        public object? Evaluate(object? input) => items();
+    }
+
+    public sealed class TypedSpread(
+        [ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<int[]> items) : IFunction
+    {
+        public object? Evaluate(object? input) => items();
+    }
+
+    public sealed class InvalidTypedProvider(
+        [ArgumentPacking(ArgumentPackingMode.Variadic)] Func<int> item) : IFunction
+    {
+        public object? Evaluate(object? input) => item();
+    }
+
+    public sealed class AmbiguousTypedProviders : IFunction
+    {
+        public AmbiguousTypedProviders(
+            [ArgumentPacking(ArgumentPackingMode.Variadic)] Func<int[]> items) { }
+
+        public AmbiguousTypedProviders(
+            [ArgumentPacking(ArgumentPackingMode.Variadic)] Func<string[]> items) { }
+
+        public object? Evaluate(object? input) => input;
     }
 
     public sealed class SpreadOnSingle(
