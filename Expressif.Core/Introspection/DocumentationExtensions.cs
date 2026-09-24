@@ -134,7 +134,7 @@ internal static class DocumentationExtensions
                         unwrapProvider: true,
                         declaringType: type,
                         parameterName: names[i]),
-                    IsVariadicParameter(type, names[i], options),
+                    IsVariadicParameter(parameters[i], type, options),
                     options.VariadicParameters.GetValueOrDefault(key),
                     paramNodes[i].InnerText.Trim()));
             }
@@ -145,12 +145,11 @@ internal static class DocumentationExtensions
     }
 
     private static bool IsVariadicParameter(
+        System.Reflection.ParameterInfo parameter,
         Type declaringType,
-        string parameterName,
         IntrospectionOptions options)
-        => (declaringType.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true
-                && parameterName == "values")
-            || options.VariadicParameters.ContainsKey(new(declaringType, parameterName));
+        => parameter.GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic }
+            || options.VariadicParameters.ContainsKey(new(declaringType, parameter.Name!));
 
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the

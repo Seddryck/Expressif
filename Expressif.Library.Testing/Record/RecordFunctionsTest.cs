@@ -234,11 +234,11 @@ public class RecordFunctionsTest
     }
 
     [Test]
-    public void Record_DeclaresValueSpreadAwareness()
+    public void Record_UsesStructuralSpreadRatherThanPositionalPacking()
         => Assert.That(
-            typeof(RecordFunction).GetCustomAttributes(typeof(FunctionAttribute), true)
-                .Cast<FunctionAttribute>().Single().SupportsValueSpread,
-            Is.True);
+            typeof(RecordFunction).GetConstructors().SelectMany(constructor => constructor.GetParameters())
+                .Any(parameter => parameter.IsDefined(typeof(ArgumentPackingAttribute), false)),
+            Is.False);
 
     [Test]
     public void Record_Evaluate_NamedEntries_PreservesDeclarationOrder()

@@ -5,7 +5,7 @@ namespace Expressif.Library.Text.Partitioning;
 /// <summary>
 /// Splits text into consecutive nonempty segments of the requested lengths, preserving any remaining text as a final segment. Returns an empty array for null or empty input and null for invalid lengths.
 /// </summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 [Scope("text/partitioning")]
 public sealed class SplitLengths : BaseTextFunction<string[]>
 {
@@ -16,7 +16,7 @@ public sealed class SplitLengths : BaseTextFunction<string[]>
         : this(_ => []) { }
 
     /// <param name="lengths">Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place.</param>
-    public SplitLengths(Func<object?, object?[]> lengths)
+    public SplitLengths([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> lengths)
         => Lengths = lengths;
 
     protected override object? EvaluateHighLevelString(string value)

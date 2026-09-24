@@ -4,7 +4,7 @@ using GroupingValue = Expressif.Values.Grouping;
 namespace Expressif.Library.Grouping;
 
 /// <summary>Constructs a grouping from zero or more pairs. Spread arguments expand arrays of pairs in place.</summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 [Scope("grouping")]
 public sealed class Grouping : IFunction<object?, GroupingValue>
 {
@@ -15,7 +15,7 @@ public sealed class Grouping : IFunction<object?, GroupingValue>
         : this(_ => []) { }
 
     /// <param name="values">Zero or more pairs whose keys and grouped value collections become groups.</param>
-    public Grouping(Func<object?, object?[]> values)
+    public Grouping([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> values)
         => Values = values;
 
     public GroupingValue Evaluate(object? value)

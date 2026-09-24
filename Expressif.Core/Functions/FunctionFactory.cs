@@ -368,6 +368,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 return constructor.Construct(function, context, this);
             if (constructors.TryGetAnnotated(registeredType, out var annotated))
                 return InstantiateAnnotated(registeredType, annotated, function, context);
+            if (constructors.TryGetSpreadPacked(registeredType, out var spreadPacked))
+                return InstantiateValueSpread(registeredType, spreadPacked, function, context);
         }
 
         if (!Registry.TryResolve(function.Name, out var type))
@@ -379,9 +381,6 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
             throw new NotImplementedFunctionException(function.Name);
         }
-
-        if (type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread == true)
-            return InstantiateValueSpread(type, function, context);
 
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
@@ -509,7 +508,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return EvaluationRuntime.EvaluateNested(expression, input, currentInput);
     }
 
-    private IFunction InstantiateValueSpread(Type type, Bindings.Function function, IContext context)
+    private IFunction InstantiateValueSpread(Type type, ConstructorInfo constructor, Bindings.Function function, IContext context)
     {
         var values = function.Arguments
             .Select(argument => new ValueArgumentEvaluator(
@@ -517,9 +516,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 argument.IsSpread))
             .ToArray();
         var arguments = (Func<object?, object?[]>)(input => ValueArguments.Evaluate(values, input).ToArray());
-        return Activator.CreateInstance(type, arguments) as IFunction
+        return constructor.Invoke([arguments]) as IFunction
             ?? throw new InvalidOperationException(
-                $"Value-spread function '{type.FullName}' must expose a constructor accepting Func<object?, object?[]>.");
+                $"Spread-aware constructor for '{type.FullName}' did not create a function.");
     }
 
     private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)

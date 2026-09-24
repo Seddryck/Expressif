@@ -83,7 +83,7 @@ public sealed class ExcludeFields : IFunction<ValueRecord, ValueRecord>
 /// Creates a record by evaluating its named and spread entries against the input value.
 /// Later entries overwrite fields with the same name created by earlier entries.
 /// </summary>
-[Function(prefix: "", SupportsValueSpread = true)]
+[Function(prefix: "")]
 public class Record : IFunction<object?, ValueRecord>
 {
     private Func<RecordEntryEvaluator[]> Entries { get; }

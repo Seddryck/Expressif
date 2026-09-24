@@ -10,6 +10,7 @@ internal sealed class FunctionConstructorRegistry
 {
     private readonly IReadOnlyDictionary<Type, IFunctionConstructor> constructors;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> annotated;
+    private readonly IReadOnlyDictionary<Type, ConstructorInfo> spreadPacked;
 
     public FunctionConstructorRegistry(IEnumerable<IFunctionConstructor> constructors)
         : this(constructors, []) { }
@@ -21,6 +22,7 @@ internal sealed class FunctionConstructorRegistry
             ValidateAssociation(constructor);
         this.constructors = Build(materialized);
         annotated = DiscoverAnnotated(types);
+        spreadPacked = DiscoverSpreadPacked(types);
     }
 
     public FunctionConstructorRegistry(params Assembly[] assemblies)
@@ -37,6 +39,52 @@ internal sealed class FunctionConstructorRegistry
 
     public bool TryGetAnnotated(Type functionType, out ConstructorInfo[] targets)
         => annotated.TryGetValue(functionType, out targets!);
+
+    public bool TryGetSpreadPacked(Type functionType, out ConstructorInfo target)
+    {
+        if (spreadPacked.TryGetValue(functionType, out target!))
+            return true;
+        return DiscoverSpreadPacked([functionType]).TryGetValue(functionType, out target!);
+    }
+
+    private static IReadOnlyDictionary<Type, ConstructorInfo> DiscoverSpreadPacked(IEnumerable<Type> types)
+    {
+        var result = new Dictionary<Type, ConstructorInfo>();
+        foreach (var type in types.Distinct().Where(type => type.IsClass && !type.IsAbstract
+            && typeof(IFunction).IsAssignableFrom(type)))
+        {
+            foreach (var constructor in type.GetConstructors())
+            {
+                var parameters = constructor.GetParameters();
+                var packed = parameters.Select(parameter => (Parameter: parameter,
+                    Attribute: parameter.GetCustomAttribute<ArgumentPackingAttribute>()))
+                    .Where(item => item.Attribute is not null).ToArray();
+                foreach (var (parameter, attribute) in packed)
+                {
+                    if (!Enum.IsDefined(attribute!.Mode))
+                        throw InvalidPackingMetadata(type, parameter, "unknown packing mode");
+                    if (attribute.AllowSpread && attribute.Mode != ArgumentPackingMode.Variadic)
+                        throw InvalidPackingMetadata(type, parameter, "spread requires variadic packing");
+                }
+                var variadic = packed.Where(item => item.Attribute!.Mode == ArgumentPackingMode.Variadic).ToArray();
+                if (variadic.Length > 1)
+                    throw InvalidPackingMetadata(type, variadic[1].Parameter, "only one positional variadic parameter is permitted per constructor");
+                foreach (var (parameter, attribute) in variadic)
+                {
+                    if (parameter.ParameterType != typeof(Func<object?, object?[]>))
+                        throw InvalidPackingMetadata(type, parameter, "variadic packing requires Func<object?, object?[]> delegate");
+                    if (parameters.Length != 1)
+                        throw InvalidPackingMetadata(type, parameter, "variadic packing requires a single-parameter constructor");
+                    if (attribute!.AllowSpread && !result.TryAdd(type, constructor))
+                        throw InvalidPackingMetadata(type, parameter, "ambiguous spread-aware constructors");
+                }
+            }
+        }
+        return result;
+    }
+
+    private static InvalidOperationException InvalidPackingMetadata(Type type, ParameterInfo parameter, string reason)
+        => new($"Invalid argument packing metadata on '{type.FullName}.{parameter.Name}': {reason}.");
 
     private static IReadOnlyDictionary<Type, ConstructorInfo[]> DiscoverAnnotated(IEnumerable<Type> types)
     {

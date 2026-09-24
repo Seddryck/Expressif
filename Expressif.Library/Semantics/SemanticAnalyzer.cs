@@ -261,7 +261,8 @@ public sealed class SemanticAnalyzer
 
         private static bool UsesScalarProviders(BoundFunction function, Type type)
             => FunctionConstruction.Classify(function.Name) == FunctionConstructionKind.Standard
-                && type.GetCustomAttribute<FunctionAttribute>(true)?.SupportsValueSpread != true
+                && !type.GetConstructors().SelectMany(constructor => constructor.GetParameters()).Any(parameter =>
+                    parameter.GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic, AllowSpread: true })
                 && !type.GetConstructors().Any(constructor => constructor.GetParameters().Any(parameter =>
                     parameter.ParameterType == typeof(Func<IFunction>) || parameter.ParameterType == typeof(Func<IPredicate>)));
 
