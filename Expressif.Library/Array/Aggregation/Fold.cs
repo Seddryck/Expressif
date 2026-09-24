@@ -17,7 +17,8 @@ public class Fold : BaseArrayFunction<object>
     public Func<IAccumulator> Accumulator { get; }
 
     /// <param name="accumulator">Factory that creates the accumulator instance used for the fold execution.</param>
-    public Fold(Func<IAccumulator> accumulator)
+    public Fold([ArgumentRole(ArgumentRole.Accumulator)]
+        [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IAccumulator> accumulator)
         => Accumulator = accumulator;
 
     /// <param name="accumulator">Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`, ...).</param>

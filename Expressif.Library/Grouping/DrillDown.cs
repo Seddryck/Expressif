@@ -16,7 +16,8 @@ public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
 
     /// <param name="expressions">One or more expressions whose results are appended to the existing key.</param>
     [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
-    public DrillDown(IEnumerable<Func<object?, object?>> expressions)
+    public DrillDown([ArgumentEvaluation(ArgumentEvaluationMode.Nested)]
+        IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 
     public GroupingValue Evaluate(GroupingValue value)

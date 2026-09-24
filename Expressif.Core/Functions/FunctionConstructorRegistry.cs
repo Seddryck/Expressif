@@ -284,9 +284,11 @@ internal sealed class FunctionConstructorRegistry
                             && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)
                             && parameter.ParameterType.IsAssignableFrom(typeof(Func<object?>)),
                         ArgumentEvaluationMode.Incoming or ArgumentEvaluationMode.Nested =>
-                            parameter.ParameterType.IsGenericType
-                            && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)
-                            && parameter.ParameterType.IsAssignableFrom(typeof(Func<object?, object?>)),
+                            (parameter.ParameterType.IsGenericType
+                                && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)
+                                && parameter.ParameterType.IsAssignableFrom(typeof(Func<object?, object?>)))
+                            || parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>)
+                            || TryGetNamedEvaluatorConstructor(parameter.ParameterType, out _),
                         _ => false,
                     };
                     if (!validShape)
@@ -296,6 +298,22 @@ internal sealed class FunctionConstructorRegistry
                     }
                     if (nullability.Create(parameter).ReadState == NullabilityState.Nullable && !parameter.IsOptional)
                         throw InvalidMetadata(type, parameter, "nullable delegates must be optional");
+                    if (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>)
+                        && (target.GetParameters().Length != 1
+                            || target.GetCustomAttribute<Expressif.Bindings.ArgumentLayoutAttribute>() is not
+                                { Kind: Expressif.Bindings.ArgumentLayoutKind.Positional }))
+                    {
+                        throw InvalidMetadata(type, parameter,
+                            "expression collections require a single-parameter positional argument layout");
+                    }
+                    if (TryGetNamedEvaluatorConstructor(parameter.ParameterType, out _)
+                        && (target.GetParameters().Length != 1
+                            || target.GetCustomAttribute<Expressif.Bindings.ArgumentLayoutAttribute>() is not
+                                { Kind: Expressif.Bindings.ArgumentLayoutKind.Named }))
+                    {
+                        throw InvalidMetadata(type, parameter,
+                            "named evaluator collections require a single-parameter named argument layout");
+                    }
 
                     var name = parameter.Name!.ToKebabCase();
                     if (modes.TryGetValue(name, out var previous) && previous != attribute.Mode)
@@ -310,6 +328,19 @@ internal sealed class FunctionConstructorRegistry
 
     private static InvalidOperationException InvalidMetadata(Type type, ParameterInfo parameter, string reason)
         => new($"Invalid argument evaluation metadata on '{type.FullName}.{parameter.Name}': {reason}.");
+
+    internal static bool TryGetNamedEvaluatorConstructor(Type parameterType, out ConstructorInfo constructor)
+    {
+        constructor = null!;
+        if (!parameterType.IsGenericType || parameterType.GetGenericTypeDefinition() != typeof(Func<>))
+            return false;
+        var resultType = parameterType.GetGenericArguments()[0];
+        if (!resultType.IsArray)
+            return false;
+        constructor = resultType.GetElementType()!.GetConstructor(
+            [typeof(string), typeof(Func<object?, object?>)])!;
+        return constructor is not null;
+    }
 
     private static IReadOnlyDictionary<Type, IFunctionConstructor> Build(
         IEnumerable<IFunctionConstructor> constructors)

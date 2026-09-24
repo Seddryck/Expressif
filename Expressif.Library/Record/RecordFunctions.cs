@@ -190,7 +190,8 @@ public sealed class Put : BasePut
 {
     /// <param name="assignments">One or more named assignments evaluated against the original input record.</param>
     [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
-    public Put(Func<RecordAssignmentEvaluator[]> assignments)
+    public Put([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Always) { }
 }
 
@@ -201,7 +202,8 @@ public sealed class PutPresent : BasePut
 {
     /// <param name="assignments">One or more named assignments applied only to fields already present.</param>
     [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
-    public PutPresent(Func<RecordAssignmentEvaluator[]> assignments)
+    public PutPresent([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Present) { }
 }
 
@@ -212,7 +214,8 @@ public sealed class PutAbsent : BasePut
 {
     /// <param name="assignments">One or more named assignments applied only to fields that are absent.</param>
     [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
-    public PutAbsent(Func<RecordAssignmentEvaluator[]> assignments)
+    public PutAbsent([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Absent) { }
 }
 

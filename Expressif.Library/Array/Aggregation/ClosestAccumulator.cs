@@ -21,7 +21,7 @@ public class ClosestAccumulator : BaseArrayAccumulator
     private object? closest;
 
     /// <param name="target">Specifies the reference value used to measure numeric or temporal distance.</param>
-    public ClosestAccumulator(Func<object?> target)
+    public ClosestAccumulator([ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> target)
         => targetProvider = target;
 
     public override void Initialize()
