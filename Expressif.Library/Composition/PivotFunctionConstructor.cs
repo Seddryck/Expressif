@@ -21,10 +21,7 @@ internal sealed class PivotFunctionConstructor : IFunctionConstructor<Expressif.
 
         NamedFieldSelector BuildRow(IParameter parameter)
         {
-            var field = parameter is OpenExpressionParameter open
-                ? open.Expression.Members.ToArray()
-                : [];
-            if (field is not [{ Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string name }] }])
+            if (!ExpressionShapeNormalizer.TryGetDirectFieldName(parameter, out var name))
             {
                 throw new BindingException(
                     "Each pivot row dimension must be a direct field selector such as .country; computed or unnamed row expressions are not supported.");

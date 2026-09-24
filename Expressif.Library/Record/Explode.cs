@@ -16,7 +16,7 @@ public class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<IEnumera
     private readonly bool preserveParent;
 
     /// <param name="selector">A direct field selector identifying the collection-valued field to replace.</param>
-    public Explode(NamedFieldSelector selector) => this.selector = selector;
+    public Explode([AcceptedExpressionShape(AcceptedExpressionShape.DirectFieldSelector)] NamedFieldSelector selector) => this.selector = selector;
 
     protected Explode(NamedFieldSelector selector, bool preserveParent)
     {

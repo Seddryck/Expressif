@@ -370,6 +370,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 return InstantiateAnnotated(registeredType, annotated, function, context);
             if (constructors.TryGetRoleAnnotated(registeredType, out var roleAnnotated))
                 return InstantiateRoleAnnotated(registeredType, roleAnnotated, function, context);
+            if (constructors.TryGetShapeAnnotated(registeredType, out var shapeAnnotated))
+                return InstantiateShapeAnnotated(registeredType, shapeAnnotated, function, context);
             if (constructors.TryGetSpreadPacked(registeredType, out var spreadPacked))
                 return InstantiateValueSpread(registeredType, spreadPacked, function, context);
         }
@@ -443,14 +445,52 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 ArgumentRole.Accumulator => BuildAccumulatorProvider(parameter, context),
                 ArgumentRole.Transformation => TryGetOpenExpression(parameter, out var open)
                     ? BuildTransformationProvider(open, context)
-                    : throw new ArgumentException(
-                        $"The function named '{function.Name}' expects parameter '{metadata[index].Name}' to be an open expression.",
-                        nameof(function)),
+                    : throw new BindingException(
+                        $"Function '{function.Name}' parameter '{metadata[index].Name}' must be an open expression."),
                 _ => throw new InvalidOperationException($"Unsupported argument role on '{type.FullName}.{metadata[index].Name}'."),
             };
         }
         return binding.Constructor.Invoke(providers) as IFunction
             ?? throw new InvalidOperationException($"Role-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private IFunction InstantiateShapeAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var values = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = metadata[index];
+            var shape = parameter.GetCustomAttribute<AcceptedExpressionShapeAttribute>()?.Shape
+                ?? throw new InvalidOperationException(
+                    $"Constructor '{type.FullName}' parameter '{parameter.Name}' has no expression shape metadata.");
+            values[index] = shape switch
+            {
+                AcceptedExpressionShape.DirectFieldSelector => CreateDirectFieldSelector(
+                    binding.Parameters[index], function.Name, parameter.Name!, context),
+                AcceptedExpressionShape.OpenExpression => ExpressionShapeNormalizer.TryGetOpenExpression(
+                    binding.Parameters[index], out var open)
+                    ? BuildTransformationProvider(open, context)
+                    : throw new BindingException(
+                        $"Function '{function.Name}' parameter '{parameter.Name}' must be an open expression."),
+                _ => throw new InvalidOperationException($"Unsupported expression shape '{shape}'."),
+            };
+        }
+        return binding.Constructor.Invoke(values) as IFunction
+            ?? throw new InvalidOperationException($"Shape-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private NamedFieldSelector CreateDirectFieldSelector(
+        IParameter parameter, string function, string parameterName, IContext context)
+    {
+        var name = ExpressionShapeNormalizer.RequireDirectFieldName(parameter, function, parameterName);
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return new NamedFieldSelector(name, value => EvaluationRuntime.EvaluateNested(evaluator, value, value));
     }
 
     private Func<object?, object?> BuildNestedValueEvaluator(IParameter parameter, IContext context)
@@ -859,22 +899,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private static bool TryGetOpenExpression(
         IParameter parameter,
         [NotNullWhen(true)] out OpenExpressionParameter? expression)
-    {
-        expression = parameter switch
-        {
-            OpenExpressionParameter open => open,
-            ScopedTupleProjectionParameter projection => new OpenExpressionParameter(new OpenExpression([
-                new Bindings.Function(
-                    "tuple-at",
-                    [projection],
-                    FunctionSyntax.ScopedTupleProjectionShorthand),
-            ])),
-            LiteralParameter { Value: string value } => new OpenExpressionParameter(
-                new OpenExpression([new Bindings.Function(value, [])])),
-            _ => null
-        };
-        return expression is not null;
-    }
+        => ExpressionShapeNormalizer.TryGetOpenExpression(parameter, out expression);
 
     protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {

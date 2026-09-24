@@ -12,6 +12,7 @@ internal sealed class FunctionConstructorRegistry
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> annotated;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo> spreadPacked;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> roleAnnotated;
+    private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> shapeAnnotated;
 
     public FunctionConstructorRegistry(IEnumerable<IFunctionConstructor> constructors)
         : this(constructors, []) { }
@@ -25,6 +26,7 @@ internal sealed class FunctionConstructorRegistry
         annotated = DiscoverAnnotated(types);
         spreadPacked = DiscoverSpreadPacked(types);
         roleAnnotated = DiscoverRoles(types);
+        shapeAnnotated = DiscoverShapes(types);
     }
 
     public FunctionConstructorRegistry(params Assembly[] assemblies)
@@ -55,6 +57,66 @@ internal sealed class FunctionConstructorRegistry
             return true;
         return DiscoverRoles([functionType]).TryGetValue(functionType, out targets!);
     }
+
+    public bool TryGetShapeAnnotated(Type functionType, out ConstructorInfo[] targets)
+    {
+        if (shapeAnnotated.TryGetValue(functionType, out targets!))
+            return true;
+        return DiscoverShapes([functionType]).TryGetValue(functionType, out targets!);
+    }
+
+    private static IReadOnlyDictionary<Type, ConstructorInfo[]> DiscoverShapes(IEnumerable<Type> types)
+    {
+        var result = new Dictionary<Type, ConstructorInfo[]>();
+        foreach (var type in types.Distinct().Where(type => type.IsClass && !type.IsAbstract
+            && typeof(IFunction).IsAssignableFrom(type)))
+        {
+            var targets = type.GetConstructors().Where(constructor => constructor.GetParameters()
+                .Any(parameter => parameter.IsDefined(typeof(AcceptedExpressionShapeAttribute), false))).ToArray();
+            if (targets.Length == 0)
+                continue;
+            var shapes = new Dictionary<string, AcceptedExpressionShape>(StringComparer.OrdinalIgnoreCase);
+            foreach (var target in targets)
+            {
+                foreach (var parameter in target.GetParameters())
+                {
+                    var attribute = parameter.GetCustomAttribute<AcceptedExpressionShapeAttribute>();
+                    if (attribute is null)
+                        continue;
+                    if (!Enum.IsDefined(attribute.Shape))
+                        throw InvalidShapeMetadata(type, parameter, "unknown expression shape");
+                    var expectedType = attribute.Shape switch
+                    {
+                        AcceptedExpressionShape.DirectFieldSelector => typeof(Expressif.Bindings.NamedFieldSelector),
+                        AcceptedExpressionShape.OpenExpression => typeof(Func<IFunction>),
+                        AcceptedExpressionShape.CallableReference => parameter.ParameterType,
+                        _ => throw InvalidShapeMetadata(type, parameter, "unknown expression shape"),
+                    };
+                    if (parameter.ParameterType != expectedType)
+                    {
+                        throw InvalidShapeMetadata(type, parameter,
+                            $"{attribute.Shape} requires a {expectedType.Name} runtime parameter");
+                    }
+                    if (attribute.Shape == AcceptedExpressionShape.CallableReference
+                        && (!parameter.ParameterType.IsGenericType
+                            || parameter.ParameterType.GetGenericTypeDefinition() != typeof(Func<>)))
+                    {
+                        throw InvalidShapeMetadata(type, parameter,
+                            "CallableReference requires a zero-input provider delegate");
+                    }
+                    var name = parameter.Name!.ToKebabCase();
+                    if (shapes.TryGetValue(name, out var previous) && previous != attribute.Shape)
+                        throw InvalidShapeMetadata(type, parameter, "equivalent overload parameters must use the same expression shape");
+                    shapes[name] = attribute.Shape;
+                }
+            }
+            result.Add(type, targets);
+        }
+        return result;
+    }
+
+    private static InvalidOperationException InvalidShapeMetadata(Type type, ParameterInfo parameter, string reason)
+        => new($"Invalid expression shape metadata on '{type.FullName}.{parameter.Name}': {reason}.");
 
     private static IReadOnlyDictionary<Type, ConstructorInfo[]> DiscoverRoles(IEnumerable<Type> types)
     {
