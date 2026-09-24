@@ -97,6 +97,21 @@ public class RecordFunctionsTest
             Throws.TypeOf<ArgumentException>()
                 .With.Message.EqualTo("Record path tuple must contain at least one segment. (Parameter 'value')"));
 
+    [TestCase("put-path")]
+    [TestCase("put-present-path")]
+    [TestCase("put-absent-path")]
+    public void PutPathVariants_NamedArgumentsEvaluateAgainstIncomingRecord(string name)
+    {
+        var input = new ValueRecord();
+        input.Set("target", "old");
+        input.Set("source", "new");
+
+        var result = (ValueRecord)TestExpression.Create(
+            $"{name}(value := .source, path := \"target\")").Evaluate(input)!;
+
+        Assert.That(result["target"], Is.EqualTo(name == "put-absent-path" ? "old" : "new"));
+    }
+
     [Test]
     public void PutPath_NestedAssignment_DoesNotMutateInput()
     {
