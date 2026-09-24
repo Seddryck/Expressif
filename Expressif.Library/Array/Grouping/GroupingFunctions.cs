@@ -14,7 +14,8 @@ public sealed class Key : IFunction<object?, PairValue>
 
     /// <param name="expressions">One or more expressions evaluated against the input; multiple results form a tuple key.</param>
     [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
-    public Key(IEnumerable<Func<object?, object?>> expressions)
+    public Key([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 
     public PairValue Evaluate(object? value)
@@ -45,7 +46,8 @@ public sealed class GroupBy : BaseArrayFunction<GroupingValue>
 
     /// <param name="expressions">One or more expressions evaluated once per input value; multiple results form a tuple key.</param>
     [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
-    public GroupBy(IEnumerable<Func<object?, object?>> expressions)
+    public GroupBy([ArgumentEvaluation(ArgumentEvaluationMode.Nested)]
+        IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 
     protected override object? EvaluateArray(IEnumerable enumerable)
