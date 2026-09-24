@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Expressif.Bindings;
 using Expressif.Values;
 using ValueRecord = Expressif.Values.RecordValue;
 
@@ -188,6 +189,7 @@ public abstract class BasePut : IFunction<ValueRecord, ValueRecord>
 public sealed class Put : BasePut
 {
     /// <param name="assignments">One or more named assignments evaluated against the original input record.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
     public Put(Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Always) { }
 }
@@ -198,6 +200,7 @@ public sealed class Put : BasePut
 public sealed class PutPresent : BasePut
 {
     /// <param name="assignments">One or more named assignments applied only to fields already present.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
     public PutPresent(Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Present) { }
 }
@@ -208,6 +211,7 @@ public sealed class PutPresent : BasePut
 public sealed class PutAbsent : BasePut
 {
     /// <param name="assignments">One or more named assignments applied only to fields that are absent.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
     public PutAbsent(Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Absent) { }
 }

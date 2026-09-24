@@ -1,5 +1,6 @@
 using System.Collections;
 using Expressif.Values;
+using Expressif.Bindings;
 using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Array.Grouping;
@@ -12,6 +13,7 @@ public sealed class Key : IFunction<object?, PairValue>
     private IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
     /// <param name="expressions">One or more expressions evaluated against the input; multiple results form a tuple key.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
     public Key(IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 
@@ -42,6 +44,7 @@ public sealed class GroupBy : BaseArrayFunction<GroupingValue>
     private IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
     /// <param name="expressions">One or more expressions evaluated once per input value; multiple results form a tuple key.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
     public GroupBy(IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 

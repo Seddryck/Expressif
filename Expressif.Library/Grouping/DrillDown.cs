@@ -1,5 +1,6 @@
 using Expressif.Library.Array;
 using Expressif.Values;
+using Expressif.Bindings;
 using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Grouping;
@@ -14,6 +15,7 @@ public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
     private IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
     /// <param name="expressions">One or more expressions whose results are appended to the existing key.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
     public DrillDown(IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 
