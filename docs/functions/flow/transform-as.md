@@ -31,7 +31,7 @@ Transforms one or more named expression results with the same open expression an
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Open expression evaluated once against each named result. |
-| `expressions` | `entry` | Variadic (one or more) | One or more named expressions evaluated independently against the original input. |
+| `expressions` | `entry` | Variadic (one or more); no spread | One or more named expressions evaluated independently against the original input. |
 
 
 

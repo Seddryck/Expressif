@@ -29,7 +29,7 @@ Returns `true` when strictly more than half of the supplied predicates are satis
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `predicates` | `predicate` | Variadic (zero or more) | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
+| `predicates` | `predicate` | Variadic (zero or more); no spread | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
 
 
 

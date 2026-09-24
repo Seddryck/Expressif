@@ -29,7 +29,7 @@ Returns the result of the first branch whose predicate accepts the original inpu
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `branches` | `entry` | Variadic (one or more) | Ordered branches with an optional final catch-all fallback. |
+| `branches` | `entry` | Variadic (one or more); no spread | Ordered branches with an optional final catch-all fallback. |
 
 
 

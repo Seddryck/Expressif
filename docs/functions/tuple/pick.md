@@ -29,7 +29,7 @@ Returns a tuple containing selected positions in the requested order.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `positions` | `integer` | Variadic (one or more) | One or more zero-based tuple positions. |
+| `positions` | `integer` | Variadic (one or more); no spread | One or more zero-based tuple positions. |
 
 
 

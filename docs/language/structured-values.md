@@ -285,7 +285,7 @@ A tuple passed to a function is likewise one input value. If the function expect
 
 ## Spread expands; it does not map or flatten
 
-Spread is explicit expansion during construction. In an array construction, a spread array contributes its elements at that position:
+Spread is explicit expansion during construction. In an array construction or a function parameter documented as accepting spread, a spread array contributes its elements at that position:
 
 ```expressif
 {1, ...{2, 3}, 4}
@@ -293,7 +293,7 @@ Spread is explicit expansion during construction. In an array construction, a sp
 
 produces `{1, 2, 3, 4}`. In `record(...)`, a standalone `...` contributes the incoming record's fields to the new record.
 
-Spread does not evaluate a transformation for each element, and it does not recursively flatten nested collections. `{1, ...{{2, 3}}, 4}` still contains the nested array `{2, 3}` as one element. See [Advanced expressions](advanced.md#array-spread-arguments) for the supported spread contexts.
+Spread does not evaluate a transformation for each element, and it does not recursively flatten nested collections. `{1, ...{{2, 3}}, 4}` still contains the nested array `{2, 3}` as one element. See [Advanced expressions](advanced.md#positional-spread-arguments) for the supported spread contexts.
 
 ## Tuple positions and record fields
 

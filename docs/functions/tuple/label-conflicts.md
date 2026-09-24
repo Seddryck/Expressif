@@ -29,7 +29,7 @@ Returns a flat record whose expanded record fields receive positional labels onl
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `names` | `text` | Variadic (zero or more) | One label for each tuple position, in positional order. Omission supplies an empty variadic sequence. |
+| `names` | `text` | Variadic (zero or more); no spread | One label for each tuple position, in positional order. Omission supplies an empty variadic sequence. |
 
 
 
