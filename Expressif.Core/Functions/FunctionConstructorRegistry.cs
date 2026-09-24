@@ -11,6 +11,7 @@ internal sealed class FunctionConstructorRegistry
     private readonly IReadOnlyDictionary<Type, IFunctionConstructor> constructors;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> annotated;
     private readonly IReadOnlyDictionary<Type, ConstructorInfo> spreadPacked;
+    private readonly IReadOnlyDictionary<Type, ConstructorInfo[]> roleAnnotated;
 
     public FunctionConstructorRegistry(IEnumerable<IFunctionConstructor> constructors)
         : this(constructors, []) { }
@@ -23,6 +24,7 @@ internal sealed class FunctionConstructorRegistry
         this.constructors = Build(materialized);
         annotated = DiscoverAnnotated(types);
         spreadPacked = DiscoverSpreadPacked(types);
+        roleAnnotated = DiscoverRoles(types);
     }
 
     public FunctionConstructorRegistry(params Assembly[] assemblies)
@@ -46,6 +48,58 @@ internal sealed class FunctionConstructorRegistry
             return true;
         return DiscoverSpreadPacked([functionType]).TryGetValue(functionType, out target!);
     }
+
+    public bool TryGetRoleAnnotated(Type functionType, out ConstructorInfo[] targets)
+    {
+        if (roleAnnotated.TryGetValue(functionType, out targets!))
+            return true;
+        return DiscoverRoles([functionType]).TryGetValue(functionType, out targets!);
+    }
+
+    private static IReadOnlyDictionary<Type, ConstructorInfo[]> DiscoverRoles(IEnumerable<Type> types)
+    {
+        var result = new Dictionary<Type, ConstructorInfo[]>();
+        foreach (var type in types.Distinct().Where(type => type.IsClass && !type.IsAbstract
+            && typeof(IFunction).IsAssignableFrom(type)))
+        {
+            var targets = type.GetConstructors().Where(constructor => constructor.GetParameters()
+                .Any(parameter => parameter.IsDefined(typeof(ArgumentRoleAttribute), false))).ToArray();
+            if (targets.Length == 0)
+                continue;
+            var roles = new Dictionary<string, ArgumentRole>(StringComparer.OrdinalIgnoreCase);
+            foreach (var target in targets)
+            {
+                foreach (var parameter in target.GetParameters())
+                {
+                    var attribute = parameter.GetCustomAttribute<ArgumentRoleAttribute>()
+                        ?? throw InvalidRoleMetadata(type, parameter, "every parameter in a role-annotated constructor must declare a role");
+                    if (!Enum.IsDefined(attribute.Role))
+                        throw InvalidRoleMetadata(type, parameter, "unknown semantic role");
+                    var expectedType = attribute.Role switch
+                    {
+                        ArgumentRole.Predicate => typeof(Func<Predicates.IPredicate>),
+                        ArgumentRole.Transformation => typeof(Func<IFunction>),
+                        ArgumentRole.Accumulator => typeof(Func<Accumulation.IAccumulator>),
+                        _ => throw InvalidRoleMetadata(type, parameter, "unknown semantic role"),
+                    };
+                    if (parameter.ParameterType != expectedType)
+                    {
+                        throw InvalidRoleMetadata(type, parameter,
+                            $"{attribute.Role} requires a {expectedType.Name} provider delegate");
+                    }
+                    var name = parameter.Name!.ToKebabCase();
+                    if (roles.TryGetValue(name, out var previous) && previous != attribute.Role)
+                        throw InvalidRoleMetadata(type, parameter, "equivalent overload parameters must use the same semantic role");
+                    roles[name] = attribute.Role;
+                }
+            }
+            result.Add(type, targets);
+        }
+        return result;
+    }
+
+    private static InvalidOperationException InvalidRoleMetadata(Type type, ParameterInfo parameter, string reason)
+        => new($"Invalid argument role metadata on '{type.FullName}.{parameter.Name}': {reason}.");
 
     private static IReadOnlyDictionary<Type, ConstructorInfo> DiscoverSpreadPacked(IEnumerable<Type> types)
     {

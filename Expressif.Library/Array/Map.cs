@@ -16,7 +16,7 @@ public class Map : BaseArrayFunction
     public Func<IFunction> Transformation { get; }
 
     /// <param name="transformation">Expression creating the transformation applied to each input item.</param>
-    public Map(Func<IFunction> transformation)
+    public Map([ArgumentRole(ArgumentRole.Transformation)] Func<IFunction> transformation)
         => Transformation = transformation;
 
     protected override object? EvaluateArray(IEnumerable enumerable)
