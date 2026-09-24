@@ -404,6 +404,41 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         Bindings.Function function,
         IContext context)
     {
+        var collection = targets.SingleOrDefault(target => target.GetParameters() is
+            [var parameter] && (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>)
+                || FunctionConstructorRegistry.TryGetNamedEvaluatorConstructor(parameter.ParameterType, out _)));
+        if (collection is not null)
+        {
+            var parameter = collection.GetParameters()[0];
+            var mode = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>()!.Mode;
+            var layout = ParameterArgumentBinder.BindLayout(type, function.Arguments);
+            object values;
+            if (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>))
+            {
+                values = layout.Positional.Select(argument => mode == ArgumentEvaluationMode.Nested
+                    ? BuildNestedValueEvaluator(argument.Value, context)
+                    : BuildValueEvaluator(argument.Value, context)).ToArray();
+            }
+            else
+            {
+                FunctionConstructorRegistry.TryGetNamedEvaluatorConstructor(parameter.ParameterType, out var entry);
+                var entries = System.Array.CreateInstance(entry.DeclaringType!, layout.Named.Length);
+                for (var index = 0; index < layout.Named.Length; index++)
+                {
+                    var argument = layout.Named[index];
+                    var evaluator = mode == ArgumentEvaluationMode.Nested
+                        ? BuildNestedValueEvaluator(argument.Value, context)
+                        : BuildValueEvaluator(argument.Value, context);
+                    entries.SetValue(entry.Invoke([argument.Name!, evaluator]), index);
+                }
+                values = LinqExpression.Lambda(parameter.ParameterType,
+                    LinqExpression.Constant(entries, entries.GetType())).Compile();
+            }
+            return collection.Invoke([values]) as IFunction
+                ?? throw new InvalidOperationException(
+                    $"Annotated constructor for '{type.FullName}' did not create a function.");
+        }
+
         var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
         var metadata = binding.Constructor.GetParameters();
         var callbacks = new object?[metadata.Length];
@@ -521,12 +556,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         Type accumulatorType,
         IContext context)
     {
-        if (constructors.TryGet(accumulatorType, out var constructor))
+        if (TryBuildAccumulatorConstructor(function, accumulatorType, context, out var create))
         {
-            Func<IAccumulator> create = () =>
-                constructor.Construct(function, context, this) as IAccumulator
-                ?? throw new InvalidOperationException(
-                    $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
             _ = create();
             return new AccumulatorFunction(create);
         }
@@ -535,6 +566,28 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         return new AccumulatorFunction(() => accumulatorRegistry.Create(function.Name));
+    }
+
+    private bool TryBuildAccumulatorConstructor(
+        Bindings.Function function,
+        Type accumulatorType,
+        IContext context,
+        [NotNullWhen(true)] out Func<IAccumulator>? create)
+    {
+        create = null;
+        if (constructors.TryGet(accumulatorType, out var constructor))
+        {
+            create = () => constructor.Construct(function, context, this) as IAccumulator
+                ?? throw new InvalidOperationException(
+                    $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        else if (constructors.TryGetAnnotated(accumulatorType, out var annotated))
+        {
+            create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IAccumulator
+                ?? throw new InvalidOperationException(
+                    $"The annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        return create is not null;
     }
 
     private static IFunction? BuildReferenceFunction(Bindings.Function function)
@@ -800,12 +853,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         {
             var call = open.Expression.Members.Single();
             if (accumulatorRegistry.TryResolve(call.Name, out var accumulatorType)
-                && constructors.TryGet(accumulatorType, out var constructor))
-            {
-                return () => constructor.Construct(call, context, this) as IAccumulator
-                    ?? throw new InvalidOperationException(
-                        $"The constructor for accumulator '{call.Name}' did not create an accumulator.");
-            }
+                && TryBuildAccumulatorConstructor(call, accumulatorType, context, out var create))
+                return create;
             if (call.Arguments.Length != 0)
                 throw new MissingOrUnexpectedParametersFunctionException(call.Name, call.Parameters.Length);
         }

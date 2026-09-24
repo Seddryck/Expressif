@@ -23,17 +23,4 @@ internal static class FunctionConstructorSupport
 
     public static object? EvaluateNested(IFunction expression, object? input)
         => EvaluationRuntime.EvaluateNested(expression, input, input);
-
-    public static IEnumerable<Func<object?, object?>> BuildExpressionEvaluators(
-        Bindings.Function function,
-        IContext context,
-        IFunctionConstructionContext constructionContext)
-    {
-        if (!constructionContext.TryResolveImplementation(function.Name, out var type))
-            throw new NotImplementedFunctionException(function.Name);
-        var layout = ParameterArgumentBinder.BindLayout(type, function.Arguments);
-        return layout.Positional
-            .Select(argument => constructionContext.CreateValueEvaluator(argument.Value, context))
-            .ToArray();
-    }
 }

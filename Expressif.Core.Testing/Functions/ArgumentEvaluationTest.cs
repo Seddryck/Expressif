@@ -1,3 +1,4 @@
+using Expressif.Bindings;
 using Expressif.Discovery;
 using Expressif.Functions;
 
@@ -15,6 +16,8 @@ public class ArgumentEvaluationTest
         Assert.That(Discover(typeof(OptionalNullable)).TryGetAnnotated(typeof(OptionalNullable), out _), Is.True);
         Assert.That(Discover(typeof(ValidNested)).TryGetAnnotated(typeof(ValidNested), out _), Is.True);
         Assert.That(Discover(typeof(ValidAmbient)).TryGetAnnotated(typeof(ValidAmbient), out _), Is.True);
+        Assert.That(Discover(typeof(PositionalCollection)).TryGetAnnotated(typeof(PositionalCollection), out _), Is.True);
+        Assert.That(Discover(typeof(NamedCollection)).TryGetAnnotated(typeof(NamedCollection), out _), Is.True);
     }
 
     [TestCase(typeof(MissingMode), "every constructor parameter")]
@@ -24,6 +27,8 @@ public class ArgumentEvaluationTest
     [TestCase(typeof(InvalidNestedShape), "one-input")]
     [TestCase(typeof(InvalidAmbientShape), "zero-input")]
     [TestCase(typeof(InconsistentOverloads), "same evaluation mode")]
+    [TestCase(typeof(PositionalCollectionWithoutLayout), "positional argument layout")]
+    [TestCase(typeof(NamedCollectionWithPositionalLayout), "named argument layout")]
     public void Discovery_RejectsInvalidMetadata(Type type, string reason)
         => Assert.That(() => Discover(type),
             Throws.TypeOf<InvalidOperationException>()
@@ -80,6 +85,50 @@ public class ArgumentEvaluationTest
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> callback) : IFunction
     {
         public object? Evaluate(object? value) => callback();
+    }
+
+    public sealed class PositionalCollection : IFunction
+    {
+        [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
+        public PositionalCollection(
+            [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] IEnumerable<Func<object?, object?>> expressions)
+            => Expressions = expressions;
+
+        private IEnumerable<Func<object?, object?>> Expressions { get; }
+
+        public object? Evaluate(object? value) => Expressions.Select(expression => expression(value)).ToArray();
+    }
+
+    public sealed record NamedEntry(string Name, Func<object?, object?> Evaluator);
+
+    public sealed class NamedCollection : IFunction
+    {
+        [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1)]
+        public NamedCollection(
+            [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<NamedEntry[]> expressions)
+            => Expressions = expressions;
+
+        private Func<NamedEntry[]> Expressions { get; }
+
+        public object? Evaluate(object? value) => Expressions().Select(expression => expression.Evaluator(value)).ToArray();
+    }
+
+    public sealed class PositionalCollectionWithoutLayout(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] IEnumerable<Func<object?, object?>> expressions) : IFunction
+    {
+        public object? Evaluate(object? value) => expressions.ToArray();
+    }
+
+    public sealed class NamedCollectionWithPositionalLayout : IFunction
+    {
+        [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
+        public NamedCollectionWithPositionalLayout(
+            [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<NamedEntry[]> expressions)
+            => Expressions = expressions;
+
+        private Func<NamedEntry[]> Expressions { get; }
+
+        public object? Evaluate(object? value) => Expressions();
     }
 
     public sealed class InvalidNestedShape(
