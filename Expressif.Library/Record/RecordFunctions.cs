@@ -244,7 +244,9 @@ public sealed class PutPath : BasePutPath
 {
     /// <param name="path">An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.</param>
     /// <param name="value">The expression producing the assigned value from the original input record.</param>
-    public PutPath(Func<object?, object?> path, Func<object?, object?> value)
+    public PutPath(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> path,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         : base(path, value, AssignmentMode.Always) { }
 }
 
@@ -255,7 +257,9 @@ public sealed class PutPresentPath : BasePutPath
 {
     /// <param name="path">An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.</param>
     /// <param name="value">The expression producing the assigned value from the original input record.</param>
-    public PutPresentPath(Func<object?, object?> path, Func<object?, object?> value)
+    public PutPresentPath(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> path,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         : base(path, value, AssignmentMode.Present) { }
 }
 
@@ -266,7 +270,9 @@ public sealed class PutAbsentPath : BasePutPath
 {
     /// <param name="path">An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.</param>
     /// <param name="value">The expression producing the assigned value from the original input record.</param>
-    public PutAbsentPath(Func<object?, object?> path, Func<object?, object?> value)
+    public PutAbsentPath(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> path,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         : base(path, value, AssignmentMode.Absent) { }
 }
 

@@ -15,7 +15,9 @@ public sealed class Pair : IFunction<object?, PairValueType>
 
     /// <param name="key">The expression whose evaluated result becomes the key.</param>
     /// <param name="value">The expression whose evaluated result becomes the value.</param>
-    public Pair(Func<object?, object?> key, Func<object?, object?> value)
+    public Pair(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> key,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         => (Key, Value) = (key, value);
 
     public PairValueType Evaluate(object? input)
