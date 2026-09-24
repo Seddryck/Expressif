@@ -2,7 +2,11 @@ using System.Reflection;
 
 namespace Expressif.Bindings;
 
-internal sealed record ParameterArgumentBinding(ConstructorInfo Constructor, IParameter[] Parameters);
+internal sealed record ParameterArgumentBinding(ConstructorInfo Constructor, IParameter[] Parameters, bool[] Supplied)
+{
+    public ParameterArgumentBinding(ConstructorInfo constructor, IParameter[] parameters)
+        : this(constructor, parameters, Enumerable.Repeat(true, parameters.Length).ToArray()) { }
+}
 
 internal static class ParameterArgumentBinder
 {
@@ -40,7 +44,12 @@ internal static class ParameterArgumentBinder
         if (matches.Length == 1)
             return matches[0];
         if (matches.Length > 1)
+        {
+            var exact = matches.Where(match => match.Constructor.GetParameters().Length == arguments.Length).ToArray();
+            if (exact.Length == 1)
+                return exact[0];
             throw new AmbiguousParameterBindingException(functionName);
+        }
 
         var candidate = constructors.Where(x => x.GetParameters().Length >= positionalCount)
             .OrderByDescending(x => x.GetParameters().Length).First();
@@ -58,20 +67,25 @@ internal static class ParameterArgumentBinder
             return null;
 
         var values = new IParameter?[metadata.Length];
+        var supplied = new bool[metadata.Length];
         for (var i = 0; i < positionalCount; i++)
+        {
             values[i] = arguments[i].Value;
+            supplied[i] = true;
+        }
         foreach (var argument in arguments.Skip(positionalCount))
         {
             var index = Array.FindIndex(metadata, x => NamesMatch(x.Name!, argument.Name!));
             if (index < 0)
                 return null;
             values[index] = argument.Value;
+            supplied[index] = true;
         }
         if (values.Select((value, index) => value is null && !metadata[index].IsOptional).Any(x => x))
             return null;
         for (var i = 0; i < values.Length; i++)
             values[i] ??= new LiteralParameter(metadata[i].DefaultValue);
-        return new ParameterArgumentBinding(constructor, values!);
+        return new ParameterArgumentBinding(constructor, values!, supplied);
     }
 
     private static bool NamesMatch(string parameter, string supplied)

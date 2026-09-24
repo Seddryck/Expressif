@@ -13,13 +13,16 @@ public class ArgumentEvaluationTest
         Assert.That(registry.TryGetAnnotated(typeof(ValidIncoming), out var constructors), Is.True);
         Assert.That(constructors, Has.Length.EqualTo(1));
         Assert.That(Discover(typeof(OptionalNullable)).TryGetAnnotated(typeof(OptionalNullable), out _), Is.True);
+        Assert.That(Discover(typeof(ValidNested)).TryGetAnnotated(typeof(ValidNested), out _), Is.True);
+        Assert.That(Discover(typeof(ValidAmbient)).TryGetAnnotated(typeof(ValidAmbient), out _), Is.True);
     }
 
     [TestCase(typeof(MissingMode), "every constructor parameter")]
     [TestCase(typeof(ZeroInput), "one-input")]
     [TestCase(typeof(NonDelegate), "one-input")]
     [TestCase(typeof(RequiredNullable), "nullable delegates must be optional")]
-    [TestCase(typeof(UnsupportedMode), "not supported")]
+    [TestCase(typeof(InvalidNestedShape), "one-input")]
+    [TestCase(typeof(InvalidAmbientShape), "zero-input")]
     [TestCase(typeof(InconsistentOverloads), "same evaluation mode")]
     public void Discovery_RejectsInvalidMetadata(Type type, string reason)
         => Assert.That(() => Discover(type),
@@ -67,8 +70,26 @@ public class ArgumentEvaluationTest
         public object? Evaluate(object? value) => callback?.Invoke(value);
     }
 
-    public sealed class UnsupportedMode(
+    public sealed class ValidNested(
         [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> callback) : IFunction
+    {
+        public object? Evaluate(object? value) => callback(value);
+    }
+
+    public sealed class ValidAmbient(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> callback) : IFunction
+    {
+        public object? Evaluate(object? value) => callback();
+    }
+
+    public sealed class InvalidNestedShape(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?> callback) : IFunction
+    {
+        public object? Evaluate(object? value) => callback();
+    }
+
+    public sealed class InvalidAmbientShape(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?, object?> callback) : IFunction
     {
         public object? Evaluate(object? value) => callback(value);
     }

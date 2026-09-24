@@ -48,7 +48,21 @@ public class ParameterArgumentBinderTest
     {
         var binding = ParameterArgumentBinder.Bind(typeof(OptionalParameter), []);
 
-        Assert.That(binding.Parameters, Is.EqualTo(new[] { new LiteralParameter(null) }));
+        Assert.Multiple(() =>
+        {
+            Assert.That(binding.Parameters, Is.EqualTo(new[] { new LiteralParameter(null) }));
+            Assert.That(binding.Supplied, Is.EqualTo(new[] { false }));
+        });
+    }
+
+    [Test]
+    public void Bind_ExactArityWinsOverOverloadWithOptionalCallback()
+    {
+        var arguments = new[] { new FunctionArgument(null, new LiteralParameter(1)) };
+
+        var binding = ParameterArgumentBinder.Bind(typeof(ExactAndOptional), arguments);
+
+        Assert.That(binding.Constructor.GetParameters(), Has.Length.EqualTo(1));
     }
 
     private sealed class AmbiguousConstructors
@@ -71,5 +85,11 @@ public class ParameterArgumentBinderTest
     private sealed class OptionalParameter
     {
         public OptionalParameter(Func<int>? value = null) { }
+    }
+
+    private sealed class ExactAndOptional
+    {
+        public ExactAndOptional(Func<int> value) { }
+        public ExactAndOptional(Func<int> value, Func<int>? other = null) { }
     }
 }

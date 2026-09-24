@@ -18,13 +18,18 @@ public sealed class Join : BaseArrayFunction<IEnumerable>
 
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
-    public Join(Func<object?> right, Func<object?, object?> leftKey)
+    public Join(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey)
         : this(right, leftKey, null) { }
 
     /// <param name="right">The array, grouping, or dictionary supplying matching right-hand values.</param>
     /// <param name="leftKey">Selects the lookup key of each left value.</param>
     /// <param name="rightKey">Selects the key of each right array value; when omitted, the left-key expression is reused. It is unnecessary for a grouping or dictionary.</param>
-    public Join(Func<object?> right, Func<object?, object?> leftKey, Func<object?, object?>? rightKey)
+    public Join(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> right,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> leftKey,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?>? rightKey = null)
         => (this.right, this.leftKey, this.rightKey) = (right, leftKey, rightKey);
 
     protected override object? EvaluateArray(IEnumerable enumerable)

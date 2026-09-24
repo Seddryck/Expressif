@@ -12,7 +12,7 @@ public sealed class DrillUp : IFunction<GroupingValue, GroupingValue>
     private Func<object?, object?> Expression { get; }
 
     /// <param name="expression">The expression that derives a new key from each existing group key.</param>
-    public DrillUp(Func<object?, object?> expression)
+    public DrillUp([ArgumentEvaluation(ArgumentEvaluationMode.Nested)] Func<object?, object?> expression)
         => Expression = expression;
 
     public GroupingValue Evaluate(GroupingValue value)
