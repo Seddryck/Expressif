@@ -9,13 +9,14 @@ internal sealed class SortTermFunctionConstructor : IFunctionConstructor<Express
 {
     public IFunction Construct(Bindings.Function function, IContext context, IFunctionConstructionContext constructionContext)
     {
-        if (function.Parameters.Length is not (2 or 4)
-            || function.Parameters[1] is not CallableReferenceParameter reference)
+        if (function.Parameters.Length is not (2 or 4))
         {
             throw new BindingException(
                 "The comparer for 'sort-term' must be a tuple-bound callable reference.");
         }
 
+        var reference = ExpressionShapeNormalizer.RequireCallableReference(
+            function.Parameters[1], function.Name, "comparer");
         var target = constructionContext.ResolveTupleTarget(reference.Name, function.SourceSpan);
         var outputs = target.GetInterfaces()
             .Where(contract => contract.IsGenericType
