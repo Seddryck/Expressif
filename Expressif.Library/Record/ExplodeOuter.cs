@@ -8,6 +8,6 @@ namespace Expressif.Library.Record;
 public sealed class ExplodeOuter : Explode
 {
     /// <param name="selector">A direct field selector identifying the collection-valued field to replace.</param>
-    public ExplodeOuter(NamedFieldSelector selector)
+    public ExplodeOuter([AcceptedExpressionShape(AcceptedExpressionShape.DirectFieldSelector)] NamedFieldSelector selector)
         : base(selector, preserveParent: true) { }
 }

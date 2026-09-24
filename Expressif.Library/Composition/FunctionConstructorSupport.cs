@@ -8,22 +8,7 @@ internal static class FunctionConstructorSupport
     public static bool TryGetOpenExpression(
         IParameter parameter,
         [NotNullWhen(true)] out OpenExpressionParameter? expression)
-    {
-        expression = parameter switch
-        {
-            OpenExpressionParameter open => open,
-            ScopedTupleProjectionParameter projection => new OpenExpressionParameter(new OpenExpression([
-                new Bindings.Function(
-                    "tuple-at",
-                    [projection],
-                    FunctionSyntax.ScopedTupleProjectionShorthand),
-            ])),
-            LiteralParameter { Value: string value } => new OpenExpressionParameter(
-                new OpenExpression([new Bindings.Function(value, [])])),
-            _ => null,
-        };
-        return expression is not null;
-    }
+        => ExpressionShapeNormalizer.TryGetOpenExpression(parameter, out expression);
 
     public static bool TryGetFieldName(IParameter[] parameters, out string fieldName)
     {

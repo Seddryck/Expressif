@@ -12,7 +12,8 @@ public sealed class SortTerm : IFunction<object?, SortTermValue>
 
     /// <param name="value">The value to compare.</param>
     /// <param name="comparer">The tuple-bound ordering comparer.</param>
-    public SortTerm(Func<object?> value, Func<SortComparer> comparer)
+    public SortTerm(Func<object?> value,
+        [AcceptedExpressionShape(AcceptedExpressionShape.CallableReference)] Func<SortComparer> comparer)
         => (this.value, this.comparer) = (value, comparer);
 
     public SortTermValue Evaluate(object? input)

@@ -9,12 +9,10 @@ internal sealed class ExpandFunctionConstructor : IFunctionConstructor<Expressif
         if (function.Arguments.Any(argument => argument.IsSpread))
             throw new SpreadArgumentException("Spread arguments are not supported by expand.");
         var bound = ParameterArgumentBinder.Bind(typeof(Expressif.Library.Record.Expand), function.Arguments).Parameters;
-        var members = bound[0] is OpenExpressionParameter open ? open.Expression.Members.ToArray() : [];
-        var field = members.FirstOrDefault() is
-            { Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string fieldName }] }
-            ? fieldName
-            : null;
-        if (bound.Length == 1 && (field is null || members.Length != 1))
+        var isDirectField = ExpressionShapeNormalizer.TryGetDirectFieldName(bound[0], out var field);
+        if (!isDirectField)
+            ExpressionShapeNormalizer.TryGetLeadingFieldName(bound[0], out field);
+        if (bound.Length == 1 && !isDirectField)
         {
             throw new BindingException(
                 "The expand selector must be a direct field selector such as .customer when no explicit label is supplied.");
