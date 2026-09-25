@@ -14,7 +14,10 @@ public sealed class Throw : IFunction
         : this(() => new Expressif.Library.Special.Null()) { }
 
     /// <param name="predicate">Predicate that rejects the input when true; defaults to is-null when omitted.</param>
-    public Throw(Func<IPredicate> predicate) => this.predicate = predicate;
+    public Throw(
+        [ArgumentRole(ArgumentRole.Predicate, AllowValueExpression = true)]
+        [ProviderLifetime(ProviderLifetime.BoundExpression)]
+        Func<IPredicate> predicate) => this.predicate = predicate;
 
     public object? Evaluate(object? value)
     {

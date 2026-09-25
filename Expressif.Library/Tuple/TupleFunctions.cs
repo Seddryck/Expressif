@@ -71,7 +71,8 @@ public sealed class Extend : IFunction<IPositionalValue, IPositionalValue?>, IFu
 {
     private Func<IPositionalValue, object?> Extension { get; }
     /// <param name="value">Specifies the value to append; tuple values are expanded into their positions.</param>
-    public Extend(Func<IPositionalValue, object?> value) => Extension = value;
+    public Extend([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<IPositionalValue, object?> value) => Extension = value;
     public IPositionalValue? Evaluate(IPositionalValue value)
     {
         var extension = Extension.Invoke(value);

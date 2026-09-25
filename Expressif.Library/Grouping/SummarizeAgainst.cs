@@ -16,7 +16,10 @@ public sealed class SummarizeAgainst : IFunction<GroupingValue, DictionaryValue>
     /// <param name="local">The accumulator applied independently to each group's values.</param>
     /// <param name="global">The accumulator applied once across every group's values.</param>
     /// <param name="combine">The operation combining a finalized local summary with the global summary.</param>
-    public SummarizeAgainst(Func<IAccumulator> local, Func<IAccumulator> global, Func<IFunction> combine)
+    public SummarizeAgainst(
+        [ArgumentRole(ArgumentRole.Accumulator)] Func<IAccumulator> local,
+        [ArgumentRole(ArgumentRole.Accumulator)] Func<IAccumulator> global,
+        [ArgumentRole(ArgumentRole.Transformation)] Func<IFunction> combine)
         => (this.local, this.global, this.combine) = (local, global, combine);
 
     public DictionaryValue Evaluate(GroupingValue value)

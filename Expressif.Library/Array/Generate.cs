@@ -16,13 +16,18 @@ public class Generate : IFunction<object?, object?[]>
 
     /// <param name="while">Specifies the predicate that determines whether the current seed is included.</param>
     /// <param name="next">Specifies the expression that produces the next seed.</param>
-    public Generate(Func<IPredicate> @while, Func<IFunction> next)
+    public Generate(
+        [ArgumentRole(ArgumentRole.Predicate)] Func<IPredicate> @while,
+        [ArgumentRole(ArgumentRole.Transformation)] Func<IFunction> next)
         : this(@while, next, null) { }
 
     /// <param name="while">Specifies the predicate that determines whether the current seed is included.</param>
     /// <param name="next">Specifies the expression that produces the next seed.</param>
     /// <param name="result">Specifies the expression that produces the value appended for the current seed.</param>
-    public Generate(Func<IPredicate> @while, Func<IFunction> next, Func<IFunction>? result)
+    public Generate(
+        [ArgumentRole(ArgumentRole.Predicate)] Func<IPredicate> @while,
+        [ArgumentRole(ArgumentRole.Transformation)] Func<IFunction> next,
+        [ArgumentRole(ArgumentRole.Transformation)] Func<IFunction>? result)
         => (While, Next, Result) = (@while, next, result);
 
     public object?[] Evaluate(object? value)
