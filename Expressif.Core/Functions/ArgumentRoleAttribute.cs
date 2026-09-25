@@ -17,4 +17,5 @@ internal enum ArgumentRole
 internal sealed class ArgumentRoleAttribute(ArgumentRole role) : Attribute
 {
     public ArgumentRole Role { get; } = role;
+    public bool AllowValueExpression { get; set; }
 }

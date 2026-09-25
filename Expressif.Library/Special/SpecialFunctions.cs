@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Expressif.Bindings;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using Expressif.Values.Special;
@@ -114,7 +115,9 @@ public class Coalesce : IFunction
     public IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
     /// <param name="expressions">Two or more candidate expressions evaluated from left to right against the same input.</param>
-    public Coalesce(IEnumerable<Func<object?, object?>> expressions)
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 2)]
+    public Coalesce([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        IEnumerable<Func<object?, object?>> expressions)
     {
         Expressions = expressions.ToArray();
         if (Expressions.Count < 2)

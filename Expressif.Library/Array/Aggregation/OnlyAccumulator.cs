@@ -19,7 +19,13 @@ public class OnlyAccumulator : BaseArrayAccumulator
     public OnlyAccumulator(IPredicate predicate, IAccumulator accumulator)
         : this(() => predicate, () => accumulator) { }
 
-    internal OnlyAccumulator(Func<IPredicate> predicate, Func<IAccumulator> accumulator)
+    internal OnlyAccumulator(
+        [ArgumentRole(ArgumentRole.Predicate, AllowValueExpression = true)]
+        [ProviderLifetime(ProviderLifetime.FreshPerRequest)]
+        Func<IPredicate> predicate,
+        [ArgumentRole(ArgumentRole.Accumulator)]
+        [ProviderLifetime(ProviderLifetime.FreshPerRequest)]
+        Func<IAccumulator> accumulator)
         => (predicateProvider, accumulatorProvider) = (predicate, accumulator);
 
     public override void Initialize()
