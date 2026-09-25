@@ -4,7 +4,6 @@ using Expressif.Functions.Coercions;
 using Expressif.Values.Types;
 using Expressif.Values;
 using Expressif.Functions.Accumulation;
-using Expressif.Types;
 
 namespace Expressif.Bindings;
 
@@ -20,7 +19,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
 
     internal BindingSourceMap Sources { get; }
 
-    public ExpressifBinder(
+    internal ExpressifBinder(
         IEnumerable<IImplementationRegistry> implementationRegistries,
         FunctionBinderRegistry functionBinders,
         ITypeRegistry typeRegistry,
@@ -197,9 +196,9 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         {
             QuotedLiteralParameter => typeof(string),
             LiteralParameter { Value: { } value } => value.GetType(),
-            TupleParameter => typeof(Values.TupleValue),
-            VectorParameter => typeof(Values.VectorValue),
-            PairParameter => typeof(Values.PairValue),
+            TupleParameter => typeof(Values.Tuple),
+            VectorParameter => typeof(Values.Vector),
+            PairParameter => typeof(Values.Pair),
             GroupingParameter => typeof(Values.Grouping),
             DictionaryParameter => typeof(Values.Dictionary),
             RecordLiteralParameter => typeof(Values.RecordValue),
@@ -498,7 +497,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         return pattern.Names.Select(name => name.Name).ToArray();
     }
 
-    private InputBoundExpression BindInputBound(InputBindingExpressionSyntax syntax)
+    private OpenExpression BindInputBound(InputBindingExpressionSyntax syntax)
     {
         var names = syntax.Binding switch
         {
@@ -511,7 +510,10 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         inputBoundBody = true;
         try
         {
-            return new InputBoundExpression(names, syntax.Binding is PositionalBindingPatternSyntax, Bind(syntax.Body));
+            return new OpenExpression(new InputBoundExpression(
+                names,
+                syntax.Binding is PositionalBindingPatternSyntax,
+                Bind(syntax.Body)));
         }
         finally
         {

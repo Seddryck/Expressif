@@ -11,6 +11,8 @@ internal sealed class CoerceNumericDescriptor : CoercionDescriptor
             typeof(decimal?),
             CoercionDescriptorSupport.NumericSourceTypes
                 .Concat([typeof(bool), typeof(string), typeof(OrderingValue)]),
+            sourceType => CoercionDescriptorSupport.GetNumericOrFallbackType(
+                typeof(CoerceNumeric<>), typeof(CoerceNumeric), sourceType),
             sourceType => CoercionDescriptorSupport.CreateNumericOrFallback(
                 typeof(CoerceNumeric<>), sourceType, () => new CoerceNumeric())) { }
 }

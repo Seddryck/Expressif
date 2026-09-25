@@ -12,14 +12,14 @@ using Expressif.Functions;
 
 namespace Expressif.Introspection;
 
-public record CtorInfo(ParamInfo[] Parameters);
+internal sealed record CtorInfo(ParamInfo[] Parameters);
 
-public record ParamInfo(string Name, string Type, bool Variadic, int MinimumCardinality, string Summary);
+internal sealed record ParamInfo(string Name, string Type, bool Variadic, bool AllowsSpread, int MinimumCardinality, string Summary);
 
 /// <summary>
 /// Utility class to provide documentation for various types where available with the assembly.
 /// </summary>
-public static class DocumentationExtensions
+internal static class DocumentationExtensions
 {
     /// <summary>
     /// Provides the documentation comments for a specific method.
@@ -134,7 +134,8 @@ public static class DocumentationExtensions
                         unwrapProvider: true,
                         declaringType: type,
                         parameterName: names[i]),
-                    IsVariadicParameter(type, names[i], options),
+                    IsVariadicParameter(parameters[i], type, options),
+                    parameters[i].GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic, AllowSpread: true },
                     options.VariadicParameters.GetValueOrDefault(key),
                     paramNodes[i].InnerText.Trim()));
             }
@@ -145,11 +146,11 @@ public static class DocumentationExtensions
     }
 
     private static bool IsVariadicParameter(
+        System.Reflection.ParameterInfo parameter,
         Type declaringType,
-        string parameterName,
         IntrospectionOptions options)
-        => (typeof(IValueSpreadAware).IsAssignableFrom(declaringType) && parameterName == "values")
-            || options.VariadicParameters.ContainsKey(new(declaringType, parameterName));
+        => parameter.GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic }
+            || options.VariadicParameters.ContainsKey(new(declaringType, parameter.Name!));
 
     /// <summary>
     /// Obtains the XML Element that describes a reflection element by searching the

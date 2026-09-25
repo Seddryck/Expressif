@@ -29,12 +29,14 @@ public class TextConstructorTest
     {
         var order = new List<string>();
         var input = new object();
-        var function = new TextFunction(() =>
-        [
-            new(value => { order.Add("a"); Assert.That(value, Is.SameAs(input)); return "one"; }),
-            new(value => { order.Add("b"); Assert.That(value, Is.SameAs(input)); return 2; }),
-            new(value => { order.Add("c"); Assert.That(value, Is.SameAs(input)); return "three"; }),
-        ]);
+        var function = new TextFunction(value =>
+        {
+            Assert.That(value, Is.SameAs(input));
+            order.Add("a");
+            order.Add("b");
+            order.Add("c");
+            return ["one", 2, "three"];
+        });
 
         Assert.Multiple(() =>
         {
@@ -70,7 +72,7 @@ public class TextConstructorTest
     public void Evaluate_NonSpreadArray_RemainsSingleValue()
     {
         var array = new object?[] { "Nikola", "Tesla" };
-        var function = new TextFunction(() => [new(_ => array)]);
+        var function = new TextFunction(_ => [array]);
 
         Assert.That(function.Evaluate(null), Is.EqualTo(array.ToString()));
     }

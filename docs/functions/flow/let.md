@@ -29,7 +29,7 @@ Evaluates named bindings once and preserves the pipeline input for subsequent st
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `bindings` | `entry` | Variadic (one or more) | One or more named expressions whose results become lexical values. |
+| `bindings` | `entry` | Variadic (one or more); no spread | One or more named expressions whose results become lexical values. |
 
 
 

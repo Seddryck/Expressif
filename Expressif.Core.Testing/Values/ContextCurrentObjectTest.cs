@@ -310,7 +310,7 @@ public class ContextCurrentObjectTest
         Assert.That(context.CurrentObject.Value, Is.AssignableTo<IList<int>>());
     }
 
-    private class DataRowWrapper(DataRow row) : ILiteDataRow
+    private class DataRowWrapper(DataRow row) : IReadOnlyDataRow
     {
         private DataRow Row { get; } = row;
 

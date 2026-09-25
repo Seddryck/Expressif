@@ -29,7 +29,7 @@ Expands a grouping into explicitly declared sets of retained key dimensions.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `tuple` | Variadic (zero or more) | Zero or more tuples of zero-based key dimension positions to retain. Omission supplies an empty variadic sequence. |
+| `values` | `tuple` | Variadic (zero or more); accepts spread | Zero or more tuples of zero-based key dimension positions to retain. Omission supplies an empty variadic sequence. |
 
 
 

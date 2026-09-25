@@ -24,7 +24,8 @@ public class ConcatAccumulator : BaseArrayAccumulator
         : this(() => string.Empty) { }
 
     /// <param name="separator">Specifies the text inserted between consecutive accumulated values.</param>
-    public ConcatAccumulator(Func<string> separator)
+    public ConcatAccumulator(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<string> separator)
         => separatorProvider = separator;
 
     public override void Initialize()

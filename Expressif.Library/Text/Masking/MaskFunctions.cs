@@ -62,21 +62,21 @@ public class MaskToText : BaseTextFunction
         var mask = Mask.Invoke() ?? string.Empty;
         var stringBuilder = new StringBuilder();
         if (mask.Length != value.Length)
-            return new Expressif.Values.Special.Null().Keyword;
+            return Expressif.Values.Special.Null.Keyword;
 
         for (int i = 0; i < mask.Length; i++)
         {
             if (mask[i].Equals(maskChar) && !value[i].Equals(maskChar))
                 stringBuilder.Append(value[i]);
             else if (!mask[i].Equals(value[i]))
-                return new Expressif.Values.Special.Null().Keyword;
+                return Expressif.Values.Special.Null.Keyword;
         }
 
         return stringBuilder.ToString();
     }
 
     protected override object EvaluateBlank()
-        => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), string.Empty).Length == 0) ? new Whitespace().Keyword : new Expressif.Values.Special.Null().Keyword;
+        => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), string.Empty).Length == 0) ? Whitespace.Keyword : Expressif.Values.Special.Null.Keyword;
     protected override object EvaluateEmpty()
-        => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), string.Empty).Length == 0) ? new Expressif.Values.Special.Empty().Keyword : new Expressif.Values.Special.Null().Keyword;
+        => ((Mask.Invoke() ?? string.Empty).Replace(maskChar.ToString(), string.Empty).Length == 0) ? Expressif.Values.Special.Empty.Keyword : Expressif.Values.Special.Null.Keyword;
 }

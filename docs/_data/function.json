@@ -127,6 +127,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more expressions whose evaluated values become the elements of the resulting array.",
         "Evaluation": {
@@ -656,6 +657,7 @@
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more named expressions whose results become lexical values.",
         "Evaluation": {
@@ -728,6 +730,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more expressions evaluated independently against the original input.",
         "Evaluation": {
@@ -772,6 +775,7 @@
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more named expressions evaluated independently against the original input.",
         "Evaluation": {
@@ -3027,6 +3031,7 @@
         "Type": "text",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 1,
         "Summary": "One or more literal field names in traversal order. Spread arguments expand arrays of names in place."
       }
@@ -3408,6 +3413,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value.",
         "Evaluation": {
@@ -3435,6 +3441,7 @@
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more named assignments evaluated against the original input record.",
         "Evaluation": {
@@ -3462,6 +3469,7 @@
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more named assignments applied only to fields already present.",
         "Evaluation": {
@@ -3489,6 +3497,7 @@
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more named assignments applied only to fields that are absent.",
         "Evaluation": {
@@ -3637,6 +3646,7 @@
         "Kind": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more named projections evaluated independently against the input value.",
         "Evaluation": {
@@ -3798,6 +3808,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers.",
         "Evaluation": {
@@ -3833,6 +3844,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers.",
         "Evaluation": {
@@ -3980,6 +3992,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers."
       }
@@ -4059,6 +4072,7 @@
         "Type": "sort-term",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 1,
         "Summary": "One or more sort terms in lexicographic comparison order."
       }
@@ -4192,6 +4206,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 2,
         "Summary": "Two or more candidate expressions evaluated from left to right against the same input.",
         "Evaluation": {
@@ -4221,6 +4236,7 @@
         "Type": "type | mapping",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more positional type descriptors or selector-to-type mappings.",
         "Evaluation": {
@@ -4508,6 +4524,7 @@
         "Type": "integer",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more zero-based tuple positions.",
         "Evaluation": {
@@ -4543,6 +4560,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "One label for each tuple position, in positional order.",
         "Evaluation": {
@@ -4585,6 +4603,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "One label for each tuple position, in positional order.",
         "Evaluation": {
@@ -4622,6 +4641,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more pairs whose unique keys and values become dictionary entries.",
         "Evaluation": {
@@ -4669,6 +4689,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more expressions evaluated against the input; multiple results form a tuple key.",
         "Evaluation": {
@@ -4839,6 +4860,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more expressions evaluated once per input value; multiple results form a tuple key.",
         "Evaluation": {
@@ -4931,6 +4953,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more pairs whose keys and grouped value collections become groups.",
         "Evaluation": {
@@ -5149,6 +5172,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more expressions whose evaluated values become the positions of the resulting tuple.",
         "Evaluation": {
@@ -7590,6 +7614,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more strictly positive character counts, consumed in order. Spread arrays expand lengths in place."
       }
@@ -7827,6 +7852,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place.",
         "Evaluation": {
@@ -8683,6 +8709,7 @@
         "Type": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "Ordered branches with an optional final catch-all fallback.",
         "Evaluation": {
@@ -8710,6 +8737,7 @@
         "Type": "entry",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 2,
         "Summary": "Ordered branches with an optional final catch-all fallback.",
         "Evaluation": {
@@ -8742,6 +8770,7 @@
         "Type": "expression",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 1,
         "Summary": "One or more expressions whose results are appended to the existing key.",
         "Evaluation": {
@@ -8953,6 +8982,7 @@
           "Mode": "empty-variadic"
         },
         "Variadic": true,
+        "AllowsSpread": true,
         "MinimumCardinality": 0,
         "Summary": "Zero or more tuples of zero-based key dimension positions to retain.",
         "Evaluation": {

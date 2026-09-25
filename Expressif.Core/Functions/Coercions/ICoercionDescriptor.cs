@@ -7,11 +7,6 @@ public interface ICoercionDescriptor
     IReadOnlySet<Type> SourceTypes { get; }
 
     bool Supports(Type sourceType, Type targetType);
+    Type GetImplementationType(Type sourceType);
     IFunction Create(Type sourceType);
 }
-
-public sealed record CoercionInfo(
-    string Name,
-    Type SourceType,
-    Type TargetType,
-    Type ImplementationType);

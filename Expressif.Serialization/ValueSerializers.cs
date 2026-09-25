@@ -227,7 +227,7 @@ public static class ValueSerializers
                 DataRow row => Enumerable.Range(0, row.Table.Columns.Count)
                     .Select(index => new KeyValuePair<string, object?>(row.Table.Columns[index].ColumnName, row[index]))
                     .ToArray(),
-                ILiteDataRow row => Enumerable.Range(0, row.ColumnCount)
+                IReadOnlyDataRow row => Enumerable.Range(0, row.ColumnCount)
                     .Select(index => new KeyValuePair<string, object?>(row.ColumnNames[index], row[index]))
                     .ToArray(),
                 _ => [],
@@ -238,7 +238,7 @@ public static class ValueSerializers
                 or IDictionary<string, object?>
                 or IDictionary
                 or DataRow
-                or ILiteDataRow;
+                or IReadOnlyDataRow;
         }
     }
 }

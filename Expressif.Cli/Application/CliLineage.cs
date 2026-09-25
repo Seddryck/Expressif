@@ -15,10 +15,10 @@ internal static class CliLineage
         {
             configuration ??= CliConfiguration.CreateDefault();
             if (configuration.Get("openlineage.disabled") == "true")
-                return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
+                return IgnoredObservation.Instance;
             var url = configuration.Get("openlineage.url");
             if (string.IsNullOrWhiteSpace(url))
-                return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
+                return IgnoredObservation.Instance;
             var inputs = IsDataFile(sourcePath, format)
                 ? new[] { OpenLineageDataset.FromFile(sourcePath!) }
                 : [];
@@ -36,7 +36,7 @@ internal static class CliLineage
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
             Report(exception);
-            return NoOpExpressionObserver.Instance.Begin(ExpressionObservationStage.Evaluate);
+            return IgnoredObservation.Instance;
         }
     }
 
@@ -47,4 +47,13 @@ internal static class CliLineage
 
     private static void Report(Exception exception)
         => Console.Error.WriteLine($"OpenLineage reporting failed: {exception.Message}");
+
+    private sealed class IgnoredObservation : IExpressionObservation
+    {
+        public static IgnoredObservation Instance { get; } = new();
+
+        private IgnoredObservation() { }
+
+        public void Dispose() { }
+    }
 }

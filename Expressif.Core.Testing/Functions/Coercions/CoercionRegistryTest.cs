@@ -13,14 +13,17 @@ public class CoercionRegistryTest
 {
     public static IEnumerable<TestCaseData> DeclaredPairs()
     {
-        var registry = new CoercionRegistry(typeof(Coerce).Assembly);
-        return registry.Descriptors.SelectMany(descriptor => descriptor.SourceTypes.Select(sourceType =>
-            new TestCaseData(descriptor.Name, sourceType, descriptor.TargetType)
-                .SetName($"{descriptor.Name}.{sourceType.Name}.{descriptor.TargetType.Name}")));
+        return new CoercionIntrospector(typeof(Coerce).Assembly).Describe().Select(info =>
+            new TestCaseData(info.Name, info.SourceType, info.TargetType, info.ImplementationType)
+                .SetName($"{info.Name}.{info.SourceType.Name}.{info.TargetType.Name}"));
     }
 
     [TestCaseSource(nameof(DeclaredPairs))]
-    public void Registry_ClosesEveryDeclaredPair(string name, Type sourceType, Type targetType)
+    public void Registry_ClosesEveryDeclaredPair(
+        string name,
+        Type sourceType,
+        Type targetType,
+        Type implementationType)
     {
         var success = new CoercionRegistry(typeof(Coerce).Assembly).TryCreate(sourceType, targetType, out var function);
         var contract = typeof(IFunction<,>).MakeGenericType(sourceType, targetType);
@@ -28,6 +31,7 @@ public class CoercionRegistryTest
         Assert.Multiple(() =>
         {
             Assert.That(success, Is.True);
+            Assert.That(function, Is.TypeOf(implementationType));
             Assert.That(function.GetType().GetInterfaces(), Does.Contain(contract));
         });
     }
@@ -41,12 +45,15 @@ public class CoercionRegistryTest
             Is.False);
 
     [Test]
-    public void Introspector_ReportsEveryRegistryPair()
+    public void Introspector_ReportsEveryResolvablePair()
     {
         var registry = new CoercionRegistry(typeof(Coerce).Assembly);
-        var expected = registry.Descriptors.Sum(x => x.SourceTypes.Count);
+        var descriptions = new CoercionIntrospector(typeof(Coerce).Assembly).Describe();
 
-        Assert.That(new CoercionIntrospector(registry).Locate().ToArray(), Has.Length.EqualTo(expected));
+        Assert.That(
+            descriptions,
+            Has.All.Matches<CoercionInfo>(info =>
+                registry.TryResolve(info.SourceType, info.TargetType, out var name) && name == info.Name));
     }
 
     [Test]
@@ -118,14 +125,15 @@ public class CoercionRegistryTest
     [Test]
     public void OrderingDescriptor_AcceptsOnlyNumericSources()
     {
-        var descriptor = new CoercionRegistry(typeof(Coerce).Assembly).Descriptors
-            .Single(x => x.Name == "coerce-ordering");
+        var sourceTypes = new CoercionIntrospector(typeof(Coerce).Assembly).Describe()
+            .Where(info => info.Name == "coerce-ordering")
+            .Select(info => info.SourceType);
 
         Assert.Multiple(() =>
         {
-            Assert.That(descriptor.SourceTypes, Is.EquivalentTo(NumericCoercion.SupportedSourceTypes
+            Assert.That(sourceTypes, Is.EquivalentTo(NumericCoercion.SupportedSourceTypes
                 .SelectMany(type => new[] { type, typeof(Nullable<>).MakeGenericType(type) })));
-            Assert.That(descriptor.SourceTypes, Does.Not.Contain(typeof(string))
+            Assert.That(sourceTypes, Does.Not.Contain(typeof(string))
                 .And.Not.Contain(typeof(bool))
                 .And.Not.Contain(typeof(DateOnly)));
         });

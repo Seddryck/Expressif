@@ -88,7 +88,7 @@ public class TupleFunctionsTest
         => value switch
         {
             "(null)" => null,
-            "(empty)" => new Expressif.Values.Special.Empty(),
+            "(empty)" => Expressif.Values.Special.Empty.Instance,
             _ => ParseTupleLike(value),
         };
 
@@ -179,6 +179,29 @@ public class TupleFunctionsTest
         => Assert.That(
             TestExpression.Create("pick(1, 0, 1)").Evaluate(new TupleValue("John", "Smith")),
             Is.EqualTo(new TupleValue("Smith", "John", "Smith")));
+
+    [Test]
+    public void Pick_TypedPositionsAreReadOnEachEvaluation()
+    {
+        var context = new Context();
+        context.Variables.Set("position", 0);
+        var expression = TestExpression.Create("pick(@position)", context);
+        var input = new TupleValue("first", "second");
+
+        Assert.That(expression.Evaluate(input), Is.EqualTo(new TupleValue("first")));
+        context.Variables.Set("position", 1);
+        Assert.That(expression.Evaluate(input), Is.EqualTo(new TupleValue("second")));
+    }
+
+    [Test]
+    public void Pick_EmptySelectionStillFailsDuringEvaluation()
+        => Assert.That(() => TestExpression.Create("pick()").Evaluate(new TupleValue(1)),
+            Throws.ArgumentException.With.Message.StartWith("Pick requires at least one position."));
+
+    [TestCase("pick(position := 0)", typeof(UnknownParameterNameException))]
+    [TestCase("pick(...{0})", typeof(Expressif.Bindings.BindingException))]
+    public void Pick_RejectsNonPositionalArguments(string source, Type exceptionType)
+        => Assert.That(() => TestExpression.Create(source), Throws.TypeOf(exceptionType));
 
     [Conformance]
     public void Pick_Valid(string value, int[] positions, string expected)

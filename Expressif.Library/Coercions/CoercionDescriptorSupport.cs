@@ -15,4 +15,12 @@ internal static class CoercionDescriptorSupport
         => NumericCoercion.IsSupported(Nullable.GetUnderlyingType(sourceType) ?? sourceType)
             ? (IFunction)Activator.CreateInstance(genericFunctionType.MakeGenericType(sourceType))!
             : fallbackFactory.Invoke();
+
+    public static Type GetNumericOrFallbackType(
+        Type genericFunctionType,
+        Type fallbackType,
+        Type sourceType)
+        => NumericCoercion.IsSupported(Nullable.GetUnderlyingType(sourceType) ?? sourceType)
+            ? genericFunctionType.MakeGenericType(sourceType)
+            : fallbackType;
 }

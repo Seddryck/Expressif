@@ -29,7 +29,7 @@ Groups input values by keys calculated from one or more expressions.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated once per input value; multiple results form a tuple key. |
+| `expressions` | `expression` | Variadic (one or more); no spread | One or more expressions evaluated once per input value; multiple results form a tuple key. |
 
 
 

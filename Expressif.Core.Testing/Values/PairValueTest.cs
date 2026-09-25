@@ -8,7 +8,7 @@ public class PairValueTest
     public void Equality_WithEquivalentTupleAndGroup_IsSymmetricAndHashCompatible()
     {
         var values = new object?[] { 1, 2 };
-        var pair = new PairValue("BE", values);
+        var pair = new Pair("BE", values);
         var tuple = new TupleValue("BE", values);
         var group = new Group("BE", values);
 
@@ -47,7 +47,7 @@ public class PairValueTest
         tupleRecord.Set("code", "BE");
         tupleRecord.Set("name", "Bob");
 
-        var pair = new PairValue("BE", pairRecord);
+        var pair = new Pair("BE", pairRecord);
         var tuple = new TupleValue("BE", tupleRecord);
 
         Assert.Multiple(() =>
@@ -61,8 +61,8 @@ public class PairValueTest
     [Test]
     public void Equality_SameNestedComponents_EqualAndHaveSameHashCode()
     {
-        var left = new PairValue(new object?[] { 1, null }, new TupleValue(2, "three"));
-        var right = new PairValue(new object?[] { 1, null }, new TupleValue(2, "three"));
+        var left = new Pair(new object?[] { 1, null }, new TupleValue(2, "three"));
+        var right = new Pair(new object?[] { 1, null }, new TupleValue(2, "three"));
 
         Assert.Multiple(() =>
         {
@@ -73,15 +73,15 @@ public class PairValueTest
 
     [Test]
     public void Format_UsesCanonicalPairSyntax()
-        => Assert.That(ValueFormatter.Format(new PairValue("BE", 42)), Is.EqualTo("(\"BE\" => 42)"));
+        => Assert.That(ValueFormatter.Format(new Pair("BE", 42)), Is.EqualTo("(\"BE\" => 42)"));
 
     [Test]
     public void Format_RoundTripsWithoutLosingPairType()
     {
-        var source = new PairValue("BE", new object?[] { 42m, true });
+        var source = new Pair("BE", new object?[] { 42m, true });
         var formatted = ValueFormatter.Format(source);
         var parsed = TestExpression.CreateClosed(formatted).Evaluate(null);
 
-        Assert.That(parsed, Is.InstanceOf<PairValue>().And.EqualTo(source));
+        Assert.That(parsed, Is.InstanceOf<Pair>().And.EqualTo(source));
     }
 }

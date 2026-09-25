@@ -15,7 +15,7 @@ public sealed class Bind : IFunction<IPositionalValue, object?>
 
     /// <param name="function">Names the callable to invoke.</param>
     public Bind(Func<string> function)
-        : this(function, (name, tuple) => new FunctionFactory(new AssemblyTypesProbe([typeof(Bind).Assembly])).InvokeTuple(name, tuple)) { }
+        : this(function, (name, tuple) => new FunctionFactory(new AssemblyTypeSource(typeof(Bind).Assembly)).InvokeTuple(name, tuple)) { }
 
     internal Bind(Func<string> function, Func<string, IPositionalValue, object?> invoke)
         => (this.function, this.invoke) = (function, invoke);

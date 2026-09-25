@@ -66,6 +66,8 @@ See the language guide for [expressions](https://seddryck.github.io/Expressif/la
 
 The `Expressif` NuGet package targets .NET 8, .NET 9, and .NET 10. It is the recommended umbrella package and installs both `Expressif.Core` and the official `Expressif.Library` vocabulary.
 
+Portable logical plan types and JSON serialization live in `Expressif.Core`. To plan expressions with the built-in vocabulary, use `Expressif.Library.Composition.LogicalPlannerFactory.Create().Build(syntax)`; a Core-only host can supply its own `ILogicalPlanningContext`.
+
 ```bash
 dotnet add package Expressif
 ```

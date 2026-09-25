@@ -1,6 +1,6 @@
 using Expressif.Serialization;
 using Expressif.Bindings;
-using Expressif.Types;
+using Expressif.Values.Types;
 using Expressif.Values;
 using System;
 using System.Collections.Generic;

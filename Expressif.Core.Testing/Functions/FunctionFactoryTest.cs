@@ -19,7 +19,7 @@ public class FunctionFactoryTest
         var function = new Function("field", [], FunctionSyntax.EnclosingRootFieldShorthand);
 
         Assert.That(
-            () => new FunctionFactory(TestExpression.LibraryProbe).Instantiate(
+            () => new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
                 new OpenRootExpression(new OpenExpression([function])),
                 new Context()),
             Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
@@ -39,7 +39,7 @@ public class FunctionFactoryTest
         ]);
         var root = new OpenRootExpression(new OpenExpression([function]));
 
-        var runtime = new FunctionFactory(registry, TestExpression.LibraryProbe).Instantiate(root, new Context());
+        var runtime = new FunctionFactory(registry, TestExpression.LibraryTypeSource).Instantiate(root, new Context());
 
         Assert.That(runtime.Evaluate(null), Is.EqualTo(new object?[] { 1, 2, 3 }));
     }
@@ -68,7 +68,7 @@ public class FunctionFactoryTest
     {
         var root = ExpressifBinderFactory.Create(applyCoercion: false).Bind(
             ExpressifSyntax.Parse("trim | multiply(1.21) | round(2) | prepend(\"€\")"));
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(root, new Context());
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context());
 
         Assert.Multiple(() =>
         {
@@ -105,7 +105,7 @@ public class FunctionFactoryTest
             new Expressif.Bindings.Function("second", []),
         };
 
-        var success = new FunctionFactory(TestExpression.LibraryProbe).TryBuildTypedChain(members, functions, out var chain);
+        var success = new FunctionFactory(TestExpression.LibraryTypeSource).TryBuildTypedChain(members, functions, out var chain);
         var result = ((IFunction<string, string>)chain!).Evaluate("value");
 
         Assert.Multiple(() =>
@@ -133,7 +133,7 @@ public class FunctionFactoryTest
     {
         var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse(source));
         var root = new OpenRootExpression(new OpenExpression([function]));
-        var runtime = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(root, new Context());
+        var runtime = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context());
 
         Assert.That(runtime.Evaluate("01234567"), Is.EqualTo("01abc67"));
     }
@@ -147,7 +147,7 @@ public class FunctionFactoryTest
         var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse(source));
         var root = new OpenRootExpression(new OpenExpression([function]));
 
-        Assert.That(() => new FunctionFactory(TestExpression.LibraryProbe).Instantiate(root, new Context()), Throws.TypeOf(exceptionType));
+        Assert.That(() => new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context()), Throws.TypeOf(exceptionType));
     }
     [SetUp]
     public void Setup()
@@ -161,7 +161,7 @@ public class FunctionFactoryTest
     [TestCase(typeof(Token), 2)]
     public void GetMatchingConstructor_TypeAndParams_Valid(Type type, int paramCount)
     {
-        var ctor = new FunctionFactory(TestExpression.LibraryProbe).GetMatchingConstructor(type, paramCount);
+        var ctor = new FunctionFactory(TestExpression.LibraryTypeSource).GetMatchingConstructor(type, paramCount);
         Assert.That(ctor, Is.Not.Null);
         Assert.That(ctor.GetParameters(), Has.Length.EqualTo(paramCount));
     }
@@ -173,12 +173,12 @@ public class FunctionFactoryTest
     [TestCase(typeof(Token), 0)]
     [TestCase(typeof(Token), 3)]
     public void GetMatchingConstructor_TypeAndParams_Invalid(Type type, int paramCount)
-        => Assert.That(() => new FunctionFactory(TestExpression.LibraryProbe).GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
+        => Assert.That(() => new FunctionFactory(TestExpression.LibraryTypeSource).GetMatchingConstructor(type, paramCount), Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
     [Test]
     public void Instantiate_RoundLiteralParameter_Valid()
     {
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(typeof(Round), new[] { new LiteralParameter("1") }, new Context());
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new LiteralParameter("1") }, new Context());
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(1));
@@ -189,7 +189,7 @@ public class FunctionFactoryTest
     {
         var context = new Context();
         context.Variables.Add<int>("myVar", 2);
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(2));
@@ -200,7 +200,7 @@ public class FunctionFactoryTest
     {
         var context = new Context();
         context.CurrentObject.Set(new { Digits = 3 });
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
         Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(3));
@@ -210,7 +210,7 @@ public class FunctionFactoryTest
     public void Instantiate_RoundObjectIndexParameter_Valid()
     {
         var context = new Context();
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
         context.CurrentObject.Set(new List<int> { 0, 4 });
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
@@ -222,7 +222,7 @@ public class FunctionFactoryTest
     {
         var context = new Context();
         var subFunction = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", []) }));
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(typeof(Round), new[] { subFunction }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { subFunction }, context);
         context.Variables.Add<int>("myVar", 4);
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
@@ -236,7 +236,7 @@ public class FunctionFactoryTest
         var subFunction1 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", []) }));
         var subFunction2 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", []) }));
         var subFunction3 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", [subFunction1]), new Function("numeric-to-multiply", [subFunction2]) }));
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(typeof(Round), new[] { subFunction3 }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { subFunction3 }, context);
         context.Variables.Add<int>("myVar1", 4);
         context.Variables.Add<int>("myVar2", 5);
         Assert.That(function, Is.Not.Null);
@@ -381,7 +381,7 @@ public class FunctionFactoryTest
             [new OpenExpressionParameter(new OpenExpression([predicate]))]);
         var root = new OpenRootExpression(new OpenExpression([filter]));
 
-        var function = new FunctionFactory(TestExpression.LibraryProbe).Instantiate(root, new Context());
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context());
 
         Assert.That(function.Evaluate(new object[] { 10, 12, 13 }), Is.Empty);
     }
@@ -420,7 +420,7 @@ public class FunctionFactoryTest
     }
 
     private static IFunction Instantiate(string source, IContext context)
-        => new FunctionFactory(TestExpression.LibraryProbe).Instantiate(
+        => new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
             ExpressifBinderFactory.Create().Bind(ExpressifSyntax.Parse(source)),
             context);
 
@@ -456,10 +456,10 @@ public class FunctionFactoryTest
         }
     }
 
-    private sealed class SpreadAwareProbe(Func<ValueArgumentEvaluator[]> arguments)
-        : IFunction, IValueSpreadAware
+    [Function]
+    private sealed class SpreadAwareProbe([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] Func<object?, object?[]> arguments) : IFunction
     {
         public object? Evaluate(object? value)
-            => ValueArguments.Evaluate(arguments.Invoke(), value).ToArray();
+            => arguments.Invoke(value);
     }
 }

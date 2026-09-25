@@ -60,7 +60,7 @@ public class CasingFunctionsTests
     [Test]
     public void TextCasing_BlankInput_ReturnsBlank()
     {
-        var expected = new Whitespace().Keyword;
+        var expected = Whitespace.Keyword;
 
         Assert.Multiple(() =>
         {
@@ -76,7 +76,7 @@ public class CasingFunctionsTests
     [Test]
     public void WordCasing_BlankInput_ReturnsBlank()
     {
-        var expected = new Whitespace().Keyword;
+        var expected = Whitespace.Keyword;
 
         Assert.Multiple(() =>
         {

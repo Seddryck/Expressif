@@ -29,7 +29,7 @@ Returns the first non-null result from two or more expressions evaluated from le
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `expressions` | `expression` | Variadic (two or more) | Two or more candidate expressions evaluated from left to right against the same input. |
+| `expressions` | `expression` | Variadic (two or more); no spread | Two or more candidate expressions evaluated from left to right against the same input. |
 
 
 

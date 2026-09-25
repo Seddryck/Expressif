@@ -30,7 +30,7 @@ Evaluates named projections independently against the input, then evaluates a bo
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `projections` | `entry` | Variadic (one or more) | One or more named projections evaluated independently against the input value. |
+| `projections` | `entry` | Variadic (one or more); no spread | One or more named projections evaluated independently against the input value. |
 | `body` | `expression` | Yes | The final expression evaluated against the temporary projection record. |
 
 

@@ -9,13 +9,13 @@ namespace Expressif.Library.Composition;
 
 public class PredicateCombiner
 {
-    protected UnaryOperatorFactory UnaryFactory { get; }
-    protected BinaryOperatorFactory BinaryFactory { get; }
+    private UnaryOperatorFactory UnaryFactory { get; }
+    private BinaryOperatorFactory BinaryFactory { get; }
 
     public PredicateCombiner()
         : this(new(), new()) { }
 
-    public PredicateCombiner(UnaryOperatorFactory unaryFactory, BinaryOperatorFactory binaryFactory)
+    internal PredicateCombiner(UnaryOperatorFactory unaryFactory, BinaryOperatorFactory binaryFactory)
         => (UnaryFactory, BinaryFactory) = (unaryFactory, binaryFactory);
 
     public PredicateRightCombiner With(IPredicate left)
@@ -26,8 +26,8 @@ public class PredicateCombiner
 
     public class PredicateRightCombiner
     {
-        protected UnaryOperatorFactory UnaryFactory { get; }
-        protected BinaryOperatorFactory BinaryFactory { get; }
+        private UnaryOperatorFactory UnaryFactory { get; }
+        private BinaryOperatorFactory BinaryFactory { get; }
         private IPredicate State { get; }
 
         internal PredicateRightCombiner(UnaryOperatorFactory unaryFactory, BinaryOperatorFactory binaryFactory, IPredicate state)

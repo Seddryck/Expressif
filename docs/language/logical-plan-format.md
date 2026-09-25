@@ -4,6 +4,17 @@ Expressif logical plans are a language-level interchange format. They contain ca
 
 The top-level object identifies the format as `expressif.logical-plan`, declares its integer `version`, identifies the compatible catalog line with `catalogCompatibility`, and contains a pipeline in `plan`. Version 1 is described by [`logical-plan.schema.json`](../_data/logical-plan.schema.json).
 
+The `Expressif.Core` package owns the `Expressif.Planning` model, planner, JSON reader and writer, and embedded `Expressif.LogicalPlan.schema.json` resource. A Core-only host creates `LogicalPlanner` with an `ILogicalPlanningContext` that binds syntax and supplies function and semantic type metadata. For the official built-in vocabulary, `Expressif.Library` supplies that context:
+
+```csharp
+using Expressif.Library.Composition;
+using Expressif.Syntax;
+
+var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("trim | upper"));
+```
+
+This replaces `new LogicalPlanner()` and `LogicalPlanner.Plan(syntax)`. Callers with a custom catalog can pass it to `LogicalPlannerFactory.Create(catalog)`; custom Core-only hosts implement `ILogicalPlanningContext` and pass it to the `LogicalPlanner` constructor.
+
 ## Compatibility
 
 Readers must reject an unknown format name, plan version, node kind, or catalog compatibility level. A reader may accept added optional fields only in a later format version whose compatibility rules explicitly allow them; version 1 objects reject undeclared fields. Existing fields and node kinds do not change meaning within a format version.

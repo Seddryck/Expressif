@@ -3,14 +3,14 @@ using Expressif.Values.Types;
 
 namespace Expressif.Introspection;
 
-public readonly record struct ParameterIntrospectionKey(Type DeclaringType, string ParameterName);
+internal readonly record struct ParameterIntrospectionKey(Type DeclaringType, string ParameterName);
 
 /// <summary>
 /// Supplies vocabulary-specific metadata to the Core introspection engine.
 /// </summary>
-public sealed record IntrospectionOptions(
+internal sealed record IntrospectionOptions(
     ITypeRegistry Types,
-    ICoercionRegistry Coercions,
+    IReadOnlyList<ICoercionDescriptor> Coercions,
     IReadOnlyDictionary<ParameterIntrospectionKey, string> ParameterTypes,
     IReadOnlyDictionary<ParameterIntrospectionKey, string> ParameterNames,
     IReadOnlyDictionary<ParameterIntrospectionKey, int> VariadicParameters,
@@ -18,7 +18,11 @@ public sealed record IntrospectionOptions(
     IReadOnlyDictionary<string, string> OutputOverrides,
     Func<Type, IReadOnlyList<TupleBindingSignature>> TupleBindingSignatures)
 {
-    public IntrospectionOptions(ITypeRegistry types, ICoercionRegistry coercions)
+    internal static IntrospectionOptions Default { get; } = new(
+        new TypeRegistry(Array.Empty<TypeDescriptor>()),
+        Array.Empty<ICoercionDescriptor>());
+
+    public IntrospectionOptions(ITypeRegistry types, IReadOnlyList<ICoercionDescriptor> coercions)
         : this(
             types,
             coercions,

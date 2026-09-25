@@ -14,7 +14,7 @@ public class MetadataCompletenessTest
             "function",
             ExpressifIntrospection.Functions.Describe()
                 .Where(x => x.IsPublic)
-                .Select(x => new OperatorMetadata(x.Name, x.Aliases)));
+                .Select(x => new OperatorMetadata(x.Name, x.Aliases.ToArray())));
 
     [Test]
     public void Predicates_PublicRuntimeSurfaceMatchesGeneratedCatalog()
@@ -22,7 +22,7 @@ public class MetadataCompletenessTest
             "predicate",
             ExpressifIntrospection.Predicates.Describe()
                 .Where(x => x.IsPublic)
-                .Select(x => new OperatorMetadata(x.Name, x.Aliases)));
+                .Select(x => new OperatorMetadata(x.Name, x.Aliases.ToArray())));
 
     [TestCase("function")]
     [TestCase("predicate")]
@@ -74,6 +74,20 @@ public class MetadataCompletenessTest
         }
 
         Assert.That(failures, Is.Empty, string.Join(Environment.NewLine, failures));
+    }
+
+    [TestCase("function")]
+    [TestCase("predicate")]
+    public void Catalog_AllVariadicParametersExplicitlyDeclareSpreadSupport(string kind)
+    {
+        var failures = LoadParameters(kind)
+            .Where(item => item.Parameter.TryGetProperty("Variadic", out var variadic) && variadic.GetBoolean())
+            .Where(item => !item.Parameter.TryGetProperty("AllowsSpread", out var spread)
+                || spread.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+            .Select(item => $"{item.Member}.{item.Parameter.GetProperty("Name").GetString()}")
+            .ToArray();
+
+        Assert.That(failures, Is.Empty, string.Join(", ", failures));
     }
 
     private static void AssertComplete(string kind, IEnumerable<OperatorMetadata> runtimeOperators)

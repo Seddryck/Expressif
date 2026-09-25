@@ -2,8 +2,6 @@ using Expressif.Functions.Accumulation;
 using Expressif.Functions;
 using Expressif.Values;
 using GroupingValue = Expressif.Values.Grouping;
-using PairValue = Expressif.Values.Pair;
-using TupleValue = Expressif.Values.Tuple;
 using SummarizeAgainstFunction = Expressif.Library.Grouping.SummarizeAgainst;
 
 namespace Expressif.Testing.Grouping;

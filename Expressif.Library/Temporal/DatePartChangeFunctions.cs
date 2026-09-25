@@ -15,7 +15,7 @@ public abstract class BaseDatePartChangeFunction : BaseTemporalFunction
 {
     protected override object? EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         if (new IntegerCaster().TryCast(value, out var integer))
@@ -48,7 +48,7 @@ public class ChangeOfYear : BaseDatePartChangeFunction
     {
         var newYear = Year.Invoke();
         if (newYear < 1 || newYear > 9999)
-            return new Expressif.Values.Special.Null();
+            return Expressif.Values.Special.Null.Instance;
         var newDay = value.Month == 2 && value.Day == 29 && !DateTime.IsLeapYear(newYear) ? 28 : value.Day;
         return new DateTime(newYear, value.Month, newDay, value.Hour, value.Minute, value.Second, value.Millisecond);
     }
@@ -70,7 +70,7 @@ public class ChangeOfMonth : BaseDatePartChangeFunction
     {
         var newMonth = Month.Invoke();
         if (newMonth < 1 || newMonth > 12)
-            return new Expressif.Values.Special.Null();
+            return Expressif.Values.Special.Null.Instance;
         var lastDayOfMonth = new DateTime(value.Year, newMonth, 1).AddMonths(1).AddDays(-1).Day;
         var newDay = value.Day > lastDayOfMonth ? lastDayOfMonth : value.Day;
         return new DateTime(value.Year, newMonth, newDay, value.Hour, value.Minute, value.Second, value.Millisecond);
@@ -79,7 +79,7 @@ public class ChangeOfMonth : BaseDatePartChangeFunction
     {
         var newMonth = Month.Invoke();
         if (newMonth < 1 || newMonth > 12)
-            return new Expressif.Values.Special.Null();
+            return Expressif.Values.Special.Null.Instance;
         return new YearMonth(yearMonth.Year, newMonth);
     }
 }

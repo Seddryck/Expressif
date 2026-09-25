@@ -58,11 +58,11 @@ public class PredicateIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_SomeAliases()
     {
-        Assert.That(Infos.Count(x => x.Aliases.Length > 0), Is.GreaterThan(1));
+        Assert.That(Infos.Count(x => x.Aliases.Count > 0), Is.GreaterThan(1));
 
         foreach (var info in Infos)
         {
-            Debug.WriteLine($"{info.Name}: {(info.Aliases.Length != 0 ? info.Aliases.ElementAt(0) : string.Empty)}");
+            Debug.WriteLine($"{info.Name}: {(info.Aliases.Count != 0 ? info.Aliases.ElementAt(0) : string.Empty)}");
             foreach (var alias in info.Aliases)
                 Assert.That(info.Aliases.ElementAt(0), Is.Not.Null.And.Not.Empty);
         }
@@ -71,7 +71,7 @@ public class PredicateIntrospectorTest
     [Test]
     public void Locate_ExpressifAssembly_NoDuplicateAlias()
     {
-        var infos = Infos.Where(x => x.Aliases.Length != 0);
+        var infos = Infos.Where(x => x.Aliases.Count != 0);
 
         foreach (var info in infos)
             Assert.That(infos.Count(x => x.Aliases.Contains(info.Aliases.ElementAt(0))), Is.EqualTo(1));

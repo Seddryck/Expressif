@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Values.Casters;
 
-public class TypeChecker
+internal static class TypeChecker
 {
     public static bool IsNumericType(object value)
     => value switch

@@ -222,13 +222,13 @@ For example, an array constructor can conceptually accept:
 array(1, 2, 3, 4)
 ```
 
-It is currently the only function that accepts spread arguments. An array prefixed with `...` contributes its elements to the constructed array:
+Its `values` parameter accepts spread. An array prefixed with `...` contributes its elements to the constructed array:
 
 ```expressif
 array(1, ...@values, 4)
 ```
 
-Array spread and the standalone incoming-value expression `...` are covered in [Advanced expressions](advanced.md#array-spread-arguments).
+Other spread-aware variadic parameters are documented in the function reference; variadic alone does not imply spread support. Array spread and the standalone incoming-value expression `...` are covered in [Advanced expressions](advanced.md#positional-spread-arguments).
 
 ## Read function signatures left to right
 

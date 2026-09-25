@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Expressif.Cli.Commands;
-using Expressif.Library.Catalog;
 using Expressif.Planning;
 
 namespace Expressif.Cli.Tests;
@@ -17,8 +16,8 @@ public class LogicalPlanFormatterTests
             [
                 new LogicalArgument(parameter, new LogicalLiteral("text", "plain"), false, true),
                 new LogicalArgument(parameter, new LogicalLiteral("integer", 1), true, true),
-                new LogicalArgument(parameter, null, false, false, new ParameterOmissionDocumentation(
-                    ParameterOmissionMode.Constant,
+                new LogicalArgument(parameter, null, false, false, new PlannerOmissionDescriptor(
+                    PlannerOmissionMode.Constant,
                     omissionValue.RootElement.Clone())),
                 new LogicalArgument(parameter, null, false, false),
             ]);

@@ -55,6 +55,18 @@ public class LabelTest
                 "{pair := T(1, 2), first := \"a\", second := \"b\"} | .pair | label(.first, .second)").Evaluate(null)),
             Is.EqualTo("{a := 1, b := 2}"));
 
+    [Test]
+    public void Label_TypedNamesAreReadOnEachEvaluation()
+    {
+        var context = new Context();
+        context.Variables.Set("name", "first");
+        var expression = TestExpression.Create("label(@name)", context);
+
+        Assert.That(ValueFormatter.Format(expression.Evaluate(new TupleValue(42))), Is.EqualTo("{first := 42}"));
+        context.Variables.Set("name", "second");
+        Assert.That(ValueFormatter.Format(expression.Evaluate(new TupleValue(42))), Is.EqualTo("{second := 42}"));
+    }
+
     [TestCase("label")]
     [TestCase("label-conflicts")]
     public void Label_SpreadArgumentsAreRejected(string function)

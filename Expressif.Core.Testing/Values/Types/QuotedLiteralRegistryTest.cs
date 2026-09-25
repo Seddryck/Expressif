@@ -2,7 +2,6 @@ using System.Globalization;
 using Expressif.Bindings;
 using Expressif.Serialization;
 using Expressif.Syntax;
-using Expressif.Types;
 using Expressif.Values.Types;
 
 namespace Expressif.Testing.Types;

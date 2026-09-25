@@ -26,7 +26,7 @@ public abstract class BaseNumericFunction : IFunction<decimal?, decimal?>
 
     protected virtual object? EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value) || new Expressif.Values.Special.Empty().Equals(value) || new Whitespace().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value) || Expressif.Values.Special.Empty.Instance.Equals(value) || Whitespace.Instance.Equals(value))
             return EvaluateNull();
 
         return new NumericCaster().TryCast(value, out var numeric)

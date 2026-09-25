@@ -29,7 +29,7 @@ Assigns statically named fields only when they are absent; a present field conta
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `assignments` | `entry` | Variadic (one or more) | One or more named assignments applied only to fields that are absent. |
+| `assignments` | `entry` | Variadic (one or more); no spread | One or more named assignments applied only to fields that are absent. |
 
 
 

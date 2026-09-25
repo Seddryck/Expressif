@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -9,7 +9,7 @@ using Expressif.Values.Casters;
 
 namespace Expressif.Values.Converters;
 
-public class DateOnlyConverter : TypeConverter
+internal sealed class DateOnlyConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
         => sourceType switch

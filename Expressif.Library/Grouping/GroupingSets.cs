@@ -6,23 +6,23 @@ namespace Expressif.Library.Grouping;
 /// <summary>Expands a grouping into explicitly declared sets of retained key dimensions.</summary>
 [Function(prefix: "")]
 [Scope("grouping")]
-public sealed class GroupingSets : IFunction<GroupingValue, GroupingValue>, IValueSpreadAware
+public sealed class GroupingSets : IFunction<GroupingValue, GroupingValue>
 {
-    private readonly Func<ValueArgumentEvaluator[]> values;
+    private readonly Func<object?, object?[]> values;
 
     /// <summary>Creates a selection with no grouping levels.</summary>
     public GroupingSets()
-        : this(() => []) { }
+        : this(_ => []) { }
 
     /// <param name="values">Zero or more tuples of zero-based key dimension positions to retain.</param>
-    public GroupingSets(Func<ValueArgumentEvaluator[]> values)
+    public GroupingSets([ArgumentPacking(ArgumentPackingMode.Variadic, AllowSpread = true)] [ArgumentOmission(ArgumentOmissionMode.EmptyVariadic)] Func<object?, object?[]> values)
         => this.values = values;
 
     public GroupingValue Evaluate(GroupingValue value)
     {
         var dimensions = value.Count == 0 ? 0 : value[0].Key is TupleValue key ? key.Count : 1;
         var levels = new List<bool[]>();
-        foreach (var specification in ValueArguments.Evaluate(values.Invoke(), value))
+        foreach (var specification in values.Invoke(value))
         {
             if (specification is not TupleValue set)
                 throw new ArgumentException("Every grouping set must be a tuple of integer dimension positions.", nameof(value));

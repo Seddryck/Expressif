@@ -61,9 +61,9 @@ They are useful when:
 
 Named arguments can be values or expressions where the parameter contract allows it.
 
-## Array spread arguments
+## Positional spread arguments
 
-Spread arguments are currently supported only by the `array` function. Prefix an array value with `...` to expand its elements in place:
+Some variadic parameters accept positional spread; a variadic parameter does not necessarily accept it. Prefix an array value with `...` to expand its elements in place:
 
 ```expressif
 array(1, ...@values, 4)
@@ -77,7 +77,7 @@ Array literals support the same operation:
 {1, ...{2, 3}, 4}
 ```
 
-Other functions do not accept spread arguments. For example, `add(...@values)` is invalid.
+The function reference identifies spread-aware variadic parameters. They include `array`, `tuple`, `dictionary`, `grouping`, `grouping-sets`, `text`, `split-lengths`, `nested-field`, and `sort-key`. A non-spread-aware function such as `add` does not accept `add(...@values)`. Spread evaluates the array once, expands one level in place, and does not recursively flatten nested arrays; empty arrays contribute no arguments.
 
 ## The incoming-value reference `@_`
 
@@ -122,7 +122,7 @@ record(
 )
 ```
 
-Record handling of `...` is specific to record construction; it is not support for general spread arguments.
+Record handling of `...` is specific to record construction; it is not positional value spread on a variadic parameter.
 
 ## The variadic `array` function
 

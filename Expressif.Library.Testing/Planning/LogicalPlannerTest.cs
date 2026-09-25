@@ -1,6 +1,6 @@
 using System.Reflection;
 using Expressif.Bindings;
-using Expressif.Library.Catalog;
+using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Syntax;
 
@@ -56,8 +56,8 @@ public class LogicalPlannerTest
     [Test]
     public void Plan_AliasAndCanonicalSyntax_ProduceEquivalentCalls()
     {
-        var canonical = LogicalPlanner.Plan(ExpressionParser.Parse("upper"));
-        var alias = LogicalPlanner.Plan(ExpressionParser.Parse("text-to-upper"));
+        var canonical = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("upper"));
+        var alias = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("text-to-upper"));
 
         Assert.Multiple(() =>
         {
@@ -104,7 +104,7 @@ public class LogicalPlannerTest
         {
             Assert.That(omitted.IsExplicit, Is.False);
             Assert.That(omitted.Value, Is.Null);
-            Assert.That(omitted.Omission?.Mode, Is.EqualTo(ParameterOmissionMode.Constant));
+            Assert.That(omitted.Omission?.Mode, Is.EqualTo(PlannerOmissionMode.Constant));
             Assert.That(omitted.Omission?.Value.GetDecimal(), Is.EqualTo(1m));
         });
     }
@@ -142,7 +142,7 @@ public class LogicalPlannerTest
     [TestCase("T(1, 2)", "tuple")]
     public void Plan_ValueConstructorSyntax_UsesOrdinaryCalls(string source, string name)
     {
-        var plan = LogicalPlanner.Plan(ExpressionParser.Parse(source));
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(source));
 
         Assert.That(((LogicalCall)plan.Pipeline.Items.Single()).Function.Name, Is.EqualTo(name));
     }
@@ -150,7 +150,7 @@ public class LogicalPlannerTest
     [Test]
     public void Plan_DoesNotApplyRuntimeCoercionInsertion()
     {
-        var plan = LogicalPlanner.Plan(ExpressionParser.Parse("split(\",\") | length"));
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("split(\",\") | length"));
 
         Assert.That(plan.Pipeline.Items.OfType<LogicalCall>().Select(call => call.Function.Name),
             Is.EqualTo(new[] { "split", "length" }));
@@ -205,7 +205,7 @@ public class LogicalPlannerTest
     }
 
     private static LogicalCall SingleCall(string source)
-        => (LogicalCall)LogicalPlanner.Plan(ExpressionParser.Parse(source)).Pipeline.Items.Single();
+        => (LogicalCall)LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(source)).Pipeline.Items.Single();
 
     private static TestCaseData Shape(IParameter parameter, string expected)
         => new TestCaseData(parameter, expected).SetName($"Value_{parameter.GetType().Name}");
@@ -213,15 +213,15 @@ public class LogicalPlannerTest
     private static LogicalValue InvokeValue(IParameter parameter)
         => (LogicalValue)typeof(LogicalPlanner)
             .GetMethod("Value", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .Invoke(new LogicalPlanner(), [parameter])!;
+            .Invoke(LogicalPlannerFactory.Create(), [parameter])!;
 
     private static IReadOnlyList<LogicalArgument> InvokeNormalizeArguments(
         string name,
-        IReadOnlyList<FunctionParameterDocumentation> parameters,
+        IReadOnlyList<PlannerParameterMetadata> parameters,
         IReadOnlyList<FunctionArgument> supplied)
         => (IReadOnlyList<LogicalArgument>)typeof(LogicalPlanner)
             .GetMethod("NormalizeArguments", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .Invoke(new LogicalPlanner(), [name, parameters, supplied])!;
+            .Invoke(LogicalPlannerFactory.Create(), [name, parameters, supplied])!;
 
     private static string ShapeOf(LogicalValue value) => value switch
     {

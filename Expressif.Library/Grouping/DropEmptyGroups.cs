@@ -1,6 +1,5 @@
 using Expressif.Values;
 using GroupingValue = Expressif.Values.Grouping;
-using PairValue = Expressif.Values.Pair;
 
 namespace Expressif.Library.Grouping;
 

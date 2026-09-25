@@ -157,8 +157,8 @@ public class TupleBindingIntegrationTest
                     new("chunk-counted", typeof(ChunkCounted)),
                     new("counted-starts", typeof(CountedStarts)),
                 ]),
-                new FunctionRegistry(TestExpression.LibraryProbe)),
-            TestExpression.LibraryProbe);
+                new FunctionRegistry(TestExpression.LibraryTypeSource)),
+            TestExpression.LibraryTypeSource);
         var bound = ExpressifBinderFactory.Create().Bind(Expressif.Syntax.ExpressionParser.Parse(source));
         var result = new Expression(factory.Instantiate(bound, new Context())).Evaluate(input);
         return result is System.Collections.IEnumerable values and not string ? values.Cast<object?>().ToArray() : result;

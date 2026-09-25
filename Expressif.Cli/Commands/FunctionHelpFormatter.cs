@@ -26,6 +26,8 @@ internal static class FunctionHelpFormatter
                     builder.Append(" (variadic, ").Append(FormatMinimumCardinality(parameter)).Append(" or more)");
                 else if (parameter.Optional)
                     builder.Append(" (optional)");
+                if (parameter.AllowsSpread)
+                    builder.Append(" (accepts spread)");
 
                 builder.Append("  ").AppendLine(parameter.Summary);
             }

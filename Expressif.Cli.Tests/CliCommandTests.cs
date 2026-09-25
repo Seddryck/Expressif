@@ -2039,6 +2039,19 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Help_SpreadSupport_IsDistinctFromVariadicCardinality()
+    {
+        var spread = await InvokeAsync("help", "nested-field");
+        var variadicOnly = await InvokeAsync("help", "coalesce");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(spread.StdOut, Does.Contain("(accepts spread)"));
+            Assert.That(variadicOnly.StdOut, Does.Not.Contain("(accepts spread)"));
+        });
+    }
+
+    [Test]
     public async Task Help_DynamicFunction_DisplaysAnyContract()
     {
         var result = await InvokeAsync("help", "field");

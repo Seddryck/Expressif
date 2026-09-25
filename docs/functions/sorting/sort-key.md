@@ -29,7 +29,7 @@ Creates a non-empty ordered sort key from one or more sort terms.
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `sort-term` | Variadic (one or more) | One or more sort terms in lexicographic comparison order. |
+| `values` | `sort-term` | Variadic (one or more); accepts spread | One or more sort terms in lexicographic comparison order. |
 
 
 

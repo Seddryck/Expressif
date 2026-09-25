@@ -3,11 +3,11 @@ using Expressif.Discovery;
 
 namespace Expressif.Values.Casters;
 
-public sealed class CasterValueConverter : IValueConverter
+internal sealed class CasterValueConverter : IValueConverter
 {
     private readonly Caster caster = new();
 
-    public CasterValueConverter(ITypesProbe probe)
+    public CasterValueConverter(ITypeSource source)
     { }
 
     public object? Convert(object? value, Type targetType)

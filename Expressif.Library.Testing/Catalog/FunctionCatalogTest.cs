@@ -44,8 +44,8 @@ public class FunctionCatalogTest
                     $"Replacement equivalence for {name}");
                 Assert.That(documentation.MigrationNotes, Is.EqualTo(implementation.MigrationNotes),
                     $"Migration notes for {name}");
-                Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic)),
-                    Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic))),
+                Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic, x.AllowsSpread)),
+                    Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic, x.AllowsSpread))),
                     $"Parameters for {name}");
                 Assert.That(documentation.Parameters.Select(x => x.Summary), Is.All.Not.Empty, $"Parameter summaries for {name}");
             }
@@ -120,9 +120,26 @@ public class FunctionCatalogTest
             "sample", true, [], "special", "any", "any", "Summary.", [],
             Deprecated: true, Replacement: "replacement", Sunset: "3.0",
             ReplacementIsEquivalent: true, MigrationNotes: "No behavior change.");
-        var implementation = new FunctionInfo(
-            "sample", true, [], "special", "any", "any", false, "Reason.",
-            typeof(object), "Summary.", [], true, "replacement", "3.0", true, "No behavior change.", []);
+        var implementation = new FunctionInfo(new FunctionInfoDefinition
+        {
+            Name = "sample",
+            IsPublic = true,
+            Aliases = [],
+            Scope = "special",
+            Input = "any",
+            Output = "any",
+            Converted = false,
+            Reason = "Reason.",
+            ImplementationType = typeof(object),
+            Summary = "Summary.",
+            Parameters = [],
+            Deprecated = true,
+            Replacement = "replacement",
+            Sunset = "3.0",
+            ReplacementIsEquivalent = true,
+            MigrationNotes = "No behavior change.",
+            Signatures = [],
+        });
 
         using (Assert.EnterMultipleScope())
         {
@@ -155,6 +172,44 @@ public class FunctionCatalogTest
         => Assert.That(
             FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).MinimumCardinality,
             Is.EqualTo(minimumCardinality));
+
+    [TestCase("array", "values", true)]
+    [TestCase("nested-field", "path", true)]
+    [TestCase("sort-key", "values", true)]
+    [TestCase("record", "entries", false)]
+    [TestCase("coalesce", "expressions", false)]
+    public void Default_VariadicParameter_DeclaresPositionalSpreadSeparately(
+        string function, string parameter, bool allowsSpread)
+        => Assert.That(
+            FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter).AllowsSpread,
+            Is.EqualTo(allowsSpread));
+
+    [Test]
+    public void Default_RuntimeOmissionContracts_AgreeWithCatalog()
+    {
+        foreach (var implementation in ExpressifIntrospection.Functions.Describe().Where(item => item.IsPublic))
+        {
+            var documentation = FunctionCatalog.Default.Find(implementation.Name)!;
+            var annotated = implementation.ImplementationType.GetConstructors()
+                .SelectMany(constructor => constructor.GetParameters())
+                .Where(parameter => parameter.IsDefined(typeof(ArgumentOmissionAttribute), false));
+            foreach (var parameter in annotated)
+            {
+                var runtime = parameter.GetCustomAttributes(typeof(ArgumentOmissionAttribute), false)
+                    .Cast<ArgumentOmissionAttribute>().Single();
+                var documented = documentation.Parameters.Single(item =>
+                    item.Name == parameter.Name!.ToKebabCase());
+                var expected = runtime.Mode switch
+                {
+                    ArgumentOmissionMode.EmptyVariadic => ParameterOmissionMode.EmptyVariadic,
+                    ArgumentOmissionMode.Absent => ParameterOmissionMode.Absent,
+                    _ => throw new InvalidOperationException($"Unsupported runtime omission mode '{runtime.Mode}'."),
+                };
+                Assert.That(documented.Omission?.Mode, Is.EqualTo(expected),
+                    $"Omission for {implementation.Name}.{documented.Name}");
+            }
+        }
+    }
 
     [Test]
     public void Find_CaseVariantAliasForSameFunction_ReturnsCanonicalFunction()
@@ -246,6 +301,16 @@ public class FunctionCatalogTest
         Assert.That(
             () => FunctionCatalog.ValidateOmissions([function]),
             Throws.InvalidOperationException.With.Message.Contains(message));
+    }
+
+    [Test]
+    public void ValidateOmissions_NonVariadicParameterCannotAllowSpread()
+    {
+        var parameter = new FunctionParameterDocumentation("value", "any", false, "Summary.", AllowsSpread: true);
+        var function = new FunctionDocumentation("sample", true, [], "special", "any", "any", "Summary.", [parameter]);
+
+        Assert.That(() => FunctionCatalog.ValidateOmissions([function]),
+            Throws.InvalidOperationException.With.Message.Contains("allows spread but is not variadic"));
     }
 
     [TestCase("invalid", "per-element", "preserved", "cardinality")]

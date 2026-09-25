@@ -27,9 +27,9 @@ public abstract class BaseTextPredicate : BasePredicate
 
     protected virtual bool EvaluateUncasted(object value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
-        if (new Expressif.Values.Special.Empty().Equals(value))
+        if (Expressif.Values.Special.Empty.Instance.Equals(value))
             return EvaluateBaseText(string.Empty);
 
         var caster = new TextCaster();
@@ -42,10 +42,10 @@ public abstract class BaseTextPredicateWithoutReference : BaseTextPredicate
 {
     protected override bool EvaluateBaseText(string value)
     {
-        if (new Values.Special.Null().Equals(value))
+        if (Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
-        if (new Values.Special.Empty().Equals(value))
+        if (Values.Special.Empty.Instance.Equals(value))
             return EvaluateText(string.Empty);
 
         return EvaluateText(value);
@@ -62,20 +62,20 @@ public abstract class BaseTextPredicateReference : BaseTextPredicate
 
     protected override bool EvaluateBaseText(string value)
     {
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
         var reference = Reference.Invoke();
-        if (new Expressif.Values.Special.Null().Equals(reference))
+        if (Expressif.Values.Special.Null.Instance.Equals(reference))
             return EvaluateNull(reference);
-        if ((new Whitespace().Equals(value) || new Whitespace().Equals(reference))
-            && !(new Values.Special.Empty().Equals(value) || new Values.Special.Empty().Equals(reference)))
+        if ((Whitespace.Instance.Equals(value) || Whitespace.Instance.Equals(reference))
+            && !(Values.Special.Empty.Instance.Equals(value) || Values.Special.Empty.Instance.Equals(reference)))
             return EvaluateWhitespaces();
 
-        if (new Values.Special.Empty().Equals(value))
+        if (Values.Special.Empty.Instance.Equals(value))
             value = string.Empty;
 
-        if (new Values.Special.Empty().Equals(reference))
+        if (Values.Special.Empty.Instance.Equals(reference))
             reference = string.Empty;
 
         return EvaluateText(value, reference!);

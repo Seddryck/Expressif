@@ -16,7 +16,7 @@ public class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<IEnumera
     private readonly bool preserveParent;
 
     /// <param name="selector">A direct field selector identifying the collection-valued field to replace.</param>
-    public Explode(NamedFieldSelector selector) => this.selector = selector;
+    public Explode([AcceptedExpressionShape(AcceptedExpressionShape.DirectFieldSelector)] NamedFieldSelector selector) => this.selector = selector;
 
     protected Explode(NamedFieldSelector selector, bool preserveParent)
     {
@@ -76,7 +76,7 @@ public class Explode : IFunction<ValueRecord, ValueRecord[]>, IFunction<IEnumera
 
     internal static bool IsRecord(object? value)
         => value is ValueRecord or IReadOnlyDictionary<string, object?> or IDictionary<string, object?>
-            or IDictionary or DataRow or ILiteDataRow;
+            or IDictionary or DataRow or IReadOnlyDataRow;
 
     private static bool IsCollection(object? value)
         => value is IEnumerable and not string and not IDictionary

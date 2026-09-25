@@ -10,6 +10,7 @@ internal sealed class CoerceOrderingDescriptor : CoercionDescriptor
             "coerce-ordering",
             typeof(OrderingValue),
             CoercionDescriptorSupport.NumericSourceTypes,
+            sourceType => typeof(CoerceOrdering<>).MakeGenericType(sourceType),
             sourceType => (IFunction)Activator.CreateInstance(
                 typeof(CoerceOrdering<>).MakeGenericType(sourceType))!) { }
 }

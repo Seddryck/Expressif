@@ -6,7 +6,7 @@ internal static class LegacyTupleBindingRules
     {
         var rule = Semantics.UsageLifecycle.Find(consumer);
         if (rule is null) return false;
-        if (expression is InputBoundExpression || TupleBindingOperations.LeadingLength(expression) > 0) return false;
+        if (expression.InputBinding is not null || TupleBindingOperations.LeadingLength(expression) > 0) return false;
         var members = expression.Members.ToArray();
         return members is [{ Parameters.Length: 0 }, ..]
             && (rule.AllowFollowingStages || members.Length == 1);

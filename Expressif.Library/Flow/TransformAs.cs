@@ -1,4 +1,5 @@
 using Expressif.Values;
+using Expressif.Bindings;
 
 namespace Expressif.Library.Flow;
 
@@ -12,6 +13,8 @@ public sealed class TransformAs : IFunction<object?, RecordValue>
 
     /// <param name="operation">Open expression evaluated once against each named result.</param>
     /// <param name="expressions">One or more named expressions evaluated independently against the original input.</param>
+    [ArgumentLayout(ArgumentLayoutKind.PositionalThenNamed, PositionalPrefix = 1,
+        MinimumCardinality = 2, RequireUniqueNames = true)]
     public TransformAs(Func<IFunction> operation, IEnumerable<NamedExpressionEvaluator> expressions)
     {
         Operation = operation;

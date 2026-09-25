@@ -14,7 +14,7 @@ namespace Expressif.Testing.Predicates;
 public class PredicateRegistryTest
 {
     private static IImplementationRegistry CreateRegistry()
-        => new PredicateRegistry(TestExpression.LibraryProbe);
+        => new PredicateRegistry(TestExpression.LibraryTypeSource);
 
     [Test]
     [TestCase("equal-to", typeof(EqualTo))]

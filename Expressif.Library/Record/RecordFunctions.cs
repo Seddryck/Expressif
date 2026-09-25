@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Expressif.Bindings;
 using Expressif.Values;
 using ValueRecord = Expressif.Values.RecordValue;
 
@@ -84,7 +85,7 @@ public sealed class ExcludeFields : IFunction<ValueRecord, ValueRecord>
 /// Later entries overwrite fields with the same name created by earlier entries.
 /// </summary>
 [Function(prefix: "")]
-public class Record : IFunction<object?, ValueRecord>, IValueSpreadAware
+public class Record : IFunction<object?, ValueRecord>
 {
     private Func<RecordEntryEvaluator[]> Entries { get; }
 
@@ -188,7 +189,9 @@ public abstract class BasePut : IFunction<ValueRecord, ValueRecord>
 public sealed class Put : BasePut
 {
     /// <param name="assignments">One or more named assignments evaluated against the original input record.</param>
-    public Put(Func<RecordAssignmentEvaluator[]> assignments)
+    [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
+    public Put([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Always) { }
 }
 
@@ -198,7 +201,9 @@ public sealed class Put : BasePut
 public sealed class PutPresent : BasePut
 {
     /// <param name="assignments">One or more named assignments applied only to fields already present.</param>
-    public PutPresent(Func<RecordAssignmentEvaluator[]> assignments)
+    [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
+    public PutPresent([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Present) { }
 }
 
@@ -208,7 +213,9 @@ public sealed class PutPresent : BasePut
 public sealed class PutAbsent : BasePut
 {
     /// <param name="assignments">One or more named assignments applied only to fields that are absent.</param>
-    public PutAbsent(Func<RecordAssignmentEvaluator[]> assignments)
+    [ArgumentLayout(ArgumentLayoutKind.Named, MinimumCardinality = 1, RequireUniqueNames = true)]
+    public PutAbsent([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        Func<RecordAssignmentEvaluator[]> assignments)
         : base(assignments, AssignmentMode.Absent) { }
 }
 
@@ -244,7 +251,9 @@ public sealed class PutPath : BasePutPath
 {
     /// <param name="path">An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.</param>
     /// <param name="value">The expression producing the assigned value from the original input record.</param>
-    public PutPath(Func<object?, object?> path, Func<object?, object?> value)
+    public PutPath(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> path,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         : base(path, value, AssignmentMode.Always) { }
 }
 
@@ -255,7 +264,9 @@ public sealed class PutPresentPath : BasePutPath
 {
     /// <param name="path">An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.</param>
     /// <param name="value">The expression producing the assigned value from the original input record.</param>
-    public PutPresentPath(Func<object?, object?> path, Func<object?, object?> value)
+    public PutPresentPath(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> path,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         : base(path, value, AssignmentMode.Present) { }
 }
 
@@ -266,7 +277,9 @@ public sealed class PutAbsentPath : BasePutPath
 {
     /// <param name="path">An expression producing non-empty text for one literal segment or a non-empty tuple of non-empty text segments.</param>
     /// <param name="value">The expression producing the assigned value from the original input record.</param>
-    public PutAbsentPath(Func<object?, object?> path, Func<object?, object?> value)
+    public PutAbsentPath(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> path,
+        [ArgumentEvaluation(ArgumentEvaluationMode.Incoming)] Func<object?, object?> value)
         : base(path, value, AssignmentMode.Absent) { }
 }
 
@@ -436,5 +449,5 @@ public class RecordEntryEvaluator
             or IDictionary<string, object?>
             or IDictionary
             or DataRow
-            or ILiteDataRow;
+            or IReadOnlyDataRow;
 }

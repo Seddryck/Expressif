@@ -7,7 +7,7 @@ using Expressif.Values;
 
 namespace Expressif.Functions;
 
-public class ChainFunction : IFunction
+internal class ChainFunction : IFunction
 {
     internal IEnumerable<IFunction> Functions { get; }
 
@@ -33,7 +33,7 @@ public class ChainFunction : IFunction
     }
 }
 
-public sealed class ChainFunction<TIn, TOut> : ChainFunction, IFunction<TIn, TOut>
+internal sealed class ChainFunction<TIn, TOut> : ChainFunction, IFunction<TIn, TOut>
 {
     private Func<TIn, TOut> Pipeline { get; }
 

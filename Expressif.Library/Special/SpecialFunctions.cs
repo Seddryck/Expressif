@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Expressif.Bindings;
 using Expressif.Values;
 using Expressif.Values.Casters;
 using Expressif.Values.Special;
@@ -40,19 +41,19 @@ public abstract class BaseSpecialFunction : IFunction<object?, string>
 
     protected virtual string EvaluateHighLevelString(string value)
     {
-        if (new Expressif.Values.Special.Empty().Equals(value))
+        if (Expressif.Values.Special.Empty.Instance.Equals(value))
             return EvaluateEmpty();
 
-        if (new Expressif.Values.Special.Null().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
             return EvaluateNull();
 
-        if (new Whitespace().Equals(value))
+        if (Whitespace.Instance.Equals(value))
             return EvaluateBlank();
 
-        if (new Any().Keyword.Equals(value))
+        if (Any.Keyword.Equals(value))
             return EvaluateAny();
 
-        if (new Value().Keyword.Equals(value))
+        if (Value.Keyword.Equals(value))
             return EvaluateValue();
 
         return EvaluateString(value);
@@ -71,11 +72,11 @@ public abstract class BaseSpecialFunction : IFunction<object?, string>
 /// </summary>
 public class NullToValue : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => new Value().Keyword;
-    protected override string EvaluateEmpty() => new Expressif.Values.Special.Empty().Keyword;
-    protected override string EvaluateBlank() => new Whitespace().Keyword;
-    protected override string EvaluateAny() => new Value().Keyword;
-    protected override string EvaluateValue() => new Value().Keyword;
+    protected override string EvaluateNull() => Value.Keyword;
+    protected override string EvaluateEmpty() => Expressif.Values.Special.Empty.Keyword;
+    protected override string EvaluateBlank() => Whitespace.Keyword;
+    protected override string EvaluateAny() => Value.Keyword;
+    protected override string EvaluateValue() => Value.Keyword;
     protected override string EvaluateString(string value) => value;
 }
 
@@ -84,12 +85,12 @@ public class NullToValue : BaseSpecialFunction
 /// </summary>
 public class AnyToAny : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => new Any().Keyword;
-    protected override string EvaluateEmpty() => new Any().Keyword;
-    protected override string EvaluateBlank() => new Any().Keyword;
-    protected override string EvaluateAny() => new Any().Keyword;
-    protected override string EvaluateValue() => new Any().Keyword;
-    protected override string EvaluateString(string value) => new Any().Keyword;
+    protected override string EvaluateNull() => Any.Keyword;
+    protected override string EvaluateEmpty() => Any.Keyword;
+    protected override string EvaluateBlank() => Any.Keyword;
+    protected override string EvaluateAny() => Any.Keyword;
+    protected override string EvaluateValue() => Any.Keyword;
+    protected override string EvaluateString(string value) => Any.Keyword;
 }
 
 /// <summary>
@@ -97,12 +98,12 @@ public class AnyToAny : BaseSpecialFunction
 /// </summary>
 public class ValueToValue : BaseSpecialFunction
 {
-    protected override string EvaluateNull() => new Expressif.Values.Special.Null().Keyword;
-    protected override string EvaluateEmpty() => new Value().Keyword;
-    protected override string EvaluateBlank() => new Value().Keyword;
-    protected override string EvaluateAny() => new Value().Keyword;
-    protected override string EvaluateValue() => new Value().Keyword;
-    protected override string EvaluateString(string value) => new Value().Keyword;
+    protected override string EvaluateNull() => Expressif.Values.Special.Null.Keyword;
+    protected override string EvaluateEmpty() => Value.Keyword;
+    protected override string EvaluateBlank() => Value.Keyword;
+    protected override string EvaluateAny() => Value.Keyword;
+    protected override string EvaluateValue() => Value.Keyword;
+    protected override string EvaluateString(string value) => Value.Keyword;
 }
 
 /// <summary>
@@ -114,7 +115,9 @@ public class Coalesce : IFunction
     public IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
     /// <param name="expressions">Two or more candidate expressions evaluated from left to right against the same input.</param>
-    public Coalesce(IEnumerable<Func<object?, object?>> expressions)
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 2)]
+    public Coalesce([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        IEnumerable<Func<object?, object?>> expressions)
     {
         Expressions = expressions.ToArray();
         if (Expressions.Count < 2)
@@ -126,7 +129,7 @@ public class Coalesce : IFunction
         foreach (var expression in Expressions)
         {
             var result = expression.Invoke(value);
-            if (result is not null && !new Expressif.Values.Special.Null().Equals(result))
+            if (result is not null && !Expressif.Values.Special.Null.Instance.Equals(result))
                 return result;
         }
 

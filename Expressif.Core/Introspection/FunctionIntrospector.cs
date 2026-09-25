@@ -1,84 +1,85 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Expressif.Functions;
 using Expressif.Discovery;
+using Expressif.Functions;
 
 namespace Expressif.Introspection;
 
-public class FunctionIntrospector : BaseIntrospector
+/// <summary>Describes functions discovered from extension assemblies or a custom type source.</summary>
+public sealed class FunctionIntrospector
 {
-    private IntrospectionOptions Options { get; }
-    private ExpressifTypeMapper TypeMapper { get; }
-    private FunctionContractIntrospector ContractIntrospector { get; }
+    private readonly BaseIntrospector scanner;
+    private readonly IntrospectionOptions options;
+    private readonly ExpressifTypeMapper typeMapper;
+    private readonly FunctionContractIntrospector contractIntrospector;
 
-    public FunctionIntrospector(IntrospectionOptions options, params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Distinct().ToArray()), options) { }
+    public FunctionIntrospector(params Assembly[] assemblies)
+        : this(new AssemblyTypeSource(RequireAssemblies(assemblies)), IntrospectionOptions.Default) { }
 
-    public FunctionIntrospector(ITypesProbe probe, IntrospectionOptions options)
-        : base(probe)
+    public FunctionIntrospector(ITypeSource source)
+        : this(source, IntrospectionOptions.Default) { }
+
+    internal FunctionIntrospector(ITypeSource source, IntrospectionOptions options)
     {
-        Options = options;
-        TypeMapper = new ExpressifTypeMapper(options);
-        ContractIntrospector = new FunctionContractIntrospector(options, TypeMapper);
+        ArgumentNullException.ThrowIfNull(source);
+        this.options = options;
+        scanner = new BaseIntrospector(source);
+        typeMapper = new ExpressifTypeMapper(options);
+        contractIntrospector = new FunctionContractIntrospector(options, typeMapper);
     }
 
-    public IEnumerable<FunctionInfo> Locate()
-        => Locate<FunctionAttribute>(true);
+    public IReadOnlyList<FunctionInfo> Describe()
+        => DescribeFunctions().ToList().AsReadOnly();
 
-    public IEnumerable<FunctionInfo> Describe()
-        => Locate<FunctionAttribute>(false);
-
-    protected IEnumerable<FunctionInfo> Locate<T>(bool fast)
-        where T : FunctionAttribute
+    private IEnumerable<FunctionInfo> DescribeFunctions()
     {
-        var functions = LocateAttribute<FunctionAttribute>();
-
-        foreach (var function in functions)
+        foreach (var function in scanner.LocateAttribute<FunctionAttribute>())
         {
             var name = function.Attribute.Name ?? function.Type.Name.ToKebabCase();
             var scope = function.Type.GetCustomAttribute<ScopeAttribute>(true)?.Name
                 ?? function.Type.Namespace!.ToToken('.').Last().ToKebabCase();
             var scopePrefix = scope.Split('/')[0];
-            var contract = ContractIntrospector.Describe(function.Type, name);
+            var contract = contractIntrospector.Describe(function.Type, name);
             var lifecycle = function.Type.GetCustomAttribute<FunctionLifecycleAttribute>(false);
-            yield return new FunctionInfo(
-                    name
-                    , function.Type.IsPublic
-                    , function.Attribute.Prefix != null && string.IsNullOrEmpty(function.Attribute.Prefix)
-                        ? function.Attribute.Aliases
-                        : function.Attribute.Aliases.AsQueryable()
-                            .Prepend(string.IsNullOrEmpty(function.Attribute.Prefix)
-                                ? $"{scopePrefix}-to-{function.Type.Name.ToKebabCase()}"
-                                : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}"
-                            ).Where(x => !string.IsNullOrEmpty(x)).ToArray()
-                    , scope
-                    , contract.Input
-                    , contract.Output
-                    , contract.Converted
-                    , contract.Reason
-                    , function.Type
-                    , fast ? "" : function.Type.GetSummary()
-                    , fast ? [] : BuildParameters(function.Type.GetInfoConstructors(TypeMapper, Options)).ToArray()
-                    , lifecycle?.Deprecated ?? false
-                    , lifecycle?.Replacement
-                    , lifecycle?.Sunset
-                    , lifecycle?.ReplacementIsEquivalent ?? false
-                    , lifecycle?.MigrationNotes
-                    , Options.TupleBindingSignatures(function.Type)
-                )
+            IEnumerable<string> aliases = function.Attribute.Prefix != null && string.IsNullOrEmpty(function.Attribute.Prefix)
+                ? function.Attribute.Aliases
+                : function.Attribute.Aliases.AsEnumerable()
+                    .Prepend(string.IsNullOrEmpty(function.Attribute.Prefix)
+                        ? $"{scopePrefix}-to-{function.Type.Name.ToKebabCase()}"
+                        : $"{function.Attribute.Prefix}-to-{function.Type.Name.ToKebabCase()}")
+                    .Where(alias => !string.IsNullOrEmpty(alias));
+            var deprecatedAliases = function.Type.GetCustomAttributes<FunctionAliasLifecycleAttribute>()
+                .Select(alias => new FunctionAliasLifecycleInfo(
+                    alias.Name,
+                    alias.Replacement,
+                    alias.Message,
+                    alias.Sunset));
+
+            yield return new FunctionInfo(new FunctionInfoDefinition
             {
-                DeprecatedAliases = function.Type.GetCustomAttributes<FunctionAliasLifecycleAttribute>()
-                    .Select(alias => new FunctionAliasLifecycleInfo(
-                        alias.Name,
-                        alias.Replacement,
-                        alias.Message,
-                        alias.Sunset))
-                    .ToArray(),
-            };
+                Name = name,
+                IsPublic = function.Type.IsPublic,
+                Aliases = aliases,
+                Scope = scope,
+                Input = contract.Input,
+                Output = contract.Output,
+                Converted = contract.Converted,
+                Reason = contract.Reason,
+                ImplementationType = function.Type,
+                Summary = function.Type.GetSummary(),
+                Parameters = BaseIntrospector.BuildParameters(function.Type.GetInfoConstructors(typeMapper, options)),
+                Deprecated = lifecycle?.Deprecated ?? false,
+                Replacement = lifecycle?.Replacement,
+                Sunset = lifecycle?.Sunset,
+                ReplacementIsEquivalent = lifecycle?.ReplacementIsEquivalent ?? false,
+                MigrationNotes = lifecycle?.MigrationNotes,
+                Signatures = options.TupleBindingSignatures(function.Type).Select(signature => signature.ToInfo()),
+                DeprecatedAliases = deprecatedAliases,
+            });
         }
     }
+
+    private static Assembly[] RequireAssemblies(Assembly[] assemblies)
+        => assemblies.Length > 0
+            ? assemblies.Distinct().ToArray()
+            : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies));
 }

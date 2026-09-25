@@ -10,10 +10,10 @@ namespace Expressif.Library.IO;
 public abstract class BasePathFunction : BaseTextFunction, IBasePathFunction
 {
     public BasePathFunction() { }
-    protected override object EvaluateNull() => new Expressif.Values.Special.Empty().Keyword;
-    protected override object EvaluateEmpty() => new Expressif.Values.Special.Empty().Keyword;
-    protected override object EvaluateBlank() => new Expressif.Values.Special.Empty().Keyword;
-    protected override object EvaluateSpecial(string value) => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateNull() => Expressif.Values.Special.Empty.Keyword;
+    protected override object EvaluateEmpty() => Expressif.Values.Special.Empty.Keyword;
+    protected override object EvaluateBlank() => Expressif.Values.Special.Empty.Keyword;
+    protected override object EvaluateSpecial(string value) => Expressif.Values.Special.Empty.Keyword;
 }
 
 /// <summary>

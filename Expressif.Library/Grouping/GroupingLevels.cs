@@ -28,7 +28,7 @@ internal static class GroupingLevels
             // Keep the original level intact, including specialized tuple runtime types.
             if (!aggregated.Any(component => component))
             {
-                pairs.AddRange(value);
+                pairs.AddRange(value.Select(group => new PairValue(group.Key, group.Values)));
                 continue;
             }
 

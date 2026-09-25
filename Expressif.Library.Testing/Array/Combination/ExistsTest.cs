@@ -66,6 +66,16 @@ public class ExistsTest
         => Assert.That(new Exists(() => right, value => value).Evaluate(1), Is.False);
 
     [Test]
+    public void Exists_ExplicitNullRightKeyIsNotTreatedAsOmitted()
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(TestExpression.CreateClosed("1 | exists({1}, @_)").Evaluate(null), Is.True);
+            Assert.That(TestExpression.CreateClosed("1 | exists({1}, @_, #null)").Evaluate(null), Is.False);
+        });
+    }
+
+    [Test]
     public void Exists_ConcurrentEvaluationsKeepKeyContextsIsolated()
     {
         var expression = TestExpression.Create("exists({{id := \"1\"}, {id := \"3\"}}, .id)");
