@@ -16,6 +16,7 @@ public class ArgumentEvaluationTest
         Assert.That(Discover(typeof(OptionalNullable)).TryGetAnnotated(typeof(OptionalNullable), out _), Is.True);
         Assert.That(Discover(typeof(ValidNested)).TryGetAnnotated(typeof(ValidNested), out _), Is.True);
         Assert.That(Discover(typeof(ValidAmbient)).TryGetAnnotated(typeof(ValidAmbient), out _), Is.True);
+        Assert.That(Discover(typeof(ValidTypedAmbient)).TryGetAnnotated(typeof(ValidTypedAmbient), out _), Is.True);
         Assert.That(Discover(typeof(PositionalCollection)).TryGetAnnotated(typeof(PositionalCollection), out _), Is.True);
         Assert.That(Discover(typeof(NamedCollection)).TryGetAnnotated(typeof(NamedCollection), out _), Is.True);
     }
@@ -83,6 +84,12 @@ public class ArgumentEvaluationTest
 
     public sealed class ValidAmbient(
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> callback) : IFunction
+    {
+        public object? Evaluate(object? value) => callback();
+    }
+
+    public sealed class ValidTypedAmbient(
+        [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<int> callback) : IFunction
     {
         public object? Evaluate(object? value) => callback();
     }

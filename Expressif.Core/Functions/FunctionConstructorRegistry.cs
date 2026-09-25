@@ -178,7 +178,8 @@ internal sealed class FunctionConstructorRegistry
         foreach (var type in types.Distinct().Where(type => type.IsClass && !type.IsAbstract
             && typeof(IFunction).IsAssignableFrom(type)))
         {
-            var targets = type.GetConstructors().Where(constructor => constructor.GetParameters()
+            var targets = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(constructor => constructor.GetParameters()
                 .Any(parameter => parameter.IsDefined(typeof(ArgumentRoleAttribute), false))).ToArray();
             if (targets.Length == 0)
                 continue;
@@ -191,6 +192,8 @@ internal sealed class FunctionConstructorRegistry
                         ?? throw InvalidRoleMetadata(type, parameter, "every parameter in a role-annotated constructor must declare a role");
                     if (!Enum.IsDefined(attribute.Role))
                         throw InvalidRoleMetadata(type, parameter, "unknown semantic role");
+                    if (attribute.AllowValueExpression && attribute.Role != ArgumentRole.Predicate)
+                        throw InvalidRoleMetadata(type, parameter, "value expressions are supported only for predicate roles");
                     var expectedType = attribute.Role switch
                     {
                         ArgumentRole.Predicate => typeof(Func<Predicates.IPredicate>),
@@ -271,9 +274,10 @@ internal sealed class FunctionConstructorRegistry
         foreach (var type in types.Distinct().Where(type => type.IsClass && !type.IsAbstract
             && typeof(IFunction).IsAssignableFrom(type)))
         {
-            var targets = type.GetConstructors();
-            if (!targets.SelectMany(target => target.GetParameters())
-                .Any(parameter => parameter.IsDefined(typeof(ArgumentEvaluationAttribute), false)))
+            var targets = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(target => target.GetParameters()
+                .Any(parameter => parameter.IsDefined(typeof(ArgumentEvaluationAttribute), false))).ToArray();
+            if (targets.Length == 0)
                 continue;
 
             var modes = new Dictionary<string, ArgumentEvaluationMode>(StringComparer.OrdinalIgnoreCase);
@@ -289,8 +293,7 @@ internal sealed class FunctionConstructorRegistry
                     var validShape = attribute.Mode switch
                     {
                         ArgumentEvaluationMode.Ambient => parameter.ParameterType.IsGenericType
-                            && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>)
-                            && parameter.ParameterType.IsAssignableFrom(typeof(Func<object?>)),
+                            && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<>),
                         ArgumentEvaluationMode.Incoming or ArgumentEvaluationMode.Nested =>
                             (parameter.ParameterType.IsGenericType
                                 && parameter.ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)

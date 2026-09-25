@@ -453,7 +453,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                     {
                         ArgumentEvaluationMode.Incoming => BuildValueEvaluator(binding.Parameters[index], context),
                         ArgumentEvaluationMode.Nested => BuildNestedValueEvaluator(binding.Parameters[index], context),
-                        ArgumentEvaluationMode.Ambient => BuildAmbientValueProvider(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Ambient => BuildAmbientValueProvider(
+                            binding.Parameters[index], parameter.ParameterType, context),
                         _ => throw new InvalidOperationException($"Unsupported argument evaluation mode '{mode}'."),
                     };
         }
@@ -468,6 +469,16 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         Bindings.Function function,
         IContext context)
     {
+        if (function.Arguments.Length == 0 && type.GetConstructor(Type.EmptyTypes) is { } parameterless)
+        {
+            return parameterless.Invoke([]) as IFunction
+                ?? throw new InvalidOperationException(
+                    $"Parameterless constructor for '{type.FullName}' did not create a function.");
+        }
+
+        if (function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException($"Spread arguments are not supported by {function.Name}.");
+
         var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
         var metadata = binding.Constructor.GetParameters();
         var providers = new object?[metadata.Length];
@@ -477,7 +488,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             providers[index] = metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.Role switch
             {
                 ArgumentRole.Predicate => ApplyProviderLifetime(
-                    BuildPredicateProvider(parameter, context, function.Name), metadata[index]),
+                    BuildPredicateProvider(parameter, context, function.Name,
+                        metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.AllowValueExpression), metadata[index]),
                 ArgumentRole.Accumulator => ApplyProviderLifetime(
                     BuildAccumulatorProvider(parameter, context), metadata[index]),
                 ArgumentRole.Transformation => TryGetOpenExpression(parameter, out var open)
@@ -545,10 +557,12 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return value => EvaluationRuntime.EvaluateNested(evaluator, value);
     }
 
-    private Func<object?> BuildAmbientValueProvider(IParameter parameter, IContext context)
+    private Delegate BuildAmbientValueProvider(IParameter parameter, Type providerType, IContext context)
     {
         var evaluator = BuildValueEvaluator(parameter, context);
-        return () => evaluator.Invoke(EvaluationRuntime.Frame?.Current);
+        return CreateFunctionCast(
+            () => evaluator.Invoke(EvaluationRuntime.Frame?.Current),
+            providerType.GetGenericArguments()[0]);
     }
 
     private IFunction BuildAccumulatorFunction(
@@ -581,11 +595,18 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 ?? throw new InvalidOperationException(
                     $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
         }
-        else if (constructors.TryGetAnnotated(accumulatorType, out var annotated))
+        else if (constructors.TryGetAnnotated(accumulatorType, out var annotated)
+            && (function.Arguments.Length > 0 || accumulatorType.GetConstructor(Type.EmptyTypes) is null))
         {
             create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IAccumulator
                 ?? throw new InvalidOperationException(
                     $"The annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        else if (constructors.TryGetRoleAnnotated(accumulatorType, out var roleAnnotated))
+        {
+            create = () => InstantiateRoleAnnotated(accumulatorType, roleAnnotated, function, context) as IAccumulator
+                ?? throw new InvalidOperationException(
+                    $"The role-annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
         }
         return create is not null;
     }
@@ -955,7 +976,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return true;
     }
 
-    private Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
+    private Func<IPredicate> BuildPredicateProvider(
+        IParameter parameter, IContext context, string functionName, bool allowValueExpression = false)
     {
         if (TryGetOpenExpression(parameter, out var openExpression))
             return () => BuildBooleanPredicate(openExpression.Expression, context);
@@ -963,10 +985,17 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return parameter switch
         {
             PredicationParameter predication => () => predicationFactory.Instantiate(predication.Predication, context),
+            _ when allowValueExpression => BuildValuePredicateProvider(parameter, context),
             _ => throw new ArgumentException(
-                    $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
-                    nameof(parameter))
+                $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
+                nameof(parameter)),
         };
+    }
+
+    private Func<IPredicate> BuildValuePredicateProvider(IParameter parameter, IContext context)
+    {
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return () => new BooleanFunctionPredicate(evaluator);
     }
 
     private IPredicate BuildBooleanPredicate(OpenExpression expression, IContext context)
