@@ -154,15 +154,17 @@
       "additionalProperties": false,
       "properties": {
         "kind": { "const": "literal" },
-        "type": { "enum": ["null", "boolean", "text", "decimal", "integer", "date", "datetime", "time", "duration", "type"] },
+        "type": { "enum": ["null", "boolean", "text", "decimal", "integer", "date", "datetime", "time", "duration", "type", "all", "ordering"] },
         "value": true
       },
       "allOf": [
         { "if": { "properties": { "type": { "const": "null" } } }, "then": { "properties": { "value": { "type": "null" } } } },
         { "if": { "properties": { "type": { "const": "boolean" } } }, "then": { "properties": { "value": { "type": "boolean" } } } },
-        { "if": { "properties": { "type": { "enum": ["text", "date", "datetime", "time", "duration", "type"] } } }, "then": { "properties": { "value": { "type": "string" } } } },
+        { "if": { "properties": { "type": { "enum": ["text", "date", "datetime", "time", "duration", "type", "all", "ordering"] } } }, "then": { "properties": { "value": { "type": "string" } } } },
         { "if": { "properties": { "type": { "const": "decimal" } } }, "then": { "properties": { "value": { "type": "number" } } } },
-        { "if": { "properties": { "type": { "const": "integer" } } }, "then": { "properties": { "value": { "type": "integer" } } } }
+        { "if": { "properties": { "type": { "const": "integer" } } }, "then": { "properties": { "value": { "type": "integer" } } } },
+        { "if": { "properties": { "type": { "const": "all" } } }, "then": { "properties": { "value": { "const": "#all" } } } },
+        { "if": { "properties": { "type": { "const": "ordering" } } }, "then": { "properties": { "value": { "enum": ["#less", "#equal", "#greater"] } } } }
       ]
     }
   }

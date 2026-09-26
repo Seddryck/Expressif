@@ -1,6 +1,7 @@
 using Expressif.Bindings;
 using Expressif.Functions.Catalog;
 using Expressif.Types;
+using Expressif.Values;
 
 namespace Expressif.Planning;
 
@@ -250,6 +251,8 @@ public sealed class LogicalPlanner
         TimeOnly time => new LogicalLiteral("time", time),
         TimeSpan duration => new LogicalLiteral("duration", duration),
         TypeDescriptor type => new LogicalLiteral("type", type.Name),
+        AllDimension => new LogicalLiteral("all", "#all"),
+        OrderingValue ordering => new LogicalLiteral("ordering", ordering.ToString()),
         _ => throw new LogicalPlanningException($"Value of runtime type '{value.GetType().Name}' has no Expressif literal representation."),
     };
 
