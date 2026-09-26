@@ -24,6 +24,38 @@ public class ExpressionParserTest
         Assert.That(quoted.Value, Is.EqualTo("|and"));
     }
 
+    [TestCase("V(1, 2)", typeof(VectorLiteralSyntax), "V(1, 2)")]
+    [TestCase("@groups |#> reverse", typeof(GroupingMapShorthandSyntax), "|#> reverse")]
+    [TestCase("1 ?> add(2)", typeof(ConditionalExpressionSyntax), "1 ?> add(2)")]
+    [TestCase("switch(#true => 1, _ => 0)", typeof(ControlFlowCallSyntax), "switch(#true => 1, _ => 0)")]
+    [TestCase("upper | @transform", typeof(ValueReferenceStageSyntax), "@transform")]
+    [TestCase("#\"42\":integer", typeof(QuotedTypedLiteralSyntax), "#\"42\":integer")]
+    [TestCase("#less", typeof(OrderingLiteralSyntax), "#less")]
+    public void Parse_FirstClassConstruct_PreservesAuthoredTextAndSpan(
+        string source,
+        Type nodeType,
+        string expectedText)
+    {
+        var syntax = ExpressionParser.Parse(source);
+        var node = DescendantsAndSelf(syntax).Single(candidate => candidate.GetType() == nodeType);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(node.Text, Is.EqualTo(expectedText));
+            Assert.That(node.Span, Is.EqualTo(new SourceSpan(source.IndexOf(expectedText, StringComparison.Ordinal), expectedText.Length)));
+        });
+    }
+
+    [TestCase("even |and odd", "|and")]
+    [TestCase("even |Or odd", "|Or")]
+    [TestCase("even |XoR odd", "|XoR")]
+    public void Parse_CaseInsensitiveBooleanOperator_PreservesAuthoredText(string source, string expectedOperator)
+    {
+        var binary = DescendantsAndSelf(ExpressionParser.Parse(source)).OfType<BinaryExpressionSyntax>().Single();
+
+        Assert.That(binary.Operator.Text, Is.EqualTo(expectedOperator));
+    }
+
     [Test]
     public void Parse_EnclosingRootReference_PreservesDepthAndQuotedLiterals()
     {
