@@ -183,6 +183,32 @@ public class LogicalPlannerTest
         });
     }
 
+    [TestCase("apply(@_ | input :> @input)", false, new[] { "input" }, "variable")]
+    [TestCase("apply(@_ | :> .first | upper)", false, new string[0], "field")]
+    [TestCase("apply((left, right) :> @left)", true, new[] { "left", "right" }, "variable")]
+    public void Plan_InputBinding_PreservesDeclarationAndBody(
+        string source,
+        bool positional,
+        string[] names,
+        string expectedBodyShape)
+    {
+        var apply = SingleCall(source);
+        var expression = (LogicalPipeline)apply.Arguments.Single().Value!;
+        var binding = (LogicalCall)expression.Items.Single();
+        var plannedNames = (LogicalCall)binding.Arguments.Single(argument => argument.Parameter.Name == "names").Value!;
+        var body = (LogicalPipeline)binding.Arguments.Single(argument => argument.Parameter.Name == "body").Value!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(binding.Function.Name, Is.EqualTo("input-binding"));
+            Assert.That(binding.Arguments.Single(argument => argument.Parameter.Name == "positional").Value,
+                Is.EqualTo(new LogicalLiteral("boolean", positional)));
+            Assert.That(plannedNames.Arguments.Where(argument => argument.IsExplicit)
+                .Select(argument => ((LogicalLiteral)argument.Value!).Value), Is.EqualTo(names));
+            Assert.That(ShapeOf(body.Items.First()), Is.EqualTo(expectedBodyShape));
+        });
+    }
+
     [Test]
     public void Plan_LetDefinition_PreservesBindingNameAndValue()
     {
@@ -229,6 +255,26 @@ public class LogicalPlannerTest
             Assert.That(reference.Arguments.Single().Parameter.Name, Is.EqualTo("name"));
             Assert.That(reference.Arguments.Single().Value,
                 Is.EqualTo(new LogicalLiteral("text", "compare-numeric")));
+        });
+    }
+
+    [Test]
+    public void Plan_NestedInputBindings_PreserveBothDeclarations()
+    {
+        var apply = SingleCall("apply(@_ | outer :> apply(@_ | inner :> @outer))");
+        var outer = InputBindingFrom((LogicalPipeline)apply.Arguments.Single().Value!);
+        var outerBody = (LogicalPipeline)outer.Arguments.Single(argument => argument.Parameter.Name == "body").Value!;
+        var nestedApply = (LogicalCall)outerBody.Items.Single();
+        var inner = InputBindingFrom((LogicalPipeline)nestedApply.Arguments.Single().Value!);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(InputBindingNames(outer), Is.EqualTo(new[] { "outer" }));
+            Assert.That(InputBindingNames(inner), Is.EqualTo(new[] { "inner" }));
+            Assert.That(((LogicalPipeline)inner.Arguments.Single(argument => argument.Parameter.Name == "body").Value!)
+                .Items.Single(), Is.InstanceOf<LogicalCall>()
+                    .And.Property(nameof(LogicalCall.Function)).Property(nameof(PlannerFunctionDescriptor.Name))
+                    .EqualTo("variable"));
         });
     }
 
@@ -282,6 +328,15 @@ public class LogicalPlannerTest
 
     private static LogicalCall SingleCall(string source)
         => (LogicalCall)LogicalPlanner.Plan(ExpressionParser.Parse(source)).Pipeline.Items.Single();
+
+    private static LogicalCall InputBindingFrom(LogicalPipeline pipeline)
+        => (LogicalCall)pipeline.Items.Single();
+
+    private static object?[] InputBindingNames(LogicalCall binding)
+        => ((LogicalCall)binding.Arguments.Single(argument => argument.Parameter.Name == "names").Value!)
+            .Arguments.Where(argument => argument.IsExplicit)
+            .Select(argument => ((LogicalLiteral)argument.Value!).Value)
+            .ToArray();
 
     private static TestCaseData Shape(IParameter parameter, string expected)
         => new TestCaseData(parameter, expected).SetName($"Value_{parameter.GetType().Name}");
