@@ -156,6 +156,24 @@ public class LogicalPlannerTest
             Is.EqualTo(new[] { "split", "length" }));
     }
 
+    [TestCase("#all", "all", "#all")]
+    [TestCase("#less", "ordering", "#less")]
+    [TestCase("#equal", "ordering", "#equal")]
+    [TestCase("#greater", "ordering", "#greater")]
+    public void Plan_SpecialScalarLiteral_UsesPortableLogicalRepresentation(
+        string source,
+        string expectedType,
+        string expectedValue)
+    {
+        var literal = (LogicalLiteral)LogicalPlanner.Plan(ExpressionParser.Parse(source)).Pipeline.Items.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(literal.Type, Is.EqualTo(expectedType));
+            Assert.That(literal.Value, Is.EqualTo(expectedValue));
+        });
+    }
+
     [TestCaseSource(nameof(ParameterShapes))]
     public void Value_EverySupportedParameterShape_ProducesLogicalValue(IParameter parameter, string expectedShape)
     {

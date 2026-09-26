@@ -417,6 +417,8 @@ public static class LogicalPlanJson
             "datetime" => DateTime.Parse(value.GetString()!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind),
             "time" => TimeOnly.Parse(value.GetString()!, CultureInfo.InvariantCulture),
             "duration" => TimeSpan.ParseExact(value.GetString()!, "c", CultureInfo.InvariantCulture),
+            "all" when value.GetString() == "#all" => "#all",
+            "ordering" when value.GetString() is "#less" or "#equal" or "#greater" => value.GetString(),
             _ => throw new LogicalPlanFormatException($"Unsupported or invalid literal type '{type}'."),
         };
         return new LogicalLiteral(type, semanticValue);

@@ -12,7 +12,7 @@ Writers emit canonical operator names and properties in deterministic order. The
 
 ## Nodes
 
-A `pipeline` contains ordered `items`. A `call` contains its canonical operator descriptor, context depth, and arguments in canonical parameter order. Each argument records whether it was explicitly supplied, whether it spreads its value, and either its value or its omission behavior. A `literal` pairs an Expressif semantic type with its JSON representation; temporal and duration values use invariant strings.
+A `pipeline` contains ordered `items`. A `call` contains its canonical operator descriptor, context depth, and arguments in canonical parameter order. Each argument records whether it was explicitly supplied, whether it spreads its value, and either its value or its omission behavior. A `literal` pairs an Expressif semantic type with its JSON representation; temporal and duration values use invariant strings. Special scalar literals retain their canonical source spelling: `all` uses `#all`, while `ordering` uses `#less`, `#equal`, or `#greater`.
 
 References and structured value constructors use calls rather than private node kinds. For example, `.age` uses `field`, `$1` uses `tuple-at`, and array and tuple literals use `array` and `tuple`.
 
