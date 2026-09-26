@@ -16,6 +16,8 @@ A `pipeline` contains ordered `items`. A `call` contains its canonical operator 
 
 References and structured value constructors use calls rather than private node kinds. For example, `.age` uses `field`, `$1` uses `tuple-at`, and array and tuple literals use `array` and `tuple`.
 
+Input-binding expressions use an `input-binding` call. Its `names` argument is an array of declared names, `positional` distinguishes tuple destructuring from named or anonymous binding, and `body` contains the complete bound pipeline. An empty names array with `positional` set to `false` represents an anonymous binding.
+
 ## Traversal and evaluation
 
 An operator's optional `traversal` object identifies the value source and the selection visited within it. A parameter's optional `evaluation` object identifies its `frequency` and, when applicable, its `source` or `context`. Evaluation frequency is one of `once`, `per-element`, or `custom`.

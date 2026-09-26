@@ -35,10 +35,26 @@ public sealed class LogicalPlanner
     }
 
     private LogicalPipeline Pipeline(OpenExpression expression)
-        => new(expression.Members.Select(Call).ToArray());
+        => expression is InputBoundExpression binding
+            ? new LogicalPipeline([InputBinding(binding)])
+            : new LogicalPipeline(expression.Members.Select(Call).ToArray());
 
     private LogicalPipeline Pipeline(ClosedExpression expression)
         => new([Value(expression.Parameter), .. expression.Members.Select(Call)]);
+
+    private LogicalPipeline Pipeline(IRootExpression expression) => expression switch
+    {
+        OpenRootExpression open => Pipeline(open.Expression),
+        ClosedRootExpression closed => Pipeline(closed.Expression),
+        _ => throw new LogicalPlanningException($"Unsupported input-binding body '{expression.GetType().Name}'."),
+    };
+
+    private LogicalCall InputBinding(InputBoundExpression binding)
+        => SyntheticCall(
+            "input-binding",
+            ("names", Collection("array", binding.Names.Select(name => ((IParameter)new QuotedLiteralParameter(name), false)))),
+            ("positional", new LogicalLiteral("boolean", binding.IsPositional)),
+            ("body", Pipeline(binding.Body)));
 
     private LogicalCall Call(Function function)
     {

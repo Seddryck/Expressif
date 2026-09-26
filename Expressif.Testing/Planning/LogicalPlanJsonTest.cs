@@ -26,6 +26,36 @@ public class LogicalPlanJsonTest
         Assert.That(roundTrip, Is.EqualTo(json));
     }
 
+    [TestCase("apply(@_ | input :> @input)")]
+    [TestCase("apply(@_ | :> .first | upper)")]
+    [TestCase("apply((left, right) :> @left)")]
+    [TestCase("apply(@_ | outer :> apply(@_ | inner :> @outer))")]
+    public void Deserialize_SerializedInputBinding_RoundTripsCanonicalJson(string source)
+    {
+        var json = LogicalPlanJson.Serialize(Plan(source), indented: false);
+
+        var roundTrip = LogicalPlanJson.Serialize(LogicalPlanJson.Deserialize(json), indented: false);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(roundTrip, Is.EqualTo(json));
+            Assert.That(json, Does.Contain("\"name\":\"input-binding\""));
+            Assert.That(json, Does.Contain("\"name\":\"body\""));
+        });
+    }
+
+    [Test]
+    public void Deserialize_InputBindingWithInvalidArguments_ThrowsFormatException()
+    {
+        var json = LogicalPlanJson.Serialize(Plan("apply(@_ | input :> @input)"), indented: false)
+            .Replace("\"name\":\"positional\"", "\"name\":\"mode\"", StringComparison.Ordinal);
+
+        var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
+
+        Assert.That(exception!.Message, Is.EqualTo(
+            "An input-binding call must contain names, positional, and body arguments in that order."));
+    }
+
     [Test]
     public void Serialize_SemanticTemporalAndNullLiterals_RoundTripWithoutRuntimeMetadata()
     {
