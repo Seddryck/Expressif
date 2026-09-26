@@ -94,6 +94,7 @@ public static class LogicalPlanJson
                 writer.WriteEndArray();
                 break;
             case LogicalCall call:
+                ValidateInputBinding(call);
                 writer.WriteString("kind", "call");
                 writer.WritePropertyName("operator");
                 WriteFunction(writer, call.Function);
@@ -262,10 +263,80 @@ public static class LogicalPlanJson
         var contextDepth = RequireInt32(element, "contextDepth");
         if (contextDepth < 0)
             throw new LogicalPlanFormatException("Property 'contextDepth' cannot be negative.");
-        return new LogicalCall(
+        var call = new LogicalCall(
             ReadFunction(RequireProperty(element, "operator")),
             RequireArray(element, "arguments").Select(ReadArgument).ToArray(),
             contextDepth);
+        ValidateInputBinding(call);
+        return call;
+    }
+
+    private static void ValidateInputBinding(LogicalCall call)
+    {
+        if (!call.Function.Name.Equals("input-binding", StringComparison.Ordinal))
+            return;
+        if (call.ContextDepth != 0)
+            throw new LogicalPlanFormatException("An input-binding call cannot declare a context depth.");
+        if (!call.Arguments.Select(argument => argument.Parameter.Name)
+                .SequenceEqual(new[] { "names", "positional", "body" }, StringComparer.Ordinal))
+        {
+            throw new LogicalPlanFormatException(
+                "An input-binding call must contain names, positional, and body arguments in that order.");
+        }
+        if (call.Arguments.Any(argument => !argument.IsExplicit || argument.IsSpread || argument.Omission is not null))
+            throw new LogicalPlanFormatException("Every input-binding argument must be explicit and cannot be spread.");
+
+        var names = ReadInputBindingNames(call.Arguments[0].Value);
+        if (call.Arguments[1].Value is not LogicalLiteral { Type: "boolean", Value: bool positional })
+            throw new LogicalPlanFormatException("The input-binding positional argument must be a boolean literal.");
+        if (call.Arguments[2].Value is not LogicalPipeline { Items.Count: > 0 })
+            throw new LogicalPlanFormatException("The input-binding body argument must be a non-empty pipeline.");
+        if (positional && names.Length < 2)
+            throw new LogicalPlanFormatException("A positional input binding must declare at least two names.");
+        if (!positional && names.Length > 1)
+            throw new LogicalPlanFormatException("A named input binding cannot declare more than one name.");
+        if (names.Distinct(StringComparer.Ordinal).Count() != names.Length)
+            throw new LogicalPlanFormatException("An input binding cannot declare duplicate names.");
+    }
+
+    private static string[] ReadInputBindingNames(LogicalValue? value)
+    {
+        if (value is not LogicalCall { ContextDepth: 0 } names || names.Function.Name != "array")
+            throw new LogicalPlanFormatException("The input-binding names argument must be an array call.");
+
+        if (names.Arguments is
+            [
+                {
+                    Parameter.Name: "values",
+                    IsExplicit: false,
+                    IsSpread: false,
+                    Value: null,
+                    Omission.Mode: ParameterOmissionMode.EmptyVariadic,
+                },
+            ])
+        {
+            return [];
+        }
+
+        var result = new List<string>();
+        foreach (var argument in names.Arguments)
+        {
+            if (argument is not
+                {
+                    Parameter.Name: "values",
+                    IsExplicit: true,
+                    IsSpread: false,
+                    Omission: null,
+                    Value: LogicalLiteral { Type: "text", Value: string name },
+                }
+                || string.IsNullOrEmpty(name))
+            {
+                throw new LogicalPlanFormatException(
+                    "The input-binding names array must contain explicit, non-empty text literals.");
+            }
+            result.Add(name);
+        }
+        return result.ToArray();
     }
 
     private static PlannerFunctionDescriptor ReadFunction(JsonElement element)
