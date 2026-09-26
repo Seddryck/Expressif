@@ -13,17 +13,14 @@ namespace Expressif.Serializers;
 public class ParameterSerializer
 {
     private readonly QuotedLiteralRegistry quotedLiteralRegistry;
-    private readonly bool includeBuiltInQuotedLiteralTypeSuffixes;
     private FunctionSerializer? functionSerializer;
 
     public ParameterSerializer()
-        : this(QuotedLiteralRegistry.Default, false) { }
+        : this(QuotedLiteralRegistry.Default) { }
 
-    public ParameterSerializer(
-        QuotedLiteralRegistry quotedLiteralRegistry,
-        bool includeBuiltInQuotedLiteralTypeSuffixes = false)
-        => (this.quotedLiteralRegistry, this.includeBuiltInQuotedLiteralTypeSuffixes) =
-            (quotedLiteralRegistry ?? throw new ArgumentNullException(nameof(quotedLiteralRegistry)), includeBuiltInQuotedLiteralTypeSuffixes);
+    public ParameterSerializer(QuotedLiteralRegistry quotedLiteralRegistry)
+        => this.quotedLiteralRegistry = quotedLiteralRegistry
+            ?? throw new ArgumentNullException(nameof(quotedLiteralRegistry));
 
     private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
 
@@ -139,10 +136,9 @@ public class ParameterSerializer
                 => quotedLiteralRegistry.Serialize(
                     typed,
                     literalType,
-                    literalTypeIsExplicit
-                        || includeBuiltInQuotedLiteralTypeSuffixes
-                        || !IsBuiltInQuotedLiteral(typed)
-                        || !quotedLiteralRegistry.CanInferWithoutTypeSuffix(typed, literalType)),
+                    !IsBuiltInQuotedLiteral(typed)
+                        && (literalTypeIsExplicit
+                            || !quotedLiteralRegistry.CanInferWithoutTypeSuffix(typed, literalType))),
             DateOnly date => $"#\"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}\"",
             DateTime dateTime => $"#\"{dateTime.ToString("yyyy-MM-dd'T'HH:mm:ss", CultureInfo.InvariantCulture)}\"",
             TimeOnly time => $"#\"{time.ToString("HH:mm:ss", CultureInfo.InvariantCulture)}\"",

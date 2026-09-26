@@ -33,12 +33,9 @@ public class ParameterSerializerTest
     }
 
     [TestCase("#\"2026-08-17\"", "#\"2026-08-17\"")]
-    [TestCase("#\"2026-08-17\":date", "#\"2026-08-17\":date")]
     [TestCase("#\"2026-08-17T14:30:00\"", "#\"2026-08-17T14:30:00\"")]
-    [TestCase("#\"2026-08-17T14:30:00\":datetime", "#\"2026-08-17T14:30:00\":datetime")]
     [TestCase("#\"14:30:00\"", "#\"14:30:00\"")]
-    [TestCase("#\"14:30:00\":time", "#\"14:30:00\":time")]
-    public void Serialize_QuotedLiteral_PreservesExplicitTypeSuffix(string source, string expected)
+    public void Serialize_TemporalLiteral_PreservesCanonicalSyntax(string source, string expected)
     {
         var parameter = new ExpressifBinder().BindParameter(ExpressionParser.Parse(source));
 
@@ -46,11 +43,13 @@ public class ParameterSerializerTest
     }
 
     [Test]
-    public void Serialize_BuiltInQuotedLiteral_CanIncludeCanonicalTypeSuffix()
+    public void Serialize_ExplicitBuiltInType_UsesCanonicalSpecializedLiteral()
     {
-        var serializer = new ParameterSerializer(QuotedLiteralRegistry.Default, includeBuiltInQuotedLiteralTypeSuffixes: true);
+        var serializer = new ParameterSerializer(QuotedLiteralRegistry.Default);
 
-        Assert.That(serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17))), Is.EqualTo("#\"2026-08-17\":date"));
+        Assert.That(
+            serializer.Serialize(new LiteralParameter(new DateOnly(2026, 8, 17), "date", IsLiteralTypeExplicit: true)),
+            Is.EqualTo("#\"2026-08-17\""));
     }
 
     [TestCaseSource(nameof(OrderingValues))]
