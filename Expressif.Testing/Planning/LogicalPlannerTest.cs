@@ -12,6 +12,12 @@ public class LogicalPlannerTest
     {
         yield return Shape(new LiteralParameter(1), "literal");
         yield return Shape(new QuotedLiteralParameter("quoted"), "literal");
+        yield return Shape(new CallableReferenceParameter("compare-numeric"), "callable-reference");
+        yield return Shape(new SortCriterionParameter(
+            new TupleProjectionParameter(0),
+            Expressif.Types.TypeRegistry.Resolve("integer"),
+            Ascending: true,
+            NullsFirst: false), "sort-criterion");
         yield return Shape(new VariableParameter("value"), "variable");
         yield return Shape(new IncomingValueParameter(), "incoming");
         yield return Shape(new ObjectPropertyParameter("name"), "field");
@@ -32,6 +38,9 @@ public class LogicalPlannerTest
             new RecordNamedEntry("name", new LiteralParameter("value")),
             new RecordSpreadEntry(new IncomingValueParameter()),
         ]), "record");
+        yield return Shape(new LetDefinitionParameter([
+            new LetBinding("value", new LiteralParameter(10)),
+        ]), "let-definition");
         yield return Shape(new OpenExpressionParameter(new OpenExpression([new Function("trim", [])])), "pipeline");
         yield return Shape(new InputExpressionParameter(new ClosedExpression(new LiteralParameter("text"), [new Function("trim", [])])), "pipeline");
         yield return Shape(new IntervalParameter(new IntervalBinding(
@@ -171,6 +180,55 @@ public class LogicalPlannerTest
         {
             Assert.That(literal.Type, Is.EqualTo(expectedType));
             Assert.That(literal.Value, Is.EqualTo(expectedValue));
+        });
+    }
+
+    [Test]
+    public void Plan_LetDefinition_PreservesBindingNameAndValue()
+    {
+        var call = SingleCall("let(value := 10)");
+        var definition = (LogicalCall)call.Arguments.Single().Value!;
+        var binding = definition.Arguments.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(definition.Function.Name, Is.EqualTo("let-definition"));
+            Assert.That(binding.Parameter.Name, Is.EqualTo("value"));
+            Assert.That(((LogicalLiteral)binding.Value!).Value, Is.EqualTo(10m));
+        });
+    }
+
+    [Test]
+    public void Plan_SortCriterion_PreservesSelectorTypeDirectionAndNullPlacement()
+    {
+        var call = SingleCall("sort-by($0 -> :integer)");
+        var criterion = (LogicalCall)call.Arguments.Single().Value!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(criterion.Function.Name, Is.EqualTo("sort-criterion"));
+            Assert.That(((LogicalCall)criterion.Arguments[0].Value!).Function.Name, Is.EqualTo("tuple-at"));
+            Assert.That(criterion.Arguments[1].Value,
+                Is.EqualTo(new LogicalLiteral("type", "integer")));
+            Assert.That(criterion.Arguments[2].Value,
+                Is.EqualTo(new LogicalLiteral("boolean", true)));
+            Assert.That(criterion.Arguments[3].Value,
+                Is.EqualTo(new LogicalLiteral("boolean", false)));
+        });
+    }
+
+    [Test]
+    public void Plan_CallableReference_PreservesReferencedName()
+    {
+        var call = SingleCall("sort-term(1, compare-numeric~)");
+        var reference = (LogicalCall)call.Arguments.Single(argument => argument.Parameter.Name == "comparer").Value!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(reference.Function.Name, Is.EqualTo("callable-reference"));
+            Assert.That(reference.Arguments.Single().Parameter.Name, Is.EqualTo("name"));
+            Assert.That(reference.Arguments.Single().Value,
+                Is.EqualTo(new LogicalLiteral("text", "compare-numeric")));
         });
     }
 
