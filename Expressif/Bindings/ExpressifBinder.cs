@@ -242,6 +242,7 @@ public sealed class ExpressifBinder
             GuardedExpressionSyntax guarded => [BindGuardedExpression(guarded)],
             UnaryExpressionSyntax unary => BindUnaryExpression(unary).Members,
             BinaryExpressionSyntax binary => BindBinaryExpression(binary).Members,
+            ConditionalExpressionSyntax conditional => BindConditionalExpression(conditional).Members,
             ParenthesizedExpressionSyntax { Expression: OpenExpressionSyntax open } => BindOpen(open).Members,
             ParenthesizedExpressionSyntax
             {
@@ -277,12 +278,25 @@ public sealed class ExpressifBinder
                 ])
         ]);
 
+    private OpenExpression BindConditionalExpression(ConditionalExpressionSyntax syntax)
+        => new([
+            new Function(
+                syntax.Operator.Direction is ConditionalDirection.Forward
+                    ? "conditional-forward"
+                    : "conditional-backward",
+                [BindArgument(syntax.Left), BindArgument(syntax.Right)],
+                syntax.Operator.Direction is ConditionalDirection.Forward
+                    ? FunctionSyntax.ConditionalForward
+                    : FunctionSyntax.ConditionalBackward)
+        ]);
+
     private OpenExpression BindExpression(ExpressionSyntax syntax) => syntax switch
     {
         GuardedExpressionSyntax guarded => new OpenExpression([BindGuardedExpression(guarded)]),
         OpenExpressionSyntax open => BindOpen(open),
         UnaryExpressionSyntax unary => BindUnaryExpression(unary),
         BinaryExpressionSyntax binary => BindBinaryExpression(binary),
+        ConditionalExpressionSyntax conditional => BindConditionalExpression(conditional),
         ParenthesizedExpressionSyntax parenthesized => BindOpenRoot(parenthesized.Expression),
         _ => new OpenExpression(BindPipelineMembers(syntax)),
     };
@@ -317,14 +331,16 @@ public sealed class ExpressifBinder
     private Function BindPipelineMemberCore(ExpressionSyntax syntax) => syntax switch
     {
         InputBindingExpressionSyntax binding => new Function("apply", [new OpenExpressionParameter(BindInputBound(binding))], FunctionSyntax.InputBindingStage),
+        ValueReferenceStageSyntax reference => new Function("apply", [new VariableParameter(reference.Reference.Name)]),
         TupleProjectionSyntax { RootDepth: > 0 } reference => new Function(
             "tuple-at",
             [new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth)],
             FunctionSyntax.ScopedTupleProjectionShorthand),
-        FunctionCallSyntax { Name: "group-map-shorthand" } shorthand => Function.FromArguments(
+        GroupingMapShorthandSyntax map => new Function(
             "map-groups",
-            BindFunctionArguments(shorthand),
+            [new OpenExpressionParameter(BindOpen(map.Expression))],
             FunctionSyntax.GroupMapShorthand),
+        ControlFlowCallSyntax controlFlow => BindControlFlowCall(controlFlow),
         FunctionCallSyntax call => BindFunction(call),
         TupleProjectionSyntax projection => new Function(
             "tuple-at",
@@ -339,6 +355,33 @@ public sealed class ExpressifBinder
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
     };
+
+    private Function BindControlFlowCall(ControlFlowCallSyntax syntax)
+    {
+        var isTry = syntax.Name.Equals("try", StringComparison.OrdinalIgnoreCase);
+        if (syntax.Branches.Count < (isTry ? 2 : 1))
+            throw new BindingException($"Function '{syntax.Name}' has too few branches.");
+        var branches = new List<IParameter>();
+        for (var index = 0; index < syntax.Branches.Count; index++)
+        {
+            switch (syntax.Branches[index])
+            {
+                case ControlFlowFallbackSyntax fallback when index > 0 && index == syntax.Branches.Count - 1:
+                    branches.Add(new ControlFlowBranchParameter(BindArgument(fallback.Action), null));
+                    break;
+                case ConditionalControlFlowBranchSyntax branch:
+                    branches.Add(new ControlFlowBranchParameter(
+                        BindArgument(isTry ? branch.Condition : branch.Action),
+                        BindArgument(isTry ? branch.Action : branch.Condition)));
+                    break;
+                case ControlFlowFallbackSyntax:
+                    throw new BindingException("A catch-all fallback must follow ordinary branches and be final.");
+                default:
+                    throw new BindingException("Invalid control-flow branch.");
+            }
+        }
+        return new Function(syntax.Name.ToLowerInvariant(), branches.ToArray());
+    }
 
     private Function BindFunction(FunctionCallSyntax syntax)
         {
@@ -706,6 +749,8 @@ public sealed class ExpressifBinder
         FunctionCallSyntax call => new OpenExpressionParameter(new OpenExpression([BindFunction(call)])),
         UnaryExpressionSyntax unary => new OpenExpressionParameter(BindUnaryExpression(unary)),
         BinaryExpressionSyntax binary => new OpenExpressionParameter(BindBinaryExpression(binary)),
+        ConditionalExpressionSyntax conditional => new OpenExpressionParameter(BindConditionalExpression(conditional)),
+        ControlFlowCallSyntax controlFlow => new OpenExpressionParameter(new OpenExpression([BindControlFlowCall(controlFlow)])),
         ParenthesizedExpressionSyntax
         {
             Expression: ClosedExpressionSyntax
@@ -791,15 +836,22 @@ public sealed class ExpressifBinder
         BooleanLiteralSyntax boolean => new LiteralParameter(boolean.Value),
         NullLiteralSyntax => new LiteralParameter(null),
         AllLiteralSyntax => new LiteralParameter(AllDimension.Instance),
-        QuotedLiteralSyntax quoted when OrderingSyntax.Bind(quoted.Value) is { } ordering
-            => new LiteralParameter(ordering),
+        OrderingLiteralSyntax ordering => new LiteralParameter(ordering.Text switch
+        {
+            "#less" => OrderingValue.Less,
+            "#equal" => OrderingValue.Equal,
+            "#greater" => OrderingValue.Greater,
+            _ => throw Unsupported(ordering),
+        }),
         QuotedLiteralSyntax quoted => new QuotedLiteralParameter(quoted.Value),
+        QuotedTypedLiteralSyntax quoted => BindQuotedTypedLiteral(quoted),
         DateLiteralSyntax date => new LiteralParameter(date.Value, "date"),
         DateTimeLiteralSyntax dateTime => new LiteralParameter(dateTime.Value, "datetime"),
         TimeLiteralSyntax time => new LiteralParameter(time.Value, "time"),
         TypeLiteralSyntax type => new LiteralParameter(TypeRegistry.Resolve(type.Name)),
         IntervalLiteralSyntax interval => new IntervalParameter(BindInterval(interval)),
         ArrayLiteralSyntax array => new ArrayParameter(array.Elements.Select(BindArrayElement).ToArray()),
+        VectorLiteralSyntax vector => new VectorParameter(vector.Elements.Select(BindVectorElement).ToArray()),
         TupleLiteralSyntax tuple => BindTupleLike(tuple),
         PairLiteralSyntax pair => new PairParameter(BindArgument(pair.Key), BindArgument(pair.Value)),
         GroupingLiteralSyntax grouping => new GroupingParameter(grouping.Entries
@@ -811,6 +863,13 @@ public sealed class ExpressifBinder
         RecordLiteralSyntax record => BindRecordLiteral(record),
         _ => throw Unsupported(syntax),
     };
+
+    private IParameter BindQuotedTypedLiteral(QuotedTypedLiteralSyntax syntax)
+    {
+        var typeName = syntax.Type?.Name ?? string.Empty;
+        var literal = quotedLiteralRegistry.Parse(syntax.Representation.Value, typeName);
+        return new LiteralParameter(literal.Value, literal.TypeName, !string.IsNullOrEmpty(typeName));
+    }
 
     private ArrayElementParameter BindArrayElement(ArrayElementSyntax element)
         => new(
@@ -826,6 +885,14 @@ public sealed class ExpressifBinder
                 ? new IncomingValueParameter()
                 : BindArgument(element.Expression
                     ?? throw new BindingException("An explicit tuple spread must include an expression.")),
+            element.IsSpread);
+
+    private TupleElementParameter BindVectorElement(VectorElementSyntax element)
+        => new(
+            element.IsImplicitSpread
+                ? new IncomingValueParameter()
+                : BindArgument(element.Expression
+                    ?? throw new BindingException("An explicit vector spread must include an expression.")),
             element.IsSpread);
 
     private RecordLiteralParameter BindRecordLiteral(RecordLiteralSyntax record)
@@ -851,27 +918,7 @@ public sealed class ExpressifBinder
     private IParameter BindTupleLike(TupleLiteralSyntax tuple)
     {
         var elements = tuple.Elements.Select(BindTupleElement).ToArray();
-        if (elements is
-            [
-                { IsSpread: false, Value: QuotedLiteralParameter { Value: QuotedTypedLiteralSyntax.Marker } },
-                { IsSpread: false, Value: QuotedLiteralParameter { Value: QuotedTypedLiteralSyntax.MarkerEnd } },
-                { IsSpread: false, Value: QuotedLiteralParameter representation },
-                { IsSpread: false, Value: QuotedLiteralParameter type }
-            ])
-        {
-            var literal = quotedLiteralRegistry.Parse(representation.Value, type.Value);
-            return new LiteralParameter(literal.Value, literal.TypeName, !string.IsNullOrEmpty(type.Value));
-        }
-        const string marker = "__expressif_internal_vector_literal__";
-        const string markerEnd = "__expressif_internal_vector_literal_end__";
-        return elements is
-            [
-                { IsSpread: false, Value: QuotedLiteralParameter { Value: marker } },
-                { IsSpread: false, Value: QuotedLiteralParameter { Value: markerEnd } },
-                .. var components
-            ]
-            ? new VectorParameter(components)
-            : new TupleParameter(elements);
+        return new TupleParameter(elements);
     }
 
     private static IntervalBinding BindInterval(IntervalLiteralSyntax syntax)

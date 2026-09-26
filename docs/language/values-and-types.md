@@ -122,18 +122,16 @@ datetime
 time
 ```
 
-Prefix temporal literals with `#`, enclose their representation in double quotes, and add the type after a colon:
+Prefix temporal literals with `#` and enclose their canonical representation in double quotes:
 
 ```expressif
-#"2025-12-16":date
-#"2025-12-16T14:30:00":datetime
-#"14:30:00":time
+#"2025-12-16"
+#"2025-12-16T14:30:00"
+#"14:30:00"
 #"P2DT3H30M"
 ```
 
-The explicit suffix selects the corresponding literal parser before the quoted representation is interpreted. Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function.
-
-The suffix can be omitted for compatibility, as in `#"2025-12-16"`. Expressif then tries every registered quoted-literal parser. Exactly one parser must accept the representation. If more than one type accepts it, the literal is ambiguous and must be disambiguated with an explicit suffix. Adding a new registered parser can therefore make an existing unsuffixed literal ambiguous; adding `:date`, `:datetime`, or another intended type is the remedy. Ordinary quoted values such as `"2025-12-16"` remain text.
+Dates use `yyyy-MM-dd`; datetimes separate the date and time with `T`; times use a 24-hour clock; and durations use ISO 8601 duration notation. These canonical forms have dedicated syntax nodes, so no type suffix is required. Duration is a distinct scalar type rather than part of the temporal family. Temporal functions can extract components, shift values, compare them, or calculate durations depending on the function. Ordinary quoted values such as `"2025-12-16"` remain text.
 
 ### Null
 

@@ -35,15 +35,15 @@ public sealed class TemporalTypeDescriptor : ITypeDescriptor
 }
 
 /// <summary>A calendar date without a time component.</summary>
-[ExpressifType(Parent = "temporal", LiteralSyntax = "#\"yyyy-MM-dd\":date", LiteralExamples = ["#\"2025-12-16\":date"])]
+[ExpressifType(Parent = "temporal", LiteralSyntax = "#\"yyyy-MM-dd\"", LiteralExamples = ["#\"2025-12-16\""])]
 public sealed class DateTypeDescriptor : TypeDescriptor<DateOnly> { }
 
 /// <summary>A calendar date and time.</summary>
-[ExpressifType(Name = "datetime", Parent = "temporal", LiteralSyntax = "#\"yyyy-MM-ddTHH:mm:ss\":datetime", LiteralExamples = ["#\"2025-12-16T14:30:00\":datetime"])]
+[ExpressifType(Name = "datetime", Parent = "temporal", LiteralSyntax = "#\"yyyy-MM-ddTHH:mm:ss\"", LiteralExamples = ["#\"2025-12-16T14:30:00\""])]
 public sealed class DateTimeTypeDescriptor : TypeDescriptor<DateTime> { }
 
 /// <summary>A time of day without a date component.</summary>
-[ExpressifType(Parent = "temporal", LiteralSyntax = "#\"HH:mm:ss\":time", LiteralExamples = ["#\"14:30:00\":time"])]
+[ExpressifType(Parent = "temporal", LiteralSyntax = "#\"HH:mm:ss\"", LiteralExamples = ["#\"14:30:00\""])]
 public sealed class TimeTypeDescriptor : TypeDescriptor<TimeOnly> { }
 
 /// <summary>An elapsed duration expressed using ISO 8601 notation.</summary>
