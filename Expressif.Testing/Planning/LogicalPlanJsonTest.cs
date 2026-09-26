@@ -50,6 +50,27 @@ public class LogicalPlanJsonTest
         });
     }
 
+    [TestCase("#all", "all", "#all")]
+    [TestCase("#less", "ordering", "#less")]
+    [TestCase("#equal", "ordering", "#equal")]
+    [TestCase("#greater", "ordering", "#greater")]
+    public void Serialize_SpecialScalarLiteral_RoundTripsCanonicalJson(
+        string source,
+        string expectedType,
+        string expectedValue)
+    {
+        var json = LogicalPlanJson.Serialize(Plan(source), indented: false);
+        var roundTrip = LogicalPlanJson.Deserialize(json);
+        var literal = (LogicalLiteral)roundTrip.Pipeline.Items.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(literal.Type, Is.EqualTo(expectedType));
+            Assert.That(literal.Value, Is.EqualTo(expectedValue));
+            Assert.That(LogicalPlanJson.Serialize(roundTrip, indented: false), Is.EqualTo(json));
+        });
+    }
+
     [Test]
     public void Serialize_AllSupportedLiteralRuntimeTypes_WritesExpectedJsonValues()
     {
