@@ -38,6 +38,7 @@ public abstract class BaseTimeZoneParameteredFunction : BaseTimeZoneFunction
 [Function(prefix: "")]
 public class UtcToLocal : BaseTimeZoneParameteredFunction
 {
+    /// <param name="timeZoneLabel">The time-zone identifier or display-name label to convert to.</param>
     public UtcToLocal(Func<string> timeZoneLabel)
         : base(timeZoneLabel) { }
 
@@ -51,6 +52,7 @@ public class UtcToLocal : BaseTimeZoneParameteredFunction
 [Function(prefix: "")]
 public class LocalToUtc : BaseTimeZoneParameteredFunction
 {
+    /// <param name="timeZoneLabel">The time-zone identifier or display-name label of the input value.</param>
     public LocalToUtc(Func<string> timeZoneLabel)
         : base(timeZoneLabel)
     { }

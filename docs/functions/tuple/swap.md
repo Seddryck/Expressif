@@ -15,8 +15,8 @@ generated: true
 ```
 tuple | vector →
 swap(
-    first: integer,
-    second: integer
+    first?: integer,
+    second?: integer
 ) → tuple | vector
 ```
 
@@ -30,15 +30,17 @@ Returns a tuple with two positions exchanged, defaulting to the first and last p
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `first` | `integer` | Yes | Specifies the first zero-based position. |
-| `second` | `integer` | Yes | Specifies the second zero-based position. |
+| `first` | `integer` | No | Specifies the first zero-based position. Omission is preserved for operator-specific handling. |
+| `second` | `integer` | No | Specifies the second zero-based position. Omission is preserved for operator-specific handling. |
+
+
 
 
 
 ## Argument evaluation
 
-- **`first`:** Evaluated once in the enclosing context.
-- **`second`:** Evaluated once in the enclosing context.
+- **`first`:** Evaluated once in the context surrounding this `swap` call.
+- **`second`:** Evaluated once in the context surrounding this `swap` call.
 
 
 

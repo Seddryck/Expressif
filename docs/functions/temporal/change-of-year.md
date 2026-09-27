@@ -14,19 +14,30 @@ generated: true
 
 ```
 date-time →
-change-of-year() → date-time
+change-of-year(
+    year: integer
+) → date-time
 ```
 
 returns a temporal value corresponding to the same day and month of the argument value but of the year passed as the parameter. If the original date was the 29th of February and the year passed as a parameter is not a leap year then it returns the 28th of February.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `year` | `integer` | Yes | The year to set. |
 
 
 
+
+
+## Argument evaluation
+
+- **`year`:** Evaluated once in the context surrounding this `change-of-year` call.
 
 
 

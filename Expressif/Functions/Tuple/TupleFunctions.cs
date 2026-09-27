@@ -45,6 +45,7 @@ public sealed class Swap : IFunction<IPositionalValue, TupleValue?>, IFunction<V
 {
     private Func<int>? First { get; }
     private Func<int>? Second { get; }
+    /// <summary>Creates a swap that exchanges the first and last positions.</summary>
     public Swap() { }
     /// <param name="first">Specifies the first zero-based position.</param>
     /// <param name="second">Specifies the second zero-based position.</param>

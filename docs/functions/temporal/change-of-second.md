@@ -14,19 +14,30 @@ generated: true
 
 ```
 date-time →
-change-of-second() → date-time
+change-of-second(
+    second: integer
+) → date-time
 ```
 
 returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `second` | `integer` | Yes | The second to set. |
 
 
 
+
+
+## Argument evaluation
+
+- **`second`:** Evaluated once in the context surrounding this `change-of-second` call.
 
 
 

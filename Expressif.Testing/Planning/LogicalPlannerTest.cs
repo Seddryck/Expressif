@@ -118,6 +118,34 @@ public class LogicalPlannerTest
         });
     }
 
+    [TestCase("4 | power(2)", "exponent", 1)]
+    [TestCase("16 | nth-root(2)", "exponent", 1)]
+    [TestCase("10 | subtract(5)", "value,times", 1)]
+    [TestCase("T(\"a\", \"b\", \"c\", \"d\") | swap", "first,second", 0)]
+    [TestCase("#\"2024-01-15 12:30:45\" | change-of-hour(8)", "hour", 1)]
+    [TestCase("#\"2024-01-15 12:30:45\" | change-of-minute(15)", "minute", 1)]
+    [TestCase("#\"2024-01-15 12:30:45\" | change-of-second(10)", "second", 1)]
+    [TestCase("#\"2024-01-15 12:30:45\" | change-of-month(6)", "month", 1)]
+    [TestCase("#\"2024-01-15 12:30:45\" | change-of-year(2025)", "year", 1)]
+    [TestCase("#\"2024-01-15 12:30:00\" | local-to-utc(\"UTC\")", "timeZoneLabel", 1)]
+    [TestCase("#\"2024-01-15 12:30:00\" | utc-to-local(\"UTC\")", "timeZoneLabel", 1)]
+    [TestCase("2024 | catholic-calendar(\"Easter Sunday\")", "event,kind", 1)]
+    public void Plan_CorrectedCatalogExample_UsesCanonicalParameters(
+        string source,
+        string parameterNames,
+        int explicitArguments)
+    {
+        var plan = LogicalPlanner.Plan(ExpressionParser.Parse(source));
+        var call = plan.Pipeline.Items.OfType<LogicalCall>().Last();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Arguments.Select(argument => argument.Parameter.Name),
+                Is.EqualTo(parameterNames.Split(',')));
+            Assert.That(call.Arguments.Count(argument => argument.IsExplicit), Is.EqualTo(explicitArguments));
+        });
+    }
+
     [Test]
     public void Plan_SpreadArgument_PreservesSpreadOnCanonicalParameter()
     {
