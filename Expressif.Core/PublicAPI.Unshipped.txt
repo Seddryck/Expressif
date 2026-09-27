@@ -7,7 +7,7 @@ abstract Expressif.Planning.LogicalValue.<Clone>$() -> Expressif.Planning.Logica
 abstract Expressif.Predicates.BasePredicate.Evaluate(object? value) -> bool
 const Expressif.Planning.LogicalPlanJson.CatalogCompatibility = "3.0" -> string!
 const Expressif.Planning.LogicalPlanJson.FormatName = "expressif.logical-plan" -> string!
-const Expressif.Planning.LogicalPlanJson.FormatVersion = 1 -> int
+const Expressif.Planning.LogicalPlanJson.FormatVersion = 2 -> int
 const Expressif.Planning.LogicalPlanJson.SchemaResourceName = "Expressif.LogicalPlan.schema.json" -> string!
 Expressif.AbstractPredicationBuilder
 Expressif.AbstractPredicationBuilder.AbstractPredicationBuilder(Expressif.AbstractPredicationBuilder! builder) -> void
@@ -702,7 +702,7 @@ Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
 Expressif.Planning.ILogicalPlanningContext
 Expressif.Planning.ILogicalPlanningContext.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IRootExpression!
-Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name) -> Expressif.Planning.PlannerFunctionMetadata?
+Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null) -> Expressif.Planning.PlannerFunctionMetadata?
 Expressif.Planning.ILogicalPlanningContext.FindTypeName(System.Type! runtimeType) -> string?
 Expressif.Planning.LogicalArgument
 Expressif.Planning.LogicalArgument.<Clone>$() -> Expressif.Planning.LogicalArgument!
@@ -775,15 +775,17 @@ Expressif.Planning.PlannerEvaluationDescriptor.Source.get -> string?
 Expressif.Planning.PlannerEvaluationDescriptor.Source.init -> void
 Expressif.Planning.PlannerFunctionDescriptor
 Expressif.Planning.PlannerFunctionDescriptor.<Clone>$() -> Expressif.Planning.PlannerFunctionDescriptor!
-Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics) -> void
+Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics, out string! Kind) -> void
 Expressif.Planning.PlannerFunctionDescriptor.Equals(Expressif.Planning.PlannerFunctionDescriptor? other) -> bool
 Expressif.Planning.PlannerFunctionDescriptor.Input.get -> string!
 Expressif.Planning.PlannerFunctionDescriptor.Input.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.Kind.get -> string!
+Expressif.Planning.PlannerFunctionDescriptor.Kind.init -> void
 Expressif.Planning.PlannerFunctionDescriptor.Name.get -> string!
 Expressif.Planning.PlannerFunctionDescriptor.Name.init -> void
 Expressif.Planning.PlannerFunctionDescriptor.Output.get -> string!
 Expressif.Planning.PlannerFunctionDescriptor.Output.init -> void
-Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null) -> void
+Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null, string! Kind = "function") -> void
 Expressif.Planning.PlannerFunctionDescriptor.Semantics.get -> Expressif.Planning.PlannerSemanticsDescriptor?
 Expressif.Planning.PlannerFunctionDescriptor.Semantics.init -> void
 Expressif.Planning.PlannerFunctionDescriptor.Traversal.get -> Expressif.Planning.PlannerTraversalDescriptor?

@@ -239,7 +239,7 @@ public class LogicalPlannerTest
     [Test]
     public void Plan_DuplicateEntry_RetainsRuntimeBindingDiagnostic()
         => Assert.That(
-            () => LogicalPlanner.Plan(ExpressionParser.Parse("put(age := 1, age := 2)")),
+            () => LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("put(age := 1, age := 2)")),
             Throws.TypeOf<DuplicateNamedArgumentException>());
 
     [Test]
@@ -274,7 +274,7 @@ public class LogicalPlannerTest
         string parameterNames,
         int explicitArguments)
     {
-        var plan = LogicalPlanner.Plan(ExpressionParser.Parse(source));
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(source));
         var call = plan.Pipeline.Items.OfType<LogicalCall>().Last();
 
         Assert.Multiple(() =>
