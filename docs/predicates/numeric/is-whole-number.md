@@ -40,5 +40,5 @@ This predicate has no parameters.
 
 **Kind:** Predicate  
 **Scope:** `numeric`  
-**Aliases:** `is-integer`, `integer`, `numeric-is-integer`, `whole-number`, `numeric-is-whole-number`
+**Aliases:** `is-integer`, `numeric-is-integer`, `whole-number`, `numeric-is-whole-number`
 {: .member-reference }

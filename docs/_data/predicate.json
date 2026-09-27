@@ -601,9 +601,7 @@
   {
     "Name": "is-code-point",
     "IsPublic": true,
-    "Aliases": [
-      "code-point"
-    ],
+    "Aliases": [],
     "Scope": "numeric",
     "Input": "numeric",
     "Output": "boolean",
@@ -649,8 +647,8 @@
       "numeric-is-greater-than"
     ],
     "Scope": "numeric",
-    "Input": null,
-    "Output": null,
+    "Input": "numeric",
+    "Output": "boolean",
     "Summary": "Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise.",
     "Parameters": [
       {
@@ -702,7 +700,6 @@
     "IsPublic": true,
     "Aliases": [
       "is-integer",
-      "integer",
       "numeric-is-integer",
       "whole-number",
       "numeric-is-whole-number"
