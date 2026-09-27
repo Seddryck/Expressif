@@ -26,6 +26,27 @@ public class LogicalPlanJsonTest
         Assert.That(roundTrip, Is.EqualTo(json));
     }
 
+    [TestCase("put(first := 1, second := 2)", "first", "second")]
+    [TestCase("transform-as(trim, first := .first-name, second := .last-name)", "first", "second")]
+    [TestCase("with(first := 1, second := 2, add(.first, .second))", "first", "second")]
+    public void Deserialize_SerializedNamedEntries_RoundTripsNamesAndBodies(
+        string source,
+        string first,
+        string second)
+    {
+        var json = LogicalPlanJson.Serialize(Plan(source), indented: false);
+
+        var roundTrip = LogicalPlanJson.Serialize(LogicalPlanJson.Deserialize(json), indented: false);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(roundTrip, Is.EqualTo(json));
+            Assert.That(json, Does.Contain("\"name\":\"named-entry\""));
+            Assert.That(json, Does.Contain($"\"value\":\"{first}\""));
+            Assert.That(json, Does.Contain($"\"value\":\"{second}\""));
+        });
+    }
+
     [TestCase("apply(@_ | input :> @input)")]
     [TestCase("apply(@_ | :> .first | upper)")]
     [TestCase("apply((left, right) :> @left)")]
