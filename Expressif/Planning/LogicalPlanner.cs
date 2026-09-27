@@ -64,7 +64,9 @@ public sealed class LogicalPlanner
             : Descriptor(documentation);
         var parameters = documentation?.Parameters
             ?? SyntheticParameters(function.Arguments.Length);
-        var arguments = NormalizeArguments(descriptor.Name, parameters, function.Arguments);
+        var arguments = function.Parameters is [WithDefinitionParameter with] && descriptor.Name == "with"
+            ? WithArguments(parameters, with)
+            : NormalizeArguments(descriptor.Name, parameters, function.Arguments);
         var contextDepth = ContextDepth(function.Syntax);
         if (descriptor.Name == "tuple-at" && function.Arguments is [{ Value: ScopedTupleProjectionParameter projection }])
         {
@@ -92,11 +94,15 @@ public sealed class LogicalPlanner
             return [];
         }
 
-        var associated = new List<(FunctionParameterDocumentation Parameter, FunctionArgument Argument)>();
+        var associated = new List<(
+            FunctionParameterDocumentation Parameter,
+            FunctionArgument Argument,
+            string? EntryName)>();
         var positionalIndex = 0;
         foreach (var argument in supplied)
         {
             FunctionParameterDocumentation? parameter;
+            string? entryName = null;
             if (argument.Name is null)
             {
                 parameter = positionalIndex < parameters.Count
@@ -109,12 +115,20 @@ public sealed class LogicalPlanner
             }
             else
             {
-                parameter = parameters.SingleOrDefault(candidate => candidate.Name.Equals(argument.Name, StringComparison.OrdinalIgnoreCase))
-                    ?? throw new LogicalPlanningException($"Function '{functionName}' has no parameter named '{argument.Name}'.");
-                if (associated.Any(item => ReferenceEquals(item.Parameter, parameter)))
-                    throw new LogicalPlanningException($"Parameter '{parameter.Name}' is supplied more than once.");
+                parameter = parameters.SingleOrDefault(candidate => candidate.Kind == "entry");
+                if (parameter is not null)
+                {
+                    entryName = argument.Name;
+                }
+                else
+                {
+                    parameter = parameters.SingleOrDefault(candidate => candidate.Name.Equals(argument.Name, StringComparison.OrdinalIgnoreCase))
+                        ?? throw new LogicalPlanningException($"Function '{functionName}' has no parameter named '{argument.Name}'.");
+                    if (associated.Any(item => ReferenceEquals(item.Parameter, parameter)))
+                        throw new LogicalPlanningException($"Parameter '{parameter.Name}' is supplied more than once.");
+                }
             }
-            associated.Add((parameter, argument));
+            associated.Add((parameter, argument, entryName));
         }
 
         var result = new List<LogicalArgument>();
@@ -122,7 +136,12 @@ public sealed class LogicalPlanner
         {
             var matches = associated.Where(item => ReferenceEquals(item.Parameter, parameter)).ToArray();
             foreach (var match in matches)
-                result.Add(new LogicalArgument(Descriptor(parameter), Value(match.Argument.Value), match.Argument.IsSpread, IsExplicit: true));
+            {
+                var value = match.EntryName is null
+                    ? Value(match.Argument.Value)
+                    : NamedEntry(match.EntryName, match.Argument.Value);
+                result.Add(new LogicalArgument(Descriptor(parameter), value, match.Argument.IsSpread, IsExplicit: true));
+            }
             if (matches.Length == 0)
             {
                 if (!parameter.Optional)
@@ -131,6 +150,22 @@ public sealed class LogicalPlanner
             }
         }
         return result;
+    }
+
+    private IReadOnlyList<LogicalArgument> WithArguments(
+        IReadOnlyList<FunctionParameterDocumentation> parameters,
+        WithDefinitionParameter definition)
+    {
+        var projections = parameters.Single(parameter => parameter.Kind == "entry");
+        var body = parameters.Single(parameter => parameter.Name == "body");
+        return [
+            .. definition.Projections.Select(projection => new LogicalArgument(
+                Descriptor(projections),
+                NamedEntry(projection.Name, projection.Value),
+                IsSpread: false,
+                IsExplicit: true)),
+            new LogicalArgument(Descriptor(body), Value(definition.Body), IsSpread: false, IsExplicit: true),
+        ];
     }
 
     private LogicalValue Value(IParameter parameter) => parameter switch
@@ -212,10 +247,7 @@ public sealed class LogicalPlanner
             Descriptor(parameter),
             entry.Spread
                 ? SyntheticCall("spread-entry", ("value", Value(entry.Value)))
-                : SyntheticCall(
-                    "named-entry",
-                    ("name", new LogicalLiteral("text", entry.Name)),
-                    ("value", Value(entry.Value))),
+                : NamedEntry(entry.Name, entry.Value),
             entry.Spread,
             true)).ToList();
         if (arguments.Count == 0)
@@ -224,6 +256,12 @@ public sealed class LogicalPlanner
             Descriptor(documentation),
             arguments);
     }
+
+    private LogicalCall NamedEntry(string name, IParameter value)
+        => SyntheticCall(
+            "named-entry",
+            ("name", new LogicalLiteral("text", name)),
+            ("value", Value(value)));
 
     private LogicalCall Interval(IntervalBinding interval)
         => SyntheticCall("interval",

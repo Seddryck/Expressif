@@ -135,6 +135,64 @@ public class LogicalPlannerTest
             Is.EqualTo(new object[] { 5m, 2m }));
     }
 
+    [TestCase("put")]
+    [TestCase("put-present")]
+    [TestCase("put-absent")]
+    public void Plan_PutAssignments_UseCanonicalParameterAndPreserveEntryNames(string function)
+    {
+        var call = SingleCall($"{function}(first := 1, second := 2)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Arguments.Select(argument => argument.Parameter.Name),
+                Is.EqualTo(new[] { "assignments", "assignments" }));
+            Assert.That(call.Arguments.Select(EntryName), Is.EqualTo(new[] { "first", "second" }));
+            Assert.That(call.Arguments.Select(argument => ((LogicalLiteral)EntryValue(argument)).Value),
+                Is.EqualTo(new object[] { 1m, 2m }));
+        });
+    }
+
+    [Test]
+    public void Plan_TransformAs_PreservesOperationAndNamedExpressions()
+    {
+        var call = SingleCall("transform-as(trim, first := .first-name, second := .last-name)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Arguments.Select(argument => argument.Parameter.Name),
+                Is.EqualTo(new[] { "operation", "expressions", "expressions" }));
+            Assert.That(((LogicalPipeline)call.Arguments[0].Value!).Items.Single(),
+                Is.InstanceOf<LogicalCall>().And.Property(nameof(LogicalCall.Function))
+                    .Property(nameof(PlannerFunctionDescriptor.Name)).EqualTo("trim"));
+            Assert.That(call.Arguments.Skip(1).Select(EntryName), Is.EqualTo(new[] { "first", "second" }));
+            Assert.That(call.Arguments.Skip(1).Select(argument =>
+                    ((LogicalCall)((LogicalPipeline)EntryValue(argument)).Items.Single()).Function.Name),
+                Is.EqualTo(new[] { "field", "field" }));
+        });
+    }
+
+    [Test]
+    public void Plan_With_PreservesNamedProjectionsAndSeparateBody()
+    {
+        var call = SingleCall("with(first := 1, second := 2, add(.first, .second))");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Arguments.Select(argument => argument.Parameter.Name),
+                Is.EqualTo(new[] { "projections", "projections", "body" }));
+            Assert.That(call.Arguments.Take(2).Select(EntryName), Is.EqualTo(new[] { "first", "second" }));
+            Assert.That(((LogicalPipeline)call.Arguments[2].Value!).Items.Single(),
+                Is.InstanceOf<LogicalCall>().And.Property(nameof(LogicalCall.Function))
+                    .Property(nameof(PlannerFunctionDescriptor.Name)).EqualTo("add"));
+        });
+    }
+
+    [Test]
+    public void Plan_DuplicateEntry_RetainsRuntimeBindingDiagnostic()
+        => Assert.That(
+            () => LogicalPlanner.Plan(ExpressionParser.Parse("put(age := 1, age := 2)")),
+            Throws.TypeOf<DuplicateNamedArgumentException>());
+
     [Test]
     public void Plan_OmittedArgument_PreservesCatalogOmissionInsteadOfMaterializingDefault()
     {
@@ -391,6 +449,14 @@ public class LogicalPlannerTest
 
     private static LogicalCall InputBindingFrom(LogicalPipeline pipeline)
         => (LogicalCall)pipeline.Items.Single();
+
+    private static string EntryName(LogicalArgument argument)
+        => (string)((LogicalLiteral)((LogicalCall)argument.Value!).Arguments
+            .Single(entryArgument => entryArgument.Parameter.Name == "name").Value!).Value!;
+
+    private static LogicalValue EntryValue(LogicalArgument argument)
+        => ((LogicalCall)argument.Value!).Arguments
+            .Single(entryArgument => entryArgument.Parameter.Name == "value").Value!;
 
     private static object?[] InputBindingNames(LogicalCall binding)
         => ((LogicalCall)binding.Arguments.Single(argument => argument.Parameter.Name == "names").Value!)
