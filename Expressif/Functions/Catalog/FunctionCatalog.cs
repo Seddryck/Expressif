@@ -6,6 +6,7 @@ namespace Expressif.Functions.Catalog;
 public sealed class FunctionCatalog
 {
     internal const string ResourceName = "Expressif.FunctionCatalog.json";
+    internal const string PredicateResourceName = "Expressif.PredicateCatalog.json";
     private static readonly Lazy<FunctionCatalog> LazyDefault = new(() => Load(typeof(FunctionCatalog).Assembly));
     private readonly FunctionDocumentation[] functions;
 
@@ -44,27 +45,62 @@ public sealed class FunctionCatalog
             .Select(x => new
             {
                 Function = x,
-                Distance = x.Aliases.Prepend(x.Name).Min(candidate => EditDistance(name, candidate)),
+                Distance = Names(x).Min(candidate => EditDistance(name, candidate)),
             })
             .Where(x => x.Distance <= maximumDistance)
             .OrderBy(x => x.Distance)
             .ThenBy(x => x.Function.Name, StringComparer.Ordinal)
+            .ThenBy(x => x.Function.Kind, StringComparer.Ordinal)
             .Take(count)
             .Select(x => x.Function);
     }
 
     internal static FunctionCatalog Load(Assembly assembly)
     {
-        using var stream = assembly.GetManifestResourceStream(ResourceName)
-            ?? throw new InvalidOperationException($"Embedded function catalog '{ResourceName}' was not found in assembly '{assembly.GetName().Name}'.");
+        var entries = Merge(
+            LoadEntries(assembly, ResourceName, "function"),
+            LoadEntries(assembly, PredicateResourceName, "predicate"));
 
-        var entries = JsonSerializer.Deserialize<FunctionDocumentation[]>(stream)
-            ?? throw new InvalidOperationException("The embedded function catalog could not be deserialized.");
-
+        ValidateNames(entries);
         ValidateOmissions(entries);
         ValidateSemantics(entries);
 
-        return new FunctionCatalog(entries.Where(x => x.IsPublic).ToArray());
+        return new FunctionCatalog(entries);
+    }
+
+    internal static FunctionDocumentation[] Merge(
+        IEnumerable<FunctionDocumentation> functions,
+        IEnumerable<FunctionDocumentation> predicates)
+        => [
+            .. functions.Where(entry => entry.IsPublic),
+            .. predicates.Where(entry => entry.IsPublic).Select(entry => entry with { Kind = "predicate" }),
+        ];
+
+    internal static void ValidateNames(IEnumerable<FunctionDocumentation> entries)
+    {
+        var collisions = entries
+            .SelectMany(entry => Names(entry)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(name => (Name: name, Entry: entry)))
+            .GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+            .Select(group => new
+            {
+                group.Key,
+                Entries = group.Select(item => item.Entry)
+                    .Distinct()
+                    .ToArray(),
+            })
+            .Where(collision => collision.Entries.Length > 1)
+            .OrderBy(collision => collision.Key, StringComparer.Ordinal)
+            .ToArray();
+        if (collisions.Length == 0)
+            return;
+
+        var collision = collisions[0];
+        var members = string.Join(", ", collision.Entries
+            .OrderBy(entry => entry.Name, StringComparer.Ordinal)
+            .Select(entry => $"{entry.Kind} '{entry.Name}'"));
+        throw new InvalidOperationException($"Catalog name '{collision.Key}' is ambiguous between {members}.");
     }
 
     internal static void ValidateOmissions(IEnumerable<FunctionDocumentation> entries)
@@ -127,12 +163,25 @@ public sealed class FunctionCatalog
     }
 
     private static bool IsExactMatch(FunctionDocumentation function, string name)
-        => string.Equals(function.Name, name, StringComparison.Ordinal)
-            || function.Aliases.Contains(name, StringComparer.Ordinal);
+        => Names(function).Contains(name, StringComparer.Ordinal);
 
     private static bool IsInsensitiveMatch(FunctionDocumentation function, string name)
-        => string.Equals(function.Name, name, StringComparison.OrdinalIgnoreCase)
-            || function.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase);
+        => Names(function).Contains(name, StringComparer.OrdinalIgnoreCase);
+
+    private static IEnumerable<string> Names(FunctionDocumentation function)
+        => function.Aliases
+            .Prepend(function.Name)
+            .Concat(function.DeprecatedAliases?.Select(alias => alias.Name) ?? []);
+
+    private static FunctionDocumentation[] LoadEntries(Assembly assembly, string resourceName, string kind)
+    {
+        using var stream = assembly.GetManifestResourceStream(resourceName)
+            ?? throw new InvalidOperationException(
+                $"Embedded {kind} catalog '{resourceName}' was not found in assembly '{assembly.GetName().Name}'.");
+
+        return JsonSerializer.Deserialize<FunctionDocumentation[]>(stream)
+            ?? throw new InvalidOperationException($"The embedded {kind} catalog could not be deserialized.");
+    }
 
     private static FunctionDocumentation? SingleCanonicalMatch(FunctionDocumentation[] matches)
     {

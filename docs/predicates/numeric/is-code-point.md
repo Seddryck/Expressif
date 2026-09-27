@@ -41,5 +41,5 @@ This predicate has no parameters.
 
 **Kind:** Predicate  
 **Scope:** `numeric`  
-**Aliases:** `code-point`
+**Aliases:** None
 {: .member-reference }

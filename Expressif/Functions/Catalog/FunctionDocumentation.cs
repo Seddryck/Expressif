@@ -19,8 +19,17 @@ public sealed record FunctionDocumentation(
     string? Sunset = null,
     bool ReplacementIsEquivalent = false,
     string? MigrationNotes = null,
+    string Kind = "function",
+    FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null,
     FunctionTraversalDocumentation? Traversal = null,
     FunctionSemanticsDocumentation? Semantics = null);
+
+public sealed record FunctionAliasLifecycleDocumentation(
+    string Name,
+    string Replacement,
+    string Message,
+    string? Sunset = null,
+    bool ReplacementIsEquivalent = true);
 
 public sealed record FunctionParameterDocumentation(
     string Name,

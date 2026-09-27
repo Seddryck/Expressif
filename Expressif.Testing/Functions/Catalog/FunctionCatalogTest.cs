@@ -14,7 +14,11 @@ public class FunctionCatalogTest
     {
         var assembly = typeof(FunctionCatalog).Assembly;
 
-        Assert.That(assembly.GetManifestResourceNames(), Does.Contain(FunctionCatalog.ResourceName));
+        Assert.Multiple(() =>
+        {
+            Assert.That(assembly.GetManifestResourceNames(), Does.Contain(FunctionCatalog.ResourceName));
+            Assert.That(assembly.GetManifestResourceNames(), Does.Contain(FunctionCatalog.PredicateResourceName));
+        });
         Assert.That(FunctionCatalog.Default.Functions, Is.Not.Empty);
     }
 
@@ -22,7 +26,9 @@ public class FunctionCatalogTest
     [Category("MetadataConsistency")]
     public void Default_PublicFunctions_MatchIntrospectionMetadata()
     {
-        var documented = FunctionCatalog.Default.Functions.ToDictionary(x => x.Name);
+        var documented = FunctionCatalog.Default.Functions
+            .Where(x => x.Kind == "function")
+            .ToDictionary(x => x.Name);
         var introspected = new FunctionIntrospector().Describe().Where(x => x.IsPublic).ToDictionary(x => x.Name);
 
         Assert.That(documented.Keys, Is.EquivalentTo(introspected.Keys));
@@ -142,6 +148,66 @@ public class FunctionCatalogTest
     public void Find_Alias_ReturnsCanonicalFunction()
         => Assert.That(FunctionCatalog.Default.Find("array-to-broadcast")?.Name, Is.EqualTo("broadcast"));
 
+    [Test]
+    public void Find_PredicateAlias_ReturnsCanonicalPredicateMetadata()
+    {
+        var predicate = FunctionCatalog.Default.Find("greater-than");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(predicate?.Name, Is.EqualTo("is-greater-than"));
+            Assert.That(predicate?.Kind, Is.EqualTo("predicate"));
+            Assert.That(predicate?.Input, Is.EqualTo("numeric"));
+            Assert.That(predicate?.Output, Is.EqualTo("boolean"));
+            Assert.That(predicate?.Parameters,
+                Has.Exactly(1).Matches<FunctionParameterDocumentation>(parameter =>
+                    parameter.Name == "reference"
+                    && parameter.Type == "numeric"
+                    && !parameter.Optional));
+        });
+    }
+
+    [Test]
+    public void Merge_ExplicitFunctionKindsRemainUnchangedAndPredicatesAreMarked()
+    {
+        var accumulator = Documentation("sum") with { Kind = "accumulator" };
+        var predicate = Documentation("is-positive");
+
+        var merged = FunctionCatalog.Merge([accumulator], [predicate]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(merged.Single(entry => entry.Name == "sum").Kind, Is.EqualTo("accumulator"));
+            Assert.That(merged.Single(entry => entry.Name == "is-positive").Kind, Is.EqualTo("predicate"));
+        });
+    }
+
+    [TestCase("canonical")]
+    [TestCase("alias")]
+    [TestCase("deprecated-alias")]
+    public void ValidateNames_CollisionAcrossKinds_ThrowsClearDiagnostic(string collisionKind)
+    {
+        var first = collisionKind switch
+        {
+            "canonical" => Documentation("shared"),
+            "alias" => Documentation("first", ["shared"]),
+            "deprecated-alias" => Documentation("first") with
+            {
+                DeprecatedAliases = [new("shared", "first", "Use first.")],
+            },
+            _ => throw new ArgumentOutOfRangeException(nameof(collisionKind)),
+        };
+        var second = Documentation(collisionKind == "canonical" ? "shared" : "second", ["shared"])
+            with { Kind = "predicate" };
+        var expected = collisionKind == "canonical"
+            ? "Catalog name 'shared' is ambiguous between function 'shared', predicate 'shared'."
+            : "Catalog name 'shared' is ambiguous between function 'first', predicate 'second'.";
+
+        Assert.That(
+            () => FunctionCatalog.ValidateNames([first, second]),
+            Throws.InvalidOperationException.With.Message.EqualTo(expected));
+    }
+
     [TestCase("array", "values", 0)]
     [TestCase("record", "entries", 0)]
     [TestCase("coalesce", "expressions", 2)]
@@ -166,6 +232,10 @@ public class FunctionCatalogTest
     [Test]
     public void Suggest_CloseName_ReturnsExpectedFunctionFirst()
         => Assert.That(FunctionCatalog.Default.Suggest("revers").First().Name, Is.EqualTo("reverse"));
+
+    [Test]
+    public void Suggest_ClosePredicateAlias_ReturnsExpectedPredicateFirst()
+        => Assert.That(FunctionCatalog.Default.Suggest("greter-than").First().Name, Is.EqualTo("is-greater-than"));
 
     [Test]
     public void Default_FunctionWithExamples_DeserializesExamples()
@@ -319,4 +389,7 @@ public class FunctionCatalogTest
             () => FunctionCatalog.ValidateSemantics([function]),
             Throws.InvalidOperationException.With.Message.Contains($"semantics {dimension}"));
     }
+
+    private static FunctionDocumentation Documentation(string name, string[]? aliases = null)
+        => new(name, true, aliases ?? [], "special", "any", "any", "Summary.", []);
 }

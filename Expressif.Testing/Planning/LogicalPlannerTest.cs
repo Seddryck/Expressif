@@ -51,7 +51,7 @@ public class LogicalPlannerTest
         yield return Shape(new PositionalCoercionParameter(typeof(string)), "coercion");
         yield return Shape(new FieldCoercionParameter("name", typeof(string)), "field-coercion");
         yield return Shape(new TupleCoercionParameter(1, typeof(string)), "tuple-coercion");
-        yield return Shape(new PredicationParameter(new SinglePredication(new Function("even", []))), "even");
+        yield return Shape(new PredicationParameter(new SinglePredication(new Function("even", []))), "is-even");
         yield return Shape(new PredicationParameter(new PipelinePredication(new OpenExpression([new Function("even", [])]))), "pipeline");
         yield return Shape(new ControlFlowBranchParameter(new LiteralParameter(1), null), "branch");
         yield return new TestCaseData(
@@ -73,6 +73,38 @@ public class LogicalPlannerTest
             Assert.That(((LogicalCall)alias.Pipeline.Items.Single()).Function,
                 Is.EqualTo(((LogicalCall)canonical.Pipeline.Items.Single()).Function));
             Assert.That(((LogicalCall)alias.Pipeline.Items.Single()).Arguments, Is.Empty);
+        });
+    }
+
+    [Test]
+    public void Plan_PredicateAlias_UsesCanonicalCatalogMetadata()
+    {
+        var call = SingleCall("greater-than(1)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Function.Name, Is.EqualTo("is-greater-than"));
+            Assert.That(call.Function.Input, Is.EqualTo("numeric"));
+            Assert.That(call.Function.Output, Is.EqualTo("boolean"));
+            Assert.That(call.Arguments.Single().Parameter.Name, Is.EqualTo("reference"));
+            Assert.That(call.Arguments.Single().Parameter.Type, Is.EqualTo("numeric"));
+        });
+    }
+
+    [Test]
+    public void Plan_FilterPredicate_ContainsNoSyntheticArgumentMetadata()
+    {
+        var filter = SingleCall("filter(greater-than(1))");
+        var predicatePipeline = (LogicalPipeline)filter.Arguments.Single().Value!;
+        var predicate = (LogicalCall)predicatePipeline.Items.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(predicate.Function.Name, Is.EqualTo("is-greater-than"));
+            Assert.That(predicate.Arguments.Select(argument => argument.Parameter.Name),
+                Is.EqualTo(new[] { "reference" }));
+            Assert.That(predicate.Arguments.Select(argument => argument.Parameter.Type),
+                Is.EqualTo(new[] { "numeric" }));
         });
     }
 

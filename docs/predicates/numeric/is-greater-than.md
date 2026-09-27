@@ -13,9 +13,10 @@ generated: true
 ---
 
 ```
+numeric →
 is-greater-than(
     reference: numeric
-)
+) → boolean
 ```
 
 Returns true if the numeric value passed as argument is greater than the numeric value passed as parameter. Returns `false` otherwise.
