@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using Expressif.Library.Catalog;
 
 namespace Expressif.Planning;
 
@@ -186,7 +185,7 @@ public static class LogicalPlanJson
         writer.WriteEndObject();
     }
 
-    private static void WriteOmission(Utf8JsonWriter writer, ParameterOmissionDocumentation omission)
+    private static void WriteOmission(Utf8JsonWriter writer, PlannerOmissionDescriptor omission)
     {
         writer.WriteStartObject();
         writer.WriteString("mode", OmissionMode(omission.Mode));
@@ -312,7 +311,7 @@ public static class LogicalPlanJson
                     IsExplicit: false,
                     IsSpread: false,
                     Value: null,
-                    Omission.Mode: ParameterOmissionMode.EmptyVariadic,
+                    Omission.Mode: PlannerOmissionMode.EmptyVariadic,
                 },
             ])
         {
@@ -442,19 +441,19 @@ public static class LogicalPlanJson
         return new PlannerSemanticsDescriptor(cardinality, dependency, ordering);
     }
 
-    private static ParameterOmissionDocumentation ReadOmission(JsonElement element)
+    private static PlannerOmissionDescriptor ReadOmission(JsonElement element)
     {
         var omission = RequireObject(element, "omission descriptor");
         EnsureProperties(omission, "mode", "value", "source");
         var mode = RequireString(omission, "mode") switch
         {
-            "constant" => ParameterOmissionMode.Constant,
-            "empty-variadic" => ParameterOmissionMode.EmptyVariadic,
-            "absent" => ParameterOmissionMode.Absent,
-            "environment-derived" => ParameterOmissionMode.EnvironmentDerived,
+            "constant" => PlannerOmissionMode.Constant,
+            "empty-variadic" => PlannerOmissionMode.EmptyVariadic,
+            "absent" => PlannerOmissionMode.Absent,
+            "environment-derived" => PlannerOmissionMode.EnvironmentDerived,
             var unsupported => throw new LogicalPlanFormatException($"Unsupported omission mode '{unsupported}'."),
         };
-        var result = new ParameterOmissionDocumentation(
+        var result = new PlannerOmissionDescriptor(
             mode,
             omission.TryGetProperty("value", out var value) ? value.Clone() : default,
             OptionalString(omission, "source"));
@@ -462,15 +461,15 @@ public static class LogicalPlanJson
         return result;
     }
 
-    private static void ValidateOmission(ParameterOmissionDocumentation omission)
+    private static void ValidateOmission(PlannerOmissionDescriptor omission)
     {
         var hasValue = omission.Value.ValueKind != JsonValueKind.Undefined;
         var hasSource = omission.Source is not null;
         var isValid = omission.Mode switch
         {
-            ParameterOmissionMode.Constant => hasValue && !hasSource,
-            ParameterOmissionMode.EmptyVariadic or ParameterOmissionMode.Absent => !hasValue && !hasSource,
-            ParameterOmissionMode.EnvironmentDerived => !hasValue && hasSource,
+            PlannerOmissionMode.Constant => hasValue && !hasSource,
+            PlannerOmissionMode.EmptyVariadic or PlannerOmissionMode.Absent => !hasValue && !hasSource,
+            PlannerOmissionMode.EnvironmentDerived => !hasValue && hasSource,
             _ => false,
         };
         if (!isValid)
@@ -559,12 +558,12 @@ public static class LogicalPlanJson
         }
     }
 
-    private static string OmissionMode(ParameterOmissionMode mode) => mode switch
+    private static string OmissionMode(PlannerOmissionMode mode) => mode switch
     {
-        ParameterOmissionMode.Constant => "constant",
-        ParameterOmissionMode.EmptyVariadic => "empty-variadic",
-        ParameterOmissionMode.Absent => "absent",
-        ParameterOmissionMode.EnvironmentDerived => "environment-derived",
+        PlannerOmissionMode.Constant => "constant",
+        PlannerOmissionMode.EmptyVariadic => "empty-variadic",
+        PlannerOmissionMode.Absent => "absent",
+        PlannerOmissionMode.EnvironmentDerived => "environment-derived",
         _ => throw new LogicalPlanFormatException($"Unsupported omission mode '{mode}'."),
     };
 }

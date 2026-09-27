@@ -1105,8 +1105,8 @@ Expressif.Values.Tuple.GetEnumerator() -> System.Collections.Generic.IEnumerator
 Expressif.Values.Tuple.GetPosition(int index) -> object?
 Expressif.Values.Tuple.this[int index].get -> object?
 Expressif.Values.Tuple.Tuple(params object?[]! values) -> void
-Expressif.Values.Types.AmbiguousQuotedLiteralException
-Expressif.Values.Types.AmbiguousQuotedLiteralException.AmbiguousQuotedLiteralException(string! representation, System.Collections.Generic.IEnumerable<string!>! typeNames) -> void
+Expressif.Types.AmbiguousQuotedLiteralException
+Expressif.Types.AmbiguousQuotedLiteralException.AmbiguousQuotedLiteralException(string! representation, System.Collections.Generic.IEnumerable<string!>! typeNames) -> void
 Expressif.Values.Types.ExpressifTypeAttribute
 Expressif.Values.Types.ExpressifTypeAttribute.ExpressifTypeAttribute() -> void
 Expressif.Values.Types.ExpressifTypeAttribute.LiteralExamples.get -> string![]!
@@ -1120,20 +1120,20 @@ Expressif.Values.Types.ExpressifTypeAttribute.Parent.init -> void
 Expressif.Values.Types.ExpressifTypeDefinition<T>
 Expressif.Values.Types.ExpressifTypeDefinition<T>.ExpressifTypeDefinition() -> void
 Expressif.Values.Types.ExpressifTypeDefinition<T>.RuntimeType.get -> System.Type!
-Expressif.Values.Types.InvalidQuotedLiteralException
-Expressif.Values.Types.InvalidQuotedLiteralException.InvalidQuotedLiteralException(string! representation, string? typeName = null) -> void
-Expressif.Values.Types.IQuotedLiteralParser
-Expressif.Values.Types.IQuotedLiteralParser.Format(object! value) -> string!
-Expressif.Values.Types.IQuotedLiteralParser.RuntimeType.get -> System.Type!
-Expressif.Values.Types.IQuotedLiteralParser.TryParse(string! representation, out object? value) -> bool
-Expressif.Values.Types.IQuotedLiteralParser.TypeName.get -> string!
+Expressif.Types.InvalidQuotedLiteralException
+Expressif.Types.InvalidQuotedLiteralException.InvalidQuotedLiteralException(string! representation, string? typeName = null) -> void
+Expressif.Types.IQuotedLiteralParser
+Expressif.Types.IQuotedLiteralParser.Format(object! value) -> string!
+Expressif.Types.IQuotedLiteralParser.RuntimeType.get -> System.Type!
+Expressif.Types.IQuotedLiteralParser.TryParse(string! representation, out object? value) -> bool
+Expressif.Types.IQuotedLiteralParser.TypeName.get -> string!
 Expressif.Values.Types.ITypeDescriptor
 Expressif.Values.Types.ITypeDescriptor.RuntimeType.get -> System.Type?
-Expressif.Values.Types.QuotedLiteralRegistry
-Expressif.Values.Types.QuotedLiteralRegistry.CanSerialize(object! value) -> bool
-Expressif.Values.Types.QuotedLiteralRegistry.Parse(string! representation, string? typeName = null) -> (object? Value, string! TypeName)
-Expressif.Values.Types.QuotedLiteralRegistry.QuotedLiteralRegistry(System.Collections.Generic.IEnumerable<Expressif.Values.Types.IQuotedLiteralParser!>! parsers) -> void
-Expressif.Values.Types.QuotedLiteralRegistry.Serialize(object! value, string? typeName = null, bool includeTypeSuffix = true) -> string!
+Expressif.Types.QuotedLiteralRegistry
+Expressif.Types.QuotedLiteralRegistry.CanSerialize(object! value) -> bool
+Expressif.Types.QuotedLiteralRegistry.Parse(string! representation, string? typeName = null) -> (object? Value, string! TypeName)
+Expressif.Types.QuotedLiteralRegistry.QuotedLiteralRegistry(System.Collections.Generic.IEnumerable<Expressif.Types.IQuotedLiteralParser!>! parsers) -> void
+Expressif.Types.QuotedLiteralRegistry.Serialize(object! value, string? typeName = null, bool includeTypeSuffix = true) -> string!
 Expressif.Values.Types.TypeDescriptor
 Expressif.Values.Types.TypeDescriptor.Bindings.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
 Expressif.Values.Types.TypeDescriptor.Literal.get -> Expressif.Values.Types.TypeLiteralMetadata?
@@ -1144,8 +1144,8 @@ Expressif.Values.Types.TypeDescriptor.Summary.get -> string!
 Expressif.Values.Types.TypeLiteralMetadata
 Expressif.Values.Types.TypeLiteralMetadata.Examples.get -> System.Collections.Generic.IReadOnlyList<string!>!
 Expressif.Values.Types.TypeLiteralMetadata.Syntax.get -> string?
-Expressif.Values.Types.UnsupportedQuotedLiteralTypeException
-Expressif.Values.Types.UnsupportedQuotedLiteralTypeException.UnsupportedQuotedLiteralTypeException(string! typeName) -> void
+Expressif.Types.UnsupportedQuotedLiteralTypeException
+Expressif.Types.UnsupportedQuotedLiteralTypeException.UnsupportedQuotedLiteralTypeException(string! typeName) -> void
 Expressif.Values.Vector
 Expressif.Values.Vector.Arity.get -> int
 Expressif.Values.Vector.Count.get -> int
@@ -1557,7 +1557,7 @@ static Expressif.Values.Special.Value.Instance.get -> Expressif.Values.Special.V
 static Expressif.Values.Special.Value.Keyword.get -> string!
 static Expressif.Values.Special.Whitespace.Instance.get -> Expressif.Values.Special.Whitespace!
 static Expressif.Values.Special.Whitespace.Keyword.get -> string!
-static Expressif.Values.Types.QuotedLiteralRegistry.Default.get -> Expressif.Values.Types.QuotedLiteralRegistry!
+static Expressif.Types.QuotedLiteralRegistry.Default.get -> Expressif.Types.QuotedLiteralRegistry!
 virtual Expressif.AbstractPredicationBuilder.Parametrize(object?[]! parameters) -> Expressif.Bindings.IParameter![]!
 virtual Expressif.Bindings.CoercionSpecificationParameter.EqualityContract.get -> System.Type!
 virtual Expressif.Bindings.CoercionSpecificationParameter.Equals(Expressif.Bindings.CoercionSpecificationParameter? other) -> bool

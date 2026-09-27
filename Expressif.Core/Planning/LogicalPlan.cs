@@ -1,4 +1,4 @@
-using Expressif.Library.Catalog;
+using System.Text.Json;
 
 namespace Expressif.Planning;
 
@@ -38,7 +38,26 @@ public sealed record LogicalArgument(
     LogicalValue? Value,
     bool IsSpread,
     bool IsExplicit,
-    ParameterOmissionDocumentation? Omission = null);
+    PlannerOmissionDescriptor? Omission = null);
+
+/// <summary>
+/// Describes how an omitted argument obtains its value.
+/// </summary>
+public sealed record PlannerOmissionDescriptor(
+    PlannerOmissionMode Mode,
+    JsonElement Value = default,
+    string? Source = null);
+
+/// <summary>
+/// Identifies the source of an omitted argument value.
+/// </summary>
+public enum PlannerOmissionMode
+{
+    Constant,
+    EmptyVariadic,
+    Absent,
+    EnvironmentDerived,
+}
 
 /// <summary>
 /// The planner-relevant part of a catalog operator.

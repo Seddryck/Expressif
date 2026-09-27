@@ -67,6 +67,57 @@ public class LogicalPlanIntegrationTest
         });
     }
 
+    [TestCase("apply(@_ | input :> @input)")]
+    [TestCase("apply(@_ | :> .first | upper)")]
+    [TestCase("apply((left, right) :> @left)")]
+    [TestCase("apply(@_ | outer :> apply(@_ | inner :> @outer))")]
+    public void Deserialize_SerializedInputBinding_RoundTripsCanonicalJson(string source)
+    {
+        var json = LogicalPlanJson.Serialize(Plan(source), indented: false);
+
+        var roundTrip = LogicalPlanJson.Serialize(LogicalPlanJson.Deserialize(json), indented: false);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(roundTrip, Is.EqualTo(json));
+            Assert.That(json, Does.Contain("\"name\":\"input-binding\""));
+            Assert.That(json, Does.Contain("\"name\":\"body\""));
+        });
+    }
+
+    [Test]
+    public void Deserialize_InputBindingWithInvalidArguments_ThrowsFormatException()
+    {
+        var json = LogicalPlanJson.Serialize(Plan("apply(@_ | input :> @input)"), indented: false)
+            .Replace("\"name\":\"positional\"", "\"name\":\"mode\"", StringComparison.Ordinal);
+
+        var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
+
+        Assert.That(exception!.Message, Is.EqualTo(
+            "An input-binding call must contain names, positional, and body arguments in that order."));
+    }
+
+    [TestCase("#all", "all", "#all")]
+    [TestCase("#less", "ordering", "#less")]
+    [TestCase("#equal", "ordering", "#equal")]
+    [TestCase("#greater", "ordering", "#greater")]
+    public void Serialize_SpecialScalarLiteral_RoundTripsCanonicalJson(
+        string source,
+        string expectedType,
+        string expectedValue)
+    {
+        var json = LogicalPlanJson.Serialize(Plan(source), indented: false);
+        var roundTrip = LogicalPlanJson.Deserialize(json);
+        var literal = (LogicalLiteral)roundTrip.Pipeline.Items.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(literal.Type, Is.EqualTo(expectedType));
+            Assert.That(literal.Value, Is.EqualTo(expectedValue));
+            Assert.That(LogicalPlanJson.Serialize(roundTrip, indented: false), Is.EqualTo(json));
+        });
+    }
+
     private static LogicalPlan Plan(string source)
         => LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(source));
 }
