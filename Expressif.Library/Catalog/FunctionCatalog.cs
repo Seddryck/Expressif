@@ -68,7 +68,7 @@ public sealed class FunctionCatalog
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
 
         var maximumDistance = Math.Max(2, name.Length / 3);
-        return candidates
+        var suggestions = candidates
             .Select(x => new
             {
                 Function = x,
@@ -78,6 +78,13 @@ public sealed class FunctionCatalog
             .OrderBy(x => x.Distance)
             .ThenBy(x => x.Function.Name, StringComparer.Ordinal)
             .ThenBy(x => x.Function.Kind, StringComparer.Ordinal)
+            .ToArray();
+        if (suggestions.Length == 0)
+            return [];
+
+        var closestDistance = suggestions[0].Distance;
+        return suggestions
+            .Where(x => x.Distance == closestDistance)
             .Take(count)
             .Select(x => x.Function);
     }
@@ -89,7 +96,11 @@ public sealed class FunctionCatalog
             LoadEntries(assembly, PredicateResourceName, "predicate"),
             []);
 
-        ValidateNames(entries);
+        // Functions and accumulators intentionally share some callable names; they are
+        // resolved in distinct runtime contexts. Predicates share the function lookup,
+        // so validate each of those domains against predicates independently.
+        ValidateNames(entries.Where(entry => entry.Kind != "accumulator"));
+        ValidateNames(entries.Where(entry => entry.Kind != "function"));
         ValidateOmissions(entries);
         ValidateSemantics(entries);
 

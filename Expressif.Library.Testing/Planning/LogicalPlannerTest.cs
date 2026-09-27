@@ -274,7 +274,7 @@ public class LogicalPlannerTest
         string parameterNames,
         int explicitArguments)
     {
-        var plan = LogicalPlanner.Plan(ExpressionParser.Parse(source));
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(source));
         var call = plan.Pipeline.Items.OfType<LogicalCall>().Last();
 
         Assert.Multiple(() =>
