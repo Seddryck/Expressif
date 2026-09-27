@@ -14,19 +14,30 @@ generated: true
 
 ```
 date-time →
-change-of-hour() → date-time
+change-of-hour(
+    hour: integer
+) → date-time
 ```
 
 returns a temporal value corresponding to the same instant of the argument value but with a new value for the second part.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `hour` | `integer` | Yes | The hour to set. |
 
 
 
+
+
+## Argument evaluation
+
+- **`hour`:** Evaluated once in the context surrounding this `change-of-hour` call.
 
 
 

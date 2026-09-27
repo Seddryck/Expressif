@@ -14,19 +14,33 @@ generated: true
 
 ```
 date-time →
-catholic-calendar() → date-time
+catholic-calendar(
+    event: text,
+    kind: text = "Local"
+) → date-time
 ```
 
 Returns the date of the Catholic calendar event passed as parameter for the year specified by the argument. Returns `null` if the event is unknown.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `event` | `text` | Yes | The Catholic calendar event whose date is returned. |
+| `kind` | `text` | No | The date-time kind assigned to the returned value. Defaults to `"Local"`. |
 
 
 
+
+
+## Argument evaluation
+
+- **`event`:** Evaluated once in the context surrounding this `catholic-calendar` call.
+- **`kind`:** Evaluated once in the context surrounding this `catholic-calendar` call.
 
 
 

@@ -45,6 +45,7 @@ public class Subtract : Add
     public Subtract(Func<decimal> value, Func<int> times)
         : base(value, times) { }
 
+    /// <param name="value">The value to be subtracted from the input value.</param>
     public Subtract(Func<decimal> value)
         : base(value) { }
 

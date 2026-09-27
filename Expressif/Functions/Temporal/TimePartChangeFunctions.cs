@@ -20,6 +20,7 @@ public abstract class BaseTimePartChangeFunction : BaseTemporalFunction
 public class ChangeOfHour : BaseTimePartChangeFunction
 {
     public Func<int> Hour { get; }
+    /// <param name="hour">The hour to set.</param>
     public ChangeOfHour(Func<int> hour)
         => Hour = hour;
 
@@ -38,6 +39,7 @@ public class ChangeOfHour : BaseTimePartChangeFunction
 public class ChangeOfMinute : BaseTimePartChangeFunction
 {
     public Func<int> Minute { get; }
+    /// <param name="minute">The minute to set.</param>
     public ChangeOfMinute(Func<int> minute)
         => Minute = minute;
 
@@ -56,6 +58,7 @@ public class ChangeOfMinute : BaseTimePartChangeFunction
 public class ChangeOfSecond : BaseTimePartChangeFunction
 {
     public Func<int> Second { get; }
+    /// <param name="second">The second to set.</param>
     public ChangeOfSecond(Func<int> second)
         => Second = second;
 

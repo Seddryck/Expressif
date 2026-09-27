@@ -41,6 +41,7 @@ public abstract class BaseDatePartChangeFunction : BaseTemporalFunction
 public class ChangeOfYear : BaseDatePartChangeFunction
 {
     public Func<int> Year { get; }
+    /// <param name="year">The year to set.</param>
     public ChangeOfYear(Func<int> year)
         => Year = year;
 
@@ -63,6 +64,7 @@ public class ChangeOfYear : BaseDatePartChangeFunction
 public class ChangeOfMonth : BaseDatePartChangeFunction
 {
     public Func<int> Month { get; }
+    /// <param name="month">The month to set.</param>
     public ChangeOfMonth(Func<int> month)
         => Month = month;
 

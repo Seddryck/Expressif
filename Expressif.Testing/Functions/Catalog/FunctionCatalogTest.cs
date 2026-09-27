@@ -173,6 +173,57 @@ public class FunctionCatalogTest
             FunctionCatalog.Default.Find("add")?.Examples,
             Is.EqualTo(new[] { "10 | add(5)      → 15", "10 | add(5, 2)   → 20" }));
 
+    [TestCase("subtract", "times", "integer", true)]
+    [TestCase("power", "exponent", "numeric", false)]
+    [TestCase("nth-root", "exponent", "numeric", false)]
+    [TestCase("swap", "first", "integer", true)]
+    [TestCase("swap", "second", "integer", true)]
+    [TestCase("change-of-hour", "hour", "integer", false)]
+    [TestCase("change-of-minute", "minute", "integer", false)]
+    [TestCase("change-of-second", "second", "integer", false)]
+    [TestCase("change-of-month", "month", "integer", false)]
+    [TestCase("change-of-year", "year", "integer", false)]
+    [TestCase("local-to-utc", "timeZoneLabel", "text", false)]
+    [TestCase("utc-to-local", "timeZoneLabel", "text", false)]
+    [TestCase("catholic-calendar", "event", "text", false)]
+    [TestCase("catholic-calendar", "kind", "text", true)]
+    public void Default_CorrectedRuntimeParameter_HasCanonicalMetadata(
+        string function,
+        string parameter,
+        string type,
+        bool optional)
+    {
+        var metadata = FunctionCatalog.Default.Find(function)?.Parameters.Single(x => x.Name == parameter);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(metadata?.Type, Is.EqualTo(type));
+            Assert.That(metadata?.Optional, Is.EqualTo(optional));
+            Assert.That(metadata?.Evaluation,
+                Is.EqualTo(new ParameterEvaluationDocumentation(
+                    "once",
+                    $"Evaluated once in the context surrounding this `{function}` call.",
+                    Source: "enclosing")));
+        });
+    }
+
+    [TestCase("subtract", "times", "1")]
+    [TestCase("catholic-calendar", "kind", "\"Local\"")]
+    public void Default_OptionalRuntimeParameter_HasConstantDefault(
+        string function,
+        string parameter,
+        string value)
+    {
+        var omission = FunctionCatalog.Default.Find(function)?.Parameters
+            .Single(x => x.Name == parameter).Omission;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(omission?.Mode, Is.EqualTo(ParameterOmissionMode.Constant));
+            Assert.That(omission?.Value.GetRawText(), Is.EqualTo(value));
+        });
+    }
+
     [Test]
     public void Default_FunctionWithBehavior_DeserializesBehavior()
         => Assert.That(
@@ -197,6 +248,10 @@ public class FunctionCatalogTest
     }
 
     [TestCase("add", "times", ParameterOmissionMode.Constant)]
+    [TestCase("subtract", "times", ParameterOmissionMode.Constant)]
+    [TestCase("swap", "first", ParameterOmissionMode.Absent)]
+    [TestCase("swap", "second", ParameterOmissionMode.Absent)]
+    [TestCase("catholic-calendar", "kind", ParameterOmissionMode.Constant)]
     [TestCase("array", "values", ParameterOmissionMode.EmptyVariadic)]
     [TestCase("throw", "predicate", ParameterOmissionMode.Absent)]
     [TestCase("distribute-random-split", "seed", ParameterOmissionMode.EnvironmentDerived)]

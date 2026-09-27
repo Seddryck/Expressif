@@ -14,19 +14,30 @@ generated: true
 
 ```
 date-time →
-change-of-month() → date-time
+change-of-month(
+    month: integer
+) → date-time
 ```
 
 returns a temporal value corresponding to the same day and year of the argument value but of the month passed as the parameter. If the original day is 29, 30, or 31 and the new month passed as a parameter has fewer days then it returns the last day of the corresponding month.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `month` | `integer` | Yes | The month to set. |
 
 
 
+
+
+## Argument evaluation
+
+- **`month`:** Evaluated once in the context surrounding this `change-of-month` call.
 
 
 

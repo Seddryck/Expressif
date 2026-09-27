@@ -21,6 +21,7 @@ public abstract class BaseNumericPowerRootFunction : BaseNumericFunction
 /// </summary>
 public class Power : BaseNumericPowerRootFunction
 {
+    /// <param name="exponent">The exponent to which the input value is raised.</param>
     public Power(Func<decimal> exponent)
         : base(exponent) { }
 
@@ -51,6 +52,7 @@ public class CubePower : Power
 /// </summary>
 public class NthRoot : BaseNumericPowerRootFunction
 {
+    /// <param name="exponent">The exponent of the root to return.</param>
     public NthRoot(Func<decimal> exponent)
         : base(exponent) { }
 

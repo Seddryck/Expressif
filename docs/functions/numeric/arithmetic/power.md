@@ -14,18 +14,30 @@ generated: true
 
 ```
 numeric →
-power() → numeric
+power(
+    exponent: numeric
+) → numeric
 ```
 
 Returns the the numeric argument value raised to the power specified by the parameter value.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `exponent` | `numeric` | Yes | The exponent to which the input value is raised. |
 
 
+
+
+
+## Argument evaluation
+
+- **`exponent`:** Evaluated once in the context surrounding this `power` call.
 
 
 

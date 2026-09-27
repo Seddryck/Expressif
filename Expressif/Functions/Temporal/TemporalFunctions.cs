@@ -86,9 +86,12 @@ public class CatholicCalendar : BaseDatePartChangeFunction
     public Func<string> Event { get; }
     public Func<string> Kind { get; }
 
+    /// <param name="event">The Catholic calendar event whose date is returned.</param>
     public CatholicCalendar(Func<string> @event)
         : this(@event, () => nameof(DateTimeKind.Local)) { }
 
+    /// <param name="event">The Catholic calendar event whose date is returned.</param>
+    /// <param name="kind">The date-time kind assigned to the returned value.</param>
     public CatholicCalendar(Func<string> @event, Func<string> kind)
         => (Event, Kind) = (@event, kind);
 
