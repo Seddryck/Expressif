@@ -28,7 +28,7 @@ public sealed class LogicalPlanner
     }
 
     private LogicalPipeline Pipeline(OpenExpression expression, string? expectedKind = null)
-        => expression is InputBoundExpression binding
+        => expression.InputBinding is { } binding
             ? new LogicalPipeline([InputBinding(binding, expectedKind)])
             : Pipeline(expression.Members, expectedKind);
 

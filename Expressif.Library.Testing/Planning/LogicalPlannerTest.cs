@@ -252,7 +252,7 @@ public class LogicalPlannerTest
         {
             Assert.That(omitted.IsExplicit, Is.False);
             Assert.That(omitted.Value, Is.Null);
-            Assert.That(omitted.Omission?.Mode, Is.EqualTo(ParameterOmissionMode.Constant));
+            Assert.That(omitted.Omission?.Mode, Is.EqualTo(PlannerOmissionMode.Constant));
             Assert.That(omitted.Omission?.Value.GetDecimal(), Is.EqualTo(1m));
         });
     }
@@ -341,7 +341,7 @@ public class LogicalPlannerTest
         string expectedType,
         string expectedValue)
     {
-        var literal = (LogicalLiteral)LogicalPlanner.Plan(ExpressionParser.Parse(source)).Pipeline.Items.Single();
+        var literal = (LogicalLiteral)LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(source)).Pipeline.Items.Single();
 
         Assert.Multiple(() =>
         {
