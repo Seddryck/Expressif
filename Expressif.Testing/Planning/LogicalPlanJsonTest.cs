@@ -26,6 +26,25 @@ public class LogicalPlanJsonTest
         Assert.That(roundTrip, Is.EqualTo(json));
     }
 
+    [TestCase("first(1)", "function")]
+    [TestCase("is-even", "predicate")]
+    [TestCase("fold(first)", "accumulator")]
+    [TestCase("custom-operator", "extension")]
+    public void Deserialize_SerializedOperatorKind_RoundTripsWithoutLoss(
+        string source,
+        string expectedKind)
+    {
+        var json = LogicalPlanJson.Serialize(Plan(source), indented: false);
+
+        var roundTrip = LogicalPlanJson.Serialize(LogicalPlanJson.Deserialize(json), indented: false);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(roundTrip, Is.EqualTo(json));
+            Assert.That(json, Does.Contain($"\"kind\":\"{expectedKind}\""));
+        });
+    }
+
     [TestCase("put(first := 1, second := 2)", "first", "second")]
     [TestCase("transform-as(trim, first := .first-name, second := .last-name)", "first", "second")]
     [TestCase("with(first := 1, second := 2, add(.first, .second))", "first", "second")]
@@ -183,7 +202,8 @@ public class LogicalPlanJsonTest
         string value,
         Type expectedInnerException)
     {
-        var json = "{\"format\":\"expressif.logical-plan\",\"version\":1,\"catalogCompatibility\":\"3.0\"," +
+        var json = $"{{\"format\":\"expressif.logical-plan\",\"version\":{LogicalPlanJson.FormatVersion}," +
+            "\"catalogCompatibility\":\"3.0\"," +
             $"\"plan\":{{\"kind\":\"pipeline\",\"items\":[{{\"kind\":\"literal\",\"type\":\"{type}\",\"value\":{value}}}]}}}}";
 
         var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
@@ -199,12 +219,16 @@ public class LogicalPlanJsonTest
     public void Deserialize_UnsupportedVersion_ReportsSupportedVersion()
     {
         var json = LogicalPlanJson.Serialize(Plan("trim"), indented: false)
-            .Replace("\"version\":1", "\"version\":2", StringComparison.Ordinal);
+            .Replace(
+                $"\"version\":{LogicalPlanJson.FormatVersion}",
+                $"\"version\":{LogicalPlanJson.FormatVersion + 1}",
+                StringComparison.Ordinal);
 
         var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
 
         Assert.That(exception!.Message, Is.EqualTo(
-            "Unsupported logical-plan version '2'. This reader supports version '1'."));
+            $"Unsupported logical-plan version '{LogicalPlanJson.FormatVersion + 1}'. " +
+            $"This reader supports version '{LogicalPlanJson.FormatVersion}'."));
     }
 
     [Test]
@@ -214,13 +238,16 @@ public class LogicalPlanJsonTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(schema.RootElement.GetProperty("$id").GetString(), Does.EndWith("logical-plan-v1.schema.json"));
+            Assert.That(schema.RootElement.GetProperty("$id").GetString(), Does.EndWith("logical-plan-v2.schema.json"));
             Assert.That(schema.RootElement.GetProperty("properties").GetProperty("format").GetProperty("const").GetString(),
                 Is.EqualTo(LogicalPlanJson.FormatName));
             Assert.That(schema.RootElement.GetProperty("properties").GetProperty("version").GetProperty("const").GetInt32(),
                 Is.EqualTo(LogicalPlanJson.FormatVersion));
             Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("value").GetProperty("oneOf").GetArrayLength(),
                 Is.EqualTo(3));
+            Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("operator")
+                    .GetProperty("properties").GetProperty("kind").GetProperty("enum").GetArrayLength(),
+                Is.EqualTo(4));
             Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("semantics")
                     .GetProperty("properties").GetProperty("cardinality").GetProperty("enum").GetArrayLength(),
                 Is.EqualTo(6));
@@ -231,6 +258,17 @@ public class LogicalPlanJsonTest
                     .GetProperty("properties").TryGetProperty("summary", out _),
                 Is.False);
         });
+    }
+
+    [Test]
+    public void Deserialize_UnsupportedOperatorKind_ThrowsFormatException()
+    {
+        var json = LogicalPlanJson.Serialize(Plan("trim"), indented: false)
+            .Replace("\"kind\":\"function\"", "\"kind\":\"unknown\"", StringComparison.Ordinal);
+
+        var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
+
+        Assert.That(exception!.Message, Is.EqualTo("Unsupported operator kind 'unknown'."));
     }
 
     [Test]

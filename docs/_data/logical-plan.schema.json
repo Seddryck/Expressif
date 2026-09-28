@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://seddryck.github.io/Expressif/schemas/logical-plan-v1.schema.json",
-  "title": "Expressif logical plan version 1",
+  "$id": "https://seddryck.github.io/Expressif/schemas/logical-plan-v2.schema.json",
+  "title": "Expressif logical plan version 2",
   "type": "object",
   "required": ["format", "version", "catalogCompatibility", "plan"],
   "additionalProperties": false,
   "properties": {
     "format": { "const": "expressif.logical-plan" },
-    "version": { "const": 1 },
+    "version": { "const": 2 },
     "catalogCompatibility": { "type": "string", "minLength": 1 },
     "plan": { "$ref": "#/$defs/pipeline" }
   },
@@ -41,10 +41,11 @@
     },
     "operator": {
       "type": "object",
-      "required": ["name", "input", "output"],
+      "required": ["name", "kind", "input", "output"],
       "additionalProperties": false,
       "properties": {
         "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["function", "predicate", "accumulator", "extension"] },
         "input": { "type": "string", "minLength": 1 },
         "output": { "type": "string", "minLength": 1 },
         "traversal": { "$ref": "#/$defs/traversal" },

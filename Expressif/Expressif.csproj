@@ -14,6 +14,7 @@
 	<ItemGroup>
 		<EmbeddedResource Include="..\docs\_data\function.json" LogicalName="Expressif.FunctionCatalog.json" />
 		<EmbeddedResource Include="..\docs\_data\predicate.json" LogicalName="Expressif.PredicateCatalog.json" />
+		<EmbeddedResource Include="..\docs\_data\accumulator.json" LogicalName="Expressif.AccumulatorCatalog.json" />
 		<EmbeddedResource Include="..\docs\_data\type.json" LogicalName="Expressif.TypeCatalog.json" />
 		<EmbeddedResource Include="..\docs\_data\usage-lifecycle.json" LogicalName="Expressif.UsageLifecycle.json" />
 		<EmbeddedResource Include="..\docs\_data\logical-plan.schema.json" LogicalName="Expressif.LogicalPlan.schema.json" />

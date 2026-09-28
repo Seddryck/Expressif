@@ -84,10 +84,58 @@ public class LogicalPlannerTest
         Assert.Multiple(() =>
         {
             Assert.That(call.Function.Name, Is.EqualTo("is-greater-than"));
+            Assert.That(call.Function.Kind, Is.EqualTo("predicate"));
             Assert.That(call.Function.Input, Is.EqualTo("numeric"));
             Assert.That(call.Function.Output, Is.EqualTo("boolean"));
             Assert.That(call.Arguments.Single().Parameter.Name, Is.EqualTo("reference"));
             Assert.That(call.Arguments.Single().Parameter.Type, Is.EqualTo("numeric"));
+        });
+    }
+
+    [TestCase("first", "first-elements")]
+    [TestCase("last", "last-elements")]
+    public void Plan_CrossKindAliasWithArgument_ResolvesFunction(
+        string alias,
+        string canonical)
+    {
+        var call = SingleCall($"{alias}(1)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Function.Name, Is.EqualTo(canonical));
+            Assert.That(call.Function.Kind, Is.EqualTo("function"));
+            Assert.That(call.Arguments.Single().Parameter.Name, Is.EqualTo("count"));
+        });
+    }
+
+    [TestCase("first")]
+    [TestCase("last")]
+    public void Plan_AccumulatorArgument_ResolvesAccumulatorKind(string accumulator)
+    {
+        var fold = SingleCall($"fold({accumulator})");
+        var pipeline = (LogicalPipeline)fold.Arguments.Single().Value!;
+        var nested = (LogicalCall)pipeline.Items.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(fold.Function.Kind, Is.EqualTo("function"));
+            Assert.That(fold.Arguments.Single().Parameter.Name, Is.EqualTo("accumulator"));
+            Assert.That(nested.Function.Name, Is.EqualTo(accumulator));
+            Assert.That(nested.Function.Kind, Is.EqualTo("accumulator"));
+            Assert.That(nested.Arguments, Is.Empty);
+        });
+    }
+
+    [Test]
+    public void Plan_UnknownOperator_UsesExplicitExtensionKind()
+    {
+        var call = SingleCall("custom-operator(1)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Function.Name, Is.EqualTo("custom-operator"));
+            Assert.That(call.Function.Kind, Is.EqualTo("extension"));
+            Assert.That(call.Arguments.Single().Parameter.Name, Is.EqualTo("argument-0"));
         });
     }
 
@@ -470,7 +518,7 @@ public class LogicalPlannerTest
     private static LogicalValue InvokeValue(IParameter parameter)
         => (LogicalValue)typeof(LogicalPlanner)
             .GetMethod("Value", BindingFlags.Instance | BindingFlags.NonPublic)!
-            .Invoke(new LogicalPlanner(), [parameter])!;
+            .Invoke(new LogicalPlanner(), [parameter, null])!;
 
     private static IReadOnlyList<LogicalArgument> InvokeNormalizeArguments(
         string name,
