@@ -11,7 +11,7 @@ namespace Expressif.Planning;
 public static class LogicalPlanJson
 {
     public const string FormatName = "expressif.logical-plan";
-    public const int FormatVersion = 1;
+    public const int FormatVersion = 2;
     public const string CatalogCompatibility = "3.0";
     public const string SchemaResourceName = "Expressif.LogicalPlan.schema.json";
 
@@ -121,6 +121,7 @@ public static class LogicalPlanJson
     {
         writer.WriteStartObject();
         writer.WriteString("name", function.Name);
+        writer.WriteString("kind", OperatorKind(function.Kind));
         writer.WriteString("input", function.Input);
         writer.WriteString("output", function.Output);
         if (function.Traversal is not null)
@@ -342,7 +343,7 @@ public static class LogicalPlanJson
     private static PlannerFunctionDescriptor ReadFunction(JsonElement element)
     {
         var function = RequireObject(element, "operator descriptor");
-        EnsureProperties(function, "name", "input", "output", "traversal", "semantics");
+        EnsureProperties(function, "name", "kind", "input", "output", "traversal", "semantics");
         PlannerTraversalDescriptor? traversal = null;
         if (function.TryGetProperty("traversal", out var traversalElement))
         {
@@ -360,8 +361,14 @@ public static class LogicalPlanJson
             RequireString(function, "input"),
             RequireString(function, "output"),
             traversal,
-            semantics);
+            semantics,
+            OperatorKind(RequireString(function, "kind")));
     }
+
+    private static string OperatorKind(string kind)
+        => kind is "function" or "predicate" or "accumulator" or "extension"
+            ? kind
+            : throw new LogicalPlanFormatException($"Unsupported operator kind '{kind}'.");
 
     private static LogicalArgument ReadArgument(JsonElement element)
     {

@@ -19,11 +19,19 @@ public class MetadataCompletenessTest
 
     [Test]
     public void Predicates_PublicRuntimeSurfaceMatchesGeneratedCatalog()
-        => AssertComplete(
+    {
+        var functionNames = LoadCatalog("function")
+            .SelectMany(function => function.Aliases.Prepend(function.Name))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        AssertComplete(
             "predicate",
             new PredicateIntrospector().Describe()
                 .Where(x => x.IsPublic)
-                .Select(x => new OperatorMetadata(x.Name, x.Aliases)));
+                .Select(x => new OperatorMetadata(
+                    x.Name,
+                    x.Aliases.Where(alias => !functionNames.Contains(alias)).ToArray())));
+    }
 
     [Test]
     public void Accumulators_PublicRuntimeSurfaceMatchesGeneratedCatalog()

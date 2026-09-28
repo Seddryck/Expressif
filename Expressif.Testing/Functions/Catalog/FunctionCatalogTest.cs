@@ -18,6 +18,7 @@ public class FunctionCatalogTest
         {
             Assert.That(assembly.GetManifestResourceNames(), Does.Contain(FunctionCatalog.ResourceName));
             Assert.That(assembly.GetManifestResourceNames(), Does.Contain(FunctionCatalog.PredicateResourceName));
+            Assert.That(assembly.GetManifestResourceNames(), Does.Contain(FunctionCatalog.AccumulatorResourceName));
         });
         Assert.That(FunctionCatalog.Default.Functions, Is.Not.Empty);
     }
@@ -167,25 +168,44 @@ public class FunctionCatalogTest
         });
     }
 
+    [TestCase("first", "function", "first-elements")]
+    [TestCase("last", "function", "last-elements")]
+    [TestCase("first", "accumulator", "first")]
+    [TestCase("last", "accumulator", "last")]
+    public void Find_KindConstraint_ResolvesCrossKindName(
+        string name,
+        string kind,
+        string canonical)
+        => Assert.That(FunctionCatalog.Default.Find(name, kind)?.Name, Is.EqualTo(canonical));
+
+    [TestCase("first")]
+    [TestCase("last")]
+    public void Find_WithoutKind_ReturnsNullForCrossKindAmbiguity(string name)
+        => Assert.That(FunctionCatalog.Default.Find(name), Is.Null);
+
     [Test]
     public void Merge_ExplicitFunctionKindsRemainUnchangedAndPredicatesAreMarked()
     {
-        var accumulator = Documentation("sum") with { Kind = "accumulator" };
+        var function = Documentation("sum");
         var predicate = Documentation("is-positive");
+        var accumulator = Documentation("first") with { Input = null!, Output = null! };
 
-        var merged = FunctionCatalog.Merge([accumulator], [predicate]);
+        var merged = FunctionCatalog.Merge([function], [predicate], [accumulator]);
 
         Assert.Multiple(() =>
         {
-            Assert.That(merged.Single(entry => entry.Name == "sum").Kind, Is.EqualTo("accumulator"));
+            Assert.That(merged.Single(entry => entry.Name == "sum").Kind, Is.EqualTo("function"));
             Assert.That(merged.Single(entry => entry.Name == "is-positive").Kind, Is.EqualTo("predicate"));
+            Assert.That(merged.Single(entry => entry.Name == "first").Kind, Is.EqualTo("accumulator"));
+            Assert.That(merged.Single(entry => entry.Name == "first").Input, Is.EqualTo("any"));
+            Assert.That(merged.Single(entry => entry.Name == "first").Output, Is.EqualTo("any"));
         });
     }
 
     [TestCase("canonical")]
     [TestCase("alias")]
     [TestCase("deprecated-alias")]
-    public void ValidateNames_CollisionAcrossKinds_ThrowsClearDiagnostic(string collisionKind)
+    public void ValidateNames_CollisionWithinKind_ThrowsClearDiagnostic(string collisionKind)
     {
         var first = collisionKind switch
         {
@@ -198,15 +218,24 @@ public class FunctionCatalogTest
             _ => throw new ArgumentOutOfRangeException(nameof(collisionKind)),
         };
         var second = Documentation(collisionKind == "canonical" ? "shared" : "second", ["shared"])
-            with { Kind = "predicate" };
+            with { Scope = "other" };
         var expected = collisionKind == "canonical"
-            ? "Catalog name 'shared' is ambiguous between function 'shared', predicate 'shared'."
-            : "Catalog name 'shared' is ambiguous between function 'first', predicate 'second'.";
+            ? "Catalog name 'shared' is ambiguous between function 'shared', function 'shared'."
+            : "Catalog name 'shared' is ambiguous between function 'first', function 'second'.";
 
         Assert.That(
             () => FunctionCatalog.ValidateNames([first, second]),
             Throws.InvalidOperationException.With.Message.EqualTo(expected));
     }
+
+    [Test]
+    public void ValidateNames_CollisionAcrossKinds_IsAllowed()
+        => Assert.That(
+            () => FunctionCatalog.ValidateNames([
+                Documentation("shared"),
+                Documentation("shared") with { Kind = "accumulator" },
+            ]),
+            Throws.Nothing);
 
     [TestCase("array", "values", 0)]
     [TestCase("record", "entries", 0)]
@@ -236,6 +265,10 @@ public class FunctionCatalogTest
     [Test]
     public void Suggest_ClosePredicateAlias_ReturnsExpectedPredicateFirst()
         => Assert.That(FunctionCatalog.Default.Suggest("greter-than").First().Name, Is.EqualTo("is-greater-than"));
+
+    [Test]
+    public void Suggest_KindConstraint_ReturnsAccumulator()
+        => Assert.That(FunctionCatalog.Default.Suggest("frist", "accumulator").First().Name, Is.EqualTo("first"));
 
     [Test]
     public void Default_FunctionWithExamples_DeserializesExamples()

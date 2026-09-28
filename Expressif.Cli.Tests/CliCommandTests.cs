@@ -6,6 +6,7 @@ using Expressif.Cli.Expressions;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
 using Expressif.Functions.Catalog;
+using Expressif.Planning;
 
 namespace Expressif.Cli.Tests;
 
@@ -1944,9 +1945,11 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(document.RootElement.GetProperty("format").GetString(), Is.EqualTo("expressif.logical-plan"));
-            Assert.That(document.RootElement.GetProperty("version").GetInt32(), Is.EqualTo(1));
+            Assert.That(document.RootElement.GetProperty("version").GetInt32(), Is.EqualTo(LogicalPlanJson.FormatVersion));
             Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
                 .GetProperty("operator").GetProperty("name").GetString(), Is.EqualTo("trim"));
+            Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
+                .GetProperty("operator").GetProperty("kind").GetString(), Is.EqualTo("function"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

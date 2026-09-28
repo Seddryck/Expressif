@@ -48,7 +48,8 @@ public sealed record PlannerFunctionDescriptor(
     string Input,
     string Output,
     PlannerTraversalDescriptor? Traversal = null,
-    PlannerSemanticsDescriptor? Semantics = null);
+    PlannerSemanticsDescriptor? Semantics = null,
+    string Kind = "function");
 
 /// <summary>
 /// The machine-readable traversal contract of a planned operator.

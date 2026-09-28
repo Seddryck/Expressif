@@ -7,6 +7,7 @@ public sealed class FunctionCatalog
 {
     internal const string ResourceName = "Expressif.FunctionCatalog.json";
     internal const string PredicateResourceName = "Expressif.PredicateCatalog.json";
+    internal const string AccumulatorResourceName = "Expressif.AccumulatorCatalog.json";
     private static readonly Lazy<FunctionCatalog> LazyDefault = new(() => Load(typeof(FunctionCatalog).Assembly));
     private readonly FunctionDocumentation[] functions;
 
@@ -18,14 +19,26 @@ public sealed class FunctionCatalog
     public IReadOnlyList<FunctionDocumentation> Functions => functions;
 
     public FunctionDocumentation? Find(string name)
+        => Find(name, functions);
+
+    public FunctionDocumentation? Find(string name, string kind)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(kind);
+
+        return Find(name, functions.Where(
+            function => function.Kind.Equals(kind, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    private static FunctionDocumentation? Find(string name, IEnumerable<FunctionDocumentation> candidates)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-        var exact = functions.Where(x => IsExactMatch(x, name)).ToArray();
+        var exact = candidates.Where(x => IsExactMatch(x, name)).ToArray();
         if (exact.Length > 0)
             return SingleCanonicalMatch(exact);
 
-        var insensitive = functions.Where(x => IsInsensitiveMatch(x, name)).ToArray();
+        var insensitive = candidates.Where(x => IsInsensitiveMatch(x, name)).ToArray();
         return SingleCanonicalMatch(insensitive);
     }
 
@@ -36,12 +49,27 @@ public sealed class FunctionCatalog
     }
 
     public IEnumerable<FunctionDocumentation> Suggest(string name, int count = 3)
+        => Suggest(name, functions.Where(function => function.Kind != "accumulator"), count);
+
+    public IEnumerable<FunctionDocumentation> Suggest(string name, string kind, int count = 3)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(kind);
+        return Suggest(
+            name,
+            functions.Where(function => function.Kind.Equals(kind, StringComparison.OrdinalIgnoreCase)),
+            count);
+    }
+
+    private static IEnumerable<FunctionDocumentation> Suggest(
+        string name,
+        IEnumerable<FunctionDocumentation> candidates,
+        int count)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(count);
 
         var maximumDistance = Math.Max(2, name.Length / 3);
-        return functions
+        return candidates
             .Select(x => new
             {
                 Function = x,
@@ -59,7 +87,8 @@ public sealed class FunctionCatalog
     {
         var entries = Merge(
             LoadEntries(assembly, ResourceName, "function"),
-            LoadEntries(assembly, PredicateResourceName, "predicate"));
+            LoadEntries(assembly, PredicateResourceName, "predicate"),
+            LoadEntries(assembly, AccumulatorResourceName, "accumulator"));
 
         ValidateNames(entries);
         ValidateOmissions(entries);
@@ -70,10 +99,17 @@ public sealed class FunctionCatalog
 
     internal static FunctionDocumentation[] Merge(
         IEnumerable<FunctionDocumentation> functions,
-        IEnumerable<FunctionDocumentation> predicates)
+        IEnumerable<FunctionDocumentation> predicates,
+        IEnumerable<FunctionDocumentation> accumulators)
         => [
             .. functions.Where(entry => entry.IsPublic),
             .. predicates.Where(entry => entry.IsPublic).Select(entry => entry with { Kind = "predicate" }),
+            .. accumulators.Where(entry => entry.IsPublic).Select(entry => entry with
+            {
+                Kind = "accumulator",
+                Input = string.IsNullOrWhiteSpace(entry.Input) ? "any" : entry.Input,
+                Output = string.IsNullOrWhiteSpace(entry.Output) ? "any" : entry.Output,
+            }),
         ];
 
     internal static void ValidateNames(IEnumerable<FunctionDocumentation> entries)
@@ -83,13 +119,15 @@ public sealed class FunctionCatalog
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Select(name => (Name: name, Entry: entry)))
             .GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
-            .Select(group => new
-            {
-                group.Key,
-                Entries = group.Select(item => item.Entry)
-                    .Distinct()
-                    .ToArray(),
-            })
+            .SelectMany(group => group
+                .GroupBy(item => item.Entry.Kind, StringComparer.OrdinalIgnoreCase)
+                .Select(kind => new
+                {
+                    group.Key,
+                    Entries = kind.Select(item => item.Entry)
+                        .Distinct()
+                        .ToArray(),
+                }))
             .Where(collision => collision.Entries.Length > 1)
             .OrderBy(collision => collision.Key, StringComparer.Ordinal)
             .ToArray();
@@ -185,7 +223,9 @@ public sealed class FunctionCatalog
 
     private static FunctionDocumentation? SingleCanonicalMatch(FunctionDocumentation[] matches)
     {
-        var canonical = matches.DistinctBy(x => x.Name, StringComparer.Ordinal).ToArray();
+        var canonical = matches
+            .DistinctBy(x => $"{x.Kind}\0{x.Name}", StringComparer.Ordinal)
+            .ToArray();
         return canonical.Length == 1 ? canonical[0] : null;
     }
 

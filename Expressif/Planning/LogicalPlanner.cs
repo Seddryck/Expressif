@@ -29,36 +29,47 @@ public sealed class LogicalPlanner
         {
             OpenRootExpression open => Pipeline(open.Expression),
             ClosedRootExpression closed => new LogicalPipeline(
-                [Value(closed.Expression.Parameter), .. closed.Expression.Members.Select(Call)]),
+                [Value(closed.Expression.Parameter), .. closed.Expression.Members.Select(member => Call(member))]),
             _ => throw new LogicalPlanningException($"Unsupported bound root '{bound.GetType().Name}'."),
         });
     }
 
-    private LogicalPipeline Pipeline(OpenExpression expression)
+    private LogicalPipeline Pipeline(OpenExpression expression, string? expectedKind = null)
         => expression is InputBoundExpression binding
-            ? new LogicalPipeline([InputBinding(binding)])
-            : new LogicalPipeline(expression.Members.Select(Call).ToArray());
+            ? new LogicalPipeline([InputBinding(binding, expectedKind)])
+            : Pipeline(expression.Members, expectedKind);
 
-    private LogicalPipeline Pipeline(ClosedExpression expression)
-        => new([Value(expression.Parameter), .. expression.Members.Select(Call)]);
+    private LogicalPipeline Pipeline(ClosedExpression expression, string? expectedKind = null)
+        => new([Value(expression.Parameter), .. PipelineItems(expression.Members, expectedKind)]);
 
-    private LogicalPipeline Pipeline(IRootExpression expression) => expression switch
+    private LogicalPipeline Pipeline(IRootExpression expression, string? expectedKind = null) => expression switch
     {
-        OpenRootExpression open => Pipeline(open.Expression),
-        ClosedRootExpression closed => Pipeline(closed.Expression),
+        OpenRootExpression open => Pipeline(open.Expression, expectedKind),
+        ClosedRootExpression closed => Pipeline(closed.Expression, expectedKind),
         _ => throw new LogicalPlanningException($"Unsupported input-binding body '{expression.GetType().Name}'."),
     };
 
-    private LogicalCall InputBinding(InputBoundExpression binding)
+    private LogicalPipeline Pipeline(IEnumerable<Function> members, string? expectedKind)
+        => new(PipelineItems(members, expectedKind));
+
+    private IReadOnlyList<LogicalValue> PipelineItems(IEnumerable<Function> members, string? expectedKind)
+    {
+        var calls = members.ToArray();
+        return calls.Select((call, index) => (LogicalValue)Call(
+            call,
+            index == calls.Length - 1 ? expectedKind : null)).ToArray();
+    }
+
+    private LogicalCall InputBinding(InputBoundExpression binding, string? expectedKind = null)
         => SyntheticCall(
             "input-binding",
             ("names", Collection("array", binding.Names.Select(name => ((IParameter)new QuotedLiteralParameter(name), false)))),
             ("positional", new LogicalLiteral("boolean", binding.IsPositional)),
-            ("body", Pipeline(binding.Body)));
+            ("body", Pipeline(binding.Body, expectedKind)));
 
-    private LogicalCall Call(Function function)
+    private LogicalCall Call(Function function, string? expectedKind = null)
     {
-        var documentation = catalog.Find(function.Name);
+        var documentation = Resolve(function.Name, expectedKind);
         var descriptor = documentation is null
             ? SyntheticFunction(function.Name)
             : Descriptor(documentation);
@@ -81,6 +92,11 @@ public sealed class LogicalPlanner
         }
         return new LogicalCall(descriptor, arguments, contextDepth);
     }
+
+    private FunctionDocumentation? Resolve(string name, string? expectedKind)
+        => expectedKind is "predicate" or "accumulator"
+            ? catalog.Find(name, expectedKind)
+            : catalog.Find(name, "function") ?? catalog.Find(name);
 
     private IReadOnlyList<LogicalArgument> NormalizeArguments(
         string functionName,
@@ -138,7 +154,7 @@ public sealed class LogicalPlanner
             foreach (var match in matches)
             {
                 var value = match.EntryName is null
-                    ? Value(match.Argument.Value)
+                    ? Value(match.Argument.Value, ExpectedKind(parameter))
                     : NamedEntry(match.EntryName, match.Argument.Value);
                 result.Add(new LogicalArgument(Descriptor(parameter), value, match.Argument.IsSpread, IsExplicit: true));
             }
@@ -164,11 +180,15 @@ public sealed class LogicalPlanner
                 NamedEntry(projection.Name, projection.Value),
                 IsSpread: false,
                 IsExplicit: true)),
-            new LogicalArgument(Descriptor(body), Value(definition.Body), IsSpread: false, IsExplicit: true),
+            new LogicalArgument(
+                Descriptor(body),
+                Value(definition.Body, ExpectedKind(body)),
+                IsSpread: false,
+                IsExplicit: true),
         ];
     }
 
-    private LogicalValue Value(IParameter parameter) => parameter switch
+    private LogicalValue Value(IParameter parameter, string? expectedKind = null) => parameter switch
     {
         LiteralParameter literal => Literal(literal.Value),
         QuotedLiteralParameter quoted => new LogicalLiteral("text", quoted.Value),
@@ -203,14 +223,16 @@ public sealed class LogicalPlanner
         })),
         LetDefinitionParameter definition => SyntheticCall("let-definition",
             definition.Bindings.Select(binding => (binding.Name, Value(binding.Value))).ToArray()),
-        OpenExpressionParameter open => Pipeline(open.Expression),
-        InputExpressionParameter input => Pipeline(input.Expression),
+        OpenExpressionParameter open => Pipeline(open.Expression, expectedKind),
+        InputExpressionParameter input => Pipeline(input.Expression, expectedKind),
         IntervalParameter interval => Interval(interval.Value),
         CoercionSpecificationParameter coercion => Coercion(coercion),
         PredicationParameter predication => Predication(predication.Predication),
         ControlFlowBranchParameter branch => SyntheticCall("branch",
             ("expression", Value(branch.Expression)),
-            ("predicate", branch.Predicate is null ? new LogicalLiteral("null", null) : Value(branch.Predicate))),
+            ("predicate", branch.Predicate is null
+                ? new LogicalLiteral("null", null)
+                : Value(branch.Predicate, "predicate"))),
         WithDefinitionParameter with => SyntheticCall("with",
             [.. with.Projections.Select(projection => (projection.Name, Value(projection.Value))), ("body", Value(with.Body))]),
         _ => throw new LogicalPlanningException($"Unsupported parameter '{parameter.GetType().Name}'."),
@@ -296,8 +318,8 @@ public sealed class LogicalPlanner
 
     private LogicalValue Predication(IPredication predication) => predication switch
     {
-        SinglePredication single => Call(single.Member),
-        PipelinePredication pipeline => Pipeline(pipeline.Expression),
+        SinglePredication single => Call(single.Member, "predicate"),
+        PipelinePredication pipeline => Pipeline(pipeline.Expression, "predicate"),
         _ => throw new LogicalPlanningException($"Unsupported predication '{predication.GetType().Name}'."),
     };
 
@@ -326,7 +348,7 @@ public sealed class LogicalPlanner
                 Descriptor(SyntheticParameter(argument.Name)), argument.Value, false, true)).ToArray());
 
     private static PlannerFunctionDescriptor SyntheticFunction(string name)
-        => new(name.ToLowerInvariant(), "any", "any");
+        => new(name.ToLowerInvariant(), "any", "any", Kind: "extension");
 
     private static FunctionParameterDocumentation[] SyntheticParameters(int count)
         => Enumerable.Range(0, count).Select(index => SyntheticParameter($"argument-{index}")).ToArray();
@@ -337,8 +359,8 @@ public sealed class LogicalPlanner
     private static PlannerFunctionDescriptor Descriptor(FunctionDocumentation function)
         => new(
             function.Name,
-            function.Input,
-            function.Output,
+            string.IsNullOrWhiteSpace(function.Input) ? "any" : function.Input,
+            string.IsNullOrWhiteSpace(function.Output) ? "any" : function.Output,
             function.Traversal is null
                 ? null
                 : new PlannerTraversalDescriptor(function.Traversal.Source, function.Traversal.Selection),
@@ -347,7 +369,11 @@ public sealed class LogicalPlanner
                 : new PlannerSemanticsDescriptor(
                     function.Semantics.Cardinality,
                     function.Semantics.Dependency,
-                    function.Semantics.Ordering));
+                    function.Semantics.Ordering),
+            function.Kind);
+
+    private static string? ExpectedKind(FunctionParameterDocumentation parameter)
+        => parameter.TypeOrKind is "predicate" or "accumulator" ? parameter.TypeOrKind : null;
 
     private static PlannerParameterDescriptor Descriptor(FunctionParameterDocumentation parameter)
         => new(
