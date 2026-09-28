@@ -205,9 +205,9 @@ public class FunctionCatalogTest
     {
         var function = Documentation("sum");
         var predicate = Documentation("is-positive");
-        var accumulator = Documentation("first") with { Input = null!, Output = null! };
+        var accumulator = Documentation("first") with { Kind = "accumulator", Input = "any", Output = "any" };
 
-        var merged = FunctionCatalog.Merge([function], [predicate], [accumulator]);
+        var merged = FunctionCatalog.Merge([function, accumulator], [predicate]);
 
         Assert.Multiple(() =>
         {

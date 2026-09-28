@@ -53,7 +53,7 @@ public class CoreLogicalPlannerTest
     {
         public IRootExpression Bind(RootExpressionSyntax syntax) => bound;
 
-        public PlannerFunctionMetadata? FindFunction(string name)
+        public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
             => name == "custom-alias" ? metadata : null;
 
         public string? FindTypeName(Type runtimeType) => null;

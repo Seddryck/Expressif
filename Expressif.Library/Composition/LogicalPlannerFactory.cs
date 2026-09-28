@@ -27,8 +27,8 @@ public static class LogicalPlannerFactory
             return function is null ? null : new PlannerFunctionMetadata(
                 new PlannerFunctionDescriptor(
                     function.Name,
-                    function.Input,
-                    function.Output,
+                    string.IsNullOrWhiteSpace(function.Input) ? "any" : function.Input,
+                    string.IsNullOrWhiteSpace(function.Output) ? "any" : function.Output,
                     function.Traversal is null
                         ? null
                         : new PlannerTraversalDescriptor(function.Traversal.Source, function.Traversal.Selection),

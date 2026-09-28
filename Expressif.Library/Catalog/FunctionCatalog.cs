@@ -93,8 +93,7 @@ public sealed class FunctionCatalog
     {
         var entries = Merge(
             LoadEntries(assembly, ResourceName, "function"),
-            LoadEntries(assembly, PredicateResourceName, "predicate"),
-            []);
+            LoadEntries(assembly, PredicateResourceName, "predicate"));
 
         // Functions and accumulators intentionally share some callable names; they are
         // resolved in distinct runtime contexts. Predicates share the function lookup,
@@ -109,17 +108,10 @@ public sealed class FunctionCatalog
 
     internal static FunctionDocumentation[] Merge(
         IEnumerable<FunctionDocumentation> functions,
-        IEnumerable<FunctionDocumentation> predicates,
-        IEnumerable<FunctionDocumentation> accumulators)
+        IEnumerable<FunctionDocumentation> predicates)
         => [
             .. functions.Where(entry => entry.IsPublic),
             .. predicates.Where(entry => entry.IsPublic).Select(entry => entry with { Kind = "predicate" }),
-            .. accumulators.Where(entry => entry.IsPublic).Select(entry => entry with
-            {
-                Kind = "accumulator",
-                Input = string.IsNullOrWhiteSpace(entry.Input) ? "any" : entry.Input,
-                Output = string.IsNullOrWhiteSpace(entry.Output) ? "any" : entry.Output,
-            }),
         ];
 
     internal static void ValidateNames(IEnumerable<FunctionDocumentation> entries)
