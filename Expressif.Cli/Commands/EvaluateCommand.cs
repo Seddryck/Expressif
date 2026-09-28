@@ -15,8 +15,9 @@ internal static class EvaluateCommand
         var expression = new Argument<string?>("expression") { Arity = ArgumentArity.ZeroOrOne, Description = "Expression to evaluate." };
         var input = new Option<string?>("--input") { Description = "Input value passed to the expression." };
         input.Aliases.Add("-i");
-        var source = new Option<string?>("--source") { Description = "Path to a source whose complete row set is passed as one array." };
+        var source = new Option<string[]>("--source") { Description = "Source path or pattern. Repeat to collect multiple JSON documents." };
         source.Aliases.Add("-s");
+        var collect = new Option<bool>("--collect") { Description = "Read each selected JSON document root as one element and evaluate once." };
         var scalar = new Option<bool>("--scalar") { Description = "Treat each source row as a single value. The source must contain exactly one column." };
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var file = new Option<string?>("--file") { Description = "Path to a UTF-8 file containing the expression to evaluate." };
@@ -31,6 +32,7 @@ internal static class EvaluateCommand
         command.Arguments.Add(expression);
         command.Options.Add(input);
         command.Options.Add(source);
+        command.Options.Add(collect);
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
@@ -40,20 +42,23 @@ internal static class EvaluateCommand
         command.Options.Add(pretty);
         command.Options.Add(compact);
         command.Options.Add(indent);
-        command.SetAction(result => Execute(result, handler, textFiles, configuration ?? CliConfiguration.CreateDefault(), expression, input, source, scalar, sourceOptions,
+        command.SetAction(result => Execute(result, handler, textFiles, configuration ?? CliConfiguration.CreateDefault(), expression, input, source, collect, scalar, sourceOptions,
             file, output, raw, outputStyle, pretty, compact, indent));
         return command;
     }
 
     private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles, CliConfiguration configuration,
-        Argument<string?> expression, Option<string?> input, Option<string?> source,
+        Argument<string?> expression, Option<string?> input, Option<string[]> source, Option<bool> collect,
         Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file,
         Option<ValueSerializationFormat?> output, Option<bool> raw,
         Option<ValueFormat?> outputStyle, Option<bool> pretty, Option<bool> compact, Option<string?> indent)
     {
         var hasInput = result.GetResult(input) is not null;
         var hasSource = result.GetResult(source) is not null;
-        var optionError = ValidateOptions(result, hasInput, hasSource, result.GetValue(scalar), result.GetResult(sourceOptions) is not null);
+        var sourcePaths = result.GetValue(source) ?? [];
+        var collectionRequested = result.GetValue(collect);
+        var optionError = ValidateOptions(result, hasInput, hasSource, sourcePaths.Length, collectionRequested,
+            result.GetValue(scalar), result.GetResult(sourceOptions) is not null);
         if (optionError is not null)
         {
             Console.Error.WriteLine(optionError);
@@ -66,13 +71,13 @@ internal static class EvaluateCommand
             return ExitCodes.InvalidExpressionOrInput;
 
         var kind = ResolveInputKind(hasInput, hasSource);
-        var request = new EvaluateRequest(code, kind, result.GetValue(input), result.GetValue(source),
-            result.GetValue(sourceOptions) ?? [], result.GetValue(scalar));
+        var request = new EvaluateRequest(code, kind, result.GetValue(input), sourcePaths,
+            result.GetValue(sourceOptions) ?? [], result.GetValue(scalar), collectionRequested);
         if (!ConfiguredOutput.TryResolve(configuration, "evaluate",
                 result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
                 out var serializer, out var formatting, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
-        using var observation = CliLineage.Begin(code, "evaluate", hasSource ? request.SourcePath : null, configuration: configuration);
+        using var observation = CliLineage.Begin(code, "evaluate", hasSource ? request.SourcePaths.FirstOrDefault() : null, configuration: configuration);
         var exitCode = WriteResult(handler.Execute(request), code, fromFile, filePath, serializer, formatting);
         if (exitCode == ExitCodes.Success)
             observation.Complete();
@@ -84,12 +89,21 @@ internal static class EvaluateCommand
     private static EvaluateInputKind ResolveInputKind(bool hasInput, bool hasSource)
         => hasSource ? EvaluateInputKind.Source : hasInput ? EvaluateInputKind.Value : EvaluateInputKind.Closed;
 
-    private static string? ValidateOptions(ParseResult result, bool hasInput, bool hasSource, bool scalar, bool hasSourceOptions)
+    private static string? ValidateOptions(ParseResult result, bool hasInput, bool hasSource, int sourceCount,
+        bool collect, bool scalar, bool hasSourceOptions)
     {
         if (result.Tokens.Count(token => token.Value is "--input" or "-i") > 1)
             return "The --input option can only be specified once for evaluate.";
         if (hasInput && hasSource)
             return "The --source option cannot be combined with --input.";
+        if (collect && !hasSource)
+            return "The --collect option requires --source.";
+        if (sourceCount > 1 && !collect)
+            return "The --source option can only be repeated with --collect.";
+        if (collect && scalar)
+            return "The --scalar option cannot be combined with --collect.";
+        if (collect && hasSourceOptions)
+            return "The --source-option option cannot be combined with --collect.";
         if (scalar && !hasSource)
             return "The --scalar option requires --source.";
         return hasSourceOptions && !hasSource ? "The --source-option option requires --source." : null;

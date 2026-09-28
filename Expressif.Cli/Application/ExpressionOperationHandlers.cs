@@ -39,9 +39,10 @@ internal sealed record EvaluateRequest(
     string Expression,
     EvaluateInputKind InputKind,
     string? Input,
-    string? SourcePath,
+    IReadOnlyList<string> SourcePaths,
     IReadOnlyList<string> SourceOptions,
-    bool Scalar);
+    bool Scalar,
+    bool Collect);
 
 internal sealed class EvaluateHandler(
     IExpressionService expressions,
@@ -57,7 +58,7 @@ internal sealed class EvaluateHandler(
         try
         {
             input = request.InputKind == EvaluateInputKind.Source
-                ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar).ToArray()
+                ? ReadSource(request)
                 : values.Parse(request.Input ?? string.Empty);
         }
         catch (FormatException exception)
@@ -70,6 +71,11 @@ internal sealed class EvaluateHandler(
 
         return EvaluateOpen(request.Expression, input);
     }
+
+    private object?[] ReadSource(EvaluateRequest request)
+        => request.Collect
+            ? sources.CollectJsonDocuments(request.SourcePaths)
+            : sources.Read(request.SourcePaths.SingleOrDefault(), request.SourceOptions, request.Scalar).ToArray();
 
     private ExpressionOperationResult EvaluateClosed(string code)
     {

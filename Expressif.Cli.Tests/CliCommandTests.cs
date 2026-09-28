@@ -1074,6 +1074,146 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_CollectRepeatedSources_PreservesDocumentRootsAndNulls()
+    {
+        var arrayPath = CreateTempFile("[1, 2]", ".json");
+        var objectPath = CreateTempFile("{\"name\":\"Alice\"}", ".json");
+        var nullPath = CreateTempFile("null", ".json");
+
+        var countResult = await InvokeAsync(
+            "evaluate", "count",
+            "--source", arrayPath,
+            "--source", objectPath,
+            "--source", nullPath,
+            "--collect");
+        var nestedArrayResult = await InvokeAsync(
+            "evaluate", "first | count",
+            "--source", arrayPath,
+            "--source", objectPath,
+            "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(countResult.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(countResult.StdOut.Trim(), Is.EqualTo("3"));
+            Assert.That(countResult.StdErr, Is.Empty);
+            Assert.That(nestedArrayResult.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(nestedArrayResult.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(nestedArrayResult.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectRepeatedSources_PreservesSourceOrder()
+    {
+        var firstPath = CreateTempFile("2", ".json");
+        var secondPath = CreateTempFile("1", ".json");
+
+        var result = await InvokeAsync(
+            "evaluate", "first",
+            "--source", firstPath,
+            "--source", secondPath,
+            "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectWildcard_OrdersMatchesOrdinally()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), $"expressif-collect-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            File.WriteAllText(Path.Combine(directory, "b.json"), "2");
+            File.WriteAllText(Path.Combine(directory, "a.json"), "1");
+
+            var result = await InvokeAsync(
+                "evaluate", "first",
+                "--source", Path.Combine(directory, "*.json"),
+                "--collect");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+                Assert.That(result.StdOut.Trim(), Is.EqualTo("1"));
+                Assert.That(result.StdErr, Is.Empty);
+            });
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Test]
+    public async Task Evaluate_CollectInvalidJson_IdentifiesSource()
+    {
+        var sourcePath = CreateTempFile("{", ".json");
+
+        var result = await InvokeAsync("evaluate", "count", "--source", sourcePath, "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain($"Invalid JSON syntax in '{sourcePath}':"));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectUnmatchedWildcard_ReturnsClearError()
+    {
+        var pattern = Path.Combine(Path.GetTempPath(), $"expressif-{Guid.NewGuid():N}-*.json");
+
+        var result = await InvokeAsync("evaluate", "count", "--source", pattern, "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo($"Source pattern '{pattern}' did not match any files."));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectNonJsonSource_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile("1", ".txt");
+
+        var result = await InvokeAsync("evaluate", "count", "--source", sourcePath, "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(
+                $"The source '{sourcePath}' is not a JSON document. The --collect option only supports JSON sources."));
+        });
+    }
+
+    [TestCase(new[] { "--collect" }, "The --collect option requires --source.")]
+    [TestCase(new[] { "--source", "first.json", "--source", "second.json" }, "The --source option can only be repeated with --collect.")]
+    [TestCase(new[] { "--source", "source.json", "--collect", "--scalar" }, "The --scalar option cannot be combined with --collect.")]
+    [TestCase(new[] { "--source", "source.json", "--collect", "--source-option", "header=#true" }, "The --source-option option cannot be combined with --collect.")]
+    public async Task Evaluate_InvalidCollectionOptionCombination_ReturnsClearError(string[] options, string expectedError)
+    {
+        var result = await InvokeAsync(["evaluate", "count", .. options]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(expectedError));
+        });
+    }
+
+    [Test]
     public async Task Evaluate_SourceAndInputTogether_ReturnsClearError()
     {
         var sourcePath = CreateTempFile("name", ".csv");
