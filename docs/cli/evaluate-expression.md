@@ -3,7 +3,7 @@ layout: docs
 title: Evaluate an expression
 parent: Command-line interface
 nav_order: 20
-description: Evaluate a closed expression, one explicit input, or one complete data source.
+description: Evaluate a closed expression, one explicit input, one complete data source, or a collection of JSON documents.
 ---
 
 `evaluate` always evaluates an expression once and writes one formatted value.
@@ -50,6 +50,7 @@ What changes is the value supplied to that evaluation.
 | Closed | Do not provide `--input` or `--source`. | No incoming value. |
 | Explicit value | Provide `--input` or `-i`. | One parsed CLI value. |
 | Complete source | Provide `--source` or `-s`. | One array containing all source rows. |
+| Collected documents | Provide `--collect` with one or more `--source` options. | One array containing each complete JSON document root. |
 
 ## Evaluate a closed expression
 
@@ -107,6 +108,26 @@ flowchart LR
 CSV files are read as tabular data. Other file extensions are interpreted as strict UTF-8 Expressif source expressions; the source expression must be closed and return an enumerable value or `IDataReader`.
 
 See [Run expressions over input data](run-input-data.md) for CSV profiles and for evaluating once per source row.
+
+## Collect complete JSON documents
+
+Use `--collect` to evaluate once against several complete JSON document roots. Repeat
+`--source` to select explicit files, or use `*` and `?` wildcards in the file name:
+
+```powershell
+expressif evaluate 'flat-map(.boards)' --source 'data\*-K954.json' --collect
+expressif evaluate '<query>' --source first.json --source second.json --collect
+```
+
+Source patterns are processed in command-line order. The files matched by each pattern
+are ordered by their ordinal path, so the collected array is deterministic. Each file
+is parsed as one complete JSON document: an array root remains one nested array element,
+and object, scalar, and null roots are preserved without merging, flattening, or removing
+duplicates. Collection materializes every selected document in memory before evaluation.
+
+Collection supports JSON files only. It cannot be combined with `--input`, `--scalar`,
+or `--source-option`. Repeating `--source` without `--collect` is rejected. Wildcards are
+supported in file names; directory names must be explicit.
 
 ## Read the expression from a file
 
