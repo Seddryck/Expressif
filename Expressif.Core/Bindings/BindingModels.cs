@@ -25,27 +25,51 @@ public enum FunctionSyntax
     ImplicitFoldAccumulator,
 }
 
+internal enum FunctionImplementationKind
+{
+    Unspecified,
+    Function,
+    Predicate,
+    Accumulator,
+}
+
 public sealed record FunctionArgument(string? Name, IParameter Value, bool IsSpread = false);
 
 public sealed class Function : IBoundExpression
 {
     public Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard)
-        : this(name, parameters.Select(x => new FunctionArgument(null, x)).ToArray(), syntax) { }
+        : this(
+            name,
+            parameters.Select(x => new FunctionArgument(null, x)).ToArray(),
+            syntax,
+            FunctionImplementationKind.Unspecified) { }
 
-    private Function(string name, FunctionArgument[] arguments, FunctionSyntax syntax)
-        => (Name, Arguments, Syntax) = (name, arguments, syntax);
+    private Function(
+        string name,
+        FunctionArgument[] arguments,
+        FunctionSyntax syntax,
+        FunctionImplementationKind implementationKind)
+        => (Name, Arguments, Syntax, ImplementationKind) = (name, arguments, syntax, implementationKind);
 
     internal static Function FromArguments(string name, FunctionArgument[] arguments)
-        => new(name, arguments, FunctionSyntax.Standard);
+        => new(name, arguments, FunctionSyntax.Standard, FunctionImplementationKind.Unspecified);
 
     internal static Function FromArguments(string name, FunctionArgument[] arguments, FunctionSyntax syntax)
-        => new(name, arguments, syntax);
+        => new(name, arguments, syntax, FunctionImplementationKind.Unspecified);
+
+    internal static Function FromArguments(
+        string name,
+        FunctionArgument[] arguments,
+        FunctionSyntax syntax,
+        FunctionImplementationKind implementationKind)
+        => new(name, arguments, syntax, implementationKind);
 
     public Expressif.Syntax.SourceSpan? SourceSpan { get; internal set; }
     public string Name { get; }
     public FunctionArgument[] Arguments { get; }
     public IParameter[] Parameters => Arguments.Select(x => x.Value).ToArray();
     public FunctionSyntax Syntax { get; }
+    internal FunctionImplementationKind ImplementationKind { get; }
 }
 
 public sealed class OpenExpression(IEnumerable<Function> members) : IBoundExpression

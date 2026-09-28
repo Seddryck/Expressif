@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Functions;
+using Expressif.Planning;
 using Expressif.Syntax;
 using NUnit.Framework;
 
@@ -33,6 +34,12 @@ public sealed class CoreHostingTest
 
         public IExpression BindClosed(RootExpressionSyntax syntax)
             => Bind(syntax);
+
+        public IExpression Bind(LogicalPlan plan)
+            => throw new NotSupportedException();
+
+        public IExpression BindClosed(LogicalPlan plan)
+            => throw new NotSupportedException();
     }
 
     private sealed class CustomExpression(IFunction function) : IExpression

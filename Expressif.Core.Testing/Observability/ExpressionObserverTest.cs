@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using Expressif.Bindings;
 using Expressif.Observability;
+using Expressif.Planning;
 using Expressif.Syntax;
 
 namespace Expressif.Testing.Observability;
@@ -344,12 +345,16 @@ public class ExpressionObserverTest
     {
         public IExpression Bind(RootExpressionSyntax syntax) => expression;
         public IExpression BindClosed(RootExpressionSyntax syntax) => expression;
+        public IExpression Bind(LogicalPlan plan) => expression;
+        public IExpression BindClosed(LogicalPlan plan) => expression;
     }
 
     private sealed class ThrowingBinder(Exception exception) : IExpressionBinder
     {
         public IExpression Bind(RootExpressionSyntax syntax) => throw exception;
         public IExpression BindClosed(RootExpressionSyntax syntax) => throw exception;
+        public IExpression Bind(LogicalPlan plan) => throw exception;
+        public IExpression BindClosed(LogicalPlan plan) => throw exception;
     }
 
     private sealed class PassThroughExpression : IExpression
