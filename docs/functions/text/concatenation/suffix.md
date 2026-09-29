@@ -3,7 +3,7 @@ layout: docs
 title: "suffix"
 parent: "Concatenation functions"
 grand_parent: "Text functions"
-nav_order: 110
+nav_order: 130
 has_toc: false
 permalink: /functions/text/concatenation/suffix/
 tags:
@@ -21,6 +21,8 @@ suffix(
 
 Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns the argument value followed by the parameter value. If the argument is `
 |:-----|:-----|:---------|:------------|
 | `suffix` | `text` | Yes | The text to append |
 
+
+
 ## Argument evaluation
 
 - **`suffix`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

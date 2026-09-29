@@ -3,7 +3,7 @@ layout: docs
 title: "is-greater-than-or-equal"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 30
+nav_order: 40
 has_toc: false
 permalink: /predicates/numeric/is-greater-than-or-equal/
 tags:
@@ -20,6 +20,8 @@ is-greater-than-or-equal(
 
 Returns true if the numeric value passed as argument is greater than or equal to the numeric value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,13 @@ Returns true if the numeric value passed as argument is greater than or equal to
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`reference`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

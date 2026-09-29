@@ -19,11 +19,14 @@ decrement() → numeric
 
 Returns the argument number decremented of one unit.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

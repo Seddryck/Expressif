@@ -31,9 +31,13 @@ Returns the dot product of the input vector and another vector of the same dimen
 |:-----|:-----|:---------|:------------|
 | `vector` | `vector` | Yes | Specifies the vector whose components are multiplied with the input components. |
 
+
+
 ## Argument evaluation
 
 - **`vector`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

@@ -1,0 +1,301 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Expressif.Values.Special;
+
+namespace Expressif.Library.Text.Concatenation;
+
+[Scope("text/concatenation")]
+public abstract class BaseTextAppend : BaseTextFunction
+{
+    public Func<string> Append { get; }
+    public BaseTextAppend(Func<string> append)
+        => Append = append;
+
+    protected override object EvaluateEmpty() => Append.Invoke() ?? string.Empty;
+    protected override object EvaluateBlank() => Append.Invoke() ?? string.Empty;
+}
+
+public abstract class BaseTextAppendNonNullable : BaseTextAppend
+{
+    public BaseTextAppendNonNullable(Func<string> append)
+        : base(append) { }
+
+    protected override object EvaluateNull()
+    {
+        var value = Append.Invoke();
+        if (new Expressif.Values.Special.Null().Equals(value))
+            return string.Empty;
+        else
+            return value;
+    }
+}
+
+/// <summary>
+/// Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.
+/// </summary>
+public class Prefix : BaseTextAppend
+{
+    /// <param name="prefix">The text to append</param>
+    public Prefix(Func<string> prefix)
+        : base(prefix) { }
+    protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
+}
+
+/// <summary>
+/// Returns the argument value followed by the parameter value. If the argument is `null`, it returns `null`.
+/// </summary>
+public class Suffix : BaseTextAppend
+{
+    /// <param name="suffix">The text to append</param>
+    public Suffix(Func<string> suffix)
+        : base(suffix) { }
+    protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
+}
+
+[Scope("text/concatenation")]
+public abstract class BaseTextAffixIfMissing : BaseTextFunction
+{
+    protected string Affix { get; }
+
+    protected BaseTextAffixIfMissing(string affix)
+        => Affix = affix;
+
+    protected override object EvaluateEmpty() => Affix;
+
+    protected override object? EvaluateHighLevelString(string value)
+    {
+        if (new Expressif.Values.Special.Empty().Equals(value))
+            return EvaluateEmpty();
+
+        if (new Expressif.Values.Special.Null().Equals(value))
+            return EvaluateNull();
+
+        if (value.StartsWith('(') && value.EndsWith(')'))
+            return EvaluateSpecial(value);
+
+        return EvaluateString(value);
+    }
+}
+
+public abstract class BasePrefixIfMissing : BaseTextAffixIfMissing
+{
+    protected BasePrefixIfMissing(string prefix)
+        : base(prefix) { }
+
+    protected override object EvaluateString(string value)
+        => value.StartsWith(Affix, StringComparison.Ordinal) ? value : $"{Affix}{value}";
+}
+
+public abstract class BaseSuffixIfMissing : BaseTextAffixIfMissing
+{
+    protected BaseSuffixIfMissing(string suffix)
+        : base(suffix) { }
+
+    protected override object EvaluateString(string value)
+        => value.EndsWith(Affix, StringComparison.Ordinal) ? value : $"{value}{Affix}";
+}
+
+/// <summary>
+/// Returns the argument value followed by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
+/// </summary>
+[FunctionLifecycle("suffix", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
+public class Append : BaseTextAppendNonNullable
+{
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
+    /// <param name="text">The text to append</param>
+    public Append(Func<string> text)
+        : base(text) { }
+    protected override object EvaluateString(string value) => $"{value}{Append.Invoke()}";
+}
+
+/// <summary>
+/// Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
+/// </summary>
+[FunctionLifecycle("prefix", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
+public class Prepend : BaseTextAppendNonNullable
+{
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
+    /// <param name="text">The text to prepend</param>
+    public Prepend(Func<string> text)
+        : base(text) { }
+    protected override object EvaluateString(string value) => $"{Append.Invoke()}{value}";
+}
+
+#region Space
+
+/// <summary>
+/// Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
+/// </summary>
+public class PrefixSpace : Prefix
+{
+    public PrefixSpace()
+        : base(() => ((char)32).ToString()) { }
+}
+
+/// <summary>
+/// Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
+/// </summary>
+public class SuffixSpace : Suffix
+{
+    public SuffixSpace()
+        : base(() => ((char)32).ToString()) { }
+}
+
+/// <summary>
+/// Prefixes the argument with a space character unless it already starts with one. Preserves `null`.
+/// </summary>
+public class PrefixSpaceIfMissing : BasePrefixIfMissing
+{
+    public PrefixSpaceIfMissing()
+        : base(" ") { }
+}
+
+/// <summary>
+/// Suffixes the argument with a space character unless it already ends with one. Preserves `null`.
+/// </summary>
+public class SuffixSpaceIfMissing : BaseSuffixIfMissing
+{
+    public SuffixSpaceIfMissing()
+        : base(" ") { }
+}
+
+/// <summary>
+/// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
+/// </summary>
+[FunctionLifecycle("suffix-space", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
+public class AppendSpace : Append
+{
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
+    public AppendSpace()
+        : base(() => ((char)32).ToString()) { }
+}
+
+/// <summary>
+/// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
+/// </summary>
+[FunctionLifecycle("prefix-space", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
+public class PrependSpace : Prepend
+{
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
+    public PrependSpace()
+        : base(() => ((char)32).ToString()) { }
+}
+
+#endregion
+
+#region NewLine
+
+/// <summary>
+/// Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
+/// </summary>
+public class PrefixNewLine : Prefix
+{
+    public PrefixNewLine()
+        : base(() => Environment.NewLine) { }
+}
+
+/// <summary>
+/// Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
+/// </summary>
+public class SuffixNewLine : Suffix
+{
+    public SuffixNewLine()
+        : base(() => Environment.NewLine) { }
+}
+
+/// <summary>
+/// Prefixes the argument with a CRLF sequence unless it already starts with CRLF. Preserves `null`.
+/// </summary>
+public class PrefixNewLineIfMissing : BasePrefixIfMissing
+{
+    public PrefixNewLineIfMissing()
+        : base("\r\n") { }
+}
+
+/// <summary>
+/// Suffixes the argument with a CRLF sequence unless it already ends with CRLF. Preserves `null`.
+/// </summary>
+public class SuffixNewLineIfMissing : BaseSuffixIfMissing
+{
+    public SuffixNewLineIfMissing()
+        : base("\r\n") { }
+}
+
+/// <summary>
+/// Returns the argument value followed by a space character. If the argument is `null`, it returns the text specified as the parameter.
+/// </summary>
+[FunctionLifecycle("suffix-new-line", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
+public class AppendNewLine : Append
+{
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
+    public AppendNewLine()
+        : base(() => Environment.NewLine) { }
+}
+
+/// <summary>
+/// Returns the argument value preceeded by a space character. If the argument is `null`, it returns the text specified as the parameter.
+/// </summary>
+[FunctionLifecycle("prefix-new-line", "3.0", migrationNotes: ReplacementNullHandlingMigration)]
+public class PrependNewLine : Prepend
+{
+    private const string ReplacementNullHandlingMigration =
+        "The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.";
+
+    public PrependNewLine()
+        : base(() => Environment.NewLine) { }
+}
+
+#endregion
+
+/// <summary>
+/// Returns the argument value with a subset of the string substitued by a another string.
+/// </summary>
+public class ReplaceSlice : BaseTextAppend
+{
+    public Func<int> Start { get; }
+    public Func<int> Length { get; }
+
+    /// <param name="start">The position to start to replace</param>
+    /// <param name="length">The length to replace</param>
+    /// <param name="append">The text to append when the slice has been removed</param>
+    public ReplaceSlice(Func<int> start, Func<int> length, Func<string> append)
+        : base(append) { (Start, Length) = (start, length); }
+    protected override object EvaluateString(string value)
+    {
+        var start = Start.Invoke();
+        var length = Length.Invoke();
+
+        if (length < 0)
+        {
+            start += length;
+            length = Math.Abs(length);
+        }
+
+        if (start >= value.Length)
+            return $"{value}{Append.Invoke()}";
+        if (start + length <= 0)
+            return $"{Append.Invoke()}{value}";
+
+        var text = new StringBuilder();
+        if (start >= 0)
+            text.Append(value[..start]);
+        text.Append(Append.Invoke());
+        if (start + length <= value.Length)
+            text.Append(value[(start + length)..]);
+
+        return text.ToString();
+    }
+}

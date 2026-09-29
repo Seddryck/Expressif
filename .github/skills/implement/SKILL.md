@@ -19,7 +19,7 @@ Locate the operator by canonical name or alias in the matching file:
 
 * `docs/_data/function.json`;
 * `docs/_data/predicate.json`;
-* `docs/_data/accumulator.json`.
+* accumulator entries in `docs/_data/function.json` (identified by `"Kind": "accumulator"`).
 
 Read its YAML under `conformance/<kind>/<scope-lower>/`. Stop if either artifact is absent or ambiguous: scaffolding is incomplete.
 

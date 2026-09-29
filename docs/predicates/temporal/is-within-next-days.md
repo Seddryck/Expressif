@@ -20,6 +20,8 @@ is-within-next-days(
 
 Returns true if the date passed as argument is between tomorrow and the count of days after the current date. Returns false otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,22 @@ Returns true if the date passed as argument is between tomorrow and the count of
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Count of days to move forward. A value of 1 is equivalent to the predicate `tomorrow` and a value of 0 will return false. |
 
+
+
 ## Argument evaluation
 
 - **`count`:** Evaluated once in the enclosing context only when the date passes the lower-bound check.
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-within-next-days(2) → #false
+```
+{% endraw %}
+
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

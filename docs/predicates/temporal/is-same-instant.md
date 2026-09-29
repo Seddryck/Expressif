@@ -20,6 +20,8 @@ is-same-instant(
 
 Returns true if the temporal value passed as argument is equal to the temporal value passed as parameter.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,22 @@ Returns true if the temporal value passed as argument is equal to the temporal v
 |:-----|:-----|:---------|:------------|
 | `reference` | `date-time` | Yes | A temporal value to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`reference`:** Evaluated once in the enclosing context.
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-same-instant(#"2024-01-14 12:30:00") → #false
+```
+{% endraw %}
+
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

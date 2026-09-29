@@ -3,7 +3,7 @@ layout: docs
 title: "is-upper-case"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 120
+nav_order: 170
 has_toc: false
 permalink: /predicates/text/is-upper-case/
 tags:
@@ -18,6 +18,8 @@ is-upper-case()
 
 Returns `true` if all characters of the text value passed as argument are upper-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+"Hello World" | is-upper-case → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

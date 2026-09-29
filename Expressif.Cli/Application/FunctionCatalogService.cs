@@ -1,4 +1,4 @@
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 
 namespace Expressif.Cli.Application;
 

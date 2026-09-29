@@ -1,0 +1,54 @@
+---
+layout: docs
+title: "next-weekday-or-same"
+parent: "Calendar functions"
+grand_parent: "Temporal functions"
+nav_order: 120
+has_toc: false
+permalink: /functions/temporal/calendar/next-weekday-or-same/
+tags:
+  - functions
+  - temporal/calendar
+generated: true
+---
+
+```
+date-time →
+next-weekday-or-same(
+    weekday: weekday
+) → date
+```
+
+Returns a new date value corresponding to the occurrence of the weekday passed as a parameter following the date passed as the argument except if this date corresponds to the expected weekday then it returns this date.
+
+
+
+## Parameters
+
+
+
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `weekday` | `weekday` | Yes | The day of week to compare to the argument. |
+
+
+
+## Argument evaluation
+
+- **`weekday`:** Evaluated once in the enclosing context.
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15" | next-weekday-or-same("Monday") → #"2024-01-15"
+```
+{% endraw %}
+
+
+**Kind:** Function  
+**Scope:** `temporal/calendar`  
+**Aliases:** `dateTime-to-next-weekday-or-same`
+{: .member-reference }

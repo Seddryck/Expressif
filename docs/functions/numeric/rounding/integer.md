@@ -19,11 +19,14 @@ integer() → numeric
 
 Returns the value of an argument number rounded to the nearest integer.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

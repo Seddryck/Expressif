@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-min()
+array →
+min() → any
 ```
 
 Tracks the smallest numeric value found during accumulation.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `min`
+**Aliases:** None
 {: .member-reference }

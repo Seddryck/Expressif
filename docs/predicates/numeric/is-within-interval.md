@@ -3,7 +3,7 @@ layout: docs
 title: "is-within-interval"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /predicates/numeric/is-within-interval/
 tags:
@@ -20,6 +20,8 @@ is-within-interval(
 
 Returns true if the numeric value passed as argument is between the lower bound and the upper bound defined in the interval. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -28,9 +30,13 @@ Returns true if the numeric value passed as argument is between the lower bound 
 |:-----|:-----|:---------|:------------|
 | `interval` | `any` | Yes | A numeric interval to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`interval`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

@@ -19,6 +19,8 @@ hour-of-day() → integer
 
 returns a numeric value representing the hours of the date passed as the argument
 
+
+
 ## Parameters
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "suffix-new-line"
 parent: "Concatenation functions"
 grand_parent: "Text functions"
-nav_order: 120
+nav_order: 140
 has_toc: false
 permalink: /functions/text/concatenation/suffix-new-line/
 tags:
@@ -19,11 +19,14 @@ suffix-new-line() → text
 
 Returns the argument value followed by a space character. If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
+
 
 
 

@@ -3,7 +3,7 @@ layout: docs
 title: "pascal-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/text/casing/pascal-case/
 tags:
@@ -18,6 +18,8 @@ pascal-case() → text
 ```
 
 Returns the input text in PascalCase, capitalizing each word and removing separators. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
+
+
 
 ## Parameters
 

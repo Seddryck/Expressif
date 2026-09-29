@@ -3,7 +3,7 @@ layout: docs
 title: "dot-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /functions/text/casing/dot-case/
 tags:
@@ -18,6 +18,8 @@ dot-case() → text
 ```
 
 Returns the input text in dot.case, lowercasing words and joining them with periods. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
+
+
 
 ## Parameters
 

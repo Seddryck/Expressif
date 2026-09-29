@@ -13,7 +13,7 @@ generated: true
 ---
 
 ```
-any →
+array →
 closest(
     target: any
 ) → any

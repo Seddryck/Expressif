@@ -31,9 +31,13 @@ Returns all tokens in the argument value in source order. By default, tokenizati
 |:-----|:-----|:---------|:------------|
 | `separator` | `text` | No | A character that delimits the tokens in the argument value. When omitted, whitespace characters delimit tokens. |
 
+
+
 ## Argument evaluation
 
 - **`separator`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

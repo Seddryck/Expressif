@@ -19,6 +19,8 @@ text-to-xml-escaped() → text
 
 Returns text escaped for use as XML character data without adding a containing element. Returns `null` for characters that are invalid in XML and preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 

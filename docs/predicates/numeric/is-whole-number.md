@@ -3,7 +3,7 @@ layout: docs
 title: "is-whole-number"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /predicates/numeric/is-whole-number/
 tags:
@@ -17,6 +17,8 @@ is-whole-number()
 ```
 
 Returns true if the numeric value passed as argument is a whole-number value. Returns `false` otherwise.
+
+
 
 ## Parameters
 

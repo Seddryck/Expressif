@@ -3,7 +3,7 @@ layout: docs
 title: "is-zero"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 140
+nav_order: 150
 has_toc: false
 permalink: /predicates/numeric/is-zero/
 tags:
@@ -17,6 +17,8 @@ is-zero()
 ```
 
 Returns true if the numeric argument is equal to 0.
+
+
 
 ## Parameters
 

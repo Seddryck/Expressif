@@ -3,7 +3,7 @@ layout: docs
 title: "is-lower-case"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 70
+nav_order: 100
 has_toc: false
 permalink: /predicates/text/is-lower-case/
 tags:
@@ -18,6 +18,8 @@ is-lower-case()
 
 Returns `true` if all characters of the text value passed as argument are lower-case. The value `null`, `empty` and `whitespace` also returns `true`. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -26,6 +28,16 @@ This predicate has no parameters.
 
 
 
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+"Hello World" | is-lower-case → #false
+```
+{% endraw %}
 
 
 **Kind:** Predicate  

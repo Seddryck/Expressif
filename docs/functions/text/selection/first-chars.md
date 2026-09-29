@@ -31,9 +31,13 @@ Returns the first chars of the argument value. The length of the string returned
 |:-----|:-----|:---------|:------------|
 | `length` | `integer` | Yes | An integer value between 0 and +Infinity, defining the length of the substring to return. |
 
+
+
 ## Argument evaluation
 
 - **`length`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

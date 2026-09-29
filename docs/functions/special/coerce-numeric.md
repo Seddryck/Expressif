@@ -13,11 +13,13 @@ generated: true
 ---
 
 ```
-boolean | integer | numeric | text →
+boolean | integer | numeric | ordering | text →
 coerce-numeric() → numeric
 ```
 
 Attempts to convert the input to a numeric value. Returns `null` when the input cannot be converted.
+
+
 
 ## Parameters
 

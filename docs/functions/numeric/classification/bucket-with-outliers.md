@@ -23,6 +23,8 @@ bucket-with-outliers(
 
 Classifies a numeric value into an equal-width bucket, using additional buckets for values below and above the configured interval. Returns `null` when the bucket configuration is invalid.
 
+
+
 ## Parameters
 
 
@@ -33,11 +35,15 @@ Classifies a numeric value into an equal-width bucket, using additional buckets 
 | `maximum` | `numeric` | Yes | Exclusive upper bound of the classified interval. |
 | `count` | `integer` | Yes | Strictly positive number of equal-width in-range buckets. |
 
+
+
 ## Argument evaluation
 
 - **`minimum`:** Evaluated once in the enclosing context.
 - **`maximum`:** Evaluated once in the enclosing context.
 - **`count`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

@@ -13,7 +13,8 @@ generated: true
 ---
 
 ```
-sum()
+array →
+sum() → any
 ```
 
 Computes the sum of all accumulated numeric values.
@@ -49,5 +50,5 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `sum`
+**Aliases:** None
 {: .member-reference }

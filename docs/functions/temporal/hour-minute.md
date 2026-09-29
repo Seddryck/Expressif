@@ -19,6 +19,8 @@ hour-minute() → text
 
 returns a textual value at format hh:mm (24 hours format) representing the hours and minutes of the dateTime passed as the argument
 
+
+
 ## Parameters
 
 

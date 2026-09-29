@@ -19,6 +19,8 @@ hour() → text
 
 returns a textual value at format hh (24 hours format) representing the hours of the dateTime passed as the argument
 
+
+
 ## Parameters
 
 

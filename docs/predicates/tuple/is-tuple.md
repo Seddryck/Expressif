@@ -19,6 +19,8 @@ is-tuple() → boolean
 
 Returns whether the input value is a tuple.
 
+
+
 ## Parameters
 
 
@@ -41,5 +43,5 @@ T(1, "foo") | is-tuple → #true
 
 **Kind:** Predicate  
 **Scope:** `tuple`  
-**Aliases:** None
+**Aliases:** `tuple-is-tuple`
 {: .member-reference }

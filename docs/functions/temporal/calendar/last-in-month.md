@@ -21,6 +21,8 @@ last-in-month(
 
 Returns a new dateTime value corresponding to the last occurrence of the weekday passed as a parameter of the month of the date passed as the argument.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,13 @@ Returns a new dateTime value corresponding to the last occurrence of the weekday
 |:-----|:-----|:---------|:------------|
 | `weekday` | `weekday` | Yes | The day of week to compare to the argument. |
 
+
+
 ## Argument evaluation
 
 - **`weekday`:** Evaluated once in the enclosing context.
+
+
 
 ## Examples
 

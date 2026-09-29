@@ -3,7 +3,7 @@ layout: docs
 title: "year-of-era"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 540
+nav_order: 480
 has_toc: false
 permalink: /functions/temporal/year-of-era/
 tags:
@@ -18,6 +18,8 @@ year-of-era() → integer
 ```
 
 returns a numeric value representing the year of the date passed as the argument
+
+
 
 ## Parameters
 

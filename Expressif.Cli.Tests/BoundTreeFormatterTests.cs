@@ -62,7 +62,7 @@ public class BoundTreeFormatterTests
     [Test]
     public void Format_ControlFlow_ExposesBranchOperands()
     {
-        var root = new ExpressifBinder().Bind(Expressif.Syntax.ExpressionParser.Parse("try(absolute => is-positive, _ => 0)"));
+        var root = ExpressifBinderFactory.Create().Bind(Expressif.Syntax.ExpressionParser.Parse("try(absolute => is-positive, _ => 0)"));
         var tree = BoundTreeFormatter.Format(root, "tree");
         Assert.That(tree, Does.Contain("Predicate").And.Contain("Expression").And.Contain("Fallback"));
     }

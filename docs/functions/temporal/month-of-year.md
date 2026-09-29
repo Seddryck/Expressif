@@ -19,6 +19,8 @@ month-of-year() → integer
 
 returns a numeric value representing the month of the date passed as the argument
 
+
+
 ## Parameters
 
 

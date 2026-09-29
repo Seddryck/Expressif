@@ -3,7 +3,7 @@ layout: docs
 title: "kebab-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 70
+nav_order: 80
 has_toc: false
 permalink: /functions/text/casing/kebab-case/
 tags:
@@ -18,6 +18,8 @@ kebab-case() → text
 ```
 
 Returns the input text in kebab-case, lowercasing words and joining them with hyphens. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
+
+
 
 ## Parameters
 

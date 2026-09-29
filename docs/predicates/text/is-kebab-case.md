@@ -3,7 +3,7 @@ layout: docs
 title: "is-kebab-case"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /predicates/text/is-kebab-case/
 tags:

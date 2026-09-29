@@ -3,7 +3,7 @@ layout: docs
 title: "Formatting functions"
 parent: "Numeric functions"
 grand_parent: "Functions library"
-nav_order: 30
+nav_order: 40
 has_children: true
 has_toc: false
 permalink: /functions/numeric/formatting/

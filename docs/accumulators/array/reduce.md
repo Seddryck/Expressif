@@ -70,5 +70,5 @@ The combining expression receives a two-element tuple: `$0` is the accumulated v
 
 **Kind:** Accumulator  
 **Scope:** `array`  
-**Aliases:** `reduce`
+**Aliases:** None
 {: .member-reference }
