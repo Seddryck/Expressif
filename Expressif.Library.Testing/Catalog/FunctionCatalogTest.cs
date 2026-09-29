@@ -405,6 +405,22 @@ public class FunctionCatalogTest
         Assert.That(semantics, Is.EqualTo(new FunctionSemanticsDocumentation(cardinality, dependency, ordering)));
     }
 
+    [Test]
+    public void Default_Map_DeserializesSchemaContract()
+    {
+        var schema = FunctionCatalog.Default.Find("map")?.Schema;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(schema?.Input, Is.EqualTo("array<T>"));
+            Assert.That(schema?.Output, Is.EqualTo("array<U>"));
+            Assert.That(schema?.Parameters?["transformation"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "U")));
+            Assert.That(schema?.Nullability, Is.EqualTo("propagate-input"));
+            Assert.That(FunctionCatalog.Default.Find("field")?.Schema?.Intrinsic, Is.EqualTo("field"));
+        });
+    }
+
     [TestCase("add", "times", ParameterOmissionMode.Constant)]
     [TestCase("subtract", "times", ParameterOmissionMode.Constant)]
     [TestCase("swap", "first", ParameterOmissionMode.Absent)]

@@ -17,7 +17,7 @@ public static class LogicalPlannerFactory
         public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
         {
             var function = expectedKind is "predicate" or "accumulator"
-                ? catalog.Find(name, expectedKind)
+                ? catalog.Find(name, expectedKind) ?? catalog.Find(name, "function")
                 : catalog.Find(name, "function") ?? catalog.Find(name);
             return function is null ? null : new PlannerFunctionMetadata(
                 new PlannerFunctionDescriptor(
@@ -33,7 +33,20 @@ public static class LogicalPlannerFactory
                             function.Semantics.Cardinality,
                             function.Semantics.Dependency,
                             function.Semantics.Ordering),
-                    function.Kind),
+                    function.Kind,
+                    function.Schema is null
+                        ? null
+                        : new PlannerSchemaDescriptor(
+                            function.Schema.Input,
+                            function.Schema.Output,
+                            function.Schema.Parameters?.ToDictionary(
+                                parameter => parameter.Key,
+                                parameter => new PlannerParameterSchemaDescriptor(
+                                    parameter.Value.Input,
+                                    parameter.Value.Output),
+                                StringComparer.Ordinal),
+                            function.Schema.Intrinsic,
+                            function.Schema.Nullability)),
                 function.Parameters.Select(parameter => new PlannerParameterMetadata(
                     new PlannerParameterDescriptor(
                         parameter.Name,

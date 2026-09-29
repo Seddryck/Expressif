@@ -68,7 +68,23 @@ public sealed record PlannerFunctionDescriptor(
     string Output,
     PlannerTraversalDescriptor? Traversal = null,
     PlannerSemanticsDescriptor? Semantics = null,
-    string Kind = "function");
+    string Kind = "function",
+    PlannerSchemaDescriptor? Schema = null);
+
+/// <summary>
+/// The schema relationship declared by a planned operator.
+/// </summary>
+public sealed record PlannerSchemaDescriptor(
+    string? Input = null,
+    string? Output = null,
+    IReadOnlyDictionary<string, PlannerParameterSchemaDescriptor>? Parameters = null,
+    string? Intrinsic = null,
+    string? Nullability = null);
+
+/// <summary>
+/// The input and output schema relationship of an operator argument.
+/// </summary>
+public sealed record PlannerParameterSchemaDescriptor(string? Input = null, string? Output = null);
 
 /// <summary>
 /// The machine-readable traversal contract of a planned operator.

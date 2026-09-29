@@ -102,6 +102,7 @@ public sealed class FunctionCatalog
         ValidateNames(entries.Where(entry => entry.Kind != "function"));
         ValidateOmissions(entries);
         ValidateSemantics(entries);
+        ValidateSchemas(entries);
 
         return new FunctionCatalog(entries);
     }
@@ -188,6 +189,40 @@ public sealed class FunctionCatalog
             ValidateSemanticsChoice(function.Name, "cardinality", semantics.Cardinality, cardinalities);
             ValidateSemanticsChoice(function.Name, "dependency", semantics.Dependency, dependencies);
             ValidateSemanticsChoice(function.Name, "ordering", semantics.Ordering, orderings);
+        }
+    }
+
+    internal static void ValidateSchemas(IEnumerable<FunctionDocumentation> entries)
+    {
+        foreach (var function in entries.Where(entry => entry.Schema is not null))
+        {
+            var schema = function.Schema!;
+            var member = $"Function '{function.Name}' schema";
+            if (!string.IsNullOrWhiteSpace(schema.Intrinsic))
+            {
+                if (schema.Input is not null || schema.Output is not null
+                    || schema.Parameters is not null || schema.Nullability is not null)
+                {
+                    throw new InvalidOperationException(
+                        $"{member} cannot combine an intrinsic with a declarative contract.");
+                }
+                continue;
+            }
+            if (string.IsNullOrWhiteSpace(schema.Input) || string.IsNullOrWhiteSpace(schema.Output))
+            {
+                throw new InvalidOperationException($"{member} must declare both input and output expressions.");
+            }
+            if (schema.Nullability is not null && schema.Nullability != "propagate-input")
+            {
+                throw new InvalidOperationException(
+                    $"{member} has unsupported nullability policy '{schema.Nullability}'.");
+            }
+            var parameterNames = function.Parameters.Select(parameter => parameter.Name).ToHashSet(StringComparer.Ordinal);
+            var unknown = schema.Parameters?.Keys.FirstOrDefault(parameter => !parameterNames.Contains(parameter));
+            if (unknown is not null)
+            {
+                throw new InvalidOperationException($"{member} references unknown parameter '{unknown}'.");
+            }
         }
     }
 

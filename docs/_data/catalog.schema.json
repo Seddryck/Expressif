@@ -19,10 +19,74 @@
       },
       "Semantics": {
         "$ref": "#/definitions/semantics"
+      },
+      "Schema": {
+        "$ref": "#/definitions/schema"
       }
     }
   },
   "definitions": {
+    "schema": {
+      "type": "object",
+      "properties": {
+        "Input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/parameter-schema"
+          }
+        },
+        "Intrinsic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Nullability": {
+          "enum": ["propagate-input"]
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["Intrinsic"],
+          "not": {
+            "anyOf": [
+              { "required": ["Input"] },
+              { "required": ["Output"] },
+              { "required": ["Parameters"] },
+              { "required": ["Nullability"] }
+            ]
+          }
+        },
+        {
+          "required": ["Input", "Output"],
+          "not": {
+            "required": ["Intrinsic"]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "parameter-schema": {
+      "type": "object",
+      "properties": {
+        "Input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Output": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
     "semantics": {
       "type": "object",
       "required": ["Cardinality", "Dependency", "Ordering"],

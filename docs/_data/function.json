@@ -111,6 +111,9 @@
     "Scope": "array",
     "Input": "any",
     "Output": "array",
+    "Schema": {
+      "Intrinsic": "array"
+    },
     "Summary": "Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.",
     "Parameters": [
       {
@@ -232,6 +235,11 @@
     "Scope": "array/partitioning",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<array<T>>",
+      "Nullability": "propagate-input"
+    },
     "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
     "Semantics": {
       "Cardinality": "partitioned",
@@ -371,6 +379,17 @@
     "Scope": "array",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "Parameters": {
+        "predicate": {
+          "Input": "T",
+          "Output": "boolean"
+        }
+      },
+      "Nullability": "propagate-input"
+    },
     "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
       "Cardinality": "non-increasing",
@@ -906,6 +925,17 @@
     "Scope": "array",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<U>",
+      "Parameters": {
+        "transformation": {
+          "Input": "T",
+          "Output": "U"
+        }
+      },
+      "Nullability": "propagate-input"
+    },
     "Summary": "Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
       "Cardinality": "preserved",
@@ -943,6 +973,17 @@
     "Scope": "array",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<U>",
+      "Parameters": {
+        "expression": {
+          "Input": "T",
+          "Output": "array<U>"
+        }
+      },
+      "Nullability": "propagate-input"
+    },
     "Summary": "Evaluates an array-producing expression for each input element and concatenates the resulting arrays in order. Flattens one level, preserving nested arrays and null elements. Empty arrays contribute no elements. Throws an argument error when an expression result is not an array, including null or text.",
     "Semantics": {
       "Cardinality": "expanded",
@@ -1487,6 +1528,16 @@
     "Scope": "array/combination",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<tuple<T, U>>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
+      "Nullability": "propagate-input"
+    },
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array.",
     "Semantics": {
       "Cardinality": "non-increasing",
@@ -1618,6 +1669,11 @@
     "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "Nullability": "propagate-input"
+    },
     "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
       "Cardinality": "preserved",
@@ -1694,6 +1750,10 @@
     "Scope": "array/selection",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "nullable<T>"
+    },
     "Summary": "Returns the only element of the input array without transforming it. Returns `null` when the input is empty, contains more than one element, or cannot be evaluated as an array.",
     "Semantics": {
       "Cardinality": "collapsed",
@@ -3021,6 +3081,9 @@
     "Scope": "record",
     "Input": "any",
     "Output": "any",
+    "Schema": {
+      "Intrinsic": "field"
+    },
     "Summary": "Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values.",
     "Parameters": [
       {
@@ -3425,6 +3488,9 @@
     "Scope": "record",
     "Input": "any",
     "Output": "record",
+    "Schema": {
+      "Intrinsic": "record"
+    },
     "Summary": "Creates a record by evaluating its named and spread entries against the input value. Later entries overwrite fields with the same name created by earlier entries.",
     "Parameters": [
       {
@@ -3456,6 +3522,9 @@
     "Scope": "record",
     "Input": "record",
     "Output": "record",
+    "Schema": {
+      "Intrinsic": "put"
+    },
     "Summary": "Creates or replaces statically named fields while preserving every other field. Assignment expressions are evaluated against the original input record.",
     "Parameters": [
       {
@@ -3484,6 +3553,9 @@
     "Scope": "record",
     "Input": "record",
     "Output": "record",
+    "Schema": {
+      "Intrinsic": "put"
+    },
     "Summary": "Assigns statically named fields only when they are present, including fields whose value is null.",
     "Parameters": [
       {
@@ -3512,6 +3584,9 @@
     "Scope": "record",
     "Input": "record",
     "Output": "record",
+    "Schema": {
+      "Intrinsic": "put"
+    },
     "Summary": "Assigns statically named fields only when they are absent; a present field containing null remains unchanged.",
     "Parameters": [
       {
@@ -5176,6 +5251,9 @@
     "Scope": "tuple",
     "Input": "any",
     "Output": "tuple",
+    "Schema": {
+      "Intrinsic": "tuple"
+    },
     "Summary": "Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.",
     "Parameters": [
       {

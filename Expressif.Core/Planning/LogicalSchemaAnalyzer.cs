@@ -22,35 +22,6 @@ public static class LogicalSchemaAnalyzer
     {
         private readonly List<SchemaAnalysisDiagnostic> diagnostics = [];
         private readonly Dictionary<string, SchemaAnalysisNode> nodes = new(StringComparer.Ordinal);
-        private readonly IReadOnlyDictionary<string, Func<LogicalCall, LogicalSchema, string, Requirement>> requirementRules;
-        private readonly IReadOnlyDictionary<string, Func<LogicalCall, LogicalSchema, LogicalSchema, string, LogicalSchema>> inferenceRules;
-
-        public Analyzer()
-        {
-            requirementRules = new Dictionary<string, Func<LogicalCall, LogicalSchema, string, Requirement>>(
-                StringComparer.Ordinal)
-            {
-                ["field"] = RequireField,
-                ["filter"] = RequireFilter,
-                ["map"] = RequireMap,
-                ["flat-map"] = RequireFlatMap,
-            };
-            inferenceRules = new Dictionary<string, Func<LogicalCall, LogicalSchema, LogicalSchema, string, LogicalSchema>>(
-                StringComparer.Ordinal)
-            {
-                ["field"] = InferField,
-                ["filter"] = InferFilter,
-                ["map"] = InferMap,
-                ["flat-map"] = InferFlatMap,
-                ["array"] = InferArray,
-                ["tuple"] = InferTuple,
-                ["record"] = InferRecord,
-                ["put"] = InferPut,
-                ["put-present"] = InferPut,
-                ["put-absent"] = InferPut,
-                ["named-entry"] = InferNamedEntry,
-            };
-        }
 
         public IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics => diagnostics;
 
@@ -175,9 +146,92 @@ public static class LogicalSchemaAnalyzer
 
         private Requirement RequireCall(LogicalCall call, LogicalSchema expected, string path)
         {
-            return requirementRules.TryGetValue(call.Function.Name, out var rule)
-                ? rule(call, expected, path)
+            var schema = call.Function.Schema;
+            if (schema?.Intrinsic is not null)
+                return RequireIntrinsic(call, expected, path, schema.Intrinsic);
+            return schema?.Input is not null || schema?.Output is not null
+                ? RequireContract(call, expected, path, schema)
                 : RequireGenericCall(call, path);
+        }
+
+        private Requirement RequireIntrinsic(
+            LogicalCall call,
+            LogicalSchema expected,
+            string path,
+            string intrinsic) => intrinsic switch
+            {
+                "field" => RequireField(call, expected, path),
+                "array" or "tuple" or "record" or "put" or "named-entry"
+                    => RequireGenericCall(call, path),
+                _ => throw new InvalidOperationException(
+                    $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
+            };
+
+        private Requirement RequireContract(
+            LogicalCall call,
+            LogicalSchema expected,
+            string path,
+            PlannerSchemaDescriptor contract)
+        {
+            var bindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
+            if (contract.Output is not null)
+                Bind(ParseSchema(contract.Output), expected, bindings, $"{path}.output");
+
+            var enclosing = (LogicalSchema)new AnyLogicalSchema();
+            var argumentRequirements = new List<(LogicalArgument Argument, Requirement Requirement)>();
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                if (!argument.IsExplicit || argument.Value is null)
+                    continue;
+                PlannerParameterSchemaDescriptor? parameterContract = null;
+                contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
+                var expectedArgument = parameterContract?.Output is null
+                    ? FromType(argument.Parameter.Type)
+                    : Resolve(ParseSchema(parameterContract.Output), bindings);
+                var requirement = Require(argument.Value, expectedArgument, $"{path}.arguments[{index}]");
+                argumentRequirements.Add((argument, requirement));
+                if (parameterContract?.Input is not null)
+                {
+                    var parameterInput = Intersect(
+                        requirement.Input,
+                        requirement.Enclosing,
+                        $"{path}.parameters.{argument.Parameter.Name}");
+                    Bind(
+                        ParseSchema(parameterContract.Input),
+                        parameterInput,
+                        bindings,
+                        $"{path}.parameters.{argument.Parameter.Name}");
+                }
+            }
+
+            var input = contract.Input is null
+                ? FromType(call.Function.Input)
+                : Resolve(ParseSchema(contract.Input), bindings);
+            foreach (var (argument, requirement) in argumentRequirements)
+            {
+                PlannerParameterSchemaDescriptor? parameterContract = null;
+                contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
+                if (parameterContract?.Input is not null)
+                    continue;
+                var evaluation = argument.Parameter.Evaluation;
+                if (evaluation?.Context == "traversal" && input is ArrayLogicalSchema array)
+                {
+                    input = array with
+                    {
+                        Items = Intersect(array.Items, requirement.Input, $"{path}.traversal"),
+                    };
+                }
+                else if (evaluation?.Source is "enclosing" or "surrounding")
+                {
+                    enclosing = Intersect(enclosing, requirement.Input, $"{path}.enclosing");
+                }
+                else if (evaluation?.Source == "incoming")
+                {
+                    input = Intersect(input, requirement.Input, $"{path}.incoming");
+                }
+            }
+            return new Requirement(input, enclosing);
         }
 
         private Requirement RequireField(LogicalCall call, LogicalSchema expected, string path)
@@ -193,38 +247,6 @@ public static class LogicalSchemaAnalyzer
             return call.ContextDepth == 0
                 ? new Requirement(record, new AnyLogicalSchema())
                 : new Requirement(new AnyLogicalSchema(), record);
-        }
-
-        private Requirement RequireFilter(LogicalCall call, LogicalSchema expected, string path)
-        {
-            var downstreamItem = expected is ArrayLogicalSchema array ? array.Items : new AnyLogicalSchema();
-            var predicate = Argument(call, "predicate")?.Value;
-            var predicateRequirement = predicate is null
-                ? new AnyLogicalSchema()
-                : Require(predicate, new ScalarLogicalSchema("boolean"), $"{path}.predicate").Input;
-            return new Requirement(
-                new ArrayLogicalSchema(Intersect(downstreamItem, predicateRequirement, $"{path}.items")),
-                new AnyLogicalSchema());
-        }
-
-        private Requirement RequireMap(LogicalCall call, LogicalSchema expected, string path)
-        {
-            var expectedItem = expected is ArrayLogicalSchema array ? array.Items : new AnyLogicalSchema();
-            var transformation = Argument(call, "transformation")?.Value;
-            var itemRequirement = transformation is null
-                ? new AnyLogicalSchema()
-                : Require(transformation, expectedItem, $"{path}.transformation").Input;
-            return new Requirement(new ArrayLogicalSchema(itemRequirement), new AnyLogicalSchema());
-        }
-
-        private Requirement RequireFlatMap(LogicalCall call, LogicalSchema expected, string path)
-        {
-            var expectedItems = expected is ArrayLogicalSchema array ? array.Items : new AnyLogicalSchema();
-            var transformation = Argument(call, "expression")?.Value;
-            var itemRequirement = transformation is null
-                ? new AnyLogicalSchema()
-                : Require(transformation, new ArrayLogicalSchema(expectedItems), $"{path}.expression").Input;
-            return new Requirement(new ArrayLogicalSchema(itemRequirement), new AnyLogicalSchema());
         }
 
         private Requirement RequireGenericCall(LogicalCall call, string path)
@@ -281,9 +303,63 @@ public static class LogicalSchemaAnalyzer
             LogicalSchema enclosing,
             string path)
         {
-            return inferenceRules.TryGetValue(call.Function.Name, out var rule)
-                ? rule(call, input, enclosing, path)
+            var schema = call.Function.Schema;
+            if (schema?.Intrinsic is not null)
+                return InferIntrinsic(call, input, enclosing, path, schema.Intrinsic);
+            return schema?.Input is not null || schema?.Output is not null
+                ? InferContract(call, input, enclosing, path, schema)
                 : InferGenericCall(call, input, enclosing, path);
+        }
+
+        private LogicalSchema InferIntrinsic(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path,
+            string intrinsic) => intrinsic switch
+            {
+                "field" => InferField(call, input, enclosing, path),
+                "array" => InferArray(call, input, enclosing, path),
+                "tuple" => InferTuple(call, input, enclosing, path),
+                "record" => InferRecord(call, input, enclosing, path),
+                "put" => InferPut(call, input, enclosing, path),
+                "named-entry" => InferNamedEntry(call, input, enclosing, path),
+                _ => throw new InvalidOperationException(
+                    $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
+            };
+
+        private LogicalSchema InferContract(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path,
+            PlannerSchemaDescriptor contract)
+        {
+            var bindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
+            if (contract.Input is not null)
+                Bind(ParseSchema(contract.Input), input, bindings, $"{path}.input");
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                if (!argument.IsExplicit || argument.Value is null)
+                    continue;
+                PlannerParameterSchemaDescriptor? parameterContract = null;
+                contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
+                var context = ArgumentContext(argument, input, enclosing);
+                if (parameterContract?.Input is not null)
+                    Bind(ParseSchema(parameterContract.Input), context, bindings, $"{path}.parameters.{argument.Parameter.Name}.input");
+                var result = Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
+                if (parameterContract?.Output is not null)
+                    Bind(ParseSchema(parameterContract.Output), result, bindings, $"{path}.parameters.{argument.Parameter.Name}.output");
+            }
+            if (contract.Input is not null && contract.Output == contract.Input)
+                return input;
+            var output = contract.Output is null
+                ? FromType(call.Function.Output)
+                : Resolve(ParseSchema(contract.Output), bindings);
+            return contract.Nullability == "propagate-input" && IsNullable(input)
+                ? WithNullability(output, true)
+                : output;
         }
 
         private LogicalSchema InferField(
@@ -302,39 +378,6 @@ public static class LogicalSchemaAnalyzer
                 return field.Optional ? WithNullability(field.Schema, true) : field.Schema;
             }
             return Dynamic(path, name is null ? "field with a dynamic name" : $"field '{name}'");
-        }
-
-        private LogicalSchema InferFilter(
-            LogicalCall call,
-            LogicalSchema input,
-            LogicalSchema enclosing,
-            string path)
-        {
-            InferArgument(call, "predicate", input, enclosing, path);
-            return input;
-        }
-
-        private LogicalSchema InferMap(
-            LogicalCall call,
-            LogicalSchema input,
-            LogicalSchema enclosing,
-            string path)
-        {
-            var transformed = InferArgument(call, "transformation", input, enclosing, path);
-            return new ArrayLogicalSchema(transformed ?? new AnyLogicalSchema());
-        }
-
-        private LogicalSchema InferFlatMap(
-            LogicalCall call,
-            LogicalSchema input,
-            LogicalSchema enclosing,
-            string path)
-        {
-            var transformed = InferArgument(call, "expression", input, enclosing, path)
-                ?? new AnyLogicalSchema();
-            return transformed is ArrayLogicalSchema result
-                ? result
-                : new ArrayLogicalSchema(Dynamic(path, "flat-map result item"));
         }
 
         private LogicalSchema InferArray(
@@ -500,6 +543,101 @@ public static class LogicalSchemaAnalyzer
             nodes[path] = new SchemaAnalysisNode(path, kind, operation, input, output);
         }
 
+        private void Bind(
+            SchemaExpression expression,
+            LogicalSchema actual,
+            IDictionary<string, LogicalSchema> bindings,
+            string path)
+        {
+            if (actual is NoInputLogicalSchema or AnyLogicalSchema)
+                return;
+            if (expression.IsVariable)
+            {
+                bindings[expression.Name] = bindings.TryGetValue(expression.Name, out var existing)
+                    ? Intersect(existing, actual, path)
+                    : actual;
+                return;
+            }
+            if (expression.Name == "nullable")
+            {
+                Bind(expression.Arguments.Single(), actual, bindings, path);
+                return;
+            }
+            if (expression.Name == "array" && actual is ArrayLogicalSchema array)
+            {
+                Bind(expression.Arguments.Single(), array.Items, bindings, $"{path}.items");
+                return;
+            }
+            if (expression.Name == "tuple" && actual is TupleLogicalSchema tuple
+                && expression.Arguments.Count == tuple.Items.Count)
+            {
+                for (var index = 0; index < tuple.Items.Count; index++)
+                    Bind(expression.Arguments[index], tuple.Items[index], bindings, $"{path}.items[{index}]");
+            }
+        }
+
+        private LogicalSchema Resolve(
+            SchemaExpression expression,
+            IReadOnlyDictionary<string, LogicalSchema> bindings)
+        {
+            if (expression.IsVariable)
+                return bindings.TryGetValue(expression.Name, out var value) ? value : new AnyLogicalSchema();
+            return expression.Name switch
+            {
+                "nullable" => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
+                "array" => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
+                "tuple" => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
+                _ when expression.Arguments.Count == 0 => FromType(expression.Name),
+                _ => throw new InvalidOperationException($"Unsupported schema constructor '{expression.Name}'."),
+            };
+        }
+
+        private static SchemaExpression ParseSchema(string text)
+        {
+            var index = 0;
+            var expression = ParseSchema(text, ref index);
+            SkipWhitespace(text, ref index);
+            if (index != text.Length)
+                throw new InvalidOperationException($"Invalid schema expression '{text}' at position {index}.");
+            return expression;
+        }
+
+        private static SchemaExpression ParseSchema(string text, ref int index)
+        {
+            SkipWhitespace(text, ref index);
+            var start = index;
+            while (index < text.Length && (char.IsLetterOrDigit(text[index]) || text[index] is '-' or '_'))
+                index++;
+            if (start == index)
+                throw new InvalidOperationException($"Invalid schema expression '{text}' at position {index}.");
+            var name = text[start..index];
+            SkipWhitespace(text, ref index);
+            if (index >= text.Length || text[index] != '<')
+                return new SchemaExpression(name, []);
+            index++;
+            var arguments = new List<SchemaExpression>();
+            while (true)
+            {
+                arguments.Add(ParseSchema(text, ref index));
+                SkipWhitespace(text, ref index);
+                if (index < text.Length && text[index] == ',')
+                {
+                    index++;
+                    continue;
+                }
+                if (index >= text.Length || text[index] != '>')
+                    throw new InvalidOperationException($"Invalid schema expression '{text}' at position {index}.");
+                index++;
+                return new SchemaExpression(name, arguments);
+            }
+        }
+
+        private static void SkipWhitespace(string text, ref int index)
+        {
+            while (index < text.Length && char.IsWhiteSpace(text[index]))
+                index++;
+        }
+
         private LogicalSchema FromType(string type)
         {
             var normalized = Normalize(type);
@@ -655,5 +793,10 @@ public static class LogicalSchemaAnalyzer
         };
 
         private sealed record Requirement(LogicalSchema Input, LogicalSchema Enclosing);
+
+        private sealed record SchemaExpression(string Name, IReadOnlyList<SchemaExpression> Arguments)
+        {
+            public bool IsVariable => Arguments.Count == 0 && Name.Length > 0 && char.IsUpper(Name[0]);
+        }
     }
 }

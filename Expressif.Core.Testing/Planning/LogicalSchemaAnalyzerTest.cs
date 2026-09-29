@@ -109,6 +109,30 @@ public class LogicalSchemaAnalyzerTest
         });
     }
 
+    [Test]
+    public void Analyze_MetadataContracts_InferReusableStructuralOperators()
+    {
+        var zipped = AsArray(Analyze("{1, 2} | zip({\"a\", \"b\"})").Output);
+        var zippedItem = zipped.Items as TupleLogicalSchema
+            ?? throw new AssertionException($"Expected a tuple schema but found {zipped.Items.GetType().Name}.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(Analyze("{1, 2} | reverse").Output,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("decimal"))));
+            Assert.That(Analyze("{1, 2} | chunk(1)").Output,
+                Is.EqualTo(new ArrayLogicalSchema(
+                    new ArrayLogicalSchema(new ScalarLogicalSchema("decimal")))));
+            Assert.That(Analyze("{1, 2} | single").Output,
+                Is.EqualTo(new ScalarLogicalSchema("decimal", true)));
+            Assert.That(zippedItem.Items, Is.EqualTo(new LogicalSchema[]
+            {
+                new ScalarLogicalSchema("decimal"),
+                new ScalarLogicalSchema("text"),
+            }));
+        });
+    }
+
     private static SchemaAnalysis Analyze(string expression, LogicalSchema? input = null)
         => LogicalSchemaAnalyzer.Analyze(LogicalPlanner.Plan(ExpressionParser.Parse(expression)), input);
 

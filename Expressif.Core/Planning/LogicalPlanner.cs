@@ -778,7 +778,12 @@ public sealed class LogicalPlanner
                 IsExplicit: true)).ToArray());
 
     private static PlannerFunctionDescriptor SyntheticFunction(string name)
-        => new(name.ToLowerInvariant(), "any", "any", Kind: "extension");
+        => new(
+            name.ToLowerInvariant(),
+            "any",
+            "any",
+            Kind: "extension",
+            Schema: name == "named-entry" ? new(Intrinsic: "named-entry") : null);
 
     private static PlannerParameterMetadata[] SyntheticParameters(int count)
         => Enumerable.Range(0, count).Select(index => SyntheticParameter($"argument-{index}")).ToArray();
