@@ -85,6 +85,14 @@ public static class LogicalSchemaAnalyzer
 
         public LogicalSchema Intersect(LogicalSchema left, LogicalSchema right, string path)
         {
+            if (left is NoInputLogicalSchema && right is AnyLogicalSchema)
+                return left;
+            if (right is NoInputLogicalSchema && left is AnyLogicalSchema)
+                return right;
+            if (left is NoInputLogicalSchema)
+                return right;
+            if (right is NoInputLogicalSchema)
+                return left;
             if (left is AnyLogicalSchema)
                 return WithNullability(right, IsNullable(left) || IsNullable(right));
             if (right is AnyLogicalSchema)
@@ -159,7 +167,7 @@ public static class LogicalSchemaAnalyzer
 
         private Requirement Require(LogicalValue value, LogicalSchema expected, string path) => value switch
         {
-            LogicalLiteral => new Requirement(new AnyLogicalSchema(), new AnyLogicalSchema()),
+            LogicalLiteral => new Requirement(new NoInputLogicalSchema(), new NoInputLogicalSchema()),
             LogicalPipeline pipeline => new Requirement(RequirePipeline(pipeline, expected, path), new AnyLogicalSchema()),
             LogicalCall call => RequireCall(call, expected, path),
             _ => DynamicRequirement(path, value.GetType().Name),
@@ -593,6 +601,7 @@ public static class LogicalSchemaAnalyzer
 
         private static LogicalSchema WithNullability(LogicalSchema schema, bool nullable) => schema switch
         {
+            NoInputLogicalSchema => schema,
             AnyLogicalSchema value => value with { IsNullable = nullable },
             ScalarLogicalSchema value => value with { IsNullable = nullable },
             RecordLogicalSchema value => value with { IsNullable = nullable },
@@ -604,6 +613,7 @@ public static class LogicalSchemaAnalyzer
 
         private static bool IsNullable(LogicalSchema schema) => schema switch
         {
+            NoInputLogicalSchema => false,
             AnyLogicalSchema value => value.IsNullable,
             ScalarLogicalSchema value => value.IsNullable,
             RecordLogicalSchema value => value.IsNullable,
@@ -634,6 +644,7 @@ public static class LogicalSchemaAnalyzer
 
         private static string Describe(LogicalSchema schema) => schema switch
         {
+            NoInputLogicalSchema => "no-input",
             AnyLogicalSchema => "any",
             ScalarLogicalSchema scalar => scalar.Type,
             RecordLogicalSchema => "record",

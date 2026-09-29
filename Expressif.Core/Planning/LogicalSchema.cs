@@ -6,6 +6,11 @@ namespace Expressif.Planning;
 public abstract record LogicalSchema;
 
 /// <summary>
+/// Indicates that a plan does not require an externally supplied input value.
+/// </summary>
+public sealed record NoInputLogicalSchema : LogicalSchema;
+
+/// <summary>
 /// A value for which no more precise static schema is known.
 /// </summary>
 public sealed record AnyLogicalSchema(bool IsNullable = false) : LogicalSchema;

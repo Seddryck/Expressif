@@ -96,6 +96,19 @@ public class LogicalSchemaAnalyzerTest
         });
     }
 
+    [Test]
+    public void Analyze_ClosedPipeline_ReportsNoExternalInputAndKnownCompleteness()
+    {
+        var analysis = Analyze("{1, 2, 3} | map(add(1))");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(analysis.Input, Is.TypeOf<NoInputLogicalSchema>());
+            Assert.That(analysis.Output, Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("numeric"))));
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Known));
+        });
+    }
+
     private static SchemaAnalysis Analyze(string expression, LogicalSchema? input = null)
         => LogicalSchemaAnalyzer.Analyze(LogicalPlanner.Plan(ExpressionParser.Parse(expression)), input);
 
