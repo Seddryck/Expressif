@@ -443,6 +443,44 @@ public class FunctionCatalogTest
     }
 
     [Test]
+    public void Default_AccumulatorContracts_ReflectImplementationRelationships()
+    {
+        var any = FunctionCatalog.Default.Find("any", "accumulator")!;
+        var closest = FunctionCatalog.Default.Find("closest", "accumulator")!.Schema!;
+        var every = FunctionCatalog.Default.Find("every", "accumulator")!;
+        var last = FunctionCatalog.Default.Find("last", "accumulator")!.Schema!;
+        var maximum = FunctionCatalog.Default.Find("max", "accumulator")!.Schema!;
+        var minimum = FunctionCatalog.Default.Find("min", "accumulator")!.Schema!;
+        var only = FunctionCatalog.Default.Find("only", "accumulator")!.Schema!;
+        var reduce = FunctionCatalog.Default.Find("reduce", "accumulator")!.Schema!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((any.Input, any.Output, any.Schema!.Classification),
+                Is.EqualTo(("boolean", "boolean", "fixed")));
+            Assert.That((every.Input, every.Output, every.Schema!.Classification),
+                Is.EqualTo(("boolean", "boolean", "fixed")));
+            Assert.That((closest.Classification, closest.Input, closest.Output),
+                Is.EqualTo(("contract", "T", "nullable<T>")));
+            Assert.That((last.Classification, last.Input, last.Output),
+                Is.EqualTo(("contract", "T", "nullable<T>")));
+            Assert.That((maximum.Classification, maximum.Input, maximum.Output),
+                Is.EqualTo(("contract", "numeric", "nullable<numeric>")));
+            Assert.That((minimum.Classification, minimum.Input, minimum.Output),
+                Is.EqualTo(("contract", "numeric", "nullable<numeric>")));
+            Assert.That((only.Classification, only.Input, only.Output),
+                Is.EqualTo(("contract", "T", "U")));
+            Assert.That(only.Parameters!["predicate"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "boolean")));
+            Assert.That(only.Parameters["accumulator"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "U")));
+            Assert.That(reduce.Classification, Is.EqualTo("dynamic"));
+            Assert.That(reduce.DynamicReason, Does.Contain("operation output"));
+            Assert.That(reduce.DynamicReason, Does.Contain("initial value"));
+        });
+    }
+
+    [Test]
     public void Default_AllPublicCallables_HaveExactlyOneSchemaClassification()
     {
         var functions = FunctionCatalog.Default.Functions;

@@ -216,6 +216,39 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_AccumulatorContracts_DeriveImplementationTypes()
+    {
+        var any = Analyze("fold(any)");
+        var every = Analyze("fold(every)");
+        var last = Analyze("{1, 2, 3} | fold(last)");
+        var maximum = Analyze("{1, 2, 3} | fold(max)");
+        var minimum = Analyze("{1, 2, 3} | fold(min)");
+        var closest = Analyze("{1, 2, 3} | fold(closest(2))");
+        var only = Analyze("{1, 2, 3} | fold(only(is-even, sum))");
+        var reduce = Analyze("{1, 2, 3} | fold(reduce(add($0, $1)))");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(any.Input,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("boolean"))));
+            Assert.That(any.Output, Is.EqualTo(new ScalarLogicalSchema("boolean")));
+            Assert.That(every.Input,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("boolean"))));
+            Assert.That(every.Output, Is.EqualTo(new ScalarLogicalSchema("boolean")));
+            Assert.That(last.Output, Is.EqualTo(new ScalarLogicalSchema("decimal", true)));
+            Assert.That(maximum.Output, Is.EqualTo(new ScalarLogicalSchema("numeric", true)));
+            Assert.That(minimum.Output, Is.EqualTo(new ScalarLogicalSchema("numeric", true)));
+            Assert.That(closest.Output, Is.EqualTo(new ScalarLogicalSchema("decimal", true)));
+            Assert.That(only.Output, Is.EqualTo(new ScalarLogicalSchema("numeric")));
+            Assert.That(reduce.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Dynamic));
+            Assert.That(reduce.Diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Code == "schema.dynamic"
+                && diagnostic.Message.Contains("operation output", StringComparison.Ordinal)
+                && diagnostic.Message.Contains("initial value", StringComparison.Ordinal)));
+        });
+    }
+
+    [Test]
     public void Analyze_GroupBy_CapturesKeyAndItemSchemas()
     {
         var analysis = Analyze("{{country := \"BE\", year := 2025}} | group-by(.country, .year)");

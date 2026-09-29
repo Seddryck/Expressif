@@ -10424,8 +10424,7 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "fixed"
     },
     "Summary": "Returns `true` when at least one accumulated boolean value is `true`.",
     "Parameters": [],
@@ -10433,8 +10432,8 @@
       "{#false, #true, #false} | fold(any) → #true"
     ],
     "Kind": "accumulator",
-    "Input": "array",
-    "Output": "any"
+    "Input": "boolean",
+    "Output": "boolean"
   },
   {
     "Name": "closest",
@@ -10444,8 +10443,9 @@
     "Input": "array",
     "Output": "any",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "nullable<T>"
     },
     "Summary": "Returns the first non-null input value with the smallest absolute distance to the target.",
     "Behavior": "The result preserves the selected input value and its type. Numeric targets use subtract; other targets use duration-between. Compatibility and coercion follow those operations. Values whose distance is null are ignored. Ties preserve input order. A null target, empty input, or input without a valid distance returns null. Arithmetic overflow follows the underlying difference operation.",
@@ -10496,8 +10496,7 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "fixed"
     },
     "Summary": "Returns `true` only when every accumulated boolean value is `true`.",
     "Parameters": [],
@@ -10505,8 +10504,8 @@
       "{#true, #true, #false} | fold(every) → #false"
     ],
     "Kind": "accumulator",
-    "Input": "array",
-    "Output": "any"
+    "Input": "boolean",
+    "Output": "boolean"
   },
   {
     "Name": "first",
@@ -10533,8 +10532,9 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "nullable<T>"
     },
     "Summary": "Stores the most recently accumulated item.",
     "Parameters": [],
@@ -10600,8 +10600,9 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "numeric",
+      "Output": "nullable<numeric>"
     },
     "Summary": "Tracks the greatest numeric value found during accumulation.",
     "Parameters": [],
@@ -10618,8 +10619,9 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "numeric",
+      "Output": "nullable<numeric>"
     },
     "Summary": "Tracks the smallest numeric value found during accumulation.",
     "Parameters": [],
@@ -10639,7 +10641,7 @@
     "Output": "any",
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result schema depends recursively on the operation output, the item type, and whether an initial value is supplied; the current contract grammar cannot express that conditional relationship."
     },
     "Summary": "Combines array elements in source order by repeatedly evaluating an expression against the accumulated value and current element.",
     "Behavior": "The combining expression receives a two-element tuple: `$0` is the accumulated value and `$1` is the current element. Without `initial`, the first element becomes the accumulated value and an empty array returns `null`. With `initial`, evaluation starts by combining it with the first element, and an empty array returns the initial value unchanged. `f~` invokes accumulator | f(current item); `~f` invokes current item | f(accumulator). Existing complete expressions and the normalization of an explicitly supplied leading $0 are preserved and are not deprecated.",
@@ -10713,8 +10715,19 @@
     "Input": "array",
     "Output": "any",
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "U",
+      "Parameters": {
+        "predicate": {
+          "Input": "T",
+          "Output": "boolean"
+        },
+        "accumulator": {
+          "Input": "T",
+          "Output": "U"
+        }
+      }
     },
     "Summary": "Forwards only items satisfying the predicate to the wrapped accumulator.",
     "Behavior": "The input and final result types are inherited from the wrapped accumulator. Initialization, empty-input and no-match results, completion, and failures are unchanged. Null items are evaluated by the predicate like any other item. Predicate results must be Boolean. Matching items retain source order without materializing a filtered collection. Direct pipeline calls implicitly fold the wrapper.",
