@@ -72,6 +72,32 @@ public static class LogicalSchemaAnalyzer
                 return left;
             if (right is ConflictingLogicalSchema)
                 return right;
+            if (left is UnionLogicalSchema leftUnion)
+            {
+                var alternatives = leftUnion.Alternatives
+                    .Where(alternative => CanIntersectRoot(alternative, right))
+                    .Select((alternative, index) => Intersect(alternative, right, $"{path}.alternatives[{index}]"))
+                    .ToArray();
+                if (alternatives.Length > 0)
+                {
+                    return WithNullability(
+                        alternatives.Aggregate(Union),
+                        IsNullable(left) || IsNullable(right));
+                }
+            }
+            if (right is UnionLogicalSchema rightUnion)
+            {
+                var alternatives = rightUnion.Alternatives
+                    .Where(alternative => CanIntersectRoot(left, alternative))
+                    .Select((alternative, index) => Intersect(left, alternative, $"{path}.alternatives[{index}]"))
+                    .ToArray();
+                if (alternatives.Length > 0)
+                {
+                    return WithNullability(
+                        alternatives.Aggregate(Union),
+                        IsNullable(left) || IsNullable(right));
+                }
+            }
             if (left is ScalarLogicalSchema leftScalar && right is ScalarLogicalSchema rightScalar)
             {
                 var type = IntersectScalar(leftScalar.Type, rightScalar.Type);
@@ -151,6 +177,24 @@ public static class LogicalSchemaAnalyzer
             return conflict;
         }
 
+        private static bool CanIntersectRoot(LogicalSchema left, LogicalSchema right) => (left, right) switch
+        {
+            (AnyLogicalSchema or NoInputLogicalSchema, _) => true,
+            (_, AnyLogicalSchema or NoInputLogicalSchema) => true,
+            (UnionLogicalSchema union, _) => union.Alternatives.Any(alternative => CanIntersectRoot(alternative, right)),
+            (_, UnionLogicalSchema union) => union.Alternatives.Any(alternative => CanIntersectRoot(left, alternative)),
+            (ScalarLogicalSchema leftScalar, ScalarLogicalSchema rightScalar)
+                => IntersectScalar(leftScalar.Type, rightScalar.Type) is not null,
+            (ArrayLogicalSchema, ArrayLogicalSchema) => true,
+            (RecordLogicalSchema, RecordLogicalSchema) => true,
+            (TupleLogicalSchema, TupleLogicalSchema) => true,
+            (PairLogicalSchema, PairLogicalSchema) => true,
+            (DictionaryLogicalSchema, DictionaryLogicalSchema) => true,
+            (GroupingLogicalSchema, GroupingLogicalSchema) => true,
+            (SortTableLogicalSchema, SortTableLogicalSchema) => true,
+            _ => false,
+        };
+
         public SchemaAnalysisCompleteness Completeness(LogicalSchema input, LogicalSchema output)
         {
             if (ContainsConflict(input) || ContainsConflict(output))
@@ -219,6 +263,8 @@ public static class LogicalSchemaAnalyzer
                 "with" => RequireWith(call, expected, path),
                 "spread-entry" => RequireSpreadEntry(call, expected, path),
                 "sort-criterion" => RequireSortCriterion(call, path),
+                _ when intrinsic.StartsWith("tuple-position", StringComparison.Ordinal)
+                    => RequireTuplePosition(call, path),
                 "array" or "tuple" or "record" or "dictionary" or "grouping"
                     or "put" or "put-present" or "put-absent" or "named-entry"
                     => RequireGenericCall(call, path),
@@ -510,6 +556,8 @@ public static class LogicalSchemaAnalyzer
                 "named-entry" => InferNamedEntry(call, input, enclosing, path),
                 "spread-entry" => InferSpreadEntry(call, input, enclosing, path),
                 "sort-criterion" => InferSortCriterion(call, input, enclosing, path),
+                _ when intrinsic.StartsWith("tuple-position", StringComparison.Ordinal)
+                    => InferTuplePosition(call, input, enclosing, path, intrinsic),
                 _ => throw new InvalidOperationException(
                     $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
             };
@@ -1012,6 +1060,78 @@ public static class LogicalSchemaAnalyzer
                 : WithNullability(FromType(type), true);
         }
 
+        private Requirement RequireTuplePosition(
+            LogicalCall call,
+            string path)
+        {
+            var generic = RequireGenericCall(call, path);
+            var pair = new PairLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema());
+            return new Requirement(Union(generic.Input, pair), generic.Enclosing);
+        }
+
+        private LogicalSchema InferTuplePosition(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path,
+            string intrinsic)
+        {
+            InferArgument(call, "position", input, enclosing, path);
+            var position = TuplePosition(call, intrinsic);
+            return position is null
+                ? Dynamic(path, "tuple position selected by a non-literal expression")
+                : SelectTuplePosition(input, position.Value, path);
+        }
+
+        private LogicalSchema SelectTuplePosition(LogicalSchema input, int position, string path)
+        {
+            if (input is UnionLogicalSchema union)
+            {
+                return union.Alternatives
+                    .Select(item => SelectTuplePosition(item, position, path))
+                    .Aggregate(Union);
+            }
+            if (input is PairLogicalSchema pair)
+            {
+                var selected = position switch
+                {
+                    0 => pair.Key,
+                    1 or -1 => pair.Value,
+                    -2 => pair.Key,
+                    _ => new AnyLogicalSchema(true),
+                };
+                return IsNullable(input) ? WithNullability(selected, true) : selected;
+            }
+            if (input is TupleLogicalSchema tuple)
+            {
+                var index = position < 0 && tuple.AdditionalItems is null
+                    ? tuple.Items.Count + position
+                    : position;
+                LogicalSchema selected;
+                if (index >= 0 && index < tuple.Items.Count)
+                {
+                    selected = tuple.Items[index];
+                }
+                else if (index >= tuple.Items.Count && tuple.AdditionalItems is not null)
+                {
+                    selected = WithNullability(tuple.AdditionalItems, true);
+                }
+                else if (position < 0 && tuple.AdditionalItems is not null)
+                {
+                    selected = tuple.Items
+                        .Append(tuple.AdditionalItems)
+                        .Aggregate(Union);
+                    selected = WithNullability(selected, true);
+                }
+                else
+                {
+                    selected = new AnyLogicalSchema(true);
+                }
+                return IsNullable(input) ? WithNullability(selected, true) : selected;
+            }
+            return Dynamic(path, "tuple position selected from an unknown positional shape");
+        }
+
         private LogicalSchema InferGenericCall(
             LogicalCall call,
             LogicalSchema input,
@@ -1105,6 +1225,35 @@ public static class LogicalSchemaAnalyzer
         {
             if (actual is NoInputLogicalSchema or AnyLogicalSchema)
                 return;
+            if (expression.Name == "union")
+            {
+                var exact = expression.Arguments
+                    .Where(alternative => AcceptsExactRoot(alternative, actual))
+                    .ToArray();
+                var alternatives = exact.Length > 0 ? exact : expression.Arguments
+                    .Where(alternative => AcceptsRoot(alternative, actual))
+                    .ToArray();
+                if (alternatives.Length == 1)
+                {
+                    Bind(alternatives[0], actual, bindings, path);
+                    return;
+                }
+                foreach (var alternativeBindings in alternatives.Select(alternative =>
+                {
+                    var candidate = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
+                    Bind(alternative, actual, candidate, path);
+                    return candidate;
+                }))
+                {
+                    foreach (var binding in alternativeBindings)
+                    {
+                        bindings[binding.Key] = bindings.TryGetValue(binding.Key, out var existing)
+                            ? Union(existing, binding.Value)
+                            : binding.Value;
+                    }
+                }
+                return;
+            }
             if (expression.IsVariable)
             {
                 bindings[expression.Name] = bindings.TryGetValue(expression.Name, out var existing)
@@ -1217,11 +1366,35 @@ public static class LogicalSchemaAnalyzer
         {
             if (expression.IsVariable)
                 return true;
+            if (actual is UnionLogicalSchema union)
+                return union.Alternatives.Any(alternative => AcceptsRoot(expression, alternative));
+            if (expression.Name == "union")
+                return expression.Arguments.Any(alternative => AcceptsRoot(alternative, actual));
             if (expression.Name == "nullable")
                 return AcceptsRoot(expression.Arguments.Single(), actual);
             return (expression.Name, actual) switch
             {
                 ("array", ArrayLogicalSchema or DictionaryLogicalSchema or GroupingLogicalSchema) => true,
+                ("tuple" or "variadic-tuple", TupleLogicalSchema) => true,
+                ("pair", PairLogicalSchema) => true,
+                ("dictionary", DictionaryLogicalSchema) => true,
+                ("grouping", GroupingLogicalSchema) => true,
+                ("sort-table", SortTableLogicalSchema) => true,
+                _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
+                    && IntersectScalar(expression.Name, scalar.Type) is not null,
+            };
+        }
+
+        private static bool AcceptsExactRoot(SchemaExpression expression, LogicalSchema actual)
+        {
+            if (expression.IsVariable)
+                return true;
+            if (expression.Name == "nullable")
+                return AcceptsExactRoot(expression.Arguments.Single(), actual);
+            return (expression.Name, actual) switch
+            {
+                ("array", ArrayLogicalSchema) => true,
+                ("record", RecordLogicalSchema) => true,
                 ("tuple" or "variadic-tuple", TupleLogicalSchema) => true,
                 ("pair", PairLogicalSchema) => true,
                 ("dictionary", DictionaryLogicalSchema) => true,
@@ -1241,6 +1414,9 @@ public static class LogicalSchemaAnalyzer
             return expression.Name switch
             {
                 "nullable" => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
+                "union" => expression.Arguments
+                    .Select(item => Resolve(item, bindings))
+                    .Aggregate(Union),
                 "array" => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
                 "tuple" => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
                 "variadic-tuple" => new TupleLogicalSchema(
@@ -1344,6 +1520,29 @@ public static class LogicalSchemaAnalyzer
             var value = Argument(call, parameter)?.Value
                 ?? call.Arguments.FirstOrDefault()?.Value;
             return value is LogicalLiteral { Value: string text } ? text : null;
+        }
+
+        private static int? TuplePosition(LogicalCall call, string intrinsic)
+        {
+            const string prefix = "tuple-position:";
+            if (intrinsic.StartsWith(prefix, StringComparison.Ordinal)
+                && int.TryParse(intrinsic[prefix.Length..], out var configured))
+            {
+                return configured;
+            }
+
+            var value = Argument(call, "position")?.Value;
+            return value switch
+            {
+                LogicalLiteral { Value: int position } => position,
+                LogicalLiteral { Value: long position } when position is >= int.MinValue and <= int.MaxValue
+                    => (int)position,
+                LogicalLiteral { Value: decimal position }
+                    when position == decimal.Truncate(position)
+                        && position is >= int.MinValue and <= int.MaxValue
+                    => (int)position,
+                _ => null,
+            };
         }
 
         private static string? SelectedField(LogicalCall call, string parameter)

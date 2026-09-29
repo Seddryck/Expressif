@@ -392,6 +392,140 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_SetContracts_DistinguishBothItemSources()
+    {
+        var input = new ArrayLogicalSchema(new ScalarLogicalSchema("decimal"));
+        var complement = AsArray(Analyze("complement({\"x\"})", input).Output);
+        var union = AsArray(Analyze("union({\"x\"})", input).Output).Items
+            as UnionLogicalSchema
+            ?? throw new AssertionException("Expected union items.");
+        var symmetricDifference = AsArray(Analyze("symmetric-difference({\"x\"})", input).Output).Items
+            as UnionLogicalSchema
+            ?? throw new AssertionException("Expected union items.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(complement.Items, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(union.Alternatives, Is.EquivalentTo(new LogicalSchema[]
+            {
+                new ScalarLogicalSchema("decimal"),
+                new ScalarLogicalSchema("text"),
+            }));
+            Assert.That(symmetricDifference.Alternatives, Is.EquivalentTo(union.Alternatives));
+        });
+    }
+
+    [Test]
+    public void Analyze_GroupingContracts_PreserveAndTransformComponents()
+    {
+        var key = new ScalarLogicalSchema("text");
+        var item = new ScalarLogicalSchema("decimal");
+        var grouping = new GroupingLogicalSchema(key, item);
+        var grouped = Analyze("group", new ArrayLogicalSchema(new PairLogicalSchema(key, item))).Output
+            as GroupingLogicalSchema
+            ?? throw new AssertionException("Expected group to produce a grouping schema.");
+        var preserved = new[]
+        {
+            "drop-empty-groups",
+            "filter-groups($key | is-equivalent-to(\"BE\"))",
+            "top-groups(1, $key)",
+        }.Select(expression => Analyze(expression, grouping).Output).ToArray();
+        var mapped = Analyze("map-groups(map(coerce-text))", grouping).Output
+            as GroupingLogicalSchema
+            ?? throw new AssertionException("Expected map-groups to produce a grouping schema.");
+        var drilled = Analyze("drill-up(lower)", grouping).Output
+            as GroupingLogicalSchema
+            ?? throw new AssertionException("Expected drill-up to produce a grouping schema.");
+        var summarized = Analyze("summarize-against(sum, sum, $0 | divide($1))", grouping).Output
+            as DictionaryLogicalSchema
+            ?? throw new AssertionException("Expected summarize-against to produce a dictionary schema.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((grouped.Keys, grouped.Items), Is.EqualTo((key, item)));
+            Assert.That(preserved, Has.All.EqualTo(grouping));
+            Assert.That((mapped.Keys, mapped.Items),
+                Is.EqualTo((key, new ScalarLogicalSchema("text"))));
+            Assert.That((drilled.Keys, drilled.Items), Is.EqualTo((key, item)));
+            Assert.That((summarized.Keys, summarized.Values),
+                Is.EqualTo((key, new ScalarLogicalSchema("numeric"))));
+        });
+    }
+
+    [Test]
+    public void Analyze_JoinContracts_PreserveSidesAndOuterNullability()
+    {
+        var left = new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>
+        {
+            ["id"] = new(new ScalarLogicalSchema("decimal")),
+        });
+        const string right = "{{id := 1, name := \"A\"}}";
+        var inner = AsArray(Analyze($"join({right}, .id)", new ArrayLogicalSchema(left)).Output).Items
+            as PairLogicalSchema
+            ?? throw new AssertionException("Expected join to produce pairs.");
+        var leftOuter = AsArray(Analyze($"join-left({right}, .id)", new ArrayLogicalSchema(left)).Output).Items
+            as PairLogicalSchema
+            ?? throw new AssertionException("Expected join-left to produce pairs.");
+        var rightOuter = AsArray(Analyze($"join-right({right}, .id)", new ArrayLogicalSchema(left)).Output).Items
+            as PairLogicalSchema
+            ?? throw new AssertionException("Expected join-right to produce pairs.");
+        var fullOuter = AsArray(Analyze($"join-full({right}, .id)", new ArrayLogicalSchema(left)).Output).Items
+            as PairLogicalSchema
+            ?? throw new AssertionException("Expected join-full to produce pairs.");
+        var groupedRight = AsArray(Analyze("{\"A\"} | join({\"A\"} | group-by(@_), @_)").Output).Items
+            as PairLogicalSchema
+            ?? throw new AssertionException("Expected grouping join to produce pairs.");
+        var dictionaryRight = AsArray(
+            Analyze("{\"A\"} | join(dictionary(pair(\"A\", \"A\")), @_)").Output).Items
+            as PairLogicalSchema
+            ?? throw new AssertionException("Expected dictionary join to produce pairs.");
+        Assert.Multiple(() =>
+        {
+            Assert.That(inner.Key, Is.TypeOf<RecordLogicalSchema>());
+            Assert.That(inner.Value, Is.TypeOf<RecordLogicalSchema>());
+            Assert.That(leftOuter.Key, Is.TypeOf<RecordLogicalSchema>());
+            Assert.That(AsRecord(leftOuter.Value).IsNullable, Is.True);
+            Assert.That(AsRecord(leftOuter.Value).Fields.Keys,
+                Is.EqualTo(AsRecord(inner.Value).Fields.Keys));
+            Assert.That(AsRecord(rightOuter.Key).IsNullable, Is.True);
+            Assert.That(AsRecord(rightOuter.Key).Fields.Keys,
+                Is.EqualTo(AsRecord(inner.Key).Fields.Keys));
+            Assert.That(rightOuter.Value, Is.TypeOf<RecordLogicalSchema>());
+            Assert.That(AsRecord(fullOuter.Key).IsNullable, Is.True);
+            Assert.That(AsRecord(fullOuter.Value).IsNullable, Is.True);
+            Assert.That(groupedRight.Value, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(dictionaryRight.Value, Is.EqualTo(new ScalarLogicalSchema("text")));
+        });
+    }
+
+    [Test]
+    public void Analyze_TuplePositionIntrinsic_SelectsKnownComponent()
+    {
+        var tuple = new TupleLogicalSchema(new LogicalSchema[]
+        {
+            new ScalarLogicalSchema("text"),
+            new ScalarLogicalSchema("decimal"),
+        });
+        var pair = new PairLogicalSchema(
+            new ScalarLogicalSchema("text"),
+            new ScalarLogicalSchema("integer"));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(Analyze("tuple-first", tuple).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(Analyze("tuple-second", tuple).Output,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(Analyze("tuple-at(-1)", tuple).Output,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(Analyze("tuple-at(1)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(Analyze("tuple-at(3)", tuple).Output,
+                Is.EqualTo(new AnyLogicalSchema(true)));
+        });
+    }
+
+    [Test]
     public void Analyze_WithIntrinsic_UsesProjectionRecordAsBodyContext()
     {
         var analysis = Analyze("with(label := .name | upper, record(value := .label))");

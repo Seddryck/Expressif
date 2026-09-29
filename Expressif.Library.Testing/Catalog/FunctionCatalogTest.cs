@@ -478,6 +478,49 @@ public class FunctionCatalogTest
     }
 
     [Test]
+    public void Default_RelatedFamilies_DeserializeStructuralSchemaMetadata()
+    {
+        FunctionSchemaDocumentation Schema(string name)
+            => FunctionCatalog.Default.Find(name)?.Schema
+                ?? throw new AssertionException($"Expected schema metadata for '{name}'.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((Schema("complement").Input, Schema("complement").Output),
+                Is.EqualTo(("array<T>", "array<U>")));
+            Assert.That(Schema("complement").Parameters?["array"].Output, Is.EqualTo("array<U>"));
+            Assert.That(new[] { Schema("union"), Schema("symmetric-difference") },
+                Has.All.Matches<FunctionSchemaDocumentation>(schema =>
+                    schema.Input == "array<T>" && schema.Output == "array<union<T, U>>"));
+
+            Assert.That((Schema("group").Input, Schema("group").Output),
+                Is.EqualTo(("array<pair<K, V>>", "grouping<K, V>")));
+            Assert.That(new[] { Schema("drop-empty-groups"), Schema("filter-groups"), Schema("top-groups") },
+                Has.All.Matches<FunctionSchemaDocumentation>(schema =>
+                    schema.Input == "grouping<K, T>" && schema.Output == "grouping<K, T>"));
+            Assert.That((Schema("map-groups").Input, Schema("map-groups").Output),
+                Is.EqualTo(("grouping<K, T>", "grouping<K, U>")));
+            Assert.That((Schema("drill-up").Input, Schema("drill-up").Output),
+                Is.EqualTo(("grouping<K, T>", "grouping<U, T>")));
+            Assert.That((Schema("summarize-against").Input, Schema("summarize-against").Output),
+                Is.EqualTo(("grouping<K, T>", "dictionary<K, U>")));
+
+            Assert.That((Schema("join").Input, Schema("join").Output),
+                Is.EqualTo(("array<L>", "array<pair<L, R>>")));
+            Assert.That((Schema("join-left").Input, Schema("join-left").Output),
+                Is.EqualTo(("array<L>", "array<pair<L, nullable<R>>>")));
+            Assert.That((Schema("join-right").Input, Schema("join-right").Output),
+                Is.EqualTo(("array<L>", "array<pair<nullable<L>, R>>")));
+            Assert.That((Schema("join-full").Input, Schema("join-full").Output),
+                Is.EqualTo(("array<L>", "array<pair<nullable<L>, nullable<R>>>")));
+
+            Assert.That(Schema("tuple-at").Intrinsic, Is.EqualTo("tuple-position"));
+            Assert.That(Schema("tuple-first").Intrinsic, Is.EqualTo("tuple-position:0"));
+            Assert.That(Schema("tuple-second").Intrinsic, Is.EqualTo("tuple-position:1"));
+        });
+    }
+
+    [Test]
     public void Default_AccumulatorContracts_ReflectImplementationRelationships()
     {
         var any = FunctionCatalog.Default.Find("any", "accumulator")!;

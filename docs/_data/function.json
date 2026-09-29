@@ -1567,7 +1567,26 @@
       "Summary": "Visits each element of the array entering this join call in order; each matching group contributes its right values in their original order."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<L>",
+      "Output": "array<pair<L, R>>",
+      "Parameters": {
+        "right": {
+          "Output": "union<array<R>, grouping<K, R>, dictionary<K, R>>"
+        },
+        "left-key": {
+          "Input": "L",
+          "Output": "K"
+        },
+        "right-key": {
+          "Input": "R",
+          "Output": "K"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "right"
+      ]
     }
   },
   {
@@ -1636,7 +1655,26 @@
       "Summary": "Visits each element of the array supplied as pipeline input to this join-left call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<L>",
+      "Output": "array<pair<L, nullable<R>>>",
+      "Parameters": {
+        "right": {
+          "Output": "union<array<R>, grouping<K, R>, dictionary<K, R>>"
+        },
+        "left-key": {
+          "Input": "L",
+          "Output": "K"
+        },
+        "right-key": {
+          "Input": "R",
+          "Output": "K"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "right"
+      ]
     }
   },
   {
@@ -1705,7 +1743,26 @@
       "Summary": "Visits each element of the array supplied as pipeline input to this join-right call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<L>",
+      "Output": "array<pair<nullable<L>, R>>",
+      "Parameters": {
+        "right": {
+          "Output": "union<array<R>, grouping<K, R>, dictionary<K, R>>"
+        },
+        "left-key": {
+          "Input": "L",
+          "Output": "K"
+        },
+        "right-key": {
+          "Input": "R",
+          "Output": "K"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "right"
+      ]
     }
   },
   {
@@ -1774,7 +1831,26 @@
       "Summary": "Visits each element of the array supplied as pipeline input to this join-full call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<L>",
+      "Output": "array<pair<nullable<L>, nullable<R>>>",
+      "Parameters": {
+        "right": {
+          "Output": "union<array<R>, grouping<K, R>, dictionary<K, R>>"
+        },
+        "left-key": {
+          "Input": "L",
+          "Output": "K"
+        },
+        "right-key": {
+          "Input": "R",
+          "Output": "K"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "right"
+      ]
     }
   },
   {
@@ -2275,7 +2351,12 @@
     "Schema": {
       "Classification": "contract",
       "Input": "array<T>",
-      "Output": "array<T>",
+      "Output": "array<U>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
       "NullableWhen": [
         "input",
         "array"
@@ -2424,7 +2505,18 @@
       "{1, 2, 3} | symmetric-difference({2, 3, 4}) → {1, 4}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<union<T, U>>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -2459,7 +2551,18 @@
       "{1, 2, 3} | union({2, 3, 4}) → {1, 2, 3, 4}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<union<T, U>>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -5606,7 +5709,12 @@
       "{} | group → #{}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<pair<K, V>>",
+      "Output": "grouping<K, V>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -5805,7 +5913,12 @@
       "#{(\"BE\" => {#null})} | drop-empty-groups → #{(\"BE\" => {#null})}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "grouping<K, T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -5846,7 +5959,18 @@
       "Summary": "Visits each group, including its key and values, in the grouping entering this call."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "grouping<K, T>",
+      "Parameters": {
+        "predicate": {
+          "Input": "pair<K, array<T>>",
+          "Output": "boolean"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -5922,7 +6046,18 @@
       "Summary": "Visits each group in the incoming grouping and supplies its entire value collection to the expression."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "grouping<K, U>",
+      "Parameters": {
+        "expression": {
+          "Input": "array<T>",
+          "Output": "array<U>"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -6024,7 +6159,26 @@
       "Summary": "Visits each value of each group supplied as pipeline input to this call, in group and value order. Each visited value feeds both its group's local accumulator and the shared global accumulator."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "dictionary<K, U>",
+      "Parameters": {
+        "local": {
+          "Input": "T",
+          "Output": "L"
+        },
+        "global": {
+          "Input": "T",
+          "Output": "G"
+        },
+        "combine": {
+          "Input": "tuple<L, G>",
+          "Output": "U"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -6189,8 +6343,8 @@
       "T(10, 20, 30) | tuple-at(1) → 20"
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The selected tuple item schema depends on the runtime position value and tuple arity."
+      "Classification": "intrinsic",
+      "Intrinsic": "tuple-position"
     }
   },
   {
@@ -6208,8 +6362,8 @@
       "T(10, 20, 30) | tuple-first → 10"
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The first item can be read from tuples of any arity, but the current grammar cannot bind a fixed position in an open tuple."
+      "Classification": "intrinsic",
+      "Intrinsic": "tuple-position:0"
     }
   },
   {
@@ -6227,8 +6381,8 @@
       "T(10, 20, 30) | tuple-second → 20"
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The second item can be read from tuples of any arity, but the current grammar cannot bind a fixed position in an open tuple."
+      "Classification": "intrinsic",
+      "Intrinsic": "tuple-position:1"
     }
   },
   {
@@ -10469,7 +10623,18 @@
       "Summary": "Visits each existing key of the grouping supplied as pipeline input to this drill-up call, in group order, including keys of empty groups."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "grouping<U, T>",
+      "Parameters": {
+        "expression": {
+          "Input": "K",
+          "Output": "U"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -10612,7 +10777,18 @@
       "#{(\"BE\" => {1}), (\"FR\" => {2, 3})} | top-groups(1, $value | cardinality) → #{(\"FR\" => {2, 3})}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "grouping<K, T>",
+      "Parameters": {
+        "expression": {
+          "Input": "pair<K, array<T>>",
+          "Output": "S"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
