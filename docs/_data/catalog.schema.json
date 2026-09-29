@@ -5,7 +5,7 @@
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["Name", "Parameters"],
+    "required": ["Name", "Parameters", "Schema"],
     "properties": {
       "Name": {
         "type": "string",

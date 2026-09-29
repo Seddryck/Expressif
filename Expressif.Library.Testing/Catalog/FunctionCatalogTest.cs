@@ -481,6 +481,7 @@ public class FunctionCatalogTest
     }
 
     [Test]
+    [Category("MetadataConsistency")]
     public void Default_AllPublicCallables_HaveExactlyOneSchemaClassification()
     {
         var functions = FunctionCatalog.Default.Functions;
@@ -499,6 +500,34 @@ public class FunctionCatalogTest
             Assert.That(functions.Where(function => function.Schema!.Classification == "intrinsic")
                 .Select(function => function.Schema!.Intrinsic), Is.All.Not.Empty);
         });
+    }
+
+    [Test]
+    public void ValidateSchemas_MissingSchema_ThrowsClearDiagnostic()
+    {
+        var function = Documentation("sample");
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSchemas([function]),
+            Throws.InvalidOperationException.With.Message.EqualTo(
+                "Function 'sample' must declare a schema classification."));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("unsupported")]
+    public void ValidateSchemas_MissingOrUnsupportedClassification_ThrowsClearDiagnostic(
+        string? classification)
+    {
+        var function = Documentation("sample") with
+        {
+            Schema = new FunctionSchemaDocumentation(Classification: classification),
+        };
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSchemas([function]),
+            Throws.InvalidOperationException.With.Message.EqualTo(
+                $"Function 'sample' schema has unsupported classification '{classification}'."));
     }
 
     [Test]
