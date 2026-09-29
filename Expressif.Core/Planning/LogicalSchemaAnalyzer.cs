@@ -135,6 +135,13 @@ public static class LogicalSchemaAnalyzer
                     Intersect(leftGrouping.Items, rightGrouping.Items, $"{path}.items"),
                     IsNullable(left) || IsNullable(right));
             }
+            if (left is SortTableLogicalSchema leftSortTable
+                && right is SortTableLogicalSchema rightSortTable)
+            {
+                return new SortTableLogicalSchema(
+                    Intersect(leftSortTable.Items, rightSortTable.Items, $"{path}.items"),
+                    IsNullable(left) || IsNullable(right));
+            }
 
             var conflict = new ConflictingLogicalSchema(left, right, IsNullable(left) || IsNullable(right));
             diagnostics.Add(new SchemaAnalysisDiagnostic(
@@ -1202,6 +1209,8 @@ public static class LogicalSchemaAnalyzer
                 Bind(expression.Arguments[0], grouping.Keys, bindings, $"{path}.keys");
                 Bind(expression.Arguments[1], grouping.Items, bindings, $"{path}.items");
             }
+            if (expression.Name == "sort-table" && actual is SortTableLogicalSchema sortTable)
+                Bind(expression.Arguments.Single(), sortTable.Items, bindings, $"{path}.items");
         }
 
         private static bool AcceptsRoot(SchemaExpression expression, LogicalSchema actual)
@@ -1217,6 +1226,7 @@ public static class LogicalSchemaAnalyzer
                 ("pair", PairLogicalSchema) => true,
                 ("dictionary", DictionaryLogicalSchema) => true,
                 ("grouping", GroupingLogicalSchema) => true,
+                ("sort-table", SortTableLogicalSchema) => true,
                 _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
                     && IntersectScalar(expression.Name, scalar.Type) is not null,
             };
@@ -1245,6 +1255,8 @@ public static class LogicalSchemaAnalyzer
                 "grouping" => new GroupingLogicalSchema(
                     Resolve(expression.Arguments[0], bindings),
                     Resolve(expression.Arguments[1], bindings)),
+                "sort-table" => new SortTableLogicalSchema(
+                    Resolve(expression.Arguments.Single(), bindings)),
                 _ when expression.Arguments.Count == 0 => FromType(expression.Name),
                 _ => throw new InvalidOperationException($"Unsupported schema constructor '{expression.Name}'."),
             };
@@ -1318,6 +1330,7 @@ public static class LogicalSchemaAnalyzer
                 "pair" => new PairLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
                 "dictionary" => new DictionaryLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
                 "grouping" => new GroupingLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
+                "sort-table" => new SortTableLogicalSchema(new AnyLogicalSchema()),
                 "null" => new AnyLogicalSchema(true),
                 _ => new ScalarLogicalSchema(normalized),
             };
@@ -1445,6 +1458,7 @@ public static class LogicalSchemaAnalyzer
             PairLogicalSchema value => value with { IsNullable = nullable },
             DictionaryLogicalSchema value => value with { IsNullable = nullable },
             GroupingLogicalSchema value => value with { IsNullable = nullable },
+            SortTableLogicalSchema value => value with { IsNullable = nullable },
             UnionLogicalSchema value => value with { IsNullable = nullable },
             ConflictingLogicalSchema value => value with { IsNullable = nullable },
             _ => schema,
@@ -1461,6 +1475,7 @@ public static class LogicalSchemaAnalyzer
             PairLogicalSchema value => value.IsNullable,
             DictionaryLogicalSchema value => value.IsNullable,
             GroupingLogicalSchema value => value.IsNullable,
+            SortTableLogicalSchema value => value.IsNullable,
             UnionLogicalSchema value => value.IsNullable,
             ConflictingLogicalSchema value => value.IsNullable,
             _ => false,
@@ -1476,6 +1491,7 @@ public static class LogicalSchemaAnalyzer
             PairLogicalSchema pair => ContainsAny(pair.Key) || ContainsAny(pair.Value),
             DictionaryLogicalSchema dictionary => ContainsAny(dictionary.Keys) || ContainsAny(dictionary.Values),
             GroupingLogicalSchema grouping => ContainsAny(grouping.Keys) || ContainsAny(grouping.Items),
+            SortTableLogicalSchema sortTable => ContainsAny(sortTable.Items),
             UnionLogicalSchema union => union.Alternatives.Any(ContainsAny),
             ConflictingLogicalSchema conflict => ContainsAny(conflict.Left) || ContainsAny(conflict.Right),
             _ => false,
@@ -1491,6 +1507,7 @@ public static class LogicalSchemaAnalyzer
             PairLogicalSchema pair => ContainsConflict(pair.Key) || ContainsConflict(pair.Value),
             DictionaryLogicalSchema dictionary => ContainsConflict(dictionary.Keys) || ContainsConflict(dictionary.Values),
             GroupingLogicalSchema grouping => ContainsConflict(grouping.Keys) || ContainsConflict(grouping.Items),
+            SortTableLogicalSchema sortTable => ContainsConflict(sortTable.Items),
             UnionLogicalSchema union => union.Alternatives.Any(ContainsConflict),
             _ => false,
         };
@@ -1506,6 +1523,7 @@ public static class LogicalSchemaAnalyzer
             PairLogicalSchema => "pair",
             DictionaryLogicalSchema => "dictionary",
             GroupingLogicalSchema => "grouping",
+            SortTableLogicalSchema => "sort-table",
             UnionLogicalSchema => "union",
             ConflictingLogicalSchema => "conflict",
             _ => schema.GetType().Name,

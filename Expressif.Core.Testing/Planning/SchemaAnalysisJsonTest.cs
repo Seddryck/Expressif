@@ -123,4 +123,30 @@ public class SchemaAnalysisJsonTest
                 Is.EqualTo("numeric"));
         });
     }
+
+    [Test]
+    public void Serialize_SortTable_UsesExpandedItemShape()
+    {
+        var analysis = new SchemaAnalysis(
+            new NoInputLogicalSchema(),
+            new SortTableLogicalSchema(
+                new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>
+                {
+                    ["name"] = new(new ScalarLogicalSchema("text")),
+                })),
+            SchemaAnalysisCompleteness.Known,
+            [],
+            []);
+
+        using var document = JsonDocument.Parse(SchemaAnalysisJson.Serialize(analysis));
+        var output = document.RootElement.GetProperty("output");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(output.GetProperty("type").GetString(), Is.EqualTo("sort-table"));
+            Assert.That(output.GetProperty("nullable").GetBoolean(), Is.False);
+            Assert.That(output.GetProperty("items").GetProperty("type").GetString(),
+                Is.EqualTo("record"));
+        });
+    }
 }

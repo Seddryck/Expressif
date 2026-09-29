@@ -427,12 +427,20 @@ public class FunctionCatalogTest
     public void Default_RepresentativeContracts_DeserializeCompositionMetadata()
     {
         var coalesce = FunctionCatalog.Default.Find("coalesce")?.Schema;
+        var denseRank = FunctionCatalog.Default.Find("dense-rank")?.Schema;
+        var denseRankBy = FunctionCatalog.Default.Find("dense-rank-by")?.Schema;
         var groupBy = FunctionCatalog.Default.Find("group-by")?.Schema;
+        var rank = FunctionCatalog.Default.Find("rank")?.Schema;
         var rankBy = FunctionCatalog.Default.Find("rank-by")?.Schema;
+        var sort = FunctionCatalog.Default.Find("sort")?.Schema;
         var sortBy = FunctionCatalog.Default.Find("sort-by")?.Schema;
+        var sortTable = FunctionCatalog.Default.Find("sort-table")?.Schema;
         var summarize = FunctionCatalog.Default.Find("summarize")?.Schema;
         var sum = FunctionCatalog.Default.Find("sum", "accumulator")?.Schema;
         var with = FunctionCatalog.Default.Find("with")?.Schema;
+        var selections = new[] { "bottom", "bottom-with-ties", "top", "top-with-ties" }
+            .Select(name => FunctionCatalog.Default.Find(name)?.Schema)
+            .ToArray();
 
         Assert.Multiple(() =>
         {
@@ -444,6 +452,19 @@ public class FunctionCatalogTest
             Assert.That((rankBy?.Input, rankBy?.Output),
                 Is.EqualTo(("array<T>", "grouping<integer, T>")));
             Assert.That(rankBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
+            Assert.That((denseRankBy?.Input, denseRankBy?.Output),
+                Is.EqualTo(("array<T>", "grouping<integer, T>")));
+            Assert.That(denseRankBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
+            Assert.That((sortTable?.Input, sortTable?.Output),
+                Is.EqualTo(("array<pair<sort-key, T>>", "sort-table<T>")));
+            Assert.That(sortTable?.NullableWhen, Is.EqualTo(new[] { "input" }));
+            Assert.That((sort?.Input, sort?.Output), Is.EqualTo(("sort-table<T>", "array<T>")));
+            Assert.That((rank?.Input, rank?.Output),
+                Is.EqualTo(("sort-table<T>", "grouping<integer, T>")));
+            Assert.That((denseRank?.Input, denseRank?.Output),
+                Is.EqualTo(("sort-table<T>", "grouping<integer, T>")));
+            Assert.That(selections, Has.All.Matches<FunctionSchemaDocumentation>(schema =>
+                schema.Input == "sort-table<T>" && schema.Output == "array<T>"));
             Assert.That(summarize?.Input, Is.EqualTo("grouping<K, T>"));
             Assert.That(summarize?.Output, Is.EqualTo("dictionary<K, U>"));
             Assert.That(summarize?.Parameters?["expression"],

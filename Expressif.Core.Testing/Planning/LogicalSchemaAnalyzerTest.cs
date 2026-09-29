@@ -334,6 +334,64 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_DenseRankByContract_PreservesOriginalItemSchema()
+    {
+        var item = new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>
+        {
+            ["name"] = new(new ScalarLogicalSchema("text")),
+            ["score"] = new(new ScalarLogicalSchema("decimal")),
+        });
+        var analysis = Analyze("dense-rank-by(.score -> :integer)", new ArrayLogicalSchema(item));
+        var ranked = analysis.Output as GroupingLogicalSchema
+            ?? throw new AssertionException("Expected a grouping schema.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ranked.Keys, Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(AsRecord(ranked.Items).Fields["name"].Schema,
+                Is.EqualTo(item.Fields["name"].Schema));
+            Assert.That(AsRecord(ranked.Items).Fields["score"].Schema,
+                Is.EqualTo(item.Fields["score"].Schema));
+        });
+    }
+
+    [Test]
+    public void Analyze_SortTableContracts_PreserveOriginalRowSchema()
+    {
+        var item = new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>
+        {
+            ["name"] = new(new ScalarLogicalSchema("text")),
+            ["score"] = new(new ScalarLogicalSchema("decimal")),
+        });
+        var pair = new PairLogicalSchema(new ScalarLogicalSchema("sort-key"), item);
+        var table = Analyze("sort-table", new ArrayLogicalSchema(pair)).Output
+            as SortTableLogicalSchema
+            ?? throw new AssertionException("Expected a sort-table schema.");
+        var arrayResults = new[] { "sort", "top(2)", "bottom(2)", "top-with-ties(2)", "bottom-with-ties(2)" }
+            .Select(expression => Analyze(expression, table).Output)
+            .ToArray();
+        var groupingResults = new[] { "rank", "dense-rank" }
+            .Select(expression => Analyze(expression, table).Output as GroupingLogicalSchema
+                ?? throw new AssertionException("Expected a grouping schema."))
+            .ToArray();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(AsRecord(table.Items).Fields["name"], Is.EqualTo(item.Fields["name"]));
+            Assert.That(AsRecord(table.Items).Fields["score"], Is.EqualTo(item.Fields["score"]));
+            Assert.That(arrayResults, Has.All.Matches<ArrayLogicalSchema>(schema =>
+                AsRecord(schema.Items).Fields.Keys.SequenceEqual(item.Fields.Keys)
+                && AsRecord(schema.Items).Fields["name"].Schema == item.Fields["name"].Schema
+                && AsRecord(schema.Items).Fields["score"].Schema == item.Fields["score"].Schema));
+            Assert.That(groupingResults, Has.All.Matches<GroupingLogicalSchema>(schema =>
+                schema.Keys == new ScalarLogicalSchema("integer")
+                && AsRecord(schema.Items).Fields.Keys.SequenceEqual(item.Fields.Keys)
+                && AsRecord(schema.Items).Fields["name"].Schema == item.Fields["name"].Schema
+                && AsRecord(schema.Items).Fields["score"].Schema == item.Fields["score"].Schema));
+        });
+    }
+
+    [Test]
     public void Analyze_WithIntrinsic_UsesProjectionRecordAsBodyContext()
     {
         var analysis = Analyze("with(label := .name | upper, record(value := .label))");

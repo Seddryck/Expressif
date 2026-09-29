@@ -72,6 +72,13 @@ public sealed record GroupingLogicalSchema(
     bool IsNullable = false) : LogicalSchema;
 
 /// <summary>
+/// A normalized sort table retaining the schema of each original row value.
+/// </summary>
+public sealed record SortTableLogicalSchema(
+    LogicalSchema Items,
+    bool IsNullable = false) : LogicalSchema;
+
+/// <summary>
 /// A value matching one of several alternative schemas.
 /// </summary>
 public sealed record UnionLogicalSchema(

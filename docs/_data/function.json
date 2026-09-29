@@ -4572,7 +4572,17 @@
       "Summary": "Visits each element of the array supplied as pipeline input to this dense-rank-by call."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "grouping<integer, T>",
+      "Parameters": {
+        "criteria": {
+          "Input": "T"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -4603,7 +4613,9 @@
     ],
     "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "array<T>"
     }
   },
   {
@@ -4634,7 +4646,9 @@
     ],
     "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "array<T>"
     }
   },
   {
@@ -4665,7 +4679,9 @@
     ],
     "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "array<T>"
     }
   },
   {
@@ -4696,7 +4712,9 @@
     ],
     "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "array<T>"
     }
   },
   {
@@ -4764,7 +4782,9 @@
     "Parameters": [],
     "Behavior": "Uses the same stable ordering and adjacent comparer-based tie detection as rank. Each changed key increments the rank by one. Returns original values in stable order and an empty grouping for empty input. Invalid comparer results fail as for sort.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "grouping<integer, T>"
     }
   },
   {
@@ -4783,7 +4803,9 @@
     "Parameters": [],
     "Behavior": "Rows use the same stable lexicographic ordering and comparer failure contract as sort. Adjacent ordered keys that compare equal share a rank; each changed key starts a rank equal to its one-based row position, leaving gaps after ties. Groups appear in ascending rank order and retain stable original-value order. Empty input returns an empty grouping. Ranking assumes a coherent comparer relation with transitive comparison equality; invalid relations are not normalized.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "grouping<integer, T>"
     }
   },
   {
@@ -4802,7 +4824,9 @@
     "Parameters": [],
     "Behavior": "Rows are compared lexicographically by headers. Null placement is resolved before invoking a comparer; descending direction reverses only non-equal ordering results. Comparers are invoked only for two non-null values and must return a non-null ordering value. Equal keys preserve original row order.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "sort-table<T>",
+      "Output": "array<T>"
     }
   },
   {
@@ -4816,7 +4840,12 @@
     "Parameters": [],
     "Behavior": "Every input item must be a pair whose key is a SortKey. All keys must have equal arity and matching comparer identity, direction, and null policy at each position. Header metadata is hoisted once; rows retain key values and original values. Empty input produces a headerless, rowless SortTable. No sorting is performed.",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<pair<sort-key, T>>",
+      "Output": "sort-table<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {

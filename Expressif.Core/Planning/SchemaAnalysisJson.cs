@@ -140,6 +140,12 @@ public static class SchemaAnalysisJson
                 writer.WritePropertyName("items");
                 WriteSchema(writer, grouping.Items);
                 break;
+            case SortTableLogicalSchema sortTable:
+                writer.WriteString("type", "sort-table");
+                writer.WriteBoolean("nullable", sortTable.IsNullable);
+                writer.WritePropertyName("items");
+                WriteSchema(writer, sortTable.Items);
+                break;
             case UnionLogicalSchema union:
                 writer.WriteString("type", "union");
                 writer.WriteBoolean("nullable", union.IsNullable);
