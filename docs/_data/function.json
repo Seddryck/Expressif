@@ -12,7 +12,7 @@
     "Examples": ["{payload := \"{\\\"name\\\":\\\"Ada\\\"}\"} | .payload | parse-json | field(\"name\") → \"Ada\""],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The decoded JSON shape is determined by the input text value, which the current schema grammar does not inspect."
     }
   },
   {
@@ -40,7 +40,7 @@
     "Examples": ["{nickname := #null, name := \"Alice\"} | .nickname | catch(.name) | upper → \"Alice\""],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result is either the non-null pipeline input or the recovery expression result; the current grammar cannot form that conditional union."
     }
   },
   {
@@ -70,8 +70,15 @@
     ],
     "Examples": ["12.346 | throw(is-negative) | round(2) → 12.35"],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "T",
+      "Parameters": {
+        "predicate": {
+          "Input": "T",
+          "Output": "boolean"
+        }
+      }
     }
   },
   {
@@ -114,7 +121,18 @@
       "Summary": "Visits consecutive elements of the array supplied as pipeline input to this adjacent call, in source order, starting with the second element."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<U>",
+      "Parameters": {
+        "operation": {
+          "Input": "tuple<T, T>",
+          "Output": "U"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -185,7 +203,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The invoked callable and therefore its output schema are selected by the runtime text value supplied as the function name."
     }
   },
   {
@@ -227,7 +245,18 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<U>",
+      "Parameters": {
+        "accumulator": {
+          "Input": "T",
+          "Output": "U"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -327,7 +356,12 @@
       "{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "tuple<array<T>, T, array<T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -363,7 +397,12 @@
       "{10, 20, 30, 40} | chunk-on(2) → T({10, 20}, {30, 40})"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "tuple<array<T>, array<T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -405,7 +444,18 @@
       "Summary": "Visits consecutive elements of the array supplied as pipeline input to this chunk-while call, in source order, starting with the second element."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<array<T>>",
+      "Parameters": {
+        "operation": {
+          "Input": "tuple<array<T>, T>",
+          "Output": "boolean"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -500,7 +550,18 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<array<T>>",
+      "Parameters": {
+        "weight": {
+          "Input": "T",
+          "Output": "numeric"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -536,7 +597,12 @@
       "{1, 2, 3, 4, 5} | distribute-round-robin(2) → {{1, 3, 5}, {2, 4}}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<array<T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -589,7 +655,12 @@
       "{1, 2, 3, 4, 5} | distribute-random-split({1, 0}, 42) → {{1, 2, 3, 4, 5}, {}}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<array<T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -630,7 +701,18 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<array<T>>",
+      "Parameters": {
+        "condition": {
+          "Input": "T",
+          "Output": "boolean"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -669,7 +751,12 @@
       "{1, 2, 3} | first-elements(5) → {1, 2, 3}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -754,8 +841,9 @@
       "{quantity := 4, unit-price := 5} | let(total := .quantity | multiply(.unit-price)) | @total → 20"
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "T"
     }
   },
   {
@@ -789,8 +877,15 @@
       "{1, 2, 3, 4} | apply(zip(lag | lag)) → {T(1, #null), T(2, #null), T(3, 1), T(4, 2)}"
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "U",
+      "Parameters": {
+        "expression": {
+          "Input": "T",
+          "Output": "U"
+        }
+      }
     }
   },
   {
@@ -922,7 +1017,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result is either the original input or the guarded expression result according to runtime entry-contract compatibility."
     }
   },
   {
@@ -989,7 +1084,12 @@
       "{1, 2, 3} | last-elements(5) → {1, 2, 3}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -1012,7 +1112,12 @@
       "{1, 2, 3} | lead → {2, 3, #null}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<nullable<T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -1239,7 +1344,12 @@
       "{1, 2, 3} | pairwise → {T(1, 2), T(2, 3)}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<tuple<T, T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -1262,7 +1372,12 @@
       "{\"a\", \"b\", \"c\"} | with-position | value-at(2) | tuple-first → 2"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<tuple<integer, T>>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -1382,7 +1497,7 @@
     },
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result recursively preserves container shape while replacing leaf schemas with the transformation result; recursive schema mapping is not expressible by the current grammar."
     }
   },
   {
@@ -1741,7 +1856,18 @@
       "{1, 2, 3, 4} | zip-cycle({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\"), T(3, \"a\"), T(4, \"b\")}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<tuple<T, U>>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -1822,7 +1948,18 @@
       "{1, 2} | zip-strict({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\")}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<tuple<T, U>>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -1919,7 +2056,18 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<U>",
+      "Parameters": {
+        "accumulator": {
+          "Input": "T",
+          "Output": "U"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -1984,7 +2132,12 @@
       "{1, 2, 3} | skip-first-elements(5) → {}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -2023,7 +2176,12 @@
       "{1, 2, 3} | skip-last-elements(5) → {}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -2075,7 +2233,12 @@
       "{1, 2, 3} | slice-elements(2, 1) → {}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -2110,7 +2273,13 @@
       "{1, 2, 3} | complement({2, 3, 4}) → {4}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -2145,7 +2314,13 @@
       "{1, 2, 3} | difference({2, 3, 4}) → {1}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -2168,7 +2343,12 @@
       "{1, 2, 3} | distinct → {1, 2, 3}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {
@@ -2203,7 +2383,13 @@
       "{1, 2, 3} | intersection({2, 3, 4}) → {2, 3}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "array<T>",
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     }
   },
   {
@@ -3463,7 +3649,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The selected field schema depends on the runtime path values and each traversed record shape."
     }
   },
   {
@@ -4160,7 +4346,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The body runs against a temporary record whose fields and schemas are created by the named projection arguments; the current grammar cannot construct that argument context."
     }
   },
   {
@@ -4743,7 +4929,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result is either the input key or a dictionary replacement value; the current grammar cannot form that conditional union."
     }
   },
   {
@@ -4820,7 +5006,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result shape is selected by runtime type descriptors and selector mappings."
     }
   },
   {
@@ -4964,8 +5150,9 @@
       "#null | neutral → #null"
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "T"
     }
   },
   {
@@ -5931,7 +6118,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The selected tuple item schema depends on the runtime position value and tuple arity."
     }
   },
   {
@@ -5950,7 +6137,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The first item can be read from tuples of any arity, but the current grammar cannot bind a fixed position in an open tuple."
     }
   },
   {
@@ -5969,7 +6156,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The second item can be read from tuples of any arity, but the current grammar cannot bind a fixed position in an open tuple."
     }
   },
   {
@@ -9951,8 +10138,14 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "nullable<T>",
+      "Parameters": {
+        "expression": {
+          "Input": "T"
+        }
+      }
     }
   },
   {
@@ -9992,8 +10185,14 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "nullable<T>",
+      "Parameters": {
+        "expression": {
+          "Input": "T"
+        }
+      }
     }
   },
   {
@@ -10043,8 +10242,15 @@
       "Summary": "Visits each element of the array entering this call."
     },
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "nullable<T>",
+      "Parameters": {
+        "expression": {
+          "Input": "T",
+          "Output": "numeric"
+        }
+      }
     }
   },
   {
@@ -10076,7 +10282,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result is selected from ordered conditional branches; the current grammar cannot infer branch entry shapes and combine their outputs."
     }
   },
   {
@@ -10108,7 +10314,7 @@
     ],
     "Schema": {
       "Classification": "dynamic",
-      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+      "DynamicReason": "The result is selected from ordered guarded branches; the current grammar cannot infer branch entry shapes and combine their outputs."
     }
   },
   {

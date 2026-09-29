@@ -348,6 +348,69 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_ImplementationBackedContracts_PreservePreciseSchemas()
+    {
+        var applied = Analyze("{name := \"Ada\"} | apply(.name | upper)");
+        var selected = Analyze("{2, 1} | min-by(neutral)").Output;
+        var closest = AsArray(Analyze("closest-by(.score, 1)").Input);
+        var closestItem = AsRecord(closest.Items);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(applied.Output, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(selected, Is.EqualTo(new ScalarLogicalSchema("decimal", true)));
+            Assert.That(closestItem.Fields["score"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("numeric")));
+            Assert.That(Analyze("\"value\" | neutral | throw(is-null)").Output,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+        });
+    }
+
+    [Test]
+    public void Analyze_ArrayContracts_PreserveElementAndNestedShapes()
+    {
+        var lead = AsArray(Analyze("{1, 2, 3} | lead").Output);
+        var pairwise = AsArray(Analyze("{1, 2, 3} | pairwise").Output);
+        var pair = pairwise.Items as TupleLogicalSchema
+            ?? throw new AssertionException("Expected pairwise to produce tuple items.");
+        var positioned = AsArray(Analyze("{\"a\", \"b\"} | with-position").Output);
+        var position = positioned.Items as TupleLogicalSchema
+            ?? throw new AssertionException("Expected with-position to produce tuple items.");
+        var distributed = AsArray(Analyze("{1, 2, 3} | distribute-condition(is-even)").Output);
+        var adjacent = AsArray(Analyze("{1, 2, 3} | adjacent(add($0, $1))").Output);
+        var chunked = Analyze("{1, 2, 3} | chunk-around(1)").Output as TupleLogicalSchema
+            ?? throw new AssertionException("Expected chunk-around to produce a tuple.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(Analyze("{1, 2, 3} | first-elements(2) | distinct").Output,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("decimal"))));
+            Assert.That(lead.Items, Is.EqualTo(new ScalarLogicalSchema("decimal", true)));
+            Assert.That(pair.Items, Is.EqualTo(new LogicalSchema[]
+            {
+                new ScalarLogicalSchema("decimal"),
+                new ScalarLogicalSchema("decimal"),
+            }));
+            Assert.That(position.Items, Is.EqualTo(new LogicalSchema[]
+            {
+                new ScalarLogicalSchema("integer"),
+                new ScalarLogicalSchema("text"),
+            }));
+            Assert.That(distributed.Items,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("decimal"))));
+            Assert.That(adjacent.Items, Is.EqualTo(new ScalarLogicalSchema("numeric")));
+            Assert.That(chunked.Items, Is.EqualTo(new LogicalSchema[]
+            {
+                new ArrayLogicalSchema(new ScalarLogicalSchema("decimal")),
+                new ScalarLogicalSchema("decimal"),
+                new ArrayLogicalSchema(new ScalarLogicalSchema("decimal")),
+            }));
+            Assert.That(Analyze("{1, 2, 3} | scan(sum)").Output,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("numeric"))));
+        });
+    }
+
+    [Test]
     public void Analyze_DynamicClassification_ReportsCatalogReason()
     {
         var analysis = Analyze("\"{}\" | parse-json");
@@ -357,7 +420,7 @@ public class LogicalSchemaAnalyzerTest
             Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Dynamic));
             Assert.That(analysis.Diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
                 diagnostic.Code == "schema.dynamic"
-                && diagnostic.Message.Contains("runtime values", StringComparison.Ordinal)));
+                && diagnostic.Message.Contains("decoded JSON shape", StringComparison.Ordinal)));
         });
     }
 

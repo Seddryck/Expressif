@@ -433,7 +433,9 @@ public static class LogicalSchemaAnalyzer
                     continue;
                 PlannerParameterSchemaDescriptor? parameterContract = null;
                 contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
-                var context = ArgumentContext(argument, input, enclosing);
+                var context = parameterContract?.Input is null
+                    ? ArgumentContext(argument, input, enclosing)
+                    : Resolve(ParseSchema(parameterContract.Input), bindings);
                 if (parameterContract?.Input is not null)
                     Bind(ParseSchema(parameterContract.Input), context, bindings, $"{path}.parameters.{argument.Parameter.Name}.input");
                 var result = Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
