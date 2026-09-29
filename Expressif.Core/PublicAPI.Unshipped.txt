@@ -706,9 +706,8 @@ Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception)
 Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
 Expressif.Planning.ILogicalPlanningContext
-Expressif.Planning.ILogicalPlanningContext.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IRootExpression!
 Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null) -> Expressif.Planning.PlannerFunctionMetadata?
-Expressif.Planning.ILogicalPlanningContext.FindTypeName(System.Type! runtimeType) -> string?
+Expressif.Planning.ILogicalPlanningContext.FindType(string! name) -> string?
 Expressif.Planning.LogicalArgument
 Expressif.Planning.LogicalArgument.<Clone>$() -> Expressif.Planning.LogicalArgument!
 Expressif.Planning.LogicalArgument.Deconstruct(out Expressif.Planning.PlannerParameterDescriptor! Parameter, out Expressif.Planning.LogicalValue? Value, out bool IsSpread, out bool IsExplicit, out Expressif.Planning.PlannerOmissionDescriptor? Omission) -> void

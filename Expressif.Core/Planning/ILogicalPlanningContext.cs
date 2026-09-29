@@ -1,18 +1,13 @@
-using Expressif.Bindings;
-using Expressif.Syntax;
-
 namespace Expressif.Planning;
 
 /// <summary>
-/// Supplies syntax binding and vocabulary metadata to the Core logical planner.
+/// Supplies vocabulary metadata to the Core logical planner.
 /// </summary>
 public interface ILogicalPlanningContext
 {
-    IRootExpression Bind(RootExpressionSyntax syntax);
-
     PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null);
 
-    string? FindTypeName(Type runtimeType);
+    string? FindType(string name);
 }
 
 /// <summary>
