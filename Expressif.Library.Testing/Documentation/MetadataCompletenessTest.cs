@@ -150,11 +150,13 @@ public class MetadataCompletenessTest
 
     private static bool HasKind(JsonElement member, string kind)
     {
-        if (kind != "accumulator")
+        if (kind == "predicate")
             return true;
 
-        return member.TryGetProperty("Kind", out var memberKind)
-            && memberKind.GetString() == "accumulator";
+        var memberKind = member.TryGetProperty("Kind", out var value)
+            ? value.GetString()
+            : "function";
+        return memberKind == kind;
     }
 
     private static string Format(IEnumerable<string> aliases)
