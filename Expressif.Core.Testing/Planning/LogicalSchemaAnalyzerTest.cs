@@ -303,6 +303,74 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_WithIntrinsic_UsesProjectionRecordAsBodyContext()
+    {
+        var analysis = Analyze("with(label := .name | upper, record(value := .label))");
+        var input = AsRecord(analysis.Input);
+        var output = AsRecord(analysis.Output);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(input.Fields["name"].Schema, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(output.Fields.Keys, Is.EqualTo(new[] { "value" }));
+            Assert.That(output.Fields["value"].Schema, Is.EqualTo(new ScalarLogicalSchema("text", true)));
+            Assert.That(analysis.Diagnostics, Has.None.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Message.Contains("temporary record", StringComparison.Ordinal)));
+        });
+    }
+
+    [Test]
+    public void Analyze_SummarizeContract_PreservesKeysAndSummaryShape()
+    {
+        var item = new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>
+        {
+            ["amount"] = new(new ScalarLogicalSchema("decimal")),
+        });
+        var input = new GroupingLogicalSchema(new ScalarLogicalSchema("text"), item);
+        var output = Analyze(
+            "summarize(record(total := map(.amount) | sum, count := cardinality))",
+            input).Output
+            as DictionaryLogicalSchema
+            ?? throw new AssertionException("Expected a dictionary schema.");
+        var summary = AsRecord(output.Values);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(output.Keys, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(summary.Fields.Keys, Is.EqualTo(new[] { "count", "total" }));
+            Assert.That(summary.Fields["total"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("numeric")));
+            Assert.That(summary.Fields["count"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("integer")));
+        });
+    }
+
+    [Test]
+    public void Analyze_RecordSpread_MergesKnownFieldsInEntryOrder()
+    {
+        var output = AsRecord(Analyze(
+            "record(a := 1, ...{b := \"x\", a := #true}, c := 3)").Output);
+        var mapped = AsArray(Analyze("""
+            {{code := "BE", score := 1}}
+            | group-by(.code)
+            | summarize(record(score := map(.score) | sum))
+            | map(record(code := $key, ...($value)))
+            """).Output);
+        var mappedRecord = AsRecord(mapped.Items);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(output.Fields["a"].Schema, Is.EqualTo(new ScalarLogicalSchema("boolean")));
+            Assert.That(output.Fields["b"].Schema, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(output.Fields["c"].Schema, Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(output.AllowsAdditionalFields, Is.False);
+            Assert.That(mappedRecord.Fields["code"].Schema, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(mappedRecord.Fields["score"].Schema, Is.EqualTo(new ScalarLogicalSchema("numeric")));
+            Assert.That(mappedRecord.AllowsAdditionalFields, Is.False);
+        });
+    }
+
+    [Test]
     public void Analyze_OpenEndedTuple_SeparatesKnownPrefixFromAdditionalItems()
     {
         var spread = Analyze("tuple(1, ...{\"a\", \"b\"})").Output as TupleLogicalSchema
@@ -510,11 +578,27 @@ public class LogicalSchemaAnalyzerTest
         var row = AsRecord(AsArray(board.Fields["rows"].Schema).Items);
         var explode = AsArray(analysis.Nodes.Single(node => node.Path == "plan.items[2]").Output);
         var explodedBoard = AsRecord(explode.Items);
+        var summarized = analysis.Nodes.Single(node => node.Path == "plan.items[4]").Output
+            as DictionaryLogicalSchema
+            ?? throw new AssertionException("Expected summarize to produce a dictionary schema.");
+        var summary = AsRecord(summarized.Values);
+        var mappedSummary = AsRecord(AsArray(
+            analysis.Nodes.Single(node => node.Path == "plan.items[5]").Output).Items);
 
         Assert.Multiple(() =>
         {
             Assert.That(row.Fields.ContainsKey("nick_name"), Is.True);
             Assert.That(explodedBoard.Fields["rows"].Schema, Is.TypeOf<RecordLogicalSchema>());
+            Assert.That(summary.Fields.Keys,
+                Is.EqualTo(new[] { "best-rankings", "rank-sum", "ranking-count" }));
+            Assert.That(summary.Fields["best-rankings"].Schema, Is.TypeOf<ArrayLogicalSchema>());
+            Assert.That(summary.Fields["ranking-count"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(summary.Fields["rank-sum"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("numeric")));
+            Assert.That(mappedSummary.Fields.Keys,
+                Is.EqualTo(new[] { "best-rankings", "nickname", "rank-sum", "ranking-count" }));
+            Assert.That(mappedSummary.AllowsAdditionalFields, Is.False);
             Assert.That(analysis.Output, Is.TypeOf<ArrayLogicalSchema>());
             Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Dynamic));
             Assert.That(analysis.Diagnostics, Has.None.Matches<SchemaAnalysisDiagnostic>(diagnostic =>

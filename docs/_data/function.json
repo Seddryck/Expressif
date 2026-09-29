@@ -4347,8 +4347,8 @@
       "{firstName := \"John\", lastName := \"Doe\"} | with(last-name := .lastName, first-name := .firstName, .last-name | suffix(\", \") | suffix(.first-name)) → \"Doe, John\""
     ],
     "Schema": {
-      "Classification": "dynamic",
-      "DynamicReason": "The body runs against a temporary record whose fields and schemas are created by the named projection arguments; the current grammar cannot construct that argument context."
+      "Classification": "intrinsic",
+      "Intrinsic": "with"
     }
   },
   {
@@ -5897,7 +5897,18 @@
       "Summary": "Visits each group in the incoming grouping and supplies its entire value collection to the expression."
     },
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "grouping<K, T>",
+      "Output": "dictionary<K, U>",
+      "Parameters": {
+        "expression": {
+          "Input": "array<T>",
+          "Output": "U"
+        }
+      },
+      "NullableWhen": [
+        "input"
+      ]
     }
   },
   {

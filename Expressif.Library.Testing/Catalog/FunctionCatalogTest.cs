@@ -428,17 +428,24 @@ public class FunctionCatalogTest
     {
         var coalesce = FunctionCatalog.Default.Find("coalesce")?.Schema;
         var groupBy = FunctionCatalog.Default.Find("group-by")?.Schema;
+        var summarize = FunctionCatalog.Default.Find("summarize")?.Schema;
         var sum = FunctionCatalog.Default.Find("sum", "accumulator")?.Schema;
+        var with = FunctionCatalog.Default.Find("with")?.Schema;
 
         Assert.Multiple(() =>
         {
             Assert.That(coalesce?.Parameters?["expressions"].Combine, Is.EqualTo("union"));
             Assert.That(groupBy?.Output, Is.EqualTo("grouping<K, T>"));
             Assert.That(groupBy?.Parameters?["expressions"].Combine, Is.EqualTo("tuple"));
+            Assert.That(summarize?.Input, Is.EqualTo("grouping<K, T>"));
+            Assert.That(summarize?.Output, Is.EqualTo("dictionary<K, U>"));
+            Assert.That(summarize?.Parameters?["expression"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("array<T>", "U")));
             Assert.That(sum, Is.EqualTo(new FunctionSchemaDocumentation(
                 "numeric",
                 "numeric",
                 Classification: "contract")));
+            Assert.That((with?.Classification, with?.Intrinsic), Is.EqualTo(("intrinsic", "with")));
         });
     }
 

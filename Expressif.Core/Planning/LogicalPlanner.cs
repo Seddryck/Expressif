@@ -783,9 +783,12 @@ public sealed class LogicalPlanner
             "any",
             "any",
             Kind: "extension",
-            Schema: name == "named-entry"
-                ? new(Intrinsic: "named-entry", Classification: "intrinsic")
-                : null);
+            Schema: name switch
+            {
+                "named-entry" => new(Intrinsic: "named-entry", Classification: "intrinsic"),
+                "spread-entry" => new(Intrinsic: "spread-entry", Classification: "intrinsic"),
+                _ => null,
+            });
 
     private static PlannerParameterMetadata[] SyntheticParameters(int count)
         => Enumerable.Range(0, count).Select(index => SyntheticParameter($"argument-{index}")).ToArray();

@@ -209,6 +209,8 @@ public static class LogicalSchemaAnalyzer
                 "field" => RequireField(call, expected, path),
                 "select-fields" => RequireSelectFields(call, expected, path),
                 "explode-field" or "explode-field-outer" => RequireExplode(call, expected, path),
+                "with" => RequireWith(call, expected, path),
+                "spread-entry" => RequireSpreadEntry(call, expected, path),
                 "array" or "tuple" or "record" or "dictionary" or "grouping"
                     or "put" or "put-present" or "put-absent" or "named-entry"
                     => RequireGenericCall(call, path),
@@ -357,6 +359,51 @@ public static class LogicalSchemaAnalyzer
             return new Requirement(input, new AnyLogicalSchema());
         }
 
+        private Requirement RequireWith(LogicalCall call, LogicalSchema expected, string path)
+        {
+            var bodyIndex = call.Arguments
+                .Select((argument, index) => (argument, index))
+                .Single(item => item.argument.Parameter.Name == "body").index;
+            var body = call.Arguments[bodyIndex].Value!;
+            var bodyRequirement = Require(body, expected, $"{path}.arguments[{bodyIndex}].value");
+            var temporary = Intersect(
+                bodyRequirement.Input,
+                bodyRequirement.Enclosing,
+                $"{path}.temporary");
+            var temporaryRecord = temporary as RecordLogicalSchema;
+            var input = (LogicalSchema)new AnyLogicalSchema();
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                if (argument.Parameter.Name != "projections"
+                    || argument.Value is not LogicalCall entry)
+                    continue;
+                var name = LiteralText(entry, "name");
+                var projection = Argument(entry, "value")?.Value;
+                if (projection is null)
+                    continue;
+                var projectionExpected = name is not null
+                    && temporaryRecord?.Fields.TryGetValue(name, out var field) == true
+                        ? field.Schema
+                        : new AnyLogicalSchema();
+                var requirement = Require(
+                    projection,
+                    projectionExpected,
+                    $"{path}.arguments[{index}].value.arguments[1].value");
+                input = Intersect(input, requirement.Input, $"{path}.projections[{index}].input");
+                input = Intersect(input, requirement.Enclosing, $"{path}.projections[{index}].enclosing");
+            }
+            return new Requirement(input, new AnyLogicalSchema());
+        }
+
+        private Requirement RequireSpreadEntry(LogicalCall call, LogicalSchema expected, string path)
+        {
+            var value = Argument(call, "value")?.Value;
+            return value is null
+                ? DynamicRequirement(path, "record spread")
+                : Require(value, expected, $"{path}.arguments[0].value");
+        }
+
         private Requirement RequireGenericCall(LogicalCall call, string path)
         {
             var input = FromType(call.Function.Input);
@@ -432,6 +479,7 @@ public static class LogicalSchemaAnalyzer
                 "select-fields" => InferSelectFields(call, input, enclosing, path),
                 "explode-field" => InferExplode(call, input, path, preserveParent: false),
                 "explode-field-outer" => InferExplode(call, input, path, preserveParent: true),
+                "with" => InferWith(call, input, enclosing, path),
                 "array" => InferArray(call, input, enclosing, path),
                 "tuple" => InferTuple(call, input, enclosing, path),
                 "record" => InferRecord(call, input, enclosing, path),
@@ -441,6 +489,7 @@ public static class LogicalSchemaAnalyzer
                 "put-present" => InferPut(call, input, enclosing, path, RecordMutation.WhenPresent),
                 "put-absent" => InferPut(call, input, enclosing, path, RecordMutation.WhenAbsent),
                 "named-entry" => InferNamedEntry(call, input, enclosing, path),
+                "spread-entry" => InferSpreadEntry(call, input, enclosing, path),
                 _ => throw new InvalidOperationException(
                     $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
             };
@@ -767,12 +816,26 @@ public static class LogicalSchemaAnalyzer
                 if (!argument.IsExplicit || argument.Value is null)
                     continue;
                 var valueSchema = InferArgument(call, index, input, enclosing, path);
-                if (argument.Value is LogicalCall entry
+                if (!argument.IsSpread
+                    && argument.Value is LogicalCall entry
                     && entry.Function.Schema?.Intrinsic == "named-entry")
                 {
                     var name = LiteralText(entry, "name");
                     if (name is not null && valueSchema is not null)
                         fields[name] = new LogicalSchemaField(valueSchema);
+                }
+                else if (!argument.IsSpread
+                    && argument.Value is LogicalCall nested
+                    && nested.Function.Schema?.Intrinsic == "record"
+                    && valueSchema is RecordLogicalSchema nestedRecord)
+                {
+                    MergeRecordFields(fields, nestedRecord);
+                    dynamic |= nestedRecord.AllowsAdditionalFields;
+                }
+                else if (argument.IsSpread && valueSchema is RecordLogicalSchema spreadRecord)
+                {
+                    MergeRecordFields(fields, spreadRecord);
+                    dynamic |= spreadRecord.AllowsAdditionalFields;
                 }
                 else
                 {
@@ -782,6 +845,55 @@ public static class LogicalSchemaAnalyzer
             if (dynamic)
                 diagnostics.Add(new SchemaAnalysisDiagnostic("schema.dynamic", path, "Record spread has a dynamic shape."));
             return new RecordLogicalSchema(fields, AllowsAdditionalFields: dynamic);
+        }
+
+        private void MergeRecordFields(
+            IDictionary<string, LogicalSchemaField> fields,
+            RecordLogicalSchema source)
+        {
+            foreach (var field in source.Fields)
+            {
+                if (field.Value.Optional && fields.TryGetValue(field.Key, out var existing))
+                {
+                    fields[field.Key] = new LogicalSchemaField(
+                        Union(existing.Schema, field.Value.Schema),
+                        existing.Optional);
+                }
+                else
+                {
+                    fields[field.Key] = field.Value;
+                }
+            }
+        }
+
+        private LogicalSchema InferWith(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                if (argument.Parameter.Name != "projections"
+                    || argument.Value is not LogicalCall entry)
+                    continue;
+                var value = InferArgument(call, index, input, enclosing, path);
+                var name = LiteralText(entry, "name");
+                if (name is not null && value is not null)
+                    fields[name] = new LogicalSchemaField(value);
+            }
+
+            var temporary = new RecordLogicalSchema(fields);
+            var body = call.Arguments
+                .Select((argument, index) => (argument, index))
+                .Single(item => item.argument.Parameter.Name == "body");
+            return Infer(
+                body.argument.Value!,
+                temporary,
+                temporary,
+                $"{path}.arguments[{body.index}].value");
         }
 
         private LogicalSchema InferPut(
@@ -856,6 +968,13 @@ public static class LogicalSchemaAnalyzer
             InferArgument(call, "name", input, enclosing, path);
             return InferArgument(call, "value", input, enclosing, path) ?? new AnyLogicalSchema();
         }
+
+        private LogicalSchema InferSpreadEntry(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+            => InferArgument(call, "value", input, enclosing, path) ?? new AnyLogicalSchema();
 
         private LogicalSchema InferGenericCall(
             LogicalCall call,
@@ -1005,6 +1124,26 @@ public static class LogicalSchemaAnalyzer
                 Bind(expression.Arguments.Single(), array.Items, bindings, $"{path}.items");
                 return;
             }
+            if (expression.Name == "array" && actual is DictionaryLogicalSchema dictionaryCollection)
+            {
+                Bind(
+                    expression.Arguments.Single(),
+                    new PairLogicalSchema(dictionaryCollection.Keys, dictionaryCollection.Values),
+                    bindings,
+                    $"{path}.items");
+                return;
+            }
+            if (expression.Name == "array" && actual is GroupingLogicalSchema groupingCollection)
+            {
+                Bind(
+                    expression.Arguments.Single(),
+                    new PairLogicalSchema(
+                        groupingCollection.Keys,
+                        new ArrayLogicalSchema(groupingCollection.Items)),
+                    bindings,
+                    $"{path}.items");
+                return;
+            }
             if (expression.Name == "tuple" && actual is TupleLogicalSchema tuple
                 && expression.Arguments.Count == tuple.Items.Count)
             {
@@ -1044,7 +1183,7 @@ public static class LogicalSchemaAnalyzer
                 return AcceptsRoot(expression.Arguments.Single(), actual);
             return (expression.Name, actual) switch
             {
-                ("array", ArrayLogicalSchema) => true,
+                ("array", ArrayLogicalSchema or DictionaryLogicalSchema or GroupingLogicalSchema) => true,
                 ("tuple" or "variadic-tuple", TupleLogicalSchema) => true,
                 ("pair", PairLogicalSchema) => true,
                 ("dictionary", DictionaryLogicalSchema) => true,
