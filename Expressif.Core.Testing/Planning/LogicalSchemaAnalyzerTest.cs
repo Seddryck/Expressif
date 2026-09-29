@@ -411,6 +411,118 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_ExplodeIntrinsic_ReplacesSelectedArrayWithItsItemSchema()
+    {
+        var exploded = AsArray(Analyze("{id := 1, tags := {\"A\", \"B\"}} | explode(.tags)").Output);
+        var explodedItem = AsRecord(exploded.Items);
+        var outer = AsArray(Analyze("{id := 1, tags := {\"A\"}} | explode-outer(.tags)").Output);
+        var outerItem = AsRecord(outer.Items);
+        var selector = Analyze("{id := 1, tags := {\"A\"}} | explode(.tags)").Nodes
+            .Single(node => node.Path == "plan.items[1].arguments[0].value.items[0]");
+        var selectorInput = AsRecord(selector.Input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(explodedItem.Fields["id"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(explodedItem.Fields["tags"],
+                Is.EqualTo(new LogicalSchemaField(new ScalarLogicalSchema("text"))));
+            Assert.That(outerItem.Fields["tags"],
+                Is.EqualTo(new LogicalSchemaField(new ScalarLogicalSchema("text", true))));
+            Assert.That(selectorInput.AllowsAdditionalFields, Is.False);
+            Assert.That(selectorInput.Fields["id"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(selectorInput.Fields["tags"].Schema,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("text"))));
+            Assert.That(selector.Output,
+                Is.EqualTo(new ArrayLogicalSchema(new ScalarLogicalSchema("text"))));
+        });
+    }
+
+    [Test]
+    public void Analyze_ExplodeIntrinsic_PropagatesSelectedFieldRequirementBackward()
+    {
+        var analysis = Analyze("""
+            .boards
+            | filter(.kind | equivalent-to("player"))
+            | explode(.rows)
+            | group-by(.rows.nick_name)
+            """);
+        var input = AsRecord(analysis.Input);
+        var boards = AsArray(input.Fields["boards"].Schema);
+        var board = AsRecord(boards.Items);
+        var rows = AsArray(board.Fields["rows"].Schema);
+        var row = AsRecord(rows.Items);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(board.Fields["kind"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(board.Fields["rows"].Optional, Is.True);
+            Assert.That(rows.IsNullable, Is.True);
+            Assert.That(row.Fields.ContainsKey("nick_name"), Is.True);
+            Assert.That(analysis.Diagnostics, Has.None.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Path == "plan.items[2].arguments[0].value.items[0]"));
+        });
+    }
+
+    [Test]
+    public void Analyze_PlayerRankingQuery_PreservesRowsThroughExplode()
+    {
+        var analysis = Analyze("""
+            .boards
+            | filter(.kind | equivalent-to("player"))
+            | explode(.rows)
+            | group-by(.rows.nick_name)
+            | summarize(
+                with(
+                    best :=
+                        sort-by(
+                            .rows.rank -> :integer,
+                            .name -> :text
+                        )
+                        | first(3)
+                        | map(
+                            record(
+                                board := .name,
+                                rank := .rows.rank
+                            )
+                        ),
+                    record(
+                        best-rankings := .best,
+                        ranking-count := .best | cardinality,
+                        rank-sum := .best | map(.rank) | sum
+                    )
+                )
+            )
+            | map(record(nickname := $key, ...($value)))
+            | sort-by(.nickname -> :text)
+            | rank-by(
+                .ranking-count -> :integer | desc,
+                .rank-sum -> :integer
+            )
+            | map(record(overall-rank := $key, players := $value))
+            | explode(.players)
+            | map(record(overall-rank := .overall-rank, ...(.players)))
+            """);
+        var input = AsRecord(analysis.Input);
+        var board = AsRecord(AsArray(input.Fields["boards"].Schema).Items);
+        var row = AsRecord(AsArray(board.Fields["rows"].Schema).Items);
+        var explode = AsArray(analysis.Nodes.Single(node => node.Path == "plan.items[2]").Output);
+        var explodedBoard = AsRecord(explode.Items);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(row.Fields.ContainsKey("nick_name"), Is.True);
+            Assert.That(explodedBoard.Fields["rows"].Schema, Is.TypeOf<RecordLogicalSchema>());
+            Assert.That(analysis.Output, Is.TypeOf<ArrayLogicalSchema>());
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Dynamic));
+            Assert.That(analysis.Diagnostics, Has.None.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Path == "plan.items[2].arguments[0].value.items[0]"));
+        });
+    }
+
+    [Test]
     public void Analyze_DynamicClassification_ReportsCatalogReason()
     {
         var analysis = Analyze("\"{}\" | parse-json");

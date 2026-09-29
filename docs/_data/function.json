@@ -3787,7 +3787,8 @@
       "{id := 1, tags := {}} | explode-outer(.tags) → {{id := 1, tags := #null}}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "intrinsic",
+      "Intrinsic": "explode-field-outer"
     }
   },
   {
@@ -3827,7 +3828,8 @@
       "{id := 1, tags := {}} | explode(.tags) → {}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "intrinsic",
+      "Intrinsic": "explode-field"
     }
   },
   {

@@ -208,6 +208,7 @@ public static class LogicalSchemaAnalyzer
             {
                 "field" => RequireField(call, expected, path),
                 "select-fields" => RequireSelectFields(call, expected, path),
+                "explode-field" or "explode-field-outer" => RequireExplode(call, expected, path),
                 "array" or "tuple" or "record" or "dictionary" or "grouping"
                     or "put" or "put-present" or "put-absent" or "named-entry"
                     => RequireGenericCall(call, path),
@@ -326,6 +327,36 @@ public static class LogicalSchemaAnalyzer
                 generic.Enclosing);
         }
 
+        private Requirement RequireExplode(LogicalCall call, LogicalSchema expected, string path)
+        {
+            var name = SelectedField(call, "selector");
+            if (name is null)
+                return DynamicRequirement(path, "explode selector");
+
+            var output = expected as ArrayLogicalSchema;
+            var outputParent = output?.Items as RecordLogicalSchema;
+            var child = outputParent is not null
+                && outputParent.Fields.TryGetValue(name, out var selected)
+                    ? selected.Schema
+                    : new AnyLogicalSchema();
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            if (outputParent is not null)
+            {
+                foreach (var field in outputParent.Fields)
+                    fields.Add(field.Key, field.Value);
+            }
+            fields[name] = new LogicalSchemaField(
+                new ArrayLogicalSchema(child, IsNullable: true),
+                Optional: true);
+            var parent = new RecordLogicalSchema(
+                fields,
+                outputParent?.AllowsAdditionalFields ?? true);
+            var input = new UnionLogicalSchema(
+                [parent, new ArrayLogicalSchema(parent)],
+                IsNullable(expected));
+            return new Requirement(input, new AnyLogicalSchema());
+        }
+
         private Requirement RequireGenericCall(LogicalCall call, string path)
         {
             var input = FromType(call.Function.Input);
@@ -399,6 +430,8 @@ public static class LogicalSchemaAnalyzer
             {
                 "field" => InferField(call, input, enclosing, path),
                 "select-fields" => InferSelectFields(call, input, enclosing, path),
+                "explode-field" => InferExplode(call, input, path, preserveParent: false),
+                "explode-field-outer" => InferExplode(call, input, path, preserveParent: true),
                 "array" => InferArray(call, input, enclosing, path),
                 "tuple" => InferTuple(call, input, enclosing, path),
                 "record" => InferRecord(call, input, enclosing, path),
@@ -554,6 +587,71 @@ public static class LogicalSchemaAnalyzer
                     fields.Add(name, new LogicalSchemaField(new AnyLogicalSchema(), Optional: true));
             }
             return new RecordLogicalSchema(fields, AllowsAdditionalFields: false, record.IsNullable);
+        }
+
+        private LogicalSchema InferExplode(
+            LogicalCall call,
+            LogicalSchema input,
+            string path,
+            bool preserveParent)
+        {
+            var name = SelectedField(call, "selector");
+            if (name is null)
+                return Dynamic(path, "explode selector");
+
+            var parent = input switch
+            {
+                RecordLogicalSchema record => record,
+                ArrayLogicalSchema { Items: RecordLogicalSchema record } => record,
+                _ => null,
+            };
+            if (parent is null)
+                return Dynamic(path, "explode parent record");
+
+            var selector = Argument(call, "selector");
+            if (selector?.Value is not null)
+            {
+                var selectorIndex = call.Arguments
+                    .Select((argument, index) => (argument, index))
+                    .Single(item => item.argument.Parameter.Name == "selector")
+                    .index;
+                Infer(
+                    selector.Value,
+                    parent,
+                    parent,
+                    $"{path}.arguments[{selectorIndex}].value");
+            }
+
+            LogicalSchema child;
+            if (parent.Fields.TryGetValue(name, out var selected))
+            {
+                if (selected.Schema is not ArrayLogicalSchema array)
+                {
+                    diagnostics.Add(new SchemaAnalysisDiagnostic(
+                        "schema.conflict",
+                        path,
+                        $"Field '{name}' must be an array to be exploded."));
+                    child = new AnyLogicalSchema();
+                }
+                else
+                {
+                    child = array.Items;
+                }
+            }
+            else
+            {
+                child = new AnyLogicalSchema();
+            }
+
+            if (preserveParent)
+                child = WithNullability(child, true);
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            foreach (var field in parent.Fields)
+                fields.Add(field.Key, field.Value);
+            fields[name] = new LogicalSchemaField(child);
+            return new ArrayLogicalSchema(
+                new RecordLogicalSchema(fields, parent.AllowsAdditionalFields),
+                IsNullable(input));
         }
 
         private LogicalSchema InferArray(
@@ -864,6 +962,44 @@ public static class LogicalSchemaAnalyzer
                 Bind(expression.Arguments.Single(), actual, bindings, path);
                 return;
             }
+            if (actual is UnionLogicalSchema union)
+            {
+                var alternatives = union.Alternatives
+                    .Select((schema, index) => (schema, index))
+                    .Where(item => AcceptsRoot(expression, item.schema))
+                    .ToArray();
+                if (alternatives.Length == 1)
+                {
+                    Bind(
+                        expression,
+                        alternatives[0].schema,
+                        bindings,
+                        $"{path}.alternatives[{alternatives[0].index}]");
+                    return;
+                }
+
+                var alternativesBindings = alternatives.Select(item =>
+                {
+                    var alternativeBindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
+                    Bind(
+                        expression,
+                        item.schema,
+                        alternativeBindings,
+                        $"{path}.alternatives[{item.index}]");
+                    return alternativeBindings;
+                }).ToArray();
+                foreach (var name in alternativesBindings.SelectMany(item => item.Keys).Distinct(StringComparer.Ordinal))
+                {
+                    var value = alternativesBindings
+                        .Where(item => item.ContainsKey(name))
+                        .Select(item => item[name])
+                        .Aggregate(Union);
+                    bindings[name] = bindings.TryGetValue(name, out var existing)
+                        ? Intersect(existing, value, path)
+                        : value;
+                }
+                return;
+            }
             if (expression.Name == "array" && actual is ArrayLogicalSchema array)
             {
                 Bind(expression.Arguments.Single(), array.Items, bindings, $"{path}.items");
@@ -898,6 +1034,24 @@ public static class LogicalSchemaAnalyzer
                 Bind(expression.Arguments[0], grouping.Keys, bindings, $"{path}.keys");
                 Bind(expression.Arguments[1], grouping.Items, bindings, $"{path}.items");
             }
+        }
+
+        private static bool AcceptsRoot(SchemaExpression expression, LogicalSchema actual)
+        {
+            if (expression.IsVariable)
+                return true;
+            if (expression.Name == "nullable")
+                return AcceptsRoot(expression.Arguments.Single(), actual);
+            return (expression.Name, actual) switch
+            {
+                ("array", ArrayLogicalSchema) => true,
+                ("tuple" or "variadic-tuple", TupleLogicalSchema) => true,
+                ("pair", PairLogicalSchema) => true,
+                ("dictionary", DictionaryLogicalSchema) => true,
+                ("grouping", GroupingLogicalSchema) => true,
+                _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
+                    && IntersectScalar(expression.Name, scalar.Type) is not null,
+            };
         }
 
         private LogicalSchema Resolve(
@@ -1009,6 +1163,20 @@ public static class LogicalSchemaAnalyzer
             var value = Argument(call, parameter)?.Value
                 ?? call.Arguments.FirstOrDefault()?.Value;
             return value is LogicalLiteral { Value: string text } ? text : null;
+        }
+
+        private static string? SelectedField(LogicalCall call, string parameter)
+        {
+            var value = Argument(call, parameter)?.Value;
+            var selector = value switch
+            {
+                LogicalCall direct => direct,
+                LogicalPipeline { Items.Count: 1 } pipeline => pipeline.Items[0] as LogicalCall,
+                _ => null,
+            };
+            return selector?.Function.Schema?.Intrinsic == "field"
+                ? LiteralText(selector, "name")
+                : null;
         }
 
         private static string[]? LiteralTexts(LogicalValue? value) => value switch
