@@ -563,6 +563,25 @@ public class FunctionCatalogTest
             Throws.InvalidOperationException.With.Message.Contains($"semantics {dimension}"));
     }
 
+    [TestCase(null, "boolean")]
+    [TestCase("text", null)]
+    public void ValidateSchemas_FixedSchemaWithoutCanonicalType_Throws(
+        string? input,
+        string? output)
+    {
+        var function = Documentation("sample") with
+        {
+            Input = input!,
+            Output = output!,
+            Schema = new FunctionSchemaDocumentation(Classification: "fixed"),
+        };
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSchemas([function]),
+            Throws.InvalidOperationException.With.Message.Contains(
+                "must declare canonical input and output types"));
+    }
+
     private static FunctionDocumentation Documentation(string name, string[]? aliases = null)
         => new(name, true, aliases ?? [], "special", "any", "any", "Summary.", []);
 }

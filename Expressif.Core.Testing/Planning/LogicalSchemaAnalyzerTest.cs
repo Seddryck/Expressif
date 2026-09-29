@@ -36,6 +36,23 @@ public class LogicalSchemaAnalyzerTest
         });
     }
 
+    [TestCase("is-even", "numeric")]
+    [TestCase("contains(\"x\")", "text")]
+    [TestCase("is-today", "temporal")]
+    public void Analyze_Predicate_UsesCanonicalInputAndBooleanOutput(
+        string expression,
+        string inputType)
+    {
+        var analysis = Analyze(expression);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(analysis.Input, Is.EqualTo(new ScalarLogicalSchema(inputType)));
+            Assert.That(analysis.Output, Is.EqualTo(new ScalarLogicalSchema("boolean")));
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Known));
+        });
+    }
+
     [Test]
     public void Analyze_Map_DiscoversIncomingAndEnclosingFieldTypes()
     {

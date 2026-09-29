@@ -115,8 +115,6 @@ public sealed class FunctionCatalog
             .. predicates.Where(entry => entry.IsPublic).Select(entry => entry with
             {
                 Kind = "predicate",
-                Input = string.IsNullOrWhiteSpace(entry.Input) ? "any" : entry.Input,
-                Output = string.IsNullOrWhiteSpace(entry.Output) ? "boolean" : entry.Output,
             }),
         ];
 
@@ -215,6 +213,11 @@ public sealed class FunctionCatalog
                 EnsureNoSchemaDetails(schema, member);
                 if (schema.DynamicReason is not null)
                     throw new InvalidOperationException($"{member} can declare a dynamic reason only when classified as dynamic.");
+                if (string.IsNullOrWhiteSpace(function.Input) || string.IsNullOrWhiteSpace(function.Output))
+                {
+                    throw new InvalidOperationException(
+                        $"{member} must declare canonical input and output types on the function.");
+                }
                 continue;
             }
             if (schema.Classification == "dynamic")
