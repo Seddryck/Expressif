@@ -625,6 +625,16 @@
     "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "U",
+      "Parameters": {
+        "accumulator": {
+          "Input": "T",
+          "Output": "U"
+        }
+      }
+    },
     "Summary": "Executes an accumulator once over the full input enumerable and returns the final accumulated value. Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
       "Cardinality": "collapsed",
@@ -849,6 +859,11 @@
     "Scope": "array/sequencing",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<nullable<T>>",
+      "Nullability": "propagate-input"
+    },
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
       "Cardinality": "preserved",
@@ -1603,6 +1618,16 @@
     "Scope": "array/combination",
     "Input": "array",
     "Output": "array",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "array<tuple<nullable<T>, nullable<U>>>",
+      "Parameters": {
+        "array": {
+          "Output": "array<U>"
+        }
+      },
+      "Nullability": "propagate-input"
+    },
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.",
     "Semantics": {
       "Cardinality": "expanded",
@@ -3369,6 +3394,9 @@
     "Scope": "record",
     "Input": "record",
     "Output": "record",
+    "Schema": {
+      "Intrinsic": "select-fields"
+    },
     "Summary": "Returns only fields whose names appear in the supplied array, preserving input field order and ignoring unknown names.",
     "Parameters": [
       {
@@ -4282,6 +4310,17 @@
     "Scope": "special",
     "Input": "any",
     "Output": "any",
+    "Schema": {
+      "Input": "T",
+      "Output": "nullable<U>",
+      "Parameters": {
+        "expressions": {
+          "Input": "T",
+          "Output": "U",
+          "Combine": "union"
+        }
+      }
+    },
     "Summary": "Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.",
     "Parameters": [
       {
@@ -4937,6 +4976,18 @@
     "Scope": "array/grouping",
     "Input": "array",
     "Output": "grouping",
+    "Schema": {
+      "Input": "array<T>",
+      "Output": "grouping<K, T>",
+      "Parameters": {
+        "expressions": {
+          "Input": "T",
+          "Output": "K",
+          "Combine": "tuple"
+        }
+      },
+      "Nullability": "propagate-input"
+    },
     "Summary": "Groups input values by keys calculated from one or more expressions.",
     "Semantics": {
       "Cardinality": "partitioned",
@@ -9284,6 +9335,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Input": "T",
+      "Output": "integer"
+    },
     "Summary": "Counts the number of accumulated items, including `null` values.",
     "Parameters": [],
     "Examples": [
@@ -9312,6 +9367,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Input": "T",
+      "Output": "nullable<T>"
+    },
     "Summary": "Stores the first accumulated item and ignores all subsequent items.",
     "Parameters": [],
     "Examples": [
@@ -9353,6 +9412,10 @@
     "Scope": "text",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Input": "text",
+      "Output": "text"
+    },
     "Summary": "Combines accumulated text values in source order, inserting the separator only between values.",
     "Behavior": "The separator defaults to the empty string. Empty input returns empty text. Empty values still participate in separator placement, and accumulating `null` is invalid.",
     "Parameters": [
@@ -9464,6 +9527,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Input": "numeric",
+      "Output": "numeric"
+    },
     "Summary": "Computes the sum of all accumulated numeric values.",
     "Parameters": [],
     "Examples": [

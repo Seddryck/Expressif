@@ -32,7 +32,10 @@ public sealed record FunctionSchemaDocumentation(
     string? Intrinsic = null,
     string? Nullability = null);
 
-public sealed record FunctionParameterSchemaDocumentation(string? Input = null, string? Output = null);
+public sealed record FunctionParameterSchemaDocumentation(
+    string? Input = null,
+    string? Output = null,
+    string? Combine = null);
 
 public sealed record FunctionAliasLifecycleDocumentation(
     string Name,

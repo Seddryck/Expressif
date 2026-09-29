@@ -111,6 +111,23 @@ public static class SchemaAnalysisJson
                     WriteSchema(writer, item);
                 writer.WriteEndArray();
                 break;
+            case GroupingLogicalSchema grouping:
+                writer.WriteString("type", "grouping");
+                writer.WriteBoolean("nullable", grouping.IsNullable);
+                writer.WritePropertyName("keys");
+                WriteSchema(writer, grouping.Keys);
+                writer.WritePropertyName("items");
+                WriteSchema(writer, grouping.Items);
+                break;
+            case UnionLogicalSchema union:
+                writer.WriteString("type", "union");
+                writer.WriteBoolean("nullable", union.IsNullable);
+                writer.WritePropertyName("alternatives");
+                writer.WriteStartArray();
+                foreach (var alternative in union.Alternatives)
+                    WriteSchema(writer, alternative);
+                writer.WriteEndArray();
+                break;
             case ConflictingLogicalSchema conflict:
                 writer.WriteString("type", "conflict");
                 writer.WriteBoolean("nullable", conflict.IsNullable);

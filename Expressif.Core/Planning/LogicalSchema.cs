@@ -45,6 +45,21 @@ public sealed record TupleLogicalSchema(IReadOnlyList<LogicalSchema> Items, bool
     : LogicalSchema;
 
 /// <summary>
+/// A grouping whose keys identify arrays of values with a common item schema.
+/// </summary>
+public sealed record GroupingLogicalSchema(
+    LogicalSchema Keys,
+    LogicalSchema Items,
+    bool IsNullable = false) : LogicalSchema;
+
+/// <summary>
+/// A value matching one of several alternative schemas.
+/// </summary>
+public sealed record UnionLogicalSchema(
+    IReadOnlyList<LogicalSchema> Alternatives,
+    bool IsNullable = false) : LogicalSchema;
+
+/// <summary>
 /// Mutually incompatible schema constraints.
 /// </summary>
 public sealed record ConflictingLogicalSchema(

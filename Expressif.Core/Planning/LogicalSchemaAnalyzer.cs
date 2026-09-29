@@ -116,6 +116,13 @@ public static class LogicalSchemaAnalyzer
                         Intersect(item, rightTuple.Items[index], $"{path}.items[{index}]")).ToArray(),
                     IsNullable(left) || IsNullable(right));
             }
+            if (left is GroupingLogicalSchema leftGrouping && right is GroupingLogicalSchema rightGrouping)
+            {
+                return new GroupingLogicalSchema(
+                    Intersect(leftGrouping.Keys, rightGrouping.Keys, $"{path}.keys"),
+                    Intersect(leftGrouping.Items, rightGrouping.Items, $"{path}.items"),
+                    IsNullable(left) || IsNullable(right));
+            }
 
             var conflict = new ConflictingLogicalSchema(left, right, IsNullable(left) || IsNullable(right));
             diagnostics.Add(new SchemaAnalysisDiagnostic(
@@ -161,6 +168,7 @@ public static class LogicalSchemaAnalyzer
             string intrinsic) => intrinsic switch
             {
                 "field" => RequireField(call, expected, path),
+                "select-fields" => RequireSelectFields(call, expected, path),
                 "array" or "tuple" or "record" or "put" or "named-entry"
                     => RequireGenericCall(call, path),
                 _ => throw new InvalidOperationException(
@@ -179,6 +187,11 @@ public static class LogicalSchemaAnalyzer
 
             var enclosing = (LogicalSchema)new AnyLogicalSchema();
             var argumentRequirements = new List<(LogicalArgument Argument, Requirement Requirement)>();
+            var parameterCounts = call.Arguments
+                .Where(argument => argument.IsExplicit && argument.Value is not null)
+                .GroupBy(argument => argument.Parameter.Name, StringComparer.Ordinal)
+                .ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+            var parameterOrdinals = new Dictionary<string, int>(StringComparer.Ordinal);
             for (var index = 0; index < call.Arguments.Count; index++)
             {
                 var argument = call.Arguments[index];
@@ -186,9 +199,14 @@ public static class LogicalSchemaAnalyzer
                     continue;
                 PlannerParameterSchemaDescriptor? parameterContract = null;
                 contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
-                var expectedArgument = parameterContract?.Output is null
-                    ? FromType(argument.Parameter.Type)
-                    : Resolve(ParseSchema(parameterContract.Output), bindings);
+                var ordinal = parameterOrdinals.GetValueOrDefault(argument.Parameter.Name);
+                parameterOrdinals[argument.Parameter.Name] = ordinal + 1;
+                var expectedArgument = ExpectedParameterOutput(
+                    argument,
+                    parameterContract,
+                    bindings,
+                    parameterCounts[argument.Parameter.Name],
+                    ordinal);
                 var requirement = Require(argument.Value, expectedArgument, $"{path}.arguments[{index}]");
                 argumentRequirements.Add((argument, requirement));
                 if (parameterContract?.Input is not null)
@@ -247,6 +265,25 @@ public static class LogicalSchemaAnalyzer
             return call.ContextDepth == 0
                 ? new Requirement(record, new AnyLogicalSchema())
                 : new Requirement(new AnyLogicalSchema(), record);
+        }
+
+        private Requirement RequireSelectFields(LogicalCall call, LogicalSchema expected, string path)
+        {
+            var generic = RequireGenericCall(call, path);
+            var names = LiteralTexts(Argument(call, "names")?.Value);
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            if (expected is RecordLogicalSchema record)
+            {
+                foreach (var field in record.Fields)
+                {
+                    if (names is null || names.Contains(field.Key, StringComparer.Ordinal))
+                        fields.Add(field.Key, field.Value);
+                }
+            }
+            var required = new RecordLogicalSchema(fields);
+            return new Requirement(
+                Intersect(generic.Input, required, $"{path}.input"),
+                generic.Enclosing);
         }
 
         private Requirement RequireGenericCall(LogicalCall call, string path)
@@ -319,6 +356,7 @@ public static class LogicalSchemaAnalyzer
             string intrinsic) => intrinsic switch
             {
                 "field" => InferField(call, input, enclosing, path),
+                "select-fields" => InferSelectFields(call, input, enclosing, path),
                 "array" => InferArray(call, input, enclosing, path),
                 "tuple" => InferTuple(call, input, enclosing, path),
                 "record" => InferRecord(call, input, enclosing, path),
@@ -338,6 +376,9 @@ public static class LogicalSchemaAnalyzer
             var bindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
             if (contract.Input is not null)
                 Bind(ParseSchema(contract.Input), input, bindings, $"{path}.input");
+            var parameterOutputs = new Dictionary<
+                string,
+                (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)>(StringComparer.Ordinal);
             for (var index = 0; index < call.Arguments.Count; index++)
             {
                 var argument = call.Arguments[index];
@@ -350,9 +391,25 @@ public static class LogicalSchemaAnalyzer
                     Bind(ParseSchema(parameterContract.Input), context, bindings, $"{path}.parameters.{argument.Parameter.Name}.input");
                 var result = Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
                 if (parameterContract?.Output is not null)
-                    Bind(ParseSchema(parameterContract.Output), result, bindings, $"{path}.parameters.{argument.Parameter.Name}.output");
+                {
+                    if (!parameterOutputs.TryGetValue(argument.Parameter.Name, out var collected))
+                    {
+                        collected = (parameterContract, []);
+                        parameterOutputs.Add(argument.Parameter.Name, collected);
+                    }
+                    collected.Outputs.Add(result);
+                }
             }
-            if (contract.Input is not null && contract.Output == contract.Input)
+            foreach (var parameter in parameterOutputs)
+            {
+                Bind(
+                    ParseSchema(parameter.Value.Contract.Output!),
+                    CombineParameterOutputs(parameter.Value.Outputs, parameter.Value.Contract.Combine),
+                    bindings,
+                    $"{path}.parameters.{parameter.Key}.output");
+            }
+            if (contract.Input is not null && contract.Output == contract.Input
+                && ParseSchema(contract.Input).ContainsVariable)
                 return input;
             var output = contract.Output is null
                 ? FromType(call.Function.Output)
@@ -361,6 +418,37 @@ public static class LogicalSchemaAnalyzer
                 ? WithNullability(output, true)
                 : output;
         }
+
+        private LogicalSchema ExpectedParameterOutput(
+            LogicalArgument argument,
+            PlannerParameterSchemaDescriptor? contract,
+            IReadOnlyDictionary<string, LogicalSchema> bindings,
+            int count,
+            int ordinal)
+        {
+            if (contract?.Output is null)
+                return FromType(argument.Parameter.Type);
+            var expected = Resolve(ParseSchema(contract.Output), bindings);
+            return contract.Combine == "tuple" && count > 1
+                && expected is TupleLogicalSchema tuple && tuple.Items.Count == count
+                    ? tuple.Items[ordinal]
+                    : expected;
+        }
+
+        private LogicalSchema CombineParameterOutputs(
+            IReadOnlyList<LogicalSchema> outputs,
+            string? combination) => combination switch
+            {
+                "union" => outputs.Aggregate(Union),
+                "tuple" when outputs.Count > 1 => new TupleLogicalSchema(outputs),
+                "tuple" => outputs.Single(),
+                null when outputs.Count == 1 => outputs[0],
+                null => outputs.Aggregate(IntersectForParameter),
+                _ => throw new InvalidOperationException($"Unsupported schema combination '{combination}'."),
+            };
+
+        private LogicalSchema IntersectForParameter(LogicalSchema left, LogicalSchema right)
+            => Intersect(left, right, "plan.parameter");
 
         private LogicalSchema InferField(
             LogicalCall call,
@@ -380,20 +468,41 @@ public static class LogicalSchemaAnalyzer
             return Dynamic(path, name is null ? "field with a dynamic name" : $"field '{name}'");
         }
 
+        private LogicalSchema InferSelectFields(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            InferArgument(call, "names", input, enclosing, path);
+            var names = LiteralTexts(Argument(call, "names")?.Value);
+            if (input is not RecordLogicalSchema record || names is null)
+                return Dynamic(path, "selected record fields");
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            foreach (var name in names.Distinct(StringComparer.Ordinal))
+            {
+                if (record.Fields.TryGetValue(name, out var field))
+                    fields.Add(name, field);
+                else if (record.AllowsAdditionalFields)
+                    fields.Add(name, new LogicalSchemaField(new AnyLogicalSchema(), Optional: true));
+            }
+            return new RecordLogicalSchema(fields, AllowsAdditionalFields: false, record.IsNullable);
+        }
+
         private LogicalSchema InferArray(
             LogicalCall call,
             LogicalSchema input,
             LogicalSchema enclosing,
             string path)
         {
-            var item = (LogicalSchema)new AnyLogicalSchema();
+            LogicalSchema? item = null;
             for (var index = 0; index < call.Arguments.Count; index++)
             {
                 var value = InferArgument(call, index, input, enclosing, path);
                 if (value is not null)
-                    item = Union(item, value);
+                    item = item is null ? value : Union(item, value);
             }
-            return new ArrayLogicalSchema(item);
+            return new ArrayLogicalSchema(item ?? new AnyLogicalSchema());
         }
 
         private LogicalSchema InferTuple(
@@ -574,6 +683,11 @@ public static class LogicalSchemaAnalyzer
                 for (var index = 0; index < tuple.Items.Count; index++)
                     Bind(expression.Arguments[index], tuple.Items[index], bindings, $"{path}.items[{index}]");
             }
+            if (expression.Name == "grouping" && actual is GroupingLogicalSchema grouping)
+            {
+                Bind(expression.Arguments[0], grouping.Keys, bindings, $"{path}.keys");
+                Bind(expression.Arguments[1], grouping.Items, bindings, $"{path}.items");
+            }
         }
 
         private LogicalSchema Resolve(
@@ -587,6 +701,9 @@ public static class LogicalSchemaAnalyzer
                 "nullable" => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
                 "array" => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
                 "tuple" => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
+                "grouping" => new GroupingLogicalSchema(
+                    Resolve(expression.Arguments[0], bindings),
+                    Resolve(expression.Arguments[1], bindings)),
                 _ when expression.Arguments.Count == 0 => FromType(expression.Name),
                 _ => throw new InvalidOperationException($"Unsupported schema constructor '{expression.Name}'."),
             };
@@ -657,6 +774,7 @@ public static class LogicalSchemaAnalyzer
                 "record" => new RecordLogicalSchema(
                     new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal)),
                 "tuple" => new TupleLogicalSchema([]),
+                "grouping" => new GroupingLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
                 "null" => new AnyLogicalSchema(true),
                 _ => new ScalarLogicalSchema(normalized),
             };
@@ -671,6 +789,18 @@ public static class LogicalSchemaAnalyzer
                 ?? call.Arguments.FirstOrDefault()?.Value;
             return value is LogicalLiteral { Value: string text } ? text : null;
         }
+
+        private static string[]? LiteralTexts(LogicalValue? value) => value switch
+        {
+            LogicalPipeline { Items.Count: 1 } pipeline => LiteralTexts(pipeline.Items[0]),
+            LogicalCall { Function.Schema.Intrinsic: "array" } array
+                when array.Arguments.Where(argument => argument.IsExplicit)
+                    .All(argument => argument.Value is LogicalLiteral { Value: string })
+                => array.Arguments.Where(argument => argument.IsExplicit)
+                    .Select(argument => (string)((LogicalLiteral)argument.Value!).Value!)
+                    .ToArray(),
+            _ => null,
+        };
 
         private Requirement DynamicRequirement(string path, string description)
         {
@@ -689,10 +819,10 @@ public static class LogicalSchemaAnalyzer
 
         private LogicalSchema Union(LogicalSchema left, LogicalSchema right)
         {
-            if (left is AnyLogicalSchema)
-                return right;
-            if (right is AnyLogicalSchema)
-                return left;
+            if (left is AnyLogicalSchema leftAny)
+                return leftAny.IsNullable ? WithNullability(right, true) : left;
+            if (right is AnyLogicalSchema rightAny)
+                return rightAny.IsNullable ? WithNullability(left, true) : right;
             if (left == right)
                 return left;
             if (left is ScalarLogicalSchema leftScalar && right is ScalarLogicalSchema rightScalar)
@@ -702,8 +832,18 @@ public static class LogicalSchemaAnalyzer
                 if (IsTemporal(leftScalar.Type) && IsTemporal(rightScalar.Type))
                     return new ScalarLogicalSchema("temporal", IsNullable(left) || IsNullable(right));
             }
-            return new AnyLogicalSchema(IsNullable(left) || IsNullable(right));
+            var alternatives = FlattenUnion(left)
+                .Concat(FlattenUnion(right))
+                .Select(schema => WithNullability(schema, false))
+                .Distinct()
+                .ToArray();
+            return alternatives.Length == 1
+                ? WithNullability(alternatives[0], IsNullable(left) || IsNullable(right))
+                : new UnionLogicalSchema(alternatives, IsNullable(left) || IsNullable(right));
         }
+
+        private static IEnumerable<LogicalSchema> FlattenUnion(LogicalSchema schema)
+            => schema is UnionLogicalSchema union ? union.Alternatives : [schema];
 
         private static string? IntersectScalar(string left, string right)
         {
@@ -745,6 +885,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema value => value with { IsNullable = nullable },
             ArrayLogicalSchema value => value with { IsNullable = nullable },
             TupleLogicalSchema value => value with { IsNullable = nullable },
+            GroupingLogicalSchema value => value with { IsNullable = nullable },
+            UnionLogicalSchema value => value with { IsNullable = nullable },
             ConflictingLogicalSchema value => value with { IsNullable = nullable },
             _ => schema,
         };
@@ -757,6 +899,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema value => value.IsNullable,
             ArrayLogicalSchema value => value.IsNullable,
             TupleLogicalSchema value => value.IsNullable,
+            GroupingLogicalSchema value => value.IsNullable,
+            UnionLogicalSchema value => value.IsNullable,
             ConflictingLogicalSchema value => value.IsNullable,
             _ => false,
         };
@@ -767,6 +911,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema record => record.Fields.Values.Any(field => ContainsAny(field.Schema)),
             ArrayLogicalSchema array => ContainsAny(array.Items),
             TupleLogicalSchema tuple => tuple.Items.Any(ContainsAny),
+            GroupingLogicalSchema grouping => ContainsAny(grouping.Keys) || ContainsAny(grouping.Items),
+            UnionLogicalSchema union => union.Alternatives.Any(ContainsAny),
             ConflictingLogicalSchema conflict => ContainsAny(conflict.Left) || ContainsAny(conflict.Right),
             _ => false,
         };
@@ -777,6 +923,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema record => record.Fields.Values.Any(field => ContainsConflict(field.Schema)),
             ArrayLogicalSchema array => ContainsConflict(array.Items),
             TupleLogicalSchema tuple => tuple.Items.Any(ContainsConflict),
+            GroupingLogicalSchema grouping => ContainsConflict(grouping.Keys) || ContainsConflict(grouping.Items),
+            UnionLogicalSchema union => union.Alternatives.Any(ContainsConflict),
             _ => false,
         };
 
@@ -788,6 +936,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema => "record",
             ArrayLogicalSchema => "array",
             TupleLogicalSchema => "tuple",
+            GroupingLogicalSchema => "grouping",
+            UnionLogicalSchema => "union",
             ConflictingLogicalSchema => "conflict",
             _ => schema.GetType().Name,
         };
@@ -797,6 +947,8 @@ public static class LogicalSchemaAnalyzer
         private sealed record SchemaExpression(string Name, IReadOnlyList<SchemaExpression> Arguments)
         {
             public bool IsVariable => Arguments.Count == 0 && Name.Length > 0 && char.IsUpper(Name[0]);
+
+            public bool ContainsVariable => IsVariable || Arguments.Any(argument => argument.ContainsVariable);
         }
     }
 }

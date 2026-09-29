@@ -43,7 +43,8 @@ public static class LogicalPlannerFactory
                                 parameter => parameter.Key,
                                 parameter => new PlannerParameterSchemaDescriptor(
                                     parameter.Value.Input,
-                                    parameter.Value.Output),
+                                    parameter.Value.Output,
+                                    parameter.Value.Combine),
                                 StringComparer.Ordinal),
                             function.Schema.Intrinsic,
                             function.Schema.Nullability)),

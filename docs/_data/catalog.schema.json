@@ -82,6 +82,9 @@
         "Output": {
           "type": "string",
           "minLength": 1
+        },
+        "Combine": {
+          "enum": ["union", "tuple"]
         }
       },
       "minProperties": 1,

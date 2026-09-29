@@ -223,6 +223,15 @@ public sealed class FunctionCatalog
             {
                 throw new InvalidOperationException($"{member} references unknown parameter '{unknown}'.");
             }
+            var invalidCombination = schema.Parameters?.FirstOrDefault(parameter =>
+                parameter.Value.Combine is not null
+                && (parameter.Value.Output is null || parameter.Value.Combine is not ("union" or "tuple")));
+            if (invalidCombination is { Value.Combine: not null })
+            {
+                throw new InvalidOperationException(
+                    $"{member} parameter '{invalidCombination.Value.Key}' has unsupported combination "
+                    + $"'{invalidCombination.Value.Value.Combine}'.");
+            }
         }
     }
 

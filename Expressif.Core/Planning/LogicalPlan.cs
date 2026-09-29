@@ -84,7 +84,10 @@ public sealed record PlannerSchemaDescriptor(
 /// <summary>
 /// The input and output schema relationship of an operator argument.
 /// </summary>
-public sealed record PlannerParameterSchemaDescriptor(string? Input = null, string? Output = null);
+public sealed record PlannerParameterSchemaDescriptor(
+    string? Input = null,
+    string? Output = null,
+    string? Combine = null);
 
 /// <summary>
 /// The machine-readable traversal contract of a planned operator.

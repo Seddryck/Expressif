@@ -421,6 +421,22 @@ public class FunctionCatalogTest
         });
     }
 
+    [Test]
+    public void Default_RepresentativeContracts_DeserializeCompositionMetadata()
+    {
+        var coalesce = FunctionCatalog.Default.Find("coalesce")?.Schema;
+        var groupBy = FunctionCatalog.Default.Find("group-by")?.Schema;
+        var sum = FunctionCatalog.Default.Find("sum", "accumulator")?.Schema;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(coalesce?.Parameters?["expressions"].Combine, Is.EqualTo("union"));
+            Assert.That(groupBy?.Output, Is.EqualTo("grouping<K, T>"));
+            Assert.That(groupBy?.Parameters?["expressions"].Combine, Is.EqualTo("tuple"));
+            Assert.That(sum, Is.EqualTo(new FunctionSchemaDocumentation("numeric", "numeric")));
+        });
+    }
+
     [TestCase("add", "times", ParameterOmissionMode.Constant)]
     [TestCase("subtract", "times", ParameterOmissionMode.Constant)]
     [TestCase("swap", "first", ParameterOmissionMode.Absent)]

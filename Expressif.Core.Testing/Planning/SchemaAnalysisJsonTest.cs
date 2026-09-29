@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Expressif.Planning;
 
 namespace Expressif.Testing.Planning;
@@ -61,5 +62,32 @@ public class SchemaAnalysisJsonTest
         var second = SchemaAnalysisJson.Serialize(analysis);
 
         Assert.That(second, Is.EqualTo(first));
+    }
+
+    [Test]
+    public void Serialize_GroupingAndUnion_UsesExpandedShapes()
+    {
+        var analysis = new SchemaAnalysis(
+            new NoInputLogicalSchema(),
+            new GroupingLogicalSchema(
+                new UnionLogicalSchema([
+                    new ScalarLogicalSchema("text"),
+                    new ScalarLogicalSchema("integer"),
+                ]),
+                new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>())),
+            SchemaAnalysisCompleteness.Known,
+            [],
+            []);
+
+        using var document = JsonDocument.Parse(SchemaAnalysisJson.Serialize(analysis));
+        var output = document.RootElement.GetProperty("output");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(output.GetProperty("type").GetString(), Is.EqualTo("grouping"));
+            Assert.That(output.GetProperty("keys").GetProperty("type").GetString(), Is.EqualTo("union"));
+            Assert.That(output.GetProperty("keys").GetProperty("alternatives").GetArrayLength(), Is.EqualTo(2));
+            Assert.That(output.GetProperty("items").GetProperty("type").GetString(), Is.EqualTo("record"));
+        });
     }
 }
