@@ -110,6 +110,27 @@ public static class SchemaAnalysisJson
                 foreach (var item in tuple.Items)
                     WriteSchema(writer, item);
                 writer.WriteEndArray();
+                writer.WritePropertyName("additionalItems");
+                if (tuple.AdditionalItems is null)
+                    writer.WriteNullValue();
+                else
+                    WriteSchema(writer, tuple.AdditionalItems);
+                break;
+            case PairLogicalSchema pair:
+                writer.WriteString("type", "pair");
+                writer.WriteBoolean("nullable", pair.IsNullable);
+                writer.WritePropertyName("key");
+                WriteSchema(writer, pair.Key);
+                writer.WritePropertyName("value");
+                WriteSchema(writer, pair.Value);
+                break;
+            case DictionaryLogicalSchema dictionary:
+                writer.WriteString("type", "dictionary");
+                writer.WriteBoolean("nullable", dictionary.IsNullable);
+                writer.WritePropertyName("keys");
+                WriteSchema(writer, dictionary.Keys);
+                writer.WritePropertyName("values");
+                WriteSchema(writer, dictionary.Values);
                 break;
             case GroupingLogicalSchema grouping:
                 writer.WriteString("type", "grouping");

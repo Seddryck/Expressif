@@ -28,7 +28,11 @@
   "definitions": {
     "schema": {
       "type": "object",
+      "required": ["Classification"],
       "properties": {
+        "Classification": {
+          "enum": ["fixed", "contract", "intrinsic", "dynamic"]
+        },
         "Input": {
           "type": "string",
           "minLength": 1
@@ -49,24 +53,80 @@
         },
         "Nullability": {
           "enum": ["propagate-input"]
+        },
+        "NullableWhen": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "DynamicReason": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "oneOf": [
         {
+          "properties": {
+            "Classification": { "const": "fixed" }
+          },
+          "not": {
+            "anyOf": [
+              { "required": ["Input"] },
+              { "required": ["Output"] },
+              { "required": ["Parameters"] },
+              { "required": ["Intrinsic"] },
+              { "required": ["Nullability"] },
+              { "required": ["NullableWhen"] },
+              { "required": ["DynamicReason"] }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "Classification": { "const": "contract" }
+          },
+          "required": ["Input", "Output"],
+          "not": {
+            "anyOf": [
+              { "required": ["Intrinsic"] },
+              { "required": ["DynamicReason"] }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "Classification": { "const": "intrinsic" }
+          },
           "required": ["Intrinsic"],
           "not": {
             "anyOf": [
               { "required": ["Input"] },
               { "required": ["Output"] },
               { "required": ["Parameters"] },
-              { "required": ["Nullability"] }
+              { "required": ["Nullability"] },
+              { "required": ["NullableWhen"] },
+              { "required": ["DynamicReason"] }
             ]
           }
         },
         {
-          "required": ["Input", "Output"],
+          "properties": {
+            "Classification": { "const": "dynamic" }
+          },
+          "required": ["DynamicReason"],
           "not": {
-            "required": ["Intrinsic"]
+            "anyOf": [
+              { "required": ["Input"] },
+              { "required": ["Output"] },
+              { "required": ["Parameters"] },
+              { "required": ["Intrinsic"] },
+              { "required": ["Nullability"] },
+              { "required": ["NullableWhen"] }
+            ]
           }
         }
       ],

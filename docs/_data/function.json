@@ -9,7 +9,11 @@
     "Summary": "Parses JSON text into native records, arrays, and scalar values.",
     "Behavior": "The output type depends on the JSON value at runtime. Objects become ordered records recursively; arrays become native arrays. Null input returns null. Empty, blank, and malformed JSON raise an evaluation error. Comments, trailing commas, and multiple root values are rejected. Numbers follow JSON source conversion rules; duplicate object properties retain the last value.",
     "Parameters": [],
-    "Examples": ["{payload := \"{\\\"name\\\":\\\"Ada\\\"}\"} | .payload | parse-json | field(\"name\") → \"Ada\""]
+    "Examples": ["{payload := \"{\\\"name\\\":\\\"Ada\\\"}\"} | .payload | parse-json | field(\"name\") → \"Ada\""],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "catch",
@@ -33,7 +37,11 @@
         }
       }
     ],
-    "Examples": ["{nickname := #null, name := \"Alice\"} | .nickname | catch(.name) | upper → \"Alice\""]
+    "Examples": ["{nickname := #null, name := \"Alice\"} | .nickname | catch(.name) | upper → \"Alice\""],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "throw",
@@ -60,7 +68,11 @@
         }
       }
     ],
-    "Examples": ["12.346 | throw(is-negative) | round(2) → 12.35"]
+    "Examples": ["12.346 | throw(is-negative) | round(2) → 12.35"],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "adjacent",
@@ -100,6 +112,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits consecutive elements of the array supplied as pipeline input to this adjacent call, in source order, starting with the second element."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -112,6 +127,7 @@
     "Input": "any",
     "Output": "array",
     "Schema": {
+      "Classification": "intrinsic",
       "Intrinsic": "array"
     },
     "Summary": "Constructs a new array by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place. This is the runtime-expression counterpart of array literal syntax.",
@@ -166,7 +182,11 @@
     "Examples": [
       "T(120, 135) | bind(\"subtract\") → -15",
       "T(120, 135) | ~subtract → 15"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "broadcast",
@@ -205,6 +225,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -224,7 +247,10 @@
     "Examples": [
       "{} | cardinality → 0",
       "{1, 2, 3} | cardinality → 3"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "chunk",
@@ -236,9 +262,12 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<array<T>>",
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.",
     "Semantics": {
@@ -296,7 +325,10 @@
     "Behavior": "`chunk-around` materializes the input and returns `T(before, selected, after)`. The selected value is preserved as a scalar, including when it is `null` or structured. A position is valid only when it identifies an existing element.\n\nA common use is resuming an approval workflow where the item at the cursor has a distinct role. Given these steps:\n\n```expressif\n{ValidateInvoice, ManagerApproval, FinanceApproval, ReleasePayment}\n```\n\nand a current position of `2`, the required structure is `completed steps | current step | future steps`:\n\n```expressif\nsteps | chunk-around(2)\n→ T(\n    {ValidateInvoice, ManagerApproval},\n    FinanceApproval,\n    {ReleasePayment}\n)\n```\n\n`FinanceApproval` remains a single workflow-step record, so it can be displayed, executed, or updated as the current step. By contrast, `chunk-on(2)` returns only the values before the cursor and the values from the cursor onward:\n\n```expressif\nsteps | chunk-on(2)\n→ T(\n    {ValidateInvoice, ManagerApproval},\n    {FinanceApproval, ReleasePayment}\n)\n```\n\nThe same three-role structure—`past | selected/current item | future`—appears in workflow engines, carousel focus, undo/redo histories, breadcrumb navigation, and processing a specific failed event in a sequence. The equivalent result can be constructed by splitting the right chunk again, but `chunk-on` alone does not distinguish the current item from future items. `chunk-around` directly provides this array-zipper operation.",
     "Examples": [
       "{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "chunk-on",
@@ -329,7 +361,10 @@
     "Behavior": "`chunk-on` materializes the input and returns `T(before, from-position)`. Positions beyond the input cardinality use the end boundary, so the right chunk is empty. Negative positions return `null`.",
     "Examples": [
       "{10, 20, 30, 40} | chunk-on(2) → T({10, 20}, {30, 40})"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "chunk-while",
@@ -368,6 +403,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits consecutive elements of the array supplied as pipeline input to this chunk-while call, in source order, starting with the second element."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -380,6 +418,7 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<T>",
       "Parameters": {
@@ -388,7 +427,9 @@
           "Output": "boolean"
         }
       },
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
@@ -457,6 +498,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -490,7 +534,10 @@
     "Behavior": "The value at zero-based input position `i` is assigned to output array `i modulo count`. The result always contains exactly `count` arrays, including empty trailing arrays when the count exceeds the input cardinality. Relative input order is preserved within every output array. Empty input returns `count` empty arrays.",
     "Examples": [
       "{1, 2, 3, 4, 5} | distribute-round-robin(2) → {{1, 3, 5}, {2, 4}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "distribute-random-split",
@@ -540,7 +587,10 @@
     "Behavior": "The weights are normalized by their total and specify assignment probabilities rather than exact output cardinalities. Each input value is independently assigned to exactly one output array. The result contains one array per weight, including empty arrays, and preserves relative input order within each output. Reusing the same seed, input, and weights produces the same result on the same runtime version. Empty input still validates the weights and returns one empty array per valid weight.",
     "Examples": [
       "{1, 2, 3, 4, 5} | distribute-random-split({1, 0}, 42) → {{1, 2, 3, 4, 5}, {}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "distribute-condition",
@@ -578,6 +628,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -614,7 +667,10 @@
     "Examples": [
       "{1, 2, 3} | first-elements(2) → {1, 2}",
       "{1, 2, 3} | first-elements(5) → {1, 2, 3}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "fold",
@@ -626,6 +682,7 @@
     "Input": "array",
     "Output": "any",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "U",
       "Parameters": {
@@ -695,7 +752,11 @@
       "10 | let(double := multiply(2)) | add(1) → 11",
       "10 | let(double := multiply(2)) | add(@double) → 30",
       "{quantity := 4, unit-price := 5} | let(total := .quantity | multiply(.unit-price)) | @total → 20"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "apply",
@@ -726,7 +787,11 @@
       "T(2, 3) | apply(5 | power($0) | add(2) | nth-root($1)) → 3",
       "{firstName := \"John\", lastName := \"Doe\"} | apply(.firstName | append-space | suffix(.lastName)) → \"John Doe\"",
       "{1, 2, 3, 4} | apply(zip(lag | lag)) → {T(1, #null), T(2, #null), T(3, 1), T(4, 2)}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "transform-with",
@@ -771,6 +836,9 @@
       "Source": "custom",
       "Selection": "custom",
       "Summary": "Evaluates the shared operation against each result produced by the other expression arguments."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -816,6 +884,9 @@
       "Source": "custom",
       "Selection": "custom",
       "Summary": "Evaluates the shared operation against each result produced by the named expression arguments."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -848,7 +919,11 @@
       "\"5\" | *add(1) → \"5\"",
       "42 | *trim → 42",
       "\" Bob \" | *(trim | append-space) → \"Bob \""
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "lag",
@@ -860,9 +935,12 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<nullable<T>>",
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Returns the previous value for each input element. The first output value is `null` because there is no previous element. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
@@ -909,7 +987,10 @@
     "Examples": [
       "{1, 2, 3} | last-elements(2) → {2, 3}",
       "{1, 2, 3} | last-elements(5) → {1, 2, 3}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "lead",
@@ -929,7 +1010,10 @@
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | lead → {2, 3, #null}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "map",
@@ -941,6 +1025,7 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<U>",
       "Parameters": {
@@ -949,7 +1034,9 @@
           "Output": "U"
         }
       },
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Applies a transformation expression to each input item and returns the transformed values. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
@@ -989,6 +1076,7 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<U>",
       "Parameters": {
@@ -997,7 +1085,9 @@
           "Output": "array<U>"
         }
       },
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Evaluates an array-producing expression for each input element and concatenates the resulting arrays in order. Flattens one level, preserving nested arrays and null elements. Empty arrays contribute no elements. Throws an argument error when an expression result is not an array, including null or text.",
     "Semantics": {
@@ -1074,7 +1164,10 @@
       "Selection": "custom",
       "Summary": "Visits each element of the values argument supplied to this map-over call, in declaration order."
     },
-    "Behavior": "Prepare the invocation tuple only for a leading `bind(\"f\")`, `rotate | bind(\"f\")`, or `rotate(1) | bind(\"f\")`, including their equivalent tilde forms. Parentheses around an open operation are transparent; an input-bound expression introduces its own boundary. Later bindings consume the preceding stage result without preparing another tuple. The tuple-valued outer input remains one position and nested item tuples are not recursively expanded. Legacy bare-callable argument injection remains available during deprecation; use `f~` for an explicit invocation. Ordinary complete expressions retain their existing input and argument contexts."
+    "Behavior": "Prepare the invocation tuple only for a leading `bind(\"f\")`, `rotate | bind(\"f\")`, or `rotate(1) | bind(\"f\")`, including their equivalent tilde forms. Parentheses around an open operation are transparent; an input-bound expression introduces its own boundary. Later bindings consume the preceding stage result without preparing another tuple. The tuple-valued outer input remains one position and nested item tuples are not recursively expanded. Legacy bare-callable argument injection remains available during deprecation; use `f~` for an explicit invocation. Ordinary complete expressions retain their existing input and argument contexts.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "map-with",
@@ -1121,7 +1214,10 @@
       "Selection": "custom",
       "Summary": "Visits each element of the values argument supplied to this map-with call, in declaration order."
     },
-    "Behavior": "Prepare the invocation tuple only for a leading `bind(\"f\")`, `rotate | bind(\"f\")`, or `rotate(1) | bind(\"f\")`, including their equivalent tilde forms. Parentheses around an open operation are transparent; an input-bound expression introduces its own boundary. Later bindings consume the preceding stage result without preparing another tuple. The supplied item and outer input each remain one position, even when either is a tuple. Legacy bare-callable argument injection remains available during deprecation; use `~f` for an explicit invocation. Ordinary complete expressions retain their existing input and argument contexts."
+    "Behavior": "Prepare the invocation tuple only for a leading `bind(\"f\")`, `rotate | bind(\"f\")`, or `rotate(1) | bind(\"f\")`, including their equivalent tilde forms. Parentheses around an open operation are transparent; an input-bound expression introduces its own boundary. Later bindings consume the preceding stage result without preparing another tuple. The supplied item and outer input each remain one position, even when either is a tuple. Legacy bare-callable argument injection remains available during deprecation; use `~f` for an explicit invocation. Ordinary complete expressions retain their existing input and argument contexts.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pairwise",
@@ -1141,7 +1237,10 @@
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | pairwise → {T(1, 2), T(2, 3)}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "with-position",
@@ -1161,7 +1260,10 @@
     "Parameters": [],
     "Examples": [
       "{\"a\", \"b\", \"c\"} | with-position | value-at(2) | tuple-first → 2"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "position-of",
@@ -1195,7 +1297,10 @@
     ],
     "Examples": [
       "{\"a\", \"b\", \"c\"} | position-of(\"b\") → 1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "value-at",
@@ -1229,7 +1334,12 @@
     ],
     "Examples": [
       "{\"a\", \"b\", \"c\"} | value-at(1) → \"b\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "nullable<T>"
+    }
   },
   {
     "Name": "walk",
@@ -1269,6 +1379,10 @@
       "Source": "incoming",
       "Selection": "leaf",
       "Summary": "Recursively visits the leaf values in the incoming arrays, tuples, and records."
+    },
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
     }
   },
   {
@@ -1336,6 +1450,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this join call in order; each matching group contributes its right values in their original order."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -1402,6 +1519,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array supplied as pipeline input to this join-left call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -1468,6 +1588,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array supplied as pipeline input to this join-right call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -1534,6 +1657,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array supplied as pipeline input to this join-full call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -1544,6 +1670,7 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<tuple<T, U>>",
       "Parameters": {
@@ -1551,7 +1678,10 @@
           "Output": "array<U>"
         }
       },
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     },
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples, stopping when either array is exhausted. Returns `null` when either value cannot be evaluated as an array.",
     "Semantics": {
@@ -1609,7 +1739,10 @@
     "Behavior": "Both inputs are materialized once. When both arrays are non-empty, the result has the cardinality of the longer array and indexes each input cyclically. Two empty inputs produce an empty array; exactly one empty input produces `null` because no value is available to cycle.",
     "Examples": [
       "{1, 2, 3, 4} | zip-cycle({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\"), T(3, \"a\"), T(4, \"b\")}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "zip-padded",
@@ -1619,6 +1752,7 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<tuple<nullable<T>, nullable<U>>>",
       "Parameters": {
@@ -1626,7 +1760,10 @@
           "Output": "array<U>"
         }
       },
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input",
+        "array"
+      ]
     },
     "Summary": "Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.",
     "Semantics": {
@@ -1683,7 +1820,10 @@
     ],
     "Examples": [
       "{1, 2} | zip-strict({\"a\", \"b\"}) → {T(1, \"a\"), T(2, \"b\")}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "reverse",
@@ -1695,9 +1835,12 @@
     "Input": "array",
     "Output": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "array<T>",
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Returns the input enumerable with elements emitted in the opposite order. Preserves input cardinality (one output item per input item). Returns `null` when the input is not an enumerable or is a string.",
     "Semantics": {
@@ -1727,7 +1870,15 @@
     "Behavior": "`to-tuple` materializes the input array as a tuple without changing its elements. Null values and nested arrays, records, and tuples are preserved without recursive conversion.",
     "Examples": [
       "{1, \"A\", #true} | to-tuple → T(1, \"A\", #true)"
-    ]
+    ],
+    "Schema": {
+      "Classification": "contract",
+      "Input": "array<T>",
+      "Output": "variadic-tuple<T>",
+      "NullableWhen": [
+        "input"
+      ]
+    }
   },
   {
     "Name": "scan",
@@ -1766,6 +1917,9 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -1776,6 +1930,7 @@
     "Input": "array",
     "Output": "any",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "nullable<T>"
     },
@@ -1827,7 +1982,10 @@
     "Examples": [
       "{1, 2, 3} | skip-first-elements(2) → {3}",
       "{1, 2, 3} | skip-first-elements(5) → {}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "skip-last-elements",
@@ -1863,7 +2021,10 @@
     "Examples": [
       "{1, 2, 3} | skip-last-elements(2) → {1}",
       "{1, 2, 3} | skip-last-elements(5) → {}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "slice-elements",
@@ -1912,7 +2073,10 @@
     "Examples": [
       "{1, 2, 3} | slice-elements(1, 3) → {2, 3}",
       "{1, 2, 3} | slice-elements(2, 1) → {}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "complement",
@@ -1944,7 +2108,10 @@
     ],
     "Examples": [
       "{1, 2, 3} | complement({2, 3, 4}) → {4}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "difference",
@@ -1976,7 +2143,10 @@
     ],
     "Examples": [
       "{1, 2, 3} | difference({2, 3, 4}) → {1}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "distinct",
@@ -1996,7 +2166,10 @@
     "Parameters": [],
     "Examples": [
       "{1, 2, 3} | distinct → {1, 2, 3}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "intersection",
@@ -2028,7 +2201,10 @@
     ],
     "Examples": [
       "{1, 2, 3} | intersection({2, 3, 4}) → {2, 3}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "symmetric-difference",
@@ -2060,7 +2236,10 @@
     ],
     "Examples": [
       "{1, 2, 3} | symmetric-difference({2, 3, 4}) → {1, 4}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "union",
@@ -2092,7 +2271,10 @@
     ],
     "Examples": [
       "{1, 2, 3} | union({2, 3, 4}) → {1, 2, 3, 4}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "creation-datetime",
@@ -2105,7 +2287,10 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in local time.",
-    "Parameters": []
+    "Parameters": [],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "creation-datetime-utc",
@@ -2118,7 +2303,10 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the creation time of the file provided as argument in UTC.",
-    "Parameters": []
+    "Parameters": [],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "directory",
@@ -2133,7 +2321,10 @@
     "Parameters": [],
     "Examples": [
       "\"docs/_data/function.json\" | directory → \"docs\\\\_data\\\\\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "extension",
@@ -2148,7 +2339,10 @@
     "Parameters": [],
     "Examples": [
       "\"docs/_data/function.json\" | extension → \".json\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "filename",
@@ -2163,7 +2357,10 @@
     "Parameters": [],
     "Examples": [
       "\"docs/_data/function.json\" | filename → \"function.json\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "filename-without-extension",
@@ -2178,7 +2375,10 @@
     "Parameters": [],
     "Examples": [
       "\"docs/_data/function.json\" | filename-without-extension → \"function\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "root",
@@ -2193,7 +2393,10 @@
     "Parameters": [],
     "Examples": [
       "\"docs/_data/function.json\" | root → \"\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "size",
@@ -2205,7 +2408,10 @@
     "Input": "text",
     "Output": "integer",
     "Summary": "Returns the size of the file provided as argument in bytes.",
-    "Parameters": []
+    "Parameters": [],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "update-datetime",
@@ -2218,7 +2424,10 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in local time.",
-    "Parameters": []
+    "Parameters": [],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "update-datetime-utc",
@@ -2231,7 +2440,10 @@
     "Input": "text",
     "Output": "date-time",
     "Summary": "Returns the last update time of the file provided as argument in UTC.",
-    "Parameters": []
+    "Parameters": [],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "absolute",
@@ -2246,7 +2458,10 @@
     "Parameters": [],
     "Examples": [
       "10 | absolute → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "add",
@@ -2291,7 +2506,10 @@
       "10 | add(5, 2)   → 20"
     ],
     "Behavior": "**Argument form — `value` and `times`:** Value expressions: literals, references, or expression pipelines, such as `5`, `.bonus`, or `5 | multiply(2)`. `times` defaults to `1`; the result is `input + value × times`.\n\n**Enclosing context:** Both arguments retain the surrounding expression context. Field references read its contextual record, independently of the number entering `add`. For example, `{price:=10, bonus:=3} | .price | add(.bonus)` returns `13`: the pipeline input to `add` is `10`, while `.bonus` reads `3` from the surrounding record.",
-    "Traversal": null
+    "Traversal": null,
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "cube-power",
@@ -2306,7 +2524,10 @@
     "Parameters": [],
     "Examples": [
       "10 | cube-power → 1000"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "cube-root",
@@ -2321,7 +2542,10 @@
     "Parameters": [],
     "Examples": [
       "10 | cube-root → 2.15443469003188"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "decrement",
@@ -2336,7 +2560,10 @@
     "Parameters": [],
     "Examples": [
       "10 | decrement → 9"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "divide",
@@ -2363,7 +2590,10 @@
     ],
     "Examples": [
       "10 | divide(5) → 2"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "greatest-common-divisor",
@@ -2390,7 +2620,10 @@
     ],
     "Examples": [
       "10 | greatest-common-divisor(5) → 5"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "increment",
@@ -2405,7 +2638,10 @@
     "Parameters": [],
     "Examples": [
       "10 | increment → 11"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "invert",
@@ -2420,7 +2656,10 @@
     "Parameters": [],
     "Examples": [
       "10 | invert → 0.1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "lowest-common-multiple",
@@ -2449,7 +2688,10 @@
     ],
     "Examples": [
       "10 | lowest-common-multiple(5) → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "multiply",
@@ -2476,7 +2718,10 @@
     ],
     "Examples": [
       "10 | multiply(5) → 50"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nth-root",
@@ -2503,7 +2748,10 @@
     ],
     "Examples": [
       "16 | nth-root(2) → 4"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "oppose",
@@ -2518,7 +2766,10 @@
     "Parameters": [],
     "Examples": [
       "10 | oppose → -10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "percent-change",
@@ -2545,7 +2796,10 @@
     ],
     "Examples": [
       "10 | percent-change(8) → 25.00"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "power",
@@ -2572,7 +2826,10 @@
     ],
     "Examples": [
       "4 | power(2) → 16"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sign",
@@ -2587,7 +2844,10 @@
     "Parameters": [],
     "Examples": [
       "10 | sign → 1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "square-power",
@@ -2602,7 +2862,10 @@
     "Parameters": [],
     "Examples": [
       "10 | square-power → 100"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "square-root",
@@ -2617,7 +2880,10 @@
     "Parameters": [],
     "Examples": [
       "10 | square-root → 3.16227766016838"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "subtract",
@@ -2659,7 +2925,10 @@
     ],
     "Examples": [
       "10 | subtract(5, 2) → 0"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "bucket",
@@ -2706,7 +2975,10 @@
     ],
     "Examples": [
       "12500 | bucket(5000, 20000, 3) → 2"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "bucket-with-outliers",
@@ -2754,7 +3026,10 @@
     "Examples": [
       "2500 | bucket-with-outliers(5000, 20000, 3) → 0",
       "22500 | bucket-with-outliers(5000, 20000, 3) → 4"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "null-to-zero",
@@ -2767,7 +3042,10 @@
     "Parameters": [],
     "Examples": [
       "10 | null-to-zero → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "format-currency-prefix",
@@ -2854,7 +3132,10 @@
     ],
     "Examples": [
       "123.4567 | numeric-to-format-currency-prefix(\"$\") → \"$123.46\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "format-currency-suffix",
@@ -2942,7 +3223,10 @@
     "Examples": [
       "57123.4567 | numeric-to-format-currency-suffix(\"EUR\", 2, \",\", \".\") → \"57.123,46EUR\"",
       "-57123.4567 | numeric-to-format-currency-suffix(\"EUR\", 2, \",\", \".\", \"()\") → \"(57.123,46EUR)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "human-readable-format-binary-bytes",
@@ -2957,7 +3241,10 @@
     "Parameters": [],
     "Examples": [
       "10 | human-readable-format-binary-bytes → \"10 B\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "human-readable-format-decimal",
@@ -2972,7 +3259,10 @@
     "Parameters": [],
     "Examples": [
       "10 | human-readable-format-decimal → \"10\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "human-readable-format-decimal-bytes",
@@ -2987,7 +3277,10 @@
     "Parameters": [],
     "Examples": [
       "10 | human-readable-format-decimal-bytes → \"10 B\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "ceiling",
@@ -3002,7 +3295,10 @@
     "Parameters": [],
     "Examples": [
       "10 | ceiling → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "clip",
@@ -3040,7 +3336,10 @@
     ],
     "Examples": [
       "10 | clip(5, 15) → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "floor",
@@ -3055,7 +3354,10 @@
     "Parameters": [],
     "Examples": [
       "10 | floor → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "integer",
@@ -3070,7 +3372,10 @@
     "Parameters": [],
     "Examples": [
       "10 | integer → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "round",
@@ -3097,7 +3402,10 @@
     ],
     "Examples": [
       "10 | round(2) → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "field",
@@ -3107,6 +3415,7 @@
     "Input": "any",
     "Output": "any",
     "Schema": {
+      "Classification": "intrinsic",
       "Intrinsic": "field"
     },
     "Summary": "Returns the value of the named field from the input record or object. Returns `null` when the field does not exist or the input does not expose named values.",
@@ -3151,7 +3460,11 @@
       "{customer := {address := {city := \"Brussels\"}}} | nested-field(\"customer\", \"address\", \"city\") → \"Brussels\"",
       "{customer := {address := {city := \"Brussels\"}}} | nested-field(...{\"customer\", \"address\", \"city\"}) → \"Brussels\"",
       "{customer := {address := {city := \"Brussels\"}}} | nested-field(\"customer\", ...{\"address\", \"city\"}) → \"Brussels\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "expand",
@@ -3193,7 +3506,10 @@
       "{id := 1, name := \"Order\", customer := {name := \"Alice\", country := \"BE\"}} | expand(.customer) → {id := 1, name := \"Order\", \"customer.name\" := \"Alice\", country := \"BE\"}",
       "{customer := {name := \"Alice\"}} | expand(.customer, \"buyer\") → {\"buyer.name\" := \"Alice\"}",
       "{customer := {address := {country := \"BE\"}}} | expand(.customer) | expand(.address) → {country := \"BE\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "rename-fields",
@@ -3244,7 +3560,10 @@
       "{first-name := \"John\", last-name := \"Doe\"} | rename-fields(tokenize-kebab | pascal-case) → {FirstName := \"John\", LastName := \"Doe\"}",
       "{first-name := \"John\", age := 42} | rename-fields(tokenize-kebab | pascal-case, contains(\"-\")) → {FirstName := \"John\", age := 42}",
       "{\" First Name \" := \"John\"} | rename-fields(trim | lower) → {\"first name\" := \"John\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "explode-outer",
@@ -3280,7 +3599,10 @@
     ],
     "Examples": [
       "{id := 1, tags := {}} | explode-outer(.tags) → {{id := 1, tags := #null}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "explode",
@@ -3317,7 +3639,10 @@
     "Examples": [
       "{id := 1, tags := {\"A\", \"B\"}} | explode(.tags) → {{id := 1, tags := \"A\"}, {id := 1, tags := \"B\"}}",
       "{id := 1, tags := {}} | explode(.tags) → {}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pairs",
@@ -3342,7 +3667,10 @@
     "Examples": [
       "{foo := 1, bar := 2} | pairs → {(\"foo\" => 1), (\"bar\" => 2)}",
       "{_id := 42, name := \"Cedric\"} | pairs | from-pairs → {_id := 42, name := \"Cedric\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "from-pairs",
@@ -3367,7 +3695,10 @@
     "Examples": [
       "{(\"foo\" => 1), (\"bar\" => 2)} | from-pairs → {foo := 1, bar := 2}",
       "{(2025 => 100), (2026 => 120)} | from-pairs → {\"2025\" := 100, \"2026\" := 120}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "field-names",
@@ -3385,7 +3716,10 @@
     "Parameters": [],
     "Examples": [
       "{name := \"Mons\", temp := 18, pressure := 1012} | field-names → {\"name\", \"temp\", \"pressure\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "select-fields",
@@ -3395,6 +3729,7 @@
     "Input": "record",
     "Output": "record",
     "Schema": {
+      "Classification": "intrinsic",
       "Intrinsic": "select-fields"
     },
     "Summary": "Returns only fields whose names appear in the supplied array, preserving input field order and ignoring unknown names.",
@@ -3438,7 +3773,10 @@
     ],
     "Examples": [
       "{name := \"Mons\", temp := 18, pressure := 1012} | exclude-fields({\"pressure\"}) → {name := \"Mons\", temp := 18}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "public",
@@ -3451,7 +3789,10 @@
     "Parameters": [],
     "Examples": [
       "{foo := 10, _tmp := 20, bar := 30} | public → {foo := 10, bar := 30}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "set-public",
@@ -3479,7 +3820,10 @@
     ],
     "Examples": [
       "{_id := 42, name := \"Ada\"} | set-public({\"id\"}) → {id := 42, name := \"Ada\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "set-private",
@@ -3507,7 +3851,10 @@
     ],
     "Examples": [
       "{id := 42, name := \"Ada\"} | set-private({\"id\"}) → {_id := 42, name := \"Ada\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "record",
@@ -3517,6 +3864,7 @@
     "Input": "any",
     "Output": "record",
     "Schema": {
+      "Classification": "intrinsic",
       "Intrinsic": "record"
     },
     "Summary": "Creates a record by evaluating its named and spread entries against the input value. Later entries overwrite fields with the same name created by earlier entries.",
@@ -3551,6 +3899,7 @@
     "Input": "record",
     "Output": "record",
     "Schema": {
+      "Classification": "intrinsic",
       "Intrinsic": "put"
     },
     "Summary": "Creates or replaces statically named fields while preserving every other field. Assignment expressions are evaluated against the original input record.",
@@ -3582,7 +3931,8 @@
     "Input": "record",
     "Output": "record",
     "Schema": {
-      "Intrinsic": "put"
+      "Classification": "intrinsic",
+      "Intrinsic": "put-present"
     },
     "Summary": "Assigns statically named fields only when they are present, including fields whose value is null.",
     "Parameters": [
@@ -3613,7 +3963,8 @@
     "Input": "record",
     "Output": "record",
     "Schema": {
-      "Intrinsic": "put"
+      "Classification": "intrinsic",
+      "Intrinsic": "put-absent"
     },
     "Summary": "Assigns statically named fields only when they are absent; a present field containing null remains unchanged.",
     "Parameters": [
@@ -3670,7 +4021,10 @@
     ],
     "Examples": [
       "{customer := {address := {city := \"Brussels\"}}} | put-path(T(\"customer\", \"address\", \"city\"), \"Ghent\") → {customer := {address := {city := \"Ghent\"}}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "put-present-path",
@@ -3706,7 +4060,10 @@
     ],
     "Examples": [
       "{age := #null} | put-present-path(\"age\", 42) → {age := 42}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "put-absent-path",
@@ -3742,7 +4099,10 @@
     ],
     "Examples": [
       "{name := \"Alice\"} | put-absent-path(T(\"details\", \"age\"), 42) → {name := \"Alice\", details := {age := 42}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "drop-null-fields",
@@ -3755,7 +4115,10 @@
     "Parameters": [],
     "Examples": [
       "{name := \"Nikola\", age := #null, active := #false} | drop-null-fields → {name := \"Nikola\", active := #false}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "with",
@@ -3794,7 +4157,11 @@
     ],
     "Examples": [
       "{firstName := \"John\", lastName := \"Doe\"} | with(last-name := .lastName, first-name := .firstName, .last-name | suffix(\", \") | suffix(.first-name)) → \"Doe, John\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "compare-numeric",
@@ -3812,7 +4179,10 @@
         "Summary": "The value compared with the input value."
       }
     ],
-    "Behavior": "Both values are coerced to numeric. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+    "Behavior": "Both values are coerced to numeric. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "compare-ordinal",
@@ -3830,7 +4200,10 @@
         "Summary": "The value compared with the input value."
       }
     ],
-    "Behavior": "Both values are coerced to text and compared with ordinal, non-locale-sensitive semantics. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+    "Behavior": "Both values are coerced to text and compared with ordinal, non-locale-sensitive semantics. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "compare-date",
@@ -3848,7 +4221,10 @@
         "Summary": "The value compared with the input value."
       }
     ],
-    "Behavior": "Both values are coerced to date. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+    "Behavior": "Both values are coerced to date. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "compare-time",
@@ -3866,7 +4242,10 @@
         "Summary": "The value compared with the input value."
       }
     ],
-    "Behavior": "Both values are coerced to time. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+    "Behavior": "Both values are coerced to time. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "compare-datetime",
@@ -3884,7 +4263,10 @@
         "Summary": "The value compared with the input value."
       }
     ],
-    "Behavior": "Both values are coerced to datetime. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced."
+    "Behavior": "Both values are coerced to datetime. Returns #less, #equal, or #greater; returns #null when either value is null or cannot be coerced.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "compare",
@@ -3912,7 +4294,10 @@
         "Summary": "The comparison domain; defaults to :text."
       }
     ],
-    "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain."
+    "Behavior": ":text routes to ordinal comparison; :integer, :decimal, and :numeric route to numeric comparison; :date, :time, and :datetime route to their temporal comparisons. Unsupported domains fail clearly. Returns #null when either value is null or cannot be coerced to the selected domain.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "rank-by",
@@ -3948,6 +4333,9 @@
       "Source": "incoming",
       "Selection": "all",
       "Summary": "Visits each element of the array supplied as pipeline input to this rank-by call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -3984,6 +4372,9 @@
       "Source": "incoming",
       "Selection": "all",
       "Summary": "Visits each element of the array supplied as pipeline input to this dense-rank-by call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -4012,7 +4403,10 @@
         }
       }
     ],
-    "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort."
+    "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "bottom",
@@ -4040,7 +4434,10 @@
         }
       }
     ],
-    "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort."
+    "Behavior": "Uses the shared SortTable comparator and stable source order to cut boundary ties strictly at count. Results retain table order. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Partial selection does not require sorting unselected rows; invalid comparer results fail as for sort.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "top-with-ties",
@@ -4068,7 +4465,10 @@
         }
       }
     ],
-    "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort."
+    "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "bottom-with-ties",
@@ -4096,7 +4496,10 @@
         }
       }
     ],
-    "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort."
+    "Behavior": "Uses the shared full SortTable comparator to include every row tied with the selection boundary. Results retain table order and stable source order within ties. Zero count and empty input return an empty array; oversized count returns all rows. Negative count fails with an argument error. Uses partial selection followed by a boundary scan and ordering of selected rows; invalid comparer results fail as for sort.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sort-by",
@@ -4122,7 +4525,10 @@
         "Summary": "Criteria in the form expression -> :type, optionally followed by direction and null-placement modifiers."
       }
     ],
-    "Behavior": "Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercions become null keys, and equal keys preserve source order."
+    "Behavior": "Each criterion is evaluated once per source element in declaration order. :text selects ordinal comparison; integer, decimal, and numeric select numeric comparison; temporal types select their corresponding comparer. Direction defaults to ascending and null placement defaults to nulls last. Empty input returns an empty array without sampling an element. Invalid coercions become null keys, and equal keys preserve source order.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "dense-rank",
@@ -4138,7 +4544,10 @@
       "Ordering": "preserved"
     },
     "Parameters": [],
-    "Behavior": "Uses the same stable ordering and adjacent comparer-based tie detection as rank. Each changed key increments the rank by one. Returns original values in stable order and an empty grouping for empty input. Invalid comparer results fail as for sort."
+    "Behavior": "Uses the same stable ordering and adjacent comparer-based tie detection as rank. Each changed key increments the rank by one. Returns original values in stable order and an empty grouping for empty input. Invalid comparer results fail as for sort.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "rank",
@@ -4154,7 +4563,10 @@
       "Ordering": "preserved"
     },
     "Parameters": [],
-    "Behavior": "Rows use the same stable lexicographic ordering and comparer failure contract as sort. Adjacent ordered keys that compare equal share a rank; each changed key starts a rank equal to its one-based row position, leaving gaps after ties. Groups appear in ascending rank order and retain stable original-value order. Empty input returns an empty grouping. Ranking assumes a coherent comparer relation with transitive comparison equality; invalid relations are not normalized."
+    "Behavior": "Rows use the same stable lexicographic ordering and comparer failure contract as sort. Adjacent ordered keys that compare equal share a rank; each changed key starts a rank equal to its one-based row position, leaving gaps after ties. Groups appear in ascending rank order and retain stable original-value order. Empty input returns an empty grouping. Ranking assumes a coherent comparer relation with transitive comparison equality; invalid relations are not normalized.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sort",
@@ -4170,7 +4582,10 @@
       "Ordering": "reordered"
     },
     "Parameters": [],
-    "Behavior": "Rows are compared lexicographically by headers. Null placement is resolved before invoking a comparer; descending direction reverses only non-equal ordering results. Comparers are invoked only for two non-null values and must return a non-null ordering value. Equal keys preserve original row order."
+    "Behavior": "Rows are compared lexicographically by headers. Null placement is resolved before invoking a comparer; descending direction reverses only non-equal ordering results. Comparers are invoked only for two non-null values and must return a non-null ordering value. Equal keys preserve original row order.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sort-table",
@@ -4181,7 +4596,10 @@
     "Output": "sort-table",
     "Summary": "Normalizes pairs of sort keys and original values into shared headers and data rows.",
     "Parameters": [],
-    "Behavior": "Every input item must be a pair whose key is a SortKey. All keys must have equal arity and matching comparer identity, direction, and null policy at each position. Header metadata is hoisted once; rows retain key values and original values. Empty input produces a headerless, rowless SortTable. No sorting is performed."
+    "Behavior": "Every input item must be a pair whose key is a SortKey. All keys must have equal arity and matching comparer identity, direction, and null policy at each position. Header metadata is hoisted once; rows retain key values and original values. Empty input produces a headerless, rowless SortTable. No sorting is performed.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sort-key",
@@ -4202,7 +4620,10 @@
         "Summary": "One or more sort terms in lexicographic comparison order."
       }
     ],
-    "Behavior": "Every value must be a SortTerm. Declaration order is significant, nested SortKey values are rejected, and no implicit flattening occurs."
+    "Behavior": "Every value must be a SortTerm. Declaration order is significant, nested SortKey values are rejected, and no implicit flattening occurs.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sort-term",
@@ -4216,7 +4637,10 @@
       { "Name": "value", "Type": "any", "Optional": false, "Summary": "The value to compare." },
       { "Name": "comparer", "Type": "expression", "Optional": false, "Summary": "A tuple-bound callable reference that returns an ordering value." }
     ],
-    "Behavior": "Creates SortTerm(value, comparer, #true, #false), corresponding to ascending order with nulls last. The comparer is retained as a callable reference and is not invoked during construction."
+    "Behavior": "Creates SortTerm(value, comparer, #true, #false), corresponding to ascending order with nulls last. The comparer is retained as a callable reference and is not invoked during construction.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "ascending",
@@ -4227,7 +4651,10 @@
     "Output": "sort-term",
     "Summary": "Returns the sort term with ascending direction enabled.",
     "Parameters": [],
-    "Behavior": "Only the ascending flag is changed; applying the modifier repeatedly is idempotent."
+    "Behavior": "Only the ascending flag is changed; applying the modifier repeatedly is idempotent.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "descending",
@@ -4238,7 +4665,10 @@
     "Output": "sort-term",
     "Summary": "Returns the sort term with descending direction enabled.",
     "Parameters": [],
-    "Behavior": "Only the ascending flag is changed; applying the modifier repeatedly is idempotent."
+    "Behavior": "Only the ascending flag is changed; applying the modifier repeatedly is idempotent.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nulls-first",
@@ -4249,7 +4679,10 @@
     "Output": "sort-term",
     "Summary": "Returns the sort term with nulls ordered first.",
     "Parameters": [],
-    "Behavior": "Only the null-placement flag is changed; applying the modifier repeatedly is idempotent."
+    "Behavior": "Only the null-placement flag is changed; applying the modifier repeatedly is idempotent.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nulls-last",
@@ -4260,7 +4693,10 @@
     "Output": "sort-term",
     "Summary": "Returns the sort term with nulls ordered last.",
     "Parameters": [],
-    "Behavior": "Only the null-placement flag is changed; applying the modifier repeatedly is idempotent."
+    "Behavior": "Only the null-placement flag is changed; applying the modifier repeatedly is idempotent.",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "any-to-any",
@@ -4273,7 +4709,10 @@
     "Parameters": [],
     "Examples": [
       "#null | any-to-any → \"(any)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "recode",
@@ -4301,7 +4740,11 @@
       "\"A\" | recode(!{(\"A\" => 1), (\"B\" => 2)}) → 1",
       "\"X\" | recode(!{(\"A\" => 1)}) → \"X\"",
       "{code := \"A\", status-codes := !{(\"A\" => 1)}} | .code | recode(^.status-codes) → 1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "coalesce",
@@ -4311,6 +4754,7 @@
     "Input": "any",
     "Output": "any",
     "Schema": {
+      "Classification": "contract",
       "Input": "T",
       "Output": "nullable<U>",
       "Parameters": {
@@ -4373,7 +4817,11 @@
       "\"42\" | coerce(:integer) → 42",
       "T(\"42\", \"Bob\") | coerce($0 -> :integer) | $0 → 42",
       "T(\"Bob\", \"42\") | coerce($1 -> :integer) | $1 → 42"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "coerce-boolean",
@@ -4388,7 +4836,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-boolean → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "coerce-date",
@@ -4403,7 +4854,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-date → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "coerce-datetime",
@@ -4418,7 +4872,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-datetime → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "coerce-int",
@@ -4433,7 +4890,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-int → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "coerce-numeric",
@@ -4448,7 +4908,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-numeric → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "coerce-text",
@@ -4463,7 +4926,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-text → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "coerce-time",
@@ -4478,7 +4944,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | coerce-time → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "neutral",
@@ -4493,7 +4962,11 @@
     "Parameters": [],
     "Examples": [
       "#null | neutral → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "null-to-value",
@@ -4506,7 +4979,10 @@
     "Parameters": [],
     "Examples": [
       "#null | null-to-value → \"(value)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "arity",
@@ -4521,7 +4997,10 @@
     "Parameters": [],
     "Examples": [
       "T(10, \"foo\", #true) | arity → 3"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "rotate",
@@ -4556,7 +5035,10 @@
       "T(10, 20, 30) | rotate(1) → T(30, 10, 20)",
       "T(10, 20, 30) | rotate(4) → T(30, 10, 20)",
       "{items := T(10, 20, 30), offset := 1} | .items | rotate(.offset) → T(30, 10, 20)"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "swap",
@@ -4604,7 +5086,10 @@
     ],
     "Examples": [
       "T(\"a\", \"b\", \"c\", \"d\") | swap → T(\"d\", \"b\", \"c\", \"a\")"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "extend",
@@ -4634,7 +5119,10 @@
     "Examples": [
       "T(1, 2) | extend(3) → T(1, 2, 3)",
       "T(1, 2) | extend(T(3, \"foo\")) → T(1, 2, 3, \"foo\")"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pick",
@@ -4664,7 +5152,10 @@
     ],
     "Examples": [
       "T(\"John\", \"Smith\", 42) | pick(1, 0) → T(\"Smith\", \"John\")"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "label",
@@ -4707,6 +5198,9 @@
       "Source": "incoming",
       "Selection": "tuple-position",
       "Summary": "Visits each position of the tuple supplied as pipeline input to this label call in positional order. A record item contributes its fields in source order, while every other item contributes one field."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -4750,6 +5244,9 @@
       "Source": "incoming",
       "Selection": "tuple-position",
       "Summary": "Visits each position of the tuple supplied as pipeline input to this label-conflicts call in positional order. A record item contributes its fields in source order, while every other item contributes one field."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -4782,7 +5279,11 @@
     "Examples": [
       "#null | dictionary() → !{}",
       "#null | dictionary((\"BE\" => \"Belgium\"), (\"FR\" => \"France\")) → !{(\"BE\" => \"Belgium\"), (\"FR\" => \"France\")}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "intrinsic",
+      "Intrinsic": "dictionary"
+    }
   },
   {
     "Name": "nest",
@@ -4801,6 +5302,9 @@
       "Source": "incoming",
       "Selection": "dictionary-entries",
       "Summary": "Visits each entry of the dictionary supplied as pipeline input to this nest call in insertion order, using its tuple key positions to form nested dictionary levels."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -4830,7 +5334,10 @@
     "Examples": [
       "\"Belgium\" | key(@_) → (\"Belgium\" => \"Belgium\")",
       "\"Alice\" | key(upper, lower) → (T(\"ALICE\", \"alice\") => \"Alice\")"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "group",
@@ -4849,7 +5356,10 @@
     "Examples": [
       "{(\"BE\" => \"Alice\"), (\"FR\" => \"Charlie\"), (\"BE\" => \"Bob\")} | group → #{(\"BE\" => {\"Alice\", \"Bob\"}), (\"FR\" => {\"Charlie\"})}",
       "{} | group → #{}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "unpivot",
@@ -4907,7 +5417,10 @@
     },
     "Examples": [
       "{{id := 1, x := #null}} | unpivot({\"x\"}, \"name\", \"value\") → {{id := 1, name := \"x\", value := #null}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pivot",
@@ -4967,7 +5480,10 @@
       "{{country := \"BE\", category := \"Retail\", year := 2025, amount := 100}} | pivot(T(.country, .category), .year, summarize(|> .amount | sum)) → {{country := \"BE\", category := \"Retail\", \"2025\" := 100}}",
       "{{country := \"BE\", category := \"Retail\", city := \"Brussels\", year := 2025}} | pivot(T(.country, .category, .city), .year, summarize(cardinality)) → {{country := \"BE\", category := \"Retail\", city := \"Brussels\", \"2025\" := 1}}",
       "{{country := \"BE\", year := 2025, amount := 30}, {country := \"BE\", year := 2025, amount := 70}, {country := \"BE\", year := 2026, amount := 120}, {country := \"FR\", year := 2025, amount := 80}} | pivot(.country, .year, summarize(|> .amount | sum)) → {{country := \"BE\", \"2025\" := 100, \"2026\" := 120}, {country := \"FR\", \"2025\" := 80}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "group-by",
@@ -4977,6 +5493,7 @@
     "Input": "array",
     "Output": "grouping",
     "Schema": {
+      "Classification": "contract",
       "Input": "array<T>",
       "Output": "grouping<K, T>",
       "Parameters": {
@@ -4986,7 +5503,9 @@
           "Combine": "tuple"
         }
       },
-      "Nullability": "propagate-input"
+      "NullableWhen": [
+        "input"
+      ]
     },
     "Summary": "Groups input values by keys calculated from one or more expressions.",
     "Semantics": {
@@ -5036,7 +5555,10 @@
     "Examples": [
       "#{(\"BE\" => {}), (\"FR\" => {15})} | drop-empty-groups → #{(\"FR\" => {15})}",
       "#{(\"BE\" => {#null})} | drop-empty-groups → #{(\"BE\" => {#null})}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "filter-groups",
@@ -5074,6 +5596,9 @@
       "Source": "incoming",
       "Selection": "group",
       "Summary": "Visits each group, including its key and values, in the grouping entering this call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -5107,7 +5632,11 @@
       "#null | grouping() → #{}",
       "#null | grouping((\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"charlie\"})) → #{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"charlie\"})}",
       "#null | grouping(...{(\"BE\" => {\"alice\"}), (\"FR\" => {\"charlie\"})}) → #{(\"BE\" => {\"alice\"}), (\"FR\" => {\"charlie\"})}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "intrinsic",
+      "Intrinsic": "grouping"
+    }
   },
   {
     "Name": "map-groups",
@@ -5143,6 +5672,9 @@
       "Source": "incoming",
       "Selection": "group-values",
       "Summary": "Visits each group in the incoming grouping and supplies its entire value collection to the expression."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -5174,6 +5706,9 @@
       "Source": "incoming",
       "Selection": "group-values",
       "Summary": "Visits each group in the incoming grouping and supplies its entire value collection to the expression."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -5228,6 +5763,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each value of each group supplied as pipeline input to this call, in group and value order. Each visited value feeds both its group's local accumulator and the shared global accumulator."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -5265,7 +5803,22 @@
     "Examples": [
       "#null | pair(\"BE\", 42) → (\"BE\" => 42)",
       "{country := \"BE\", amount := 42} | pair(.country, .amount) → (\"BE\" => 42)"
-    ]
+    ],
+    "Schema": {
+      "Classification": "contract",
+      "Input": "T",
+      "Output": "pair<K, V>",
+      "Parameters": {
+        "value": {
+          "Input": "T",
+          "Output": "V"
+        },
+        "key": {
+          "Input": "T",
+          "Output": "K"
+        }
+      }
+    }
   },
   {
     "Name": "pair-key",
@@ -5278,7 +5831,15 @@
     "Parameters": [],
     "Examples": [
       "(\"BE\" => 42) | pair-key → \"BE\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "contract",
+      "Input": "pair<K, V>",
+      "Output": "K",
+      "NullableWhen": [
+        "input"
+      ]
+    }
   },
   {
     "Name": "pair-value",
@@ -5291,7 +5852,15 @@
     "Parameters": [],
     "Examples": [
       "(\"BE\" => 42) | pair-value → 42"
-    ]
+    ],
+    "Schema": {
+      "Classification": "contract",
+      "Input": "pair<K, V>",
+      "Output": "V",
+      "NullableWhen": [
+        "input"
+      ]
+    }
   },
   {
     "Name": "tuple",
@@ -5303,6 +5872,7 @@
     "Input": "any",
     "Output": "tuple",
     "Schema": {
+      "Classification": "intrinsic",
       "Intrinsic": "tuple"
     },
     "Summary": "Constructs a new tuple by evaluating zero or more positional expressions from left to right against the same input. Spread arguments expand array values in place.",
@@ -5358,7 +5928,11 @@
     ],
     "Examples": [
       "T(10, 20, 30) | tuple-at(1) → 20"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "tuple-first",
@@ -5373,7 +5947,11 @@
     "Parameters": [],
     "Examples": [
       "T(10, 20, 30) | tuple-first → 10"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "tuple-second",
@@ -5388,7 +5966,11 @@
     "Parameters": [],
     "Examples": [
       "T(10, 20, 30) | tuple-second → 20"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "value-to-value",
@@ -5401,7 +5983,10 @@
     "Parameters": [],
     "Examples": [
       "#null | value-to-value → \"(null)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "age",
@@ -5416,7 +6001,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | age → 2"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "backward",
@@ -5460,7 +6048,10 @@
     "Examples": [
       "#\"2024-01-15 12:30:00\" | backward(\"01:30:00\") → #\"2024-01-15 11:00:00\"",
       "#\"2024-01-15 12:30:00\" | backward(\"01:30:00\", 2) → #\"2024-01-15 09:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "ceiling-hour",
@@ -5475,7 +6066,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | ceiling-hour → #\"2024-01-15 13:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "ceiling-minute",
@@ -5490,7 +6084,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | ceiling-minute → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "change-of-hour",
@@ -5517,7 +6114,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:45\" | change-of-hour(8) → #\"2024-01-15 08:30:45\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "change-of-minute",
@@ -5544,7 +6144,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:45\" | change-of-minute(15) → #\"2024-01-15 12:15:45\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "change-of-month",
@@ -5571,7 +6174,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:45\" | change-of-month(6) → #\"2024-06-15 12:30:45\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "change-of-second",
@@ -5598,7 +6204,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:45\" | change-of-second(10) → #\"2024-01-15 12:30:10\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "change-of-year",
@@ -5625,7 +6234,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:45\" | change-of-year(2025) → #\"2025-01-15 12:30:45\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "clamp",
@@ -5664,7 +6276,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | clamp(#\"2024-01-01 00:00:00\", #\"2024-01-31 00:00:00\") → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "circular-distance",
@@ -5690,7 +6305,10 @@
     "Examples": [
       "#\"23:45:00\" | circular-distance(#\"01:00:00\") → #\"2024-01-01T01:15:00\" | duration-between(#\"2024-01-01T00:00:00\")",
       "#\"16:00:00\" | circular-distance(#\"23:45:00\") → #\"2024-01-01T07:45:00\" | duration-between(#\"2024-01-01T00:00:00\")"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "day-of-month",
@@ -5705,7 +6323,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | day-of-month → 15"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "day-of-week",
@@ -5720,7 +6341,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | day-of-week → 1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "day-of-year",
@@ -5735,7 +6359,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | day-of-year → 15"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "duration-between",
@@ -5760,7 +6387,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | duration-between(#\"2024-01-14 12:30:00\") → #\"2024-01-15 12:30:00\" | duration-between(#\"2024-01-14 12:30:00\")"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "floor-hour",
@@ -5775,7 +6405,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | floor-hour → #\"2024-01-15 12:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "floor-minute",
@@ -5790,7 +6423,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | floor-minute → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "forward",
@@ -5834,7 +6470,10 @@
     "Examples": [
       "#\"2024-01-15 12:30:00\" | forward(\"01:30:00\") → #\"2024-01-15 14:00:00\"",
       "#\"2024-01-15 12:30:00\" | forward(\"01:30:00\", 2) → #\"2024-01-15 15:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "hour",
@@ -5849,7 +6488,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | hour → \"12\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "hour-minute",
@@ -5864,7 +6506,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | hour-minute → \"12:30\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "hour-minute-second",
@@ -5879,7 +6524,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | hour-minute-second → \"12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "hour-of-day",
@@ -5894,7 +6542,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | hour-of-day → 12"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "iso-day-of-year",
@@ -5909,7 +6560,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | iso-day-of-year → 15"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "iso-week-of-year",
@@ -5924,7 +6578,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | iso-week-of-year → 3"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "iso-year-day",
@@ -5939,7 +6596,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | iso-year-day → \"2024-015\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "iso-year-week",
@@ -5954,7 +6614,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | iso-year-week → \"2024-W03\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "iso-year-week-day",
@@ -5969,7 +6632,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | iso-year-week-day → \"2024-W03-1\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "local-to-utc",
@@ -5994,7 +6660,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | local-to-utc(\"UTC\") → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "minute-of-day",
@@ -6009,7 +6678,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | minute-of-day → 750"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "minute-of-hour",
@@ -6024,7 +6696,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | minute-of-hour → 30"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "month",
@@ -6039,7 +6714,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | month → \"01\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "month-day",
@@ -6054,7 +6732,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | month-day → \"01-15\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "month-of-year",
@@ -6069,7 +6750,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | month-of-year → 1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "next-business-days",
@@ -6098,7 +6782,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | next-business-days(2) → #\"2024-01-17\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "next-day",
@@ -6113,7 +6800,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | next-day → #\"2024-01-16 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "next-month",
@@ -6128,7 +6818,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | next-month → #\"2024-02-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "next-weekday",
@@ -6155,7 +6848,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | next-weekday(\"Monday\") → #\"2024-01-22\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "next-weekday-or-same",
@@ -6182,7 +6878,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | next-weekday-or-same(\"Monday\") → #\"2024-01-15\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "next-year",
@@ -6197,7 +6896,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | next-year → #\"2025-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "previous-business-days",
@@ -6226,7 +6928,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | previous-business-days(2) → #\"2024-01-11\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "previous-day",
@@ -6241,7 +6946,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | previous-day → #\"2024-01-14 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "previous-month",
@@ -6256,7 +6964,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | previous-month → #\"2023-12-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "previous-weekday",
@@ -6283,7 +6994,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | previous-weekday(\"Monday\") → #\"2024-01-08\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "previous-weekday-or-same",
@@ -6310,7 +7024,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | previous-weekday-or-same(\"Monday\") → #\"2024-01-15\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "previous-year",
@@ -6325,7 +7042,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | previous-year → #\"2023-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "second-of-day",
@@ -6340,7 +7060,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | second-of-day → 45000"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "second-of-hour",
@@ -6355,7 +7078,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | second-of-hour → 1800"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "second-of-minute",
@@ -6370,7 +7096,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | second-of-minute → 0"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "set-time",
@@ -6397,7 +7126,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | set-time(\"01:30:00\") → #\"2024-01-15 01:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "set-to-local",
@@ -6410,7 +7142,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | set-to-local → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "set-to-utc",
@@ -6423,7 +7158,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | set-to-utc → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "utc-to-local",
@@ -6448,7 +7186,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | utc-to-local(\"UTC\") → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "year",
@@ -6463,7 +7204,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | year → \"2024\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "year-of-era",
@@ -6478,7 +7222,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | year-of-era → 2024"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "catholic-calendar",
@@ -6520,7 +7267,10 @@
     ],
     "Examples": [
       "2024 | catholic-calendar(\"Easter Sunday\") → #\"2024-03-31 00:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "first-in-month",
@@ -6547,7 +7297,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | first-in-month(\"Monday\") → #\"2024-01-01\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "first-of-month",
@@ -6562,7 +7315,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | first-of-month → #\"2024-01-01 00:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "first-of-year",
@@ -6577,7 +7333,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | first-of-year → #\"2024-01-01 00:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "last-in-month",
@@ -6604,7 +7363,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | last-in-month(\"Monday\") → #\"2024-01-29\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "last-of-month",
@@ -6619,7 +7381,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | last-of-month → #\"2024-01-31 00:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "last-of-year",
@@ -6634,7 +7399,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | last-of-year → #\"2024-12-31 00:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "length-of-month",
@@ -6649,7 +7417,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | length-of-month → 31"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "length-of-year",
@@ -6664,7 +7435,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | length-of-year → 366"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "datetime-to-date",
@@ -6679,7 +7453,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | datetime-to-date → #\"2024-01-15 00:00:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "invalid-to-date",
@@ -6704,7 +7481,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | invalid-to-date(#\"2024-01-01 00:00:00\") → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "null-to-date",
@@ -6729,7 +7509,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | null-to-date(#\"2024-01-01 00:00:00\") → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "after-substring",
@@ -6772,7 +7555,10 @@
     "Examples": [
       "\"Hello World\" | after-substring(\"lo\") → \" World\"",
       "\"Hello World\" | after-substring(\"lo\", 2) → \"(null)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "allcaps-case",
@@ -6787,7 +7573,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | allcaps-case → \"HELLOWORLD\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "append",
@@ -6820,7 +7609,10 @@
     ],
     "Examples": [
       "\"Hello World\" | append(\"Hi \") → \"Hello WorldHi \""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "append-new-line",
@@ -6841,7 +7633,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | append-new-line → \"Hello World\" | append-new-line"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "append-space",
@@ -6862,7 +7657,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | append-space → \"Hello World \""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "before-substring",
@@ -6905,7 +7703,10 @@
     "Examples": [
       "\"Hello World\" | before-substring(\"lo\") → \"Hel\"",
       "\"Hello World\" | before-substring(\"lo\", 2) → \"(null)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "camel-case",
@@ -6920,7 +7721,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | camel-case → \"helloWorld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "camel-snake-case",
@@ -6935,7 +7739,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | camel-snake-case → \"hello_World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "capitalize",
@@ -6948,7 +7755,10 @@
     "Parameters": [],
     "Examples": [
       "\"hello World\" | capitalize → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "code-point",
@@ -6961,7 +7771,10 @@
     "Parameters": [],
     "Examples": [
       "\"😀\" | code-point → 128512"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "cobol-case",
@@ -6976,7 +7789,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | cobol-case → \"HELLO-WORLD\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "count-distinct-chars",
@@ -6991,7 +7807,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | count-distinct-chars → 8"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "count-substring",
@@ -7018,7 +7837,10 @@
     ],
     "Examples": [
       "\"Hello World\" | count-substring(\"lo\") → 1"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "dot-case",
@@ -7033,7 +7855,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | dot-case → \"hello.world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "empty-to-null",
@@ -7046,7 +7871,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | empty-to-null → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "filter-chars",
@@ -7073,7 +7901,10 @@
     ],
     "Examples": [
       "#null → #null"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "extract-matches",
@@ -7099,7 +7930,10 @@
     "Behavior": "Returns whole matches without adding capture groups. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.",
     "Examples": [
       "\"a12b34\" | extract-matches(\"[0-9]+\") → {\"12\", \"34\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "first-chars",
@@ -7126,7 +7960,10 @@
     ],
     "Examples": [
       "\"Hello World\" | first-chars(2) → \"He\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "flat-case",
@@ -7141,7 +7978,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | flat-case → \"helloworld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "from-code-point",
@@ -7154,7 +7994,10 @@
     "Parameters": [],
     "Examples": [
       "128512 | from-code-point → \"😀\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "html-to-text",
@@ -7167,7 +8010,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | html-to-text → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "json-escaped-to-text",
@@ -7181,7 +8027,10 @@
     "Parameters": [],
     "Examples": [
       "\"He said \\\\\\\"hello\\\\\\\"\" | json-escaped-to-text → \"He said \\\"hello\\\"\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "kebab-case",
@@ -7196,7 +8045,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | kebab-case → \"hello-world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "last-chars",
@@ -7223,7 +8075,10 @@
     ],
     "Examples": [
       "\"Hello World\" | last-chars(2) → \"ld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "length",
@@ -7239,7 +8094,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | length → 11"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "lower",
@@ -7254,7 +8112,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | lower → \"hello world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "mask-to-text",
@@ -7279,7 +8140,10 @@
     ],
     "Examples": [
       "\"Hello World\" | mask-to-text(\"000-000\") → \"(null)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "namespace-case",
@@ -7294,7 +8158,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | namespace-case → \"hello::world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "null-to-empty",
@@ -7307,7 +8174,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | null-to-empty → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pad-center",
@@ -7345,7 +8215,10 @@
     ],
     "Examples": [
       "\"Hello World\" | pad-center(2, \"-\") → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pad-left",
@@ -7383,7 +8256,10 @@
     ],
     "Examples": [
       "\"Hello World\" | pad-left(2, \"-\") → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pad-right",
@@ -7421,7 +8297,10 @@
     ],
     "Examples": [
       "\"Hello World\" | pad-right(2, \"-\") → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pascal-case",
@@ -7436,7 +8315,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | pascal-case → \"HelloWorld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "pascal-snake-case",
@@ -7451,7 +8333,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | pascal-snake-case → \"Hello_World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "path-case",
@@ -7466,7 +8351,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | path-case → \"hello/world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prefix",
@@ -7493,7 +8381,10 @@
     ],
     "Examples": [
       "\"Hello World\" | prefix(\"Hi \") → \"Hi Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prefix-new-line",
@@ -7508,7 +8399,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prefix-new-line → \"Hello World\" | prefix-new-line"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prefix-new-line-if-missing",
@@ -7524,7 +8418,10 @@
     "Examples": [
       "\"Hello World\" | prefix-new-line-if-missing → \"Hello World\" | prefix-new-line",
       "\"Hello World\" | prefix-new-line | prefix-new-line-if-missing → \"Hello World\" | prefix-new-line"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prefix-space",
@@ -7539,7 +8436,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prefix-space → \" Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prefix-space-if-missing",
@@ -7555,7 +8455,10 @@
     "Examples": [
       "\"Hello World\" | prefix-space-if-missing → \" Hello World\"",
       "\" Hello World\" | prefix-space-if-missing → \" Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prepend",
@@ -7588,7 +8491,10 @@
     ],
     "Examples": [
       "\"Hello World\" | prepend(\"Hi \") → \"Hi Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prepend-new-line",
@@ -7609,7 +8515,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prepend-new-line → \"Hello World\" | prepend-new-line"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "prepend-space",
@@ -7630,7 +8539,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | prepend-space → \" Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "chars",
@@ -7645,7 +8557,10 @@
     "Parameters": [],
     "Examples": [
       "\"123\" | chars → {\"1\", \"2\", \"3\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "remove-chars",
@@ -7672,7 +8587,10 @@
     ],
     "Examples": [
       "\"Hello World\" | remove-chars(\"l\") → \"Heo Word\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "replace-chars",
@@ -7710,7 +8628,10 @@
     ],
     "Examples": [
       "\"Hello World\" | replace-chars(\"l\", \"x\") → \"Hexxo Worxd\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "replace-slice",
@@ -7759,7 +8680,10 @@
     ],
     "Examples": [
       "\"Hello World\" | replace-slice(1, 2, \"X\") → \"HXlo World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "retain-alpha",
@@ -7774,7 +8698,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | retain-alpha → \"HelloWorld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "retain-alpha-numeric",
@@ -7789,7 +8716,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | retain-alpha-numeric → \"HelloWorld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "retain-numeric",
@@ -7804,7 +8734,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | retain-numeric → \"(empty)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "retain-numeric-symbol",
@@ -7819,7 +8752,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | retain-numeric-symbol → \"(empty)\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "screaming-snake-case",
@@ -7834,7 +8770,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | screaming-snake-case → \"HELLO_WORLD\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "sentence-case",
@@ -7849,7 +8788,10 @@
     "Parameters": [],
     "Examples": [
       "\"hello World\" | sentence-case → \"Hello world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "split-lengths",
@@ -7880,7 +8822,10 @@
       "\"abcdef\" | split-lengths(5, 3) → {\"abcde\", \"f\"}",
       "\"abc\" | split-lengths → {\"abc\"}",
       "\"\" | split-lengths(5) → {}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "split-while",
@@ -7914,6 +8859,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each UTF-16 code unit after the first in the text supplied as pipeline input to this split-while call."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -7941,7 +8889,10 @@
     ],
     "Examples": [
       "\"Hello World\" | skip-first-chars(2) → \"llo World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "skip-last-chars",
@@ -7968,7 +8919,10 @@
     ],
     "Examples": [
       "\"Hello World\" | skip-last-chars(2) → \"Hello Wor\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "snake-case",
@@ -7983,7 +8937,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | snake-case → \"hello_world\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "suffix",
@@ -8010,7 +8967,10 @@
     ],
     "Examples": [
       "\"Hello World\" | suffix(\"!\") → \"Hello World!\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "suffix-new-line",
@@ -8025,7 +8985,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | suffix-new-line → \"Hello World\" | suffix-new-line"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "suffix-new-line-if-missing",
@@ -8041,7 +9004,10 @@
     "Examples": [
       "\"Hello World\" | suffix-new-line-if-missing → \"Hello World\" | suffix-new-line",
       "\"Hello World\" | suffix-new-line | suffix-new-line-if-missing → \"Hello World\" | suffix-new-line"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "suffix-space",
@@ -8056,7 +9022,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | suffix-space → \"Hello World \""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "suffix-space-if-missing",
@@ -8072,7 +9041,10 @@
     "Examples": [
       "\"Hello World\" | suffix-space-if-missing → \"Hello World \"",
       "\"Hello World \" | suffix-space-if-missing → \"Hello World \""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "swap-case",
@@ -8087,7 +9059,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | swap-case → \"hELLO wORLD\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text",
@@ -8121,7 +9096,10 @@
       "#null | text(\"foo\", \"bar\") → \"foobar\"",
       "{\"Nikola\", \"Tesla\"} | text(\"foo\", ..., \"bar\") → \"fooNikolaTeslabar\"",
       "{firstName := \"John\", lastName := \"Doe\"} | text(.lastName, \", \", .firstName) → \"Doe, John\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text-to-html",
@@ -8134,7 +9112,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | text-to-html → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text-to-json-escaped",
@@ -8148,7 +9129,10 @@
     "Parameters": [],
     "Examples": [
       "\"He said \\\"hello\\\"\" | text-to-json-escaped → \"He said \\\\\\\"hello\\\\\\\"\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text-to-mask",
@@ -8173,7 +9157,10 @@
     ],
     "Examples": [
       "\"Hello World\" | text-to-mask(\"000-000\") → \"000-000\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text-to-uri",
@@ -8186,7 +9173,10 @@
     "Parameters": [],
     "Examples": [
       "\"café & tea\" | text-to-uri → \"caf%C3%A9%20%26%20tea\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text-to-xml-escaped",
@@ -8200,7 +9190,10 @@
     "Parameters": [],
     "Examples": [
       "\"A & B < C\" | text-to-xml-escaped → \"A &amp; B &lt; C\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "title-case",
@@ -8215,7 +9208,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | title-case → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "token",
@@ -8257,7 +9253,10 @@
     "Examples": [
       "\"Hello World\" | token(1) → \"World\"",
       "\"Hello World\" | token(1, \" \") → \"World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "token-count",
@@ -8284,7 +9283,10 @@
     ],
     "Examples": [
       "\"Hello World\" | token-count(\" \") → 2"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "token-count-lexical",
@@ -8299,7 +9301,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello, David!\" | token-count-lexical → 4"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize",
@@ -8330,7 +9335,10 @@
     "Examples": [
       "\"Hello World\" | tokenize → {\"Hello\", \"World\"}",
       "\"Hello,World\" | tokenize(\",\") → {\"Hello\", \"World\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-lines",
@@ -8343,7 +9351,10 @@
     "Parameters": [],
     "Examples": [
       "\"first\" | suffix-new-line | suffix(\"second\") | tokenize-lines → {\"first\", \"second\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-camel",
@@ -8358,7 +9369,10 @@
     "Parameters": [],
     "Examples": [
       "\"firstName\" | tokenize-camel → {\"first\", \"Name\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-kebab",
@@ -8373,7 +9387,10 @@
     "Parameters": [],
     "Examples": [
       "\"first-name\" | tokenize-kebab → {\"first\", \"name\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-lexical",
@@ -8388,7 +9405,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello, David!\" | tokenize-lexical → {\"Hello\", \",\", \"David\", \"!\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-pascal",
@@ -8403,7 +9423,10 @@
     "Parameters": [],
     "Examples": [
       "\"HTTPServerURL\" | tokenize-pascal → {\"HTTP\", \"Server\", \"URL\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-regex",
@@ -8429,7 +9452,10 @@
     "Behavior": "Zero-width delimiters split at each match position with forward progress. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.",
     "Examples": [
       "\"a, b;c\" | tokenize-regex(\"[,;] *\") → {\"a\", \"b\", \"c\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-snake",
@@ -8444,7 +9470,10 @@
     "Parameters": [],
     "Examples": [
       "\"first_name\" | tokenize-snake → {\"first\", \"name\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "tokenize-words",
@@ -8459,7 +9488,10 @@
     "Parameters": [],
     "Examples": [
       "\"customer_HTTP-server_id\" | tokenize-words → {\"customer\", \"HTTP\", \"server\", \"id\"}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "train-case",
@@ -8474,7 +9506,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | train-case → \"Hello-World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "upper",
@@ -8489,7 +9524,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | upper → \"HELLO WORLD\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "uri-to-text",
@@ -8502,7 +9540,10 @@
     "Parameters": [],
     "Examples": [
       "\"caf%C3%A9%20%26%20tea\" | uri-to-text → \"café & tea\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "xml-escaped-to-text",
@@ -8516,7 +9557,10 @@
     "Parameters": [],
     "Examples": [
       "\"A &amp; B &lt; C\" | xml-escaped-to-text → \"A & B < C\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "text-to-datetime",
@@ -8559,7 +9603,10 @@
     "Examples": [
       "\"2024-01-15 12:30:00\" | text-to-datetime(\"yyyy-MM-dd HH:mm:ss\") → #\"2024-01-15 12:30:00\"",
       "\"01/15/2024 12:30:00\" | text-to-datetime(\"MM/dd/yyyy HH:mm:ss\", \"en-US\") → #\"2024-01-15 12:30:00\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "clean-whitespace",
@@ -8574,7 +9621,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | clean-whitespace → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "collapse-whitespace",
@@ -8589,7 +9639,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | collapse-whitespace → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "trim",
@@ -8604,7 +9657,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | trim → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "whitespaces-to-empty",
@@ -8619,7 +9675,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | whitespaces-to-empty → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "whitespaces-to-null",
@@ -8634,7 +9693,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | whitespaces-to-null → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "without-diacritics",
@@ -8649,7 +9711,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | without-diacritics → \"Hello World\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "without-whitespaces",
@@ -8664,7 +9729,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | without-whitespaces → \"HelloWorld\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "slug",
@@ -8679,7 +9747,10 @@
     "Parameters": [],
     "Examples": [
       "\"Crème brûlée recipe\" | slug → \"creme-brulee-recipe\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "generate",
@@ -8746,6 +9817,9 @@
       "Source": "custom",
       "Selection": "custom",
       "Summary": "Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -8773,7 +9847,10 @@
     ],
     "Examples": [
       "V(1, 2) | distance(V(4, 6)) → 5"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "dot",
@@ -8800,7 +9877,10 @@
     ],
     "Examples": [
       "V(1, 2, 3) | dot(V(4, 5, 6)) → 32"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "magnitude",
@@ -8813,7 +9893,10 @@
     "Parameters": [],
     "Examples": [
       "V(3, 4) | magnitude → 5"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "normalize",
@@ -8826,7 +9909,10 @@
     "Parameters": [],
     "Examples": [
       "V(3, 4) | normalize → V(0.6, 0.8)"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "min-by",
@@ -8863,6 +9949,10 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
     }
   },
   {
@@ -8900,6 +9990,10 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
     }
   },
   {
@@ -8947,6 +10041,10 @@
       "Source": "incoming",
       "Selection": "array-element",
       "Summary": "Visits each element of the array entering this call."
+    },
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
     }
   },
   {
@@ -8975,7 +10073,11 @@
     ],
     "Examples": [
       "82 | switch(less-than(50) => \"failed\", _ => \"passed\") → \"passed\""
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "try",
@@ -9003,7 +10105,11 @@
     ],
     "Examples": [
       "-5 | try(absolute => greater-than(10), _ => 0) → 0"
-    ]
+    ],
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    }
   },
   {
     "Name": "drill-down",
@@ -9043,6 +10149,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each value within each group of the grouping supplied as pipeline input to this drill-down call, in parent-group and value order."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -9080,6 +10189,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each existing key of the grouping supplied as pipeline input to this drill-up call, in group order, including keys of empty groups."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -9104,6 +10216,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each group of the grouping supplied as pipeline input to this roll-up call in source order for each prefix level, including empty groups. Existing keys determine dimensions; grouped values are copied without evaluating expressions against them."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -9128,6 +10243,9 @@
       "Source": "incoming",
       "Selection": "custom",
       "Summary": "Visits each group of the grouping supplied as pipeline input to this cube call in source order for each subset of dimensions, including empty groups. Existing keys determine dimensions; grouped values are copied without evaluating expressions against them."
+    },
+    "Schema": {
+      "Classification": "fixed"
     }
   },
   {
@@ -9164,7 +10282,10 @@
     ],
     "Examples": [
       "{{id := 1, tags := \"A\"}, {id := 1, tags := #null}} | implode-inner(.tags) → {{id := 1, tags := {\"A\"}}}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "top-groups",
@@ -9211,7 +10332,10 @@
     },
     "Examples": [
       "#{(\"BE\" => {1}), (\"FR\" => {2, 3})} | top-groups(1, $value | cardinality) → #{(\"FR\" => {2, 3})}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "grouping-sets",
@@ -9253,7 +10377,10 @@
     },
     "Examples": [
       "#{(T(\"BE\", 2025) => {1}), (T(\"BE\", 2026) => {2})} | grouping-sets(tuple(0), tuple()) → #{(T(\"BE\", #all) => {1, 2}), (T(#all, #all) => {1, 2})}"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "common-prefix",
@@ -9262,6 +10389,9 @@
     "Scope": "array",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Classification": "fixed"
+    },
     "Summary": "Returns the longest prefix shared by all accumulated strings.",
     "Behavior": "Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.",
     "Parameters": [],
@@ -9277,6 +10407,9 @@
     "Scope": "array",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Classification": "fixed"
+    },
     "Summary": "Returns the longest suffix shared by all accumulated strings.",
     "Behavior": "Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.",
     "Parameters": [],
@@ -9290,6 +10423,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Returns `true` when at least one accumulated boolean value is `true`.",
     "Parameters": [],
     "Examples": [
@@ -9306,6 +10443,10 @@
     "Scope": "array",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Returns the first non-null input value with the smallest absolute distance to the target.",
     "Behavior": "The result preserves the selected input value and its type. Numeric targets use subtract; other targets use duration-between. Compatibility and coercion follow those operations. Values whose distance is null are ignored. Ties preserve input order. A null target, empty input, or input without a valid distance returns null. Arithmetic overflow follows the underlying difference operation.",
     "Parameters": [
@@ -9336,6 +10477,7 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "T",
       "Output": "integer"
     },
@@ -9353,6 +10495,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Returns `true` only when every accumulated boolean value is `true`.",
     "Parameters": [],
     "Examples": [
@@ -9368,6 +10514,7 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "T",
       "Output": "nullable<T>"
     },
@@ -9385,6 +10532,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Stores the most recently accumulated item.",
     "Parameters": [],
     "Examples": [
@@ -9413,6 +10564,7 @@
     "Input": "array",
     "Output": "any",
     "Schema": {
+      "Classification": "contract",
       "Input": "text",
       "Output": "text"
     },
@@ -9447,6 +10599,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Tracks the greatest numeric value found during accumulation.",
     "Parameters": [],
     "Examples": [
@@ -9461,6 +10617,10 @@
     "IsPublic": true,
     "Aliases": [],
     "Scope": "array",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Tracks the smallest numeric value found during accumulation.",
     "Parameters": [],
     "Examples": [
@@ -9477,6 +10637,10 @@
     "Scope": "array",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Combines array elements in source order by repeatedly evaluating an expression against the accumulated value and current element.",
     "Behavior": "The combining expression receives a two-element tuple: `$0` is the accumulated value and `$1` is the current element. Without `initial`, the first element becomes the accumulated value and an empty array returns `null`. With `initial`, evaluation starts by combining it with the first element, and an empty array returns the initial value unchanged. `f~` invokes accumulator | f(current item); `~f` invokes current item | f(accumulator). Existing complete expressions and the normalization of an explicitly supplied leading $0 are preserved and are not deprecated.",
     "Parameters": [
@@ -9528,6 +10692,7 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
+      "Classification": "contract",
       "Input": "numeric",
       "Output": "numeric"
     },
@@ -9547,6 +10712,10 @@
     "Scope": "array",
     "Input": "array",
     "Output": "any",
+    "Schema": {
+      "Classification": "dynamic",
+      "DynamicReason": "The output schema depends on runtime values or dynamically evaluated expressions."
+    },
     "Summary": "Forwards only items satisfying the predicate to the wrapped accumulator.",
     "Behavior": "The input and final result types are inherited from the wrapped accumulator. Initialization, empty-input and no-match results, completion, and failures are unchanged. Null items are evaluated by the predicate like any other item. Predicate results must be Boolean. Matching items retain source order without materializing a filtered collection. Direct pipeline calls implicitly fold the wrapper.",
     "Traversal": {

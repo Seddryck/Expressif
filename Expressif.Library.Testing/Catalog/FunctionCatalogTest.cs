@@ -416,8 +416,10 @@ public class FunctionCatalogTest
             Assert.That(schema?.Output, Is.EqualTo("array<U>"));
             Assert.That(schema?.Parameters?["transformation"],
                 Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "U")));
-            Assert.That(schema?.Nullability, Is.EqualTo("propagate-input"));
+            Assert.That(schema?.Classification, Is.EqualTo("contract"));
+            Assert.That(schema?.NullableWhen, Is.EqualTo(new[] { "input" }));
             Assert.That(FunctionCatalog.Default.Find("field")?.Schema?.Intrinsic, Is.EqualTo("field"));
+            Assert.That(FunctionCatalog.Default.Find("field")?.Schema?.Classification, Is.EqualTo("intrinsic"));
         });
     }
 
@@ -433,7 +435,48 @@ public class FunctionCatalogTest
             Assert.That(coalesce?.Parameters?["expressions"].Combine, Is.EqualTo("union"));
             Assert.That(groupBy?.Output, Is.EqualTo("grouping<K, T>"));
             Assert.That(groupBy?.Parameters?["expressions"].Combine, Is.EqualTo("tuple"));
-            Assert.That(sum, Is.EqualTo(new FunctionSchemaDocumentation("numeric", "numeric")));
+            Assert.That(sum, Is.EqualTo(new FunctionSchemaDocumentation(
+                "numeric",
+                "numeric",
+                Classification: "contract")));
+        });
+    }
+
+    [Test]
+    public void Default_AllPublicCallables_HaveExactlyOneSchemaClassification()
+    {
+        var functions = FunctionCatalog.Default.Functions;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(functions, Has.All.Property(nameof(FunctionDocumentation.Schema)).Not.Null);
+            Assert.That(functions.Select(function => function.Schema!.Classification),
+                Is.All.AnyOf("fixed", "contract", "intrinsic", "dynamic"));
+            Assert.That(functions.Where(function => function.Schema!.Classification == "dynamic")
+                .Select(function => function.Schema!.DynamicReason), Is.All.Not.Empty);
+            Assert.That(functions.Where(function => function.Schema!.Classification == "contract")
+                .Select(function => function.Schema!.Input), Is.All.Not.Empty);
+            Assert.That(functions.Where(function => function.Schema!.Classification == "contract")
+                .Select(function => function.Schema!.Output), Is.All.Not.Empty);
+            Assert.That(functions.Where(function => function.Schema!.Classification == "intrinsic")
+                .Select(function => function.Schema!.Intrinsic), Is.All.Not.Empty);
+        });
+    }
+
+    [Test]
+    public void Default_PairDictionaryAndTupleVocabulary_Deserializes()
+    {
+        var pair = FunctionCatalog.Default.Find("pair")?.Schema;
+        var dictionary = FunctionCatalog.Default.Find("dictionary")?.Schema;
+        var tuple = FunctionCatalog.Default.Find("to-tuple")?.Schema;
+        var zip = FunctionCatalog.Default.Find("zip")?.Schema;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(pair?.Output, Is.EqualTo("pair<K, V>"));
+            Assert.That(dictionary?.Intrinsic, Is.EqualTo("dictionary"));
+            Assert.That(tuple?.Output, Is.EqualTo("variadic-tuple<T>"));
+            Assert.That(zip?.NullableWhen, Is.EqualTo(new[] { "input", "array" }));
         });
     }
 

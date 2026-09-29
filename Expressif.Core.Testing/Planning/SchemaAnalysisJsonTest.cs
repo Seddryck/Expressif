@@ -90,4 +90,37 @@ public class SchemaAnalysisJsonTest
             Assert.That(output.GetProperty("items").GetProperty("type").GetString(), Is.EqualTo("record"));
         });
     }
+
+    [Test]
+    public void Serialize_PairDictionaryAndOpenTuple_UsesExpandedShapes()
+    {
+        var analysis = new SchemaAnalysis(
+            new PairLogicalSchema(
+                new ScalarLogicalSchema("text"),
+                new ScalarLogicalSchema("integer")),
+            new DictionaryLogicalSchema(
+                new ScalarLogicalSchema("text"),
+                new TupleLogicalSchema(
+                    [new ScalarLogicalSchema("integer")],
+                    AdditionalItems: new ScalarLogicalSchema("numeric"))),
+            SchemaAnalysisCompleteness.Known,
+            [],
+            []);
+
+        using var document = JsonDocument.Parse(SchemaAnalysisJson.Serialize(analysis));
+        var input = document.RootElement.GetProperty("input");
+        var output = document.RootElement.GetProperty("output");
+        var tuple = output.GetProperty("values");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(input.GetProperty("type").GetString(), Is.EqualTo("pair"));
+            Assert.That(input.GetProperty("key").GetProperty("type").GetString(), Is.EqualTo("text"));
+            Assert.That(output.GetProperty("type").GetString(), Is.EqualTo("dictionary"));
+            Assert.That(tuple.GetProperty("type").GetString(), Is.EqualTo("tuple"));
+            Assert.That(tuple.GetProperty("items").GetArrayLength(), Is.EqualTo(1));
+            Assert.That(tuple.GetProperty("additionalItems").GetProperty("type").GetString(),
+                Is.EqualTo("numeric"));
+        });
+    }
 }

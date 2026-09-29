@@ -47,7 +47,10 @@ public static class LogicalPlannerFactory
                                     parameter.Value.Combine),
                                 StringComparer.Ordinal),
                             function.Schema.Intrinsic,
-                            function.Schema.Nullability)),
+                            function.Schema.Nullability,
+                            function.Schema.Classification,
+                            function.Schema.DynamicReason,
+                            function.Schema.NullableWhen)),
                 function.Parameters.Select(parameter => new PlannerParameterMetadata(
                     new PlannerParameterDescriptor(
                         parameter.Name,

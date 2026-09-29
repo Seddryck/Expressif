@@ -107,13 +107,25 @@ public static class LogicalSchemaAnalyzer
                     Intersect(leftArray.Items, rightArray.Items, $"{path}.items"),
                     IsNullable(left) || IsNullable(right));
             }
-            if (left is TupleLogicalSchema leftTuple
-                && right is TupleLogicalSchema rightTuple
-                && leftTuple.Items.Count == rightTuple.Items.Count)
+            if (left is TupleLogicalSchema leftTuple && right is TupleLogicalSchema rightTuple)
             {
-                return new TupleLogicalSchema(
-                    leftTuple.Items.Select((item, index) =>
-                        Intersect(item, rightTuple.Items[index], $"{path}.items[{index}]")).ToArray(),
+                var tuple = IntersectTuple(leftTuple, rightTuple, path);
+                if (tuple is not null)
+                    return tuple;
+            }
+            if (left is PairLogicalSchema leftPair && right is PairLogicalSchema rightPair)
+            {
+                return new PairLogicalSchema(
+                    Intersect(leftPair.Key, rightPair.Key, $"{path}.key"),
+                    Intersect(leftPair.Value, rightPair.Value, $"{path}.value"),
+                    IsNullable(left) || IsNullable(right));
+            }
+            if (left is DictionaryLogicalSchema leftDictionary
+                && right is DictionaryLogicalSchema rightDictionary)
+            {
+                return new DictionaryLogicalSchema(
+                    Intersect(leftDictionary.Keys, rightDictionary.Keys, $"{path}.keys"),
+                    Intersect(leftDictionary.Values, rightDictionary.Values, $"{path}.values"),
                     IsNullable(left) || IsNullable(right));
             }
             if (left is GroupingLogicalSchema leftGrouping && right is GroupingLogicalSchema rightGrouping)
@@ -143,6 +155,33 @@ public static class LogicalSchemaAnalyzer
                 : SchemaAnalysisCompleteness.Known;
         }
 
+        private TupleLogicalSchema? IntersectTuple(
+            TupleLogicalSchema left,
+            TupleLogicalSchema right,
+            string path)
+        {
+            if ((left.Items.Count > right.Items.Count && right.AdditionalItems is null)
+                || (right.Items.Count > left.Items.Count && left.AdditionalItems is null))
+            {
+                return null;
+            }
+            var count = Math.Max(left.Items.Count, right.Items.Count);
+            var items = new LogicalSchema[count];
+            for (var index = 0; index < count; index++)
+            {
+                var leftItem = index < left.Items.Count ? left.Items[index] : left.AdditionalItems!;
+                var rightItem = index < right.Items.Count ? right.Items[index] : right.AdditionalItems!;
+                items[index] = Intersect(leftItem, rightItem, $"{path}.items[{index}]");
+            }
+            var additionalItems = left.AdditionalItems is not null && right.AdditionalItems is not null
+                ? Intersect(left.AdditionalItems, right.AdditionalItems, $"{path}.additionalItems")
+                : null;
+            return new TupleLogicalSchema(
+                items,
+                IsNullable(left) || IsNullable(right),
+                additionalItems);
+        }
+
         private Requirement Require(LogicalValue value, LogicalSchema expected, string path) => value switch
         {
             LogicalLiteral => new Requirement(new NoInputLogicalSchema(), new NoInputLogicalSchema()),
@@ -154,9 +193,9 @@ public static class LogicalSchemaAnalyzer
         private Requirement RequireCall(LogicalCall call, LogicalSchema expected, string path)
         {
             var schema = call.Function.Schema;
-            if (schema?.Intrinsic is not null)
+            if (schema?.Classification == "intrinsic" && schema.Intrinsic is not null)
                 return RequireIntrinsic(call, expected, path, schema.Intrinsic);
-            return schema?.Input is not null || schema?.Output is not null
+            return schema?.Classification == "contract"
                 ? RequireContract(call, expected, path, schema)
                 : RequireGenericCall(call, path);
         }
@@ -169,7 +208,8 @@ public static class LogicalSchemaAnalyzer
             {
                 "field" => RequireField(call, expected, path),
                 "select-fields" => RequireSelectFields(call, expected, path),
-                "array" or "tuple" or "record" or "put" or "named-entry"
+                "array" or "tuple" or "record" or "dictionary" or "grouping"
+                    or "put" or "put-present" or "put-absent" or "named-entry"
                     => RequireGenericCall(call, path),
                 _ => throw new InvalidOperationException(
                     $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
@@ -341,9 +381,11 @@ public static class LogicalSchemaAnalyzer
             string path)
         {
             var schema = call.Function.Schema;
-            if (schema?.Intrinsic is not null)
+            if (schema?.Classification == "dynamic")
+                return InferDynamicCall(call, input, enclosing, path, schema.DynamicReason);
+            if (schema?.Classification == "intrinsic" && schema.Intrinsic is not null)
                 return InferIntrinsic(call, input, enclosing, path, schema.Intrinsic);
-            return schema?.Input is not null || schema?.Output is not null
+            return schema?.Classification == "contract"
                 ? InferContract(call, input, enclosing, path, schema)
                 : InferGenericCall(call, input, enclosing, path);
         }
@@ -360,7 +402,11 @@ public static class LogicalSchemaAnalyzer
                 "array" => InferArray(call, input, enclosing, path),
                 "tuple" => InferTuple(call, input, enclosing, path),
                 "record" => InferRecord(call, input, enclosing, path),
-                "put" => InferPut(call, input, enclosing, path),
+                "dictionary" => InferAssociative(call, input, enclosing, path, grouping: false),
+                "grouping" => InferAssociative(call, input, enclosing, path, grouping: true),
+                "put" => InferPut(call, input, enclosing, path, RecordMutation.Always),
+                "put-present" => InferPut(call, input, enclosing, path, RecordMutation.WhenPresent),
+                "put-absent" => InferPut(call, input, enclosing, path, RecordMutation.WhenAbsent),
                 "named-entry" => InferNamedEntry(call, input, enclosing, path),
                 _ => throw new InvalidOperationException(
                     $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
@@ -379,6 +425,7 @@ public static class LogicalSchemaAnalyzer
             var parameterOutputs = new Dictionary<
                 string,
                 (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)>(StringComparer.Ordinal);
+            var parameterResults = new Dictionary<string, List<LogicalSchema>>(StringComparer.Ordinal);
             for (var index = 0; index < call.Arguments.Count; index++)
             {
                 var argument = call.Arguments[index];
@@ -390,6 +437,12 @@ public static class LogicalSchemaAnalyzer
                 if (parameterContract?.Input is not null)
                     Bind(ParseSchema(parameterContract.Input), context, bindings, $"{path}.parameters.{argument.Parameter.Name}.input");
                 var result = Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
+                if (!parameterResults.TryGetValue(argument.Parameter.Name, out var results))
+                {
+                    results = [];
+                    parameterResults.Add(argument.Parameter.Name, results);
+                }
+                results.Add(result);
                 if (parameterContract?.Output is not null)
                 {
                     if (!parameterOutputs.TryGetValue(argument.Parameter.Name, out var collected))
@@ -414,9 +467,21 @@ public static class LogicalSchemaAnalyzer
             var output = contract.Output is null
                 ? FromType(call.Function.Output)
                 : Resolve(ParseSchema(contract.Output), bindings);
-            return contract.Nullability == "propagate-input" && IsNullable(input)
+            return IsConditionallyNullable(contract, input, parameterResults)
                 ? WithNullability(output, true)
                 : output;
+        }
+
+        private static bool IsConditionallyNullable(
+            PlannerSchemaDescriptor contract,
+            LogicalSchema input,
+            IReadOnlyDictionary<string, List<LogicalSchema>> parameterResults)
+        {
+            if (contract.Nullability == "propagate-input" && IsNullable(input))
+                return true;
+            return contract.NullableWhen?.Any(source => source == "input"
+                ? IsNullable(input)
+                : parameterResults.TryGetValue(source, out var results) && results.Any(IsNullable)) == true;
         }
 
         private LogicalSchema ExpectedParameterOutput(
@@ -510,11 +575,83 @@ public static class LogicalSchemaAnalyzer
             LogicalSchema input,
             LogicalSchema enclosing,
             string path)
-            => new TupleLogicalSchema(Enumerable.Range(0, call.Arguments.Count)
-                .Select(index => InferArgument(call, index, input, enclosing, path))
-                .Where(schema => schema is not null)
-                .Cast<LogicalSchema>()
-                .ToArray());
+        {
+            var items = new List<LogicalSchema>();
+            LogicalSchema? additionalItems = null;
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                var value = InferArgument(call, index, input, enclosing, path);
+                if (value is null)
+                    continue;
+                if (!argument.IsSpread && additionalItems is null)
+                {
+                    items.Add(value);
+                    continue;
+                }
+                if (!argument.IsSpread)
+                {
+                    additionalItems = Union(additionalItems!, value);
+                    continue;
+                }
+                switch (value)
+                {
+                    case TupleLogicalSchema tuple when additionalItems is null:
+                        items.AddRange(tuple.Items);
+                        additionalItems = tuple.AdditionalItems;
+                        break;
+                    case TupleLogicalSchema tuple:
+                        additionalItems = tuple.Items
+                            .Append(tuple.AdditionalItems ?? new AnyLogicalSchema())
+                            .Aggregate(additionalItems!, Union);
+                        break;
+                    case ArrayLogicalSchema array:
+                        additionalItems = additionalItems is null
+                            ? array.Items
+                            : Union(additionalItems, array.Items);
+                        break;
+                    default:
+                        additionalItems = new AnyLogicalSchema();
+                        diagnostics.Add(new SchemaAnalysisDiagnostic(
+                            "schema.dynamic",
+                            $"{path}.arguments[{index}]",
+                            "Tuple spread has an unknown item schema."));
+                        break;
+                }
+            }
+            return new TupleLogicalSchema(items, AdditionalItems: additionalItems);
+        }
+
+        private LogicalSchema InferAssociative(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path,
+            bool grouping)
+        {
+            LogicalSchema? keys = null;
+            LogicalSchema? values = null;
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                var result = InferArgument(call, index, input, enclosing, path);
+                var pair = result switch
+                {
+                    PairLogicalSchema direct => direct,
+                    ArrayLogicalSchema { Items: PairLogicalSchema spread } when argument.IsSpread => spread,
+                    _ => null,
+                };
+                if (pair is null)
+                    continue;
+                keys = keys is null ? pair.Key : Union(keys, pair.Key);
+                values = values is null ? pair.Value : Union(values, pair.Value);
+            }
+            keys ??= new AnyLogicalSchema();
+            values ??= new AnyLogicalSchema();
+            return grouping
+                ? new GroupingLogicalSchema(keys, values)
+                : new DictionaryLogicalSchema(keys, values);
+        }
 
         private LogicalSchema InferRecord(
             LogicalCall call,
@@ -530,7 +667,8 @@ public static class LogicalSchemaAnalyzer
                 if (!argument.IsExplicit || argument.Value is null)
                     continue;
                 var valueSchema = InferArgument(call, index, input, enclosing, path);
-                if (argument.Value is LogicalCall entry && entry.Function.Name == "named-entry")
+                if (argument.Value is LogicalCall entry
+                    && entry.Function.Schema?.Intrinsic == "named-entry")
                 {
                     var name = LiteralText(entry, "name");
                     if (name is not null && valueSchema is not null)
@@ -550,7 +688,8 @@ public static class LogicalSchemaAnalyzer
             LogicalCall call,
             LogicalSchema input,
             LogicalSchema enclosing,
-            string path)
+            string path,
+            RecordMutation mutation)
         {
             var source = input as RecordLogicalSchema
                 ?? new RecordLogicalSchema(new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal));
@@ -563,13 +702,49 @@ public static class LogicalSchemaAnalyzer
                 if (!argument.IsExplicit || argument.Value is not LogicalCall entry)
                     continue;
                 var valueSchema = InferArgument(call, index, input, enclosing, path);
-                if (entry.Function.Name != "named-entry")
+                if (entry.Function.Schema?.Intrinsic != "named-entry")
                     continue;
                 var name = LiteralText(entry, "name");
                 if (name is not null && valueSchema is not null)
-                    fields[name] = new LogicalSchemaField(valueSchema);
+                    ApplyRecordMutation(fields, source, name, valueSchema, mutation);
             }
             return new RecordLogicalSchema(fields, source.AllowsAdditionalFields, source.IsNullable);
+        }
+
+        private void ApplyRecordMutation(
+            IDictionary<string, LogicalSchemaField> fields,
+            RecordLogicalSchema source,
+            string name,
+            LogicalSchema value,
+            RecordMutation mutation)
+        {
+            fields.TryGetValue(name, out var existing);
+            switch (mutation)
+            {
+                case RecordMutation.Always:
+                    fields[name] = new LogicalSchemaField(value);
+                    break;
+                case RecordMutation.WhenPresent when existing is not null:
+                    fields[name] = new LogicalSchemaField(
+                        existing.Optional ? Union(existing.Schema, value) : value,
+                        existing.Optional);
+                    break;
+                case RecordMutation.WhenPresent when source.AllowsAdditionalFields:
+                    fields[name] = new LogicalSchemaField(
+                        Union(new AnyLogicalSchema(), value),
+                        Optional: true);
+                    break;
+                case RecordMutation.WhenAbsent when existing is not null:
+                    fields[name] = existing.Optional
+                        ? new LogicalSchemaField(Union(existing.Schema, value))
+                        : existing;
+                    break;
+                case RecordMutation.WhenAbsent:
+                    fields[name] = source.AllowsAdditionalFields
+                        ? new LogicalSchemaField(new AnyLogicalSchema())
+                        : new LogicalSchemaField(value);
+                    break;
+            }
         }
 
         private LogicalSchema InferNamedEntry(
@@ -594,6 +769,21 @@ public static class LogicalSchemaAnalyzer
             if (result is AnyLogicalSchema)
                 return Dynamic(path, $"output of '{call.Function.Name}'");
             return IsNullable(input) ? WithNullability(result, true) : result;
+        }
+
+        private LogicalSchema InferDynamicCall(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path,
+            string? reason)
+        {
+            for (var index = 0; index < call.Arguments.Count; index++)
+                InferArgument(call, index, input, enclosing, path);
+            if (reason is null)
+                return Dynamic(path, $"output of '{call.Function.Name}'");
+            diagnostics.Add(new SchemaAnalysisDiagnostic("schema.dynamic", path, reason));
+            return new AnyLogicalSchema();
         }
 
         private LogicalSchema? InferArgument(
@@ -683,6 +873,24 @@ public static class LogicalSchemaAnalyzer
                 for (var index = 0; index < tuple.Items.Count; index++)
                     Bind(expression.Arguments[index], tuple.Items[index], bindings, $"{path}.items[{index}]");
             }
+            if (expression.Name == "variadic-tuple" && actual is TupleLogicalSchema variadicTuple)
+            {
+                var item = variadicTuple.Items
+                    .Concat(variadicTuple.AdditionalItems is null ? [] : [variadicTuple.AdditionalItems])
+                    .DefaultIfEmpty(new AnyLogicalSchema())
+                    .Aggregate(Union);
+                Bind(expression.Arguments.Single(), item, bindings, $"{path}.items");
+            }
+            if (expression.Name == "pair" && actual is PairLogicalSchema pair)
+            {
+                Bind(expression.Arguments[0], pair.Key, bindings, $"{path}.key");
+                Bind(expression.Arguments[1], pair.Value, bindings, $"{path}.value");
+            }
+            if (expression.Name == "dictionary" && actual is DictionaryLogicalSchema dictionary)
+            {
+                Bind(expression.Arguments[0], dictionary.Keys, bindings, $"{path}.keys");
+                Bind(expression.Arguments[1], dictionary.Values, bindings, $"{path}.values");
+            }
             if (expression.Name == "grouping" && actual is GroupingLogicalSchema grouping)
             {
                 Bind(expression.Arguments[0], grouping.Keys, bindings, $"{path}.keys");
@@ -701,6 +909,15 @@ public static class LogicalSchemaAnalyzer
                 "nullable" => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
                 "array" => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
                 "tuple" => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
+                "variadic-tuple" => new TupleLogicalSchema(
+                    [],
+                    AdditionalItems: Resolve(expression.Arguments.Single(), bindings)),
+                "pair" => new PairLogicalSchema(
+                    Resolve(expression.Arguments[0], bindings),
+                    Resolve(expression.Arguments[1], bindings)),
+                "dictionary" => new DictionaryLogicalSchema(
+                    Resolve(expression.Arguments[0], bindings),
+                    Resolve(expression.Arguments[1], bindings)),
                 "grouping" => new GroupingLogicalSchema(
                     Resolve(expression.Arguments[0], bindings),
                     Resolve(expression.Arguments[1], bindings)),
@@ -773,7 +990,9 @@ public static class LogicalSchemaAnalyzer
                 "array" => new ArrayLogicalSchema(new AnyLogicalSchema()),
                 "record" => new RecordLogicalSchema(
                     new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal)),
-                "tuple" => new TupleLogicalSchema([]),
+                "tuple" => new TupleLogicalSchema([], AdditionalItems: new AnyLogicalSchema()),
+                "pair" => new PairLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
+                "dictionary" => new DictionaryLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
                 "grouping" => new GroupingLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
                 "null" => new AnyLogicalSchema(true),
                 _ => new ScalarLogicalSchema(normalized),
@@ -885,6 +1104,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema value => value with { IsNullable = nullable },
             ArrayLogicalSchema value => value with { IsNullable = nullable },
             TupleLogicalSchema value => value with { IsNullable = nullable },
+            PairLogicalSchema value => value with { IsNullable = nullable },
+            DictionaryLogicalSchema value => value with { IsNullable = nullable },
             GroupingLogicalSchema value => value with { IsNullable = nullable },
             UnionLogicalSchema value => value with { IsNullable = nullable },
             ConflictingLogicalSchema value => value with { IsNullable = nullable },
@@ -899,6 +1120,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema value => value.IsNullable,
             ArrayLogicalSchema value => value.IsNullable,
             TupleLogicalSchema value => value.IsNullable,
+            PairLogicalSchema value => value.IsNullable,
+            DictionaryLogicalSchema value => value.IsNullable,
             GroupingLogicalSchema value => value.IsNullable,
             UnionLogicalSchema value => value.IsNullable,
             ConflictingLogicalSchema value => value.IsNullable,
@@ -910,7 +1133,10 @@ public static class LogicalSchemaAnalyzer
             AnyLogicalSchema => true,
             RecordLogicalSchema record => record.Fields.Values.Any(field => ContainsAny(field.Schema)),
             ArrayLogicalSchema array => ContainsAny(array.Items),
-            TupleLogicalSchema tuple => tuple.Items.Any(ContainsAny),
+            TupleLogicalSchema tuple => tuple.Items.Any(ContainsAny)
+                || (tuple.AdditionalItems is not null && ContainsAny(tuple.AdditionalItems)),
+            PairLogicalSchema pair => ContainsAny(pair.Key) || ContainsAny(pair.Value),
+            DictionaryLogicalSchema dictionary => ContainsAny(dictionary.Keys) || ContainsAny(dictionary.Values),
             GroupingLogicalSchema grouping => ContainsAny(grouping.Keys) || ContainsAny(grouping.Items),
             UnionLogicalSchema union => union.Alternatives.Any(ContainsAny),
             ConflictingLogicalSchema conflict => ContainsAny(conflict.Left) || ContainsAny(conflict.Right),
@@ -922,7 +1148,10 @@ public static class LogicalSchemaAnalyzer
             ConflictingLogicalSchema => true,
             RecordLogicalSchema record => record.Fields.Values.Any(field => ContainsConflict(field.Schema)),
             ArrayLogicalSchema array => ContainsConflict(array.Items),
-            TupleLogicalSchema tuple => tuple.Items.Any(ContainsConflict),
+            TupleLogicalSchema tuple => tuple.Items.Any(ContainsConflict)
+                || (tuple.AdditionalItems is not null && ContainsConflict(tuple.AdditionalItems)),
+            PairLogicalSchema pair => ContainsConflict(pair.Key) || ContainsConflict(pair.Value),
+            DictionaryLogicalSchema dictionary => ContainsConflict(dictionary.Keys) || ContainsConflict(dictionary.Values),
             GroupingLogicalSchema grouping => ContainsConflict(grouping.Keys) || ContainsConflict(grouping.Items),
             UnionLogicalSchema union => union.Alternatives.Any(ContainsConflict),
             _ => false,
@@ -936,6 +1165,8 @@ public static class LogicalSchemaAnalyzer
             RecordLogicalSchema => "record",
             ArrayLogicalSchema => "array",
             TupleLogicalSchema => "tuple",
+            PairLogicalSchema => "pair",
+            DictionaryLogicalSchema => "dictionary",
             GroupingLogicalSchema => "grouping",
             UnionLogicalSchema => "union",
             ConflictingLogicalSchema => "conflict",
@@ -943,6 +1174,13 @@ public static class LogicalSchemaAnalyzer
         };
 
         private sealed record Requirement(LogicalSchema Input, LogicalSchema Enclosing);
+
+        private enum RecordMutation
+        {
+            Always,
+            WhenPresent,
+            WhenAbsent,
+        }
 
         private sealed record SchemaExpression(string Name, IReadOnlyList<SchemaExpression> Arguments)
         {

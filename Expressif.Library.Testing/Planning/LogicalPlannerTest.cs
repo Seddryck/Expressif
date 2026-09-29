@@ -127,7 +127,8 @@ public class LogicalPlannerTest
             Assert.That(call.Function.Schema?.Output, Is.EqualTo("array<U>"));
             Assert.That(call.Function.Schema?.Parameters?["transformation"],
                 Is.EqualTo(new PlannerParameterSchemaDescriptor("T", "U")));
-            Assert.That(call.Function.Schema?.Nullability, Is.EqualTo("propagate-input"));
+            Assert.That(call.Function.Schema?.Classification, Is.EqualTo("contract"));
+            Assert.That(call.Function.Schema?.NullableWhen, Is.EqualTo(new[] { "input" }));
         });
     }
 

@@ -41,8 +41,27 @@ public sealed record ArrayLogicalSchema(LogicalSchema Items, bool IsNullable = f
 /// <summary>
 /// A fixed-size tuple with a schema for each position.
 /// </summary>
-public sealed record TupleLogicalSchema(IReadOnlyList<LogicalSchema> Items, bool IsNullable = false)
+public sealed record TupleLogicalSchema(
+    IReadOnlyList<LogicalSchema> Items,
+    bool IsNullable = false,
+    LogicalSchema? AdditionalItems = null)
     : LogicalSchema;
+
+/// <summary>
+/// A key/value pair with independently inferred component schemas.
+/// </summary>
+public sealed record PairLogicalSchema(
+    LogicalSchema Key,
+    LogicalSchema Value,
+    bool IsNullable = false) : LogicalSchema;
+
+/// <summary>
+/// A dictionary with independently inferred key and value schemas.
+/// </summary>
+public sealed record DictionaryLogicalSchema(
+    LogicalSchema Keys,
+    LogicalSchema Values,
+    bool IsNullable = false) : LogicalSchema;
 
 /// <summary>
 /// A grouping whose keys identify arrays of values with a common item schema.

@@ -59,7 +59,10 @@
     "Examples": [
       "{{id := 1}, {id := 2}} | filter(exists({{customer-id := 1}}, .id, .customer-id)) → {{id := 1}}",
       "1 | exists(#{(1 => {})}, @_) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-single",
@@ -81,7 +84,10 @@
       "{} | is-single → #false",
       "{1, 2} | is-single → #false",
       "{#null} | is-single → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-tuple",
@@ -96,7 +102,10 @@
       "T(1, \"foo\") | is-tuple → #true"
     ],
     "Input": "any",
-    "Output": "boolean"
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "has-arity",
@@ -125,7 +134,10 @@
       "T(1, 2) | has-arity(2) → #true"
     ],
     "Input": "tuple",
-    "Output": "boolean"
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "and",
@@ -150,7 +162,10 @@
     ],
     "Examples": [
       "#true | and(#true) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-present",
@@ -175,7 +190,10 @@
     ],
     "Examples": [
       "{name := \"Alice\", age := #null} | is-present(age) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-absent",
@@ -200,7 +218,10 @@
     ],
     "Examples": [
       "{name := \"Alice\"} | is-absent(age) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-false",
@@ -216,7 +237,10 @@
     "Parameters": [],
     "Examples": [
       "#true | is-false → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-false-or-null",
@@ -232,7 +256,10 @@
     "Parameters": [],
     "Examples": [
       "#true | is-false-or-null → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-identical-to",
@@ -260,7 +287,10 @@
     ],
     "Examples": [
       "#true | is-identical-to(#true) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-true",
@@ -276,7 +306,10 @@
     "Parameters": [],
     "Examples": [
       "#true | is-true → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-true-or-null",
@@ -292,7 +325,10 @@
     "Parameters": [],
     "Examples": [
       "#true | is-true-or-null → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "not",
@@ -305,7 +341,10 @@
     "Parameters": [],
     "Examples": [
       "#true | not → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "implies",
@@ -330,7 +369,10 @@
     ],
     "Examples": [
       "#true | implies(#false) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "majority",
@@ -358,7 +400,10 @@
     ],
     "Examples": [
       "4 | majority(is-positive, is-even, is-less-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "satisfies-exactly",
@@ -397,7 +442,10 @@
     ],
     "Examples": [
       "4 | satisfies-exactly(2, is-positive, is-even, is-greater-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "satisfies-at-least",
@@ -436,7 +484,10 @@
     ],
     "Examples": [
       "4 | satisfies-at-least(2, is-positive, is-even, is-greater-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "satisfies-at-most",
@@ -475,7 +526,10 @@
     ],
     "Examples": [
       "4 | satisfies-at-most(2, is-positive, is-even, is-greater-than(10)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nand",
@@ -500,7 +554,10 @@
     ],
     "Examples": [
       "#true | nand(#true) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "or",
@@ -525,7 +582,10 @@
     ],
     "Examples": [
       "#true | or(add(1)) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "nor",
@@ -550,7 +610,10 @@
     ],
     "Examples": [
       "#false | nor(#false) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "xor",
@@ -575,7 +638,10 @@
     ],
     "Examples": [
       "#true | xor(#true) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "xnor",
@@ -600,7 +666,10 @@
     ],
     "Examples": [
       "#true | xnor(#true) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-code-point",
@@ -613,7 +682,10 @@
     "Parameters": [],
     "Examples": [
       "128512 | is-code-point → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-equal-to",
@@ -641,7 +713,10 @@
     ],
     "Examples": [
       "10 | is-equal-to(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-greater-than",
@@ -669,7 +744,10 @@
     ],
     "Examples": [
       "10 | is-greater-than(5) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-greater-than-or-equal",
@@ -697,7 +775,10 @@
     ],
     "Examples": [
       "10 | is-greater-than-or-equal(5) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-whole-number",
@@ -715,7 +796,10 @@
       "10 | is-whole-number → #true"
     ],
     "Input": null,
-    "Output": null
+    "Output": null,
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-less-than",
@@ -743,7 +827,10 @@
     ],
     "Examples": [
       "10 | is-less-than(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-less-than-or-equal",
@@ -771,7 +858,10 @@
     ],
     "Examples": [
       "10 | is-less-than-or-equal(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-negative",
@@ -787,7 +877,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-negative → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-negative-or-zero",
@@ -803,7 +896,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-negative-or-zero → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-one",
@@ -819,7 +915,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-one → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-opposite",
@@ -847,7 +946,10 @@
     ],
     "Examples": [
       "10 | is-opposite(5) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-positive",
@@ -863,7 +965,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-positive → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-positive-or-zero",
@@ -879,7 +984,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-positive-or-zero → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-interval",
@@ -907,7 +1015,10 @@
     ],
     "Examples": [
       "#null | is-within-interval(#null) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-zero",
@@ -923,7 +1034,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-zero → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-zero-or-null",
@@ -939,7 +1053,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-zero-or-null → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "has-remainder",
@@ -978,7 +1095,10 @@
     ],
     "Examples": [
       "10 | has-remainder(3, 1) → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-divisible-by",
@@ -1006,7 +1126,10 @@
     ],
     "Examples": [
       "10 | is-divisible-by(3) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-even",
@@ -1022,7 +1145,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-even → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-odd",
@@ -1038,7 +1164,10 @@
     "Parameters": [],
     "Examples": [
       "10 | is-odd → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-null",
@@ -1053,7 +1182,10 @@
     "Parameters": [],
     "Examples": [
       "#null | is-null → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-type",
@@ -1081,7 +1213,10 @@
       "\"42\" | is-type(:numeric) → #false"
     ],
     "Input": "any",
-    "Output": "boolean"
+    "Output": "boolean",
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-after",
@@ -1109,7 +1244,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-after(#\"2024-01-14 12:30:00\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-after-or-same-instant",
@@ -1137,7 +1275,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-after-or-same-instant(#\"2024-01-14 12:30:00\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-before",
@@ -1165,7 +1306,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-before(#\"2024-01-14 12:30:00\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-before-or-same-instant",
@@ -1193,7 +1337,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-before-or-same-instant(#\"2024-01-14 12:30:00\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-business-day",
@@ -1209,7 +1356,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-business-day → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-contained-in",
@@ -1237,7 +1387,10 @@
     ],
     "Examples": [
       "#null | is-contained-in(#null) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-future",
@@ -1253,7 +1406,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-future → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-future-or-now",
@@ -1269,7 +1425,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-future-or-now → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-future-or-today",
@@ -1285,7 +1444,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-future-or-today → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-past",
@@ -1301,7 +1463,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-past → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-past-or-now",
@@ -1317,7 +1482,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-past-or-now → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-in-the-past-or-today",
@@ -1333,7 +1501,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-in-the-past-or-today → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-leap-year",
@@ -1349,7 +1520,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-leap-year → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-on-the-day",
@@ -1365,7 +1539,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-on-the-day → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-on-the-hour",
@@ -1381,7 +1558,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-on-the-hour → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-on-the-minute",
@@ -1397,7 +1577,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-on-the-minute → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-same-instant",
@@ -1425,7 +1608,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-same-instant(#\"2024-01-14 12:30:00\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-today",
@@ -1441,7 +1627,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-today → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-tomorrow",
@@ -1457,7 +1646,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-tomorrow → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-weekday",
@@ -1485,7 +1677,10 @@
     ],
     "Examples": [
       "#\"2024-01-15\" | is-weekday(\"Monday\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-weekend",
@@ -1501,7 +1696,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-weekend → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-current-month",
@@ -1517,7 +1715,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-current-month → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-current-week",
@@ -1533,7 +1734,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-current-week → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-current-year",
@@ -1549,7 +1753,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-current-year → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-last-month",
@@ -1565,7 +1772,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-last-month → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-last-week",
@@ -1581,7 +1791,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-last-week → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-last-year",
@@ -1597,7 +1810,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-last-year → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-next-days",
@@ -1625,7 +1841,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-next-days(2) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-previous-days",
@@ -1653,7 +1872,10 @@
     ],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-previous-days(2) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-upcoming-month",
@@ -1669,7 +1891,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-upcoming-month → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-upcoming-week",
@@ -1685,7 +1910,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-upcoming-week → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-within-upcoming-year",
@@ -1701,7 +1929,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-within-upcoming-year → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-yesterday",
@@ -1717,7 +1948,10 @@
     "Parameters": [],
     "Examples": [
       "#\"2024-01-15 12:30:00\" | is-yesterday → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "contains",
@@ -1759,7 +1993,10 @@
     "Examples": [
       "\"Hello World\" | contains(\"Hello\") → #true",
       "\"Hello World\" | contains(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "ends-with",
@@ -1801,7 +2038,10 @@
     "Examples": [
       "\"Hello World\" | ends-with(\"Hello\") → #false",
       "\"Hello World\" | ends-with(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-any-of",
@@ -1844,7 +2084,10 @@
     "Examples": [
       "#null | is-any-of(#null) → #false",
       "#null | is-any-of(#null) → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-empty",
@@ -1860,7 +2103,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-empty → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-empty-or-null",
@@ -1876,7 +2122,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-empty-or-null → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-equivalent-to",
@@ -1919,7 +2168,10 @@
     "Examples": [
       "\"Hello World\" | is-equivalent-to(\"Hello\") → #false",
       "\"Hello World\" | is-equivalent-to(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-lower-case",
@@ -1935,7 +2187,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-lower-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-after",
@@ -1978,7 +2233,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-after(\"Hello\") → #true",
       "\"Hello World\" | is-sorted-after(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-after-or-equivalent-to",
@@ -2021,7 +2279,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-after-or-equivalent-to(\"Hello\") → #true",
       "\"Hello World\" | is-sorted-after-or-equivalent-to(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-before",
@@ -2064,7 +2325,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-before(\"Hello\") → #false",
       "\"Hello World\" | is-sorted-before(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-sorted-before-or-equivalent-to",
@@ -2107,7 +2371,10 @@
     "Examples": [
       "\"Hello World\" | is-sorted-before-or-equivalent-to(\"Hello\") → #false",
       "\"Hello World\" | is-sorted-before-or-equivalent-to(\"Hello\") → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-upper-case",
@@ -2123,7 +2390,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | is-upper-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-date",
@@ -2138,7 +2408,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-date → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-datetime",
@@ -2153,7 +2426,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-datetime → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-numeric",
@@ -2168,7 +2444,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-numeric → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-regex",
@@ -2210,7 +2489,10 @@
     "Examples": [
       "\"Hello World\" | matches-regex(\"^Hello\") → #true",
       "\"Hello World\" | matches-regex(\"^Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-time",
@@ -2225,7 +2507,10 @@
     "Parameters": [],
     "Examples": [
       "\"Hello World\" | matches-time → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "starts-with",
@@ -2267,7 +2552,10 @@
     "Examples": [
       "\"Hello World\" | starts-with(\"Hello\") → #true",
       "\"Hello World\" | starts-with(\"Hello\") → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-kebab-case",
@@ -2281,7 +2569,10 @@
     "Examples": [
       "\"first-name\" | is-kebab-case → #true",
       "\"first--name\" | is-kebab-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-snake-case",
@@ -2295,7 +2586,10 @@
     "Examples": [
       "\"first_name\" | is-snake-case → #true",
       "\"first--name\" | is-snake-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-camel-case",
@@ -2309,7 +2603,10 @@
     "Examples": [
       "\"firstName\" | is-camel-case → #true",
       "\"first--name\" | is-camel-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-pascal-case",
@@ -2323,7 +2620,10 @@
     "Examples": [
       "\"FirstName\" | is-pascal-case → #true",
       "\"first--name\" | is-pascal-case → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-not-null",
@@ -2339,7 +2639,10 @@
     "Examples": [
       "#null | is-not-null → #false",
       "10 | is-not-null → #true"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "is-currency-symbol",
@@ -2354,7 +2657,10 @@
     "Examples": [
       "\"$\" | is-currency-symbol → #true",
       "\"USD\" | is-currency-symbol → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   },
   {
     "Name": "matches-currency",
@@ -2370,6 +2676,9 @@
       "\"$1,000.01\" | matches-currency → #true",
       "\"100.01 €\" | matches-currency → #true",
       "\"$5,00\" | matches-currency → #false"
-    ]
+    ],
+    "Schema": {
+      "Classification": "fixed"
+    }
   }
 ]

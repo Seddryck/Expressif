@@ -79,7 +79,10 @@ public sealed record PlannerSchemaDescriptor(
     string? Output = null,
     IReadOnlyDictionary<string, PlannerParameterSchemaDescriptor>? Parameters = null,
     string? Intrinsic = null,
-    string? Nullability = null);
+    string? Nullability = null,
+    string? Classification = null,
+    string? DynamicReason = null,
+    IReadOnlyList<string>? NullableWhen = null);
 
 /// <summary>
 /// The input and output schema relationship of an operator argument.

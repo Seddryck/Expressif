@@ -232,6 +232,85 @@ public class LogicalSchemaAnalyzerTest
         });
     }
 
+    [Test]
+    public void Analyze_PairAndDictionary_PreserveComponentSchemas()
+    {
+        var pair = Analyze("pair(\"code\", 42)").Output as PairLogicalSchema
+            ?? throw new AssertionException("Expected a pair schema.");
+        var dictionary = Analyze("dictionary(pair(\"first\", 1), pair(\"second\", 2))").Output
+            as DictionaryLogicalSchema
+            ?? throw new AssertionException("Expected a dictionary schema.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(pair.Key, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(pair.Value, Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(dictionary.Keys, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(dictionary.Values, Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(Analyze("pair(\"code\", 42) | pair-value").Output,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+        });
+    }
+
+    [Test]
+    public void Analyze_OpenEndedTuple_SeparatesKnownPrefixFromAdditionalItems()
+    {
+        var spread = Analyze("tuple(1, ...{\"a\", \"b\"})").Output as TupleLogicalSchema
+            ?? throw new AssertionException("Expected a tuple schema.");
+        var converted = Analyze("{1, 2} | to-tuple").Output as TupleLogicalSchema
+            ?? throw new AssertionException("Expected a tuple schema.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(spread.Items, Is.EqualTo(new LogicalSchema[] { new ScalarLogicalSchema("decimal") }));
+            Assert.That(spread.AdditionalItems, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(converted.Items, Is.Empty);
+            Assert.That(converted.AdditionalItems, Is.EqualTo(new ScalarLogicalSchema("decimal")));
+        });
+    }
+
+    [Test]
+    public void Analyze_ConditionalNullability_ObservesConfiguredParameter()
+    {
+        var regular = AsArray(Analyze("{1} | zip({\"a\"})").Output);
+        var nullable = AsArray(Analyze("{1} | zip(#null)").Output);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(regular.IsNullable, Is.False);
+            Assert.That(nullable.IsNullable, Is.True);
+        });
+    }
+
+    [Test]
+    public void Analyze_RecordMutationIntrinsics_DistinguishPresenceConditions()
+    {
+        var present = AsRecord(Analyze("{a := 1} | put-present(a := \"x\", b := #true)").Output);
+        var absent = AsRecord(Analyze("{a := 1} | put-absent(a := \"x\", b := #true)").Output);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(present.Fields["a"].Schema, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(present.Fields.ContainsKey("b"), Is.False);
+            Assert.That(absent.Fields["a"].Schema, Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(absent.Fields["b"].Schema, Is.EqualTo(new ScalarLogicalSchema("boolean")));
+        });
+    }
+
+    [Test]
+    public void Analyze_DynamicClassification_ReportsCatalogReason()
+    {
+        var analysis = Analyze("\"{}\" | parse-json");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Dynamic));
+            Assert.That(analysis.Diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Code == "schema.dynamic"
+                && diagnostic.Message.Contains("runtime values", StringComparison.Ordinal)));
+        });
+    }
+
     private static SchemaAnalysis Analyze(string expression, LogicalSchema? input = null)
         => LogicalSchemaAnalyzer.Analyze(LogicalPlanner.Plan(ExpressionParser.Parse(expression)), input);
 
