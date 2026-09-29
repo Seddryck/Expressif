@@ -72,6 +72,30 @@ public class LogicalSchemaAnalyzerTest
         });
     }
 
+    [Test]
+    public void Analyze_Pipeline_ReportsInputAndOutputForEachLogicalNode()
+    {
+        var analysis = Analyze(".customer | upper | length");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(analysis.Nodes.Select(node => (node.Path, node.Kind, node.Operator)), Is.EqualTo(new[]
+            {
+                ("plan", "pipeline", (string?)null),
+                ("plan.items[0]", "call", "field"),
+                ("plan.items[0].arguments[0].value", "literal", (string?)null),
+                ("plan.items[1]", "call", "upper"),
+                ("plan.items[2]", "call", "length"),
+            }));
+            Assert.That(analysis.Nodes.Single(node => node.Path == "plan.items[0]").Output,
+                Is.EqualTo(new ScalarLogicalSchema("text", true)));
+            Assert.That(analysis.Nodes.Single(node => node.Path == "plan.items[1]").Input,
+                Is.EqualTo(new ScalarLogicalSchema("text", true)));
+            Assert.That(analysis.Nodes.Single(node => node.Path == "plan.items[2]").Output,
+                Is.EqualTo(new ScalarLogicalSchema("integer", true)));
+        });
+    }
+
     private static SchemaAnalysis Analyze(string expression, LogicalSchema? input = null)
         => LogicalSchemaAnalyzer.Analyze(LogicalPlanner.Plan(ExpressionParser.Parse(expression)), input);
 

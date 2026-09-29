@@ -61,10 +61,21 @@ public enum SchemaAnalysisCompleteness
 public sealed record SchemaAnalysisDiagnostic(string Code, string Path, string Message);
 
 /// <summary>
+/// Input and output schema information for one logical-plan node.
+/// </summary>
+public sealed record SchemaAnalysisNode(
+    string Path,
+    string Kind,
+    string? Operator,
+    LogicalSchema Input,
+    LogicalSchema Output);
+
+/// <summary>
 /// The input requirements and output schema discovered for a logical plan.
 /// </summary>
 public sealed record SchemaAnalysis(
     LogicalSchema Input,
     LogicalSchema Output,
     SchemaAnalysisCompleteness Completeness,
-    IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics);
+    IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics,
+    IReadOnlyList<SchemaAnalysisNode> Nodes);

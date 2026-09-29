@@ -13,16 +13,17 @@ public static class LogicalSchemaAnalyzer
         var input = declaredInput is null
             ? requirement
             : analyzer.Intersect(declaredInput, requirement, "plan.input");
-        var output = analyzer.InferPipeline(plan.Pipeline, input, "plan");
+        var output = analyzer.InferPipeline(plan.Pipeline, input, input, "plan");
         var completeness = analyzer.Completeness(input, output);
-        return new SchemaAnalysis(input, output, completeness, analyzer.Diagnostics);
+        return new SchemaAnalysis(input, output, completeness, analyzer.Diagnostics, analyzer.Nodes);
     }
 
     private sealed class Analyzer
     {
         private readonly List<SchemaAnalysisDiagnostic> diagnostics = [];
+        private readonly Dictionary<string, SchemaAnalysisNode> nodes = new(StringComparer.Ordinal);
         private readonly IReadOnlyDictionary<string, Func<LogicalCall, LogicalSchema, string, Requirement>> requirementRules;
-        private readonly IReadOnlyDictionary<string, Func<LogicalCall, LogicalSchema, string, LogicalSchema>> inferenceRules;
+        private readonly IReadOnlyDictionary<string, Func<LogicalCall, LogicalSchema, LogicalSchema, string, LogicalSchema>> inferenceRules;
 
         public Analyzer()
         {
@@ -34,11 +35,11 @@ public static class LogicalSchemaAnalyzer
                 ["map"] = RequireMap,
                 ["flat-map"] = RequireFlatMap,
             };
-            inferenceRules = new Dictionary<string, Func<LogicalCall, LogicalSchema, string, LogicalSchema>>(
+            inferenceRules = new Dictionary<string, Func<LogicalCall, LogicalSchema, LogicalSchema, string, LogicalSchema>>(
                 StringComparer.Ordinal)
             {
                 ["field"] = InferField,
-                ["filter"] = static (_, input, _) => input,
+                ["filter"] = InferFilter,
                 ["map"] = InferMap,
                 ["flat-map"] = InferFlatMap,
                 ["array"] = InferArray,
@@ -47,10 +48,14 @@ public static class LogicalSchemaAnalyzer
                 ["put"] = InferPut,
                 ["put-present"] = InferPut,
                 ["put-absent"] = InferPut,
+                ["named-entry"] = InferNamedEntry,
             };
         }
 
         public IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics => diagnostics;
+
+        public IReadOnlyList<SchemaAnalysisNode> Nodes
+            => nodes.Values.OrderBy(node => node.Path, StringComparer.Ordinal).ToArray();
 
         public LogicalSchema RequirePipeline(LogicalPipeline pipeline, LogicalSchema expected, string path)
         {
@@ -65,11 +70,16 @@ public static class LogicalSchemaAnalyzer
             return Intersect(current, enclosing, $"{path}.input");
         }
 
-        public LogicalSchema InferPipeline(LogicalPipeline pipeline, LogicalSchema input, string path)
+        public LogicalSchema InferPipeline(
+            LogicalPipeline pipeline,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
             var current = input;
             for (var index = 0; index < pipeline.Items.Count; index++)
-                current = Infer(pipeline.Items[index], current, $"{path}.items[{index}]");
+                current = Infer(pipeline.Items[index], current, enclosing, $"{path}.items[{index}]");
+            Capture(pipeline, path, input, current);
             return current;
         }
 
@@ -240,26 +250,45 @@ public static class LogicalSchemaAnalyzer
             return new Requirement(input, enclosing);
         }
 
-        private LogicalSchema Infer(LogicalValue value, LogicalSchema input, string path) => value switch
+        private LogicalSchema Infer(
+            LogicalValue value,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
-            LogicalLiteral literal => FromType(literal.Type),
-            LogicalPipeline pipeline => InferPipeline(pipeline, input, path),
-            LogicalCall call => InferCall(call, input, path),
-            _ => Dynamic(path, value.GetType().Name),
-        };
-
-        private LogicalSchema InferCall(LogicalCall call, LogicalSchema input, string path)
-        {
-            return inferenceRules.TryGetValue(call.Function.Name, out var rule)
-                ? rule(call, input, path)
-                : InferGenericCall(call, input, path);
+            var output = value switch
+            {
+                LogicalLiteral literal => FromType(literal.Type),
+                LogicalPipeline pipeline => InferPipeline(pipeline, input, enclosing, path),
+                LogicalCall call => InferCall(call, input, enclosing, path),
+                _ => Dynamic(path, value.GetType().Name),
+            };
+            Capture(value, path, input, output);
+            return output;
         }
 
-        private LogicalSchema InferField(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferCall(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
+            return inferenceRules.TryGetValue(call.Function.Name, out var rule)
+                ? rule(call, input, enclosing, path)
+                : InferGenericCall(call, input, enclosing, path);
+        }
+
+        private LogicalSchema InferField(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            InferArgument(call, "name", input, enclosing, path);
             var name = LiteralText(call, "name");
+            var source = call.ContextDepth == 0 ? input : enclosing;
             if (name is not null
-                && input is RecordLogicalSchema record
+                && source is RecordLogicalSchema record
                 && record.Fields.TryGetValue(name, out var field))
             {
                 return field.Optional ? WithNullability(field.Schema, true) : field.Schema;
@@ -267,53 +296,85 @@ public static class LogicalSchemaAnalyzer
             return Dynamic(path, name is null ? "field with a dynamic name" : $"field '{name}'");
         }
 
-        private LogicalSchema InferMap(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferFilter(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
-            var item = input is ArrayLogicalSchema array ? array.Items : new AnyLogicalSchema();
-            var transformation = Argument(call, "transformation")?.Value;
-            return new ArrayLogicalSchema(transformation is null
-                ? new AnyLogicalSchema()
-                : Infer(transformation, item, $"{path}.transformation"));
+            InferArgument(call, "predicate", input, enclosing, path);
+            return input;
         }
 
-        private LogicalSchema InferFlatMap(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferMap(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
-            var item = input is ArrayLogicalSchema array ? array.Items : new AnyLogicalSchema();
-            var transformation = Argument(call, "expression")?.Value;
-            var transformed = transformation is null
-                ? new AnyLogicalSchema()
-                : Infer(transformation, item, $"{path}.expression");
+            var transformed = InferArgument(call, "transformation", input, enclosing, path);
+            return new ArrayLogicalSchema(transformed ?? new AnyLogicalSchema());
+        }
+
+        private LogicalSchema InferFlatMap(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            var transformed = InferArgument(call, "expression", input, enclosing, path)
+                ?? new AnyLogicalSchema();
             return transformed is ArrayLogicalSchema result
                 ? result
                 : new ArrayLogicalSchema(Dynamic(path, "flat-map result item"));
         }
 
-        private LogicalSchema InferArray(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferArray(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
             var item = (LogicalSchema)new AnyLogicalSchema();
-            foreach (var argument in call.Arguments.Where(argument => argument.IsExplicit && argument.Value is not null))
-                item = Union(item, Infer(argument.Value!, input, path));
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var value = InferArgument(call, index, input, enclosing, path);
+                if (value is not null)
+                    item = Union(item, value);
+            }
             return new ArrayLogicalSchema(item);
         }
 
-        private LogicalSchema InferTuple(LogicalCall call, LogicalSchema input, string path)
-            => new TupleLogicalSchema(call.Arguments
-                .Where(argument => argument.IsExplicit && argument.Value is not null)
-                .Select(argument => Infer(argument.Value!, input, path))
+        private LogicalSchema InferTuple(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+            => new TupleLogicalSchema(Enumerable.Range(0, call.Arguments.Count)
+                .Select(index => InferArgument(call, index, input, enclosing, path))
+                .Where(schema => schema is not null)
+                .Cast<LogicalSchema>()
                 .ToArray());
 
-        private LogicalSchema InferRecord(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferRecord(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
             var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
             var dynamic = false;
-            foreach (var argument in call.Arguments.Where(argument => argument.IsExplicit && argument.Value is not null))
+            for (var index = 0; index < call.Arguments.Count; index++)
             {
+                var argument = call.Arguments[index];
+                if (!argument.IsExplicit || argument.Value is null)
+                    continue;
+                var valueSchema = InferArgument(call, index, input, enclosing, path);
                 if (argument.Value is LogicalCall entry && entry.Function.Name == "named-entry")
                 {
                     var name = LiteralText(entry, "name");
-                    var value = Argument(entry, "value")?.Value;
-                    if (name is not null && value is not null)
-                        fields[name] = new LogicalSchemaField(Infer(value, input, $"{path}.{name}"));
+                    if (name is not null && valueSchema is not null)
+                        fields[name] = new LogicalSchemaField(valueSchema);
                 }
                 else
                 {
@@ -325,32 +386,110 @@ public static class LogicalSchemaAnalyzer
             return new RecordLogicalSchema(fields, AllowsAdditionalFields: dynamic);
         }
 
-        private LogicalSchema InferPut(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferPut(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
             var source = input as RecordLogicalSchema
                 ?? new RecordLogicalSchema(new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal));
             var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
             foreach (var field in source.Fields)
                 fields.Add(field.Key, field.Value);
-            foreach (var argument in call.Arguments.Where(argument => argument.IsExplicit && argument.Value is LogicalCall))
+            for (var index = 0; index < call.Arguments.Count; index++)
             {
-                var entry = (LogicalCall)argument.Value!;
+                var argument = call.Arguments[index];
+                if (!argument.IsExplicit || argument.Value is not LogicalCall entry)
+                    continue;
+                var valueSchema = InferArgument(call, index, input, enclosing, path);
                 if (entry.Function.Name != "named-entry")
                     continue;
                 var name = LiteralText(entry, "name");
-                var value = Argument(entry, "value")?.Value;
-                if (name is not null && value is not null)
-                    fields[name] = new LogicalSchemaField(Infer(value, input, $"{path}.{name}"));
+                if (name is not null && valueSchema is not null)
+                    fields[name] = new LogicalSchemaField(valueSchema);
             }
             return new RecordLogicalSchema(fields, source.AllowsAdditionalFields, source.IsNullable);
         }
 
-        private LogicalSchema InferGenericCall(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferNamedEntry(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
         {
+            InferArgument(call, "name", input, enclosing, path);
+            return InferArgument(call, "value", input, enclosing, path) ?? new AnyLogicalSchema();
+        }
+
+        private LogicalSchema InferGenericCall(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            for (var index = 0; index < call.Arguments.Count; index++)
+                InferArgument(call, index, input, enclosing, path);
             var result = FromType(call.Function.Output);
             if (result is AnyLogicalSchema)
                 return Dynamic(path, $"output of '{call.Function.Name}'");
             return IsNullable(input) ? WithNullability(result, true) : result;
+        }
+
+        private LogicalSchema? InferArgument(
+            LogicalCall call,
+            string name,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            var index = call.Arguments
+                .Select((argument, index) => (argument, index))
+                .FirstOrDefault(item => item.argument.Parameter.Name == name).index;
+            return index < call.Arguments.Count && call.Arguments[index].Parameter.Name == name
+                ? InferArgument(call, index, input, enclosing, path)
+                : null;
+        }
+
+        private LogicalSchema? InferArgument(
+            LogicalCall call,
+            int index,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            var argument = call.Arguments[index];
+            if (!argument.IsExplicit || argument.Value is null)
+                return null;
+            var context = ArgumentContext(argument, input, enclosing);
+            return Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
+        }
+
+        private static LogicalSchema ArgumentContext(
+            LogicalArgument argument,
+            LogicalSchema input,
+            LogicalSchema enclosing)
+        {
+            if (argument.Parameter.Evaluation?.Context == "traversal")
+                return input is ArrayLogicalSchema array ? array.Items : new AnyLogicalSchema();
+            return argument.Parameter.Evaluation?.Source switch
+            {
+                "enclosing" or "surrounding" => enclosing,
+                "incoming" => input,
+                _ => enclosing,
+            };
+        }
+
+        private void Capture(LogicalValue value, string path, LogicalSchema input, LogicalSchema output)
+        {
+            var (kind, operation) = value switch
+            {
+                LogicalPipeline => ("pipeline", null),
+                LogicalCall call => ("call", call.Function.Name),
+                LogicalLiteral => ("literal", null),
+                _ => (value.GetType().Name, null),
+            };
+            nodes[path] = new SchemaAnalysisNode(path, kind, operation, input, output);
         }
 
         private LogicalSchema FromType(string type)
