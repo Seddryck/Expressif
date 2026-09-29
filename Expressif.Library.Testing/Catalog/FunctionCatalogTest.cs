@@ -428,6 +428,8 @@ public class FunctionCatalogTest
     {
         var coalesce = FunctionCatalog.Default.Find("coalesce")?.Schema;
         var groupBy = FunctionCatalog.Default.Find("group-by")?.Schema;
+        var rankBy = FunctionCatalog.Default.Find("rank-by")?.Schema;
+        var sortBy = FunctionCatalog.Default.Find("sort-by")?.Schema;
         var summarize = FunctionCatalog.Default.Find("summarize")?.Schema;
         var sum = FunctionCatalog.Default.Find("sum", "accumulator")?.Schema;
         var with = FunctionCatalog.Default.Find("with")?.Schema;
@@ -437,6 +439,11 @@ public class FunctionCatalogTest
             Assert.That(coalesce?.Parameters?["expressions"].Combine, Is.EqualTo("union"));
             Assert.That(groupBy?.Output, Is.EqualTo("grouping<K, T>"));
             Assert.That(groupBy?.Parameters?["expressions"].Combine, Is.EqualTo("tuple"));
+            Assert.That((sortBy?.Input, sortBy?.Output), Is.EqualTo(("array<T>", "array<T>")));
+            Assert.That(sortBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
+            Assert.That((rankBy?.Input, rankBy?.Output),
+                Is.EqualTo(("array<T>", "grouping<integer, T>")));
+            Assert.That(rankBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
             Assert.That(summarize?.Input, Is.EqualTo("grouping<K, T>"));
             Assert.That(summarize?.Output, Is.EqualTo("dictionary<K, U>"));
             Assert.That(summarize?.Parameters?["expression"],

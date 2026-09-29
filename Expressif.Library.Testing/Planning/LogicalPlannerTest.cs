@@ -361,6 +361,8 @@ public class LogicalPlannerTest
         Assert.Multiple(() =>
         {
             Assert.That(criterion.Function.Name, Is.EqualTo("sort-criterion"));
+            Assert.That((criterion.Function.Schema?.Classification, criterion.Function.Schema?.Intrinsic),
+                Is.EqualTo(("intrinsic", "sort-criterion")));
             Assert.That(((LogicalCall)criterion.Arguments[0].Value!).Function.Name, Is.EqualTo("tuple-at"));
             Assert.That(criterion.Arguments[1].Value,
                 Is.EqualTo(new LogicalLiteral("type", "integer")));

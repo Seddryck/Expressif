@@ -211,6 +211,7 @@ public static class LogicalSchemaAnalyzer
                 "explode-field" or "explode-field-outer" => RequireExplode(call, expected, path),
                 "with" => RequireWith(call, expected, path),
                 "spread-entry" => RequireSpreadEntry(call, expected, path),
+                "sort-criterion" => RequireSortCriterion(call, path),
                 "array" or "tuple" or "record" or "dictionary" or "grouping"
                     or "put" or "put-present" or "put-absent" or "named-entry"
                     => RequireGenericCall(call, path),
@@ -404,6 +405,17 @@ public static class LogicalSchemaAnalyzer
                 : Require(value, expected, $"{path}.arguments[0].value");
         }
 
+        private Requirement RequireSortCriterion(LogicalCall call, string path)
+        {
+            var selector = Argument(call, "selector")?.Value;
+            if (selector is null)
+                return DynamicRequirement(path, "sort criterion selector");
+            var requirement = Require(selector, new AnyLogicalSchema(), $"{path}.arguments[0].value");
+            return new Requirement(
+                Intersect(requirement.Input, requirement.Enclosing, $"{path}.selector"),
+                new AnyLogicalSchema());
+        }
+
         private Requirement RequireGenericCall(LogicalCall call, string path)
         {
             var input = FromType(call.Function.Input);
@@ -490,6 +502,7 @@ public static class LogicalSchemaAnalyzer
                 "put-absent" => InferPut(call, input, enclosing, path, RecordMutation.WhenAbsent),
                 "named-entry" => InferNamedEntry(call, input, enclosing, path),
                 "spread-entry" => InferSpreadEntry(call, input, enclosing, path),
+                "sort-criterion" => InferSortCriterion(call, input, enclosing, path),
                 _ => throw new InvalidOperationException(
                     $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
             };
@@ -975,6 +988,22 @@ public static class LogicalSchemaAnalyzer
             LogicalSchema enclosing,
             string path)
             => InferArgument(call, "value", input, enclosing, path) ?? new AnyLogicalSchema();
+
+        private LogicalSchema InferSortCriterion(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            InferArgument(call, "selector", input, enclosing, path);
+            InferArgument(call, "type", input, enclosing, path);
+            InferArgument(call, "ascending", input, enclosing, path);
+            InferArgument(call, "nulls-first", input, enclosing, path);
+            var type = LiteralText(call, "type");
+            return type is null
+                ? Dynamic(path, "sort criterion coercion type")
+                : WithNullability(FromType(type), true);
+        }
 
         private LogicalSchema InferGenericCall(
             LogicalCall call,

@@ -303,6 +303,37 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_SortAndRankContracts_PreserveOriginalItemSchema()
+    {
+        var item = new RecordLogicalSchema(new Dictionary<string, LogicalSchemaField>
+        {
+            ["name"] = new(new ScalarLogicalSchema("text")),
+            ["score"] = new(new ScalarLogicalSchema("decimal")),
+        });
+        var analysis = Analyze(
+            "sort-by(.name -> :text) | rank-by(.score -> :integer)",
+            new ArrayLogicalSchema(item));
+        var sorted = AsRecord(AsArray(
+            analysis.Nodes.Single(node => node.Path == "plan.items[0]").Output).Items);
+        var ranked = analysis.Output as GroupingLogicalSchema
+            ?? throw new AssertionException("Expected a grouping schema.");
+        var rankedItem = AsRecord(ranked.Items);
+        var criterion = analysis.Nodes.Single(
+            node => node.Path == "plan.items[0].arguments[0].value");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(sorted.Fields["name"].Schema, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(sorted.Fields["score"].Schema, Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(ranked.Keys, Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(rankedItem.Fields.Keys, Is.EqualTo(sorted.Fields.Keys));
+            Assert.That(rankedItem.Fields["name"], Is.EqualTo(sorted.Fields["name"]));
+            Assert.That(rankedItem.Fields["score"], Is.EqualTo(sorted.Fields["score"]));
+            Assert.That(criterion.Output, Is.EqualTo(new ScalarLogicalSchema("text", true)));
+        });
+    }
+
+    [Test]
     public void Analyze_WithIntrinsic_UsesProjectionRecordAsBodyContext()
     {
         var analysis = Analyze("with(label := .name | upper, record(value := .label))");
@@ -584,6 +615,12 @@ public class LogicalSchemaAnalyzerTest
         var summary = AsRecord(summarized.Values);
         var mappedSummary = AsRecord(AsArray(
             analysis.Nodes.Single(node => node.Path == "plan.items[5]").Output).Items);
+        var sortedSummary = AsRecord(AsArray(
+            analysis.Nodes.Single(node => node.Path == "plan.items[6]").Output).Items);
+        var rankedSummary = analysis.Nodes.Single(node => node.Path == "plan.items[7]").Output
+            as GroupingLogicalSchema
+            ?? throw new AssertionException("Expected rank-by to produce a grouping schema.");
+        var output = AsRecord(AsArray(analysis.Output).Items);
 
         Assert.Multiple(() =>
         {
@@ -599,8 +636,18 @@ public class LogicalSchemaAnalyzerTest
             Assert.That(mappedSummary.Fields.Keys,
                 Is.EqualTo(new[] { "best-rankings", "nickname", "rank-sum", "ranking-count" }));
             Assert.That(mappedSummary.AllowsAdditionalFields, Is.False);
-            Assert.That(analysis.Output, Is.TypeOf<ArrayLogicalSchema>());
-            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Dynamic));
+            Assert.That(sortedSummary, Is.EqualTo(mappedSummary));
+            Assert.That(rankedSummary.Keys, Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(AsRecord(rankedSummary.Items).Fields.Keys,
+                Is.EqualTo(mappedSummary.Fields.Keys));
+            Assert.That(output.Fields.Keys, Is.EqualTo(new[]
+            {
+                "best-rankings", "nickname", "overall-rank", "rank-sum", "ranking-count",
+            }));
+            Assert.That(output.Fields["overall-rank"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(output.AllowsAdditionalFields, Is.False);
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Partial));
             Assert.That(analysis.Diagnostics, Has.None.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
                 diagnostic.Path == "plan.items[2].arguments[0].value.items[0]"));
         });

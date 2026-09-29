@@ -787,6 +787,7 @@ public sealed class LogicalPlanner
             {
                 "named-entry" => new(Intrinsic: "named-entry", Classification: "intrinsic"),
                 "spread-entry" => new(Intrinsic: "spread-entry", Classification: "intrinsic"),
+                "sort-criterion" => new(Intrinsic: "sort-criterion", Classification: "intrinsic"),
                 _ => null,
             });
 
