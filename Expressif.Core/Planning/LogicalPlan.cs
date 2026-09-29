@@ -8,6 +8,11 @@ namespace Expressif.Planning;
 public sealed record LogicalPlan(LogicalPipeline Pipeline);
 
 /// <summary>
+/// A logical plan together with the schemas discovered for its nodes.
+/// </summary>
+public sealed record AnalyzedLogicalPlan(LogicalPlan Plan, SchemaAnalysis Analysis);
+
+/// <summary>
 /// A value that can appear in a logical plan.
 /// </summary>
 public abstract record LogicalValue;

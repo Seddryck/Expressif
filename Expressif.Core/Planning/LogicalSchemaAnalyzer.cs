@@ -5,6 +5,9 @@ namespace Expressif.Planning;
 /// </summary>
 public static class LogicalSchemaAnalyzer
 {
+    public static AnalyzedLogicalPlan AnalyzePlan(LogicalPlan plan, LogicalSchema? declaredInput = null)
+        => new(plan, Analyze(plan, declaredInput));
+
     public static SchemaAnalysis Analyze(LogicalPlan plan, LogicalSchema? declaredInput = null)
     {
         ArgumentNullException.ThrowIfNull(plan);
