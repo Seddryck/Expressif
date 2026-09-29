@@ -1,6 +1,6 @@
 ---
 name: scaffold
-description: "Scaffold documentation metadata and conformance cases for a new post-v2 Expressif function, predicate, or accumulator before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
+description: "Scaffold documentation metadata, logical-schema discovery contracts, and conformance cases for a new post-v2 Expressif function, predicate, or accumulator before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
 ---
 
 # /scaffold
@@ -52,6 +52,43 @@ Predicates are Boolean-returning callable functions. Record their semantic input
 ### Accumulator contract
 
 Describe the accumulated item type, result type, initial/empty result, null handling, and order sensitivity. Do not force function-style failure or cardinality semantics onto accumulators.
+
+## Schema discovery contract
+
+Treat logical schema discovery as part of the public operator contract, not as an optional implementation follow-up. Every catalog entry must select exactly one `Schema.Classification`:
+
+* `fixed` when the canonical input and output types completely describe the result and no nested structure must be preserved;
+* `contract` when generic schema expressions can describe how input, argument, and output schemas relate;
+* `intrinsic` when inference depends on literal or structural information that the contract grammar cannot express, such as selected field names or tuple positions;
+* `dynamic` only when the relationship is genuinely unavailable statically, with a precise `DynamicReason`.
+
+Before choosing a classification, inspect related operators and answer:
+
+1. Does the operator preserve, select, combine, wrap, or replace part of its input schema?
+2. Does an existing family member already establish that relationship?
+3. Can the relationship be expressed with the existing schema constructors and type variables?
+4. If not, can one reusable, metadata-selected intrinsic represent the structural operation without function-name dispatch?
+5. Which exact relationship remains unknown if the operator must stay dynamic?
+
+For a declarative contract, define all applicable relationships:
+
+* generic `Input` and `Output` expressions, such as `array<T>`, `grouping<K, T>`, or `array<union<T, U>>`;
+* parameter-level `Input` and `Output` expressions that state evaluation context and bind child results;
+* `Combine: union` or `Combine: tuple` for variadic parameter outputs;
+* `NullableWhen` sources, keeping value nullability distinct from optional record-field presence;
+* heterogeneous, empty, and polymorphic-source behavior when these affect the discovered schema.
+
+Every type variable in an output must be bound by the operator input or a parameter output. Do not classify an operator as `fixed` merely because its top-level semantic type is known when doing so would discard item, key, value, field, or tuple-component schemas.
+
+When proposing an intrinsic, state the structural information it consumes and the result it derives. Prefer one parameterized intrinsic shared by a family over separate intrinsic branches or canonical-name checks. Keep `dynamic` only for the portion that cannot be represented by a contract or reusable intrinsic.
+
+Include a small schema-analysis handoff with representative expectations, independently of runtime conformance. Cover at least the primary forward result and any important backward requirement, nullability, heterogeneous union, or polymorphic source. For example:
+
+```text
+array<decimal> | complement(array<text>) -> array<text>
+grouping<text, decimal> | drill-up(lower) -> grouping<text, decimal>
+tuple<text, integer> | tuple-second -> integer
+```
 
 ## Names and collisions
 
@@ -110,7 +147,7 @@ Map kind to:
 * predicate: `docs/_data/predicate.json`;
 * accumulator: an entry with `"Kind": "accumulator"` in `docs/_data/function.json`.
 
-Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, and typed `Parameters`. Emit contract-dependency, omission, or variadic fields when applicable. Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
+Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, typed `Parameters`, and a complete `Schema` classification. Emit contract relationships, intrinsic selection, dynamic reason, omission, or variadic fields when applicable. Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
 
 Validate the updated catalog against `docs/_data/catalog.schema.json`. Treat an optional parameter without `Omission`, a required parameter with `Omission`, a constant without `Value`, or a mode with fields it does not support as a scaffolding failure.
 
@@ -186,7 +223,11 @@ Confirm that:
 9. the updated catalog validates against `docs/_data/catalog.schema.json`;
 10. summaries and expected results agree;
 11. YAML conforms to the schema and can map to a conformance test method;
-12. the proposed commit message describes the eventual completed change.
+12. every callable has exactly one schema classification and every output type variable is bound;
+13. schema relationships preserve nested structure, nullability sources reference real inputs or parameters, and optional field presence is not represented as value nullability;
+14. intrinsics are reusable and metadata-selected without canonical-name dispatch, while dynamic entries explain the precise unsupported relationship;
+15. the schema-analysis handoff covers representative forward and backward inference behavior;
+16. the proposed commit message describes the eventual completed change.
 
 Show a preview when the user requests one or when unresolved choices require confirmation. Otherwise apply the scoped metadata and conformance edits without an unconditional confirmation gate.
 
@@ -197,6 +238,8 @@ Report:
 * operator kind, name, and semantic contract;
 * catalog and conformance files changed;
 * documentation reference pages regenerated;
+* schema classification, generic relationships, nullability sources, and any intrinsic or dynamic boundary;
+* representative schema-analysis expectations handed to `/implement`;
 * optional omission modes and values or sources, plus dynamic or variadic semantics recorded;
 * validation performed;
 * proposed commit message;
