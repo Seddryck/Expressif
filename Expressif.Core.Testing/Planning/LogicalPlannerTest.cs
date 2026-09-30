@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Expressif.Bindings;
 using Expressif.Planning;
 using Expressif.Syntax;
 
@@ -19,10 +18,7 @@ public class CoreLogicalPlannerTest
                     new PlannerParameterDescriptor("times", "numeric", true, false, 1),
                     new PlannerOmissionDescriptor(PlannerOmissionMode.Constant, omissionValue)),
             ]);
-        var bound = new OpenRootExpression(new OpenExpression(
-            [new Function("custom-alias", [new LiteralParameter(5m)])]));
-
-        var plan = new LogicalPlanner(new StubContext(bound, metadata)).Build(ExpressionParser.Parse("custom-alias(5)"));
+        var plan = new LogicalPlanner(new StubContext(metadata)).Build(ExpressionParser.Parse("custom-alias(5)"));
         var call = (LogicalCall)plan.Pipeline.Items.Single();
 
         Assert.Multiple(() =>
@@ -46,16 +42,19 @@ public class CoreLogicalPlannerTest
             Assert.That(assembly.GetManifestResourceNames(), Does.Contain(LogicalPlanJson.SchemaResourceName));
             Assert.That(assembly.GetReferencedAssemblies().Select(reference => reference.Name),
                 Does.Not.Contain("Expressif.Library"));
+            Assert.That(typeof(ILogicalPlanningContext).GetMethods()
+                    .SelectMany(method => method.GetParameters().Select(parameter => parameter.ParameterType)
+                        .Append(method.ReturnType))
+                    .Select(type => type.Namespace),
+                Does.Not.Contain("Expressif.Bindings"));
         });
     }
 
-    private sealed class StubContext(IRootExpression bound, PlannerFunctionMetadata metadata) : ILogicalPlanningContext
+    private sealed class StubContext(PlannerFunctionMetadata metadata) : ILogicalPlanningContext
     {
-        public IRootExpression Bind(RootExpressionSyntax syntax) => bound;
-
         public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
             => name == "custom-alias" ? metadata : null;
 
-        public string? FindTypeName(Type runtimeType) => null;
+        public string? FindType(string name) => null;
     }
 }

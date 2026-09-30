@@ -153,7 +153,9 @@ Expressif.Bindings.GroupingParameter.Equals(Expressif.Bindings.GroupingParameter
 Expressif.Bindings.GroupingParameter.GroupingParameter(Expressif.Bindings.PairParameter![]! Entries) -> void
 Expressif.Bindings.IBoundExpression
 Expressif.Bindings.IExpressionBinder
+Expressif.Bindings.IExpressionBinder.Bind(Expressif.Planning.LogicalPlan! plan) -> Expressif.IExpression!
 Expressif.Bindings.IExpressionBinder.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.IExpression!
+Expressif.Bindings.IExpressionBinder.BindClosed(Expressif.Planning.LogicalPlan! plan) -> Expressif.IExpression!
 Expressif.Bindings.IExpressionBinder.BindClosed(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.IExpression!
 Expressif.Bindings.IFunctionBinder
 Expressif.Bindings.IFunctionBinder.Bind(Expressif.Syntax.FunctionCallSyntax! syntax, Expressif.Bindings.IFunctionBindingContext! context) -> Expressif.Bindings.Function!
@@ -177,6 +179,9 @@ Expressif.Bindings.InputExpressionParameter.Deconstruct(out Expressif.Bindings.C
 Expressif.Bindings.InputExpressionParameter.Equals(Expressif.Bindings.InputExpressionParameter? other) -> bool
 Expressif.Bindings.InputExpressionParameter.Expression.get -> Expressif.Bindings.ClosedExpression!
 Expressif.Bindings.InputExpressionParameter.Expression.init -> void
+Expressif.Bindings.LogicalPlanBindingException
+Expressif.Bindings.LogicalPlanBindingException.LogicalPlanBindingException(string! message, System.Exception! innerException) -> void
+Expressif.Bindings.LogicalPlanBindingException.LogicalPlanBindingException(string! message) -> void
 Expressif.Bindings.InputExpressionParameter.InputExpressionParameter(Expressif.Bindings.ClosedExpression! Expression) -> void
 Expressif.Bindings.IntervalBinding
 Expressif.Bindings.IntervalBinding.<Clone>$() -> Expressif.Bindings.IntervalBinding!
@@ -701,9 +706,8 @@ Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception)
 Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
 Expressif.Planning.ILogicalPlanningContext
-Expressif.Planning.ILogicalPlanningContext.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IRootExpression!
 Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null) -> Expressif.Planning.PlannerFunctionMetadata?
-Expressif.Planning.ILogicalPlanningContext.FindTypeName(System.Type! runtimeType) -> string?
+Expressif.Planning.ILogicalPlanningContext.FindType(string! name) -> string?
 Expressif.Planning.LogicalArgument
 Expressif.Planning.LogicalArgument.<Clone>$() -> Expressif.Planning.LogicalArgument!
 Expressif.Planning.LogicalArgument.Deconstruct(out Expressif.Planning.PlannerParameterDescriptor! Parameter, out Expressif.Planning.LogicalValue? Value, out bool IsSpread, out bool IsExplicit, out Expressif.Planning.PlannerOmissionDescriptor? Omission) -> void

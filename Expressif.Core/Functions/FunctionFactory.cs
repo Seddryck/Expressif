@@ -356,13 +356,22 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
         var hasRegularFunction = Registry.TryResolve(name, out _);
         if (accumulatorRegistry.TryResolve(name, out var accumulatorType)
-            && (function.Syntax == FunctionSyntax.ImplicitFoldAccumulator || !hasRegularFunction))
+            && (function.ImplementationKind == FunctionImplementationKind.Accumulator
+                || (function.ImplementationKind == FunctionImplementationKind.Unspecified
+                    && (function.Syntax == FunctionSyntax.ImplicitFoldAccumulator || !hasRegularFunction))))
         {
             return BuildAccumulatorFunction(function, accumulatorType, context);
         }
 
-        if (Registry.TryResolve(name, out var registeredType)
-            || predicateRegistry.TryResolve(name, out registeredType))
+        Type registeredType;
+        var found = function.ImplementationKind switch
+        {
+            FunctionImplementationKind.Function => Registry.TryResolve(name, out registeredType),
+            FunctionImplementationKind.Predicate => predicateRegistry.TryResolve(name, out registeredType),
+            _ => Registry.TryResolve(name, out registeredType)
+                || predicateRegistry.TryResolve(name, out registeredType),
+        };
+        if (found)
         {
             if (constructors.TryGet(registeredType, out var constructor))
                 return constructor.Construct(function, context, this);
@@ -375,6 +384,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             if (constructors.TryGetVariadicPacked(registeredType, out var variadicPacked))
                 return InstantiateVariadicPacked(registeredType, variadicPacked, function, context);
         }
+
+        if (function.ImplementationKind == FunctionImplementationKind.Predicate)
+            return predicationFactory.Instantiate(new SinglePredication(function), context);
 
         if (!Registry.TryResolve(function.Name, out var type))
         {

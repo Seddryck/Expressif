@@ -1,7 +1,5 @@
-using Expressif.Bindings;
 using Expressif.Library.Catalog;
 using Expressif.Planning;
-using Expressif.Syntax;
 using Expressif.Values.Types;
 
 namespace Expressif.Library.Composition;
@@ -16,9 +14,6 @@ public static class LogicalPlannerFactory
 
     private sealed class BuiltInPlanningContext(FunctionCatalog catalog) : ILogicalPlanningContext
     {
-        public IRootExpression Bind(RootExpressionSyntax syntax)
-            => ExpressifBinderFactory.Create(applyCoercion: false).Bind(syntax);
-
         public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
         {
             var function = expectedKind is "predicate" or "accumulator"
@@ -55,9 +50,10 @@ public static class LogicalPlannerFactory
                     DescribeOmission(parameter.Omission))).ToArray());
         }
 
-        public string? FindTypeName(Type runtimeType)
-            => ExpressifTypeRegistry.Instance.All
-                .SingleOrDefault(candidate => candidate.RuntimeType == runtimeType)?.Name;
+        public string? FindType(string name)
+            => ExpressifTypeRegistry.Instance.TryResolve(name, out var descriptor)
+                ? descriptor.Name
+                : null;
 
         private static PlannerOmissionDescriptor? DescribeOmission(ParameterOmissionDocumentation? omission)
             => omission is null

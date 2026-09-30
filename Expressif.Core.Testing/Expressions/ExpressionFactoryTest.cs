@@ -1,4 +1,5 @@
 using Expressif.Bindings;
+using Expressif.Planning;
 using Expressif.Syntax;
 
 namespace Expressif.Testing.Expressions;
@@ -117,6 +118,12 @@ public class ExpressionFactoryTest
             LastSyntax = syntax;
             return Expression;
         }
+
+        public IExpression Bind(LogicalPlan plan)
+            => throw new NotSupportedException();
+
+        public IExpression BindClosed(LogicalPlan plan)
+            => throw new NotSupportedException();
     }
 
     private sealed class StubExpression : IExpression
