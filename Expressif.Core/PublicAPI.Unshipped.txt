@@ -779,7 +779,6 @@ Expressif.Planning.PlannerEvaluationDescriptor.Source.get -> string?
 Expressif.Planning.PlannerEvaluationDescriptor.Source.init -> void
 Expressif.Planning.PlannerFunctionDescriptor
 Expressif.Planning.PlannerFunctionDescriptor.<Clone>$() -> Expressif.Planning.PlannerFunctionDescriptor!
-Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics, out string! Kind) -> void
 Expressif.Planning.PlannerFunctionDescriptor.Equals(Expressif.Planning.PlannerFunctionDescriptor? other) -> bool
 Expressif.Planning.PlannerFunctionDescriptor.Input.get -> string!
 Expressif.Planning.PlannerFunctionDescriptor.Input.init -> void
@@ -789,7 +788,6 @@ Expressif.Planning.PlannerFunctionDescriptor.Name.get -> string!
 Expressif.Planning.PlannerFunctionDescriptor.Name.init -> void
 Expressif.Planning.PlannerFunctionDescriptor.Output.get -> string!
 Expressif.Planning.PlannerFunctionDescriptor.Output.init -> void
-Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null, string! Kind = "function") -> void
 Expressif.Planning.PlannerFunctionDescriptor.Semantics.get -> Expressif.Planning.PlannerSemanticsDescriptor?
 Expressif.Planning.PlannerFunctionDescriptor.Semantics.init -> void
 Expressif.Planning.PlannerFunctionDescriptor.Traversal.get -> Expressif.Planning.PlannerTraversalDescriptor?
@@ -1576,3 +1574,346 @@ virtual Expressif.Planning.LogicalValue.Equals(Expressif.Planning.LogicalValue? 
 virtual Expressif.Planning.LogicalValue.PrintMembers(System.Text.StringBuilder! builder) -> bool
 virtual Expressif.Predicates.BasePredicate.EvaluateNull() -> bool
 virtual Expressif.Predication.Evaluate(object? value) -> bool
+abstract Expressif.Planning.LogicalSchema.<Clone>$() -> Expressif.Planning.LogicalSchema!
+const Expressif.Planning.AnalyzedLogicalPlanJson.FormatName = "expressif.analyzed-logical-plan" -> string!
+const Expressif.Planning.AnalyzedLogicalPlanJson.FormatVersion = 1 -> int
+const Expressif.Planning.SchemaAnalysisJson.FormatName = "expressif.schema-analysis" -> string!
+const Expressif.Planning.SchemaAnalysisJson.FormatVersion = 1 -> int
+Expressif.Planning.AnalyzedLogicalPlan
+Expressif.Planning.AnalyzedLogicalPlan.<Clone>$() -> Expressif.Planning.AnalyzedLogicalPlan!
+Expressif.Planning.AnalyzedLogicalPlan.Analysis.get -> Expressif.Planning.SchemaAnalysis!
+Expressif.Planning.AnalyzedLogicalPlan.Analysis.init -> void
+Expressif.Planning.AnalyzedLogicalPlan.AnalyzedLogicalPlan(Expressif.Planning.LogicalPlan! Plan, Expressif.Planning.SchemaAnalysis! Analysis) -> void
+Expressif.Planning.AnalyzedLogicalPlan.Deconstruct(out Expressif.Planning.LogicalPlan! Plan, out Expressif.Planning.SchemaAnalysis! Analysis) -> void
+Expressif.Planning.AnalyzedLogicalPlan.Equals(Expressif.Planning.AnalyzedLogicalPlan? other) -> bool
+Expressif.Planning.AnalyzedLogicalPlan.Plan.get -> Expressif.Planning.LogicalPlan!
+Expressif.Planning.AnalyzedLogicalPlan.Plan.init -> void
+Expressif.Planning.AnalyzedLogicalPlanJson
+Expressif.Planning.AnyLogicalSchema
+Expressif.Planning.AnyLogicalSchema.AnyLogicalSchema(bool IsNullable = false) -> void
+Expressif.Planning.AnyLogicalSchema.Deconstruct(out bool IsNullable) -> void
+Expressif.Planning.AnyLogicalSchema.Equals(Expressif.Planning.AnyLogicalSchema? other) -> bool
+Expressif.Planning.AnyLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.AnyLogicalSchema.IsNullable.init -> void
+Expressif.Planning.ArrayLogicalSchema
+Expressif.Planning.ArrayLogicalSchema.ArrayLogicalSchema(Expressif.Planning.LogicalSchema! Items, bool IsNullable = false) -> void
+Expressif.Planning.ArrayLogicalSchema.Deconstruct(out Expressif.Planning.LogicalSchema! Items, out bool IsNullable) -> void
+Expressif.Planning.ArrayLogicalSchema.Equals(Expressif.Planning.ArrayLogicalSchema? other) -> bool
+Expressif.Planning.ArrayLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.ArrayLogicalSchema.IsNullable.init -> void
+Expressif.Planning.ArrayLogicalSchema.Items.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.ArrayLogicalSchema.Items.init -> void
+Expressif.Planning.ConflictingLogicalSchema
+Expressif.Planning.ConflictingLogicalSchema.ConflictingLogicalSchema(Expressif.Planning.LogicalSchema! Left, Expressif.Planning.LogicalSchema! Right, bool IsNullable = false) -> void
+Expressif.Planning.ConflictingLogicalSchema.Deconstruct(out Expressif.Planning.LogicalSchema! Left, out Expressif.Planning.LogicalSchema! Right, out bool IsNullable) -> void
+Expressif.Planning.ConflictingLogicalSchema.Equals(Expressif.Planning.ConflictingLogicalSchema? other) -> bool
+Expressif.Planning.ConflictingLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.ConflictingLogicalSchema.IsNullable.init -> void
+Expressif.Planning.ConflictingLogicalSchema.Left.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.ConflictingLogicalSchema.Left.init -> void
+Expressif.Planning.ConflictingLogicalSchema.Right.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.ConflictingLogicalSchema.Right.init -> void
+Expressif.Planning.DictionaryLogicalSchema
+Expressif.Planning.DictionaryLogicalSchema.Deconstruct(out Expressif.Planning.LogicalSchema! Keys, out Expressif.Planning.LogicalSchema! Values, out bool IsNullable) -> void
+Expressif.Planning.DictionaryLogicalSchema.DictionaryLogicalSchema(Expressif.Planning.LogicalSchema! Keys, Expressif.Planning.LogicalSchema! Values, bool IsNullable = false) -> void
+Expressif.Planning.DictionaryLogicalSchema.Equals(Expressif.Planning.DictionaryLogicalSchema? other) -> bool
+Expressif.Planning.DictionaryLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.DictionaryLogicalSchema.IsNullable.init -> void
+Expressif.Planning.DictionaryLogicalSchema.Keys.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.DictionaryLogicalSchema.Keys.init -> void
+Expressif.Planning.DictionaryLogicalSchema.Values.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.DictionaryLogicalSchema.Values.init -> void
+Expressif.Planning.GroupingLogicalSchema
+Expressif.Planning.GroupingLogicalSchema.Deconstruct(out Expressif.Planning.LogicalSchema! Keys, out Expressif.Planning.LogicalSchema! Items, out bool IsNullable) -> void
+Expressif.Planning.GroupingLogicalSchema.Equals(Expressif.Planning.GroupingLogicalSchema? other) -> bool
+Expressif.Planning.GroupingLogicalSchema.GroupingLogicalSchema(Expressif.Planning.LogicalSchema! Keys, Expressif.Planning.LogicalSchema! Items, bool IsNullable = false) -> void
+Expressif.Planning.GroupingLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.GroupingLogicalSchema.IsNullable.init -> void
+Expressif.Planning.GroupingLogicalSchema.Items.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.GroupingLogicalSchema.Items.init -> void
+Expressif.Planning.GroupingLogicalSchema.Keys.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.GroupingLogicalSchema.Keys.init -> void
+Expressif.Planning.LogicalSchema
+Expressif.Planning.LogicalSchema.LogicalSchema() -> void
+Expressif.Planning.LogicalSchema.LogicalSchema(Expressif.Planning.LogicalSchema! original) -> void
+Expressif.Planning.LogicalSchemaAnalyzer
+Expressif.Planning.LogicalSchemaField
+Expressif.Planning.LogicalSchemaField.<Clone>$() -> Expressif.Planning.LogicalSchemaField!
+Expressif.Planning.LogicalSchemaField.Deconstruct(out Expressif.Planning.LogicalSchema! Schema, out bool Optional) -> void
+Expressif.Planning.LogicalSchemaField.Equals(Expressif.Planning.LogicalSchemaField? other) -> bool
+Expressif.Planning.LogicalSchemaField.LogicalSchemaField(Expressif.Planning.LogicalSchema! Schema, bool Optional = false) -> void
+Expressif.Planning.LogicalSchemaField.Optional.get -> bool
+Expressif.Planning.LogicalSchemaField.Optional.init -> void
+Expressif.Planning.LogicalSchemaField.Schema.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.LogicalSchemaField.Schema.init -> void
+Expressif.Planning.NoInputLogicalSchema
+Expressif.Planning.NoInputLogicalSchema.Equals(Expressif.Planning.NoInputLogicalSchema? other) -> bool
+Expressif.Planning.NoInputLogicalSchema.NoInputLogicalSchema() -> void
+Expressif.Planning.PairLogicalSchema
+Expressif.Planning.PairLogicalSchema.Deconstruct(out Expressif.Planning.LogicalSchema! Key, out Expressif.Planning.LogicalSchema! Value, out bool IsNullable) -> void
+Expressif.Planning.PairLogicalSchema.Equals(Expressif.Planning.PairLogicalSchema? other) -> bool
+Expressif.Planning.PairLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.PairLogicalSchema.IsNullable.init -> void
+Expressif.Planning.PairLogicalSchema.Key.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.PairLogicalSchema.Key.init -> void
+Expressif.Planning.PairLogicalSchema.PairLogicalSchema(Expressif.Planning.LogicalSchema! Key, Expressif.Planning.LogicalSchema! Value, bool IsNullable = false) -> void
+Expressif.Planning.PairLogicalSchema.Value.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.PairLogicalSchema.Value.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics, out string! Kind, out Expressif.Planning.PlannerSchemaDescriptor? Schema) -> void
+Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null, string! Kind = "function", Expressif.Planning.PlannerSchemaDescriptor? Schema = null) -> void
+Expressif.Planning.PlannerFunctionDescriptor.Schema.get -> Expressif.Planning.PlannerSchemaDescriptor?
+Expressif.Planning.PlannerFunctionDescriptor.Schema.init -> void
+Expressif.Planning.PlannerParameterSchemaDescriptor
+Expressif.Planning.PlannerParameterSchemaDescriptor.<Clone>$() -> Expressif.Planning.PlannerParameterSchemaDescriptor!
+Expressif.Planning.PlannerParameterSchemaDescriptor.Combine.get -> string?
+Expressif.Planning.PlannerParameterSchemaDescriptor.Combine.init -> void
+Expressif.Planning.PlannerParameterSchemaDescriptor.Deconstruct(out string? Input, out string? Output, out string? Combine) -> void
+Expressif.Planning.PlannerParameterSchemaDescriptor.Equals(Expressif.Planning.PlannerParameterSchemaDescriptor? other) -> bool
+Expressif.Planning.PlannerParameterSchemaDescriptor.Input.get -> string?
+Expressif.Planning.PlannerParameterSchemaDescriptor.Input.init -> void
+Expressif.Planning.PlannerParameterSchemaDescriptor.Output.get -> string?
+Expressif.Planning.PlannerParameterSchemaDescriptor.Output.init -> void
+Expressif.Planning.PlannerParameterSchemaDescriptor.PlannerParameterSchemaDescriptor(string? Input = null, string? Output = null, string? Combine = null) -> void
+Expressif.Planning.PlannerSchemaDescriptor
+Expressif.Planning.PlannerSchemaDescriptor.<Clone>$() -> Expressif.Planning.PlannerSchemaDescriptor!
+Expressif.Planning.PlannerSchemaDescriptor.Classification.get -> string?
+Expressif.Planning.PlannerSchemaDescriptor.Classification.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.Deconstruct(out string? Input, out string? Output, out System.Collections.Generic.IReadOnlyDictionary<string!, Expressif.Planning.PlannerParameterSchemaDescriptor!>? Parameters, out string? Intrinsic, out string? Nullability, out string? Classification, out string? DynamicReason, out System.Collections.Generic.IReadOnlyList<string!>? NullableWhen) -> void
+Expressif.Planning.PlannerSchemaDescriptor.DynamicReason.get -> string?
+Expressif.Planning.PlannerSchemaDescriptor.DynamicReason.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.Equals(Expressif.Planning.PlannerSchemaDescriptor? other) -> bool
+Expressif.Planning.PlannerSchemaDescriptor.Input.get -> string?
+Expressif.Planning.PlannerSchemaDescriptor.Input.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.Intrinsic.get -> string?
+Expressif.Planning.PlannerSchemaDescriptor.Intrinsic.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.Nullability.get -> string?
+Expressif.Planning.PlannerSchemaDescriptor.Nullability.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.NullableWhen.get -> System.Collections.Generic.IReadOnlyList<string!>?
+Expressif.Planning.PlannerSchemaDescriptor.NullableWhen.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.Output.get -> string?
+Expressif.Planning.PlannerSchemaDescriptor.Output.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.Parameters.get -> System.Collections.Generic.IReadOnlyDictionary<string!, Expressif.Planning.PlannerParameterSchemaDescriptor!>?
+Expressif.Planning.PlannerSchemaDescriptor.Parameters.init -> void
+Expressif.Planning.PlannerSchemaDescriptor.PlannerSchemaDescriptor(string? Input = null, string? Output = null, System.Collections.Generic.IReadOnlyDictionary<string!, Expressif.Planning.PlannerParameterSchemaDescriptor!>? Parameters = null, string? Intrinsic = null, string? Nullability = null, string? Classification = null, string? DynamicReason = null, System.Collections.Generic.IReadOnlyList<string!>? NullableWhen = null) -> void
+Expressif.Planning.RecordLogicalSchema
+Expressif.Planning.RecordLogicalSchema.AllowsAdditionalFields.get -> bool
+Expressif.Planning.RecordLogicalSchema.AllowsAdditionalFields.init -> void
+Expressif.Planning.RecordLogicalSchema.Deconstruct(out System.Collections.Generic.IReadOnlyDictionary<string!, Expressif.Planning.LogicalSchemaField!>! Fields, out bool AllowsAdditionalFields, out bool IsNullable) -> void
+Expressif.Planning.RecordLogicalSchema.Equals(Expressif.Planning.RecordLogicalSchema? other) -> bool
+Expressif.Planning.RecordLogicalSchema.Fields.get -> System.Collections.Generic.IReadOnlyDictionary<string!, Expressif.Planning.LogicalSchemaField!>!
+Expressif.Planning.RecordLogicalSchema.Fields.init -> void
+Expressif.Planning.RecordLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.RecordLogicalSchema.IsNullable.init -> void
+Expressif.Planning.RecordLogicalSchema.RecordLogicalSchema(System.Collections.Generic.IReadOnlyDictionary<string!, Expressif.Planning.LogicalSchemaField!>! Fields, bool AllowsAdditionalFields = true, bool IsNullable = false) -> void
+Expressif.Planning.ScalarLogicalSchema
+Expressif.Planning.ScalarLogicalSchema.Deconstruct(out string! Type, out bool IsNullable) -> void
+Expressif.Planning.ScalarLogicalSchema.Equals(Expressif.Planning.ScalarLogicalSchema? other) -> bool
+Expressif.Planning.ScalarLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.ScalarLogicalSchema.IsNullable.init -> void
+Expressif.Planning.ScalarLogicalSchema.ScalarLogicalSchema(string! Type, bool IsNullable = false) -> void
+Expressif.Planning.ScalarLogicalSchema.Type.get -> string!
+Expressif.Planning.ScalarLogicalSchema.Type.init -> void
+Expressif.Planning.SchemaAnalysis
+Expressif.Planning.SchemaAnalysis.<Clone>$() -> Expressif.Planning.SchemaAnalysis!
+Expressif.Planning.SchemaAnalysis.Completeness.get -> Expressif.Planning.SchemaAnalysisCompleteness
+Expressif.Planning.SchemaAnalysis.Completeness.init -> void
+Expressif.Planning.SchemaAnalysis.Deconstruct(out Expressif.Planning.LogicalSchema! Input, out Expressif.Planning.LogicalSchema! Output, out Expressif.Planning.SchemaAnalysisCompleteness Completeness, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.SchemaAnalysisDiagnostic!>! Diagnostics, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.SchemaAnalysisNode!>! Nodes) -> void
+Expressif.Planning.SchemaAnalysis.Diagnostics.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.SchemaAnalysisDiagnostic!>!
+Expressif.Planning.SchemaAnalysis.Diagnostics.init -> void
+Expressif.Planning.SchemaAnalysis.Equals(Expressif.Planning.SchemaAnalysis? other) -> bool
+Expressif.Planning.SchemaAnalysis.Input.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.SchemaAnalysis.Input.init -> void
+Expressif.Planning.SchemaAnalysis.Nodes.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.SchemaAnalysisNode!>!
+Expressif.Planning.SchemaAnalysis.Nodes.init -> void
+Expressif.Planning.SchemaAnalysis.Output.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.SchemaAnalysis.Output.init -> void
+Expressif.Planning.SchemaAnalysis.SchemaAnalysis(Expressif.Planning.LogicalSchema! Input, Expressif.Planning.LogicalSchema! Output, Expressif.Planning.SchemaAnalysisCompleteness Completeness, System.Collections.Generic.IReadOnlyList<Expressif.Planning.SchemaAnalysisDiagnostic!>! Diagnostics, System.Collections.Generic.IReadOnlyList<Expressif.Planning.SchemaAnalysisNode!>! Nodes) -> void
+Expressif.Planning.SchemaAnalysisCompleteness
+Expressif.Planning.SchemaAnalysisCompleteness.Conflicting = 3 -> Expressif.Planning.SchemaAnalysisCompleteness
+Expressif.Planning.SchemaAnalysisCompleteness.Dynamic = 2 -> Expressif.Planning.SchemaAnalysisCompleteness
+Expressif.Planning.SchemaAnalysisCompleteness.Known = 0 -> Expressif.Planning.SchemaAnalysisCompleteness
+Expressif.Planning.SchemaAnalysisCompleteness.Partial = 1 -> Expressif.Planning.SchemaAnalysisCompleteness
+Expressif.Planning.SchemaAnalysisDiagnostic
+Expressif.Planning.SchemaAnalysisDiagnostic.<Clone>$() -> Expressif.Planning.SchemaAnalysisDiagnostic!
+Expressif.Planning.SchemaAnalysisDiagnostic.Code.get -> string!
+Expressif.Planning.SchemaAnalysisDiagnostic.Code.init -> void
+Expressif.Planning.SchemaAnalysisDiagnostic.Deconstruct(out string! Code, out string! Path, out string! Message) -> void
+Expressif.Planning.SchemaAnalysisDiagnostic.Equals(Expressif.Planning.SchemaAnalysisDiagnostic? other) -> bool
+Expressif.Planning.SchemaAnalysisDiagnostic.Message.get -> string!
+Expressif.Planning.SchemaAnalysisDiagnostic.Message.init -> void
+Expressif.Planning.SchemaAnalysisDiagnostic.Path.get -> string!
+Expressif.Planning.SchemaAnalysisDiagnostic.Path.init -> void
+Expressif.Planning.SchemaAnalysisDiagnostic.SchemaAnalysisDiagnostic(string! Code, string! Path, string! Message) -> void
+Expressif.Planning.SchemaAnalysisJson
+Expressif.Planning.SchemaAnalysisNode
+Expressif.Planning.SchemaAnalysisNode.<Clone>$() -> Expressif.Planning.SchemaAnalysisNode!
+Expressif.Planning.SchemaAnalysisNode.Deconstruct(out string! Path, out string! Kind, out string? Operator, out Expressif.Planning.LogicalSchema! Input, out Expressif.Planning.LogicalSchema! Output) -> void
+Expressif.Planning.SchemaAnalysisNode.Equals(Expressif.Planning.SchemaAnalysisNode? other) -> bool
+Expressif.Planning.SchemaAnalysisNode.Input.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.SchemaAnalysisNode.Input.init -> void
+Expressif.Planning.SchemaAnalysisNode.Kind.get -> string!
+Expressif.Planning.SchemaAnalysisNode.Kind.init -> void
+Expressif.Planning.SchemaAnalysisNode.Operator.get -> string?
+Expressif.Planning.SchemaAnalysisNode.Operator.init -> void
+Expressif.Planning.SchemaAnalysisNode.Output.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.SchemaAnalysisNode.Output.init -> void
+Expressif.Planning.SchemaAnalysisNode.Path.get -> string!
+Expressif.Planning.SchemaAnalysisNode.Path.init -> void
+Expressif.Planning.SchemaAnalysisNode.SchemaAnalysisNode(string! Path, string! Kind, string? Operator, Expressif.Planning.LogicalSchema! Input, Expressif.Planning.LogicalSchema! Output) -> void
+Expressif.Planning.SortTableLogicalSchema
+Expressif.Planning.SortTableLogicalSchema.Deconstruct(out Expressif.Planning.LogicalSchema! Items, out bool IsNullable) -> void
+Expressif.Planning.SortTableLogicalSchema.Equals(Expressif.Planning.SortTableLogicalSchema? other) -> bool
+Expressif.Planning.SortTableLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.SortTableLogicalSchema.IsNullable.init -> void
+Expressif.Planning.SortTableLogicalSchema.Items.get -> Expressif.Planning.LogicalSchema!
+Expressif.Planning.SortTableLogicalSchema.Items.init -> void
+Expressif.Planning.SortTableLogicalSchema.SortTableLogicalSchema(Expressif.Planning.LogicalSchema! Items, bool IsNullable = false) -> void
+Expressif.Planning.TupleLogicalSchema
+Expressif.Planning.TupleLogicalSchema.AdditionalItems.get -> Expressif.Planning.LogicalSchema?
+Expressif.Planning.TupleLogicalSchema.AdditionalItems.init -> void
+Expressif.Planning.TupleLogicalSchema.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalSchema!>! Items, out bool IsNullable, out Expressif.Planning.LogicalSchema? AdditionalItems) -> void
+Expressif.Planning.TupleLogicalSchema.Equals(Expressif.Planning.TupleLogicalSchema? other) -> bool
+Expressif.Planning.TupleLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.TupleLogicalSchema.IsNullable.init -> void
+Expressif.Planning.TupleLogicalSchema.Items.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalSchema!>!
+Expressif.Planning.TupleLogicalSchema.Items.init -> void
+Expressif.Planning.TupleLogicalSchema.TupleLogicalSchema(System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalSchema!>! Items, bool IsNullable = false, Expressif.Planning.LogicalSchema? AdditionalItems = null) -> void
+Expressif.Planning.UnionLogicalSchema
+Expressif.Planning.UnionLogicalSchema.Alternatives.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalSchema!>!
+Expressif.Planning.UnionLogicalSchema.Alternatives.init -> void
+Expressif.Planning.UnionLogicalSchema.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalSchema!>! Alternatives, out bool IsNullable) -> void
+Expressif.Planning.UnionLogicalSchema.Equals(Expressif.Planning.UnionLogicalSchema? other) -> bool
+Expressif.Planning.UnionLogicalSchema.IsNullable.get -> bool
+Expressif.Planning.UnionLogicalSchema.IsNullable.init -> void
+Expressif.Planning.UnionLogicalSchema.UnionLogicalSchema(System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalSchema!>! Alternatives, bool IsNullable = false) -> void
+override Expressif.Planning.AnalyzedLogicalPlan.Equals(object? obj) -> bool
+override Expressif.Planning.AnalyzedLogicalPlan.GetHashCode() -> int
+override Expressif.Planning.AnalyzedLogicalPlan.ToString() -> string!
+override Expressif.Planning.AnyLogicalSchema.<Clone>$() -> Expressif.Planning.AnyLogicalSchema!
+override Expressif.Planning.AnyLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.AnyLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.AnyLogicalSchema.ToString() -> string!
+override Expressif.Planning.ArrayLogicalSchema.<Clone>$() -> Expressif.Planning.ArrayLogicalSchema!
+override Expressif.Planning.ArrayLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.ArrayLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.ArrayLogicalSchema.ToString() -> string!
+override Expressif.Planning.ConflictingLogicalSchema.<Clone>$() -> Expressif.Planning.ConflictingLogicalSchema!
+override Expressif.Planning.ConflictingLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.ConflictingLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.ConflictingLogicalSchema.ToString() -> string!
+override Expressif.Planning.DictionaryLogicalSchema.<Clone>$() -> Expressif.Planning.DictionaryLogicalSchema!
+override Expressif.Planning.DictionaryLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.DictionaryLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.DictionaryLogicalSchema.ToString() -> string!
+override Expressif.Planning.GroupingLogicalSchema.<Clone>$() -> Expressif.Planning.GroupingLogicalSchema!
+override Expressif.Planning.GroupingLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.GroupingLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.GroupingLogicalSchema.ToString() -> string!
+override Expressif.Planning.LogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalSchema.GetHashCode() -> int
+override Expressif.Planning.LogicalSchema.ToString() -> string!
+override Expressif.Planning.LogicalSchemaField.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalSchemaField.GetHashCode() -> int
+override Expressif.Planning.LogicalSchemaField.ToString() -> string!
+override Expressif.Planning.NoInputLogicalSchema.<Clone>$() -> Expressif.Planning.NoInputLogicalSchema!
+override Expressif.Planning.NoInputLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.NoInputLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.NoInputLogicalSchema.ToString() -> string!
+override Expressif.Planning.PairLogicalSchema.<Clone>$() -> Expressif.Planning.PairLogicalSchema!
+override Expressif.Planning.PairLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.PairLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.PairLogicalSchema.ToString() -> string!
+override Expressif.Planning.PlannerParameterSchemaDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerParameterSchemaDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerParameterSchemaDescriptor.ToString() -> string!
+override Expressif.Planning.PlannerSchemaDescriptor.Equals(object? obj) -> bool
+override Expressif.Planning.PlannerSchemaDescriptor.GetHashCode() -> int
+override Expressif.Planning.PlannerSchemaDescriptor.ToString() -> string!
+override Expressif.Planning.RecordLogicalSchema.<Clone>$() -> Expressif.Planning.RecordLogicalSchema!
+override Expressif.Planning.RecordLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.RecordLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.RecordLogicalSchema.ToString() -> string!
+override Expressif.Planning.ScalarLogicalSchema.<Clone>$() -> Expressif.Planning.ScalarLogicalSchema!
+override Expressif.Planning.ScalarLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.ScalarLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.ScalarLogicalSchema.ToString() -> string!
+override Expressif.Planning.SchemaAnalysis.Equals(object? obj) -> bool
+override Expressif.Planning.SchemaAnalysis.GetHashCode() -> int
+override Expressif.Planning.SchemaAnalysis.ToString() -> string!
+override Expressif.Planning.SchemaAnalysisDiagnostic.Equals(object? obj) -> bool
+override Expressif.Planning.SchemaAnalysisDiagnostic.GetHashCode() -> int
+override Expressif.Planning.SchemaAnalysisDiagnostic.ToString() -> string!
+override Expressif.Planning.SchemaAnalysisNode.Equals(object? obj) -> bool
+override Expressif.Planning.SchemaAnalysisNode.GetHashCode() -> int
+override Expressif.Planning.SchemaAnalysisNode.ToString() -> string!
+override Expressif.Planning.SortTableLogicalSchema.<Clone>$() -> Expressif.Planning.SortTableLogicalSchema!
+override Expressif.Planning.SortTableLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.SortTableLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.SortTableLogicalSchema.ToString() -> string!
+override Expressif.Planning.TupleLogicalSchema.<Clone>$() -> Expressif.Planning.TupleLogicalSchema!
+override Expressif.Planning.TupleLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.TupleLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.TupleLogicalSchema.ToString() -> string!
+override Expressif.Planning.UnionLogicalSchema.<Clone>$() -> Expressif.Planning.UnionLogicalSchema!
+override Expressif.Planning.UnionLogicalSchema.Equals(object? obj) -> bool
+override Expressif.Planning.UnionLogicalSchema.GetHashCode() -> int
+override Expressif.Planning.UnionLogicalSchema.ToString() -> string!
+override sealed Expressif.Planning.AnyLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.ArrayLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.ConflictingLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.DictionaryLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.GroupingLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.NoInputLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.PairLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.RecordLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.ScalarLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.SortTableLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.TupleLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+override sealed Expressif.Planning.UnionLogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+static Expressif.Planning.AnalyzedLogicalPlan.operator !=(Expressif.Planning.AnalyzedLogicalPlan? left, Expressif.Planning.AnalyzedLogicalPlan? right) -> bool
+static Expressif.Planning.AnalyzedLogicalPlan.operator ==(Expressif.Planning.AnalyzedLogicalPlan? left, Expressif.Planning.AnalyzedLogicalPlan? right) -> bool
+static Expressif.Planning.AnalyzedLogicalPlanJson.Serialize(Expressif.Planning.AnalyzedLogicalPlan! analyzed, bool indented = true) -> string!
+static Expressif.Planning.AnyLogicalSchema.operator !=(Expressif.Planning.AnyLogicalSchema? left, Expressif.Planning.AnyLogicalSchema? right) -> bool
+static Expressif.Planning.AnyLogicalSchema.operator ==(Expressif.Planning.AnyLogicalSchema? left, Expressif.Planning.AnyLogicalSchema? right) -> bool
+static Expressif.Planning.ArrayLogicalSchema.operator !=(Expressif.Planning.ArrayLogicalSchema? left, Expressif.Planning.ArrayLogicalSchema? right) -> bool
+static Expressif.Planning.ArrayLogicalSchema.operator ==(Expressif.Planning.ArrayLogicalSchema? left, Expressif.Planning.ArrayLogicalSchema? right) -> bool
+static Expressif.Planning.ConflictingLogicalSchema.operator !=(Expressif.Planning.ConflictingLogicalSchema? left, Expressif.Planning.ConflictingLogicalSchema? right) -> bool
+static Expressif.Planning.ConflictingLogicalSchema.operator ==(Expressif.Planning.ConflictingLogicalSchema? left, Expressif.Planning.ConflictingLogicalSchema? right) -> bool
+static Expressif.Planning.DictionaryLogicalSchema.operator !=(Expressif.Planning.DictionaryLogicalSchema? left, Expressif.Planning.DictionaryLogicalSchema? right) -> bool
+static Expressif.Planning.DictionaryLogicalSchema.operator ==(Expressif.Planning.DictionaryLogicalSchema? left, Expressif.Planning.DictionaryLogicalSchema? right) -> bool
+static Expressif.Planning.GroupingLogicalSchema.operator !=(Expressif.Planning.GroupingLogicalSchema? left, Expressif.Planning.GroupingLogicalSchema? right) -> bool
+static Expressif.Planning.GroupingLogicalSchema.operator ==(Expressif.Planning.GroupingLogicalSchema? left, Expressif.Planning.GroupingLogicalSchema? right) -> bool
+static Expressif.Planning.LogicalSchema.operator !=(Expressif.Planning.LogicalSchema? left, Expressif.Planning.LogicalSchema? right) -> bool
+static Expressif.Planning.LogicalSchema.operator ==(Expressif.Planning.LogicalSchema? left, Expressif.Planning.LogicalSchema? right) -> bool
+static Expressif.Planning.LogicalSchemaAnalyzer.Analyze(Expressif.Planning.LogicalPlan! plan, Expressif.Planning.LogicalSchema? declaredInput = null) -> Expressif.Planning.SchemaAnalysis!
+static Expressif.Planning.LogicalSchemaAnalyzer.AnalyzePlan(Expressif.Planning.LogicalPlan! plan, Expressif.Planning.LogicalSchema? declaredInput = null) -> Expressif.Planning.AnalyzedLogicalPlan!
+static Expressif.Planning.LogicalSchemaField.operator !=(Expressif.Planning.LogicalSchemaField? left, Expressif.Planning.LogicalSchemaField? right) -> bool
+static Expressif.Planning.LogicalSchemaField.operator ==(Expressif.Planning.LogicalSchemaField? left, Expressif.Planning.LogicalSchemaField? right) -> bool
+static Expressif.Planning.NoInputLogicalSchema.operator !=(Expressif.Planning.NoInputLogicalSchema? left, Expressif.Planning.NoInputLogicalSchema? right) -> bool
+static Expressif.Planning.NoInputLogicalSchema.operator ==(Expressif.Planning.NoInputLogicalSchema? left, Expressif.Planning.NoInputLogicalSchema? right) -> bool
+static Expressif.Planning.PairLogicalSchema.operator !=(Expressif.Planning.PairLogicalSchema? left, Expressif.Planning.PairLogicalSchema? right) -> bool
+static Expressif.Planning.PairLogicalSchema.operator ==(Expressif.Planning.PairLogicalSchema? left, Expressif.Planning.PairLogicalSchema? right) -> bool
+static Expressif.Planning.PlannerParameterSchemaDescriptor.operator !=(Expressif.Planning.PlannerParameterSchemaDescriptor? left, Expressif.Planning.PlannerParameterSchemaDescriptor? right) -> bool
+static Expressif.Planning.PlannerParameterSchemaDescriptor.operator ==(Expressif.Planning.PlannerParameterSchemaDescriptor? left, Expressif.Planning.PlannerParameterSchemaDescriptor? right) -> bool
+static Expressif.Planning.PlannerSchemaDescriptor.operator !=(Expressif.Planning.PlannerSchemaDescriptor? left, Expressif.Planning.PlannerSchemaDescriptor? right) -> bool
+static Expressif.Planning.PlannerSchemaDescriptor.operator ==(Expressif.Planning.PlannerSchemaDescriptor? left, Expressif.Planning.PlannerSchemaDescriptor? right) -> bool
+static Expressif.Planning.RecordLogicalSchema.operator !=(Expressif.Planning.RecordLogicalSchema? left, Expressif.Planning.RecordLogicalSchema? right) -> bool
+static Expressif.Planning.RecordLogicalSchema.operator ==(Expressif.Planning.RecordLogicalSchema? left, Expressif.Planning.RecordLogicalSchema? right) -> bool
+static Expressif.Planning.ScalarLogicalSchema.operator !=(Expressif.Planning.ScalarLogicalSchema? left, Expressif.Planning.ScalarLogicalSchema? right) -> bool
+static Expressif.Planning.ScalarLogicalSchema.operator ==(Expressif.Planning.ScalarLogicalSchema? left, Expressif.Planning.ScalarLogicalSchema? right) -> bool
+static Expressif.Planning.SchemaAnalysis.operator !=(Expressif.Planning.SchemaAnalysis? left, Expressif.Planning.SchemaAnalysis? right) -> bool
+static Expressif.Planning.SchemaAnalysis.operator ==(Expressif.Planning.SchemaAnalysis? left, Expressif.Planning.SchemaAnalysis? right) -> bool
+static Expressif.Planning.SchemaAnalysisDiagnostic.operator !=(Expressif.Planning.SchemaAnalysisDiagnostic? left, Expressif.Planning.SchemaAnalysisDiagnostic? right) -> bool
+static Expressif.Planning.SchemaAnalysisDiagnostic.operator ==(Expressif.Planning.SchemaAnalysisDiagnostic? left, Expressif.Planning.SchemaAnalysisDiagnostic? right) -> bool
+static Expressif.Planning.SchemaAnalysisJson.Serialize(Expressif.Planning.SchemaAnalysis! analysis, bool indented = true) -> string!
+static Expressif.Planning.SchemaAnalysisNode.operator !=(Expressif.Planning.SchemaAnalysisNode? left, Expressif.Planning.SchemaAnalysisNode? right) -> bool
+static Expressif.Planning.SchemaAnalysisNode.operator ==(Expressif.Planning.SchemaAnalysisNode? left, Expressif.Planning.SchemaAnalysisNode? right) -> bool
+static Expressif.Planning.SortTableLogicalSchema.operator !=(Expressif.Planning.SortTableLogicalSchema? left, Expressif.Planning.SortTableLogicalSchema? right) -> bool
+static Expressif.Planning.SortTableLogicalSchema.operator ==(Expressif.Planning.SortTableLogicalSchema? left, Expressif.Planning.SortTableLogicalSchema? right) -> bool
+static Expressif.Planning.TupleLogicalSchema.operator !=(Expressif.Planning.TupleLogicalSchema? left, Expressif.Planning.TupleLogicalSchema? right) -> bool
+static Expressif.Planning.TupleLogicalSchema.operator ==(Expressif.Planning.TupleLogicalSchema? left, Expressif.Planning.TupleLogicalSchema? right) -> bool
+static Expressif.Planning.UnionLogicalSchema.operator !=(Expressif.Planning.UnionLogicalSchema? left, Expressif.Planning.UnionLogicalSchema? right) -> bool
+static Expressif.Planning.UnionLogicalSchema.operator ==(Expressif.Planning.UnionLogicalSchema? left, Expressif.Planning.UnionLogicalSchema? right) -> bool
+virtual Expressif.Planning.LogicalSchema.EqualityContract.get -> System.Type!
+virtual Expressif.Planning.LogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
+virtual Expressif.Planning.LogicalSchema.PrintMembers(System.Text.StringBuilder! builder) -> bool

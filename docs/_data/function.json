@@ -10878,7 +10878,9 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "boolean",
+      "Output": "boolean"
     },
     "Summary": "Returns `true` when at least one accumulated boolean value is `true`.",
     "Parameters": [],
@@ -10886,8 +10888,8 @@
       "{#false, #true, #false} | fold(any) → #true"
     ],
     "Kind": "accumulator",
-    "Input": "boolean",
-    "Output": "boolean"
+    "Input": "array",
+    "Output": "any"
   },
   {
     "Name": "closest",
@@ -10950,7 +10952,9 @@
     "Aliases": [],
     "Scope": "array",
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "contract",
+      "Input": "boolean",
+      "Output": "boolean"
     },
     "Summary": "Returns `true` only when every accumulated boolean value is `true`.",
     "Parameters": [],
@@ -10958,8 +10962,8 @@
       "{#true, #true, #false} | fold(every) → #false"
     ],
     "Kind": "accumulator",
-    "Input": "boolean",
-    "Output": "boolean"
+    "Input": "array",
+    "Output": "any"
   },
   {
     "Name": "first",

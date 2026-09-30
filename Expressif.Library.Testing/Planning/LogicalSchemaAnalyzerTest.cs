@@ -1,3 +1,4 @@
+using Expressif.Library.Composition;
 using Expressif.Planning;
 
 namespace Expressif.Testing.Planning;
@@ -860,7 +861,9 @@ public class LogicalSchemaAnalyzerTest
     }
 
     private static SchemaAnalysis Analyze(string expression, LogicalSchema? input = null)
-        => LogicalSchemaAnalyzer.Analyze(LogicalPlanner.Plan(ExpressionParser.Parse(expression)), input);
+        => LogicalSchemaAnalyzer.Analyze(
+            LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(expression)),
+            input);
 
     private static RecordLogicalSchema AsRecord(LogicalSchema schema)
         => schema as RecordLogicalSchema

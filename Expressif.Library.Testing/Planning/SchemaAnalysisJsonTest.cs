@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Expressif.Library.Composition;
 using Expressif.Planning;
 
 namespace Expressif.Testing.Planning;
@@ -56,7 +57,7 @@ public class SchemaAnalysisJsonTest
     public void Serialize_EquivalentAnalysis_IsByteForByteDeterministic()
     {
         var analysis = LogicalSchemaAnalyzer.Analyze(
-            LogicalPlanner.Plan(ExpressionParser.Parse(".customer | upper | length")));
+            LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(".customer | upper | length")));
 
         var first = SchemaAnalysisJson.Serialize(analysis);
         var second = SchemaAnalysisJson.Serialize(analysis);

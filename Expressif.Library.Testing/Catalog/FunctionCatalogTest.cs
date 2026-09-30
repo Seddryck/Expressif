@@ -534,10 +534,10 @@ public class FunctionCatalogTest
 
         Assert.Multiple(() =>
         {
-            Assert.That((any.Input, any.Output, any.Schema!.Classification),
-                Is.EqualTo(("boolean", "boolean", "fixed")));
-            Assert.That((every.Input, every.Output, every.Schema!.Classification),
-                Is.EqualTo(("boolean", "boolean", "fixed")));
+            Assert.That((any.Schema!.Classification, any.Schema.Input, any.Schema.Output),
+                Is.EqualTo(("contract", "boolean", "boolean")));
+            Assert.That((every.Schema!.Classification, every.Schema.Input, every.Schema.Output),
+                Is.EqualTo(("contract", "boolean", "boolean")));
             Assert.That((closest.Classification, closest.Input, closest.Output),
                 Is.EqualTo(("contract", "T", "nullable<T>")));
             Assert.That((last.Classification, last.Input, last.Output),

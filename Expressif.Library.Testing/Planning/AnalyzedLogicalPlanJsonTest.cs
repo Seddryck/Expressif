@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Syntax;
 
@@ -9,7 +10,7 @@ public class AnalyzedLogicalPlanJsonTest
     [Test]
     public void Serialize_AttachesAnnotationsUsingLogicalPlanPaths()
     {
-        var plan = LogicalPlanner.Plan(ExpressionParser.Parse("upper | first-chars(5)"));
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("upper | first-chars(5)"));
         var analyzed = LogicalSchemaAnalyzer.AnalyzePlan(plan);
 
         using var document = JsonDocument.Parse(AnalyzedLogicalPlanJson.Serialize(analyzed));
