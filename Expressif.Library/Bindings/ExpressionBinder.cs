@@ -1,5 +1,8 @@
+using System.Runtime.ExceptionServices;
+using System.Text.RegularExpressions;
 using Expressif.Syntax;
 using Expressif.Discovery;
+using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Values.Types;
 using RuntimeExpression = Expressif.IExpression;
@@ -15,7 +18,7 @@ public sealed class ExpressionBinder : IExpressionBinder
     private static readonly ITypeSource BuiltInSource = new AssemblyTypeSource(typeof(ExpressionBinder).Assembly);
 
     private IContext Context { get; }
-    private ExpressifBinder SyntaxBinder { get; }
+    private LogicalPlanner Planner { get; }
     private LogicalPlanBinder PlanBinder { get; }
     private RuntimeExpressionFactory RuntimeFactory { get; }
 
@@ -43,16 +46,16 @@ public sealed class ExpressionBinder : IExpressionBinder
     private ExpressionBinder(IContext context, CompositeTypeSource source)
         : this(
             context,
-            ExpressifBinderFactory.Create(),
+            LogicalPlannerFactory.Create(),
             new LogicalPlanBinder(source, ExpressifTypeRegistry.Instance),
             new RuntimeExpressionFactory(source)) { }
 
     internal ExpressionBinder(
         IContext context,
-        ExpressifBinder syntaxBinder,
+        LogicalPlanner planner,
         LogicalPlanBinder planBinder,
         RuntimeExpressionFactory runtimeFactory)
-        => (Context, SyntaxBinder, PlanBinder, RuntimeFactory) = (context, syntaxBinder, planBinder, runtimeFactory);
+        => (Context, Planner, PlanBinder, RuntimeFactory) = (context, planner, planBinder, runtimeFactory);
 
     /// <summary>
     /// Binds syntax to an executable expression.
@@ -91,10 +94,108 @@ public sealed class ExpressionBinder : IExpressionBinder
         => BindClosedCore(plan);
 
     private RuntimeExpression BindCore(RootExpressionSyntax syntax)
-        => new Expressif.Expression(RuntimeFactory.Instantiate(SyntaxBinder.Bind(syntax), Context));
+        => BindSyntax(syntax, requireClosed: false);
 
     private RuntimeExpression BindClosedCore(RootExpressionSyntax syntax)
-        => new Expressif.Expression(RuntimeFactory.InstantiateClosed(SyntaxBinder.Bind(syntax), Context));
+        => BindSyntax(syntax, requireClosed: true);
+
+    private RuntimeExpression BindSyntax(RootExpressionSyntax syntax, bool requireClosed)
+    {
+        LogicalPlan plan;
+        try
+        {
+            plan = Planner.Build(syntax);
+        }
+        catch (LogicalPlanningException exception)
+        {
+            throw TranslatePlanningException(exception);
+        }
+
+        try
+        {
+            return BindPlan(plan, requireClosed);
+        }
+        catch (LogicalPlanBindingException exception) when (exception.InnerException is not null)
+        {
+            ExceptionDispatchInfo.Capture(exception.InnerException).Throw();
+            throw;
+        }
+        catch (LogicalPlanBindingException exception)
+        {
+            if (exception.Message.StartsWith(
+                "The logical plan cannot be bound as closed",
+                StringComparison.Ordinal))
+            {
+                throw new ExpressionRequiresInputException(
+                    (plan.Pipeline.Items.FirstOrDefault() as LogicalCall)?.Function.Name);
+            }
+
+            var unknown = Regex.Match(
+                exception.Message,
+                "^Operator '([^']+)' of kind 'extension' is not registered\\.$",
+                RegexOptions.CultureInvariant);
+            if (unknown.Success)
+            {
+                throw new NotImplementedFunctionException(unknown.Groups[1].Value);
+            }
+
+            throw new BindingException(exception.Message);
+        }
+    }
+
+    private static Exception TranslatePlanningException(LogicalPlanningException exception)
+    {
+        if (exception.Message.StartsWith("Duplicate input binding name '", StringComparison.Ordinal))
+        {
+            return new BindingException(exception.Message);
+        }
+
+        var message = Regex.Replace(
+            exception.Message,
+            " \\(at offset [0-9]+\\)$",
+            string.Empty,
+            RegexOptions.CultureInvariant);
+        var required = Regex.Match(
+            message,
+            "^Required parameter '([^']+)' was not supplied(?: to '[^']+')?\\.$",
+            RegexOptions.CultureInvariant);
+        if (required.Success)
+            return new MissingRequiredParameterException(required.Groups[1].Value);
+
+        var unknown = Regex.Match(
+            message,
+            "^Function '([^']+)' has no parameter named '([^']+)'\\.$",
+            RegexOptions.CultureInvariant);
+        if (unknown.Success)
+            return new UnknownParameterNameException(unknown.Groups[1].Value, unknown.Groups[2].Value);
+
+        var duplicate = Regex.Match(
+            message,
+            "^(?:Parameter|Named argument) '([^']+)' (?:is supplied|was specified) more than once\\.$",
+            RegexOptions.CultureInvariant);
+        if (duplicate.Success)
+            return new DuplicateNamedArgumentException(duplicate.Groups[1].Value);
+
+        var tooMany = Regex.Match(
+            message,
+            "^Function '([^']+)' has too many positional arguments\\.$",
+            RegexOptions.CultureInvariant);
+        if (tooMany.Success)
+            return new TooManyPositionalArgumentsException(tooMany.Groups[1].Value);
+
+        var unsupportedNamed = Regex.Match(
+            message,
+            "^Function '([^']+)' does not support named arguments\\.$",
+            RegexOptions.CultureInvariant);
+        if (unsupportedNamed.Success && unsupportedNamed.Groups[1].Value == "drill-down")
+        {
+            return new MissingOrUnexpectedParametersFunctionException(
+                unsupportedNamed.Groups[1].Value,
+                1);
+        }
+
+        return new BindingException(message);
+    }
 
     private RuntimeExpression BindCore(LogicalPlan plan)
         => BindPlan(plan, requireClosed: false);

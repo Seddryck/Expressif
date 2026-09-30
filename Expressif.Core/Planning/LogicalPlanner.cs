@@ -70,8 +70,11 @@ public sealed class LogicalPlanner
         {
             case TupleBindingShorthandSyntax shorthand:
                 if (shorthand.Direction == TupleBindingDirection.Prefix)
-                    yield return CreateCall("rotate", []);
-                yield return CreateCall("bind", [Raw(new LogicalLiteral("text", shorthand.Name))], expectedKind);
+                    yield return CreateCall("rotate", []) with { SourceSpan = shorthand.Span };
+                yield return CreateCall(
+                    "bind",
+                    [Raw(new LogicalLiteral("text", shorthand.Name))],
+                    expectedKind) with { SourceSpan = shorthand.Span };
                 yield break;
             case RecordAccessSyntax access:
                 foreach (var item in PlanRecordAccess(access))
@@ -86,10 +89,7 @@ public sealed class LogicalPlanner
                 yield return CreateCall(PlanUnaryOperator(unary.Operator), [], expectedKind);
                 yield break;
             case BinaryExpressionSyntax binary:
-                yield return CreateCall(
-                    PlanBinaryOperator(binary.Operator),
-                    [Raw(PlanExpression(binary.Left)), Raw(PlanExpression(binary.Right))],
-                    expectedKind);
+                yield return CreateBinaryCall(binary, expectedKind);
                 yield break;
             case ConditionalExpressionSyntax conditional:
                 yield return CreateCall(
@@ -143,7 +143,17 @@ public sealed class LogicalPlanner
     {
         var metadata = context.FindFunction(syntax.Name, expectedKind);
         var canonicalName = metadata?.Function.Name ?? syntax.Name.ToLowerInvariant();
-        return canonicalName switch
+        if (IsValueSpreadFunction(canonicalName)
+            && syntax.Arguments.Any(argument => argument is NamedArgumentSyntax))
+        {
+            throw Error($"Function '{syntax.Name}' does not support named arguments.", syntax);
+        }
+        if (canonicalName == "drill-down"
+            && syntax.Arguments.Any(argument => argument is NamedArgumentSyntax))
+        {
+            throw Error($"Function '{syntax.Name}' does not support named arguments.", syntax);
+        }
+        var call = canonicalName switch
         {
             "coerce" => CreateCall(syntax.Name, PlanCoercions(syntax), expectedKind),
             "let" => CreateCall(syntax.Name, [Raw(PlanLetDefinition(syntax))], expectedKind),
@@ -153,10 +163,57 @@ public sealed class LogicalPlanner
             "sort-by" or "rank-by" or "dense-rank-by"
                 => CreateCall(syntax.Name, syntax.Arguments.Select(argument => Raw(PlanSortCriterion(
                     RequireArgumentValue(argument)))).ToArray(), expectedKind),
-            "sort-term" => CreateCall(syntax.Name, PlanSortTermArguments(syntax), expectedKind),
+            "sort-term" => PlanSortTerm(syntax, metadata, expectedKind),
             "with" => PlanWith(syntax, metadata, expectedKind),
-            _ => CreateCall(syntax.Name, PlanOrdinaryArguments(syntax, canonicalName), expectedKind),
+            _ => CreateCall(
+                syntax.Name,
+                PlanOrdinaryArguments(syntax, canonicalName),
+                expectedKind,
+                allowMissingRequired: !syntax.HasParentheses && syntax.Arguments.Count == 0),
         };
+        return call with { SourceSpan = syntax.Span };
+    }
+
+    private LogicalCall PlanSortTerm(
+        FunctionCallSyntax syntax,
+        PlannerFunctionMetadata? metadata,
+        string? expectedKind)
+    {
+        var supplied = PlanSortTermArguments(syntax);
+        if (supplied.Count != 4)
+            return CreateCall(syntax.Name, supplied, expectedKind);
+
+        metadata ??= context.FindFunction(syntax.Name, expectedKind)
+            ?? throw Error("The planning catalog does not define 'sort-term'.", syntax);
+        var parameters = metadata.Parameters.ToList();
+        parameters.Add(SyntheticParameter("ascending"));
+        parameters.Add(SyntheticParameter("nulls-first"));
+        return new LogicalCall(
+            metadata.Function,
+            NormalizeArguments(metadata.Function.Name, parameters, supplied));
+    }
+
+    private static bool IsValueSpreadFunction(string name)
+        => name is "array" or "text" or "tuple" or "grouping" or "grouping-sets"
+            or "dictionary" or "nested-field" or "split-lengths" or "sort-key";
+
+    private LogicalCall CreateBinaryCall(BinaryExpressionSyntax syntax, string? expectedKind)
+    {
+        var name = PlanBinaryOperator(syntax.Operator);
+        var metadata = context.FindFunction(name, expectedKind);
+        var descriptor = metadata?.Function ?? SyntheticFunction(name);
+        return new LogicalCall(descriptor, [
+            new LogicalArgument(
+                SyntheticParameter("left").Descriptor,
+                PlanExpression(syntax.Left),
+                IsSpread: false,
+                IsExplicit: true),
+            new LogicalArgument(
+                SyntheticParameter("right").Descriptor,
+                PlanExpression(syntax.Right),
+                IsSpread: false,
+                IsExplicit: true),
+        ]);
     }
 
     private RawArgument[] PlanOrdinaryArguments(FunctionCallSyntax syntax, string canonicalName)
@@ -469,7 +526,9 @@ public sealed class LogicalPlanner
         if (syntax.RootDepth == 0 || syntax.Fields.Count == 0)
             throw Error($"Record access '{syntax.Text}' cannot be used as a scalar parameter.", syntax);
         var calls = PlanRecordAccess(syntax).Cast<LogicalValue>().ToArray();
-        return calls.Length == 1 ? calls[0] : new LogicalPipeline(calls);
+        return calls.Length == 1
+            ? calls[0]
+            : new LogicalPipeline(calls) { IsScalarReference = true };
     }
 
     private IEnumerable<LogicalCall> PlanRecordAccess(RecordAccessSyntax syntax)
@@ -485,7 +544,11 @@ public sealed class LogicalPlanner
             yield return CreateCall(
                 "field",
                 [Raw(Literal(value))],
-                contextDepth: index == 0 ? syntax.RootDepth : 0);
+                contextDepth: index == 0 ? syntax.RootDepth : 0) with
+                {
+                    IsReferenceShorthand = true,
+                    IsReferenceContinuation = index > 0,
+                };
         }
     }
 
@@ -494,18 +557,30 @@ public sealed class LogicalPlanner
         var position = syntax.Direction == TupleProjectionDirection.FromEnd
             ? syntax.Index == 0 ? int.MinValue : -syntax.Index
             : syntax.Index;
-        return CreateCall("tuple-at", [Raw(Literal(position))], contextDepth: syntax.RootDepth);
+        return CreateCall("tuple-at", [Raw(Literal(position))], contextDepth: syntax.RootDepth) with
+        {
+            IsReferenceShorthand = true,
+        };
     }
 
     private LogicalCall PlanCollection(
         string name,
         IEnumerable<(ExpressionSyntax? Expression, bool IsSpread, bool IsImplicitSpread)> elements)
     {
-        var supplied = elements.Select(element => element.IsImplicitSpread
-            ? Raw(PlanIncoming(), element.IsSpread)
-            : Raw(element.Expression ?? throw new LogicalPlanningException(
-                $"An explicit {name} spread must include an expression."), element.IsSpread)).ToArray();
-        return CreateCall(name, supplied);
+        var metadata = context.FindFunction(name);
+        var descriptor = metadata is null
+            ? SyntheticFunction(name)
+            : metadata.Function with { Kind = "extension" };
+        var parameter = SyntheticParameter("values", variadic: true).Descriptor;
+        var arguments = elements.Select(element => new LogicalArgument(
+            parameter,
+            element.IsImplicitSpread
+                ? PlanIncoming()
+                : PlanArgument(element.Expression ?? throw new LogicalPlanningException(
+                    $"An explicit {name} spread must include an expression.")),
+            element.IsSpread,
+            IsExplicit: true)).ToArray();
+        return new LogicalCall(descriptor, arguments);
     }
 
     private LogicalCall PlanTextCollection(string name, IEnumerable<string> values)
@@ -678,19 +753,25 @@ public sealed class LogicalPlanner
         string authoredName,
         IReadOnlyList<RawArgument> supplied,
         string? expectedKind = null,
-        int contextDepth = 0)
+        int contextDepth = 0,
+        bool allowMissingRequired = false)
     {
         var metadata = context.FindFunction(authoredName, expectedKind);
         var descriptor = metadata?.Function ?? SyntheticFunction(authoredName);
         var parameters = metadata?.Parameters ?? SyntheticParameters(supplied.Count);
-        var arguments = NormalizeArguments(descriptor.Name, parameters, supplied);
+        var arguments = NormalizeArguments(
+            descriptor.Name,
+            parameters,
+            supplied,
+            allowMissingRequired);
         return new LogicalCall(descriptor, arguments, contextDepth);
     }
 
     private IReadOnlyList<LogicalArgument> NormalizeArguments(
         string functionName,
         IReadOnlyList<PlannerParameterMetadata> parameters,
-        IReadOnlyList<RawArgument> supplied)
+        IReadOnlyList<RawArgument> supplied,
+        bool allowMissingRequired = false)
     {
         if (parameters.Count == 0)
         {
@@ -741,7 +822,10 @@ public sealed class LogicalPlanner
             foreach (var match in matches)
             {
                 var value = match.Argument.Value
-                    ?? PlanArgument(match.Argument.Syntax!, ExpectedKind(parameter));
+                    ?? (parameter.Descriptor.Type == "text"
+                        && TryGetBareFunctionName(match.Argument.Syntax!, out var bareName)
+                            ? new LogicalLiteral("text", bareName)
+                            : PlanArgument(match.Argument.Syntax!, ExpectedKind(parameter)));
                 if (match.EntryName is not null)
                     value = PlanNamedEntry(match.EntryName, value);
                 result.Add(new LogicalArgument(
@@ -754,6 +838,8 @@ public sealed class LogicalPlanner
             {
                 if (!parameter.Descriptor.Optional)
                 {
+                    if (allowMissingRequired || parameter.Descriptor.Variadic)
+                        continue;
                     throw new LogicalPlanningException(
                         $"Required parameter '{parameter.Descriptor.Name}' was not supplied to '{functionName}'.");
                 }
@@ -801,6 +887,18 @@ public sealed class LogicalPlanner
         => parameter.Descriptor.Type is "predicate" or "accumulator"
             ? parameter.Descriptor.Type
             : null;
+
+    private static bool TryGetBareFunctionName(ExpressionSyntax syntax, out string name)
+    {
+        var call = syntax switch
+        {
+            FunctionCallSyntax { Arguments.Count: 0 } direct => direct,
+            OpenExpressionSyntax { Pipeline: [FunctionCallSyntax { Arguments.Count: 0 } nested] } => nested,
+            _ => null,
+        };
+        name = call?.Name ?? string.Empty;
+        return call is not null;
+    }
 
     private LogicalCall PlanVariable(string name)
         => SyntheticCall("variable", ("name", new LogicalLiteral("text", name)));

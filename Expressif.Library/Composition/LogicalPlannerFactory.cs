@@ -17,8 +17,8 @@ public static class LogicalPlannerFactory
         public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
         {
             var function = expectedKind is "predicate" or "accumulator"
-                ? catalog.Find(name, expectedKind) ?? catalog.Find(name, "function")
-                : catalog.Find(name, "function") ?? catalog.Find(name);
+                ? Find(name, expectedKind) ?? Find(name, "function")
+                : Find(name, "function") ?? Find(name);
             return function is null ? null : new PlannerFunctionMetadata(
                 new PlannerFunctionDescriptor(
                     function.Name,
@@ -66,6 +66,11 @@ public static class LogicalPlannerFactory
                                 parameter.Evaluation.Context)),
                     DescribeOmission(parameter.Omission))).ToArray());
         }
+
+        private FunctionDocumentation? Find(string name, string? kind = null)
+            => kind is null
+                ? catalog.Find(name) ?? catalog.Find(name.ToKebabCase())
+                : catalog.Find(name, kind) ?? catalog.Find(name.ToKebabCase(), kind);
 
         public string? FindType(string name)
             => ExpressifTypeRegistry.Instance.TryResolve(name, out var descriptor)

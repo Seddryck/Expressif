@@ -35,21 +35,16 @@ internal sealed class LogicalPlanBinder
         "with",
     };
 
-    private static readonly HashSet<string> FunctionValueOperators = new(StringComparer.Ordinal)
-    {
-        "array",
-        "record",
-        "tuple",
-        "vector",
-    };
-
     private static readonly HashSet<string> StructuralRootValueOperators = new(StringComparer.Ordinal)
     {
+        "array",
         "dictionary",
         "grouping",
         "interval",
         "pair",
+        "tuple",
         "variable",
+        "vector",
     };
 
     private readonly IImplementationRegistry functions;
@@ -83,10 +78,13 @@ internal sealed class LogicalPlanBinder
         {
             var source = BindValue(items[0]);
             var members = items.Skip(1).Select(item => BindPipelineCall(item, inputBound: false)).ToArray();
+            ValidateCoercePipeline(members, GetStaticType(source));
             return new ClosedRootExpression(new ClosedExpression(source, members));
         }
 
-        return new OpenRootExpression(BindOpenPipeline(plan.Pipeline, inputBound: false));
+        var expression = BindOpenPipeline(plan.Pipeline, inputBound: false);
+        ValidateCoercePipeline(expression.Members.ToArray(), inputType: null);
+        return new OpenRootExpression(expression);
     }
 
     public IRootExpression BindClosed(LogicalPlan plan)
@@ -141,15 +139,50 @@ internal sealed class LogicalPlanBinder
 
     private Function BindCall(LogicalCall call, bool inputBound)
     {
+        var function = BindCallCore(call, inputBound);
+        function.SourceSpan = call.SourceSpan;
+        return function;
+    }
+
+    private Function BindCallCore(LogicalCall call, bool inputBound)
+    {
         ValidateCall(call);
         if (call.Function.Kind == "extension" && StructuralOperators.Contains(call.Function.Name))
             throw Error($"Structural value '{call.Function.Name}' cannot be used as a pipeline stage.");
 
-        ResolveOperator(call);
+        if (call.Function.Name != "identity")
+            ResolveOperator(call);
         if (call.Function.Name == "record")
             return BindRecordFunction(call);
         if (call.Function.Name == "with")
             return BindWithFunction(call);
+        if (call.Function.Name is "label" or "label-conflicts"
+            && call.Arguments.Any(argument => argument.IsSpread))
+        {
+            throw new BindingException($"Function '{call.Function.Name}' does not support spread arguments.");
+        }
+        if (call.Function.Name is "drill-down" or "pick" or "expand"
+            && call.Arguments.Any(argument => argument.IsSpread))
+        {
+            throw new BindingException($"Function '{call.Function.Name}' does not support spread arguments.");
+        }
+        if (call.Function.Name == "drill-down"
+            && call.Arguments.Any(argument => argument.IsExplicit
+                && argument.Value is LogicalCall { Function.Name: "named-entry" }))
+        {
+            throw new MissingOrUnexpectedParametersFunctionException(
+                call.Function.Name,
+                call.Arguments.Count(argument => argument.IsExplicit));
+        }
+        if (call.Arguments.Count == 0 && call.Function.Name is "first-elements" or "last-elements")
+        {
+            var accumulator = call.Function.Name == "first-elements" ? "first" : "last";
+            return Function.FromArguments(
+                accumulator,
+                [],
+                FunctionSyntax.ImplicitFoldAccumulator,
+                FunctionImplementationKind.Accumulator);
+        }
 
         var arguments = BindFunctionArguments(call);
         var syntax = ResolveSyntax(call, inputBound, arguments);
@@ -195,7 +228,7 @@ internal sealed class LogicalPlanBinder
                 continue;
             }
 
-            var parameter = BindArgumentValue(argument);
+            var parameter = BindArgumentValue(call, argument);
             var argumentName = omitted && !argument.Parameter.Variadic
                 ? argument.Parameter.Name
                 : null;
@@ -204,12 +237,23 @@ internal sealed class LogicalPlanBinder
         return result.ToArray();
     }
 
-    private IParameter BindArgumentValue(LogicalArgument argument)
-        => argument.Parameter.Type switch
+    private IParameter BindArgumentValue(LogicalCall call, LogicalArgument argument)
+        => (call.Function.Name, argument.Parameter.Name, argument.Value) switch
         {
-            "predicate" => new PredicationParameter(BindPredication(argument.Value!)),
+            ("bind", "function", LogicalLiteral { Type: "text", Value: string name })
+                => new QuotedLiteralParameter(name),
+            (_, _, LogicalPipeline pipeline) => BindExpressionParameter(
+                pipeline,
+                argument.Parameter.Evaluation?.Context == "traversal",
+                argument.Parameter.Evaluation?.Source is "enclosing" or "surrounding"),
+            (_, _, LogicalCall nested) when IsExpressionCall(nested) => new OpenExpressionParameter(
+                new OpenExpression([BindCall(nested, inputBound: false)])),
             _ => BindValue(argument.Value!),
         };
+
+    private static bool IsExpressionCall(LogicalCall call)
+        => call.Function.Kind != "extension"
+            && call.Function.Name is not "field" and not "tuple-at";
 
     private Function BindRecordFunction(LogicalCall call)
     {
@@ -293,13 +337,31 @@ internal sealed class LogicalPlanBinder
         _ => throw Error($"Logical value '{value.GetType().Name}' is not supported."),
     };
 
-    private IParameter BindExpressionParameter(LogicalPipeline pipeline)
+    private IParameter BindExpressionParameter(
+        LogicalPipeline pipeline,
+        bool traversalContext = false,
+        bool enclosingContext = false)
     {
+        if (traversalContext
+            && HasLeadingScopedTupleReference(pipeline)
+            && !ContainsInputBinding(pipeline))
+            pipeline = AdjustTraversalTupleScopes(pipeline);
         if (pipeline.Items.Count == 0)
             throw Error("An expression-valued pipeline must contain at least one value.");
+        if (pipeline.Items is [LogicalPipeline nested])
+            return BindExpressionParameter(nested, traversalContext, enclosingContext);
+
+        if (!traversalContext
+            && (pipeline.IsScalarReference || enclosingContext)
+            && pipeline.Items[0] is LogicalCall { ContextDepth: > 0 })
+        {
+            return new InputExpressionParameter(new ClosedExpression(
+                BindValue(pipeline.Items[0]),
+                pipeline.Items.Skip(1).Select(item => BindPipelineCall(item, inputBound: false)).ToArray()));
+        }
 
         if (pipeline.Items[0] is LogicalLiteral
-            || (pipeline.Items[0] is LogicalCall call && IsRootValue(call)))
+            || (pipeline.Items[0] is LogicalCall call && IsMaterializedRootValue(call)))
         {
             return new InputExpressionParameter(new ClosedExpression(
                 BindValue(pipeline.Items[0]),
@@ -308,6 +370,40 @@ internal sealed class LogicalPlanBinder
 
         return new OpenExpressionParameter(BindOpenPipeline(pipeline, inputBound: false));
     }
+
+    private static bool HasLeadingScopedTupleReference(LogicalPipeline pipeline)
+        => pipeline.Items.FirstOrDefault() is LogicalCall
+        {
+            Function.Name: "tuple-at",
+            ContextDepth: > 0,
+        };
+
+    private static bool ContainsInputBinding(LogicalValue value) => value switch
+    {
+        LogicalPipeline pipeline => pipeline.Items.Any(ContainsInputBinding),
+        LogicalCall { Function.Name: "input-binding" } => true,
+        LogicalCall call => call.Arguments.Any(argument => argument.Value is not null
+            && ContainsInputBinding(argument.Value)),
+        _ => false,
+    };
+
+    private static LogicalPipeline AdjustTraversalTupleScopes(LogicalPipeline pipeline)
+        => pipeline with { Items = pipeline.Items.Select(AdjustTraversalTupleScopes).ToArray() };
+
+    private static LogicalValue AdjustTraversalTupleScopes(LogicalValue value) => value switch
+    {
+        LogicalPipeline pipeline => AdjustTraversalTupleScopes(pipeline),
+        LogicalCall call => call with
+        {
+            ContextDepth = call.Function.Name == "tuple-at" && call.ContextDepth >= 2
+                ? call.ContextDepth + 1
+                : call.ContextDepth,
+            Arguments = call.Arguments.Select(argument => argument.Value is null
+                ? argument
+                : argument with { Value = AdjustTraversalTupleScopes(argument.Value) }).ToArray(),
+        },
+        _ => value,
+    };
 
     private IParameter BindStructuralValue(LogicalCall call)
     {
@@ -378,7 +474,8 @@ internal sealed class LogicalPlanBinder
 
     private IReadOnlyList<(IParameter Value, bool IsSpread)> BindCollectionElements(LogicalCall call)
     {
-        ResolveOperator(call);
+        if (call.Function.Kind != "extension")
+            ResolveOperator(call);
         var elements = new List<(IParameter, bool)>();
         foreach (var argument in call.Arguments)
         {
@@ -643,7 +740,7 @@ internal sealed class LogicalPlanBinder
             return false;
 
         RequireStructural(entry, "named-entry");
-        name = RequireText(RequireArgument(entry, "name").Value, "entry name");
+        name = RequireText(RequireArgument(entry, "name").Value, "entry name", allowEmpty: true);
         parameter = BindValue(RequireArgument(entry, "value").Value!);
         return true;
     }
@@ -661,9 +758,11 @@ internal sealed class LogicalPlanBinder
             return FunctionSyntax.ConditionalBackward;
         if (call.Function.Name == "field")
         {
+            if (!call.IsReferenceShorthand)
+                return FunctionSyntax.Standard;
             return call.ContextDepth switch
             {
-                0 when inputBound => FunctionSyntax.InputFieldShorthand,
+                0 when inputBound && !call.IsReferenceContinuation => FunctionSyntax.InputFieldShorthand,
                 0 => FunctionSyntax.FieldShorthand,
                 1 => FunctionSyntax.RootFieldShorthand,
                 2 => FunctionSyntax.EnclosingRootFieldShorthand,
@@ -672,6 +771,8 @@ internal sealed class LogicalPlanBinder
         }
         if (call.Function.Name == "tuple-at")
         {
+            if (!call.IsReferenceShorthand)
+                return FunctionSyntax.Standard;
             if (arguments.Count != 1)
                 throw Error("Operator 'tuple-at' requires exactly one position argument.");
             if (call.ContextDepth > 0)
@@ -684,6 +785,80 @@ internal sealed class LogicalPlanBinder
             throw Error($"Operator '{call.Function.Name}' does not support context depth '{call.ContextDepth}'.");
         return FunctionSyntax.Standard;
     }
+
+    private void ValidateCoercePipeline(IReadOnlyList<Function> members, Type? inputType)
+    {
+        var currentType = inputType;
+        foreach (var member in members)
+        {
+            if (member.Name.Equals("coerce", StringComparison.OrdinalIgnoreCase))
+            {
+                if (currentType is not null)
+                    ValidateCoerceInput(member, currentType);
+                continue;
+            }
+
+            currentType = TryGetContract(member, out var outputType) && outputType != typeof(object)
+                ? Nullable.GetUnderlyingType(outputType) ?? outputType
+                : null;
+        }
+    }
+
+    private bool TryGetContract(Function function, out Type outputType)
+    {
+        outputType = null!;
+        if (function.Syntax is FunctionSyntax.ScopedTupleProjectionShorthand
+            or FunctionSyntax.InputFieldShorthand
+            or FunctionSyntax.InputTupleProjectionShorthand
+            || !functions.TryResolve(function.Name, out var implementationType))
+        {
+            return false;
+        }
+
+        var contracts = implementationType.GetInterfaces()
+            .Where(candidate => candidate.IsGenericType
+                && candidate.GetGenericTypeDefinition() == typeof(IFunction<,>))
+            .Select(candidate => candidate.GetGenericArguments())
+            .DistinctBy(candidate => (candidate[0], candidate[1]))
+            .ToArray();
+        if (contracts.Length != 1)
+            return false;
+        outputType = contracts[0][1];
+        return true;
+    }
+
+    private static void ValidateCoerceInput(Function function, Type inputType)
+    {
+        var specifications = function.Parameters.Cast<CoercionSpecificationParameter>().ToArray();
+        if (typeof(IPositionalValue).IsAssignableFrom(inputType))
+        {
+            if (specifications.Any(specification => specification is FieldCoercionParameter))
+                throw new BindingException("Tuple input requires tuple-position selectors.");
+            return;
+        }
+        if (typeof(RecordValue).IsAssignableFrom(inputType))
+        {
+            if (specifications.Any(specification => specification is not FieldCoercionParameter))
+                throw new BindingException("Record input requires field selector mappings.");
+            return;
+        }
+        if (specifications is not [PositionalCoercionParameter])
+            throw new BindingException("Scalar input requires exactly one positional type descriptor.");
+    }
+
+    private static Type? GetStaticType(IParameter parameter) => parameter switch
+    {
+        QuotedLiteralParameter => typeof(string),
+        LiteralParameter { Value: { } value } => value.GetType(),
+        TupleParameter => typeof(Expressif.Values.Tuple),
+        VectorParameter => typeof(Vector),
+        PairParameter => typeof(Pair),
+        GroupingParameter => typeof(Grouping),
+        DictionaryParameter => typeof(Expressif.Values.Dictionary),
+        RecordLiteralParameter => typeof(RecordValue),
+        ArrayParameter => typeof(object[]),
+        _ => null,
+    };
 
     private void ResolveOperator(LogicalCall call)
     {
@@ -790,10 +965,10 @@ internal sealed class LogicalPlanBinder
             ? call
             : throw Error($"Expected structural value '{name}'.");
 
-    private static string RequireText(LogicalValue? value, string description)
-        => value is LogicalLiteral { Type: "text", Value: string text } && text.Length > 0
+    private static string RequireText(LogicalValue? value, string description, bool allowEmpty = false)
+        => value is LogicalLiteral { Type: "text", Value: string text } && (allowEmpty || text.Length > 0)
             ? text
-            : throw Error($"The {description} must be a non-empty text literal.");
+            : throw Error($"The {description} must be a{(allowEmpty ? string.Empty : " non-empty")} text literal.");
 
     private static string RequireTypeName(LogicalValue? value)
         => value is LogicalLiteral { Type: "type", Value: string name } && name.Length > 0
@@ -829,9 +1004,13 @@ internal sealed class LogicalPlanBinder
         => value is sbyte or byte or short or ushort or int or uint or long or ulong;
 
     private static bool IsRootValue(LogicalCall call)
+        => IsMaterializedRootValue(call)
+            || (call.Function.Name is "field" or "tuple-at" && call.ContextDepth > 0);
+
+    private static bool IsMaterializedRootValue(LogicalCall call)
         => (call.Function.Kind == "function"
-                && FunctionValueOperators.Contains(call.Function.Name)
-                && (call.Function.Name != "record" || IsRecordValue(call)))
+                && call.Function.Name == "record"
+                && IsRecordValue(call))
             || (call.Function.Kind == "extension" && StructuralRootValueOperators.Contains(call.Function.Name));
 
     private static bool IsRecordValue(LogicalCall call)
@@ -853,7 +1032,9 @@ internal sealed class LogicalPlanBinder
     {
         LogicalLiteral => false,
         LogicalPipeline pipeline => RequiresCallerInput(pipeline),
-        LogicalCall { Function.Name: "incoming" or "input-binding" or "field" or "tuple-at" } => true,
+        LogicalCall { Function.Name: "incoming" or "input-binding" } => true,
+        LogicalCall { Function.Name: "field" or "tuple-at", ContextDepth: 0 } => true,
+        LogicalCall { Function.Name: "field" or "tuple-at" } => false,
         LogicalCall { Function.Name: "variable" or "callable-reference" } => false,
         LogicalCall call when call.Function.Name is "sort-criterion" or "coercion" or "field-coercion" or "tuple-coercion"
             => false,

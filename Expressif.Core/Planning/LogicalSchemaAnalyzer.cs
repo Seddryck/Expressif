@@ -246,12 +246,36 @@ public static class LogicalSchemaAnalyzer
 
         private Requirement RequireCall(LogicalCall call, LogicalSchema expected, string path)
         {
+            if (call.Function.Kind == "extension"
+                && call.Function.Name is "array" or "tuple" or "vector")
+            {
+                return RequireStructuralCollection(call, path);
+            }
             var schema = call.Function.Schema;
             if (schema?.Classification == "intrinsic" && schema.Intrinsic is not null)
                 return RequireIntrinsic(call, expected, path, schema.Intrinsic);
             return schema?.Classification == "contract"
                 ? RequireContract(call, expected, path, schema)
                 : RequireGenericCall(call, path);
+        }
+
+        private Requirement RequireStructuralCollection(LogicalCall call, string path)
+        {
+            var input = (LogicalSchema)new NoInputLogicalSchema();
+            var enclosing = (LogicalSchema)new NoInputLogicalSchema();
+            for (var index = 0; index < call.Arguments.Count; index++)
+            {
+                var argument = call.Arguments[index];
+                if (!argument.IsExplicit || argument.Value is null)
+                    continue;
+                var requirement = Require(
+                    argument.Value,
+                    new AnyLogicalSchema(),
+                    $"{path}.arguments[{index}]");
+                input = Intersect(input, requirement.Input, $"{path}.input");
+                enclosing = Intersect(enclosing, requirement.Enclosing, $"{path}.enclosing");
+            }
+            return new Requirement(input, enclosing);
         }
 
         private Requirement RequireIntrinsic(
