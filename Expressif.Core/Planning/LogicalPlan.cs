@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Expressif.Syntax;
 
 namespace Expressif.Planning;
 
@@ -20,7 +21,10 @@ public abstract record LogicalValue;
 /// <summary>
 /// A sequence whose output flows from one item to the next.
 /// </summary>
-public sealed record LogicalPipeline(IReadOnlyList<LogicalValue> Items) : LogicalValue;
+public sealed record LogicalPipeline(IReadOnlyList<LogicalValue> Items) : LogicalValue
+{
+    internal bool IsScalarReference { get; init; }
+}
 
 /// <summary>
 /// A canonical operator invocation.
@@ -28,7 +32,12 @@ public sealed record LogicalPipeline(IReadOnlyList<LogicalValue> Items) : Logica
 public sealed record LogicalCall(
     PlannerFunctionDescriptor Function,
     IReadOnlyList<LogicalArgument> Arguments,
-    int ContextDepth = 0) : LogicalValue;
+    int ContextDepth = 0) : LogicalValue
+{
+    internal SourceSpan? SourceSpan { get; init; }
+    internal bool IsReferenceShorthand { get; init; }
+    internal bool IsReferenceContinuation { get; init; }
+}
 
 /// <summary>
 /// A scalar value identified by its Expressif semantic type.

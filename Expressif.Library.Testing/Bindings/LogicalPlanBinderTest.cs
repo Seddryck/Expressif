@@ -10,6 +10,22 @@ namespace Expressif.Testing.Bindings;
 
 public sealed class LogicalPlanBinderTest
 {
+    [Test]
+    public void Bind_Syntax_UsesLogicalPlanPipeline()
+    {
+        var expression = ExpressionBinder.Bind(ExpressionParser.Parse("1 | add(2)"));
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(3m));
+    }
+
+    [Test]
+    public void BindClosed_Syntax_UsesLogicalPlanPipeline()
+    {
+        var expression = ExpressionBinder.BindClosed(ExpressionParser.Parse("1 | add(2)"));
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(3m));
+    }
+
     [TestCase("add(2)", 3, 5)]
     [TestCase("1 | add(2)", null, 3)]
     [TestCase("\"answer\" | upper", null, "ANSWER")]
