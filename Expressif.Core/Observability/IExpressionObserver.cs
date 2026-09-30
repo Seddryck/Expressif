@@ -9,5 +9,12 @@ namespace Expressif.Observability;
 /// </remarks>
 public interface IExpressionObserver
 {
+    /// <summary>
+    /// Begins observing one parse, bind, or evaluation operation.
+    /// </summary>
+    /// <param name="stage">The lifecycle stage performed by the operation.</param>
+    /// <returns>
+    /// A dedicated observation that receives the operation outcome and is disposed when the operation ends.
+    /// </returns>
     IExpressionObservation Begin(ExpressionObservationStage stage);
 }
