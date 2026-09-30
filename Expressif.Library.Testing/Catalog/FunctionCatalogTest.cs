@@ -405,6 +405,226 @@ public class FunctionCatalogTest
         Assert.That(semantics, Is.EqualTo(new FunctionSemanticsDocumentation(cardinality, dependency, ordering)));
     }
 
+    [Test]
+    public void Default_Map_DeserializesSchemaContract()
+    {
+        var schema = FunctionCatalog.Default.Find("map")?.Schema;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(schema?.Input, Is.EqualTo("array<T>"));
+            Assert.That(schema?.Output, Is.EqualTo("array<U>"));
+            Assert.That(schema?.Parameters?["transformation"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "U")));
+            Assert.That(schema?.Classification, Is.EqualTo("contract"));
+            Assert.That(schema?.NullableWhen, Is.EqualTo(new[] { "input" }));
+            Assert.That(FunctionCatalog.Default.Find("field")?.Schema?.Intrinsic, Is.EqualTo("field"));
+            Assert.That(FunctionCatalog.Default.Find("field")?.Schema?.Classification, Is.EqualTo("intrinsic"));
+        });
+    }
+
+    [Test]
+    public void Default_RepresentativeContracts_DeserializeCompositionMetadata()
+    {
+        var coalesce = FunctionCatalog.Default.Find("coalesce")?.Schema;
+        var denseRank = FunctionCatalog.Default.Find("dense-rank")?.Schema;
+        var denseRankBy = FunctionCatalog.Default.Find("dense-rank-by")?.Schema;
+        var groupBy = FunctionCatalog.Default.Find("group-by")?.Schema;
+        var rank = FunctionCatalog.Default.Find("rank")?.Schema;
+        var rankBy = FunctionCatalog.Default.Find("rank-by")?.Schema;
+        var sort = FunctionCatalog.Default.Find("sort")?.Schema;
+        var sortBy = FunctionCatalog.Default.Find("sort-by")?.Schema;
+        var sortTable = FunctionCatalog.Default.Find("sort-table")?.Schema;
+        var summarize = FunctionCatalog.Default.Find("summarize")?.Schema;
+        var sum = FunctionCatalog.Default.Find("sum", "accumulator")?.Schema;
+        var with = FunctionCatalog.Default.Find("with")?.Schema;
+        var selections = new[] { "bottom", "bottom-with-ties", "top", "top-with-ties" }
+            .Select(name => FunctionCatalog.Default.Find(name)?.Schema)
+            .ToArray();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(coalesce?.Parameters?["expressions"].Combine, Is.EqualTo("union"));
+            Assert.That(groupBy?.Output, Is.EqualTo("grouping<K, T>"));
+            Assert.That(groupBy?.Parameters?["expressions"].Combine, Is.EqualTo("tuple"));
+            Assert.That((sortBy?.Input, sortBy?.Output), Is.EqualTo(("array<T>", "array<T>")));
+            Assert.That(sortBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
+            Assert.That((rankBy?.Input, rankBy?.Output),
+                Is.EqualTo(("array<T>", "grouping<integer, T>")));
+            Assert.That(rankBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
+            Assert.That((denseRankBy?.Input, denseRankBy?.Output),
+                Is.EqualTo(("array<T>", "grouping<integer, T>")));
+            Assert.That(denseRankBy?.Parameters?["criteria"].Input, Is.EqualTo("T"));
+            Assert.That((sortTable?.Input, sortTable?.Output),
+                Is.EqualTo(("array<pair<sort-key, T>>", "sort-table<T>")));
+            Assert.That(sortTable?.NullableWhen, Is.EqualTo(new[] { "input" }));
+            Assert.That((sort?.Input, sort?.Output), Is.EqualTo(("sort-table<T>", "array<T>")));
+            Assert.That((rank?.Input, rank?.Output),
+                Is.EqualTo(("sort-table<T>", "grouping<integer, T>")));
+            Assert.That((denseRank?.Input, denseRank?.Output),
+                Is.EqualTo(("sort-table<T>", "grouping<integer, T>")));
+            Assert.That(selections, Has.All.Matches<FunctionSchemaDocumentation>(schema =>
+                schema.Input == "sort-table<T>" && schema.Output == "array<T>"));
+            Assert.That(summarize?.Input, Is.EqualTo("grouping<K, T>"));
+            Assert.That(summarize?.Output, Is.EqualTo("dictionary<K, U>"));
+            Assert.That(summarize?.Parameters?["expression"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("array<T>", "U")));
+            Assert.That(sum, Is.EqualTo(new FunctionSchemaDocumentation(
+                "numeric",
+                "numeric",
+                Classification: "contract")));
+            Assert.That((with?.Classification, with?.Intrinsic), Is.EqualTo(("intrinsic", "with")));
+        });
+    }
+
+    [Test]
+    public void Default_RelatedFamilies_DeserializeStructuralSchemaMetadata()
+    {
+        FunctionSchemaDocumentation Schema(string name)
+            => FunctionCatalog.Default.Find(name)?.Schema
+                ?? throw new AssertionException($"Expected schema metadata for '{name}'.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((Schema("complement").Input, Schema("complement").Output),
+                Is.EqualTo(("array<T>", "array<U>")));
+            Assert.That(Schema("complement").Parameters?["array"].Output, Is.EqualTo("array<U>"));
+            Assert.That(new[] { Schema("union"), Schema("symmetric-difference") },
+                Has.All.Matches<FunctionSchemaDocumentation>(schema =>
+                    schema.Input == "array<T>" && schema.Output == "array<union<T, U>>"));
+
+            Assert.That((Schema("group").Input, Schema("group").Output),
+                Is.EqualTo(("array<pair<K, V>>", "grouping<K, V>")));
+            Assert.That(new[] { Schema("drop-empty-groups"), Schema("filter-groups"), Schema("top-groups") },
+                Has.All.Matches<FunctionSchemaDocumentation>(schema =>
+                    schema.Input == "grouping<K, T>" && schema.Output == "grouping<K, T>"));
+            Assert.That((Schema("map-groups").Input, Schema("map-groups").Output),
+                Is.EqualTo(("grouping<K, T>", "grouping<K, U>")));
+            Assert.That((Schema("drill-up").Input, Schema("drill-up").Output),
+                Is.EqualTo(("grouping<K, T>", "grouping<U, T>")));
+            Assert.That((Schema("summarize-against").Input, Schema("summarize-against").Output),
+                Is.EqualTo(("grouping<K, T>", "dictionary<K, U>")));
+
+            Assert.That((Schema("join").Input, Schema("join").Output),
+                Is.EqualTo(("array<L>", "array<pair<L, R>>")));
+            Assert.That((Schema("join-left").Input, Schema("join-left").Output),
+                Is.EqualTo(("array<L>", "array<pair<L, nullable<R>>>")));
+            Assert.That((Schema("join-right").Input, Schema("join-right").Output),
+                Is.EqualTo(("array<L>", "array<pair<nullable<L>, R>>")));
+            Assert.That((Schema("join-full").Input, Schema("join-full").Output),
+                Is.EqualTo(("array<L>", "array<pair<nullable<L>, nullable<R>>>")));
+
+            Assert.That(Schema("tuple-at").Intrinsic, Is.EqualTo("tuple-position"));
+            Assert.That(Schema("tuple-first").Intrinsic, Is.EqualTo("tuple-position:0"));
+            Assert.That(Schema("tuple-second").Intrinsic, Is.EqualTo("tuple-position:1"));
+        });
+    }
+
+    [Test]
+    public void Default_AccumulatorContracts_ReflectImplementationRelationships()
+    {
+        var any = FunctionCatalog.Default.Find("any", "accumulator")!;
+        var closest = FunctionCatalog.Default.Find("closest", "accumulator")!.Schema!;
+        var every = FunctionCatalog.Default.Find("every", "accumulator")!;
+        var last = FunctionCatalog.Default.Find("last", "accumulator")!.Schema!;
+        var maximum = FunctionCatalog.Default.Find("max", "accumulator")!.Schema!;
+        var minimum = FunctionCatalog.Default.Find("min", "accumulator")!.Schema!;
+        var only = FunctionCatalog.Default.Find("only", "accumulator")!.Schema!;
+        var reduce = FunctionCatalog.Default.Find("reduce", "accumulator")!.Schema!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That((any.Schema!.Classification, any.Schema.Input, any.Schema.Output),
+                Is.EqualTo(("contract", "boolean", "boolean")));
+            Assert.That((every.Schema!.Classification, every.Schema.Input, every.Schema.Output),
+                Is.EqualTo(("contract", "boolean", "boolean")));
+            Assert.That((closest.Classification, closest.Input, closest.Output),
+                Is.EqualTo(("contract", "T", "nullable<T>")));
+            Assert.That((last.Classification, last.Input, last.Output),
+                Is.EqualTo(("contract", "T", "nullable<T>")));
+            Assert.That((maximum.Classification, maximum.Input, maximum.Output),
+                Is.EqualTo(("contract", "numeric", "nullable<numeric>")));
+            Assert.That((minimum.Classification, minimum.Input, minimum.Output),
+                Is.EqualTo(("contract", "numeric", "nullable<numeric>")));
+            Assert.That((only.Classification, only.Input, only.Output),
+                Is.EqualTo(("contract", "T", "U")));
+            Assert.That(only.Parameters!["predicate"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "boolean")));
+            Assert.That(only.Parameters["accumulator"],
+                Is.EqualTo(new FunctionParameterSchemaDocumentation("T", "U")));
+            Assert.That(reduce.Classification, Is.EqualTo("dynamic"));
+            Assert.That(reduce.DynamicReason, Does.Contain("operation output"));
+            Assert.That(reduce.DynamicReason, Does.Contain("initial value"));
+        });
+    }
+
+    [Test]
+    [Category("MetadataConsistency")]
+    public void Default_AllPublicCallables_HaveExactlyOneSchemaClassification()
+    {
+        var functions = FunctionCatalog.Default.Functions;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(functions, Has.All.Property(nameof(FunctionDocumentation.Schema)).Not.Null);
+            Assert.That(functions.Select(function => function.Schema!.Classification),
+                Is.All.AnyOf("fixed", "contract", "intrinsic", "dynamic"));
+            Assert.That(functions.Where(function => function.Schema!.Classification == "dynamic")
+                .Select(function => function.Schema!.DynamicReason), Is.All.Not.Empty);
+            Assert.That(functions.Where(function => function.Schema!.Classification == "contract")
+                .Select(function => function.Schema!.Input), Is.All.Not.Empty);
+            Assert.That(functions.Where(function => function.Schema!.Classification == "contract")
+                .Select(function => function.Schema!.Output), Is.All.Not.Empty);
+            Assert.That(functions.Where(function => function.Schema!.Classification == "intrinsic")
+                .Select(function => function.Schema!.Intrinsic), Is.All.Not.Empty);
+        });
+    }
+
+    [Test]
+    public void ValidateSchemas_MissingSchema_ThrowsClearDiagnostic()
+    {
+        var function = Documentation("sample");
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSchemas([function]),
+            Throws.InvalidOperationException.With.Message.EqualTo(
+                "Function 'sample' must declare a schema classification."));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("unsupported")]
+    public void ValidateSchemas_MissingOrUnsupportedClassification_ThrowsClearDiagnostic(
+        string? classification)
+    {
+        var function = Documentation("sample") with
+        {
+            Schema = new FunctionSchemaDocumentation(Classification: classification),
+        };
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSchemas([function]),
+            Throws.InvalidOperationException.With.Message.EqualTo(
+                $"Function 'sample' schema has unsupported classification '{classification}'."));
+    }
+
+    [Test]
+    public void Default_PairDictionaryAndTupleVocabulary_Deserializes()
+    {
+        var pair = FunctionCatalog.Default.Find("pair")?.Schema;
+        var dictionary = FunctionCatalog.Default.Find("dictionary")?.Schema;
+        var tuple = FunctionCatalog.Default.Find("to-tuple")?.Schema;
+        var zip = FunctionCatalog.Default.Find("zip")?.Schema;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(pair?.Output, Is.EqualTo("pair<K, V>"));
+            Assert.That(dictionary?.Intrinsic, Is.EqualTo("dictionary"));
+            Assert.That(tuple?.Output, Is.EqualTo("variadic-tuple<T>"));
+            Assert.That(zip?.NullableWhen, Is.EqualTo(new[] { "input", "array" }));
+        });
+    }
+
     [TestCase("add", "times", ParameterOmissionMode.Constant)]
     [TestCase("subtract", "times", ParameterOmissionMode.Constant)]
     [TestCase("swap", "first", ParameterOmissionMode.Absent)]
@@ -486,6 +706,25 @@ public class FunctionCatalogTest
         Assert.That(
             () => FunctionCatalog.ValidateSemantics([function]),
             Throws.InvalidOperationException.With.Message.Contains($"semantics {dimension}"));
+    }
+
+    [TestCase(null, "boolean")]
+    [TestCase("text", null)]
+    public void ValidateSchemas_FixedSchemaWithoutCanonicalType_Throws(
+        string? input,
+        string? output)
+    {
+        var function = Documentation("sample") with
+        {
+            Input = input!,
+            Output = output!,
+            Schema = new FunctionSchemaDocumentation(Classification: "fixed"),
+        };
+
+        Assert.That(
+            () => FunctionCatalog.ValidateSchemas([function]),
+            Throws.InvalidOperationException.With.Message.Contains(
+                "must declare canonical input and output types"));
     }
 
     private static FunctionDocumentation Documentation(string name, string[]? aliases = null)

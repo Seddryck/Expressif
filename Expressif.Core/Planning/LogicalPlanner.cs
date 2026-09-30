@@ -778,7 +778,18 @@ public sealed class LogicalPlanner
                 IsExplicit: true)).ToArray());
 
     private static PlannerFunctionDescriptor SyntheticFunction(string name)
-        => new(name.ToLowerInvariant(), "any", "any", Kind: "extension");
+        => new(
+            name.ToLowerInvariant(),
+            "any",
+            "any",
+            Kind: "extension",
+            Schema: name switch
+            {
+                "named-entry" => new(Intrinsic: "named-entry", Classification: "intrinsic"),
+                "spread-entry" => new(Intrinsic: "spread-entry", Classification: "intrinsic"),
+                "sort-criterion" => new(Intrinsic: "sort-criterion", Classification: "intrinsic"),
+                _ => null,
+            });
 
     private static PlannerParameterMetadata[] SyntheticParameters(int count)
         => Enumerable.Range(0, count).Select(index => SyntheticParameter($"argument-{index}")).ToArray();

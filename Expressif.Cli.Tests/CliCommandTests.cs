@@ -2061,24 +2061,24 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task Plan_Expression_DisplaysCanonicalLogicalTree()
+    public async Task Plan_Expression_DisplaysAnnotatedLogicalTree()
     {
         var result = await InvokeAsync("plan", "trim | upper");
 
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.Contain("Pipeline"));
-            Assert.That(result.StdOut, Does.Contain("Call: trim"));
-            Assert.That(result.StdOut, Does.Contain("Call: upper"));
+            Assert.That(result.StdOut, Does.Contain("Pipeline [text -> text] (known)"));
+            Assert.That(result.StdOut, Does.Contain("Call: trim [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Call: upper [text -> text]"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
 
     [Test]
-    public async Task Plan_JsonOutput_ReturnsVersionedPortablePlan()
+    public async Task PlanLogical_JsonOutput_ReturnsVersionedPortablePlan()
     {
-        var result = await InvokeAsync("plan", "trim | upper", "--output", "json");
+        var result = await InvokeAsync("plan", "logical", "trim | upper", "--output", "json");
         using var document = JsonDocument.Parse(result.StdOut);
 
         Assert.Multiple(() =>
@@ -2090,6 +2090,62 @@ public class CliCommandTests
                 .GetProperty("operator").GetProperty("name").GetString(), Is.EqualTo("trim"));
             Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
                 .GetProperty("operator").GetProperty("kind").GetString(), Is.EqualTo("function"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_Expression_DisplaysOverallAndStepSchemas()
+    {
+        var result = await InvokeAsync("plan", "schema", "upper | first-chars(5)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Schema: text -> text (known)"));
+            Assert.That(result.StdOut, Does.Contain("Step 1: upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 2: first-chars [text -> text]"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_JsonOutput_ReturnsSchemaAnalysis()
+    {
+        var result = await InvokeAsync("plan", "schema", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(),
+                Is.EqualTo(SchemaAnalysisJson.FormatName));
+            Assert.That(document.RootElement.GetProperty("input").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
+            Assert.That(document.RootElement.GetProperty("output").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Plan_JsonOutput_AttachesSchemasToLogicalNodes()
+    {
+        var result = await InvokeAsync("plan", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+        var plan = document.RootElement.GetProperty("plan");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(),
+                Is.EqualTo(AnalyzedLogicalPlanJson.FormatName));
+            Assert.That(plan.GetProperty("input").GetProperty("type").GetString(), Is.EqualTo("text"));
+            Assert.That(plan.GetProperty("output").GetProperty("type").GetString(), Is.EqualTo("text"));
+            Assert.That(plan.GetProperty("items")[0].GetProperty("input").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
+            Assert.That(plan.GetProperty("items")[1].GetProperty("output").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

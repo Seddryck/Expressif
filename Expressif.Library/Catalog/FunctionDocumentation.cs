@@ -22,7 +22,23 @@ public sealed record FunctionDocumentation(
     string Kind = "function",
     FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null,
     FunctionTraversalDocumentation? Traversal = null,
-    FunctionSemanticsDocumentation? Semantics = null);
+    FunctionSemanticsDocumentation? Semantics = null,
+    FunctionSchemaDocumentation? Schema = null);
+
+public sealed record FunctionSchemaDocumentation(
+    string? Input = null,
+    string? Output = null,
+    IReadOnlyDictionary<string, FunctionParameterSchemaDocumentation>? Parameters = null,
+    string? Intrinsic = null,
+    string? Nullability = null,
+    string? Classification = null,
+    string? DynamicReason = null,
+    string[]? NullableWhen = null);
+
+public sealed record FunctionParameterSchemaDocumentation(
+    string? Input = null,
+    string? Output = null,
+    string? Combine = null);
 
 public sealed record FunctionAliasLifecycleDocumentation(
     string Name,

@@ -102,6 +102,7 @@ public sealed class FunctionCatalog
         ValidateNames(entries.Where(entry => entry.Kind != "function"));
         ValidateOmissions(entries);
         ValidateSemantics(entries);
+        ValidateSchemas(entries);
 
         return new FunctionCatalog(entries);
     }
@@ -111,7 +112,10 @@ public sealed class FunctionCatalog
         IEnumerable<FunctionDocumentation> predicates)
         => [
             .. functions.Where(entry => entry.IsPublic),
-            .. predicates.Where(entry => entry.IsPublic).Select(entry => entry with { Kind = "predicate" }),
+            .. predicates.Where(entry => entry.IsPublic).Select(entry => entry with
+            {
+                Kind = "predicate",
+            }),
         ];
 
     internal static void ValidateNames(IEnumerable<FunctionDocumentation> entries)
@@ -188,6 +192,93 @@ public sealed class FunctionCatalog
             ValidateSemanticsChoice(function.Name, "cardinality", semantics.Cardinality, cardinalities);
             ValidateSemanticsChoice(function.Name, "dependency", semantics.Dependency, dependencies);
             ValidateSemanticsChoice(function.Name, "ordering", semantics.Ordering, orderings);
+        }
+    }
+
+    internal static void ValidateSchemas(IEnumerable<FunctionDocumentation> entries)
+    {
+        foreach (var function in entries)
+        {
+            var schema = function.Schema
+                ?? throw new InvalidOperationException(
+                    $"Function '{function.Name}' must declare a schema classification.");
+            var member = $"Function '{function.Name}' schema";
+            if (schema.Classification is not ("fixed" or "contract" or "intrinsic" or "dynamic"))
+            {
+                throw new InvalidOperationException(
+                    $"{member} has unsupported classification '{schema.Classification}'.");
+            }
+            if (schema.Classification == "fixed")
+            {
+                EnsureNoSchemaDetails(schema, member);
+                if (schema.DynamicReason is not null)
+                    throw new InvalidOperationException($"{member} can declare a dynamic reason only when classified as dynamic.");
+                if (string.IsNullOrWhiteSpace(function.Input) || string.IsNullOrWhiteSpace(function.Output))
+                {
+                    throw new InvalidOperationException(
+                        $"{member} must declare canonical input and output types on the function.");
+                }
+                continue;
+            }
+            if (schema.Classification == "dynamic")
+            {
+                EnsureNoSchemaDetails(schema, member);
+                if (string.IsNullOrWhiteSpace(schema.DynamicReason))
+                    throw new InvalidOperationException($"{member} must explain why its result is dynamic.");
+                continue;
+            }
+            if (schema.DynamicReason is not null)
+                throw new InvalidOperationException($"{member} can declare a dynamic reason only when classified as dynamic.");
+            if (schema.Classification == "intrinsic")
+            {
+                if (string.IsNullOrWhiteSpace(schema.Intrinsic))
+                    throw new InvalidOperationException($"{member} must name its intrinsic.");
+                if (schema.Input is not null || schema.Output is not null
+                    || schema.Parameters is not null || schema.Nullability is not null
+                    || schema.NullableWhen is not null)
+                {
+                    throw new InvalidOperationException(
+                        $"{member} cannot combine an intrinsic with a declarative contract.");
+                }
+                continue;
+            }
+            if (string.IsNullOrWhiteSpace(schema.Input) || string.IsNullOrWhiteSpace(schema.Output))
+                throw new InvalidOperationException($"{member} must declare both input and output expressions.");
+            if (schema.Intrinsic is not null)
+                throw new InvalidOperationException($"{member} cannot combine an intrinsic with a declarative contract.");
+            if (schema.Nullability is not null && schema.Nullability != "propagate-input")
+                throw new InvalidOperationException($"{member} has unsupported nullability policy '{schema.Nullability}'.");
+            if (schema.Nullability is not null && schema.NullableWhen is not null)
+                throw new InvalidOperationException($"{member} cannot combine legacy and conditional nullability policies.");
+            var parameterNames = function.Parameters.Select(parameter => parameter.Name).ToHashSet(StringComparer.Ordinal);
+            var invalidNullableSource = schema.NullableWhen?.FirstOrDefault(
+                source => source != "input" && !parameterNames.Contains(source));
+            if (invalidNullableSource is not null)
+                throw new InvalidOperationException($"{member} references unknown nullable source '{invalidNullableSource}'.");
+            var unknown = schema.Parameters?.Keys.FirstOrDefault(parameter => !parameterNames.Contains(parameter));
+            if (unknown is not null)
+            {
+                throw new InvalidOperationException($"{member} references unknown parameter '{unknown}'.");
+            }
+            var invalidCombination = schema.Parameters?.FirstOrDefault(parameter =>
+                parameter.Value.Combine is not null
+                && (parameter.Value.Output is null || parameter.Value.Combine is not ("union" or "tuple")));
+            if (invalidCombination is { Value.Combine: not null })
+            {
+                throw new InvalidOperationException(
+                    $"{member} parameter '{invalidCombination.Value.Key}' has unsupported combination "
+                    + $"'{invalidCombination.Value.Value.Combine}'.");
+            }
+        }
+    }
+
+    private static void EnsureNoSchemaDetails(FunctionSchemaDocumentation schema, string member)
+    {
+        if (schema.Input is not null || schema.Output is not null || schema.Parameters is not null
+            || schema.Intrinsic is not null || schema.Nullability is not null || schema.NullableWhen is not null)
+        {
+            throw new InvalidOperationException(
+                $"{member} classification '{schema.Classification}' cannot declare schema transfer details.");
         }
     }
 

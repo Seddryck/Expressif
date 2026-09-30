@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Implement a scaffolded Expressif function, predicate, or accumulator for the post-v2 architecture, including typed contracts, binder integration, metadata consistency, and conformance coverage. Use only when documentation metadata and conformance cases already exist."
+description: "Implement a scaffolded Expressif function, predicate, or accumulator for the post-v2 architecture, including typed contracts, logical-schema analysis, binder integration, metadata consistency, and conformance coverage. Use only when documentation metadata and conformance cases already exist."
 ---
 
 # /implement
@@ -23,7 +23,9 @@ Locate the operator by canonical name or alias in the matching file:
 
 Read its YAML under `conformance/<kind>/<scope-lower>/`. Stop if either artifact is absent or ambiguous: scaffolding is incomplete.
 
-Metadata is authoritative for public names, aliases, scope, summaries, parameter names, semantic types, optionality, input type, and output type. Existing binding and runtime abstractions are authoritative for construction and evaluation mechanics.
+Metadata is authoritative for public names, aliases, scope, summaries, parameter names, semantic types, optionality, input type, output type, and the logical-schema discovery classification and relationships. Existing binding and runtime abstractions are authoritative for construction and evaluation mechanics.
+
+Stop when `Schema` metadata is absent, internally unbound, or inconsistent with the documented operator behavior. Resolve that scaffolding gap before implementing runtime or analyzer behavior.
 
 Before editing, inspect the nearest implementation family, its contracts and registration, the bound parameter representations consumed by the binder or factory, introspection tests, and the matching conformance test class. Do not derive a universal C# shape solely from semantic scope.
 
@@ -44,6 +46,53 @@ Keep the untyped `IFunction.Evaluate(object?)` path only as the established comp
 Use this path when output depends on information that one closed contract cannot represent, such as an input-preserving function, a selected record field, or child-expression outputs.
 
 Use the repository's semantic contract representation. Do not publish an unexplained `any -> any` contract or add a name-based introspection exception. Add tests proving that the dynamic contract is intentional.
+
+### Logical schema analyzer integration
+
+Carry the scaffolded schema contract through the complete portable path:
+
+```text
+FunctionDocumentation
+-> PlannerSchemaDescriptor
+-> LogicalSchemaAnalyzer
+-> SchemaAnalysisJson
+```
+
+Prefer interpreting declarative metadata. Do not add function-name dictionaries, canonical-name switches, or analyzer branches for relationships expressible through generic contracts. When support is missing, extend the schema grammar with a reusable constructor or add one metadata-selected intrinsic for the structural operation.
+
+For contracts:
+
+* bind type variables from operator inputs and parameter outputs;
+* honor parameter input schemas as their evaluation contexts;
+* implement `Combine` and `NullableWhen` without collapsing optional field presence into value nullability;
+* support heterogeneous unions and polymorphic structural alternatives;
+* prefer an exact structural alternative before compatibility views, such as selecting `grouping<K, T>` rather than treating a grouping as an array of pairs when both are available.
+
+For intrinsics:
+
+* keep selection in metadata and parameterize reusable behavior there instead of inspecting the canonical function name;
+* define both the structural information consumed and the output shape produced;
+* preserve a dynamic diagnostic only when a required literal or structural value is unavailable;
+* add a new `LogicalSchema` subtype only when an existing structural shape cannot represent the result.
+
+Implement schema analysis bidirectionally:
+
+1. backward requirements state what external input and enclosing context the plan needs;
+2. forward inference derives each node's output from its input and child results.
+
+Preserve nested nullability through intersections, unions, and wrappers. Keep `AnyLogicalSchema`, conflicts, and unions explicit so completeness remains `Known`, `Partial`, `Dynamic`, or `Conflicting` for the correct reason. If a new logical schema shape is introduced, update intersection, nullability, completeness traversal, descriptions, and JSON serialization together.
+
+Add focused schema-analysis tests independently of runtime conformance. Cover as applicable:
+
+* exact catalog deserialization of the schema metadata;
+* backward input requirements and forward output inference;
+* node-by-node input/output reporting;
+* parameter type-variable propagation and heterogeneous unions;
+* polymorphic inputs and exact structural-alternative selection;
+* nullable values versus optional record fields;
+* known, partial, dynamic, and conflicting completeness;
+* JSON serialization for every new logical schema shape;
+* a related-family regression demonstrating reuse rather than name-based dispatch.
 
 ### Binder-integrated operator
 
@@ -134,7 +183,7 @@ Method arguments follow loader output:
 
 Choose CLR types compatible with loader normalization and the operator contract. Keep `expected` last. Exercise typed evaluation when proving a closed contract.
 
-Add focused tests beyond conformance only for behavior YAML cannot express adequately: binding diagnostics and source spans; named, optional, spread, or variadic binding; inference and coercion; deferred or short-circuit evaluation; evaluation-frame isolation and concurrency; registry collisions; or semantic introspection.
+Add focused tests beyond conformance for behavior YAML cannot express adequately: logical-schema discovery; binding diagnostics and source spans; named, optional, spread, or variadic binding; inference and coercion; deferred or short-circuit evaluation; evaluation-frame isolation and concurrency; registry collisions; or semantic introspection.
 
 Accumulator tests directly exercise `Initialize`, repeated `Accumulate`, and `GetValue` unless YAML explicitly specifies higher-level composition.
 
@@ -144,11 +193,15 @@ Before completion:
 
 1. confirm metadata, registration, and introspection agree;
 2. confirm every regular function exposes intended closed contracts or an explicit dynamic contract;
-3. confirm binder-integrated behavior consumes bound representations, not parser types;
-4. confirm predicates expose an explicit Boolean result;
-5. confirm accumulator state resets completely;
-6. run relevant conformance and focused tests;
-7. run the solution build;
-8. complete the repository workflow from `AGENTS.md`.
+3. confirm schema metadata is present, internally bound, and propagated into the logical plan;
+4. confirm declarative relationships need no function-name dispatch and intrinsics are reusable and metadata-selected;
+5. confirm backward requirements, forward inference, nullability, completeness, and serialization agree where applicable;
+6. confirm binder-integrated behavior consumes bound representations, not parser types;
+7. confirm predicates expose an explicit Boolean result;
+8. confirm accumulator state resets completely;
+9. run relevant conformance and focused runtime tests;
+10. run `LogicalSchemaAnalyzerTest`, catalog metadata tests, metadata-consistency tests, and `SchemaAnalysisJsonTest` when serialization changes;
+11. run the solution build and repository analyzer/style verification;
+12. complete the repository workflow from `AGENTS.md`.
 
-Report implementation path, contracts, files changed, metadata source, tests run, and intentionally dynamic behavior.
+Report implementation path, runtime and schema contracts, analyzer grammar or intrinsic changes, files changed, metadata source, tests run, intentionally dynamic behavior, and the resulting fixed/contract/intrinsic/dynamic catalog totals when classifications changed.

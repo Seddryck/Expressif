@@ -117,6 +117,22 @@ public class LogicalPlannerTest
     }
 
     [Test]
+    public void Plan_SchemaAwareOperator_CopiesSchemaContract()
+    {
+        var call = SingleCall("map(upper)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(call.Function.Schema?.Input, Is.EqualTo("array<T>"));
+            Assert.That(call.Function.Schema?.Output, Is.EqualTo("array<U>"));
+            Assert.That(call.Function.Schema?.Parameters?["transformation"],
+                Is.EqualTo(new PlannerParameterSchemaDescriptor("T", "U")));
+            Assert.That(call.Function.Schema?.Classification, Is.EqualTo("contract"));
+            Assert.That(call.Function.Schema?.NullableWhen, Is.EqualTo(new[] { "input" }));
+        });
+    }
+
+    [Test]
     public void Plan_NamedArguments_AreOrderedByCanonicalParameters()
     {
         var call = SingleCall("add(times := 2, value := 5)");
@@ -252,6 +268,8 @@ public class LogicalPlannerTest
         {
             Assert.That(call.Function.Name, Is.EqualTo(name));
             Assert.That(call.ContextDepth, Is.EqualTo(contextDepth));
+            if (name == "field")
+                Assert.That(call.Function.Schema?.Intrinsic, Is.EqualTo("field"));
             if (name == "tuple-at")
                 Assert.That(((LogicalLiteral)call.Arguments.Single().Value!).Type, Is.EqualTo("integer"));
         });
@@ -343,6 +361,8 @@ public class LogicalPlannerTest
         Assert.Multiple(() =>
         {
             Assert.That(criterion.Function.Name, Is.EqualTo("sort-criterion"));
+            Assert.That((criterion.Function.Schema?.Classification, criterion.Function.Schema?.Intrinsic),
+                Is.EqualTo(("intrinsic", "sort-criterion")));
             Assert.That(((LogicalCall)criterion.Arguments[0].Value!).Function.Name, Is.EqualTo("tuple-at"));
             Assert.That(criterion.Arguments[1].Value,
                 Is.EqualTo(new LogicalLiteral("type", "integer")));

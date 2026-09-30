@@ -12,7 +12,7 @@ public sealed class SortBy : IFunction<IEnumerable, object?[]>
 {
     private readonly IReadOnlyList<SortByCriterion> criteria;
 
-    /// <param name="criteria">One or more typed criteria in lexicographic order.</param>
+    /// <param name="criteria">Criteria in the form expression -&gt; :type, optionally followed by direction and null-placement modifiers.</param>
     public SortBy(IEnumerable<SortByCriterion> criteria)
     {
         this.criteria = criteria?.ToArray() ?? throw new ArgumentNullException(nameof(criteria));
