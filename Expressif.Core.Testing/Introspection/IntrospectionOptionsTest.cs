@@ -9,8 +9,8 @@ public sealed class IntrospectionOptionsTest
     [Test]
     public void MinimalConstructorCreatesEmptyVocabularyOverrides()
     {
-        var types = Mock.Of<ITypeRegistry>();
-        var coercions = Mock.Of<ICoercionRegistry>();
+        ITypeRegistry types = new TypeRegistry(Array.Empty<TypeDescriptor>());
+        IReadOnlyList<ICoercionDescriptor> coercions = [];
 
         var options = new IntrospectionOptions(types, coercions);
 
