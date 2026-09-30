@@ -33,7 +33,7 @@ public class AfterSubstring : BaseSubstringFunction
     protected override object EvaluateString(string value)
     {
         var substring = Substring.Invoke();
-        if (string.IsNullOrEmpty(substring) || new Expressif.Values.Special.Empty().Equals(substring) || new Expressif.Values.Special.Null().Equals(substring))
+        if (string.IsNullOrEmpty(substring) || Expressif.Values.Special.Empty.Instance.Equals(substring) || Expressif.Values.Special.Null.Instance.Equals(substring))
             return value;
 
         if (!value.Contains(substring))
@@ -51,7 +51,7 @@ public class AfterSubstring : BaseSubstringFunction
         while (index != -1 && i <= count);
 
         if (index == -1)
-            return new Expressif.Values.Special.Null().Keyword;
+            return Expressif.Values.Special.Null.Keyword;
 
         return value[(index + substring.Length)..value.Length];
     }
@@ -74,7 +74,7 @@ public class BeforeSubstring : BaseSubstringFunction
     protected override object EvaluateString(string value)
     {
         var substring = Substring.Invoke();
-        if (string.IsNullOrEmpty(substring) || new Expressif.Values.Special.Empty().Equals(substring) || new Expressif.Values.Special.Null().Equals(substring))
+        if (string.IsNullOrEmpty(substring) || Expressif.Values.Special.Empty.Instance.Equals(substring) || Expressif.Values.Special.Null.Instance.Equals(substring))
             return string.Empty;
 
         if (!value.Contains(substring))
@@ -92,7 +92,7 @@ public class BeforeSubstring : BaseSubstringFunction
         while (index != -1 && i <= count);
 
         if (index == -1)
-            return new Expressif.Values.Special.Null().Keyword;
+            return Expressif.Values.Special.Null.Keyword;
 
         return value[..index];
     }

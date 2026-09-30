@@ -11,7 +11,7 @@ namespace Expressif.Semantics;
 
 /// <summary>A resolved tuple-binding use; unknown tuple shape does not prevent target eligibility.</summary>
 public sealed record TupleBindingUse(string? Name, SourceSpan? Span, Type? ImplementationType,
-    IReadOnlyList<TupleBindingSignature> Signatures, TupleBindingFailure? Failure, string? Message);
+    IReadOnlyList<TupleBindingInfo> Signatures, TupleBindingFailure? Failure, string? Message);
 
 /// <summary>Inspects binding targets and statically known invocations without evaluating user code.</summary>
 public sealed class TupleBindingAnalyzer
@@ -20,11 +20,11 @@ public sealed class TupleBindingAnalyzer
     private readonly IImplementationRegistry predicates;
 
     public TupleBindingAnalyzer()
-        : this(new AssemblyTypesProbe([typeof(TupleBindingAnalyzer).Assembly])) { }
-    public TupleBindingAnalyzer(ITypesProbe probe)
-        : this(new FunctionRegistry(probe), new PredicateRegistry(probe)) { }
+        : this(new AssemblyTypeSource(typeof(TupleBindingAnalyzer).Assembly)) { }
+    public TupleBindingAnalyzer(ITypeSource source)
+        : this(new FunctionRegistry(source), new PredicateRegistry(source)) { }
     public TupleBindingAnalyzer(IImplementationRegistry functions)
-        : this(functions, new PredicateRegistry(new AssemblyTypesProbe([typeof(TupleBindingAnalyzer).Assembly]))) { }
+        : this(functions, new PredicateRegistry(new AssemblyTypeSource(typeof(TupleBindingAnalyzer).Assembly))) { }
     public TupleBindingAnalyzer(IImplementationRegistry functions, IImplementationRegistry predicates)
         => (this.functions, this.predicates) = (functions, predicates);
 
@@ -44,7 +44,7 @@ public sealed class TupleBindingAnalyzer
         }
         else if (root is OpenRootExpression open)
         {
-            if (open.Expression is InputBoundExpression bound) Visit(bound.Body, uses);
+            if (open.Expression.InputBinding is { } bound) Visit(bound.Body, uses);
             else VisitPipeline(open.Expression.Members, null, uses);
         }
     }
@@ -88,16 +88,20 @@ public sealed class TupleBindingAnalyzer
             return new(name, member.SourceSpan, null, [], TupleBindingFailure.UnknownTarget, $"Unknown tuple-binding target '{name}'.");
         var signatures = TupleBindingCapabilities.Describe(type);
         if (!signatures.Any(signature => signature.SupportsTupleBinding))
-            return new(name, member.SourceSpan, type, signatures, TupleBindingFailure.IneligibleTarget, $"Callable '{name}' does not support tuple binding.");
+        {
+            return new(name, member.SourceSpan, type, signatures.Select(signature => signature.ToInfo()).ToArray(),
+                TupleBindingFailure.IneligibleTarget, $"Callable '{name}' does not support tuple binding.");
+        }
         try
         {
             ValidateInvocation(input, type, signatures);
         }
         catch (TupleBindingException exception)
         {
-            return new(name, member.SourceSpan, type, signatures, exception.Failure, exception.Message);
+            return new(name, member.SourceSpan, type, signatures.Select(signature => signature.ToInfo()).ToArray(),
+                exception.Failure, exception.Message);
         }
-        return new(name, member.SourceSpan, type, signatures, null, null);
+        return new(name, member.SourceSpan, type, signatures.Select(signature => signature.ToInfo()).ToArray(), null, null);
     }
 
     private static void ValidateInvocation(IParameter? input, Type type, IReadOnlyList<TupleBindingSignature> signatures)

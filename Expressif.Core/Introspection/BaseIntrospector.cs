@@ -8,18 +8,21 @@ using Expressif.Discovery;
 
 namespace Expressif.Introspection;
 
-public abstract class BaseIntrospector
+internal sealed class BaseIntrospector
 {
-    protected record class AttributeInfo<T>(Type Type, T Attribute) { }
-    private ITypesProbe Probe { get; }
+    internal sealed record AttributeInfo<T>(Type Type, T Attribute);
+    private ITypeSource Source { get; }
 
     private Type[]? types;
-    protected Type[] Types { get => types ??= Probe.Locate().ToArray(); }
+    private Type[] Types
+        => types ??= Source.GetTypes()
+            .Where(type => type.IsClass && !type.IsAbstract)
+            .ToArray();
 
-    protected BaseIntrospector(ITypesProbe probe)
-        => Probe = probe;
+    internal BaseIntrospector(ITypeSource source)
+        => Source = source;
 
-    protected IEnumerable<AttributeInfo<T>> LocateAttribute<T>()
+    internal IEnumerable<AttributeInfo<T>> LocateAttribute<T>()
         where T : Attribute
     {
         var types = Types.Where(x => x.GetCustomAttributes(typeof(T), true).Length > 0);
@@ -31,7 +34,7 @@ public abstract class BaseIntrospector
                 ));
     }
 
-    protected IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
+    internal static IEnumerable<ParameterInfo> BuildParameters(CtorInfo[] ctorInfos)
         => ctorInfos.SelectMany(x => x.Parameters)
                     .GroupBy(x => x.Name)
                     .Select(parameters =>
@@ -43,6 +46,7 @@ public abstract class BaseIntrospector
                             string.Join(" | ", parameters.Select(x => x.Type).Distinct().OrderBy(x => x)),
                             optional,
                             variadic,
+                            parameters.Any(x => x.AllowsSpread),
                             variadic ? parameters.Max(x => x.MinimumCardinality) : optional ? 0 : 1,
                             parameters.First().Summary);
                     });

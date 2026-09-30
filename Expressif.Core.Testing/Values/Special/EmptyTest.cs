@@ -10,17 +10,17 @@ public class EmptyTest
 
     [Test]
     public void Equals_Empty_Valid()
-        => Assert.That(new Empty().Equals(string.Empty), Is.True);
+        => Assert.That(Empty.Instance.Equals(string.Empty), Is.True);
 
     [Test]
     public void EqualOperator_Null_Valid()
-        => Assert.That(new Empty() == string.Empty, Is.True);
+        => Assert.That(Empty.Instance.Equals(string.Empty), Is.True);
 
     [Test]
     public void Equals_EmptyLiteral_Valid()
-        => Assert.That(new Empty().Equals("(empty)"), Is.True);
+        => Assert.That(Empty.Instance.Equals("(empty)"), Is.True);
 
     [Test]
     public void EqualOperator_EmptyLiteral_Valid()
-        => Assert.That(new Empty() == "(empty)", Is.True);
+        => Assert.That(Empty.Instance.Equals("(empty)"), Is.True);
 }

@@ -1,3 +1,4 @@
+using Expressif.Discovery;
 using Expressif.Functions;
 
 namespace Expressif.Testing.Functions;
@@ -21,11 +22,11 @@ public sealed class FunctionConstructorRegistryTest
     }
 
     [Test]
-    public void RegistryDiscoversConstructorsFromTypeProbe()
+    public void RegistryDiscoversConstructorsFromTypeSource()
     {
-        var probe = Mock.Of<ITypesProbe>(candidate => candidate.Locate() == new[] { typeof(FirstConstructor) });
+        var source = Mock.Of<ITypeSource>(candidate => candidate.GetTypes() == new[] { typeof(FirstConstructor) });
 
-        var registry = new FunctionConstructorRegistry(probe);
+        var registry = new FunctionConstructorRegistry(source);
 
         Assert.That(registry.TryGet(typeof(FirstFunction), out var constructor), Is.True);
         Assert.That(constructor, Is.TypeOf<FirstConstructor>());

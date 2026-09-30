@@ -1,4 +1,5 @@
 using Expressif.Values;
+using Expressif.Functions;
 
 namespace Expressif.Library.Tuple;
 
@@ -14,7 +15,7 @@ public sealed class Label : IFunction<IPositionalValue, RecordValue>
         : this(() => []) { }
 
     /// <param name="names">One label for each tuple position, in positional order.</param>
-    public Label(Func<string[]> names) => Names = names;
+    public Label([ArgumentPacking(ArgumentPackingMode.Variadic)] Func<string[]> names) => Names = names;
 
     public RecordValue Evaluate(IPositionalValue value)
         => TupleLabeling.Create(value, Names.Invoke(), qualifyConflictsOnly: false);
@@ -35,7 +36,7 @@ public sealed class LabelConflicts : IFunction<IPositionalValue, RecordValue>
         : this(() => []) { }
 
     /// <param name="names">One label for each tuple position, in positional order.</param>
-    public LabelConflicts(Func<string[]> names) => Names = names;
+    public LabelConflicts([ArgumentPacking(ArgumentPackingMode.Variadic)] Func<string[]> names) => Names = names;
 
     public RecordValue Evaluate(IPositionalValue value)
         => TupleLabeling.Create(value, Names.Invoke(), qualifyConflictsOnly: true);

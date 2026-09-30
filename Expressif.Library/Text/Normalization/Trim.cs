@@ -8,6 +8,6 @@ namespace Expressif.Library.Text.Normalization;
 [Scope("text/normalization")]
 public class Trim : BaseTextFunction
 {
-    protected override object EvaluateBlank() => new Expressif.Values.Special.Empty().Keyword;
+    protected override object EvaluateBlank() => Expressif.Values.Special.Empty.Keyword;
     protected override object EvaluateString(string value) => value.Trim();
 }

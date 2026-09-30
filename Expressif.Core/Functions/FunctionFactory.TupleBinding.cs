@@ -2,7 +2,7 @@ using Expressif.Values;
 
 namespace Expressif.Functions;
 
-public partial class FunctionFactory
+internal sealed partial class FunctionFactoryRuntime
 {
     /// <summary>Invokes an eligible callable using already-evaluated tuple values.</summary>
     public object? InvokeTuple(string name, IPositionalValue tuple)

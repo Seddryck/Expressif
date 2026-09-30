@@ -140,7 +140,7 @@ public class SpecialFunctionsTest
     [TestCase(null)]
     [TestCase(150)]
     public void AnyToAny_Any(object? value)
-        => Assert.That(new AnyToAny().Evaluate(value), Is.EqualTo(new Any()));
+        => Assert.That(new AnyToAny().Evaluate(value), Is.EqualTo(Any.Instance));
 
     [Test]
     [TestCase(typeof(Expressif.Values.Special.Null))]
@@ -150,15 +150,15 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Value))]
     public void AnyToAny_SpecialType_Any(Type type)
         => Assert.That(new AnyToAny().Evaluate(
-            type.GetConstructor([])!.Invoke(System.Array.Empty<Type>()))
-            , Is.EqualTo(new Any()));
+            type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+            , Is.EqualTo(Any.Instance));
 
     [Test]
     [TestCase(typeof(DBNull))]
     public void AnyToAny_DBNull_Any(Type type)
         => Assert.That(new AnyToAny().Evaluate(
             type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
-            , Is.EqualTo(new Any()));
+            , Is.EqualTo(Any.Instance));
 
     [Test]
     [TestCase("foo")]
@@ -168,7 +168,7 @@ public class SpecialFunctionsTest
     [TestCase("(value)")]
     [TestCase(150)]
     public void ValueToValue_NotNull_Value(object value)
-        => Assert.That(new ValueToValue().Evaluate(value), Is.EqualTo(new Value()));
+        => Assert.That(new ValueToValue().Evaluate(value), Is.EqualTo(Value.Instance));
 
     [Test]
     [TestCase(typeof(Expressif.Values.Special.Empty))]
@@ -177,48 +177,48 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Value))]
     public void ValueToValue_SpecialType_Value(Type type)
         => Assert.That(new ValueToValue().Evaluate(
-            type.GetConstructor([])!.Invoke(System.Array.Empty<Type>()))
-            , Is.EqualTo(new Value()));
+            type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+            , Is.EqualTo(Value.Instance));
 
     [Test]
     [TestCase("(null)")]
     [TestCase(null)]
     public void ValueToValue_Null_Null(object? value)
-        => Assert.That(new ValueToValue().Evaluate(value), Is.EqualTo(new Expressif.Values.Special.Null()));
+        => Assert.That(new ValueToValue().Evaluate(value), Is.EqualTo(Expressif.Values.Special.Null.Instance));
 
     [Test]
     [TestCase(typeof(Expressif.Values.Special.Null))]
     public void ValueToValue_SpecialType_Null(Type type)
         => Assert.That(new ValueToValue().Evaluate(
-            type.GetConstructor([])!.Invoke(System.Array.Empty<Type>()))
-            , Is.EqualTo(new Expressif.Values.Special.Null()));
+            type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+            , Is.EqualTo(Expressif.Values.Special.Null.Instance));
 
     [Test]
     [TestCase(typeof(DBNull))]
     public void ValueToValue_DBNull_Null(Type type)
         => Assert.That(new ValueToValue().Evaluate(
             type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
-            , Is.EqualTo(new Expressif.Values.Special.Null()));
+            , Is.EqualTo(Expressif.Values.Special.Null.Instance));
 
     [Test]
     [TestCase("(null)")]
     [TestCase(null)]
     public void NullToValue_Null_Value(object? value)
-        => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(new Value()));
+        => Assert.That(new NullToValue().Evaluate(value), Is.EqualTo(Value.Instance));
 
     [Test]
     [TestCase(typeof(Expressif.Values.Special.Null))]
     public void NullToValue_SpecialType_Null(Type type)
         => Assert.That(new NullToValue().Evaluate(
-            type.GetConstructor([])!.Invoke(System.Array.Empty<Type>()))
-            , Is.EqualTo(new Value()));
+            type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
+            , Is.EqualTo(Value.Instance));
 
     [Test]
     [TestCase(typeof(DBNull))]
     public void NullToValue_DBNull_Null(Type type)
         => Assert.That(new NullToValue().Evaluate(
             type.GetField("Value", BindingFlags.Static | BindingFlags.Public)!.GetValue(null))
-            , Is.EqualTo(new Value()));
+            , Is.EqualTo(Value.Instance));
 
     [Conformance]
     public void NullToValue_Value_NotNull(object value, object expected)
@@ -231,7 +231,7 @@ public class SpecialFunctionsTest
     [TestCase(typeof(Value))]
     public void NullToValue_SpecialType_Value(Type type)
     {
-        var obj = type.GetConstructor([])!.Invoke(System.Array.Empty<Type>());
+        var obj = type.GetProperty("Instance", BindingFlags.Static | BindingFlags.Public)!.GetValue(null);
         Assert.That(new NullToValue().Evaluate(obj), Is.EqualTo(obj));
     }
 }

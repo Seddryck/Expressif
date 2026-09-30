@@ -11,11 +11,12 @@ using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Expressif.Functions;
 
-public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstructionContext
+internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IFunctionConstructionContext
 {
     private readonly IImplementationRegistry predicateRegistry;
     private readonly AccumulatorRegistry accumulatorRegistry;
@@ -24,29 +25,29 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
     private readonly IPredicationFactory predicationFactory;
     private readonly ITupleFunctionInvoker tupleBinding;
 
-    public FunctionFactory(ITypesProbe probe)
+    public FunctionFactoryRuntime(ITypeSource source)
         : this(
-            new FunctionRegistry(probe),
-            new PredicateRegistry(probe),
-            new AccumulatorRegistry(probe),
-            new CoercionRegistry(probe),
-            new FunctionConstructorRegistry(probe),
-            ProbeService.Create<IPredicationFactory>(probe),
-            ProbeService.Create<ITupleFunctionInvoker>(probe),
-            probe) { }
+            new FunctionRegistry(source),
+            new PredicateRegistry(source),
+            new AccumulatorRegistry(source),
+            new CoercionRegistry(source),
+            new FunctionConstructorRegistry(source),
+            TypeSourceService.Create<IPredicationFactory>(source),
+            TypeSourceService.Create<ITupleFunctionInvoker>(source),
+            source) { }
 
-    public FunctionFactory(IImplementationRegistry registry, ITypesProbe probe)
+    public FunctionFactoryRuntime(IImplementationRegistry registry, ITypeSource source)
         : this(
             registry,
-            new PredicateRegistry(probe),
-            new AccumulatorRegistry(probe),
-            new CoercionRegistry(probe),
-            new FunctionConstructorRegistry(probe),
-            ProbeService.Create<IPredicationFactory>(probe),
-            ProbeService.Create<ITupleFunctionInvoker>(probe),
-            probe) { }
+            new PredicateRegistry(source),
+            new AccumulatorRegistry(source),
+            new CoercionRegistry(source),
+            new FunctionConstructorRegistry(source),
+            TypeSourceService.Create<IPredicationFactory>(source),
+            TypeSourceService.Create<ITupleFunctionInvoker>(source),
+            source) { }
 
-    public FunctionFactory(
+    public FunctionFactoryRuntime(
         IImplementationRegistry registry,
         IImplementationRegistry predicateRegistry,
         AccumulatorRegistry accumulatorRegistry,
@@ -54,8 +55,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         FunctionConstructorRegistry constructors,
         IPredicationFactory predicationFactory,
         ITupleFunctionInvoker tupleBinding,
-        ITypesProbe probe)
-        : base(registry, probe)
+        ITypeSource source)
+        : base(registry, source)
         => (this.predicateRegistry, this.accumulatorRegistry, this.coercionRegistry, this.constructors,
                 this.predicationFactory, this.tupleBinding)
             = (predicateRegistry, accumulatorRegistry, coercionRegistry, constructors, predicationFactory, tupleBinding);
@@ -117,6 +118,9 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         IPositionalValue tuple,
         Syntax.SourceSpan? sourceSpan)
         => InvokeTuple(name, tuple, sourceSpan);
+
+    internal IPredicate InstantiatePredication(IPredication predication, IContext context)
+        => predicationFactory.Instantiate(predication, context);
 
     protected override Delegate CreateParameter(IParameter parameter, Type scalarType, IContext context)
     {
@@ -186,7 +190,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
 
     private IFunction BuildPipeline(OpenExpression expression, IContext context)
     {
-        if (expression is InputBoundExpression binding)
+        if (expression.InputBinding is { } binding)
             return BuildInputBoundFunction(binding, context);
 
         var members = expression.Members.ToArray();
@@ -230,10 +234,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         var outputType = initial.Output;
         for (var index = 1; index < functions.Count; index++)
         {
-            var descriptor = coercionRegistry.Descriptors.SingleOrDefault(
-                candidate => candidate.Name.Equals(members[index].Name, StringComparison.OrdinalIgnoreCase));
-            if (descriptor is not null
-                && coercionRegistry.TryCreate(outputType, descriptor.TargetType, out var coercion))
+            if (coercionRegistry.TryResolve(members[index].Name, out var targetType)
+                && coercionRegistry.TryCreate(outputType, targetType, out var coercion))
             {
                 functions[index] = coercion;
             }
@@ -345,7 +347,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
     private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
     {
         if (function.Syntax == FunctionSyntax.InputBindingStage
-            && function.Parameters is [OpenExpressionParameter { Expression: InputBoundExpression binding }])
+            && function.Parameters is [OpenExpressionParameter { Expression.InputBinding: { } binding }])
             return BuildInputBoundFunction(binding, context);
         var name = function.Name.ToKebabCase();
 
@@ -359,11 +361,19 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
             return BuildAccumulatorFunction(function, accumulatorType, context);
         }
 
-        if ((Registry.TryResolve(name, out var registeredType)
-                || predicateRegistry.TryResolve(name, out registeredType))
-            && constructors.TryGet(registeredType, out var constructor))
+        if (Registry.TryResolve(name, out var registeredType)
+            || predicateRegistry.TryResolve(name, out registeredType))
         {
-            return constructor.Construct(function, context, this);
+            if (constructors.TryGet(registeredType, out var constructor))
+                return constructor.Construct(function, context, this);
+            if (constructors.TryGetAnnotated(registeredType, out var annotated))
+                return InstantiateAnnotated(registeredType, annotated, function, context);
+            if (constructors.TryGetRoleAnnotated(registeredType, out var roleAnnotated))
+                return InstantiateRoleAnnotated(registeredType, roleAnnotated, function, context);
+            if (constructors.TryGetShapeAnnotated(registeredType, out var shapeAnnotated))
+                return InstantiateShapeAnnotated(registeredType, shapeAnnotated, function, context);
+            if (constructors.TryGetVariadicPacked(registeredType, out var variadicPacked))
+                return InstantiateVariadicPacked(registeredType, variadicPacked, function, context);
         }
 
         if (!Registry.TryResolve(function.Name, out var type))
@@ -375,9 +385,6 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
 
             throw new NotImplementedFunctionException(function.Name);
         }
-
-        if (typeof(IValueSpreadAware).IsAssignableFrom(type))
-            return InstantiateValueSpreadAware(type, function, context);
 
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
             return aggregation;
@@ -391,17 +398,180 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         return Instantiate<IFunction>(type, function.Arguments, context);
     }
 
+    private IFunction InstantiateAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var collection = targets.SingleOrDefault(target => target.GetParameters() is
+            [var parameter] && (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>)
+                || FunctionConstructorRegistry.TryGetNamedEvaluatorConstructor(parameter.ParameterType, out _)));
+        if (collection is not null)
+        {
+            var parameter = collection.GetParameters()[0];
+            var mode = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>()!.Mode;
+            var layout = ParameterArgumentBinder.BindLayout(type, function.Arguments);
+            object values;
+            if (parameter.ParameterType == typeof(IEnumerable<Func<object?, object?>>))
+            {
+                values = layout.Positional.Select(argument => mode == ArgumentEvaluationMode.Nested
+                    ? BuildNestedValueEvaluator(argument.Value, context)
+                    : BuildValueEvaluator(argument.Value, context)).ToArray();
+            }
+            else
+            {
+                FunctionConstructorRegistry.TryGetNamedEvaluatorConstructor(parameter.ParameterType, out var entry);
+                var entries = System.Array.CreateInstance(entry.DeclaringType!, layout.Named.Length);
+                for (var index = 0; index < layout.Named.Length; index++)
+                {
+                    var argument = layout.Named[index];
+                    var evaluator = mode == ArgumentEvaluationMode.Nested
+                        ? BuildNestedValueEvaluator(argument.Value, context)
+                        : BuildValueEvaluator(argument.Value, context);
+                    entries.SetValue(entry.Invoke([argument.Name!, evaluator]), index);
+                }
+                values = LinqExpression.Lambda(parameter.ParameterType,
+                    LinqExpression.Constant(entries, entries.GetType())).Compile();
+            }
+            return collection.Invoke([values]) as IFunction
+                ?? throw new InvalidOperationException(
+                    $"Annotated constructor for '{type.FullName}' did not create a function.");
+        }
+
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var callbacks = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = metadata[index];
+            var mode = parameter.GetCustomAttribute<ArgumentEvaluationAttribute>()!.Mode;
+            callbacks[index] = metadata[index].IsOptional && !binding.Supplied[index]
+                && binding.Parameters[index] is LiteralParameter { Value: null }
+                    ? null
+                    : mode switch
+                    {
+                        ArgumentEvaluationMode.Incoming => BuildValueEvaluator(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Nested => BuildNestedValueEvaluator(binding.Parameters[index], context),
+                        ArgumentEvaluationMode.Ambient => BuildAmbientValueProvider(
+                            binding.Parameters[index], parameter.ParameterType, context),
+                        _ => throw new InvalidOperationException($"Unsupported argument evaluation mode '{mode}'."),
+                    };
+        }
+        return binding.Constructor.Invoke(callbacks) as IFunction
+            ?? throw new InvalidOperationException(
+                $"Annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private IFunction InstantiateRoleAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        if (function.Arguments.Length == 0 && type.GetConstructor(Type.EmptyTypes) is { } parameterless)
+        {
+            return parameterless.Invoke([]) as IFunction
+                ?? throw new InvalidOperationException(
+                    $"Parameterless constructor for '{type.FullName}' did not create a function.");
+        }
+
+        if (function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException($"Spread arguments are not supported by {function.Name}.");
+
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var providers = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = binding.Parameters[index];
+            providers[index] = metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.Role switch
+            {
+                ArgumentRole.Predicate => ApplyProviderLifetime(
+                    BuildPredicateProvider(parameter, context, function.Name,
+                        metadata[index].GetCustomAttribute<ArgumentRoleAttribute>()!.AllowValueExpression), metadata[index]),
+                ArgumentRole.Accumulator => ApplyProviderLifetime(
+                    BuildAccumulatorProvider(parameter, context), metadata[index]),
+                ArgumentRole.Transformation => TryGetOpenExpression(parameter, out var open)
+                    ? ApplyProviderLifetime(BuildTransformationProvider(open, context), metadata[index])
+                    : throw new BindingException(
+                        $"Function '{function.Name}' parameter '{metadata[index].Name}' must be an open expression."),
+                _ => throw new InvalidOperationException($"Unsupported argument role on '{type.FullName}.{metadata[index].Name}'."),
+            };
+        }
+        return binding.Constructor.Invoke(providers) as IFunction
+            ?? throw new InvalidOperationException($"Role-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private static Func<T> ApplyProviderLifetime<T>(Func<T> provider, ParameterInfo parameter)
+        where T : class
+    {
+        if (parameter.GetCustomAttribute<ProviderLifetimeAttribute>()?.Lifetime != ProviderLifetime.BoundExpression)
+            return provider;
+        var value = provider();
+        return () => value;
+    }
+
+    private IFunction InstantiateShapeAnnotated(
+        Type type,
+        ConstructorInfo[] targets,
+        Bindings.Function function,
+        IContext context)
+    {
+        var binding = ParameterArgumentBinder.Bind(type, function.Arguments, targets);
+        var metadata = binding.Constructor.GetParameters();
+        var values = new object?[metadata.Length];
+        for (var index = 0; index < metadata.Length; index++)
+        {
+            var parameter = metadata[index];
+            var shape = parameter.GetCustomAttribute<AcceptedExpressionShapeAttribute>()?.Shape
+                ?? throw new InvalidOperationException(
+                    $"Constructor '{type.FullName}' parameter '{parameter.Name}' has no expression shape metadata.");
+            values[index] = shape switch
+            {
+                AcceptedExpressionShape.DirectFieldSelector => CreateDirectFieldSelector(
+                    binding.Parameters[index], function.Name, parameter.Name!, context),
+                AcceptedExpressionShape.OpenExpression => ExpressionShapeNormalizer.TryGetOpenExpression(
+                    binding.Parameters[index], out var open)
+                    ? BuildTransformationProvider(open, context)
+                    : throw new BindingException(
+                        $"Function '{function.Name}' parameter '{parameter.Name}' must be an open expression."),
+                _ => throw new InvalidOperationException($"Unsupported expression shape '{shape}'."),
+            };
+        }
+        return binding.Constructor.Invoke(values) as IFunction
+            ?? throw new InvalidOperationException($"Shape-annotated constructor for '{type.FullName}' did not create a function.");
+    }
+
+    private NamedFieldSelector CreateDirectFieldSelector(
+        IParameter parameter, string function, string parameterName, IContext context)
+    {
+        var name = ExpressionShapeNormalizer.RequireDirectFieldName(parameter, function, parameterName);
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return new NamedFieldSelector(name, value => EvaluationRuntime.EvaluateNested(evaluator, value, value));
+    }
+
+    private Func<object?, object?> BuildNestedValueEvaluator(IParameter parameter, IContext context)
+    {
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return value => EvaluationRuntime.EvaluateNested(evaluator, value);
+    }
+
+    private Delegate BuildAmbientValueProvider(IParameter parameter, Type providerType, IContext context)
+    {
+        var evaluator = BuildValueEvaluator(parameter, context);
+        return CreateFunctionCast(
+            () => evaluator.Invoke(EvaluationRuntime.Frame?.Current),
+            providerType.GetGenericArguments()[0]);
+    }
+
     private IFunction BuildAccumulatorFunction(
         Bindings.Function function,
         Type accumulatorType,
         IContext context)
     {
-        if (constructors.TryGet(accumulatorType, out var constructor))
+        if (TryBuildAccumulatorConstructor(function, accumulatorType, context, out var create))
         {
-            Func<IAccumulator> create = () =>
-                constructor.Construct(function, context, this) as IAccumulator
-                ?? throw new InvalidOperationException(
-                    $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
             _ = create();
             return new AccumulatorFunction(create);
         }
@@ -410,6 +580,35 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
         return new AccumulatorFunction(() => accumulatorRegistry.Create(function.Name));
+    }
+
+    private bool TryBuildAccumulatorConstructor(
+        Bindings.Function function,
+        Type accumulatorType,
+        IContext context,
+        [NotNullWhen(true)] out Func<IAccumulator>? create)
+    {
+        create = null;
+        if (constructors.TryGet(accumulatorType, out var constructor))
+        {
+            create = () => constructor.Construct(function, context, this) as IAccumulator
+                ?? throw new InvalidOperationException(
+                    $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        else if (constructors.TryGetAnnotated(accumulatorType, out var annotated)
+            && (function.Arguments.Length > 0 || accumulatorType.GetConstructor(Type.EmptyTypes) is null))
+        {
+            create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IAccumulator
+                ?? throw new InvalidOperationException(
+                    $"The annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        else if (constructors.TryGetRoleAnnotated(accumulatorType, out var roleAnnotated))
+        {
+            create = () => InstantiateRoleAnnotated(accumulatorType, roleAnnotated, function, context) as IAccumulator
+                ?? throw new InvalidOperationException(
+                    $"The role-annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
+        }
+        return create is not null;
     }
 
     private static IFunction? BuildReferenceFunction(Bindings.Function function)
@@ -464,17 +663,36 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         return EvaluationRuntime.EvaluateNested(expression, input, currentInput);
     }
 
-    private IFunction InstantiateValueSpreadAware(Type type, Bindings.Function function, IContext context)
+    private IFunction InstantiateVariadicPacked(Type type, ConstructorInfo constructor, Bindings.Function function, IContext context)
     {
-        var values = function.Arguments
-            .Select(argument => new ValueArgumentEvaluator(
-                BuildValueEvaluator(argument.Value, context),
-                argument.IsSpread))
-            .ToArray();
-        var arguments = (Func<ValueArgumentEvaluator[]>)(() => values);
-        return Activator.CreateInstance(type, arguments) as IFunction
+        var parameter = constructor.GetParameters()[0];
+        var packing = parameter.GetCustomAttribute<ArgumentPackingAttribute>()!;
+        if (!packing.AllowSpread && function.Arguments.Any(argument => argument.IsSpread))
+            throw new SpreadArgumentException($"Spread arguments are not supported by {function.Name}.");
+
+        object provider;
+        if (parameter.ParameterType == typeof(Func<object?, object?[]>))
+        {
+            var values = function.Arguments
+                .Select(argument => new ValueArgumentEvaluator(
+                    BuildValueEvaluator(argument.Value, context), argument.IsSpread))
+                .ToArray();
+            provider = (Func<object?, object?[]>)(input => ValueArguments.Evaluate(values, input).ToArray());
+        }
+        else
+        {
+            if (function.Arguments.FirstOrDefault(argument => argument.Name is not null) is { } named)
+                throw new UnknownParameterNameException(function.Name, named.Name!);
+            var elementType = parameter.ParameterType.GetGenericArguments()[0].GetElementType()!;
+            var evaluations = function.Arguments.Select(argument =>
+                LinqExpression.Invoke(LinqExpression.Constant(CreateParameter(argument.Value, elementType, context))));
+            var array = LinqExpression.NewArrayInit(elementType, evaluations);
+            provider = LinqExpression.Lambda(parameter.ParameterType, array).Compile();
+        }
+
+        return constructor.Invoke([provider]) as IFunction
             ?? throw new InvalidOperationException(
-                $"Value-spread-aware type '{type.FullName}' must expose a constructor accepting Func<ValueArgumentEvaluator[]>.");
+                $"Variadic constructor for '{type.FullName}' did not create a function.");
     }
 
     private Func<object?, object?> BuildValueEvaluator(IParameter parameter, IContext context, bool establishScope = false)
@@ -540,7 +758,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
                 })
                 .ToArray();
             return input => new Values.Grouping(entries.Select(entry =>
-                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+                new Pair(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is DictionaryParameter dictionary)
@@ -553,7 +771,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
                 })
                 .ToArray();
             return input => new Values.Dictionary(entries.Select(entry =>
-                new PairValue(entry.Key.Invoke(input), entry.Value.Invoke(input))));
+                new Pair(entry.Key.Invoke(input), entry.Value.Invoke(input))));
         }
 
         if (parameter is RecordLiteralParameter record)
@@ -604,7 +822,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
 
     private Func<object?, object?> BuildOpenExpressionRecordEvaluator(OpenExpressionParameter open, IContext context)
     {
-        if (open.Expression is InputBoundExpression binding)
+        if (open.Expression.InputBinding is { } binding)
             return BuildInputBoundFunction(binding, context).Evaluate;
 
         if (TryBuildSingleTokenEvaluator(open, out var evaluator))
@@ -675,12 +893,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         {
             var call = open.Expression.Members.Single();
             if (accumulatorRegistry.TryResolve(call.Name, out var accumulatorType)
-                && constructors.TryGet(accumulatorType, out var constructor))
-            {
-                return () => constructor.Construct(call, context, this) as IAccumulator
-                    ?? throw new InvalidOperationException(
-                        $"The constructor for accumulator '{call.Name}' did not create an accumulator.");
-            }
+                && TryBuildAccumulatorConstructor(call, accumulatorType, context, out var create))
+                return create;
             if (call.Arguments.Length != 0)
                 throw new MissingOrUnexpectedParametersFunctionException(call.Name, call.Parameters.Length);
         }
@@ -762,7 +976,8 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         return true;
     }
 
-    private Func<IPredicate> BuildPredicateProvider(IParameter parameter, IContext context, string functionName)
+    private Func<IPredicate> BuildPredicateProvider(
+        IParameter parameter, IContext context, string functionName, bool allowValueExpression = false)
     {
         if (TryGetOpenExpression(parameter, out var openExpression))
             return () => BuildBooleanPredicate(openExpression.Expression, context);
@@ -770,10 +985,17 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
         return parameter switch
         {
             PredicationParameter predication => () => predicationFactory.Instantiate(predication.Predication, context),
+            _ when allowValueExpression => BuildValuePredicateProvider(parameter, context),
             _ => throw new ArgumentException(
-                    $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
-                    nameof(parameter))
+                $"The function named '{functionName}' expects a parameter of type '{nameof(PredicationParameter)}' or '{nameof(OpenExpressionParameter)}' but received '{parameter.GetType().Name}'.",
+                nameof(parameter)),
         };
+    }
+
+    private Func<IPredicate> BuildValuePredicateProvider(IParameter parameter, IContext context)
+    {
+        var evaluator = new DelegatedFunction(BuildValueEvaluator(parameter, context));
+        return () => new BooleanFunctionPredicate(evaluator);
     }
 
     private IPredicate BuildBooleanPredicate(OpenExpression expression, IContext context)
@@ -785,22 +1007,7 @@ public partial class FunctionFactory : BaseExpressionFactory, IFunctionConstruct
     private static bool TryGetOpenExpression(
         IParameter parameter,
         [NotNullWhen(true)] out OpenExpressionParameter? expression)
-    {
-        expression = parameter switch
-        {
-            OpenExpressionParameter open => open,
-            ScopedTupleProjectionParameter projection => new OpenExpressionParameter(new OpenExpression([
-                new Bindings.Function(
-                    "tuple-at",
-                    [projection],
-                    FunctionSyntax.ScopedTupleProjectionShorthand),
-            ])),
-            LiteralParameter { Value: string value } => new OpenExpressionParameter(
-                new OpenExpression([new Bindings.Function(value, [])])),
-            _ => null
-        };
-        return expression is not null;
-    }
+        => ExpressionShapeNormalizer.TryGetOpenExpression(parameter, out expression);
 
     protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {

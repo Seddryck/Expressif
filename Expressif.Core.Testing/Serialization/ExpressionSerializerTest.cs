@@ -1,10 +1,5 @@
 using Expressif.Bindings;
 using Expressif.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expressif.Testing.Serialization;
 
@@ -43,18 +38,6 @@ public class ExpressionSerializerTest
     }
 
     [Test]
-    public void Serialize_SingleParameter_SingleExpressionMemberSerializerCall()
-    {
-        var internalSerializer = new Mock<FunctionSerializer>();
-        internalSerializer.Setup(x => x.Serialize(It.IsAny<Function>())).Returns("exp");
-
-        var expression = new Function("Lower", []); var serializer = new ExpressionSerializer(internalSerializer.Object);
-        serializer.Serialize([expression]);
-
-        internalSerializer.Verify(x => x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Once);
-    }
-
-    [Test]
     public void Serialize_MultipleMembers_WithPipe()
     {
         var lowerExpression = new Function("Lower", []);
@@ -62,21 +45,6 @@ public class ExpressionSerializerTest
         var padRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
         Assert.That(new ExpressionSerializer().Serialize([lowerExpression, firstCharsExpression, padRightExpression])
             , Is.EqualTo("lower | first-chars(5) | pad-right(7, \"*\")"));
-    }
-
-    [Test]
-    public void Serialize_MultipleMembers_MultipleExpressionMemberSerializerCall()
-    {
-        var internalSerializer = new Mock<FunctionSerializer>();
-        internalSerializer.Setup(x => x.Serialize(It.IsAny<Function>())).Returns("exp");
-
-        var lowerExpression = new Function("Lower", []);
-        var firstCharsExpression = new Function("FirstChars", [new LiteralParameter("5")]);
-        var padRightExpression = new Function("PadRight", [new LiteralParameter("7"), new LiteralParameter("*")]);
-        var serializer = new ExpressionSerializer(internalSerializer.Object);
-        serializer.Serialize([lowerExpression, firstCharsExpression, padRightExpression]);
-
-        internalSerializer.Verify(x => x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
     }
 
     [Test]

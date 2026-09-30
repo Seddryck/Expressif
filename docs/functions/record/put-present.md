@@ -29,7 +29,7 @@ Assigns statically named fields only when they are present, including fields who
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `assignments` | `entry` | Variadic (one or more) | One or more named assignments applied only to fields already present. |
+| `assignments` | `entry` | Variadic (one or more); no spread | One or more named assignments applied only to fields already present. |
 
 
 

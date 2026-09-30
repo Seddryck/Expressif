@@ -12,13 +12,13 @@ using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Functions;
 
-public abstract class BaseExpressionFactory
+internal abstract class BaseExpressionFactory
 {
     protected IImplementationRegistry Registry { get; }
     private IValueConverter Converter { get; }
 
-    protected BaseExpressionFactory(IImplementationRegistry registry, ITypesProbe probe)
-        : this(registry, ProbeService.Create<IValueConverter>(probe)) { }
+    protected BaseExpressionFactory(IImplementationRegistry registry, ITypeSource source)
+        : this(registry, TypeSourceService.Create<IValueConverter>(source)) { }
 
     protected BaseExpressionFactory(IImplementationRegistry registry, IValueConverter converter)
         => (Registry, Converter) = (registry, converter);
@@ -158,7 +158,7 @@ public abstract class BaseExpressionFactory
             {
                 if (evaluated is null)
                     throw new SpreadArgumentException("Spread argument cannot be null.");
-                if (evaluated is not VectorValue spread)
+                if (evaluated is not Vector spread)
                     throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
                 values.AddRange(spread);
             }

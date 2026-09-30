@@ -1,3 +1,4 @@
+using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Testing.Conformance;
 using Expressif.Values;
@@ -44,4 +45,53 @@ public class PairFunctionsTest
             TestExpression.Create("pair(.country, .amount)").Evaluate(input),
             Is.EqualTo(new PairValue("BE", 42m)));
     }
+
+    [Test]
+    public void Pair_NamedArgumentsRetainIncomingValueAndRootScope()
+    {
+        var input = new RecordValue();
+        input.Set("country", "BE");
+        input.Set("amount", 42m);
+
+        Assert.That(
+            TestExpression.Create("pair(value := .amount, key := ^.country)").Evaluate(input),
+            Is.EqualTo(new PairValue("BE", 42m)));
+    }
+
+    [Test]
+    public void Pair_InputBoundExpressionKeepsItsSupplyingScope()
+    {
+        var input = new RecordValue();
+        input.Set("amount", 42m);
+
+        var result = (PairValue)TestExpression.Create(
+            "pair(@_ | source :> @source, @_ | source :> @source | .amount)").Evaluate(input)!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Key, Is.SameAs(input));
+            Assert.That(result.Value, Is.EqualTo(42m));
+        });
+    }
+
+    [Test]
+    public void Pair_NestedExpressionRetainsEnclosingRoot()
+    {
+        var item = new RecordValue();
+        item.Set("amount", 42m);
+        var input = new RecordValue();
+        input.Set("country", "BE");
+        input.Set("items", new object?[] { item });
+
+        var result = (object?[])TestExpression.Create(
+            ".items | map(pair(^.amount, ^^.country))").Evaluate(input)!;
+
+        Assert.That(result, Is.EqualTo(new object?[] { new PairValue(42m, "BE") }));
+    }
+
+    [TestCase("pair(1)", typeof(MissingRequiredParameterException))]
+    [TestCase("pair(1, 2, 3)", typeof(TooManyPositionalArgumentsException))]
+    [TestCase("pair(unknown := 1, value := 2)", typeof(UnknownParameterNameException))]
+    public void Pair_InvalidArgumentsFailDuringConstruction(string source, Type exceptionType)
+        => Assert.That(() => TestExpression.Create(source), Throws.TypeOf(exceptionType));
 }

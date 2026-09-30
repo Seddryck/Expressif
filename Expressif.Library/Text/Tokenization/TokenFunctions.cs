@@ -24,8 +24,8 @@ public class Token : BaseTextFunction
     /// <param name="separator">A character that delimits the substrings in this instance.</param>
     public Token(Func<int> index, Func<char> separator)
         => (Index, Separator) = (index, separator);
-    protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Invoke()) ? new Expressif.Values.Special.Null().Keyword : new Whitespace().Keyword;
-    protected override object EvaluateEmpty() => new Expressif.Values.Special.Null().Keyword;
+    protected override object EvaluateBlank() => Separator == null || char.IsWhiteSpace(Separator.Invoke()) ? Expressif.Values.Special.Null.Keyword : Whitespace.Keyword;
+    protected override object EvaluateEmpty() => Expressif.Values.Special.Null.Keyword;
     protected override object EvaluateString(string value)
     {
         var tokenizer = Separator == null ? (ITokenizer)new WhitespaceTokenizer() : new Tokenizer(Separator.Invoke());
@@ -35,7 +35,7 @@ public class Token : BaseTextFunction
         if (indexValue < tokens.Length)
             return tokens[indexValue];
         else
-            return new Expressif.Values.Special.Null().Keyword;
+            return Expressif.Values.Special.Null.Keyword;
     }
 }
 

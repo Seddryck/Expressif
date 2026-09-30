@@ -21,5 +21,5 @@ internal sealed class SyntaxService : ISyntaxService
     public IRootExpression Bind(RootExpressionSyntax syntax) => ExpressifBinderFactory.Create().Bind(syntax);
 
     public void Validate(IRootExpression expression, Context context)
-        => _ = new FunctionFactory(new AssemblyTypesProbe([typeof(ExpressionBinder).Assembly])).Instantiate(expression, context);
+        => _ = new FunctionFactory(new AssemblyTypeSource(typeof(ExpressionBinder).Assembly)).Instantiate(expression, context);
 }

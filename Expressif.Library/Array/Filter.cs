@@ -17,7 +17,7 @@ public class Filter : BaseArrayFunction
     public Func<IPredicate> Predicate { get; }
 
     /// <param name="predicate">Expression defining the predicate applied to each input item.</param>
-    public Filter(Func<IPredicate> predicate)
+    public Filter([ArgumentRole(ArgumentRole.Predicate)] [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IPredicate> predicate)
         => Predicate = predicate;
 
     protected override object? EvaluateArray(IEnumerable enumerable)

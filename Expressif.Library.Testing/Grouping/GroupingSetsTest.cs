@@ -41,7 +41,7 @@ public class GroupingSetsTest
     public void Evaluate_PreservesReferencesAndResetsBetweenCalls()
     {
         IFunction<GroupingValue, GroupingValue> function = new Expressif.Library.Grouping.GroupingSets(
-            () => [new ValueArgumentEvaluator(_ => new TupleValue(0)), new ValueArgumentEvaluator(_ => new TupleValue())]);
+            _ => [new TupleValue(0), new TupleValue()]);
         var item = new object();
         var input = new GroupingValue([new PairValue(new TupleValue(null, 1), new object?[] { item, null, item })]);
         var first = function.Evaluate(input);

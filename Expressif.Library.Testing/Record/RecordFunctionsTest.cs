@@ -1,5 +1,6 @@
 using Expressif.Library.Numeric;
 using Expressif.Library.Record;
+using Expressif.Functions;
 using Expressif.Values;
 using Expressif.Testing.Conformance;
 using RecordFunction = Expressif.Library.Record.Record;
@@ -61,6 +62,40 @@ public class RecordFunctionsTest
     public void PutAbsent_Valid_Record(object? value, string expression, string expected)
         => Assert.That(TestExpression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
 
+    [Test]
+    public void PutPresent_BoundAssignmentsPreserveOrderAndSkipAbsentEvaluators()
+    {
+        var input = new ValueRecord();
+        input.Set("first", 0);
+        input.Set("second", 0);
+
+        var result = (ValueRecord)TestExpression.Create(
+            "put-present(first := 1, absent := throw(is-not-null), second := 2)").Evaluate(input)!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Keys, Is.EqualTo(new[] { "first", "second" }));
+            Assert.That(result["first"], Is.EqualTo(1));
+            Assert.That(result["second"], Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void PutAbsent_BoundAssignmentsSkipPresentEvaluators()
+    {
+        var input = new ValueRecord();
+        input.Set("present", 0);
+
+        var result = (ValueRecord)TestExpression.Create(
+            "put-absent(present := throw(is-not-null), absent := 2)").Evaluate(input)!;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result["present"], Is.EqualTo(0));
+            Assert.That(result["absent"], Is.EqualTo(2));
+        });
+    }
+
     [Conformance]
     public void PutPath_Valid_Record(object? value, string expression, string expected)
         => Assert.That(TestExpression.Create(expression).Evaluate(value)?.ToString(), Is.EqualTo(expected));
@@ -95,6 +130,21 @@ public class RecordFunctionsTest
             () => new PutPath(_ => new TupleValue(), _ => 42).Evaluate(new ValueRecord()),
             Throws.TypeOf<ArgumentException>()
                 .With.Message.EqualTo("Record path tuple must contain at least one segment. (Parameter 'value')"));
+
+    [TestCase("put-path")]
+    [TestCase("put-present-path")]
+    [TestCase("put-absent-path")]
+    public void PutPathVariants_NamedArgumentsEvaluateAgainstIncomingRecord(string name)
+    {
+        var input = new ValueRecord();
+        input.Set("target", "old");
+        input.Set("source", "new");
+
+        var result = (ValueRecord)TestExpression.Create(
+            $"{name}(value := .source, path := \"target\")").Evaluate(input)!;
+
+        Assert.That(result["target"], Is.EqualTo(name == "put-absent-path" ? "old" : "new"));
+    }
 
     [Test]
     public void PutPath_NestedAssignment_DoesNotMutateInput()
@@ -218,8 +268,11 @@ public class RecordFunctionsTest
     }
 
     [Test]
-    public void Record_DeclaresValueSpreadAwareness()
-        => Assert.That(new RecordFunction(), Is.InstanceOf<Expressif.Functions.IValueSpreadAware>());
+    public void Record_UsesStructuralSpreadRatherThanPositionalPacking()
+        => Assert.That(
+            typeof(RecordFunction).GetConstructors().SelectMany(constructor => constructor.GetParameters())
+                .Any(parameter => parameter.IsDefined(typeof(ArgumentPackingAttribute), false)),
+            Is.False);
 
     [Test]
     public void Record_Evaluate_NamedEntries_PreservesDeclarationOrder()

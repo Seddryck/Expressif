@@ -5,6 +5,7 @@ using Expressif.Discovery;
 using Expressif.Library.Array;
 using Expressif.Predicates;
 using Expressif.Syntax;
+using System.Reflection;
 using BoundFunction = Expressif.Bindings.Function;
 
 namespace Expressif.Semantics;
@@ -40,11 +41,11 @@ public sealed class SemanticAnalyzer
         private static readonly SemanticSource Missing = Unknown("There is no enclosing expression scope.");
         private readonly ExpressifBinder binder = ExpressifBinderFactory.Create(applyCoercion: false, trackSources: true);
         private readonly IImplementationRegistry functions = new FunctionRegistry(
-            new AssemblyTypesProbe([typeof(SemanticAnalyzer).Assembly]));
+            new AssemblyTypeSource(typeof(SemanticAnalyzer).Assembly));
         private readonly IImplementationRegistry predicates = new PredicateRegistry(
-            new AssemblyTypesProbe([typeof(SemanticAnalyzer).Assembly]));
+            new AssemblyTypeSource(typeof(SemanticAnalyzer).Assembly));
         private readonly IImplementationRegistry accumulators = new AccumulatorRegistry(
-            new AssemblyTypesProbe([typeof(SemanticAnalyzer).Assembly]));
+            new AssemblyTypeSource(typeof(SemanticAnalyzer).Assembly));
         private readonly List<FieldReference> references = [];
         private readonly List<string> diagnostics = [];
         private BindingSourceMap Sources => binder.Sources;
@@ -260,7 +261,8 @@ public sealed class SemanticAnalyzer
 
         private static bool UsesScalarProviders(BoundFunction function, Type type)
             => FunctionConstruction.Classify(function.Name) == FunctionConstructionKind.Standard
-                && !typeof(IValueSpreadAware).IsAssignableFrom(type)
+                && !type.GetConstructors().SelectMany(constructor => constructor.GetParameters()).Any(parameter =>
+                    parameter.GetCustomAttribute<ArgumentPackingAttribute>() is { Mode: ArgumentPackingMode.Variadic, AllowSpread: true })
                 && !type.GetConstructors().Any(constructor => constructor.GetParameters().Any(parameter =>
                     parameter.ParameterType == typeof(Func<IFunction>) || parameter.ParameterType == typeof(Func<IPredicate>)));
 

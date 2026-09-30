@@ -10,17 +10,16 @@ namespace Expressif;
 public class AbstractPredicationBuilder
 {
     private IContext Context { get; }
-    private IPredicationFactory Factory { get; }
+    private FunctionFactory Factory { get; }
     private PredicationSerializer Serializer { get; }
 
     protected AbstractPredicationBuilder(
-        IPredicationFactory factory,
-        IContext? context = null,
-        PredicationSerializer? serializer = null)
+        FunctionFactory factory,
+        IContext? context = null)
         => (Factory, Context, Serializer) = (
             factory ?? throw new ArgumentNullException(nameof(factory)),
             context ?? new Context(),
-            serializer ?? new PredicationSerializer());
+            new PredicationSerializer());
 
     protected AbstractPredicationBuilder(AbstractPredicationBuilder builder)
         => (Context, Factory, Serializer, Pile) = (builder.Context, builder.Factory, builder.Serializer, builder.Pile);
@@ -36,7 +35,7 @@ public class AbstractPredicationBuilder
     {
         if (Pile is null)
             throw new InvalidOperationException();
-        return Factory.Instantiate(Pile, Context);
+        return Factory.InstantiatePredication(Pile, Context);
     }
 
     protected virtual IParameter[] Parametrize(object?[] parameters)
@@ -48,7 +47,7 @@ public class AbstractPredicationBuilder
             {
                 IParameter p => p,
                 Expression<Func<IContext, object?>> expression => new ContextParameter(expression.Compile()),
-                _ => new LiteralParameter(parameter?.ToString() ?? new Null().Keyword)
+                _ => new LiteralParameter(parameter?.ToString() ?? Null.Keyword)
             });
         }
         return [.. typedParameters];
@@ -66,10 +65,9 @@ public class AbstractPredicationBuilder
 public class PredicationBuilder : AbstractPredicationBuilder
 {
     public PredicationBuilder(
-        IPredicationFactory factory,
-        IContext? context = null,
-        PredicationSerializer? serializer = null)
-        : base(factory, context, serializer) { }
+        FunctionFactory factory,
+        IContext? context = null)
+        : base(factory, context) { }
 
     public PredicationBuilderNext Create<T>()
         where T : IPredicate

@@ -346,6 +346,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -384,6 +385,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -422,6 +424,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {
@@ -460,6 +463,7 @@
         "Type": "predicate",
         "Optional": false,
         "Variadic": true,
+        "AllowsSpread": false,
         "MinimumCardinality": 0,
         "Summary": "Specifies the predicate expressions evaluated against the same input value, in declaration order.",
         "Evaluation": {

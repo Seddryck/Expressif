@@ -26,7 +26,7 @@ public abstract class BaseNumericBucketFunction : IFunction<decimal?, int?>
         if (value is decimal numeric)
             return EvaluateNumeric(numeric);
 
-        if (new Expressif.Values.Special.Null().Equals(value) || new Expressif.Values.Special.Empty().Equals(value) || new Whitespace().Equals(value))
+        if (Expressif.Values.Special.Null.Instance.Equals(value) || Expressif.Values.Special.Empty.Instance.Equals(value) || Whitespace.Instance.Equals(value))
             return null;
 
         return new NumericCaster().TryCast(value, out var cast)

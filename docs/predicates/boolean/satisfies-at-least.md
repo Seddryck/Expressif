@@ -31,7 +31,7 @@ Returns `true` when at least the requested number of supplied predicates are sat
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Specifies the minimum non-negative number of predicates that must be satisfied. |
-| `predicates` | `predicate` | Variadic (zero or more) | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
+| `predicates` | `predicate` | Variadic (zero or more); no spread | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
 
 
 

@@ -4,17 +4,17 @@ using Expressif.Values;
 
 namespace Expressif.Functions;
 
-public interface IValueConverter
+internal interface IValueConverter
 {
     object? Convert(object? value, Type targetType);
 }
 
-public interface IPredicationFactory
+internal interface IPredicationFactory
 {
     Predicates.IPredicate Instantiate(IPredication predication, IContext context);
 }
 
-public interface ITupleFunctionInvoker
+internal interface ITupleFunctionInvoker
 {
     Type ResolveTarget(
         string name,
@@ -29,18 +29,19 @@ public interface ITupleFunctionInvoker
         Syntax.SourceSpan? sourceSpan = null);
 }
 
-internal static class ProbeService
+internal static class TypeSourceService
 {
-    public static T Create<T>(ITypesProbe probe)
+    public static T Create<T>(ITypeSource source)
     {
-        var serviceType = probe.Locate().SingleOrDefault(type => typeof(T).IsAssignableFrom(type))
+        var serviceType = source.GetTypes().SingleOrDefault(type => type.IsClass && !type.IsAbstract
+            && typeof(T).IsAssignableFrom(type))
             ?? throw new InvalidOperationException(
-                $"No implementation of '{typeof(T).FullName}' was found by the supplied type probe.");
-        var probeConstructor = serviceType.GetConstructor([typeof(ITypesProbe)]);
-        return (T)(probeConstructor is not null
-            ? probeConstructor.Invoke([probe])
+                $"No implementation of '{typeof(T).FullName}' was found by the supplied type source.");
+        var sourceConstructor = serviceType.GetConstructor([typeof(ITypeSource)]);
+        return (T)(sourceConstructor is not null
+            ? sourceConstructor.Invoke([source])
             : Activator.CreateInstance(serviceType, nonPublic: true)
                 ?? throw new InvalidOperationException(
-                    $"Service '{serviceType.FullName}' must have a parameterless or ITypesProbe constructor."));
+                    $"Service '{serviceType.FullName}' must have a parameterless or ITypeSource constructor."));
     }
 }

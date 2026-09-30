@@ -1,23 +1,19 @@
-﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 
 namespace Expressif.Values;
 
-public class ContextVariables
+public sealed class ContextVariables
 {
     private IDictionary<string, object?> Variables { get; }
+    private IReadOnlyCollection<string> VariableNames { get; }
 
     public ContextVariables()
         : this(new Dictionary<string, object?>()) { }
 
     public ContextVariables(IDictionary<string, object?> variables)
-        => Variables = variables;
+        => (Variables, VariableNames) = (variables, new KeyCollection(variables));
 
     public void Add<T>(string name, object? value)
     {
@@ -45,7 +41,7 @@ public class ContextVariables
 
     public int Count => Variables.Count;
 
-    public ICollection<string> Keys => Variables.Keys;
+    public IReadOnlyCollection<string> Keys => VariableNames;
 
     public object? this[string name]
         => TryGetValue(name, out var value)
@@ -59,7 +55,7 @@ public class ContextVariables
         return response;
     }
 
-    protected virtual object? Evaluate(object? value)
+    private static object? Evaluate(object? value)
     {
         if (value is null)
             return null;
@@ -74,4 +70,11 @@ public class ContextVariables
 
     public bool Contains(string name)
         => Variables.ContainsKey(name.StartsWith('@') ? name[1..] : name);
+
+    private sealed class KeyCollection(IDictionary<string, object?> variables) : IReadOnlyCollection<string>
+    {
+        public int Count => variables.Keys.Count;
+        public IEnumerator<string> GetEnumerator() => variables.Keys.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
 }

@@ -36,7 +36,7 @@ public sealed class ExpressionFactory
 
     private RootExpressionSyntax Parse(string text)
     {
-        using var observation = Observer.Begin(ExpressionObservationStage.Parse);
+        using var observation = ExpressionObservationScope.Begin(Observer, ExpressionObservationStage.Parse);
         try
         {
             var syntax = Parser.Parse(text);
@@ -53,7 +53,7 @@ public sealed class ExpressionFactory
     private IExpression ObserveBinding(Func<IExpression> bind)
     {
         IExpression expression;
-        using (var observation = Observer.Begin(ExpressionObservationStage.Bind))
+        using (var observation = ExpressionObservationScope.Begin(Observer, ExpressionObservationStage.Bind))
         {
             try
             {

@@ -3,18 +3,33 @@ using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Expressif.Values.Types;
 
-public sealed record TypeLiteralMetadata(string? Syntax, string[] Examples);
+public sealed class TypeLiteralMetadata
+{
+    internal TypeLiteralMetadata(string? syntax, string[] examples)
+        => (Syntax, Examples) = (syntax, Array.AsReadOnly([.. examples]));
+    public string? Syntax { get; }
+    public IReadOnlyList<string> Examples { get; }
+}
 
-public sealed record TypeDescriptor(
-    string Name,
-    string Summary,
-    string? Parent,
-    TypeLiteralMetadata? Literal,
-    IReadOnlyDictionary<string, string> Bindings,
-    Type? RuntimeType);
+public sealed class TypeDescriptor
+{
+    internal TypeDescriptor(string name, string summary, string? parent, TypeLiteralMetadata? literal,
+        IReadOnlyDictionary<string, string> bindings, Type? runtimeType)
+        => (Name, Summary, Parent, Literal, Bindings, RuntimeType) =
+            (name, summary, parent, literal,
+                new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(bindings)), runtimeType);
+    public string Name { get; }
+    public string Summary { get; }
+    public string? Parent { get; }
+    public TypeLiteralMetadata? Literal { get; }
+    public IReadOnlyDictionary<string, string> Bindings { get; }
+    public Type? RuntimeType { get; }
+}
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class ExpressifTypeAttribute : Attribute
@@ -30,12 +45,12 @@ public interface ITypeDescriptor
     Type? RuntimeType { get; }
 }
 
-public abstract class TypeDescriptor<T> : ITypeDescriptor
+public abstract class ExpressifTypeDefinition<T> : ITypeDescriptor
 {
     public Type RuntimeType => typeof(T);
 }
 
-public interface ITypeRegistry
+internal interface ITypeRegistry
 {
     IReadOnlyList<TypeDescriptor> All { get; }
     bool TryResolve(string name, out TypeDescriptor descriptor);
@@ -44,7 +59,7 @@ public interface ITypeRegistry
     bool IsInstance(object? value, TypeDescriptor expected);
 }
 
-public sealed class TypeRegistry : ITypeRegistry
+internal sealed class TypeRegistry : ITypeRegistry
 {
     private readonly IReadOnlyDictionary<string, TypeDescriptor> byName;
 
@@ -57,12 +72,12 @@ public sealed class TypeRegistry : ITypeRegistry
     }
 
     public TypeRegistry(params Assembly[] assemblies)
-        : this(new TypeIntrospector(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new TypeIntrospector(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))).Describe()) { }
 
-    public TypeRegistry(ITypesProbe probe)
-        : this(new TypeIntrospector(probe).Describe()) { }
+    public TypeRegistry(ITypeSource source)
+        : this(new TypeIntrospector(source).Describe()) { }
 
     public bool TryResolve(string name, out TypeDescriptor descriptor)
         => byName.TryGetValue(name, out descriptor!);
@@ -118,24 +133,25 @@ public sealed class TypeRegistry : ITypeRegistry
     }
 }
 
-public sealed class TypeIntrospector
+internal sealed class TypeIntrospector
 {
-    private readonly ITypesProbe probe;
+    private readonly ITypeSource source;
     private Type[]? types;
-    private Type[] Types => types ??= probe.Locate().ToArray();
+    private Type[] Types => types ??= source.GetTypes().ToArray();
 
     public TypeIntrospector(params Assembly[] assemblies)
-        : this(new AssemblyTypesProbe(assemblies.Length > 0
+        : this(new AssemblyTypeSource(assemblies.Length > 0
             ? assemblies.Distinct().ToArray()
             : throw new ArgumentException("At least one assembly must be provided.", nameof(assemblies)))) { }
 
-    public TypeIntrospector(ITypesProbe probe)
-        => this.probe = probe;
+    public TypeIntrospector(ITypeSource source)
+        => this.source = source;
 
     public IEnumerable<TypeDescriptor> Describe()
         => Types
-            .Where(type => typeof(ITypeDescriptor).IsAssignableFrom(type)
-                || typeof(IExpressifValueType).IsAssignableFrom(type))
+            .Where(type => type.IsClass && !type.IsAbstract
+                && (typeof(ITypeDescriptor).IsAssignableFrom(type)
+                    || typeof(IExpressifValueType).IsAssignableFrom(type)))
             .Where(type => type.IsDefined(typeof(ExpressifTypeAttribute), false))
             .Select(Describe)
             .OrderBy(descriptor => descriptor.Name);
@@ -227,7 +243,8 @@ internal static class ExpressifTypeName
     }
 }
 
-public sealed class UnknownExpressifTypeException : ExpressifException
+[SuppressMessage("Design", "S3871:Exception types should be public", Justification = "Type resolution is internal and this exception must not expand the public API surface.")]
+internal sealed class UnknownExpressifTypeException : Exception
 {
     public UnknownExpressifTypeException(string name)
         : base($"Unknown Expressif type literal ':{name}'.") { }

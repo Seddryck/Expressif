@@ -1,0 +1,53 @@
+using System.Collections;
+using Expressif.Values.Types;
+
+namespace Expressif.Values;
+
+/// <summary>Represents an immutable ordered mapping with structurally unique keys.</summary>
+[ExpressifType(Parent = "structured", LiteralSyntax = "Pair entries enclosed in !{ and }", LiteralExamples = ["!{(\"BE\" => \"Belgium\")}"])]
+public sealed class Dictionary : IReadOnlyList<Pair>, IEquatable<Dictionary>, IExpressifValueType
+{
+    private static readonly IEqualityComparer Comparer = StructuralComparisons.StructuralEqualityComparer;
+    private readonly Pair[] entries;
+
+    public Dictionary(IEnumerable<Pair> entries)
+    {
+        ArgumentNullException.ThrowIfNull(entries);
+        var values = new List<Pair>();
+        foreach (var pair in entries)
+        {
+            if (values.Any(entry => Comparer.Equals(entry.Key, pair.Key)))
+                throw new ArgumentException($"A dictionary cannot contain duplicate key '{ValueFormatter.Format(pair.Key)}'.", nameof(entries));
+            values.Add(new Pair(pair.Key, pair.Value));
+        }
+        this.entries = values.ToArray();
+    }
+
+    public int Count => entries.Length;
+    public Pair this[int index] => entries[index];
+    /// <summary>Finds a value using the same structural key equality as dictionary construction.</summary>
+    public bool TryGetValue(object? key, out object? value)
+    {
+        var entry = entries.FirstOrDefault(entry => Comparer.Equals(entry.Key, key));
+        if (entry is not null)
+        {
+            value = entry.Value;
+            return true;
+        }
+        value = null;
+        return false;
+    }
+
+    public IEnumerator<Pair> GetEnumerator() => ((IEnumerable<Pair>)entries).GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => entries.GetEnumerator();
+    public bool Equals(Dictionary? other) => other is not null && entries.SequenceEqual(other.entries);
+    public override bool Equals(object? obj) => obj is Dictionary other && Equals(other);
+    public override int GetHashCode()
+    {
+        var hash = default(HashCode);
+        foreach (var entry in entries)
+            hash.Add(entry);
+        return hash.ToHashCode();
+    }
+    public override string ToString() => ValueFormatter.Format(this);
+}

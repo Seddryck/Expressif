@@ -9,6 +9,42 @@ namespace Expressif.Introspection;
 
 internal sealed class ExpressifTypeMapper
 {
+    private const string IntegerType = "integer";
+    private static readonly IReadOnlyDictionary<Type, string> BuiltInTypes =
+        new System.Collections.Generic.Dictionary<Type, string>
+        {
+            [typeof(IFunction)] = "expression",
+            [typeof(IPredicate)] = "predicate",
+            [typeof(IAccumulator)] = "accumulator",
+            [typeof(TypeDescriptor)] = "type",
+            [typeof(string)] = "text",
+            [typeof(char)] = "text",
+            [typeof(bool)] = "boolean",
+            [typeof(decimal)] = "numeric",
+            [typeof(double)] = "numeric",
+            [typeof(float)] = "numeric",
+            [typeof(byte)] = IntegerType,
+            [typeof(sbyte)] = IntegerType,
+            [typeof(short)] = IntegerType,
+            [typeof(ushort)] = IntegerType,
+            [typeof(int)] = IntegerType,
+            [typeof(uint)] = IntegerType,
+            [typeof(long)] = IntegerType,
+            [typeof(ulong)] = IntegerType,
+            [typeof(IPositionalValue)] = "tuple",
+            [typeof(Expressif.Values.Tuple)] = "tuple",
+            [typeof(Vector)] = "vector",
+            [typeof(Pair)] = "pair",
+            [typeof(Group)] = "group",
+            [typeof(Expressif.Values.Grouping)] = "grouping",
+            [typeof(Dictionary)] = "dictionary",
+            [typeof(RecordValue)] = "record",
+            [typeof(OrderingValue)] = "ordering",
+            [typeof(SortTerm)] = "sort-term",
+            [typeof(SortKey)] = "sort-key",
+            [typeof(SortTableValue)] = "sort-table",
+        };
+
     private readonly ITypeRegistry types;
     private readonly IReadOnlyDictionary<ParameterIntrospectionKey, string> parameterTypes;
 
@@ -21,54 +57,14 @@ internal sealed class ExpressifTypeMapper
         Type? declaringType = null,
         string? parameterName = null)
     {
-        if (declaringType is not null && parameterName is not null
-            && parameterTypes.TryGetValue(new(declaringType, parameterName), out var parameterType))
+        if (TryGetParameterType(declaringType, parameterName, out var parameterType))
             return parameterType;
 
-        type = Nullable.GetUnderlyingType(type) ?? type;
-        if (unwrapProvider && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Func<>))
-            type = Nullable.GetUnderlyingType(type.GetGenericArguments()[0]) ?? type.GetGenericArguments()[0];
-
-        if (type == typeof(IFunction))
-            return "expression";
-        if (type == typeof(IPredicate))
-            return "predicate";
-        if (type == typeof(IAccumulator))
-            return "accumulator";
-        if (type == typeof(TypeDescriptor))
-            return "type";
-        if (type == typeof(string) || type == typeof(char) || type.IsEnum)
+        type = Unwrap(type, unwrapProvider);
+        if (type.IsEnum)
             return "text";
-        if (type == typeof(bool))
-            return "boolean";
-        if (type == typeof(decimal) || type == typeof(double) || type == typeof(float))
-            return "numeric";
-        if (type == typeof(byte) || type == typeof(sbyte) || type == typeof(short)
-            || type == typeof(ushort) || type == typeof(int) || type == typeof(uint)
-            || type == typeof(long) || type == typeof(ulong))
-            return "integer";
-        if (type == typeof(IPositionalValue) || type == typeof(TupleValue) || type == typeof(Expressif.Values.Tuple))
-            return "tuple";
-        if (type == typeof(VectorValue) || type == typeof(Expressif.Values.Vector))
-            return "vector";
-        if (type == typeof(PairValue) || type == typeof(Expressif.Values.Pair))
-            return "pair";
-        if (type == typeof(Group))
-            return "group";
-        if (type == typeof(Expressif.Values.Grouping))
-            return "grouping";
-        if (type == typeof(DictionaryValue) || type == typeof(Expressif.Values.Dictionary))
-            return "dictionary";
-        if (type == typeof(RecordValue))
-            return "record";
-        if (type == typeof(OrderingValue))
-            return "ordering";
-        if (type == typeof(SortTermValue))
-            return "sort-term";
-        if (type == typeof(SortKeyValue))
-            return "sort-key";
-        if (type == typeof(SortTableValue))
-            return "sort-table";
+        if (BuiltInTypes.TryGetValue(type, out var builtInType))
+            return builtInType;
 
         var descriptor = types.All.FirstOrDefault(candidate => candidate.RuntimeType == type);
         if (descriptor is not null)
@@ -82,5 +78,29 @@ internal sealed class ExpressifTypeMapper
             return "array";
 
         return "any";
+    }
+
+    private bool TryGetParameterType(Type? declaringType, string? parameterName, out string parameterType)
+    {
+        if (declaringType is not null
+            && parameterName is not null
+            && parameterTypes.TryGetValue(new(declaringType, parameterName), out var configuredType))
+        {
+            parameterType = configuredType;
+            return true;
+        }
+
+        parameterType = string.Empty;
+        return false;
+    }
+
+    private static Type Unwrap(Type type, bool unwrapProvider)
+    {
+        type = Nullable.GetUnderlyingType(type) ?? type;
+        if (!unwrapProvider || !type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Func<>))
+            return type;
+
+        var providedType = type.GetGenericArguments()[0];
+        return Nullable.GetUnderlyingType(providedType) ?? providedType;
     }
 }

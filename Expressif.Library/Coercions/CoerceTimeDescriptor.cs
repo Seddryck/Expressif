@@ -9,5 +9,6 @@ internal sealed class CoerceTimeDescriptor : CoercionDescriptor
             "coerce-time",
             typeof(TimeOnly?),
             [typeof(TimeOnly), typeof(DateOnly), typeof(DateTime), typeof(string)],
+            _ => typeof(CoerceTime),
             _ => new CoerceTime()) { }
 }

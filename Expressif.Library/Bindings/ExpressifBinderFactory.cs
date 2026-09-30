@@ -13,7 +13,7 @@ namespace Expressif.Bindings;
 /// </summary>
 public static class ExpressifBinderFactory
 {
-    private static readonly ITypesProbe Probe = new AssemblyTypesProbe([typeof(ExpressifBinderFactory).Assembly]);
+    private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(ExpressifBinderFactory).Assembly);
     private static readonly FunctionBinderRegistry FunctionBinders = new(
         [
             new CoerceFunctionBinder(),
@@ -28,7 +28,7 @@ public static class ExpressifBinderFactory
             new WithFunctionBinder(),
         ]);
 
-    private static readonly ICoercionRegistry Coercions = new CoercionRegistry(Probe);
+    private static readonly ICoercionRegistry Coercions = new CoercionRegistry(Source);
     private static readonly ITypeRegistry Types = ExpressifTypeRegistry.Instance;
 
     public static ExpressifBinder Create(bool applyCoercion = true)
@@ -37,9 +37,9 @@ public static class ExpressifBinderFactory
     internal static ExpressifBinder Create(bool applyCoercion, bool trackSources)
         => new(
             [
-                new FunctionRegistry(Probe),
-                new PredicateRegistry(Probe),
-                new AccumulatorRegistry(Probe),
+                new FunctionRegistry(Source),
+                new PredicateRegistry(Source),
+                new AccumulatorRegistry(Source),
             ],
             FunctionBinders,
             Types,

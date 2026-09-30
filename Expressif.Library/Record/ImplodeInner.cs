@@ -8,6 +8,6 @@ namespace Expressif.Library.Record;
 public sealed class ImplodeInner : StructuralImplode
 {
     /// <param name="selector">A direct field selector identifying the field whose values are collected.</param>
-    public ImplodeInner(NamedFieldSelector selector)
+    public ImplodeInner([AcceptedExpressionShape(AcceptedExpressionShape.DirectFieldSelector)] NamedFieldSelector selector)
         : base(selector, ignoreNull: true) { }
 }

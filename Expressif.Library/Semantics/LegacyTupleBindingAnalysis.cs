@@ -9,7 +9,7 @@ namespace Expressif.Semantics;
 
 /// <summary>Resolved deprecated argument injection, including its signature and directional mapping.</summary>
 public sealed record LegacyTupleBindingUse(string Operator, string Callable, SourceSpan? Span,
-    Type ImplementationType, IReadOnlyList<TupleBindingSignature> Signatures,
+    Type ImplementationType, IReadOnlyList<TupleBindingInfo> Signatures,
     string PipelineInput, string Arguments, string Replacement, bool CanRewrite)
 {
     public UsageLifecycleRule Lifecycle => UsageLifecycle.Find(Operator)
@@ -28,11 +28,11 @@ public sealed class LegacyTupleBindingAnalyzer
     private readonly IImplementationRegistry predicates;
 
     public LegacyTupleBindingAnalyzer()
-        : this(new AssemblyTypesProbe([typeof(LegacyTupleBindingAnalyzer).Assembly])) { }
-    public LegacyTupleBindingAnalyzer(ITypesProbe probe)
-        : this(new FunctionRegistry(probe), new PredicateRegistry(probe)) { }
+        : this(new AssemblyTypeSource(typeof(LegacyTupleBindingAnalyzer).Assembly)) { }
+    public LegacyTupleBindingAnalyzer(ITypeSource source)
+        : this(new FunctionRegistry(source), new PredicateRegistry(source)) { }
     public LegacyTupleBindingAnalyzer(IImplementationRegistry functions)
-        : this(functions, new PredicateRegistry(new AssemblyTypesProbe([typeof(LegacyTupleBindingAnalyzer).Assembly]))) { }
+        : this(functions, new PredicateRegistry(new AssemblyTypeSource(typeof(LegacyTupleBindingAnalyzer).Assembly))) { }
     public LegacyTupleBindingAnalyzer(IImplementationRegistry functions, IImplementationRegistry predicates)
         => (this.functions, this.predicates) = (functions, predicates);
 
@@ -49,7 +49,7 @@ public sealed class LegacyTupleBindingAnalyzer
         if (root is ClosedRootExpression closed) Pipeline(closed.Expression.Members, closed.Expression.Parameter, uses);
         if (root is OpenRootExpression open)
         {
-            if (open.Expression is InputBoundExpression binding) Visit(binding.Body, uses);
+            if (open.Expression.InputBinding is { } binding) Visit(binding.Body, uses);
             else Pipeline(open.Expression.Members, null, uses);
         }
     }
@@ -96,7 +96,7 @@ public sealed class LegacyTupleBindingAnalyzer
         TupleBindingSignature[] candidates, List<TupleBindingSignature> selected, bool valid)
     {
         return new(consumer, callable.Name, callable.SourceSpan, type,
-            selected.Count > 0 ? selected.Distinct().ToArray() : candidates,
+            (selected.Count > 0 ? selected.Distinct() : candidates).Select(signature => signature.ToInfo()).ToArray(),
             consumer switch { MapOver => "outer input", MapWith => "supplied item", "chunk-while" => "candidate", _ => "current item" },
             consumer switch { MapOver => "supplied item, expanding its tuple positions once", MapWith => "outer input as one value", "chunk-while" => "current chunk as one array", _ => "previous item" },
             UsageLifecycle.Find(consumer)!.ReplacementFor(callable.Name), valid && candidates.Any(signature => signature.SupportsTupleBinding));

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Expressif.Serialization;
 
-public class ParameterSerializer
+internal sealed class ParameterSerializer
 {
     private readonly QuotedLiteralRegistry quotedLiteralRegistry;
     private FunctionSerializer? functionSerializer;
@@ -24,7 +24,7 @@ public class ParameterSerializer
 
     private FunctionSerializer FunctionSerializer => functionSerializer ??= new FunctionSerializer(this);
 
-    public virtual string Serialize(IParameter parameter)
+    public string Serialize(IParameter parameter)
     {
         return parameter switch
         {
@@ -35,7 +35,7 @@ public class ParameterSerializer
             RecordLiteralParameter r => $"{{{string.Join(", ", r.Fields.Select(x => $"{SerializeFieldName(x.Name)} := {Serialize(x.Value)}"))}}}",
             LetDefinitionParameter definition => string.Join(", ", definition.Bindings.Select(binding => $"{binding.Name} := {Serialize(binding.Value)}")),
             RecordDefinitionParameter definition => string.Join(", ", definition.Entries.Select(SerializeRecordEntry)),
-            OpenExpressionParameter { Expression: InputBoundExpression bound } => SerializeInputBound(bound),
+            OpenExpressionParameter { Expression.InputBinding: { } bound } => SerializeInputBound(bound),
             OpenExpressionParameter open => string.Join(" | ", open.Expression.Members.Select(FunctionSerializer.Serialize)),
             InputExpressionParameter { Expression.Parameter: ObjectPropertyParameter property } input
                 when input.Expression.Members.All(member => member.Syntax == FunctionSyntax.FieldShorthand)

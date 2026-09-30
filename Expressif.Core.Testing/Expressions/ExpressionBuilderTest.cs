@@ -1,13 +1,6 @@
 using Expressif.Library.Temporal;
 using Expressif.Library.Text;
 using Expressif.Library.Text.Selection;
-using Expressif.Bindings;
-using Expressif.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Expressif.Testing.Expressions;
 
@@ -105,19 +98,6 @@ public class ExpressionBuilderTest
 
         var expression = builder.Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));
-    }
-
-    [Test]
-    public void Serialize_WithParameters_CorrectlyEvaluate()
-    {
-        var internalSerializer = new Mock<FunctionSerializer>();
-        var serializer = new ExpressionSerializer(internalSerializer.Object);
-        var builder = new TestExpressionBuilder(serializer: serializer)
-            .Chain<Lower>()
-            .Chain<FirstChars>(5)
-            .Chain<PadRight>(7, '*');
-        var str = builder.Serialize();
-        internalSerializer.Verify(x=>x.Serialize(It.IsAny<Function>(), ref It.Ref<StringBuilder>.IsAny), Times.Exactly(3));
     }
 
     [Test]

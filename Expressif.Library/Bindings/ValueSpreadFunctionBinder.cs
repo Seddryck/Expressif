@@ -12,6 +12,7 @@ using GroupingFunction = Expressif.Library.Grouping.Grouping;
 using TextFunction = Expressif.Library.Text.Concatenation.Text;
 using TupleFunction = Expressif.Library.Tuple.Tuple;
 using SplitLengths = Expressif.Library.Text.Partitioning.SplitLengths;
+using SortKey = Expressif.Library.Sorting.SortKey;
 
 namespace Expressif.Bindings;
 
@@ -23,7 +24,8 @@ internal sealed class ValueSpreadFunctionBinder :
     IFunctionBinder<GroupingSets>,
     IFunctionBinder<DictionaryFunction>,
     IFunctionBinder<NestedField>,
-    IFunctionBinder<SplitLengths>
+    IFunctionBinder<SplitLengths>,
+    IFunctionBinder<SortKey>
 {
     public Function Bind(FunctionCallSyntax syntax, IFunctionBindingContext context)
     {

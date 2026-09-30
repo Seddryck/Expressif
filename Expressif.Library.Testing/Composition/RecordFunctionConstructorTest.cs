@@ -1,5 +1,7 @@
 using Expressif.Functions;
+using Expressif.Functions.Accumulation;
 using Expressif.Library.Record;
+using Expressif.Predicates;
 using Expressif.Values;
 using RecordFunction = Expressif.Library.Record.Record;
 
@@ -50,10 +52,10 @@ public sealed class RecordFunctionConstructorTest
             new RecordNamedEntry("provided", new ContextParameter(_ => "provided-value")),
             new RecordSpreadEntry(new IncomingValueParameter()),
         ]);
-        var construction = new Mock<IFunctionConstructionContext>();
-        construction.Setup(candidate => candidate.CreateParameter(
-                It.IsAny<IParameter>(), typeof(object), It.IsAny<IContext>()))
-            .Returns(new Func<object?>(() => "provided-value"));
+        var construction = new StubConstructionContext
+        {
+            ParameterFactory = (_, _, _) => new Func<object?>(() => "provided-value"),
+        };
 
         var runtime = (RecordFunction)Construct(new Function("record", [definition]), construction);
         var input = new Dictionary<string, object?> { ["spread"] = "spread-value" };
@@ -88,9 +90,10 @@ public sealed class RecordFunctionConstructorTest
         var definition = Definition("value", new OpenExpressionParameter(new OpenExpression([
             new Function("unregistered-token", []),
         ])));
-        var construction = new Mock<IFunctionConstructionContext>();
-        construction.Setup(candidate => candidate.CreateOpenExpression(It.IsAny<OpenExpression>(), It.IsAny<IContext>()))
-            .Throws(new NotImplementedFunctionException("unregistered-token"));
+        var construction = new StubConstructionContext
+        {
+            OpenExpressionFactory = (_, _) => throw new NotImplementedFunctionException("unregistered-token"),
+        };
 
         var result = (RecordValue)((RecordFunction)Construct(new Function("record", [definition]), construction)).Evaluate(null)!;
 
@@ -101,10 +104,14 @@ public sealed class RecordFunctionConstructorTest
     public void ConstructUsesInputBoundExpressionWithoutReplacingItsContext()
     {
         var inputBound = new InputBoundExpression([], false, new OpenRootExpression(new OpenExpression([])));
-        var definition = Definition("value", new OpenExpressionParameter(inputBound));
-        var construction = new Mock<IFunctionConstructionContext>();
-        construction.Setup(candidate => candidate.CreateOpenExpression(inputBound, It.IsAny<IContext>()))
-            .Returns(new EchoFunction());
+        var open = new OpenExpression(inputBound);
+        var definition = Definition("value", new OpenExpressionParameter(open));
+        var construction = new StubConstructionContext
+        {
+            OpenExpressionFactory = (expression, _) => ReferenceEquals(expression, open)
+                ? new EchoFunction()
+                : throw new InvalidOperationException("Unexpected open expression."),
+        };
         var input = new object();
 
         var result = (RecordValue)((RecordFunction)Construct(new Function("record", [definition]), construction)).Evaluate(input)!;
@@ -127,11 +134,63 @@ public sealed class RecordFunctionConstructorTest
 
     private static IFunction Construct(
         Function function,
-        Mock<IFunctionConstructionContext>? construction = null)
+        IFunctionConstructionContext? construction = null)
         => new RecordFunctionConstructor().Construct(
             function,
             new Context(),
-            construction?.Object ?? Mock.Of<IFunctionConstructionContext>());
+            construction ?? new StubConstructionContext());
+
+    private sealed class StubConstructionContext : IFunctionConstructionContext
+    {
+        public Func<IParameter, Type, IContext, Delegate>? ParameterFactory { get; init; }
+        public Func<OpenExpression, IContext, IFunction>? OpenExpressionFactory { get; init; }
+
+        public Delegate CreateParameter(IParameter parameter, Type targetType, IContext context)
+            => ParameterFactory?.Invoke(parameter, targetType, context)
+                ?? throw new NotSupportedException();
+
+        public IFunction CreateOpenExpression(OpenExpression expression, IContext context)
+            => OpenExpressionFactory?.Invoke(expression, context)
+                ?? throw new NotImplementedFunctionException("test-expression");
+
+        public Func<object?, object?> CreateOpenExpressionValueEvaluator(
+            OpenExpressionParameter expression,
+            IContext context) => throw new NotSupportedException();
+
+        public Func<object?, object?> CreateValueEvaluator(
+            IParameter parameter,
+            IContext context,
+            bool establishScope = false) => throw new NotSupportedException();
+
+        public IFunction CreateFunction(Function function, IContext context)
+            => throw new NotSupportedException();
+
+        public Func<IPredicate> CreatePredicateProvider(
+            IParameter parameter,
+            IContext context,
+            string functionName) => throw new NotSupportedException();
+
+        public Func<IAccumulator> CreateAccumulatorProvider(IParameter parameter, IContext context)
+            => throw new NotSupportedException();
+
+        public Func<IFunction> CreateTransformationProvider(
+            OpenExpressionParameter parameter,
+            IContext context) => throw new NotSupportedException();
+
+        public bool TryResolveImplementation(string name, out Type implementationType)
+        {
+            implementationType = null!;
+            return false;
+        }
+
+        public Type ResolveTupleTarget(string name, Expressif.Syntax.SourceSpan? sourceSpan = null)
+            => throw new NotSupportedException();
+
+        public object? InvokeTuple(
+            string name,
+            IPositionalValue tuple,
+            Expressif.Syntax.SourceSpan? sourceSpan = null) => throw new NotSupportedException();
+    }
 
     private sealed class EchoFunction : IFunction
     {

@@ -18,7 +18,7 @@ namespace Expressif.Testing.Functions;
 public class FunctionRegistryTest
 {
     private static IImplementationRegistry CreateRegistry()
-        => new FunctionRegistry(TestExpression.LibraryProbe);
+        => new FunctionRegistry(TestExpression.LibraryTypeSource);
 
     [Test]
     [TestCase("neutral", typeof(Neutral))]

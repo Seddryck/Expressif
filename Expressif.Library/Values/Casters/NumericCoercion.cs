@@ -173,12 +173,12 @@ public static class NumericCoercion
         => value is null
             || (value is string text
                 ? IsSpecialKeyword(text)
-                : new Expressif.Values.Special.Null().Equals(value)
-                    || new Expressif.Values.Special.Empty().Equals(value)
-                    || new Whitespace().Equals(value));
+                : Expressif.Values.Special.Null.Instance.Equals(value)
+                    || Expressif.Values.Special.Empty.Instance.Equals(value)
+                    || Whitespace.Instance.Equals(value));
 
     private static bool IsSpecialKeyword(string value)
-        => new[] { new Expressif.Values.Special.Null().Keyword, new Expressif.Values.Special.Empty().Keyword, new Whitespace().Keyword }
+        => new[] { Expressif.Values.Special.Null.Keyword, Expressif.Values.Special.Empty.Keyword, Whitespace.Keyword }
             .Contains(value.Trim(), StringComparer.OrdinalIgnoreCase);
 
     private static bool Fail<T>([MaybeNull] out T result)

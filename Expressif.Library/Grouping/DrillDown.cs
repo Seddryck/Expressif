@@ -1,5 +1,6 @@
 using Expressif.Library.Array;
 using Expressif.Values;
+using Expressif.Bindings;
 using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Grouping;
@@ -14,7 +15,9 @@ public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
     private IReadOnlyList<Func<object?, object?>> Expressions { get; }
 
     /// <param name="expressions">One or more expressions whose results are appended to the existing key.</param>
-    public DrillDown(IEnumerable<Func<object?, object?>> expressions)
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 1)]
+    public DrillDown([ArgumentEvaluation(ArgumentEvaluationMode.Nested)]
+        IEnumerable<Func<object?, object?>> expressions)
         => Expressions = expressions.ToArray();
 
     public GroupingValue Evaluate(GroupingValue value)
@@ -25,7 +28,7 @@ public sealed class DrillDown : IFunction<GroupingValue, GroupingValue>
             var prefix = group.Key is TupleValue tuple ? tuple.ToArray() : new[] { group.Key };
             var subgroups = GroupingOperations.Group(group.Values.Select(item =>
                 new PairValue(new Values.Tuple([.. prefix, .. Expressions.Select(expression => expression.Invoke(item))]), item)));
-            pairs.AddRange(subgroups);
+            pairs.AddRange(subgroups.Select(group => new PairValue(group.Key, group.Values)));
         }
         return new GroupingValue(pairs);
     }
