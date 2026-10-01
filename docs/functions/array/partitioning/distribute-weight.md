@@ -33,6 +33,14 @@ Distributes array values into two groups whose aggregate evaluated weights are a
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{8, 7, 6, 5} | distribute-weight(neutral) → {{8, 5}, {7, 6}}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -62,17 +70,6 @@ Visits each element of the array entering this call.
 ## Behavior
 
 `distribute-weight` evaluates `weight` exactly once per input value, orders values by descending weight using original position to break equal-weight ties, and assigns each value to the group with the lower aggregate weight. Aggregate-weight ties prefer the group with fewer values; remaining ties prefer the first group. It then restores relative input order within both groups. This deterministic largest-weight-first strategy is best-effort and does not guarantee the mathematically optimal partition. Empty input returns two empty arrays and a singleton is placed in the first group.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{8, 7, 6, 5} | distribute-weight(neutral) → {{8, 5}, {7, 6}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

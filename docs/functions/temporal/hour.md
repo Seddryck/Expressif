@@ -27,11 +27,6 @@ returns a textual value at format hh (24 hours format) representing the hours of
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | hour → "12"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

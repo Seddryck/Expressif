@@ -33,6 +33,14 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | broadcast(sum) → {6, 6, 6}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -57,17 +65,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 Visits each element of the array entering this call.
 
 - **`accumulator`:** The selected accumulator receives each incoming array element through its accumulation lifecycle; the accumulator factory is not recreated for each element.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | broadcast(sum) → {6, 6, 6}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

@@ -33,12 +33,6 @@ Returns a new date value corresponding to the date passed as the argument, count
 
 
 
-## Argument evaluation
-
-- **`count`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns a new date value corresponding to the date passed as the argument, count
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`count`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

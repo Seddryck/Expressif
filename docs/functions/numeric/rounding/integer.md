@@ -27,11 +27,6 @@ Returns the value of an argument number rounded to the nearest integer.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | integer → 10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/rounding`  

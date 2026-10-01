@@ -27,11 +27,6 @@ Returns the input string with all characters removed except for letters (A-Z, a-
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | retain-alpha-numeric → "HelloWorld"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/filtering`  

@@ -25,12 +25,6 @@ Returns `true` if argument value has a length of `0`. Return `false` otherwise.
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 "Hello World" | is-empty → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `text`  

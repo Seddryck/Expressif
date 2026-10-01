@@ -27,11 +27,6 @@ returns the count of days within the month of the dateTime value passed as the a
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | length-of-month → 31
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

@@ -33,6 +33,14 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | adjacent(~subtract) → {1, 1}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -62,17 +70,6 @@ Visits consecutive elements of the array supplied as pipeline input to this adja
 ## Behavior
 
 The operation receives T(previous, current). `~f` invokes current | f(previous), while `f~` invokes previous | f(current); subsequent stages keep that pair as their argument context. Legacy implicit argument injection is deprecated but preserved: a single bare callable still invokes current | f(previous). Use an explicit binding or `$1 | f($0)`; the operator and callable themselves are not deprecated.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | adjacent(~subtract) → {1, 1}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/sequencing`  

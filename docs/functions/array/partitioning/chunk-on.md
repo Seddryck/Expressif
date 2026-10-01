@@ -33,6 +33,14 @@ Splits an array on a zero-based boundary and returns the elements before and fro
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{10, 20, 30, 40} | chunk-on(2) → T({10, 20}, {30, 40})
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -59,17 +67,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Behavior
 
 `chunk-on` materializes the input and returns `T(before, from-position)`. Positions beyond the input cardinality use the end boundary, so the right chunk is empty. Negative positions return `null`.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{10, 20, 30, 40} | chunk-on(2) → T({10, 20}, {30, 40})
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

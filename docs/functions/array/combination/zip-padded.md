@@ -33,6 +33,14 @@ Combines corresponding values from the input array and a second array into two-e
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | zip-padded({"a", "b"}) → {T(1, "a"), T(2, "b"), T(3, #null)}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -55,17 +63,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | zip-padded({"a", "b"}) → {T(1, "a"), T(2, "b"), T(3, #null)}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/combination`  

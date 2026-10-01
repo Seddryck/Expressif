@@ -27,11 +27,6 @@ returns a numeric value representing the day of the week (1 being Monday and 7 b
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | day-of-week → 1
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

@@ -27,11 +27,6 @@ Returns the integer being the additive inverse of the argument meaning that thei
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | oppose → -10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

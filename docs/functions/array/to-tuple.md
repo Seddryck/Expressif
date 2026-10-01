@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, "A", #true} | to-tuple → T(1, "A", #true)
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -52,17 +60,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Behavior
 
 `to-tuple` materializes the input array as a tuple without changing its elements. Null values and nested arrays, records, and tuples are preserved without recursive conversion.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, "A", #true} | to-tuple → T(1, "A", #true)
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

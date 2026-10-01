@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | distinct → {1, 2, 3}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -45,19 +53,6 @@ This function has no parameters.
 - Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
-
-
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | distinct → {1, 2, 3}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/set`  

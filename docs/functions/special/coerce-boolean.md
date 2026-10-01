@@ -27,11 +27,6 @@ Attempts to convert the input to a boolean value. Returns `null` when the input 
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | coerce-boolean → #null
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

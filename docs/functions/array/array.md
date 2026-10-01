@@ -35,12 +35,6 @@ Constructs a new array by evaluating zero or more positional expressions from le
 
 
 
-## Argument evaluation
-
-- **`values`:** Each supplied expression is evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +44,9 @@ Constructs a new array by evaluating zero or more positional expressions from le
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `array`  

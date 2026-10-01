@@ -26,12 +26,6 @@ Returns `true` when the input is an integer Unicode scalar value. Returns `false
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This predicate has no parameters.
 128512 | is-code-point → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

@@ -37,6 +37,16 @@ Combines array elements in source order by repeatedly evaluating an expression a
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4} | reduce(add($0, $1)) → 10
+{1, 2, 3} | reduce(add($0, $1), 10) → 16
+{20, 3, 2} | reduce(subtract~) → 15
+```
+{% endraw %}
+
 ## Aggregation support
 
 This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
@@ -53,19 +63,6 @@ Visits the array supplied to this reduce call in source order, starting with the
 ## Behavior
 
 The combining expression receives a two-element tuple: `$0` is the accumulated value and `$1` is the current element. Without `initial`, the first element becomes the accumulated value and an empty array returns `null`. With `initial`, evaluation starts by combining it with the first element, and an empty array returns the initial value unchanged. `f~` invokes accumulator | f(current item); `~f` invokes current item | f(accumulator). Existing complete expressions and the normalization of an explicitly supplied leading $0 are preserved and are not deprecated.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4} | reduce(add($0, $1)) → 10
-{1, 2, 3} | reduce(add($0, $1), 10) → 16
-{20, 3, 2} | reduce(subtract~) → 15
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

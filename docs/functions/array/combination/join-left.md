@@ -37,6 +37,14 @@ Emits every matching pair and preserves unmatched left values with #null in the 
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2} | join-left({2, 3}, @_) → {(1 => #null), (2 => 2)}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<L>`
@@ -65,17 +73,6 @@ Visits each element of the array supplied as pipeline input to this join-left ca
 - **`right`:** Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression.
 - **`left-key`:** Evaluated once with each element of the array supplied as pipeline input to this call as its context; .field reads that element. When right-key is omitted for a right array, also evaluated once with each right element as its context before visiting left elements.
 - **`right-key`:** For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2} | join-left({2, 3}, @_) → {(1 => #null), (2 => 2)}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/combination`  

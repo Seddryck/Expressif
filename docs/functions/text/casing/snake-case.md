@@ -27,11 +27,6 @@ Returns the input text in snake_case, lowercasing words and joining them with un
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | snake-case → "hello_world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

@@ -31,12 +31,6 @@ This function has no parameters.
 
 
 
-## Behavior
-
-Decodes one layer of the five predefined XML entities and valid decimal or hexadecimal numeric character references. Markup, document type declarations, unknown entities, and invalid XML characters are rejected.
-
-
-
 ## Examples
 
 {% raw %}
@@ -45,6 +39,9 @@ Decodes one layer of the five predefined XML entities and valid decimal or hexad
 ```
 {% endraw %}
 
+## Behavior
+
+Decodes one layer of the five predefined XML entities and valid decimal or hexadecimal numeric character references. Markup, document type declarations, unknown entities, and invalid XML characters are rejected.
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

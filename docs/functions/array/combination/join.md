@@ -37,6 +37,15 @@ Emits a pair for every matching left and right value, omitting left values witho
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{{id := 1}, {id := 2}} | join({{id := 1, order := "A"}, {id := 1, order := "B"}}, .id) → {({id := 1} => {id := 1, order := "A"}), ({id := 1} => {id := 1, order := "B"})}
+{1, 2} | join(!{(1 => "one")}, @_) → {(1 => "one")}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<L>`
@@ -65,18 +74,6 @@ Visits each element of the array entering this join call in order; each matching
 - **`right`:** Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression.
 - **`left-key`:** Evaluated once with each left element as its context; when right-key is omitted for an array right-hand side, also evaluated once with each right element as its context while building the grouping.
 - **`right-key`:** For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{{id := 1}, {id := 2}} | join({{id := 1, order := "A"}, {id := 1, order := "B"}}, .id) → {({id := 1} => {id := 1, order := "A"}), ({id := 1} => {id := 1, order := "B"})}
-{1, 2} | join(!{(1 => "one")}, @_) → {(1 => "one")}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/combination`  

@@ -27,11 +27,6 @@ Returns the dateTime that adds a month to the dateTime passed as argument value.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | next-month → #"2024-02-15 12:30:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

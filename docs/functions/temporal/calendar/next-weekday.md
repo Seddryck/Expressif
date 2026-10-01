@@ -33,12 +33,6 @@ Returns a new date value corresponding to the occurrence of the weekday, passed 
 
 
 
-## Argument evaluation
-
-- **`weekday`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns a new date value corresponding to the occurrence of the weekday, passed 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`weekday`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

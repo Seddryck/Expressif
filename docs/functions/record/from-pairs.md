@@ -29,6 +29,15 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{("foo" => 1), ("bar" => 2)} | from-pairs → {foo := 1, bar := 2}
+{(2025 => 100), (2026 => 120)} | from-pairs → {"2025" := 100, "2026" := 120}
+```
+{% endraw %}
+
 ## Structural semantics
 
 - Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
@@ -47,18 +56,6 @@ Visits each element of the array supplied as pipeline input to this from-pairs c
 ## Behavior
 
 Every element must be a pair; ordinary two-element tuples and key/value records are rejected. Keys must coerce to text, and duplicate field names after coercion are rejected using case-sensitive comparison. Values, including null, are preserved without coercion. All text field names are supported, including empty and whitespace names. Leading underscores preserve private visibility. An empty array produces an empty record. Non-enumerable input is rejected.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{("foo" => 1), ("bar" => 2)} | from-pairs → {foo := 1, bar := 2}
-{(2025 => 100), (2026 => 120)} | from-pairs → {"2025" := 100, "2026" := 120}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `record`  

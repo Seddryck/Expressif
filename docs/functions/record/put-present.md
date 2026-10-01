@@ -35,12 +35,6 @@ Assigns statically named fields only when they are present, including fields who
 
 
 
-## Argument evaluation
-
-- **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is present.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Assigns statically named fields only when they are present, including fields who
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`assignments`:** Each assignment uses the record entering this call and is evaluated only if its target field is present.
 
 **Kind:** Function  
 **Scope:** `record`  

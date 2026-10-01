@@ -25,12 +25,6 @@ Returns `true` if the argument is of type `DateTime` and the minutes, seconds an
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #"2024-01-15 12:30:00" | is-on-the-hour → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

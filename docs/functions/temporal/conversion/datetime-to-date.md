@@ -27,11 +27,6 @@ Returns the date at midnight of the argument dateTime.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | datetime-to-date → #"2024-01-15 00:00:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal/conversion`  

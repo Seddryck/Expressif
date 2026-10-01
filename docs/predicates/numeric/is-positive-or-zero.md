@@ -25,12 +25,6 @@ Returns true if the numeric argument is greater or equal to 0.
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 10 | is-positive-or-zero → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

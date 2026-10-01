@@ -33,6 +33,15 @@ Applies a transformation expression to each input item and returns the transform
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | map(add(1)) → {2, 3, 4}
+!{"BE" => 100, "FR" => 80} | map(tuple($key, $value)) → {T("BE", 100), T("FR", 80)}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -62,18 +71,6 @@ Visits each element of the array or each pair of the dictionary supplied as pipe
 ## Behavior
 
 Dictionaries participate directly as ordered collections of first-class pairs. Keys and values are preserved without coercion. The result is an ordinary array, and an empty dictionary produces an empty array. Records require pairs to expose their fields as pairs.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | map(add(1)) → {2, 3, 4}
-!{"BE" => 100, "FR" => 80} | map(tuple($key, $value)) → {T("BE", 100), T("FR", 80)}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

@@ -35,6 +35,14 @@ Returns the original source element whose expression result is nearest to the nu
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{{bar := 10}, {bar := 30}} | closest-by(.bar, 32) → {bar := 30}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -64,17 +72,6 @@ Visits each element of the array entering this call.
 ## Behavior
 
 The output preserves the selected source element and its runtime type; it depends on the input element type, not the expression result type. Traverses the source once in order with constant auxiliary storage. Min-by and max-by compare numeric values across numeric types, text using ordinal ordering, and other same-type comparable scalar values; incompatible or non-comparable criteria fail. Closest-by requires numeric criteria and a numeric target. Expressions execute once per element, including after an exact match.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{{bar := 10}, {bar := 30}} | closest-by(.bar, 32) → {bar := 30}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/selection`  

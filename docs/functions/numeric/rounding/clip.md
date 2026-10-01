@@ -35,13 +35,6 @@ Returns the value of an argument number, unless it is smaller than min, in which
 
 
 
-## Argument evaluation
-
-- **`min`:** Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned.
-- **`max`:** Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +43,10 @@ Returns the value of an argument number, unless it is smaller than min, in which
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`min`:** Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned.
+- **`max`:** Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned.
 
 **Kind:** Function  
 **Scope:** `numeric/rounding`  

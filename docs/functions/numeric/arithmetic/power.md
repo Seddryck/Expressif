@@ -35,12 +35,6 @@ Returns the the numeric argument value raised to the power specified by the para
 
 
 
-## Argument evaluation
-
-- **`exponent`:** Evaluated once in the context surrounding this `power` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Returns the the numeric argument value raised to the power specified by the para
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`exponent`:** Evaluated once in the context surrounding this `power` call.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

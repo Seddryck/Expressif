@@ -31,12 +31,6 @@ This function has no parameters.
 
 
 
-## Behavior
-
-Decodes one layer of JSON string escaping, including control-character escapes and valid Unicode escape sequences. The input is fragment content without surrounding JSON quotation marks.
-
-
-
 ## Examples
 
 {% raw %}
@@ -45,6 +39,9 @@ Decodes one layer of JSON string escaping, including control-character escapes a
 ```
 {% endraw %}
 
+## Behavior
+
+Decodes one layer of JSON string escaping, including control-character escapes and valid Unicode escape sequences. The input is fragment content without surrounding JSON quotation marks.
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

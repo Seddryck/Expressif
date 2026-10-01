@@ -32,8 +32,13 @@ Keeps up to count complete groups in descending ranking order.
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | The maximum number of groups to select. |
 | `expression` | `expression` | Yes | The expression that supplies each group's ranking score. |
+## Examples
 
-
+{% raw %}
+```expressif
+#{("BE" => {1}), ("FR" => {2, 3})} | top-groups(1, $value | cardinality) → #{("FR" => {2, 3})}
+```
+{% endraw %}
 
 ## Value shape
 
@@ -65,17 +70,6 @@ Visits each group of the grouping supplied as pipeline input to this top-groups 
 ## Behavior
 
 Ranks comparable scalar scores using the same numeric normalization and ordinal text ordering as min-by and max-by. Null scores sort last, as in normal descending sorting. Equal scores retain source-group order. Zero count returns an empty grouping without evaluating scores; negative counts fail with an argument error. Oversized counts return all groups in ranking order. Values are preserved without summarization.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{("BE" => {1}), ("FR" => {2, 3})} | top-groups(1, $value | cardinality) → #{("FR" => {2, 3})}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  

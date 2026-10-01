@@ -32,12 +32,6 @@ Returns true if the temporal value passed as argument is between the lower bound
 
 
 
-## Argument evaluation
-
-- **`interval`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +40,9 @@ Returns true if the temporal value passed as argument is between the lower bound
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`interval`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

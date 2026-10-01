@@ -33,6 +33,15 @@ Splits text into consecutive nonempty segments while an operation over the curre
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+"abcdefgh" | split-while($0 | length | is-less-than(3)) → {"abc", "def", "gh"}
+"aaabb" | split-while(starts-with~) → {"aaa", "bb"}
+```
+{% endraw %}
+
 ## Argument evaluation
 
 Visits each UTF-16 code unit after the first in the text supplied as pipeline input to this split-while call.
@@ -81,18 +90,6 @@ A single space does not break the segment. Split before an ASCII letter followin
 Before trimming, the result is `{"abc def  ", "ghi jkl   ", "mno"}`. Splitting preserves the spaces; the explicit `map(trim)` removes them. `|> trim` is equivalent here.
 
 `starts-with~` invokes segment | starts-with(candidate), while `~starts-with` invokes candidate | starts-with(segment). Both directions require a Boolean result; existing complete expressions are not deprecated.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-"abcdefgh" | split-while($0 | length | is-less-than(3)) → {"abc", "def", "gh"}
-"aaabb" | split-while(starts-with~) → {"aaa", "bb"}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/partitioning`  

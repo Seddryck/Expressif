@@ -29,6 +29,15 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+#{("BE" => {}), ("FR" => {15})} | drop-empty-groups → #{("FR" => {15})}
+#{("BE" => {#null})} | drop-empty-groups → #{("BE" => {#null})}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `grouping<K, T>`
@@ -45,20 +54,6 @@ This function has no parameters.
 - Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
-
-
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{("BE" => {}), ("FR" => {15})} | drop-empty-groups → #{("FR" => {15})}
-#{("BE" => {#null})} | drop-empty-groups → #{("BE" => {#null})}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  

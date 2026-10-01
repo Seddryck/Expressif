@@ -27,11 +27,6 @@ Returns the input text in Pascal_Snake case, capitalizing each word and joining 
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | pascal-snake-case → "Hello_World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

@@ -35,13 +35,6 @@ Returns the token at the specified index in the argument value. The index of the
 
 
 
-## Argument evaluation
-
-- **`index`:** Evaluated once in the enclosing context.
-- **`separator`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +44,10 @@ Returns the token at the specified index in the argument value. The index of the
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`index`:** Evaluated once in the enclosing context.
+- **`separator`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

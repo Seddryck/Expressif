@@ -33,12 +33,6 @@ Returns a new dateTime value corresponding to the last occurrence of the weekday
 
 
 
-## Argument evaluation
-
-- **`weekday`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns a new dateTime value corresponding to the last occurrence of the weekday
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`weekday`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

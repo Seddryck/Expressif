@@ -25,12 +25,6 @@ Returns true if the date passed as argument is before today. Returns false other
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #"2024-01-15 12:30:00" | is-in-the-past → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

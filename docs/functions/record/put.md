@@ -35,12 +35,6 @@ Creates or replaces statically named fields while preserving every other field. 
 
 
 
-## Argument evaluation
-
-- **`assignments`:** Each supplied expression is evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Creates or replaces statically named fields while preserving every other field. 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`assignments`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `record`  

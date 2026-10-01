@@ -27,11 +27,6 @@ Returns the argument string without diacritics.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | without-diacritics → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/normalization`  

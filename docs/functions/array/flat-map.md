@@ -33,6 +33,15 @@ Evaluates an array-producing expression for each input element and concatenates 
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{{orders := {1, 2}}, {orders := {}}, {orders := {3}}} | flat-map(.orders) → {1, 2, 3}
+{"one two", "three four"} | flat-map(tokenize(" ")) → {"one", "two", "three", "four"}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -57,18 +66,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 Visits each element of the array supplied as pipeline input to this flat-map call.
 
 - **`expression`:** Evaluated once per visited element in source order, with that element as its pipeline input and argument context. Field references such as .orders read that element's fields.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{{orders := {1, 2}}, {orders := {}}, {orders := {3}}} | flat-map(.orders) → {1, 2, 3}
-{"one two", "three four"} | flat-map(tokenize(" ")) → {"one", "two", "three", "four"}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

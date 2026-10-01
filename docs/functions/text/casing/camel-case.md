@@ -27,11 +27,6 @@ Returns the input text in camelCase, lowercasing the first word and capitalizing
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | camel-case → "helloWorld"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

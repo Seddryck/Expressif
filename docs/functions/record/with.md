@@ -37,13 +37,6 @@ Evaluates named projections independently against the input, then evaluates a bo
 
 
 
-## Argument evaluation
-
-- **`projections`:** Each supplied expression is evaluated once against the value entering this call.
-- **`body`:** Evaluated once against the temporary record produced by the named projections.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +45,10 @@ Evaluates named projections independently against the input, then evaluates a bo
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`projections`:** Each supplied expression is evaluated once against the value entering this call.
+- **`body`:** Evaluated once against the temporary record produced by the named projections.
 
 **Kind:** Function  
 **Scope:** `record`  

@@ -27,11 +27,6 @@ Returns the dateTime passed as argument without changing the current hours/minut
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | set-to-local → #"2024-01-15 12:30:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

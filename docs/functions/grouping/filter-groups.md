@@ -33,6 +33,15 @@ Keeps whole groups whose group-level predicate evaluates to true.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+#{("BE" => {1, 2}), ("FR" => {3})} | filter-groups($value | cardinality | greater-than(1)) → #{("BE" => {1, 2})}
+#{("BE" => {1}), ("FR" => {2})} | having($key | is-equivalent-to("FR")) → #{("FR" => {2})}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `grouping<K, T>`
@@ -57,18 +66,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 Visits each group, including its key and values, in the grouping entering this call.
 
 - **`predicate`:** Evaluated once per visited group, with its key and values available in the context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{("BE" => {1, 2}), ("FR" => {3})} | filter-groups($value | cardinality | greater-than(1)) → #{("BE" => {1, 2})}
-#{("BE" => {1}), ("FR" => {2})} | having($key | is-equivalent-to("FR")) → #{("FR" => {2})}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  

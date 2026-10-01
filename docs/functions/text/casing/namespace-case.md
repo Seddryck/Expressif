@@ -27,11 +27,6 @@ Returns the input text in namespace::case, lowercasing words and joining them wi
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | namespace-case → "hello::world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

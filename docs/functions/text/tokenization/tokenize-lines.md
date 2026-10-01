@@ -27,11 +27,6 @@ Returns lines in source order, recognizing CR, LF, and CRLF as separators. Prese
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "first" | suffix-new-line | suffix("second") | tokenize-lines → {"first", "second"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

@@ -35,6 +35,16 @@ Transforms selected field names while preserving field values and order. Duplica
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{first-name := "John", last-name := "Doe"} | rename-fields(tokenize-kebab | pascal-case) → {FirstName := "John", LastName := "Doe"}
+{first-name := "John", age := 42} | rename-fields(tokenize-kebab | pascal-case, contains("-")) → {FirstName := "John", age := 42}
+{" First Name " := "John"} | rename-fields(trim | lower) → {"first name" := "John"}
+```
+{% endraw %}
+
 ## Structural semantics
 
 - Cardinality: `preserved` <span class="semantics-info" title="The output contains the same number of elements as the visited input." aria-label="Cardinality definition: The output contains the same number of elements as the visited input.">i</span>
@@ -50,19 +60,6 @@ Visits the original field names of the record supplied as pipeline input to this
 
 - **`transform`:** Evaluated once for each visited field name accepted by the filter, after the filter runs, with that original name as its context. Without a filter, it runs for every name; field values are never supplied.
 - **`filter`:** When supplied, evaluated once per visited original field name, with that name as its context. A false result preserves the original name and skips the transformation.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{first-name := "John", last-name := "Doe"} | rename-fields(tokenize-kebab | pascal-case) → {FirstName := "John", LastName := "Doe"}
-{first-name := "John", age := 42} | rename-fields(tokenize-kebab | pascal-case, contains("-")) → {FirstName := "John", age := 42}
-{" First Name " := "John"} | rename-fields(trim | lower) → {"first name" := "John"}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `record`  

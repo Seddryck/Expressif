@@ -35,13 +35,6 @@ Returns a new string that left-aligns the characters in this string by padding t
 
 
 
-## Argument evaluation
-
-- **`length`:** Evaluated once in the enclosing context.
-- **`character`:** Evaluated once in the enclosing context only when padding is needed.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +43,10 @@ Returns a new string that left-aligns the characters in this string by padding t
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`length`:** Evaluated once in the enclosing context.
+- **`character`:** Evaluated once in the enclosing context only when padding is needed.
 
 **Kind:** Function  
 **Scope:** `text/padding`  

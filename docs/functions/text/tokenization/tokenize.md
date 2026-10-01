@@ -33,12 +33,6 @@ Returns all tokens in the argument value in source order. By default, tokenizati
 
 
 
-## Argument evaluation
-
-- **`separator`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -48,6 +42,9 @@ Returns all tokens in the argument value in source order. By default, tokenizati
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`separator`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

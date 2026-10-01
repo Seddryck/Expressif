@@ -39,12 +39,6 @@ This function has no parameters.
 
 
 
-## Behavior
-
-Deprecated in favor of `suffix-new-line` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-new-line` preserves `null`. Use `null-to-empty | suffix-new-line` to retain the existing behavior for null input.
-
-
-
 ## Examples
 
 {% raw %}
@@ -53,6 +47,9 @@ Deprecated in favor of `suffix-new-line` and planned for removal in Expressif 3.
 ```
 {% endraw %}
 
+## Behavior
+
+Deprecated in favor of `suffix-new-line` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix-new-line` preserves `null`. Use `null-to-empty | suffix-new-line` to retain the existing behavior for null input.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

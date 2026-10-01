@@ -33,6 +33,15 @@ Groups consecutive values while an operation over the complete current chunk and
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4, 5, 6, 7} | chunk-while($0 | cardinality | less-than(3)) → {{1, 2, 3}, {4, 5, 6}, {7}}
+{1, 3, 5, 10, 11} | chunk-while($1 | subtract($0 | last) | absolute | less-than(3)) → {{1, 3, 5}, {10, 11}}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -64,18 +73,6 @@ Visits consecutive elements of the array supplied as pipeline input to this chun
 The first element seeds the first chunk without invoking the operation. For every subsequent candidate, true appends it; false emits the chunk and seeds the next chunk with that candidate without testing it again. The final nonempty chunk is emitted. Every element, including null and structured values, is preserved once and in order; no empty chunk is produced. Later additions do not change an exposed currentChunk array. A non-Boolean result or unsupported input returns null.
 
 The operation receives T(currentChunk, candidate). ~f invokes candidate | f(currentChunk), while f~ invokes currentChunk | f(candidate); subsequent stages retain that tuple as their argument context. Existing bare callable injection uses candidate | f(currentChunk). Pairwise conditions must explicitly select the last element of $0; the previous/current element contract is replaced.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4, 5, 6, 7} | chunk-while($0 | cardinality | less-than(3)) → {{1, 2, 3}, {4, 5, 6}, {7}}
-{1, 3, 5, 10, 11} | chunk-while($1 | subtract($0 | last) | absolute | less-than(3)) → {{1, 3, 5}, {10, 11}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

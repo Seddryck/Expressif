@@ -27,11 +27,6 @@ Returns the input text in flatcase, lowercasing words and concatenating them wit
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | flat-case → "helloworld"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

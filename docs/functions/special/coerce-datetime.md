@@ -27,11 +27,6 @@ Attempts to convert the input to a date-time value. Returns `null` when the inpu
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | coerce-datetime → #null
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

@@ -27,11 +27,6 @@ returns a numeric value representing the seconds of the day of the date passed a
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | second-of-day → 45000
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

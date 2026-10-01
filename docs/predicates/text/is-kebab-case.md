@@ -26,12 +26,6 @@ Returns `true` when the complete input is a kebab-case identifier beginning with
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -40,7 +34,6 @@ This predicate has no parameters.
 "first--name" | is-kebab-case → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `text`  

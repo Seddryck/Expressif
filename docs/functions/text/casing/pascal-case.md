@@ -27,11 +27,6 @@ Returns the input text in PascalCase, capitalizing each word and removing separa
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | pascal-case → "HelloWorld"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

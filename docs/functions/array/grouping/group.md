@@ -29,6 +29,15 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{("BE" => "Alice"), ("FR" => "Charlie"), ("BE" => "Bob")} | group → #{("BE" => {"Alice", "Bob"}), ("FR" => {"Charlie"})}
+{} | group → #{}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<pair<K, V>>`
@@ -45,20 +54,6 @@ This function has no parameters.
 - Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
-
-
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{("BE" => "Alice"), ("FR" => "Charlie"), ("BE" => "Bob")} | group → #{("BE" => {"Alice", "Bob"}), ("FR" => {"Charlie"})}
-{} | group → #{}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/grouping`  

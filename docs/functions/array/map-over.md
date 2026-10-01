@@ -35,6 +35,15 @@ Evaluates an expression once for every supplied value while preserving the pipel
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+5 | map-over(subtract~, {10, 11}) → {-5, -6}
+20 | map-over(subtract($2), {T(1, 2), T(3, 4)}) → {18, 16}
+```
+{% endraw %}
+
 ## Structural semantics
 
 - Cardinality: `preserved` <span class="semantics-info" title="The output contains the same number of elements as the visited input." aria-label="Cardinality definition: The output contains the same number of elements as the visited input.">i</span>
@@ -55,18 +64,6 @@ Visits each element of the values argument supplied to this map-over call, in de
 ## Behavior
 
 Prepare the invocation tuple only for a leading `bind("f")`, `rotate | bind("f")`, or `rotate(1) | bind("f")`, including their equivalent tilde forms. Parentheses around an open operation are transparent; an input-bound expression introduces its own boundary. Later bindings consume the preceding stage result without preparing another tuple. The tuple-valued outer input remains one position and nested item tuples are not recursively expanded. Legacy bare-callable argument injection remains available during deprecation; use `f~` for an explicit invocation. Ordinary complete expressions retain their existing input and argument contexts.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-5 | map-over(subtract~, {10, 11}) → {-5, -6}
-20 | map-over(subtract($2), {T(1, 2), T(3, 4)}) → {18, 16}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

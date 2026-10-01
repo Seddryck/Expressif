@@ -30,15 +30,6 @@ Returns the Euclidean distance between the input vector and another vector of th
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `vector` | `vector` | Yes | Specifies the vector whose distance from the input vector is calculated. |
-
-
-
-## Argument evaluation
-
-- **`vector`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ V(1, 2) | distance(V(4, 6)) → 5
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`vector`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `vector`  

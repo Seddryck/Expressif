@@ -35,12 +35,6 @@ Associates the input value with a key calculated by one or more expressions.
 
 
 
-## Argument evaluation
-
-- **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +44,9 @@ Associates the input value with a key calculated by one or more expressions.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `array/grouping`  

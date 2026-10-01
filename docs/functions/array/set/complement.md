@@ -33,6 +33,14 @@ Returns the distinct values from the specified array that do not appear in the p
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | complement({2, 3, 4}) → {4}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -55,17 +63,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | complement({2, 3, 4}) → {4}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/set`  

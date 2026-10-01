@@ -27,11 +27,6 @@ Returns the input text in dot.case, lowercasing words and joining them with peri
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | dot-case → "hello.world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

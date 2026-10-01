@@ -33,6 +33,14 @@ Splits an array into consecutive, non-overlapping chunks of at most the specifie
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | chunk(2) → {{1, 2}, {3}}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -54,17 +62,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`size`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | chunk(2) → {{1, 2}, {3}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

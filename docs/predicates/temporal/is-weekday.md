@@ -29,15 +29,6 @@ Returns `true` if the date passed as the argument corresponds to the weekday pas
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `weekday` | `weekday` | Yes | The day of week to compare to the argument. |
-
-
-
-## Argument evaluation
-
-- **`weekday`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +37,9 @@ Returns `true` if the date passed as the argument corresponds to the weekday pas
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`weekday`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

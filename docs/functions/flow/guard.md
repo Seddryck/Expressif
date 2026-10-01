@@ -33,17 +33,6 @@ Evaluates an expression only when the current input is directly compatible with 
 
 
 
-## Argument evaluation
-
-- **`expression`:** Evaluated against the incoming value only when its entry contract accepts that value without coercion.
-
-
-## Behavior
-
-`guard` checks only whether the current value can enter the supplied expression without coercion. If entry is compatible, the complete expression runs normally, including ordinary coercion between later stages. If entry would require coercion, the expression is skipped and the original value is returned unchanged. The `*expression` syntax is shorthand for `guard(expression)`.
-
-
-
 ## Examples
 
 {% raw %}
@@ -56,6 +45,14 @@ Evaluates an expression only when the current input is directly compatible with 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`expression`:** Evaluated against the incoming value only when its entry contract accepts that value without coercion.
+
+
+## Behavior
+
+`guard` checks only whether the current value can enter the supplied expression without coercion. If entry is compatible, the complete expression runs normally, including ordinary coercion between later stages. If entry would require coercion, the expression is skipped and the original value is returned unchanged. The `*expression` syntax is shorthand for `guard(expression)`.
 
 **Kind:** Function  
 **Scope:** `flow`  

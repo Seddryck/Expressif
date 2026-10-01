@@ -27,11 +27,6 @@ Returns the argument value without all leading or trailing white-space character
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | trim → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/normalization`  

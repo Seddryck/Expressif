@@ -27,11 +27,6 @@ Returns square root of the numeric argument value.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | square-root → 3.16227766016838
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

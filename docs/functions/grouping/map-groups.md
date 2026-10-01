@@ -30,8 +30,14 @@ Transforms each group's value collection while preserving its key and position.
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | The expression evaluated once against each group's value collection. |
+## Examples
 
-
+{% raw %}
+```expressif
+#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} | map-groups(filter(greater-than(10))) → #{("BE" => {20, 30}), ("FR" => {15})}
+#{("BE" => {10}), ("FR" => {20})} |#> filter(greater-than(15)) → #{("BE" => {}), ("FR" => {20})}
+```
+{% endraw %}
 
 ## Value shape
 
@@ -57,18 +63,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 Visits each group in the incoming grouping and supplies its entire value collection to the expression.
 
 - **`expression`:** Evaluated once per group against that group's entire value collection.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} | map-groups(filter(greater-than(10))) → #{("BE" => {20, 30}), ("FR" => {15})}
-#{("BE" => {10}), ("FR" => {20})} |#> filter(greater-than(15)) → #{("BE" => {}), ("FR" => {20})}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  

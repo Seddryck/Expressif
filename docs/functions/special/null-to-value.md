@@ -27,11 +27,6 @@ Returns the value passed as argument, except if the value is `null` then it retu
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #null | null-to-value → "(value)"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

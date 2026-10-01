@@ -33,6 +33,14 @@ Returns the distinct values found in both the pipeline input and the specified a
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | intersection({2, 3, 4}) → {2, 3}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -54,17 +62,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | intersection({2, 3, 4}) → {2, 3}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/set`  

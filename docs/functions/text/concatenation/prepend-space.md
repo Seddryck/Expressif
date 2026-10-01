@@ -39,12 +39,6 @@ This function has no parameters.
 
 
 
-## Behavior
-
-Deprecated in favor of `prefix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix-space` preserves `null`. Use `null-to-empty | prefix-space` to retain the existing behavior for null input.
-
-
-
 ## Examples
 
 {% raw %}
@@ -53,6 +47,9 @@ Deprecated in favor of `prefix-space` and planned for removal in Expressif 3.0. 
 ```
 {% endraw %}
 
+## Behavior
+
+Deprecated in favor of `prefix-space` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix-space` preserves `null`. Use `null-to-empty | prefix-space` to retain the existing behavior for null input.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

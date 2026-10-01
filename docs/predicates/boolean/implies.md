@@ -30,15 +30,6 @@ Returns logical implication from the Boolean input to a secondary Boolean expres
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `expression` | `boolean` | Yes | Specifies the secondary Boolean expression evaluated when the input is `true`. |
-
-
-
-## Argument evaluation
-
-- **`expression`:** Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ Returns logical implication from the Boolean input to a secondary Boolean expres
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`expression`:** Evaluated only when the incoming value converts to true. References use their enclosing context; open predicate expressions use the current evaluation value.
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

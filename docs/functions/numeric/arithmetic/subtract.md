@@ -39,15 +39,6 @@ Returns the difference between the argument number and the parameter value.
 
 
 
-## Argument evaluation
-
-- **`value`:** Evaluated once in the context surrounding this `subtract` call.
-- **`times`:** Evaluated once in the context surrounding this `subtract` call.
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -56,6 +47,10 @@ Returns the difference between the argument number and the parameter value.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the context surrounding this `subtract` call.
+- **`times`:** Evaluated once in the context surrounding this `subtract` call.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

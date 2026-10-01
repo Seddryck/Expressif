@@ -255,6 +255,9 @@ try {
         Assert-Contains -Content $mapPage -Expected $expected -Context "map-contract page"
     }
     Assert-NotContains -Content $mapPage -Unexpected "Classification" -Context "map-contract page"
+    if ($mapPage.IndexOf("## Examples", [System.StringComparison]::Ordinal) -gt $mapPage.IndexOf("## Value shape", [System.StringComparison]::Ordinal)) {
+        throw "map-contract page does not place Examples immediately after Parameters."
+    }
 
     $coalescePage = Get-Content -LiteralPath (Join-Path $functionRoot "coalesce-contract.md") -Raw
     Assert-Contains -Content $coalescePage -Expected "- Combination: When multiple values are supplied, their output types are combined as a union." -Context "coalesce-contract page"

@@ -37,6 +37,16 @@ Groups values by row and column, applies a grouping summary, and reshapes the ce
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{{country := "BE", category := "Retail", year := 2025, amount := 100}} | pivot(T(.country, .category), .year, summarize(|> .amount | sum)) → {{country := "BE", category := "Retail", "2025" := 100}}
+{{country := "BE", category := "Retail", city := "Brussels", year := 2025}} | pivot(T(.country, .category, .city), .year, summarize(cardinality)) → {{country := "BE", category := "Retail", city := "Brussels", "2025" := 1}}
+{{country := "BE", year := 2025, amount := 30}, {country := "BE", year := 2025, amount := 70}, {country := "BE", year := 2026, amount := 120}, {country := "FR", year := 2025, amount := 80}} | pivot(.country, .year, summarize(|> .amount | sum)) → {{country := "BE", "2025" := 100, "2026" := 120}, {country := "FR", "2025" := 80}}
+```
+{% endraw %}
+
 ## Structural semantics
 
 - Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
@@ -58,19 +68,6 @@ Visits each element of the array supplied as pipeline input to this pivot call, 
 ## Behavior
 
 Equivalent to grouping by each row dimension followed by column, applying summary, nesting, and converting the innermost dictionaries through from-pairs with row fields prepended. The row must be a direct field selector such as .country or a nonempty tuple of direct field selectors such as T(.country, .category). Tuple positions become separate named row dimensions in declaration order; computed, unnamed, spread, or duplicate row dimensions fail during binding. Arrays and records selected as row fields remain single structural keys. Tuple-valued individual row fields and tuple-valued columns fail during evaluation. The summary must return a dictionary preserving every generated composite key; incompatible output fails during evaluation. Row and column order follow the summary dictionary and nest insertion order. Missing combinations produce absent fields. Column keys use from-pairs text coercion; uncoercible keys, duplicate coerced names, and collisions with any row field fail during evaluation.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{{country := "BE", category := "Retail", year := 2025, amount := 100}} | pivot(T(.country, .category), .year, summarize(|> .amount | sum)) → {{country := "BE", category := "Retail", "2025" := 100}}
-{{country := "BE", category := "Retail", city := "Brussels", year := 2025}} | pivot(T(.country, .category, .city), .year, summarize(cardinality)) → {{country := "BE", category := "Retail", city := "Brussels", "2025" := 1}}
-{{country := "BE", year := 2025, amount := 30}, {country := "BE", year := 2025, amount := 70}, {country := "BE", year := 2026, amount := 120}, {country := "FR", year := 2025, amount := 80}} | pivot(.country, .year, summarize(|> .amount | sum)) → {{country := "BE", "2025" := 100, "2026" := 120}, {country := "FR", "2025" := 80}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/grouping`  

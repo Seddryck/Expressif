@@ -27,11 +27,6 @@ Returns the reciprocal of the argument number, meaning the result of the divisio
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | invert → 0.1
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

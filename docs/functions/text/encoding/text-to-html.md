@@ -27,11 +27,6 @@ Returns the argument value converted to an HTML-encoded string
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | text-to-html → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

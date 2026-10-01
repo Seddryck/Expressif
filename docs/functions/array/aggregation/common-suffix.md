@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{"running", "walking", "talking"} | fold(common-suffix) → "ing"
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `text`
@@ -48,17 +56,6 @@ This function supports incremental aggregation and can be used with `fold`, `sca
 ## Behavior
 
 Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{"running", "walking", "talking"} | fold(common-suffix) → "ing"
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

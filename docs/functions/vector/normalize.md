@@ -26,12 +26,6 @@ Returns a unit vector pointing in the same direction as the input vector.
 
 
 This function has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This function has no parameters.
 V(3, 4) | normalize → V(0.6, 0.8)
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `vector`  

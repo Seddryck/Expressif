@@ -27,11 +27,6 @@ Returns the input text in ALLCAPS case, uppercasing words and concatenating them
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | allcaps-case → "HELLOWORLD"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

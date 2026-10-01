@@ -35,12 +35,6 @@ Returns only fields whose names appear in the supplied array, preserving input f
 
 
 
-## Argument evaluation
-
-- **`names`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Returns only fields whose names appear in the supplied array, preserving input f
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`names`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

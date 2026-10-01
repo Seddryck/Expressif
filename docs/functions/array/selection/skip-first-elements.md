@@ -33,6 +33,15 @@ Omits the requested number of elements from the start of the input enumerable an
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | skip-first-elements(2) → {3}
+{1, 2, 3} | skip-first-elements(5) → {}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -59,18 +68,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Behavior
 
 When `count` is greater than the number of elements in the input, `skip-first-elements` omits all available elements and returns an empty array. Additional requested skips have no effect.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | skip-first-elements(2) → {3}
-{1, 2, 3} | skip-first-elements(5) → {}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/selection`  

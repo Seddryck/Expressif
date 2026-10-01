@@ -37,12 +37,6 @@ Returns the value at a nested field path in the input record or object, or null 
 
 
 
-## Behavior
-
-Path expressions are evaluated from left to right against the original input before traversal. Explicit and spread arguments may be mixed; spread uses the shared array expansion rules. Each text segment is one literal field name, including dots and empty text. The result preserves the selected value and its runtime type, including structured values and null. Field-name matching and unresolved paths follow field semantics. An empty expanded path or a non-text segment raises an argument error; unsupported spread values raise a spread error. Only positional arguments are accepted.
-
-
-
 ## Examples
 
 {% raw %}
@@ -53,6 +47,9 @@ Path expressions are evaluated from left to right against the original input bef
 ```
 {% endraw %}
 
+## Behavior
+
+Path expressions are evaluated from left to right against the original input before traversal. Explicit and spread arguments may be mixed; spread uses the shared array expansion rules. Each text segment is one literal field name, including dots and empty text. The result preserves the selected value and its runtime type, including structured values and null. Field-name matching and unresolved paths follow field semantics. An empty expanded path or a non-text segment raises an argument error; unsupported spread values raise a spread error. Only positional arguments are accepted.
 
 **Kind:** Function  
 **Scope:** `record`  

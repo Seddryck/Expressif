@@ -27,11 +27,6 @@ Returns the count of distinct chars in the textual argument value. If the value 
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | count-distinct-chars → 8
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/counting`  

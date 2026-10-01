@@ -27,11 +27,6 @@ Returns the extension of a file path provided as argument.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "docs/_data/function.json" | extension → ".json"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `io`  

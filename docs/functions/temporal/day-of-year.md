@@ -27,11 +27,6 @@ returns a numeric value representing the day position within the year of the dat
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | day-of-year → 15
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

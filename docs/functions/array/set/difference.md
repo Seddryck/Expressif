@@ -33,6 +33,14 @@ Returns the distinct values from the pipeline input that do not appear in the sp
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | difference({2, 3, 4}) → {1}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -54,17 +62,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | difference({2, 3, 4}) → {1}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/set`  

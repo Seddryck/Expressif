@@ -33,12 +33,6 @@ Returns the percentage change from the previous numeric value to the current inp
 
 
 
-## Argument evaluation
-
-- **`previous`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the percentage change from the previous numeric value to the current inp
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`previous`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

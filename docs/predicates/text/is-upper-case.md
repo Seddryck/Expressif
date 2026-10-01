@@ -25,12 +25,6 @@ Returns `true` if all characters of the text value passed as argument are upper-
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 "Hello World" | is-upper-case → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `text`  

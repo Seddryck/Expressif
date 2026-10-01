@@ -35,6 +35,15 @@ Constructs a pair by evaluating a key expression and a value expression against 
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+#null | pair("BE", 42) → ("BE" => 42)
+{country := "BE", amount := 42} | pair(.country, .amount) → ("BE" => 42)
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `T`
@@ -51,18 +60,6 @@ Constructs a pair by evaluating a key expression and a value expression against 
 
 - **`key`:** Evaluated once against the value entering this call.
 - **`value`:** Evaluated once against the value entering this call.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#null | pair("BE", 42) → ("BE" => 42)
-{country := "BE", amount := 42} | pair(.country, .amount) → ("BE" => 42)
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `pair`  

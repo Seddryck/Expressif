@@ -39,6 +39,17 @@ Generates an array by repeatedly transforming a seed while a condition is satisf
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+1 | generate(while := less-than-or-equal(3), next := add(1)) → {1, 2, 3}
+#"2026-09-01" | generate(while := before(#"2026-09-06"), next := next-day, result := coerce-date) → {#"2026-09-01", #"2026-09-02", #"2026-09-03", #"2026-09-04", #"2026-09-05"}
+#"2026-09-01" | generate(while := before(#"2026-09-01T01:00:00"), next := forward(#"00:15:00"), result := coerce-time) → {#"00:00:00", #"00:15:00", #"00:30:00", #"00:45:00"}
+#"2026-09-01" | generate(while := before(#"2026-09-06"), next := next-day, result := record(date := coerce-date, day := day-of-month, weekday := day-of-week)) → {{date := #"2026-09-01", day := 1, weekday := 2}, {date := #"2026-09-02", day := 2, weekday := 3}, {date := #"2026-09-03", day := 3, weekday := 4}, {date := #"2026-09-04", day := 4, weekday := 5}, {date := #"2026-09-05", day := 5, weekday := 6}}
+```
+{% endraw %}
+
 ## Argument evaluation
 
 Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration.
@@ -51,20 +62,6 @@ Starts with the incoming seed and repeatedly evaluates the condition and next-se
 ## Behavior
 
 `generate` is type-agnostic. Its input seed, successive values produced by `next`, and optional projected values may use any supported type; evaluation stops when `while` returns `false`.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-1 | generate(while := less-than-or-equal(3), next := add(1)) → {1, 2, 3}
-#"2026-09-01" | generate(while := before(#"2026-09-06"), next := next-day, result := coerce-date) → {#"2026-09-01", #"2026-09-02", #"2026-09-03", #"2026-09-04", #"2026-09-05"}
-#"2026-09-01" | generate(while := before(#"2026-09-01T01:00:00"), next := forward(#"00:15:00"), result := coerce-time) → {#"00:00:00", #"00:15:00", #"00:30:00", #"00:45:00"}
-#"2026-09-01" | generate(while := before(#"2026-09-06"), next := next-day, result := record(date := coerce-date, day := day-of-month, weekday := day-of-week)) → {{date := #"2026-09-01", day := 1, weekday := 2}, {date := #"2026-09-02", day := 2, weekday := 3}, {date := #"2026-09-03", day := 3, weekday := 4}, {date := #"2026-09-04", day := 4, weekday := 5}, {date := #"2026-09-05", day := 5, weekday := 6}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

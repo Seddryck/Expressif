@@ -27,11 +27,6 @@ Returns tokens from a camelCase name using case and acronym transitions as bound
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "firstName" | tokenize-camel → {"first", "Name"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

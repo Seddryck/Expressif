@@ -29,6 +29,16 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{42} | single → 42
+{} | single → #null
+{1, 2} | single → #null
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -51,19 +61,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Behavior
 
 `single` expresses an exact-cardinality requirement: the input must contain exactly one element. A sole `null` value is still the only element and therefore returns `null`; scalar and structured values retain their runtime type and value. Unlike `first-elements(1)`, `single` returns an element rather than an array and rejects additional elements by returning `null`.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{42} | single → 42
-{} | single → #null
-{1, 2} | single → #null
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/selection`  

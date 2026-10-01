@@ -33,12 +33,6 @@ Returns the lowest common multiple (LCM) of the argument integer and the paramet
 
 
 
-## Argument evaluation
-
-- **`value`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the lowest common multiple (LCM) of the argument integer and the paramet
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

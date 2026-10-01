@@ -33,6 +33,14 @@ Separates the element at a zero-based position from the elements before and afte
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -88,17 +96,6 @@ steps | chunk-on(2)
 ```
 
 The same three-role structure—`past | selected/current item | future`—appears in workflow engines, carousel focus, undo/redo histories, breadcrumb navigation, and processing a specific failed event in a sequence. The equivalent result can be constructed by splitting the right chunk again, but `chunk-on` alone does not distinguish the current item from future items. `chunk-around` directly provides this array-zipper operation.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

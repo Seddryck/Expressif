@@ -39,6 +39,15 @@ This {{ model.kind }} has no parameters.
 | Name | Required | Description |
 |:-----|:---------|:------------|
 {{ model.parameter_rows }}
+{{ end }}{{ if model.examples.size > 0 }}
+
+## Examples
+
+{% raw %}
+```expressif
+{{ model.examples_text }}
+```
+{% endraw %}
 {{ end }}{{ if model.has_value_shape }}
 
 ## Value shape
@@ -88,17 +97,6 @@ This function supports incremental aggregation and can be used with `fold`, `sca
 
 {{ model.behavior }}
 {{ end ~}}
-
-{{ if model.examples.size > 0 }}
-
-## Examples
-
-{% raw %}
-```expressif
-{{ model.examples_text }}
-```
-{% endraw %}
-{{ end }}
 
 {{ model.reference_text }}
 {: .member-reference }

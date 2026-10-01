@@ -27,11 +27,6 @@ returns a textual value at format MM-DD representing the month and day of the da
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | month-day → "01-15"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

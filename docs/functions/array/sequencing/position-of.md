@@ -33,6 +33,14 @@ Returns the zero-based position of the first input item equal to the specified v
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{"a", "b", "c"} | position-of("b") → 1
+```
+{% endraw %}
+
 ## Structural semantics
 
 - Cardinality: `collapsed` <span class="semantics-info" title="The visited collection produces one result." aria-label="Cardinality definition: The visited collection produces one result.">i</span>
@@ -45,17 +53,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{"a", "b", "c"} | position-of("b") → 1
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/sequencing`  

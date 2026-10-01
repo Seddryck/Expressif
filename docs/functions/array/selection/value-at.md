@@ -33,6 +33,14 @@ Returns the input item at the specified zero-based position. Returns `null` when
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{"a", "b", "c"} | value-at(1) → "b"
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -53,17 +61,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{"a", "b", "c"} | value-at(1) → "b"
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/selection`  

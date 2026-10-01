@@ -33,12 +33,6 @@ Returns the count of non-overlapping occurrences of a substring, defined as a pa
 
 
 
-## Argument evaluation
-
-- **`substring`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the count of non-overlapping occurrences of a substring, defined as a pa
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`substring`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/counting`  

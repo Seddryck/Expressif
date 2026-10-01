@@ -33,6 +33,14 @@ Returns the first non-null result from two or more expressions evaluated from le
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+#null | coalesce(#null, 42) → 42
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `T`
@@ -48,17 +56,6 @@ Returns the first non-null result from two or more expressions evaluated from le
 ## Argument evaluation
 
 - **`expressions`:** Candidates are evaluated against the same incoming value, from left to right, until one produces a non-null result. Later candidates are skipped.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#null | coalesce(#null, 42) → 42
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

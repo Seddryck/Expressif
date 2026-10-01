@@ -29,20 +29,6 @@ This function has no parameters.
 
 
 
-## Value shape
-
-- Pipeline input: `pair<K, V>`
-- Returns: `V`
-- Nullability: The result is nullable when the pipeline input is nullable.
-
-`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
-
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +37,13 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `pair<K, V>`
+- Returns: `V`
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 
 **Kind:** Function  
 **Scope:** `pair`  

@@ -33,6 +33,14 @@ Combines corresponding values from equally sized input and parameter arrays into
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2} | zip-strict({"a", "b"}) → {T(1, "a"), T(2, "b")}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -55,17 +63,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2} | zip-strict({"a", "b"}) → {T(1, "a"), T(2, "b")}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/combination`  

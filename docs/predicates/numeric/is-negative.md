@@ -25,12 +25,6 @@ Returns true if the numeric argument is less than 0.
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 10 | is-negative → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

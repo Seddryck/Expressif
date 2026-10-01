@@ -37,13 +37,6 @@ Creates or replaces the field at a dynamic path. Text is one literal segment; a 
 
 
 
-## Argument evaluation
-
-- **`path`:** Evaluated once against the value entering this call.
-- **`value`:** Evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +45,10 @@ Creates or replaces the field at a dynamic path. Text is one literal segment; a 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`path`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `record`  

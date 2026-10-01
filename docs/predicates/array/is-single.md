@@ -26,8 +26,16 @@ Returns whether the input array contains exactly one element. Returns false when
 
 
 This predicate has no parameters.
+## Examples
 
-
+{% raw %}
+```expressif
+{42} | is-single → #true
+{} | is-single → #false
+{1, 2} | is-single → #false
+{#null} | is-single → #true
+```
+{% endraw %}
 
 ## Structural semantics
 
@@ -43,20 +51,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Behavior
 
 Cardinality is independent of element values: a sole null, array, or record counts as one element. Uses the same array conversion as single, including text containing an Expressif array literal. When is-single returns true, single returns the sole element.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{42} | is-single → #true
-{} | is-single → #false
-{1, 2} | is-single → #false
-{#null} | is-single → #true
-```
-{% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `array`  

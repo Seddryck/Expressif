@@ -27,11 +27,6 @@ Suffixes the argument with a CRLF sequence unless it already ends with CRLF. Pre
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -40,7 +35,6 @@ This function has no parameters.
 "Hello World" | suffix-new-line | suffix-new-line-if-missing → "Hello World" | suffix-new-line
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

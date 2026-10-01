@@ -33,6 +33,14 @@ Raises an evaluation exception when the input is rejected; otherwise, passes the
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+12.346 | throw(is-negative) | round(2) → 12.35
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `T`
@@ -52,17 +60,6 @@ Raises an evaluation exception when the input is rejected; otherwise, passes the
 ## Behavior
 
 Without a predicate, rejects values matching is-null. A supplied predicate replaces that check completely. The output preserves the input type when accepted; rejection or a predicate error stops evaluation immediately.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-12.346 | throw(is-negative) | round(2) → 12.35
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `flow`  

@@ -35,12 +35,6 @@ returns a temporal value corresponding to the same day and year of the argument 
 
 
 
-## Argument evaluation
-
-- **`month`:** Evaluated once in the context surrounding this `change-of-month` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ returns a temporal value corresponding to the same day and year of the argument 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`month`:** Evaluated once in the context surrounding this `change-of-month` call.
 
 **Kind:** Function  
 **Scope:** `temporal`  

@@ -35,13 +35,6 @@ Returns a dateTime that subtract the timestamp passed as parameter to the argume
 
 
 
-## Argument evaluation
-
-- **`time`:** Evaluated once in the enclosing context.
-- **`times`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +44,10 @@ Returns a dateTime that subtract the timestamp passed as parameter to the argume
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`time`:** Evaluated once in the enclosing context.
+- **`times`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

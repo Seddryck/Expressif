@@ -30,8 +30,14 @@ Evaluates an expression once for each group and returns a dictionary from group 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | The expression evaluated against each group's value collection. |
+## Examples
 
-
+{% raw %}
+```expressif
+#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} | summarize(sum) → !{("BE" => 60), ("FR" => 20)}
+#{} | summarize(cardinality) → !{}
+```
+{% endraw %}
 
 ## Value shape
 
@@ -50,18 +56,6 @@ Evaluates an expression once for each group and returns a dictionary from group 
 Visits each group in the incoming grouping and supplies its entire value collection to the expression.
 
 - **`expression`:** Evaluated once per group against that group's entire value collection.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{("BE" => {10, 20, 30}), ("FR" => {5, 15})} | summarize(sum) → !{("BE" => 60), ("FR" => 20)}
-#{} | summarize(cardinality) → !{}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  

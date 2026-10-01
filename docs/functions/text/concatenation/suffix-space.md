@@ -27,11 +27,6 @@ Returns the argument value followed by a space character. If the argument is `nu
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | suffix-space → "Hello World "
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

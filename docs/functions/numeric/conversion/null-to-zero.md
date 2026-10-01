@@ -27,11 +27,6 @@ Returns the unmodified argument value except if the argument value is `null`, `e
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | null-to-zero → 10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/conversion`  

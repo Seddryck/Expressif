@@ -27,11 +27,6 @@ Returns the input text converted to uppercase using invariant culture rules. Ret
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | upper → "HELLO WORLD"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

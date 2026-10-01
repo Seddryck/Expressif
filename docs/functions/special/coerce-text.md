@@ -27,11 +27,6 @@ Attempts to convert the input to a text value. Returns `null` when the input can
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | coerce-text → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

@@ -27,11 +27,6 @@ Returns the directory information of a file path provided as argument. The value
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "docs/_data/function.json" | directory → "docs\\_data\\"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `io`  

@@ -27,11 +27,6 @@ Returns normalized tokens from an underscore-separated name, preserving escaped 
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "first_name" | tokenize-snake → {"first", "name"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

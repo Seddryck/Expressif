@@ -27,11 +27,6 @@ Returns the count of days within the year of the dateTime value passed as the ar
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | length-of-year → 366
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

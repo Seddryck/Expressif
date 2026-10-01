@@ -31,12 +31,6 @@ This function has no parameters.
 
 
 
-## Behavior
-
-Escapes ampersands and angle brackets for XML text-node content. Quotation marks remain unchanged because the result is character data rather than an attribute value. Already escaped content is escaped again.
-
-
-
 ## Examples
 
 {% raw %}
@@ -45,6 +39,9 @@ Escapes ampersands and angle brackets for XML text-node content. Quotation marks
 ```
 {% endraw %}
 
+## Behavior
+
+Escapes ampersands and angle brackets for XML text-node content. Quotation marks remain unchanged because the result is character data rather than an attribute value. Already escaped content is escaped again.
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

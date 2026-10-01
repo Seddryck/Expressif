@@ -27,11 +27,6 @@ Returns the argument value except if this value is `empty` then it returns `null
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | empty-to-null → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/normalization`  

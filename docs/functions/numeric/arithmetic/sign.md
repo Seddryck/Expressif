@@ -27,11 +27,6 @@ Returns an integer that indicates the sign of the argument value. It returns -1 
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | sign → 1
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

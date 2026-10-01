@@ -35,6 +35,15 @@ Forwards only items satisfying the predicate to the wrapped accumulator.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4} | only(is-even, count) → 2
+{10, #null, 30} | fold(only(is-not-null, count)) → 2
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `T`
@@ -63,18 +72,6 @@ Visits each item of the collection supplied as pipeline input to this only call 
 ## Behavior
 
 The input and final result types are inherited from the wrapped accumulator. Initialization, empty-input and no-match results, completion, and failures are unchanged. Null items are evaluated by the predicate like any other item. Predicate results must be Boolean. Matching items retain source order without materializing a filtered collection. Direct pipeline calls implicitly fold the wrapper.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4} | only(is-even, count) → 2
-{10, #null, 30} | fold(only(is-not-null, count)) → 2
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

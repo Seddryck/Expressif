@@ -41,17 +41,6 @@ Returns the argument value followed by the parameter value. If the argument is `
 
 
 
-## Argument evaluation
-
-- **`text`:** Evaluated once in the enclosing context.
-
-
-## Behavior
-
-Deprecated in favor of `suffix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix` preserves `null`. Use `null-to-empty | suffix(...)` to retain the existing behavior for null input.
-
-
-
 ## Examples
 
 {% raw %}
@@ -60,6 +49,14 @@ Deprecated in favor of `suffix` and planned for removal in Expressif 3.0. A dire
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`text`:** Evaluated once in the enclosing context.
+
+
+## Behavior
+
+Deprecated in favor of `suffix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `suffix` preserves `null`. Use `null-to-empty | suffix(...)` to retain the existing behavior for null input.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

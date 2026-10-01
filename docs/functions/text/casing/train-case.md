@@ -27,11 +27,6 @@ Returns the input text in Train-Case, capitalizing each word and joining them wi
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | train-case → "Hello-World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

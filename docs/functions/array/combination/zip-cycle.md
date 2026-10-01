@@ -33,6 +33,14 @@ Combines values from two arrays into two-element tuples until the longer array i
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4} | zip-cycle({"a", "b"}) → {T(1, "a"), T(2, "b"), T(3, "a"), T(4, "b")}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -60,17 +68,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ## Behavior
 
 Both inputs are materialized once. When both arrays are non-empty, the result has the cardinality of the longer array and indexes each input cyclically. Two empty inputs produce an empty array; exactly one empty input produces `null` because no value is available to cycle.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4} | zip-cycle({"a", "b"}) → {T(1, "a"), T(2, "b"), T(3, "a"), T(4, "b")}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/combination`  

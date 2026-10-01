@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | reverse → {3, 2, 1}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -45,19 +53,6 @@ This function has no parameters.
 - Ordering: `reordered` <span class="semantics-info" title="The operator deliberately changes relative order." aria-label="Ordering definition: The operator deliberately changes relative order.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
-
-
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | reverse → {3, 2, 1}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/sequencing`  

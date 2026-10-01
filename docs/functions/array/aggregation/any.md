@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{#false, #true, #false} | fold(any) → #true
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `boolean`
@@ -41,19 +49,6 @@ This function has no parameters.
 ## Aggregation support
 
 This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
-
-
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{#false, #true, #false} | fold(any) → #true
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

@@ -33,12 +33,6 @@ Returns the argument value without the specified character. If the argument and 
 
 
 
-## Argument evaluation
-
-- **`charToRemove`:** Evaluated in the enclosing context for each character tested; whitespace input has a separate check.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the argument value without the specified character. If the argument and 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`charToRemove`:** Evaluated in the enclosing context for each character tested; whitespace input has a separate check.
 
 **Kind:** Function  
 **Scope:** `text/character`  

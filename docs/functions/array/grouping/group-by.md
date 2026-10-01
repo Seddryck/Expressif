@@ -33,6 +33,14 @@ Groups input values by keys calculated from one or more expressions.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{"BE", "be", "FR"} | group-by(lower) → #{("be" => {"BE", "be"}), ("fr" => {"FR"})}
+```
+{% endraw %}
+
 ## Value shape
 
 - Pipeline input: `array<T>`
@@ -58,17 +66,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 Visits each element of the array entering this call.
 
 - **`expressions`:** Each supplied expression is evaluated once per visited element, with that element as its context.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{"BE", "be", "FR"} | group-by(lower) → #{("be" => {"BE", "be"}), ("fr" => {"FR"})}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/grouping`  

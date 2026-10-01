@@ -33,12 +33,6 @@ Returns the value that passed to the function TextToMask will return the argumen
 
 
 
-## Argument evaluation
-
-- **`mask`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the value that passed to the function TextToMask will return the argumen
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`mask`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/masking`  

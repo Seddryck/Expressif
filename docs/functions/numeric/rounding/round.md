@@ -33,12 +33,6 @@ Returns the value of an argument number to the specified number of fractional di
 
 
 
-## Argument evaluation
-
-- **`digits`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the value of an argument number to the specified number of fractional di
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`digits`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/rounding`  

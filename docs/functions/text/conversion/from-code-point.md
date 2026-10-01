@@ -27,11 +27,6 @@ Returns the text corresponding to an integer Unicode scalar value. Returns `null
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 128512 | from-code-point → "😀"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/conversion`  
