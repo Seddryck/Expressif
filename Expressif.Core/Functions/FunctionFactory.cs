@@ -628,10 +628,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
             && function.Parameters is [ScopedTupleProjectionParameter scoped])
             return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
-        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand
+            && function.Parameters is [TupleProjectionParameter projection])
         {
-            var position = int.Parse((string)((LiteralParameter)function.Parameters[0]).Value!, System.Globalization.CultureInfo.InvariantCulture);
-            var projection = new TupleProjectionParameter(position < 0 ? position == int.MinValue ? 0 : -position : position, position < 0);
             return new DelegatedFunction(input => ResolveTupleProjection(
                 EvaluationRuntime.Frame is { IsInputBound: true } frame ? frame.Ambient : input, projection));
         }

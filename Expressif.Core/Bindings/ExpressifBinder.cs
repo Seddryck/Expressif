@@ -367,12 +367,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
             FunctionSyntax.GroupMapShorthand),
         ControlFlowCallSyntax controlFlow => BindControlFlowCall(controlFlow),
         FunctionCallSyntax call => BindFunction(call),
-        TupleProjectionSyntax projection => new Function(
-            "tuple-at",
-            [new LiteralParameter((projection.Direction is TupleProjectionDirection.FromEnd
-                ? projection.Index == 0 ? int.MinValue : -projection.Index
-                : projection.Index).ToString())],
-            inputBoundBody ? FunctionSyntax.InputTupleProjectionShorthand : FunctionSyntax.TupleProjectionShorthand),
+        TupleProjectionSyntax projection => BindTupleProjection(projection),
         PairComponentAccessSyntax access => new Function(
             access.Component is PairComponent.Key ? "pair-key" : "pair-value",
             []),
@@ -380,6 +375,27 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
         _ => throw Unsupported(syntax),
     };
+
+    private Function BindTupleProjection(TupleProjectionSyntax projection)
+    {
+        if (inputBoundBody)
+        {
+            return new Function(
+                "tuple-at",
+                [new TupleProjectionParameter(
+                    projection.Index,
+                    projection.Direction == TupleProjectionDirection.FromEnd)],
+                FunctionSyntax.InputTupleProjectionShorthand);
+        }
+
+        var position = projection.Direction == TupleProjectionDirection.FromEnd
+            ? projection.Index == 0 ? int.MinValue : -projection.Index
+            : projection.Index;
+        return new Function(
+            "tuple-at",
+            [new LiteralParameter(position.ToString())],
+            FunctionSyntax.TupleProjectionShorthand);
+    }
 
     private Function BindControlFlowCall(ControlFlowCallSyntax syntax)
     {

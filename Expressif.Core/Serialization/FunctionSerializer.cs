@@ -100,13 +100,13 @@ internal sealed class FunctionSerializer
 
     private bool TrySerializeReference(Function function, StringBuilder stringBuilder)
     {
-        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        if (function.Syntax == FunctionSyntax.InputTupleProjectionShorthand
+            && function.Parameters is [TupleProjectionParameter projection])
         {
-            var index = int.Parse((string)((LiteralParameter)function.Parameters.Single()).Value!, System.Globalization.CultureInfo.InvariantCulture);
             stringBuilder.Append('$');
-            if (index < 0)
+            if (projection.FromEnd)
                 stringBuilder.Append('^');
-            stringBuilder.Append(index == int.MinValue ? 0 : Math.Abs(index));
+            stringBuilder.Append(projection.Index);
             return true;
         }
         if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand)

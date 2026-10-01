@@ -20,6 +20,20 @@ public class FunctionSerializerTest
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field(\"requested-field\")"));
     }
+
+    [TestCase(0, false, "$0")]
+    [TestCase(1, true, "$^1")]
+    [TestCase(0, true, "$^0")]
+    public void Serialize_InputTupleProjection_UsesTypedParameter(int index, bool fromEnd, string expected)
+    {
+        var function = new Function(
+            "tuple-at",
+            [new TupleProjectionParameter(index, fromEnd)],
+            FunctionSyntax.InputTupleProjectionShorthand);
+
+        Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(expected));
+    }
+
     [Test]
     public void Serialize_NoParameter_NoParenthesis()
     {
