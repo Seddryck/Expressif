@@ -29,6 +29,8 @@ public sealed class LogicalPlanBinderTest
 
     [TestCase("add(2)", 3, 5)]
     [TestCase("1 | add(2)", null, 3)]
+    [TestCase("1 | upper | add(2)", null, 3)]
+    [TestCase("1 | add(\"2\" | upper | add(3))", null, 6)]
     [TestCase("\"answer\" | upper", null, "ANSWER")]
     [TestCase("\"42\" | coerce(:integer)", null, 42)]
     [TestCase("apply(@_ | value :> add(@value))", 3, 6)]

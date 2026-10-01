@@ -40,6 +40,21 @@ public class LogicalPlanIntegrationTest
         Assert.That(roundTrip, Is.EqualTo(json));
     }
 
+    [Test]
+    public void Deserialize_SerializedImplicitCoercions_RoundTripAsExplicitCalls()
+    {
+        var json = LogicalPlanJson.Serialize(Plan("1 | upper | add(2)"), indented: false);
+
+        var roundTrip = LogicalPlanJson.Deserialize(json);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(roundTrip.Pipeline.Items.OfType<LogicalCall>().Select(call => call.Function.Name),
+                Is.EqualTo(new[] { "coerce-text", "upper", "coerce-numeric", "add" }));
+            Assert.That(LogicalPlanJson.Serialize(roundTrip, indented: false), Is.EqualTo(json));
+        });
+    }
+
     [TestCase("first-elements(1)", "function")]
     [TestCase("is-even", "predicate")]
     [TestCase("fold(first)", "accumulator")]

@@ -285,12 +285,24 @@ public class LogicalPlannerTest
     }
 
     [Test]
-    public void Plan_DoesNotApplyRuntimeCoercionInsertion()
+    public void Plan_InsertsCoercionsBetweenIncompatiblePipelineStages()
     {
-        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("split(\",\") | length"));
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("1 | upper | add(2)"));
 
         Assert.That(plan.Pipeline.Items.OfType<LogicalCall>().Select(call => call.Function.Name),
-            Is.EqualTo(new[] { "split", "length" }));
+            Is.EqualTo(new[] { "coerce-text", "upper", "coerce-numeric", "add" }));
+    }
+
+    [Test]
+    public void Plan_InsertsCoercionIntoArgumentExpression()
+    {
+        var call = (LogicalCall)LogicalPlannerFactory.Create()
+            .Build(ExpressionParser.Parse("1 | add(\"2\" | upper | add(3))"))
+            .Pipeline.Items.Last();
+        var argument = (LogicalPipeline)call.Arguments.Single(item => item.Parameter.Name == "value").Value!;
+
+        Assert.That(argument.Items.OfType<LogicalCall>().Select(item => item.Function.Name),
+            Is.EqualTo(new[] { "upper", "coerce-numeric", "add" }));
     }
 
     [TestCase("#all", "all", "#all")]

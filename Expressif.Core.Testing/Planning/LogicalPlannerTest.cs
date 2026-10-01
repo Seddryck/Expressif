@@ -31,6 +31,16 @@ public class CoreLogicalPlannerTest
     }
 
     [Test]
+    public void Build_CustomVocabulary_InsertsResolvedPipelineCoercion()
+    {
+        var plan = new LogicalPlanner(new CoercionContext())
+            .Build(ExpressionParser.Parse("1 | custom-upper | custom-add"));
+
+        Assert.That(plan.Pipeline.Items.OfType<LogicalCall>().Select(call => call.Function.Name),
+            Is.EqualTo(new[] { "coerce-text", "custom-upper", "coerce-numeric", "custom-add" }));
+    }
+
+    [Test]
     public void PlanningTypesAndSchema_AreOwnedByCore()
     {
         var assembly = typeof(LogicalPlanner).Assembly;
@@ -59,5 +69,37 @@ public class CoreLogicalPlannerTest
             => name == "custom-alias" ? metadata : null;
 
         public string? FindType(string name) => null;
+    }
+
+    private sealed class CoercionContext : ILogicalPlanningContext
+    {
+        private static readonly PlannerFunctionMetadata Upper = Function("custom-upper", "text", "text");
+        private static readonly PlannerFunctionMetadata Add = Function("custom-add", "numeric", "numeric");
+        private static readonly PlannerFunctionMetadata ToText = Function("coerce-text", "any", "text");
+        private static readonly PlannerFunctionMetadata ToNumeric = Function("coerce-numeric", "any", "numeric");
+
+        public PlannerFunctionMetadata? FindFunction(
+            string name,
+            string? expectedKind = null,
+            int? argumentCount = null)
+            => name switch
+            {
+                "custom-upper" => Upper,
+                "custom-add" => Add,
+                _ => null,
+            };
+
+        public PlannerFunctionMetadata? FindCoercion(string sourceType, string targetType)
+            => (sourceType, targetType) switch
+            {
+                ("decimal", "text") => ToText,
+                ("text", "numeric") => ToNumeric,
+                _ => null,
+            };
+
+        public string? FindType(string name) => null;
+
+        private static PlannerFunctionMetadata Function(string name, string input, string output)
+            => new(new PlannerFunctionDescriptor(name, input, output), []);
     }
 }
