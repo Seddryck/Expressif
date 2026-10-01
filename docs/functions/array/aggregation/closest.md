@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "closest"
-parent: "Array accumulators"
-grand_parent: "Accumulators library"
-nav_order: 20
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 30
 has_toc: false
-permalink: /accumulators/array/closest/
+permalink: /functions/array/aggregation/closest/
 tags:
-  - accumulators
-  - array
+  - functions
+  - array/aggregation
 generated: true
 ---
 
@@ -33,13 +33,7 @@ Returns the first non-null input value with the smallest absolute distance to th
 
 
 
-## Structural semantics
 
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
-
-See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 ## Argument evaluation
 
@@ -63,7 +57,7 @@ The result preserves the selected input value and its type. Numeric targets use 
 {% endraw %}
 
 
-**Kind:** Accumulator  
-**Scope:** `array`  
+**Kind:** Function  
+**Scope:** `array/aggregation`  
 **Aliases:** None
 {: .member-reference }

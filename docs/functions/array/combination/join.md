@@ -45,6 +45,7 @@ Emits a pair for every matching left and right value, omitting left values witho
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each element of the array entering this join call in order; each matching group contributes its right values in their original order.
@@ -65,7 +66,7 @@ Visits each element of the array entering this join call in order; each matching
 {% endraw %}
 
 
-**Kind:** Function<br>
-**Scope:** `array/combination`<br>
+**Kind:** Function  
+**Scope:** `array/combination`  
 **Aliases:** None
 {: .member-reference }

@@ -13,7 +13,7 @@ public class MetadataCompletenessTest
         => AssertComplete(
             "function",
             ExpressifIntrospection.Functions.Describe()
-                .Where(x => x.IsPublic && x.Kind == "function")
+                .Where(x => x.IsPublic)
                 .Select(x => new OperatorMetadata(x.Name, x.Aliases.ToArray())));
 
     [Test]
@@ -32,17 +32,8 @@ public class MetadataCompletenessTest
                     x.Aliases.Where(alias => !functionNames.Contains(alias)).ToArray())));
     }
 
-    [Test]
-    public void Accumulators_PublicRuntimeSurfaceMatchesGeneratedCatalog()
-        => AssertComplete(
-            "accumulator",
-            ExpressifIntrospection.Functions.Describe()
-                .Where(x => x.IsPublic && x.Kind == "accumulator")
-                .Select(x => new OperatorMetadata(x.Name, x.Aliases.ToArray())));
-
     [TestCase("function")]
     [TestCase("predicate")]
-    [TestCase("accumulator")]
     public void Catalog_ParameterOmissions_AreConsistent(string kind)
     {
         var failures = new List<string>();
@@ -160,19 +151,14 @@ public class MetadataCompletenessTest
         => Path.Combine(
             AppContext.BaseDirectory,
             "Documentation",
-            kind == "accumulator" ? "function.json" : $"{kind}.json");
+            $"{kind}.json");
 
     private static bool HasKind(JsonElement member, string kind)
     {
         var memberKind = member.TryGetProperty("Kind", out var value)
             ? value.GetString()
             : "function";
-        if (kind == "function")
-            return memberKind != "accumulator";
-        if (kind != "accumulator")
-            return true;
-
-        return memberKind == "accumulator";
+        return kind != "function" || memberKind == "function";
     }
 
     private static string Format(IEnumerable<string> aliases)

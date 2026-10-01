@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "only"
-parent: "Array accumulators"
-grand_parent: "Accumulators library"
-nav_order: 110
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 140
 has_toc: false
-permalink: /accumulators/array/only/
+permalink: /functions/array/aggregation/only/
 tags:
-  - accumulators
-  - array
+  - functions
+  - array/aggregation
 generated: true
 ---
 
@@ -35,13 +35,7 @@ Forwards only items satisfying the predicate to the wrapped accumulator.
 
 
 
-## Structural semantics
 
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
-
-See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 ## Argument evaluation
 
@@ -67,7 +61,7 @@ The input and final result types are inherited from the wrapped accumulator. Ini
 {% endraw %}
 
 
-**Kind:** Accumulator  
-**Scope:** `array`  
+**Kind:** Function  
+**Scope:** `array/aggregation`  
 **Aliases:** None
 {: .member-reference }

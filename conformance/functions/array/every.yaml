@@ -1,5 +1,5 @@
 suite: array
-kind: accumulator
+kind: function
 operator: every
 tests:
   - id: every.valid

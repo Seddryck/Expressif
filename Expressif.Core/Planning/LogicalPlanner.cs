@@ -141,7 +141,7 @@ public sealed class LogicalPlanner
 
     private LogicalCall PlanFunctionCall(FunctionCallSyntax syntax, string? expectedKind)
     {
-        var metadata = context.FindFunction(syntax.Name, expectedKind);
+        var metadata = context.FindFunction(syntax.Name, expectedKind, syntax.Arguments.Count);
         var canonicalName = metadata?.Function.Name ?? syntax.Name.ToLowerInvariant();
         if (IsValueSpreadFunction(canonicalName)
             && syntax.Arguments.Any(argument => argument is NamedArgumentSyntax))
@@ -183,7 +183,7 @@ public sealed class LogicalPlanner
         if (supplied.Count != 4)
             return CreateCall(syntax.Name, supplied, expectedKind);
 
-        metadata ??= context.FindFunction(syntax.Name, expectedKind)
+        metadata ??= context.FindFunction(syntax.Name, expectedKind, syntax.Arguments.Count)
             ?? throw Error("The planning catalog does not define 'sort-term'.", syntax);
         var parameters = metadata.Parameters.ToList();
         parameters.Add(SyntheticParameter("ascending"));
@@ -200,7 +200,7 @@ public sealed class LogicalPlanner
     private LogicalCall CreateBinaryCall(BinaryExpressionSyntax syntax, string? expectedKind)
     {
         var name = PlanBinaryOperator(syntax.Operator);
-        var metadata = context.FindFunction(name, expectedKind);
+        var metadata = context.FindFunction(name, expectedKind, 2);
         var descriptor = metadata?.Function ?? SyntheticFunction(name);
         return new LogicalCall(descriptor, [
             new LogicalArgument(
@@ -300,7 +300,7 @@ public sealed class LogicalPlanner
         {
             throw Error("Function 'with' expects one or more named projections followed by a body expression.", syntax);
         }
-        metadata ??= context.FindFunction(syntax.Name, expectedKind);
+        metadata ??= context.FindFunction(syntax.Name, expectedKind, syntax.Arguments.Count);
         var descriptor = metadata?.Function ?? SyntheticFunction(syntax.Name);
         var parameters = metadata?.Parameters ?? SyntheticParameters(syntax.Arguments.Count);
         var projections = parameters.Single(parameter => parameter.Descriptor.Type == "entry");
@@ -756,7 +756,7 @@ public sealed class LogicalPlanner
         int contextDepth = 0,
         bool allowMissingRequired = false)
     {
-        var metadata = context.FindFunction(authoredName, expectedKind);
+        var metadata = context.FindFunction(authoredName, expectedKind, supplied.Count);
         var descriptor = metadata?.Function ?? SyntheticFunction(authoredName);
         var parameters = metadata?.Parameters ?? SyntheticParameters(supplied.Count);
         var arguments = NormalizeArguments(

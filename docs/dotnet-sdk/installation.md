@@ -55,7 +55,7 @@ var result = expression.Evaluate("Nikola Tesla");
 |:--|:--|:--|
 | `Expressif` | References `Expressif.Core` and `Expressif.Library`. | The recommended package for applications using the standard Expressif language. |
 | `Expressif.Core` | Public contracts, parsing and binding infrastructure, values, evaluation runtime, and extension points. | Hosts that provide a custom or third-party vocabulary without the official built-ins. |
-| `Expressif.Library` | Official functions, predicates, accumulators, constants, catalogs, and default expression composition. References `Expressif.Core`. | Consumers that explicitly want the official vocabulary; Core is installed transitively. |
+| `Expressif.Library` | Official functions, predicates, constants, catalogs, and default expression composition. References `Expressif.Core`. | Consumers that explicitly want the official vocabulary; Core is installed transitively. |
 
 The package graph has no cycle:
 

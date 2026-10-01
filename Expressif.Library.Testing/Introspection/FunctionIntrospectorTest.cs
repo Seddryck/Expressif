@@ -36,7 +36,7 @@ public class FunctionIntrospectorTest
         {
             Debug.WriteLine(info.Name);
             Assert.That(info.Name, Is.Not.Null.And.Not.Empty);
-            if (info.Kind == "accumulator")
+            if (info.IsIncremental)
                 Assert.That(info.ImplementationType.Name, Is.EqualTo($"{info.Name.ToPascalCase()}Accumulator"));
             else
                 Assert.That(info.Name.ToPascalCase(), Is.EqualTo(info.ImplementationType.Name));
@@ -114,7 +114,7 @@ public class FunctionIntrospectorTest
             Is.EquivalentTo(new[] { "absolute", "add", "cube-power", "cube-root", "decrement", "divide", "greatest-common-divisor", "increment", "invert", "lowest-common-multiple", "multiply", "nth-root", "oppose", "percent-change", "power", "sign", "square-power", "square-root", "subtract" }));
 
     [TestCase("array/set", new[] { "complement", "union" })]
-    [TestCase("array/aggregation", new[] { "broadcast", "scan" })]
+    [TestCase("array/aggregation", new[] { "broadcast", "scan", "sum", "reduce" })]
     [TestCase("array/combination", new[] { "zip", "zip-cycle" })]
     [TestCase("array/partitioning", new[] { "chunk", "distribute-weight" })]
     [TestCase("array/selection", new[] { "first-elements", "single" })]

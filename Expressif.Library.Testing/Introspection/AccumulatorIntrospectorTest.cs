@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Expressif.Functions.Accumulation;
 using Expressif.Discovery;
 using Expressif.Introspection;
 
@@ -17,13 +16,13 @@ public class AccumulatorFunctionIntrospectionTest
     [SetUp]
     public void Setup()
         => Infos ??= ExpressifIntrospection.Functions.Describe()
-            .Where(info => typeof(IAccumulator).IsAssignableFrom(info.ImplementationType));
+            .Where(info => info.IsIncremental);
 
     [Test]
     public void Locate_ExpressifAssembly_ElementsReturned()
     {
         Debug.WriteLine($"{Infos.Count()} accumulators");
-        Assert.That(Infos.Count(), Is.GreaterThan(1));
+        Assert.That(Infos.Count(), Is.EqualTo(14));
     }
 
     [Test]
@@ -63,7 +62,9 @@ public class AccumulatorFunctionIntrospectionTest
         foreach (var info in Infos)
         {
             Debug.WriteLine($"{info.Name}: {info.Scope}");
-            Assert.That(info.Scope, Is.EqualTo(info.Name == "concat" ? "text" : "array"));
+            Assert.That(info.Scope, Is.EqualTo("array/aggregation"));
+            Assert.That(info.Kind, Is.EqualTo("function"));
+            Assert.That(info.IsIncremental, Is.True);
         }
     }
 

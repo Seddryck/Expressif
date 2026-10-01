@@ -43,6 +43,7 @@ Evaluates an expression once for every supplied value, using that value as the p
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each element of the values argument supplied to this map-with call, in declaration order.

@@ -10881,7 +10881,7 @@
     "Name": "common-prefix",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Schema": {
@@ -10893,13 +10893,13 @@
     "Examples": [
       "{\"interact\", \"internet\", \"internal\"} | fold(common-prefix) → \"inter\""
     ],
-    "Kind": "accumulator"
+    "Incremental": true
   },
   {
     "Name": "common-suffix",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Schema": {
@@ -10911,13 +10911,13 @@
     "Examples": [
       "{\"running\", \"walking\", \"talking\"} | fold(common-suffix) → \"ing\""
     ],
-    "Kind": "accumulator"
+    "Incremental": true
   },
   {
     "Name": "any",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "boolean",
@@ -10928,7 +10928,7 @@
     "Examples": [
       "{#false, #true, #false} | fold(any) → #true"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -10936,7 +10936,7 @@
     "Name": "closest",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Schema": {
@@ -10966,13 +10966,13 @@
       "{30, 10} | closest(20) → 30",
       "{#null, 10, 30} | closest(20) → 10"
     ],
-    "Kind": "accumulator"
+    "Incremental": true
   },
   {
     "Name": "count",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "T",
@@ -10983,7 +10983,7 @@
     "Examples": [
       "{10, #null, 30} | fold(count) → 3"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -10991,7 +10991,7 @@
     "Name": "every",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "boolean",
@@ -11002,7 +11002,7 @@
     "Examples": [
       "{#true, #true, #false} | fold(every) → #false"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -11010,7 +11010,7 @@
     "Name": "first",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "T",
@@ -11021,7 +11021,7 @@
     "Examples": [
       "{10, 20, 30} | fold(first) → 10"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -11029,7 +11029,7 @@
     "Name": "last",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "T",
@@ -11040,7 +11040,7 @@
     "Examples": [
       "{10, 20, 30} | fold(last) → 30"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -11048,7 +11048,7 @@
     "Name": "concat",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "text",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Schema": {
@@ -11080,13 +11080,13 @@
     "Examples": [
       "{\"a\", \"b\", \"c\"} | concat(\"-\") → \"a-b-c\""
     ],
-    "Kind": "accumulator"
+    "Incremental": true
   },
   {
     "Name": "max",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "numeric",
@@ -11097,7 +11097,7 @@
     "Examples": [
       "{10, 30, 20} | fold(max) → 30"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -11105,7 +11105,7 @@
     "Name": "min",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "numeric",
@@ -11116,7 +11116,7 @@
     "Examples": [
       "{10, 30, 20} | fold(min) → 10"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -11124,7 +11124,7 @@
     "Name": "reduce",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Schema": {
@@ -11174,13 +11174,13 @@
       "Selection": "custom",
       "Summary": "Visits the array supplied to this reduce call in source order, starting with the second element when initial is omitted and with the first when initial is supplied."
     },
-    "Kind": "accumulator"
+    "Incremental": true
   },
   {
     "Name": "sum",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Schema": {
       "Classification": "contract",
       "Input": "numeric",
@@ -11191,7 +11191,7 @@
     "Examples": [
       "{10, 20, 30} | fold(sum) → 60"
     ],
-    "Kind": "accumulator",
+    "Incremental": true,
     "Input": "array",
     "Output": "any"
   },
@@ -11199,7 +11199,7 @@
     "Name": "only",
     "IsPublic": true,
     "Aliases": [],
-    "Scope": "array",
+    "Scope": "array/aggregation",
     "Input": "array",
     "Output": "any",
     "Schema": {
@@ -11256,6 +11256,6 @@
       "{1, 2, 3, 4} | only(is-even, count) → 2",
       "{10, #null, 30} | fold(only(is-not-null, count)) → 2"
     ],
-    "Kind": "accumulator"
+    "Incremental": true
   }
 ]

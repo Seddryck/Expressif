@@ -1,7 +1,7 @@
 #requires -PSEdition Core
 param (
     [Parameter(Mandatory)]
-    [ValidateSet("function", "predicate", "accumulator", "type")]
+    [ValidateSet("function", "predicate", "type")]
     [string] $class,
 
     [Parameter()]
@@ -9,7 +9,7 @@ param (
 )
 
 $destinationPath = ".\docs\_data"
-$destinationFile = if ($class -eq "accumulator") { "function.json" } else { "$($class.ToLower()).json" }
+$destinationFile = "$($class.ToLower()).json"
 $name = @($name | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
 
 
@@ -120,15 +120,11 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
         $TextInfo = (Get-Culture).TextInfo
         $locatorType = if ($class -eq "type") {
             "Expressif.Values.Types.TypeIntrospector"
-        } elseif ($class -eq "accumulator") {
-            "Expressif.Discovery.FunctionIntrospector"
         } else {
             "Expressif.$($TextInfo.ToTitleCase($class))s.Introspection.$($TextInfo.ToTitleCase($class))Introspector"
         }
         $locator = New-Object -TypeName $locatorType
-        $described = @($locator.Describe() |
-            Where-Object { $class -ne "accumulator" -or $_.Kind -eq "accumulator" } |
-            Sort-Object Scope, Name)
+        $described = @($locator.Describe() | Sort-Object Scope, Name)
         $functions = if ($class -eq "type") {
             @($described |
                 Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
@@ -136,7 +132,8 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
         } else {
             @($described |
                 Where-Object { $names.Count -eq 0 -or $names -contains $_.Name } |
-                Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters, Kind)
+                Select-Object -Property Name, IsPublic, Aliases, Scope, Input, Output, Summary, Parameters, Kind,
+                    @{ Name = "Incremental"; Expression = { $_.IsIncremental } })
         }
 
         if ($class -eq "function") {
@@ -150,7 +147,7 @@ $job = Start-Job -ScriptBlock { param($fullDllPath, $class, $serializedNames, $d
             }
         }
 
-        if ($class -eq "function" -or $class -eq "accumulator") {
+        if ($class -eq "function") {
             foreach ($entry in $functions) {
                 $aliases = @($described | Where-Object Name -EQ $entry.Name | ForEach-Object DeprecatedAliases)
                 if ($aliases.Count -gt 0) {

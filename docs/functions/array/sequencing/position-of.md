@@ -41,6 +41,7 @@ Returns the zero-based position of the first input item equal to the specified v
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.

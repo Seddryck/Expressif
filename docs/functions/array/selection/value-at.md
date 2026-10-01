@@ -41,6 +41,7 @@ Returns the input item at the specified zero-based position. Returns `null` when
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.

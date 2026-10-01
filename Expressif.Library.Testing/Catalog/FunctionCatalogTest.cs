@@ -50,6 +50,8 @@ public class FunctionCatalogTest
                     $"Replacement equivalence for {name}");
                 Assert.That(documentation.MigrationNotes, Is.EqualTo(implementation.MigrationNotes),
                     $"Migration notes for {name}");
+                Assert.That(documentation.Incremental, Is.EqualTo(implementation.IsIncremental),
+                    $"Incremental evaluation for {name}");
                 Assert.That(documentation.Parameters.Select(x => (x.Name, Type: x.TypeOrKind, x.Optional, x.Variadic, x.AllowsSpread)),
                     Is.EqualTo(implementation.Parameters.Select(x => (x.Name, x.Type, x.Optional, x.Variadic, x.AllowsSpread))),
                     $"Parameters for {name}");
@@ -185,35 +187,32 @@ public class FunctionCatalogTest
         });
     }
 
-    [TestCase("first", "function", "first-elements")]
-    [TestCase("last", "function", "last-elements")]
-    [TestCase("first", "accumulator", "first")]
-    [TestCase("last", "accumulator", "last")]
-    public void Find_KindConstraint_ResolvesCrossKindName(
-        string name,
-        string kind,
-        string canonical)
-        => Assert.That(FunctionCatalog.Default.Find(name, kind)?.Name, Is.EqualTo(canonical));
-
-    [TestCase("first")]
-    [TestCase("last")]
-    public void Find_WithoutKind_ReturnsNullForCrossKindAmbiguity(string name)
-        => Assert.That(FunctionCatalog.Default.Find(name), Is.Null);
+    [TestCase("first", "first-elements")]
+    [TestCase("last", "last-elements")]
+    public void Find_SharedName_ResolvesByArity(string name, string selection)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(FunctionCatalog.Default.Find(name, "function", 0)?.Name, Is.EqualTo(name));
+            Assert.That(FunctionCatalog.Default.Find(name, "function", 1)?.Name, Is.EqualTo(selection));
+        });
+    }
 
     [Test]
     public void Merge_ExplicitFunctionKindsRemainUnchangedAndPredicatesAreMarked()
     {
         var function = Documentation("sum");
         var predicate = Documentation("is-positive");
-        var accumulator = Documentation("first") with { Kind = "accumulator", Input = "any", Output = "any" };
+        var aggregation = Documentation("first") with { Incremental = true, Input = "any", Output = "any" };
 
-        var merged = FunctionCatalog.Merge([function, accumulator], [predicate]);
+        var merged = FunctionCatalog.Merge([function, aggregation], [predicate]);
 
         Assert.Multiple(() =>
         {
             Assert.That(merged.Single(entry => entry.Name == "sum").Kind, Is.EqualTo("function"));
             Assert.That(merged.Single(entry => entry.Name == "is-positive").Kind, Is.EqualTo("predicate"));
-            Assert.That(merged.Single(entry => entry.Name == "first").Kind, Is.EqualTo("accumulator"));
+            Assert.That(merged.Single(entry => entry.Name == "first").Kind, Is.EqualTo("function"));
+            Assert.That(merged.Single(entry => entry.Name == "first").Incremental, Is.True);
             Assert.That(merged.Single(entry => entry.Name == "first").Input, Is.EqualTo("any"));
             Assert.That(merged.Single(entry => entry.Name == "first").Output, Is.EqualTo("any"));
         });
@@ -250,9 +249,21 @@ public class FunctionCatalogTest
         => Assert.That(
             () => FunctionCatalog.ValidateNames([
                 Documentation("shared"),
-                Documentation("shared") with { Kind = "accumulator" },
+                Documentation("shared") with { Kind = "predicate" },
             ]),
             Throws.Nothing);
+
+    [Test]
+    public void ValidateNames_CollisionWithDisjointArities_IsAllowed()
+    {
+        var aggregation = Documentation("first");
+        var selection = Documentation("first-elements", ["first"]) with
+        {
+            Parameters = [new("count", "integer", false, "Count.")],
+        };
+
+        Assert.That(() => FunctionCatalog.ValidateNames([aggregation, selection]), Throws.Nothing);
+    }
 
     [TestCase("array", "values", 0)]
     [TestCase("record", "entries", 0)]
@@ -322,8 +333,8 @@ public class FunctionCatalogTest
         => Assert.That(FunctionCatalog.Default.Suggest("greter-than").First().Name, Is.EqualTo("is-greater-than"));
 
     [Test]
-    public void Suggest_KindConstraint_ReturnsAccumulator()
-        => Assert.That(FunctionCatalog.Default.Suggest("frist", "accumulator").First().Name, Is.EqualTo("first"));
+    public void Suggest_CloseAggregationName_ReturnsFunction()
+        => Assert.That(FunctionCatalog.Default.Suggest("frist", "function").First().Name, Is.EqualTo("first"));
 
     [Test]
     public void Default_FunctionWithExamples_DeserializesExamples()
@@ -436,7 +447,7 @@ public class FunctionCatalogTest
         var sortBy = FunctionCatalog.Default.Find("sort-by")?.Schema;
         var sortTable = FunctionCatalog.Default.Find("sort-table")?.Schema;
         var summarize = FunctionCatalog.Default.Find("summarize")?.Schema;
-        var sum = FunctionCatalog.Default.Find("sum", "accumulator")?.Schema;
+        var sum = FunctionCatalog.Default.Find("sum", "function")?.Schema;
         var with = FunctionCatalog.Default.Find("with")?.Schema;
         var selections = new[] { "bottom", "bottom-with-ties", "top", "top-with-ties" }
             .Select(name => FunctionCatalog.Default.Find(name)?.Schema)
@@ -523,16 +534,16 @@ public class FunctionCatalogTest
     }
 
     [Test]
-    public void Default_AccumulatorContracts_ReflectImplementationRelationships()
+    public void Default_IncrementalAggregationContracts_ReflectImplementationRelationships()
     {
-        var any = FunctionCatalog.Default.Find("any", "accumulator")!;
-        var closest = FunctionCatalog.Default.Find("closest", "accumulator")!.Schema!;
-        var every = FunctionCatalog.Default.Find("every", "accumulator")!;
-        var last = FunctionCatalog.Default.Find("last", "accumulator")!.Schema!;
-        var maximum = FunctionCatalog.Default.Find("max", "accumulator")!.Schema!;
-        var minimum = FunctionCatalog.Default.Find("min", "accumulator")!.Schema!;
-        var only = FunctionCatalog.Default.Find("only", "accumulator")!.Schema!;
-        var reduce = FunctionCatalog.Default.Find("reduce", "accumulator")!.Schema!;
+        var any = FunctionCatalog.Default.Find("any", "function")!;
+        var closest = FunctionCatalog.Default.Find("closest", "function")!.Schema!;
+        var every = FunctionCatalog.Default.Find("every", "function")!;
+        var last = FunctionCatalog.Default.Find("last", "function")!.Schema!;
+        var maximum = FunctionCatalog.Default.Find("max", "function")!.Schema!;
+        var minimum = FunctionCatalog.Default.Find("min", "function")!.Schema!;
+        var only = FunctionCatalog.Default.Find("only", "function")!.Schema!;
+        var reduce = FunctionCatalog.Default.Find("reduce", "function")!.Schema!;
 
         Assert.Multiple(() =>
         {

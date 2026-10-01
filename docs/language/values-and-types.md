@@ -162,7 +162,7 @@ An array represents an ordered sequence of values. Its elements are peers: colle
 {1, 2, 3}
 ```
 
-Arrays are commonly used with functions such as `map`, `filter`, `adjacent`, accumulators, and other collection transformations. An array may already contain all its elements, or its elements may become available progressively while the expression consumes the sequence. A function may therefore process an array element by element, keep a limited amount of intermediate state, reduce it to one value, or collect the complete result when its behavior requires that.
+Arrays are commonly used with functions such as `map`, `filter`, `adjacent`, aggregation functions, and other collection transformations. An array may already contain all its elements, or its elements may become available progressively while the expression consumes the sequence. A function may therefore process an array element by element, keep a limited amount of intermediate state, reduce it to one value, or collect the complete result when its behavior requires that.
 
 ### Tuple
 

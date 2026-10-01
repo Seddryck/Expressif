@@ -3,7 +3,7 @@ layout: docs
 title: "fold"
 parent: "Aggregation functions"
 grand_parent: "Array functions"
-nav_order: 20
+nav_order: 100
 has_toc: false
 permalink: /functions/array/aggregation/fold/
 tags:
@@ -40,6 +40,7 @@ Executes an accumulator once over the full input enumerable and returns the fina
 - **Ordering:** `not-applicable`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

@@ -71,7 +71,7 @@ A useful user-facing model is to think of most Expressif constructs as functions
     <code class="construct-card__contract">record → value</code>
   </div>
   <div class="construct-card">
-    <span class="construct-card__kind">Accumulator</span>
+    <span class="construct-card__kind">Aggregation</span>
     <code class="construct-card__expression">sum</code>
     <span class="construct-card__arrow" aria-hidden="true">:</span>
     <code class="construct-card__contract">array&lt;numeric&gt; → numeric</code>
@@ -149,7 +149,7 @@ This consistency is intentional: learning how expressions work should also teach
 
 ## Aggregation follows the same model
 
-Accumulators reduce a collection to a value.
+Aggregation functions reduce a collection to a value.
 
 ```expressif
 @orders

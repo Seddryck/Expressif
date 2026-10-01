@@ -41,6 +41,7 @@ Splits an array into consecutive, non-overlapping chunks of at most the specifie
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`size`:** Evaluated once in the enclosing context.

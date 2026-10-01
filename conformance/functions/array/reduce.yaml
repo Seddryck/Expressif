@@ -1,5 +1,5 @@
 suite: array
-kind: accumulator
+kind: function
 operator: reduce
 tests:
   - id: reduce.without-initial

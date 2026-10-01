@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "concat"
-parent: "Text accumulators"
-grand_parent: "Accumulators library"
-nav_order: 10
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 60
 has_toc: false
-permalink: /accumulators/text/concat/
+permalink: /functions/array/aggregation/concat/
 tags:
-  - accumulators
-  - text
+  - functions
+  - array/aggregation
 generated: true
 ---
 
@@ -55,7 +55,7 @@ The separator defaults to the empty string. Empty input returns empty text. Empt
 {% endraw %}
 
 
-**Kind:** Accumulator  
-**Scope:** `text`  
+**Kind:** Function  
+**Scope:** `array/aggregation`  
 **Aliases:** None
 {: .member-reference }

@@ -5,7 +5,10 @@ namespace Expressif.Planning;
 /// </summary>
 public interface ILogicalPlanningContext
 {
-    PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null);
+    PlannerFunctionMetadata? FindFunction(
+        string name,
+        string? expectedKind = null,
+        int? argumentCount = null);
 
     string? FindType(string name);
 }

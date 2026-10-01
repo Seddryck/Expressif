@@ -41,6 +41,7 @@ Returns up to the requested number of elements from the end of the input enumera
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`count`:** Evaluated once in the enclosing context.

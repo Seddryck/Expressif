@@ -10,14 +10,12 @@ Deprecation means that a callable or usage pattern remains available for compati
 
 ## Deprecated language names
 
-{% assign function_entries = site.data.function | where_exp: "member", "member.Kind != 'accumulator'" %}
-{% assign accumulator_entries = site.data.function | where: "Kind", "accumulator" %}
+{% assign function_entries = site.data.function %}
 {% assign deprecated_functions = function_entries | where: "IsPublic", true | where: "Deprecated", true %}
 {% assign deprecated_predicates = site.data.predicate | where: "IsPublic", true | where: "Deprecated", true %}
-{% assign deprecated_accumulators = accumulator_entries | where: "IsPublic", true | where: "Deprecated", true %}
-{% assign deprecated_callables = deprecated_functions | concat: deprecated_predicates | concat: deprecated_accumulators %}
+{% assign deprecated_callables = deprecated_functions | concat: deprecated_predicates %}
 {% assign deprecated_alias_count = 0 %}
-{% for member in accumulator_entries %}
+{% for member in function_entries %}
   {% if member.IsPublic %}
     {% assign member_alias_count = member.DeprecatedAliases | size %}
     {% assign deprecated_alias_count = deprecated_alias_count | plus: member_alias_count %}
@@ -41,8 +39,7 @@ Callable and alias deprecations appear together because both are language names 
   <tbody>
 {% include language-deprecation-rows.html catalog=function_entries kind="Function" kind_plural="functions" %}
 {% include language-deprecation-rows.html catalog=site.data.predicate kind="Predicate" kind_plural="predicates" %}
-{% include language-deprecation-rows.html catalog=accumulator_entries kind="Accumulator" kind_plural="accumulators" %}
-{% include language-deprecated-alias-rows.html catalog=accumulator_entries kind="Accumulator alias" kind_plural="accumulators" %}
+{% include language-deprecated-alias-rows.html catalog=function_entries kind="Function alias" kind_plural="functions" %}
   </tbody>
 </table>
 {% else %}

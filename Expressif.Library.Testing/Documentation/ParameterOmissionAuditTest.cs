@@ -9,7 +9,7 @@ public class ParameterOmissionAuditTest
     [TestCaseSource(nameof(AuditedContracts))]
     public void OptionalParameter_HasAuditedOmissionContract(OmissionContract expected)
     {
-        var catalog = expected.Kind == "accumulator" ? "function" : expected.Kind;
+        var catalog = expected.Kind;
         var path = Path.Combine(AppContext.BaseDirectory, "Documentation", $"{catalog}.json");
         using var document = JsonDocument.Parse(File.ReadAllText(path));
         var member = document.RootElement.EnumerateArray()
@@ -32,9 +32,10 @@ public class ParameterOmissionAuditTest
 
     private static bool IsExpectedKind(JsonElement member, string kind)
     {
-        var isAccumulator = member.TryGetProperty("Kind", out var memberKind)
-            && memberKind.GetString() == "accumulator";
-        return kind == "accumulator" ? isAccumulator : !isAccumulator;
+        var memberKind = member.TryGetProperty("Kind", out var value)
+            ? value.GetString()
+            : "function";
+        return kind == "predicate" || memberKind == "function";
     }
 
     private static IEnumerable<TestCaseData> AuditedContracts()
@@ -88,8 +89,8 @@ public class ParameterOmissionAuditTest
         new("predicate", "is-sorted-before-or-equivalent-to", "comparer", "absent"),
         new("predicate", "matches-regex", "comparer", "absent"),
         new("predicate", "starts-with", "comparer", "absent"),
-        new("accumulator", "concat", "separator", "constant", ""),
-        new("accumulator", "reduce", "initial", "absent"),
+        new("function", "concat", "separator", "constant", ""),
+        new("function", "reduce", "initial", "absent"),
     ];
 
     public sealed record OmissionContract(

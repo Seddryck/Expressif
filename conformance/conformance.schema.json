@@ -13,8 +13,7 @@
       "type": "string",
       "enum": [
         "function",
-        "predicate",
-        "accumulator"
+        "predicate"
       ]
     },
     "operator": {

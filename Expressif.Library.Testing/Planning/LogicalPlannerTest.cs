@@ -38,7 +38,7 @@ public class LogicalPlannerTest
 
     [TestCase("first", "first-elements")]
     [TestCase("last", "last-elements")]
-    public void Plan_CrossKindAliasWithArgument_ResolvesFunction(
+    public void Plan_SharedNameWithArgument_ResolvesSelectionAlias(
         string alias,
         string canonical)
     {

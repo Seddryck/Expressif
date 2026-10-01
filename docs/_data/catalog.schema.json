@@ -20,6 +20,10 @@
       "Semantics": {
         "$ref": "#/definitions/semantics"
       },
+      "Incremental": {
+        "type": "boolean",
+        "description": "Whether the function supports incremental accumulation for fold, scan, and broadcast."
+      },
       "Schema": {
         "$ref": "#/definitions/schema"
       }

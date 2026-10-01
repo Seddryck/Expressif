@@ -1,5 +1,5 @@
 suite: array
-kind: accumulator
+kind: function
 operator: common-suffix
 tests:
   - id: common-suffix.values

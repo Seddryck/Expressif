@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "reduce"
-parent: "Array accumulators"
-grand_parent: "Accumulators library"
-nav_order: 120
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 150
 has_toc: false
-permalink: /accumulators/array/reduce/
+permalink: /functions/array/aggregation/reduce/
 tags:
-  - accumulators
-  - array
+  - functions
+  - array/aggregation
 generated: true
 ---
 
@@ -31,17 +31,11 @@ Combines array elements in source order by repeatedly evaluating an expression a
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Specifies the expression evaluated against each accumulated-value/current-element tuple. |
-| `initial` | `any` | No | Specifies the initial accumulated value and the result returned for an empty array. When omitted, the first item becomes the accumulated value and an empty array returns null. |
+| `initial` | `any` | No | Specifies the initial accumulated value and the result returned for an empty array. Omission is preserved for operator-specific handling. |
 
 
 
-## Structural semantics
 
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
-
-See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 ## Argument evaluation
 
@@ -68,7 +62,7 @@ The combining expression receives a two-element tuple: `$0` is the accumulated v
 {% endraw %}
 
 
-**Kind:** Accumulator  
-**Scope:** `array`  
+**Kind:** Function  
+**Scope:** `array/aggregation`  
 **Aliases:** None
 {: .member-reference }

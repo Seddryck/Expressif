@@ -62,7 +62,7 @@ public class CommonAffixTest
     {
         var info = ExpressifIntrospection.Functions.Describe().Single(x => x.Name == name);
         Assert.That(info.Aliases, Is.Empty);
-        Assert.That(info.Scope, Is.EqualTo("array"));
+        Assert.That(info.Scope, Is.EqualTo("array/aggregation"));
         Assert.That(AccumulatorFactory.Instantiate(name), Is.TypeOf(info.ImplementationType));
     }
 
