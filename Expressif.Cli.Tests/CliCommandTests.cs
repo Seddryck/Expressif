@@ -6,7 +6,9 @@ using Expressif.Cli.Expressions;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
 using Expressif.Library.Catalog;
+using Expressif.Library.Composition;
 using Expressif.Planning;
+using Expressif.Syntax;
 
 namespace Expressif.Cli.Tests;
 
@@ -2129,6 +2131,65 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task PlanSchema_LogicalFile_AnalyzesImportedPlan()
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson("upper | first-chars(5)"), ".json");
+
+        var result = await InvokeAsync("plan", "schema", "--logical", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Schema: text -> text (known)"));
+            Assert.That(result.StdOut, Does.Contain("Step 1: upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 2: first-chars [text -> text]"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_Stdin_AnalyzesImportedPlan()
+    {
+        var result = await InvokeWithInputAsync(
+            CreateLogicalPlanJson(),
+            "plan", "schema", "--stdin", "--output", "json");
+
+        using var document = JsonDocument.Parse(result.StdOut);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(),
+                Is.EqualTo(SchemaAnalysisJson.FormatName));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("expression-and-file")]
+    [TestCase("expression-and-stdin")]
+    [TestCase("file-and-stdin")]
+    [TestCase("missing")]
+    public async Task PlanSchema_InvalidSourceSelection_WritesUsageDiagnostic(string scenario)
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson(), ".json");
+        var args = scenario switch
+        {
+            "expression-and-file" => new[] { "plan", "schema", "trim", "--logical", path },
+            "expression-and-stdin" => new[] { "plan", "schema", "trim", "--stdin" },
+            "file-and-stdin" => new[] { "plan", "schema", "--logical", path, "--stdin" },
+            _ => new[] { "plan", "schema" },
+        };
+
+        var result = await InvokeWithInputAsync(CreateLogicalPlanJson(), args);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("requires exactly one source"));
+        });
+    }
+
+    [Test]
     public async Task Plan_JsonOutput_AttachesSchemasToLogicalNodes()
     {
         var result = await InvokeAsync("plan", "trim | upper", "--output", "json");
@@ -2428,14 +2489,23 @@ public class CliCommandTests
         });
     }
 
-    private async Task<InvocationResult> InvokeAsync(params string[] args)
+    private Task<InvocationResult> InvokeAsync(params string[] args)
+        => InvokeAsync(null, args);
+
+    private Task<InvocationResult> InvokeWithInputAsync(string input, params string[] args)
+        => InvokeAsync(input, args);
+
+    private async Task<InvocationResult> InvokeAsync(string? input, string[] args)
     {
+        var originalIn = Console.In;
         var originalOut = Console.Out;
         var originalError = Console.Error;
 
+        using var stdin = new StringReader(input ?? string.Empty);
         using var stdout = new StringWriter();
         using var stderr = new StringWriter();
 
+        Console.SetIn(stdin);
         Console.SetOut(stdout);
         Console.SetError(stderr);
 
@@ -2463,10 +2533,15 @@ public class CliCommandTests
         }
         finally
         {
+            Console.SetIn(originalIn);
             Console.SetOut(originalOut);
             Console.SetError(originalError);
         }
     }
+
+    private static string CreateLogicalPlanJson(string expression = "trim | upper")
+        => LogicalPlanJson.Serialize(
+            LogicalPlannerFactory.Create().Build(new SyntaxService().Parse(expression)));
 
     private string CreateTempFile(string content, string extension = ".expr")
     {
