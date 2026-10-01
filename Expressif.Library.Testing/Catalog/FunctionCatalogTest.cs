@@ -518,6 +518,7 @@ public class FunctionCatalogTest
             Assert.That(Schema("tuple-first").Intrinsic, Is.EqualTo("tuple-position:0"));
             Assert.That(Schema("tuple-second").Intrinsic, Is.EqualTo("tuple-position:1"));
             Assert.That(Schema("implode").Intrinsic, Is.EqualTo("implode-field"));
+            Assert.That(Schema("implode-inner").Intrinsic, Is.EqualTo("implode-field-inner"));
         });
     }
 

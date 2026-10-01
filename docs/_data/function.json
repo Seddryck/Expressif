@@ -10767,7 +10767,8 @@
       "{{id := 1, tags := \"A\"}, {id := 1, tags := #null}} | implode-inner(.tags) → {{id := 1, tags := {\"A\"}}}"
     ],
     "Schema": {
-      "Classification": "fixed"
+      "Classification": "intrinsic",
+      "Intrinsic": "implode-field-inner"
     }
   },
   {

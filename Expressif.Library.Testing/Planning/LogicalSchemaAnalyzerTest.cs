@@ -758,6 +758,33 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_ImplodeInnerIntrinsic_RemovesSelectedValueNullability()
+    {
+        var input = new ArrayLogicalSchema(
+            new RecordLogicalSchema(
+                new Dictionary<string, LogicalSchemaField>
+                {
+                    ["id"] = new(new ScalarLogicalSchema("integer")),
+                    ["tags"] = new(new ScalarLogicalSchema("text", true)),
+                },
+                AllowsAdditionalFields: false));
+        var analysis = Analyze("implode-inner(.tags)", input);
+        var imploded = AsArray(analysis.Output);
+        var implodedItem = AsRecord(imploded.Items);
+        var selected = implodedItem.Fields["tags"].Schema as ArrayLogicalSchema
+            ?? throw new AssertionException("Expected the imploded field to have an array schema.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(implodedItem.Fields["id"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(selected.Items,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Known));
+        });
+    }
+
+    [Test]
     public void Analyze_ImplodeIntrinsic_PropagatesSelectedFieldRequirementBackward()
     {
         var analysis = Analyze("implode(.tags) | map(.tags | first | upper)");

@@ -287,7 +287,7 @@ public static class LogicalSchemaAnalyzer
                 "field" => RequireField(call, expected, path),
                 "select-fields" => RequireSelectFields(call, expected, path),
                 "explode-field" or "explode-field-outer" => RequireExplode(call, expected, path),
-                "implode-field" => RequireImplode(call, expected, path),
+                "implode-field" or "implode-field-inner" => RequireImplode(call, expected, path),
                 "with" => RequireWith(call, expected, path),
                 "spread-entry" => RequireSpreadEntry(call, expected, path),
                 "sort-criterion" => RequireSortCriterion(call, path),
@@ -600,7 +600,8 @@ public static class LogicalSchemaAnalyzer
                 "select-fields" => InferSelectFields(call, input, enclosing, path),
                 "explode-field" => InferExplode(call, input, path, preserveParent: false),
                 "explode-field-outer" => InferExplode(call, input, path, preserveParent: true),
-                "implode-field" => InferImplode(call, input, path),
+                "implode-field" => InferImplode(call, input, path, preserveNull: true),
+                "implode-field-inner" => InferImplode(call, input, path, preserveNull: false),
                 "with" => InferWith(call, input, enclosing, path),
                 "array" => InferArray(call, input, enclosing, path),
                 "tuple" => InferTuple(call, input, enclosing, path),
@@ -828,7 +829,11 @@ public static class LogicalSchemaAnalyzer
                 IsNullable(input));
         }
 
-        private LogicalSchema InferImplode(LogicalCall call, LogicalSchema input, string path)
+        private LogicalSchema InferImplode(
+            LogicalCall call,
+            LogicalSchema input,
+            string path,
+            bool preserveNull)
         {
             var name = SelectedField(call, "selector");
             if (name is null)
@@ -840,6 +845,8 @@ public static class LogicalSchemaAnalyzer
             var child = parent.Fields.TryGetValue(name, out var selected)
                 ? selected.Schema
                 : new AnyLogicalSchema(IsNullable: true);
+            if (!preserveNull)
+                child = WithNullability(child, false);
             var selector = Argument(call, "selector");
             if (selector?.Value is not null)
             {
