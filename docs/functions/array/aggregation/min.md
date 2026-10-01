@@ -31,8 +31,8 @@ This function has no parameters.
 
 ## Value shape
 
-- **Pipeline input:** `numeric`
-- **Returns:** `nullable<numeric>`
+- Pipeline input: `numeric`
+- Returns: `nullable<numeric>`
 
 
 

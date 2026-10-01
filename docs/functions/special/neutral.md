@@ -31,8 +31,8 @@ This function has no parameters.
 
 ## Value shape
 
-- **Pipeline input:** `T`
-- **Returns:** `T`
+- Pipeline input: `T`
+- Returns: `T`
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

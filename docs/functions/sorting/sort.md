@@ -31,8 +31,8 @@ This function has no parameters.
 
 ## Value shape
 
-- **Pipeline input:** `sort-table<T>`
-- **Returns:** `array<T>`
+- Pipeline input: `sort-table<T>`
+- Returns: `array<T>`
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

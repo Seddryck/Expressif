@@ -37,10 +37,10 @@ Constructs a pair by evaluating a key expression and a value expression against 
 
 ## Value shape
 
-- **Pipeline input:** `T`
-- **Returns:** `pair<K, V>`
-- **`key`:** Receives `T` and returns `K`.
-- **`value`:** Receives `T` and returns `V`.
+- Pipeline input: `T`
+- Returns: `pair<K, V>`
+- `key`: Receives `T` and returns `K`.
+- `value`: Receives `T` and returns `V`.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

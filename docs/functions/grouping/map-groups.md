@@ -35,10 +35,10 @@ Transforms each group's value collection while preserving its key and position.
 
 ## Value shape
 
-- **Pipeline input:** `grouping<K, T>`
-- **Returns:** `grouping<K, U>`
-- **`expression`:** Receives `array<T>` and returns `array<U>`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `grouping<K, T>`
+- Returns: `grouping<K, U>`
+- `expression`: Receives `array<T>` and returns `array<U>`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

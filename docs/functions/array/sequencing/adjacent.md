@@ -35,10 +35,10 @@ Evaluates an operation against every consecutive pair of input values. Returns `
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<U>`
-- **`operation`:** Receives `tuple<T, T>` and returns `U`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<U>`
+- `operation`: Receives `tuple<T, T>` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

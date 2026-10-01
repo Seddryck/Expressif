@@ -35,8 +35,8 @@ Returns the input item at the specified zero-based position. Returns `null` when
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `nullable<T>`
+- Pipeline input: `array<T>`
+- Returns: `nullable<T>`
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

@@ -35,10 +35,10 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<U>`
-- **`accumulator`:** Receives `T` and returns `U`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<U>`
+- `accumulator`: Receives `T` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

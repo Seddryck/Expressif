@@ -31,8 +31,8 @@ This function has no parameters.
 
 ## Value shape
 
-- **Pipeline input:** `boolean`
-- **Returns:** `boolean`
+- Pipeline input: `boolean`
+- Returns: `boolean`
 
 
 

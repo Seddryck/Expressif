@@ -35,10 +35,10 @@ Returns the distinct values from the specified array that do not appear in the p
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<U>`
-- **`array`:** Returns `array<U>`.
-- **Nullability:** The result is nullable when the pipeline input or the `array` parameter is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<U>`
+- `array`: Returns `array<U>`.
+- Nullability: The result is nullable when the pipeline input or the `array` parameter is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

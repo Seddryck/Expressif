@@ -35,10 +35,10 @@ Evaluates an expression once for each group and returns a dictionary from group 
 
 ## Value shape
 
-- **Pipeline input:** `grouping<K, T>`
-- **Returns:** `dictionary<K, U>`
-- **`expression`:** Receives `array<T>` and returns `U`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `grouping<K, T>`
+- Returns: `dictionary<K, U>`
+- `expression`: Receives `array<T>` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

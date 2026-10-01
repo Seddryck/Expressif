@@ -35,10 +35,10 @@ Combines values from two arrays into two-element tuples until the longer array i
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<tuple<T, U>>`
-- **`array`:** Returns `array<U>`.
-- **Nullability:** The result is nullable when the pipeline input or the `array` parameter is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<tuple<T, U>>`
+- `array`: Returns `array<U>`.
+- Nullability: The result is nullable when the pipeline input or the `array` parameter is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

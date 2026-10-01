@@ -35,10 +35,10 @@ Distributes array values into matching and non-matching groups by evaluating a p
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<array<T>>`
-- **`condition`:** Receives `T` and returns `boolean`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<array<T>>`
+- `condition`: Receives `T` and returns `boolean`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

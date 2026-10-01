@@ -35,11 +35,11 @@ Groups input values by keys calculated from one or more expressions.
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `grouping<K, T>`
-- **`expressions`:** Receives `T` and returns `K`.
-- **Combination:** When multiple values are supplied, their output types become tuple positions in declaration order.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `grouping<K, T>`
+- `expressions`: Receives `T` and returns `K`.
+- Combination: When multiple values are supplied, their output types become tuple positions in declaration order.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

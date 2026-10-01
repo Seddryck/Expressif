@@ -35,9 +35,9 @@ Distributes successive array values cyclically among a requested number of outpu
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<array<T>>`
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<array<T>>`
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

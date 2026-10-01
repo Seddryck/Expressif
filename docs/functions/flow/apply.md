@@ -35,9 +35,9 @@ Evaluates an expression with the input value as its current context.
 
 ## Value shape
 
-- **Pipeline input:** `T`
-- **Returns:** `U`
-- **`expression`:** Receives `T` and returns `U`.
+- Pipeline input: `T`
+- Returns: `U`
+- `expression`: Receives `T` and returns `U`.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

@@ -35,8 +35,8 @@ Combines accumulated text values in source order, inserting the separator only b
 
 ## Value shape
 
-- **Pipeline input:** `text`
-- **Returns:** `text`
+- Pipeline input: `text`
+- Returns: `text`
 
 
 

@@ -35,10 +35,10 @@ Groups consecutive values while an operation over the complete current chunk and
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<array<T>>`
-- **`operation`:** Receives `tuple<array<T>, T>` and returns `boolean`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<array<T>>`
+- `operation`: Receives `tuple<array<T>, T>` and returns `boolean`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

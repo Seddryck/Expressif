@@ -35,9 +35,9 @@ Raises an evaluation exception when the input is rejected; otherwise, passes the
 
 ## Value shape
 
-- **Pipeline input:** `T`
-- **Returns:** `T`
-- **`predicate`:** Receives `T` and returns `boolean`.
+- Pipeline input: `T`
+- Returns: `T`
+- `predicate`: Receives `T` and returns `boolean`.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

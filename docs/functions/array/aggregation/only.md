@@ -37,10 +37,10 @@ Forwards only items satisfying the predicate to the wrapped accumulator.
 
 ## Value shape
 
-- **Pipeline input:** `T`
-- **Returns:** `U`
-- **`predicate`:** Receives `T` and returns `boolean`.
-- **`accumulator`:** Receives `T` and returns `U`.
+- Pipeline input: `T`
+- Returns: `U`
+- `predicate`: Receives `T` and returns `boolean`.
+- `accumulator`: Receives `T` and returns `U`.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

@@ -39,12 +39,12 @@ Summarizes each group against one summary of all grouped values and returns an o
 
 ## Value shape
 
-- **Pipeline input:** `grouping<K, T>`
-- **Returns:** `dictionary<K, U>`
-- **`local`:** Receives `T` and returns `L`.
-- **`global`:** Receives `T` and returns `G`.
-- **`combine`:** Receives `tuple<L, G>` and returns `U`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `grouping<K, T>`
+- Returns: `dictionary<K, U>`
+- `local`: Receives `T` and returns `L`.
+- `global`: Receives `T` and returns `G`.
+- `combine`: Receives `tuple<L, G>` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

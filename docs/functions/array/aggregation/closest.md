@@ -35,8 +35,8 @@ Returns the first non-null input value with the smallest absolute distance to th
 
 ## Value shape
 
-- **Pipeline input:** `T`
-- **Returns:** `nullable<T>`
+- Pipeline input: `T`
+- Returns: `nullable<T>`
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

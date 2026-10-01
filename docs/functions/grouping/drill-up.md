@@ -35,10 +35,10 @@ Derives keys from existing grouping keys and merges matching groups into one gro
 
 ## Value shape
 
-- **Pipeline input:** `grouping<K, T>`
-- **Returns:** `grouping<U, T>`
-- **`expression`:** Receives `K` and returns `U`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `grouping<K, T>`
+- Returns: `grouping<U, T>`
+- `expression`: Receives `K` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

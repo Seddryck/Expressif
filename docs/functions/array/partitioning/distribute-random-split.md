@@ -37,9 +37,9 @@ Randomly distributes array values among output arrays according to relative outp
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<array<T>>`
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<array<T>>`
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

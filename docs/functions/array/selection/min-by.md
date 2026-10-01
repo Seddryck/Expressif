@@ -35,9 +35,9 @@ Returns the original source element whose expression result is smallest. Preserv
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `nullable<T>`
-- **`expression`:** Receives `T`.
+- Pipeline input: `array<T>`
+- Returns: `nullable<T>`
+- `expression`: Receives `T`.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

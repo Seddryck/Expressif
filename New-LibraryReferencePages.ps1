@@ -542,8 +542,8 @@ foreach ($member in $members) {
 
     if ($hasValueShape) {
         $valueShapeExpressions = @([string] $schema.Input, [string] $schema.Output)
-        $valueShapeRows += "- **Pipeline input:** ``$([string] $schema.Input)``"
-        $valueShapeRows += "- **Returns:** ``$([string] $schema.Output)``"
+        $valueShapeRows += "- Pipeline input: ``$([string] $schema.Input)``"
+        $valueShapeRows += "- Returns: ``$([string] $schema.Output)``"
 
         if ($null -ne $schema.PSObject.Properties["Parameters"] -and $null -ne $schema.Parameters) {
             foreach ($parameter in $parameters) {
@@ -562,20 +562,20 @@ foreach ($member in $members) {
                     $valueShapeExpressions += [string] $parameterSchema.Output
                 }
                 if ($hasParameterInput -and $hasParameterOutput) {
-                    $valueShapeRows += "- **``$($parameter.name)``:** Receives ``$([string] $parameterSchema.Input)`` and returns ``$([string] $parameterSchema.Output)``."
+                    $valueShapeRows += "- ``$($parameter.name)``: Receives ``$([string] $parameterSchema.Input)`` and returns ``$([string] $parameterSchema.Output)``."
                 } elseif ($hasParameterInput) {
-                    $valueShapeRows += "- **``$($parameter.name)``:** Receives ``$([string] $parameterSchema.Input)``."
+                    $valueShapeRows += "- ``$($parameter.name)``: Receives ``$([string] $parameterSchema.Input)``."
                 } elseif ($hasParameterOutput) {
-                    $valueShapeRows += "- **``$($parameter.name)``:** Returns ``$([string] $parameterSchema.Output)``."
+                    $valueShapeRows += "- ``$($parameter.name)``: Returns ``$([string] $parameterSchema.Output)``."
                 }
 
                 if ($null -ne $parameterSchema.PSObject.Properties["Combine"]) {
                     switch ([string] $parameterSchema.Combine) {
                         "union" {
-                            $valueShapeRows += "- **Combination:** When multiple values are supplied, their output types are combined as a union."
+                            $valueShapeRows += "- Combination: When multiple values are supplied, their output types are combined as a union."
                         }
                         "tuple" {
-                            $valueShapeRows += "- **Combination:** When multiple values are supplied, their output types become tuple positions in declaration order."
+                            $valueShapeRows += "- Combination: When multiple values are supplied, their output types become tuple positions in declaration order."
                         }
                     }
                 }
@@ -604,7 +604,7 @@ foreach ($member in $members) {
                     }
                 }
             )
-            $valueShapeRows += "- **Nullability:** The result is nullable when $(Join-NaturalLanguageList -Values $nullableLabels) is nullable."
+            $valueShapeRows += "- Nullability: The result is nullable when $(Join-NaturalLanguageList -Values $nullableLabels) is nullable."
         }
 
         $valueShapeUsesTypeVariables = @(

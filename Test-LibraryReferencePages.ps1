@@ -243,10 +243,10 @@ try {
     foreach ($expected in @(
         "array<T> →`nmap-contract(`n    transformation: expression`n) → array<U>",
         "## Value shape",
-        "- **Pipeline input:** ``array<T>``",
-        "- **Returns:** ``array<U>``",
-        "- **``transformation``:** Receives ``T`` and returns ``U``.",
-        "- **Nullability:** The result is nullable when the pipeline input is nullable.",
+        "- Pipeline input: ``array<T>``",
+        "- Returns: ``array<U>``",
+        "- ``transformation``: Receives ``T`` and returns ``U``.",
+        "- Nullability: The result is nullable when the pipeline input is nullable.",
         "``T``, ``U``, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.",
         "- Cardinality: ``preserved`` <span class=`"semantics-info`" title=`"The output contains the same number of elements as the visited input.`"",
         "- Dependency: ``per-element`` <span class=`"semantics-info`" title=`"An output element depends only on its corresponding visited input element.`"",
@@ -257,7 +257,7 @@ try {
     Assert-NotContains -Content $mapPage -Unexpected "Classification" -Context "map-contract page"
 
     $coalescePage = Get-Content -LiteralPath (Join-Path $functionRoot "coalesce-contract.md") -Raw
-    Assert-Contains -Content $coalescePage -Expected "- **Combination:** When multiple values are supplied, their output types are combined as a union." -Context "coalesce-contract page"
+    Assert-Contains -Content $coalescePage -Expected "- Combination: When multiple values are supplied, their output types are combined as a union." -Context "coalesce-contract page"
 
     $incrementalPage = Get-Content -LiteralPath (Join-Path $functionRoot "incremental-sum.md") -Raw
     Assert-Contains -Content $incrementalPage -Expected "## Aggregation support" -Context "incremental-sum page"
@@ -280,7 +280,7 @@ try {
 
     $predicatePage = Get-Content -LiteralPath (Join-Path $destinationRoot "predicates/test/predicate-contract.md") -Raw
     Assert-Contains -Content $predicatePage -Expected "## Value shape" -Context "predicate-contract page"
-    Assert-Contains -Content $predicatePage -Expected "- **Pipeline input:** ``array<T>``" -Context "predicate-contract page"
+    Assert-Contains -Content $predicatePage -Expected "- Pipeline input: ``array<T>``" -Context "predicate-contract page"
 
     Write-Host "Validated developer-facing library reference metadata."
 }

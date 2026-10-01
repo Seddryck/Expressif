@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-common-suffix() → any
+text →
+common-suffix() → nullable<text>
 ```
 
 Returns the longest suffix shared by all accumulated strings.
@@ -26,6 +26,13 @@ Returns the longest suffix shared by all accumulated strings.
 
 
 This function has no parameters.
+
+
+
+## Value shape
+
+- Pipeline input: `text`
+- Returns: `nullable<text>`
 
 
 

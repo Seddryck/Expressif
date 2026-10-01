@@ -35,10 +35,10 @@ Stably sorts an array by one or more typed criteria while preserving original el
 
 ## Value shape
 
-- **Pipeline input:** `array<T>`
-- **Returns:** `array<T>`
-- **`criteria`:** Receives `T`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `array<T>`
+- Returns: `array<T>`
+- `criteria`: Receives `T`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 

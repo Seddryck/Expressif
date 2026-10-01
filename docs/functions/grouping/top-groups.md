@@ -37,10 +37,10 @@ Keeps up to count complete groups in descending ranking order.
 
 ## Value shape
 
-- **Pipeline input:** `grouping<K, T>`
-- **Returns:** `grouping<K, T>`
-- **`expression`:** Receives `pair<K, array<T>>` and returns `S`.
-- **Nullability:** The result is nullable when the pipeline input is nullable.
+- Pipeline input: `grouping<K, T>`
+- Returns: `grouping<K, T>`
+- `expression`: Receives `pair<K, array<T>>` and returns `S`.
+- Nullability: The result is nullable when the pipeline input is nullable.
 
 `T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 
