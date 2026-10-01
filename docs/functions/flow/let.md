@@ -33,6 +33,16 @@ Evaluates named bindings once and preserves the pipeline input for subsequent st
 
 
 
+## Value shape
+
+- **Pipeline input:** `T`
+- **Returns:** `T`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
 ## Argument evaluation
 
 - **`bindings`:** Evaluated once in declaration order against the original input supplied to this let call, stopping on failure. All expressions use the enclosing named-value environment; bindings from this call become visible together after every expression succeeds.

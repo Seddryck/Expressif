@@ -33,6 +33,16 @@ Evaluates an array-producing expression for each input element and concatenates 
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `array<U>`
+- **`expression`:** Receives `T` and returns `array<U>`.
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `expanded`

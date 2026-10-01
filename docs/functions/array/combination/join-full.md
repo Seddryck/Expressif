@@ -37,6 +37,18 @@ Emits every matching pair and preserves unmatched values from both sides with #n
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<L>`
+- **Returns:** `array<pair<nullable<L>, nullable<R>>>`
+- **`right`:** Returns `union<array<R>, grouping<K, R>, dictionary<K, R>>`.
+- **`left-key`:** Receives `L` and returns `K`.
+- **`right-key`:** Receives `R` and returns `K`.
+- **Nullability:** The result is nullable when the pipeline input or the `right` parameter is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `unknown`

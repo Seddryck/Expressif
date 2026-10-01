@@ -29,6 +29,17 @@ This function has no parameters.
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<pair<sort-key, T>>`
+- **Returns:** `sort-table<T>`
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
 
 
 ## Behavior

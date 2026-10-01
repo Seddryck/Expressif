@@ -35,6 +35,15 @@ Returns the original source element whose expression result is nearest to the nu
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `nullable<T>`
+- **`expression`:** Receives `T` and returns `numeric`.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `collapsed`

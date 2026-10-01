@@ -33,6 +33,14 @@ Returns up to count original values from the last rows in sort table order.
 
 
 
+## Value shape
+
+- **Pipeline input:** `sort-table<T>`
+- **Returns:** `array<T>`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `non-increasing`
@@ -40,6 +48,7 @@ Returns up to count original values from the last rows in sort table order.
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

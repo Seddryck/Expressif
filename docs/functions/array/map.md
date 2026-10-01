@@ -33,6 +33,16 @@ Applies a transformation expression to each input item and returns the transform
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `array<U>`
+- **`transformation`:** Receives `T` and returns `U`.
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `preserved`

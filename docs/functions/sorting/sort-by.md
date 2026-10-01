@@ -33,6 +33,16 @@ Stably sorts an array by one or more typed criteria while preserving original el
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `array<T>`
+- **`criteria`:** Receives `T`.
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `preserved`
@@ -40,6 +50,13 @@ Stably sorts an array by one or more typed criteria while preserving original el
 - **Ordering:** `reordered`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
+## Argument evaluation
+
+Visits each element of the array supplied as pipeline input to this sort-by call.
+
+- **`criteria`:** Evaluated once per visited element in declaration order, with that element as context; .field reads its field and $0 reads its first tuple component.
 
 
 ## Behavior

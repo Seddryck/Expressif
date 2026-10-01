@@ -33,6 +33,15 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `U`
+- **`accumulator`:** Receives `T` and returns `U`.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `collapsed`

@@ -33,6 +33,15 @@ Returns up to the requested number of elements from the end of the input enumera
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `array<T>`
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `non-increasing`

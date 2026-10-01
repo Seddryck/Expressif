@@ -33,6 +33,16 @@ Combines corresponding values from equally sized input and parameter arrays into
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `array<tuple<T, U>>`
+- **`array`:** Returns `array<U>`.
+- **Nullability:** The result is nullable when the pipeline input or the `array` parameter is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `preserved`

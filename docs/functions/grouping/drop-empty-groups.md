@@ -29,6 +29,15 @@ This function has no parameters.
 
 
 
+## Value shape
+
+- **Pipeline input:** `grouping<K, T>`
+- **Returns:** `grouping<K, T>`
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `non-increasing`
@@ -36,6 +45,8 @@ This function has no parameters.
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
 
 
 

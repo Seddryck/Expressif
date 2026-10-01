@@ -33,6 +33,17 @@ Raises an evaluation exception when the input is rejected; otherwise, passes the
 
 
 
+## Value shape
+
+- **Pipeline input:** `T`
+- **Returns:** `T`
+- **`predicate`:** Receives `T` and returns `boolean`.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
 ## Argument evaluation
 
 - **`predicate`:** Evaluated once against the value entering this throw call, replacing the enclosing context. Field and tuple references read that incoming value.

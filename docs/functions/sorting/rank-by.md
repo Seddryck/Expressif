@@ -33,6 +33,16 @@ Groups array elements by their one-based SQL rank using typed criteria.
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `grouping<integer, T>`
+- **`criteria`:** Receives `T`.
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `partitioned`
@@ -40,6 +50,7 @@ Groups array elements by their one-based SQL rank using typed criteria.
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

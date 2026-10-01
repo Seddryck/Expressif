@@ -33,6 +33,16 @@ Keeps whole groups whose group-level predicate evaluates to true.
 
 
 
+## Value shape
+
+- **Pipeline input:** `grouping<K, T>`
+- **Returns:** `grouping<K, T>`
+- **`predicate`:** Receives `pair<K, array<T>>` and returns `boolean`.
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `non-increasing`
@@ -40,6 +50,7 @@ Keeps whole groups whose group-level predicate evaluates to true.
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

@@ -37,6 +37,11 @@ Combines array elements in source order by repeatedly evaluating an expression a
 
 
 
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
+
+
 ## Argument evaluation
 
 Visits the array supplied to this reduce call in source order, starting with the second element when initial is omitted and with the first when initial is supplied.

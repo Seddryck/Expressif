@@ -33,6 +33,16 @@ Applies a predicate expression to each input item and returns only items for whi
 
 
 
+## Value shape
+
+- **Pipeline input:** `array<T>`
+- **Returns:** `array<T>`
+- **`predicate`:** Receives `T` and returns `boolean`.
+- **Nullability:** The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `non-increasing`

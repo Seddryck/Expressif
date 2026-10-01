@@ -29,6 +29,14 @@ This function has no parameters.
 
 
 
+## Value shape
+
+- **Pipeline input:** `sort-table<T>`
+- **Returns:** `array<T>`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
 - **Cardinality:** `preserved`
@@ -36,6 +44,8 @@ This function has no parameters.
 - **Ordering:** `reordered`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
 
 
 ## Behavior

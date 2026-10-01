@@ -33,6 +33,18 @@ Combines accumulated text values in source order, inserting the separator only b
 
 
 
+## Value shape
+
+- **Pipeline input:** `text`
+- **Returns:** `text`
+
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 
 ## Argument evaluation

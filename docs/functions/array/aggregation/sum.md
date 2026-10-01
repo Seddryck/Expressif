@@ -29,6 +29,18 @@ This function has no parameters.
 
 
 
+## Value shape
+
+- **Pipeline input:** `numeric`
+- **Returns:** `numeric`
+
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 
 
