@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Expressif.Cli.Application;
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
@@ -433,6 +434,53 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_LogicalPlan_WithInput_EvaluatesImportedPlan()
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson("trim | upper"), ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "  hello  ");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("HELLO"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_AnalyzedLogicalPlan_WithoutInput_EvaluatesClosedPlan()
+    {
+        var path = CreateTempFile(CreateAnalyzedLogicalPlanJson("\"hello\" | upper"), ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("HELLO"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_AnalyzedLogicalPlan_IgnoresStoredSchemaAnnotations()
+    {
+        var json = CreateAnalyzedLogicalPlanJson("upper")
+            .Replace("\"type\": \"text\"", "\"type\": 42", StringComparison.Ordinal);
+        var path = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("HELLO"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Evaluate_OpenExpressionWithoutInput_ReturnsInputRequiredError()
     {
         var result = await InvokeAsync("evaluate", "upper");
@@ -443,7 +491,7 @@ public class CliCommandTests
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr, Does.Contain("The expression is valid, but it requires an input to be evaluated."));
             Assert.That(result.StdErr, Does.Contain("The expression cannot be evaluated without an input because it references 'upper'."));
-            Assert.That(result.StdErr, Does.Contain("Provide an input with --input. You can load the expression from a file with --file."));
+            Assert.That(result.StdErr, Does.Contain("Provide an input with --input. You can load the expression with --file or a logical plan with --plan."));
         });
     }
 
@@ -655,7 +703,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be provided both inline and through --file."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline, --file, or --plan."));
         });
     }
 
@@ -668,7 +716,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline or --file."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline, --file, or --plan."));
         });
     }
 
@@ -1823,6 +1871,93 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_AnalyzedLogicalPlan_EvaluatesEachInputRow()
+    {
+        var path = CreateTempFile(CreateAnalyzedLogicalPlanJson("trim | upper"), ".json");
+
+        var result = await InvokeAsync("run", "--plan", path, "--input", " hello ", "--input", " world ");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "HELLO", "WORLD" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_LogicalPlan_PreservesOutputOptions()
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson("record(name := @_)"), ".json");
+
+        var result = await InvokeAsync("run", "--plan", path, "--input", "hello", "--output", "json");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\"name\":\"hello\"}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_PlanAndExpressionFile_ReturnsSourceSelectionError()
+    {
+        var plan = CreateTempFile(CreateLogicalPlanJson(), ".json");
+        var expression = CreateTempFile("upper");
+
+        var result = await InvokeAsync("evaluate", "--plan", plan, "--file", expression, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(
+                "The expression must be supplied through exactly one source: inline, --file, or --plan."));
+        });
+    }
+
+    [TestCase("{")]
+    [TestCase("{\"format\":\"expressif.source\",\"version\":1}")]
+    public async Task Evaluate_InvalidPlanFile_WritesPlanDiagnostic(string json)
+    {
+        var path = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.StartWith($"The plan loaded from '{path}' is invalid:"));
+        });
+    }
+
+    [TestCase("version", "2", "Unsupported analyzed logical-plan version")]
+    [TestCase("catalogCompatibility", "\"4.0\"", "Unsupported catalog compatibility")]
+    [TestCase("plan", "[]", "Property 'plan' must be an object")]
+    public async Task Evaluate_InvalidAnalyzedPlanMetadata_WritesSpecificDiagnostic(
+        string property,
+        string replacement,
+        string expected)
+    {
+        var document = JsonNode.Parse(CreateAnalyzedLogicalPlanJson("upper"))!.AsObject();
+        document[property] = JsonNode.Parse(replacement);
+        var json = document.ToJsonString();
+        var path = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain(expected));
+        });
+    }
+
+    [Test]
     public async Task Run_EvaluationFailure_StopsEnumerationAndReturnsFailure()
     {
         var result = await InvokeAsync("run", "fold(sum)", "--batch", "{{1}, {\"unknown\"}, {3}}");
@@ -2543,6 +2678,12 @@ public class CliCommandTests
         => LogicalPlanJson.Serialize(
             LogicalPlannerFactory.Create().Build(new SyntaxService().Parse(expression)));
 
+    private static string CreateAnalyzedLogicalPlanJson(string expression)
+    {
+        var plan = LogicalPlannerFactory.Create().Build(new SyntaxService().Parse(expression));
+        return AnalyzedLogicalPlanJson.Serialize(LogicalSchemaAnalyzer.AnalyzePlan(plan));
+    }
+
     private string CreateTempFile(string content, string extension = ".expr")
     {
         var path = Path.Combine(Path.GetTempPath(), $"expressif-{Guid.NewGuid():N}{extension}");
@@ -2582,6 +2723,10 @@ public class CliCommandTests
 
         public IExpression CompileOpen(string code, Context context) => CompileOpenHandler(code, context);
         public IExpression CompileClosed(string code, Context context) => CompileClosedHandler(code, context);
+        public IExpression CompileOpen(LogicalPlan plan, Context context)
+            => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).Bind(plan);
+        public IExpression CompileClosed(LogicalPlan plan, Context context)
+            => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).BindClosed(plan);
         public object? Evaluate(IExpression expression, object? input) => EvaluateHandler(expression, input);
     }
 }

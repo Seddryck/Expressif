@@ -13,6 +13,7 @@ namespace Expressif.Cli.Application;
 internal sealed record RunRequest(
     string? InlineExpression,
     string? ExpressionFilePath,
+    string? PlanFilePath,
     string[] InputRows,
     string? BatchInput,
     string? SourcePath,
@@ -55,17 +56,17 @@ internal sealed class RunHandler(
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        if (!ExpressionCommandCommon.TryResolveExpressionCode(
+        if (!ExpressionCommandSourceResolver.TryResolve(
                 request.InlineExpression,
                 request.ExpressionFilePath,
+                request.PlanFilePath,
                 textFiles,
-                out var expressionCode,
-                out var hasExpressionFile))
+                out var source))
         {
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        using var observation = CliLineage.Begin(expressionCode, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat, configuration);
+        using var observation = CliLineage.Begin(source.Text, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat, configuration);
         var inputs = request.HasSource
             ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar, request.SourceFormat)
             : BuildInputSource(request).Read();
@@ -73,16 +74,18 @@ internal sealed class RunHandler(
         IExpression expression;
         try
         {
-            expression = expressions.CompileOpen(expressionCode, context);
+            expression = source.Plan is not null
+                ? expressions.CompileOpen(source.Plan, context)
+                : expressions.CompileOpen(source.Code!, context);
         }
         catch (Exception exception) when (exception is ExpressifSyntaxException
                                           or BindingException
+                                          or LogicalPlanBindingException
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
             observation.Fail(exception);
-            return ExpressionCommandCommon.WriteValidationError(
-                exception, expressionCode, hasExpressionFile, request.ExpressionFilePath);
+            return ExpressionCommandSourceResolver.WriteValidationError(exception, source);
         }
         catch (Exception exception)
         {

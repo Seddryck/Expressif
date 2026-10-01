@@ -22,6 +22,7 @@ internal static class EvaluateCommand
         var sourceOptions = new Option<string[]>("--source-option") { Description = "Source-specific setting in <name>=<value> form. Repeat to add settings." };
         var file = new Option<string?>("--file") { Description = "Path to a UTF-8 file containing the expression to evaluate." };
         file.Aliases.Add("-f");
+        var plan = new Option<string?>("--plan") { Description = "Path to a versioned logical-plan JSON file to evaluate." };
         var output = new Option<ValueSerializationFormat?>("--output") { Description = "Output format: raw or json." };
         var raw = new Option<bool>("--raw") { Description = "Shortcut for --output raw." };
         var outputStyle = new Option<ValueFormat?>("--output-style") { Description = "Output style: compact or pretty." };
@@ -36,6 +37,7 @@ internal static class EvaluateCommand
         command.Options.Add(scalar);
         command.Options.Add(sourceOptions);
         command.Options.Add(file);
+        command.Options.Add(plan);
         command.Options.Add(output);
         command.Options.Add(raw);
         command.Options.Add(outputStyle);
@@ -43,13 +45,13 @@ internal static class EvaluateCommand
         command.Options.Add(compact);
         command.Options.Add(indent);
         command.SetAction(result => Execute(result, handler, textFiles, configuration ?? CliConfiguration.CreateDefault(), expression, input, source, collect, scalar, sourceOptions,
-            file, output, raw, outputStyle, pretty, compact, indent));
+            file, plan, output, raw, outputStyle, pretty, compact, indent));
         return command;
     }
 
     private static int Execute(ParseResult result, EvaluateHandler handler, IStrictUtf8TextReader textFiles, CliConfiguration configuration,
         Argument<string?> expression, Option<string?> input, Option<string[]> source, Option<bool> collect,
-        Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file,
+        Option<bool> scalar, Option<string[]> sourceOptions, Option<string?> file, Option<string?> plan,
         Option<ValueSerializationFormat?> output, Option<bool> raw,
         Option<ValueFormat?> outputStyle, Option<bool> pretty, Option<bool> compact, Option<string?> indent)
     {
@@ -65,20 +67,19 @@ internal static class EvaluateCommand
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        var filePath = result.GetValue(file);
-        if (!ExpressionCommandCommon.TryResolveExpressionCode(
-                result.GetValue(expression), filePath, textFiles, out var code, out var fromFile))
+        if (!ExpressionCommandSourceResolver.TryResolve(
+                result.GetValue(expression), result.GetValue(file), result.GetValue(plan), textFiles, out var expressionSource))
             return ExitCodes.InvalidExpressionOrInput;
 
         var kind = ResolveInputKind(hasInput, hasSource);
-        var request = new EvaluateRequest(code, kind, result.GetValue(input), sourcePaths,
+        var request = new EvaluateRequest(expressionSource, kind, result.GetValue(input), sourcePaths,
             result.GetValue(sourceOptions) ?? [], result.GetValue(scalar), collectionRequested);
         if (!ConfiguredOutput.TryResolve(configuration, "evaluate",
                 result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
                 out var serializer, out var formatting, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
-        using var observation = CliLineage.Begin(code, "evaluate", hasSource ? request.SourcePaths.FirstOrDefault() : null, configuration: configuration);
-        var exitCode = WriteResult(handler.Execute(request), code, fromFile, filePath, serializer, formatting);
+        using var observation = CliLineage.Begin(expressionSource.Text, "evaluate", hasSource ? request.SourcePaths.FirstOrDefault() : null, configuration: configuration);
+        var exitCode = WriteResult(handler.Execute(request), expressionSource, serializer, formatting);
         if (exitCode == ExitCodes.Success)
             observation.Complete();
         else
@@ -109,12 +110,12 @@ internal static class EvaluateCommand
         return hasSourceOptions && !hasSource ? "The --source-option option requires --source." : null;
     }
 
-    private static int WriteResult(ExpressionOperationResult result, string code, bool fromFile, string? filePath,
+    private static int WriteResult(ExpressionOperationResult result, ExpressionCommandSource source,
         IValueSerializer serializer, ValueFormattingOptions formatting)
         => result switch
         {
             ExpressionSuccessResult { HasValue: true } success => WriteSuccess(success.Value, serializer, formatting),
-            ExpressionValidationFailure failure => ExpressionCommandCommon.WriteValidationError(failure.Exception, code, fromFile, filePath),
+            ExpressionValidationFailure failure => ExpressionCommandSourceResolver.WriteValidationError(failure.Exception, source),
             ExpressionInputRequiredFailure failure => WriteInputRequired(failure.Exception),
             ExpressionInputFailure failure => WriteError(failure.Message, ExitCodes.InvalidExpressionOrInput),
             ExpressionEvaluationFailure failure => WriteError(CommandErrorFormatter.FormatEvaluationError(failure.Exception), ExitCodes.EvaluationFailed, true),
@@ -132,7 +133,7 @@ internal static class EvaluateCommand
     {
         Console.Error.WriteLine("The expression is valid, but it requires an input to be evaluated.");
         Console.Error.WriteLine(exception.Message);
-        Console.Error.WriteLine("Provide an input with --input. You can load the expression from a file with --file.");
+        Console.Error.WriteLine("Provide an input with --input. You can load the expression with --file or a logical plan with --plan.");
         return ExitCodes.InvalidExpressionOrInput;
     }
 
