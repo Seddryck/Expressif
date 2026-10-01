@@ -22,7 +22,11 @@ prepend(
 Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns the text specified as the parameter.
 
 
-> **Deprecated:** Use `prefix` instead. This function is planned for removal in Expressif 3.0.
+> **Deprecated:** Planned for removal in Expressif 3.0.
+>
+> Use [`prefix`]({{ '/functions/text/concatenation/prefix/' | relative_url }}) instead. This replacement is not behavior-equivalent.
+>
+> **Migration:** The replacement preserves null input; run null-to-empty first to retain the deprecated function's behavior.
 
 
 ## Parameters
@@ -35,15 +39,6 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 
 
 
-## Argument evaluation
-
-- **`text`:** Evaluated once in the enclosing context.
-
-
-## Behavior
-
-Deprecated in favor of `prefix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix` preserves `null`. Use `null-to-empty | prefix(...)` to retain the existing behavior for null input.
-
 
 
 ## Examples
@@ -54,6 +49,14 @@ Deprecated in favor of `prefix` and planned for removal in Expressif 3.0. A dire
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`text`:** Evaluated once in the enclosing context.
+
+
+## Behavior
+
+Deprecated in favor of `prefix` and planned for removal in Expressif 3.0. A direct replacement changes null handling because `prefix` preserves `null`. Use `null-to-empty | prefix(...)` to retain the existing behavior for null input.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

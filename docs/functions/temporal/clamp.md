@@ -35,13 +35,6 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 
 
 
-## Argument evaluation
-
-- **`min`:** Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned.
-- **`max`:** Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +43,10 @@ Returns the value of an argument dateTime, unless it is before min (in which cas
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`min`:** Evaluated in the enclosing context to check the lower bound, then evaluated again if that bound is returned.
+- **`max`:** Evaluated in the enclosing context when the lower-bound check allows it, then evaluated again if the upper bound is returned.
 
 **Kind:** Function  
 **Scope:** `temporal`  

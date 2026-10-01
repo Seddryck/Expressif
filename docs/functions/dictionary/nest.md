@@ -26,8 +26,13 @@ Restructures a dictionary with tuple keys into nested dictionaries, one level pe
 
 
 This function has no parameters.
+## Examples
 
-
+{% raw %}
+```expressif
+!{(T("BE", 2025) => 100), (T("BE", 2026) => 120), (T("FR", 2025) => 80)} | nest → !{("BE" => !{(2025 => 100), (2026 => 120)}), ("FR" => !{(2025 => 80)})}
+```
+{% endraw %}
 
 ## Argument evaluation
 
@@ -38,17 +43,6 @@ Visits each entry of the dictionary supplied as pipeline input to this nest call
 ## Behavior
 
 An empty dictionary remains empty. Every key in a nonempty dictionary must be a tuple of the same arity, at least two; other keys cause an evaluation error. Each tuple's last position maps to its original value. Keys at every level use dictionary structural equality.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-!{(T("BE", 2025) => 100), (T("BE", 2026) => 120), (T("FR", 2025) => 80)} | nest → !{("BE" => !{(2025 => 100), (2026 => 120)}), ("FR" => !{(2025 => 80)})}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `dictionary`  

@@ -27,11 +27,6 @@ Returns normalized tokens from a hyphen-separated name, preserving escaped hyphe
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "first-name" | tokenize-kebab → {"first", "name"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

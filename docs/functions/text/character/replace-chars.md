@@ -35,13 +35,6 @@ Returns the argument value where a specific char has been replaced by another, b
 
 
 
-## Argument evaluation
-
-- **`charToReplace`:** Evaluated once in the enclosing context.
-- **`charReplacing`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +43,10 @@ Returns the argument value where a specific char has been replaced by another, b
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`charToReplace`:** Evaluated once in the enclosing context.
+- **`charReplacing`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/character`  

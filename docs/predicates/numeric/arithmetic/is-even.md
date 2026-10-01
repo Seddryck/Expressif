@@ -25,12 +25,6 @@ Returns `true` if the numeric value passed as argument is even. Returns `false` 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 10 | is-even → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  

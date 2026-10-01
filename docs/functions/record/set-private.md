@@ -35,12 +35,6 @@ Returns a new record by renaming selected public fields by adding a leading unde
 
 
 
-## Argument evaluation
-
-- **`names`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Returns a new record by renaming selected public fields by adding a leading unde
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`names`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

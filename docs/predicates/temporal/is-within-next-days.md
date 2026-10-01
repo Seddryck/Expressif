@@ -32,12 +32,6 @@ Returns true if the date passed as argument is between tomorrow and the count of
 
 
 
-## Argument evaluation
-
-- **`count`:** Evaluated once in the enclosing context only when the date passes the lower-bound check.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +40,9 @@ Returns true if the date passed as argument is between tomorrow and the count of
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`count`:** Evaluated once in the enclosing context only when the date passes the lower-bound check.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

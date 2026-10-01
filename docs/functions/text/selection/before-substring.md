@@ -35,13 +35,6 @@ Returns the substring of the argument string, containing all the characters imme
 
 
 
-## Argument evaluation
-
-- **`substring`:** Evaluated once in the enclosing context.
-- **`count`:** Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text.
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +44,10 @@ Returns the substring of the argument string, containing all the characters imme
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`substring`:** Evaluated once in the enclosing context.
+- **`count`:** Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text.
 
 **Kind:** Function  
 **Scope:** `text/selection`  

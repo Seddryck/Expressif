@@ -27,11 +27,6 @@ returns a textual value at format YYYY-ddd representing the year, and the day nu
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | iso-year-day → "2024-015"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

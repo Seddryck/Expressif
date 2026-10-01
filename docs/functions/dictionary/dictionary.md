@@ -30,15 +30,6 @@ Constructs a dictionary from zero or more pairs. Spread arguments expand arrays 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `values` | `pair` | Variadic (zero or more); accepts spread | Zero or more pairs whose unique keys and values become dictionary entries. Omission supplies an empty variadic sequence. |
-
-
-
-## Argument evaluation
-
-- **`values`:** Each supplied expression is evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -48,6 +39,9 @@ Constructs a dictionary from zero or more pairs. Spread arguments expand arrays 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `dictionary`  

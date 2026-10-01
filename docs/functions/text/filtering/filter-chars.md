@@ -33,12 +33,6 @@ Returns only those characters specified in the parameter, in the order, they wer
 
 
 
-## Argument evaluation
-
-- **`filter`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns only those characters specified in the parameter, in the order, they wer
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`filter`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/filtering`  

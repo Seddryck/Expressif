@@ -30,20 +30,6 @@ Returns a tuple with its positions rotated cyclically, preserving arity and item
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `offset` | `integer` | No | Specifies the rotation offset: positive values rotate right and negative values rotate left, wrapping modulo tuple length. Defaults to 1; zero leaves the order unchanged. |
-
-
-
-## Argument evaluation
-
-- **`offset`:** Evaluated once in the enclosing expression's context for each tuple supplied to this rotate call, including empty and single-item tuples. Field references read the enclosing record, and $0 and $1 read its first and second positions when that context is a tuple.
-
-
-## Behavior
-
-Empty and single-item tuples retain their values. Non-positional input returns null; offsets follow the standard integer argument conversion and validation rules, including conversion of null to zero. Unconvertible or out-of-range offsets are rejected.
-
-
-
 ## Examples
 
 {% raw %}
@@ -55,6 +41,14 @@ T(10, 20, 30) | rotate(4) → T(30, 10, 20)
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`offset`:** Evaluated once in the enclosing expression's context for each tuple supplied to this rotate call, including empty and single-item tuples. Field references read the enclosing record, and $0 and $1 read its first and second positions when that context is a tuple.
+
+
+## Behavior
+
+Empty and single-item tuples retain their values. Non-positional input returns null; offsets follow the standard integer argument conversion and validation rules, including conversion of null to zero. Unconvertible or out-of-range offsets are rejected.
 
 **Kind:** Function  
 **Scope:** `tuple`  

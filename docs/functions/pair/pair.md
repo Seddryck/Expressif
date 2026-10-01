@@ -13,11 +13,11 @@ generated: true
 ---
 
 ```
-any →
+T →
 pair(
     key: any,
     value: any
-) → pair
+) → pair<K, V>
 ```
 
 Constructs a pair by evaluating a key expression and a value expression against the same input.
@@ -35,13 +35,6 @@ Constructs a pair by evaluating a key expression and a value expression against 
 
 
 
-## Argument evaluation
-
-- **`key`:** Evaluated once against the value entering this call.
-- **`value`:** Evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +44,22 @@ Constructs a pair by evaluating a key expression and a value expression against 
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `pair<K, V>`
+- `key`: Receives `T` and returns `K`.
+- `value`: Receives `T` and returns `V`.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Argument evaluation
+
+- **`key`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `pair`  

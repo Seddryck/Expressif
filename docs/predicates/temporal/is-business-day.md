@@ -26,11 +26,6 @@ Returns `true` if the date passed as the argument doesn't correspond to a Saturd
 
 This predicate has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +33,6 @@ This predicate has no parameters.
 #"2024-01-15 12:30:00" | is-business-day → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

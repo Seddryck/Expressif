@@ -27,11 +27,6 @@ Returns the Unicode code point represented by a single Unicode scalar value. Ret
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "😀" | code-point → 128512
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/conversion`  

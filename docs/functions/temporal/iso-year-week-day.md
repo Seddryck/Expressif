@@ -27,11 +27,6 @@ returns a textual value at format YYYY-Www-D representing the year and week numb
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | iso-year-week-day → "2024-W03-1"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

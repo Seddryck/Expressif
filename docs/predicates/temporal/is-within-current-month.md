@@ -25,12 +25,6 @@ Returns true if the date passed as argument is part of the same month than the c
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #"2024-01-15 12:30:00" | is-within-current-month → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

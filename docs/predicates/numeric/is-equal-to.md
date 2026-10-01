@@ -29,15 +29,6 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
-
-
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +37,9 @@ Returns true if the numeric value passed as argument is equal to the numeric val
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

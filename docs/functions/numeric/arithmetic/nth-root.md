@@ -35,12 +35,6 @@ Returns the root specified by the parameter value of the numeric argument value.
 
 
 
-## Argument evaluation
-
-- **`exponent`:** Evaluated once in the context surrounding this `nth-root` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Returns the root specified by the parameter value of the numeric argument value.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`exponent`:** Evaluated once in the context surrounding this `nth-root` call.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+text →
 concat(
     separator: text = ""
-) → any
+) → text
 ```
 
 Combines accumulated text values in source order, inserting the separator only between values.
@@ -33,6 +33,26 @@ Combines accumulated text values in source order, inserting the separator only b
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{"a", "b", "c"} | concat("-") → "a-b-c"
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `text`
+- Returns: `text`
+
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 
 ## Argument evaluation
@@ -43,17 +63,6 @@ Combines accumulated text values in source order, inserting the separator only b
 ## Behavior
 
 The separator defaults to the empty string. Empty input returns empty text. Empty values still participate in separator placement, and accumulating `null` is invalid.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{"a", "b", "c"} | concat("-") → "a-b-c"
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

@@ -32,18 +32,6 @@ Returns a tuple with two positions exchanged, defaulting to the first and last p
 |:-----|:-----|:---------|:------------|
 | `first` | `integer` | No | Specifies the first zero-based position. Omission is preserved for operator-specific handling. |
 | `second` | `integer` | No | Specifies the second zero-based position. Omission is preserved for operator-specific handling. |
-
-
-
-
-
-## Argument evaluation
-
-- **`first`:** Evaluated once in the context surrounding this `swap` call.
-- **`second`:** Evaluated once in the context surrounding this `swap` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +40,10 @@ T("a", "b", "c", "d") | swap → T("d", "b", "c", "a")
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`first`:** Evaluated once in the context surrounding this `swap` call.
+- **`second`:** Evaluated once in the context surrounding this `swap` call.
 
 **Kind:** Function  
 **Scope:** `tuple`  

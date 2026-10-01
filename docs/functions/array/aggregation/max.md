@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-max() → any
+numeric →
+max() → nullable<numeric>
 ```
 
 Tracks the greatest numeric value found during accumulation.
@@ -29,11 +29,6 @@ This function has no parameters.
 
 
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -42,6 +37,18 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `numeric`
+- Returns: `nullable<numeric>`
+
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

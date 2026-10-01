@@ -35,6 +35,15 @@ Returns the sum of the input value and the parameter value.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+10 | add(5)      → 15
+10 | add(5, 2)   → 20
+```
+{% endraw %}
+
 ## Argument evaluation
 
 - **`value`:** Evaluated once in the enclosing context.
@@ -46,18 +55,6 @@ Returns the sum of the input value and the parameter value.
 **Argument form — `value` and `times`:** Value expressions: literals, references, or expression pipelines, such as `5`, `.bonus`, or `5 | multiply(2)`. `times` defaults to `1`; the result is `input + value × times`.
 
 **Enclosing context:** Both arguments retain the surrounding expression context. Field references read its contextual record, independently of the number entering `add`. For example, `{price:=10, bonus:=3} | .price | add(.bonus)` returns `13`: the pipeline input to `add` is `10`, while `.bonus` reads `3` from the surrounding record.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-10 | add(5)      → 15
-10 | add(5, 2)   → 20
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

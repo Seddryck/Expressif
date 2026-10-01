@@ -35,12 +35,6 @@ returns a temporal value corresponding to the same instant of the argument value
 
 
 
-## Argument evaluation
-
-- **`minute`:** Evaluated once in the context surrounding this `change-of-minute` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ returns a temporal value corresponding to the same instant of the argument value
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`minute`:** Evaluated once in the context surrounding this `change-of-minute` call.
 
 **Kind:** Function  
 **Scope:** `temporal`  

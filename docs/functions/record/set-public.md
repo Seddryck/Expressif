@@ -35,12 +35,6 @@ Returns a new record by renaming selected private fields by removing one leading
 
 
 
-## Argument evaluation
-
-- **`names`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Returns a new record by renaming selected private fields by removing one leading
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`names`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

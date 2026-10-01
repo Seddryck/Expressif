@@ -33,12 +33,6 @@ Returns the argument number multiplied by the parameter value.
 
 
 
-## Argument evaluation
-
-- **`value`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the argument number multiplied by the parameter value.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

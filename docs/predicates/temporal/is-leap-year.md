@@ -25,12 +25,6 @@ Returns true if the year of the dateTime value passed as the argument is a leap 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #"2024-01-15 12:30:00" | is-leap-year → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

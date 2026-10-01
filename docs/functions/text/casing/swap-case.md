@@ -27,11 +27,6 @@ Returns the input text with lowercase characters converted to uppercase and uppe
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | swap-case → "hELLO wORLD"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

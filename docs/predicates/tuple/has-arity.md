@@ -30,15 +30,6 @@ Returns whether the input tuple has exactly the expected number of positions.
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `expected` | `integer` | Yes | Specifies the required non-negative tuple arity. |
-
-
-
-## Argument evaluation
-
-- **`expected`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ T(1, 2) | has-arity(2) → #true
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`expected`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `tuple`  

@@ -35,13 +35,6 @@ Returns a dateTime value matching the argument value parsed by the long format i
 
 
 
-## Argument evaluation
-
-- **`format`:** Evaluated once in the enclosing context.
-- **`culture`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +44,10 @@ Returns a dateTime value matching the argument value parsed by the long format i
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`format`:** Evaluated once in the enclosing context.
+- **`culture`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/conversion`  

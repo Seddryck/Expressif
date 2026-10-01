@@ -33,13 +33,24 @@ Recursively traverses arrays, tuples, and records and evaluates an expression ag
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+T(42, " 42 ") | walk(trim) → T("42", "42")
+T(42, " 42 ") | walk(*trim) → T(42, "42")
+{name := " Bob ", address := {city := " Brussels "}} | walk(*trim) → {name := "Bob", address := {city := "Brussels"}}
+```
+{% endraw %}
+
 ## Structural semantics
 
-- **Cardinality:** `preserved`
-- **Dependency:** `per-element`
-- **Ordering:** `preserved`
+- Cardinality: `preserved` <span class="semantics-info" title="The output contains the same number of elements as the visited input." aria-label="Cardinality definition: The output contains the same number of elements as the visited input.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 
@@ -51,19 +62,6 @@ Recursively visits the leaf values in the incoming arrays, tuples, and records.
 ## Behavior
 
 `walk` recursively visits array items, tuple items, and record field values. Record field names and container kinds are preserved, and only leaves are supplied to the transformation. The transformation retains its ordinary semantics, so `walk(trim)` permits normal coercion while `walk(*trim)` uses guarded entry.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-T(42, " 42 ") | walk(trim) → T("42", "42")
-T(42, " 42 ") | walk(*trim) → T(42, "42")
-{name := " Bob ", address := {city := " Brussels "}} | walk(*trim) → {name := "Bob", address := {city := "Brussels"}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `structure`  

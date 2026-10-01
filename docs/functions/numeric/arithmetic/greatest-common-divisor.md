@@ -33,12 +33,6 @@ Returns the greatest common divisor (GCD) of the argument integer and the parame
 
 
 
-## Argument evaluation
-
-- **`value`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the greatest common divisor (GCD) of the argument integer and the parame
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

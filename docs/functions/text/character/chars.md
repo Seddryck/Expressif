@@ -27,11 +27,6 @@ Returns the characters in the input text as an array in source order. Returns `n
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "123" | chars → {"1", "2", "3"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/character`  

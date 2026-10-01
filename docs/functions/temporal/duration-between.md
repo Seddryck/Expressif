@@ -33,12 +33,6 @@ Returns the signed duration between the current temporal value and a previous te
 
 
 
-## Argument evaluation
-
-- **`previous`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the signed duration between the current temporal value and a previous te
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`previous`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

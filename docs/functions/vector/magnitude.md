@@ -26,12 +26,6 @@ Returns the Euclidean magnitude of the input vector.
 
 
 This function has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This function has no parameters.
 V(3, 4) | magnitude → 5
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `vector`  

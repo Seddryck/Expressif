@@ -31,16 +31,6 @@ Returns `true` if the division of the numeric value passed as argument by the mo
 |:-----|:-----|:---------|:------------|
 | `modulus` | `numeric` | Yes | An integer value used as the modulus. |
 | `remainder` | `numeric` | Yes | An integer value defined as the expected reminder. |
-
-
-
-## Argument evaluation
-
-- **`modulus`:** Evaluated once in the enclosing context.
-- **`remainder`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +39,10 @@ Returns `true` if the division of the numeric value passed as argument by the mo
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`modulus`:** Evaluated once in the enclosing context.
+- **`remainder`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  

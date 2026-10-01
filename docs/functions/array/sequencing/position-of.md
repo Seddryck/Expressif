@@ -33,21 +33,6 @@ Returns the zero-based position of the first input item equal to the specified v
 
 
 
-## Structural semantics
-
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
-
-See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
-
-
-## Argument evaluation
-
-- **`value`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -56,6 +41,18 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 ```
 {% endraw %}
 
+## Structural semantics
+
+- Cardinality: `collapsed` <span class="semantics-info" title="The visited collection produces one result." aria-label="Cardinality definition: The visited collection produces one result.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `not-applicable` <span class="semantics-info" title="The result has no element ordering to describe." aria-label="Ordering definition: The result has no element ordering to describe.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
+## Argument evaluation
+
+- **`value`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `array/sequencing`  

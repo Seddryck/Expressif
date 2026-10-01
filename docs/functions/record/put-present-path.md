@@ -37,13 +37,6 @@ Assigns the field at a dynamic path only when the final segment is present, incl
 
 
 
-## Argument evaluation
-
-- **`path`:** Evaluated once against the value entering this call.
-- **`value`:** Evaluated against the original incoming record only if the target path is present.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +45,10 @@ Assigns the field at a dynamic path only when the final segment is present, incl
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`path`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated against the original incoming record only if the target path is present.
 
 **Kind:** Function  
 **Scope:** `record`  

@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+T →
 closest(
     target: any
-) → any
+) → nullable<T>
 ```
 
 Returns the first non-null input value with the smallest absolute distance to the target.
@@ -33,19 +33,6 @@ Returns the first non-null input value with the smallest absolute distance to th
 
 
 
-
-
-## Argument evaluation
-
-- **`target`:** Evaluated once before accumulation, using the incoming collection as its context. The result is reused for every comparison.
-
-
-## Behavior
-
-The result preserves the selected input value and its type. Numeric targets use subtract; other targets use duration-between. Compatibility and coercion follow those operations. Values whose distance is null are ignored. Ties preserve input order. A null target, empty input, or input without a valid distance returns null. Arithmetic overflow follows the underlying difference operation.
-
-
-
 ## Examples
 
 {% raw %}
@@ -56,6 +43,29 @@ The result preserves the selected input value and its type. Numeric targets use 
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `nullable<T>`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
+
+
+## Argument evaluation
+
+- **`target`:** Evaluated once before accumulation, using the incoming collection as its context. The result is reused for every comparison.
+
+
+## Behavior
+
+The result preserves the selected input value and its type. Numeric targets use subtract; other targets use duration-between. Compatibility and coercion follow those operations. Values whose distance is null are ignored. Ties preserve input order. A null target, empty input, or input without a valid distance returns null. Arithmetic overflow follows the underlying difference operation.
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

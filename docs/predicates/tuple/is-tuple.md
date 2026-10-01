@@ -26,12 +26,6 @@ Returns whether the input value is a tuple.
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This predicate has no parameters.
 T(1, "foo") | is-tuple → #true
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `tuple`  

@@ -33,12 +33,6 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 
 
 
-## Argument evaluation
-
-- **`instant`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns a dateTime with the time part set to the value passed as parameter and t
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`instant`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

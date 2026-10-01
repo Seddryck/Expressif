@@ -33,12 +33,6 @@ Returns the shortest unsigned duration between the current time and a reference 
 
 
 
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -48,6 +42,9 @@ Returns the shortest unsigned duration between the current time and a reference 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

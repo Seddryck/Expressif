@@ -33,12 +33,6 @@ Returns the result of the first branch whose predicate accepts the original inpu
 
 
 
-## Argument evaluation
-
-- **`branches`:** Branches reuse the original input and stop at the first accepted branch. The output type depends on the selected expression.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the result of the first branch whose predicate accepts the original inpu
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`branches`:** Branches reuse the original input and stop at the first accepted branch. The output type depends on the selected expression.
 
 **Kind:** Function  
 **Scope:** `flow`  

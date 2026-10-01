@@ -13,12 +13,12 @@ generated: true
 ---
 
 ```
-array →
+array<L> →
 join-full(
     right: array | grouping | dictionary,
     left-key: expression,
     right-key?: expression
-) → array
+) → array<pair<nullable<L>, nullable<R>>>
 ```
 
 Emits every matching pair and preserves unmatched values from both sides with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.
@@ -37,11 +37,31 @@ Emits every matching pair and preserves unmatched values from both sides with #n
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2} | join-full({2, 3}, @_) → {(1 => #null), (2 => 2), (#null => 3)}
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `array<L>`
+- Returns: `array<pair<nullable<L>, nullable<R>>>`
+- `right`: Returns `union<array<R>, grouping<K, R>, dictionary<K, R>>`.
+- `left-key`: Receives `L` and returns `K`.
+- `right-key`: Receives `R` and returns `K`.
+- Nullability: The result is nullable when the pipeline input or the `right` parameter is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
-- **Cardinality:** `unknown`
-- **Dependency:** `whole-input`
-- **Ordering:** `preserved`
+- Cardinality: `unknown` <span class="semantics-info" title="Cardinality is structurally relevant but cannot be declared more precisely." aria-label="Cardinality definition: Cardinality is structurally relevant but cannot be declared more precisely.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
@@ -53,17 +73,6 @@ Visits each element of the array supplied as pipeline input to this join-full ca
 - **`right`:** Evaluated once in the enclosing context before visiting the left values; an array is grouped using the right-key expression or the reused left-key expression.
 - **`left-key`:** Evaluated once with each element of the array supplied as pipeline input to this call as its context; .field reads that element. When right-key is omitted for a right array, also evaluated once with each right element as its context before visiting left elements.
 - **`right-key`:** For an array right-hand side, evaluated once per right element with that element as its context while constructing the grouping; skipped for a grouping or dictionary.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2} | join-full({2, 3}, @_) → {(1 => #null), (2 => 2), (#null => 3)}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/combination`  

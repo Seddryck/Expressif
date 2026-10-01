@@ -27,11 +27,6 @@ Attempts to convert the input to an integer value. Returns `null` when the input
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | coerce-int → #null
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

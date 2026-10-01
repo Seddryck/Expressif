@@ -27,11 +27,6 @@ Returns the input text in sentence case by capitalizing the first ordinary word 
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "hello World" | sentence-case → "Hello world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

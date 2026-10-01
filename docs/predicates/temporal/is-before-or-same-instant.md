@@ -29,15 +29,6 @@ Returns true if the temporal value passed as argument is chronologically before 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `date-time` | Yes | A temporal value to compare to the argument. |
-
-
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +37,9 @@ Returns true if the temporal value passed as argument is chronologically before 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

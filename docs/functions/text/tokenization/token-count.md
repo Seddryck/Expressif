@@ -33,12 +33,6 @@ Returns the count of token within the argument value. By default, the tokenizati
 
 
 
-## Argument evaluation
-
-- **`separator`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the count of token within the argument value. By default, the tokenizati
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`separator`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

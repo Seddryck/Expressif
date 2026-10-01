@@ -32,16 +32,6 @@ Returns `true` when at least the requested number of supplied predicates are sat
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Specifies the minimum non-negative number of predicates that must be satisfied. |
 | `predicates` | `predicate` | Variadic (zero or more); no spread | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
-
-
-
-## Argument evaluation
-
-- **`count`:** Evaluated once against the incoming value to determine the required predicate count.
-- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +40,10 @@ Returns `true` when at least the requested number of supplied predicates are sat
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`count`:** Evaluated once against the incoming value to determine the required predicate count.
+- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

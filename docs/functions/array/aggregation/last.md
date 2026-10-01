@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-last() → any
+T →
+last() → nullable<T>
 ```
 
 Stores the most recently accumulated item.
@@ -29,11 +29,6 @@ This function has no parameters.
 
 
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -42,6 +37,19 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `nullable<T>`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 chunk-while(
     operation: expression
-) → array
+) → array<array<T>>
 ```
 
 Groups consecutive values while an operation over the complete current chunk and next candidate evaluates to `true`. Returns `null` when the operation does not produce a Boolean value or the input cannot be evaluated.
@@ -33,11 +33,30 @@ Groups consecutive values while an operation over the complete current chunk and
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4, 5, 6, 7} | chunk-while($0 | cardinality | less-than(3)) → {{1, 2, 3}, {4, 5, 6}, {7}}
+{1, 3, 5, 10, 11} | chunk-while($1 | subtract($0 | last) | absolute | less-than(3)) → {{1, 3, 5}, {10, 11}}
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `array<T>`
+- Returns: `array<array<T>>`
+- `operation`: Receives `tuple<array<T>, T>` and returns `boolean`.
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
-- **Cardinality:** `partitioned`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
@@ -54,18 +73,6 @@ Visits consecutive elements of the array supplied as pipeline input to this chun
 The first element seeds the first chunk without invoking the operation. For every subsequent candidate, true appends it; false emits the chunk and seeds the next chunk with that candidate without testing it again. The final nonempty chunk is emitted. Every element, including null and structured values, is preserved once and in order; no empty chunk is produced. Later additions do not change an exposed currentChunk array. A non-Boolean result or unsupported input returns null.
 
 The operation receives T(currentChunk, candidate). ~f invokes candidate | f(currentChunk), while f~ invokes currentChunk | f(candidate); subsequent stages retain that tuple as their argument context. Existing bare callable injection uses candidate | f(currentChunk). Pairwise conditions must explicitly select the last element of $0; the previous/current element contract is replaced.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4, 5, 6, 7} | chunk-while($0 | cardinality | less-than(3)) → {{1, 2, 3}, {4, 5, 6}, {7}}
-{1, 3, 5, 10, 11} | chunk-while($1 | subtract($0 | last) | absolute | less-than(3)) → {{1, 3, 5}, {10, 11}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

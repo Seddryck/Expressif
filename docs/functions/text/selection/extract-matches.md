@@ -33,17 +33,6 @@ Returns complete non-overlapping regular expression matches in source order, inc
 
 
 
-## Argument evaluation
-
-- **`pattern`:** Evaluated once in the enclosing context.
-
-
-## Behavior
-
-Returns whole matches without adding capture groups. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +41,14 @@ Returns whole matches without adding capture groups. Invalid patterns raise a re
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`pattern`:** Evaluated once in the enclosing context.
+
+
+## Behavior
+
+Returns whole matches without adding capture groups. Invalid patterns raise a regular expression error when evaluated on nonempty text. Matching uses a one-second timeout and raises RegexMatchTimeoutException when the limit is exceeded. The blank special value is treated as one space.
 
 **Kind:** Function  
 **Scope:** `text/selection`  

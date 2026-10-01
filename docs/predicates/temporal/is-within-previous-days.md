@@ -32,12 +32,6 @@ Returns true if the date passed as argument is between the count of days before 
 
 
 
-## Argument evaluation
-
-- **`count`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -46,6 +40,9 @@ Returns true if the date passed as argument is between the count of days before 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`count`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

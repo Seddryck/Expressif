@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-any →
+T →
 coalesce(
     ...expressions: expression
-) → any
+) → nullable<U>
 ```
 
 Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.
@@ -33,12 +33,6 @@ Returns the first non-null result from two or more expressions evaluated from le
 
 
 
-## Argument evaluation
-
-- **`expressions`:** Candidates are evaluated against the same incoming value, from left to right, until one produces a non-null result. Later candidates are skipped.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,21 @@ Returns the first non-null result from two or more expressions evaluated from le
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `nullable<U>`
+- `expressions`: Receives `T` and returns `U`.
+- Combination: When multiple values are supplied, their output types are combined as a union.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Argument evaluation
+
+- **`expressions`:** Candidates are evaluated against the same incoming value, from left to right, until one produces a non-null result. Later candidates are skipped.
 
 **Kind:** Function  
 **Scope:** `special`  

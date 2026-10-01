@@ -27,13 +27,6 @@ Returns a new record without fields whose names start with an underscore, preser
 
 This function has no parameters.
 
-
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -41,7 +34,6 @@ This function has no parameters.
 {foo := 10, _tmp := 20, bar := 30} | public → {foo := 10, bar := 30}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `record`  

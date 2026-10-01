@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 distribute-condition(
     condition: predicate
-) → array
+) → array<array<T>>
 ```
 
 Distributes array values into matching and non-matching groups by evaluating a predicate once for each value. Returns `null` when the input cannot be evaluated.
@@ -33,11 +33,29 @@ Distributes array values into matching and non-matching groups by evaluating a p
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4, 5} | distribute-condition(is-even) → {{2, 4}, {1, 3, 5}}
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `array<T>`
+- Returns: `array<array<T>>`
+- `condition`: Receives `T` and returns `boolean`.
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
 ## Structural semantics
 
-- **Cardinality:** `partitioned`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
@@ -52,17 +70,6 @@ Visits each element of the array entering this call.
 ## Behavior
 
 `distribute-condition` returns exactly two arrays. The first contains values for which `condition` evaluates to `true`; the second contains values for which it evaluates to `false`. Each value occurs in exactly one output array, and relative input order is preserved within both arrays. Empty input returns two empty arrays.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4, 5} | distribute-condition(is-even) → {{2, 4}, {1, 3, 5}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

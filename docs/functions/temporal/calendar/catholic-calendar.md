@@ -37,13 +37,6 @@ Returns the date of the Catholic calendar event passed as parameter for the year
 
 
 
-## Argument evaluation
-
-- **`event`:** Evaluated once in the context surrounding this `catholic-calendar` call.
-- **`kind`:** Evaluated once in the context surrounding this `catholic-calendar` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +45,10 @@ Returns the date of the Catholic calendar event passed as parameter for the year
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`event`:** Evaluated once in the context surrounding this `catholic-calendar` call.
+- **`kind`:** Evaluated once in the context surrounding this `catholic-calendar` call.
 
 **Kind:** Function  
 **Scope:** `temporal/calendar`  

@@ -35,13 +35,6 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 
 
 
-## Argument evaluation
-
-- **`time`:** Evaluated once in the enclosing context.
-- **`times`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -51,6 +44,10 @@ Returns a dateTime that adds the timestamp passed as parameter to the argument. 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`time`:** Evaluated once in the enclosing context.
+- **`times`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

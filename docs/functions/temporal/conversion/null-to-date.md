@@ -33,12 +33,6 @@ Returns the dateTime argument except if the value is `null` then it returns the 
 
 
 
-## Argument evaluation
-
-- **`default`:** Evaluated once in the enclosing context only when the fallback value is needed.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the dateTime argument except if the value is `null` then it returns the 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`default`:** Evaluated once in the enclosing context only when the fallback value is needed.
 
 **Kind:** Function  
 **Scope:** `temporal/conversion`  

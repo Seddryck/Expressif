@@ -27,11 +27,6 @@ Returns the input text in kebab-case, lowercasing words and joining them with hy
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | kebab-case → "hello-world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

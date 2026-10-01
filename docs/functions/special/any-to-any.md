@@ -27,11 +27,6 @@ Returns `any`.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #null | any-to-any → "(any)"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

@@ -13,11 +13,11 @@ generated: true
 ---
 
 ```
-array →
+T →
 only(
     predicate: predicate,
     accumulator: accumulator
-) → any
+) → U
 ```
 
 Forwards only items satisfying the predicate to the wrapped accumulator.
@@ -35,6 +35,30 @@ Forwards only items satisfying the predicate to the wrapped accumulator.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3, 4} | only(is-even, count) → 2
+{10, #null, 30} | fold(only(is-not-null, count)) → 2
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `T`
+- Returns: `U`
+- `predicate`: Receives `T` and returns `boolean`.
+- `accumulator`: Receives `T` and returns `U`.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 
 ## Argument evaluation
@@ -48,18 +72,6 @@ Visits each item of the collection supplied as pipeline input to this only call 
 ## Behavior
 
 The input and final result types are inherited from the wrapped accumulator. Initialization, empty-input and no-match results, completion, and failures are unchanged. Null items are evaluated by the predicate like any other item. Predicate results must be Boolean. Matching items retain source order without materializing a filtered collection. Direct pipeline calls implicitly fold the wrapper.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3, 4} | only(is-even, count) → 2
-{10, #null, 30} | fold(only(is-not-null, count)) → 2
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

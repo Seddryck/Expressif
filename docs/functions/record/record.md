@@ -35,12 +35,6 @@ Creates a record by evaluating its named and spread entries against the input va
 
 
 
-## Argument evaluation
-
-- **`entries`:** Each entry is evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Creates a record by evaluating its named and spread entries against the input va
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`entries`:** Each entry is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `record`  

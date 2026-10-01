@@ -27,11 +27,6 @@ Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining th
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | screaming-snake-case → "HELLO_WORLD"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

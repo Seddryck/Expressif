@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-common-suffix() → any
+text →
+common-suffix() → nullable<text>
 ```
 
 Returns the longest suffix shared by all accumulated strings.
@@ -29,16 +29,6 @@ This function has no parameters.
 
 
 
-
-
-
-
-## Behavior
-
-Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +37,25 @@ Empty input returns null. A single string is returned unchanged. Nonempty input 
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `text`
+- Returns: `nullable<text>`
+
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
+
+
+
+
+## Behavior
+
+Empty input returns null. A single string is returned unchanged. Nonempty input with no shared text, including an empty string, returns empty text. Comparison is ordinal and case-sensitive, without Unicode normalization. The result is independent of input order. Null and non-string elements throw InvalidCastException, even after the running result becomes empty.
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

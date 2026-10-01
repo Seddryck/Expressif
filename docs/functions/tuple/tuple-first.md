@@ -26,12 +26,6 @@ Returns the first field of a tuple. Returns `null` when the input is not a tuple
 
 
 This function has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This function has no parameters.
 T(10, 20, 30) | tuple-first → 10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `tuple`  

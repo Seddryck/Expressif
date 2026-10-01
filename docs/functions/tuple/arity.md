@@ -26,12 +26,6 @@ Returns the number of positional elements in the input tuple.
 
 
 This function has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This function has no parameters.
 T(10, "foo", #true) | arity → 3
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `tuple`  

@@ -33,12 +33,6 @@ Returns the first chars of the argument value. The length of the string returned
 
 
 
-## Argument evaluation
-
-- **`length`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the first chars of the argument value. The length of the string returned
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`length`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/selection`  

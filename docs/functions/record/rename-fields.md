@@ -35,24 +35,6 @@ Transforms selected field names while preserving field values and order. Duplica
 
 
 
-## Structural semantics
-
-- **Cardinality:** `preserved`
-- **Dependency:** `per-element`
-- **Ordering:** `preserved`
-
-See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
-
-
-## Argument evaluation
-
-Visits the original field names of the record supplied as pipeline input to this rename-fields call, in field order. Argument expressions use the field name as their context, so .field does not read the surrounding record.
-
-- **`transform`:** Evaluated once for each visited field name accepted by the filter, after the filter runs, with that original name as its context. Without a filter, it runs for every name; field values are never supplied.
-- **`filter`:** When supplied, evaluated once per visited original field name, with that name as its context. A false result preserves the original name and skips the transformation.
-
-
-
 ## Examples
 
 {% raw %}
@@ -63,6 +45,21 @@ Visits the original field names of the record supplied as pipeline input to this
 ```
 {% endraw %}
 
+## Structural semantics
+
+- Cardinality: `preserved` <span class="semantics-info" title="The output contains the same number of elements as the visited input." aria-label="Cardinality definition: The output contains the same number of elements as the visited input.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
+## Argument evaluation
+
+Visits the original field names of the record supplied as pipeline input to this rename-fields call, in field order. Argument expressions use the field name as their context, so .field does not read the surrounding record.
+
+- **`transform`:** Evaluated once for each visited field name accepted by the filter, after the filter runs, with that original name as its context. Without a filter, it runs for every name; field values are never supplied.
+- **`filter`:** When supplied, evaluated once per visited original field name, with that name as its context. A false result preserves the original name and skips the transformation.
 
 **Kind:** Function  
 **Scope:** `record`  

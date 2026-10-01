@@ -27,13 +27,6 @@ Removes null-valued fields from the input record without traversing nested recor
 
 This function has no parameters.
 
-
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -41,7 +34,6 @@ This function has no parameters.
 {name := "Nikola", age := #null, active := #false} | drop-null-fields → {name := "Nikola", active := #false}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `record`  

@@ -33,12 +33,6 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 
 
 
-## Argument evaluation
-
-- **`prefix`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`prefix`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

@@ -30,15 +30,6 @@ Returns the dot product of the input vector and another vector of the same dimen
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `vector` | `vector` | Yes | Specifies the vector whose components are multiplied with the input components. |
-
-
-
-## Argument evaluation
-
-- **`vector`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ V(1, 2, 3) | dot(V(4, 5, 6)) → 32
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`vector`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `vector`  

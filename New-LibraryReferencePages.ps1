@@ -81,6 +81,48 @@ function ConvertTo-Slug {
     return $Value.Trim().ToLowerInvariant() -replace '[^a-z0-9]+', '-'
 }
 
+function Join-NaturalLanguageList {
+    param(
+        [Parameter(Mandatory)]
+        [string[]] $Values
+    )
+
+    if ($Values.Count -eq 1) {
+        return $Values[0]
+    }
+
+    if ($Values.Count -eq 2) {
+        return "$($Values[0]) or $($Values[1])"
+    }
+
+    return "$($Values[0..($Values.Count - 2)] -join ', '), or $($Values[-1])"
+}
+
+$semanticsDefinitions = @{
+    Cardinality = @{
+        "preserved"      = "The output contains the same number of elements as the visited input."
+        "non-increasing" = "The output contains no more elements than the visited input."
+        "collapsed"      = "The visited collection produces one result."
+        "expanded"       = "One visited input can produce multiple output elements."
+        "partitioned"    = "Visited inputs are reorganized into groups or partitions."
+        "unknown"        = "Cardinality is structurally relevant but cannot be declared more precisely."
+    }
+    Dependency = @{
+        "per-element" = "An output element depends only on its corresponding visited input element."
+        "prefix"      = "An output at a position depends on the visited prefix ending at that position."
+        "whole-input" = "An output depends on the complete visited input."
+        "partition"   = "An output depends on the elements belonging to the same partition or key."
+        "unknown"     = "Dependency is structurally relevant but cannot be declared more precisely."
+    }
+    Ordering = @{
+        "preserved"      = "Relative source order is retained."
+        "reordered"      = "The operator deliberately changes relative order."
+        "unordered"      = "Output order is not part of the semantic contract."
+        "not-applicable" = "The result has no element ordering to describe."
+        "unknown"        = "Ordering is structurally relevant but cannot be declared more precisely."
+    }
+}
+
 $kindName = $Kind.ToLowerInvariant()
 $kindPlural = "$kindName`s"
 $kindPluralTitle = (Get-Culture).TextInfo.ToTitleCase($kindPlural)
@@ -311,6 +353,11 @@ foreach ($member in $members) {
         }
     }
 
+    $schema = $null
+    if ($null -ne $member.PSObject.Properties["Schema"] -and $null -ne $member.Schema) {
+        $schema = $member.Schema
+    }
+
     $parameters = @(
         foreach ($parameter in @($member.Parameters)) {
             foreach ($propertyName in @("Name", "Optional")) {
@@ -438,14 +485,146 @@ foreach ($member in $members) {
     $deprecated = $null -ne $member.PSObject.Properties["Deprecated"] -and [bool] $member.Deprecated
     $replacement = if ($null -ne $member.PSObject.Properties["Replacement"]) { [string] $member.Replacement } else { "" }
     $sunset = if ($null -ne $member.PSObject.Properties["Sunset"]) { [string] $member.Sunset } else { "" }
+    $replacementCompatibilityKnown = $null -ne $member.PSObject.Properties["ReplacementIsEquivalent"]
+    $replacementIsEquivalent = $replacementCompatibilityKnown -and [bool] $member.ReplacementIsEquivalent
+    $migrationNotes = if ($null -ne $member.PSObject.Properties["MigrationNotes"]) { [string] $member.MigrationNotes } else { "" }
+    $replacementDisplay = if ([string]::IsNullOrWhiteSpace($replacement)) {
+        ""
+    } else {
+        $replacementMember = @(
+            $allMembers | Where-Object {
+                $_.IsPublic -eq $true -and ([string] $_.Name) -ceq $replacement
+            }
+        ) | Select-Object -First 1
+
+        if ($null -eq $replacementMember) {
+            "``$replacement``"
+        } else {
+            $replacementScope = (([string] $replacementMember.Scope).ToLowerInvariant() -split '/') |
+                ForEach-Object { ConvertTo-Slug $_ }
+            $replacementPath = "/$kindPlural/$($replacementScope -join '/')/$replacement/"
+            "[``$replacement``]({{ '$replacementPath' | relative_url }})"
+        }
+    }
+
+    $deprecationText = ""
+    if ($deprecated) {
+        $removalText = if ([string]::IsNullOrWhiteSpace($sunset)) {
+            "Removal is planned, but no version is scheduled."
+        } else {
+            "Planned for removal in Expressif $sunset."
+        }
+        $deprecationLines = @("> **Deprecated:** $removalText", ">")
+
+        if ([string]::IsNullOrWhiteSpace($replacement)) {
+            $deprecationLines += "> No direct replacement is available."
+        } elseif (-not $replacementCompatibilityKnown) {
+            $deprecationLines += "> Use $replacementDisplay instead. Review the replacement before migrating because compatibility information is unavailable."
+        } elseif ($replacementIsEquivalent) {
+            $deprecationLines += "> Use $replacementDisplay instead. This replacement is behavior-equivalent."
+        } else {
+            $deprecationLines += "> Use $replacementDisplay instead. This replacement is not behavior-equivalent."
+            if (-not [string]::IsNullOrWhiteSpace($migrationNotes)) {
+                $deprecationLines += ">"
+                $deprecationLines += "> **Migration:** $migrationNotes"
+            }
+        }
+
+        $deprecationText = $deprecationLines -join "`n"
+    }
+
+    $valueShapeRows = @()
+    $valueShapeUsesTypeVariables = $false
+    $hasValueShape = $null -ne $schema -and
+        ([string] $schema.Classification) -eq "contract" -and
+        $null -ne $schema.PSObject.Properties["Input"] -and
+        $null -ne $schema.PSObject.Properties["Output"]
+
+    if ($hasValueShape) {
+        $valueShapeExpressions = @([string] $schema.Input, [string] $schema.Output)
+        $valueShapeRows += "- Pipeline input: ``$([string] $schema.Input)``"
+        $valueShapeRows += "- Returns: ``$([string] $schema.Output)``"
+
+        if ($null -ne $schema.PSObject.Properties["Parameters"] -and $null -ne $schema.Parameters) {
+            foreach ($parameter in $parameters) {
+                $parameterSchemaProperty = $schema.Parameters.PSObject.Properties[$parameter.name]
+                if ($null -eq $parameterSchemaProperty) {
+                    continue
+                }
+
+                $parameterSchema = $parameterSchemaProperty.Value
+                $hasParameterInput = $null -ne $parameterSchema.PSObject.Properties["Input"]
+                $hasParameterOutput = $null -ne $parameterSchema.PSObject.Properties["Output"]
+                if ($hasParameterInput) {
+                    $valueShapeExpressions += [string] $parameterSchema.Input
+                }
+                if ($hasParameterOutput) {
+                    $valueShapeExpressions += [string] $parameterSchema.Output
+                }
+                if ($hasParameterInput -and $hasParameterOutput) {
+                    $valueShapeRows += "- ``$($parameter.name)``: Receives ``$([string] $parameterSchema.Input)`` and returns ``$([string] $parameterSchema.Output)``."
+                } elseif ($hasParameterInput) {
+                    $valueShapeRows += "- ``$($parameter.name)``: Receives ``$([string] $parameterSchema.Input)``."
+                } elseif ($hasParameterOutput) {
+                    $valueShapeRows += "- ``$($parameter.name)``: Returns ``$([string] $parameterSchema.Output)``."
+                }
+
+                if ($null -ne $parameterSchema.PSObject.Properties["Combine"]) {
+                    switch ([string] $parameterSchema.Combine) {
+                        "union" {
+                            $valueShapeRows += "- Combination: When multiple values are supplied, their output types are combined as a union."
+                        }
+                        "tuple" {
+                            $valueShapeRows += "- Combination: When multiple values are supplied, their output types become tuple positions in declaration order."
+                        }
+                    }
+                }
+            }
+        }
+
+        $nullableSources = @()
+        if (
+            $null -ne $schema.PSObject.Properties["Nullability"] -and
+            ([string] $schema.Nullability) -eq "propagate-input"
+        ) {
+            $nullableSources += "input"
+        }
+        if ($null -ne $schema.PSObject.Properties["NullableWhen"]) {
+            $nullableSources += @($schema.NullableWhen | ForEach-Object { [string] $_ })
+        }
+        $nullableSources = @($nullableSources | Select-Object -Unique)
+
+        if ($nullableSources.Count -gt 0) {
+            $nullableLabels = @(
+                $nullableSources | ForEach-Object {
+                    if ($_ -eq "input") {
+                        "the pipeline input"
+                    } else {
+                        "the ``$_`` parameter"
+                    }
+                }
+            )
+            $valueShapeRows += "- Nullability: The result is nullable when $(Join-NaturalLanguageList -Values $nullableLabels) is nullable."
+        }
+
+        $valueShapeUsesTypeVariables = @(
+            $valueShapeExpressions | Where-Object { $_ -match '(?<![A-Za-z])[A-Z](?![A-Za-z])' }
+        ).Count -gt 0
+    }
+
+    $incremental = $null -ne $member.PSObject.Properties["Incremental"] -and [bool] $member.Incremental
 
     $inputType = ""
-    if ($null -ne $member.PSObject.Properties["Input"]) {
+    if ($hasValueShape) {
+        $inputType = [string] $schema.Input
+    } elseif ($null -ne $member.PSObject.Properties["Input"]) {
         $inputType = [string] $member.Input
     }
 
     $outputType = ""
-    if ($null -ne $member.PSObject.Properties["Output"]) {
+    if ($hasValueShape) {
+        $outputType = [string] $schema.Output
+    } elseif ($null -ne $member.PSObject.Properties["Output"]) {
         $outputType = [string] $member.Output
     }
 
@@ -544,16 +723,22 @@ foreach ($member in $members) {
         signature           = $signatureLines -join "`n"
         summary             = [string] $member.Summary
         deprecated          = $deprecated
-        replacement         = $replacement
-        sunset              = $sunset
+        deprecation_text    = $deprecationText
         behavior            = $behavior
         has_behavior        = -not [string]::IsNullOrWhiteSpace($behavior)
+        has_value_shape     = $hasValueShape
+        value_shape_rows    = $valueShapeRows -join "`n"
+        value_shape_uses_type_variables = $valueShapeUsesTypeVariables
+        incremental         = $incremental
         has_traversal       = $null -ne $traversal
         traversal_summary  = if ($null -ne $traversal) { [string] $traversal.Summary } else { "" }
         has_semantics       = $null -ne $semantics
         semantics_cardinality = if ($null -ne $semantics) { [string] $semantics.Cardinality } else { "" }
+        semantics_cardinality_definition = if ($null -ne $semantics) { $semanticsDefinitions.Cardinality[[string] $semantics.Cardinality] } else { "" }
         semantics_dependency = if ($null -ne $semantics) { [string] $semantics.Dependency } else { "" }
+        semantics_dependency_definition = if ($null -ne $semantics) { $semanticsDefinitions.Dependency[[string] $semantics.Dependency] } else { "" }
         semantics_ordering  = if ($null -ne $semantics) { [string] $semantics.Ordering } else { "" }
+        semantics_ordering_definition = if ($null -ne $semantics) { $semanticsDefinitions.Ordering[[string] $semantics.Ordering] } else { "" }
         has_evaluation     = @($parameters | Where-Object { $_.evaluation_frequency -ne "" }).Count -gt 0
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes

@@ -27,11 +27,6 @@ Returns a lowercase, separator-normalized slug, removing Latin diacritics withou
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Crème brûlée recipe" | slug → "creme-brulee-recipe"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/normalization`  

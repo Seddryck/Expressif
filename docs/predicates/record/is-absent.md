@@ -30,15 +30,6 @@ Returns whether the named field does not exist in the input record, independentl
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `name` | `text` | Yes | Name of the field whose absence is tested. |
-
-
-
-## Argument evaluation
-
-- **`name`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ Returns whether the named field does not exist in the input record, independentl
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`name`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `record`  

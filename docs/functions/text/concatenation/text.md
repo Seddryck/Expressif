@@ -33,12 +33,6 @@ Constructs text by evaluating zero or more positional expressions from left to r
 
 
 
-## Argument evaluation
-
-- **`values`:** Each supplied expression is evaluated once against the value entering this call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +44,9 @@ Constructs text by evaluating zero or more positional expressions from left to r
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function<br>
 **Scope:** `text/concatenation`<br>

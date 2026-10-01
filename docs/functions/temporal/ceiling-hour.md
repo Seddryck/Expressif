@@ -27,11 +27,6 @@ Returns the dateTime passed as argument value with the minutes, seconds and mill
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | ceiling-hour → #"2024-01-15 13:00:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

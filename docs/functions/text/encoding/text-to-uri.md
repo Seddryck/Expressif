@@ -27,11 +27,6 @@ Returns the input text escaped as URI data using UTF-8 percent encoding. Preserv
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "café & tea" | text-to-uri → "caf%C3%A9%20%26%20tea"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

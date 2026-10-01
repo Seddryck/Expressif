@@ -31,12 +31,6 @@ This function has no parameters.
 
 
 
-## Behavior
-
-Escapes quotation marks, reverse solidus characters, and control characters required by the JSON string grammar while leaving valid Unicode text readable. Already escaped content is escaped again.
-
-
-
 ## Examples
 
 {% raw %}
@@ -45,6 +39,9 @@ Escapes quotation marks, reverse solidus characters, and control characters requ
 ```
 {% endraw %}
 
+## Behavior
+
+Escapes quotation marks, reverse solidus characters, and control characters required by the JSON string grammar while leaving valid Unicode text readable. Already escaped content is escaped again.
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-any() → any
+boolean →
+any() → boolean
 ```
 
 Returns `true` when at least one accumulated boolean value is `true`.
@@ -29,11 +29,6 @@ This function has no parameters.
 
 
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -42,6 +37,18 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `boolean`
+- Returns: `boolean`
+
+
+
+
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 
 **Kind:** Function  
 **Scope:** `array/aggregation`  

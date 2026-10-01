@@ -31,16 +31,6 @@ Compare the text value passed as argument and the text value passed as parameter
 |:-----|:-----|:---------|:------------|
 | `reference` | `text` | Yes | A string to be compared to the argument value. |
 | `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
-
-
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped.
-- **`comparer`:** Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +40,10 @@ Compare the text value passed as argument and the text value passed as parameter
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context unless the incoming value is null, in which case it is skipped.
+- **`comparer`:** Supplied as comparer configuration and reused during comparisons; it is not evaluated as an expression for each value.
 
 **Kind:** Predicate  
 **Scope:** `text`  

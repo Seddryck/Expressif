@@ -27,11 +27,6 @@ Returns the input text in COBOL-CASE, uppercasing words and joining them with hy
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | cobol-case → "HELLO-WORLD"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

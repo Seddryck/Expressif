@@ -37,14 +37,6 @@ Classifies a numeric value into an equal-width bucket within a half-open interva
 
 
 
-## Argument evaluation
-
-- **`minimum`:** Evaluated once in the enclosing context.
-- **`maximum`:** Evaluated once in the enclosing context.
-- **`count`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -53,6 +45,11 @@ Classifies a numeric value into an equal-width bucket within a half-open interva
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`minimum`:** Evaluated once in the enclosing context.
+- **`maximum`:** Evaluated once in the enclosing context.
+- **`count`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `numeric/classification`  

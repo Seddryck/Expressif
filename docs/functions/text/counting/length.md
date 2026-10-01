@@ -27,11 +27,6 @@ Returns the length of the argument value. If the value is `null` or `empty` then
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | length → 11
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/counting`  

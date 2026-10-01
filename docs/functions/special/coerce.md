@@ -33,17 +33,6 @@ Coerces a scalar value or selected tuple and record values to requested Expressi
 
 
 
-## Argument evaluation
-
-- **`specifications`:** Type descriptors and field or position mappings are resolved as coercion specifications, rather than evaluated as ordinary expressions.
-
-
-## Behavior
-
-Tuple selector mappings use zero-based positions: `$0` selects the first position, `$1` selects the second, and unavailable positions are ignored.
-
-
-
 ## Examples
 
 {% raw %}
@@ -54,6 +43,14 @@ T("Bob", "42") | coerce($1 -> :integer) | $1 → 42
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`specifications`:** Type descriptors and field or position mappings are resolved as coercion specifications, rather than evaluated as ordinary expressions.
+
+
+## Behavior
+
+Tuple selector mappings use zero-based positions: `$0` selects the first position, `$1` selects the second, and unavailable positions are ignored.
 
 **Kind:** Function  
 **Scope:** `special`  

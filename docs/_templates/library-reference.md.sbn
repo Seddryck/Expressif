@@ -19,7 +19,7 @@ generated: true
 {{ model.summary }}
 
 {{ if model.deprecated }}
-> **Deprecated:** Use `{{ model.replacement }}` instead. This function is planned for removal in Expressif {{ model.sunset }}.
+{{ model.deprecation_text }}
 {{ end }}
 
 ## Parameters
@@ -39,17 +39,40 @@ This {{ model.kind }} has no parameters.
 | Name | Required | Description |
 |:-----|:---------|:------------|
 {{ model.parameter_rows }}
+{{ end }}{{ if model.examples.size > 0 }}
+
+## Examples
+
+{% raw %}
+```expressif
+{{ model.examples_text }}
+```
+{% endraw %}
+{{ end }}{{ if model.has_value_shape }}
+
+## Value shape
+
+{{ model.value_shape_rows }}
+
+{{ if model.value_shape_uses_type_variables -}}
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+{{ end -}}
 {{ end }}
 
 {{ if model.has_semantics -}}
 
 ## Structural semantics
 
-- **Cardinality:** `{{ model.semantics_cardinality }}`
-- **Dependency:** `{{ model.semantics_dependency }}`
-- **Ordering:** `{{ model.semantics_ordering }}`
+- Cardinality: `{{ model.semantics_cardinality }}` <span class="semantics-info" title="{{ model.semantics_cardinality_definition }}" aria-label="Cardinality definition: {{ model.semantics_cardinality_definition }}">i</span>
+- Dependency: `{{ model.semantics_dependency }}` <span class="semantics-info" title="{{ model.semantics_dependency_definition }}" aria-label="Dependency definition: {{ model.semantics_dependency_definition }}">i</span>
+- Ordering: `{{ model.semantics_ordering }}` <span class="semantics-info" title="{{ model.semantics_ordering_definition }}" aria-label="Ordering definition: {{ model.semantics_ordering_definition }}">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+{{ end }}{{ if model.incremental }}
+
+## Aggregation support
+
+This function supports incremental aggregation and can be used with `fold`, `scan`, and `broadcast`.
 {{ end }}
 
 {{ if model.has_traversal || model.has_evaluation -}}
@@ -74,17 +97,6 @@ See [Structural semantics](/Expressif/language/structural-semantics/) for the de
 
 {{ model.behavior }}
 {{ end ~}}
-
-{{ if model.examples.size > 0 }}
-
-## Examples
-
-{% raw %}
-```expressif
-{{ model.examples_text }}
-```
-{% endraw %}
-{{ end }}
 
 {{ model.reference_text }}
 {: .member-reference }

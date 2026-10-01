@@ -37,14 +37,6 @@ Returns the argument value with a subset of the string substitued by a another s
 
 
 
-## Argument evaluation
-
-- **`start`:** Evaluated once in the enclosing context.
-- **`length`:** Evaluated once in the enclosing context.
-- **`append`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -53,6 +45,11 @@ Returns the argument value with a subset of the string substitued by a another s
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`start`:** Evaluated once in the enclosing context.
+- **`length`:** Evaluated once in the enclosing context.
+- **`append`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

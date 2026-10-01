@@ -33,12 +33,6 @@ Returns the argument value formatted according to the mask specified as paramete
 
 
 
-## Argument evaluation
-
-- **`mask`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +41,9 @@ Returns the argument value formatted according to the mask specified as paramete
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`mask`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/masking`  

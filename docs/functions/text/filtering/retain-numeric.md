@@ -27,11 +27,6 @@ Returns the input string with all non-numeric characters removed, leaving only d
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "Hello World" | retain-numeric → "(empty)"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/filtering`  

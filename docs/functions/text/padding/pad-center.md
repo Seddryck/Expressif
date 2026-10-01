@@ -35,13 +35,6 @@ Returns a new string that center-aligns the characters in this string by padding
 
 
 
-## Argument evaluation
-
-- **`length`:** Evaluated once in the enclosing context.
-- **`character`:** Evaluated once in the enclosing context only when padding is needed.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +43,10 @@ Returns a new string that center-aligns the characters in this string by padding
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`length`:** Evaluated once in the enclosing context.
+- **`character`:** Evaluated once in the enclosing context only when padding is needed.
 
 **Kind:** Function  
 **Scope:** `text/padding`  

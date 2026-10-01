@@ -27,11 +27,6 @@ Returns the root directory information of a file path provided as argument. Retu
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "docs/_data/function.json" | root → ""
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `io`  

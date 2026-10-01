@@ -30,15 +30,6 @@ Returns the tuple field at the specified zero-based position. Returns `null` whe
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | Specifies the zero-based position of the tuple field to return. |
-
-
-
-## Argument evaluation
-
-- **`position`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -47,6 +38,9 @@ T(10, 20, 30) | tuple-at(1) → 20
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`position`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `tuple`  

@@ -35,12 +35,6 @@ Returns the dateTime passed as argument and set in UTC converted to the time zon
 
 
 
-## Argument evaluation
-
-- **`timeZoneLabel`:** Evaluated once in the context surrounding this `utc-to-local` call.
-
-
-
 ## Examples
 
 {% raw %}
@@ -49,6 +43,9 @@ Returns the dateTime passed as argument and set in UTC converted to the time zon
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`timeZoneLabel`:** Evaluated once in the context surrounding this `utc-to-local` call.
 
 **Kind:** Function  
 **Scope:** `temporal`  

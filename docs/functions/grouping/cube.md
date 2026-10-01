@@ -29,13 +29,22 @@ This function has no parameters.
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+#{(T("BE", 2025) => {120, 30}), (T("FR", 2025) => {90}), (T("BE", 2026) => {80})} | cube | summarize(sum) | map(pair-value) → {150, 90, 80, 230, 90, 240, 80, 320}
+```
+{% endraw %}
+
 ## Structural semantics
 
-- **Cardinality:** `expanded`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `expanded` <span class="semantics-info" title="One visited input can produce multiple output elements." aria-label="Cardinality definition: One visited input can produce multiple output elements.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 
@@ -50,17 +59,6 @@ Generates all 2^N grouping levels for N dimensions, starting with the original l
 For two dimensions, the equivalent explicit pattern is grouping-sets(T(0, 1), tuple(0), tuple(1), tuple()).
 
 Uses the same AllDimension.Instance marker as roll-up, whose source literal is #all and which is distinct from null and the string "#all". Reading #all represents an already-aggregated dimension; it does not aggregate values or act as a wildcard. Scalar keys have one dimension and a scalar total key; arrays and records are scalar dimensions. Tuple arity is retained, with nested tuples treated as single dimensions. Empty groupings remain empty; zero-component tuples have only their original level. All keys must be scalar or all tuples of the same arity. Mixed shapes and keys already containing the aggregated marker as a dimension fail with an argument error, preventing ambiguous dimensions and double-counting.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-#{(T("BE", 2025) => {120, 30}), (T("FR", 2025) => {90}), (T("BE", 2026) => {80})} | cube | summarize(sum) | map(pair-value) → {150, 90, 80, 230, 90, 240, 80, 320}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `grouping`  
