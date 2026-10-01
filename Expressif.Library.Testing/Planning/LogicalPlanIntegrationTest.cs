@@ -40,7 +40,7 @@ public class LogicalPlanIntegrationTest
         Assert.That(roundTrip, Is.EqualTo(json));
     }
 
-    [TestCase("first(1)", "function")]
+    [TestCase("first-elements(1)", "function")]
     [TestCase("is-even", "predicate")]
     [TestCase("fold(first)", "accumulator")]
     [TestCase("custom-operator", "extension")]

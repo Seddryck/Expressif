@@ -1,5 +1,5 @@
 suite: array
-kind: accumulator
+kind: function
 operator: closest
 tests:
   - id: closest.selection

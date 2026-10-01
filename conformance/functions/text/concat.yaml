@@ -1,5 +1,5 @@
 suite: text
-kind: accumulator
+kind: function
 operator: concat
 tests:
   - id: concat.without-separator

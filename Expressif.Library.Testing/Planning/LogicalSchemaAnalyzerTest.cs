@@ -843,7 +843,7 @@ public class LogicalSchemaAnalyzerTest
                             .rows.rank -> :integer,
                             .name -> :text
                         )
-                        | first(3)
+                        | first-elements(3)
                         | map(
                             record(
                                 board := .name,

@@ -45,6 +45,7 @@ Converts selected present record fields into rows, preserving retained fields an
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each record of the array supplied as pipeline input to this unpivot call, in source order; selected field names determine row order within each record.

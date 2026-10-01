@@ -35,7 +35,7 @@ raise 'Unexpected lifecycle rule identities' unless source_rules.map { |rule| ru
     end
     if scenario == 'alias-only'
       File.write(File.join(data, 'function.json'), JSON.generate([{
-        'Name' => 'new', 'Scope' => 'array', 'IsPublic' => true, 'Kind' => 'accumulator',
+        'Name' => 'new', 'Scope' => 'array/aggregation', 'IsPublic' => true, 'Incremental' => true,
         'DeprecatedAliases' => [{
           'Name' => 'old', 'Replacement' => 'new', 'Message' => 'old is deprecated; use new instead.',
           'Sunset' => '3.0', 'ReplacementIsEquivalent' => true

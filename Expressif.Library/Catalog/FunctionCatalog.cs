@@ -48,7 +48,7 @@ public sealed class FunctionCatalog
     }
 
     public IEnumerable<FunctionDocumentation> Suggest(string name, int count = 3)
-        => Suggest(name, functions.Where(function => function.Kind != "accumulator"), count);
+        => Suggest(name, functions, count);
 
     public IEnumerable<FunctionDocumentation> Suggest(string name, string kind, int count = 3)
     {
@@ -95,11 +95,8 @@ public sealed class FunctionCatalog
             LoadEntries(assembly, ResourceName, "function"),
             LoadEntries(assembly, PredicateResourceName, "predicate"));
 
-        // Functions and accumulators intentionally share some callable names; they are
-        // resolved in distinct runtime contexts. Predicates share the function lookup,
-        // so validate each of those domains against predicates independently.
-        ValidateNames(entries.Where(entry => entry.Kind != "accumulator"));
-        ValidateNames(entries.Where(entry => entry.Kind != "function"));
+        ValidateNames(entries.Where(entry => entry.Kind == "function"));
+        ValidateNames(entries.Where(entry => entry.Kind == "predicate"));
         ValidateOmissions(entries);
         ValidateSemantics(entries);
         ValidateSchemas(entries);

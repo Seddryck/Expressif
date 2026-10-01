@@ -20,6 +20,7 @@ public sealed record FunctionDocumentation(
     bool ReplacementIsEquivalent = false,
     string? MigrationNotes = null,
     string Kind = "function",
+    bool Incremental = false,
     FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null,
     FunctionTraversalDocumentation? Traversal = null,
     FunctionSemanticsDocumentation? Semantics = null,

@@ -312,11 +312,10 @@ public class FunctionFactoryTest
 
     [Test]
     [TestCase("first-elements(2)", typeof(FirstElements))]
-    [TestCase("first(2)", typeof(FirstElements))]
-    [TestCase("last(2)", typeof(LastElements))]
+    [TestCase("last-elements(2)", typeof(LastElements))]
     [TestCase("skip-first(2)", typeof(SkipFirstElements))]
     [TestCase("skip-last(2)", typeof(SkipLastElements))]
-    public void Instantiate_ArraySelectionAliases_Valid(string expression, Type expectedType)
+    public void Instantiate_ArraySelectionNames_Valid(string expression, Type expectedType)
     {
         var function = Instantiate(expression, new Context());
 

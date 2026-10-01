@@ -12,7 +12,7 @@ Set-Location -Path $PSScriptRoot
 
 $expected = @{}
 @(
-    foreach ($kind in @("function", "predicate", "accumulator")) {
+    foreach ($kind in @("function", "predicate")) {
         $catalog = Get-Content -LiteralPath (Join-Path $CatalogPath "$kind.json") -Raw | ConvertFrom-Json
         foreach ($member in @($catalog | Where-Object { $_.IsPublic -eq $true -and $_.Deprecated -eq $true })) {
             [ordered] @{
@@ -23,11 +23,11 @@ $expected = @{}
                 Notes       = if ($null -ne $member.MigrationNotes) { [string] $member.MigrationNotes } else { "" }
             }
         }
-        if ($kind -eq "accumulator") {
+        if ($kind -eq "function") {
             foreach ($member in @($catalog | Where-Object { $_.IsPublic -eq $true })) {
                 foreach ($alias in @($member.DeprecatedAliases | Where-Object { $null -ne $_ })) {
                     [ordered] @{
-                        Key         = "accumulator alias|$($alias.Name)"
+                        Key         = "function alias|$($alias.Name)"
                         Replacement = [string] $alias.Replacement
                         Sunset      = if ($null -ne $alias.Sunset) { [string] $alias.Sunset } else { "" }
                         Equivalent  = ([bool] $alias.ReplacementIsEquivalent).ToString().ToLowerInvariant()
@@ -48,7 +48,7 @@ $content = Get-Content -LiteralPath $pagePath -Raw
 $actual = @{}
 [regex]::Matches(
     $content,
-    '<tr data-kind="(function|predicate|accumulator|accumulator alias)" data-name="([^"]+)" data-replacement="([^"]*)" data-equivalent="([^"]*)" data-migration-notes="([^"]*)" data-sunset="([^"]*)">'
+    '<tr data-kind="(function|predicate|function alias)" data-name="([^"]+)" data-replacement="([^"]*)" data-equivalent="([^"]*)" data-migration-notes="([^"]*)" data-sunset="([^"]*)">'
 ) | ForEach-Object {
     $key = "$($_.Groups[1].Value)|$($_.Groups[2].Value)"
     $actual[$key] = [ordered] @{

@@ -45,6 +45,7 @@ Emits every matching pair and preserves unmatched left values with #null in the 
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each element of the array supplied as pipeline input to this join-left call in order; matching right values retain their order within the key. Preserved unmatched left values occupy their input position; preserved unmatched right values are appended in original array order or keyed entry order, with group values in order. Empty groups supply no right values.
@@ -64,7 +65,7 @@ Visits each element of the array supplied as pipeline input to this join-left ca
 {% endraw %}
 
 
-**Kind:** Function<br>
-**Scope:** `array/combination`<br>
+**Kind:** Function  
+**Scope:** `array/combination`  
 **Aliases:** None
 {: .member-reference }

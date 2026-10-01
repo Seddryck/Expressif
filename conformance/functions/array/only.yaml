@@ -1,5 +1,5 @@
 suite: array
-kind: accumulator
+kind: function
 operator: only
 tests:
   - id: only.selection

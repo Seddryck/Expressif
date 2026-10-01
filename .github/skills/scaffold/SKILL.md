@@ -1,6 +1,6 @@
 ---
 name: scaffold
-description: "Scaffold documentation metadata, logical-schema discovery contracts, and conformance cases for a new post-v2 Expressif function, predicate, or accumulator before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
+description: "Scaffold documentation metadata, logical-schema discovery contracts, and conformance cases for a new post-v2 Expressif function or predicate before implementation. Use when defining a new operator; do not use for implementing an existing scaffold."
 ---
 
 # /scaffold
@@ -9,7 +9,7 @@ Define the public contract for a new operator and create the catalog record and 
 
 This skill targets the architecture after the `next-major` development line. Do not preserve legacy metadata or parser conventions from `main`.
 
-Supported kinds are function, predicate, and accumulator.
+Supported public kinds are function and predicate. Array aggregation functions that need incremental evaluation are functions with `Incremental: true`.
 
 Follow `AGENTS.md` for issue, branch, worktree, commit, push, and pull-request execution. Scaffolding may propose a commit message, but it does not independently authorize or forbid those Git operations.
 
@@ -49,9 +49,9 @@ Do not replace a known relationship with unexplained `any` metadata.
 
 Predicates are Boolean-returning callable functions. Record their semantic input and Boolean output and follow the repository's canonical question-style naming convention. Compatibility spellings belong in aliases, not in the canonical name.
 
-### Accumulator contract
+### Incremental aggregation contract
 
-Describe the accumulated item type, result type, initial/empty result, null handling, and order sensitivity. Do not force function-style failure or cardinality semantics onto accumulators.
+Describe the aggregated item type, result type, initial/empty result, null handling, and order sensitivity. Mark the function `Incremental: true` when `fold`, `scan`, or `broadcast` must consume it through the internal accumulation lifecycle.
 
 ## Schema discovery contract
 
@@ -135,7 +135,7 @@ Document null, empty, blank, invalid-input, and binding behavior only as semanti
 * predicates have explicit Boolean behavior;
 * functions may preserve, transform, materialize, or reject special values;
 * unsupported calls may fail during binding with a diagnostic;
-* accumulators define their own empty and null lifecycle behavior.
+* incremental aggregation functions define their own empty and null lifecycle behavior.
 
 End prose sentences with punctuation and preserve stable terminology used by adjacent catalog entries.
 
@@ -145,7 +145,7 @@ Map kind to:
 
 * function: `docs/_data/function.json`;
 * predicate: `docs/_data/predicate.json`;
-* accumulator: an entry with `"Kind": "accumulator"` in `docs/_data/function.json`.
+* incremental aggregation function: an entry with `"Incremental": true` in `docs/_data/function.json`.
 
 Emit the complete record required by the current post-v2 schema. For functions this includes at least `Name`, `IsPublic`, `Aliases`, `Scope`, `Input`, `Output`, `Summary`, typed `Parameters`, and a complete `Schema` classification. Emit contract relationships, intrinsic selection, dynamic reason, omission, or variadic fields when applicable. Do not append an incomplete record merely because older entries omit newer semantic fields. Preserve existing formatting and ordering without reordering unrelated entries.
 
@@ -167,7 +167,7 @@ Select cases from semantic partitions rather than a fixed count. Cover applicabl
 * empty, single, multiple, heterogeneous, nested, and spread forms for variadic operators;
 * every supported typed input contract for coercions;
 * short-circuit or declaration-order behavior;
-* accumulator empty, null, repeated, and order-sensitive behavior;
+* incremental aggregation empty, null, repeated, and order-sensitive behavior;
 * null, empty, and blank only when meaningful for the declared input and semantics.
 
 When omission affects an observable result, include a case that actually omits the argument. For `constant`, cover the omitted form and its fixed semantic value; for `empty-variadic`, cover the zero-argument form; for `absent`, demonstrate the documented operator-specific path; and for `environment-derived`, assert stable observable invariants without hard-coding nondeterministic output. If omission is not observable in the conformance schema, state why and place any required coverage in a focused test.
@@ -189,7 +189,7 @@ post-v2 page generator:
 ./New-LibraryReferencePages.ps1 -Kind <Kind> -Scope <Scope>
 ```
 
-Map `<Kind>` to `Function`, `Predicate`, or `Accumulator`. Pass the changed
+Map `<Kind>` to `Function` or `Predicate`. Pass the changed
 operator's scope, such as `text` or `text/conversion`, so generation and stale-page
 cleanup stay limited to that scope. Include the generated page for the new operator
 and its affected indexes in the task. Regeneration must succeed before the completed

@@ -178,7 +178,7 @@ flowchart LR
     F --> G[numeric]
 ```
 
-## Functions, predicates, and accumulators
+## Functions and predicates
 
 From a user's perspective, these concepts share the same composition model.
 
@@ -194,13 +194,13 @@ A predicate:
 value → boolean
 ```
 
-An accumulator:
+An aggregation function:
 
 ```text
 array<T> → value
 ```
 
-They differ by purpose and contract, not by requiring completely different expression syntax.
+Aggregation functions such as `sum`, `count`, and `reduce` are ordinary functions in the public language model. The public .NET `IAccumulator` extension contract remains available, while catalog metadata exposes `Incremental` as an execution capability instead of a third language-level operator kind. This lets `fold`, `scan`, and `broadcast` share stateful, linear-time evaluation.
 
 See [Predicates](predicates.md) and [Structured values](structured-values.md) for the specialized behavior.
 
@@ -211,6 +211,8 @@ A function can expose aliases for discoverability or compatibility.
 Where namespaces are available, they can also disambiguate or organize related functions.
 
 The canonical function name should be preferred in documentation and reusable expressions unless an alias communicates the intent more clearly for a specific audience.
+
+In v3.0, the old `/accumulators/<scope>/<name>/` reference URLs move to `/functions/array/aggregation/<name>/`. `first` and `last` name the scalar aggregation functions. The former selection aliases were removed; use `first-elements(count)` and `last-elements(count)` when selecting arrays of elements.
 
 ## Array arguments and spread
 

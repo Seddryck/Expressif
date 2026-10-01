@@ -41,6 +41,7 @@ Applies a transformation expression to each input item and returns the transform
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each element of the array or each pair of the dictionary supplied as pipeline input to this map call, in enumeration order.

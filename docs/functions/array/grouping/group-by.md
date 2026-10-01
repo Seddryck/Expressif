@@ -41,6 +41,7 @@ Groups input values by keys calculated from one or more expressions.
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each element of the array entering this call.

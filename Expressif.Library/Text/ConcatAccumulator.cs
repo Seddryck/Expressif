@@ -9,7 +9,7 @@ namespace Expressif.Library.Text;
 /// Combines accumulated text values in source order, inserting the separator only between values.
 /// </summary>
 [Function(prefix: "", Name = "concat")]
-[Scope("text")]
+[Scope("array/aggregation")]
 public class ConcatAccumulator : BaseArrayAccumulator
 {
     private readonly Func<string> separatorProvider;

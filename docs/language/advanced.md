@@ -176,13 +176,13 @@ Conceptually:
 
 ```mermaid
 flowchart LR
-    A["value 1"] --> D[Accumulator]
+    A["value 1"] --> D[Incremental aggregation]
     B["value 2"] --> D
     C["value 3"] --> D
     D --> E[Result]
 ```
 
-A function such as `sum` is a familiar specialized accumulator.
+A function such as `sum` is a familiar specialized aggregation.
 
 A more general fold allows the reduction behavior itself to be expressed.
 

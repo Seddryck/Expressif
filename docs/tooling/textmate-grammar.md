@@ -104,7 +104,7 @@ Once the extension is installed, Visual Studio Code automatically detects Expres
 This means that:
 
 - operators such as pipes receive dedicated colors;
-- functions, predicates, and accumulators are highlighted;
+- functions and predicates are highlighted, with incremental aggregation functions retaining their specialized style;
 - strings, dates, and numbers are styled automatically;
 - constants such as `null`, `empty`, and `blank` are recognized;
 - input-binding declarations such as `(a, b) :>` and named references such as `@a` are recognized;

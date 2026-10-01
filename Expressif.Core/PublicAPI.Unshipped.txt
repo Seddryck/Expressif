@@ -643,6 +643,7 @@ Expressif.Introspection.FunctionInfo.Deprecated.get -> bool
 Expressif.Introspection.FunctionInfo.DeprecatedAliases.get -> System.Collections.Generic.IReadOnlyList<Expressif.Introspection.FunctionAliasLifecycleInfo!>!
 Expressif.Introspection.FunctionInfo.ImplementationType.get -> System.Type!
 Expressif.Introspection.FunctionInfo.Input.get -> string!
+Expressif.Introspection.FunctionInfo.IsIncremental.get -> bool
 Expressif.Introspection.FunctionInfo.IsPublic.get -> bool
 Expressif.Introspection.FunctionInfo.Kind.get -> string!
 Expressif.Introspection.FunctionInfo.MigrationNotes.get -> string?

@@ -43,6 +43,7 @@ Returns the elements in the zero-based half-open range from start, inclusive, to
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`start`:** Evaluated once in the enclosing context.

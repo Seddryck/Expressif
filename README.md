@@ -110,12 +110,12 @@ The documentation site is the authoritative guide and reference:
 - [Language guide](https://seddryck.github.io/Expressif/language/)
 - [Function reference](https://seddryck.github.io/Expressif/functions/)
 - [Predicate reference](https://seddryck.github.io/Expressif/predicates/)
-- [Accumulator reference](https://seddryck.github.io/Expressif/accumulators/)
+- [Array aggregation functions](https://seddryck.github.io/Expressif/functions/array/aggregation/)
 - [.NET SDK](https://seddryck.github.io/Expressif/dotnet-sdk/)
 - [Command-line interface](https://seddryck.github.io/Expressif/cli/)
 - [Tooling and editor support](https://seddryck.github.io/Expressif/tooling/)
 
-Function, predicate, and accumulator details live in these references rather than being duplicated in this README.
+Function and predicate details live in these references rather than being duplicated in this README. Incremental aggregation operators are documented as functions.
 
 ## Tooling
 

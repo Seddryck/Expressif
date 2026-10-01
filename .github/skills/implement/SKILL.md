@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Implement a scaffolded Expressif function, predicate, or accumulator for the post-v2 architecture, including typed contracts, logical-schema analysis, binder integration, metadata consistency, and conformance coverage. Use only when documentation metadata and conformance cases already exist."
+description: "Implement a scaffolded Expressif function or predicate for the post-v2 architecture, including typed contracts, logical-schema analysis, binder integration, metadata consistency, and conformance coverage. Use only when documentation metadata and conformance cases already exist."
 ---
 
 # /implement
@@ -9,7 +9,7 @@ Implement an operator whose documentation metadata and conformance cases were al
 
 This skill targets the architecture after the `next-major` development line. Do not preserve or recreate legacy parser/factory patterns from `main`.
 
-Supported operator kinds are function, predicate, and accumulator.
+Supported public operator kinds are function and predicate. Incremental array aggregation is an implementation capability of functions.
 
 Follow `AGENTS.md` for issue, branch, worktree, commit, push, and pull-request requirements. This skill does not replace that workflow.
 
@@ -19,7 +19,7 @@ Locate the operator by canonical name or alias in the matching file:
 
 * `docs/_data/function.json`;
 * `docs/_data/predicate.json`;
-* accumulator entries in `docs/_data/function.json` (identified by `"Kind": "accumulator"`).
+* incremental aggregation entries in `docs/_data/function.json` (identified by `"Incremental": true`).
 
 Read its YAML under `conformance/<kind>/<scope-lower>/`. Stop if either artifact is absent or ambiguous: scaffolding is incomplete.
 
@@ -114,7 +114,7 @@ Implement a predicate as a Boolean-returning function contract. Reuse the shared
 
 Use predicate-specific registration or bases only where they remain part of the post-v2 registry. Do not duplicate function resolution, chaining, coercion, or argument binding for predicates. Check canonical predicate naming and retain compatibility names only when metadata declares them as aliases.
 
-### Accumulator
+### Incremental aggregation function
 
 Inherit from `BaseAccumulator` and preserve the lifecycle:
 
@@ -162,7 +162,7 @@ Validate canonical-name and alias lookup, parameter semantic types and optionali
 
 ## File placement
 
-Place implementation beside the nearest cohesive family. If none fits, create a descriptive `.cs` file under the appropriate `Expressif/Functions/<Scope>`, `Expressif/Predicates/<Scope>`, or `Expressif/Accumulators` directory.
+Place implementation beside the nearest cohesive family. If none fits, create a descriptive `.cs` file under the appropriate function or predicate scope; place incremental aggregation implementations with the array aggregation family.
 
 Mirror that organization in `Expressif.Testing`. Do not create files literally named `function` or `accumulator`, and do not introduce a new scope base solely for one operator.
 
@@ -185,7 +185,7 @@ Choose CLR types compatible with loader normalization and the operator contract.
 
 Add focused tests beyond conformance for behavior YAML cannot express adequately: logical-schema discovery; binding diagnostics and source spans; named, optional, spread, or variadic binding; inference and coercion; deferred or short-circuit evaluation; evaluation-frame isolation and concurrency; registry collisions; or semantic introspection.
 
-Accumulator tests directly exercise `Initialize`, repeated `Accumulate`, and `GetValue` unless YAML explicitly specifies higher-level composition.
+Incremental aggregation tests directly exercise `Initialize`, repeated `Accumulate`, and `GetValue` unless YAML explicitly specifies higher-level composition.
 
 ## Validation
 
@@ -198,7 +198,7 @@ Before completion:
 5. confirm backward requirements, forward inference, nullability, completeness, and serialization agree where applicable;
 6. confirm binder-integrated behavior consumes bound representations, not parser types;
 7. confirm predicates expose an explicit Boolean result;
-8. confirm accumulator state resets completely;
+8. confirm incremental aggregation state resets completely;
 9. run relevant conformance and focused runtime tests;
 10. run `LogicalSchemaAnalyzerTest`, catalog metadata tests, metadata-consistency tests, and `SchemaAnalysisJsonTest` when serialization changes;
 11. run the solution build and repository analyzer/style verification;

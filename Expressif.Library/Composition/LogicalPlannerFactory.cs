@@ -1,4 +1,6 @@
 using Expressif.Library.Catalog;
+using Expressif.Discovery;
+using Expressif.Functions.Accumulation;
 using Expressif.Planning;
 using Expressif.Values.Types;
 
@@ -9,16 +11,28 @@ namespace Expressif.Library.Composition;
 /// </summary>
 public static class LogicalPlannerFactory
 {
-    public static LogicalPlanner Create(FunctionCatalog? catalog = null)
-        => new(new BuiltInPlanningContext(catalog ?? FunctionCatalog.Default));
+    private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(LogicalPlannerFactory).Assembly);
 
-    private sealed class BuiltInPlanningContext(FunctionCatalog catalog) : ILogicalPlanningContext
+    public static LogicalPlanner Create(FunctionCatalog? catalog = null)
+        => new(new BuiltInPlanningContext(catalog ?? FunctionCatalog.Default, new AccumulatorRegistry(Source)));
+
+    private sealed class BuiltInPlanningContext(
+        FunctionCatalog catalog,
+        AccumulatorRegistry accumulators) : ILogicalPlanningContext
     {
         public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
         {
-            var function = expectedKind is "predicate" or "accumulator"
-                ? Find(name, expectedKind) ?? Find(name, "function")
+            var function = expectedKind == "predicate"
+                ? Find(name, "predicate") ?? Find(name, "function")
                 : Find(name, "function") ?? Find(name);
+            if (expectedKind == "accumulator"
+                && (function is null || !accumulators.TryResolve(function.Name, out _)))
+            {
+                return null;
+            }
+            var implementationKind = function is not null && function.Incremental
+                ? "accumulator"
+                : function?.Kind;
             return function is null ? null : new PlannerFunctionMetadata(
                 new PlannerFunctionDescriptor(
                     function.Name,
@@ -33,7 +47,7 @@ public static class LogicalPlannerFactory
                             function.Semantics.Cardinality,
                             function.Semantics.Dependency,
                             function.Semantics.Ordering),
-                    function.Kind,
+                    implementationKind!,
                     function.Schema is null
                         ? null
                         : new PlannerSchemaDescriptor(

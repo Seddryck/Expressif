@@ -45,7 +45,8 @@ public sealed class FunctionInfo
     public string? MigrationNotes { get; }
     public IReadOnlyList<TupleBindingInfo> Signatures { get; }
     public IReadOnlyList<FunctionAliasLifecycleInfo> DeprecatedAliases { get; }
-    public string Kind => typeof(IAccumulator).IsAssignableFrom(ImplementationType) ? "accumulator" : "function";
+    public string Kind => "function";
+    public bool IsIncremental => typeof(IAccumulator).IsAssignableFrom(ImplementationType);
 }
 
 internal sealed class FunctionInfoDefinition

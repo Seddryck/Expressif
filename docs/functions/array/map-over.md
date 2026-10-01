@@ -43,6 +43,7 @@ Evaluates an expression once for every supplied value while preserving the pipel
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 Visits each element of the values argument supplied to this map-over call, in declaration order.

@@ -36,21 +36,13 @@ public class LogicalPlannerTest
         });
     }
 
-    [TestCase("first", "first-elements")]
-    [TestCase("last", "last-elements")]
-    public void Plan_CrossKindAliasWithArgument_ResolvesFunction(
-        string alias,
-        string canonical)
-    {
-        var call = SingleCall($"{alias}(1)");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(call.Function.Name, Is.EqualTo(canonical));
-            Assert.That(call.Function.Kind, Is.EqualTo("function"));
-            Assert.That(call.Arguments.Single().Parameter.Name, Is.EqualTo("count"));
-        });
-    }
+    [TestCase("first")]
+    [TestCase("last")]
+    public void Plan_RemovedSelectionAliasWithArgument_IsRejected(string name)
+        => Assert.That(
+            () => SingleCall($"{name}(1)"),
+            Throws.TypeOf<LogicalPlanningException>()
+                .With.Message.EqualTo($"Function '{name}' does not accept arguments."));
 
     [TestCase("first")]
     [TestCase("last")]

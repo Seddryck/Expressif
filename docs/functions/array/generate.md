@@ -37,6 +37,8 @@ Generates an array by repeatedly transforming a seed while a condition is satisf
 
 
 
+
+
 ## Argument evaluation
 
 Starts with the incoming seed and repeatedly evaluates the condition and next-seed expression. The seed changes after each iteration.

@@ -1,14 +1,14 @@
 ---
 layout: docs
 title: "common-prefix"
-parent: "Array accumulators"
-grand_parent: "Accumulators library"
-nav_order: 30
+parent: "Aggregation functions"
+grand_parent: "Array functions"
+nav_order: 40
 has_toc: false
-permalink: /accumulators/array/common-prefix/
+permalink: /functions/array/aggregation/common-prefix/
 tags:
-  - accumulators
-  - array
+  - functions
+  - array/aggregation
 generated: true
 ---
 
@@ -25,17 +25,12 @@ Returns the longest prefix shared by all accumulated strings.
 
 
 
-This accumulator has no parameters.
+This function has no parameters.
 
 
 
-## Structural semantics
 
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
 
-See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
 
 ## Behavior
@@ -53,7 +48,7 @@ Empty input returns null. A single string is returned unchanged. Nonempty input 
 {% endraw %}
 
 
-**Kind:** Accumulator  
-**Scope:** `array`  
+**Kind:** Function  
+**Scope:** `array/aggregation`  
 **Aliases:** None
 {: .member-reference }

@@ -4,7 +4,10 @@ function Get-IntrospectionEntries {
         [string] $Path,
 
         [Parameter()]
-        [string] $Kind
+        [string] $Kind,
+
+        [Parameter()]
+        [switch] $Incremental
     )
 
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
@@ -16,7 +19,8 @@ function Get-IntrospectionEntries {
     foreach ($item in @(Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json) |
         Where-Object {
             $_.IsPublic -eq $true -and
-                ([string]::IsNullOrWhiteSpace($Kind) -or $_.Kind -eq $Kind)
+                ([string]::IsNullOrWhiteSpace($Kind) -or $_.Kind -eq $Kind) -and
+                (-not $Incremental -or $_.Incremental -eq $true)
         }) {
         foreach ($name in @($item.Name) + @($item.Aliases)) {
             if (-not [string]::IsNullOrWhiteSpace($name) -and -not $entries.ContainsKey($name)) {
@@ -61,7 +65,7 @@ function Get-SyntaxModel {
     [ordered]@{
         functions = @(Get-IntrospectionEntries -Path $functionCatalog)
         predicates = @(Get-IntrospectionEntries -Path (Join-Path $resolvedInputFolder 'predicate.json'))
-        accumulators = @(Get-IntrospectionEntries -Path $functionCatalog -Kind 'accumulator')
+        accumulators = @(Get-IntrospectionEntries -Path $functionCatalog -Incremental)
         types = @(Get-TypeEntries -Path (Join-Path $resolvedInputFolder 'type.json'))
         constants = @('#blank', '#empty', '#false', '#null', '#true')
         operators = @('...', ':>', ':=', '->', '|>', '|?', '|OR', '|XOR', '|AND', '~', '!', '#', '$', '&', '.', '@', '|')

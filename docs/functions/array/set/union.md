@@ -41,6 +41,7 @@ Returns the distinct values appearing in either the pipeline input or the specif
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`array`:** Evaluated once in the enclosing context.

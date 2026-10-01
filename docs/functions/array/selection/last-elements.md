@@ -41,6 +41,7 @@ Returns up to the requested number of elements from the end of the input enumera
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 
+
 ## Argument evaluation
 
 - **`count`:** Evaluated once in the enclosing context.
@@ -64,5 +65,5 @@ When `count` is greater than the number of elements in the input, `last-elements
 
 **Kind:** Function  
 **Scope:** `array/selection`  
-**Aliases:** `last`
+**Aliases:** None
 {: .member-reference }

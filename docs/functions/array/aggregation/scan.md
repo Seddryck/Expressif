@@ -3,7 +3,7 @@ layout: docs
 title: "scan"
 parent: "Aggregation functions"
 grand_parent: "Array functions"
-nav_order: 30
+nav_order: 160
 has_toc: false
 permalink: /functions/array/aggregation/scan/
 tags:
@@ -40,6 +40,7 @@ Executes an accumulator progressively over the input enumerable and returns the 
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

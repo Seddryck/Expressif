@@ -3,7 +3,7 @@ layout: docs
 title: "broadcast"
 parent: "Aggregation functions"
 grand_parent: "Array functions"
-nav_order: 10
+nav_order: 20
 has_toc: false
 permalink: /functions/array/aggregation/broadcast/
 tags:
@@ -40,6 +40,7 @@ Executes an accumulator once over the full input enumerable, then returns the fi
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

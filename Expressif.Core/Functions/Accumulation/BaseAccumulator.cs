@@ -3,7 +3,7 @@ using Expressif.Functions;
 
 namespace Expressif.Functions.Accumulation;
 
-[Scope("array")]
+[Scope("array/aggregation")]
 public abstract class BaseAccumulator : IAccumulator
 {
     object? IFunction<IEnumerable, object?>.Evaluate(IEnumerable value)
