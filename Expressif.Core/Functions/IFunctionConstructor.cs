@@ -44,7 +44,7 @@ internal interface IFunctionConstructionContext
         IParameter parameter,
         IContext context,
         string functionName);
-    Func<IAccumulator> CreateAccumulatorProvider(IParameter parameter, IContext context);
+    Func<IIncrementalAggregation> CreateAccumulatorProvider(IParameter parameter, IContext context);
     Func<IFunction> CreateTransformationProvider(
         OpenExpressionParameter parameter,
         IContext context);

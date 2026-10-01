@@ -8,6 +8,6 @@ internal static class AccumulatorFactory
     private static readonly AccumulatorRegistry Registry = new(
         new AssemblyTypeSource(typeof(AccumulatorFactory).Assembly));
 
-    public static IAccumulator Instantiate(string? name)
+    public static IIncrementalAggregation Instantiate(string? name)
         => Registry.Create(name ?? string.Empty);
 }

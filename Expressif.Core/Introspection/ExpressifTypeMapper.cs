@@ -15,7 +15,7 @@ internal sealed class ExpressifTypeMapper
         {
             [typeof(IFunction)] = "expression",
             [typeof(IPredicate)] = "predicate",
-            [typeof(IAccumulator)] = "accumulator",
+            [typeof(IIncrementalAggregation)] = "accumulator",
             [typeof(TypeDescriptor)] = "type",
             [typeof(string)] = "text",
             [typeof(char)] = "text",

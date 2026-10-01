@@ -19,14 +19,20 @@ public class CommonAffixTest
 
     [TestCase("common-prefix")]
     [TestCase("common-suffix")]
-    public void Initialize_AfterAccumulation_ResetsState(string name)
+    public void CreateSession_AfterAccumulation_IsolatesState(string name)
     {
-        var accumulator = AccumulatorFactory.Instantiate(name);
-        Accumulate(accumulator, ["abc", "xyz"]);
-        accumulator.Initialize();
-        Assert.That(accumulator.GetValue(), Is.Null);
-        accumulator.Accumulate("fresh");
-        Assert.That(accumulator.GetValue(), Is.EqualTo("fresh"));
+        var aggregation = AccumulatorFactory.Instantiate(name);
+        var first = aggregation.CreateSession();
+        first.Add("abc");
+        first.Add("xyz");
+        var second = aggregation.CreateSession();
+        Assert.That(second.Snapshot(), Is.Null);
+        second.Add("fresh");
+        Assert.Multiple(() =>
+        {
+            Assert.That(first.Snapshot(), Is.EqualTo(string.Empty));
+            Assert.That(second.Snapshot(), Is.EqualTo("fresh"));
+        });
     }
 
     [TestCase("common-prefix", null)]
@@ -37,13 +43,12 @@ public class CommonAffixTest
     [TestCase("common-suffix", true)]
     public void Accumulate_InvalidItem_ThrowsBeforeAndAfterEmptyResult(string name, object? item)
     {
-        var accumulator = AccumulatorFactory.Instantiate(name);
-        accumulator.Initialize();
-        Assert.That(() => accumulator.Accumulate(item), Throws.TypeOf<InvalidCastException>());
-        accumulator.Accumulate("abc");
-        Assert.That(() => accumulator.Accumulate(item), Throws.TypeOf<InvalidCastException>());
-        accumulator.Accumulate("xyz");
-        Assert.That(() => accumulator.Accumulate(item), Throws.TypeOf<InvalidCastException>());
+        var session = AccumulatorFactory.Instantiate(name).CreateSession();
+        Assert.That(() => session.Add(item), Throws.TypeOf<InvalidCastException>());
+        session.Add("abc");
+        Assert.That(() => session.Add(item), Throws.TypeOf<InvalidCastException>());
+        session.Add("xyz");
+        Assert.That(() => session.Add(item), Throws.TypeOf<InvalidCastException>());
     }
 
     [TestCase("common-prefix", "{\"interact\", \"internet\", \"internal\"}", "inter", new[] { "interact", "inter", "inter" })]
@@ -66,11 +71,11 @@ public class CommonAffixTest
         Assert.That(AccumulatorFactory.Instantiate(name), Is.TypeOf(info.ImplementationType));
     }
 
-    private static object? Accumulate(IAccumulator accumulator, object?[] values)
+    private static object? Accumulate(IIncrementalAggregation aggregation, object?[] values)
     {
-        accumulator.Initialize();
+        var session = aggregation.CreateSession();
         foreach (var value in values)
-            accumulator.Accumulate(value);
-        return accumulator.GetValue();
+            session.Add(value);
+        return session.Snapshot();
     }
 }

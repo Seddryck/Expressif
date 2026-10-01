@@ -198,7 +198,7 @@ internal sealed class FunctionConstructorRegistry
                     {
                         ArgumentRole.Predicate => typeof(Func<Predicates.IPredicate>),
                         ArgumentRole.Transformation => typeof(Func<IFunction>),
-                        ArgumentRole.Accumulator => typeof(Func<Accumulation.IAccumulator>),
+                        ArgumentRole.Accumulator => typeof(Func<Accumulation.IIncrementalAggregation>),
                         _ => throw InvalidRoleMetadata(type, parameter, "unknown semantic role"),
                     };
                     if (parameter.ParameterType != expectedType)

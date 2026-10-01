@@ -7,66 +7,68 @@ namespace Expressif.Library.Array.Aggregation;
 /// Returns the longest prefix shared by all accumulated strings.
 /// </summary>
 [Function(prefix: "", Name = "common-prefix")]
-public class CommonPrefixAccumulator : BaseArrayAccumulator
+public class CommonPrefixAccumulator : BaseArrayAggregation
 {
-    private string? value;
+    public override IAggregationSession CreateSession() => new Session();
 
-    public override void Initialize()
-        => value = null;
-
-    public override void Accumulate(object? item)
+    private sealed class Session : IAggregationSession
     {
-        if (item is not string text)
-            throw new InvalidCastException("Common-prefix aggregation requires string values.");
+        private string? value;
 
-        if (value is null)
+        public void Add(object? item)
         {
-            value = text;
-            return;
+            if (item is not string text)
+                throw new InvalidCastException("Common-prefix aggregation requires string values.");
+
+            if (value is null)
+            {
+                value = text;
+                return;
+            }
+
+            var length = 0;
+            var limit = Math.Min(value.Length, text.Length);
+            while (length < limit && value[length] == text[length])
+                length++;
+
+            value = value[..length];
         }
 
-        var length = 0;
-        var limit = Math.Min(value.Length, text.Length);
-        while (length < limit && value[length] == text[length])
-            length++;
-
-        value = value[..length];
+        public object? Snapshot() => value;
     }
-
-    public override object? GetValue()
-        => value;
 }
 
 /// <summary>
 /// Returns the longest suffix shared by all accumulated strings.
 /// </summary>
 [Function(prefix: "", Name = "common-suffix")]
-public class CommonSuffixAccumulator : BaseArrayAccumulator
+public class CommonSuffixAccumulator : BaseArrayAggregation
 {
-    private string? value;
+    public override IAggregationSession CreateSession() => new Session();
 
-    public override void Initialize()
-        => value = null;
-
-    public override void Accumulate(object? item)
+    private sealed class Session : IAggregationSession
     {
-        if (item is not string text)
-            throw new InvalidCastException("Common-suffix aggregation requires string values.");
+        private string? value;
 
-        if (value is null)
+        public void Add(object? item)
         {
-            value = text;
-            return;
+            if (item is not string text)
+                throw new InvalidCastException("Common-suffix aggregation requires string values.");
+
+            if (value is null)
+            {
+                value = text;
+                return;
+            }
+
+            var length = 0;
+            var limit = Math.Min(value.Length, text.Length);
+            while (length < limit && value[value.Length - length - 1] == text[text.Length - length - 1])
+                length++;
+
+            value = value[(value.Length - length)..];
         }
 
-        var length = 0;
-        var limit = Math.Min(value.Length, text.Length);
-        while (length < limit && value[value.Length - length - 1] == text[text.Length - length - 1])
-            length++;
-
-        value = value[(value.Length - length)..];
+        public object? Snapshot() => value;
     }
-
-    public override object? GetValue()
-        => value;
 }

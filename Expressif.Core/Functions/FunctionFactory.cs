@@ -94,7 +94,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         string functionName)
         => BuildPredicateProvider(parameter, context, functionName);
 
-    Func<IAccumulator> IFunctionConstructionContext.CreateAccumulatorProvider(
+    Func<IIncrementalAggregation> IFunctionConstructionContext.CreateAccumulatorProvider(
         IParameter parameter,
         IContext context)
         => BuildAccumulatorProvider(parameter, context);
@@ -598,25 +598,25 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         Bindings.Function function,
         Type accumulatorType,
         IContext context,
-        [NotNullWhen(true)] out Func<IAccumulator>? create)
+        [NotNullWhen(true)] out Func<IIncrementalAggregation>? create)
     {
         create = null;
         if (constructors.TryGet(accumulatorType, out var constructor))
         {
-            create = () => constructor.Construct(function, context, this) as IAccumulator
+            create = () => constructor.Construct(function, context, this) as IIncrementalAggregation
                 ?? throw new InvalidOperationException(
                     $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
         }
         else if (constructors.TryGetAnnotated(accumulatorType, out var annotated)
             && (function.Arguments.Length > 0 || accumulatorType.GetConstructor(Type.EmptyTypes) is null))
         {
-            create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IAccumulator
+            create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IIncrementalAggregation
                 ?? throw new InvalidOperationException(
                     $"The annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
         }
         else if (constructors.TryGetRoleAnnotated(accumulatorType, out var roleAnnotated))
         {
-            create = () => InstantiateRoleAnnotated(accumulatorType, roleAnnotated, function, context) as IAccumulator
+            create = () => InstantiateRoleAnnotated(accumulatorType, roleAnnotated, function, context) as IIncrementalAggregation
                 ?? throw new InvalidOperationException(
                     $"The role-annotated constructor for accumulator '{function.Name}' did not create an accumulator.");
         }
@@ -883,7 +883,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
         var ctor = type.GetConstructors()
                        .FirstOrDefault(x => x.GetParameters().Length == 1
-                                         && x.GetParameters()[0].ParameterType == typeof(Func<IAccumulator>));
+                                         && x.GetParameters()[0].ParameterType == typeof(Func<IIncrementalAggregation>));
         if (ctor is null)
         {
             return false;
@@ -898,7 +898,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return true;
     }
 
-    private Func<IAccumulator> BuildAccumulatorProvider(IParameter parameter, IContext context)
+    private Func<IIncrementalAggregation> BuildAccumulatorProvider(IParameter parameter, IContext context)
     {
         if (parameter is OpenExpressionParameter open && open.Expression.Members.Count() == 1)
         {
@@ -1049,18 +1049,14 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         return () => provider.DynamicInvoke()?.ToString() ?? string.Empty;
     }
 
-    private sealed class AccumulatorFunction(Func<IAccumulator> accumulatorProvider) : IFunction
+    private sealed class AccumulatorFunction(Func<IIncrementalAggregation> accumulatorProvider) : IFunction
     {
         public object? Evaluate(object? value)
         {
             if (value is not IEnumerable enumerable || value is string)
                 return null;
 
-            var accumulator = accumulatorProvider.Invoke();
-            accumulator.Initialize();
-            foreach (var item in enumerable)
-                accumulator.Accumulate(item);
-            return accumulator.GetValue();
+            return accumulatorProvider.Invoke().Evaluate(enumerable);
         }
     }
 }

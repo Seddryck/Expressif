@@ -17,11 +17,11 @@ namespace Expressif.Library.Array.Aggregation;
 [Scope("array/aggregation")]
 public class Scan : BaseArrayFunction
 {
-    public Func<IAccumulator> Accumulator { get; }
+    public Func<IIncrementalAggregation> Aggregation { get; }
 
-    /// <param name="accumulator">Factory that creates the accumulator instance used for the scan execution.</param>
-    public Scan([ArgumentRole(ArgumentRole.Accumulator)] [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IAccumulator> accumulator)
-        => Accumulator = accumulator;
+    /// <param name="accumulator">Provider for the incremental aggregation used by each scan execution.</param>
+    public Scan([ArgumentRole(ArgumentRole.Accumulator)] [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IIncrementalAggregation> accumulator)
+        => Aggregation = accumulator;
 
     /// <param name="accumulator">Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`, ...).</param>
     public Scan(Func<string> accumulator)
@@ -33,14 +33,13 @@ public class Scan : BaseArrayFunction
 
     protected override object? EvaluateArray(IEnumerable enumerable)
     {
-        var accumulator = Accumulator.Invoke();
-        accumulator.Initialize();
+        var session = Aggregation.Invoke().CreateSession();
 
         var output = new List<object?>();
         foreach (var item in enumerable!)
         {
-            accumulator.Accumulate(item);
-            output.Add(accumulator.GetValue());
+            session.Add(item);
+            output.Add(session.Snapshot());
         }
 
         return output.ToArray();

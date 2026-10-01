@@ -9,37 +9,35 @@ namespace Expressif.Library.Grouping;
 [Scope("grouping")]
 public sealed class SummarizeAgainst : IFunction<GroupingValue, DictionaryValue>
 {
-    private readonly Func<IAccumulator> local;
-    private readonly Func<IAccumulator> global;
+    private readonly Func<IIncrementalAggregation> local;
+    private readonly Func<IIncrementalAggregation> global;
     private readonly Func<IFunction> combine;
 
-    /// <param name="local">The accumulator applied independently to each group's values.</param>
-    /// <param name="global">The accumulator applied once across every group's values.</param>
+    /// <param name="local">The incremental aggregation applied independently to each group's values.</param>
+    /// <param name="global">The incremental aggregation applied once across every group's values.</param>
     /// <param name="combine">The operation combining a finalized local summary with the global summary.</param>
     public SummarizeAgainst(
-        [ArgumentRole(ArgumentRole.Accumulator)] Func<IAccumulator> local,
-        [ArgumentRole(ArgumentRole.Accumulator)] Func<IAccumulator> global,
+        [ArgumentRole(ArgumentRole.Accumulator)] Func<IIncrementalAggregation> local,
+        [ArgumentRole(ArgumentRole.Accumulator)] Func<IIncrementalAggregation> global,
         [ArgumentRole(ArgumentRole.Transformation)] Func<IFunction> combine)
         => (this.local, this.global, this.combine) = (local, global, combine);
 
     public DictionaryValue Evaluate(GroupingValue value)
     {
-        var globalState = global();
-        globalState.Initialize();
-        var localStates = new IAccumulator[value.Count];
+        var globalState = global().CreateSession();
+        var localStates = new IAggregationSession[value.Count];
         for (var index = 0; index < value.Count; index++)
         {
-            var localState = local();
-            localState.Initialize();
+            var localState = local().CreateSession();
             localStates[index] = localState;
             foreach (var item in value[index].Values)
             {
-                localState.Accumulate(item);
-                globalState.Accumulate(item);
+                localState.Add(item);
+                globalState.Add(item);
             }
         }
 
-        var globalResult = globalState.GetValue();
+        var globalResult = globalState.Snapshot();
         if (value.Count == 0)
             return new DictionaryValue([]);
 
@@ -47,7 +45,7 @@ public sealed class SummarizeAgainst : IFunction<GroupingValue, DictionaryValue>
         var pairs = new PairValue[value.Count];
         for (var index = 0; index < value.Count; index++)
         {
-            var localResult = localStates[index].GetValue();
+            var localResult = localStates[index].Snapshot();
             var arguments = new TupleValue(localResult, globalResult);
             pairs[index] = new PairValue(value[index].Key, EvaluationRuntime.EvaluateNested(operation, arguments));
         }

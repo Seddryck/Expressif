@@ -10,13 +10,9 @@ namespace Expressif.Library.Text;
 /// </summary>
 [Function(prefix: "", Name = "concat")]
 [Scope("array/aggregation")]
-public class ConcatAccumulator : BaseArrayAccumulator
+public class ConcatAccumulator : BaseArrayAggregation
 {
     private readonly Func<string> separatorProvider;
-    private readonly StringBuilder value = new();
-    private readonly TextCaster caster = new();
-    private string separator = string.Empty;
-    private bool hasValue;
 
     /// <summary>Creates a concatenation accumulator with no separator.</summary>
     public ConcatAccumulator()
@@ -27,25 +23,27 @@ public class ConcatAccumulator : BaseArrayAccumulator
         [ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<string> separator)
         => separatorProvider = separator;
 
-    public override void Initialize()
+    public override IAggregationSession CreateSession()
+        => new Session(separatorProvider.Invoke());
+
+    private sealed class Session(string separator) : IAggregationSession
     {
-        value.Clear();
-        separator = separatorProvider.Invoke();
-        hasValue = false;
+        private readonly StringBuilder value = new();
+        private readonly TextCaster caster = new();
+        private bool hasValue;
+
+        public void Add(object? item)
+        {
+            if (item is null)
+                throw new InvalidCastException("Cannot cast null value to text for concat aggregation.");
+
+            if (hasValue)
+                value.Append(separator);
+
+            value.Append(caster.Cast(item));
+            hasValue = true;
+        }
+
+        public object Snapshot() => value.ToString();
     }
-
-    public override void Accumulate(object? item)
-    {
-        if (item is null)
-            throw new InvalidCastException("Cannot cast null value to text for concat aggregation.");
-
-        if (hasValue)
-            value.Append(separator);
-
-        value.Append(caster.Cast(item));
-        hasValue = true;
-    }
-
-    public override object GetValue()
-        => value.ToString();
 }

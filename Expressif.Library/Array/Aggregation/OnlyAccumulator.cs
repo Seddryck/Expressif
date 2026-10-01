@@ -4,19 +4,17 @@ using Expressif.Functions;
 namespace Expressif.Library.Array.Aggregation;
 
 /// <summary>
-/// Forwards only items satisfying the predicate to the wrapped accumulator.
+/// Forwards only items satisfying the predicate to the wrapped incremental aggregation.
 /// </summary>
 [Function(prefix: "", Name = "only")]
-public class OnlyAccumulator : BaseArrayAccumulator
+public class OnlyAccumulator : BaseArrayAggregation
 {
     private readonly Func<IPredicate> predicateProvider;
-    private readonly Func<IAccumulator> accumulatorProvider;
-    private IPredicate? predicate;
-    private IAccumulator? accumulator;
+    private readonly Func<IIncrementalAggregation> accumulatorProvider;
 
     /// <param name="predicate">Specifies the predicate deciding which items participate.</param>
-    /// <param name="accumulator">Specifies the accumulator receiving matching items.</param>
-    public OnlyAccumulator(IPredicate predicate, IAccumulator accumulator)
+    /// <param name="accumulator">Specifies the incremental aggregation receiving matching items.</param>
+    public OnlyAccumulator(IPredicate predicate, IIncrementalAggregation accumulator)
         : this(() => predicate, () => accumulator) { }
 
     internal OnlyAccumulator(
@@ -25,22 +23,24 @@ public class OnlyAccumulator : BaseArrayAccumulator
         Func<IPredicate> predicate,
         [ArgumentRole(ArgumentRole.Accumulator)]
         [ProviderLifetime(ProviderLifetime.FreshPerRequest)]
-        Func<IAccumulator> accumulator)
+        Func<IIncrementalAggregation> accumulator)
         => (predicateProvider, accumulatorProvider) = (predicate, accumulator);
 
-    public override void Initialize()
+    public override IAggregationSession CreateSession()
     {
-        predicate = predicateProvider.Invoke();
-        accumulator = accumulatorProvider.Invoke();
-        accumulator.Initialize();
+        var predicate = predicateProvider.Invoke();
+        var accumulator = accumulatorProvider.Invoke().CreateSession();
+        return new Session(predicate, accumulator);
     }
 
-    public override void Accumulate(object? item)
+    private sealed class Session(IPredicate predicate, IAggregationSession accumulator) : IAggregationSession
     {
-        if (predicate!.Evaluate(item))
-            accumulator!.Accumulate(item);
-    }
+        public void Add(object? item)
+        {
+            if (predicate.Evaluate(item))
+                accumulator.Add(item);
+        }
 
-    public override object? GetValue()
-        => accumulator!.GetValue();
+        public object? Snapshot() => accumulator.Snapshot();
+    }
 }

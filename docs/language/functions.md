@@ -200,7 +200,7 @@ An aggregation function:
 array<T> → value
 ```
 
-Aggregation functions such as `sum`, `count`, and `reduce` are ordinary functions in the public language model. The public .NET `IAccumulator` extension contract remains available, while catalog metadata exposes `Incremental` as an execution capability instead of a third language-level operator kind. This lets `fold`, `scan`, and `broadcast` share stateful, linear-time evaluation.
+Aggregation functions such as `sum`, `count`, and `reduce` are ordinary functions in the public language model. The public .NET `IIncrementalAggregation` capability creates an isolated `IAggregationSession` for each evaluation, while catalog metadata exposes `Incremental` as an execution capability instead of a third language-level operator kind. This lets `fold`, `scan`, and `broadcast` share stateful, linear-time evaluation.
 
 See [Predicates](predicates.md) and [Structured values](structured-values.md) for the specialized behavior.
 

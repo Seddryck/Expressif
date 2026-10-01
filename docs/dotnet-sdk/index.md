@@ -58,3 +58,4 @@ flowchart LR
 6. [Serialize a builder](serialization.md).
 
 7. [Analyze field scopes](semantic-analysis.md).
+8. [Migrate incremental aggregations to v3](migrate-incremental-aggregations.md).

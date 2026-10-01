@@ -249,10 +249,10 @@ public class FunctionFactoryTest
     {
         var function = Instantiate("fold(sum)", new Context());
         var fold = GetSingleFunction<Fold>(function);
-        var accumulator = fold.Accumulator.Invoke();
+        var aggregation = fold.Aggregation.Invoke();
 
         Assert.That(fold, Is.Not.Null);
-        Assert.That(accumulator, Is.TypeOf<SumAccumulator>());
+        Assert.That(aggregation, Is.TypeOf<SumAccumulator>());
     }
 
     [Test]
@@ -260,10 +260,10 @@ public class FunctionFactoryTest
     {
         var function = Instantiate("broadcast(sum)", new Context());
         var broadcast = GetSingleFunction<Broadcast>(function);
-        var accumulator = broadcast.Accumulator.Invoke();
+        var aggregation = broadcast.Aggregation.Invoke();
 
         Assert.That(broadcast, Is.Not.Null);
-        Assert.That(accumulator, Is.TypeOf<SumAccumulator>());
+        Assert.That(aggregation, Is.TypeOf<SumAccumulator>());
     }
 
     [Test]
@@ -271,10 +271,10 @@ public class FunctionFactoryTest
     {
         var function = Instantiate("scan(sum)", new Context());
         var scan = GetSingleFunction<Scan>(function);
-        var accumulator = scan.Accumulator.Invoke();
+        var aggregation = scan.Aggregation.Invoke();
 
         Assert.That(scan, Is.Not.Null);
-        Assert.That(accumulator, Is.TypeOf<SumAccumulator>());
+        Assert.That(aggregation, Is.TypeOf<SumAccumulator>());
     }
 
     [Test]

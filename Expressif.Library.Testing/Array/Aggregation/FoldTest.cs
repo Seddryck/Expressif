@@ -37,7 +37,7 @@ public class FoldTest
         => Assert.That(new Fold(() => new LastAccumulator()).Evaluate(new object[] { 3, 2, 1 }), Is.EqualTo(1));
 
     [TestCaseSource(nameof(BooleanAccumulatorCases))]
-    public void Evaluate_BooleanAccumulator_Valid(IAccumulator accumulator, object[] input, bool expected)
+    public void Evaluate_BooleanAccumulator_Valid(IIncrementalAggregation accumulator, object[] input, bool expected)
         => Assert.That(new Fold(() => accumulator).Evaluate(input), Is.EqualTo(expected));
 
     private static readonly object[] BooleanAccumulatorCases =
@@ -65,14 +65,14 @@ public class FoldTest
     }
 
     [TestCaseSource(nameof(BooleanAccumulators))]
-    public void Evaluate_BooleanAccumulatorWithNull_ThrowsInvalidCastException(IAccumulator accumulator)
+    public void Evaluate_BooleanAccumulatorWithNull_ThrowsInvalidCastException(IIncrementalAggregation accumulator)
         => Assert.Throws<InvalidCastException>(() => new Fold(() => accumulator).Evaluate(new object?[] { null }));
 
     [TestCaseSource(nameof(BooleanAccumulators))]
-    public void Evaluate_BooleanAccumulatorWithInvalidValue_ThrowsInvalidCastException(IAccumulator accumulator)
+    public void Evaluate_BooleanAccumulatorWithInvalidValue_ThrowsInvalidCastException(IIncrementalAggregation accumulator)
         => Assert.Throws<InvalidCastException>(() => new Fold(() => accumulator).Evaluate(new object[] { "not-a-boolean" }));
 
-    private static readonly IAccumulator[] BooleanAccumulators = [new EveryAccumulator(), new AnyAccumulator()];
+    private static readonly IIncrementalAggregation[] BooleanAccumulators = [new EveryAccumulator(), new AnyAccumulator()];
 
     [Test]
     public void Evaluate_NonEnumerableInput_Null()
@@ -81,4 +81,14 @@ public class FoldTest
     [Test]
     public void Evaluate_StringArrayLiteralInput_Valid()
         => Assert.That(new Fold(() => new SumAccumulator()).Evaluate("{1,2,2}"), Is.EqualTo(5m));
+
+    [Test]
+    public void Evaluate_SharedAggregationDefinition_IsolatesConcurrentSessions()
+    {
+        var aggregation = new SumAccumulator();
+        var fold = new Fold(() => aggregation);
+
+        Parallel.For(0, 100, value =>
+            Assert.That(fold.Evaluate(new object[] { value, 1 }), Is.EqualTo((decimal)value + 1)));
+    }
 }
