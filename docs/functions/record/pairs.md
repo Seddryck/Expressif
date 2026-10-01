@@ -3,7 +3,7 @@ layout: docs
 title: "pairs"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 110
+nav_order: 120
 has_toc: false
 permalink: /functions/record/pairs/
 tags:
@@ -36,6 +36,7 @@ This function has no parameters.
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

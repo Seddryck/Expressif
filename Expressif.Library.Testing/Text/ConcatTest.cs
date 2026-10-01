@@ -15,14 +15,6 @@ public class ConcatTest
     public void Concat_WithSeparator(object? value, string separator, string expected)
         => Assert.That(Evaluate(value, $"concat(\"{separator}\")"), Is.EqualTo(expected));
 
-    [Conformance]
-    public void Implode_WithoutSeparator(object? value, string expected)
-        => Assert.That(Evaluate(value, "implode"), Is.EqualTo(expected));
-
-    [Conformance]
-    public void Implode_WithSeparator(object? value, string separator, string expected)
-        => Assert.That(Evaluate(value, $"implode(\"{separator}\")"), Is.EqualTo(expected));
-
     [Test]
     public void Evaluate_NamedSeparator_Valid()
         => Assert.That(
@@ -54,16 +46,6 @@ public class ConcatTest
 
         Assert.That(() => accumulator.Accumulate(null), Throws.TypeOf<InvalidCastException>());
     }
-
-    [TestCase("implode")]
-    [TestCase("implode(\"-\")")]
-    [TestCase("implode(separator := \"-\")")]
-    [TestCase("fold(implode)")]
-    [TestCase("fold(\"implode\")")]
-    [TestCase("fold(concat)")]
-    public void Evaluate_CompatibilityAlias_MatchesCanonical(string expression)
-        => Assert.That(Evaluate("{\"a\", \"\", \"b\"}", expression),
-            Is.EqualTo(Evaluate("{\"a\", \"\", \"b\"}", expression.Replace("implode", "concat"))));
 
     private static object? Evaluate(object? value, string expression)
     {

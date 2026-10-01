@@ -3,7 +3,7 @@ layout: docs
 title: "nested-field"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /functions/record/nested-field/
 tags:
@@ -30,6 +30,8 @@ Returns the value at a nested field path in the input record or object, or null 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `path` | `text` | Variadic (one or more); accepts spread | One or more literal field names in traversal order. Spread arguments expand arrays of names in place. |
+
+
 
 
 

@@ -63,7 +63,7 @@ internal static class FunctionConstruction
             "generate" => FunctionConstructionKind.Generate,
             "only" => FunctionConstructionKind.Only,
             "closest" => FunctionConstructionKind.Closest,
-            "concat" or "implode" => FunctionConstructionKind.Concat,
+            "concat" => FunctionConstructionKind.Concat,
             "map-over" => FunctionConstructionKind.MapOver,
             "map-with" => FunctionConstructionKind.MapWith,
             "reduce" => FunctionConstructionKind.Reduce,

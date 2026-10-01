@@ -32,6 +32,8 @@ This function has no parameters.
 
 
 
+
+
 ## Examples
 
 {% raw %}

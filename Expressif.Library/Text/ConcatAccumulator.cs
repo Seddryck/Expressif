@@ -8,8 +8,7 @@ namespace Expressif.Library.Text;
 /// <summary>
 /// Combines accumulated text values in source order, inserting the separator only between values.
 /// </summary>
-[Function(prefix: "", aliases: ["implode"], Name = "concat")]
-[FunctionAliasLifecycle("implode", "concat", "3.0")]
+[Function(prefix: "", Name = "concat")]
 [Scope("text")]
 public class ConcatAccumulator : BaseArrayAccumulator
 {

@@ -3,7 +3,7 @@ layout: docs
 title: "record"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 190
+nav_order: 200
 has_toc: false
 permalink: /functions/record/record/
 tags:
@@ -30,6 +30,8 @@ Creates a record by evaluating its named and spread entries against the input va
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `entries` | `entry` | Variadic (zero or more); no spread | Zero or more named or spread entries used to construct the resulting record. Each entry is evaluated against the input value. Omission supplies an empty variadic sequence. |
+
+
 
 
 

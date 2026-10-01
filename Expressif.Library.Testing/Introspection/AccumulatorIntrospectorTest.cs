@@ -41,8 +41,6 @@ public class AccumulatorFunctionIntrospectionTest
     [Test]
     public void Locate_ExpressifAssembly_SomeAliases()
     {
-        Assert.That(Infos.Count(x => x.Aliases.Count > 0), Is.GreaterThan(0));
-
         foreach (var info in Infos)
         {
             Debug.WriteLine($"{info.Name}: {(info.Aliases.Any() ? info.Aliases.ElementAt(0) : string.Empty)}");
@@ -70,18 +68,14 @@ public class AccumulatorFunctionIntrospectionTest
     }
 
     [Test]
-    public void Describe_Concat_ExposesDeprecatedAlias()
+    public void Describe_Concat_HasNoImplodeAlias()
     {
         var info = Infos.Single(x => x.Name == "concat");
         using (Assert.EnterMultipleScope())
         {
             Assert.That(Infos.Any(x => x.Name == "implode"), Is.False);
-            Assert.That(info.Aliases, Does.Contain("implode"));
-            Assert.That(info.DeprecatedAliases.Single().Name, Is.EqualTo("implode"));
-            Assert.That(info.DeprecatedAliases.Single().Replacement, Is.EqualTo("concat"));
-            Assert.That(info.DeprecatedAliases.Single().Message, Does.Contain("use concat"));
-            Assert.That(info.DeprecatedAliases.Single().Sunset, Is.EqualTo("3.0"));
-            Assert.That(info.DeprecatedAliases.Single().ReplacementIsEquivalent, Is.True);
+            Assert.That(info.Aliases, Does.Not.Contain("implode"));
+            Assert.That(info.DeprecatedAliases, Is.Empty);
         }
     }
 

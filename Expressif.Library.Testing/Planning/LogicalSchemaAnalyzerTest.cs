@@ -732,6 +732,76 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_ImplodeIntrinsic_ReplacesSelectedValueWithArraySchema()
+    {
+        var analysis = Analyze("{{id := 1, tags := \"A\"}} | implode(.tags)");
+        var imploded = AsArray(analysis.Output);
+        var implodedItem = AsRecord(imploded.Items);
+        var selected = implodedItem.Fields["tags"].Schema as ArrayLogicalSchema
+            ?? throw new AssertionException("Expected the imploded field to have an array schema.");
+        var selector = analysis.Nodes
+            .Single(node => node.Path == "plan.items[1].arguments[0].value.items[0]");
+        var selectorInput = AsRecord(selector.Input);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(implodedItem.Fields["id"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(selected.Items,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(selectorInput.Fields["tags"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(selector.Output,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Known));
+        });
+    }
+
+    [Test]
+    public void Analyze_ImplodeInnerIntrinsic_RemovesSelectedValueNullability()
+    {
+        var input = new ArrayLogicalSchema(
+            new RecordLogicalSchema(
+                new Dictionary<string, LogicalSchemaField>
+                {
+                    ["id"] = new(new ScalarLogicalSchema("integer")),
+                    ["tags"] = new(new ScalarLogicalSchema("text", true)),
+                },
+                AllowsAdditionalFields: false));
+        var analysis = Analyze("implode-inner(.tags)", input);
+        var imploded = AsArray(analysis.Output);
+        var implodedItem = AsRecord(imploded.Items);
+        var selected = implodedItem.Fields["tags"].Schema as ArrayLogicalSchema
+            ?? throw new AssertionException("Expected the imploded field to have an array schema.");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(implodedItem.Fields["id"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(selected.Items,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(analysis.Completeness, Is.EqualTo(SchemaAnalysisCompleteness.Known));
+        });
+    }
+
+    [Test]
+    public void Analyze_ImplodeIntrinsic_PropagatesSelectedFieldRequirementBackward()
+    {
+        var analysis = Analyze("implode(.tags) | map(.tags | first | upper)");
+        var input = AsArray(analysis.Input);
+        var item = AsRecord(input.Items);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(item.Fields["tags"].Optional, Is.True);
+            Assert.That(item.Fields["tags"].Schema,
+                Is.EqualTo(new AnyLogicalSchema(true)));
+            Assert.That(analysis.Diagnostics, Has.None.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Path == "plan.items[0].arguments[0].value.items[0]"));
+        });
+    }
+
+    [Test]
     public void Analyze_ExplodeIntrinsic_PropagatesSelectedFieldRequirementBackward()
     {
         var analysis = Analyze("""

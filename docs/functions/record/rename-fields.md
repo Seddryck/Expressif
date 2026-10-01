@@ -3,7 +3,7 @@ layout: docs
 title: "rename-fields"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 200
+nav_order: 210
 has_toc: false
 permalink: /functions/record/rename-fields/
 tags:
@@ -42,6 +42,7 @@ Transforms selected field names while preserving field values and order. Duplica
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 
