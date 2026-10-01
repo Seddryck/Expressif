@@ -1,5 +1,4 @@
 using Expressif.Functions;
-using Expressif.Functions.Coercions;
 using Expressif.Discovery;
 using Expressif.Library.Special;
 using Expressif.Functions.Accumulation;
@@ -11,7 +10,7 @@ namespace Expressif.Bindings;
 /// <summary>
 /// Composes the Expressif syntax binder with the official built-in vocabulary.
 /// </summary>
-public static class ExpressifBinderFactory
+internal static class ExpressifBinderFactory
 {
     private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(ExpressifBinderFactory).Assembly);
     private static readonly FunctionBinderRegistry FunctionBinders = new(
@@ -28,13 +27,9 @@ public static class ExpressifBinderFactory
             new WithFunctionBinder(),
         ]);
 
-    private static readonly ICoercionRegistry Coercions = new CoercionRegistry(Source);
     private static readonly ITypeRegistry Types = ExpressifTypeRegistry.Instance;
 
-    public static ExpressifBinder Create(bool applyCoercion = true)
-        => Create(applyCoercion, false);
-
-    internal static ExpressifBinder Create(bool applyCoercion, bool trackSources)
+    internal static ExpressifBinder Create(bool trackSources = false)
         => new(
             [
                 new FunctionRegistry(Source),
@@ -43,7 +38,5 @@ public static class ExpressifBinderFactory
             ],
             FunctionBinders,
             Types,
-            Coercions,
-            applyCoercion,
             trackSources);
 }

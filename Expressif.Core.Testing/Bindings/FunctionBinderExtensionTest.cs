@@ -20,7 +20,7 @@ public sealed class FunctionBinderExtensionTest
             new FunctionBinderRegistry([new CustomFunctionBinder()]),
             new TypeRegistry(Array.Empty<TypeDescriptor>()));
 
-        var function = binder.BindFunction(ExpressionParser.Parse($"{name}(ignored := 1)"));
+        var function = binder.BindSingleFunction(ExpressionParser.Parse($"{name}(ignored := 1)"));
 
         Assert.That(function.Parameters, Is.EqualTo(new[] { new LiteralParameter("specialized") }));
     }

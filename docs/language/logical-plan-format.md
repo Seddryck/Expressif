@@ -27,6 +27,8 @@ A `pipeline` contains ordered `items`. A `call` contains its canonical operator 
 
 References and structured value constructors use calls rather than private node kinds. For example, `.age` uses `field`, `$1` uses `tuple-at`, and array and tuple literals use `array` and `tuple`.
 
+When the output type of one pipeline item requires an available implicit conversion before it can enter the next operator, the planner inserts the canonical coercion call into the plan. For example, `1 | upper | add(2)` contains `coerce-text` before `upper` and `coerce-numeric` before `add`. This normalization also applies within nested pipelines used as arguments, so serialization, schema analysis, and every conforming execution backend observe the same conversions. Parameter descriptors continue to define the strict type contract at the boundary between an argument result and its receiving operator.
+
 Input-binding expressions use an `input-binding` call. Its `names` argument is an array of declared names, `positional` distinguishes tuple destructuring from named or anonymous binding, and `body` contains the complete bound pipeline. An empty names array with `positional` set to `false` represents an anonymous binding.
 
 ## Traversal and evaluation

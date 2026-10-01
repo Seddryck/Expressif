@@ -10,6 +10,7 @@ public class ExpressionBinderTest
     {
         Assert.Multiple(() =>
         {
+            Assert.That(typeof(ExpressifBinder).IsNotPublic, Is.True);
             Assert.That(typeof(OpenExpression).IsSealed, Is.True);
             Assert.That(typeof(ClosedExpression).IsSealed, Is.True);
             Assert.That(typeof(ClosedExpression).GetProperty(
@@ -54,52 +55,6 @@ public class ExpressionBinderTest
 
         Assert.That(expression.Members.Select(member => member.Name),
             Is.EqualTo(new[] { "text-to-func", "numeric-to-func", "boolean-to-func" }));
-    }
-
-    [Test]
-    public void Bind_TypedPipeline_InsertsImplicitCoercionsByDefault()
-    {
-        var syntax = SyntaxFactory.Open(
-            null,
-            SyntaxFactory.Function("trim"),
-            SyntaxFactory.Function("multiply", SyntaxFactory.Argument(SyntaxFactory.Number(1.21m))),
-            SyntaxFactory.Function("round", SyntaxFactory.Argument(SyntaxFactory.Number(2))),
-            SyntaxFactory.Function("prepend", SyntaxFactory.Argument(SyntaxFactory.Text("€"))));
-        var root = ExpressifBinderFactory.Create().Bind(syntax);
-        var expression = ((OpenRootExpression)root).Expression;
-
-        Assert.That(
-            expression.Members.Select(member => member.Name),
-            Is.EqualTo(new[]
-            {
-                "trim",
-                "coerce-numeric",
-                "multiply",
-                "round",
-                "coerce-text",
-                "prepend",
-            }));
-    }
-
-    [Test]
-    public void Bind_TypedPipelineWithCoercionDisabled_PreservesOriginalMembers()
-    {
-        var syntax = SyntaxFactory.Open(
-            null,
-            SyntaxFactory.Function("trim"),
-            SyntaxFactory.Function("multiply", SyntaxFactory.Argument(SyntaxFactory.Number(1.21m))),
-            SyntaxFactory.Function("round", SyntaxFactory.Argument(SyntaxFactory.Number(2))),
-            SyntaxFactory.Function("prepend", SyntaxFactory.Argument(SyntaxFactory.Text("€"))));
-        var root = ExpressifBinderFactory.Create(applyCoercion: false).Bind(syntax);
-        var expression = ((OpenRootExpression)root).Expression;
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(ExpressifBinderFactory.Create(applyCoercion: false).ApplyCoercion, Is.False);
-            Assert.That(
-                expression.Members.Select(member => member.Name),
-                Is.EqualTo(new[] { "trim", "multiply", "round", "prepend" }));
-        });
     }
 
     [Test]
@@ -244,7 +199,7 @@ public class ExpressionBinderTest
             SyntaxFactory.Function("multiply", SyntaxFactory.Argument(SyntaxFactory.TupleProjection(1))));
         var syntax = SyntaxFactory.Open(
             SyntaxFactory.Function("adjacent", SyntaxFactory.Argument(SyntaxFactory.Parenthesized(composition))));
-        var adjacent = ExpressifBinderFactory.Create().BindFunction(syntax);
+        var adjacent = ExpressifBinderFactory.Create().BindSingleFunction(syntax);
         var expression = ((OpenExpressionParameter)adjacent.Parameters.Single()).Expression;
 
         Assert.Multiple(() =>

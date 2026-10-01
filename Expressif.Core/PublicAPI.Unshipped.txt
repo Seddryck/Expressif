@@ -94,12 +94,6 @@ Expressif.Bindings.EnclosingObjectPropertyParameter.EnclosingObjectPropertyParam
 Expressif.Bindings.EnclosingObjectPropertyParameter.Equals(Expressif.Bindings.EnclosingObjectPropertyParameter? other) -> bool
 Expressif.Bindings.EnclosingObjectPropertyParameter.Name.get -> string!
 Expressif.Bindings.EnclosingObjectPropertyParameter.Name.init -> void
-Expressif.Bindings.ExpressifBinder
-Expressif.Bindings.ExpressifBinder.ApplyCoercion.get -> bool
-Expressif.Bindings.ExpressifBinder.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IRootExpression!
-Expressif.Bindings.ExpressifBinder.BindFunction(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.Function!
-Expressif.Bindings.ExpressifBinder.BindParameter(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IParameter!
-Expressif.Bindings.ExpressifBinder.BindPredication(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Bindings.IPredication!
 Expressif.Bindings.FieldCoercionParameter
 Expressif.Bindings.FieldCoercionParameter.Deconstruct(out string! Field, out System.Type! TargetType) -> void
 Expressif.Bindings.FieldCoercionParameter.Equals(Expressif.Bindings.FieldCoercionParameter? other) -> bool
@@ -707,6 +701,7 @@ Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception)
 Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
 Expressif.Planning.ILogicalPlanningContext
+Expressif.Planning.ILogicalPlanningContext.FindCoercion(string! sourceType, string! targetType) -> Expressif.Planning.PlannerFunctionMetadata?
 Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null, int? argumentCount = null) -> Expressif.Planning.PlannerFunctionMetadata?
 Expressif.Planning.ILogicalPlanningContext.FindType(string! name) -> string?
 Expressif.Planning.LogicalArgument

@@ -191,7 +191,7 @@ public class LetTest
     public void Serialization_PreservesBindings()
     {
         const string source = "let(a := multiply(2), b := @_)";
-        var bound = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse(source));
+        var bound = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse(source));
         Assert.That(new FunctionSerializer().Serialize(bound), Is.EqualTo("let(a := multiply(2), b := ...)"));
     }
 

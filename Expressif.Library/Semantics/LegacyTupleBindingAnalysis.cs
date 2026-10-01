@@ -39,7 +39,7 @@ public sealed class LegacyTupleBindingAnalyzer
     public IReadOnlyList<LegacyTupleBindingUse> Analyze(RootExpressionSyntax syntax)
     {
         var uses = new List<LegacyTupleBindingUse>();
-        try { Visit(ExpressifBinderFactory.Create(applyCoercion: false).Bind(syntax), uses); }
+        try { Visit(ExpressifBinderFactory.Create().Bind(syntax), uses); }
         catch (BindingException) { return []; }
         return uses;
     }

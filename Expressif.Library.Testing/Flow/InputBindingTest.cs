@@ -20,7 +20,7 @@ public class InputBindingTest
     [TestCase("apply(@_ | :> .address.city | upper)")]
     public void Anonymous_SerializationPreservesReferenceSemantics(string source)
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse(source));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse(source));
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(source));
     }
 
@@ -70,7 +70,7 @@ public class InputBindingTest
     public void Destructuring_SerializationPreservesNamesAndOrder()
     {
         const string source = "apply((a, b, c) :> @c | subtract(@a) | add(@b))";
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse(source));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse(source));
         Assert.That(new FunctionSerializer().Serialize(function),
             Is.EqualTo("apply(@_ | (a, b, c) :> @c | subtract(@a) | add(@b))"));
     }
@@ -115,7 +115,7 @@ public class InputBindingTest
     public void Named_SerializationPreservesBinding()
     {
         const string source = "apply(@_ | input :> @input | add(@input))";
-        var bound = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse(source));
+        var bound = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse(source));
         Assert.That(new FunctionSerializer().Serialize(bound), Is.EqualTo(source));
     }
 

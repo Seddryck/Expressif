@@ -14,7 +14,7 @@ public class FunctionBinderTest
             SyntaxFactory.Argument(SyntaxFactory.Text("foo")),
             SyntaxFactory.Argument(SyntaxFactory.Variable("bar"))));
 
-        var function = Binder.BindFunction(syntax);
+        var function = Binder.BindSingleFunction(syntax);
 
         Assert.Multiple(() =>
         {
@@ -34,7 +34,7 @@ public class FunctionBinderTest
             SyntaxFactory.Named("start", SyntaxFactory.Number(2)),
             SyntaxFactory.Named("length", SyntaxFactory.Number(4))));
 
-        var function = Binder.BindFunction(syntax);
+        var function = Binder.BindSingleFunction(syntax);
 
         Assert.That(function.Arguments.Select(argument => argument.Name),
             Is.EqualTo(new[] { "append", "start", "length" }));
@@ -48,7 +48,7 @@ public class FunctionBinderTest
             SyntaxFactory.Named("start", SyntaxFactory.Number(2)),
             SyntaxFactory.Argument(SyntaxFactory.Number(4))));
 
-        Assert.That(() => Binder.BindFunction(syntax),
+        Assert.That(() => Binder.BindSingleFunction(syntax),
             Throws.TypeOf<PositionalArgumentAfterNamedArgumentException>());
     }
 
@@ -60,7 +60,7 @@ public class FunctionBinderTest
             SyntaxFactory.Named("start", SyntaxFactory.Number(2)),
             SyntaxFactory.Named("start", SyntaxFactory.Number(4))));
 
-        Assert.That(() => Binder.BindFunction(syntax), Throws.TypeOf<DuplicateNamedArgumentException>());
+        Assert.That(() => Binder.BindSingleFunction(syntax), Throws.TypeOf<DuplicateNamedArgumentException>());
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class FunctionBinderTest
             SyntaxFactory.Spread(SyntaxFactory.Variable("values")),
             SyntaxFactory.Argument(SyntaxFactory.Number(4))));
 
-        var function = Binder.BindFunction(syntax);
+        var function = Binder.BindSingleFunction(syntax);
 
         Assert.Multiple(() =>
         {
@@ -87,7 +87,7 @@ public class FunctionBinderTest
     {
         var syntax = SyntaxFactory.Open(SyntaxFactory.Function("array", SyntaxFactory.Spread()));
 
-        var function = Binder.BindFunction(syntax);
+        var function = Binder.BindSingleFunction(syntax);
 
         Assert.That(function.Arguments.Single().Value, Is.TypeOf<IncomingValueParameter>());
     }
@@ -101,7 +101,7 @@ public class FunctionBinderTest
             SyntaxFactory.Spread(SyntaxFactory.Variable("values")),
             SyntaxFactory.Argument(SyntaxFactory.Text("after"))));
 
-        var function = Binder.BindFunction(syntax);
+        var function = Binder.BindSingleFunction(syntax);
 
         Assert.Multiple(() =>
         {
@@ -118,7 +118,7 @@ public class FunctionBinderTest
             SyntaxFactory.Function("array", SyntaxFactory.Named("value", SyntaxFactory.Number(1))));
 
         Assert.That(
-            () => Binder.BindFunction(syntax),
+            () => Binder.BindSingleFunction(syntax),
             Throws.TypeOf<BindingException>()
                 .With.Message.EqualTo("Function 'array' does not support named arguments."));
     }
@@ -130,7 +130,7 @@ public class FunctionBinderTest
             SyntaxFactory.Function("add", SyntaxFactory.Spread(SyntaxFactory.Array(SyntaxFactory.Number(1)))));
 
         Assert.That(
-            () => Binder.BindFunction(syntax),
+            () => Binder.BindSingleFunction(syntax),
             Throws.TypeOf<BindingException>()
                 .With.Message.EqualTo("Function 'add' does not support spread arguments."));
     }
@@ -143,7 +143,7 @@ public class FunctionBinderTest
             SyntaxFactory.Function("first-chars", SyntaxFactory.Argument(SyntaxFactory.Number(2)))));
         var syntax = SyntaxFactory.Open(SyntaxFactory.Function("map", SyntaxFactory.Argument(expression)));
 
-        var function = Binder.BindFunction(syntax);
+        var function = Binder.BindSingleFunction(syntax);
 
         Assert.That(function.Parameters.Single(), Is.TypeOf<OpenExpressionParameter>());
         Assert.That(((OpenExpressionParameter)function.Parameters.Single()).Expression.Members.Select(member => member.Name),

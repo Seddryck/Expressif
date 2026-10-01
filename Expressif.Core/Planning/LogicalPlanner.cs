@@ -16,7 +16,7 @@ public sealed class LogicalPlanner
     public LogicalPlan Build(RootExpressionSyntax syntax)
     {
         ArgumentNullException.ThrowIfNull(syntax);
-        return new LogicalPlan(PlanRoot(syntax));
+        return new LogicalPlan(new LogicalPlanCoercionNormalizer(context).Normalize(PlanRoot(syntax)));
     }
 
     private LogicalPipeline PlanRoot(RootExpressionSyntax syntax, string? expectedKind = null) => syntax switch

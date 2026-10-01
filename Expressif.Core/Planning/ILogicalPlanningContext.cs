@@ -10,6 +10,11 @@ public interface ILogicalPlanningContext
         string? expectedKind = null,
         int? argumentCount = null);
 
+    /// <summary>
+    /// Resolves the canonical coercion between two semantic types when one is available.
+    /// </summary>
+    PlannerFunctionMetadata? FindCoercion(string sourceType, string targetType) => null;
+
     string? FindType(string name);
 }
 

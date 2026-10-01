@@ -177,7 +177,7 @@ public class ParameterSerializerTest
     [Test]
     public void Serialize_RecordSpread_PreservesSpreadExpressions()
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse(
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressifSyntax.Parse(
             "record(a := 1, ...{b := 2}, ..., c := 3)"));
 
         Assert.That(new FunctionSerializer().Serialize(function),

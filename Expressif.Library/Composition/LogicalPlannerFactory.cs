@@ -1,6 +1,7 @@
 using Expressif.Library.Catalog;
 using Expressif.Discovery;
 using Expressif.Functions.Accumulation;
+using Expressif.Functions.Coercions;
 using Expressif.Planning;
 using Expressif.Values.Types;
 
@@ -14,11 +15,17 @@ public static class LogicalPlannerFactory
     private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(LogicalPlannerFactory).Assembly);
 
     public static LogicalPlanner Create(FunctionCatalog? catalog = null)
-        => new(new BuiltInPlanningContext(catalog ?? FunctionCatalog.Default, new AccumulatorRegistry(Source)));
+        => new(new BuiltInPlanningContext(
+            catalog ?? FunctionCatalog.Default,
+            new AccumulatorRegistry(Source),
+            new CoercionRegistry(Source),
+            ExpressifTypeRegistry.Instance));
 
     private sealed class BuiltInPlanningContext(
         FunctionCatalog catalog,
-        AccumulatorRegistry accumulators) : ILogicalPlanningContext
+        AccumulatorRegistry accumulators,
+        CoercionRegistry coercions,
+        ITypeRegistry types) : ILogicalPlanningContext
     {
         public PlannerFunctionMetadata? FindFunction(
             string name,
@@ -95,8 +102,28 @@ public static class LogicalPlannerFactory
                     ?? catalog.Find(name.ToKebabCase(), kind, argumentCount.Value),
             };
 
+        public PlannerFunctionMetadata? FindCoercion(string sourceType, string targetType)
+        {
+            if (!types.TryResolve(sourceType, out var source)
+                || source.RuntimeType is null
+                || !types.TryResolve(targetType, out var target)
+                || target.RuntimeType is null
+                || target.RuntimeType.IsAssignableFrom(source.RuntimeType))
+            {
+                return null;
+            }
+
+            var targetTypes = target.RuntimeType.IsValueType
+                ? new[] { target.RuntimeType, typeof(Nullable<>).MakeGenericType(target.RuntimeType) }
+                : [target.RuntimeType];
+            var coercionName = targetTypes
+                .Select(candidate => coercions.TryResolve(source.RuntimeType, candidate, out var name) ? name : null)
+                .FirstOrDefault(name => name is not null);
+            return coercionName is null ? null : FindFunction(coercionName, "function", 0);
+        }
+
         public string? FindType(string name)
-            => ExpressifTypeRegistry.Instance.TryResolve(name, out var descriptor)
+            => types.TryResolve(name, out var descriptor)
                 ? descriptor.Name
                 : null;
 

@@ -1,5 +1,6 @@
 using Expressif.Predicates;
 using Expressif.Library.Special;
+using Expressif.Planning;
 using Expressif.Testing.Conformance;
 using Expressif.Values.Types;
 using Expressif.Values;
@@ -52,7 +53,7 @@ public class TypeTest
     [Test]
     public void Factory_TypeLiteral_BindsThroughCanonicalRegistry()
     {
-        var predicate = new PredicationFactory().Instantiate("is-type(:integer)", new Context());
+        var predicate = TestPredication.Create("is-type(:integer)");
 
         Assert.Multiple(() =>
         {
@@ -74,8 +75,8 @@ public class TypeTest
     [Test]
     public void Factory_UnknownTypeLiteral_UsesNormalBindingError()
         => Assert.That(
-            () => new PredicationFactory().Instantiate("is-type(:unknown)", new Context()),
-            Throws.TypeOf<UnknownExpressifTypeException>());
+            () => TestPredication.Create("is-type(:unknown)"),
+            Throws.TypeOf<LogicalPlanningException>());
 
     private static bool Evaluate(object? value, string type)
         => new IsType(() => ExpressifTypeRegistry.Instance.Resolve(type)).Evaluate(value);

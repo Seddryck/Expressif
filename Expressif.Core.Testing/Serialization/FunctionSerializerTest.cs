@@ -8,7 +8,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_FieldShorthand_PreservesShorthand()
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse(".name"));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressifSyntax.Parse(".name"));
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(".name"));
     }
@@ -16,7 +16,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_DynamicFieldName_PreservesLongForm()
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse("field(\"requested-field\")"));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressifSyntax.Parse("field(\"requested-field\")"));
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("field(\"requested-field\")"));
     }
@@ -58,7 +58,7 @@ public class FunctionSerializerTest
     [Test]
     public void Serialize_NamedArguments_PreservesNames()
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse("replace-slice(2, append := \"abc\", length := 4)"));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressifSyntax.Parse("replace-slice(2, append := \"abc\", length := 4)"));
 
         Assert.That(new FunctionSerializer().Serialize(function),
             Is.EqualTo("replace-slice(2, append := \"abc\", length := 4)"));

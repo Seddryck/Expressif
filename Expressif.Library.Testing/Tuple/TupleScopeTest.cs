@@ -21,9 +21,9 @@ public class TupleScopeTest
     [TestCase("^^^^$12")]
     public void Serialize_Reference_PreservesScope(string source)
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse(source));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse(source));
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo(source));
-        var call = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse($"add({source})"));
+        var call = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse($"add({source})"));
         Assert.That(new FunctionSerializer().Serialize(call), Is.EqualTo($"add({source})"));
     }
 
@@ -88,8 +88,8 @@ public class TupleScopeTest
     public void Bind_NativeReference_PreservesDepth(string source, int depth)
     {
         var binder = ExpressifBinderFactory.Create();
-        var stage = binder.BindFunction(ExpressifSyntax.Parse(source));
-        var argument = binder.BindFunction(ExpressifSyntax.Parse($"add(({source}))"));
+        var stage = binder.BindSingleFunction(ExpressifSyntax.Parse(source));
+        var argument = binder.BindSingleFunction(ExpressifSyntax.Parse($"add(({source}))"));
         Assert.Multiple(() =>
         {
             Assert.That(stage.Syntax, Is.EqualTo(FunctionSyntax.ScopedTupleProjectionShorthand));
