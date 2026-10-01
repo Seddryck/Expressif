@@ -595,6 +595,52 @@ public class LogicalSchemaAnalyzerTest
     }
 
     [Test]
+    public void Analyze_Record_NestedAndDynamicContributionsRetainKnownShape()
+    {
+        var nested = AsRecord(Analyze("record(parent := record(child := 1))").Output);
+        var nestedParent = AsRecord(nested.Fields["parent"].Schema);
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("record(value := 1)"));
+        var record = (LogicalCall)plan.Pipeline.Items.Single();
+        var nestedRecord = (LogicalCall)record.Arguments.Single().Value!;
+        var entry = (LogicalCall)nestedRecord.Arguments.Single().Value!;
+        var dynamicName = LogicalPlannerFactory.Create()
+            .Build(ExpressionParser.Parse("upper"))
+            .Pipeline.Items.Single();
+        var dynamicEntry = entry with
+        {
+            Arguments = entry.Arguments.Select(argument => argument.Parameter.Name == "name"
+                ? argument with { Value = dynamicName }
+                : argument).ToArray(),
+        };
+        var dynamicNestedRecord = nestedRecord with
+        {
+            Arguments = [nestedRecord.Arguments.Single() with { Value = dynamicEntry }],
+        };
+        var dynamicPlan = plan with
+        {
+            Pipeline = new LogicalPipeline([
+                record with
+                {
+                    Arguments = [record.Arguments.Single() with { Value = dynamicNestedRecord }],
+                },
+            ]),
+        };
+
+        var dynamic = LogicalSchemaAnalyzer.Analyze(dynamicPlan);
+        var dynamicRecord = AsRecord(dynamic.Output);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(nestedParent.Fields["child"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(dynamicRecord.Fields, Is.Empty);
+            Assert.That(dynamicRecord.AllowsAdditionalFields, Is.True);
+            Assert.That(dynamic.Diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Code == "schema.dynamic" && diagnostic.Path == "plan.items[0]"));
+        });
+    }
+
+    [Test]
     public void Analyze_OpenEndedTuple_SeparatesKnownPrefixFromAdditionalItems()
     {
         var spread = Analyze("tuple(1, ...{\"a\", \"b\"})").Output as TupleLogicalSchema
@@ -944,7 +990,8 @@ public class LogicalSchemaAnalyzerTest
             OutputContract: new LogicalTypeContract("text"));
         var plan = new LogicalPlan(new LogicalPipeline([
             new LogicalNamedExpressionInvocation("convert", []),
-        ])) { Definitions = [definition] };
+        ]))
+        { Definitions = [definition] };
 
         var analysis = LogicalSchemaAnalyzer.Analyze(plan);
 
