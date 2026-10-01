@@ -3,8 +3,9 @@ using Expressif.Functions;
 
 namespace Expressif.Functions.Accumulation;
 
+/// <summary>Base class for ordinary functions that also support incremental aggregation.</summary>
 [Scope("array/aggregation")]
-public abstract class BaseAccumulator : IAccumulator
+public abstract class BaseIncrementalAggregation : IIncrementalAggregation
 {
     object? IFunction<IEnumerable, object?>.Evaluate(IEnumerable value)
         => Evaluate(value);
@@ -16,17 +17,12 @@ public abstract class BaseAccumulator : IAccumulator
 
     public object? Evaluate(IEnumerable value)
     {
-        Initialize();
+        var session = CreateSession();
         foreach (var item in value)
-            Accumulate(item);
+            session.Add(item);
 
-        return GetValue();
+        return session.Snapshot();
     }
 
-    public virtual void Initialize()
-    { }
-
-    public abstract void Accumulate(object? item);
-
-    public abstract object? GetValue();
+    public abstract IAggregationSession CreateSession();
 }

@@ -430,7 +430,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
 
     private bool IsAccumulator(string name)
         => implementationRegistries.Any(registry => registry.TryResolve(name, out var implementationType)
-            && typeof(IAccumulator).IsAssignableFrom(implementationType));
+            && typeof(IIncrementalAggregation).IsAssignableFrom(implementationType));
 
     private bool TryResolveFunctionType(string name, out Type functionType)
     {

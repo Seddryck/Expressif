@@ -17,10 +17,10 @@ public class OnlyTest
     {
         var result = expected is null ? null : TestExpression.CreateClosed(expected).Evaluate(null);
         var wrapper = new OnlyAccumulator(new PredicationFactory().Instantiate(predicate, new Context()), AccumulatorFactory.Instantiate(accumulator));
-        wrapper.Initialize();
+        var session = wrapper.CreateSession();
         foreach (var item in (IEnumerable)TestExpression.CreateClosed(value).Evaluate(null)!)
-            wrapper.Accumulate(item);
-        Assert.That(wrapper.GetValue(), Is.EqualTo(result));
+            session.Add(item);
+        Assert.That(session.Snapshot(), Is.EqualTo(result));
         Assert.That(TestExpression.CreateClosed($"{value} | only({predicate}, {accumulator})").Evaluate(null), Is.EqualTo(result));
         Assert.That(TestExpression.CreateClosed($"{value} | fold(only({predicate}, {accumulator}))").Evaluate(null), Is.EqualTo(result));
     }
@@ -75,19 +75,22 @@ public class OnlyTest
     public void Evaluate_PredicateFailure_Propagates()
     {
         var wrapper = new OnlyAccumulator(new ThrowingPredicate(), new CountAccumulator());
-        wrapper.Initialize();
-        Assert.That(() => wrapper.Accumulate(1), Throws.TypeOf<InvalidOperationException>());
+        var session = wrapper.CreateSession();
+        Assert.That(() => session.Add(1), Throws.TypeOf<InvalidOperationException>());
     }
 
     [Test]
-    public void Initialize_ResetsWrappedState()
+    public void CreateSession_IsolatesWrappedState()
     {
         var wrapper = new OnlyAccumulator(new Expressif.Library.Numeric.Arithmetic.Even(), new CountAccumulator());
-        wrapper.Initialize();
-        wrapper.Accumulate(2);
-        Assert.That(wrapper.GetValue(), Is.EqualTo(1));
-        wrapper.Initialize();
-        Assert.That(wrapper.GetValue(), Is.EqualTo(0));
+        var first = wrapper.CreateSession();
+        first.Add(2);
+        var second = wrapper.CreateSession();
+        Assert.Multiple(() =>
+        {
+            Assert.That(first.Snapshot(), Is.EqualTo(1));
+            Assert.That(second.Snapshot(), Is.EqualTo(0));
+        });
     }
 
     [Test]

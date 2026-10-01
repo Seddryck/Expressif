@@ -39,7 +39,7 @@ public class ArgumentRoleTest
         public object? Evaluate(object? value) => provider().Evaluate(value);
     }
 
-    public sealed class AccumulatorRole([ArgumentRole(ArgumentRole.Accumulator)] Func<IAccumulator> provider) : IFunction
+    public sealed class AccumulatorRole([ArgumentRole(ArgumentRole.Accumulator)] Func<IIncrementalAggregation> provider) : IFunction
     {
         public object? Evaluate(object? value) => provider();
     }

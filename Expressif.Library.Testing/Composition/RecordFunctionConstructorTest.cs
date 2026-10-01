@@ -170,7 +170,7 @@ public sealed class RecordFunctionConstructorTest
             IContext context,
             string functionName) => throw new NotSupportedException();
 
-        public Func<IAccumulator> CreateAccumulatorProvider(IParameter parameter, IContext context)
+        public Func<IIncrementalAggregation> CreateAccumulatorProvider(IParameter parameter, IContext context)
             => throw new NotSupportedException();
 
         public Func<IFunction> CreateTransformationProvider(

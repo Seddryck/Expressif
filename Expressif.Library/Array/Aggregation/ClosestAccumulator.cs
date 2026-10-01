@@ -13,49 +13,49 @@ namespace Expressif.Library.Array.Aggregation;
 /// Returns the first non-null input value with the smallest absolute distance to the target.
 /// </summary>
 [Function(prefix: "", Name = "closest")]
-public class ClosestAccumulator : BaseArrayAccumulator
+public class ClosestAccumulator : BaseArrayAggregation
 {
     private readonly Func<object?> targetProvider;
-    private IFunction? difference;
-    private decimal? minimumDistance;
-    private object? closest;
 
     /// <param name="target">Specifies the reference value used to measure numeric or temporal distance.</param>
     public ClosestAccumulator([ArgumentEvaluation(ArgumentEvaluationMode.Ambient)] Func<object?> target)
         => targetProvider = target;
 
-    public override void Initialize()
+    public override IAggregationSession CreateSession()
     {
-        closest = null;
-        minimumDistance = null;
-        difference = null;
         var target = targetProvider.Invoke();
         if (Expressif.Values.Special.Null.Instance.Equals(target))
-            return;
+            return new Session(null);
 
-        difference = new NumericCaster().TryCast(target!, out var numeric)
+        IFunction difference = new NumericCaster().TryCast(target!, out var numeric)
             ? new Subtract(() => numeric)
             : new DurationBetween(() => target);
+        return new Session(difference);
     }
 
-    public override void Accumulate(object? item)
+    private sealed class Session(IFunction? difference) : IAggregationSession
     {
-        if (difference is null || Expressif.Values.Special.Null.Instance.Equals(item))
-            return;
+        private decimal? minimumDistance;
+        private object? closest;
 
-        decimal? distance = difference.Evaluate(item) switch
+        public void Add(object? item)
         {
-            decimal numeric => Math.Abs(numeric),
-            TimeSpan duration => Math.Abs((decimal)duration.Ticks),
-            _ => null,
-        };
-        if (distance.HasValue && (!minimumDistance.HasValue || distance.Value < minimumDistance.Value))
-        {
-            minimumDistance = distance;
-            closest = item;
+            if (difference is null || Expressif.Values.Special.Null.Instance.Equals(item))
+                return;
+
+            decimal? distance = difference.Evaluate(item) switch
+            {
+                decimal numeric => Math.Abs(numeric),
+                TimeSpan duration => Math.Abs((decimal)duration.Ticks),
+                _ => null,
+            };
+            if (distance.HasValue && (!minimumDistance.HasValue || distance.Value < minimumDistance.Value))
+            {
+                minimumDistance = distance;
+                closest = item;
+            }
         }
-    }
 
-    public override object? GetValue()
-        => closest;
+        public object? Snapshot() => closest;
+    }
 }

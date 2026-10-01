@@ -19,13 +19,12 @@ public class ClosestTest
     public void Closest_Selection(string value, string target, string? expected)
     {
         var reference = TestExpression.CreateClosed(target).Evaluate(null);
-        var accumulator = new ClosestAccumulator(() => reference);
-        accumulator.Initialize();
+        var session = new ClosestAccumulator(() => reference).CreateSession();
         foreach (var item in (IEnumerable)TestExpression.CreateClosed(value).Evaluate(null)!)
-            accumulator.Accumulate(item);
+            session.Add(item);
 
         var result = expected is null ? null : TestExpression.CreateClosed(expected).Evaluate(null);
-        Assert.That(accumulator.GetValue(), Is.EqualTo(result));
+        Assert.That(session.Snapshot(), Is.EqualTo(result));
         Assert.That(TestExpression.CreateClosed($"{value} | closest({target})").Evaluate(null), Is.EqualTo(result));
     }
 
@@ -53,33 +52,36 @@ public class ClosestTest
         => Assert.That(() => TestExpression.Create("closest(value := 32)"), Throws.TypeOf<UnknownParameterNameException>());
 
     [Test]
-    public void Initialize_AfterAccumulation_ResetsStateAndTarget()
+    public void CreateSession_AfterAccumulation_IsolatesStateAndRefreshesTarget()
     {
         object? target = 32;
-        var accumulator = new ClosestAccumulator(() => target);
-        accumulator.Initialize();
-        accumulator.Accumulate(30);
+        var aggregation = new ClosestAccumulator(() => target);
+        var numericSession = aggregation.CreateSession();
+        numericSession.Add(30);
         target = new DateOnly(2024, 1, 12);
-        accumulator.Initialize();
-        Assert.That(accumulator.GetValue(), Is.Null);
+        var temporalSession = aggregation.CreateSession();
+        Assert.That(temporalSession.Snapshot(), Is.Null);
         var date = new DateOnly(2024, 1, 10);
-        accumulator.Accumulate(date);
-        Assert.That(accumulator.GetValue(), Is.EqualTo(date));
+        temporalSession.Add(date);
+        Assert.That(temporalSession.Snapshot(), Is.EqualTo(date));
         target = null;
-        accumulator.Initialize();
-        accumulator.Accumulate(30);
-        Assert.That(accumulator.GetValue(), Is.Null);
+        var nullTargetSession = aggregation.CreateSession();
+        nullTargetSession.Add(30);
+        Assert.Multiple(() =>
+        {
+            Assert.That(numericSession.Snapshot(), Is.EqualTo(30));
+            Assert.That(nullTargetSession.Snapshot(), Is.Null);
+        });
     }
 
     [Test]
     public void Accumulate_CoercedInput_PreservesOriginalObject()
     {
         object input = 30;
-        var accumulator = new ClosestAccumulator(() => 32m);
-        accumulator.Initialize();
-        accumulator.Accumulate(input);
-        accumulator.Accumulate(50m);
-        Assert.That(accumulator.GetValue(), Is.SameAs(input));
+        var session = new ClosestAccumulator(() => 32m).CreateSession();
+        session.Add(input);
+        session.Add(50m);
+        Assert.That(session.Snapshot(), Is.SameAs(input));
     }
 
     [Test]
@@ -104,21 +106,19 @@ public class ClosestTest
                 .Where(pair => pair.Distance is TimeSpan)
                 .OrderBy(pair => Math.Abs(((TimeSpan)pair.Distance!).Ticks))
                 .Select(pair => pair.Item).FirstOrDefault();
-            var accumulator = new ClosestAccumulator(() => target);
-            accumulator.Initialize();
+            var session = new ClosestAccumulator(() => target).CreateSession();
             foreach (var item in items)
-                accumulator.Accumulate(item);
-            Assert.That(accumulator.GetValue(), Is.SameAs(expected));
+                session.Add(item);
+            Assert.That(session.Snapshot(), Is.SameAs(expected));
         }
     }
 
     [Test]
     public void Accumulate_Overflow_MatchesSubtract()
     {
-        var accumulator = new ClosestAccumulator(() => decimal.MinValue);
-        accumulator.Initialize();
+        var session = new ClosestAccumulator(() => decimal.MinValue).CreateSession();
         Assert.That(() => new Subtract(() => decimal.MinValue).Evaluate(decimal.MaxValue), Throws.TypeOf<OverflowException>());
-        Assert.That(() => accumulator.Accumulate(decimal.MaxValue), Throws.TypeOf<OverflowException>());
+        Assert.That(() => session.Add(decimal.MaxValue), Throws.TypeOf<OverflowException>());
     }
 
     [Test]

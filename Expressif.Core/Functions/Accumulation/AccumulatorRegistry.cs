@@ -36,10 +36,10 @@ internal sealed class AccumulatorRegistry : IImplementationRegistry
             ? canonicalName
             : ImplementationRegistry.NormalizeName(name);
 
-    public IAccumulator Create(string name)
+    public IIncrementalAggregation Create(string name)
     {
         var implementationType = Resolve(name);
-        return Activator.CreateInstance(implementationType) as IAccumulator
+        return Activator.CreateInstance(implementationType) as IIncrementalAggregation
             ?? throw new InvalidOperationException(
                 $"Accumulator '{implementationType.FullName}' must have a parameterless constructor.");
     }
@@ -47,7 +47,7 @@ internal sealed class AccumulatorRegistry : IImplementationRegistry
     private static IEnumerable<AccumulatorRegistration> Discover(ITypeSource source)
         => source.GetTypes()
             .Where(type => type.IsClass && !type.IsAbstract
-                && typeof(IAccumulator).IsAssignableFrom(type))
+                && typeof(IIncrementalAggregation).IsAssignableFrom(type))
             .Select(type => (Type: type, Attribute: type.GetCustomAttribute<FunctionAttribute>(true)))
             .Where(candidate => candidate.Attribute is not null)
             .Select(candidate =>

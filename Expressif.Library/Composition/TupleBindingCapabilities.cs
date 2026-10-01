@@ -26,7 +26,7 @@ internal static class TupleBindingCapabilities
     private static bool IsValueType(Type type)
         => !typeof(Delegate).IsAssignableFrom(type)
             && !typeof(IFunction).IsAssignableFrom(type)
-            && !typeof(IAccumulator).IsAssignableFrom(type)
+            && !typeof(IIncrementalAggregation).IsAssignableFrom(type)
             && (!type.IsArray || (type.GetElementType() is { } element && IsValueType(element)))
             && (!type.IsGenericType || type.GetGenericArguments().All(IsValueType));
 

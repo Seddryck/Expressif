@@ -22,7 +22,7 @@ public class SummarizeAgainstTest
         Assert.Multiple(() =>
         {
             Assert.That(result, Is.Empty);
-            Assert.That(events, Is.EqualTo(new[] { "global.initialize", "global.finalize" }));
+            Assert.That(events, Is.EqualTo(new[] { "global.create", "global.snapshot" }));
         });
     }
 
@@ -48,11 +48,11 @@ public class SummarizeAgainstTest
             Assert.That(result.Select(pair => pair.Value), Is.EqualTo(new object?[] { 5, 4 }));
             Assert.That(events, Is.EqualTo(new[]
             {
-                "global.initialize", "local0.initialize",
-                "local0.accumulate:2", "global.accumulate:2",
-                "local0.accumulate:null", "global.accumulate:null",
-                "local1.initialize", "local1.accumulate:3", "global.accumulate:3",
-                "global.finalize", "local0.finalize", "combine", "local1.finalize", "combine",
+                "global.create", "local0.create",
+                "local0.add:2", "global.add:2",
+                "local0.add:null", "global.add:null",
+                "local1.create", "local1.add:3", "global.add:3",
+                "global.snapshot", "local0.snapshot", "combine", "local1.snapshot", "combine",
             }));
         });
     }
@@ -75,26 +75,29 @@ public class SummarizeAgainstTest
         });
     }
 
-    private sealed class TrackingAccumulator(string name, List<string> events) : BaseAccumulator
+    private sealed class TrackingAccumulator(string name, List<string> events) : BaseIncrementalAggregation
     {
-        private int count;
-
-        public override void Initialize()
+        public override IAggregationSession CreateSession()
         {
-            events.Add($"{name}.initialize");
-            count = 0;
+            events.Add($"{name}.create");
+            return new Session(name, events);
         }
 
-        public override void Accumulate(object? item)
+        private sealed class Session(string name, List<string> events) : IAggregationSession
         {
-            events.Add($"{name}.accumulate:{item ?? "null"}");
-            count++;
-        }
+            private int count;
 
-        public override object GetValue()
-        {
-            events.Add($"{name}.finalize");
-            return count;
+            public void Add(object? item)
+            {
+                events.Add($"{name}.add:{item ?? "null"}");
+                count++;
+            }
+
+            public object Snapshot()
+            {
+                events.Add($"{name}.snapshot");
+                return count;
+            }
         }
     }
 

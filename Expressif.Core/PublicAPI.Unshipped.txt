@@ -1,7 +1,6 @@
 #nullable enable
 abstract Expressif.Bindings.CoercionSpecificationParameter.<Clone>$() -> Expressif.Bindings.CoercionSpecificationParameter!
-abstract Expressif.Functions.Accumulation.BaseAccumulator.Accumulate(object? item) -> void
-abstract Expressif.Functions.Accumulation.BaseAccumulator.GetValue() -> object?
+abstract Expressif.Functions.Accumulation.BaseIncrementalAggregation.CreateSession() -> Expressif.Functions.Accumulation.IAggregationSession!
 abstract Expressif.Functions.Function<TIn, TOut>.Evaluate(TIn value) -> TOut
 abstract Expressif.Planning.LogicalValue.<Clone>$() -> Expressif.Planning.LogicalValue!
 abstract Expressif.Predicates.BasePredicate.Evaluate(object? value) -> bool
@@ -548,13 +547,14 @@ Expressif.ExpressionFactory.CreateClosed(string! text) -> Expressif.IExpression!
 Expressif.ExpressionFactory.ExpressionFactory(Expressif.Bindings.IExpressionBinder! binder, Expressif.Syntax.IExpressionParser? parser = null, Expressif.Observability.IExpressionObserver? observer = null) -> void
 Expressif.ExpressionRequiresInputException
 Expressif.ExpressionRequiresInputException.ExpressionRequiresInputException(string? reference) -> void
-Expressif.Functions.Accumulation.BaseAccumulator
-Expressif.Functions.Accumulation.BaseAccumulator.BaseAccumulator() -> void
-Expressif.Functions.Accumulation.BaseAccumulator.Evaluate(System.Collections.IEnumerable! value) -> object?
-Expressif.Functions.Accumulation.IAccumulator
-Expressif.Functions.Accumulation.IAccumulator.Accumulate(object? item) -> void
-Expressif.Functions.Accumulation.IAccumulator.GetValue() -> object?
-Expressif.Functions.Accumulation.IAccumulator.Initialize() -> void
+Expressif.Functions.Accumulation.BaseIncrementalAggregation
+Expressif.Functions.Accumulation.BaseIncrementalAggregation.BaseIncrementalAggregation() -> void
+Expressif.Functions.Accumulation.BaseIncrementalAggregation.Evaluate(System.Collections.IEnumerable! value) -> object?
+Expressif.Functions.Accumulation.IAggregationSession
+Expressif.Functions.Accumulation.IAggregationSession.Add(object? item) -> void
+Expressif.Functions.Accumulation.IAggregationSession.Snapshot() -> object?
+Expressif.Functions.Accumulation.IIncrementalAggregation
+Expressif.Functions.Accumulation.IIncrementalAggregation.CreateSession() -> Expressif.Functions.Accumulation.IAggregationSession!
 Expressif.Functions.Coercions.CoercionDescriptor
 Expressif.Functions.Coercions.CoercionDescriptor.CoercionDescriptor(string! name, System.Type! targetType, System.Collections.Generic.IEnumerable<System.Type!>! sourceTypes, System.Func<System.Type!, System.Type!>! implementationType, System.Func<System.Type!, Expressif.Functions.IFunction!>! factory) -> void
 Expressif.Functions.Coercions.CoercionDescriptor.Create(System.Type! sourceType) -> Expressif.Functions.IFunction!
@@ -1568,8 +1568,7 @@ virtual Expressif.Bindings.CoercionSpecificationParameter.EqualityContract.get -
 virtual Expressif.Bindings.CoercionSpecificationParameter.Equals(Expressif.Bindings.CoercionSpecificationParameter? other) -> bool
 virtual Expressif.Bindings.CoercionSpecificationParameter.PrintMembers(System.Text.StringBuilder! builder) -> bool
 virtual Expressif.ExpressionBuilder.Parametrize(object?[]! parameters) -> Expressif.Bindings.IParameter![]!
-virtual Expressif.Functions.Accumulation.BaseAccumulator.Evaluate(object? value) -> object?
-virtual Expressif.Functions.Accumulation.BaseAccumulator.Initialize() -> void
+virtual Expressif.Functions.Accumulation.BaseIncrementalAggregation.Evaluate(object? value) -> object?
 virtual Expressif.Planning.LogicalValue.EqualityContract.get -> System.Type!
 virtual Expressif.Planning.LogicalValue.Equals(Expressif.Planning.LogicalValue? other) -> bool
 virtual Expressif.Planning.LogicalValue.PrintMembers(System.Text.StringBuilder! builder) -> bool

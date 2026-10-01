@@ -88,14 +88,14 @@ public class ArgumentContractTest
 
     public sealed class FreshAccumulator(
         [ArgumentRole(ArgumentRole.Accumulator)]
-        [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IAccumulator> provider) : IFunction
+        [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IIncrementalAggregation> provider) : IFunction
     {
         public object? Evaluate(object? value) => ReferenceEquals(provider(), provider());
     }
 
     public sealed class StableAccumulator(
         [ArgumentRole(ArgumentRole.Accumulator)]
-        [ProviderLifetime(ProviderLifetime.BoundExpression)] Func<IAccumulator> provider) : IFunction
+        [ProviderLifetime(ProviderLifetime.BoundExpression)] Func<IIncrementalAggregation> provider) : IFunction
     {
         public object? Evaluate(object? value) => provider();
     }

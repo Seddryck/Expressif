@@ -17,7 +17,7 @@ internal sealed class FunctionRegistry : ImplementationRegistry
     private static IEnumerable<ImplementationRegistration> Discover(ITypeSource source)
         => source.GetTypes()
             .Where(type => type.IsClass && !type.IsAbstract
-                && !typeof(IAccumulator).IsAssignableFrom(type))
+                && !typeof(IIncrementalAggregation).IsAssignableFrom(type))
             .Select(type => (Type: type, Attribute: type.GetCustomAttribute<FunctionAttribute>(true)))
             .Where(candidate => candidate.Attribute is not null)
             .SelectMany(candidate => Names(candidate.Type, candidate.Attribute!)

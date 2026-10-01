@@ -14,12 +14,12 @@ namespace Expressif.Library.Array.Aggregation;
 [Scope("array/aggregation")]
 public class Fold : BaseArrayFunction<object>
 {
-    public Func<IAccumulator> Accumulator { get; }
+    public Func<IIncrementalAggregation> Aggregation { get; }
 
-    /// <param name="accumulator">Factory that creates the accumulator instance used for the fold execution.</param>
+    /// <param name="accumulator">Provider for the incremental aggregation used by each fold execution.</param>
     public Fold([ArgumentRole(ArgumentRole.Accumulator)]
-        [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IAccumulator> accumulator)
-        => Accumulator = accumulator;
+        [ProviderLifetime(ProviderLifetime.FreshPerRequest)] Func<IIncrementalAggregation> accumulator)
+        => Aggregation = accumulator;
 
     /// <param name="accumulator">Accumulator name (`count`, `sum`, `min`, `max`, `first`, `last`, ...).</param>
     public Fold(Func<string> accumulator)
@@ -31,11 +31,10 @@ public class Fold : BaseArrayFunction<object>
 
     protected override object? EvaluateArray(IEnumerable enumerable)
     {
-        var accumulator = Accumulator.Invoke();
-        accumulator.Initialize();
+        var session = Aggregation.Invoke().CreateSession();
         foreach (var item in enumerable!)
-            accumulator.Accumulate(item);
+            session.Add(item);
 
-        return accumulator.GetValue();
+        return session.Snapshot();
     }
 }

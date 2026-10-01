@@ -116,15 +116,13 @@ Use predicate-specific registration or bases only where they remain part of the 
 
 ### Incremental aggregation function
 
-Inherit from `BaseAccumulator` and preserve the lifecycle:
+Inherit from `BaseIncrementalAggregation` and create isolated evaluation sessions:
 
 ```csharp
-public override void Initialize();
-public override void Accumulate(object? item);
-public override object? GetValue();
+public override IAggregationSession CreateSession();
 ```
 
-Keep mutable aggregation state in private fields and reset all per-run state in `Initialize()`. Preserve public parameterless construction while `AccumulatorFactory` requires it.
+Keep configuration and runtime providers on the reusable aggregation definition. Keep all mutable per-run state in the returned `IAggregationSession`, implement `Add(object?)`, and make `Snapshot()` a stable, non-terminal projection so `scan` can continue adding items after observing a prefix. Resolve per-evaluation providers in `CreateSession()`, and preserve public parameterless construction while `AccumulatorFactory` requires it.
 
 ## Parameters and constructors
 

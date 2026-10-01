@@ -26,25 +26,28 @@ public class ConcatTest
         => Assert.That(TestExpression.Create("chars | concat").Evaluate("abc"), Is.EqualTo("abc"));
 
     [Test]
-    public void Initialize_AfterAccumulation_ResetsState()
+    public void CreateSession_AfterAccumulation_IsolatesState()
     {
-        var accumulator = new ConcatAccumulator(() => "-");
-        accumulator.Initialize();
-        accumulator.Accumulate("a");
-        accumulator.Accumulate("b");
-        accumulator.Initialize();
-        accumulator.Accumulate("c");
+        var aggregation = new ConcatAccumulator(() => "-");
+        var first = aggregation.CreateSession();
+        first.Add("a");
+        first.Add("b");
+        var second = aggregation.CreateSession();
+        second.Add("c");
 
-        Assert.That(accumulator.GetValue(), Is.EqualTo("c"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(first.Snapshot(), Is.EqualTo("a-b"));
+            Assert.That(second.Snapshot(), Is.EqualTo("c"));
+        });
     }
 
     [Test]
     public void Accumulate_Null_ThrowsInvalidCastException()
     {
-        var accumulator = new ConcatAccumulator();
-        accumulator.Initialize();
+        var session = new ConcatAccumulator().CreateSession();
 
-        Assert.That(() => accumulator.Accumulate(null), Throws.TypeOf<InvalidCastException>());
+        Assert.That(() => session.Add(null), Throws.TypeOf<InvalidCastException>());
     }
 
     private static object? Evaluate(object? value, string expression)
