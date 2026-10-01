@@ -3,7 +3,7 @@ layout: docs
 title: "with"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 240
+nav_order: 250
 has_toc: false
 permalink: /functions/record/with/
 tags:
@@ -32,6 +32,8 @@ Evaluates named projections independently against the input, then evaluates a bo
 |:-----|:-----|:---------|:------------|
 | `projections` | `entry` | Variadic (one or more); no spread | One or more named projections evaluated independently against the input value. |
 | `body` | `expression` | Yes | The final expression evaluated against the temporary projection record. |
+
+
 
 
 

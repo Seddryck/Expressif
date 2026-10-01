@@ -28,7 +28,7 @@ public abstract class StructuralImplode : IFunction<IEnumerable, ValueRecord[]>
         foreach (var item in value)
         {
             if (!Explode.IsRecord(item))
-                throw new ArgumentException("Every parent supplied to implode-inner must be a record.", nameof(value));
+                throw new ArgumentException("Every parent supplied to structural implode must be a record.", nameof(value));
             var fields = RecordOperations.Enumerate(item);
             var key = new ValueRecord();
             foreach (var field in fields)

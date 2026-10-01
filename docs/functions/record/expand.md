@@ -35,6 +35,8 @@ Flattens a selected nested record into its parent, qualifying conflicts or every
 
 
 
+
+
 ## Argument evaluation
 
 - **`selector`:** Evaluated once with the record supplied as pipeline input to this expand call as its context. A direct .field reads that record, including changes made by earlier pipeline stages.

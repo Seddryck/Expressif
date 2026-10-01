@@ -58,6 +58,7 @@ public static class ExpressifIntrospection
             [Key<Record.Expand>("label")] = "text",
             [Key<Record.Explode>("selector")] = "expression",
             [Key<Record.ExplodeOuter>("selector")] = "expression",
+            [Key<Record.Implode>("selector")] = "expression",
             [Key<Record.ImplodeInner>("selector")] = "expression",
             [Key<Array.Grouping.Pivot>("row")] = "expression",
             [Key<Array.Grouping.Pivot>("column")] = "expression",

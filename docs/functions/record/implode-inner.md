@@ -3,7 +3,7 @@ layout: docs
 title: "implode-inner"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 90
+nav_order: 100
 has_toc: false
 permalink: /functions/record/implode-inner/
 tags:
@@ -40,6 +40,7 @@ Groups records by all non-selected fields and collects non-null selected values 
 - **Ordering:** `preserved`
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

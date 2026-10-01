@@ -3,7 +3,7 @@ layout: docs
 title: "set-private"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 220
+nav_order: 230
 has_toc: false
 permalink: /functions/record/set-private/
 tags:
@@ -30,6 +30,8 @@ Returns a new record by renaming selected public fields by adding a leading unde
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `names` | `array` | No | Field names without the private underscore prefix. Missing, inapplicable, and duplicate names are ignored. An empty array changes no fields; omission selects all applicable fields. |
+
+
 
 
 

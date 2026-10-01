@@ -287,6 +287,7 @@ public static class LogicalSchemaAnalyzer
                 "field" => RequireField(call, expected, path),
                 "select-fields" => RequireSelectFields(call, expected, path),
                 "explode-field" or "explode-field-outer" => RequireExplode(call, expected, path),
+                "implode-field" => RequireImplode(call, expected, path),
                 "with" => RequireWith(call, expected, path),
                 "spread-entry" => RequireSpreadEntry(call, expected, path),
                 "sort-criterion" => RequireSortCriterion(call, path),
@@ -440,6 +441,34 @@ public static class LogicalSchemaAnalyzer
             return new Requirement(input, new AnyLogicalSchema());
         }
 
+        private Requirement RequireImplode(LogicalCall call, LogicalSchema expected, string path)
+        {
+            var name = SelectedField(call, "selector");
+            if (name is null)
+                return DynamicRequirement(path, "implode selector");
+
+            var output = expected as ArrayLogicalSchema;
+            var outputParent = output?.Items as RecordLogicalSchema;
+            var child = outputParent is not null
+                && outputParent.Fields.TryGetValue(name, out var selected)
+                && selected.Schema is ArrayLogicalSchema array
+                    ? array.Items
+                    : new AnyLogicalSchema();
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            if (outputParent is not null)
+            {
+                foreach (var field in outputParent.Fields)
+                    fields.Add(field.Key, field.Value);
+            }
+            fields[name] = new LogicalSchemaField(WithNullability(child, true), Optional: true);
+            var parent = new RecordLogicalSchema(
+                fields,
+                outputParent?.AllowsAdditionalFields ?? true);
+            return new Requirement(
+                new ArrayLogicalSchema(parent, IsNullable(expected)),
+                new AnyLogicalSchema());
+        }
+
         private Requirement RequireWith(LogicalCall call, LogicalSchema expected, string path)
         {
             var bodyIndex = call.Arguments
@@ -571,6 +600,7 @@ public static class LogicalSchemaAnalyzer
                 "select-fields" => InferSelectFields(call, input, enclosing, path),
                 "explode-field" => InferExplode(call, input, path, preserveParent: false),
                 "explode-field-outer" => InferExplode(call, input, path, preserveParent: true),
+                "implode-field" => InferImplode(call, input, path),
                 "with" => InferWith(call, input, enclosing, path),
                 "array" => InferArray(call, input, enclosing, path),
                 "tuple" => InferTuple(call, input, enclosing, path),
@@ -793,6 +823,41 @@ public static class LogicalSchemaAnalyzer
             foreach (var field in parent.Fields)
                 fields.Add(field.Key, field.Value);
             fields[name] = new LogicalSchemaField(child);
+            return new ArrayLogicalSchema(
+                new RecordLogicalSchema(fields, parent.AllowsAdditionalFields),
+                IsNullable(input));
+        }
+
+        private LogicalSchema InferImplode(LogicalCall call, LogicalSchema input, string path)
+        {
+            var name = SelectedField(call, "selector");
+            if (name is null)
+                return Dynamic(path, "implode selector");
+
+            if (input is not ArrayLogicalSchema { Items: RecordLogicalSchema parent })
+                return Dynamic(path, "implode parent record");
+
+            var child = parent.Fields.TryGetValue(name, out var selected)
+                ? selected.Schema
+                : new AnyLogicalSchema(IsNullable: true);
+            var selector = Argument(call, "selector");
+            if (selector?.Value is not null)
+            {
+                var selectorIndex = call.Arguments
+                    .Select((argument, index) => (argument, index))
+                    .Single(item => item.argument.Parameter.Name == "selector")
+                    .index;
+                Infer(
+                    selector.Value,
+                    parent,
+                    parent,
+                    $"{path}.arguments[{selectorIndex}].value");
+            }
+
+            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+            foreach (var field in parent.Fields)
+                fields.Add(field.Key, field.Value);
+            fields[name] = new LogicalSchemaField(new ArrayLogicalSchema(child));
             return new ArrayLogicalSchema(
                 new RecordLogicalSchema(fields, parent.AllowsAdditionalFields),
                 IsNullable(input));
