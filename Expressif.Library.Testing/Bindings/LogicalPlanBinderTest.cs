@@ -186,6 +186,20 @@ public sealed class LogicalPlanBinderTest
     }
 
     [Test]
+    public void Bind_SameShortNameInDifferentNamespaces_UsesQualifiedIdentity()
+    {
+        var plan = new LogicalPlan(new LogicalPipeline([
+            new LogicalCall(
+                new PlannerFunctionDescriptor(
+                    "shared", "decimal", "decimal", Kind: "extension", Namespace: "second"),
+                [])
+        ]));
+        IExpressionBinder binder = new ExpressionBinder(new FixedTypeSource(typeof(FirstShared), typeof(SecondShared)));
+
+        Assert.That(binder.Bind(plan).Evaluate(4m), Is.EqualTo(6m));
+    }
+
+    [Test]
     public void Bind_UnresolvedExtension_ThrowsPlanBindingException()
     {
         var plan = new LogicalPlan(new LogicalPipeline([
@@ -217,5 +231,19 @@ public sealed class LogicalPlanBinderTest
     private sealed class Triple : Function<decimal, decimal>
     {
         public override decimal Evaluate(decimal value) => value * 3;
+    }
+
+    [Scope("first")]
+    [Function(prefix: "", aliases: [], Name = "shared")]
+    private sealed class FirstShared : Function<decimal, decimal>
+    {
+        public override decimal Evaluate(decimal value) => value + 1;
+    }
+
+    [Scope("second")]
+    [Function(prefix: "", aliases: [], Name = "shared")]
+    private sealed class SecondShared : Function<decimal, decimal>
+    {
+        public override decimal Evaluate(decimal value) => value + 2;
     }
 }

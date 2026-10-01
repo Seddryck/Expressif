@@ -133,9 +133,38 @@ internal sealed class LogicalPlanBinder
     }
 
     private Function BindPipelineCall(LogicalValue value, bool inputBound)
-        => value is LogicalCall call
-            ? BindCall(call, inputBound)
-            : throw Error($"A pipeline stage must be an operator call, but found '{value.GetType().Name}'.");
+        => value switch
+        {
+            LogicalCall call => BindCall(call, inputBound),
+            LogicalNamedExpressionInvocation invocation => BindNamedExpressionInvocation(invocation),
+            _ => throw Error($"A pipeline stage must be an operator call, but found '{value.GetType().Name}'."),
+        };
+
+    private Function BindNamedExpressionInvocation(LogicalNamedExpressionInvocation invocation)
+    {
+        if (string.IsNullOrWhiteSpace(invocation.Name))
+            throw Error("A named-expression invocation must have a target name.");
+        if (invocation.Arguments is null)
+            throw Error($"Named-expression invocation '{invocation.Name}' has no argument collection.");
+        var arguments = new List<FunctionArgument>
+        {
+            new(null, new LiteralParameter(invocation.Name)),
+        };
+        arguments.AddRange(invocation.Arguments.Select(value => new FunctionArgument(null, BindInvocationArgument(value))));
+        return Function.FromArguments(
+            new OperatorIdentity("system", "named-expression-invocation"),
+            arguments.ToArray());
+    }
+
+    private IParameter BindInvocationArgument(LogicalValue value) => value switch
+    {
+        LogicalPipeline pipeline => BindExpressionParameter(pipeline),
+        LogicalCall call when IsExpressionCall(call) => new OpenExpressionParameter(
+            new OpenExpression([BindCall(call, inputBound: false)])),
+        LogicalNamedExpressionInvocation invocation => new OpenExpressionParameter(
+            new OpenExpression([BindNamedExpressionInvocation(invocation)])),
+        _ => BindValue(value),
+    };
 
     private Function BindCall(LogicalCall call, bool inputBound)
     {
@@ -178,7 +207,7 @@ internal sealed class LogicalPlanBinder
         {
             var accumulator = call.Function.Name == "first-elements" ? "first" : "last";
             return Function.FromArguments(
-                accumulator,
+                new OperatorIdentity(call.Function.Namespace, accumulator),
                 [],
                 FunctionSyntax.ImplicitFoldAccumulator,
                 FunctionImplementationKind.Accumulator);
@@ -192,7 +221,7 @@ internal sealed class LogicalPlanBinder
             return BindTupleProjection(call, syntax, implementationKind);
         }
         var arguments = BindFunctionArguments(call);
-        return Function.FromArguments(call.Function.Name, arguments, syntax, implementationKind);
+        return Function.FromArguments(call.Function.Identity, arguments, syntax, implementationKind);
     }
 
     private static Function BindTupleProjection(
@@ -222,7 +251,7 @@ internal sealed class LogicalPlanBinder
             };
         }
         return Function.FromArguments(
-            call.Function.Name,
+            call.Function.Identity,
             [new FunctionArgument(null, parameter)],
             syntax,
             implementationKind);
@@ -311,7 +340,7 @@ internal sealed class LogicalPlanBinder
             ? []
             : new IParameter[] { new RecordDefinitionParameter(entries.ToArray()) };
         return Function.FromArguments(
-            call.Function.Name,
+            call.Function.Identity,
             parameters.Select(parameter => new FunctionArgument(null, parameter)).ToArray(),
             FunctionSyntax.Standard,
             ImplementationKind(call));
@@ -340,7 +369,7 @@ internal sealed class LogicalPlanBinder
         if (projections.Count == 0 || body?.Value is null)
             throw Error("Function 'with' requires one or more projections and one body argument.");
         return Function.FromArguments(
-            call.Function.Name,
+            call.Function.Identity,
             [new FunctionArgument(null, new WithDefinitionParameter(
                 projections.ToArray(),
                 BindValue(body.Value)))],
@@ -353,6 +382,8 @@ internal sealed class LogicalPlanBinder
         LogicalLiteral literal => BindLiteral(literal),
         LogicalPipeline pipeline => BindExpressionParameter(pipeline),
         LogicalCall call => BindStructuralValue(call),
+        LogicalNamedExpressionInvocation invocation => new OpenExpressionParameter(
+            new OpenExpression([BindNamedExpressionInvocation(invocation)])),
         _ => throw Error($"Logical value '{value.GetType().Name}' is not supported."),
     };
 
@@ -403,6 +434,7 @@ internal sealed class LogicalPlanBinder
         LogicalCall { Function.Name: "input-binding" } => true,
         LogicalCall call => call.Arguments.Any(argument => argument.Value is not null
             && ContainsInputBinding(argument.Value)),
+        LogicalNamedExpressionInvocation invocation => invocation.Arguments.Any(ContainsInputBinding),
         _ => false,
     };
 
@@ -420,6 +452,10 @@ internal sealed class LogicalPlanBinder
             Arguments = call.Arguments.Select(argument => argument.Value is null
                 ? argument
                 : argument with { Value = AdjustTraversalTupleScopes(argument.Value) }).ToArray(),
+        },
+        LogicalNamedExpressionInvocation invocation => invocation with
+        {
+            Arguments = invocation.Arguments.Select(AdjustTraversalTupleScopes).ToArray(),
         },
         _ => value,
     };
@@ -493,8 +529,6 @@ internal sealed class LogicalPlanBinder
 
     private IReadOnlyList<(IParameter Value, bool IsSpread)> BindCollectionElements(LogicalCall call)
     {
-        if (call.Function.Kind != "extension")
-            ResolveOperator(call);
         var elements = new List<(IParameter, bool)>();
         foreach (var argument in call.Arguments)
         {
@@ -882,16 +916,16 @@ internal sealed class LogicalPlanBinder
     {
         var resolved = call.Function.Kind switch
         {
-            "function" => functions.TryResolve(call.Function.Name, out _),
-            "predicate" => predicates.TryResolve(call.Function.Name, out _),
-            "accumulator" => accumulators.TryResolve(call.Function.Name, out _),
-            "extension" => functions.TryResolve(call.Function.Name, out _)
-                || predicates.TryResolve(call.Function.Name, out _)
-                || accumulators.TryResolve(call.Function.Name, out _),
+            "function" => functions.TryResolve(call.Function.Identity, out _),
+            "predicate" => predicates.TryResolve(call.Function.Identity, out _),
+            "accumulator" => accumulators.TryResolve(call.Function.Identity, out _),
+            "extension" => functions.TryResolve(call.Function.Identity, out _)
+                || predicates.TryResolve(call.Function.Identity, out _)
+                || accumulators.TryResolve(call.Function.Identity, out _),
             _ => false,
         };
         if (!resolved)
-            throw Error($"Operator '{call.Function.Name}' of kind '{call.Function.Kind}' is not registered.");
+            throw Error($"Operator '{call.Function.CanonicalName}' of kind '{call.Function.Kind}' is not registered.");
     }
 
     private static FunctionImplementationKind ImplementationKind(LogicalCall call)
@@ -1037,6 +1071,8 @@ internal sealed class LogicalPlanBinder
 
     private static bool RequiresCallerInput(LogicalPipeline pipeline)
     {
+        if (pipeline.Items.Count == 0)
+            return false;
         var first = pipeline.Items[0];
         return first switch
         {
@@ -1059,6 +1095,7 @@ internal sealed class LogicalPlanBinder
         LogicalCall call => call.Arguments
             .Where(argument => argument.IsExplicit && argument.Value is not null)
             .Any(argument => ValueRequiresCallerInput(argument.Value!)),
+        LogicalNamedExpressionInvocation => true,
         _ => true,
     };
 

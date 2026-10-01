@@ -1914,7 +1914,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'unknown'."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'system::unknown'."));
         });
     }
 
@@ -1952,7 +1952,7 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr, Does.Contain($"The expression loaded from '{path}' is invalid:"));
-            Assert.That(result.StdErr, Does.Contain("Unknown function 'unknown'."));
+            Assert.That(result.StdErr, Does.Contain("Unknown function 'system::unknown'."));
         });
     }
 
@@ -2071,8 +2071,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.Contain("Pipeline [text -> text] (known)"));
-            Assert.That(result.StdOut, Does.Contain("Call: trim [text -> text]"));
-            Assert.That(result.StdOut, Does.Contain("Call: upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Call: text::trim [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Call: text::upper [text -> text]"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -2105,8 +2105,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.Contain("Schema: text -> text (known)"));
-            Assert.That(result.StdOut, Does.Contain("Step 1: upper [text -> text]"));
-            Assert.That(result.StdOut, Does.Contain("Step 2: first-chars [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 1: text::upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 2: text::first-chars [text -> text]"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -2141,8 +2141,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.Contain("Schema: text -> text (known)"));
-            Assert.That(result.StdOut, Does.Contain("Step 1: upper [text -> text]"));
-            Assert.That(result.StdOut, Does.Contain("Step 2: first-chars [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 1: text::upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 2: text::first-chars [text -> text]"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

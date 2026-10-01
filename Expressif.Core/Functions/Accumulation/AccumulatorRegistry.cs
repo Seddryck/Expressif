@@ -20,16 +20,23 @@ internal sealed class AccumulatorRegistry : IImplementationRegistry
     private AccumulatorRegistry(AccumulatorRegistration[] accumulators)
     {
         implementations = new ImplementationRegistry(accumulators.SelectMany(accumulator => accumulator.Names
-            .Select(name => new ImplementationRegistration(name, accumulator.Type))));
+            .Select(name => new ImplementationRegistration(accumulator.Namespace, name, accumulator.Type))));
         canonicalNames = accumulators.SelectMany(accumulator => accumulator.Names.Select(alias =>
                 new KeyValuePair<string, string>(ImplementationRegistry.NormalizeName(alias), accumulator.CanonicalName)))
-            .ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.OrdinalIgnoreCase);
+            .GroupBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+            .Where(group => group.Count() == 1)
+            .ToDictionary(group => group.Key, group => group.Single().Value, StringComparer.OrdinalIgnoreCase);
     }
 
     public Type Resolve(string name) => implementations.Resolve(name);
 
     public bool TryResolve(string name, out Type implementationType)
         => implementations.TryResolve(name, out implementationType);
+
+    public Type Resolve(OperatorIdentity identity) => implementations.Resolve(identity);
+
+    public bool TryResolve(OperatorIdentity identity, out Type implementationType)
+        => implementations.TryResolve(identity, out implementationType);
 
     public string ResolveCanonicalName(string name)
         => canonicalNames.TryGetValue(ImplementationRegistry.NormalizeName(name), out var canonicalName)
@@ -53,11 +60,12 @@ internal sealed class AccumulatorRegistry : IImplementationRegistry
             .Select(candidate =>
             {
                 var canonical = candidate.Attribute!.Name ?? candidate.Type.Name.ToKebabCase();
+                var @namespace = OperatorIdentity.NamespaceFromType(candidate.Type);
                 var names = candidate.Attribute.Aliases.Prepend(canonical)
                     .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToArray();
-                return new AccumulatorRegistration(canonical, names, candidate.Type);
+                return new AccumulatorRegistration(@namespace, canonical, names, candidate.Type);
             });
 
-    private sealed record AccumulatorRegistration(string CanonicalName, string[] Names, Type Type);
+    private sealed record AccumulatorRegistration(string Namespace, string CanonicalName, string[] Names, Type Type);
 }

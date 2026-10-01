@@ -11,7 +11,10 @@ public static class LogicalSchemaAnalyzer
     public static SchemaAnalysis Analyze(LogicalPlan plan, LogicalSchema? declaredInput = null)
     {
         ArgumentNullException.ThrowIfNull(plan);
-        var analyzer = new Analyzer();
+        LogicalNamedExpressionValidator.Validate(plan);
+        var analyzer = new Analyzer(plan.Definitions);
+        for (var index = 0; index < plan.Definitions.Count; index++)
+            analyzer.AnalyzeDefinition(plan.Definitions[index], $"definitions[{index}]");
         var requirement = analyzer.RequirePipeline(plan.Pipeline, new AnyLogicalSchema(), "plan");
         var input = declaredInput is null
             ? requirement
@@ -25,11 +28,26 @@ public static class LogicalSchemaAnalyzer
     {
         private readonly List<SchemaAnalysisDiagnostic> diagnostics = [];
         private readonly Dictionary<string, SchemaAnalysisNode> nodes = new(StringComparer.Ordinal);
+        private readonly IReadOnlyDictionary<string, LogicalNamedExpressionDefinition> definitions;
+
+        public Analyzer(IReadOnlyList<LogicalNamedExpressionDefinition> definitions)
+            => this.definitions = definitions.ToDictionary(definition => definition.Name, StringComparer.Ordinal);
 
         public IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics => diagnostics;
 
         public IReadOnlyList<SchemaAnalysisNode> Nodes
             => nodes.Values.OrderBy(node => node.Path, StringComparer.Ordinal).ToArray();
+
+        public void AnalyzeDefinition(LogicalNamedExpressionDefinition definition, string path)
+        {
+            var input = definition.InputContract is null
+                ? new AnyLogicalSchema()
+                : FromType(definition.InputContract.Type);
+            _ = RequirePipeline(definition.Body,
+                definition.OutputContract is null ? new AnyLogicalSchema() : FromType(definition.OutputContract.Type),
+                $"{path}.body");
+            _ = InferPipeline(definition.Body, input, input, $"{path}.body");
+        }
 
         public LogicalSchema RequirePipeline(LogicalPipeline pipeline, LogicalSchema expected, string path)
         {
@@ -241,8 +259,18 @@ public static class LogicalSchemaAnalyzer
             LogicalLiteral => new Requirement(new NoInputLogicalSchema(), new NoInputLogicalSchema()),
             LogicalPipeline pipeline => new Requirement(RequirePipeline(pipeline, expected, path), new AnyLogicalSchema()),
             LogicalCall call => RequireCall(call, expected, path),
+            LogicalNamedExpressionInvocation invocation => RequireInvocation(invocation, path),
             _ => DynamicRequirement(path, value.GetType().Name),
         };
+
+        private Requirement RequireInvocation(LogicalNamedExpressionInvocation invocation, string path)
+        {
+            for (var index = 0; index < invocation.Arguments.Count; index++)
+                _ = Require(invocation.Arguments[index], new AnyLogicalSchema(), $"{path}.arguments[{index}]");
+            return definitions[invocation.Name].InputContract is { } contract
+                ? new Requirement(FromType(contract.Type), new AnyLogicalSchema())
+                : DynamicRequirement(path, $"input of named expression '{invocation.Name}'");
+        }
 
         private Requirement RequireCall(LogicalCall call, LogicalSchema expected, string path)
         {
@@ -567,10 +595,24 @@ public static class LogicalSchemaAnalyzer
                 LogicalLiteral literal => FromType(literal.Type),
                 LogicalPipeline pipeline => InferPipeline(pipeline, input, enclosing, path),
                 LogicalCall call => InferCall(call, input, enclosing, path),
+                LogicalNamedExpressionInvocation invocation => InferInvocation(invocation, input, enclosing, path),
                 _ => Dynamic(path, value.GetType().Name),
             };
             Capture(value, path, input, output);
             return output;
+        }
+
+        private LogicalSchema InferInvocation(
+            LogicalNamedExpressionInvocation invocation,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path)
+        {
+            for (var index = 0; index < invocation.Arguments.Count; index++)
+                _ = Infer(invocation.Arguments[index], input, enclosing, $"{path}.arguments[{index}]");
+            return definitions[invocation.Name].OutputContract is { } contract
+                ? FromType(contract.Type)
+                : Dynamic(path, $"output of named expression '{invocation.Name}'");
         }
 
         private LogicalSchema InferCall(
@@ -1311,6 +1353,7 @@ public static class LogicalSchemaAnalyzer
                 LogicalPipeline => ("pipeline", null),
                 LogicalCall call => ("call", call.Function.Name),
                 LogicalLiteral => ("literal", null),
+                LogicalNamedExpressionInvocation invocation => ("named-expression-invocation", invocation.Name),
                 _ => (value.GetType().Name, null),
             };
             nodes[path] = new SchemaAnalysisNode(path, kind, operation, input, output);

@@ -10,13 +10,14 @@ namespace Expressif.Planning;
 public static class LogicalPlanJson
 {
     public const string FormatName = "expressif.logical-plan";
-    public const int FormatVersion = 2;
+    public const int FormatVersion = 3;
     public const string CatalogCompatibility = "3.0";
     public const string SchemaResourceName = "Expressif.LogicalPlan.schema.json";
 
     public static string Serialize(LogicalPlan plan, bool indented = true)
     {
         ArgumentNullException.ThrowIfNull(plan);
+        LogicalNamedExpressionValidator.Validate(plan);
         using var stream = new MemoryStream();
         using (var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = indented }))
         {
@@ -24,6 +25,11 @@ public static class LogicalPlanJson
             writer.WriteString("format", FormatName);
             writer.WriteNumber("version", FormatVersion);
             writer.WriteString("catalogCompatibility", CatalogCompatibility);
+            writer.WritePropertyName("definitions");
+            writer.WriteStartArray();
+            foreach (var definition in plan.Definitions)
+                WriteDefinition(writer, definition);
+            writer.WriteEndArray();
             writer.WritePropertyName("plan");
             WriteValue(writer, plan.Pipeline);
             writer.WriteEndObject();
@@ -38,7 +44,7 @@ public static class LogicalPlanJson
         {
             using var document = JsonDocument.Parse(json);
             var root = RequireObject(document.RootElement, "logical-plan document");
-            EnsureProperties(root, "format", "version", "catalogCompatibility", "plan");
+            EnsureProperties(root, "format", "version", "catalogCompatibility", "definitions", "plan");
             var format = RequireString(root, "format");
             if (format != FormatName)
             {
@@ -57,9 +63,14 @@ public static class LogicalPlanJson
                     $"Unsupported catalog compatibility '{compatibility}'. This reader supports '{CatalogCompatibility}'.");
             }
             var plan = ReadValue(RequireProperty(root, "plan"));
-            return plan is LogicalPipeline pipeline
+            var result = plan is LogicalPipeline pipeline
                 ? new LogicalPlan(pipeline)
+                {
+                    Definitions = RequireArray(root, "definitions").Select(ReadDefinition).ToArray(),
+                }
                 : throw new LogicalPlanFormatException("The root plan node must be a pipeline.");
+            LogicalNamedExpressionValidator.Validate(result);
+            return result;
         }
         catch (JsonException exception)
         {
@@ -110,15 +121,85 @@ public static class LogicalPlanJson
                 writer.WritePropertyName("value");
                 WriteLiteralValue(writer, literal);
                 break;
+            case LogicalNamedExpressionInvocation invocation:
+                writer.WriteString("kind", "named-expression-invocation");
+                writer.WriteString("name", invocation.Name);
+                writer.WritePropertyName("arguments");
+                writer.WriteStartArray();
+                foreach (var argument in invocation.Arguments)
+                    WriteValue(writer, argument);
+                writer.WriteEndArray();
+                break;
             default:
                 throw new LogicalPlanFormatException($"Unsupported logical-plan node '{value.GetType().Name}'.");
         }
         writer.WriteEndObject();
     }
 
+    private static void WriteDefinition(Utf8JsonWriter writer, LogicalNamedExpressionDefinition definition)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", definition.Name);
+        writer.WritePropertyName("parameters");
+        writer.WriteStartArray();
+        foreach (var parameter in definition.EffectiveParameters)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("name", parameter.Name);
+            if (parameter.Default is not null)
+            {
+                writer.WritePropertyName("default");
+                WriteValue(writer, parameter.Default);
+            }
+            if (parameter.Contract is not null)
+            {
+                writer.WritePropertyName("contract");
+                WriteContract(writer, parameter.Contract);
+            }
+            writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
+        writer.WritePropertyName("receivers");
+        writer.WriteStartArray();
+        foreach (var receiver in definition.EffectiveReceivers)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("name", receiver.Name);
+            if (receiver.Contract is not null)
+            {
+                writer.WritePropertyName("contract");
+                WriteContract(writer, receiver.Contract);
+            }
+            writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
+        if (definition.InputContract is not null)
+        {
+            writer.WritePropertyName("inputContract");
+            WriteContract(writer, definition.InputContract);
+        }
+        if (definition.OutputContract is not null)
+        {
+            writer.WritePropertyName("outputContract");
+            WriteContract(writer, definition.OutputContract);
+        }
+        writer.WritePropertyName("body");
+        WriteValue(writer, definition.Body);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteContract(Utf8JsonWriter writer, LogicalTypeContract contract)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", contract.Type);
+        writer.WriteBoolean("strict", contract.Strict);
+        writer.WriteEndObject();
+    }
+
     private static void WriteFunction(Utf8JsonWriter writer, PlannerFunctionDescriptor function)
     {
         writer.WriteStartObject();
+        writer.WriteString("namespace", function.Namespace);
         writer.WriteString("name", function.Name);
         writer.WriteString("kind", OperatorKind(function.Kind));
         writer.WriteString("input", function.Input);
@@ -247,8 +328,71 @@ public static class LogicalPlanJson
             "pipeline" => ReadPipeline(value),
             "call" => ReadCall(value),
             "literal" => ReadLiteral(value),
+            "named-expression-invocation" => ReadNamedExpressionInvocation(value),
             var kind => throw new LogicalPlanFormatException($"Unsupported logical-plan node kind '{kind}'."),
         };
+    }
+
+    private static LogicalNamedExpressionDefinition ReadDefinition(JsonElement element)
+    {
+        var definition = RequireObject(element, "named-expression definition");
+        EnsureProperties(
+            definition,
+            "name",
+            "parameters",
+            "receivers",
+            "inputContract",
+            "outputContract",
+            "body");
+        var body = ReadValue(RequireProperty(definition, "body")) as LogicalPipeline
+            ?? throw new LogicalPlanFormatException("A named-expression body must be a pipeline.");
+        return new LogicalNamedExpressionDefinition(
+            RequireString(definition, "name"),
+            body,
+            RequireArray(definition, "parameters").Select(ReadNamedExpressionParameter).ToArray(),
+            RequireArray(definition, "receivers").Select(ReadNamedExpressionReceiver).ToArray(),
+            definition.TryGetProperty("inputContract", out var input) ? ReadContract(input) : null,
+            definition.TryGetProperty("outputContract", out var output) ? ReadContract(output) : null);
+    }
+
+    private static LogicalNamedExpressionParameter ReadNamedExpressionParameter(JsonElement element)
+    {
+        var parameter = RequireObject(element, "named-expression parameter");
+        EnsureProperties(parameter, "name", "default", "contract");
+        LogicalLiteral? defaultValue = null;
+        if (parameter.TryGetProperty("default", out var value))
+        {
+            defaultValue = ReadValue(value) as LogicalLiteral
+                ?? throw new LogicalPlanFormatException("A named-expression parameter default must be a literal.");
+        }
+        return new LogicalNamedExpressionParameter(
+            RequireString(parameter, "name"),
+            defaultValue,
+            parameter.TryGetProperty("contract", out var contract) ? ReadContract(contract) : null);
+    }
+
+    private static LogicalNamedExpressionReceiver ReadNamedExpressionReceiver(JsonElement element)
+    {
+        var receiver = RequireObject(element, "named-expression receiver");
+        EnsureProperties(receiver, "name", "contract");
+        return new LogicalNamedExpressionReceiver(
+            RequireString(receiver, "name"),
+            receiver.TryGetProperty("contract", out var contract) ? ReadContract(contract) : null);
+    }
+
+    private static LogicalTypeContract ReadContract(JsonElement element)
+    {
+        var contract = RequireObject(element, "named-expression type contract");
+        EnsureProperties(contract, "type", "strict");
+        return new LogicalTypeContract(RequireString(contract, "type"), RequireBoolean(contract, "strict"));
+    }
+
+    private static LogicalNamedExpressionInvocation ReadNamedExpressionInvocation(JsonElement element)
+    {
+        EnsureProperties(element, "kind", "name", "arguments");
+        return new LogicalNamedExpressionInvocation(
+            RequireString(element, "name"),
+            RequireArray(element, "arguments").Select(ReadValue).ToArray());
     }
 
     private static LogicalPipeline ReadPipeline(JsonElement element)
@@ -342,7 +486,7 @@ public static class LogicalPlanJson
     private static PlannerFunctionDescriptor ReadFunction(JsonElement element)
     {
         var function = RequireObject(element, "operator descriptor");
-        EnsureProperties(function, "name", "kind", "input", "output", "traversal", "semantics");
+        EnsureProperties(function, "namespace", "name", "kind", "input", "output", "traversal", "semantics");
         PlannerTraversalDescriptor? traversal = null;
         if (function.TryGetProperty("traversal", out var traversalElement))
         {
@@ -361,7 +505,8 @@ public static class LogicalPlanJson
             RequireString(function, "output"),
             traversal,
             semantics,
-            OperatorKind(RequireString(function, "kind")));
+            OperatorKind(RequireString(function, "kind")),
+            Namespace: RequireString(function, "namespace"));
     }
 
     private static string OperatorKind(string kind)

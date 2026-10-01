@@ -930,6 +930,37 @@ public class LogicalSchemaAnalyzerTest
         });
     }
 
+    [Test]
+    public void Analyze_NamedExpressionInvocation_UsesBoundaryContractsAndTraversesBody()
+    {
+        var identity = new LogicalCall(
+            new PlannerFunctionDescriptor(
+                "identity", "any", "any", Kind: "extension", Namespace: "system"),
+            []);
+        var definition = new LogicalNamedExpressionDefinition(
+            "convert",
+            new LogicalPipeline([identity]),
+            InputContract: new LogicalTypeContract("integer"),
+            OutputContract: new LogicalTypeContract("text"));
+        var plan = new LogicalPlan(new LogicalPipeline([
+            new LogicalNamedExpressionInvocation("convert", []),
+        ])) { Definitions = [definition] };
+
+        var analysis = LogicalSchemaAnalyzer.Analyze(plan);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(analysis.Input, Is.EqualTo(new ScalarLogicalSchema("integer")));
+            Assert.That(analysis.Output, Is.EqualTo(new ScalarLogicalSchema("text")));
+            Assert.That(analysis.Nodes, Has.One.Matches<SchemaAnalysisNode>(node =>
+                node.Path == "definitions[0].body" && node.Kind == "pipeline"));
+            Assert.That(analysis.Nodes, Has.One.Matches<SchemaAnalysisNode>(node =>
+                node.Path == "plan.items[0]"
+                && node.Kind == "named-expression-invocation"
+                && node.Operator == "convert"));
+        });
+    }
+
     private static SchemaAnalysis Analyze(string expression, LogicalSchema? input = null)
         => LogicalSchemaAnalyzer.Analyze(
             LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(expression)),

@@ -875,7 +875,8 @@ public sealed class LogicalPlanner
                 "spread-entry" => new(Intrinsic: "spread-entry", Classification: "intrinsic"),
                 "sort-criterion" => new(Intrinsic: "sort-criterion", Classification: "intrinsic"),
                 _ => null,
-            });
+            },
+            Namespace: name is "conditional-forward" or "conditional-backward" ? "flow" : "system");
 
     private static PlannerParameterMetadata[] SyntheticParameters(int count)
         => Enumerable.Range(0, count).Select(index => SyntheticParameter($"argument-{index}")).ToArray();

@@ -5,6 +5,8 @@ using Expressif.Discovery;
 using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Values.Types;
+using Expressif.Values;
+using Expressif.Functions.Coercions;
 using RuntimeExpression = Expressif.IExpression;
 using RuntimeExpressionFactory = Expressif.Functions.FunctionFactory;
 
@@ -22,6 +24,8 @@ public sealed class ExpressionBinder : IExpressionBinder
     private LogicalPlanner Planner { get; }
     private LogicalPlanBinder PlanBinder { get; }
     private RuntimeExpressionFactory RuntimeFactory { get; }
+    private ITypeRegistry Types { get; }
+    private IValueConverter Converter { get; }
 
     public ExpressionBinder()
         : this(new Context()) { }
@@ -49,14 +53,19 @@ public sealed class ExpressionBinder : IExpressionBinder
             context,
             LogicalPlannerFactory.Create(),
             new LogicalPlanBinder(source, ExpressifTypeRegistry.Instance),
-            new RuntimeExpressionFactory(source)) { }
+            new RuntimeExpressionFactory(source),
+            ExpressifTypeRegistry.Instance,
+            TypeSourceService.Create<IValueConverter>(source)) { }
 
     internal ExpressionBinder(
         IContext context,
         LogicalPlanner planner,
         LogicalPlanBinder planBinder,
-        RuntimeExpressionFactory runtimeFactory)
-        => (Context, Planner, PlanBinder, RuntimeFactory) = (context, planner, planBinder, runtimeFactory);
+        RuntimeExpressionFactory runtimeFactory,
+        ITypeRegistry types,
+        IValueConverter converter)
+        => (Context, Planner, PlanBinder, RuntimeFactory, Types, Converter) =
+            (context, planner, planBinder, runtimeFactory, types, converter);
 
     /// <summary>
     /// Binds syntax to an executable expression.
@@ -215,11 +224,10 @@ public sealed class ExpressionBinder : IExpressionBinder
     {
         try
         {
-            var bound = requireClosed ? PlanBinder.BindClosed(plan) : PlanBinder.Bind(plan);
-            var function = requireClosed
-                ? RuntimeFactory.InstantiateClosed(bound, Context)
-                : RuntimeFactory.Instantiate(bound, Context);
-            return new Expressif.Expression(function);
+            LogicalNamedExpressionValidator.Validate(plan);
+            if (plan.Definitions.Count > 0)
+                return BindNamedExpressionDocument(plan, requireClosed);
+            return new Expressif.Expression(BindFunction(plan, requireClosed));
         }
         catch (LogicalPlanBindingException)
         {
@@ -235,6 +243,123 @@ public sealed class ExpressionBinder : IExpressionBinder
                 $"The logical plan could not be bound: {exception.Message}",
                 exception);
         }
+    }
+
+    private IFunction BindFunction(LogicalPlan plan, bool requireClosed)
+    {
+        var bound = requireClosed ? PlanBinder.BindClosed(plan) : PlanBinder.Bind(plan);
+        return requireClosed
+            ? RuntimeFactory.InstantiateClosed(bound, Context)
+            : RuntimeFactory.Instantiate(bound, Context);
+    }
+
+    private RuntimeExpression BindNamedExpressionDocument(LogicalPlan plan, bool requireClosed)
+    {
+        foreach (var definition in plan.Definitions)
+            ValidateContracts(definition);
+        var functions = plan.Definitions.ToDictionary(
+            definition => definition.Name,
+            definition => BindFunction(new LogicalPlan(definition.Body), requireClosed: false),
+            StringComparer.Ordinal);
+        var definitions = plan.Definitions.ToDictionary(
+            definition => definition.Name,
+            definition => CreateInvoker(definition, functions[definition.Name]),
+            StringComparer.Ordinal);
+        IFunction? entry = null;
+        if (plan.HasEntry)
+            entry = BindFunction(new LogicalPlan(plan.Pipeline), requireClosed);
+        return new NamedExpressionDocument(entry, definitions);
+    }
+
+    private void ValidateContracts(LogicalNamedExpressionDefinition definition)
+    {
+        var contracts = definition.EffectiveParameters.Select(parameter => (parameter.Name, parameter.Contract))
+            .Concat(definition.EffectiveReceivers.Select(receiver => (receiver.Name, receiver.Contract)))
+            .Append(("input", definition.InputContract))
+            .Append(("output", definition.OutputContract));
+        foreach (var (boundary, contract) in contracts.Where(item => item.Item2 is not null))
+        {
+            if (!Types.TryResolve(contract!.Type, out _))
+            {
+                throw new LogicalPlanBindingException(
+                    $"Named expression '{definition.Name}' has unknown type contract ':{contract.Type}' "
+                    + $"for '{boundary}'.");
+            }
+        }
+    }
+
+    private NamedExpressionInvoker CreateInvoker(LogicalNamedExpressionDefinition definition, IFunction body)
+        => (input, arguments) =>
+        {
+            var parameters = definition.EffectiveParameters;
+            var required = parameters.Count(parameter => parameter.Default is null);
+            if (arguments.Count < required || arguments.Count > parameters.Count)
+            {
+                throw new ArgumentException(
+                    $"Named expression '{definition.Name}' expects between {required} and {parameters.Count} arguments "
+                    + $"but received {arguments.Count}.");
+            }
+
+            var boundInput = ApplyContract(definition.Name, "input", input, definition.InputContract);
+            var bindings = new Dictionary<string, object?>(StringComparer.Ordinal);
+            if (definition.EffectiveReceivers.Count > 0)
+            {
+                if (boundInput is not IPositionalValue positional)
+                {
+                    throw new ArgumentException(
+                        "Positional input binding requires a tuple, pair, group, or vector; received "
+                        + (boundInput?.GetType().Name ?? "null") + ".");
+                }
+                if (positional.Arity != definition.EffectiveReceivers.Count)
+                {
+                    throw new ArgumentException(
+                        $"Positional input binding expects {definition.EffectiveReceivers.Count} components "
+                        + $"but received {positional.Arity}.");
+                }
+                for (var index = 0; index < definition.EffectiveReceivers.Count; index++)
+                {
+                    var receiver = definition.EffectiveReceivers[index];
+                    bindings.Add(receiver.Name, ApplyContract(
+                        definition.Name,
+                        receiver.Name,
+                        positional.GetPosition(index),
+                        receiver.Contract));
+                }
+            }
+
+            for (var index = 0; index < parameters.Count; index++)
+            {
+                var parameter = parameters[index];
+                var value = index < arguments.Count ? arguments[index] : parameter.Default!.Value;
+                bindings.Add(parameter.Name, ApplyContract(definition.Name, parameter.Name, value, parameter.Contract));
+            }
+
+            using var scope = EvaluationRuntime.BindNamedExpression(boundInput, bindings);
+            var result = EvaluationRuntime.CaptureDeferredResult(body.Evaluate(boundInput));
+            return ApplyContract(definition.Name, "output", result, definition.OutputContract);
+        };
+
+    private object? ApplyContract(
+        string definition,
+        string boundary,
+        object? value,
+        LogicalTypeContract? contract)
+    {
+        if (contract is null)
+            return value;
+        var descriptor = Types.Resolve(contract.Type);
+        if (contract.Strict)
+        {
+            if (!Types.IsInstance(value, descriptor))
+            {
+                throw new InvalidOperationException(
+                    $"Named expression '{definition}' requires '{boundary}' to be ':{descriptor.Name}', "
+                    + $"but received '{value?.GetType().Name ?? "null"}'.");
+            }
+            return value;
+        }
+
+        return descriptor.RuntimeType is null ? value : Converter.Convert(value, descriptor.RuntimeType);
     }
 
     private static CompositeTypeSource Compose(ITypeSource extensions)

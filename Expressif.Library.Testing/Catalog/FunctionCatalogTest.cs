@@ -233,16 +233,24 @@ public class FunctionCatalogTest
             },
             _ => throw new ArgumentOutOfRangeException(nameof(collisionKind)),
         };
-        var second = Documentation(collisionKind == "canonical" ? "shared" : "second", ["shared"])
-            with { Scope = "other" };
+        var second = Documentation(collisionKind == "canonical" ? "shared" : "second", ["shared"]);
         var expected = collisionKind == "canonical"
-            ? "Catalog name 'shared' is ambiguous between function 'shared', function 'shared'."
-            : "Catalog name 'shared' is ambiguous between function 'first', function 'second'.";
+            ? "Catalog name 'special::shared' is ambiguous between function 'shared', function 'shared'."
+            : "Catalog name 'special::shared' is ambiguous between function 'first', function 'second'.";
 
         Assert.That(
             () => FunctionCatalog.ValidateNames([first, second]),
             Throws.InvalidOperationException.With.Message.EqualTo(expected));
     }
+
+    [Test]
+    public void ValidateNames_SameShortNameAcrossNamespaces_IsAllowed()
+        => Assert.That(
+            () => FunctionCatalog.ValidateNames([
+                Documentation("shared"),
+                Documentation("shared") with { Scope = "other" },
+            ]),
+            Throws.Nothing);
 
     [Test]
     public void ValidateNames_CollisionAcrossKinds_IsAllowed()

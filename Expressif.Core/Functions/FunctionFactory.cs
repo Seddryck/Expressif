@@ -346,6 +346,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
     private IFunction InstantiateOrWrapAggregation(Bindings.Function function, IContext context)
     {
+        if (function.Identity == new OperatorIdentity("system", "named-expression-invocation"))
+            return BuildNamedExpressionInvocation(function, context);
         if (function.Syntax == FunctionSyntax.InputBindingStage
             && function.Parameters is [OpenExpressionParameter { Expression.InputBinding: { } binding }])
             return BuildInputBoundFunction(binding, context);
@@ -354,8 +356,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (BuildReferenceFunction(function) is { } reference)
             return reference;
 
-        var hasRegularFunction = Registry.TryResolve(name, out _);
-        if (accumulatorRegistry.TryResolve(name, out var accumulatorType)
+        var hasRegularFunction = TryResolve(Registry, function, out _);
+        if (TryResolve(accumulatorRegistry, function, out var accumulatorType)
             && (function.ImplementationKind == FunctionImplementationKind.Accumulator
                 || (function.ImplementationKind == FunctionImplementationKind.Unspecified
                     && (function.Syntax == FunctionSyntax.ImplicitFoldAccumulator || !hasRegularFunction))))
@@ -366,10 +368,10 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         Type registeredType;
         var found = function.ImplementationKind switch
         {
-            FunctionImplementationKind.Function => Registry.TryResolve(name, out registeredType),
-            FunctionImplementationKind.Predicate => predicateRegistry.TryResolve(name, out registeredType),
-            _ => Registry.TryResolve(name, out registeredType)
-                || predicateRegistry.TryResolve(name, out registeredType),
+            FunctionImplementationKind.Function => TryResolve(Registry, function, out registeredType),
+            FunctionImplementationKind.Predicate => TryResolve(predicateRegistry, function, out registeredType),
+            _ => TryResolve(Registry, function, out registeredType)
+                || TryResolve(predicateRegistry, function, out registeredType),
         };
         if (found)
         {
@@ -388,14 +390,14 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (function.ImplementationKind == FunctionImplementationKind.Predicate)
             return predicationFactory.Instantiate(new SinglePredication(function), context);
 
-        if (!Registry.TryResolve(function.Name, out var type))
+        if (!TryResolve(Registry, function, out var type))
         {
-            if (predicateRegistry.TryResolve(function.Name, out _))
+            if (TryResolve(predicateRegistry, function, out _))
             {
                 return predicationFactory.Instantiate(new SinglePredication(function), context);
             }
 
-            throw new NotImplementedFunctionException(function.Name);
+            throw new NotImplementedFunctionException(function.Identity.CanonicalName);
         }
 
         if (TryInstantiateWithAccumulatorProvider(type, function, context, out var aggregation))
@@ -408,6 +410,31 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return filtering;
 
         return Instantiate<IFunction>(type, function.Arguments, context);
+    }
+
+    private static bool TryResolve(
+        IImplementationRegistry registry,
+        Bindings.Function function,
+        out Type implementationType)
+    {
+        if (registry.TryResolve(function.Identity, out implementationType)
+            || (function.IsUnqualified && registry.TryResolve(function.Name, out implementationType)))
+        {
+            return true;
+        }
+        implementationType = null!;
+        return false;
+    }
+
+    private IFunction BuildNamedExpressionInvocation(Bindings.Function function, IContext context)
+    {
+        if (function.Parameters is not [LiteralParameter { Value: string name }, .. var arguments])
+            throw new BindingException("A named-expression invocation must contain a target name.");
+        var providers = arguments.Select(argument => CreateParameter(argument, typeof(object), context)).ToArray();
+        return new DelegatedFunction(input => NamedExpressionRuntime.Invoke(
+            name,
+            input,
+            providers.Select(provider => provider.DynamicInvoke()).ToArray()));
     }
 
     private IFunction InstantiateAnnotated(
@@ -591,7 +618,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (function.Parameters.Length != 0)
             throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
 
-        return new AccumulatorFunction(() => accumulatorRegistry.Create(function.Name));
+        return new AccumulatorFunction(() => Activator.CreateInstance(accumulatorType) as IIncrementalAggregation
+            ?? throw new InvalidOperationException(
+                $"Accumulator '{accumulatorType.FullName}' must have a parameterless constructor."));
     }
 
     private bool TryBuildAccumulatorConstructor(
@@ -625,6 +654,12 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
     private static IFunction? BuildReferenceFunction(Bindings.Function function)
     {
+        if (function.Identity == new OperatorIdentity("system", "identity"))
+        {
+            if (function.Parameters.Length != 0)
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            return new DelegatedFunction(value => value);
+        }
         if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
             && function.Parameters is [ScopedTupleProjectionParameter scoped])
             return new DelegatedFunction(_ => ResolveScopedTupleProjection(scoped));
