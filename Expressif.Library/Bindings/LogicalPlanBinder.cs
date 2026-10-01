@@ -184,29 +184,48 @@ internal sealed class LogicalPlanBinder
                 FunctionImplementationKind.Accumulator);
         }
 
-        var arguments = BindFunctionArguments(call);
-        var syntax = ResolveSyntax(call, inputBound, arguments);
+        var syntax = ResolveSyntax(call, inputBound);
         var implementationKind = ImplementationKind(call);
+        if (syntax is FunctionSyntax.ScopedTupleProjectionShorthand
+            or FunctionSyntax.InputTupleProjectionShorthand)
+        {
+            return BindTupleProjection(call, syntax, implementationKind);
+        }
+        var arguments = BindFunctionArguments(call);
+        return Function.FromArguments(call.Function.Name, arguments, syntax, implementationKind);
+    }
+
+    private static Function BindTupleProjection(
+        LogicalCall call,
+        FunctionSyntax syntax,
+        FunctionImplementationKind implementationKind)
+    {
+        if (call.Arguments.Count != 1)
+            throw Error("Operator 'tuple-at' requires exactly one position argument.");
+        var argument = call.Arguments.Single();
+        ValidateArgument(argument, call.Function.Name);
+        if (!argument.IsExplicit || argument.IsSpread)
+            throw Error("Operator 'tuple-at' requires one explicit non-spread position argument.");
+        var position = RequireInteger(argument.Value, "tuple-at position");
+        IParameter parameter;
         if (syntax == FunctionSyntax.ScopedTupleProjectionShorthand)
         {
-            var position = RequireInteger(call.Arguments.Single().Value, "tuple-at position");
-            return Function.FromArguments(
-                call.Function.Name,
-                [new FunctionArgument(null, new ScopedTupleProjectionParameter(position, call.ContextDepth))],
-                syntax,
-                implementationKind);
+            parameter = new ScopedTupleProjectionParameter(position, call.ContextDepth);
         }
-        if (syntax == FunctionSyntax.InputTupleProjectionShorthand)
+        else
         {
-            var position = RequireInteger(call.Arguments.Single().Value, "tuple-at position");
-            return Function.FromArguments(
-                call.Function.Name,
-                [new FunctionArgument(null, new LiteralParameter(
-                    position.ToString(CultureInfo.InvariantCulture)))],
-                syntax,
-                implementationKind);
+            parameter = position switch
+            {
+                int.MinValue => new TupleProjectionParameter(0, FromEnd: true),
+                < 0 => new TupleProjectionParameter(-position, FromEnd: true),
+                _ => new TupleProjectionParameter(position),
+            };
         }
-        return Function.FromArguments(call.Function.Name, arguments, syntax, implementationKind);
+        return Function.FromArguments(
+            call.Function.Name,
+            [new FunctionArgument(null, parameter)],
+            syntax,
+            implementationKind);
     }
 
     private FunctionArgument[] BindFunctionArguments(LogicalCall call)
@@ -747,8 +766,7 @@ internal sealed class LogicalPlanBinder
 
     private FunctionSyntax ResolveSyntax(
         LogicalCall call,
-        bool inputBound,
-        IReadOnlyList<FunctionArgument> arguments)
+        bool inputBound)
     {
         if (call.Function.Kind == "accumulator")
             return FunctionSyntax.ImplicitFoldAccumulator;
@@ -773,7 +791,7 @@ internal sealed class LogicalPlanBinder
         {
             if (!call.IsReferenceShorthand)
                 return FunctionSyntax.Standard;
-            if (arguments.Count != 1)
+            if (call.Arguments.Count != 1)
                 throw Error("Operator 'tuple-at' requires exactly one position argument.");
             if (call.ContextDepth > 0)
                 return FunctionSyntax.ScopedTupleProjectionShorthand;

@@ -5,6 +5,7 @@ using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Syntax;
 using Expressif.Values;
+using Expressif.Values.Types;
 
 namespace Expressif.Testing.Bindings;
 
@@ -43,6 +44,40 @@ public sealed class LogicalPlanBinderTest
         var expression = ExpressionBinder.Bind(RoundTrip(source));
 
         Assert.That(expression.Evaluate(Normalize(input)), Is.EqualTo(Normalize(expected)));
+    }
+
+    [TestCase("$0", 0, false)]
+    [TestCase("$^1", 1, true)]
+    [TestCase("$^0", 0, true)]
+    public void Bind_InputTupleProjection_UsesTypedParameter(string reference, int index, bool fromEnd)
+    {
+        var binder = new LogicalPlanBinder(
+            new AssemblyTypeSource(typeof(ExpressionBinder).Assembly),
+            ExpressifTypeRegistry.Instance);
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse($"apply(@_ | :> {reference})"));
+        var root = (OpenRootExpression)binder.Bind(plan);
+        var apply = root.Expression.Members.Single();
+        var open = (OpenExpressionParameter)apply.Parameters.Single();
+        var body = (OpenRootExpression)open.Expression.InputBinding!.Body;
+        var projection = body.Expression.Members.Single();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(projection.Syntax, Is.EqualTo(FunctionSyntax.InputTupleProjectionShorthand));
+            Assert.That(projection.Parameters.Single(), Is.EqualTo(new TupleProjectionParameter(index, fromEnd)));
+        });
+    }
+
+    [TestCase("$1", 20)]
+    [TestCase("$^1", 20)]
+    [TestCase("$^0", null)]
+    public void Bind_InputTupleProjection_ResolvesAgainstAmbientInput(string reference, object? expected)
+    {
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse(
+            $"T(10, 20) | apply(@_ | :> $0 | add(5) | {reference})"));
+        var expression = ExpressionBinder.Bind(plan);
+
+        Assert.That(expression.Evaluate(null), Is.EqualTo(Normalize(expected)));
     }
 
     [Test]
