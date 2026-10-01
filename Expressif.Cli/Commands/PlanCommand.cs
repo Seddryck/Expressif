@@ -21,7 +21,6 @@ internal static class PlanCommand
             "Display the canonical logical plan without schema annotations.",
             handler,
             PlanView.Logical));
-        command.Subcommands.Add(CreateImportCommand(handler, textReader));
         command.Subcommands.Add(CreateSchemaCommand(handler, textReader));
         return command;
     }
@@ -48,31 +47,6 @@ internal static class PlanCommand
             handler,
             view,
             parseResult.GetValue(expressionArgument)!,
-            parseResult.GetValue(outputOption)!));
-        return command;
-    }
-
-    private static Command CreateImportCommand(PlanHandler handler, IStrictUtf8TextReader textReader)
-    {
-        var fileArgument = new Argument<string?>("filename")
-        {
-            Arity = ArgumentArity.ZeroOrOne,
-            Description = "Logical-plan JSON file to import."
-        };
-        var stdinOption = new Option<bool>("--stdin")
-        {
-            Description = "Read logical-plan JSON from standard input."
-        };
-        var outputOption = CreateOutputOption();
-        var command = new Command("import", "Import, validate, and normalize a logical plan.");
-        command.Arguments.Add(fileArgument);
-        command.Options.Add(stdinOption);
-        command.Options.Add(outputOption);
-        command.SetAction(parseResult => ExecuteImport(
-            handler,
-            textReader,
-            parseResult.GetValue(fileArgument),
-            parseResult.GetValue(stdinOption),
             parseResult.GetValue(outputOption)!));
         return command;
     }
@@ -148,21 +122,6 @@ internal static class PlanCommand
         }
     }
 
-    private static int ExecuteImport(
-        PlanHandler handler,
-        IStrictUtf8TextReader textReader,
-        string? filename,
-        bool stdin,
-        string output)
-    {
-        if (!ValidateOutput(output) || !ValidateLogicalPlanSource(filename, stdin, "import"))
-            return ExitCodes.InvalidExpressionOrInput;
-
-        return TryReadLogicalPlan(filename, stdin, textReader, handler, out var plan)
-            ? WriteLogicalPlan(plan!, output)
-            : ExitCodes.InvalidExpressionOrInput;
-    }
-
     private static int ExecuteSchema(
         PlanHandler handler,
         IStrictUtf8TextReader textReader,
@@ -192,18 +151,6 @@ internal static class PlanCommand
 
         Console.Out.WriteLine(FormatSchema(handler.Analyze(plan!), output));
         return ExitCodes.Success;
-    }
-
-    private static bool ValidateLogicalPlanSource(string? filename, bool stdin, string command)
-    {
-        var hasFilename = !string.IsNullOrWhiteSpace(filename);
-        if (hasFilename == stdin)
-        {
-            Console.Error.WriteLine(
-                $"Plan {command} requires exactly one source: a filename or --stdin.");
-            return false;
-        }
-        return true;
     }
 
     private static bool TryReadLogicalPlan(
@@ -258,12 +205,6 @@ internal static class PlanCommand
             TextFileFailureKind.Empty => $"Logical-plan file '{path}' is empty.",
             _ => $"Logical-plan file '{path}' could not be accessed: {exception.Message}",
         };
-
-    private static int WriteLogicalPlan(LogicalPlan plan, string output)
-    {
-        Console.Out.WriteLine(FormatLogical(plan, output));
-        return ExitCodes.Success;
-    }
 
     private static bool ValidateOutput(string output)
     {

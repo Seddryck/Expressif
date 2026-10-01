@@ -2097,61 +2097,6 @@ public class CliCommandTests
     }
 
     [Test]
-    public async Task PlanImport_File_DisplaysLogicalTree()
-    {
-        var path = CreateTempFile(CreateLogicalPlanJson(), ".json");
-
-        var result = await InvokeAsync("plan", "import", path);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.Contain("Pipeline"));
-            Assert.That(result.StdOut, Does.Contain("Call: trim"));
-            Assert.That(result.StdOut, Does.Contain("Call: upper"));
-            Assert.That(result.StdErr, Is.Empty);
-        });
-    }
-
-    [Test]
-    public async Task PlanImport_Stdin_DisplaysLogicalTree()
-    {
-        var result = await InvokeWithInputAsync(
-            CreateLogicalPlanJson(),
-            "plan", "import", "--stdin");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.Contain("Call: trim"));
-            Assert.That(result.StdErr, Is.Empty);
-        });
-    }
-
-    [Test]
-    public async Task PlanImport_JsonOutput_NormalizesDeterministically()
-    {
-        var json = CreateLogicalPlanJson();
-        using var document = JsonDocument.Parse(json);
-        var compact = JsonSerializer.Serialize(document.RootElement);
-        var path = CreateTempFile(compact, ".json");
-
-        var first = await InvokeAsync("plan", "import", path, "--output", "json");
-        var second = await InvokeWithInputAsync(
-            compact,
-            "plan", "import", "--stdin", "--output", "json");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(first.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(first.StdOut.TrimEnd(), Is.EqualTo(json));
-            Assert.That(second.StdOut, Is.EqualTo(first.StdOut));
-            Assert.That(first.StdErr, Is.Empty);
-            Assert.That(second.StdErr, Is.Empty);
-        });
-    }
-
-    [Test]
     public async Task PlanSchema_Expression_DisplaysOverallAndStepSchemas()
     {
         var result = await InvokeAsync("plan", "schema", "upper | first-chars(5)");
@@ -2241,75 +2186,6 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr, Does.Contain("requires exactly one source"));
-        });
-    }
-
-    [TestCase("plan", "import")]
-    [TestCase("plan", "import", "file.json", "--stdin")]
-    public async Task PlanImport_InvalidSourceSelection_WritesUsageDiagnostic(params string[] args)
-    {
-        var result = await InvokeWithInputAsync(CreateLogicalPlanJson(), args);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
-            Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr, Does.Contain("requires exactly one source"));
-        });
-    }
-
-    [Test]
-    public async Task PlanImport_MalformedJson_WritesSpecificDiagnosticToStandardError()
-    {
-        var result = await InvokeWithInputAsync("{", "plan", "import", "--stdin");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
-            Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr, Does.Contain("not valid JSON"));
-        });
-    }
-
-    [Test]
-    public async Task PlanImport_InvalidStructure_WritesSpecificDiagnosticToStandardError()
-    {
-        var json = """
-            {"format":"expressif.logical-plan","version":2,"catalogCompatibility":"3.0",
-             "plan":{"kind":"literal","type":"text","value":"upper"}}
-            """;
-
-        var result = await InvokeWithInputAsync(json, "plan", "import", "--stdin");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
-            Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr, Does.Contain("root plan node must be a pipeline"));
-        });
-    }
-
-    [TestCase("format", "unknown.logical-plan", "Unsupported logical-plan format")]
-    [TestCase("version", "999", "Unsupported logical-plan version")]
-    [TestCase("catalogCompatibility", "999.0", "Unsupported catalog compatibility")]
-    public async Task PlanImport_IncompatibleHeader_WritesSpecificDiagnostic(
-        string property,
-        string value,
-        string expectedDiagnostic)
-    {
-        var json = CreateLogicalPlanJson();
-        using var document = JsonDocument.Parse(json);
-        var root = JsonSerializer.Deserialize<Dictionary<string, object>>(document.RootElement)!;
-        root[property] = property == "version" ? int.Parse(value) : value;
-        var incompatible = JsonSerializer.Serialize(root);
-
-        var result = await InvokeWithInputAsync(incompatible, "plan", "import", "--stdin");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
-            Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr, Does.Contain(expectedDiagnostic));
         });
     }
 
