@@ -46,8 +46,14 @@ internal sealed class PlanHandler(ISyntaxService syntax)
     public LogicalPlan Execute(string expression)
         => LogicalPlannerFactory.Create().Build(syntax.Parse(expression));
 
+    public LogicalPlan Import(string json)
+        => LogicalPlanJson.Deserialize(json);
+
     public AnalyzedLogicalPlan Analyze(string expression)
         => LogicalSchemaAnalyzer.AnalyzePlan(Execute(expression));
+
+    public AnalyzedLogicalPlan Analyze(LogicalPlan plan)
+        => LogicalSchemaAnalyzer.AnalyzePlan(plan);
 }
 
 internal enum HelpMode
