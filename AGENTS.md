@@ -136,6 +136,22 @@ For every completed implementation:
 
 Do NOT use `bug`, `new-feature`, or `enhancement` labels on the pull request unless explicitly requested.
 
+## Release branches
+
+A release branch is named `feat/vX.Y`, where `X` and `Y` are version numbers. Its release pull request has that branch as its head and targets `main`.
+
+When a pull request is merged into a release branch:
+
+1. Identify the release pull request whose head is the target `feat/vX.Y` branch.
+2. Identify every issue delivered by the merged pull request.
+3. Add a `Closes #<issue-number>` entry to the release pull request for each delivered issue. Preserve existing content and do not add duplicate entries.
+4. Assign each issue to the `vX.Y` milestone corresponding to the release branch. Correct a missing or incorrect milestone.
+5. Add the `staged-release` label to each issue while preserving its required change-type label.
+6. Close each issue explicitly.
+7. Verify that the release pull request references every delivered issue and that each issue is closed, labelled `staged-release`, and assigned to the correct milestone.
+
+If no unique release pull request can be identified for the target branch, stop and resolve the ambiguity before changing any issues.
+
 ## Completion criteria
 
 A coding task is complete only when:
