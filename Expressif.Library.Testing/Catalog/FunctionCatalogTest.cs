@@ -187,10 +187,16 @@ public class FunctionCatalogTest
         });
     }
 
-    [TestCase("first")]
-    [TestCase("last")]
-    public void Find_AggregationName_ResolvesFunction(string name)
-        => Assert.That(FunctionCatalog.Default.Find(name, "function")?.Name, Is.EqualTo(name));
+    [TestCase("first", "first-elements")]
+    [TestCase("last", "last-elements")]
+    public void Find_SharedName_ResolvesByArity(string name, string selection)
+    {
+        Assert.Multiple(() =>
+        {
+            Assert.That(FunctionCatalog.Default.Find(name, "function", 0)?.Name, Is.EqualTo(name));
+            Assert.That(FunctionCatalog.Default.Find(name, "function", 1)?.Name, Is.EqualTo(selection));
+        });
+    }
 
     [Test]
     public void Merge_ExplicitFunctionKindsRemainUnchangedAndPredicatesAreMarked()
@@ -246,6 +252,18 @@ public class FunctionCatalogTest
                 Documentation("shared") with { Kind = "predicate" },
             ]),
             Throws.Nothing);
+
+    [Test]
+    public void ValidateNames_CollisionWithDisjointArities_IsAllowed()
+    {
+        var aggregation = Documentation("first");
+        var selection = Documentation("first-elements", ["first"]) with
+        {
+            Parameters = [new("count", "integer", false, "Count.")],
+        };
+
+        Assert.That(() => FunctionCatalog.ValidateNames([aggregation, selection]), Throws.Nothing);
+    }
 
     [TestCase("array", "values", 0)]
     [TestCase("record", "entries", 0)]

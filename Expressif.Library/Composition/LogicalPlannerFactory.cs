@@ -20,11 +20,14 @@ public static class LogicalPlannerFactory
         FunctionCatalog catalog,
         AccumulatorRegistry accumulators) : ILogicalPlanningContext
     {
-        public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
+        public PlannerFunctionMetadata? FindFunction(
+            string name,
+            string? expectedKind = null,
+            int? argumentCount = null)
         {
             var function = expectedKind == "predicate"
-                ? Find(name, "predicate") ?? Find(name, "function")
-                : Find(name, "function") ?? Find(name);
+                ? Find(name, "predicate", argumentCount) ?? Find(name, "function", argumentCount)
+                : Find(name, "function", argumentCount) ?? Find(name, null, argumentCount);
             if (expectedKind == "accumulator"
                 && (function is null || !accumulators.TryResolve(function.Name, out _)))
             {
@@ -81,10 +84,16 @@ public static class LogicalPlannerFactory
                     DescribeOmission(parameter.Omission))).ToArray());
         }
 
-        private FunctionDocumentation? Find(string name, string? kind = null)
-            => kind is null
-                ? catalog.Find(name) ?? catalog.Find(name.ToKebabCase())
-                : catalog.Find(name, kind) ?? catalog.Find(name.ToKebabCase(), kind);
+        private FunctionDocumentation? Find(string name, string? kind, int? argumentCount)
+            => (kind, argumentCount) switch
+            {
+                (null, null) => catalog.Find(name) ?? catalog.Find(name.ToKebabCase()),
+                (not null, null) => catalog.Find(name, kind) ?? catalog.Find(name.ToKebabCase(), kind),
+                (null, not null) => catalog.Find(name, argumentCount.Value)
+                    ?? catalog.Find(name.ToKebabCase(), argumentCount.Value),
+                (not null, not null) => catalog.Find(name, kind, argumentCount.Value)
+                    ?? catalog.Find(name.ToKebabCase(), kind, argumentCount.Value),
+            };
 
         public string? FindType(string name)
             => ExpressifTypeRegistry.Instance.TryResolve(name, out var descriptor)

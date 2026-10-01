@@ -212,7 +212,7 @@ Where namespaces are available, they can also disambiguate or organize related f
 
 The canonical function name should be preferred in documentation and reusable expressions unless an alias communicates the intent more clearly for a specific audience.
 
-In v3.0, the old `/accumulators/<scope>/<name>/` reference URLs move to `/functions/array/aggregation/<name>/`. `first` and `last` name the scalar aggregation functions. The former selection aliases were removed; use `first-elements(count)` and `last-elements(count)` when selecting arrays of elements.
+In v3.0, the old `/accumulators/<scope>/<name>/` reference URLs move to `/functions/array/aggregation/<name>/`. Bare `first` and `last` name the zero-argument scalar aggregation functions; `first(count)` and `last(count)` remain aliases of `first-elements(count)` and `last-elements(count)`. The shared names are resolved by their non-overlapping argument counts.
 
 ## Array arguments and spread
 

@@ -52,7 +52,10 @@ public class CoreLogicalPlannerTest
 
     private sealed class StubContext(PlannerFunctionMetadata metadata) : ILogicalPlanningContext
     {
-        public PlannerFunctionMetadata? FindFunction(string name, string? expectedKind = null)
+        public PlannerFunctionMetadata? FindFunction(
+            string name,
+            string? expectedKind = null,
+            int? argumentCount = null)
             => name == "custom-alias" ? metadata : null;
 
         public string? FindType(string name) => null;

@@ -9,7 +9,7 @@ namespace Expressif.Library.Array.Selection;
 /// Returns up to the requested number of elements from the start of the input enumerable.
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
 /// </summary>
-[Function(prefix: "")]
+[Function(prefix: "", aliases: ["first"])]
 [Scope("array/selection")]
 public class FirstElements : BaseArrayFunction
 {
@@ -78,7 +78,7 @@ public class SkipFirstElements : BaseArrayFunction
 /// Returns up to the requested number of elements from the end of the input enumerable, preserving their order.
 /// Returns <see langword="null"/> when the input is not an enumerable, is a string, or the count is negative.
 /// </summary>
-[Function(prefix: "")]
+[Function(prefix: "", aliases: ["last"])]
 [Scope("array/selection")]
 public class LastElements : BaseArrayFunction
 {

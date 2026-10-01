@@ -707,7 +707,7 @@ Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception)
 Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
 Expressif.Planning.ILogicalPlanningContext
-Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null) -> Expressif.Planning.PlannerFunctionMetadata?
+Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null, int? argumentCount = null) -> Expressif.Planning.PlannerFunctionMetadata?
 Expressif.Planning.ILogicalPlanningContext.FindType(string! name) -> string?
 Expressif.Planning.LogicalArgument
 Expressif.Planning.LogicalArgument.<Clone>$() -> Expressif.Planning.LogicalArgument!

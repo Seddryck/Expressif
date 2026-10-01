@@ -18,7 +18,10 @@ public sealed class FunctionCatalog
     public IReadOnlyList<FunctionDocumentation> Functions => functions;
 
     public FunctionDocumentation? Find(string name)
-        => Find(name, functions);
+        => Find(name, functions, null);
+
+    public FunctionDocumentation? Find(string name, int argumentCount)
+        => Find(name, functions, argumentCount);
 
     public FunctionDocumentation? Find(string name, string kind)
     {
@@ -26,19 +29,32 @@ public sealed class FunctionCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(kind);
 
         return Find(name, functions.Where(
-            function => function.Kind.Equals(kind, StringComparison.OrdinalIgnoreCase)));
+            function => function.Kind.Equals(kind, StringComparison.OrdinalIgnoreCase)), null);
     }
 
-    private static FunctionDocumentation? Find(string name, IEnumerable<FunctionDocumentation> candidates)
+    public FunctionDocumentation? Find(string name, string kind, int argumentCount)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(kind);
+        ArgumentOutOfRangeException.ThrowIfNegative(argumentCount);
+
+        return Find(name, functions.Where(
+            function => function.Kind.Equals(kind, StringComparison.OrdinalIgnoreCase)), argumentCount);
+    }
+
+    private static FunctionDocumentation? Find(
+        string name,
+        IEnumerable<FunctionDocumentation> candidates,
+        int? argumentCount)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         var exact = candidates.Where(x => IsExactMatch(x, name)).ToArray();
         if (exact.Length > 0)
-            return SingleCanonicalMatch(exact);
+            return SelectCanonicalMatch(name, exact, argumentCount, StringComparison.Ordinal);
 
         var insensitive = candidates.Where(x => IsInsensitiveMatch(x, name)).ToArray();
-        return SingleCanonicalMatch(insensitive);
+        return SelectCanonicalMatch(name, insensitive, argumentCount, StringComparison.OrdinalIgnoreCase);
     }
 
     public IEnumerable<FunctionDocumentation> ForScope(string scope)
@@ -131,7 +147,7 @@ public sealed class FunctionCatalog
                         .Distinct()
                         .ToArray(),
                 }))
-            .Where(collision => collision.Entries.Length > 1)
+            .Where(collision => collision.Entries.Length > 1 && HasOverlappingArities(collision.Entries))
             .OrderBy(collision => collision.Key, StringComparer.Ordinal)
             .ToArray();
         if (collisions.Length == 0)
@@ -303,6 +319,39 @@ public sealed class FunctionCatalog
             .Prepend(function.Name)
             .Concat(function.DeprecatedAliases?.Select(alias => alias.Name) ?? []);
 
+    private static bool HasOverlappingArities(IReadOnlyList<FunctionDocumentation> entries)
+    {
+        for (var left = 0; left < entries.Count; left++)
+        {
+            for (var right = left + 1; right < entries.Count; right++)
+            {
+                var leftRange = ArgumentCountRange(entries[left]);
+                var rightRange = ArgumentCountRange(entries[right]);
+                if (leftRange.Minimum <= rightRange.Maximum && rightRange.Minimum <= leftRange.Maximum)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool AcceptsArgumentCount(FunctionDocumentation function, int argumentCount)
+    {
+        var range = ArgumentCountRange(function);
+        return argumentCount >= range.Minimum && argumentCount <= range.Maximum;
+    }
+
+    private static (int Minimum, int Maximum) ArgumentCountRange(FunctionDocumentation function)
+    {
+        var minimum = function.Parameters.Sum(parameter => parameter.Variadic
+            ? parameter.MinimumCardinality
+            : parameter.Optional ? 0 : 1);
+        var maximum = function.Parameters.Any(parameter => parameter.Variadic)
+            ? int.MaxValue
+            : function.Parameters.Length;
+        return (minimum, maximum);
+    }
+
     private static FunctionDocumentation[] LoadEntries(Assembly assembly, string resourceName, string kind)
     {
         using var stream = assembly.GetManifestResourceStream(resourceName)
@@ -313,12 +362,33 @@ public sealed class FunctionCatalog
             ?? throw new InvalidOperationException($"The embedded {kind} catalog could not be deserialized.");
     }
 
-    private static FunctionDocumentation? SingleCanonicalMatch(FunctionDocumentation[] matches)
+    private static FunctionDocumentation? SelectCanonicalMatch(
+        string name,
+        FunctionDocumentation[] matches,
+        int? argumentCount,
+        StringComparison comparison)
     {
         var canonical = matches
             .DistinctBy(x => $"{x.Kind}\0{x.Name}", StringComparer.Ordinal)
             .ToArray();
-        return canonical.Length == 1 ? canonical[0] : null;
+        if (canonical.Length <= 1)
+            return canonical.SingleOrDefault();
+
+        if (argumentCount is not null)
+        {
+            var eligible = canonical
+                .Where(candidate => AcceptsArgumentCount(candidate, argumentCount.Value))
+                .ToArray();
+            if (eligible.Length == 1)
+                return eligible[0];
+            if (eligible.Length > 1)
+                return null;
+        }
+
+        var exactCanonical = canonical
+            .Where(candidate => candidate.Name.Equals(name, comparison))
+            .ToArray();
+        return exactCanonical.Length == 1 ? exactCanonical[0] : null;
     }
 
     private static int EditDistance(string left, string right)

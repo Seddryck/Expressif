@@ -718,7 +718,9 @@
   {
     "Name": "first-elements",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "first"
+    ],
     "Scope": "array/selection",
     "Input": "array",
     "Output": "array",
@@ -1049,7 +1051,9 @@
   {
     "Name": "last-elements",
     "IsPublic": true,
-    "Aliases": [],
+    "Aliases": [
+      "last"
+    ],
     "Scope": "array/selection",
     "Input": "array",
     "Output": "array",

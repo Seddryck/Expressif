@@ -65,5 +65,5 @@ When `count` is greater than the number of elements in the input, `last-elements
 
 **Kind:** Function  
 **Scope:** `array/selection`  
-**Aliases:** None
+**Aliases:** `last`
 {: .member-reference }
