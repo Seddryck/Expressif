@@ -13,11 +13,11 @@ generated: true
 ---
 
 ```
-array →
+T →
 only(
     predicate: predicate,
     accumulator: accumulator
-) → any
+) → U
 ```
 
 Forwards only items satisfying the predicate to the wrapped accumulator.

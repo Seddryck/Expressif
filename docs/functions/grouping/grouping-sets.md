@@ -35,11 +35,12 @@ Expands a grouping into explicitly declared sets of retained key dimensions.
 
 ## Structural semantics
 
-- **Cardinality:** `expanded`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `expanded` <span class="semantics-info" title="One visited input can produce multiple output elements." aria-label="Cardinality definition: One visited input can produce multiple output elements.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
 
 ## Argument evaluation
 

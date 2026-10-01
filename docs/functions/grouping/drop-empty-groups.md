@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-grouping →
-drop-empty-groups() → grouping
+grouping<K, T> →
+drop-empty-groups() → grouping<K, T>
 ```
 
 Removes groups whose value collection contains no items.
@@ -40,9 +40,9 @@ This function has no parameters.
 
 ## Structural semantics
 
-- **Cardinality:** `non-increasing`
-- **Dependency:** `per-element`
-- **Ordering:** `preserved`
+- Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

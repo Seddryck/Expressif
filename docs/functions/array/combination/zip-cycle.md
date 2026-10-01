@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 zip-cycle(
     array: array
-) → array
+) → array<tuple<T, U>>
 ```
 
 Combines values from two arrays into two-element tuples until the longer array is exhausted, cycling each non-empty shorter array from its beginning. Returns an empty array when both inputs are empty and `null` when exactly one input is empty or either value cannot be evaluated as an array.
@@ -45,9 +45,9 @@ Combines values from two arrays into two-element tuples until the longer array i
 
 ## Structural semantics
 
-- **Cardinality:** `expanded`
-- **Dependency:** `whole-input`
-- **Ordering:** `preserved`
+- Cardinality: `expanded` <span class="semantics-info" title="One visited input can produce multiple output elements." aria-label="Cardinality definition: One visited input can produce multiple output elements.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 zip-padded(
     array: array
-) → array
+) → array<tuple<nullable<T>, nullable<U>>>
 ```
 
 Combines corresponding values from the input array and a second array into two-element tuples until both arrays are exhausted, using `null` for a missing value. Returns `null` when either value cannot be evaluated as an array.
@@ -45,9 +45,9 @@ Combines corresponding values from the input array and a second array into two-e
 
 ## Structural semantics
 
-- **Cardinality:** `expanded`
-- **Dependency:** `whole-input`
-- **Ordering:** `preserved`
+- Cardinality: `expanded` <span class="semantics-info" title="One visited input can produce multiple output elements." aria-label="Cardinality definition: One visited input can produce multiple output elements.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

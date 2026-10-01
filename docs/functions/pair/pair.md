@@ -13,11 +13,11 @@ generated: true
 ---
 
 ```
-any →
+T →
 pair(
     key: any,
     value: any
-) → pair
+) → pair<K, V>
 ```
 
 Constructs a pair by evaluating a key expression and a value expression against the same input.

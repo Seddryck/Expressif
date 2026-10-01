@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-pair →
-pair-value() → any
+pair<K, V> →
+pair-value() → V
 ```
 
 Returns the value component of the input pair.

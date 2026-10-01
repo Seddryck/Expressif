@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-grouping →
+grouping<K, T> →
 summarize(
     expression: expression
-) → dictionary
+) → dictionary<K, U>
 ```
 
 Evaluates an expression once for each group and returns a dictionary from group keys to summary values.

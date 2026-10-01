@@ -13,12 +13,12 @@ generated: true
 ---
 
 ```
-grouping →
+grouping<K, T> →
 summarize-against(
     local: accumulator,
     global: accumulator,
     combine: expression
-) → dictionary
+) → dictionary<K, U>
 ```
 
 Summarizes each group against one summary of all grouped values and returns an ordered dictionary.

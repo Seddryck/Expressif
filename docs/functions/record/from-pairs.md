@@ -31,9 +31,9 @@ This function has no parameters.
 
 ## Structural semantics
 
-- **Cardinality:** `non-increasing`
-- **Dependency:** `whole-input`
-- **Ordering:** `unordered`
+- Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `unordered` <span class="semantics-info" title="Output order is not part of the semantic contract." aria-label="Ordering definition: Output order is not part of the semantic contract.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

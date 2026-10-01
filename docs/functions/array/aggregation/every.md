@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-every() → any
+boolean →
+every() → boolean
 ```
 
 Returns `true` only when every accumulated boolean value is `true`.

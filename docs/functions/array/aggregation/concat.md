@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+text →
 concat(
     separator: text = ""
-) → any
+) → text
 ```
 
 Combines accumulated text values in source order, inserting the separator only between values.

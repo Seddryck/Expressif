@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-any →
+T →
 coalesce(
     ...expressions: expression
-) → any
+) → nullable<U>
 ```
 
 Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns `null` when every expression evaluates to `null`.

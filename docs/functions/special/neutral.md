@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-any →
-neutral() → any
+T →
+neutral() → T
 ```
 
 Returns the argument value.

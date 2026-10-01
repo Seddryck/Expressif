@@ -98,6 +98,31 @@ function Join-NaturalLanguageList {
     return "$($Values[0..($Values.Count - 2)] -join ', '), or $($Values[-1])"
 }
 
+$semanticsDefinitions = @{
+    Cardinality = @{
+        "preserved"      = "The output contains the same number of elements as the visited input."
+        "non-increasing" = "The output contains no more elements than the visited input."
+        "collapsed"      = "The visited collection produces one result."
+        "expanded"       = "One visited input can produce multiple output elements."
+        "partitioned"    = "Visited inputs are reorganized into groups or partitions."
+        "unknown"        = "Cardinality is structurally relevant but cannot be declared more precisely."
+    }
+    Dependency = @{
+        "per-element" = "An output element depends only on its corresponding visited input element."
+        "prefix"      = "An output at a position depends on the visited prefix ending at that position."
+        "whole-input" = "An output depends on the complete visited input."
+        "partition"   = "An output depends on the elements belonging to the same partition or key."
+        "unknown"     = "Dependency is structurally relevant but cannot be declared more precisely."
+    }
+    Ordering = @{
+        "preserved"      = "Relative source order is retained."
+        "reordered"      = "The operator deliberately changes relative order."
+        "unordered"      = "Output order is not part of the semantic contract."
+        "not-applicable" = "The result has no element ordering to describe."
+        "unknown"        = "Ordering is structurally relevant but cannot be declared more precisely."
+    }
+}
+
 $kindName = $Kind.ToLowerInvariant()
 $kindPlural = "$kindName`s"
 $kindPluralTitle = (Get-Culture).TextInfo.ToTitleCase($kindPlural)
@@ -590,12 +615,16 @@ foreach ($member in $members) {
     $incremental = $null -ne $member.PSObject.Properties["Incremental"] -and [bool] $member.Incremental
 
     $inputType = ""
-    if ($null -ne $member.PSObject.Properties["Input"]) {
+    if ($hasValueShape) {
+        $inputType = [string] $schema.Input
+    } elseif ($null -ne $member.PSObject.Properties["Input"]) {
         $inputType = [string] $member.Input
     }
 
     $outputType = ""
-    if ($null -ne $member.PSObject.Properties["Output"]) {
+    if ($hasValueShape) {
+        $outputType = [string] $schema.Output
+    } elseif ($null -ne $member.PSObject.Properties["Output"]) {
         $outputType = [string] $member.Output
     }
 
@@ -705,8 +734,11 @@ foreach ($member in $members) {
         traversal_summary  = if ($null -ne $traversal) { [string] $traversal.Summary } else { "" }
         has_semantics       = $null -ne $semantics
         semantics_cardinality = if ($null -ne $semantics) { [string] $semantics.Cardinality } else { "" }
+        semantics_cardinality_definition = if ($null -ne $semantics) { $semanticsDefinitions.Cardinality[[string] $semantics.Cardinality] } else { "" }
         semantics_dependency = if ($null -ne $semantics) { [string] $semantics.Dependency } else { "" }
+        semantics_dependency_definition = if ($null -ne $semantics) { $semanticsDefinitions.Dependency[[string] $semantics.Dependency] } else { "" }
         semantics_ordering  = if ($null -ne $semantics) { [string] $semantics.Ordering } else { "" }
+        semantics_ordering_definition = if ($null -ne $semantics) { $semanticsDefinitions.Ordering[[string] $semantics.Ordering] } else { "" }
         has_evaluation     = @($parameters | Where-Object { $_.evaluation_frequency -ne "" }).Count -gt 0
         parameters          = $parameters
         has_parameter_types = $hasParameterTypes

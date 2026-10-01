@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+T →
 closest(
     target: any
-) → any
+) → nullable<T>
 ```
 
 Returns the first non-null input value with the smallest absolute distance to the target.

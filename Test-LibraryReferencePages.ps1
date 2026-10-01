@@ -63,6 +63,11 @@ try {
     "Input": "array",
     "Output": "array",
     "Summary": "Maps values.",
+    "Semantics": {
+      "Cardinality": "preserved",
+      "Dependency": "per-element",
+      "Ordering": "preserved"
+    },
     "Parameters": [
       {
         "Name": "transformation",
@@ -236,12 +241,16 @@ try {
     $functionRoot = Join-Path $destinationRoot "functions/test"
     $mapPage = Get-Content -LiteralPath (Join-Path $functionRoot "map-contract.md") -Raw
     foreach ($expected in @(
+        "array<T> →`nmap-contract(`n    transformation: expression`n) → array<U>",
         "## Value shape",
         "- **Pipeline input:** ``array<T>``",
         "- **Returns:** ``array<U>``",
         "- **``transformation``:** Receives ``T`` and returns ``U``.",
         "- **Nullability:** The result is nullable when the pipeline input is nullable.",
-        "``T``, ``U``, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract."
+        "``T``, ``U``, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.",
+        "- Cardinality: ``preserved`` <span class=`"semantics-info`" title=`"The output contains the same number of elements as the visited input.`"",
+        "- Dependency: ``per-element`` <span class=`"semantics-info`" title=`"An output element depends only on its corresponding visited input element.`"",
+        "- Ordering: ``preserved`` <span class=`"semantics-info`" title=`"Relative source order is retained.`""
     )) {
         Assert-Contains -Content $mapPage -Expected $expected -Context "map-contract page"
     }

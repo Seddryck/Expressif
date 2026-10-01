@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-min() → any
+numeric →
+min() → nullable<numeric>
 ```
 
 Tracks the smallest numeric value found during accumulation.

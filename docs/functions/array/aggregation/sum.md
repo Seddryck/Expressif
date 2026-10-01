@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-sum() → any
+numeric →
+sum() → numeric
 ```
 
 Computes the sum of all accumulated numeric values.

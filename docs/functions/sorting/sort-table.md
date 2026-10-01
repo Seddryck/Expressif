@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-sort-table() → sort-table
+array<pair<sort-key, T>> →
+sort-table() → sort-table<T>
 ```
 
 Normalizes pairs of sort keys and original values into shared headers and data rows.

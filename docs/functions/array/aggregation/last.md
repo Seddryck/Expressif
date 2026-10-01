@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-last() → any
+T →
+last() → nullable<T>
 ```
 
 Stores the most recently accumulated item.

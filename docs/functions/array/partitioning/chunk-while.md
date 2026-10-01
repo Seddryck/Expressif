@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 chunk-while(
     operation: expression
-) → array
+) → array<array<T>>
 ```
 
 Groups consecutive values while an operation over the complete current chunk and next candidate evaluates to `true`. Returns `null` when the operation does not produce a Boolean value or the input cannot be evaluated.
@@ -45,9 +45,9 @@ Groups consecutive values while an operation over the complete current chunk and
 
 ## Structural semantics
 
-- **Cardinality:** `partitioned`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

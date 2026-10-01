@@ -13,11 +13,11 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 slice-elements(
     start: integer,
     end: integer
-) → array
+) → array<T>
 ```
 
 Returns the elements in the zero-based half-open range from start, inclusive, to end, exclusive. Returns `null` when the input is not an enumerable, is a string, or either bound is negative.
@@ -46,9 +46,9 @@ Returns the elements in the zero-based half-open range from start, inclusive, to
 
 ## Structural semantics
 
-- **Cardinality:** `non-increasing`
-- **Dependency:** `whole-input`
-- **Ordering:** `preserved`
+- Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

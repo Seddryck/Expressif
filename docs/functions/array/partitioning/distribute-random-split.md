@@ -13,11 +13,11 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 distribute-random-split(
     weights: array,
     seed?: integer
-) → array
+) → array<array<T>>
 ```
 
 Randomly distributes array values among output arrays according to relative output weights. Returns `null` when the input, weights, or seed cannot be evaluated.
@@ -46,9 +46,9 @@ Randomly distributes array values among output arrays according to relative outp
 
 ## Structural semantics
 
-- **Cardinality:** `partitioned`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

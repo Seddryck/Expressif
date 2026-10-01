@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-count() → any
+T →
+count() → integer
 ```
 
 Counts the number of accumulated items, including `null` values.

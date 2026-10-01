@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-any →
+T →
 apply(
     expression: expression
-) → any
+) → U
 ```
 
 Evaluates an expression with the input value as its current context.

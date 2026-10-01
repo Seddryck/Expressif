@@ -54,9 +54,9 @@ This {{ model.kind }} has no parameters.
 
 ## Structural semantics
 
-- **Cardinality:** `{{ model.semantics_cardinality }}`
-- **Dependency:** `{{ model.semantics_dependency }}`
-- **Ordering:** `{{ model.semantics_ordering }}`
+- Cardinality: `{{ model.semantics_cardinality }}` <span class="semantics-info" title="{{ model.semantics_cardinality_definition }}" aria-label="Cardinality definition: {{ model.semantics_cardinality_definition }}">i</span>
+- Dependency: `{{ model.semantics_dependency }}` <span class="semantics-info" title="{{ model.semantics_dependency_definition }}" aria-label="Dependency definition: {{ model.semantics_dependency_definition }}">i</span>
+- Ordering: `{{ model.semantics_ordering }}` <span class="semantics-info" title="{{ model.semantics_ordering_definition }}" aria-label="Ordering definition: {{ model.semantics_ordering_definition }}">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 {{ end }}{{ if model.incremental }}

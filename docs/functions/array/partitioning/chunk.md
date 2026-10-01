@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 chunk(
     size: integer
-) → array
+) → array<array<T>>
 ```
 
 Splits an array into consecutive, non-overlapping chunks of at most the specified size, preserving a final partial chunk. It resembles a count-based tumbling window but, unlike general sliding or hopping windows, has no separate step and always keeps the final partial chunk. It does not group items by inactivity or time. Returns `null` when the input cannot be evaluated.
@@ -44,9 +44,9 @@ Splits an array into consecutive, non-overlapping chunks of at most the specifie
 
 ## Structural semantics
 
-- **Cardinality:** `partitioned`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

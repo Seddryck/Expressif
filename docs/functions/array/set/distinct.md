@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-distinct() → array
+array<T> →
+distinct() → array<T>
 ```
 
 Returns the unique values from the input array in the order of their first occurrence. Returns `null` when the input cannot be evaluated.
@@ -40,9 +40,9 @@ This function has no parameters.
 
 ## Structural semantics
 
-- **Cardinality:** `non-increasing`
-- **Dependency:** `prefix`
-- **Ordering:** `preserved`
+- Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
+- Dependency: `prefix` <span class="semantics-info" title="An output at a position depends on the visited prefix ending at that position." aria-label="Dependency definition: An output at a position depends on the visited prefix ending at that position.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

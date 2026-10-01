@@ -13,12 +13,12 @@ generated: true
 ---
 
 ```
-array →
+array<L> →
 join-full(
     right: array | grouping | dictionary,
     left-key: expression,
     right-key?: expression
-) → array
+) → array<pair<nullable<L>, nullable<R>>>
 ```
 
 Emits every matching pair and preserves unmatched values from both sides with #null in the absent side. Array right-hand values are grouped by key before lookup. Null keys match null keys; composite keys use structural equality and duplicate values produce Cartesian combinations. Null or invalid collection inputs return null.
@@ -51,9 +51,9 @@ Emits every matching pair and preserves unmatched values from both sides with #n
 
 ## Structural semantics
 
-- **Cardinality:** `unknown`
-- **Dependency:** `whole-input`
-- **Ordering:** `preserved`
+- Cardinality: `unknown` <span class="semantics-info" title="Cardinality is structurally relevant but cannot be declared more precisely." aria-label="Cardinality definition: Cardinality is structurally relevant but cannot be declared more precisely.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

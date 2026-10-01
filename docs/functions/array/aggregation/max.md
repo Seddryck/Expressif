@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-max() → any
+numeric →
+max() → nullable<numeric>
 ```
 
 Tracks the greatest numeric value found during accumulation.

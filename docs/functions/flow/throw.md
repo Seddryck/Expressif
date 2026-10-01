@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-any →
+T →
 throw(
     predicate?: predicate
-) → any
+) → T
 ```
 
 Raises an evaluation exception when the input is rejected; otherwise, passes the input through.

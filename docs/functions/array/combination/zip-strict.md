@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 zip-strict(
     array: array
-) → array
+) → array<tuple<T, U>>
 ```
 
 Combines corresponding values from equally sized input and parameter arrays into two-element tuples. Returns `null` when the arrays have different lengths or either value cannot be evaluated as an array.
@@ -45,9 +45,9 @@ Combines corresponding values from equally sized input and parameter arrays into
 
 ## Structural semantics
 
-- **Cardinality:** `preserved`
-- **Dependency:** `per-element`
-- **Ordering:** `preserved`
+- Cardinality: `preserved` <span class="semantics-info" title="The output contains the same number of elements as the visited input." aria-label="Cardinality definition: The output contains the same number of elements as the visited input.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

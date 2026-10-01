@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 fold(
     accumulator: accumulator
-) → any
+) → U
 ```
 
 Executes an accumulator once over the full input enumerable and returns the final accumulated value. Returns `null` when the input is not an enumerable or is a string.
@@ -44,9 +44,9 @@ Executes an accumulator once over the full input enumerable and returns the fina
 
 ## Structural semantics
 
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
+- Cardinality: `collapsed` <span class="semantics-info" title="The visited collection produces one result." aria-label="Cardinality definition: The visited collection produces one result.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `not-applicable` <span class="semantics-info" title="The result has no element ordering to describe." aria-label="Ordering definition: The result has no element ordering to describe.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

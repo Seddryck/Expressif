@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 value-at(
     position: integer
-) → any
+) → nullable<T>
 ```
 
 Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.
@@ -43,9 +43,9 @@ Returns the input item at the specified zero-based position. Returns `null` when
 
 ## Structural semantics
 
-- **Cardinality:** `collapsed`
-- **Dependency:** `whole-input`
-- **Ordering:** `not-applicable`
+- Cardinality: `collapsed` <span class="semantics-info" title="The visited collection produces one result." aria-label="Cardinality definition: The visited collection produces one result.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `not-applicable` <span class="semantics-info" title="The result has no element ordering to describe." aria-label="Ordering definition: The result has no element ordering to describe.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

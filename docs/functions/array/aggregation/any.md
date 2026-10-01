@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-any() → any
+boolean →
+any() → boolean
 ```
 
 Returns `true` when at least one accumulated boolean value is `true`.

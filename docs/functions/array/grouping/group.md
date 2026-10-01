@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-group() → grouping
+array<pair<K, V>> →
+group() → grouping<K, V>
 ```
 
 Groups pairs by structurally equal keys while preserving first-seen group and value order.
@@ -40,9 +40,9 @@ This function has no parameters.
 
 ## Structural semantics
 
-- **Cardinality:** `partitioned`
-- **Dependency:** `partition`
-- **Ordering:** `preserved`
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
 
 See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
 

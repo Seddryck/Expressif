@@ -13,8 +13,8 @@ generated: true
 ---
 
 ```
-array →
-first() → any
+T →
+first() → nullable<T>
 ```
 
 Stores the first accumulated item and ignores all subsequent items.

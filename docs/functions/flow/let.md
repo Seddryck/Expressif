@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-any →
+T →
 let(
     ...bindings: entry
-) → any
+) → T
 ```
 
 Evaluates named bindings once and preserves the pipeline input for subsequent stages.
