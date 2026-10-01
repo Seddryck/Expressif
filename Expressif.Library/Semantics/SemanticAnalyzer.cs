@@ -39,7 +39,7 @@ public sealed class SemanticAnalyzer
     {
         private static readonly SemanticSource External = new(SemanticSourceKind.ExternalInput);
         private static readonly SemanticSource Missing = Unknown("There is no enclosing expression scope.");
-        private readonly ExpressifBinder binder = ExpressifBinderFactory.Create(applyCoercion: false, trackSources: true);
+        private readonly ExpressifBinder binder = ExpressifBinderFactory.Create(trackSources: true);
         private readonly IImplementationRegistry functions = new FunctionRegistry(
             new AssemblyTypeSource(typeof(SemanticAnalyzer).Assembly));
         private readonly IImplementationRegistry predicates = new PredicateRegistry(

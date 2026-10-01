@@ -2,7 +2,6 @@ using Expressif.Functions;
 using Expressif.Discovery;
 using Expressif.Bindings;
 using Expressif.Library.Operators;
-using Expressif.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,8 +21,6 @@ internal sealed class PredicationFactory : BaseExpressionFactory, IPredicationFa
             [typeof(global::Expressif.Library.Boolean.SatisfiesAtLeast)] = (count, predicates) => new global::Expressif.Library.Boolean.SatisfiesAtLeast(count, predicates),
             [typeof(global::Expressif.Library.Boolean.SatisfiesAtMost)] = (count, predicates) => new global::Expressif.Library.Boolean.SatisfiesAtMost(count, predicates),
         };
-
-    private ExpressifBinder Binder { get; } = ExpressifBinderFactory.Create();
 
     private UnaryOperatorFactory UnaryOperatorFactory { get; }
     private BinaryOperatorFactory BinaryOperatorFactory { get; }
@@ -48,13 +45,6 @@ internal sealed class PredicationFactory : BaseExpressionFactory, IPredicationFa
 
     public PredicationFactory(ITypeSource source)
         : this(new PredicateRegistry(source), source) { }
-
-    public IPredicate Instantiate(string code, IContext context)
-    {
-        var predication = Binder.BindPredication(ExpressionParser.Parse(code));
-        var predicate = Instantiate(predication, context);
-        return predicate;
-    }
 
     public IPredicate Instantiate(IPredication predication, IContext context)
     => predication switch

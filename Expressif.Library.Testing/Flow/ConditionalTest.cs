@@ -40,7 +40,7 @@ public class ConditionalTest
     [TestCase("Conditional-Backward", FunctionSyntax.ConditionalBackward)]
     public void Bind_ConditionalName_IgnoresCase(string name, FunctionSyntax expected)
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressionParser.Parse($"{name}(#true, #false)"));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse($"{name}(#true, #false)"));
         Assert.That(function.Syntax, Is.EqualTo(expected));
     }
 

@@ -16,7 +16,7 @@ public class OnlyTest
     public void Only_Selection(string value, string predicate, string accumulator, string? expected)
     {
         var result = expected is null ? null : TestExpression.CreateClosed(expected).Evaluate(null);
-        var wrapper = new OnlyAccumulator(new PredicationFactory().Instantiate(predicate, new Context()), AccumulatorFactory.Instantiate(accumulator));
+        var wrapper = new OnlyAccumulator(TestPredication.Create(predicate), AccumulatorFactory.Instantiate(accumulator));
         var session = wrapper.CreateSession();
         foreach (var item in (IEnumerable)TestExpression.CreateClosed(value).Evaluate(null)!)
             session.Add(item);

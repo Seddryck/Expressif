@@ -5,8 +5,10 @@ using Expressif.Library.Array;
 using Expressif.Library.IO;
 using Expressif.Library.Numeric;
 using Expressif.Library.Array.Selection;
+using Expressif.Library.Composition;
 using Expressif.Library.Temporal;
 using Expressif.Library.Text;
+using Expressif.Values.Types;
 using System.Reflection;
 
 namespace Expressif.Testing.Functions;
@@ -64,20 +66,6 @@ public class FunctionFactoryTest
     }
 
     [Test]
-    public void Instantiate_NonCoercingPipeline_UsesDynamicChainFallback()
-    {
-        var root = ExpressifBinderFactory.Create(applyCoercion: false).Bind(
-            ExpressifSyntax.Parse("trim | multiply(1.21) | round(2) | prepend(\"€\")"));
-        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context());
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(function, Is.TypeOf<ChainFunction>());
-            Assert.That(function.Evaluate(" 12.345 "), Is.EqualTo("€14.94"));
-        });
-    }
-
-    [Test]
     public void Instantiate_NumericFunctionWithInvalidDirectInput_ReturnsNull()
         => Assert.That(Instantiate("nth-root(2)", new Context()).Evaluate("A"), Is.Null);
 
@@ -131,7 +119,7 @@ public class FunctionFactoryTest
     [TestCase("replace-slice(append := \"abc\", start := 2, length := 4)")]
     public void Instantiate_ReplaceSliceArgumentForms_Equivalent(string source)
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse(source));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressifSyntax.Parse(source));
         var root = new OpenRootExpression(new OpenExpression([function]));
         var runtime = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context());
 
@@ -144,7 +132,7 @@ public class FunctionFactoryTest
     [TestCase("replace-slice(1, 2, \"x\", 4)", typeof(TooManyPositionalArgumentsException))]
     public void Instantiate_InvalidNamedArguments_ThrowsSpecificException(string source, Type exceptionType)
     {
-        var function = ExpressifBinderFactory.Create().BindFunction(ExpressifSyntax.Parse(source));
+        var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressifSyntax.Parse(source));
         var root = new OpenRootExpression(new OpenExpression([function]));
 
         Assert.That(() => new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(root, new Context()), Throws.TypeOf(exceptionType));
@@ -421,9 +409,12 @@ public class FunctionFactoryTest
     }
 
     private static IFunction Instantiate(string source, IContext context)
-        => new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
-            ExpressifBinderFactory.Create().Bind(ExpressifSyntax.Parse(source)),
-            context);
+    {
+        var typeSource = TestExpression.LibraryTypeSource;
+        var plan = LogicalPlannerFactory.Create().Build(ExpressifSyntax.Parse(source));
+        var bound = new LogicalPlanBinder(typeSource, ExpressifTypeRegistry.Instance).Bind(plan);
+        return new FunctionFactory(typeSource).Instantiate(bound, context);
+    }
 
     private static IFunction GetSingleFunction(IFunction function, Type expectedType)
     {

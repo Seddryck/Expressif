@@ -36,6 +36,20 @@ public class BindCommandTests
     }
 
     [Test]
+    public async Task Bind_TypedPipeline_UsesLogicalPlanCoercions()
+    {
+        var result = await InvokeAsync("bind", "1 | upper | add(2)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Match(
+                "Function: coerce-text[\\s\\S]*Function: upper[\\s\\S]*Function: coerce-numeric"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Bind_PredicateOnlyExpression_IsValid()
     {
         var result = await InvokeAsync("bind", "even");
@@ -43,7 +57,7 @@ public class BindCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.Contain("Function: even"));
+            Assert.That(result.StdOut, Does.Contain("Function: is-even"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }

@@ -1,6 +1,5 @@
 using Expressif.Syntax;
 using Expressif.Functions;
-using Expressif.Functions.Coercions;
 using Expressif.Values.Types;
 using Expressif.Values;
 using Expressif.Functions.Accumulation;
@@ -8,15 +7,13 @@ using Expressif.Types;
 
 namespace Expressif.Bindings;
 
-public sealed class ExpressifBinder : IFunctionBindingContext
+internal sealed class ExpressifBinder : IFunctionBindingContext
 {
     private readonly IImplementationRegistry[] implementationRegistries;
     private readonly FunctionBinderRegistry functionBinders;
     private readonly ITypeRegistry typeRegistry;
-    private readonly ICoercionRegistry? coercionRegistry;
     private readonly QuotedLiteralRegistry quotedLiteralRegistry;
     private bool inputBoundBody;
-    public bool ApplyCoercion { get; }
 
     internal BindingSourceMap Sources { get; }
 
@@ -24,15 +21,11 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         IEnumerable<IImplementationRegistry> implementationRegistries,
         FunctionBinderRegistry functionBinders,
         ITypeRegistry typeRegistry,
-        ICoercionRegistry? coercionRegistry = null,
-        bool applyCoercion = true,
         QuotedLiteralRegistry? quotedLiteralRegistry = null)
         : this(
             implementationRegistries,
             functionBinders,
             typeRegistry,
-            coercionRegistry,
-            applyCoercion,
             false,
             quotedLiteralRegistry) { }
 
@@ -40,14 +33,12 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         IEnumerable<IImplementationRegistry> implementationRegistries,
         FunctionBinderRegistry functionBinders,
         ITypeRegistry typeRegistry,
-        ICoercionRegistry? coercionRegistry,
-        bool applyCoercion,
         bool trackSources,
         QuotedLiteralRegistry? quotedLiteralRegistry = null)
-        => (this.implementationRegistries, this.functionBinders, this.typeRegistry, this.coercionRegistry,
-            this.quotedLiteralRegistry, ApplyCoercion, Sources) =
-            (implementationRegistries.ToArray(), functionBinders, typeRegistry, coercionRegistry,
-                quotedLiteralRegistry ?? QuotedLiteralRegistry.Default, applyCoercion, new(trackSources));
+        => (this.implementationRegistries, this.functionBinders, this.typeRegistry,
+            this.quotedLiteralRegistry, Sources) =
+            (implementationRegistries.ToArray(), functionBinders, typeRegistry,
+                quotedLiteralRegistry ?? QuotedLiteralRegistry.Default, new(trackSources));
 
     TypeDescriptor IFunctionBindingContext.ResolveType(string name)
         => typeRegistry.Resolve(name);
@@ -55,7 +46,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
     Type? IFunctionBindingContext.ResolveRuntimeType(string name)
         => typeRegistry.ResolveRuntimeType(name);
 
-    public IRootExpression Bind(RootExpressionSyntax syntax)
+    internal IRootExpression Bind(RootExpressionSyntax syntax)
     {
         if (syntax is ClosedExpressionSyntax { Value: IncomingValueSyntax, Pipeline: [InputBindingExpressionSyntax binding] })
             return new OpenRootExpression(BindInputBound(binding));
@@ -71,15 +62,7 @@ public sealed class ExpressifBinder : IFunctionBindingContext
         _ => throw Unsupported(syntax),
     };
 
-    public Function BindFunction(RootExpressionSyntax syntax)
-    {
-        var root = Bind(syntax);
-        return root is OpenRootExpression open && open.Expression.Members.Count() == 1
-            ? open.Expression.Members.Single()
-            : throw new BindingException($"Source '{syntax.Text}' is not a single function.");
-    }
-
-    public IParameter BindParameter(RootExpressionSyntax syntax)
+    internal IParameter BindParameter(RootExpressionSyntax syntax)
     {
         if (syntax is OpenExpressionSyntax
             {
@@ -94,169 +77,23 @@ public sealed class ExpressifBinder : IFunctionBindingContext
             : throw new BindingException($"Source '{syntax.Text}' is not a standalone parameter.");
     }
 
-    public IPredication BindPredication(RootExpressionSyntax syntax)
-    {
-        var root = Bind(syntax);
-        return root switch
-        {
-            OpenRootExpression open => BindPredication(open.Expression),
-            ClosedRootExpression closed when closed.Expression.Members.Any()
-                => BindPredication(new OpenExpression(closed.Expression.Members)),
-            _ => throw new BindingException($"Predication '{syntax.Text}' is not bound in this iteration."),
-        };
-    }
-
-    private static IPredication BindPredication(OpenExpression expression)
-    {
-        var members = expression.Members.ToArray();
-        if (members is [var combinator]
-            && combinator.Name is "and" or "or" or "xor"
-            && combinator.Parameters is [OpenExpressionParameter left, OpenExpressionParameter right])
-        {
-            return new BinaryPredication(
-                new BinaryOperator(combinator.Name),
-                BindPredication(left.Expression),
-                BindPredication(right.Expression));
-        }
-
-        return members switch
-        {
-            [var member] => new SinglePredication(member),
-            _ => new PipelinePredication(expression),
-        };
-    }
-
     private OpenExpression BindOpen(OpenExpressionSyntax syntax)
     {
         if (syntax.Source is null && syntax.Pipeline is [InputBindingExpressionSyntax binding])
             return BindInputBound(binding);
-        var members = ApplyCoercions([
-            .. syntax.Source is null ? [] : BindPipelineMembers(syntax.Source),
+        Function[] members =
+        [
+            .. (syntax.Source is null ? [] : BindPipelineMembers(syntax.Source)),
             .. syntax.Pipeline.SelectMany(BindPipelineMembers),
-        ]).ToArray();
-        ValidateCoercePipeline(members, null);
+        ];
         return new OpenExpression(members);
     }
 
     private ClosedExpression BindClosed(ClosedExpressionSyntax syntax)
     {
         var source = BindValue(syntax.Value);
-        var members = ApplyCoercions(syntax.Pipeline.SelectMany(BindPipelineMembers)).ToArray();
-        ValidateCoercePipeline(members, GetStaticType(source));
+        var members = syntax.Pipeline.SelectMany(BindPipelineMembers).ToArray();
         return new ClosedExpression(source, members);
-    }
-
-    private void ValidateCoercePipeline(
-        IReadOnlyList<Function> members,
-        Type? inputType)
-    {
-        var currentType = inputType;
-        foreach (var member in members)
-        {
-            if (member.Name.Equals("coerce", StringComparison.OrdinalIgnoreCase))
-            {
-                if (currentType is not null)
-                    ValidateCoerceInput(member, currentType);
-                continue;
-            }
-
-            if (TryGetContract(member, out _, out var outputType) && outputType != typeof(object))
-            {
-                currentType = Nullable.GetUnderlyingType(outputType) ?? outputType;
-            }
-            else
-            {
-                currentType = null;
-            }
-        }
-    }
-
-    private static void ValidateCoerceInput(Function function, Type inputType)
-    {
-        var specifications = function.Parameters.Cast<CoercionSpecificationParameter>().ToArray();
-        if (typeof(Values.IPositionalValue).IsAssignableFrom(inputType))
-        {
-            if (specifications.Any(specification => specification is FieldCoercionParameter))
-                throw new BindingException("Tuple input requires tuple-position selectors.");
-            return;
-        }
-
-        if (typeof(Values.RecordValue).IsAssignableFrom(inputType))
-        {
-            if (specifications.Any(specification => specification is not FieldCoercionParameter))
-                throw new BindingException("Record input requires field selector mappings.");
-            return;
-        }
-
-        if (specifications is not [PositionalCoercionParameter])
-            throw new BindingException("Scalar input requires exactly one positional type descriptor.");
-    }
-
-    private static Type? GetStaticType(IParameter parameter)
-        => parameter switch
-        {
-            QuotedLiteralParameter => typeof(string),
-            LiteralParameter { Value: { } value } => value.GetType(),
-            TupleParameter => typeof(Values.Tuple),
-            VectorParameter => typeof(Values.Vector),
-            PairParameter => typeof(Values.Pair),
-            GroupingParameter => typeof(Values.Grouping),
-            DictionaryParameter => typeof(Values.Dictionary),
-            RecordLiteralParameter => typeof(Values.RecordValue),
-            ArrayParameter => typeof(object[]),
-            _ => null,
-        };
-
-    private IEnumerable<Function> ApplyCoercions(IEnumerable<Function> functions)
-    {
-        var members = functions.ToArray();
-        if (!ApplyCoercion || members.Length < 2)
-            return members;
-
-        var rewritten = new List<Function> { members[0] };
-        for (var index = 1; index < members.Length; index++)
-        {
-            var previous = members[index - 1];
-            var current = members[index];
-            if (TryGetContract(previous, out _, out var sourceType)
-                && TryGetContract(current, out var targetType, out _)
-                && !targetType.IsAssignableFrom(sourceType))
-            {
-                var coercionSourceType = Nullable.GetUnderlyingType(sourceType) ?? sourceType;
-                if (coercionRegistry is not null
-                    && coercionRegistry.TryResolve(coercionSourceType, targetType, out var coercionName))
-                {
-                    rewritten.Add(new Function(coercionName, []));
-                }
-            }
-
-            rewritten.Add(current);
-        }
-
-        return rewritten;
-    }
-
-    private bool TryGetContract(Function function, out Type inputType, out Type outputType)
-    {
-        inputType = null!;
-        outputType = null!;
-        if (function.Syntax is FunctionSyntax.ScopedTupleProjectionShorthand or FunctionSyntax.InputFieldShorthand or FunctionSyntax.InputTupleProjectionShorthand)
-            return false;
-        if (!TryResolveFunctionType(function.Name, out var implementationType))
-            return false;
-
-        var contracts = implementationType.GetInterfaces()
-            .Where(candidate => candidate.IsGenericType
-                && candidate.GetGenericTypeDefinition() == typeof(IFunction<,>))
-            .Select(candidate => candidate.GetGenericArguments())
-            .DistinctBy(candidate => (candidate[0], candidate[1]))
-            .ToArray();
-        if (contracts.Length != 1)
-            return false;
-
-        inputType = contracts[0][0];
-        outputType = contracts[0][1];
-        return true;
     }
 
     private IEnumerable<Function> BindPipelineMembers(ExpressionSyntax syntax)

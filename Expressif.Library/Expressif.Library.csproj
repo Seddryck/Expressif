@@ -12,8 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Expressif.Library.Testing" />
+    <InternalsVisibleTo Include="Expressif.Core.Testing" />
     <InternalsVisibleTo Include="Expressif.Testing" />
     <InternalsVisibleTo Include="Expressif.Serialization" />
+    <InternalsVisibleTo Include="Expressif.Cli" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\docs\_data\function.json" LogicalName="Expressif.FunctionCatalog.json" />
