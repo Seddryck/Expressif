@@ -16,6 +16,7 @@ namespace Expressif.Bindings;
 public sealed class ExpressionBinder : IExpressionBinder
 {
     private static readonly ITypeSource BuiltInSource = new AssemblyTypeSource(typeof(ExpressionBinder).Assembly);
+    private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
     private IContext Context { get; }
     private LogicalPlanner Planner { get; }
@@ -133,7 +134,8 @@ public sealed class ExpressionBinder : IExpressionBinder
             var unknown = Regex.Match(
                 exception.Message,
                 "^Operator '([^']+)' of kind 'extension' is not registered\\.$",
-                RegexOptions.CultureInvariant);
+                RegexOptions.CultureInvariant,
+                RegexTimeout);
             if (unknown.Success)
             {
                 throw new NotImplementedFunctionException(unknown.Groups[1].Value);
@@ -154,39 +156,45 @@ public sealed class ExpressionBinder : IExpressionBinder
             exception.Message,
             " \\(at offset [0-9]+\\)$",
             string.Empty,
-            RegexOptions.CultureInvariant);
+            RegexOptions.CultureInvariant,
+            RegexTimeout);
         var required = Regex.Match(
             message,
             "^Required parameter '([^']+)' was not supplied(?: to '[^']+')?\\.$",
-            RegexOptions.CultureInvariant);
+            RegexOptions.CultureInvariant,
+            RegexTimeout);
         if (required.Success)
             return new MissingRequiredParameterException(required.Groups[1].Value);
 
         var unknown = Regex.Match(
             message,
             "^Function '([^']+)' has no parameter named '([^']+)'\\.$",
-            RegexOptions.CultureInvariant);
+            RegexOptions.CultureInvariant,
+            RegexTimeout);
         if (unknown.Success)
             return new UnknownParameterNameException(unknown.Groups[1].Value, unknown.Groups[2].Value);
 
         var duplicate = Regex.Match(
             message,
             "^(?:Parameter|Named argument) '([^']+)' (?:is supplied|was specified) more than once\\.$",
-            RegexOptions.CultureInvariant);
+            RegexOptions.CultureInvariant,
+            RegexTimeout);
         if (duplicate.Success)
             return new DuplicateNamedArgumentException(duplicate.Groups[1].Value);
 
         var tooMany = Regex.Match(
             message,
             "^Function '([^']+)' has too many positional arguments\\.$",
-            RegexOptions.CultureInvariant);
+            RegexOptions.CultureInvariant,
+            RegexTimeout);
         if (tooMany.Success)
             return new TooManyPositionalArgumentsException(tooMany.Groups[1].Value);
 
         var unsupportedNamed = Regex.Match(
             message,
             "^Function '([^']+)' does not support named arguments\\.$",
-            RegexOptions.CultureInvariant);
+            RegexOptions.CultureInvariant,
+            RegexTimeout);
         if (unsupportedNamed.Success && unsupportedNamed.Groups[1].Value == "drill-down")
         {
             return new MissingOrUnexpectedParametersFunctionException(
