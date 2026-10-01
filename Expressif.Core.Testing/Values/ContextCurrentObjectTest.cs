@@ -151,15 +151,98 @@ public class ContextCurrentObjectTest
         });
     }
 
-    [Test]
-    public void Name_List_ThrowsException()
+    [TestCase(
+        "name",
+        "Cannot access field 'name' directly on an array. Use map(.name) to access it on each element, or value-at(0) | .name to access it on a specific element.")]
+    [TestCase(
+        "customer name",
+        "Cannot access field 'customer name' directly on an array. Use map(field(\"customer name\")) to access it on each element, or value-at(0) | field(\"customer name\") to access it on a specific element.")]
+    public void Name_List_ReportsArrayGuidance(string name, string message)
     {
         var context = new Context();
         context.CurrentObject.Set(new List<int> { 123 });
         Assert.Multiple(() =>
         {
-            Assert.That(() => context.CurrentObject.Contains("myVar"), Throws.TypeOf<NotNameableContextObjectException>());
-            Assert.That(() => context.CurrentObject["myVar"], Throws.TypeOf<NotNameableContextObjectException>());
+            Assert.That(() => context.CurrentObject.Contains(name), Throws.TypeOf<NotNameableContextObjectException>()
+                .With.Message.EqualTo(message));
+            Assert.That(() => context.CurrentObject[name], Throws.TypeOf<NotNameableContextObjectException>()
+                .With.Message.EqualTo(message));
+        });
+    }
+
+    [TestCaseSource(nameof(NonRecordValues))]
+    public void Name_ExpressifNonRecord_ReportsExpressifType(
+        object value,
+        string name,
+        string message)
+    {
+        var context = new Context();
+        context.CurrentObject.Set(value);
+        Assert.Multiple(() =>
+        {
+            Assert.That(() => context.CurrentObject.Contains(name), Throws.TypeOf<NotNameableContextObjectException>()
+                .With.Message.EqualTo(message));
+            Assert.That(() => context.CurrentObject[name], Throws.TypeOf<NotNameableContextObjectException>()
+                .With.Message.EqualTo(message));
+        });
+    }
+
+    private static IEnumerable<TestCaseData> NonRecordValues()
+    {
+        yield return new TestCaseData(
+            new Expressif.Values.Tuple(new RecordValue()),
+            "name",
+            "Cannot access field 'name' directly on a tuple. Select a position such as $0 before accessing a field.")
+            .SetName("Tuple");
+        yield return new TestCaseData(
+            new Pair("BE", new RecordValue()),
+            "name",
+            "Cannot access field 'name' directly on a pair. Select $key for its key or $value for its value before accessing a field.")
+            .SetName("Pair");
+        yield return new TestCaseData(
+            new Group("BE", new object?[] { new RecordValue() }),
+            "name",
+            "Cannot access field 'name' directly on a group. Select $key for its key or $value for its value before accessing a field.")
+            .SetName("Group");
+        yield return new TestCaseData(
+            new Vector(1, 2),
+            "name",
+            "Cannot access field 'name' directly on a value of type 'vector'. This type does not expose named fields.")
+            .SetName("Vector");
+        yield return new TestCaseData(
+            new Grouping([new Pair("BE", new object?[] { new RecordValue() })]),
+            "name",
+            "Cannot access field 'name' directly on a value of type 'grouping'. This type does not expose named fields.")
+            .SetName("Grouping");
+        yield return new TestCaseData(
+            new Expressif.Values.Dictionary([new Pair("BE", new RecordValue())]),
+            "name",
+            "Cannot access field 'name' directly on a value of type 'dictionary'. This type does not expose named fields.")
+            .SetName("Dictionary");
+    }
+
+    [Test]
+    public void Name_ExpressifImplementationProperty_ThrowsException()
+    {
+        var context = new Context();
+        context.CurrentObject.Set(new Expressif.Values.Tuple(1, 2));
+        Assert.That(() => context.CurrentObject["Count"], Throws.TypeOf<NotNameableContextObjectException>()
+            .With.Message.EqualTo(
+                "Cannot access field 'Count' directly on a tuple. Select a position such as $0 before accessing a field."));
+    }
+
+    [Test]
+    public void Name_RecordValueWithExistingField_ValueReturned()
+    {
+        var record = new RecordValue();
+        record.Set("name", "Alice");
+        var context = new Context();
+        context.CurrentObject.Set(record);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(context.CurrentObject.Contains("name"), Is.True);
+            Assert.That(context.CurrentObject["name"], Is.EqualTo("Alice"));
         });
     }
 

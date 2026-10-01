@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Reflection;
+using Expressif.Values;
+using Expressif.Values.Types;
 
 namespace Expressif;
 
@@ -57,6 +59,48 @@ public class NotNameableContextObjectException : ExpressifException
     public NotNameableContextObjectException(object? value)
         : base($"The current object of the context of type '{value?.GetType().Name ?? "null"}' is not being accessible with properties' name.")
     { }
+
+    internal NotNameableContextObjectException(object? value, string name)
+        : base(FormatMessage(value, name))
+    { }
+
+    private static string FormatMessage(object? value, string name)
+    {
+        var type = value is System.Collections.IList
+            ? "array"
+            : value is IExpressifValueType
+                ? ExpressifTypeName.Get(value.GetType())
+                : value?.GetType().Name ?? "null";
+
+        return type switch
+        {
+            "array" => FormatArrayMessage(name),
+            "tuple" => $"Cannot access field '{name}' directly on a tuple. Select a position such as $0 before accessing a field.",
+            "pair" or "group" => $"Cannot access field '{name}' directly on a {type}. Select $key for its key or $value for its value before accessing a field.",
+            _ => $"Cannot access field '{name}' directly on a value of type '{type}'. This type does not expose named fields.",
+        };
+    }
+
+    private static string FormatArrayMessage(string name)
+    {
+        var field = FormatFieldExpression(name);
+        return $"Cannot access field '{name}' directly on an array. Use map({field}) to access it on each element, or value-at(0) | {field} to access it on a specific element.";
+    }
+
+    private static string FormatFieldExpression(string name)
+        => CanUseFieldShorthand(name)
+            ? $".{name}"
+            : $"field(\"{RecordSyntax.EscapeDoubleQuoted(name)}\")";
+
+    private static bool CanUseFieldShorthand(string name)
+        => name.Length > 0
+            && IsAsciiLetter(name[0])
+            && name.Skip(1).All(character => IsAsciiLetter(character)
+                || char.IsAsciiDigit(character)
+                || character is '_' or '-' or '+');
+
+    private static bool IsAsciiLetter(char character)
+        => character is >= 'A' and <= 'Z' or >= 'a' and <= 'z';
 }
 
 public class ExpressionRequiresInputException : ExpressifException

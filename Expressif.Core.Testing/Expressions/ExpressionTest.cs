@@ -588,6 +588,18 @@ public class ExpressionTest
         Assert.That(TestExpression.Create(".address | .city").Evaluate(input), Is.EqualTo("Brussels"));
     }
 
+    [TestCase(
+        "{{name := \"Alice\"}} | .name",
+        "Cannot access field 'name' directly on an array. Use map(.name) to access it on each element, or value-at(0) | .name to access it on a specific element.")]
+    [TestCase(
+        "tuple({name := \"Alice\"}) | .name",
+        "Cannot access field 'name' directly on a tuple. Select a position such as $0 before accessing a field.")]
+    public void Evaluate_FieldShorthand_NonRecordInput_ReportsExpressifGuidance(
+        string source,
+        string message)
+        => Assert.That(() => TestExpression.Create(source).Evaluate(null),
+            Throws.TypeOf<NotNameableContextObjectException>().With.Message.EqualTo(message));
+
     [TestCase(".address.location.city")]
     [TestCase(".address | .location | .city")]
     [TestCase("(.address.location.city)")]

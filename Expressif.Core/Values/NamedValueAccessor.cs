@@ -17,7 +17,8 @@ internal static class NamedValueAccessor
             IReadOnlyDictionary<string, object?> readOnly => readOnly.ContainsKey(name),
             IReadOnlyDataRow row => row.ContainsColumn(name),
             IDictionary dico => dico.Contains(name),
-            IList => throw new NotNameableContextObjectException(value),
+            IList => throw new NotNameableContextObjectException(value, name),
+            IExpressifValueType => throw new NotNameableContextObjectException(value, name),
             _ => TryRetrieveObjectProperty(value, name, out var _),
         };
 
@@ -29,7 +30,8 @@ internal static class NamedValueAccessor
             IReadOnlyDictionary<string, object?> readOnly => readOnly.ContainsKey(name) ? readOnly[name] : throw new ArgumentOutOfRangeException(name),
             IReadOnlyDataRow row => row.ContainsColumn(name) ? row[name] : throw new ArgumentOutOfRangeException(name),
             IDictionary dico => dico.Contains(name) ? dico[name] : throw new ArgumentOutOfRangeException(name),
-            IList => throw new NotNameableContextObjectException(value),
+            IList => throw new NotNameableContextObjectException(value, name),
+            IExpressifValueType => throw new NotNameableContextObjectException(value, name),
             _ => RetrieveObjectProperty(value, name),
         };
     }
@@ -87,6 +89,9 @@ internal static class NamedValueAccessor
                 values = null;
                 return false;
             case IList:
+                values = null;
+                return false;
+            case IExpressifValueType:
                 values = null;
                 return false;
             default:
