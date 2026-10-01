@@ -115,12 +115,25 @@ public sealed class FunctionCatalog
             .Select(x => x.Function);
     }
 
-    internal static FunctionCatalog Load(Assembly assembly)
+    public static FunctionCatalog Load(Assembly assembly)
     {
+        ArgumentNullException.ThrowIfNull(assembly);
         var entries = Merge(
             LoadEntries(assembly, ResourceName, "function"),
             LoadEntries(assembly, PredicateResourceName, "predicate"));
 
+        return Create(entries);
+    }
+
+    public static FunctionCatalog Load(IEnumerable<Assembly> assemblies)
+    {
+        ArgumentNullException.ThrowIfNull(assemblies);
+        var entries = assemblies.SelectMany(assembly => Load(assembly).Functions).ToArray();
+        return Create(entries);
+    }
+
+    private static FunctionCatalog Create(FunctionDocumentation[] entries)
+    {
         ValidateNames(entries.Where(entry => entry.Kind == "function"));
         ValidateNames(entries.Where(entry => entry.Kind == "predicate"));
         ValidateOmissions(entries);

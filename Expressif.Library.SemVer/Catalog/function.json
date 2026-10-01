@@ -1,0 +1,135 @@
+[
+  {
+    "Name": "bump-major",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "semver",
+    "Summary": "Increments the major component and resets minor and patch to zero, removing pre-release and build metadata.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "bump-minor",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "semver",
+    "Summary": "Increments the minor component and resets patch to zero, removing pre-release and build metadata.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "bump-patch",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "semver",
+    "Summary": "Increments the patch component, removing pre-release and build metadata.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "major",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "integer",
+    "Summary": "Returns the major component.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "minor",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "integer",
+    "Summary": "Returns the minor component.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "patch",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "integer",
+    "Summary": "Returns the patch component.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "pre-release",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "text",
+    "Summary": "Returns pre-release text without the leading hyphen, or empty text when absent.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "build-metadata",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "text",
+    "Summary": "Returns build metadata without the leading plus sign, or empty text when absent.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "compare-semver",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "ordering",
+    "Summary": "Compares semantic-version precedence, ignoring build metadata.",
+    "Parameters": [
+      {
+        "Name": "right",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": {
+          "Frequency": "once",
+          "Source": "enclosing",
+          "Summary": "Evaluated once in the context enclosing this compare-semver call."
+        }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "coerce-semver",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "text | semver",
+    "Output": "semver",
+    "Summary": "Attempts to convert text or an existing semantic version to a semantic version, returning null for invalid input.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "semver-to-text",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "text",
+    "Summary": "Returns canonical semantic-version text including pre-release and build metadata.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  }
+]

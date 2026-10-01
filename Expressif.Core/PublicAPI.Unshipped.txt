@@ -756,7 +756,7 @@ Expressif.Planning.LogicalPlanFormatException.LogicalPlanFormatException(string!
 Expressif.Planning.LogicalPlanJson
 Expressif.Planning.LogicalPlanner
 Expressif.Planning.LogicalPlanner.Build(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.Planning.LogicalPlan!
-Expressif.Planning.LogicalPlanner.LogicalPlanner(Expressif.Planning.ILogicalPlanningContext! context) -> void
+Expressif.Planning.LogicalPlanner.LogicalPlanner(Expressif.Planning.ILogicalPlanningContext! context, Expressif.Types.QuotedLiteralRegistry? quotedLiterals = null) -> void
 Expressif.Planning.LogicalPlanningException
 Expressif.Planning.LogicalPlanningException.LogicalPlanningException(string! message) -> void
 Expressif.Planning.LogicalValue
@@ -1129,13 +1129,31 @@ Expressif.Types.IQuotedLiteralParser.TryParse(string! representation, out object
 Expressif.Types.IQuotedLiteralParser.TypeName.get -> string!
 Expressif.Values.Types.ITypeDescriptor
 Expressif.Values.Types.ITypeDescriptor.RuntimeType.get -> System.Type?
+Expressif.Values.Types.ITypeRegistry
+Expressif.Values.Types.ITypeRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Expressif.Values.Types.TypeDescriptor!>!
+Expressif.Values.Types.ITypeRegistry.IsInstance(object? value, Expressif.Values.Types.TypeDescriptor! expected) -> bool
+Expressif.Values.Types.ITypeRegistry.Resolve(string! name) -> Expressif.Values.Types.TypeDescriptor!
+Expressif.Values.Types.ITypeRegistry.ResolveRuntimeType(string! name) -> System.Type?
+Expressif.Values.Types.ITypeRegistry.TryResolve(string! name, out Expressif.Values.Types.TypeDescriptor! descriptor) -> bool
 Expressif.Types.QuotedLiteralRegistry
+Expressif.Types.QuotedLiteralRegistry.Add(System.Collections.Generic.IEnumerable<Expressif.Types.IQuotedLiteralParser!>! additionalParsers) -> Expressif.Types.QuotedLiteralRegistry!
 Expressif.Types.QuotedLiteralRegistry.CanSerialize(object! value) -> bool
 Expressif.Types.QuotedLiteralRegistry.Parse(string! representation, string? typeName = null) -> (object? Value, string! TypeName)
+Expressif.Types.QuotedLiteralRegistry.Parsers.get -> System.Collections.Generic.IReadOnlyList<Expressif.Types.IQuotedLiteralParser!>!
 Expressif.Types.QuotedLiteralRegistry.QuotedLiteralRegistry(System.Collections.Generic.IEnumerable<Expressif.Types.IQuotedLiteralParser!>! parsers) -> void
 Expressif.Types.QuotedLiteralRegistry.Serialize(object! value, string? typeName = null, bool includeTypeSuffix = true) -> string!
+Expressif.Values.Types.TypeRegistry
+Expressif.Values.Types.TypeRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Expressif.Values.Types.TypeDescriptor!>!
+Expressif.Values.Types.TypeRegistry.IsInstance(object? value, Expressif.Values.Types.TypeDescriptor! expected) -> bool
+Expressif.Values.Types.TypeRegistry.Resolve(string! name) -> Expressif.Values.Types.TypeDescriptor!
+Expressif.Values.Types.TypeRegistry.ResolveRuntimeType(string! name) -> System.Type?
+Expressif.Values.Types.TypeRegistry.TryResolve(string! name, out Expressif.Values.Types.TypeDescriptor! descriptor) -> bool
+Expressif.Values.Types.TypeRegistry.TypeRegistry(Expressif.Discovery.ITypeSource! source) -> void
+Expressif.Values.Types.TypeRegistry.TypeRegistry(System.Collections.Generic.IEnumerable<Expressif.Values.Types.TypeDescriptor!>! descriptors) -> void
+Expressif.Values.Types.TypeRegistry.TypeRegistry(params System.Reflection.Assembly![]! assemblies) -> void
 Expressif.Values.Types.TypeDescriptor
 Expressif.Values.Types.TypeDescriptor.Bindings.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Expressif.Values.Types.TypeDescriptor.IsInstance(object? value) -> bool
 Expressif.Values.Types.TypeDescriptor.Literal.get -> Expressif.Values.Types.TypeLiteralMetadata?
 Expressif.Values.Types.TypeDescriptor.Name.get -> string!
 Expressif.Values.Types.TypeDescriptor.Parent.get -> string?

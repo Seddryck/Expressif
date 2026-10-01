@@ -1,0 +1,10 @@
+suite: semver
+kind: predicate
+operator: higher-precedence
+tests:
+  - id: higher-precedence.valid.semver
+    cases:
+      - id: higher-precedence.valid.semver.release
+        value: '1.0.0'
+        parameters: ['1.0.0-rc.1']
+        expected: true

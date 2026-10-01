@@ -1,0 +1,9 @@
+suite: semver
+kind: function
+operator: semver-to-text
+tests:
+  - id: semver-to-text.valid.semver
+    cases:
+      - id: semver-to-text.valid.semver.all-components
+        value: '1.25.0-rc.1+abc'
+        expected: '1.25.0-rc.1+abc'

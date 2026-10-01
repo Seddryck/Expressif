@@ -1,0 +1,9 @@
+suite: semver
+kind: function
+operator: major
+tests:
+  - id: major.valid.semver
+    cases:
+      - id: major.valid.semver.release
+        value: '12.3.4'
+        expected: 12

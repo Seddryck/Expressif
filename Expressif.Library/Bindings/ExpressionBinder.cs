@@ -7,6 +7,7 @@ using Expressif.Planning;
 using Expressif.Values.Types;
 using Expressif.Values;
 using Expressif.Functions.Coercions;
+using Expressif.Hosting;
 using RuntimeExpression = Expressif.IExpression;
 using RuntimeExpressionFactory = Expressif.Functions.FunctionFactory;
 
@@ -32,6 +33,24 @@ public sealed class ExpressionBinder : IExpressionBinder
 
     public ExpressionBinder(IContext context)
         : this(context, new CompositeTypeSource(BuiltInSource)) { }
+
+    /// <summary>Creates a binder with the supplied immutable library environment.</summary>
+    public ExpressionBinder(ExpressifEnvironment environment)
+        : this(new Context(), environment) { }
+
+    /// <summary>Creates a binder with the supplied context and immutable library environment.</summary>
+    public ExpressionBinder(IContext context, ExpressifEnvironment environment)
+        : this(
+            context,
+            LogicalPlannerFactory.Create(
+                RequireEnvironment(environment).Catalog,
+                environment.Source,
+                environment.Types,
+                environment.QuotedLiterals),
+            new LogicalPlanBinder(environment.Source, environment.Types, environment.QuotedLiterals),
+            new RuntimeExpressionFactory(environment.Source),
+            environment.Types,
+            TypeSourceService.Create<IValueConverter>(environment.Source)) { }
 
     /// <summary>
     /// Creates a binder with the built-in vocabulary and additional extension types.
@@ -367,6 +386,9 @@ public sealed class ExpressionBinder : IExpressionBinder
         ArgumentNullException.ThrowIfNull(extensions);
         return new CompositeTypeSource(BuiltInSource, extensions);
     }
+
+    private static ExpressifEnvironment RequireEnvironment(ExpressifEnvironment? environment)
+        => environment ?? throw new ArgumentNullException(nameof(environment));
 
     private sealed class CompositeTypeSource(params ITypeSource[] sources) : ITypeSource
     {

@@ -144,7 +144,7 @@ public class BindCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr, Does.Contain("Unknown function 'global::does-not-exist'."));
+            Assert.That(result.StdErr, Does.Contain("Unknown function 'system::does-not-exist'."));
         });
     }
 

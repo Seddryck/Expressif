@@ -1,0 +1,13 @@
+[
+  {
+    "Name": "bump-patch",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "semver",
+    "Summary": "Provides a deliberate registration collision for testing.",
+    "Parameters": [],
+    "Schema": { "Classification": "fixed" }
+  }
+]

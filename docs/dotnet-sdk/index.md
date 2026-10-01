@@ -56,6 +56,6 @@ flowchart LR
 4. [Build an expression with C#](build-expression.md).
 5. [Build a predication with C#](build-predication.md).
 6. [Serialize a builder](serialization.md).
-
-7. [Analyze field scopes](semantic-analysis.md).
-8. [Migrate incremental aggregations to v3](migrate-incremental-aggregations.md).
+7. [Load runtime libraries](runtime-libraries.md).
+8. [Analyze field scopes](semantic-analysis.md).
+9. [Migrate incremental aggregations to v3](migrate-incremental-aggregations.md).

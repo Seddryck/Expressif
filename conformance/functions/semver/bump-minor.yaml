@@ -1,0 +1,9 @@
+suite: semver
+kind: function
+operator: bump-minor
+tests:
+  - id: bump-minor.valid.semver
+    cases:
+      - id: bump-minor.valid.semver.prerelease-build
+        value: '1.2.3-rc.1+build.7'
+        expected: '1.3.0'

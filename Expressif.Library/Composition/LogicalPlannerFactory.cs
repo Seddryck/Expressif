@@ -4,6 +4,8 @@ using Expressif.Functions.Accumulation;
 using Expressif.Functions.Coercions;
 using Expressif.Planning;
 using Expressif.Values.Types;
+using Expressif.Types;
+using Expressif.Hosting;
 
 namespace Expressif.Library.Composition;
 
@@ -15,11 +17,31 @@ public static class LogicalPlannerFactory
     private static readonly ITypeSource Source = new AssemblyTypeSource(typeof(LogicalPlannerFactory).Assembly);
 
     public static LogicalPlanner Create(FunctionCatalog? catalog = null)
-        => new(new BuiltInPlanningContext(
+        => Create(
             catalog ?? FunctionCatalog.Default,
-            new AccumulatorRegistry(Source),
-            new CoercionRegistry(Source),
-            ExpressifTypeRegistry.Instance));
+            Source,
+            ExpressifTypeRegistry.Instance,
+            QuotedLiteralRegistry.Default);
+
+    /// <summary>Creates a logical planner for an immutable library environment.</summary>
+    public static LogicalPlanner Create(ExpressifEnvironment environment)
+    {
+        ArgumentNullException.ThrowIfNull(environment);
+        return Create(environment.Catalog, environment.Source, environment.Types, environment.QuotedLiterals);
+    }
+
+    internal static LogicalPlanner Create(
+        FunctionCatalog catalog,
+        ITypeSource source,
+        ITypeRegistry types,
+        QuotedLiteralRegistry quotedLiterals)
+        => new(
+            new BuiltInPlanningContext(
+                catalog,
+                new AccumulatorRegistry(source),
+                new CoercionRegistry(source),
+                types),
+            quotedLiterals);
 
     private sealed class BuiltInPlanningContext(
         FunctionCatalog catalog,

@@ -1,0 +1,10 @@
+suite: semver
+kind: predicate
+operator: same-precedence
+tests:
+  - id: same-precedence.valid.semver
+    cases:
+      - id: same-precedence.valid.semver.different-build
+        value: '1.0.0+abc'
+        parameters: ['1.0.0+def']
+        expected: true

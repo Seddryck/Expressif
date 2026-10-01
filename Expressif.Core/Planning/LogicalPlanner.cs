@@ -9,9 +9,12 @@ namespace Expressif.Planning;
 public sealed class LogicalPlanner
 {
     private readonly ILogicalPlanningContext context;
+    private readonly QuotedLiteralRegistry quotedLiterals;
 
-    public LogicalPlanner(ILogicalPlanningContext context)
-        => this.context = context ?? throw new ArgumentNullException(nameof(context));
+    public LogicalPlanner(ILogicalPlanningContext context, QuotedLiteralRegistry? quotedLiterals = null)
+        => (this.context, this.quotedLiterals) = (
+            context ?? throw new ArgumentNullException(nameof(context)),
+            quotedLiterals ?? QuotedLiteralRegistry.Default);
 
     public LogicalPlan Build(RootExpressionSyntax syntax)
     {
@@ -738,8 +741,10 @@ public sealed class LogicalPlanner
     {
         var authoredType = syntax.Type?.Name;
         var typeName = authoredType is null ? null : ResolveType(authoredType, syntax.Type!);
-        var literal = QuotedLiteralRegistry.Default.Parse(syntax.Representation.Value, typeName);
-        return Literal(literal.Value);
+        var literal = quotedLiterals.Parse(syntax.Representation.Value, typeName);
+        return new LogicalLiteral(
+            literal.TypeName,
+            new QuotedLiteralRepresentation(syntax.Representation.Value));
     }
 
     private LogicalLiteral PlanType(TypeLiteralSyntax syntax)

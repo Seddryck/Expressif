@@ -19,14 +19,23 @@ public sealed class QuotedLiteralRegistry
 {
     private readonly IReadOnlyDictionary<string, IQuotedLiteralParser> parsers;
 
+    public IReadOnlyList<IQuotedLiteralParser> Parsers { get; }
+
     public QuotedLiteralRegistry(IEnumerable<IQuotedLiteralParser> parsers)
     {
         ArgumentNullException.ThrowIfNull(parsers);
-        this.parsers = parsers.ToDictionary(parser => parser.TypeName, StringComparer.OrdinalIgnoreCase);
+        Parsers = parsers.ToArray();
+        this.parsers = Parsers.ToDictionary(parser => parser.TypeName, StringComparer.OrdinalIgnoreCase);
     }
 
     public static QuotedLiteralRegistry Default { get; } = new(
         [new DateLiteralParser(), new DateTimeLiteralParser(), new TimeLiteralParser()]);
+
+    public QuotedLiteralRegistry Add(IEnumerable<IQuotedLiteralParser> additionalParsers)
+    {
+        ArgumentNullException.ThrowIfNull(additionalParsers);
+        return new QuotedLiteralRegistry(Parsers.Concat(additionalParsers));
+    }
 
     public (object? Value, string TypeName) Parse(string representation, string? typeName = null)
         => ParseCore(representation, typeName, null);

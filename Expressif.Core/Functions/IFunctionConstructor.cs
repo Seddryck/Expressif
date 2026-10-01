@@ -49,6 +49,7 @@ internal interface IFunctionConstructionContext
         OpenExpressionParameter parameter,
         IContext context);
     bool TryResolveImplementation(string name, out Type implementationType);
+    bool TryCoerce(object? value, Type targetType, out object? result);
     Type ResolveTupleTarget(string name, Syntax.SourceSpan? sourceSpan = null);
     object? InvokeTuple(
         string name,

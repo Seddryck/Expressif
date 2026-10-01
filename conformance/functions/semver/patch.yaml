@@ -1,0 +1,9 @@
+suite: semver
+kind: function
+operator: patch
+tests:
+  - id: patch.valid.semver
+    cases:
+      - id: patch.valid.semver.release
+        value: '12.3.4'
+        expected: 4
