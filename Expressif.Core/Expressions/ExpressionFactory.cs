@@ -16,11 +16,11 @@ public sealed class ExpressionFactory
         => (Parser, Binder, Observer) = (
             parser ?? new ExpressionParser(),
             binder ?? throw new ArgumentNullException(nameof(binder)),
-            observer ?? NoOpExpressionObserver.Instance);
+            observer);
 
     private IExpressionParser Parser { get; }
     private IExpressionBinder Binder { get; }
-    private IExpressionObserver Observer { get; }
+    private IExpressionObserver? Observer { get; }
 
     public IExpression Create(string text)
         => Create(Parse(text));
@@ -36,39 +36,48 @@ public sealed class ExpressionFactory
 
     private RootExpressionSyntax Parse(string text)
     {
-        using var observation = ExpressionObservationScope.Begin(Observer, ExpressionObservationStage.Parse);
+        var observation = ExpressionObservationScope.Create(Observer, ExpressionObservationStage.Parse);
+        if (observation is null)
+            return Parser.Parse(text);
         try
         {
             var syntax = Parser.Parse(text);
-            observation.Complete();
+            ExpressionObservationScope.Complete(observation);
             return syntax;
         }
         catch (Exception exception)
         {
-            observation.Fail(exception);
+            ExpressionObservationScope.Fail(observation, exception);
             throw;
+        }
+        finally
+        {
+            ExpressionObservationScope.Dispose(observation);
         }
     }
 
     private IExpression ObserveBinding(Func<IExpression> bind)
     {
-        IExpression expression;
-        using (var observation = ExpressionObservationScope.Begin(Observer, ExpressionObservationStage.Bind))
+        var observation = ExpressionObservationScope.Create(Observer, ExpressionObservationStage.Bind);
+        if (observation is null)
         {
-            try
-            {
-                expression = bind();
-                observation.Complete();
-            }
-            catch (Exception exception)
-            {
-                observation.Fail(exception);
-                throw;
-            }
+            var direct = bind();
+            return Observer is null ? direct : new ObservedExpression(direct, Observer);
         }
-
-        return ReferenceEquals(Observer, NoOpExpressionObserver.Instance)
-            ? expression
-            : new ObservedExpression(expression, Observer);
+        try
+        {
+            var expression = bind();
+            ExpressionObservationScope.Complete(observation);
+            return new ObservedExpression(expression, Observer!);
+        }
+        catch (Exception exception)
+        {
+            ExpressionObservationScope.Fail(observation, exception);
+            throw;
+        }
+        finally
+        {
+            ExpressionObservationScope.Dispose(observation);
+        }
     }
 }

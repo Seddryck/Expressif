@@ -1,14 +1,75 @@
 using System;
 using System.Threading;
+using Expressif.Observability;
 
 namespace Expressif;
 
 internal static class EvaluationRuntime
 {
     private static readonly AsyncLocal<State?> CurrentState = new();
+    private static readonly AsyncLocal<ActiveObservation?> CurrentObservation = new();
+    private static readonly AsyncLocal<FunctionObservationContext?> CurrentFunction = new();
 
     public static EvaluationFrame? Frame => CurrentState.Value?.Frame;
     public static EvaluationContext? Context => CurrentState.Value?.Context;
+    internal static bool HasFunctionObservations => CurrentObservation.Value?.Functions.Length > 0;
+    internal static bool HasFlowDecisionObservations => CurrentObservation.Value?.FlowDecisions.Length > 0;
+    internal static bool HasDetailedObservations => HasFunctionObservations || HasFlowDecisionObservations;
+
+    internal static IDisposable ActivateObservation(IExpressionObservation observation)
+    {
+        var previous = CurrentObservation.Value;
+        CurrentObservation.Value = ActiveObservation.Create(observation);
+        return new ObservationScope(previous);
+    }
+
+    internal static FunctionScope EnterFunction(FunctionObservationContext context)
+    {
+        var previous = CurrentFunction.Value;
+        CurrentFunction.Value = context;
+        return new FunctionScope(previous);
+    }
+
+    internal static void ReportFunctionCompleted(FunctionObservationContext context, object? input, object? output)
+    {
+        var observers = CurrentObservation.Value?.Functions;
+        if (observers is null || observers.Length == 0)
+            return;
+        foreach (var observer in observers)
+        {
+            try { observer.OnCompleted(context, input, output); }
+            catch (Exception) { }
+        }
+    }
+
+    internal static void ReportFunctionFailed(FunctionObservationContext context, object? input, Exception exception)
+    {
+        var observers = CurrentObservation.Value?.Functions;
+        if (observers is null || observers.Length == 0)
+            return;
+        foreach (var observer in observers)
+        {
+            try { observer.OnFailed(context, input, exception); }
+            catch (Exception) { }
+        }
+    }
+
+    internal static void ReportFlowDecision(
+        FlowDecisionOutcome outcome,
+        int index = -1,
+        int evaluated = 0,
+        bool isFallback = false)
+    {
+        var observation = CurrentObservation.Value;
+        if (observation is null || observation.FlowDecisions.Length == 0 || CurrentFunction.Value is not { } function)
+            return;
+        var decision = new FlowDecision(outcome, index, evaluated, isFallback);
+        foreach (var observer in observation.FlowDecisions)
+        {
+            try { observer.OnDecision(function, decision); }
+            catch (Exception) { }
+        }
+    }
 
     public static IDisposable Enter(EvaluationFrame frame, EvaluationContext context)
     {
@@ -143,5 +204,42 @@ internal static class EvaluationRuntime
     private sealed class Scope(State? previous) : IDisposable
     {
         public void Dispose() => CurrentState.Value = previous;
+    }
+
+    internal readonly struct FunctionScope(FunctionObservationContext? previous) : IDisposable
+    {
+        public void Dispose() => CurrentFunction.Value = previous;
+    }
+
+    private sealed class ObservationScope(ActiveObservation? previous) : IDisposable
+    {
+        private int disposed;
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref disposed, 1) == 0)
+                CurrentObservation.Value = previous;
+        }
+    }
+
+    private sealed record ActiveObservation(
+        IExpressionObservation Root,
+        IFunctionObserver[] Functions,
+        IFlowObserver[] FlowDecisions)
+    {
+        private static readonly IFunctionObserver[] EmptyFunctions = [];
+        private static readonly IFlowObserver[] EmptyFlowDecisions = [];
+
+        public static ActiveObservation Create(IExpressionObservation root)
+        {
+            var observations = root is ICompositeExpressionObservation composite
+                ? composite.Children
+                : [root];
+            var functions = observations.OfType<IFunctionObserver>().ToArray();
+            var flows = observations.OfType<IFlowObserver>().ToArray();
+            return new(root,
+                functions.Length == 0 ? EmptyFunctions : functions,
+                flows.Length == 0 ? EmptyFlowDecisions : flows);
+        }
     }
 }

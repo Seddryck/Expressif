@@ -5,7 +5,7 @@ namespace Expressif.Observability;
 /// </summary>
 /// <remarks>
 /// An observer can be shared by bound expressions and must be safe for concurrent calls.
-/// Every call to <see cref="Begin"/> must return a distinct observation dedicated to that operation.
+/// Every non-null result from <see cref="Create"/> must be a distinct observation dedicated to that operation.
 /// Multiple observations returned by the same observer can be active concurrently, but each observation
 /// is used only by the operation for which it was created.
 /// Exceptions thrown by an observer are suppressed and are not themselves observed. They do not
@@ -14,14 +14,14 @@ namespace Expressif.Observability;
 public interface IExpressionObserver
 {
     /// <summary>
-    /// Begins observing one parse, bind, or evaluation operation and returns its dedicated observation.
+    /// Creates an observation for one parse, bind, or evaluation operation.
     /// </summary>
     /// <param name="stage">The lifecycle stage performed by the operation.</param>
     /// <returns>
-    /// A dedicated observation that receives the operation outcome and is disposed when the operation ends.
+    /// A dedicated observation, or <see langword="null"/> when this observer does not observe the stage.
     /// </returns>
     /// <remarks>
     /// If this method throws, the expression operation proceeds without an observation.
     /// </remarks>
-    IExpressionObservation Begin(ExpressionObservationStage stage);
+    IExpressionObservation? Create(ExpressionObservationStage stage);
 }

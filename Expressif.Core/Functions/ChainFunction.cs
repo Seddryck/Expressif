@@ -4,30 +4,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Expressif.Values;
+using Expressif.Observability;
 
 namespace Expressif.Functions;
 
 internal class ChainFunction : IFunction
 {
+    private readonly FunctionObservationContext[]? observationContexts;
     internal IEnumerable<IFunction> Functions { get; }
 
     public ChainFunction(IEnumerable<IFunction> functions)
         => Functions = functions;
 
+    public ChainFunction(
+        IEnumerable<IFunction> functions,
+        FunctionObservationContext[] observationContexts)
+        => (Functions, this.observationContexts) = (functions, observationContexts);
+
     public virtual object? Evaluate(object? value)
     {
+        var index = 0;
         foreach (var function in Functions)
         {
             if (function is IPipelineControlFunction control)
             {
-                value = control.Evaluate(value, out var terminate);
+                value = observationContexts is null
+                    ? control.Evaluate(value, out var terminate)
+                    : FunctionObservationDispatcher.EvaluateControl(control, observationContexts[index], value, out terminate);
                 if (terminate)
                     return value;
             }
             else
             {
-                value = function.Evaluate(value);
+                value = observationContexts is null
+                    ? function.Evaluate(value)
+                    : FunctionObservationDispatcher.Evaluate(function, observationContexts[index], value);
             }
+            index++;
         }
         return value;
     }
@@ -39,6 +52,13 @@ internal sealed class ChainFunction<TIn, TOut> : ChainFunction, IFunction<TIn, T
 
     public ChainFunction(IEnumerable<IFunction> functions, Func<TIn, TOut> pipeline)
         : base(functions)
+        => Pipeline = pipeline;
+
+    public ChainFunction(
+        IEnumerable<IFunction> functions,
+        Func<TIn, TOut> pipeline,
+        FunctionObservationContext[] observationContexts)
+        : base(functions, observationContexts)
         => Pipeline = pipeline;
 
     public TOut Evaluate(TIn value) => Pipeline.Invoke(value);

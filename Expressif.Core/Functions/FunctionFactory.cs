@@ -5,6 +5,7 @@ using Expressif.Predicates;
 using Expressif.Values;
 using Expressif.Functions.Coercions;
 using Expressif.Discovery;
+using Expressif.Observability;
 using System;
 using System.Collections.Generic;
 using System.Collections;
@@ -24,6 +25,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private readonly FunctionConstructorRegistry constructors;
     private readonly IPredicationFactory predicationFactory;
     private readonly ITupleFunctionInvoker tupleBinding;
+    private static long nextObservationId;
 
     public FunctionFactoryRuntime(ITypeSource source)
         : this(
@@ -227,12 +229,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             .Select(member => InstantiateOrWrapAggregation(member, context))
             .ToList();
 
-        if (functions.Count == 1 && functions[0] is IPredicate)
-            return functions[0];
-
         return TryBuildTypedChain(members, functions, out var chain)
             ? chain
-            : new ChainFunction(functions);
+            : CreateChain(members, functions);
     }
 
     private IFunction BuildInputBoundFunction(InputBoundExpression binding, IContext context)
@@ -279,24 +278,40 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         var inputType = initial.Input;
         var parameter = LinqExpression.Parameter(inputType, "value");
         LinqExpression body = parameter;
+        var observationContexts = CreateObservationContexts(members);
         for (var index = 0; index < functions.Count; index++)
         {
             var contract = contracts[index];
             var argument = body.Type == contract.Input
                 ? body
                 : LinqExpression.Convert(body, contract.Input);
+            var typedFunction = LinqExpression.Convert(LinqExpression.Constant(functions[index]), contract.Contract);
             body = LinqExpression.Call(
-                LinqExpression.Convert(LinqExpression.Constant(functions[index]), contract.Contract),
-                contract.Contract.GetMethod(nameof(IFunction.Evaluate))!,
-                argument);
+                    typeof(FunctionObservationDispatcher).GetMethods()
+                        .Single(method => method.Name == nameof(FunctionObservationDispatcher.Evaluate)
+                            && method.IsGenericMethodDefinition)
+                        .MakeGenericMethod(contract.Input, contract.Output),
+                    typedFunction,
+                    LinqExpression.Constant(observationContexts![index]),
+                    argument);
         }
 
         var delegateType = typeof(Func<,>).MakeGenericType(inputType, outputType);
         var pipeline = LinqExpression.Lambda(delegateType, body, parameter).Compile();
         var chainType = typeof(ChainFunction<,>).MakeGenericType(inputType, outputType);
-        chain = (IFunction)Activator.CreateInstance(chainType, functions, pipeline)!;
+        chain = (IFunction)Activator.CreateInstance(chainType, functions, pipeline, observationContexts)!;
         return true;
     }
+
+    private ChainFunction CreateChain(
+        IReadOnlyList<Bindings.Function> members,
+        IEnumerable<IFunction> functions)
+        => new(functions, CreateObservationContexts(members));
+
+    private FunctionObservationContext[] CreateObservationContexts(IReadOnlyList<Bindings.Function> members)
+        => members.Select(member => new FunctionObservationContext(
+            $"function[{Interlocked.Increment(ref nextObservationId) - 1}]",
+            member.Identity)).ToArray();
 
     private static bool TrySelectInitialContract(
         IFunction function,
@@ -353,7 +368,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         foreach (var member in expression.Members)
             functions.Add(InstantiateOrWrapAggregation(member, context));
 
-        var pipeline = new ChainFunction(functions);
+        var pipeline = CreateChain(expression.Members.ToArray(), functions);
         return new DelegatedFunction(input =>
         {
             var source = sourceEvaluator.Invoke(input);
@@ -784,7 +799,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (parameter is InputExpressionParameter inputExpression)
         {
             var source = BuildValueEvaluator(inputExpression.Expression.Parameter, context);
-            var chain = new ChainFunction(inputExpression.Expression.Members
+            var members = inputExpression.Expression.Members.ToArray();
+            var chain = CreateChain(members, members
                 .Select(member => InstantiateOrWrapAggregation(member, context))
                 .ToArray());
             return input => WithCurrentObject(
@@ -905,8 +921,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
         try
         {
-            var functions = open.Expression.Members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
-            var chain = new ChainFunction(functions);
+            var members = open.Expression.Members.ToArray();
+            var functions = members.Select(member => InstantiateOrWrapAggregation(member, context)).ToArray();
+            var chain = CreateChain(members, functions);
             return input => EvaluateNested(chain, input);
         }
         catch (NotImplementedFunctionException) when (IsSingleTokenExpression(open))
@@ -1087,7 +1104,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     protected override Delegate CreateInputExpression(InputExpressionParameter input, Type type, IContext context)
     {
         var source = BuildValueEvaluator(input.Expression.Parameter, context);
-        var chain = new ChainFunction(input.Expression.Members
+        var members = input.Expression.Members.ToArray();
+        var chain = CreateChain(members, members
             .Select(member => InstantiateOrWrapAggregation(member, context))
             .ToArray());
         return CreateFunctionCast(() =>

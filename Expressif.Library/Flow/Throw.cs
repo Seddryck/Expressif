@@ -22,7 +22,11 @@ public sealed class Throw : IFunction
     public object? Evaluate(object? value)
     {
         if (ControlFlowBranch.RequireBoolean(EvaluationRuntime.EvaluateNested(predicate.Invoke(), value)))
+        {
+            EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.InputRejected);
             throw new EvaluationException();
+        }
+        EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.InputAccepted);
         return value;
     }
 }

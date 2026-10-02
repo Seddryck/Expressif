@@ -12,18 +12,25 @@ internal sealed class ObservedExpression : IExpression
 
     public object? Evaluate(object? value)
     {
-        using var observation = ExpressionObservationScope.Begin(observer, ExpressionObservationStage.Evaluate);
-        var frame = new EvaluationFrame(value, value, observation);
+        var observation = ExpressionObservationScope.Create(observer, ExpressionObservationStage.Evaluate);
+        if (observation is null)
+            return expression.Evaluate(value);
+        var activation = observation.Activate();
         try
         {
-            var result = expression.Evaluate(frame.Current);
-            observation.Complete();
+            var result = expression.Evaluate(value);
+            ExpressionObservationScope.Complete(observation);
             return result;
         }
         catch (Exception exception)
         {
-            observation.Fail(exception);
+            ExpressionObservationScope.Fail(observation, exception);
             throw;
+        }
+        finally
+        {
+            activation.Dispose();
+            ExpressionObservationScope.Dispose(observation);
         }
     }
 

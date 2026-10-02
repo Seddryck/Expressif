@@ -17,8 +17,13 @@ public sealed class Catch : IPipelineControlFunction
     private object? Evaluate(object? value, out bool terminate)
     {
         terminate = new Expressif.Library.Special.Null().Evaluate(value);
-        return terminate
-            ? expression.Invoke().Evaluate(EvaluationRuntime.Frame is { } frame ? frame.Current : value)
-            : value;
+        if (!terminate)
+        {
+            EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.PassThrough);
+            return value;
+        }
+
+        EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.Recovery);
+        return expression.Invoke().Evaluate(EvaluationRuntime.Frame is { } frame ? frame.Current : value);
     }
 }

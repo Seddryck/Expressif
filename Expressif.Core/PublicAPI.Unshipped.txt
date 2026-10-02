@@ -695,11 +695,47 @@ Expressif.Observability.ExpressionObservationStage
 Expressif.Observability.ExpressionObservationStage.Bind = 1 -> Expressif.Observability.ExpressionObservationStage
 Expressif.Observability.ExpressionObservationStage.Evaluate = 2 -> Expressif.Observability.ExpressionObservationStage
 Expressif.Observability.ExpressionObservationStage.Parse = 0 -> Expressif.Observability.ExpressionObservationStage
+Expressif.Observability.ExpressionObservationExtensions
+static Expressif.Observability.ExpressionObservationExtensions.Activate(this Expressif.Observability.IExpressionObservation! observation) -> System.IDisposable!
+Expressif.Observability.ExpressionObservers
+static Expressif.Observability.ExpressionObservers.Combine(params Expressif.Observability.IExpressionObserver![]! observers) -> Expressif.Observability.IExpressionObserver?
+Expressif.Observability.FlowDecision
+Expressif.Observability.FlowDecision.FlowDecision() -> void
+Expressif.Observability.FlowDecision.Evaluated.get -> int
+Expressif.Observability.FlowDecision.FlowDecision(Expressif.Observability.FlowDecisionOutcome outcome, int index = -1, int evaluated = 0, bool isFallback = false) -> void
+Expressif.Observability.FlowDecision.Index.get -> int
+Expressif.Observability.FlowDecision.IsFallback.get -> bool
+Expressif.Observability.FlowDecision.Outcome.get -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.AllCandidatesNull = 5 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.BranchSelected = 6 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.CandidateSelected = 4 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.ExpressionSelected = 2 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.GuardedExpressionSelected = 9 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.IncompatibleInputRetained = 10 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.InputAccepted = 11 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.InputRejected = 12 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.NoBranchMatched = 7 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.NoCandidateAccepted = 8 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.OriginalInputRetained = 3 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.PassThrough = 0 -> Expressif.Observability.FlowDecisionOutcome
+Expressif.Observability.FlowDecisionOutcome.Recovery = 1 -> Expressif.Observability.FlowDecisionOutcome
 Expressif.Observability.IExpressionObservation
 Expressif.Observability.IExpressionObservation.Complete() -> void
 Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception) -> void
 Expressif.Observability.IExpressionObserver
-Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
+Expressif.Observability.IExpressionObserver.Create(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation?
+Expressif.Observability.FunctionObservationContext
+Expressif.Observability.FunctionObservationContext.CanonicalName.get -> string!
+Expressif.Observability.FunctionObservationContext.Function.get -> Expressif.Discovery.OperatorIdentity!
+Expressif.Observability.FunctionObservationContext.Id.get -> string!
+Expressif.Observability.FunctionObservationContext.Name.get -> string!
+Expressif.Observability.FunctionObservationContext.Namespace.get -> string!
+Expressif.Observability.IFunctionObserver
+Expressif.Observability.IFunctionObserver.OnCompleted(Expressif.Observability.FunctionObservationContext! context, object? input, object? output) -> void
+Expressif.Observability.IFunctionObserver.OnFailed(Expressif.Observability.FunctionObservationContext! context, object? input, System.Exception! exception) -> void
+Expressif.Observability.IFlowObserver
+Expressif.Observability.IFlowObserver.OnDecision(Expressif.Observability.FunctionObservationContext! function, Expressif.Observability.FlowDecision decision) -> void
 Expressif.Planning.ILogicalPlanningContext
 Expressif.Planning.ILogicalPlanningContext.FindCoercion(string! sourceType, string! targetType) -> Expressif.Planning.PlannerFunctionMetadata?
 Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null, int? argumentCount = null) -> Expressif.Planning.PlannerFunctionMetadata?

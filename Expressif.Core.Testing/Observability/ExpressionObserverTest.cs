@@ -18,13 +18,13 @@ public class ExpressionObserverTest
     }
 
     [Test]
-    public void NoOpExpressionObserver_IsNotPublic()
+    public void NoOpExpressionObserver_IsRemoved()
     {
         var type = typeof(ExpressionFactory).Assembly.GetType(
             "Expressif.Observability.NoOpExpressionObserver",
-            throwOnError: true);
+            throwOnError: false);
 
-        Assert.That(type!.IsNotPublic, Is.True);
+        Assert.That(type, Is.Null);
     }
 
     [Test]
@@ -153,8 +153,8 @@ public class ExpressionObserverTest
     }
 
     [Test]
-    public void BeginFailure_DoesNotChangeSuccessfulOperation()
-        => AssertSuccessfulOperationIsolatedFrom(ObserverCallback.Begin);
+    public void CreateFailure_DoesNotChangeSuccessfulOperation()
+        => AssertSuccessfulOperationIsolatedFrom(ObserverCallback.Create);
 
     [Test]
     public void CompleteFailure_DoesNotChangeSuccessfulOperation()
@@ -225,7 +225,7 @@ public class ExpressionObserverTest
         public ConcurrentQueue<string> Events { get; } = new();
         public ConcurrentQueue<TrackingObservation> Observations { get; } = new();
 
-        public IExpressionObservation Begin(ExpressionObservationStage stage)
+        public IExpressionObservation Create(ExpressionObservationStage stage)
         {
             Events.Enqueue($"begin:{stage}");
             var observation = new TrackingObservation(
@@ -279,7 +279,7 @@ public class ExpressionObserverTest
     [Flags]
     private enum ObserverCallback
     {
-        Begin = 1,
+        Create = 1,
         Complete = 2,
         Fail = 4,
         Dispose = 8,
@@ -290,11 +290,11 @@ public class ExpressionObserverTest
         public ConcurrentQueue<string> Events { get; } = new();
         public Exception? Failure { get; private set; }
 
-        public IExpressionObservation Begin(ExpressionObservationStage stage)
+        public IExpressionObservation Create(ExpressionObservationStage stage)
         {
             Events.Enqueue($"begin:{stage}");
-            if (callbacks.HasFlag(ObserverCallback.Begin))
-                throw new ObserverException(ObserverCallback.Begin);
+            if (callbacks.HasFlag(ObserverCallback.Create))
+                throw new ObserverException(ObserverCallback.Create);
 
             return new ThrowingObservation(this, stage, callbacks);
         }

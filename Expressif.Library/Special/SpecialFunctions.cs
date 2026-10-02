@@ -126,13 +126,22 @@ public class Coalesce : IFunction
 
     public object? Evaluate(object? value)
     {
-        foreach (var expression in Expressions)
+        for (var index = 0; index < Expressions.Count; index++)
         {
-            var result = expression.Invoke(value);
+            var result = Expressions[index].Invoke(value);
             if (result is not null && !Expressif.Values.Special.Null.Instance.Equals(result))
+            {
+                EvaluationRuntime.ReportFlowDecision(
+                    Observability.FlowDecisionOutcome.CandidateSelected,
+                    index,
+                    index + 1);
                 return result;
+            }
         }
 
+        EvaluationRuntime.ReportFlowDecision(
+            Observability.FlowDecisionOutcome.AllCandidatesNull,
+            evaluated: Expressions.Count);
         return null;
     }
 }

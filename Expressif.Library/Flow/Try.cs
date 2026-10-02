@@ -13,12 +13,23 @@ public sealed class Try : IFunction
 
     public object? Evaluate(object? value)
     {
-        foreach (var branch in Branches)
+        for (var index = 0; index < Branches.Count; index++)
         {
+            var branch = Branches[index];
             var candidate = branch.Expression.Invoke(value);
             if (branch.Accepts(candidate))
+            {
+                EvaluationRuntime.ReportFlowDecision(
+                    Observability.FlowDecisionOutcome.CandidateSelected,
+                    index,
+                    index + 1,
+                    branch.Predicate is null);
                 return candidate;
+            }
         }
+        EvaluationRuntime.ReportFlowDecision(
+            Observability.FlowDecisionOutcome.NoCandidateAccepted,
+            evaluated: Branches.Count);
         return null;
     }
 }

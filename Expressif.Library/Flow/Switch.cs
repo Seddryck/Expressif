@@ -13,11 +13,22 @@ public sealed class Switch : IFunction
 
     public object? Evaluate(object? value)
     {
-        foreach (var branch in Branches)
+        for (var index = 0; index < Branches.Count; index++)
         {
+            var branch = Branches[index];
             if (branch.Accepts(value))
+            {
+                EvaluationRuntime.ReportFlowDecision(
+                    Observability.FlowDecisionOutcome.BranchSelected,
+                    index,
+                    index + 1,
+                    branch.Predicate is null);
                 return branch.Expression.Invoke(value);
+            }
         }
+        EvaluationRuntime.ReportFlowDecision(
+            Observability.FlowDecisionOutcome.NoBranchMatched,
+            evaluated: Branches.Count);
         return null;
     }
 }
