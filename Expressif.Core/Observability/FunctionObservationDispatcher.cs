@@ -7,18 +7,20 @@ internal static class FunctionObservationDispatcher
     public static object? Evaluate(
         IFunction function,
         FunctionObservationContext context,
-        IFunctionObserver[] observers,
         object? input)
     {
+        if (!EvaluationRuntime.HasDetailedObservations)
+            return function.Evaluate(input);
+        using var scope = EvaluationRuntime.EnterFunction(context);
         try
         {
             var output = function.Evaluate(input);
-            Complete(observers, context, input, output);
+            EvaluationRuntime.ReportFunctionCompleted(context, input, output);
             return output;
         }
         catch (Exception exception)
         {
-            Fail(observers, context, input, exception);
+            EvaluationRuntime.ReportFunctionFailed(context, input, exception);
             throw;
         }
     }
@@ -26,18 +28,20 @@ internal static class FunctionObservationDispatcher
     public static TOut Evaluate<TIn, TOut>(
         IFunction<TIn, TOut> function,
         FunctionObservationContext context,
-        IFunctionObserver[] observers,
         TIn input)
     {
+        if (!EvaluationRuntime.HasDetailedObservations)
+            return function.Evaluate(input);
+        using var scope = EvaluationRuntime.EnterFunction(context);
         try
         {
             var output = function.Evaluate(input);
-            Complete(observers, context, input, output);
+            EvaluationRuntime.ReportFunctionCompleted(context, input, output);
             return output;
         }
         catch (Exception exception)
         {
-            Fail(observers, context, input, exception);
+            EvaluationRuntime.ReportFunctionFailed(context, input, exception);
             throw;
         }
     }
@@ -45,46 +49,22 @@ internal static class FunctionObservationDispatcher
     public static object? EvaluateControl(
         IPipelineControlFunction function,
         FunctionObservationContext context,
-        IFunctionObserver[] observers,
         object? input,
         out bool terminate)
     {
+        if (!EvaluationRuntime.HasDetailedObservations)
+            return function.Evaluate(input, out terminate);
+        using var scope = EvaluationRuntime.EnterFunction(context);
         try
         {
             var output = function.Evaluate(input, out terminate);
-            Complete(observers, context, input, output);
+            EvaluationRuntime.ReportFunctionCompleted(context, input, output);
             return output;
         }
         catch (Exception exception)
         {
-            Fail(observers, context, input, exception);
+            EvaluationRuntime.ReportFunctionFailed(context, input, exception);
             throw;
-        }
-    }
-
-    private static void Complete(
-        IFunctionObserver[] observers,
-        FunctionObservationContext context,
-        object? input,
-        object? output)
-    {
-        foreach (var observer in observers)
-        {
-            try { observer.OnCompleted(context, input, output); }
-            catch (Exception) { }
-        }
-    }
-
-    private static void Fail(
-        IFunctionObserver[] observers,
-        FunctionObservationContext context,
-        object? input,
-        Exception exception)
-    {
-        foreach (var observer in observers)
-        {
-            try { observer.OnFailed(context, input, exception); }
-            catch (Exception) { }
         }
     }
 }

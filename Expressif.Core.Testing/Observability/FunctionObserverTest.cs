@@ -13,8 +13,9 @@ public class FunctionObserverTest
         var events = new ConcurrentQueue<string>();
         var first = new TrackingObserver("first", events);
         var second = new TrackingObserver("second", events);
-        var expression = new ExpressionFactory(new ExpressionBinder())
-            .WithFunctionObservers([first, second])
+        var expression = new ExpressionFactory(
+                new ExpressionBinder(),
+                observer: ExpressionObservers.Combine(first, second))
             .Create("upper | length");
 
         var result = expression.Evaluate("abc");
@@ -35,8 +36,7 @@ public class FunctionObserverTest
     public void FailedFunction_NotifiesObserversAndPreservesException()
     {
         var observer = new TrackingObserver("observer", new());
-        var expression = new ExpressionFactory(new ExpressionBinder())
-            .WithFunctionObservers([observer])
+        var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer)
             .Create("fold(sum)");
 
         var exception = Assert.Catch(() => expression.Evaluate(new[] { "unknown" }));
@@ -52,8 +52,7 @@ public class FunctionObserverTest
     [Test]
     public void ObserverFailure_DoesNotChangeFunctionResult()
     {
-        var expression = new ExpressionFactory(new ExpressionBinder())
-            .WithFunctionObservers([new ThrowingObserver()])
+        var expression = new ExpressionFactory(new ExpressionBinder(), observer: new ThrowingObserver())
             .Create("upper");
 
         Assert.That(expression.Evaluate("abc"), Is.EqualTo("ABC"));
@@ -63,8 +62,7 @@ public class FunctionObserverTest
     public void NestedCalls_AreObservedWithDistinctNodeIdentities()
     {
         var observer = new TrackingObserver("observer", new());
-        var expression = new ExpressionFactory(new ExpressionBinder())
-            .WithFunctionObservers([observer])
+        var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer)
             .Create("map(upper)");
 
         var deferred = (System.Collections.IEnumerable)expression.Evaluate(new[] { "a", "b" })!;
@@ -83,8 +81,7 @@ public class FunctionObserverTest
     public void ConcurrentEvaluations_CanShareObserver()
     {
         var observer = new TrackingObserver("observer", new());
-        var expression = new ExpressionFactory(new ExpressionBinder())
-            .WithFunctionObservers([observer])
+        var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer)
             .Create("upper");
 
         Parallel.ForEach(Enumerable.Range(0, 50), index =>
@@ -93,27 +90,48 @@ public class FunctionObserverTest
         Assert.That(observer.Completed, Has.Count.EqualTo(50));
     }
 
-    private sealed class TrackingObserver(string name, ConcurrentQueue<string> events) : IFunctionObserver
+    private sealed class TrackingObserver(string name, ConcurrentQueue<string> events) : IExpressionObserver
     {
+        private readonly string name = name;
+        private readonly ConcurrentQueue<string> events = events;
+
         public ConcurrentQueue<(FunctionObservationContext Context, object? Input, object? Output)> Completed { get; } = new();
         public ConcurrentQueue<(FunctionObservationContext Context, object? Input, Exception Exception)> Failed { get; } = new();
 
-        public void OnCompleted(FunctionObservationContext context, object? input, object? output)
-        {
-            Completed.Enqueue((context, input, output));
-            events.Enqueue($"{name}:{context.Name}:{input}:{output}");
-        }
+        public IExpressionObservation? Create(ExpressionObservationStage stage)
+            => stage == ExpressionObservationStage.Evaluate ? new Observation(this) : null;
 
-        public void OnFailed(FunctionObservationContext context, object? input, Exception exception)
-            => Failed.Enqueue((context, input, exception));
+        private sealed class Observation(TrackingObserver owner) : IExpressionObservation, IFunctionObserver
+        {
+            public void Complete() { }
+            public void Fail(Exception exception) { }
+            public void Dispose() { }
+
+            public void OnCompleted(FunctionObservationContext context, object? input, object? output)
+            {
+                owner.Completed.Enqueue((context, input, output));
+                owner.events.Enqueue($"{owner.name}:{context.Name}:{input}:{output}");
+            }
+
+            public void OnFailed(FunctionObservationContext context, object? input, Exception exception)
+                => owner.Failed.Enqueue((context, input, exception));
+        }
     }
 
-    private sealed class ThrowingObserver : IFunctionObserver
+    private sealed class ThrowingObserver : IExpressionObserver
     {
-        public void OnCompleted(FunctionObservationContext context, object? input, object? output)
-            => throw new InvalidOperationException("Observer failed.");
+        public IExpressionObservation? Create(ExpressionObservationStage stage)
+            => stage == ExpressionObservationStage.Evaluate ? new Observation() : null;
 
-        public void OnFailed(FunctionObservationContext context, object? input, Exception exception)
-            => throw new InvalidOperationException("Observer failed.");
+        private sealed class Observation : IExpressionObservation, IFunctionObserver
+        {
+            public void Complete() { }
+            public void Fail(Exception exception) { }
+            public void Dispose() { }
+            public void OnCompleted(FunctionObservationContext context, object? input, object? output)
+                => throw new InvalidOperationException("Observer failed.");
+            public void OnFailed(FunctionObservationContext context, object? input, Exception exception)
+                => throw new InvalidOperationException("Observer failed.");
+        }
     }
 }

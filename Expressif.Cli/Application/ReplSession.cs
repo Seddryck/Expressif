@@ -1,6 +1,7 @@
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Configuration;
+using Expressif.Observability;
 
 namespace Expressif.Cli.Application;
 
@@ -61,30 +62,31 @@ internal sealed class ReplSession
                 ? trimmed
                 : trimmed[1..].TrimStart()
             : source;
-        using var observation = CliLineage.Begin(code, "repl", configuration: configuration);
+        using var observation = CliLineage.Create(code, "repl", configuration: configuration);
+        using var activation = observation?.Activate();
         IExpression expression;
         try
         {
             expression = (isOpen
-                    ? expressions.CompileOpen(code, bindingContext, observation.FunctionObservers)
-                    : expressions.CompileClosed(code, bindingContext, observation.FunctionObservers))
+                    ? expressions.CompileOpen(code, bindingContext)
+                    : expressions.CompileClosed(code, bindingContext))
                 .WithContext(evaluationContext);
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             return new ReplErrorResult(
                 ReplErrorKind.Validation,
                 CommandErrorFormatter.FormatValidationError(exception, code));
         }
         catch (ExpressionRequiresInputException exception)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             return new ReplErrorResult(ReplErrorKind.Input, exception.Message);
         }
         catch (Exception exception)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             return new ReplErrorResult(ReplErrorKind.Unexpected, $"Unexpected error: {exception.Message}");
         }
 
@@ -94,12 +96,12 @@ internal sealed class ReplSession
             history.Push((HasCurrentInput, currentInput));
             currentInput = value;
             HasCurrentInput = true;
-            observation.Complete();
+            observation?.Complete();
             return new ReplEvaluationResult(value);
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             return new ReplErrorResult(
                 ReplErrorKind.Evaluation,
                 CommandErrorFormatter.FormatEvaluationError(exception));

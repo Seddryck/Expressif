@@ -7,6 +7,7 @@ package or on OpenLineage types.
 
 ```csharp
 using Expressif;
+using Expressif.Bindings;
 using Expressif.OpenLineage;
 
 using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
@@ -16,19 +17,19 @@ var observer = new OpenLineageObserver(new OpenLineageOptions
     Namespace = "my-application",
     JobName = "customers",
     Expression = "upper",
+    FunctionMetrics = true,
     Inputs = [OpenLineageDataset.FromFile("customers.json")],
     Outputs = [OpenLineageDataset.FromFile("customers.ndjson")],
 }, transport, exception => Console.Error.WriteLine(exception.Message));
-var expression = new ExpressionFactory(observer: observer).Create("upper");
+var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer).Create("upper");
 var value = expression.Evaluate("alice");
 ```
 
-To include aggregated null/non-null function metrics on terminal run events, install the same
-observer at function boundaries before binding:
+Set `FunctionMetrics` to `true` to include aggregated null/non-null function metrics on terminal run
+events. The evaluation observation exposes the function capability automatically:
 
 ```csharp
 var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer)
-    .WithFunctionObservers([observer])
     .Create("trim | upper");
 ```
 
@@ -49,8 +50,9 @@ snapshotted when the observer is constructed. Transports shared across
 evaluations must be safe for concurrent use; the HTTP transport is.
 
 For a larger execution that includes lazy enumeration, serialization, or writing
-an output, use the same observer's `Begin(ExpressionObservationStage.Evaluate)`
-scope around that work and call `Complete()` only once all work succeeds, or
+an output, create and activate an observation with
+`observer.Create(ExpressionObservationStage.Evaluate)` and `observation.Activate()` around that work.
+Call `Complete()` only once all work succeeds, or
 `Fail(exception)` on failure. Disposing an unfinished scope emits `FAIL`.
 An `ExpressionFactory` evaluation scope ends when `Evaluate` returns; it does not
 track later consumption of a lazy result. The CLI scopes cover the full command,

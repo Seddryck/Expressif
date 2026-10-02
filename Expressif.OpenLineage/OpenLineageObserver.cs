@@ -14,7 +14,7 @@ namespace Expressif.OpenLineage;
 /// Parse and bind scopes are ignored. Each evaluation has an independent run ID.
 /// Transport failures are isolated from execution and can be reported through the diagnostic callback.
 /// </remarks>
-public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
+public sealed class OpenLineageObserver : IExpressionObserver
 {
     public const string SchemaUrl = "https://openlineage.io/spec/2-0-2/OpenLineage.json#/$defs/RunEvent";
     public const string FacetSchemaUrl = "https://openlineage.io/spec/2-0-2/OpenLineage.json#/$defs/BaseFacet";
@@ -26,7 +26,7 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
     private readonly object job;
     private readonly object[] inputs;
     private readonly object[] outputs;
-    private readonly AsyncLocal<RunObservation?> current = new();
+    private readonly bool functionMetrics;
 
     public OpenLineageObserver(OpenLineageOptions options, IOpenLineageTransport transport, Action<Exception>? diagnostic = null)
     {
@@ -37,6 +37,7 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
         ArgumentNullException.ThrowIfNull(options.Expression);
         this.transport = transport;
         this.diagnostic = diagnostic;
+        functionMetrics = options.FunctionMetrics;
         job = new
         {
             @namespace = options.Namespace,
@@ -57,16 +58,10 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
         outputs = Datasets(options.Outputs);
     }
 
-    public IExpressionObservation Begin(ExpressionObservationStage stage)
+    public IExpressionObservation? Create(ExpressionObservationStage stage)
         => stage == ExpressionObservationStage.Evaluate
-            ? new RunObservation(this, current.Value)
-            : IgnoredObservation.Instance;
-
-    public void OnCompleted(FunctionObservationContext context, object? input, object? output)
-        => current.Value?.Complete(context, input, output);
-
-    public void OnFailed(FunctionObservationContext context, object? input, Exception exception)
-        => current.Value?.Fail(context, input);
+            ? functionMetrics ? new FunctionRunObservation(this) : new RunObservation(this)
+            : null;
 
     private static object[] Datasets(IReadOnlyList<OpenLineageDataset> datasets)
         => datasets.Select(dataset =>
@@ -101,19 +96,15 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
         }
     }
 
-    private sealed class RunObservation : IExpressionObservation
+    private class RunObservation : IExpressionObservation
     {
         private readonly OpenLineageObserver observer;
-        private readonly RunObservation? previous;
         private readonly Guid runId = Guid.NewGuid();
-        private readonly ConcurrentDictionary<string, FunctionMetric> metrics = new(StringComparer.Ordinal);
         private int ended;
 
-        public RunObservation(OpenLineageObserver observer, RunObservation? previous)
+        public RunObservation(OpenLineageObserver observer)
         {
             this.observer = observer;
-            this.previous = previous;
-            observer.current.Value = this;
             observer.Emit(runId, "START");
         }
 
@@ -121,17 +112,7 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
 
         public void Fail(Exception exception) => End("FAIL");
 
-        public void Dispose()
-        {
-            End("FAIL");
-            observer.current.Value = previous;
-        }
-
-        public void Complete(FunctionObservationContext context, object? input, object? output)
-            => metrics.GetOrAdd(context.Id, _ => new(context)).Complete(input, output);
-
-        public void Fail(FunctionObservationContext context, object? input)
-            => metrics.GetOrAdd(context.Id, _ => new(context)).Fail(input);
+        public void Dispose() => End("FAIL");
 
         private void End(string eventType)
         {
@@ -139,7 +120,21 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
                 observer.Emit(runId, eventType, CreateFacet());
         }
 
-        private object? CreateFacet()
+        protected virtual object? CreateFacet() => null;
+    }
+
+    private sealed class FunctionRunObservation(OpenLineageObserver observer)
+        : RunObservation(observer), IFunctionObserver
+    {
+        private readonly ConcurrentDictionary<string, FunctionMetric> metrics = new(StringComparer.Ordinal);
+
+        public void OnCompleted(FunctionObservationContext context, object? input, object? output)
+            => metrics.GetOrAdd(context.Id, _ => new(context)).Complete(input, output);
+
+        public void OnFailed(FunctionObservationContext context, object? input, Exception exception)
+            => metrics.GetOrAdd(context.Id, _ => new(context)).Fail(input);
+
+        protected override object? CreateFacet()
         {
             if (metrics.IsEmpty)
                 return null;
@@ -214,14 +209,5 @@ public sealed class OpenLineageObserver : IExpressionObserver, IFunctionObserver
 
         private static bool IsNull(object? value)
             => Expressif.Values.Special.Null.Instance.Equals(value);
-    }
-
-    private sealed class IgnoredObservation : IExpressionObservation
-    {
-        public static IgnoredObservation Instance { get; } = new();
-
-        private IgnoredObservation() { }
-
-        public void Dispose() { }
     }
 }

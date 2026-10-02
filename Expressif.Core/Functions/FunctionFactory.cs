@@ -25,8 +25,6 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private readonly FunctionConstructorRegistry constructors;
     private readonly IPredicationFactory predicationFactory;
     private readonly ITupleFunctionInvoker tupleBinding;
-    private readonly ITypeSource source;
-    private readonly IFunctionObserver[] observers;
     private static long nextObservationId;
 
     public FunctionFactoryRuntime(ITypeSource source)
@@ -60,27 +58,10 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         IPredicationFactory predicationFactory,
         ITupleFunctionInvoker tupleBinding,
         ITypeSource source)
-        : this(registry, predicateRegistry, accumulatorRegistry, coercionRegistry, constructors,
-            predicationFactory, tupleBinding, source, []) { }
-
-    private FunctionFactoryRuntime(
-        IImplementationRegistry registry,
-        IImplementationRegistry predicateRegistry,
-        AccumulatorRegistry accumulatorRegistry,
-        CoercionRegistry coercionRegistry,
-        FunctionConstructorRegistry constructors,
-        IPredicationFactory predicationFactory,
-        ITupleFunctionInvoker tupleBinding,
-        ITypeSource source,
-        IFunctionObserver[] observers)
         : base(registry, source)
         => (this.predicateRegistry, this.accumulatorRegistry, this.coercionRegistry, this.constructors,
-                this.predicationFactory, this.tupleBinding, this.source, this.observers)
-            = (predicateRegistry, accumulatorRegistry, coercionRegistry, constructors, predicationFactory, tupleBinding, source, observers);
-
-    internal FunctionFactoryRuntime WithObservers(IReadOnlyList<IFunctionObserver> configuredObservers)
-        => new(Registry, predicateRegistry, accumulatorRegistry, coercionRegistry, constructors,
-            predicationFactory, tupleBinding, source, configuredObservers.ToArray());
+                this.predicationFactory, this.tupleBinding)
+            = (predicateRegistry, accumulatorRegistry, coercionRegistry, constructors, predicationFactory, tupleBinding);
 
     Delegate IFunctionConstructionContext.CreateParameter(
         IParameter parameter,
@@ -248,9 +229,6 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             .Select(member => InstantiateOrWrapAggregation(member, context))
             .ToList();
 
-        if (observers.Length == 0 && functions.Count == 1 && functions[0] is IPredicate)
-            return functions[0];
-
         return TryBuildTypedChain(members, functions, out var chain)
             ? chain
             : CreateChain(members, functions);
@@ -300,7 +278,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         var inputType = initial.Input;
         var parameter = LinqExpression.Parameter(inputType, "value");
         LinqExpression body = parameter;
-        var observationContexts = observers.Length == 0 ? null : CreateObservationContexts(members);
+        var observationContexts = CreateObservationContexts(members);
         for (var index = 0; index < functions.Count; index++)
         {
             var contract = contracts[index];
@@ -308,34 +286,27 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                 ? body
                 : LinqExpression.Convert(body, contract.Input);
             var typedFunction = LinqExpression.Convert(LinqExpression.Constant(functions[index]), contract.Contract);
-            body = observers.Length == 0
-                ? LinqExpression.Call(typedFunction, contract.Contract.GetMethod(nameof(IFunction.Evaluate))!, argument)
-                : LinqExpression.Call(
+            body = LinqExpression.Call(
                     typeof(FunctionObservationDispatcher).GetMethods()
                         .Single(method => method.Name == nameof(FunctionObservationDispatcher.Evaluate)
                             && method.IsGenericMethodDefinition)
                         .MakeGenericMethod(contract.Input, contract.Output),
                     typedFunction,
                     LinqExpression.Constant(observationContexts![index]),
-                    LinqExpression.Constant(observers),
                     argument);
         }
 
         var delegateType = typeof(Func<,>).MakeGenericType(inputType, outputType);
         var pipeline = LinqExpression.Lambda(delegateType, body, parameter).Compile();
         var chainType = typeof(ChainFunction<,>).MakeGenericType(inputType, outputType);
-        chain = observers.Length == 0
-            ? (IFunction)Activator.CreateInstance(chainType, functions, pipeline)!
-            : (IFunction)Activator.CreateInstance(chainType, functions, pipeline, observationContexts, observers)!;
+        chain = (IFunction)Activator.CreateInstance(chainType, functions, pipeline, observationContexts)!;
         return true;
     }
 
     private ChainFunction CreateChain(
         IReadOnlyList<Bindings.Function> members,
         IEnumerable<IFunction> functions)
-        => observers.Length == 0
-            ? new ChainFunction(functions)
-            : new ChainFunction(functions, CreateObservationContexts(members), observers);
+        => new(functions, CreateObservationContexts(members));
 
     private FunctionObservationContext[] CreateObservationContexts(IReadOnlyList<Bindings.Function> members)
         => members.Select(member => new FunctionObservationContext(

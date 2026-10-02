@@ -3,7 +3,6 @@ using Expressif.Bindings;
 using Expressif.Discovery;
 using Expressif.Predicates;
 using Expressif.Values;
-using Expressif.Observability;
 
 namespace Expressif.Functions;
 
@@ -17,12 +16,6 @@ public sealed class FunctionFactory
 
     internal FunctionFactory(IImplementationRegistry registry, ITypeSource source)
         => runtime = new FunctionFactoryRuntime(registry, source);
-
-    private FunctionFactory(FunctionFactoryRuntime runtime)
-        => this.runtime = runtime;
-
-    internal FunctionFactory WithObservers(IReadOnlyList<IFunctionObserver> observers)
-        => new(runtime.WithObservers(observers));
 
     public IFunction Instantiate(IRootExpression rootExpression, IContext context)
         => runtime.Instantiate(rootExpression, context);

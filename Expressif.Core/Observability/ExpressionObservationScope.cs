@@ -1,36 +1,28 @@
 namespace Expressif.Observability;
 
-internal sealed class ExpressionObservationScope : IExpressionObservation
+internal static class ExpressionObservationScope
 {
-    private readonly IExpressionObservation? observation;
-    private int outcome;
-    private int disposed;
-
-    private ExpressionObservationScope(IExpressionObservation? observation)
-        => this.observation = observation;
-
-    public static ExpressionObservationScope Begin(
-        IExpressionObserver observer,
+    public static IExpressionObservation? Create(
+        IExpressionObserver? observer,
         ExpressionObservationStage stage)
     {
+        if (observer is null)
+            return null;
         try
         {
-            return new(observer.Begin(stage));
+            return observer.Create(stage);
         }
         catch (Exception)
         {
-            return new(null);
+            return null;
         }
     }
 
-    public void Complete()
+    public static void Complete(IExpressionObservation observation)
     {
-        if (Interlocked.CompareExchange(ref outcome, 1, 0) != 0)
-            return;
-
         try
         {
-            observation?.Complete();
+            observation.Complete();
         }
         catch (Exception)
         {
@@ -38,14 +30,11 @@ internal sealed class ExpressionObservationScope : IExpressionObservation
         }
     }
 
-    public void Fail(Exception exception)
+    public static void Fail(IExpressionObservation observation, Exception exception)
     {
-        if (Interlocked.CompareExchange(ref outcome, 2, 0) != 0)
-            return;
-
         try
         {
-            observation?.Fail(exception);
+            observation.Fail(exception);
         }
         catch (Exception)
         {
@@ -53,14 +42,11 @@ internal sealed class ExpressionObservationScope : IExpressionObservation
         }
     }
 
-    public void Dispose()
+    public static void Dispose(IExpressionObservation observation)
     {
-        if (Interlocked.Exchange(ref disposed, 1) != 0)
-            return;
-
         try
         {
-            observation?.Dispose();
+            observation.Dispose();
         }
         catch (Exception)
         {

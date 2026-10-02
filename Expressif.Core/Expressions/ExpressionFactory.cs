@@ -13,77 +13,71 @@ public sealed class ExpressionFactory
         IExpressionBinder binder,
         IExpressionParser? parser = null,
         IExpressionObserver? observer = null)
-        : this(binder, parser, observer, null) { }
-
-    private ExpressionFactory(
-        IExpressionBinder binder,
-        IExpressionParser? parser,
-        IExpressionObserver? observer,
-        IEnumerable<IFunctionObserver>? functionObservers)
-        => (Parser, Binder, Observer, FunctionObservers) = (
+        => (Parser, Binder, Observer) = (
             parser ?? new ExpressionParser(),
             binder ?? throw new ArgumentNullException(nameof(binder)),
-            observer ?? NoOpExpressionObserver.Instance,
-            functionObservers?.ToArray() ?? []);
+            observer);
 
     private IExpressionParser Parser { get; }
     private IExpressionBinder Binder { get; }
-    private IExpressionObserver Observer { get; }
-    private IReadOnlyList<IFunctionObserver> FunctionObservers { get; }
-
-    /// <summary>
-    /// Returns a factory that passively notifies the supplied observers at every bound-function boundary.
-    /// </summary>
-    public ExpressionFactory WithFunctionObservers(IEnumerable<IFunctionObserver> observers)
-        => new(Binder, Parser, Observer, observers ?? throw new ArgumentNullException(nameof(observers)));
+    private IExpressionObserver? Observer { get; }
 
     public IExpression Create(string text)
         => Create(Parse(text));
 
     public IExpression Create(RootExpressionSyntax syntax)
-        => ObserveBinding(() => Binder.Bind(syntax, FunctionObservers));
+        => ObserveBinding(() => Binder.Bind(syntax));
 
     public IExpression CreateClosed(string text)
         => CreateClosed(Parse(text));
 
     public IExpression CreateClosed(RootExpressionSyntax syntax)
-        => ObserveBinding(() => Binder.BindClosed(syntax, FunctionObservers));
+        => ObserveBinding(() => Binder.BindClosed(syntax));
 
     private RootExpressionSyntax Parse(string text)
     {
-        using var observation = ExpressionObservationScope.Begin(Observer, ExpressionObservationStage.Parse);
+        var observation = ExpressionObservationScope.Create(Observer, ExpressionObservationStage.Parse);
+        if (observation is null)
+            return Parser.Parse(text);
         try
         {
             var syntax = Parser.Parse(text);
-            observation.Complete();
+            ExpressionObservationScope.Complete(observation);
             return syntax;
         }
         catch (Exception exception)
         {
-            observation.Fail(exception);
+            ExpressionObservationScope.Fail(observation, exception);
             throw;
+        }
+        finally
+        {
+            ExpressionObservationScope.Dispose(observation);
         }
     }
 
     private IExpression ObserveBinding(Func<IExpression> bind)
     {
-        IExpression expression;
-        using (var observation = ExpressionObservationScope.Begin(Observer, ExpressionObservationStage.Bind))
+        var observation = ExpressionObservationScope.Create(Observer, ExpressionObservationStage.Bind);
+        if (observation is null)
         {
-            try
-            {
-                expression = bind();
-                observation.Complete();
-            }
-            catch (Exception exception)
-            {
-                observation.Fail(exception);
-                throw;
-            }
+            var direct = bind();
+            return Observer is null ? direct : new ObservedExpression(direct, Observer);
         }
-
-        return ReferenceEquals(Observer, NoOpExpressionObserver.Instance)
-            ? expression
-            : new ObservedExpression(expression, Observer);
+        try
+        {
+            var expression = bind();
+            ExpressionObservationScope.Complete(observation);
+            return new ObservedExpression(expression, Observer!);
+        }
+        catch (Exception exception)
+        {
+            ExpressionObservationScope.Fail(observation, exception);
+            throw;
+        }
+        finally
+        {
+            ExpressionObservationScope.Dispose(observation);
+        }
     }
 }

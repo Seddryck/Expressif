@@ -7,6 +7,7 @@ using Expressif.Cli.Infrastructure;
 using Expressif.Serialization;
 using Expressif.Syntax;
 using Expressif.Values;
+using Expressif.Observability;
 
 namespace Expressif.Cli.Application;
 
@@ -66,7 +67,8 @@ internal sealed class RunHandler(
             return ExitCodes.InvalidExpressionOrInput;
         }
 
-        using var observation = CliLineage.Begin(source.Text, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat, configuration);
+        using var observation = CliLineage.Create(source.Text, "run", request.HasSource ? request.SourcePath : null, request.SourceFormat, configuration);
+        using var activation = observation?.Activate();
         var inputs = request.HasSource
             ? sources.Read(request.SourcePath, request.SourceOptions, request.Scalar, request.SourceFormat)
             : BuildInputSource(request).Read();
@@ -75,8 +77,8 @@ internal sealed class RunHandler(
         try
         {
             expression = source.Plan is not null
-                ? expressions.CompileOpen(source.Plan, context, observation.FunctionObservers)
-                : expressions.CompileOpen(source.Code!, context, observation.FunctionObservers);
+                ? expressions.CompileOpen(source.Plan, context)
+                : expressions.CompileOpen(source.Code!, context);
         }
         catch (Exception exception) when (exception is ExpressifSyntaxException
                                           or BindingException
@@ -84,12 +86,12 @@ internal sealed class RunHandler(
                                           or NotImplementedFunctionException
                                           or MissingOrUnexpectedParametersFunctionException)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             return ExpressionCommandSourceResolver.WriteValidationError(exception, source);
         }
         catch (Exception exception)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             Console.Error.WriteLine($"Unexpected error: {exception.Message}");
             return ExitCodes.UnexpectedInternalError;
         }
@@ -98,18 +100,18 @@ internal sealed class RunHandler(
         {
             foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
                 Console.Out.WriteLine(serializer.Serialize(result, formatting));
-            observation.Complete();
+            observation?.Complete();
             return ExitCodes.Success;
         }
         catch (FormatException exception)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             Console.Error.WriteLine(exception.Message);
             return ExitCodes.InvalidExpressionOrInput;
         }
         catch (Exception exception) when (exception is not OutOfMemoryException)
         {
-            observation.Fail(exception);
+            observation?.Fail(exception);
             CommandDiagnosticWriter.WriteLine(exception.Message);
             return ExitCodes.EvaluationFailed;
         }

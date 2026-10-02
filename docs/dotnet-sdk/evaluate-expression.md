@@ -128,22 +128,72 @@ preserves the standard pretty output.
 See [References](../language/references.md) for field, variable, and expression-root syntax. See [Advanced expressions](../language/advanced.md) for nested expressions and other language features.
 # Function observation
 
-Function observers can inspect the input and terminal outcome of every bound function node without
-changing evaluation. Configure them before binding the expression:
+An expression observer creates one observation for each parse, bind, or evaluation operation. Return
+`null` for stages that are not supported. To inspect function boundaries, make the evaluation
+observation implement `IFunctionObserver`:
 
 ```csharp
-var factory = new ExpressionFactory(new ExpressionBinder())
-    .WithFunctionObservers([observer]);
+sealed class FunctionMetricsObserver : IExpressionObserver
+{
+    public IExpressionObservation? Create(ExpressionObservationStage stage)
+        => stage == ExpressionObservationStage.Evaluate ? new Evaluation() : null;
+
+    private sealed class Evaluation : IExpressionObservation, IFunctionObserver
+    {
+        public void OnCompleted(FunctionObservationContext function, object? input, object? output)
+            => Console.WriteLine($"{function.Id}: {function.CanonicalName} completed");
+
+        public void OnFailed(FunctionObservationContext function, object? input, Exception exception)
+            => Console.WriteLine($"{function.Id}: {function.CanonicalName} failed");
+
+        public void Complete() { }
+        public void Fail(Exception exception) { }
+        public void Dispose() { }
+    }
+}
+
+var observer = new FunctionMetricsObserver();
+var factory = new ExpressionFactory(new ExpressionBinder(), observer: observer);
 var expression = factory.Create("trim | upper");
+var result = expression.Evaluate("  hello  ");
 ```
 
-An `IFunctionObserver` receives `OnCompleted` after a function returns or `OnFailed` after it throws.
+`OnCompleted` runs after a function returns and `OnFailed` after it throws.
 `FunctionObservationContext.Id` distinguishes repeated and nested bound nodes, while `Function`
-contains the canonical operator identity. Multiple observers run in registration order and each
-function is still invoked exactly once. Observer exceptions are isolated from the authoritative
-result or failure.
+contains the canonical operator identity. `ExpressionFactory` automatically activates the evaluation
+observation while `Evaluate` is running.
+
+Use `ExpressionObservers.Combine(first, second)` to combine observers. Lifecycle and detail callbacks
+run in registration order; observations are disposed in reverse order. Combining no observers returns
+`null`, and combining one returns that observer unchanged.
+
+Hosts that own a wider operation can create and activate an observation directly. Keep both the
+observation and activation alive until deferred results have been enumerated and output has been
+written:
+
+```csharp
+using var observation = observer.Create(ExpressionObservationStage.Evaluate);
+using var activation = observation?.Activate();
+
+try
+{
+    var result = expression.Evaluate(input);
+    WriteResult(result); // Include deferred enumeration in the observation.
+    observation?.Complete();
+}
+catch (Exception exception)
+{
+    observation?.Fail(exception);
+    throw;
+}
+```
+
+Activations are scoped and nest safely: disposing an inner activation restores the outer observation.
+The host owns completion, failure, disposal, and the lifetime of lazy results. An activation never
+completes or disposes its observation.
 
 Observers are passive: they must not mutate the input or output references they receive. They can
 see raw values, so implementations are responsible for thread safety and for protecting, retaining,
-and disposing of sensitive data. Lazy results are reported as sequence objects and are never
-enumerated merely for observation.
+and disposing of sensitive data. Each function is invoked exactly once, observer exceptions are
+isolated from the authoritative result or failure, and lazy results are never enumerated merely for
+observation. When no active observation exposes a detail capability, evaluation takes the direct path.

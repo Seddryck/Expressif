@@ -5,6 +5,7 @@ using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
 using Expressif.Serialization;
 using Expressif.Values;
+using Expressif.Observability;
 
 namespace Expressif.Cli.Commands;
 
@@ -78,12 +79,13 @@ internal static class EvaluateCommand
                 result.GetValue(output), result.GetValue(raw), result.GetValue(outputStyle), result.GetValue(pretty), result.GetValue(compact), result.GetValue(indent),
                 out var serializer, out var formatting, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
-        using var observation = CliLineage.Begin(expressionSource.Text, "evaluate", hasSource ? request.SourcePaths.FirstOrDefault() : null, configuration: configuration);
-        var exitCode = WriteResult(handler.Execute(request, observation.FunctionObservers), expressionSource, serializer, formatting);
+        using var observation = CliLineage.Create(expressionSource.Text, "evaluate", hasSource ? request.SourcePaths.FirstOrDefault() : null, configuration: configuration);
+        using var activation = observation?.Activate();
+        var exitCode = WriteResult(handler.Execute(request), expressionSource, serializer, formatting);
         if (exitCode == ExitCodes.Success)
-            observation.Complete();
+            observation?.Complete();
         else
-            observation.Fail(new InvalidOperationException("Evaluation did not complete successfully."));
+            observation?.Fail(new InvalidOperationException("Evaluation did not complete successfully."));
         return exitCode;
     }
 

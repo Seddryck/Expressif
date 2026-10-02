@@ -24,7 +24,7 @@ public class OpenLineageObserverTest
             Inputs = [OpenLineageDataset.FromFile("customers.json")],
             Outputs = [OpenLineageDataset.FromFile("customers.ndjson")],
         }, transport);
-        using (var observation = observer.Begin(ExpressionObservationStage.Evaluate))
+        using (var observation = observer.Create(ExpressionObservationStage.Evaluate)!)
         {
             if (successful)
                 observation.Complete();
@@ -92,7 +92,6 @@ public class OpenLineageObserverTest
         var transport = new RecordingTransport();
         var observer = CreateObserver(transport);
         var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
-            .WithFunctionObservers([observer])
             .Create("empty-to-null | null-to-value");
 
         Assert.That(expression.Evaluate(string.Empty), Is.EqualTo("(value)"));
@@ -119,7 +118,6 @@ public class OpenLineageObserverTest
         var transport = new RecordingTransport();
         var observer = CreateObserver(transport);
         var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
-            .WithFunctionObservers([observer])
             .Create("fold(sum)");
 
         Assert.Catch(() => expression.Evaluate(new[] { "unknown" }));
@@ -138,10 +136,12 @@ public class OpenLineageObserverTest
     }
 
     [Test]
-    public void FunctionMetrics_AreAbsentWhenObserverIsNotInstalledAtFunctionBoundaries()
+    public void FunctionMetrics_AreAbsentWhenDisabled()
     {
         var transport = new RecordingTransport();
-        var observer = CreateObserver(transport);
+        var observer = new OpenLineageObserver(
+            new OpenLineageOptions { Expression = "upper", FunctionMetrics = false },
+            transport);
         var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
             .Create("upper");
 
@@ -157,7 +157,6 @@ public class OpenLineageObserverTest
         var transport = new RecordingTransport();
         var observer = CreateObserver(transport);
         var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
-            .WithFunctionObservers([observer])
             .Create("upper");
         Parallel.For(0, 30, _ => expression.Evaluate("alice"));
         var runs = transport.Events.Select(json =>
@@ -185,7 +184,6 @@ public class OpenLineageObserverTest
         var transport = new RecordingTransport();
         var observer = CreateObserver(transport);
         var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
-            .WithFunctionObservers([observer])
             .Create("upper | lower | upper");
 
         expression.Evaluate("Alice");
@@ -206,13 +204,13 @@ public class OpenLineageObserverTest
     {
         var transport = new RecordingTransport();
         var observer = CreateObserver(transport);
-        using (var scope = observer.Begin(ExpressionObservationStage.Evaluate))
+        using (var scope = observer.Create(ExpressionObservationStage.Evaluate)!)
         {
             scope.Complete();
             scope.Fail(new Exception());
             scope.Complete();
         }
-        observer.Begin(ExpressionObservationStage.Evaluate).Dispose();
+        observer.Create(ExpressionObservationStage.Evaluate)!.Dispose();
         Assert.That(transport.Events.Select(EventType), Is.EqualTo(new[] { "START", "COMPLETE", "START", "FAIL" }));
     }
 
@@ -272,7 +270,7 @@ public class OpenLineageObserverTest
     }
 
     private static OpenLineageObserver CreateObserver(IOpenLineageTransport transport)
-        => new(new OpenLineageOptions { Expression = "upper" }, transport);
+        => new(new OpenLineageOptions { Expression = "upper", FunctionMetrics = true }, transport);
 
     private static string? EventType(string json)
     {

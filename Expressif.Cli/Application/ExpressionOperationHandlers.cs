@@ -4,7 +4,6 @@ using Expressif.Cli.Inputs;
 using Expressif.Cli.Commands;
 using Expressif.Planning;
 using Expressif.Syntax;
-using Expressif.Observability;
 
 namespace Expressif.Cli.Application;
 
@@ -57,11 +56,10 @@ internal sealed class EvaluateHandler(
     IInputValueParser values,
     SourcePipeline sources)
 {
-    public ExpressionOperationResult Execute(EvaluateRequest request, IReadOnlyList<IFunctionObserver>? observers = null)
+    public ExpressionOperationResult Execute(EvaluateRequest request)
     {
-        observers ??= [];
         if (request.InputKind == EvaluateInputKind.Closed)
-            return EvaluateClosed(request.Source, observers);
+            return EvaluateClosed(request.Source);
 
         object? input;
         try
@@ -78,7 +76,7 @@ internal sealed class EvaluateHandler(
             return new ExpressionInputFailure(message);
         }
 
-        return EvaluateOpen(request.Source, input, observers);
+        return EvaluateOpen(request.Source, input);
     }
 
     private object?[] ReadSource(EvaluateRequest request)
@@ -86,16 +84,16 @@ internal sealed class EvaluateHandler(
             ? sources.CollectJsonDocuments(request.SourcePaths)
             : sources.Read(request.SourcePaths.SingleOrDefault(), request.SourceOptions, request.Scalar).ToArray();
 
-    private ExpressionOperationResult EvaluateClosed(ExpressionCommandSource source, IReadOnlyList<IFunctionObserver> observers)
+    private ExpressionOperationResult EvaluateClosed(ExpressionCommandSource source)
     {
         IExpression expression;
         try
         {
-            expression = CompileClosed(source, new Context(), observers);
+            expression = CompileClosed(source, new Context());
         }
         catch (Exception exception) when (ExpressionFailureClassifier.InputRequired(exception) is not null)
         {
-            var openResult = ValidateOpen(source, observers);
+            var openResult = ValidateOpen(source);
             return openResult is ExpressionSuccessResult
                 ? new ExpressionInputRequiredFailure(ExpressionFailureClassifier.InputRequired(exception)!)
                 : openResult;
@@ -112,12 +110,12 @@ internal sealed class EvaluateHandler(
         return Evaluate(expression, null);
     }
 
-    private ExpressionOperationResult EvaluateOpen(ExpressionCommandSource source, object? input, IReadOnlyList<IFunctionObserver> observers)
+    private ExpressionOperationResult EvaluateOpen(ExpressionCommandSource source, object? input)
     {
         IExpression expression;
         try
         {
-            expression = CompileOpen(source, new Context(), observers);
+            expression = CompileOpen(source, new Context());
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
         {
@@ -131,11 +129,11 @@ internal sealed class EvaluateHandler(
         return Evaluate(expression, input);
     }
 
-    private ExpressionOperationResult ValidateOpen(ExpressionCommandSource source, IReadOnlyList<IFunctionObserver> observers)
+    private ExpressionOperationResult ValidateOpen(ExpressionCommandSource source)
     {
         try
         {
-            _ = CompileOpen(source, new Context(), observers);
+            _ = CompileOpen(source, new Context());
             return new ExpressionSuccessResult();
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))
@@ -148,15 +146,15 @@ internal sealed class EvaluateHandler(
         }
     }
 
-    private IExpression CompileOpen(ExpressionCommandSource source, Context context, IReadOnlyList<IFunctionObserver> observers)
+    private IExpression CompileOpen(ExpressionCommandSource source, Context context)
         => source.Plan is not null
-            ? expressions.CompileOpen(source.Plan, context, observers)
-            : expressions.CompileOpen(source.Code!, context, observers);
+            ? expressions.CompileOpen(source.Plan, context)
+            : expressions.CompileOpen(source.Code!, context);
 
-    private IExpression CompileClosed(ExpressionCommandSource source, Context context, IReadOnlyList<IFunctionObserver> observers)
+    private IExpression CompileClosed(ExpressionCommandSource source, Context context)
         => source.Plan is not null
-            ? expressions.CompileClosed(source.Plan, context, observers)
-            : expressions.CompileClosed(source.Code!, context, observers);
+            ? expressions.CompileClosed(source.Plan, context)
+            : expressions.CompileClosed(source.Code!, context);
 
     private ExpressionOperationResult Evaluate(IExpression expression, object? input)
     {
