@@ -146,6 +146,10 @@ Expressif.Bindings.GroupingParameter.Equals(Expressif.Bindings.GroupingParameter
 Expressif.Bindings.GroupingParameter.GroupingParameter(Expressif.Bindings.PairParameter![]! Entries) -> void
 Expressif.Bindings.IBoundExpression
 Expressif.Bindings.IExpressionBinder
+Expressif.Bindings.IExpressionBinder.Bind(Expressif.Planning.LogicalPlan! plan, System.Collections.Generic.IReadOnlyList<Expressif.Observability.IFunctionObserver!>! observers) -> Expressif.IExpression!
+Expressif.Bindings.IExpressionBinder.Bind(Expressif.Syntax.RootExpressionSyntax! syntax, System.Collections.Generic.IReadOnlyList<Expressif.Observability.IFunctionObserver!>! observers) -> Expressif.IExpression!
+Expressif.Bindings.IExpressionBinder.BindClosed(Expressif.Planning.LogicalPlan! plan, System.Collections.Generic.IReadOnlyList<Expressif.Observability.IFunctionObserver!>! observers) -> Expressif.IExpression!
+Expressif.Bindings.IExpressionBinder.BindClosed(Expressif.Syntax.RootExpressionSyntax! syntax, System.Collections.Generic.IReadOnlyList<Expressif.Observability.IFunctionObserver!>! observers) -> Expressif.IExpression!
 Expressif.Bindings.IExpressionBinder.Bind(Expressif.Planning.LogicalPlan! plan) -> Expressif.IExpression!
 Expressif.Bindings.IExpressionBinder.Bind(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.IExpression!
 Expressif.Bindings.IExpressionBinder.BindClosed(Expressif.Planning.LogicalPlan! plan) -> Expressif.IExpression!
@@ -539,6 +543,7 @@ Expressif.ExpressionFactory.Create(string! text) -> Expressif.IExpression!
 Expressif.ExpressionFactory.CreateClosed(Expressif.Syntax.RootExpressionSyntax! syntax) -> Expressif.IExpression!
 Expressif.ExpressionFactory.CreateClosed(string! text) -> Expressif.IExpression!
 Expressif.ExpressionFactory.ExpressionFactory(Expressif.Bindings.IExpressionBinder! binder, Expressif.Syntax.IExpressionParser? parser = null, Expressif.Observability.IExpressionObserver? observer = null) -> void
+Expressif.ExpressionFactory.WithFunctionObservers(System.Collections.Generic.IEnumerable<Expressif.Observability.IFunctionObserver!>! observers) -> Expressif.ExpressionFactory!
 Expressif.ExpressionRequiresInputException
 Expressif.ExpressionRequiresInputException.ExpressionRequiresInputException(string? reference) -> void
 Expressif.Functions.Accumulation.BaseIncrementalAggregation
@@ -700,6 +705,15 @@ Expressif.Observability.IExpressionObservation.Complete() -> void
 Expressif.Observability.IExpressionObservation.Fail(System.Exception! exception) -> void
 Expressif.Observability.IExpressionObserver
 Expressif.Observability.IExpressionObserver.Begin(Expressif.Observability.ExpressionObservationStage stage) -> Expressif.Observability.IExpressionObservation!
+Expressif.Observability.FunctionObservationContext
+Expressif.Observability.FunctionObservationContext.CanonicalName.get -> string!
+Expressif.Observability.FunctionObservationContext.Function.get -> Expressif.Discovery.OperatorIdentity!
+Expressif.Observability.FunctionObservationContext.Id.get -> string!
+Expressif.Observability.FunctionObservationContext.Name.get -> string!
+Expressif.Observability.FunctionObservationContext.Namespace.get -> string!
+Expressif.Observability.IFunctionObserver
+Expressif.Observability.IFunctionObserver.OnCompleted(Expressif.Observability.FunctionObservationContext! context, object? input, object? output) -> void
+Expressif.Observability.IFunctionObserver.OnFailed(Expressif.Observability.FunctionObservationContext! context, object? input, System.Exception! exception) -> void
 Expressif.Planning.ILogicalPlanningContext
 Expressif.Planning.ILogicalPlanningContext.FindCoercion(string! sourceType, string! targetType) -> Expressif.Planning.PlannerFunctionMetadata?
 Expressif.Planning.ILogicalPlanningContext.FindFunction(string! name, string? expectedKind = null, int? argumentCount = null) -> Expressif.Planning.PlannerFunctionMetadata?

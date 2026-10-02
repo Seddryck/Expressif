@@ -8,6 +8,7 @@ using Expressif.Values.Types;
 using Expressif.Values;
 using Expressif.Functions.Coercions;
 using Expressif.Hosting;
+using Expressif.Observability;
 using RuntimeExpression = Expressif.IExpression;
 using RuntimeExpressionFactory = Expressif.Functions.FunctionFactory;
 
@@ -113,14 +114,26 @@ public sealed class ExpressionBinder : IExpressionBinder
     RuntimeExpression IExpressionBinder.Bind(RootExpressionSyntax syntax)
         => BindCore(syntax);
 
+    RuntimeExpression IExpressionBinder.Bind(RootExpressionSyntax syntax, IReadOnlyList<IFunctionObserver> observers)
+        => BindSyntax(syntax, requireClosed: false, observers);
+
     RuntimeExpression IExpressionBinder.Bind(LogicalPlan plan)
         => BindCore(plan);
+
+    RuntimeExpression IExpressionBinder.Bind(LogicalPlan plan, IReadOnlyList<IFunctionObserver> observers)
+        => BindPlan(plan, requireClosed: false, observers);
 
     RuntimeExpression IExpressionBinder.BindClosed(RootExpressionSyntax syntax)
         => BindClosedCore(syntax);
 
+    RuntimeExpression IExpressionBinder.BindClosed(RootExpressionSyntax syntax, IReadOnlyList<IFunctionObserver> observers)
+        => BindSyntax(syntax, requireClosed: true, observers);
+
     RuntimeExpression IExpressionBinder.BindClosed(LogicalPlan plan)
         => BindClosedCore(plan);
+
+    RuntimeExpression IExpressionBinder.BindClosed(LogicalPlan plan, IReadOnlyList<IFunctionObserver> observers)
+        => BindPlan(plan, requireClosed: true, observers);
 
     private RuntimeExpression BindCore(RootExpressionSyntax syntax)
         => BindSyntax(syntax, requireClosed: false);
@@ -128,7 +141,10 @@ public sealed class ExpressionBinder : IExpressionBinder
     private RuntimeExpression BindClosedCore(RootExpressionSyntax syntax)
         => BindSyntax(syntax, requireClosed: true);
 
-    private RuntimeExpression BindSyntax(RootExpressionSyntax syntax, bool requireClosed)
+    private RuntimeExpression BindSyntax(
+        RootExpressionSyntax syntax,
+        bool requireClosed,
+        IReadOnlyList<IFunctionObserver>? observers = null)
     {
         LogicalPlan plan;
         try
@@ -142,7 +158,7 @@ public sealed class ExpressionBinder : IExpressionBinder
 
         try
         {
-            return BindPlan(plan, requireClosed);
+            return BindPlan(plan, requireClosed, observers);
         }
         catch (LogicalPlanBindingException exception) when (exception.InnerException is not null)
         {
@@ -239,14 +255,17 @@ public sealed class ExpressionBinder : IExpressionBinder
     private RuntimeExpression BindClosedCore(LogicalPlan plan)
         => BindPlan(plan, requireClosed: true);
 
-    private RuntimeExpression BindPlan(LogicalPlan plan, bool requireClosed)
+    private RuntimeExpression BindPlan(
+        LogicalPlan plan,
+        bool requireClosed,
+        IReadOnlyList<IFunctionObserver>? observers = null)
     {
         try
         {
             LogicalNamedExpressionValidator.Validate(plan);
             if (plan.Definitions.Count > 0)
-                return BindNamedExpressionDocument(plan, requireClosed);
-            return new Expressif.Expression(BindFunction(plan, requireClosed));
+                return BindNamedExpressionDocument(plan, requireClosed, observers);
+            return new Expressif.Expression(BindFunction(plan, requireClosed, observers));
         }
         catch (LogicalPlanBindingException)
         {
@@ -264,21 +283,28 @@ public sealed class ExpressionBinder : IExpressionBinder
         }
     }
 
-    private IFunction BindFunction(LogicalPlan plan, bool requireClosed)
+    private IFunction BindFunction(
+        LogicalPlan plan,
+        bool requireClosed,
+        IReadOnlyList<IFunctionObserver>? observers = null)
     {
         var bound = requireClosed ? PlanBinder.BindClosed(plan) : PlanBinder.Bind(plan);
+        var factory = observers is { Count: > 0 } ? RuntimeFactory.WithObservers(observers) : RuntimeFactory;
         return requireClosed
-            ? RuntimeFactory.InstantiateClosed(bound, Context)
-            : RuntimeFactory.Instantiate(bound, Context);
+            ? factory.InstantiateClosed(bound, Context)
+            : factory.Instantiate(bound, Context);
     }
 
-    private RuntimeExpression BindNamedExpressionDocument(LogicalPlan plan, bool requireClosed)
+    private RuntimeExpression BindNamedExpressionDocument(
+        LogicalPlan plan,
+        bool requireClosed,
+        IReadOnlyList<IFunctionObserver>? observers)
     {
         foreach (var definition in plan.Definitions)
             ValidateContracts(definition);
         var functions = plan.Definitions.ToDictionary(
             definition => definition.Name,
-            definition => BindFunction(new LogicalPlan(definition.Body), requireClosed: false),
+            definition => BindFunction(new LogicalPlan(definition.Body), requireClosed: false, observers),
             StringComparer.Ordinal);
         var definitions = plan.Definitions.ToDictionary(
             definition => definition.Name,
@@ -286,7 +312,7 @@ public sealed class ExpressionBinder : IExpressionBinder
             StringComparer.Ordinal);
         IFunction? entry = null;
         if (plan.HasEntry)
-            entry = BindFunction(new LogicalPlan(plan.Pipeline), requireClosed);
+            entry = BindFunction(new LogicalPlan(plan.Pipeline), requireClosed, observers);
         return new NamedExpressionDocument(entry, definitions);
     }
 

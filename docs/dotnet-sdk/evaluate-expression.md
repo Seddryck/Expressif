@@ -126,3 +126,24 @@ Compact formatting ignores the inline policy. Leaving `InlineValueTypes` empty
 preserves the standard pretty output.
 
 See [References](../language/references.md) for field, variable, and expression-root syntax. See [Advanced expressions](../language/advanced.md) for nested expressions and other language features.
+# Function observation
+
+Function observers can inspect the input and terminal outcome of every bound function node without
+changing evaluation. Configure them before binding the expression:
+
+```csharp
+var factory = new ExpressionFactory(new ExpressionBinder())
+    .WithFunctionObservers([observer]);
+var expression = factory.Create("trim | upper");
+```
+
+An `IFunctionObserver` receives `OnCompleted` after a function returns or `OnFailed` after it throws.
+`FunctionObservationContext.Id` distinguishes repeated and nested bound nodes, while `Function`
+contains the canonical operator identity. Multiple observers run in registration order and each
+function is still invoked exactly once. Observer exceptions are isolated from the authoritative
+result or failure.
+
+Observers are passive: they must not mutate the input or output references they receive. They can
+see raw values, so implementations are responsible for thread safety and for protecting, retaining,
+and disposing of sensitive data. Lazy results are reported as sequence objects and are never
+enumerated merely for observation.
