@@ -25,12 +25,6 @@ Returns the logical negation of the Boolean-converted input. Null-like and uncon
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -38,7 +32,6 @@ This predicate has no parameters.
 #true | not → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

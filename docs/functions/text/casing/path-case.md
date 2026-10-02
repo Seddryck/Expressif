@@ -3,7 +3,7 @@ layout: docs
 title: "path-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 120
+nav_order: 130
 has_toc: false
 permalink: /functions/text/casing/path-case/
 tags:
@@ -19,16 +19,13 @@ path-case() → text
 
 Returns the input text in path/case, lowercasing words and joining them with slashes. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "Hello World" | path-case → "hello/world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

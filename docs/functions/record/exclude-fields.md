@@ -33,10 +33,6 @@ Returns all fields except those whose names appear in the supplied array, preser
 
 
 
-## Argument evaluation
-
-- **`names`:** Evaluated once in the enclosing context.
-
 
 
 ## Examples
@@ -47,6 +43,9 @@ Returns all fields except those whose names appear in the supplied array, preser
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`names`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

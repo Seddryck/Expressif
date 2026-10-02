@@ -3,7 +3,7 @@ layout: docs
 title: "is-less-than-or-equal"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 50
+nav_order: 60
 has_toc: false
 permalink: /predicates/numeric/is-less-than-or-equal/
 tags:
@@ -20,6 +20,8 @@ is-less-than-or-equal(
 
 Returns true if the numeric value passed as argument is less than or equal to the numeric value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,11 +29,6 @@ Returns true if the numeric value passed as argument is less than or equal to th
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `numeric` | Yes | A numeric value to compare to the argument. |
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
 ## Examples
 
 {% raw %}
@@ -40,6 +37,9 @@ Returns true if the numeric value passed as argument is less than or equal to th
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

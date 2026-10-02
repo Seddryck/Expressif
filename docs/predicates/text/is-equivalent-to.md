@@ -3,7 +3,7 @@ layout: docs
 title: "is-equivalent-to"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 60
+nav_order: 80
 has_toc: false
 permalink: /predicates/text/is-equivalent-to/
 tags:
@@ -21,6 +21,8 @@ is-equivalent-to(
 
 Compare the text value passed as argument and the text value passed as parameter and returns `true` if they are equal. By default the comparison is agnostic of the culture and case-insensitive.
 
+
+
 ## Parameters
 
 
@@ -28,7 +30,15 @@ Compare the text value passed as argument and the text value passed as parameter
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `text` | Yes | A string to be compared to the argument value. |
-| `comparer` | `any` | No | A definition of the parameters of the comparison (case-sensitivity, culture-sensitivity).. |
+| `comparer` | `any` | No | Controls case and culture sensitivity. When omitted, comparison uses invariant culture and ignores case. |
+## Examples
+
+{% raw %}
+```expressif
+"Hello World" | is-equivalent-to("Hello") → #false
+"Hello World" | is-equivalent-to("Hello") → #false
+```
+{% endraw %}
 
 ## Argument evaluation
 

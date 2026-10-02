@@ -31,9 +31,7 @@ Returns the first chars of the argument value. The length of the string omitted 
 |:-----|:-----|:---------|:------------|
 | `length` | `integer` | Yes | An integer value between 0 and +Infinity, defining the length of the substring to skip. |
 
-## Argument evaluation
 
-- **`length`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -43,6 +41,9 @@ Returns the first chars of the argument value. The length of the string omitted 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`length`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/selection`  

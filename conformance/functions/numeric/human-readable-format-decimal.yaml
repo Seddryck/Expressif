@@ -6,10 +6,10 @@ tests:
     cases:
       - id: human-readable-format-decimal.valid.default-precision.numeric.1048576
         value: 1048576
-        expected: 1.05 M
+        expected: 1.05M
       - id: human-readable-format-decimal.valid.default-precision.numeric.1000
         value: 1000
-        expected: 1.00 k
+        expected: 1.00k
       - id: human-readable-format-decimal.valid.default-precision.numeric.999
         value: 999
         expected: 999
@@ -18,17 +18,17 @@ tests:
         expected: 0
       - id: human-readable-format-decimal.valid.default-precision.numeric.minus-1048576
         value: -1048576
-        expected: -1.05 M
+        expected: -1.05M
   - id: human-readable-format-decimal.valid.precision
     cases:
       - id: human-readable-format-decimal.valid.precision.numeric.1048576-to-1-m
         value: 1048576
-        expected: 1 M
+        expected: 1M
         parameters:
           - 0
       - id: human-readable-format-decimal.valid.precision.numeric.1048576-to-1-049-m
         value: 1048576
-        expected: 1.049 M
+        expected: 1.049M
         parameters:
           - 3
       - id: human-readable-format-decimal.valid.precision.numeric.999
@@ -38,7 +38,7 @@ tests:
           - 2
       - id: human-readable-format-decimal.valid.precision.numeric.1000
         value: 1000
-        expected: 1 k
+        expected: 1k
         parameters:
           - 0
   - id: human-readable-format-decimal.invalid

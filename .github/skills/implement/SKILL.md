@@ -1,6 +1,6 @@
 ---
 name: implement
-description: "Implement a scaffolded Expressif function, predicate, or accumulator for the post-v2 architecture, including typed contracts, binder integration, metadata consistency, and conformance coverage. Use only when documentation metadata and conformance cases already exist."
+description: "Implement a scaffolded Expressif function or predicate for the post-v2 architecture, including typed contracts, logical-schema analysis, binder integration, metadata consistency, and conformance coverage. Use only when documentation metadata and conformance cases already exist."
 ---
 
 # /implement
@@ -9,7 +9,7 @@ Implement an operator whose documentation metadata and conformance cases were al
 
 This skill targets the architecture after the `next-major` development line. Do not preserve or recreate legacy parser/factory patterns from `main`.
 
-Supported operator kinds are function, predicate, and accumulator.
+Supported public operator kinds are function and predicate. Incremental array aggregation is an implementation capability of functions.
 
 Follow `AGENTS.md` for issue, branch, worktree, commit, push, and pull-request requirements. This skill does not replace that workflow.
 
@@ -19,11 +19,13 @@ Locate the operator by canonical name or alias in the matching file:
 
 * `docs/_data/function.json`;
 * `docs/_data/predicate.json`;
-* `docs/_data/accumulator.json`.
+* incremental aggregation entries in `docs/_data/function.json` (identified by `"Incremental": true`).
 
 Read its YAML under `conformance/<kind>/<scope-lower>/`. Stop if either artifact is absent or ambiguous: scaffolding is incomplete.
 
-Metadata is authoritative for public names, aliases, scope, summaries, parameter names, semantic types, optionality, input type, and output type. Existing binding and runtime abstractions are authoritative for construction and evaluation mechanics.
+Metadata is authoritative for public names, aliases, scope, summaries, parameter names, semantic types, optionality, input type, output type, and the logical-schema discovery classification and relationships. Existing binding and runtime abstractions are authoritative for construction and evaluation mechanics.
+
+Stop when `Schema` metadata is absent, internally unbound, or inconsistent with the documented operator behavior. Resolve that scaffolding gap before implementing runtime or analyzer behavior.
 
 Before editing, inspect the nearest implementation family, its contracts and registration, the bound parameter representations consumed by the binder or factory, introspection tests, and the matching conformance test class. Do not derive a universal C# shape solely from semantic scope.
 
@@ -45,6 +47,53 @@ Use this path when output depends on information that one closed contract cannot
 
 Use the repository's semantic contract representation. Do not publish an unexplained `any -> any` contract or add a name-based introspection exception. Add tests proving that the dynamic contract is intentional.
 
+### Logical schema analyzer integration
+
+Carry the scaffolded schema contract through the complete portable path:
+
+```text
+FunctionDocumentation
+-> PlannerSchemaDescriptor
+-> LogicalSchemaAnalyzer
+-> SchemaAnalysisJson
+```
+
+Prefer interpreting declarative metadata. Do not add function-name dictionaries, canonical-name switches, or analyzer branches for relationships expressible through generic contracts. When support is missing, extend the schema grammar with a reusable constructor or add one metadata-selected intrinsic for the structural operation.
+
+For contracts:
+
+* bind type variables from operator inputs and parameter outputs;
+* honor parameter input schemas as their evaluation contexts;
+* implement `Combine` and `NullableWhen` without collapsing optional field presence into value nullability;
+* support heterogeneous unions and polymorphic structural alternatives;
+* prefer an exact structural alternative before compatibility views, such as selecting `grouping<K, T>` rather than treating a grouping as an array of pairs when both are available.
+
+For intrinsics:
+
+* keep selection in metadata and parameterize reusable behavior there instead of inspecting the canonical function name;
+* define both the structural information consumed and the output shape produced;
+* preserve a dynamic diagnostic only when a required literal or structural value is unavailable;
+* add a new `LogicalSchema` subtype only when an existing structural shape cannot represent the result.
+
+Implement schema analysis bidirectionally:
+
+1. backward requirements state what external input and enclosing context the plan needs;
+2. forward inference derives each node's output from its input and child results.
+
+Preserve nested nullability through intersections, unions, and wrappers. Keep `AnyLogicalSchema`, conflicts, and unions explicit so completeness remains `Known`, `Partial`, `Dynamic`, or `Conflicting` for the correct reason. If a new logical schema shape is introduced, update intersection, nullability, completeness traversal, descriptions, and JSON serialization together.
+
+Add focused schema-analysis tests independently of runtime conformance. Cover as applicable:
+
+* exact catalog deserialization of the schema metadata;
+* backward input requirements and forward output inference;
+* node-by-node input/output reporting;
+* parameter type-variable propagation and heterogeneous unions;
+* polymorphic inputs and exact structural-alternative selection;
+* nullable values versus optional record fields;
+* known, partial, dynamic, and conflicting completeness;
+* JSON serialization for every new logical schema shape;
+* a related-family regression demonstrating reuse rather than name-based dispatch.
+
 ### Binder-integrated operator
 
 Use this path when ordinary constructor binding cannot express deferred or short-circuit evaluation, nested expressions, lexical or contextual access, structured entries, spread, variadic parameters, type inference, or function-specific binding validation.
@@ -65,17 +114,15 @@ Implement a predicate as a Boolean-returning function contract. Reuse the shared
 
 Use predicate-specific registration or bases only where they remain part of the post-v2 registry. Do not duplicate function resolution, chaining, coercion, or argument binding for predicates. Check canonical predicate naming and retain compatibility names only when metadata declares them as aliases.
 
-### Accumulator
+### Incremental aggregation function
 
-Inherit from `BaseAccumulator` and preserve the lifecycle:
+Inherit from `BaseIncrementalAggregation` and create isolated evaluation sessions:
 
 ```csharp
-public override void Initialize();
-public override void Accumulate(object? item);
-public override object? GetValue();
+public override IAggregationSession CreateSession();
 ```
 
-Keep mutable aggregation state in private fields and reset all per-run state in `Initialize()`. Preserve public parameterless construction while `AccumulatorFactory` requires it.
+Keep configuration and runtime providers on the reusable aggregation definition. Keep all mutable per-run state in the returned `IAggregationSession`, implement `Add(object?)`, and make `Snapshot()` a stable, non-terminal projection so `scan` can continue adding items after observing a prefix. Resolve per-evaluation providers in `CreateSession()`, and preserve public parameterless construction while `AccumulatorFactory` requires it.
 
 ## Parameters and constructors
 
@@ -113,7 +160,7 @@ Validate canonical-name and alias lookup, parameter semantic types and optionali
 
 ## File placement
 
-Place implementation beside the nearest cohesive family. If none fits, create a descriptive `.cs` file under the appropriate `Expressif/Functions/<Scope>`, `Expressif/Predicates/<Scope>`, or `Expressif/Accumulators` directory.
+Place implementation beside the nearest cohesive family. If none fits, create a descriptive `.cs` file under the appropriate function or predicate scope; place incremental aggregation implementations with the array aggregation family.
 
 Mirror that organization in `Expressif.Testing`. Do not create files literally named `function` or `accumulator`, and do not introduce a new scope base solely for one operator.
 
@@ -134,9 +181,9 @@ Method arguments follow loader output:
 
 Choose CLR types compatible with loader normalization and the operator contract. Keep `expected` last. Exercise typed evaluation when proving a closed contract.
 
-Add focused tests beyond conformance only for behavior YAML cannot express adequately: binding diagnostics and source spans; named, optional, spread, or variadic binding; inference and coercion; deferred or short-circuit evaluation; evaluation-frame isolation and concurrency; registry collisions; or semantic introspection.
+Add focused tests beyond conformance for behavior YAML cannot express adequately: logical-schema discovery; binding diagnostics and source spans; named, optional, spread, or variadic binding; inference and coercion; deferred or short-circuit evaluation; evaluation-frame isolation and concurrency; registry collisions; or semantic introspection.
 
-Accumulator tests directly exercise `Initialize`, repeated `Accumulate`, and `GetValue` unless YAML explicitly specifies higher-level composition.
+Incremental aggregation tests directly exercise `Initialize`, repeated `Accumulate`, and `GetValue` unless YAML explicitly specifies higher-level composition.
 
 ## Validation
 
@@ -144,11 +191,15 @@ Before completion:
 
 1. confirm metadata, registration, and introspection agree;
 2. confirm every regular function exposes intended closed contracts or an explicit dynamic contract;
-3. confirm binder-integrated behavior consumes bound representations, not parser types;
-4. confirm predicates expose an explicit Boolean result;
-5. confirm accumulator state resets completely;
-6. run relevant conformance and focused tests;
-7. run the solution build;
-8. complete the repository workflow from `AGENTS.md`.
+3. confirm schema metadata is present, internally bound, and propagated into the logical plan;
+4. confirm declarative relationships need no function-name dispatch and intrinsics are reusable and metadata-selected;
+5. confirm backward requirements, forward inference, nullability, completeness, and serialization agree where applicable;
+6. confirm binder-integrated behavior consumes bound representations, not parser types;
+7. confirm predicates expose an explicit Boolean result;
+8. confirm incremental aggregation state resets completely;
+9. run relevant conformance and focused runtime tests;
+10. run `LogicalSchemaAnalyzerTest`, catalog metadata tests, metadata-consistency tests, and `SchemaAnalysisJsonTest` when serialization changes;
+11. run the solution build and repository analyzer/style verification;
+12. complete the repository workflow from `AGENTS.md`.
 
-Report implementation path, contracts, files changed, metadata source, tests run, and intentionally dynamic behavior.
+Report implementation path, runtime and schema contracts, analyzer grammar or intrinsic changes, files changed, metadata source, tests run, intentionally dynamic behavior, and the resulting fixed/contract/intrinsic/dynamic catalog totals when classifications changed.

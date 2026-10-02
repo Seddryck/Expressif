@@ -1,0 +1,12 @@
+suite: semver
+kind: function
+operator: build-metadata
+tests:
+  - id: build-metadata.valid.semver
+    cases:
+      - id: build-metadata.valid.semver.present
+        value: '1.2.3-rc.1+build.7'
+        expected: 'build.7'
+      - id: build-metadata.valid.semver.absent
+        value: '1.2.3'
+        expected: ''

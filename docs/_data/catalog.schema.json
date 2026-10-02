@@ -1,0 +1,315 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://seddryck.github.io/Expressif/schemas/catalog.schema.json",
+  "title": "Expressif operator catalog",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["Name", "Parameters", "Schema"],
+    "properties": {
+      "Name": {
+        "type": "string",
+        "minLength": 1
+      },
+      "Parameters": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/parameter"
+        }
+      },
+      "Semantics": {
+        "$ref": "#/definitions/semantics"
+      },
+      "Incremental": {
+        "type": "boolean",
+        "description": "Whether the function supports incremental accumulation for fold, scan, and broadcast."
+      },
+      "Schema": {
+        "$ref": "#/definitions/schema"
+      }
+    }
+  },
+  "definitions": {
+    "schema": {
+      "type": "object",
+      "required": ["Classification"],
+      "properties": {
+        "Classification": {
+          "enum": ["fixed", "contract", "intrinsic", "dynamic"]
+        },
+        "Input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Parameters": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/parameter-schema"
+          }
+        },
+        "Intrinsic": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Nullability": {
+          "enum": ["propagate-input"]
+        },
+        "NullableWhen": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "DynamicReason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "Classification": { "const": "fixed" }
+          },
+          "not": {
+            "anyOf": [
+              { "required": ["Input"] },
+              { "required": ["Output"] },
+              { "required": ["Parameters"] },
+              { "required": ["Intrinsic"] },
+              { "required": ["Nullability"] },
+              { "required": ["NullableWhen"] },
+              { "required": ["DynamicReason"] }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "Classification": { "const": "contract" }
+          },
+          "required": ["Input", "Output"],
+          "not": {
+            "anyOf": [
+              { "required": ["Intrinsic"] },
+              { "required": ["DynamicReason"] }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "Classification": { "const": "intrinsic" }
+          },
+          "required": ["Intrinsic"],
+          "not": {
+            "anyOf": [
+              { "required": ["Input"] },
+              { "required": ["Output"] },
+              { "required": ["Parameters"] },
+              { "required": ["Nullability"] },
+              { "required": ["NullableWhen"] },
+              { "required": ["DynamicReason"] }
+            ]
+          }
+        },
+        {
+          "properties": {
+            "Classification": { "const": "dynamic" }
+          },
+          "required": ["DynamicReason"],
+          "not": {
+            "anyOf": [
+              { "required": ["Input"] },
+              { "required": ["Output"] },
+              { "required": ["Parameters"] },
+              { "required": ["Intrinsic"] },
+              { "required": ["Nullability"] },
+              { "required": ["NullableWhen"] }
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "parameter-schema": {
+      "type": "object",
+      "properties": {
+        "Input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Combine": {
+          "enum": ["union", "tuple"]
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+    "semantics": {
+      "type": "object",
+      "required": ["Cardinality", "Dependency", "Ordering"],
+      "properties": {
+        "Cardinality": {
+          "enum": ["preserved", "non-increasing", "collapsed", "expanded", "partitioned", "unknown"]
+        },
+        "Dependency": {
+          "enum": ["per-element", "prefix", "whole-input", "partition", "unknown"]
+        },
+        "Ordering": {
+          "enum": ["preserved", "reordered", "unordered", "not-applicable", "unknown"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["Name", "Optional"],
+      "properties": {
+        "Name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "Optional": {
+          "type": "boolean"
+        },
+        "Variadic": {
+          "type": "boolean"
+        },
+        "AllowsSpread": {
+          "type": "boolean"
+        },
+        "Omission": {
+          "$ref": "#/definitions/omission"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "Optional": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": ["Omission"]
+          },
+          "else": {
+            "not": {
+              "required": ["Omission"]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "Omission": {
+                "properties": {
+                  "Mode": {
+                    "const": "empty-variadic"
+                  }
+                },
+                "required": ["Mode"]
+              }
+            },
+            "required": ["Omission"]
+          },
+          "then": {
+            "properties": {
+              "Variadic": {
+                "const": true
+              }
+            },
+            "required": ["Variadic"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "Variadic": { "const": true }
+            },
+            "required": ["Variadic"]
+          },
+          "then": {
+            "required": ["AllowsSpread"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "AllowsSpread": { "const": true }
+            },
+            "required": ["AllowsSpread"]
+          },
+          "then": {
+            "properties": { "Variadic": { "const": true } },
+            "required": ["Variadic"]
+          }
+        },
+        {
+          "not": {
+            "required": ["Default"]
+          }
+        }
+      ]
+    },
+    "omission": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["Mode", "Value"],
+          "properties": {
+            "Mode": {
+              "const": "constant"
+            },
+            "Value": true
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["Mode"],
+          "properties": {
+            "Mode": {
+              "const": "empty-variadic"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["Mode"],
+          "properties": {
+            "Mode": {
+              "const": "absent"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["Mode", "Source"],
+          "properties": {
+            "Mode": {
+              "const": "environment-derived"
+            },
+            "Source": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

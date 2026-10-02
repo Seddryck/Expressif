@@ -78,7 +78,7 @@ The `greater-than(2)` predicate is evaluated for each element. Only values for w
 
 ## Aggregating arrays
 
-Accumulators reduce an array to a result.
+Aggregation functions reduce an array to a result.
 
 ```expressif
 @orders
@@ -94,7 +94,7 @@ flowchart LR
     D --> E[numeric]
 ```
 
-Other accumulators can produce text, counts, booleans, or structured results depending on their contract.
+Other aggregation functions can produce text, counts, booleans, or structured results depending on their contract.
 
 ## Tuples
 
@@ -279,13 +279,13 @@ These are reasoning categories, not an exhaustive function list. Consult the [fu
 
 Expressif does not automatically apply a scalar function to every item in a structured value. Mapping is explicit: `map(expression)` and its `|> (expression)` shorthand evaluate the expression once for every array item.
 
-Other functions receive the complete structured value. An accumulator such as `sum` consumes the whole array and returns one result. `scan` also consumes the array as an accumulation but returns each intermediate result, while `broadcast` repeats the final accumulated result once per input element. That behavior belongs specifically to the `broadcast` function; it is not a general rule that scalar arguments are broadcast across collections.
+Other functions receive the complete structured value. An incremental aggregation function such as `sum` consumes the whole array and returns one result. `scan` also consumes the array as an accumulation but returns each intermediate result, while `broadcast` repeats the final accumulated result once per input element. That behavior belongs specifically to the `broadcast` function; it is not a general rule that scalar arguments are broadcast across collections.
 
 A tuple passed to a function is likewise one input value. If the function expects an array, the tuple may first be coerced to an array as described below. That does not mean the function is independently applied to each tuple position.
 
 ## Spread expands; it does not map or flatten
 
-Spread is explicit expansion during construction. In an array construction, a spread array contributes its elements at that position:
+Spread is explicit expansion during construction. In an array construction or a function parameter documented as accepting spread, a spread array contributes its elements at that position:
 
 ```expressif
 {1, ...{2, 3}, 4}
@@ -293,7 +293,7 @@ Spread is explicit expansion during construction. In an array construction, a sp
 
 produces `{1, 2, 3, 4}`. In `record(...)`, a standalone `...` contributes the incoming record's fields to the new record.
 
-Spread does not evaluate a transformation for each element, and it does not recursively flatten nested collections. `{1, ...{{2, 3}}, 4}` still contains the nested array `{2, 3}` as one element. See [Advanced expressions](advanced.md#array-spread-arguments) for the supported spread contexts.
+Spread does not evaluate a transformation for each element, and it does not recursively flatten nested collections. `{1, ...{{2, 3}}, 4}` still contains the nested array `{2, 3}` as one element. See [Advanced expressions](advanced.md#positional-spread-arguments) for the supported spread contexts.
 
 ## Tuple positions and record fields
 

@@ -16,3 +16,7 @@ tests:
         value: (null)
         parameters: ['sort-key(sort-term(1, compare-numeric~), sort-term("x", compare-ordinal~))']
         expected: 'SortKey(SortTerm(1, compare-numeric~, #true, #false), SortTerm("x", compare-ordinal~, #true, #false))'
+      - id: sort-key.valid.construction.spread
+        value: (null)
+        parameters: ['sort-key(sort-term(1, compare-numeric~), ...{})']
+        expected: 'SortKey(SortTerm(1, compare-numeric~, #true, #false))'

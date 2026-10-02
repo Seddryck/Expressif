@@ -30,15 +30,6 @@ Returns whether the input has the requested Expressif runtime type or belongs to
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `type` | `type` | Yes | Specifies the Expressif type descriptor to test. |
-
-
-
-## Argument evaluation
-
-- **`type`:** Evaluated once in the enclosing context.
-
-
-
 ## Examples
 
 {% raw %}
@@ -48,6 +39,9 @@ Returns whether the input has the requested Expressif runtime type or belongs to
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`type`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `special`  

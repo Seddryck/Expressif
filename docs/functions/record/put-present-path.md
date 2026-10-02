@@ -3,7 +3,7 @@ layout: docs
 title: "put-present-path"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 180
+nav_order: 190
 has_toc: false
 permalink: /functions/record/put-present-path/
 tags:
@@ -35,11 +35,6 @@ Assigns the field at a dynamic path only when the final segment is present, incl
 
 
 
-## Argument evaluation
-
-- **`path`:** Evaluated once against the value entering this call.
-- **`value`:** Evaluated against the original incoming record only if the target path is present.
-
 
 
 ## Examples
@@ -50,6 +45,10 @@ Assigns the field at a dynamic path only when the final segment is present, incl
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`path`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated against the original incoming record only if the target path is present.
 
 **Kind:** Function  
 **Scope:** `record`  

@@ -1,10 +1,15 @@
 using System.Data;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using Expressif.Cli.Application;
 using Expressif.Cli.Commands;
 using Expressif.Cli.Expressions;
 using Expressif.Cli.Infrastructure;
 using Expressif.Cli.Inputs;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
+using Expressif.Library.Composition;
+using Expressif.Planning;
+using Expressif.Syntax;
 
 namespace Expressif.Cli.Tests;
 
@@ -429,6 +434,53 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Evaluate_LogicalPlan_WithInput_EvaluatesImportedPlan()
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson("trim | upper"), ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "  hello  ");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("HELLO"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_AnalyzedLogicalPlan_WithoutInput_EvaluatesClosedPlan()
+    {
+        var path = CreateTempFile(CreateAnalyzedLogicalPlanJson("\"hello\" | upper"), ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("HELLO"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_AnalyzedLogicalPlan_IgnoresStoredSchemaAnnotations()
+    {
+        var json = CreateAnalyzedLogicalPlanJson("upper")
+            .Replace("\"type\": \"text\"", "\"type\": 42", StringComparison.Ordinal);
+        var path = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("HELLO"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
     public async Task Evaluate_OpenExpressionWithoutInput_ReturnsInputRequiredError()
     {
         var result = await InvokeAsync("evaluate", "upper");
@@ -439,7 +491,7 @@ public class CliCommandTests
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr, Does.Contain("The expression is valid, but it requires an input to be evaluated."));
             Assert.That(result.StdErr, Does.Contain("The expression cannot be evaluated without an input because it references 'upper'."));
-            Assert.That(result.StdErr, Does.Contain("Provide an input with --input. You can load the expression from a file with --file."));
+            Assert.That(result.StdErr, Does.Contain("Provide an input with --input. You can load the expression with --file or a logical plan with --plan."));
         });
     }
 
@@ -651,7 +703,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression cannot be provided both inline and through --file."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline, --file, or --plan."));
         });
     }
 
@@ -664,7 +716,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline or --file."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("The expression must be supplied through exactly one source: inline, --file, or --plan."));
         });
     }
 
@@ -1068,6 +1120,146 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut.Trim(), Is.EqualTo("0"));
             Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectRepeatedSources_PreservesDocumentRootsAndNulls()
+    {
+        var arrayPath = CreateTempFile("[1, 2]", ".json");
+        var objectPath = CreateTempFile("{\"name\":\"Alice\"}", ".json");
+        var nullPath = CreateTempFile("null", ".json");
+
+        var countResult = await InvokeAsync(
+            "evaluate", "count",
+            "--source", arrayPath,
+            "--source", objectPath,
+            "--source", nullPath,
+            "--collect");
+        var nestedArrayResult = await InvokeAsync(
+            "evaluate", "first | count",
+            "--source", arrayPath,
+            "--source", objectPath,
+            "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(countResult.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(countResult.StdOut.Trim(), Is.EqualTo("3"));
+            Assert.That(countResult.StdErr, Is.Empty);
+            Assert.That(nestedArrayResult.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(nestedArrayResult.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(nestedArrayResult.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectRepeatedSources_PreservesSourceOrder()
+    {
+        var firstPath = CreateTempFile("2", ".json");
+        var secondPath = CreateTempFile("1", ".json");
+
+        var result = await InvokeAsync(
+            "evaluate", "first",
+            "--source", firstPath,
+            "--source", secondPath,
+            "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("2"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectWildcard_OrdersMatchesOrdinally()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), $"expressif-collect-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        try
+        {
+            File.WriteAllText(Path.Combine(directory, "b.json"), "2");
+            File.WriteAllText(Path.Combine(directory, "a.json"), "1");
+
+            var result = await InvokeAsync(
+                "evaluate", "first",
+                "--source", Path.Combine(directory, "*.json"),
+                "--collect");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+                Assert.That(result.StdOut.Trim(), Is.EqualTo("1"));
+                Assert.That(result.StdErr, Is.Empty);
+            });
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Test]
+    public async Task Evaluate_CollectInvalidJson_IdentifiesSource()
+    {
+        var sourcePath = CreateTempFile("{", ".json");
+
+        var result = await InvokeAsync("evaluate", "count", "--source", sourcePath, "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain($"Invalid JSON syntax in '{sourcePath}':"));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectUnmatchedWildcard_ReturnsClearError()
+    {
+        var pattern = Path.Combine(Path.GetTempPath(), $"expressif-{Guid.NewGuid():N}-*.json");
+
+        var result = await InvokeAsync("evaluate", "count", "--source", pattern, "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo($"Source pattern '{pattern}' did not match any files."));
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_CollectNonJsonSource_ReturnsClearError()
+    {
+        var sourcePath = CreateTempFile("1", ".txt");
+
+        var result = await InvokeAsync("evaluate", "count", "--source", sourcePath, "--collect");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(
+                $"The source '{sourcePath}' is not a JSON document. The --collect option only supports JSON sources."));
+        });
+    }
+
+    [TestCase(new[] { "--collect" }, "The --collect option requires --source.")]
+    [TestCase(new[] { "--source", "first.json", "--source", "second.json" }, "The --source option can only be repeated with --collect.")]
+    [TestCase(new[] { "--source", "source.json", "--collect", "--scalar" }, "The --scalar option cannot be combined with --collect.")]
+    [TestCase(new[] { "--source", "source.json", "--collect", "--source-option", "header=#true" }, "The --source-option option cannot be combined with --collect.")]
+    public async Task Evaluate_InvalidCollectionOptionCombination_ReturnsClearError(string[] options, string expectedError)
+    {
+        var result = await InvokeAsync(["evaluate", "count", .. options]);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(expectedError));
         });
     }
 
@@ -1679,6 +1871,93 @@ public class CliCommandTests
     }
 
     [Test]
+    public async Task Run_AnalyzedLogicalPlan_EvaluatesEachInputRow()
+    {
+        var path = CreateTempFile(CreateAnalyzedLogicalPlanJson("trim | upper"), ".json");
+
+        var result = await InvokeAsync("run", "--plan", path, "--input", " hello ", "--input", " world ");
+
+        var outputs = result.StdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(outputs, Is.EqualTo(new[] { "HELLO", "WORLD" }));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Run_LogicalPlan_PreservesOutputOptions()
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson("record(name := @_)"), ".json");
+
+        var result = await InvokeAsync("run", "--plan", path, "--input", "hello", "--output", "json");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut.Trim(), Is.EqualTo("{\"name\":\"hello\"}"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Evaluate_PlanAndExpressionFile_ReturnsSourceSelectionError()
+    {
+        var plan = CreateTempFile(CreateLogicalPlanJson(), ".json");
+        var expression = CreateTempFile("upper");
+
+        var result = await InvokeAsync("evaluate", "--plan", plan, "--file", expression, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr.Trim(), Is.EqualTo(
+                "The expression must be supplied through exactly one source: inline, --file, or --plan."));
+        });
+    }
+
+    [TestCase("{")]
+    [TestCase("{\"format\":\"expressif.source\",\"version\":1}")]
+    public async Task Evaluate_InvalidPlanFile_WritesPlanDiagnostic(string json)
+    {
+        var path = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.StartWith($"The plan loaded from '{path}' is invalid:"));
+        });
+    }
+
+    [TestCase("version", "2", "Unsupported analyzed logical-plan version")]
+    [TestCase("catalogCompatibility", "\"4.0\"", "Unsupported catalog compatibility")]
+    [TestCase("plan", "[]", "Property 'plan' must be an object")]
+    public async Task Evaluate_InvalidAnalyzedPlanMetadata_WritesSpecificDiagnostic(
+        string property,
+        string replacement,
+        string expected)
+    {
+        var document = JsonNode.Parse(CreateAnalyzedLogicalPlanJson("upper"))!.AsObject();
+        document[property] = JsonNode.Parse(replacement);
+        var json = document.ToJsonString();
+        var path = CreateTempFile(json, ".json");
+
+        var result = await InvokeAsync("evaluate", "--plan", path, "--input", "hello");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain(expected));
+        });
+    }
+
+    [Test]
     public async Task Run_EvaluationFailure_StopsEnumerationAndReturnsFailure()
     {
         var result = await InvokeAsync("run", "fold(sum)", "--batch", "{{1}, {\"unknown\"}, {3}}");
@@ -1770,7 +2049,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
-            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'unknown'."));
+            Assert.That(result.StdErr.Trim(), Is.EqualTo("Unknown function 'system::unknown'."));
         });
     }
 
@@ -1808,7 +2087,7 @@ public class CliCommandTests
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
             Assert.That(result.StdOut, Is.Empty);
             Assert.That(result.StdErr, Does.Contain($"The expression loaded from '{path}' is invalid:"));
-            Assert.That(result.StdErr, Does.Contain("Unknown function 'unknown'."));
+            Assert.That(result.StdErr, Does.Contain("Unknown function 'system::unknown'."));
         });
     }
 
@@ -1910,9 +2189,159 @@ public class CliCommandTests
             Assert.That(result.StdOut, Does.Contain("evaluate"));
             Assert.That(result.StdOut, Does.Contain("run"));
             Assert.That(result.StdOut, Does.Contain("validate"));
+            Assert.That(result.StdOut, Does.Contain("plan"));
             Assert.That(result.StdOut, Does.Contain("help"));
             Assert.That(result.StdOut, Does.Contain("repl"));
             Assert.That(result.StdOut, Does.Contain("version"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Plan_Expression_DisplaysAnnotatedLogicalTree()
+    {
+        var result = await InvokeAsync("plan", "trim | upper");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Pipeline [text -> text] (known)"));
+            Assert.That(result.StdOut, Does.Contain("Call: text::trim [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Call: text::upper [text -> text]"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanLogical_JsonOutput_ReturnsVersionedPortablePlan()
+    {
+        var result = await InvokeAsync("plan", "logical", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(), Is.EqualTo("expressif.logical-plan"));
+            Assert.That(document.RootElement.GetProperty("version").GetInt32(), Is.EqualTo(LogicalPlanJson.FormatVersion));
+            Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
+                .GetProperty("operator").GetProperty("name").GetString(), Is.EqualTo("trim"));
+            Assert.That(document.RootElement.GetProperty("plan").GetProperty("items")[0]
+                .GetProperty("operator").GetProperty("kind").GetString(), Is.EqualTo("function"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_Expression_DisplaysOverallAndStepSchemas()
+    {
+        var result = await InvokeAsync("plan", "schema", "upper | first-chars(5)");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Schema: text -> text (known)"));
+            Assert.That(result.StdOut, Does.Contain("Step 1: text::upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 2: text::first-chars [text -> text]"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_JsonOutput_ReturnsSchemaAnalysis()
+    {
+        var result = await InvokeAsync("plan", "schema", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(),
+                Is.EqualTo(SchemaAnalysisJson.FormatName));
+            Assert.That(document.RootElement.GetProperty("input").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
+            Assert.That(document.RootElement.GetProperty("output").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_LogicalFile_AnalyzesImportedPlan()
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson("upper | first-chars(5)"), ".json");
+
+        var result = await InvokeAsync("plan", "schema", "--logical", path);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(result.StdOut, Does.Contain("Schema: text -> text (known)"));
+            Assert.That(result.StdOut, Does.Contain("Step 1: text::upper [text -> text]"));
+            Assert.That(result.StdOut, Does.Contain("Step 2: text::first-chars [text -> text]"));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task PlanSchema_Stdin_AnalyzesImportedPlan()
+    {
+        var result = await InvokeWithInputAsync(
+            CreateLogicalPlanJson(),
+            "plan", "schema", "--stdin", "--output", "json");
+
+        using var document = JsonDocument.Parse(result.StdOut);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(),
+                Is.EqualTo(SchemaAnalysisJson.FormatName));
+            Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [TestCase("expression-and-file")]
+    [TestCase("expression-and-stdin")]
+    [TestCase("file-and-stdin")]
+    [TestCase("missing")]
+    public async Task PlanSchema_InvalidSourceSelection_WritesUsageDiagnostic(string scenario)
+    {
+        var path = CreateTempFile(CreateLogicalPlanJson(), ".json");
+        var args = scenario switch
+        {
+            "expression-and-file" => new[] { "plan", "schema", "trim", "--logical", path },
+            "expression-and-stdin" => new[] { "plan", "schema", "trim", "--stdin" },
+            "file-and-stdin" => new[] { "plan", "schema", "--logical", path, "--stdin" },
+            _ => new[] { "plan", "schema" },
+        };
+
+        var result = await InvokeWithInputAsync(CreateLogicalPlanJson(), args);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.InvalidExpressionOrInput));
+            Assert.That(result.StdOut, Is.Empty);
+            Assert.That(result.StdErr, Does.Contain("requires exactly one source"));
+        });
+    }
+
+    [Test]
+    public async Task Plan_JsonOutput_AttachesSchemasToLogicalNodes()
+    {
+        var result = await InvokeAsync("plan", "trim | upper", "--output", "json");
+        using var document = JsonDocument.Parse(result.StdOut);
+        var plan = document.RootElement.GetProperty("plan");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
+            Assert.That(document.RootElement.GetProperty("format").GetString(),
+                Is.EqualTo(AnalyzedLogicalPlanJson.FormatName));
+            Assert.That(plan.GetProperty("input").GetProperty("type").GetString(), Is.EqualTo("text"));
+            Assert.That(plan.GetProperty("output").GetProperty("type").GetString(), Is.EqualTo("text"));
+            Assert.That(plan.GetProperty("items")[0].GetProperty("input").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
+            Assert.That(plan.GetProperty("items")[1].GetProperty("output").GetProperty("type").GetString(),
+                Is.EqualTo("text"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -1983,8 +2412,8 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith(
-                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count?: integer{Environment.NewLine}) → text"));
-            Assert.That(result.StdOut, Does.Contain("count?"));
+                $"text →{Environment.NewLine}after-substring({Environment.NewLine}    substring: text,{Environment.NewLine}    count: integer = 0{Environment.NewLine}) → text"));
+            Assert.That(result.StdOut, Does.Contain("count: integer = 0"));
             Assert.That(result.StdErr, Is.Empty);
         });
     }
@@ -2001,6 +2430,19 @@ public class CliCommandTests
                 $"any →{Environment.NewLine}coalesce({Environment.NewLine}    ...expressions: expression{Environment.NewLine}) → any"));
             Assert.That(result.StdOut, Does.Contain("expressions  expression (variadic, two or more)"));
             Assert.That(result.StdErr, Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task Help_SpreadSupport_IsDistinctFromVariadicCardinality()
+    {
+        var spread = await InvokeAsync("help", "nested-field");
+        var variadicOnly = await InvokeAsync("help", "coalesce");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(spread.StdOut, Does.Contain("(accepts spread)"));
+            Assert.That(variadicOnly.StdOut, Does.Not.Contain("(accepts spread)"));
         });
     }
 
@@ -2042,7 +2484,7 @@ public class CliCommandTests
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
             Assert.That(result.StdOut, Does.StartWith(
-                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times?: integer{Environment.NewLine}) → numeric"));
+                $"numeric →{Environment.NewLine}add({Environment.NewLine}    value: numeric,{Environment.NewLine}    times: integer = 1{Environment.NewLine}) → numeric"));
             Assert.That(result.StdOut, Does.Contain("Returns the sum of the input value and the parameter value."));
             Assert.That(result.StdOut, Does.Contain("times  integer (optional)"));
             Assert.That(result.StdOut, Does.Contain("  10 | add(5)      → 15"));
@@ -2182,14 +2624,23 @@ public class CliCommandTests
         });
     }
 
-    private async Task<InvocationResult> InvokeAsync(params string[] args)
+    private Task<InvocationResult> InvokeAsync(params string[] args)
+        => InvokeAsync(null, args);
+
+    private Task<InvocationResult> InvokeWithInputAsync(string input, params string[] args)
+        => InvokeAsync(input, args);
+
+    private async Task<InvocationResult> InvokeAsync(string? input, string[] args)
     {
+        var originalIn = Console.In;
         var originalOut = Console.Out;
         var originalError = Console.Error;
 
+        using var stdin = new StringReader(input ?? string.Empty);
         using var stdout = new StringWriter();
         using var stderr = new StringWriter();
 
+        Console.SetIn(stdin);
         Console.SetOut(stdout);
         Console.SetError(stderr);
 
@@ -2205,6 +2656,7 @@ public class CliCommandTests
             var composition = new CliComposition(
                 new ParseHandler(new SyntaxService()),
                 new BindHandler(new SyntaxService()),
+                new PlanHandler(new SyntaxService()),
                 new EvaluateHandler(expressions, values, sources),
                 new RunHandler(expressions, values, textFiles, sources),
                 new ValidateHandler(expressions),
@@ -2216,9 +2668,20 @@ public class CliCommandTests
         }
         finally
         {
+            Console.SetIn(originalIn);
             Console.SetOut(originalOut);
             Console.SetError(originalError);
         }
+    }
+
+    private static string CreateLogicalPlanJson(string expression = "trim | upper")
+        => LogicalPlanJson.Serialize(
+            LogicalPlannerFactory.Create().Build(new SyntaxService().Parse(expression)));
+
+    private static string CreateAnalyzedLogicalPlanJson(string expression)
+    {
+        var plan = LogicalPlannerFactory.Create().Build(new SyntaxService().Parse(expression));
+        return AnalyzedLogicalPlanJson.Serialize(LogicalSchemaAnalyzer.AnalyzePlan(plan));
     }
 
     private string CreateTempFile(string content, string extension = ".expr")
@@ -2250,16 +2713,20 @@ public class CliCommandTests
     private sealed class FakeExpressionService : IExpressionService
     {
         public Func<string, Context, IExpression> CompileOpenHandler { get; set; }
-            = static (code, context) => Expression.Create(code, context);
+            = static (code, context) => Expression.Create(code, new Expressif.Bindings.ExpressionBinder(context));
 
         public Func<string, Context, IExpression> CompileClosedHandler { get; set; }
-            = static (code, context) => Expression.CreateClosed(code, context);
+            = static (code, context) => Expression.CreateClosed(code, new Expressif.Bindings.ExpressionBinder(context));
 
         public Func<IExpression, object?, object?> EvaluateHandler { get; set; }
             = static (expression, input) => expression.Evaluate(input);
 
         public IExpression CompileOpen(string code, Context context) => CompileOpenHandler(code, context);
         public IExpression CompileClosed(string code, Context context) => CompileClosedHandler(code, context);
+        public IExpression CompileOpen(LogicalPlan plan, Context context)
+            => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).Bind(plan);
+        public IExpression CompileClosed(LogicalPlan plan, Context context)
+            => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).BindClosed(plan);
         public object? Evaluate(IExpression expression, object? input) => EvaluateHandler(expression, input);
     }
 }

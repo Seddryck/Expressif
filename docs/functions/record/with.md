@@ -3,7 +3,7 @@ layout: docs
 title: "with"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 240
+nav_order: 250
 has_toc: false
 permalink: /functions/record/with/
 tags:
@@ -30,15 +30,10 @@ Evaluates named projections independently against the input, then evaluates a bo
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `projections` | `entry` | Variadic (one or more) | One or more named projections evaluated independently against the input value. |
+| `projections` | `entry` | Variadic (one or more); no spread | One or more named projections evaluated independently against the input value. |
 | `body` | `expression` | Yes | The final expression evaluated against the temporary projection record. |
 
 
-
-## Argument evaluation
-
-- **`projections`:** Each supplied expression is evaluated once against the value entering this call.
-- **`body`:** Evaluated once against the temporary record produced by the named projections.
 
 
 
@@ -50,6 +45,10 @@ Evaluates named projections independently against the input, then evaluates a bo
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`projections`:** Each supplied expression is evaluated once against the value entering this call.
+- **`body`:** Evaluated once against the temporary record produced by the named projections.
 
 **Kind:** Function  
 **Scope:** `record`  

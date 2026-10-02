@@ -19,15 +19,13 @@ html-to-text() → text
 
 Returns the argument value that has previously been HTML-encoded into a decoded string.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 "Hello World" | html-to-text → "Hello World"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

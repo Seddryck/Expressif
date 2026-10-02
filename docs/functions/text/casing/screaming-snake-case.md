@@ -3,7 +3,7 @@ layout: docs
 title: "screaming-snake-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /functions/text/casing/screaming-snake-case/
 tags:
@@ -19,16 +19,13 @@ screaming-snake-case() → text
 
 Returns the input text in SCREAMING_SNAKE_CASE, uppercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "Hello World" | screaming-snake-case → "HELLO_WORLD"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

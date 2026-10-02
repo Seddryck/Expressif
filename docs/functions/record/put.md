@@ -3,7 +3,7 @@ layout: docs
 title: "put"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 130
+nav_order: 140
 has_toc: false
 permalink: /functions/record/put/
 tags:
@@ -29,13 +29,9 @@ Creates or replaces statically named fields while preserving every other field. 
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `assignments` | `entry` | Variadic (one or more) | One or more named assignments evaluated against the original input record. |
+| `assignments` | `entry` | Variadic (one or more); no spread | One or more named assignments evaluated against the original input record. |
 
 
-
-## Argument evaluation
-
-- **`assignments`:** Each supplied expression is evaluated once against the value entering this call.
 
 
 
@@ -47,6 +43,9 @@ Creates or replaces statically named fields while preserving every other field. 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`assignments`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `record`  

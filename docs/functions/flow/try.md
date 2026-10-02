@@ -29,13 +29,7 @@ Returns the first candidate result accepted by its predicate, or the final fallb
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `branches` | `entry` | Variadic (two or more) | Ordered branches with an optional final catch-all fallback. |
-
-
-
-## Argument evaluation
-
-- **`branches`:** Branches reuse the original input and stop at the first accepted branch. The output type depends on the selected expression.
+| `branches` | `entry` | Variadic (two or more); no spread | Ordered branches with an optional final catch-all fallback. |
 
 
 
@@ -47,6 +41,9 @@ Returns the first candidate result accepted by its predicate, or the final fallb
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`branches`:** Branches reuse the original input and stop at the first accepted branch. The output type depends on the selected expression.
 
 **Kind:** Function  
 **Scope:** `flow`  

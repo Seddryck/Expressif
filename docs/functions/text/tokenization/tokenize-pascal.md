@@ -27,11 +27,6 @@ Returns tokens from a PascalCase name using case and acronym transitions as boun
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 "HTTPServerURL" | tokenize-pascal → {"HTTP", "Server", "URL"}
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/tokenization`  

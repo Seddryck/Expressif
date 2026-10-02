@@ -14,17 +14,22 @@ generated: true
 
 ```
 date-time →
-local-to-utc() → date-time
+local-to-utc(
+    timeZoneLabel: text
+) → date-time
 ```
 
 Returns the dateTime passed as argument and set in the time zone passed as parameter converted to UTC.
+
+
 
 ## Parameters
 
 
 
-This function has no parameters.
-
+| Name | Type | Required | Description |
+|:-----|:-----|:---------|:------------|
+| `timeZoneLabel` | `text` | Yes | The time-zone identifier or display-name label of the input value. |
 
 
 
@@ -38,6 +43,9 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`timeZoneLabel`:** Evaluated once in the context surrounding this `local-to-utc` call.
 
 **Kind:** Function  
 **Scope:** `temporal`  

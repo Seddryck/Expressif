@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 value-at(
     position: integer
-) → any
+) → nullable<T>
 ```
 
 Returns the input item at the specified zero-based position. Returns `null` when the position is negative or out of range, or the input cannot be evaluated.
@@ -31,9 +31,7 @@ Returns the input item at the specified zero-based position. Returns `null` when
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | Specifies the zero-based position of the item to return. |
 
-## Argument evaluation
 
-- **`position`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -43,6 +41,26 @@ Returns the input item at the specified zero-based position. Returns `null` when
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `array<T>`
+- Returns: `nullable<T>`
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+## Structural semantics
+
+- Cardinality: `collapsed` <span class="semantics-info" title="The visited collection produces one result." aria-label="Cardinality definition: The visited collection produces one result.">i</span>
+- Dependency: `whole-input` <span class="semantics-info" title="An output depends on the complete visited input." aria-label="Dependency definition: An output depends on the complete visited input.">i</span>
+- Ordering: `not-applicable` <span class="semantics-info" title="The result has no element ordering to describe." aria-label="Ordering definition: The result has no element ordering to describe.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
+## Argument evaluation
+
+- **`position`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `array/selection`  

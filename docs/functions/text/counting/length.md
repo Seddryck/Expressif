@@ -19,15 +19,13 @@ length() → integer
 
 Returns the length of the argument value. If the value is `null` or `empty` then it returns `0`. If the value is `blank` then it returns `-1`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 "Hello World" | length → 11
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/counting`  

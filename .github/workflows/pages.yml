@@ -34,6 +34,10 @@ jobs:
       - name: Restore .NET tools
         run: dotnet tool restore
 
+      - name: Test library reference generation
+        shell: pwsh
+        run: ./Test-LibraryReferencePages.ps1
+
       - name: Install ImageMagick
         run: sudo apt-get update && sudo apt-get install --yes imagemagick
 

@@ -19,15 +19,13 @@ floor() → numeric
 
 Returns the largest integer less than or equal to the argument number.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 10 | floor → 10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/rounding`  

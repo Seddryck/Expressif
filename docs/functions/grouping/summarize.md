@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-grouping →
+grouping<K, T> →
 summarize(
     expression: expression
-) → dictionary
+) → dictionary<K, U>
 ```
 
 Evaluates an expression once for each group and returns a dictionary from group keys to summary values.
@@ -30,17 +30,6 @@ Evaluates an expression once for each group and returns a dictionary from group 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `expression` | `expression` | Yes | The expression evaluated against each group's value collection. |
-
-
-
-## Argument evaluation
-
-Visits each group in the incoming grouping and supplies its entire value collection to the expression.
-
-- **`expression`:** Evaluated once per group against that group's entire value collection.
-
-
-
 ## Examples
 
 {% raw %}
@@ -50,6 +39,23 @@ Visits each group in the incoming grouping and supplies its entire value collect
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `grouping<K, T>`
+- Returns: `dictionary<K, U>`
+- `expression`: Receives `array<T>` and returns `U`.
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+
+
+## Argument evaluation
+
+Visits each group in the incoming grouping and supplies its entire value collection to the expression.
+
+- **`expression`:** Evaluated once per group against that group's entire value collection.
 
 **Kind:** Function  
 **Scope:** `grouping`  

@@ -3,7 +3,7 @@ layout: docs
 title: "lower"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 80
+nav_order: 90
 has_toc: false
 permalink: /functions/text/casing/lower/
 tags:
@@ -19,15 +19,13 @@ lower() → text
 
 Returns the input text converted to lowercase using invariant culture rules. Returns `null` when the input is `null`, `DBNull`, `(null)`, or a zero-length array.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 "Hello World" | lower → "hello world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

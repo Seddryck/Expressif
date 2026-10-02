@@ -26,12 +26,6 @@ Returns the second field of a tuple. Returns `null` when the input is not a tupl
 
 
 This function has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +33,6 @@ This function has no parameters.
 T(10, 20, 30) | tuple-second → 20
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `tuple`  

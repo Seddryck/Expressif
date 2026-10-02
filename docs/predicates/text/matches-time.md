@@ -3,7 +3,7 @@ layout: docs
 title: "matches-time"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 170
+nav_order: 230
 has_toc: false
 permalink: /predicates/text/matches-time/
 tags:
@@ -18,15 +18,20 @@ matches-time()
 
 Returns `true` if the text value passed as argument is a valid representation of a time in the culture specified as parameter. The expected format is the LongTimePattern. If the value is of type `TimeOnly`, it returns `true`. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
+## Examples
 
-
-
-
+{% raw %}
+```expressif
+"Hello World" | matches-time → #false
+```
+{% endraw %}
 
 **Kind:** Predicate  
 **Scope:** `text`  

@@ -20,6 +20,8 @@ is-before(
 
 Returns true if the temporal value passed as argument is chronologically before the temporal value passed as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,16 @@ Returns true if the temporal value passed as argument is chronologically before 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `date-time` | Yes | A temporal value to compare to the argument |
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-before(#"2024-01-14 12:30:00") → #false
+```
+{% endraw %}
 
 ## Argument evaluation
 

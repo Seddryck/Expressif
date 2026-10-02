@@ -29,11 +29,6 @@ Returns `true` if the boolean passed as argument has the same value than the boo
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `reference` | `boolean` | Yes | A boolean value to compare to the argument. |
-
-## Argument evaluation
-
-- **`reference`:** Evaluated once in the enclosing context.
-
 ## Examples
 
 {% raw %}
@@ -42,6 +37,9 @@ Returns `true` if the boolean passed as argument has the same value than the boo
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

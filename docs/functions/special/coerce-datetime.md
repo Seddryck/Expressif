@@ -19,16 +19,13 @@ coerce-datetime() → date-time
 
 Attempts to convert the input to a date-time value. Returns `null` when the input cannot be converted.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "Hello World" | coerce-datetime → #null
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `special`  

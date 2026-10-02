@@ -3,7 +3,7 @@ layout: docs
 title: "snake-case"
 parent: "Casing functions"
 grand_parent: "Text functions"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /functions/text/casing/snake-case/
 tags:
@@ -19,16 +19,13 @@ snake-case() → text
 
 Returns the input text in snake_case, lowercasing words and joining them with underscores. Preserves `null`, empty, and blank inputs; returns `null` for a zero-length array.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "Hello World" | snake-case → "hello_world"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/casing`  

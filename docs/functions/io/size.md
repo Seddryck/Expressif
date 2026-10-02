@@ -19,6 +19,8 @@ size() → integer
 
 Returns the size of the file provided as argument in bytes.
 
+
+
 ## Parameters
 
 

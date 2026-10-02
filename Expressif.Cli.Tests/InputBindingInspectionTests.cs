@@ -1,5 +1,6 @@
 using Expressif.Bindings;
 using Expressif.Cli.Commands;
+using Expressif.Cli.Expressions;
 using Expressif.Syntax;
 
 namespace Expressif.Cli.Tests;
@@ -13,7 +14,7 @@ public class InputBindingInspectionTests
     {
         var syntax = ExpressionParser.Parse(source);
         var syntaxOutput = SyntaxTreeFormatter.Format(syntax, "json");
-        var boundOutput = BoundTreeFormatter.Format(new ExpressifBinder().Bind(syntax), "json");
+        var boundOutput = BoundTreeFormatter.Format(new SyntaxService().Bind(syntax), "json");
         Assert.Multiple(() =>
         {
             Assert.That(syntaxOutput, Does.Contain("InputBindingExpression"));

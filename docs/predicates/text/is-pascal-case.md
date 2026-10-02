@@ -3,7 +3,7 @@ layout: docs
 title: "is-pascal-case"
 parent: "Text predicates"
 grand_parent: "Predicates library"
-nav_order: 100
+nav_order: 110
 has_toc: false
 permalink: /predicates/text/is-pascal-case/
 tags:
@@ -26,12 +26,6 @@ Returns `true` when the complete input is a pascal-case identifier beginning wit
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -40,7 +34,6 @@ This predicate has no parameters.
 "first--name" | is-pascal-case → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `text`  

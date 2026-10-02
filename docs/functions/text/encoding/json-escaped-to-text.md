@@ -19,6 +19,8 @@ json-escaped-to-text() → text
 
 Returns text by decoding escaped JSON string contents without requiring surrounding quotation marks. Returns `null` for malformed input and preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 
@@ -26,12 +28,6 @@ Returns text by decoding escaped JSON string contents without requiring surround
 This function has no parameters.
 
 
-
-
-
-## Behavior
-
-Decodes one layer of JSON string escaping, including control-character escapes and valid Unicode escape sequences. The input is fragment content without surrounding JSON quotation marks.
 
 
 
@@ -43,6 +39,9 @@ Decodes one layer of JSON string escaping, including control-character escapes a
 ```
 {% endraw %}
 
+## Behavior
+
+Decodes one layer of JSON string escaping, including control-character escapes and valid Unicode escape sequences. The input is fragment content without surrounding JSON quotation marks.
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

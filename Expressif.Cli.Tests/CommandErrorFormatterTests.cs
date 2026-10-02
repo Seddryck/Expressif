@@ -43,7 +43,7 @@ public class CommandErrorFormatterTests
     [Test]
     public void FormatValidationError_SyntaxFailureWithoutSource_UsesAggregateMessage()
     {
-        var exception = Assert.Throws<ExpressifSyntaxException>(() => Expression.Create("add("));
+        var exception = Assert.Throws<ExpressifSyntaxException>(() => Expression.Create("add(", new ExpressionBinder()));
 
         Assert.That(
             CommandErrorFormatter.FormatValidationError(exception),
@@ -54,7 +54,7 @@ public class CommandErrorFormatterTests
     public void FormatValidationError_SyntaxFailureOnSecondLine_LocatesLineAndColumn()
     {
         const string source = "trim |\nadd(";
-        var exception = Assert.Throws<ExpressifSyntaxException>(() => Expression.Create(source));
+        var exception = Assert.Throws<ExpressifSyntaxException>(() => Expression.Create(source, new ExpressionBinder()));
 
         Assert.That(
             CommandErrorFormatter.FormatValidationError(exception, source),

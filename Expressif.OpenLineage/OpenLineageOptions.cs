@@ -14,4 +14,8 @@ public sealed class OpenLineageOptions
     public IReadOnlyList<OpenLineageDataset> Inputs { get; init; } = [];
 
     public IReadOnlyList<OpenLineageDataset> Outputs { get; init; } = [];
+
+    public bool FunctionMetrics { get; init; }
+
+    public bool FlowDecisions { get; init; }
 }

@@ -33,17 +33,6 @@ Returns a recovery result and terminates the current pipeline when the input is 
 
 
 
-## Argument evaluation
-
-- **`expression`:** Evaluated once only when the value entering this catch call is null, in the enclosing expression's context. Field references read that enclosing record, and tuple references select positions in that enclosing tuple.
-
-
-## Behavior
-
-Uses is-null semantics. The output preserves the input type on the pass-through path and depends on the recovery expression otherwise. Recovery errors propagate, and even a null recovery result terminates only the current pipeline.
-
-
-
 ## Examples
 
 {% raw %}
@@ -52,6 +41,14 @@ Uses is-null semantics. The output preserves the input type on the pass-through 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`expression`:** Evaluated once only when the value entering this catch call is null, in the enclosing expression's context. Field references read that enclosing record, and tuple references select positions in that enclosing tuple.
+
+
+## Behavior
+
+Uses is-null semantics. The output preserves the input type on the pass-through path and depends on the recovery expression otherwise. Recovery errors propagate, and even a null recovery result terminates only the current pipeline.
 
 **Kind:** Function  
 **Scope:** `flow`  

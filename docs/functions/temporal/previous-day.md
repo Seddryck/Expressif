@@ -3,7 +3,7 @@ layout: docs
 title: "previous-day"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 410
+nav_order: 370
 has_toc: false
 permalink: /functions/temporal/previous-day/
 tags:
@@ -19,16 +19,13 @@ previous-day() → date-time
 
 Returns the dateTime that substract a day to the dateTime passed as argument value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | previous-day → #"2024-01-14 12:30:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

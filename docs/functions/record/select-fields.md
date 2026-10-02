@@ -3,7 +3,7 @@ layout: docs
 title: "select-fields"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 210
+nav_order: 220
 has_toc: false
 permalink: /functions/record/select-fields/
 tags:
@@ -33,10 +33,6 @@ Returns only fields whose names appear in the supplied array, preserving input f
 
 
 
-## Argument evaluation
-
-- **`names`:** Evaluated once in the enclosing context.
-
 
 
 ## Examples
@@ -47,6 +43,9 @@ Returns only fields whose names appear in the supplied array, preserving input f
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`names`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `record`  

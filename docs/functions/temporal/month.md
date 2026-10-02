@@ -19,16 +19,13 @@ month() → text
 
 returns a textual value at format MM representing the month of the date passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | month → "01"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

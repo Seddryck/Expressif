@@ -19,15 +19,13 @@ decrement() → numeric
 
 Returns the argument number decremented of one unit.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 10 | decrement → 9
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

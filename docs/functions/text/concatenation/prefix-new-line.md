@@ -19,15 +19,13 @@ prefix-new-line() → text
 
 Returns the argument value preceeded by a space character. If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 "Hello World" | prefix-new-line → "Hello World" | prefix-new-line
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

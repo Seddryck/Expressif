@@ -1,0 +1,9 @@
+suite: semver
+kind: function
+operator: minor
+tests:
+  - id: minor.valid.semver
+    cases:
+      - id: minor.valid.semver.release
+        value: '12.3.4'
+        expected: 3

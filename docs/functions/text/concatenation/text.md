@@ -3,7 +3,7 @@ layout: docs
 title: "text"
 parent: "Concatenation functions"
 grand_parent: "Text functions"
-nav_order: 140
+nav_order: 180
 has_toc: false
 permalink: /functions/text/concatenation/text/
 tags:
@@ -21,17 +21,17 @@ text(
 
 Constructs text by evaluating zero or more positional expressions from left to right against the same input, converting each result to text, and concatenating the converted values in order. Spread arguments expand array values in place. Returns empty text when no expressions are supplied.
 
+
+
 ## Parameters
 
 
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `values` | `expression` | Variadic (zero or more) | Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place. |
+| `values` | `expression` | Variadic (zero or more); accepts spread | Zero or more expressions whose results are converted to text and concatenated in declaration order. Spread arguments expand array values in place. Omission supplies an empty variadic sequence. |
 
-## Argument evaluation
 
-- **`values`:** Each supplied expression is evaluated once against the value entering this call.
 
 ## Examples
 
@@ -44,8 +44,11 @@ Constructs text by evaluating zero or more positional expressions from left to r
 ```
 {% endraw %}
 
+## Argument evaluation
 
-**Kind:** Function
-**Scope:** `text/concatenation`
+- **`values`:** Each supplied expression is evaluated once against the value entering this call.
+
+**Kind:** Function<br>
+**Scope:** `text/concatenation`<br>
 **Aliases:** None
 {: .member-reference }

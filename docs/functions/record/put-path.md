@@ -3,7 +3,7 @@ layout: docs
 title: "put-path"
 parent: "Record functions"
 grand_parent: "Functions library"
-nav_order: 160
+nav_order: 170
 has_toc: false
 permalink: /functions/record/put-path/
 tags:
@@ -35,11 +35,6 @@ Creates or replaces the field at a dynamic path. Text is one literal segment; a 
 
 
 
-## Argument evaluation
-
-- **`path`:** Evaluated once against the value entering this call.
-- **`value`:** Evaluated once against the value entering this call.
-
 
 
 ## Examples
@@ -50,6 +45,10 @@ Creates or replaces the field at a dynamic path. Text is one literal segment; a 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`path`:** Evaluated once against the value entering this call.
+- **`value`:** Evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `record`  

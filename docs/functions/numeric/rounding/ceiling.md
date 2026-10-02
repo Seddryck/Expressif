@@ -19,15 +19,13 @@ ceiling() → numeric
 
 Returns the smallest integer greater than or equal to the argument number.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 10 | ceiling → 10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/rounding`  

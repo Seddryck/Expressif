@@ -9,7 +9,7 @@ function ParseTestFile {
       [String]$fileName,
       [String]$testName
     )
-    $sourceFile = "Expressif.Testing/$fileName"
+    $sourceFile = "Expressif.Library.Testing/$fileName"
     [bool] $capture = $false
     [string] $leadingSpace = ""
     ForEach ($line in Get-Content -Path $sourceFile) {

@@ -3,7 +3,7 @@ layout: docs
 title: "next-day"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 350
+nav_order: 340
 has_toc: false
 permalink: /functions/temporal/next-day/
 tags:
@@ -19,16 +19,13 @@ next-day() → date-time
 
 Returns the day immediately following the dateTime passed as argument value.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | next-day → #"2024-01-16 12:30:00"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

@@ -19,16 +19,13 @@ root() → text
 
 Returns the root directory information of a file path provided as argument. Returns `empty` if path does not contain root directory information or is `null`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "docs/_data/function.json" | root → ""
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `io`  

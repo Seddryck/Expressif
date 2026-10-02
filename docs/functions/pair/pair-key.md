@@ -13,20 +13,19 @@ generated: true
 ---
 
 ```
-pair →
-pair-key() → any
+pair<K, V> →
+pair-key() → K
 ```
 
 Returns the key component of the input pair.
+
+
 
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
 
 
 
@@ -38,6 +37,13 @@ This function has no parameters.
 ```
 {% endraw %}
 
+## Value shape
+
+- Pipeline input: `pair<K, V>`
+- Returns: `K`
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
 
 **Kind:** Function  
 **Scope:** `pair`  

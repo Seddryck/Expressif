@@ -33,17 +33,6 @@ Returns the dictionary value associated with the input key, or preserves the inp
 
 
 
-## Argument evaluation
-
-- **`mapping`:** Evaluated once in the enclosing expression context. Field references read that context's record, while the value entering this recode call is the key to match.
-
-
-## Behavior
-
-Output depends on the matched dictionary value, or preserves the input and its type when absent. Matching uses the dictionary's structural key equality, including null and structured keys; an empty dictionary preserves every input. Exactly one dictionary is required; arrays of pairs, tuples, records, groupings, and null mappings are rejected.
-
-
-
 ## Examples
 
 {% raw %}
@@ -54,6 +43,14 @@ Output depends on the matched dictionary value, or preserves the input and its t
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`mapping`:** Evaluated once in the enclosing expression context. Field references read that context's record, while the value entering this recode call is the key to match.
+
+
+## Behavior
+
+Output depends on the matched dictionary value, or preserves the input and its type when absent. Matching uses the dictionary's structural key equality, including null and structured keys; an empty dictionary preserves every input. Exactly one dictionary is required; arrays of pairs, tuples, records, groupings, and null mappings are rejected.
 
 **Kind:** Function  
 **Scope:** `special`  

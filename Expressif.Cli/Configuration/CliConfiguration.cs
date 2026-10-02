@@ -8,7 +8,11 @@ internal sealed class CliConfiguration(string path)
     public const string FileName = "expressif.config.json";
     public static readonly string[] Commands = ["repl", "run", "evaluate"];
     public static readonly string[] Settings = ["output-style", "indent", "preferred-line-width", "inline-types"];
-    public static readonly string[] LineageSettings = ["url", "endpoint", "api-key", "namespace", "job-name", "disabled"];
+    public static readonly string[] LineageSettings = ["url", "endpoint", "api-key", "namespace", "job-name", "disabled", "function-metrics", "flow-decisions"];
+    private static readonly HashSet<string> BooleanLineageSettings = new(StringComparer.Ordinal)
+    {
+        "disabled", "function-metrics", "flow-decisions",
+    };
     private static readonly HashSet<string> InlineTypes = new(StringComparer.OrdinalIgnoreCase)
     {
         "array", "tuple", "vector", "pair", "group", "record", "dictionary", "grouping",
@@ -62,7 +66,7 @@ internal sealed class CliConfiguration(string path)
             target = document[command] as JsonObject ?? throw new FormatException($"Configuration section '{command}' must be an object.");
         }
 
-        target[setting] = command == "openlineage" && setting == "disabled"
+        target[setting] = command == "openlineage" && BooleanLineageSettings.Contains(setting)
             ? JsonValue.Create(bool.Parse(normalized))
             : setting switch
         {
@@ -119,23 +123,23 @@ internal sealed class CliConfiguration(string path)
             {
                 "endpoint" => "api/v1/lineage",
                 "namespace" => "expressif",
-                "disabled" => "false",
+                "disabled" or "function-metrics" or "flow-decisions" => "false",
                 _ => string.Empty,
             };
         }
 
-        if (value is not JsonValue scalar || !(scalar.TryGetValue<string>(out _) || (setting == "disabled" && scalar.TryGetValue<bool>(out _))))
+        if (value is not JsonValue scalar || !(scalar.TryGetValue<string>(out _) || (BooleanLineageSettings.Contains(setting) && scalar.TryGetValue<bool>(out _))))
             throw new FormatException($"Configuration openlineage.{setting} has an invalid value type.");
         return ValidateLineageValue(setting, value!.ToString());
     }
 
     private static string ValidateLineageValue(string setting, string value)
     {
-        if (setting == "disabled")
+        if (BooleanLineageSettings.Contains(setting))
         {
-            if (bool.TryParse(value, out var disabled))
-                return disabled ? "true" : "false";
-            throw new FormatException("Configuration openlineage.disabled must be true or false.");
+            if (bool.TryParse(value, out var enabled))
+                return enabled ? "true" : "false";
+            throw new FormatException($"Configuration openlineage.{setting} must be true or false.");
         }
         if (string.IsNullOrWhiteSpace(value))
             throw new FormatException($"Configuration openlineage.{setting} must not be blank. Use config unset to remove it.");

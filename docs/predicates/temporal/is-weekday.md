@@ -20,6 +20,8 @@ is-weekday(
 
 Returns `true` if the date passed as the argument corresponds to the weekday passed as the parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,13 @@ Returns `true` if the date passed as the argument corresponds to the weekday pas
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `weekday` | `weekday` | Yes | The day of week to compare to the argument. |
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15" | is-weekday("Monday") → #true
+```
+{% endraw %}
 
 ## Argument evaluation
 

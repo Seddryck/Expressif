@@ -35,6 +35,23 @@ Evaluates an expression once for every supplied value, using that value as the p
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+5 | map-with(~subtract, {10, 11}) → {5, 6}
+```
+{% endraw %}
+
+## Structural semantics
+
+- Cardinality: `preserved` <span class="semantics-info" title="The output contains the same number of elements as the visited input." aria-label="Cardinality definition: The output contains the same number of elements as the visited input.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
 ## Argument evaluation
 
 Visits each element of the values argument supplied to this map-with call, in declaration order.
@@ -46,17 +63,6 @@ Visits each element of the values argument supplied to this map-with call, in de
 ## Behavior
 
 Prepare the invocation tuple only for a leading `bind("f")`, `rotate | bind("f")`, or `rotate(1) | bind("f")`, including their equivalent tilde forms. Parentheses around an open operation are transparent; an input-bound expression introduces its own boundary. Later bindings consume the preceding stage result without preparing another tuple. The supplied item and outer input each remain one position, even when either is a tuple. Legacy bare-callable argument injection remains available during deprecation; use `~f` for an explicit invocation. Ordinary complete expressions retain their existing input and argument contexts.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-5 | map-with(~subtract, {10, 11}) → {5, 6}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

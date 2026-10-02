@@ -97,6 +97,64 @@ internal sealed class SourcePipeline(
         foreach (var row in infrastructure.Normalize(source, path, scalar))
             yield return row;
     }
+
+    public object?[] CollectJsonDocuments(IReadOnlyList<string> sourcePatterns)
+    {
+        var documents = new List<object?>();
+        foreach (var pattern in sourcePatterns)
+        {
+            foreach (var path in SourcePathExpander.Expand(pattern))
+            {
+                if (!Path.GetExtension(path).Equals(".json", StringComparison.OrdinalIgnoreCase))
+                    throw new FormatException($"The source '{path}' is not a JSON document. The --collect option only supports JSON sources.");
+                SourcePathValidator.Validate(path);
+                documents.Add(infrastructure.OpenJsonDocument(path));
+            }
+        }
+
+        return [.. documents];
+    }
+}
+
+internal static class SourcePathExpander
+{
+    private static readonly char[] Wildcards = ['*', '?'];
+
+    public static IReadOnlyList<string> Expand(string pattern)
+    {
+        if (string.IsNullOrWhiteSpace(pattern))
+            throw new FormatException("Source path is required.");
+        if (pattern.IndexOfAny(Wildcards) < 0)
+            return [pattern];
+
+        var fullPattern = Path.GetFullPath(pattern);
+        var wildcardIndex = fullPattern.IndexOfAny(Wildcards);
+        var separatorIndex = fullPattern.LastIndexOfAny([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar], wildcardIndex);
+        var root = Path.GetPathRoot(fullPattern) ?? string.Empty;
+        var directory = separatorIndex < root.Length
+            ? root
+            : fullPattern[..separatorIndex];
+        var searchPattern = fullPattern[(separatorIndex + 1)..];
+        if (searchPattern.IndexOfAny([Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar]) >= 0)
+            throw new FormatException($"Source pattern '{pattern}' cannot contain wildcards in directory names.");
+
+        string[] matches;
+        try
+        {
+            matches = Directory.Exists(directory)
+                ? Directory.GetFiles(directory, searchPattern, SearchOption.TopDirectoryOnly)
+                : [];
+        }
+        catch (Exception exception) when (exception is not OutOfMemoryException)
+        {
+            throw new FormatException($"Source pattern '{pattern}' could not be expanded: {exception.Message}", exception);
+        }
+
+        if (matches.Length == 0)
+            throw new FormatException($"Source pattern '{pattern}' did not match any files.");
+        Array.Sort(matches, StringComparer.Ordinal);
+        return matches;
+    }
 }
 
 internal static class SourcePathValidator

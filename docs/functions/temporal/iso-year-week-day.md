@@ -19,16 +19,13 @@ iso-year-week-day() → text
 
 returns a textual value at format YYYY-Www-D representing the year and week number (according to ISO 8601), and the day number (1 being Monday) of the date passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | iso-year-week-day → "2024-W03-1"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

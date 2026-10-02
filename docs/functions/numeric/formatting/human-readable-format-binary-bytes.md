@@ -27,11 +27,6 @@ Formats a numeric value as binary bytes using IEC prefixes.
 
 This function has no parameters.
 
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -39,7 +34,6 @@ This function has no parameters.
 10 | human-readable-format-binary-bytes → "10 B"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/formatting`  

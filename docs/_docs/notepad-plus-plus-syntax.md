@@ -5,7 +5,7 @@ tags: [edition]
 ---
 # Notepad++ Syntax Highlighting
 
-Expressif releases include a generated Notepad++ User Defined Language (UDL) file. The file highlights `.expr` and `.expressif` files using the functions, predicates, accumulators, literals, operators, and delimiters known to the version of Expressif in that release.
+Expressif releases include a generated Notepad++ User Defined Language (UDL) file. The file highlights `.expr` and `.expressif` files using the functions, predicates, incremental aggregation functions, literals, operators, and delimiters known to the version of Expressif in that release.
 
 ## Install the language
 

@@ -33,17 +33,6 @@ Returns the sum of the input value and the parameter value.
 | `value` | `numeric` | Yes | The value to add to the input value. |
 | `times` | `integer` | No | Number of times the addition is applied. Defaults to `1`. |
 
-## Argument evaluation
-
-- **`value`:** Evaluated once in the enclosing context.
-- **`times`:** Evaluated once in the enclosing context.
-
-## Behavior
-
-**Argument form — `value` and `times`:** Value expressions: literals, references, or expression pipelines, such as `5`, `.bonus`, or `5 | multiply(2)`. `times` defaults to `1`; the result is `input + value × times`.
-
-**Enclosing context:** Both arguments retain the surrounding expression context. Field references read its contextual record, independently of the number entering `add`. For example, `{price:=10, bonus:=3} | .price | add(.bonus)` returns `13`: the pipeline input to `add` is `10`, while `.bonus` reads `3` from the surrounding record.
-
 
 
 ## Examples
@@ -55,6 +44,17 @@ Returns the sum of the input value and the parameter value.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`value`:** Evaluated once in the enclosing context.
+- **`times`:** Evaluated once in the enclosing context.
+
+
+## Behavior
+
+**Argument form — `value` and `times`:** Value expressions: literals, references, or expression pipelines, such as `5`, `.bonus`, or `5 | multiply(2)`. `times` defaults to `1`; the result is `input + value × times`.
+
+**Enclosing context:** Both arguments retain the surrounding expression context. Field references read its contextual record, independently of the number entering `add`. For example, `{price:=10, bonus:=3} | .price | add(.bonus)` returns `13`: the pipeline input to `add` is `10`, while `.bonus` reads `3` from the surrounding record.
 
 **Kind:** Function  
 **Scope:** `numeric/arithmetic`  

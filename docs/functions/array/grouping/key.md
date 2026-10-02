@@ -21,17 +21,19 @@ key(
 
 Associates the input value with a key calculated by one or more expressions.
 
+
+
 ## Parameters
 
 
 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
-| `expressions` | `expression` | Variadic (one or more) | One or more expressions evaluated against the input; multiple results form a tuple key. |
+| `expressions` | `expression` | Variadic (one or more); no spread | One or more expressions evaluated against the input; multiple results form a tuple key. |
 
-## Argument evaluation
 
-- **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
+
+
 
 ## Examples
 
@@ -42,6 +44,9 @@ Associates the input value with a key calculated by one or more expressions.
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`expressions`:** Each supplied expression is evaluated once against the value entering this call.
 
 **Kind:** Function  
 **Scope:** `array/grouping`  

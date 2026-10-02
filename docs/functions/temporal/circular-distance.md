@@ -21,6 +21,8 @@ circular-distance(
 
 Returns the shortest unsigned duration between the current time and a reference time on a 24-hour clock. Returns `null` when either time is `null`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,7 @@ Returns the shortest unsigned duration between the current time and a reference 
 |:-----|:-----|:---------|:------------|
 | `reference` | `time` | Yes | The time from which to measure the shortest distance around the clock. |
 
-## Argument evaluation
 
-- **`reference`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -42,6 +42,9 @@ Returns the shortest unsigned duration between the current time and a reference 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`reference`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

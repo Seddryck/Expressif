@@ -31,13 +31,7 @@ Returns `true` when at most the requested number of supplied predicates are sati
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Specifies the maximum non-negative number of predicates that may be satisfied. |
-| `predicates` | `predicate` | Variadic (zero or more) | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
-
-## Argument evaluation
-
-- **`count`:** Evaluated once against the incoming value to determine the required predicate count.
-- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
-
+| `predicates` | `predicate` | Variadic (zero or more); no spread | Specifies the predicate expressions evaluated against the same input value, in declaration order. |
 ## Examples
 
 {% raw %}
@@ -46,6 +40,10 @@ Returns `true` when at most the requested number of supplied predicates are sati
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`count`:** Evaluated once against the incoming value to determine the required predicate count.
+- **`predicates`:** Predicates use the same incoming value and are evaluated in declaration order. Evaluation stops as soon as the result is known.
 
 **Kind:** Predicate  
 **Scope:** `boolean`  

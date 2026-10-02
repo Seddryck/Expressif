@@ -20,6 +20,8 @@ is-within-previous-days(
 
 Returns true if the date passed as argument is between the count of days before the current date and yesterday (both included). Returns false otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,6 +29,16 @@ Returns true if the date passed as argument is between the count of days before 
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `count` | `integer` | Yes | Count of days to move backward. A value of 1 is equivalent to the predicate `yesterday` and a value of 0 will return false. |
+
+
+
+## Examples
+
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-within-previous-days(2) → #false
+```
+{% endraw %}
 
 ## Argument evaluation
 

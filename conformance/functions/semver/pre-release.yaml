@@ -1,0 +1,12 @@
+suite: semver
+kind: function
+operator: pre-release
+tests:
+  - id: pre-release.valid.semver
+    cases:
+      - id: pre-release.valid.semver.present
+        value: '1.2.3-rc.1+build.7'
+        expected: 'rc.1'
+      - id: pre-release.valid.semver.absent
+        value: '1.2.3'
+        expected: ''

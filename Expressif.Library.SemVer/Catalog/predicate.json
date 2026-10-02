@@ -1,0 +1,116 @@
+[
+  {
+    "Name": "same-version",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "boolean",
+    "Summary": "Returns true when all five semantic-version components match exactly.",
+    "Parameters": [
+      {
+        "Name": "version",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": { "Frequency": "once", "Source": "enclosing", "Summary": "Evaluated once in the context enclosing this same-version call." }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "lower-precedence",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "boolean",
+    "Summary": "Returns true when the pipeline input has lower SemVer precedence than the parameter.",
+    "Parameters": [
+      {
+        "Name": "version",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": { "Frequency": "once", "Source": "enclosing", "Summary": "Evaluated once in the context enclosing this lower-precedence call." }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "higher-precedence",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "boolean",
+    "Summary": "Returns true when the pipeline input has higher SemVer precedence than the parameter.",
+    "Parameters": [
+      {
+        "Name": "version",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": { "Frequency": "once", "Source": "enclosing", "Summary": "Evaluated once in the context enclosing this higher-precedence call." }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "same-precedence",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "boolean",
+    "Summary": "Returns true when the pipeline input has equal SemVer precedence, ignoring build metadata.",
+    "Parameters": [
+      {
+        "Name": "version",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": { "Frequency": "once", "Source": "enclosing", "Summary": "Evaluated once in the context enclosing this same-precedence call." }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "same-major",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "boolean",
+    "Summary": "Returns true when the major components match.",
+    "Parameters": [
+      {
+        "Name": "version",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": { "Frequency": "once", "Source": "enclosing", "Summary": "Evaluated once in the context enclosing this same-major call." }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  },
+  {
+    "Name": "same-minor",
+    "IsPublic": true,
+    "Aliases": [],
+    "Scope": "semver",
+    "Input": "semver",
+    "Output": "boolean",
+    "Summary": "Returns true when both major and minor components match.",
+    "Parameters": [
+      {
+        "Name": "version",
+        "Type": "semver",
+        "Optional": false,
+        "Summary": "The semantic version compared with the pipeline input.",
+        "Evaluation": { "Frequency": "once", "Source": "enclosing", "Summary": "Evaluated once in the context enclosing this same-minor call." }
+      }
+    ],
+    "Schema": { "Classification": "fixed" }
+  }
+]

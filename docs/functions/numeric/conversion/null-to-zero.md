@@ -19,15 +19,13 @@ null-to-zero() → numeric
 
 Returns the unmodified argument value except if the argument value is `null`, `empty` or `whitespace` then it returns `0`.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
 
 ## Examples
 
@@ -36,7 +34,6 @@ This function has no parameters.
 10 | null-to-zero → 10
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `numeric/conversion`  

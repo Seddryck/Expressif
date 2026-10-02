@@ -1,19 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-        <PackageId>Expressif</PackageId>
-        <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
-        <PackageTags>predicate-functions;variable-binding;predicate;variable-substitution</PackageTags>
-        <Description>Expressif is the variable substitution syntax combined with a library of predicates and functions. Initially designed for NBi.io, Expressif allows you to define variables, transformations of these variables (with expressions and functions), in plain text, which can then be interpreted by the engine. Same can be done with predicates.</Description>
-    </PropertyGroup>
-	<PropertyGroup>
-	  <GenerateDocumentationFile>True</GenerateDocumentationFile>
-	</PropertyGroup>
-	<ItemGroup>
-    <PackageReference Include="Expressif.Syntax" Version="0.47.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="..\docs\_data\function.json" LogicalName="Expressif.FunctionCatalog.json" />
-		<EmbeddedResource Include="..\docs\_data\type.json" LogicalName="Expressif.TypeCatalog.json" />
-		<EmbeddedResource Include="..\docs\_data\usage-lifecycle.json" LogicalName="Expressif.UsageLifecycle.json" />
-	</ItemGroup>
+  <PropertyGroup>
+    <PackageId>Expressif</PackageId>
+    <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
+    <PackageTags>predicate-functions;variable-binding;predicate;variable-substitution</PackageTags>
+    <Description>Umbrella package for Expressif. References the core runtime and official built-in library at the same version.</Description>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Expressif.Core\Expressif.Core.csproj" />
+    <ProjectReference Include="..\Expressif.Library\Expressif.Library.csproj" />
+  </ItemGroup>
 </Project>

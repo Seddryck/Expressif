@@ -13,13 +13,15 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 chunk-around(
     position: integer
-) → tuple
+) → tuple<array<T>, T, array<T>>
 ```
 
 Separates the element at a zero-based position from the elements before and after it, returning the three parts as a tuple. Returns `null` when the position is invalid or the input cannot be evaluated.
+
+
 
 ## Parameters
 
@@ -29,9 +31,38 @@ Separates the element at a zero-based position from the elements before and afte
 |:-----|:-----|:---------|:------------|
 | `position` | `integer` | Yes | The zero-based position of the element to separate. |
 
+
+
+## Examples
+
+{% raw %}
+```expressif
+{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `array<T>`
+- Returns: `tuple<array<T>, T, array<T>>`
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+## Structural semantics
+
+- Cardinality: `partitioned` <span class="semantics-info" title="Visited inputs are reorganized into groups or partitions." aria-label="Cardinality definition: Visited inputs are reorganized into groups or partitions.">i</span>
+- Dependency: `partition` <span class="semantics-info" title="An output depends on the elements belonging to the same partition or key." aria-label="Dependency definition: An output depends on the elements belonging to the same partition or key.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
 ## Argument evaluation
 
 - **`position`:** Evaluated once in the enclosing context.
+
 
 ## Behavior
 
@@ -65,17 +96,6 @@ steps | chunk-on(2)
 ```
 
 The same three-role structure—`past | selected/current item | future`—appears in workflow engines, carousel focus, undo/redo histories, breadcrumb navigation, and processing a specific failed event in a sequence. The equivalent result can be constructed by splitting the right chunk again, but `chunk-on` alone does not distinguish the current item from future items. `chunk-around` directly provides this array-zipper operation.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{10, 20, 30, 40} | chunk-around(2) → T({10, 20}, 30, {40})
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array/partitioning`  

@@ -33,6 +33,23 @@ Emits one record per selected collection element, preserving parents with empty 
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{id := 1, tags := {}} | explode-outer(.tags) → {{id := 1, tags := #null}}
+```
+{% endraw %}
+
+## Structural semantics
+
+- Cardinality: `expanded` <span class="semantics-info" title="One visited input can produce multiple output elements." aria-label="Cardinality definition: One visited input can produce multiple output elements.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
 ## Argument evaluation
 
 Visits the record supplied as pipeline input to this explode-outer call, or each parent record of its input array in source order. Visits selected children in source order, retaining a parent with no children.
@@ -43,17 +60,6 @@ Visits the record supplied as pipeline input to this explode-outer call, or each
 ## Behavior
 
 Matches explode for non-empty collections, preserving field position, child order, duplicates, and one-level expansion. Empty, null, or missing selected fields emit one parent with a null selected field; a missing field is appended. Non-collection selected values and non-record parents cause an evaluation error. Null pipeline input returns null. The selector must be a direct field reference; computed expressions and nested paths fail during binding. Empty and originally null collections become indistinguishable. expand changes record shape without expanding cardinality.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{id := 1, tags := {}} | explode-outer(.tags) → {{id := 1, tags := #null}}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `record`  

@@ -19,16 +19,13 @@ text-to-uri() → text
 
 Returns the input text escaped as URI data using UTF-8 percent encoding. Preserves `null`, empty, and blank inputs.
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 "café & tea" | text-to-uri → "caf%C3%A9%20%26%20tea"
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `text/encoding`  

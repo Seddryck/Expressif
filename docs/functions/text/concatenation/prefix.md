@@ -21,6 +21,8 @@ prefix(
 
 Returns the argument value preceeded by the parameter value. If the argument is `null`, it returns `null`.
 
+
+
 ## Parameters
 
 
@@ -29,9 +31,7 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 |:-----|:-----|:---------|:------------|
 | `prefix` | `text` | Yes | The text to append |
 
-## Argument evaluation
 
-- **`prefix`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -41,6 +41,9 @@ Returns the argument value preceeded by the parameter value. If the argument is 
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`prefix`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `text/concatenation`  

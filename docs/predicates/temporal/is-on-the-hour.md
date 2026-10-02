@@ -18,15 +18,20 @@ is-on-the-hour()
 
 Returns `true` if the argument is of type `DateTime` and the minutes, seconds and milliseconds are all set at `0`. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
+## Examples
 
-
-
-
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-on-the-hour → #false
+```
+{% endraw %}
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

@@ -3,7 +3,7 @@ layout: docs
 title: "second-of-hour"
 parent: "Temporal functions"
 grand_parent: "Functions library"
-nav_order: 470
+nav_order: 410
 has_toc: false
 permalink: /functions/temporal/second-of-hour/
 tags:
@@ -19,16 +19,13 @@ second-of-hour() → integer
 
 returns a numeric value representing the seconds of the hour of the date passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | second-of-hour → 1800
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

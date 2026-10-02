@@ -3,7 +3,7 @@ layout: docs
 title: "is-zero-or-null"
 parent: "Numeric predicates"
 grand_parent: "Predicates library"
-nav_order: 150
+nav_order: 160
 has_toc: false
 permalink: /predicates/numeric/is-zero-or-null/
 tags:
@@ -18,17 +18,13 @@ is-zero-or-null()
 
 Returns true if the numeric value passed as argument is equal to `0` or `null`. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
-
-
-
-
-
-
 ## Examples
 
 {% raw %}
@@ -36,7 +32,6 @@ This predicate has no parameters.
 10 | is-zero-or-null → #false
 ```
 {% endraw %}
-
 
 **Kind:** Predicate  
 **Scope:** `numeric`  

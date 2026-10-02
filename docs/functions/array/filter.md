@@ -13,10 +13,10 @@ generated: true
 ---
 
 ```
-array →
+array<T> →
 filter(
     predicate: predicate
-) → array
+) → array<T>
 ```
 
 Applies a predicate expression to each input item and returns only items for which the predicate evaluates to `true`. Returns `null` when the input is not an enumerable or is a string.
@@ -33,6 +33,35 @@ Applies a predicate expression to each input item and returns only items for whi
 
 
 
+## Examples
+
+{% raw %}
+```expressif
+{1, 2, 3} | filter(greater-than(1)) → {2, 3}
+{{active:=#true}, {active:=#false}} | filter(.active) → {{active:=#true}}
+!{"BE" => 100, "FR" => 80} | filter($value | greater-than(90)) → {("BE" => 100)}
+```
+{% endraw %}
+
+## Value shape
+
+- Pipeline input: `array<T>`
+- Returns: `array<T>`
+- `predicate`: Receives `T` and returns `boolean`.
+- Nullability: The result is nullable when the pipeline input is nullable.
+
+`T`, `U`, and other capital letters represent related value shapes. Repeated letters refer to the same shape within the contract.
+
+
+## Structural semantics
+
+- Cardinality: `non-increasing` <span class="semantics-info" title="The output contains no more elements than the visited input." aria-label="Cardinality definition: The output contains no more elements than the visited input.">i</span>
+- Dependency: `per-element` <span class="semantics-info" title="An output element depends only on its corresponding visited input element." aria-label="Dependency definition: An output element depends only on its corresponding visited input element.">i</span>
+- Ordering: `preserved` <span class="semantics-info" title="Relative source order is retained." aria-label="Ordering definition: Relative source order is retained.">i</span>
+
+See [Structural semantics](/Expressif/language/structural-semantics/) for the definitions and their relationship to traversal and argument evaluation.
+
+
 ## Argument evaluation
 
 Visits each element of the array or each pair of the dictionary supplied as pipeline input to this filter call, in enumeration order.
@@ -47,19 +76,6 @@ Visits each element of the array or each pair of the dictionary supplied as pipe
 **Element binding:** The predicate runs once for each element of the array supplied as pipeline input to this `filter` call. At the start of the predicate, `.field` reads that element's field. In `.lines | filter(.active)`, the inner predicate receives a line from the `.lines` array, not the surrounding record.
 
 **Dictionary traversal:** A dictionary supplies its pairs directly, in dictionary order. The predicate receives each pair as its context; $key and $value access that pair. The result is an ordinary array of unchanged selected pairs. An empty dictionary produces an empty array.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{1, 2, 3} | filter(greater-than(1)) → {2, 3}
-{{active:=#true}, {active:=#false}} | filter(.active) → {{active:=#true}}
-!{"BE" => 100, "FR" => 80} | filter($value | greater-than(90)) → {("BE" => 100)}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `array`  

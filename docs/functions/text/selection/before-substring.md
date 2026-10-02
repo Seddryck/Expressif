@@ -16,7 +16,7 @@ generated: true
 text →
 before-substring(
     substring: text,
-    count?: integer
+    count: integer = 0
 ) → text
 ```
 
@@ -31,12 +31,9 @@ Returns the substring of the argument string, containing all the characters imme
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `substring` | `text` | Yes | The string to seek. |
-| `count` | `integer` | No | The number of character positions to examine. |
+| `count` | `integer` | No | The number of character positions to examine. Defaults to `0`. |
 
-## Argument evaluation
 
-- **`substring`:** Evaluated once in the enclosing context.
-- **`count`:** Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text.
 
 ## Examples
 
@@ -47,6 +44,10 @@ Returns the substring of the argument string, containing all the characters imme
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`substring`:** Evaluated once in the enclosing context.
+- **`count`:** Evaluated once in the enclosing context when the substring is found. Skipped when the substring is empty, null, or absent from the text.
 
 **Kind:** Function  
 **Scope:** `text/selection`  

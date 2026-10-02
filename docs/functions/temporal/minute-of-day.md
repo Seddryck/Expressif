@@ -19,16 +19,13 @@ minute-of-day() → integer
 
 returns a numeric value representing the minutes of the date passed as the argument
 
+
+
 ## Parameters
 
 
 
 This function has no parameters.
-
-
-
-
-
 
 ## Examples
 
@@ -37,7 +34,6 @@ This function has no parameters.
 #"2024-01-15 12:30:00" | minute-of-day → 750
 ```
 {% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `temporal`  

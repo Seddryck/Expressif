@@ -31,9 +31,17 @@ Transforms one or more named expression results with the same open expression an
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `operation` | `expression` | Yes | Open expression evaluated once against each named result. |
-| `expressions` | `entry` | Variadic (one or more) | One or more named expressions evaluated independently against the original input. |
+| `expressions` | `entry` | Variadic (one or more); no spread | One or more named expressions evaluated independently against the original input. |
 
 
+
+## Examples
+
+{% raw %}
+```expressif
+{first-name := " Alice ", last-name := " Smith "} | transform-as(trim, first-name := .first-name, last-name := .last-name) → {first-name := "Alice", last-name := "Smith"}
+```
+{% endraw %}
 
 ## Argument evaluation
 
@@ -46,17 +54,6 @@ Evaluates the shared operation against each result produced by the named express
 ## Behavior
 
 `transform-as` evaluates every named expression independently against the original input, then evaluates the shared open expression against each resulting value. Each argument name becomes the corresponding field name, declaration order is preserved, and the result is always a record, including for a single named expression. Unnamed expressions after the operation are rejected. `transform-as` is the named, record-producing counterpart of `transform-with`, which accepts positional expressions and returns a tuple. Unlike `apply`, the shared expression is evaluated separately for each named result.
-
-
-
-## Examples
-
-{% raw %}
-```expressif
-{first-name := " Alice ", last-name := " Smith "} | transform-as(trim, first-name := .first-name, last-name := .last-name) → {first-name := "Alice", last-name := "Smith"}
-```
-{% endraw %}
-
 
 **Kind:** Function  
 **Scope:** `flow`  

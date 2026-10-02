@@ -16,11 +16,13 @@ generated: true
 date-time →
 backward(
     time: time,
-    times?: integer
+    times: integer = 1
 ) → date-time
 ```
 
 Returns a dateTime that subtract the timestamp passed as parameter to the argument. If times is specified this operation is reproduced.
+
+
 
 ## Parameters
 
@@ -29,12 +31,9 @@ Returns a dateTime that subtract the timestamp passed as parameter to the argume
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `time` | `time` | Yes | The value to be subtracted to the argument value. |
-| `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction |
+| `times` | `integer` | No | An integer between 0 and +Infinity, indicating the number of times to repeat the subtraction Defaults to `1`. |
 
-## Argument evaluation
 
-- **`time`:** Evaluated once in the enclosing context.
-- **`times`:** Evaluated once in the enclosing context.
 
 ## Examples
 
@@ -45,6 +44,10 @@ Returns a dateTime that subtract the timestamp passed as parameter to the argume
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`time`:** Evaluated once in the enclosing context.
+- **`times`:** Evaluated once in the enclosing context.
 
 **Kind:** Function  
 **Scope:** `temporal`  

@@ -1,5 +1,5 @@
 using System.Text;
-using Expressif.Functions.Catalog;
+using Expressif.Library.Catalog;
 
 namespace Expressif.Cli.Commands;
 
@@ -26,6 +26,8 @@ internal static class FunctionHelpFormatter
                     builder.Append(" (variadic, ").Append(FormatMinimumCardinality(parameter)).Append(" or more)");
                 else if (parameter.Optional)
                     builder.Append(" (optional)");
+                if (parameter.AllowsSpread)
+                    builder.Append(" (accepts spread)");
 
                 builder.Append("  ").AppendLine(parameter.Summary);
             }
@@ -88,10 +90,13 @@ internal static class FunctionHelpFormatter
                 builder.Append("...");
 
             builder.Append(parameter.Name);
-            if (parameter.Optional && !parameter.Variadic)
+            if (parameter.Optional && !parameter.Variadic
+                && parameter.Omission?.Mode != ParameterOmissionMode.Constant)
                 builder.Append('?');
 
             builder.Append(": ").Append(parameter.TypeOrKind);
+            if (parameter.Omission?.Mode == ParameterOmissionMode.Constant)
+                builder.Append(" = ").Append(parameter.Omission.Value.GetRawText());
             if (i < function.Parameters.Length - 1)
                 builder.Append(',');
 

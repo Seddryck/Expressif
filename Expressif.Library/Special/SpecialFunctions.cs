@@ -1,0 +1,147 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Text;
+using Expressif.Bindings;
+using Expressif.Values;
+using Expressif.Values.Casters;
+using Expressif.Values.Special;
+
+namespace Expressif.Library.Special;
+
+[Function(prefix: "")]
+public abstract class BaseSpecialFunction : IFunction<object?, string>
+{
+    public object? Evaluate(object? value)
+    {
+        return value switch
+        {
+            null => EvaluateNull(),
+            DBNull _ => EvaluateNull(),
+            Expressif.Values.Special.Null => EvaluateNull(),
+            Expressif.Values.Special.Empty => EvaluateEmpty(),
+            Whitespace => EvaluateBlank(),
+            Any => EvaluateAny(),
+            Value => EvaluateValue(),
+            string s => EvaluateHighLevelString(s),
+            _ => EvaluateUncasted(value),
+        };
+    }
+
+    string IFunction<object?, string>.Evaluate(object? value) => (string)Evaluate(value)!;
+
+    private string EvaluateUncasted(object value)
+    {
+        var caster = new TextCaster();
+        var str = caster.Cast(value);
+        return EvaluateHighLevelString(str);
+    }
+
+    protected virtual string EvaluateHighLevelString(string value)
+    {
+        if (Expressif.Values.Special.Empty.Instance.Equals(value))
+            return EvaluateEmpty();
+
+        if (Expressif.Values.Special.Null.Instance.Equals(value))
+            return EvaluateNull();
+
+        if (Whitespace.Instance.Equals(value))
+            return EvaluateBlank();
+
+        if (Any.Keyword.Equals(value))
+            return EvaluateAny();
+
+        if (Value.Keyword.Equals(value))
+            return EvaluateValue();
+
+        return EvaluateString(value);
+    }
+
+    protected abstract string EvaluateNull();
+    protected abstract string EvaluateEmpty();
+    protected abstract string EvaluateBlank();
+    protected abstract string EvaluateAny();
+    protected abstract string EvaluateValue();
+    protected abstract string EvaluateString(string value);
+}
+
+/// <summary>
+/// Returns the value passed as argument, except if the value is `null` then it returns `value`.
+/// </summary>
+public class NullToValue : BaseSpecialFunction
+{
+    protected override string EvaluateNull() => Value.Keyword;
+    protected override string EvaluateEmpty() => Expressif.Values.Special.Empty.Keyword;
+    protected override string EvaluateBlank() => Whitespace.Keyword;
+    protected override string EvaluateAny() => Value.Keyword;
+    protected override string EvaluateValue() => Value.Keyword;
+    protected override string EvaluateString(string value) => value;
+}
+
+/// <summary>
+/// Returns `any`.
+/// </summary>
+public class AnyToAny : BaseSpecialFunction
+{
+    protected override string EvaluateNull() => Any.Keyword;
+    protected override string EvaluateEmpty() => Any.Keyword;
+    protected override string EvaluateBlank() => Any.Keyword;
+    protected override string EvaluateAny() => Any.Keyword;
+    protected override string EvaluateValue() => Any.Keyword;
+    protected override string EvaluateString(string value) => Any.Keyword;
+}
+
+/// <summary>
+/// Returns `value` except if the argument value is `null` then it returns `null`.
+/// </summary>
+public class ValueToValue : BaseSpecialFunction
+{
+    protected override string EvaluateNull() => Expressif.Values.Special.Null.Keyword;
+    protected override string EvaluateEmpty() => Value.Keyword;
+    protected override string EvaluateBlank() => Value.Keyword;
+    protected override string EvaluateAny() => Value.Keyword;
+    protected override string EvaluateValue() => Value.Keyword;
+    protected override string EvaluateString(string value) => Value.Keyword;
+}
+
+/// <summary>
+/// Returns the first non-null result from two or more expressions evaluated from left to right against the same input. Returns <see langword="null"/> when every expression evaluates to <see langword="null"/>.
+/// </summary>
+[Function(prefix: "")]
+public class Coalesce : IFunction
+{
+    public IReadOnlyList<Func<object?, object?>> Expressions { get; }
+
+    /// <param name="expressions">Two or more candidate expressions evaluated from left to right against the same input.</param>
+    [ArgumentLayout(ArgumentLayoutKind.Positional, MinimumCardinality = 2)]
+    public Coalesce([ArgumentEvaluation(ArgumentEvaluationMode.Incoming)]
+        IEnumerable<Func<object?, object?>> expressions)
+    {
+        Expressions = expressions.ToArray();
+        if (Expressions.Count < 2)
+            throw new MissingOrUnexpectedParametersFunctionException(nameof(Coalesce), Expressions.Count);
+    }
+
+    public object? Evaluate(object? value)
+    {
+        for (var index = 0; index < Expressions.Count; index++)
+        {
+            var result = Expressions[index].Invoke(value);
+            if (result is not null && !Expressif.Values.Special.Null.Instance.Equals(result))
+            {
+                EvaluationRuntime.ReportFlowDecision(
+                    Observability.FlowDecisionOutcome.CandidateSelected,
+                    index,
+                    index + 1);
+                return result;
+            }
+        }
+
+        EvaluationRuntime.ReportFlowDecision(
+            Observability.FlowDecisionOutcome.AllCandidatesNull,
+            evaluated: Expressions.Count);
+        return null;
+    }
+}

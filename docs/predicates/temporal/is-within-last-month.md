@@ -18,15 +18,21 @@ is-within-last-month()
 
 Returns true if the date passed as argument is part of the month preceding than the current month. Returns false otherwise.
 
+
+
 ## Parameters
 
 
 
 This predicate has no parameters.
 
+## Examples
 
-
-
+{% raw %}
+```expressif
+#"2024-01-15 12:30:00" | is-within-last-month → #false
+```
+{% endraw %}
 
 **Kind:** Predicate  
 **Scope:** `temporal`  

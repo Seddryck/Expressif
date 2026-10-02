@@ -35,16 +35,6 @@ Flattens a selected nested record into its parent, qualifying conflicts or every
 
 
 
-## Argument evaluation
-
-- **`selector`:** Evaluated once with the record supplied as pipeline input to this expand call as its context. A direct .field reads that record, including changes made by earlier pipeline stages.
-- **`label`:** When supplied, evaluated after the selector with the record entering this expand call as its context, before expanding its fields.
-
-
-## Behavior
-
-Without a label, the selector must be a direct field selector such as .customer; computed selectors require a label at binding time. A direct selector consumes its field; a computed selector beginning with a direct field selection consumes that first field, while other computed selectors append their expanded fields. Expanded fields replace the consumed field in nested field order; all remaining parent fields retain their order. Expansion is shallow. Null or missing selections add no fields; non-record selections return null. Non-record pipeline input is rejected. Field names are case-sensitive. Parent fields are authoritative: conflicting expanded names receive the qualifier repeatedly until unique, while unique unqualified nested names are reserved before resolving conflicts. Explicit labels qualify every field, including when the label is empty. See [label](/functions/tuple/label/) and [label-conflicts](/functions/tuple/label-conflicts/) for symmetric tuple shaping.
-
 
 
 ## Examples
@@ -57,6 +47,15 @@ Without a label, the selector must be a direct field selector such as .customer;
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`selector`:** Evaluated once with the record supplied as pipeline input to this expand call as its context. A direct .field reads that record, including changes made by earlier pipeline stages.
+- **`label`:** When supplied, evaluated after the selector with the record entering this expand call as its context, before expanding its fields.
+
+
+## Behavior
+
+Without a label, the selector must be a direct field selector such as .customer; computed selectors require a label at binding time. A direct selector consumes its field; a computed selector beginning with a direct field selection consumes that first field, while other computed selectors append their expanded fields. Expanded fields replace the consumed field in nested field order; all remaining parent fields retain their order. Expansion is shallow. Null or missing selections add no fields; non-record selections return null. Non-record pipeline input is rejected. Field names are case-sensitive. Parent fields are authoritative: conflicting expanded names receive the qualifier repeatedly until unique, while unique unqualified nested names are reserved before resolving conflicts. Explicit labels qualify every field, including when the label is empty. See [label](/functions/tuple/label/) and [label-conflicts](/functions/tuple/label-conflicts/) for symmetric tuple shaping.
 
 **Kind:** Function  
 **Scope:** `record`  

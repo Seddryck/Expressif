@@ -20,6 +20,8 @@ is-divisible-by(
 
 Returns `true` if the numeric value passed as argument is evenly divisible by the divisor provided as parameter. Returns `false` otherwise.
 
+
+
 ## Parameters
 
 
@@ -27,11 +29,6 @@ Returns `true` if the numeric value passed as argument is evenly divisible by th
 | Name | Type | Required | Description |
 |:-----|:-----|:---------|:------------|
 | `divisor` | `numeric` | Yes | An integer value used as the divisor. |
-
-## Argument evaluation
-
-- **`divisor`:** Evaluated once in the enclosing context.
-
 ## Examples
 
 {% raw %}
@@ -40,6 +37,9 @@ Returns `true` if the numeric value passed as argument is evenly divisible by th
 ```
 {% endraw %}
 
+## Argument evaluation
+
+- **`divisor`:** Evaluated once in the enclosing context.
 
 **Kind:** Predicate  
 **Scope:** `numeric/arithmetic`  
