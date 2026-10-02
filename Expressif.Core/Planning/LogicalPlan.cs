@@ -89,6 +89,8 @@ public sealed record LogicalCall(
 /// </summary>
 public sealed record LogicalLiteral(string Type, object? Value) : LogicalValue;
 
+internal sealed record QuotedLiteralRepresentation(string Value);
+
 /// <summary>
 /// An argument associated with its canonical catalog parameter.
 /// </summary>

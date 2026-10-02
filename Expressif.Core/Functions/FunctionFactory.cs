@@ -110,6 +110,35 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         => Registry.TryResolve(name, out implementationType!)
             || predicateRegistry.TryResolve(name, out implementationType!);
 
+    bool IFunctionConstructionContext.TryCoerce(object? value, Type targetType, out object? result)
+    {
+        if (value is null)
+        {
+            result = null;
+            return true;
+        }
+        if (targetType.IsInstanceOfType(value))
+        {
+            result = value;
+            return true;
+        }
+        var targetTypes = targetType.IsValueType && Nullable.GetUnderlyingType(targetType) is null
+            ? new[] { targetType, typeof(Nullable<>).MakeGenericType(targetType) }
+            : [targetType];
+        var coercion = targetTypes
+            .Select(candidate => coercionRegistry.TryCreate(value.GetType(), candidate, out var function)
+                ? function
+                : null)
+            .FirstOrDefault(function => function is not null);
+        if (coercion is not null)
+        {
+            result = coercion.Evaluate(value);
+            return true;
+        }
+        result = null;
+        return false;
+    }
+
     Type IFunctionConstructionContext.ResolveTupleTarget(string name, Syntax.SourceSpan? sourceSpan)
         => ResolveTupleTarget(name, sourceSpan);
 

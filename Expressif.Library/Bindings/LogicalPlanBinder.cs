@@ -7,6 +7,7 @@ using Expressif.Planning;
 using Expressif.Predicates;
 using Expressif.Values;
 using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 
@@ -51,21 +52,27 @@ internal sealed class LogicalPlanBinder
     private readonly IImplementationRegistry predicates;
     private readonly IImplementationRegistry accumulators;
     private readonly ITypeRegistry types;
+    private readonly QuotedLiteralRegistry quotedLiterals;
 
-    public LogicalPlanBinder(ITypeSource source, ITypeRegistry types)
+    public LogicalPlanBinder(
+        ITypeSource source,
+        ITypeRegistry types,
+        QuotedLiteralRegistry? quotedLiterals = null)
         : this(
             new FunctionRegistry(source),
             new PredicateRegistry(source),
             new AccumulatorRegistry(source),
-            types) { }
+            types,
+            quotedLiterals ?? QuotedLiteralRegistry.Default) { }
 
     private LogicalPlanBinder(
         IImplementationRegistry functions,
         IImplementationRegistry predicates,
         IImplementationRegistry accumulators,
-        ITypeRegistry types)
-        => (this.functions, this.predicates, this.accumulators, this.types) =
-            (functions, predicates, accumulators, types);
+        ITypeRegistry types,
+        QuotedLiteralRegistry quotedLiterals)
+        => (this.functions, this.predicates, this.accumulators, this.types, this.quotedLiterals) =
+            (functions, predicates, accumulators, types, quotedLiterals);
 
     public IRootExpression Bind(LogicalPlan plan)
     {
@@ -511,8 +518,21 @@ internal sealed class LogicalPlanBinder
             "ordering" when Equals(literal.Value, "#less") => new LiteralParameter(OrderingValue.Less),
             "ordering" when Equals(literal.Value, "#equal") => new LiteralParameter(OrderingValue.Equal),
             "ordering" when Equals(literal.Value, "#greater") => new LiteralParameter(OrderingValue.Greater),
+            _ when literal.Value is QuotedLiteralRepresentation representation
+                => BindQuotedLiteral(literal.Type, representation.Value),
+            _ when types.TryResolve(literal.Type, out var descriptor) && descriptor.IsInstance(literal.Value)
+                => new LiteralParameter(literal.Value, descriptor.Name, true),
             _ => throw Error($"Literal type '{literal.Type}' contains an invalid value."),
         };
+    }
+
+    private LiteralParameter BindQuotedLiteral(string type, string representation)
+    {
+        var parsed = quotedLiterals.Parse(representation, type);
+        var descriptor = types.Resolve(parsed.TypeName);
+        if (!descriptor.IsInstance(parsed.Value))
+            throw Error($"Literal parser for type '{type}' returned an incompatible value.");
+        return new LiteralParameter(parsed.Value, descriptor.Name, true);
     }
 
     private ArrayParameter BindArray(LogicalCall call)

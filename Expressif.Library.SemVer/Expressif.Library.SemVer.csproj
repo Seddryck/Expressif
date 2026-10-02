@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Expressif.Library.SemVer</PackageId>
+    <AssemblyName>Expressif.Library.SemVer</AssemblyName>
+    <RootNamespace>Expressif.Library.SemVer</RootNamespace>
+    <RepositoryUrl>https://github.com/Seddryck/Expressif</RepositoryUrl>
+    <PackageTags>expression-language;semantic-versioning;semver</PackageTags>
+    <Description>An independently versioned semantic-version library for Expressif.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Expressif.Library\Expressif.Library.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Catalog\function.json" LogicalName="Expressif.FunctionCatalog.json" />
+    <EmbeddedResource Include="Catalog\predicate.json" LogicalName="Expressif.PredicateCatalog.json" />
+  </ItemGroup>
+</Project>

@@ -12,7 +12,7 @@ internal sealed class CoerceFunctionConstructor : IFunctionConstructor<Coerce>
     {
         if (function.Parameters.All(parameter => parameter is PositionalCoercionParameter))
         {
-            return new Coerce(function.Parameters
+            return new Coerce((value, targetType) => Coerce(value, targetType, constructionContext), function.Parameters
                 .Cast<PositionalCoercionParameter>()
                 .Select(parameter => parameter.TargetType)
                 .ToArray());
@@ -29,6 +29,12 @@ internal sealed class CoerceFunctionConstructor : IFunctionConstructor<Coerce>
             _ => throw new InvalidOperationException(
                 $"Unsupported bound coercion specification '{parameter.GetType().Name}'."),
         }).ToArray();
-        return new Coerce(mappings);
+        return new Coerce((value, targetType) => Coerce(value, targetType, constructionContext), mappings);
     }
+
+    private static object? Coerce(
+        object? value,
+        Type targetType,
+        IFunctionConstructionContext constructionContext)
+        => constructionContext.TryCoerce(value, targetType, out var result) ? result : null;
 }

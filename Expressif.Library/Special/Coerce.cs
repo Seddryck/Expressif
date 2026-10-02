@@ -11,6 +11,7 @@ public sealed class Coerce : IFunction<object?, object?>
 {
     private readonly Type[]? positionalTypes;
     private readonly CoercionMapping[]? mappings;
+    private readonly Func<object?, Type, object?>? registeredConverter;
     private readonly Caster caster = new();
 
     /// <summary>Creates a type-directed coercion.</summary>
@@ -22,6 +23,12 @@ public sealed class Coerce : IFunction<object?, object?>
     /// <param name="specifications">One or more positional type descriptors or selector-to-type mappings.</param>
     public Coerce(params CoercionMapping[] specifications)
         => mappings = specifications;
+
+    internal Coerce(Func<object?, Type, object?> registeredConverter, params Type[] specifications)
+        => (this.registeredConverter, positionalTypes) = (registeredConverter, specifications);
+
+    internal Coerce(Func<object?, Type, object?> registeredConverter, params CoercionMapping[] specifications)
+        => (this.registeredConverter, mappings) = (registeredConverter, specifications);
 
     public object? Evaluate(object? value)
         => value switch
@@ -82,7 +89,9 @@ public sealed class Coerce : IFunction<object?, object?>
     }
 
     private object? Convert(object? value, Type targetType)
-        => caster.TryCast(value, targetType, out var result) ? result : null;
+        => registeredConverter is not null
+            ? registeredConverter(value, targetType)
+            : caster.TryCast(value, targetType, out var result) ? result : null;
 }
 
 public interface ICoercionSelector;

@@ -55,8 +55,6 @@ public class ValuesApiTest
         });
     }
 
-    [TestCase("Expressif.Values.Types.ITypeRegistry")]
-    [TestCase("Expressif.Values.Types.TypeRegistry")]
     [TestCase("Expressif.Values.Types.TypeIntrospector")]
     [TestCase("Expressif.Values.Types.UnknownExpressifTypeException")]
     [TestCase("Expressif.Values.JsonValueParser")]
@@ -74,6 +72,8 @@ public class ValuesApiTest
         {
             Assert.That(typeof(ExpressifTypeAttribute).IsPublic, Is.True);
             Assert.That(typeof(ITypeDescriptor).IsPublic, Is.True);
+            Assert.That(typeof(ITypeRegistry).IsPublic, Is.True);
+            Assert.That(typeof(TypeRegistry).IsPublic, Is.True);
             Assert.That(typeof(ExpressifTypeDefinition<>).IsPublic, Is.True);
             Assert.That(typeof(TypeDescriptor).GetConstructors(), Is.Empty);
             Assert.That(typeof(TypeLiteralMetadata).GetConstructors(), Is.Empty);

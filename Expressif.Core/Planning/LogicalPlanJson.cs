@@ -314,6 +314,9 @@ public static class LogicalPlanJson
             case TimeSpan duration:
                 writer.WriteStringValue(duration.ToString("c", CultureInfo.InvariantCulture));
                 break;
+            case QuotedLiteralRepresentation quoted:
+                writer.WriteStringValue(quoted.Value);
+                break;
             default:
                 throw new LogicalPlanFormatException(
                     $"Literal type '{literal.Type}' contains unsupported value '{literal.Value.GetType().Name}'.");
@@ -641,6 +644,8 @@ public static class LogicalPlanJson
             "duration" => TimeSpan.ParseExact(value.GetString()!, "c", CultureInfo.InvariantCulture),
             "all" when value.GetString() == "#all" => "#all",
             "ordering" when value.GetString() is "#less" or "#equal" or "#greater" => value.GetString(),
+            _ when value.ValueKind == JsonValueKind.String
+                => new QuotedLiteralRepresentation(value.GetString()!),
             _ => throw new LogicalPlanFormatException($"Unsupported or invalid literal type '{type}'."),
         };
         return new LogicalLiteral(type, semanticValue);

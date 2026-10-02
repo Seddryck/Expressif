@@ -18,6 +18,8 @@ public sealed class TypeLiteralMetadata
 
 public sealed class TypeDescriptor
 {
+    private Func<object?, bool>? instanceCheck;
+
     internal TypeDescriptor(string name, string summary, string? parent, TypeLiteralMetadata? literal,
         IReadOnlyDictionary<string, string> bindings, Type? runtimeType)
         => (Name, Summary, Parent, Literal, Bindings, RuntimeType) =
@@ -29,6 +31,16 @@ public sealed class TypeDescriptor
     public TypeLiteralMetadata? Literal { get; }
     public IReadOnlyDictionary<string, string> Bindings { get; }
     public Type? RuntimeType { get; }
+
+    /// <summary>Returns whether a value belongs to this Expressif type or type family.</summary>
+    public bool IsInstance(object? value)
+        => instanceCheck?.Invoke(value)
+            ?? (value is null
+                ? Name.Equals("null", StringComparison.OrdinalIgnoreCase)
+                : RuntimeType?.IsInstanceOfType(value) == true);
+
+    internal void BindInstanceCheck(Func<object?, bool> check)
+        => instanceCheck = check;
 }
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
@@ -50,7 +62,7 @@ public abstract class ExpressifTypeDefinition<T> : ITypeDescriptor
     public Type RuntimeType => typeof(T);
 }
 
-internal interface ITypeRegistry
+public interface ITypeRegistry
 {
     IReadOnlyList<TypeDescriptor> All { get; }
     bool TryResolve(string name, out TypeDescriptor descriptor);
@@ -59,7 +71,7 @@ internal interface ITypeRegistry
     bool IsInstance(object? value, TypeDescriptor expected);
 }
 
-internal sealed class TypeRegistry : ITypeRegistry
+public sealed class TypeRegistry : ITypeRegistry
 {
     private readonly IReadOnlyDictionary<string, TypeDescriptor> byName;
 
@@ -69,6 +81,8 @@ internal sealed class TypeRegistry : ITypeRegistry
     {
         All = descriptors.OrderBy(descriptor => descriptor.Name).ToArray();
         byName = BuildLookup(All);
+        foreach (var descriptor in All)
+            descriptor.BindInstanceCheck(value => IsInstance(value, descriptor));
     }
 
     public TypeRegistry(params Assembly[] assemblies)

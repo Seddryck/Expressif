@@ -14,5 +14,5 @@ public sealed class IsType : BasePredicate
     public IsType(Func<TypeDescriptor> type) => Expected = type;
 
     public override bool Evaluate(object? value)
-        => ExpressifTypeRegistry.Instance.IsInstance(value, Expected.Invoke());
+        => Expected.Invoke().IsInstance(value);
 }

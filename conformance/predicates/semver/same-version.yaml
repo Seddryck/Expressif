@@ -1,0 +1,14 @@
+suite: semver
+kind: predicate
+operator: same-version
+tests:
+  - id: same-version.valid.semver
+    cases:
+      - id: same-version.valid.semver.same-build
+        value: '1.0.0+abc'
+        parameters: ['1.0.0+abc']
+        expected: true
+      - id: same-version.valid.semver.different-build
+        value: '1.0.0+abc'
+        parameters: ['1.0.0+def']
+        expected: false

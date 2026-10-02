@@ -183,6 +183,12 @@ public sealed class RecordFunctionConstructorTest
             return false;
         }
 
+        public bool TryCoerce(object? value, Type targetType, out object? result)
+        {
+            result = null;
+            return false;
+        }
+
         public Type ResolveTupleTarget(string name, Expressif.Syntax.SourceSpan? sourceSpan = null)
             => throw new NotSupportedException();
 
