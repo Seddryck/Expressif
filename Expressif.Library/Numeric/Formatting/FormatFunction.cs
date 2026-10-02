@@ -39,7 +39,7 @@ public abstract class FormatFunction : IFunction<decimal?, string?>
 
 internal static class HumanReadableFormatter
 {
-    internal static string FormatHumanReadable(decimal value, int precision, int @base, string[] units, bool omitDecimalsForBaseUnit)
+    internal static string FormatHumanReadable(decimal value, int precision, int @base, string[] units, string unitSeparator, bool omitDecimalsForBaseUnit)
     {
         var isNegative = value < 0;
         var scaled = Math.Abs(value);
@@ -77,7 +77,7 @@ internal static class HumanReadableFormatter
             number = $"-{number}";
 
         var unit = units[unitIndex];
-        return string.IsNullOrEmpty(unit) ? number : $"{number} {unit}";
+        return string.IsNullOrEmpty(unit) ? number : $"{number}{unitSeparator}{unit}";
     }
 
     private static (string Number, decimal Rounded, int UnitIndex) FormatBaseUnitNumber(decimal rounded, int precision, int @base, string[] units, int unitIndex)
@@ -121,7 +121,7 @@ public class HumanReadableFormatDecimal : FormatFunction
         if (precision < 0 || precision > 3)
             return null;
 
-        return HumanReadableFormatter.FormatHumanReadable(numeric, precision, 1000, Units, true);
+        return HumanReadableFormatter.FormatHumanReadable(numeric, precision, 1000, Units, string.Empty, true);
     }
 }
 
@@ -146,7 +146,7 @@ public class HumanReadableFormatDecimalBytes : FormatFunction
         if (precision < 0 || precision > 3)
             return null;
 
-        return HumanReadableFormatter.FormatHumanReadable(numeric, precision, 1000, Units, true);
+        return HumanReadableFormatter.FormatHumanReadable(numeric, precision, 1000, Units, " ", true);
     }
 }
 
@@ -171,6 +171,6 @@ public class HumanReadableFormatBinaryBytes : FormatFunction
         if (precision < 0 || precision > 3)
             return null;
 
-        return HumanReadableFormatter.FormatHumanReadable(numeric, precision, 1024, Units, true);
+        return HumanReadableFormatter.FormatHumanReadable(numeric, precision, 1024, Units, " ", true);
     }
 }
