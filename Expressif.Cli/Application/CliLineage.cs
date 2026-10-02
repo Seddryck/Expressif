@@ -29,6 +29,7 @@ internal static class CliLineage
                 JobName = configuration.Get("openlineage.job-name") is { Length: > 0 } name ? name : command,
                 Inputs = inputs,
                 FunctionMetrics = configuration.Get("openlineage.function-metrics") == "true",
+                FlowDecisions = configuration.Get("openlineage.flow-decisions") == "true",
             };
             var transport = new HttpOpenLineageTransport(Client, new Uri(url),
                 configuration.Get("openlineage.endpoint"), configuration.Get("openlineage.api-key"));

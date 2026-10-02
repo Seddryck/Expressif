@@ -19,7 +19,8 @@ section of `expressif.config.json`, or set `OPENLINEAGE_URL`, to report `run`,
     "namespace": "my-application",
     "job-name": "customers",
     "disabled": false,
-    "function-metrics": false
+    "function-metrics": false,
+    "flow-decisions": false
   }
 }
 ```
@@ -29,13 +30,14 @@ Use the existing configuration commands:
 ```bash
 expressif config set openlineage.url http://localhost:5000
 expressif config set openlineage.namespace my-application
+expressif config set openlineage.flow-decisions true
 expressif config get openlineage.url
 expressif config list
 expressif config unset openlineage.url
 ```
 
 Supported section keys are `url`, `endpoint`, `api-key`, `namespace`, `job-name`,
-`disabled`, and `function-metrics`. They are shared by all execution commands. Each setting resolves
+`disabled`, `function-metrics`, and `flow-decisions`. They are shared by all execution commands. Each setting resolves
 independently: a nonblank matching environment variable overrides its JSON value,
 then the built-in default applies. Missing, null, and blank JSON values inherit
 defaults; Boolean `false` is an explicit value. `config get` and `config list`
@@ -58,6 +60,7 @@ expressif run 'upper' --source customers.json
 | `OPENLINEAGE_JOB_NAME` | command name | Stable job name (`run`, `evaluate`, or `repl`). |
 | `OPENLINEAGE_DISABLED` | `false` | Set to `true` to disable reporting even with a URL. |
 | `OPENLINEAGE_FUNCTION_METRICS` | `false` | Opt in to aggregated null/non-null metrics for bound function nodes. |
+| `OPENLINEAGE_FLOW_DECISIONS` | `false` | Opt in to aggregated semantic outcomes for flow operators. |
 
 The HTTP variables follow the [OpenLineage simple HTTP configuration conventions](https://openlineage.io/docs/client/python/configuration/).
 This minimal integration does not read `openlineage.yml` or the full nested
@@ -76,6 +79,42 @@ invocation has a classified input and an error but no output; a non-null collect
 non-null value and is never enumerated for profiling. Profiling has runtime and memory overhead and
 exposes values to an in-process observer while counting them, so only enable it where that access is
 appropriate.
+
+Flow decisions remain disabled unless `openlineage.flow-decisions` or
+`OPENLINEAGE_FLOW_DECISIONS` is `true`. Enable them for the saved CLI configuration with:
+
+```bash
+expressif config set openlineage.flow-decisions true
+```
+
+Or enable them for one shell invocation:
+
+```bash
+OPENLINEAGE_URL=http://localhost:5000 \
+OPENLINEAGE_FLOW_DECISIONS=true \
+expressif evaluate 'switch(is-positive => 1, _ => 0)' --input=-1
+```
+
+The terminal event then contains one `expressif_flowDecisions` run facet. It aggregates outcomes by
+stable bound-node ID and canonical operator identity without recording raw values. Reported operators
+and outcomes are:
+
+| Operator | Outcomes |
+| --- | --- |
+| `catch` | `pass-through`, `recovery` |
+| `conditional-forward` | `expression-selected`, `original-input-retained` |
+| `conditional-backward` | `candidate-selected`, `original-input-retained` |
+| `coalesce` | `candidate[index]`, `all-null` |
+| `switch` | `branch[index]`, `fallback[index]`, `no-branch-matched` |
+| `try` | `candidate[index]`, `fallback[index]`, `no-candidate-accepted` |
+| `guard` | `guarded-expression-selected`, `incompatible-input-retained` |
+| `throw` | `input-accepted`, `input-rejected` |
+
+`apply`, `transform-with`, and `transform-as` have fixed execution paths and do not emit flow
+decisions. With no active flow observation, decision reporting performs an ambient-state check and
+does not allocate. Enabled flow-decision profiling adds runtime and memory overhead, so it remains an
+explicit opt-in.
+
 Events include the expression and Expressif version in a custom job
 facet. JSON/CSV source files are identified by absolute file URIs, including
 files selected using a format override. Expression-backed sources are not

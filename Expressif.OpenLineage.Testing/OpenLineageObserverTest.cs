@@ -200,6 +200,56 @@ public class OpenLineageObserverTest
     }
 
     [Test]
+    public void FlowDecisions_AreAggregatedOnTerminalEvent()
+    {
+        var transport = new RecordingTransport();
+        var observer = new OpenLineageObserver(new OpenLineageOptions
+        {
+            Expression = "switch(#false => 1, _ => 2)",
+            FlowDecisions = true,
+        }, transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .Create("switch(#false => 1, _ => 2)");
+
+        Assert.That(expression.Evaluate(1), Is.EqualTo(2));
+
+        using var terminal = JsonDocument.Parse(transport.Events.Last());
+        var nodes = terminal.RootElement.GetProperty("run").GetProperty("facets")
+            .GetProperty("expressif_flowDecisions").GetProperty("nodes");
+        Assert.Multiple(() =>
+        {
+            Assert.That(nodes.GetArrayLength(), Is.EqualTo(1));
+            Assert.That(nodes[0].GetProperty("operator").GetString(), Is.EqualTo("switch"));
+            Assert.That(nodes[0].GetProperty("evaluations").GetInt64(), Is.EqualTo(1));
+            Assert.That(nodes[0].GetProperty("outcomes").GetProperty("fallback[1]").GetInt64(), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void FunctionMetricsAndFlowDecisions_CanBeEnabledTogether()
+    {
+        var transport = new RecordingTransport();
+        var observer = new OpenLineageObserver(new OpenLineageOptions
+        {
+            Expression = "throw(#false)",
+            FunctionMetrics = true,
+            FlowDecisions = true,
+        }, transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .Create("throw(#false)");
+
+        expression.Evaluate(1);
+
+        using var terminal = JsonDocument.Parse(transport.Events.Last());
+        var facets = terminal.RootElement.GetProperty("run").GetProperty("facets");
+        Assert.Multiple(() =>
+        {
+            Assert.That(facets.TryGetProperty("expressif_functionMetrics", out _), Is.True);
+            Assert.That(facets.TryGetProperty("expressif_flowDecisions", out _), Is.True);
+        });
+    }
+
+    [Test]
     public void Scope_EmitsOnlyOneTerminalEventAndFailsWhenAbandoned()
     {
         var transport = new RecordingTransport();

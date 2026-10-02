@@ -9,8 +9,25 @@ internal sealed class ConditionalForward(
     public object? Evaluate(object? value)
     {
         if (!testCandidate)
-            return ControlFlowBranch.RequireBoolean(predicate.Invoke(value)) ? expression.Invoke(value) : value;
+        {
+            if (ControlFlowBranch.RequireBoolean(predicate.Invoke(value)))
+            {
+                EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.ExpressionSelected);
+                return expression.Invoke(value);
+            }
+
+            EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.OriginalInputRetained);
+            return value;
+        }
+
         var candidate = expression.Invoke(value);
-        return ControlFlowBranch.RequireBoolean(predicate.Invoke(candidate)) ? candidate : value;
+        if (ControlFlowBranch.RequireBoolean(predicate.Invoke(candidate)))
+        {
+            EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.CandidateSelected);
+            return candidate;
+        }
+
+        EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.OriginalInputRetained);
+        return value;
     }
 }

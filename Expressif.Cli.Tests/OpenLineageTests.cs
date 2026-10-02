@@ -10,7 +10,7 @@ namespace Expressif.Cli.Tests;
 public class OpenLineageTests
 {
     private static readonly string[] Variables =
-    ["OPENLINEAGE_URL", "OPENLINEAGE_ENDPOINT", "OPENLINEAGE_API_KEY", "OPENLINEAGE_NAMESPACE", "OPENLINEAGE_JOB_NAME", "OPENLINEAGE_DISABLED", "OPENLINEAGE_FUNCTION_METRICS"];
+    ["OPENLINEAGE_URL", "OPENLINEAGE_ENDPOINT", "OPENLINEAGE_API_KEY", "OPENLINEAGE_NAMESPACE", "OPENLINEAGE_JOB_NAME", "OPENLINEAGE_DISABLED", "OPENLINEAGE_FUNCTION_METRICS", "OPENLINEAGE_FLOW_DECISIONS"];
     private readonly List<string> files = [];
     private string?[] saved = [];
 
@@ -133,6 +133,28 @@ public class OpenLineageTests
     }
 
     [Test]
+    public async Task FlowDecisionsOptIn_AddsAggregateToTerminalEvent()
+    {
+        using var backend = new Backend();
+        Environment.SetEnvironmentVariable("OPENLINEAGE_URL", backend.Url);
+        Environment.SetEnvironmentVariable("OPENLINEAGE_FLOW_DECISIONS", "true");
+        var receiving = backend.ReceiveAsync(2);
+
+        var result = await InvokeAsync("evaluate", "switch(#false => 1, _ => 2)", "--input", "1");
+        var events = await receiving;
+
+        using var terminal = JsonDocument.Parse(events[1]);
+        var node = terminal.RootElement.GetProperty("run").GetProperty("facets")
+            .GetProperty("expressif_flowDecisions").GetProperty("nodes")[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Code, Is.Zero);
+            Assert.That(node.GetProperty("operator").GetString(), Is.EqualTo("switch"));
+            Assert.That(node.GetProperty("outcomes").GetProperty("fallback[1]").GetInt64(), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
     public async Task MissingSource_ReportsFail()
     {
         using var backend = new Backend();
@@ -202,6 +224,7 @@ public class OpenLineageTests
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.api-key", "secret-token")).Code, Is.Zero);
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.disabled", "true")).Code, Is.Zero);
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.function-metrics", "true")).Code, Is.Zero);
+        Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.flow-decisions", "true")).Code, Is.Zero);
         var read = await InvokeConfiguredAsync(configuration, "config", "get", "openlineage.url");
         var listed = await InvokeConfiguredAsync(configuration, "config", "list", "--command", "run");
         using var document = JsonDocument.Parse(File.ReadAllText(configuration.Path));
@@ -214,6 +237,7 @@ public class OpenLineageTests
             Assert.That(listed.Output, Does.Not.Contain("secret-token"));
             Assert.That(document.RootElement.GetProperty("openlineage").GetProperty("disabled").GetBoolean(), Is.True);
             Assert.That(document.RootElement.GetProperty("openlineage").GetProperty("function-metrics").GetBoolean(), Is.True);
+            Assert.That(document.RootElement.GetProperty("openlineage").GetProperty("flow-decisions").GetBoolean(), Is.True);
         });
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "unset", "openlineage.url")).Code, Is.Zero);
         Assert.That(configuration.Get("openlineage.url"), Is.Empty);
@@ -304,6 +328,7 @@ public class OpenLineageTests
     [TestCase("openlineage.endpoint", "https://other-host/events")]
     [TestCase("openlineage.disabled", "sometimes")]
     [TestCase("openlineage.function-metrics", "sometimes")]
+    [TestCase("openlineage.flow-decisions", "sometimes")]
     public async Task ConfigSet_InvalidValuesAreRejected(string key, string value)
     {
         var configuration = CreateConfiguration();

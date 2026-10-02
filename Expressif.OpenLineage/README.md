@@ -18,6 +18,7 @@ var observer = new OpenLineageObserver(new OpenLineageOptions
     JobName = "customers",
     Expression = "upper",
     FunctionMetrics = true,
+    FlowDecisions = true,
     Inputs = [OpenLineageDataset.FromFile("customers.json")],
     Outputs = [OpenLineageDataset.FromFile("customers.ndjson")],
 }, transport, exception => Console.Error.WriteLine(exception.Message));
@@ -36,6 +37,10 @@ var expression = new ExpressionFactory(new ExpressionBinder(), observer: observe
 The `expressif_functionMetrics` run facet distinguishes bound nodes by stable ID and contains no raw
 values. Each entry counts invocations, null/non-null inputs and outputs, and errors. Collections count
 as a single non-null boundary value and are not enumerated by observation.
+
+Set `FlowDecisions` to `true` to add the `expressif_flowDecisions` run facet. It aggregates semantic
+outcomes for `catch`, conditional flow, `coalesce`, `switch`, `try`, `guard`, and `throw` by stable
+bound-node ID without retaining raw values.
 
 Each evaluation emits `START` and then `COMPLETE` or `FAIL` with the same unique
 run ID. Parse and bind scopes do not generate separate jobs. The custom

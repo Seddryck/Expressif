@@ -8,10 +8,10 @@ internal sealed class CliConfiguration(string path)
     public const string FileName = "expressif.config.json";
     public static readonly string[] Commands = ["repl", "run", "evaluate"];
     public static readonly string[] Settings = ["output-style", "indent", "preferred-line-width", "inline-types"];
-    public static readonly string[] LineageSettings = ["url", "endpoint", "api-key", "namespace", "job-name", "disabled", "function-metrics"];
+    public static readonly string[] LineageSettings = ["url", "endpoint", "api-key", "namespace", "job-name", "disabled", "function-metrics", "flow-decisions"];
     private static readonly HashSet<string> BooleanLineageSettings = new(StringComparer.Ordinal)
     {
-        "disabled", "function-metrics",
+        "disabled", "function-metrics", "flow-decisions",
     };
     private static readonly HashSet<string> InlineTypes = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -123,7 +123,7 @@ internal sealed class CliConfiguration(string path)
             {
                 "endpoint" => "api/v1/lineage",
                 "namespace" => "expressif",
-                "disabled" or "function-metrics" => "false",
+                "disabled" or "function-metrics" or "flow-decisions" => "false",
                 _ => string.Empty,
             };
         }

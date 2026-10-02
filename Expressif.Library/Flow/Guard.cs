@@ -21,8 +21,12 @@ public sealed class Guard : IFunction
     {
         var guarded = expression.Invoke();
         if (!IsDirectlyCompatible(value, guarded))
+        {
+            EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.IncompatibleInputRetained);
             return value;
+        }
 
+        EvaluationRuntime.ReportFlowDecision(Observability.FlowDecisionOutcome.GuardedExpressionSelected);
         return EvaluationRuntime.EvaluateNested(guarded, value);
     }
 
