@@ -138,6 +138,10 @@ public class InfrastructureCoverageTests
         public IExpression CompileOpen(string code, Context context)
             => Expression.Create(code, new Expressif.Bindings.ExpressionBinder(context));
         public IExpression CompileClosed(string code, Context context) => CompileClosedHandler(code, context);
+        public IExpression CompileOpen(Expressif.Planning.LogicalPlan plan, Context context)
+            => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).Bind(plan);
+        public IExpression CompileClosed(Expressif.Planning.LogicalPlan plan, Context context)
+            => ((Expressif.Bindings.IExpressionBinder)new Expressif.Bindings.ExpressionBinder(context)).BindClosed(plan);
         public object? Evaluate(IExpression expression, object? input) => EvaluateHandler(expression, input);
     }
 
