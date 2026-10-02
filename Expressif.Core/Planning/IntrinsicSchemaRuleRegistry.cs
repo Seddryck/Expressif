@@ -2,9 +2,13 @@ namespace Expressif.Planning;
 
 internal sealed partial class LogicalSchemaAnalysisSession
 {
-    private interface IIntrinsicSchemaRule
+    internal interface IIntrinsicSchemaRule
     {
-        Requirement Require(LogicalCall call, LogicalSchema expected, string path);
+        IReadOnlyCollection<string> Intrinsics { get; }
+
+        bool Matches(string intrinsic) => Intrinsics.Contains(intrinsic, StringComparer.Ordinal);
+
+        Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic);
 
         LogicalSchema Infer(
             LogicalCall call,
@@ -14,47 +18,39 @@ internal sealed partial class LogicalSchemaAnalysisSession
             string intrinsic);
     }
 
-    private sealed class IntrinsicRuleRegistry(
-        IReadOnlyDictionary<string, IIntrinsicSchemaRule> rules,
-        IIntrinsicSchemaRule tuplePosition)
+    private sealed class IntrinsicRuleRegistry
     {
+        private readonly Dictionary<string, IIntrinsicSchemaRule> rules = new(StringComparer.Ordinal);
+        private readonly List<IIntrinsicSchemaRule> patternRules = [];
+
         public static IntrinsicRuleRegistry Create(LogicalSchemaAnalysisSession session)
         {
-            var rules = new Dictionary<string, IIntrinsicSchemaRule>(StringComparer.Ordinal);
-            Add(rules, "field", session.RequireField, session.InferField);
-            Add(rules, "select-fields", session.RequireSelectFields, session.InferSelectFields);
-            Add(rules, "explode-field", session.RequireExplode,
-                (call, input, _, path) => session.InferExplode(call, input, path, preserveParent: false));
-            Add(rules, "explode-field-outer", session.RequireExplode,
-                (call, input, _, path) => session.InferExplode(call, input, path, preserveParent: true));
-            Add(rules, "implode-field", session.RequireImplode,
-                (call, input, _, path) => session.InferImplode(call, input, path, preserveNull: true));
-            Add(rules, "implode-field-inner", session.RequireImplode,
-                (call, input, _, path) => session.InferImplode(call, input, path, preserveNull: false));
-            Add(rules, "with", session.RequireWith, session.InferWith);
-            Add(rules, "array", RequireGeneric(session), session.InferArray);
-            Add(rules, "tuple", RequireGeneric(session), session.InferTuple);
-            Add(rules, "record", RequireGeneric(session), session.InferRecord);
-            Add(rules, "dictionary", RequireGeneric(session),
-                (call, input, enclosing, path) => session.InferAssociative(call, input, enclosing, path, grouping: false));
-            Add(rules, "grouping", RequireGeneric(session),
-                (call, input, enclosing, path) => session.InferAssociative(call, input, enclosing, path, grouping: true));
-            Add(rules, "put", RequireGeneric(session),
-                (call, input, enclosing, path) => session.InferPut(call, input, enclosing, path, RecordMutation.Always));
-            Add(rules, "put-present", RequireGeneric(session),
-                (call, input, enclosing, path) => session.InferPut(call, input, enclosing, path, RecordMutation.WhenPresent));
-            Add(rules, "put-absent", RequireGeneric(session),
-                (call, input, enclosing, path) => session.InferPut(call, input, enclosing, path, RecordMutation.WhenAbsent));
-            Add(rules, "named-entry", RequireGeneric(session), session.InferNamedEntry);
-            Add(rules, "spread-entry", session.RequireSpreadEntry, session.InferSpreadEntry);
-            Add(rules, "sort-criterion",
-                (call, _, path) => session.RequireSortCriterion(call, path),
-                session.InferSortCriterion);
-            var tuple = new DelegateIntrinsicSchemaRule(
-                (call, _, path) => session.RequireTuplePosition(call, path),
-                (call, input, enclosing, path, intrinsic)
-                    => session.InferTuplePosition(call, input, enclosing, path, intrinsic));
-            return new IntrinsicRuleRegistry(rules, tuple);
+            var registry = new IntrinsicRuleRegistry();
+            registry.Register(new FieldIntrinsicSchemaRule(session));
+            registry.Register(new ExplodeIntrinsicSchemaRule(session));
+            registry.Register(new ImplodeIntrinsicSchemaRule(session));
+            registry.Register(new WithIntrinsicSchemaRule(session));
+            registry.Register(new CollectionIntrinsicSchemaRule(session));
+            registry.Register(new RecordMutationIntrinsicSchemaRule(session));
+            registry.Register(new EntryIntrinsicSchemaRule(session));
+            registry.Register(new SortCriterionIntrinsicSchemaRule(session));
+            registry.Register(new TuplePositionIntrinsicSchemaRule(session));
+            return registry;
+        }
+
+        public void Register(IIntrinsicSchemaRule rule)
+        {
+            if (rule.Intrinsics.Count == 0)
+            {
+                patternRules.Add(rule);
+                return;
+            }
+
+            foreach (var intrinsic in rule.Intrinsics)
+            {
+                if (!rules.TryAdd(intrinsic, rule))
+                    throw new InvalidOperationException($"A schema rule is already registered for '{intrinsic}'.");
+            }
         }
 
         public Requirement Require(
@@ -62,7 +58,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
             LogicalCall call,
             LogicalSchema expected,
             string path)
-            => Resolve(intrinsic, call).Require(call, expected, path);
+            => Resolve(intrinsic, call).Require(call, expected, path, intrinsic);
 
         public LogicalSchema Infer(
             string intrinsic,
@@ -72,44 +68,184 @@ internal sealed partial class LogicalSchemaAnalysisSession
             string path)
             => Resolve(intrinsic, call).Infer(call, input, enclosing, path, intrinsic);
 
-        private static Func<LogicalCall, LogicalSchema, string, Requirement> RequireGeneric(
-            LogicalSchemaAnalysisSession session)
-            => (call, _, path) => session.RequireGenericCall(call, path);
-
-        private static void Add(
-            IDictionary<string, IIntrinsicSchemaRule> rules,
-            string name,
-            Func<LogicalCall, LogicalSchema, string, Requirement> require,
-            Func<LogicalCall, LogicalSchema, LogicalSchema, string, LogicalSchema> infer)
-            => rules.Add(name, new DelegateIntrinsicSchemaRule(
-                require,
-                (call, input, enclosing, path, _) => infer(call, input, enclosing, path)));
-
         private IIntrinsicSchemaRule Resolve(string intrinsic, LogicalCall call)
         {
             if (rules.TryGetValue(intrinsic, out var rule))
                 return rule;
-            if (intrinsic.StartsWith("tuple-position", StringComparison.Ordinal))
-                return tuplePosition;
-            throw new InvalidOperationException(
-                $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'.");
+            var matching = patternRules.Where(candidate => candidate.Matches(intrinsic)).ToArray();
+            return matching.Length switch
+            {
+                1 => matching[0],
+                > 1 => throw new InvalidOperationException(
+                    $"Multiple schema rules are registered for '{intrinsic}'."),
+                _ => throw new InvalidOperationException(
+                    $"Unsupported schema intrinsic '{intrinsic}' for '{call.Function.Name}'."),
+            };
         }
     }
 
-    private sealed class DelegateIntrinsicSchemaRule(
-        Func<LogicalCall, LogicalSchema, string, Requirement> require,
-        Func<LogicalCall, LogicalSchema, LogicalSchema, string, string, LogicalSchema> infer)
+    private abstract class IntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
         : IIntrinsicSchemaRule
     {
-        public Requirement Require(LogicalCall call, LogicalSchema expected, string path)
-            => require(call, expected, path);
+        protected LogicalSchemaAnalysisSession Session { get; } = session;
 
-        public LogicalSchema Infer(
+        public abstract IReadOnlyCollection<string> Intrinsics { get; }
+
+        public virtual bool Matches(string intrinsic)
+            => Intrinsics.Contains(intrinsic, StringComparer.Ordinal);
+
+        public virtual Requirement Require(
+            LogicalCall call,
+            LogicalSchema expected,
+            string path,
+            string intrinsic)
+            => Session.RequireGenericCall(call, path);
+
+        public abstract LogicalSchema Infer(
             LogicalCall call,
             LogicalSchema input,
             LogicalSchema enclosing,
             string path,
-            string intrinsic)
-            => infer(call, input, enclosing, path, intrinsic);
+            string intrinsic);
+    }
+
+    private sealed class FieldIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } = ["field", "select-fields"];
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => intrinsic == "field"
+                ? Session.RequireField(call, expected, path)
+                : Session.RequireSelectFields(call, expected, path);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => intrinsic == "field"
+                ? Session.InferField(call, input, enclosing, path)
+                : Session.InferSelectFields(call, input, enclosing, path);
+    }
+
+    private sealed class ExplodeIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } =
+            ["explode-field", "explode-field-outer"];
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => Session.RequireExplode(call, expected, path);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => Session.InferExplode(call, input, path, intrinsic == "explode-field-outer");
+    }
+
+    private sealed class ImplodeIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } =
+            ["implode-field", "implode-field-inner"];
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => Session.RequireImplode(call, expected, path);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => Session.InferImplode(call, input, path, intrinsic == "implode-field");
+    }
+
+    private sealed class WithIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } = ["with"];
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => Session.RequireWith(call, expected, path);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => Session.InferWith(call, input, enclosing, path);
+    }
+
+    private sealed class CollectionIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } =
+            ["array", "tuple", "record", "dictionary", "grouping"];
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => intrinsic switch
+            {
+                "array" => Session.InferArray(call, input, enclosing, path),
+                "tuple" => Session.InferTuple(call, input, enclosing, path),
+                "record" => Session.InferRecord(call, input, enclosing, path),
+                "dictionary" => Session.InferAssociative(call, input, enclosing, path, grouping: false),
+                "grouping" => Session.InferAssociative(call, input, enclosing, path, grouping: true),
+                _ => throw new InvalidOperationException($"Unsupported collection intrinsic '{intrinsic}'."),
+            };
+    }
+
+    private sealed class RecordMutationIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } =
+            ["put", "put-present", "put-absent"];
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => Session.InferPut(call, input, enclosing, path, intrinsic switch
+            {
+                "put" => RecordMutation.Always,
+                "put-present" => RecordMutation.WhenPresent,
+                "put-absent" => RecordMutation.WhenAbsent,
+                _ => throw new InvalidOperationException($"Unsupported record mutation intrinsic '{intrinsic}'."),
+            });
+    }
+
+    private sealed class EntryIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } = ["named-entry", "spread-entry"];
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => intrinsic == "spread-entry"
+                ? Session.RequireSpreadEntry(call, expected, path)
+                : base.Require(call, expected, path, intrinsic);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => intrinsic == "named-entry"
+                ? Session.InferNamedEntry(call, input, enclosing, path)
+                : Session.InferSpreadEntry(call, input, enclosing, path);
+    }
+
+    private sealed class SortCriterionIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } = ["sort-criterion"];
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => Session.RequireSortCriterion(call, path);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => Session.InferSortCriterion(call, input, enclosing, path);
+    }
+
+    private sealed class TuplePositionIntrinsicSchemaRule(LogicalSchemaAnalysisSession session)
+        : IntrinsicSchemaRule(session)
+    {
+        public override IReadOnlyCollection<string> Intrinsics { get; } = [];
+
+        public override bool Matches(string intrinsic)
+            => intrinsic.StartsWith("tuple-position", StringComparison.Ordinal);
+
+        public override Requirement Require(LogicalCall call, LogicalSchema expected, string path, string intrinsic)
+            => Session.RequireTuplePosition(call, path);
+
+        public override LogicalSchema Infer(
+            LogicalCall call, LogicalSchema input, LogicalSchema enclosing, string path, string intrinsic)
+            => Session.InferTuplePosition(call, input, enclosing, path, intrinsic);
     }
 }
