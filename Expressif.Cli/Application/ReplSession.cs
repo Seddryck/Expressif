@@ -66,8 +66,8 @@ internal sealed class ReplSession
         try
         {
             expression = (isOpen
-                    ? expressions.CompileOpen(code, bindingContext)
-                    : expressions.CompileClosed(code, bindingContext))
+                    ? expressions.CompileOpen(code, bindingContext, observation.FunctionObservers)
+                    : expressions.CompileClosed(code, bindingContext, observation.FunctionObservers))
                 .WithContext(evaluationContext);
         }
         catch (Exception exception) when (ExpressionFailureClassifier.IsValidation(exception))

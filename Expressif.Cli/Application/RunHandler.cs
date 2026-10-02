@@ -75,8 +75,8 @@ internal sealed class RunHandler(
         try
         {
             expression = source.Plan is not null
-                ? expressions.CompileOpen(source.Plan, context)
-                : expressions.CompileOpen(source.Code!, context);
+                ? expressions.CompileOpen(source.Plan, context, observation.FunctionObservers)
+                : expressions.CompileOpen(source.Code!, context, observation.FunctionObservers);
         }
         catch (Exception exception) when (exception is ExpressifSyntaxException
                                           or BindingException

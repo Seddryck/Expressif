@@ -18,7 +18,8 @@ section of `expressif.config.json`, or set `OPENLINEAGE_URL`, to report `run`,
     "url": "http://localhost:5000",
     "namespace": "my-application",
     "job-name": "customers",
-    "disabled": false
+    "disabled": false,
+    "function-metrics": false
   }
 }
 ```
@@ -34,7 +35,7 @@ expressif config unset openlineage.url
 ```
 
 Supported section keys are `url`, `endpoint`, `api-key`, `namespace`, `job-name`,
-and `disabled`. They are shared by all execution commands. Each setting resolves
+`disabled`, and `function-metrics`. They are shared by all execution commands. Each setting resolves
 independently: a nonblank matching environment variable overrides its JSON value,
 then the built-in default applies. Missing, null, and blank JSON values inherit
 defaults; Boolean `false` is an explicit value. `config get` and `config list`
@@ -56,6 +57,7 @@ expressif run 'upper' --source customers.json
 | `OPENLINEAGE_NAMESPACE` | `expressif` | Stable job namespace. |
 | `OPENLINEAGE_JOB_NAME` | command name | Stable job name (`run`, `evaluate`, or `repl`). |
 | `OPENLINEAGE_DISABLED` | `false` | Set to `true` to disable reporting even with a URL. |
+| `OPENLINEAGE_FUNCTION_METRICS` | `false` | Opt in to aggregated null/non-null metrics for bound function nodes. |
 
 The HTTP variables follow the [OpenLineage simple HTTP configuration conventions](https://openlineage.io/docs/client/python/configuration/).
 This minimal integration does not read `openlineage.yml` or the full nested
@@ -64,7 +66,17 @@ those sources is tracked in [issue #1189](https://github.com/Seddryck/Expressif/
 
 Each command execution generates one `START` followed by `COMPLETE` or `FAIL`;
 `run` reports one run for its entire row sequence. REPL reports each expression
-evaluation. Events include the expression and Expressif version in a custom job
+as a separate run.
+
+Function metrics remain disabled unless `openlineage.function-metrics` or
+`OPENLINEAGE_FUNCTION_METRICS` is `true`. When enabled, the terminal event contains one
+`expressif_functionMetrics` run facet rather than an event per invocation. Each stable bound-node
+entry reports its invocation count, input and output null/non-null counts, and error count. A thrown
+invocation has a classified input and an error but no output; a non-null collection counts as one
+non-null value and is never enumerated for profiling. Profiling has runtime and memory overhead and
+exposes values to an in-process observer while counting them, so only enable it where that access is
+appropriate.
+Events include the expression and Expressif version in a custom job
 facet. JSON/CSV source files are identified by absolute file URIs, including
 files selected using a format override. Expression-backed sources are not
 identified as datasets because their underlying data locations are unknown.

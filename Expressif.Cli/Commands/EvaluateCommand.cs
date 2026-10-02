@@ -79,7 +79,7 @@ internal static class EvaluateCommand
                 out var serializer, out var formatting, out var outputError))
             return WriteError(outputError!, ExitCodes.InvalidExpressionOrInput);
         using var observation = CliLineage.Begin(expressionSource.Text, "evaluate", hasSource ? request.SourcePaths.FirstOrDefault() : null, configuration: configuration);
-        var exitCode = WriteResult(handler.Execute(request), expressionSource, serializer, formatting);
+        var exitCode = WriteResult(handler.Execute(request, observation.FunctionObservers), expressionSource, serializer, formatting);
         if (exitCode == ExitCodes.Success)
             observation.Complete();
         else

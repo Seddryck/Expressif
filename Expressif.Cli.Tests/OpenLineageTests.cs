@@ -10,7 +10,7 @@ namespace Expressif.Cli.Tests;
 public class OpenLineageTests
 {
     private static readonly string[] Variables =
-    ["OPENLINEAGE_URL", "OPENLINEAGE_ENDPOINT", "OPENLINEAGE_API_KEY", "OPENLINEAGE_NAMESPACE", "OPENLINEAGE_JOB_NAME", "OPENLINEAGE_DISABLED"];
+    ["OPENLINEAGE_URL", "OPENLINEAGE_ENDPOINT", "OPENLINEAGE_API_KEY", "OPENLINEAGE_NAMESPACE", "OPENLINEAGE_JOB_NAME", "OPENLINEAGE_DISABLED", "OPENLINEAGE_FUNCTION_METRICS"];
     private readonly List<string> files = [];
     private string?[] saved = [];
 
@@ -108,6 +108,31 @@ public class OpenLineageTests
     }
 
     [Test]
+    public async Task FunctionMetricsOptIn_AddsAggregateToTerminalEvent()
+    {
+        using var backend = new Backend();
+        Environment.SetEnvironmentVariable("OPENLINEAGE_URL", backend.Url);
+        Environment.SetEnvironmentVariable("OPENLINEAGE_FUNCTION_METRICS", "true");
+        var receiving = backend.ReceiveAsync(2);
+
+        var result = await InvokeAsync("evaluate", "upper | length", "--input", "\"alice\"");
+        var events = await receiving;
+
+        using var terminal = JsonDocument.Parse(events[1]);
+        var functions = terminal.RootElement.GetProperty("run").GetProperty("facets")
+            .GetProperty("expressif_functionMetrics").GetProperty("functions");
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Code, Is.Zero);
+            Assert.That(functions.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(functions.EnumerateArray().Select(metric => metric.GetProperty("name").GetString()),
+                Is.EqualTo(new[] { "upper", "length" }));
+            Assert.That(functions.EnumerateArray().Select(metric => metric.GetProperty("invocationCount").GetInt64()),
+                Has.All.EqualTo(1));
+        });
+    }
+
+    [Test]
     public async Task MissingSource_ReportsFail()
     {
         using var backend = new Backend();
@@ -176,6 +201,7 @@ public class OpenLineageTests
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.url", "http://localhost:5000")).Code, Is.Zero);
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.api-key", "secret-token")).Code, Is.Zero);
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.disabled", "true")).Code, Is.Zero);
+        Assert.That((await InvokeConfiguredAsync(configuration, "config", "set", "openlineage.function-metrics", "true")).Code, Is.Zero);
         var read = await InvokeConfiguredAsync(configuration, "config", "get", "openlineage.url");
         var listed = await InvokeConfiguredAsync(configuration, "config", "list", "--command", "run");
         using var document = JsonDocument.Parse(File.ReadAllText(configuration.Path));
@@ -187,6 +213,7 @@ public class OpenLineageTests
             Assert.That(listed.Output, Does.Contain("openlineage.api-key=[redacted]"));
             Assert.That(listed.Output, Does.Not.Contain("secret-token"));
             Assert.That(document.RootElement.GetProperty("openlineage").GetProperty("disabled").GetBoolean(), Is.True);
+            Assert.That(document.RootElement.GetProperty("openlineage").GetProperty("function-metrics").GetBoolean(), Is.True);
         });
         Assert.That((await InvokeConfiguredAsync(configuration, "config", "unset", "openlineage.url")).Code, Is.Zero);
         Assert.That(configuration.Get("openlineage.url"), Is.Empty);
@@ -276,6 +303,7 @@ public class OpenLineageTests
     [TestCase("openlineage.url", "file:///customers.json")]
     [TestCase("openlineage.endpoint", "https://other-host/events")]
     [TestCase("openlineage.disabled", "sometimes")]
+    [TestCase("openlineage.function-metrics", "sometimes")]
     public async Task ConfigSet_InvalidValuesAreRejected(string key, string value)
     {
         var configuration = CreateConfiguration();

@@ -23,6 +23,19 @@ var expression = new ExpressionFactory(observer: observer).Create("upper");
 var value = expression.Evaluate("alice");
 ```
 
+To include aggregated null/non-null function metrics on terminal run events, install the same
+observer at function boundaries before binding:
+
+```csharp
+var expression = new ExpressionFactory(new ExpressionBinder(), observer: observer)
+    .WithFunctionObservers([observer])
+    .Create("trim | upper");
+```
+
+The `expressif_functionMetrics` run facet distinguishes bound nodes by stable ID and contains no raw
+values. Each entry counts invocations, null/non-null inputs and outputs, and errors. Collections count
+as a single non-null boundary value and are not enumerated by observation.
+
 Each evaluation emits `START` and then `COMPLETE` or `FAIL` with the same unique
 run ID. Parse and bind scopes do not generate separate jobs. The custom
 `expressif_expression` job facet includes the original expression, Expressif

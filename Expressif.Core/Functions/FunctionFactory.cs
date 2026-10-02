@@ -27,7 +27,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private readonly ITupleFunctionInvoker tupleBinding;
     private readonly ITypeSource source;
     private readonly IFunctionObserver[] observers;
-    private int nextObservationId;
+    private static long nextObservationId;
 
     public FunctionFactoryRuntime(ITypeSource source)
         : this(

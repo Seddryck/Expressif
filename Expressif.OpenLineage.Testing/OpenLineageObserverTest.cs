@@ -87,10 +87,78 @@ public class OpenLineageObserverTest
     }
 
     [Test]
+    public void FunctionMetrics_AreAggregatedOnTerminalEvent()
+    {
+        var transport = new RecordingTransport();
+        var observer = CreateObserver(transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .WithFunctionObservers([observer])
+            .Create("empty-to-null | null-to-value");
+
+        Assert.That(expression.Evaluate(string.Empty), Is.EqualTo("(value)"));
+
+        using var terminal = JsonDocument.Parse(transport.Events.Last());
+        var schemaResult = Schema.Value.Evaluate(terminal.RootElement, new EvaluationOptions { RequireFormatValidation = true });
+        var functions = terminal.RootElement.GetProperty("run").GetProperty("facets")
+            .GetProperty("expressif_functionMetrics").GetProperty("functions");
+        Assert.Multiple(() =>
+        {
+            Assert.That(schemaResult.IsValid, Is.True);
+            Assert.That(functions.GetArrayLength(), Is.EqualTo(2));
+            Assert.That(functions[0].GetProperty("invocationCount").GetInt64(), Is.EqualTo(1));
+            Assert.That(functions[0].GetProperty("input").GetProperty("nonNullCount").GetInt64(), Is.EqualTo(1));
+            Assert.That(functions[0].GetProperty("output").GetProperty("nullCount").GetInt64(), Is.EqualTo(1));
+            Assert.That(functions[1].GetProperty("input").GetProperty("nullCount").GetInt64(), Is.EqualTo(1));
+            Assert.That(functions[1].GetProperty("output").GetProperty("nonNullCount").GetInt64(), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void FunctionMetrics_FailedInvocationHasInputAndErrorWithoutOutput()
+    {
+        var transport = new RecordingTransport();
+        var observer = CreateObserver(transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .WithFunctionObservers([observer])
+            .Create("fold(sum)");
+
+        Assert.Catch(() => expression.Evaluate(new[] { "unknown" }));
+
+        using var terminal = JsonDocument.Parse(transport.Events.Last());
+        var metric = terminal.RootElement.GetProperty("run").GetProperty("facets")
+            .GetProperty("expressif_functionMetrics").GetProperty("functions")[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(metric.GetProperty("invocationCount").GetInt64(), Is.EqualTo(1));
+            Assert.That(metric.GetProperty("input").GetProperty("nonNullCount").GetInt64(), Is.EqualTo(1));
+            Assert.That(metric.GetProperty("output").GetProperty("nullCount").GetInt64(), Is.Zero);
+            Assert.That(metric.GetProperty("output").GetProperty("nonNullCount").GetInt64(), Is.Zero);
+            Assert.That(metric.GetProperty("errorCount").GetInt64(), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void FunctionMetrics_AreAbsentWhenObserverIsNotInstalledAtFunctionBoundaries()
+    {
+        var transport = new RecordingTransport();
+        var observer = CreateObserver(transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .Create("upper");
+
+        expression.Evaluate("alice");
+
+        using var terminal = JsonDocument.Parse(transport.Events.Last());
+        Assert.That(terminal.RootElement.GetProperty("run").TryGetProperty("facets", out _), Is.False);
+    }
+
+    [Test]
     public void ConcurrentEvaluations_HaveIndependentRuns()
     {
         var transport = new RecordingTransport();
-        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: CreateObserver(transport)).Create("upper");
+        var observer = CreateObserver(transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .WithFunctionObservers([observer])
+            .Create("upper");
         Parallel.For(0, 30, _ => expression.Evaluate("alice"));
         var runs = transport.Events.Select(json =>
         {
@@ -101,6 +169,35 @@ public class OpenLineageObserverTest
         {
             Assert.That(runs, Has.Length.EqualTo(30));
             Assert.That(runs, Has.All.Matches<IGrouping<string?, (string? Id, string? Type)>>(run => run.Select(item => item.Type).SequenceEqual(["START", "COMPLETE"])));
+        });
+        foreach (var terminal in transport.Events.Where(json => EventType(json) == "COMPLETE"))
+        {
+            using var document = JsonDocument.Parse(terminal);
+            var metric = document.RootElement.GetProperty("run").GetProperty("facets")
+                .GetProperty("expressif_functionMetrics").GetProperty("functions")[0];
+            Assert.That(metric.GetProperty("invocationCount").GetInt64(), Is.EqualTo(1));
+        }
+    }
+
+    [Test]
+    public void FunctionMetrics_DistinguishRepeatedFunctionNames()
+    {
+        var transport = new RecordingTransport();
+        var observer = CreateObserver(transport);
+        var expression = new ExpressionFactory(new Expressif.Bindings.ExpressionBinder(), observer: observer)
+            .WithFunctionObservers([observer])
+            .Create("upper | lower | upper");
+
+        expression.Evaluate("Alice");
+
+        using var terminal = JsonDocument.Parse(transport.Events.Last());
+        var functions = terminal.RootElement.GetProperty("run").GetProperty("facets")
+            .GetProperty("expressif_functionMetrics").GetProperty("functions");
+        Assert.Multiple(() =>
+        {
+            Assert.That(functions.EnumerateArray().Select(metric => metric.GetProperty("name").GetString()),
+                Is.EqualTo(new[] { "upper", "lower", "upper" }));
+            Assert.That(functions.EnumerateArray().Select(metric => metric.GetProperty("id").GetString()).ToArray(), Is.Unique);
         });
     }
 
