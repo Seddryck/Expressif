@@ -82,6 +82,27 @@ public class SchemaAlgebraTest
         });
     }
 
+    [Test]
+    public void RegisterIntrinsicRule_NewIntrinsic_AcceptsRule()
+    {
+        var session = new LogicalSchemaAnalysisSession([]);
+
+        var action = () => session.RegisterIntrinsicRule(new TestIntrinsicRule("custom"));
+
+        Assert.That(action, Throws.Nothing);
+    }
+
+    [Test]
+    public void RegisterIntrinsicRule_DuplicateIntrinsic_Throws()
+    {
+        var session = new LogicalSchemaAnalysisSession([]);
+
+        var action = () => session.RegisterIntrinsicRule(new TestIntrinsicRule("field"));
+
+        Assert.That(action, Throws.InvalidOperationException
+            .With.Message.EqualTo("A schema rule is already registered for 'field'."));
+    }
+
     private static RecordLogicalSchema Record(
         params (string Name, LogicalSchema Schema, bool Optional)[] fields)
         => new(fields.ToDictionary(
@@ -89,4 +110,25 @@ public class SchemaAlgebraTest
             field => new LogicalSchemaField(field.Schema, field.Optional),
             StringComparer.Ordinal),
             AllowsAdditionalFields: false);
+
+    private sealed class TestIntrinsicRule(string intrinsic)
+        : LogicalSchemaAnalysisSession.IIntrinsicSchemaRule
+    {
+        public IReadOnlyCollection<string> Intrinsics { get; } = [intrinsic];
+
+        public LogicalSchemaAnalysisSession.Requirement Require(
+            LogicalCall call,
+            LogicalSchema expected,
+            string path,
+            string intrinsic)
+            => new(expected, new AnyLogicalSchema());
+
+        public LogicalSchema Infer(
+            LogicalCall call,
+            LogicalSchema input,
+            LogicalSchema enclosing,
+            string path,
+            string intrinsic)
+            => input;
+    }
 }

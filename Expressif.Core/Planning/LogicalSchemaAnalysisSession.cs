@@ -21,6 +21,9 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
     public IReadOnlyList<SchemaAnalysisNode> Nodes => trace.Nodes;
 
+    internal void RegisterIntrinsicRule(IIntrinsicSchemaRule rule)
+        => intrinsicRules.Register(rule);
+
     public void AnalyzeDefinition(LogicalNamedExpressionDefinition definition, string path)
     {
         var input = definition.InputContract is null
@@ -1458,7 +1461,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     private static bool ContainsConflict(LogicalSchema schema) => SchemaAlgebra.ContainsConflict(schema);
     private static string Describe(LogicalSchema schema) => SchemaAlgebra.Describe(schema);
 
-    private sealed record Requirement(LogicalSchema Input, LogicalSchema Enclosing);
+    internal sealed record Requirement(LogicalSchema Input, LogicalSchema Enclosing);
 
     private enum RecordMutation
     {
