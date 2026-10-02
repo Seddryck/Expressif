@@ -24,7 +24,11 @@ public sealed record FunctionDocumentation(
     FunctionAliasLifecycleDocumentation[]? DeprecatedAliases = null,
     FunctionTraversalDocumentation? Traversal = null,
     FunctionSemanticsDocumentation? Semantics = null,
-    FunctionSchemaDocumentation? Schema = null);
+    FunctionSchemaDocumentation? Schema = null)
+{
+    public string Namespace => Discovery.OperatorIdentity.NamespaceFromScope(Scope);
+    public string CanonicalName => $"{Namespace}::{Name}";
+}
 
 public sealed record FunctionSchemaDocumentation(
     string? Input = null,

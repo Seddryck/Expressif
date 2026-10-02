@@ -20,7 +20,10 @@ internal sealed class PredicateRegistry : ImplementationRegistry
             .Select(type => (Type: type, Attribute: type.GetCustomAttribute<PredicateAttribute>(true)))
             .Where(candidate => candidate.Attribute is not null)
             .SelectMany(candidate => Names(candidate.Type, candidate.Attribute!)
-                .Select(name => new ImplementationRegistration(name, candidate.Type)));
+                .Select(name => new ImplementationRegistration(
+                    OperatorIdentity.NamespaceFromType(candidate.Type),
+                    name,
+                    candidate.Type)));
 
     private static IEnumerable<string> Names(Type type, PredicateAttribute attribute)
     {

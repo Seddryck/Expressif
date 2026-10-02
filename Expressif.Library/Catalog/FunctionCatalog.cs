@@ -49,6 +49,16 @@ public sealed class FunctionCatalog
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
+        var separator = name.IndexOf("::", StringComparison.Ordinal);
+        if (separator >= 0)
+        {
+            var @namespace = name[..separator];
+            name = name[(separator + 2)..];
+            candidates = candidates.Where(function => function.Namespace.Equals(
+                @namespace,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
         var exact = candidates.Where(x => IsExactMatch(x, name)).ToArray();
         if (exact.Length > 0)
             return SelectCanonicalMatch(name, exact, argumentCount, StringComparison.Ordinal);
@@ -136,7 +146,7 @@ public sealed class FunctionCatalog
         var collisions = entries
             .SelectMany(entry => Names(entry)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Select(name => (Name: name, Entry: entry)))
+                .Select(name => (Name: $"{entry.Namespace}::{name}", Entry: entry)))
             .GroupBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
             .SelectMany(group => group
                 .GroupBy(item => item.Entry.Kind, StringComparer.OrdinalIgnoreCase)

@@ -35,10 +35,19 @@ internal static class EvaluationRuntime
     }
 
     public static IDisposable BindInput(object? input, IReadOnlyDictionary<string, object?> names)
+        => BindInputCore(input, names, inheritBindings: true);
+
+    public static IDisposable BindNamedExpression(object? input, IReadOnlyDictionary<string, object?> names)
+        => BindInputCore(input, names, inheritBindings: false);
+
+    private static IDisposable BindInputCore(
+        object? input,
+        IReadOnlyDictionary<string, object?> names,
+        bool inheritBindings)
     {
         var previous = CurrentState.Value;
         var bindings = new Dictionary<string, object?>(StringComparer.Ordinal);
-        if (previous?.Bindings is { } inherited)
+        if (inheritBindings && previous?.Bindings is { } inherited)
         {
             foreach (var binding in inherited)
                 bindings.Add(binding.Key, binding.Value);
@@ -46,7 +55,7 @@ internal static class EvaluationRuntime
         foreach (var binding in names)
             bindings[binding.Key] = binding.Value;
         CurrentState.Value = new State(
-            new EvaluationFrame(input, input, parent: previous?.Frame) { IsInputBound = true },
+            new EvaluationFrame(input, input, parent: inheritBindings ? previous?.Frame : null) { IsInputBound = true },
             previous?.Context ?? EvaluationContext.Empty,
             bindings);
         return new Scope(previous);

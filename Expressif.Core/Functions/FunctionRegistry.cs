@@ -22,7 +22,10 @@ internal sealed class FunctionRegistry : ImplementationRegistry
             .Where(candidate => candidate.Attribute is not null)
             .SelectMany(candidate => Names(candidate.Type, candidate.Attribute!)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Select(name => new ImplementationRegistration(name, candidate.Type)));
+                .Select(name => new ImplementationRegistration(
+                    OperatorIdentity.NamespaceFromType(candidate.Type),
+                    name,
+                    candidate.Type)));
 
     private static IEnumerable<string> Names(Type type, FunctionAttribute attribute)
     {

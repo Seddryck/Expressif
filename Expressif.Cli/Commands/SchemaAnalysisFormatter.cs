@@ -30,8 +30,9 @@ internal static class SchemaAnalysisFormatter
         var label = value switch
         {
             LogicalPipeline => "Pipeline",
-            LogicalCall call => call.Function.Name,
+            LogicalCall call => call.Function.CanonicalName,
             LogicalLiteral literal => $"Literal ({literal.Type})",
+            LogicalNamedExpressionInvocation invocation => $"Invoke: {invocation.Name}",
             _ => value.GetType().Name,
         };
         if (prefix is not null)
@@ -48,6 +49,8 @@ internal static class SchemaAnalysisFormatter
                 ToDocument(item, $"{path}.items[{index}]", annotations)).ToArray(),
             LogicalCall call => call.Arguments.Select((argument, index) =>
                 Argument(argument, $"{path}.arguments[{index}]", annotations)).ToArray(),
+            LogicalNamedExpressionInvocation invocation => invocation.Arguments.Select((argument, index) =>
+                ToDocument(argument, $"{path}.arguments[{index}]", annotations)).ToArray(),
             _ => [],
         };
         return new TreeDocument(label, new Dictionary<string, object?> { ["Kind"] = label }, children);

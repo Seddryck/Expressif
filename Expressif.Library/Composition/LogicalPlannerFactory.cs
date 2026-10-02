@@ -36,7 +36,8 @@ public static class LogicalPlannerFactory
                 ? Find(name, "predicate", argumentCount) ?? Find(name, "function", argumentCount)
                 : Find(name, "function", argumentCount) ?? Find(name, null, argumentCount);
             if (expectedKind == "accumulator"
-                && (function is null || !accumulators.TryResolve(function.Name, out _)))
+                && (function is null || !accumulators.TryResolve(
+                    new OperatorIdentity(function.Namespace, function.Name), out _)))
             {
                 return null;
             }
@@ -74,7 +75,8 @@ public static class LogicalPlannerFactory
                             function.Schema.Nullability,
                             function.Schema.Classification,
                             function.Schema.DynamicReason,
-                            function.Schema.NullableWhen)),
+                            function.Schema.NullableWhen),
+                    function.Namespace),
                 function.Parameters.Select(parameter => new PlannerParameterMetadata(
                     new PlannerParameterDescriptor(
                         parameter.Name,

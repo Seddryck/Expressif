@@ -1,4 +1,5 @@
 using Expressif.Values.Types;
+using Expressif.Discovery;
 
 namespace Expressif.Bindings;
 
@@ -39,37 +40,56 @@ public sealed class Function : IBoundExpression
 {
     public Function(string name, IParameter[] parameters, FunctionSyntax syntax = FunctionSyntax.Standard)
         : this(
-            name,
+            OperatorIdentity.Parse(name),
             parameters.Select(x => new FunctionArgument(null, x)).ToArray(),
             syntax,
-            FunctionImplementationKind.Unspecified) { }
+            FunctionImplementationKind.Unspecified,
+            !name.Contains("::", StringComparison.Ordinal)) { }
 
     private Function(
-        string name,
+        OperatorIdentity identity,
         FunctionArgument[] arguments,
         FunctionSyntax syntax,
-        FunctionImplementationKind implementationKind)
-        => (Name, Arguments, Syntax, ImplementationKind) = (name, arguments, syntax, implementationKind);
+        FunctionImplementationKind implementationKind,
+        bool isUnqualified = false)
+        => (Identity, Arguments, Syntax, ImplementationKind, IsUnqualified)
+            = (identity, arguments, syntax, implementationKind, isUnqualified);
 
     internal static Function FromArguments(string name, FunctionArgument[] arguments)
-        => new(name, arguments, FunctionSyntax.Standard, FunctionImplementationKind.Unspecified);
+        => new(OperatorIdentity.Parse(name), arguments, FunctionSyntax.Standard,
+            FunctionImplementationKind.Unspecified, !name.Contains("::", StringComparison.Ordinal));
+
+    internal static Function FromArguments(OperatorIdentity identity, FunctionArgument[] arguments)
+        => new(identity, arguments, FunctionSyntax.Standard, FunctionImplementationKind.Unspecified);
 
     internal static Function FromArguments(string name, FunctionArgument[] arguments, FunctionSyntax syntax)
-        => new(name, arguments, syntax, FunctionImplementationKind.Unspecified);
+        => new(OperatorIdentity.Parse(name), arguments, syntax,
+            FunctionImplementationKind.Unspecified, !name.Contains("::", StringComparison.Ordinal));
 
     internal static Function FromArguments(
         string name,
         FunctionArgument[] arguments,
         FunctionSyntax syntax,
         FunctionImplementationKind implementationKind)
-        => new(name, arguments, syntax, implementationKind);
+        => new(OperatorIdentity.Parse(name), arguments, syntax, implementationKind,
+            !name.Contains("::", StringComparison.Ordinal));
+
+    internal static Function FromArguments(
+        OperatorIdentity identity,
+        FunctionArgument[] arguments,
+        FunctionSyntax syntax,
+        FunctionImplementationKind implementationKind)
+        => new(identity, arguments, syntax, implementationKind);
 
     public Expressif.Syntax.SourceSpan? SourceSpan { get; internal set; }
-    public string Name { get; }
+    public OperatorIdentity Identity { get; }
+    public string Name => Identity.Name;
+    public string Namespace => Identity.Namespace;
     public FunctionArgument[] Arguments { get; }
     public IParameter[] Parameters => Arguments.Select(x => x.Value).ToArray();
     public FunctionSyntax Syntax { get; }
     internal FunctionImplementationKind ImplementationKind { get; }
+    internal bool IsUnqualified { get; }
 }
 
 public sealed class OpenExpression(IEnumerable<Function> members) : IBoundExpression

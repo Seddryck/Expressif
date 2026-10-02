@@ -6,16 +6,32 @@ namespace Expressif.Cli.Commands;
 internal static class LogicalPlanFormatter
 {
     public static string Format(LogicalPlan plan)
-        => TreeDocumentFormatter.Format(ToDocument(plan.Pipeline, "plan"), "tree");
+        => TreeDocumentFormatter.Format(ToDocument(plan), "tree");
 
     public static string Format(AnalyzedLogicalPlan analyzed)
     {
         var annotations = analyzed.Analysis.Nodes.ToDictionary(node => node.Path, StringComparer.Ordinal);
-        var document = ToDocument(analyzed.Plan.Pipeline, "plan", annotations);
+        var document = ToDocument(analyzed.Plan, annotations);
         return TreeDocumentFormatter.Format(new TreeDocument(
             $"{document.Label} ({analyzed.Analysis.Completeness.ToString().ToLowerInvariant()})",
             document.Properties,
             [.. document.Children, .. Diagnostics(analyzed.Analysis.Diagnostics)]), "tree");
+    }
+
+    private static TreeDocument ToDocument(
+        LogicalPlan plan,
+        IReadOnlyDictionary<string, SchemaAnalysisNode>? annotations = null)
+    {
+        if (plan.Definitions.Count == 0)
+            return ToDocument(plan.Pipeline, "plan", annotations);
+
+        var definitions = plan.Definitions.Select((definition, index) => Node(
+            $"Definition: {definition.Name}",
+            [ToDocument(definition.Body, $"definitions[{index}].body", annotations)]));
+        var entry = plan.HasEntry
+            ? new[] { Node("Entry", [ToDocument(plan.Pipeline, "plan", annotations)]) }
+            : [];
+        return Node("Document", [.. definitions, .. entry]);
     }
 
     private static TreeDocument ToDocument(
@@ -32,10 +48,14 @@ internal static class LogicalPlanFormatter
                     ToDocument(item, $"{path}.items[{index}]", annotations))),
             LogicalCall call => Node(
                 (call.ContextDepth == 0
-                    ? $"Call: {call.Function.Name}"
-                    : $"Call: {call.Function.Name} (context depth {call.ContextDepth})") + annotation,
+                    ? $"Call: {call.Function.CanonicalName}"
+                    : $"Call: {call.Function.CanonicalName} (context depth {call.ContextDepth})") + annotation,
                 call.Arguments.Select((argument, index) =>
                     Argument(argument, $"{path}.arguments[{index}]", annotations))),
+            LogicalNamedExpressionInvocation invocation => Node(
+                $"Invoke: {invocation.Name}{annotation}",
+                invocation.Arguments.Select((argument, index) =>
+                    ToDocument(argument, $"{path}.arguments[{index}]", annotations))),
             LogicalLiteral literal => Node(
                 $"Literal: {literal.Type} = {Format(literal.Value)}{annotation}"),
             _ => Node($"{value.GetType().Name}{annotation}"),

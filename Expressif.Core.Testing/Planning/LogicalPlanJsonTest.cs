@@ -70,6 +70,51 @@ public class LogicalPlanJsonTest
     }
 
     [Test]
+    public void Serialize_NamespaceQualifiedCall_RoundTripsCanonicalIdentity()
+    {
+        var plan = new LogicalPlan(new LogicalPipeline([
+            new LogicalCall(new PlannerFunctionDescriptor(
+                "shared", "any", "any", Namespace: "extension-one"), []),
+        ]));
+
+        var roundTrip = LogicalPlanJson.Deserialize(LogicalPlanJson.Serialize(plan, indented: false));
+
+        var call = (LogicalCall)roundTrip.Pipeline.Items.Single();
+        Assert.That(call.Function.CanonicalName, Is.EqualTo("extension-one::shared"));
+    }
+
+    [Test]
+    public void Serialize_NamedExpressionDocument_RoundTripsSignaturesAndInvocation()
+    {
+        var definition = new LogicalNamedExpressionDefinition(
+            "convert",
+            new LogicalPipeline([new LogicalLiteral("integer", 1L)]),
+            [new LogicalNamedExpressionParameter(
+                "factor",
+                new LogicalLiteral("integer", 2L),
+                new LogicalTypeContract("integer", Strict: true))],
+            [new LogicalNamedExpressionReceiver("value", new LogicalTypeContract("decimal"))],
+            new LogicalTypeContract("tuple", Strict: true),
+            new LogicalTypeContract("integer"));
+        var plan = new LogicalPlan(new LogicalPipeline([
+            new LogicalNamedExpressionInvocation("convert", [new LogicalLiteral("integer", 3L)]),
+        ])) { Definitions = [definition] };
+
+        var json = LogicalPlanJson.Serialize(plan, indented: false);
+        var roundTrip = LogicalPlanJson.Deserialize(json);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(roundTrip.Definitions, Has.Count.EqualTo(1));
+            Assert.That(roundTrip.Definitions[0].EffectiveParameters[0].Default!.Value, Is.EqualTo(2L));
+            Assert.That(roundTrip.Definitions[0].EffectiveParameters[0].Contract!.Strict, Is.True);
+            Assert.That(roundTrip.Definitions[0].EffectiveReceivers[0].Name, Is.EqualTo("value"));
+            Assert.That(roundTrip.Definitions[0].InputContract!.Type, Is.EqualTo("tuple"));
+            Assert.That(roundTrip.Pipeline.Items.Single(), Is.TypeOf<LogicalNamedExpressionInvocation>());
+        });
+    }
+
+    [Test]
     public void Deserialize_InvalidJson_WrapsJsonException()
     {
         var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize("{"));
@@ -92,6 +137,7 @@ public class LogicalPlanJsonTest
     {
         var json = $"{{\"format\":\"expressif.logical-plan\",\"version\":{LogicalPlanJson.FormatVersion}," +
             "\"catalogCompatibility\":\"3.0\"," +
+            "\"definitions\":[]," +
             $"\"plan\":{{\"kind\":\"pipeline\",\"items\":[{{\"kind\":\"literal\",\"type\":\"{type}\",\"value\":{value}}}]}}}}";
 
         var exception = Assert.Throws<LogicalPlanFormatException>(() => LogicalPlanJson.Deserialize(json));
@@ -126,13 +172,13 @@ public class LogicalPlanJsonTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(schema.RootElement.GetProperty("$id").GetString(), Does.EndWith("logical-plan-v2.schema.json"));
+            Assert.That(schema.RootElement.GetProperty("$id").GetString(), Does.EndWith("logical-plan-v3.schema.json"));
             Assert.That(schema.RootElement.GetProperty("properties").GetProperty("format").GetProperty("const").GetString(),
                 Is.EqualTo(LogicalPlanJson.FormatName));
             Assert.That(schema.RootElement.GetProperty("properties").GetProperty("version").GetProperty("const").GetInt32(),
                 Is.EqualTo(LogicalPlanJson.FormatVersion));
             Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("value").GetProperty("oneOf").GetArrayLength(),
-                Is.EqualTo(3));
+                Is.EqualTo(4));
             Assert.That(schema.RootElement.GetProperty("$defs").GetProperty("operator")
                     .GetProperty("properties").GetProperty("kind").GetProperty("enum").GetArrayLength(),
                 Is.EqualTo(4));

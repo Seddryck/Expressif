@@ -6,7 +6,7 @@ abstract Expressif.Planning.LogicalValue.<Clone>$() -> Expressif.Planning.Logica
 abstract Expressif.Predicates.BasePredicate.Evaluate(object? value) -> bool
 const Expressif.Planning.LogicalPlanJson.CatalogCompatibility = "3.0" -> string!
 const Expressif.Planning.LogicalPlanJson.FormatName = "expressif.logical-plan" -> string!
-const Expressif.Planning.LogicalPlanJson.FormatVersion = 2 -> int
+const Expressif.Planning.LogicalPlanJson.FormatVersion = 3 -> int
 const Expressif.Planning.LogicalPlanJson.SchemaResourceName = "Expressif.LogicalPlan.schema.json" -> string!
 Expressif.AbstractPredicationBuilder
 Expressif.AbstractPredicationBuilder.AbstractPredicationBuilder(Expressif.AbstractPredicationBuilder! builder) -> void
@@ -1654,8 +1654,8 @@ Expressif.Planning.PairLogicalSchema.Key.init -> void
 Expressif.Planning.PairLogicalSchema.PairLogicalSchema(Expressif.Planning.LogicalSchema! Key, Expressif.Planning.LogicalSchema! Value, bool IsNullable = false) -> void
 Expressif.Planning.PairLogicalSchema.Value.get -> Expressif.Planning.LogicalSchema!
 Expressif.Planning.PairLogicalSchema.Value.init -> void
-Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics, out string! Kind, out Expressif.Planning.PlannerSchemaDescriptor? Schema) -> void
-Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null, string! Kind = "function", Expressif.Planning.PlannerSchemaDescriptor? Schema = null) -> void
+Expressif.Planning.PlannerFunctionDescriptor.Deconstruct(out string! Name, out string! Input, out string! Output, out Expressif.Planning.PlannerTraversalDescriptor? Traversal, out Expressif.Planning.PlannerSemanticsDescriptor? Semantics, out string! Kind, out Expressif.Planning.PlannerSchemaDescriptor? Schema, out string! Namespace) -> void
+Expressif.Planning.PlannerFunctionDescriptor.PlannerFunctionDescriptor(string! Name, string! Input, string! Output, Expressif.Planning.PlannerTraversalDescriptor? Traversal = null, Expressif.Planning.PlannerSemanticsDescriptor? Semantics = null, string! Kind = "function", Expressif.Planning.PlannerSchemaDescriptor? Schema = null, string! Namespace = "global") -> void
 Expressif.Planning.PlannerFunctionDescriptor.Schema.get -> Expressif.Planning.PlannerSchemaDescriptor?
 Expressif.Planning.PlannerFunctionDescriptor.Schema.init -> void
 Expressif.Planning.PlannerParameterSchemaDescriptor
@@ -1912,3 +1912,118 @@ static Expressif.Planning.UnionLogicalSchema.operator ==(Expressif.Planning.Unio
 virtual Expressif.Planning.LogicalSchema.EqualityContract.get -> System.Type!
 virtual Expressif.Planning.LogicalSchema.Equals(Expressif.Planning.LogicalSchema? other) -> bool
 virtual Expressif.Planning.LogicalSchema.PrintMembers(System.Text.StringBuilder! builder) -> bool
+Expressif.Bindings.Function.Identity.get -> Expressif.Discovery.OperatorIdentity!
+Expressif.Bindings.Function.Namespace.get -> string!
+Expressif.Discovery.CompositeImplementationRegistry.Resolve(Expressif.Discovery.OperatorIdentity! identity) -> System.Type!
+Expressif.Discovery.CompositeImplementationRegistry.TryResolve(Expressif.Discovery.OperatorIdentity! identity, out System.Type! implementationType) -> bool
+Expressif.Discovery.IImplementationRegistry.Resolve(Expressif.Discovery.OperatorIdentity! identity) -> System.Type!
+Expressif.Discovery.IImplementationRegistry.TryResolve(Expressif.Discovery.OperatorIdentity! identity, out System.Type! implementationType) -> bool
+Expressif.Discovery.ImplementationRegistration.Identity.get -> Expressif.Discovery.OperatorIdentity!
+Expressif.Discovery.ImplementationRegistration.ImplementationRegistration(string! namespace, string! name, System.Type! implementationType) -> void
+Expressif.Discovery.ImplementationRegistration.Namespace.get -> string!
+Expressif.Discovery.ImplementationRegistration.Namespace.init -> void
+Expressif.Discovery.ImplementationRegistry.Resolve(Expressif.Discovery.OperatorIdentity! identity) -> System.Type!
+Expressif.Discovery.ImplementationRegistry.TryResolve(Expressif.Discovery.OperatorIdentity! identity, out System.Type! implementationType) -> bool
+Expressif.Discovery.OperatorIdentity
+Expressif.Discovery.OperatorIdentity.<Clone>$() -> Expressif.Discovery.OperatorIdentity!
+Expressif.Discovery.OperatorIdentity.CanonicalName.get -> string!
+Expressif.Discovery.OperatorIdentity.Equals(Expressif.Discovery.OperatorIdentity? other) -> bool
+Expressif.Discovery.OperatorIdentity.Name.get -> string!
+Expressif.Discovery.OperatorIdentity.Namespace.get -> string!
+Expressif.Discovery.OperatorIdentity.OperatorIdentity(string! namespace, string! name) -> void
+Expressif.Planning.LogicalNamedExpressionDefinition
+Expressif.Planning.LogicalNamedExpressionDefinition.<Clone>$() -> Expressif.Planning.LogicalNamedExpressionDefinition!
+Expressif.Planning.LogicalNamedExpressionDefinition.Body.get -> Expressif.Planning.LogicalPipeline!
+Expressif.Planning.LogicalNamedExpressionDefinition.Body.init -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.Deconstruct(out string! Name, out Expressif.Planning.LogicalPipeline! Body, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionParameter!>? Parameters, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionReceiver!>? Receivers, out Expressif.Planning.LogicalTypeContract? InputContract, out Expressif.Planning.LogicalTypeContract? OutputContract) -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.EffectiveParameters.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionParameter!>!
+Expressif.Planning.LogicalNamedExpressionDefinition.EffectiveReceivers.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionReceiver!>!
+Expressif.Planning.LogicalNamedExpressionDefinition.Equals(Expressif.Planning.LogicalNamedExpressionDefinition? other) -> bool
+Expressif.Planning.LogicalNamedExpressionDefinition.InputContract.get -> Expressif.Planning.LogicalTypeContract?
+Expressif.Planning.LogicalNamedExpressionDefinition.InputContract.init -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.LogicalNamedExpressionDefinition(string! Name, Expressif.Planning.LogicalPipeline! Body, System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionParameter!>? Parameters = null, System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionReceiver!>? Receivers = null, Expressif.Planning.LogicalTypeContract? InputContract = null, Expressif.Planning.LogicalTypeContract? OutputContract = null) -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.Name.get -> string!
+Expressif.Planning.LogicalNamedExpressionDefinition.Name.init -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.OutputContract.get -> Expressif.Planning.LogicalTypeContract?
+Expressif.Planning.LogicalNamedExpressionDefinition.OutputContract.init -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.Parameters.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionParameter!>?
+Expressif.Planning.LogicalNamedExpressionDefinition.Parameters.init -> void
+Expressif.Planning.LogicalNamedExpressionDefinition.Receivers.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionReceiver!>?
+Expressif.Planning.LogicalNamedExpressionDefinition.Receivers.init -> void
+Expressif.Planning.LogicalNamedExpressionInvocation
+Expressif.Planning.LogicalNamedExpressionInvocation.Arguments.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalValue!>!
+Expressif.Planning.LogicalNamedExpressionInvocation.Arguments.init -> void
+Expressif.Planning.LogicalNamedExpressionInvocation.Deconstruct(out string! Name, out System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalValue!>! Arguments) -> void
+Expressif.Planning.LogicalNamedExpressionInvocation.Equals(Expressif.Planning.LogicalNamedExpressionInvocation? other) -> bool
+Expressif.Planning.LogicalNamedExpressionInvocation.LogicalNamedExpressionInvocation(string! Name, System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalValue!>! Arguments) -> void
+Expressif.Planning.LogicalNamedExpressionInvocation.Name.get -> string!
+Expressif.Planning.LogicalNamedExpressionInvocation.Name.init -> void
+Expressif.Planning.LogicalNamedExpressionParameter
+Expressif.Planning.LogicalNamedExpressionParameter.<Clone>$() -> Expressif.Planning.LogicalNamedExpressionParameter!
+Expressif.Planning.LogicalNamedExpressionParameter.Contract.get -> Expressif.Planning.LogicalTypeContract?
+Expressif.Planning.LogicalNamedExpressionParameter.Contract.init -> void
+Expressif.Planning.LogicalNamedExpressionParameter.Deconstruct(out string! Name, out Expressif.Planning.LogicalLiteral? Default, out Expressif.Planning.LogicalTypeContract? Contract) -> void
+Expressif.Planning.LogicalNamedExpressionParameter.Default.get -> Expressif.Planning.LogicalLiteral?
+Expressif.Planning.LogicalNamedExpressionParameter.Default.init -> void
+Expressif.Planning.LogicalNamedExpressionParameter.Equals(Expressif.Planning.LogicalNamedExpressionParameter? other) -> bool
+Expressif.Planning.LogicalNamedExpressionParameter.LogicalNamedExpressionParameter(string! Name, Expressif.Planning.LogicalLiteral? Default = null, Expressif.Planning.LogicalTypeContract? Contract = null) -> void
+Expressif.Planning.LogicalNamedExpressionParameter.Name.get -> string!
+Expressif.Planning.LogicalNamedExpressionParameter.Name.init -> void
+Expressif.Planning.LogicalNamedExpressionReceiver
+Expressif.Planning.LogicalNamedExpressionReceiver.<Clone>$() -> Expressif.Planning.LogicalNamedExpressionReceiver!
+Expressif.Planning.LogicalNamedExpressionReceiver.Contract.get -> Expressif.Planning.LogicalTypeContract?
+Expressif.Planning.LogicalNamedExpressionReceiver.Contract.init -> void
+Expressif.Planning.LogicalNamedExpressionReceiver.Deconstruct(out string! Name, out Expressif.Planning.LogicalTypeContract? Contract) -> void
+Expressif.Planning.LogicalNamedExpressionReceiver.Equals(Expressif.Planning.LogicalNamedExpressionReceiver? other) -> bool
+Expressif.Planning.LogicalNamedExpressionReceiver.LogicalNamedExpressionReceiver(string! Name, Expressif.Planning.LogicalTypeContract? Contract = null) -> void
+Expressif.Planning.LogicalNamedExpressionReceiver.Name.get -> string!
+Expressif.Planning.LogicalNamedExpressionReceiver.Name.init -> void
+Expressif.Planning.LogicalPlan.Definitions.get -> System.Collections.Generic.IReadOnlyList<Expressif.Planning.LogicalNamedExpressionDefinition!>!
+Expressif.Planning.LogicalPlan.Definitions.init -> void
+Expressif.Planning.LogicalPlan.HasEntry.get -> bool
+Expressif.Planning.LogicalTypeContract
+Expressif.Planning.LogicalTypeContract.<Clone>$() -> Expressif.Planning.LogicalTypeContract!
+Expressif.Planning.LogicalTypeContract.Deconstruct(out string! Type, out bool Strict) -> void
+Expressif.Planning.LogicalTypeContract.Equals(Expressif.Planning.LogicalTypeContract? other) -> bool
+Expressif.Planning.LogicalTypeContract.LogicalTypeContract(string! Type, bool Strict = false) -> void
+Expressif.Planning.LogicalTypeContract.Strict.get -> bool
+Expressif.Planning.LogicalTypeContract.Strict.init -> void
+Expressif.Planning.LogicalTypeContract.Type.get -> string!
+Expressif.Planning.LogicalTypeContract.Type.init -> void
+Expressif.Planning.PlannerFunctionDescriptor.CanonicalName.get -> string!
+Expressif.Planning.PlannerFunctionDescriptor.Identity.get -> Expressif.Discovery.OperatorIdentity!
+Expressif.Planning.PlannerFunctionDescriptor.Namespace.get -> string!
+Expressif.Planning.PlannerFunctionDescriptor.Namespace.init -> void
+override Expressif.Discovery.OperatorIdentity.Equals(object? obj) -> bool
+override Expressif.Discovery.OperatorIdentity.GetHashCode() -> int
+override Expressif.Discovery.OperatorIdentity.ToString() -> string!
+override Expressif.Planning.LogicalNamedExpressionDefinition.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalNamedExpressionDefinition.GetHashCode() -> int
+override Expressif.Planning.LogicalNamedExpressionDefinition.ToString() -> string!
+override Expressif.Planning.LogicalNamedExpressionInvocation.<Clone>$() -> Expressif.Planning.LogicalNamedExpressionInvocation!
+override Expressif.Planning.LogicalNamedExpressionInvocation.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalNamedExpressionInvocation.GetHashCode() -> int
+override Expressif.Planning.LogicalNamedExpressionInvocation.ToString() -> string!
+override Expressif.Planning.LogicalNamedExpressionParameter.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalNamedExpressionParameter.GetHashCode() -> int
+override Expressif.Planning.LogicalNamedExpressionParameter.ToString() -> string!
+override Expressif.Planning.LogicalNamedExpressionReceiver.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalNamedExpressionReceiver.GetHashCode() -> int
+override Expressif.Planning.LogicalNamedExpressionReceiver.ToString() -> string!
+override Expressif.Planning.LogicalTypeContract.Equals(object? obj) -> bool
+override Expressif.Planning.LogicalTypeContract.GetHashCode() -> int
+override Expressif.Planning.LogicalTypeContract.ToString() -> string!
+override sealed Expressif.Planning.LogicalNamedExpressionInvocation.Equals(Expressif.Planning.LogicalValue? other) -> bool
+static Expressif.Discovery.OperatorIdentity.operator !=(Expressif.Discovery.OperatorIdentity? left, Expressif.Discovery.OperatorIdentity? right) -> bool
+static Expressif.Discovery.OperatorIdentity.operator ==(Expressif.Discovery.OperatorIdentity? left, Expressif.Discovery.OperatorIdentity? right) -> bool
+static Expressif.Discovery.OperatorIdentity.Parse(string! canonicalName, string! defaultNamespace = "global") -> Expressif.Discovery.OperatorIdentity!
+static Expressif.Planning.LogicalNamedExpressionDefinition.operator !=(Expressif.Planning.LogicalNamedExpressionDefinition? left, Expressif.Planning.LogicalNamedExpressionDefinition? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionDefinition.operator ==(Expressif.Planning.LogicalNamedExpressionDefinition? left, Expressif.Planning.LogicalNamedExpressionDefinition? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionInvocation.operator !=(Expressif.Planning.LogicalNamedExpressionInvocation? left, Expressif.Planning.LogicalNamedExpressionInvocation? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionInvocation.operator ==(Expressif.Planning.LogicalNamedExpressionInvocation? left, Expressif.Planning.LogicalNamedExpressionInvocation? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionParameter.operator !=(Expressif.Planning.LogicalNamedExpressionParameter? left, Expressif.Planning.LogicalNamedExpressionParameter? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionParameter.operator ==(Expressif.Planning.LogicalNamedExpressionParameter? left, Expressif.Planning.LogicalNamedExpressionParameter? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionReceiver.operator !=(Expressif.Planning.LogicalNamedExpressionReceiver? left, Expressif.Planning.LogicalNamedExpressionReceiver? right) -> bool
+static Expressif.Planning.LogicalNamedExpressionReceiver.operator ==(Expressif.Planning.LogicalNamedExpressionReceiver? left, Expressif.Planning.LogicalNamedExpressionReceiver? right) -> bool
+static Expressif.Planning.LogicalTypeContract.operator !=(Expressif.Planning.LogicalTypeContract? left, Expressif.Planning.LogicalTypeContract? right) -> bool
+static Expressif.Planning.LogicalTypeContract.operator ==(Expressif.Planning.LogicalTypeContract? left, Expressif.Planning.LogicalTypeContract? right) -> bool

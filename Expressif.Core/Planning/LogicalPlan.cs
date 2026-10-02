@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Expressif.Discovery;
 using Expressif.Syntax;
 
 namespace Expressif.Planning;
@@ -6,7 +7,11 @@ namespace Expressif.Planning;
 /// <summary>
 /// A portable logical representation of an Expressif expression.
 /// </summary>
-public sealed record LogicalPlan(LogicalPipeline Pipeline);
+public sealed record LogicalPlan(LogicalPipeline Pipeline)
+{
+    public IReadOnlyList<LogicalNamedExpressionDefinition> Definitions { get; init; } = [];
+    public bool HasEntry => Pipeline.Items.Count > 0;
+}
 
 /// <summary>
 /// A logical plan together with the schemas discovered for its nodes.
@@ -17,6 +22,46 @@ public sealed record AnalyzedLogicalPlan(LogicalPlan Plan, SchemaAnalysis Analys
 /// A value that can appear in a logical plan.
 /// </summary>
 public abstract record LogicalValue;
+
+/// <summary>
+/// A reusable expression declared in a logical document.
+/// </summary>
+public sealed record LogicalNamedExpressionDefinition(
+    string Name,
+    LogicalPipeline Body,
+    IReadOnlyList<LogicalNamedExpressionParameter>? Parameters = null,
+    IReadOnlyList<LogicalNamedExpressionReceiver>? Receivers = null,
+    LogicalTypeContract? InputContract = null,
+    LogicalTypeContract? OutputContract = null)
+{
+    public IReadOnlyList<LogicalNamedExpressionParameter> EffectiveParameters => Parameters ?? [];
+    public IReadOnlyList<LogicalNamedExpressionReceiver> EffectiveReceivers => Receivers ?? [];
+}
+
+/// <summary>
+/// An explicit parameter in a named-expression signature.
+/// </summary>
+public sealed record LogicalNamedExpressionParameter(
+    string Name,
+    LogicalLiteral? Default = null,
+    LogicalTypeContract? Contract = null);
+
+/// <summary>
+/// A named component decomposed from a named expression's tuple input.
+/// </summary>
+public sealed record LogicalNamedExpressionReceiver(string Name, LogicalTypeContract? Contract = null);
+
+/// <summary>
+/// A type boundary on a named-expression signature member.
+/// </summary>
+public sealed record LogicalTypeContract(string Type, bool Strict = false);
+
+/// <summary>
+/// Invokes a definition in the containing logical document.
+/// </summary>
+public sealed record LogicalNamedExpressionInvocation(
+    string Name,
+    IReadOnlyList<LogicalValue> Arguments) : LogicalValue;
 
 /// <summary>
 /// A sequence whose output flows from one item to the next.
@@ -83,7 +128,12 @@ public sealed record PlannerFunctionDescriptor(
     PlannerTraversalDescriptor? Traversal = null,
     PlannerSemanticsDescriptor? Semantics = null,
     string Kind = "function",
-    PlannerSchemaDescriptor? Schema = null);
+    PlannerSchemaDescriptor? Schema = null,
+    string Namespace = "global")
+{
+    public OperatorIdentity Identity => new(Namespace, Name);
+    public string CanonicalName => Identity.CanonicalName;
+}
 
 /// <summary>
 /// The schema relationship declared by a planned operator.
