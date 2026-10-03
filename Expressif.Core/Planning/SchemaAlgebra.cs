@@ -7,119 +7,168 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
 
     public LogicalSchema Intersect(LogicalSchema left, LogicalSchema right, string path)
     {
-        if (left is NoInputLogicalSchema && right is AnyLogicalSchema)
-            return left;
-        if (right is NoInputLogicalSchema && left is AnyLogicalSchema)
-            return right;
-        if (left is NoInputLogicalSchema)
-            return right;
-        if (right is NoInputLogicalSchema)
-            return left;
-        if (left is AnyLogicalSchema)
-            return WithNullability(right, IsNullable(left) || IsNullable(right));
-        if (right is AnyLogicalSchema)
-            return WithNullability(left, IsNullable(left) || IsNullable(right));
-        if (left is ConflictingLogicalSchema)
-            return left;
-        if (right is ConflictingLogicalSchema)
-            return right;
+        var special = IntersectSpecial(left, right);
+        if (special is not null)
+            return special;
+
+        var union = IntersectUnion(left, right, path);
+        if (union is not null)
+            return union;
+
+        return IntersectSameShape(left, right, path)
+            ?? CreateConflict(left, right, path);
+    }
+
+    private static LogicalSchema? IntersectSpecial(LogicalSchema left, LogicalSchema right)
+        => (left, right) switch
+        {
+            (NoInputLogicalSchema, AnyLogicalSchema) => left,
+            (AnyLogicalSchema, NoInputLogicalSchema) => right,
+            (NoInputLogicalSchema, _) => right,
+            (_, NoInputLogicalSchema) => left,
+            (AnyLogicalSchema, _) => WithCombinedNullability(right, left),
+            (_, AnyLogicalSchema) => WithCombinedNullability(left, right),
+            (ConflictingLogicalSchema, _) => left,
+            (_, ConflictingLogicalSchema) => right,
+            _ => null,
+        };
+
+    private LogicalSchema? IntersectUnion(LogicalSchema left, LogicalSchema right, string path)
+    {
         if (left is UnionLogicalSchema leftUnion)
         {
-            var alternatives = leftUnion.Alternatives
-                .Where(alternative => CanIntersectRoot(alternative, right))
-                .Select((alternative, index) => Intersect(alternative, right, $"{path}.alternatives[{index}]"))
-                .ToArray();
-            if (alternatives.Length > 0)
-            {
-                return WithNullability(
-                    alternatives.Aggregate(Union),
-                    IsNullable(left) || IsNullable(right));
-            }
+            var result = IntersectAlternatives(leftUnion, right, path, unionOnLeft: true);
+            if (result is not null)
+                return result;
         }
-        if (right is UnionLogicalSchema rightUnion)
-        {
-            var alternatives = rightUnion.Alternatives
-                .Where(alternative => CanIntersectRoot(left, alternative))
-                .Select((alternative, index) => Intersect(left, alternative, $"{path}.alternatives[{index}]"))
-                .ToArray();
-            if (alternatives.Length > 0)
-            {
-                return WithNullability(
-                    alternatives.Aggregate(Union),
-                    IsNullable(left) || IsNullable(right));
-            }
-        }
-        if (left is ScalarLogicalSchema leftScalar && right is ScalarLogicalSchema rightScalar)
-        {
-            var type = IntersectScalar(leftScalar.Type, rightScalar.Type);
-            if (type is not null)
-                return new ScalarLogicalSchema(type, IsNullable(left) || IsNullable(right));
-        }
-        if (left is RecordLogicalSchema leftRecord && right is RecordLogicalSchema rightRecord)
-        {
-            var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
-            foreach (var field in leftRecord.Fields)
-                fields.Add(field.Key, field.Value);
-            foreach (var field in rightRecord.Fields)
-            {
-                if (fields.TryGetValue(field.Key, out var existing))
-                {
-                    fields[field.Key] = new LogicalSchemaField(
-                        Intersect(existing.Schema, field.Value.Schema, $"{path}.{field.Key}"),
-                        existing.Optional || field.Value.Optional);
-                }
-                else
-                {
-                    fields.Add(field.Key, field.Value);
-                }
-            }
-            return new RecordLogicalSchema(
-                fields,
-                leftRecord.AllowsAdditionalFields && rightRecord.AllowsAdditionalFields,
-                IsNullable(left) || IsNullable(right));
-        }
-        if (left is ArrayLogicalSchema leftArray && right is ArrayLogicalSchema rightArray)
-        {
-            return new ArrayLogicalSchema(
-                Intersect(leftArray.Items, rightArray.Items, $"{path}.items"),
-                IsNullable(left) || IsNullable(right));
-        }
-        if (left is TupleLogicalSchema leftTuple && right is TupleLogicalSchema rightTuple)
-        {
-            var tuple = IntersectTuple(leftTuple, rightTuple, path);
-            if (tuple is not null)
-                return tuple;
-        }
-        if (left is PairLogicalSchema leftPair && right is PairLogicalSchema rightPair)
-        {
-            return new PairLogicalSchema(
-                Intersect(leftPair.Key, rightPair.Key, $"{path}.key"),
-                Intersect(leftPair.Value, rightPair.Value, $"{path}.value"),
-                IsNullable(left) || IsNullable(right));
-        }
-        if (left is DictionaryLogicalSchema leftDictionary
-            && right is DictionaryLogicalSchema rightDictionary)
-        {
-            return new DictionaryLogicalSchema(
-                Intersect(leftDictionary.Keys, rightDictionary.Keys, $"{path}.keys"),
-                Intersect(leftDictionary.Values, rightDictionary.Values, $"{path}.values"),
-                IsNullable(left) || IsNullable(right));
-        }
-        if (left is GroupingLogicalSchema leftGrouping && right is GroupingLogicalSchema rightGrouping)
-        {
-            return new GroupingLogicalSchema(
-                Intersect(leftGrouping.Keys, rightGrouping.Keys, $"{path}.keys"),
-                Intersect(leftGrouping.Items, rightGrouping.Items, $"{path}.items"),
-                IsNullable(left) || IsNullable(right));
-        }
-        if (left is SortTableLogicalSchema leftSortTable
-            && right is SortTableLogicalSchema rightSortTable)
-        {
-            return new SortTableLogicalSchema(
-                Intersect(leftSortTable.Items, rightSortTable.Items, $"{path}.items"),
-                IsNullable(left) || IsNullable(right));
-        }
+        return right is UnionLogicalSchema rightUnion
+            ? IntersectAlternatives(rightUnion, left, path, unionOnLeft: false)
+            : null;
+    }
 
+    private LogicalSchema? IntersectAlternatives(
+        UnionLogicalSchema union,
+        LogicalSchema other,
+        string path,
+        bool unionOnLeft)
+    {
+        var alternatives = union.Alternatives
+            .Where(alternative => unionOnLeft
+                ? CanIntersectRoot(alternative, other)
+                : CanIntersectRoot(other, alternative))
+            .Select((alternative, index) => unionOnLeft
+                ? Intersect(alternative, other, $"{path}.alternatives[{index}]")
+                : Intersect(other, alternative, $"{path}.alternatives[{index}]"))
+            .ToArray();
+        return alternatives.Length == 0
+            ? null
+            : WithNullability(
+                alternatives.Aggregate(Union),
+                IsNullable(union) || IsNullable(other));
+    }
+
+    private LogicalSchema? IntersectSameShape(
+        LogicalSchema left,
+        LogicalSchema right,
+        string path)
+        => (left, right) switch
+        {
+            (ScalarLogicalSchema leftScalar, ScalarLogicalSchema rightScalar)
+                => IntersectScalars(leftScalar, rightScalar),
+            (RecordLogicalSchema leftRecord, RecordLogicalSchema rightRecord)
+                => IntersectRecords(leftRecord, rightRecord, path),
+            (ArrayLogicalSchema leftArray, ArrayLogicalSchema rightArray)
+                => IntersectArrays(leftArray, rightArray, path),
+            (TupleLogicalSchema leftTuple, TupleLogicalSchema rightTuple)
+                => IntersectTuple(leftTuple, rightTuple, path),
+            (PairLogicalSchema leftPair, PairLogicalSchema rightPair)
+                => IntersectPairs(leftPair, rightPair, path),
+            (DictionaryLogicalSchema leftDictionary, DictionaryLogicalSchema rightDictionary)
+                => IntersectDictionaries(leftDictionary, rightDictionary, path),
+            (GroupingLogicalSchema leftGrouping, GroupingLogicalSchema rightGrouping)
+                => IntersectGroupings(leftGrouping, rightGrouping, path),
+            (SortTableLogicalSchema leftSortTable, SortTableLogicalSchema rightSortTable)
+                => IntersectSortTables(leftSortTable, rightSortTable, path),
+            _ => null,
+        };
+
+    private static LogicalSchema? IntersectScalars(
+        ScalarLogicalSchema left,
+        ScalarLogicalSchema right)
+    {
+        var type = IntersectScalar(left.Type, right.Type);
+        return type is null
+            ? null
+            : new ScalarLogicalSchema(type, left.IsNullable || right.IsNullable);
+    }
+
+    private LogicalSchema IntersectRecords(
+        RecordLogicalSchema left,
+        RecordLogicalSchema right,
+        string path)
+    {
+        var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
+        foreach (var field in left.Fields)
+            fields.Add(field.Key, field.Value);
+        foreach (var field in right.Fields)
+        {
+            fields[field.Key] = fields.TryGetValue(field.Key, out var existing)
+                ? new LogicalSchemaField(
+                    Intersect(existing.Schema, field.Value.Schema, $"{path}.{field.Key}"),
+                    existing.Optional || field.Value.Optional)
+                : field.Value;
+        }
+        return new RecordLogicalSchema(
+            fields,
+            left.AllowsAdditionalFields && right.AllowsAdditionalFields,
+            left.IsNullable || right.IsNullable);
+    }
+
+    private LogicalSchema IntersectArrays(
+        ArrayLogicalSchema left,
+        ArrayLogicalSchema right,
+        string path)
+        => new ArrayLogicalSchema(
+            Intersect(left.Items, right.Items, $"{path}.items"),
+            left.IsNullable || right.IsNullable);
+
+    private LogicalSchema IntersectPairs(
+        PairLogicalSchema left,
+        PairLogicalSchema right,
+        string path)
+        => new PairLogicalSchema(
+            Intersect(left.Key, right.Key, $"{path}.key"),
+            Intersect(left.Value, right.Value, $"{path}.value"),
+            left.IsNullable || right.IsNullable);
+
+    private LogicalSchema IntersectDictionaries(
+        DictionaryLogicalSchema left,
+        DictionaryLogicalSchema right,
+        string path)
+        => new DictionaryLogicalSchema(
+            Intersect(left.Keys, right.Keys, $"{path}.keys"),
+            Intersect(left.Values, right.Values, $"{path}.values"),
+            left.IsNullable || right.IsNullable);
+
+    private LogicalSchema IntersectGroupings(
+        GroupingLogicalSchema left,
+        GroupingLogicalSchema right,
+        string path)
+        => new GroupingLogicalSchema(
+            Intersect(left.Keys, right.Keys, $"{path}.keys"),
+            Intersect(left.Items, right.Items, $"{path}.items"),
+            left.IsNullable || right.IsNullable);
+
+    private LogicalSchema IntersectSortTables(
+        SortTableLogicalSchema left,
+        SortTableLogicalSchema right,
+        string path)
+        => new SortTableLogicalSchema(
+            Intersect(left.Items, right.Items, $"{path}.items"),
+            left.IsNullable || right.IsNullable);
+
+    private LogicalSchema CreateConflict(LogicalSchema left, LogicalSchema right, string path)
+    {
         var conflict = new ConflictingLogicalSchema(left, right, IsNullable(left) || IsNullable(right));
         diagnostics.Add(new SchemaAnalysisDiagnostic(
             "schema.conflict",
@@ -127,6 +176,9 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
             $"Schema constraints '{Describe(left)}' and '{Describe(right)}' are incompatible."));
         return conflict;
     }
+
+    private static LogicalSchema WithCombinedNullability(LogicalSchema schema, LogicalSchema other)
+        => WithNullability(schema, IsNullable(schema) || IsNullable(other));
 
     public static LogicalSchema Union(LogicalSchema left, LogicalSchema right)
     {
