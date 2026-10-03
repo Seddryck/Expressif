@@ -31,7 +31,7 @@ public class SchemaAlgebraTest
     {
         var algebra = new SchemaAlgebra([]);
 
-        var result = algebra.Union(
+        var result = SchemaAlgebra.Union(
             new ScalarLogicalSchema("integer"),
             new ScalarLogicalSchema("decimal", IsNullable: true));
 
@@ -42,7 +42,7 @@ public class SchemaAlgebraTest
     public void RecordContributionFold_PreservesOrderAndOptionalFieldSemantics()
     {
         var algebra = new SchemaAlgebra([]);
-        RecordSchemaContribution[] contributions =
+        IRecordSchemaContribution[] contributions =
         [
             new NamedRecordContribution("value", new LogicalSchemaField(new ScalarLogicalSchema("decimal"))),
             new RecordShapeContribution(Record(

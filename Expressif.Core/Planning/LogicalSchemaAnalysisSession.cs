@@ -2,6 +2,18 @@ namespace Expressif.Planning;
 
 internal sealed partial class LogicalSchemaAnalysisSession
 {
+    private const string ArraySchemaName = "array";
+    private const string DictionarySchemaName = "dictionary";
+    private const string DynamicDiagnosticCode = "schema.dynamic";
+    private const string GroupingSchemaName = "grouping";
+    private const string NullableSchemaName = "nullable";
+    private const string SelectorParameterName = "selector";
+    private const string SortTableSchemaName = "sort-table";
+    private const string TupleSchemaName = "tuple";
+    private const string UnionSchemaName = "union";
+    private const string ValueParameterName = "value";
+    private const string VariadicTupleSchemaName = "variadic-tuple";
+
     private readonly SchemaDiagnosticBag diagnostics = new();
     private readonly SchemaAnalysisTrace trace = new();
     private readonly IReadOnlyDictionary<string, LogicalNamedExpressionDefinition> definitions;
@@ -19,7 +31,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
     public IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics => diagnostics;
 
-    public IReadOnlyList<SchemaAnalysisNode> Nodes => trace.Nodes;
+    public IReadOnlyList<SchemaAnalysisNode> Nodes => trace.GetNodes();
 
     internal void RegisterIntrinsicRule(IIntrinsicSchemaRule rule)
         => intrinsicRules.Register(rule);
@@ -68,7 +80,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         if (ContainsConflict(input) || ContainsConflict(output))
             return SchemaAnalysisCompleteness.Conflicting;
-        if (diagnostics.Any(diagnostic => diagnostic.Code == "schema.dynamic"))
+        if (diagnostics.Any(diagnostic => diagnostic.Code == DynamicDiagnosticCode))
             return SchemaAnalysisCompleteness.Dynamic;
         return ContainsAny(input) || ContainsAny(output)
             ? SchemaAnalysisCompleteness.Partial
@@ -96,7 +108,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     private Requirement RequireCall(LogicalCall call, LogicalSchema expected, string path)
     {
         if (call.Function.Kind == "extension"
-            && call.Function.Name is "array" or "tuple" or "vector")
+            && call.Function.Name is ArraySchemaName or TupleSchemaName or "vector")
         {
             return RequireStructuralCollection(call, path);
         }
@@ -233,10 +245,10 @@ internal sealed partial class LogicalSchemaAnalysisSession
         var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
         if (expected is RecordLogicalSchema record)
         {
-            foreach (var field in record.Fields)
+            foreach (var field in record.Fields.Where(field =>
+                names is null || names.Contains(field.Key, StringComparer.Ordinal)))
             {
-                if (names is null || names.Contains(field.Key, StringComparer.Ordinal))
-                    fields.Add(field.Key, field.Value);
+                fields.Add(field.Key, field.Value);
             }
         }
         var required = new RecordLogicalSchema(fields);
@@ -247,7 +259,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
     private Requirement RequireExplode(LogicalCall call, LogicalSchema expected, string path)
     {
-        var name = SelectedField(call, "selector");
+        var name = SelectedField(call, SelectorParameterName);
         if (name is null)
             return DynamicRequirement(path, "explode selector");
 
@@ -277,7 +289,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
     private Requirement RequireImplode(LogicalCall call, LogicalSchema expected, string path)
     {
-        var name = SelectedField(call, "selector");
+        var name = SelectedField(call, SelectorParameterName);
         if (name is null)
             return DynamicRequirement(path, "implode selector");
 
@@ -323,7 +335,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 || argument.Value is not LogicalCall entry)
                 continue;
             var name = LiteralText(entry, "name");
-            var projection = Argument(entry, "value")?.Value;
+            var projection = Argument(entry, ValueParameterName)?.Value;
             if (projection is null)
                 continue;
             var projectionExpected = name is not null
@@ -342,7 +354,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
     private Requirement RequireSpreadEntry(LogicalCall call, LogicalSchema expected, string path)
     {
-        var value = Argument(call, "value")?.Value;
+        var value = Argument(call, ValueParameterName)?.Value;
         return value is null
             ? DynamicRequirement(path, "record spread")
             : Require(value, expected, $"{path}.arguments[0].value");
@@ -350,7 +362,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
     private Requirement RequireSortCriterion(LogicalCall call, string path)
     {
-        var selector = Argument(call, "selector")?.Value;
+        var selector = Argument(call, SelectorParameterName)?.Value;
         if (selector is null)
             return DynamicRequirement(path, "sort criterion selector");
         var requirement = Require(selector, new AnyLogicalSchema(), $"{path}.arguments[0].value");
@@ -529,7 +541,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         if (contract?.Output is null)
             return FromType(argument.Parameter.Type);
         var expected = Resolve(ParseSchema(contract.Output), bindings);
-        return contract.Combine == "tuple" && count > 1
+        return contract.Combine == TupleSchemaName && count > 1
             && expected is TupleLogicalSchema tuple && tuple.Items.Count == count
                 ? tuple.Items[ordinal]
                 : expected;
@@ -539,9 +551,9 @@ internal sealed partial class LogicalSchemaAnalysisSession
         IReadOnlyList<LogicalSchema> outputs,
         string? combination) => combination switch
         {
-            "union" => outputs.Aggregate(Union),
-            "tuple" when outputs.Count > 1 => new TupleLogicalSchema(outputs),
-            "tuple" => outputs.Single(),
+            UnionSchemaName => outputs.Aggregate(Union),
+            TupleSchemaName when outputs.Count > 1 => new TupleLogicalSchema(outputs),
+            TupleSchemaName => outputs.Single(),
             null when outputs.Count == 1 => outputs[0],
             null => outputs.Aggregate(IntersectForParameter),
             _ => throw new InvalidOperationException($"Unsupported schema combination '{combination}'."),
@@ -595,7 +607,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         string path,
         bool preserveParent)
     {
-        var name = SelectedField(call, "selector");
+        var name = SelectedField(call, SelectorParameterName);
         if (name is null)
             return Dynamic(path, "explode selector");
 
@@ -608,12 +620,12 @@ internal sealed partial class LogicalSchemaAnalysisSession
         if (parent is null)
             return Dynamic(path, "explode parent record");
 
-        var selector = Argument(call, "selector");
+        var selector = Argument(call, SelectorParameterName);
         if (selector?.Value is not null)
         {
             var selectorIndex = call.Arguments
                 .Select((argument, index) => (argument, index))
-                .Single(item => item.argument.Parameter.Name == "selector")
+                .Single(item => item.argument.Parameter.Name == SelectorParameterName)
                 .index;
             Infer(
                 selector.Value,
@@ -660,7 +672,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         string path,
         bool preserveNull)
     {
-        var name = SelectedField(call, "selector");
+        var name = SelectedField(call, SelectorParameterName);
         if (name is null)
             return Dynamic(path, "implode selector");
 
@@ -672,12 +684,12 @@ internal sealed partial class LogicalSchemaAnalysisSession
             : new AnyLogicalSchema(IsNullable: true);
         if (!preserveNull)
             child = WithNullability(child, false);
-        var selector = Argument(call, "selector");
+        var selector = Argument(call, SelectorParameterName);
         if (selector?.Value is not null)
         {
             var selectorIndex = call.Arguments
                 .Select((argument, index) => (argument, index))
-                .Single(item => item.argument.Parameter.Name == "selector")
+                .Single(item => item.argument.Parameter.Name == SelectorParameterName)
                 .index;
             Infer(
                 selector.Value,
@@ -754,7 +766,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 default:
                     additionalItems = new AnyLogicalSchema();
                     diagnostics.Add(new SchemaAnalysisDiagnostic(
-                        "schema.dynamic",
+                        DynamicDiagnosticCode,
                         $"{path}.arguments[{index}]",
                         "Tuple spread has an unknown item schema."));
                     break;
@@ -905,7 +917,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         string path)
     {
         InferArgument(call, "name", input, enclosing, path);
-        return InferArgument(call, "value", input, enclosing, path) ?? new AnyLogicalSchema();
+        return InferArgument(call, ValueParameterName, input, enclosing, path) ?? new AnyLogicalSchema();
     }
 
     private LogicalSchema InferSpreadEntry(
@@ -913,7 +925,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         LogicalSchema input,
         LogicalSchema enclosing,
         string path)
-        => InferArgument(call, "value", input, enclosing, path) ?? new AnyLogicalSchema();
+        => InferArgument(call, ValueParameterName, input, enclosing, path) ?? new AnyLogicalSchema();
 
     private LogicalSchema InferSortCriterion(
         LogicalCall call,
@@ -921,7 +933,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         LogicalSchema enclosing,
         string path)
     {
-        InferArgument(call, "selector", input, enclosing, path);
+        InferArgument(call, SelectorParameterName, input, enclosing, path);
         InferArgument(call, "type", input, enclosing, path);
         InferArgument(call, "ascending", input, enclosing, path);
         InferArgument(call, "nulls-first", input, enclosing, path);
@@ -1028,7 +1040,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
             InferArgument(call, index, input, enclosing, path);
         if (reason is null)
             return Dynamic(path, $"output of '{call.Function.Name}'");
-        diagnostics.Add(new SchemaAnalysisDiagnostic("schema.dynamic", path, reason));
+        diagnostics.Add(new SchemaAnalysisDiagnostic(DynamicDiagnosticCode, path, reason));
         return new AnyLogicalSchema();
     }
 
@@ -1087,7 +1099,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         if (actual is NoInputLogicalSchema or AnyLogicalSchema)
             return;
-        if (expression.Name == "union")
+        if (expression.Name == UnionSchemaName)
         {
             var exact = expression.Arguments
                 .Where(alternative => AcceptsExactRoot(alternative, actual))
@@ -1123,7 +1135,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 : actual;
             return;
         }
-        if (expression.Name == "nullable")
+        if (expression.Name == NullableSchemaName)
         {
             Bind(expression.Arguments.Single(), actual, bindings, path);
             return;
@@ -1166,12 +1178,12 @@ internal sealed partial class LogicalSchemaAnalysisSession
             }
             return;
         }
-        if (expression.Name == "array" && actual is ArrayLogicalSchema array)
+        if (expression.Name == ArraySchemaName && actual is ArrayLogicalSchema array)
         {
             Bind(expression.Arguments.Single(), array.Items, bindings, $"{path}.items");
             return;
         }
-        if (expression.Name == "array" && actual is DictionaryLogicalSchema dictionaryCollection)
+        if (expression.Name == ArraySchemaName && actual is DictionaryLogicalSchema dictionaryCollection)
         {
             Bind(
                 expression.Arguments.Single(),
@@ -1180,7 +1192,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 $"{path}.items");
             return;
         }
-        if (expression.Name == "array" && actual is GroupingLogicalSchema groupingCollection)
+        if (expression.Name == ArraySchemaName && actual is GroupingLogicalSchema groupingCollection)
         {
             Bind(
                 expression.Arguments.Single(),
@@ -1191,13 +1203,13 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 $"{path}.items");
             return;
         }
-        if (expression.Name == "tuple" && actual is TupleLogicalSchema tuple
+        if (expression.Name == TupleSchemaName && actual is TupleLogicalSchema tuple
             && expression.Arguments.Count == tuple.Items.Count)
         {
             for (var index = 0; index < tuple.Items.Count; index++)
                 Bind(expression.Arguments[index], tuple.Items[index], bindings, $"{path}.items[{index}]");
         }
-        if (expression.Name == "variadic-tuple" && actual is TupleLogicalSchema variadicTuple)
+        if (expression.Name == VariadicTupleSchemaName && actual is TupleLogicalSchema variadicTuple)
         {
             var item = variadicTuple.Items
                 .Concat(variadicTuple.AdditionalItems is null ? [] : [variadicTuple.AdditionalItems])
@@ -1210,17 +1222,17 @@ internal sealed partial class LogicalSchemaAnalysisSession
             Bind(expression.Arguments[0], pair.Key, bindings, $"{path}.key");
             Bind(expression.Arguments[1], pair.Value, bindings, $"{path}.value");
         }
-        if (expression.Name == "dictionary" && actual is DictionaryLogicalSchema dictionary)
+        if (expression.Name == DictionarySchemaName && actual is DictionaryLogicalSchema dictionary)
         {
             Bind(expression.Arguments[0], dictionary.Keys, bindings, $"{path}.keys");
             Bind(expression.Arguments[1], dictionary.Values, bindings, $"{path}.values");
         }
-        if (expression.Name == "grouping" && actual is GroupingLogicalSchema grouping)
+        if (expression.Name == GroupingSchemaName && actual is GroupingLogicalSchema grouping)
         {
             Bind(expression.Arguments[0], grouping.Keys, bindings, $"{path}.keys");
             Bind(expression.Arguments[1], grouping.Items, bindings, $"{path}.items");
         }
-        if (expression.Name == "sort-table" && actual is SortTableLogicalSchema sortTable)
+        if (expression.Name == SortTableSchemaName && actual is SortTableLogicalSchema sortTable)
             Bind(expression.Arguments.Single(), sortTable.Items, bindings, $"{path}.items");
     }
 
@@ -1230,18 +1242,18 @@ internal sealed partial class LogicalSchemaAnalysisSession
             return true;
         if (actual is UnionLogicalSchema union)
             return union.Alternatives.Any(alternative => AcceptsRoot(expression, alternative));
-        if (expression.Name == "union")
+        if (expression.Name == UnionSchemaName)
             return expression.Arguments.Any(alternative => AcceptsRoot(alternative, actual));
-        if (expression.Name == "nullable")
+        if (expression.Name == NullableSchemaName)
             return AcceptsRoot(expression.Arguments.Single(), actual);
         return (expression.Name, actual) switch
         {
-            ("array", ArrayLogicalSchema or DictionaryLogicalSchema or GroupingLogicalSchema) => true,
-            ("tuple" or "variadic-tuple", TupleLogicalSchema) => true,
+            (ArraySchemaName, ArrayLogicalSchema or DictionaryLogicalSchema or GroupingLogicalSchema) => true,
+            (TupleSchemaName or VariadicTupleSchemaName, TupleLogicalSchema) => true,
             ("pair", PairLogicalSchema) => true,
-            ("dictionary", DictionaryLogicalSchema) => true,
-            ("grouping", GroupingLogicalSchema) => true,
-            ("sort-table", SortTableLogicalSchema) => true,
+            (DictionarySchemaName, DictionaryLogicalSchema) => true,
+            (GroupingSchemaName, GroupingLogicalSchema) => true,
+            (SortTableSchemaName, SortTableLogicalSchema) => true,
             _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
                 && IntersectScalar(expression.Name, scalar.Type) is not null,
         };
@@ -1251,17 +1263,17 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         if (expression.IsVariable)
             return true;
-        if (expression.Name == "nullable")
+        if (expression.Name == NullableSchemaName)
             return AcceptsExactRoot(expression.Arguments.Single(), actual);
         return (expression.Name, actual) switch
         {
-            ("array", ArrayLogicalSchema) => true,
+            (ArraySchemaName, ArrayLogicalSchema) => true,
             ("record", RecordLogicalSchema) => true,
-            ("tuple" or "variadic-tuple", TupleLogicalSchema) => true,
+            (TupleSchemaName or VariadicTupleSchemaName, TupleLogicalSchema) => true,
             ("pair", PairLogicalSchema) => true,
-            ("dictionary", DictionaryLogicalSchema) => true,
-            ("grouping", GroupingLogicalSchema) => true,
-            ("sort-table", SortTableLogicalSchema) => true,
+            (DictionarySchemaName, DictionaryLogicalSchema) => true,
+            (GroupingSchemaName, GroupingLogicalSchema) => true,
+            (SortTableSchemaName, SortTableLogicalSchema) => true,
             _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
                 && IntersectScalar(expression.Name, scalar.Type) is not null,
         };
@@ -1275,25 +1287,25 @@ internal sealed partial class LogicalSchemaAnalysisSession
             return bindings.TryGetValue(expression.Name, out var value) ? value : new AnyLogicalSchema();
         return expression.Name switch
         {
-            "nullable" => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
-            "union" => expression.Arguments
+            NullableSchemaName => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
+            UnionSchemaName => expression.Arguments
                 .Select(item => Resolve(item, bindings))
                 .Aggregate(Union),
-            "array" => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
-            "tuple" => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
-            "variadic-tuple" => new TupleLogicalSchema(
+            ArraySchemaName => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
+            TupleSchemaName => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
+            VariadicTupleSchemaName => new TupleLogicalSchema(
                 [],
                 AdditionalItems: Resolve(expression.Arguments.Single(), bindings)),
             "pair" => new PairLogicalSchema(
                 Resolve(expression.Arguments[0], bindings),
                 Resolve(expression.Arguments[1], bindings)),
-            "dictionary" => new DictionaryLogicalSchema(
+            DictionarySchemaName => new DictionaryLogicalSchema(
                 Resolve(expression.Arguments[0], bindings),
                 Resolve(expression.Arguments[1], bindings)),
-            "grouping" => new GroupingLogicalSchema(
+            GroupingSchemaName => new GroupingLogicalSchema(
                 Resolve(expression.Arguments[0], bindings),
                 Resolve(expression.Arguments[1], bindings)),
-            "sort-table" => new SortTableLogicalSchema(
+            SortTableSchemaName => new SortTableLogicalSchema(
                 Resolve(expression.Arguments.Single(), bindings)),
             _ when expression.Arguments.Count == 0 => FromType(expression.Name),
             _ => throw new InvalidOperationException($"Unsupported schema constructor '{expression.Name}'."),
@@ -1346,7 +1358,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
             index++;
     }
 
-    private LogicalSchema FromType(string type)
+    private static LogicalSchema FromType(string type)
     {
         var normalized = Normalize(type);
         if (normalized.Contains('|', StringComparison.Ordinal))
@@ -1361,14 +1373,14 @@ internal sealed partial class LogicalSchemaAnalysisSession
         return normalized switch
         {
             "any" or "expression" or "predicate" or "accumulator" or "entry" => new AnyLogicalSchema(),
-            "array" => new ArrayLogicalSchema(new AnyLogicalSchema()),
+            ArraySchemaName => new ArrayLogicalSchema(new AnyLogicalSchema()),
             "record" => new RecordLogicalSchema(
                 new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal)),
-            "tuple" => new TupleLogicalSchema([], AdditionalItems: new AnyLogicalSchema()),
+            TupleSchemaName => new TupleLogicalSchema([], AdditionalItems: new AnyLogicalSchema()),
             "pair" => new PairLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
-            "dictionary" => new DictionaryLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
-            "grouping" => new GroupingLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
-            "sort-table" => new SortTableLogicalSchema(new AnyLogicalSchema()),
+            DictionarySchemaName => new DictionaryLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
+            GroupingSchemaName => new GroupingLogicalSchema(new AnyLogicalSchema(), new AnyLogicalSchema()),
+            SortTableSchemaName => new SortTableLogicalSchema(new AnyLogicalSchema()),
             "null" => new AnyLogicalSchema(true),
             _ => new ScalarLogicalSchema(normalized),
         };
@@ -1424,7 +1436,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     private static string[]? LiteralTexts(LogicalValue? value) => value switch
     {
         LogicalPipeline { Items.Count: 1 } pipeline => LiteralTexts(pipeline.Items[0]),
-        LogicalCall { Function.Schema.Intrinsic: "array" } array
+        LogicalCall { Function.Schema.Intrinsic: ArraySchemaName } array
             when array.Arguments.Where(argument => argument.IsExplicit)
                 .All(argument => argument.Value is LogicalLiteral { Value: string })
             => array.Arguments.Where(argument => argument.IsExplicit)
@@ -1442,14 +1454,14 @@ internal sealed partial class LogicalSchemaAnalysisSession
     private LogicalSchema Dynamic(string path, string description)
     {
         diagnostics.Add(new SchemaAnalysisDiagnostic(
-            "schema.dynamic",
+            DynamicDiagnosticCode,
             path,
             $"The schema of {description} cannot be determined statically."));
         return new AnyLogicalSchema();
     }
 
-    private LogicalSchema Union(LogicalSchema left, LogicalSchema right)
-        => algebra.Union(left, right);
+    private static LogicalSchema Union(LogicalSchema left, LogicalSchema right)
+        => SchemaAlgebra.Union(left, right);
 
     private static string Normalize(string type) => SchemaAlgebra.Normalize(type);
     private static string? IntersectScalar(string left, string right)
