@@ -25,7 +25,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         this.definitions = definitions.ToDictionary(definition => definition.Name, StringComparer.Ordinal);
         algebra = new SchemaAlgebra(diagnostics);
-        recordInference = new RecordSchemaInferenceRule(algebra, diagnostics);
+        recordInference = new RecordSchemaInferenceRule(diagnostics);
         intrinsicRules = IntrinsicRuleRegistry.Create(this);
     }
 
@@ -874,7 +874,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
         return new RecordLogicalSchema(fields, source.AllowsAdditionalFields, source.IsNullable);
     }
 
-    private void ApplyRecordMutation(
+    private static void ApplyRecordMutation(
         IDictionary<string, LogicalSchemaField> fields,
         RecordLogicalSchema source,
         string name,

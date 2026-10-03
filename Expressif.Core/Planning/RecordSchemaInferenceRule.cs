@@ -1,8 +1,6 @@
 namespace Expressif.Planning;
 
-internal sealed class RecordSchemaInferenceRule(
-    SchemaAlgebra algebra,
-    ICollection<SchemaAnalysisDiagnostic> diagnostics)
+internal sealed class RecordSchemaInferenceRule(ICollection<SchemaAnalysisDiagnostic> diagnostics)
 {
     public LogicalSchema Infer(
         LogicalCall call,
@@ -47,7 +45,7 @@ internal sealed class RecordSchemaInferenceRule(
 
     private LogicalSchema Fold(IReadOnlyList<IRecordSchemaContribution> contributions, string path)
     {
-        var result = RecordSchemaContributionFold.Apply(contributions, algebra);
+        var result = RecordSchemaContributionFold.Apply(contributions);
         var opensShape = result.AllowsAdditionalFields;
         if (opensShape)
         {
@@ -77,8 +75,7 @@ internal sealed record DynamicRecordContribution : IRecordSchemaContribution
 internal static class RecordSchemaContributionFold
 {
     public static RecordLogicalSchema Apply(
-        IReadOnlyList<IRecordSchemaContribution> contributions,
-        SchemaAlgebra algebra)
+        IReadOnlyList<IRecordSchemaContribution> contributions)
     {
         var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
         var opensShape = false;
@@ -90,7 +87,7 @@ internal static class RecordSchemaContributionFold
                     fields[named.Name] = named.Field;
                     break;
                 case RecordShapeContribution shape:
-                    Merge(fields, shape.Schema, algebra);
+                    Merge(fields, shape.Schema);
                     opensShape |= shape.Schema.AllowsAdditionalFields;
                     break;
                 case DynamicRecordContribution:
@@ -103,8 +100,7 @@ internal static class RecordSchemaContributionFold
 
     private static void Merge(
         IDictionary<string, LogicalSchemaField> fields,
-        RecordLogicalSchema source,
-        SchemaAlgebra algebra)
+        RecordLogicalSchema source)
     {
         foreach (var field in source.Fields)
         {
