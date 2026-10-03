@@ -18,6 +18,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     private readonly SchemaAnalysisTrace trace = new();
     private readonly IReadOnlyDictionary<string, LogicalNamedExpressionDefinition> definitions;
     private readonly SchemaAlgebra algebra;
+    private readonly SchemaExpressionBinder schemaBinder;
     private readonly RecordSchemaInferenceRule recordInference;
     private readonly IntrinsicRuleRegistry intrinsicRules;
 
@@ -25,6 +26,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         this.definitions = definitions.ToDictionary(definition => definition.Name, StringComparer.Ordinal);
         algebra = new SchemaAlgebra(diagnostics);
+        schemaBinder = new SchemaExpressionBinder(algebra, FromType);
         recordInference = new RecordSchemaInferenceRule(diagnostics);
         intrinsicRules = IntrinsicRuleRegistry.Create(this);
     }
@@ -154,7 +156,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         var bindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
         if (contract.Output is not null)
-            Bind(ParseSchema(contract.Output), expected, bindings, $"{path}.output");
+            schemaBinder.Bind(SchemaExpressionParser.Parse(contract.Output), expected, bindings, $"{path}.output");
 
         var enclosing = (LogicalSchema)new AnyLogicalSchema();
         var argumentRequirements = new List<(LogicalArgument Argument, Requirement Requirement)>();
@@ -186,8 +188,8 @@ internal sealed partial class LogicalSchemaAnalysisSession
                     requirement.Input,
                     requirement.Enclosing,
                     $"{path}.parameters.{argument.Parameter.Name}");
-                Bind(
-                    ParseSchema(parameterContract.Input),
+                schemaBinder.Bind(
+                    SchemaExpressionParser.Parse(parameterContract.Input),
                     parameterInput,
                     bindings,
                     $"{path}.parameters.{argument.Parameter.Name}");
@@ -196,7 +198,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
 
         var input = contract.Input is null
             ? FromType(call.Function.Input)
-            : Resolve(ParseSchema(contract.Input), bindings);
+            : schemaBinder.Resolve(SchemaExpressionParser.Parse(contract.Input), bindings);
         foreach (var (argument, requirement) in argumentRequirements)
         {
             PlannerParameterSchemaDescriptor? parameterContract = null;
@@ -466,7 +468,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         var bindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
         if (contract.Input is not null)
-            Bind(ParseSchema(contract.Input), input, bindings, $"{path}.input");
+            schemaBinder.Bind(SchemaExpressionParser.Parse(contract.Input), input, bindings, $"{path}.input");
         var parameterOutputs = new Dictionary<
             string,
             (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)>(StringComparer.Ordinal);
@@ -480,9 +482,15 @@ internal sealed partial class LogicalSchemaAnalysisSession
             contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
             var context = parameterContract?.Input is null
                 ? ArgumentContext(argument, input, enclosing)
-                : Resolve(ParseSchema(parameterContract.Input), bindings);
+                : schemaBinder.Resolve(SchemaExpressionParser.Parse(parameterContract.Input), bindings);
             if (parameterContract?.Input is not null)
-                Bind(ParseSchema(parameterContract.Input), context, bindings, $"{path}.parameters.{argument.Parameter.Name}.input");
+            {
+                schemaBinder.Bind(
+                    SchemaExpressionParser.Parse(parameterContract.Input),
+                    context,
+                    bindings,
+                    $"{path}.parameters.{argument.Parameter.Name}.input");
+            }
             var result = Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
             if (!parameterResults.TryGetValue(argument.Parameter.Name, out var results))
             {
@@ -502,18 +510,18 @@ internal sealed partial class LogicalSchemaAnalysisSession
         }
         foreach (var parameter in parameterOutputs)
         {
-            Bind(
-                ParseSchema(parameter.Value.Contract.Output!),
+            schemaBinder.Bind(
+                SchemaExpressionParser.Parse(parameter.Value.Contract.Output!),
                 CombineParameterOutputs(parameter.Value.Outputs, parameter.Value.Contract.Combine),
                 bindings,
                 $"{path}.parameters.{parameter.Key}.output");
         }
         if (contract.Input is not null && contract.Output == contract.Input
-            && ParseSchema(contract.Input).ContainsVariable)
+            && SchemaExpressionParser.Parse(contract.Input).ContainsVariable)
             return input;
         var output = contract.Output is null
             ? FromType(call.Function.Output)
-            : Resolve(ParseSchema(contract.Output), bindings);
+            : schemaBinder.Resolve(SchemaExpressionParser.Parse(contract.Output), bindings);
         return IsConditionallyNullable(contract, input, parameterResults)
             ? WithNullability(output, true)
             : output;
@@ -540,7 +548,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
     {
         if (contract?.Output is null)
             return FromType(argument.Parameter.Type);
-        var expected = Resolve(ParseSchema(contract.Output), bindings);
+        var expected = schemaBinder.Resolve(SchemaExpressionParser.Parse(contract.Output), bindings);
         return contract.Combine == TupleSchemaName && count > 1
             && expected is TupleLogicalSchema tuple && tuple.Items.Count == count
                 ? tuple.Items[ordinal]
@@ -1091,273 +1099,6 @@ internal sealed partial class LogicalSchemaAnalysisSession
     private void Capture(LogicalValue value, string path, LogicalSchema input, LogicalSchema output)
         => trace.Capture(value, path, input, output);
 
-    private void Bind(
-        SchemaExpression expression,
-        LogicalSchema actual,
-        IDictionary<string, LogicalSchema> bindings,
-        string path)
-    {
-        if (actual is NoInputLogicalSchema or AnyLogicalSchema)
-            return;
-        if (expression.Name == UnionSchemaName)
-        {
-            var exact = expression.Arguments
-                .Where(alternative => AcceptsExactRoot(alternative, actual))
-                .ToArray();
-            var alternatives = exact.Length > 0 ? exact : expression.Arguments
-                .Where(alternative => AcceptsRoot(alternative, actual))
-                .ToArray();
-            if (alternatives.Length == 1)
-            {
-                Bind(alternatives[0], actual, bindings, path);
-                return;
-            }
-            foreach (var alternativeBindings in alternatives.Select(alternative =>
-            {
-                var candidate = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
-                Bind(alternative, actual, candidate, path);
-                return candidate;
-            }))
-            {
-                foreach (var binding in alternativeBindings)
-                {
-                    bindings[binding.Key] = bindings.TryGetValue(binding.Key, out var existing)
-                        ? Union(existing, binding.Value)
-                        : binding.Value;
-                }
-            }
-            return;
-        }
-        if (expression.IsVariable)
-        {
-            bindings[expression.Name] = bindings.TryGetValue(expression.Name, out var existing)
-                ? Intersect(existing, actual, path)
-                : actual;
-            return;
-        }
-        if (expression.Name == NullableSchemaName)
-        {
-            Bind(expression.Arguments.Single(), actual, bindings, path);
-            return;
-        }
-        if (actual is UnionLogicalSchema union)
-        {
-            var alternatives = union.Alternatives
-                .Select((schema, index) => (schema, index))
-                .Where(item => AcceptsRoot(expression, item.schema))
-                .ToArray();
-            if (alternatives.Length == 1)
-            {
-                Bind(
-                    expression,
-                    alternatives[0].schema,
-                    bindings,
-                    $"{path}.alternatives[{alternatives[0].index}]");
-                return;
-            }
-
-            var alternativesBindings = alternatives.Select(item =>
-            {
-                var alternativeBindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
-                Bind(
-                    expression,
-                    item.schema,
-                    alternativeBindings,
-                    $"{path}.alternatives[{item.index}]");
-                return alternativeBindings;
-            }).ToArray();
-            foreach (var name in alternativesBindings.SelectMany(item => item.Keys).Distinct(StringComparer.Ordinal))
-            {
-                var value = alternativesBindings
-                    .Where(item => item.ContainsKey(name))
-                    .Select(item => item[name])
-                    .Aggregate(Union);
-                bindings[name] = bindings.TryGetValue(name, out var existing)
-                    ? Intersect(existing, value, path)
-                    : value;
-            }
-            return;
-        }
-        if (expression.Name == ArraySchemaName && actual is ArrayLogicalSchema array)
-        {
-            Bind(expression.Arguments.Single(), array.Items, bindings, $"{path}.items");
-            return;
-        }
-        if (expression.Name == ArraySchemaName && actual is DictionaryLogicalSchema dictionaryCollection)
-        {
-            Bind(
-                expression.Arguments.Single(),
-                new PairLogicalSchema(dictionaryCollection.Keys, dictionaryCollection.Values),
-                bindings,
-                $"{path}.items");
-            return;
-        }
-        if (expression.Name == ArraySchemaName && actual is GroupingLogicalSchema groupingCollection)
-        {
-            Bind(
-                expression.Arguments.Single(),
-                new PairLogicalSchema(
-                    groupingCollection.Keys,
-                    new ArrayLogicalSchema(groupingCollection.Items)),
-                bindings,
-                $"{path}.items");
-            return;
-        }
-        if (expression.Name == TupleSchemaName && actual is TupleLogicalSchema tuple
-            && expression.Arguments.Count == tuple.Items.Count)
-        {
-            for (var index = 0; index < tuple.Items.Count; index++)
-                Bind(expression.Arguments[index], tuple.Items[index], bindings, $"{path}.items[{index}]");
-        }
-        if (expression.Name == VariadicTupleSchemaName && actual is TupleLogicalSchema variadicTuple)
-        {
-            var item = variadicTuple.Items
-                .Concat(variadicTuple.AdditionalItems is null ? [] : [variadicTuple.AdditionalItems])
-                .DefaultIfEmpty(new AnyLogicalSchema())
-                .Aggregate(Union);
-            Bind(expression.Arguments.Single(), item, bindings, $"{path}.items");
-        }
-        if (expression.Name == "pair" && actual is PairLogicalSchema pair)
-        {
-            Bind(expression.Arguments[0], pair.Key, bindings, $"{path}.key");
-            Bind(expression.Arguments[1], pair.Value, bindings, $"{path}.value");
-        }
-        if (expression.Name == DictionarySchemaName && actual is DictionaryLogicalSchema dictionary)
-        {
-            Bind(expression.Arguments[0], dictionary.Keys, bindings, $"{path}.keys");
-            Bind(expression.Arguments[1], dictionary.Values, bindings, $"{path}.values");
-        }
-        if (expression.Name == GroupingSchemaName && actual is GroupingLogicalSchema grouping)
-        {
-            Bind(expression.Arguments[0], grouping.Keys, bindings, $"{path}.keys");
-            Bind(expression.Arguments[1], grouping.Items, bindings, $"{path}.items");
-        }
-        if (expression.Name == SortTableSchemaName && actual is SortTableLogicalSchema sortTable)
-            Bind(expression.Arguments.Single(), sortTable.Items, bindings, $"{path}.items");
-    }
-
-    private static bool AcceptsRoot(SchemaExpression expression, LogicalSchema actual)
-    {
-        if (expression.IsVariable)
-            return true;
-        if (actual is UnionLogicalSchema union)
-            return union.Alternatives.Any(alternative => AcceptsRoot(expression, alternative));
-        if (expression.Name == UnionSchemaName)
-            return expression.Arguments.Any(alternative => AcceptsRoot(alternative, actual));
-        if (expression.Name == NullableSchemaName)
-            return AcceptsRoot(expression.Arguments.Single(), actual);
-        return (expression.Name, actual) switch
-        {
-            (ArraySchemaName, ArrayLogicalSchema or DictionaryLogicalSchema or GroupingLogicalSchema) => true,
-            (TupleSchemaName or VariadicTupleSchemaName, TupleLogicalSchema) => true,
-            ("pair", PairLogicalSchema) => true,
-            (DictionarySchemaName, DictionaryLogicalSchema) => true,
-            (GroupingSchemaName, GroupingLogicalSchema) => true,
-            (SortTableSchemaName, SortTableLogicalSchema) => true,
-            _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
-                && IntersectScalar(expression.Name, scalar.Type) is not null,
-        };
-    }
-
-    private static bool AcceptsExactRoot(SchemaExpression expression, LogicalSchema actual)
-    {
-        if (expression.IsVariable)
-            return true;
-        if (expression.Name == NullableSchemaName)
-            return AcceptsExactRoot(expression.Arguments.Single(), actual);
-        return (expression.Name, actual) switch
-        {
-            (ArraySchemaName, ArrayLogicalSchema) => true,
-            ("record", RecordLogicalSchema) => true,
-            (TupleSchemaName or VariadicTupleSchemaName, TupleLogicalSchema) => true,
-            ("pair", PairLogicalSchema) => true,
-            (DictionarySchemaName, DictionaryLogicalSchema) => true,
-            (GroupingSchemaName, GroupingLogicalSchema) => true,
-            (SortTableSchemaName, SortTableLogicalSchema) => true,
-            _ => expression.Arguments.Count == 0 && actual is ScalarLogicalSchema scalar
-                && IntersectScalar(expression.Name, scalar.Type) is not null,
-        };
-    }
-
-    private LogicalSchema Resolve(
-        SchemaExpression expression,
-        IReadOnlyDictionary<string, LogicalSchema> bindings)
-    {
-        if (expression.IsVariable)
-            return bindings.TryGetValue(expression.Name, out var value) ? value : new AnyLogicalSchema();
-        return expression.Name switch
-        {
-            NullableSchemaName => WithNullability(Resolve(expression.Arguments.Single(), bindings), true),
-            UnionSchemaName => expression.Arguments
-                .Select(item => Resolve(item, bindings))
-                .Aggregate(Union),
-            ArraySchemaName => new ArrayLogicalSchema(Resolve(expression.Arguments.Single(), bindings)),
-            TupleSchemaName => new TupleLogicalSchema(expression.Arguments.Select(item => Resolve(item, bindings)).ToArray()),
-            VariadicTupleSchemaName => new TupleLogicalSchema(
-                [],
-                AdditionalItems: Resolve(expression.Arguments.Single(), bindings)),
-            "pair" => new PairLogicalSchema(
-                Resolve(expression.Arguments[0], bindings),
-                Resolve(expression.Arguments[1], bindings)),
-            DictionarySchemaName => new DictionaryLogicalSchema(
-                Resolve(expression.Arguments[0], bindings),
-                Resolve(expression.Arguments[1], bindings)),
-            GroupingSchemaName => new GroupingLogicalSchema(
-                Resolve(expression.Arguments[0], bindings),
-                Resolve(expression.Arguments[1], bindings)),
-            SortTableSchemaName => new SortTableLogicalSchema(
-                Resolve(expression.Arguments.Single(), bindings)),
-            _ when expression.Arguments.Count == 0 => FromType(expression.Name),
-            _ => throw new InvalidOperationException($"Unsupported schema constructor '{expression.Name}'."),
-        };
-    }
-
-    private static SchemaExpression ParseSchema(string text)
-    {
-        var index = 0;
-        var expression = ParseSchema(text, ref index);
-        SkipWhitespace(text, ref index);
-        if (index != text.Length)
-            throw new InvalidOperationException($"Invalid schema expression '{text}' at position {index}.");
-        return expression;
-    }
-
-    private static SchemaExpression ParseSchema(string text, ref int index)
-    {
-        SkipWhitespace(text, ref index);
-        var start = index;
-        while (index < text.Length && (char.IsLetterOrDigit(text[index]) || text[index] is '-' or '_'))
-            index++;
-        if (start == index)
-            throw new InvalidOperationException($"Invalid schema expression '{text}' at position {index}.");
-        var name = text[start..index];
-        SkipWhitespace(text, ref index);
-        if (index >= text.Length || text[index] != '<')
-            return new SchemaExpression(name, []);
-        index++;
-        var arguments = new List<SchemaExpression>();
-        while (true)
-        {
-            arguments.Add(ParseSchema(text, ref index));
-            SkipWhitespace(text, ref index);
-            if (index < text.Length && text[index] == ',')
-            {
-                index++;
-                continue;
-            }
-            if (index >= text.Length || text[index] != '>')
-                throw new InvalidOperationException($"Invalid schema expression '{text}' at position {index}.");
-            index++;
-            return new SchemaExpression(name, arguments);
-        }
-    }
-
-    private static void SkipWhitespace(string text, ref int index)
-    {
-        while (index < text.Length && char.IsWhiteSpace(text[index]))
-            index++;
-    }
-
     private static LogicalSchema FromType(string type)
     {
         var normalized = Normalize(type);
@@ -1464,8 +1205,6 @@ internal sealed partial class LogicalSchemaAnalysisSession
         => SchemaAlgebra.Union(left, right);
 
     private static string Normalize(string type) => SchemaAlgebra.Normalize(type);
-    private static string? IntersectScalar(string left, string right)
-        => SchemaAlgebra.IntersectScalar(left, right);
     private static LogicalSchema WithNullability(LogicalSchema schema, bool nullable)
         => SchemaAlgebra.WithNullability(schema, nullable);
     private static bool IsNullable(LogicalSchema schema) => SchemaAlgebra.IsNullable(schema);
@@ -1480,12 +1219,5 @@ internal sealed partial class LogicalSchemaAnalysisSession
         Always,
         WhenPresent,
         WhenAbsent,
-    }
-
-    private sealed record SchemaExpression(string Name, IReadOnlyList<SchemaExpression> Arguments)
-    {
-        public bool IsVariable => Arguments.Count == 0 && Name.Length > 0 && char.IsUpper(Name[0]);
-
-        public bool ContainsVariable => IsVariable || Arguments.Any(argument => argument.ContainsVariable);
     }
 }
