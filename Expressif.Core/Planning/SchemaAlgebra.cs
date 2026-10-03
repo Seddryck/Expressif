@@ -182,19 +182,36 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
 
     public static LogicalSchema Union(LogicalSchema left, LogicalSchema right)
     {
-        if (left is AnyLogicalSchema leftAny)
-            return leftAny.IsNullable ? WithNullability(right, true) : left;
-        if (right is AnyLogicalSchema rightAny)
-            return rightAny.IsNullable ? WithNullability(left, true) : right;
-        if (left == right)
-            return left;
-        if (left is ScalarLogicalSchema leftScalar && right is ScalarLogicalSchema rightScalar)
+        var special = UnionSpecial(left, right);
+        if (special is not null)
+            return special;
+        var scalar = UnionScalars(left, right);
+        return scalar ?? UnionAlternatives(left, right);
+    }
+
+    private static LogicalSchema? UnionSpecial(LogicalSchema left, LogicalSchema right)
+        => (left, right) switch
         {
-            if (IsNumeric(leftScalar.Type) && IsNumeric(rightScalar.Type))
-                return new ScalarLogicalSchema(NumericTypeName, IsNullable(left) || IsNullable(right));
-            if (IsTemporal(leftScalar.Type) && IsTemporal(rightScalar.Type))
-                return new ScalarLogicalSchema(TemporalTypeName, IsNullable(left) || IsNullable(right));
-        }
+            (AnyLogicalSchema any, _) => any.IsNullable ? WithNullability(right, true) : left,
+            (_, AnyLogicalSchema any) => any.IsNullable ? WithNullability(left, true) : right,
+            _ when left == right => left,
+            _ => null,
+        };
+
+    private static LogicalSchema? UnionScalars(LogicalSchema left, LogicalSchema right)
+    {
+        if (left is not ScalarLogicalSchema leftScalar || right is not ScalarLogicalSchema rightScalar)
+            return null;
+        var nullable = leftScalar.IsNullable || rightScalar.IsNullable;
+        if (IsNumeric(leftScalar.Type) && IsNumeric(rightScalar.Type))
+            return new ScalarLogicalSchema(NumericTypeName, nullable);
+        return IsTemporal(leftScalar.Type) && IsTemporal(rightScalar.Type)
+            ? new ScalarLogicalSchema(TemporalTypeName, nullable)
+            : null;
+    }
+
+    private static LogicalSchema UnionAlternatives(LogicalSchema left, LogicalSchema right)
+    {
         var alternatives = FlattenUnion(left)
             .Concat(FlattenUnion(right))
             .Select(schema => WithNullability(schema, false))
@@ -323,8 +340,8 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
         var items = new LogicalSchema[count];
         for (var index = 0; index < count; index++)
         {
-            var leftItem = index < left.Items.Count ? left.Items[index] : left.AdditionalItems!;
-            var rightItem = index < right.Items.Count ? right.Items[index] : right.AdditionalItems!;
+            var leftItem = TupleItem(left, index);
+            var rightItem = TupleItem(right, index);
             items[index] = Intersect(leftItem, rightItem, $"{path}.items[{index}]");
         }
         var additionalItems = left.AdditionalItems is not null && right.AdditionalItems is not null
@@ -332,6 +349,12 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
             : null;
         return new TupleLogicalSchema(items, IsNullable(left) || IsNullable(right), additionalItems);
     }
+
+    private static LogicalSchema TupleItem(TupleLogicalSchema tuple, int index)
+        => index < tuple.Items.Count
+            ? tuple.Items[index]
+            : tuple.AdditionalItems
+                ?? throw new InvalidOperationException("A variadic tuple item was expected.");
 
     private static IEnumerable<LogicalSchema> FlattenUnion(LogicalSchema schema)
         => schema is UnionLogicalSchema union ? union.Alternatives : [schema];

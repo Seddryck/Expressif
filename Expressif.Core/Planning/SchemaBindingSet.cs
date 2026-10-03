@@ -19,7 +19,15 @@ internal sealed class SchemaBindingSet
         => new(algebra, new Dictionary<string, LogicalSchema>(StringComparer.Ordinal));
 
     public bool TryGetValue(string name, out LogicalSchema value)
-        => values.TryGetValue(name, out value!);
+    {
+        if (values.TryGetValue(name, out var binding))
+        {
+            value = binding;
+            return true;
+        }
+        value = new AnyLogicalSchema();
+        return false;
+    }
 
     public void Constrain(string name, LogicalSchema value, string path)
         => values[name] = values.TryGetValue(name, out var existing)

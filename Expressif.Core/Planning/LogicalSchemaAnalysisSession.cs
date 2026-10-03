@@ -205,22 +205,14 @@ internal sealed partial class LogicalSchemaAnalysisSession
             contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
             if (parameterContract?.Input is not null)
                 continue;
-            var evaluation = argument.Parameter.Evaluation;
-            if (evaluation?.Context == "traversal" && input is ArrayLogicalSchema array)
-            {
-                input = array with
-                {
-                    Items = Intersect(array.Items, requirement.Input, $"{path}.traversal"),
-                };
-            }
-            else if (evaluation?.Source is "enclosing" or "surrounding")
-            {
-                enclosing = Intersect(enclosing, requirement.Input, $"{path}.enclosing");
-            }
-            else if (evaluation?.Source == "incoming")
-            {
-                input = Intersect(input, requirement.Input, $"{path}.incoming");
-            }
+            var applied = ApplyArgumentRequirement(
+                argument.Parameter.Evaluation,
+                requirement,
+                input,
+                enclosing,
+                path);
+            input = applied.Input;
+            enclosing = applied.Enclosing;
         }
         return new Requirement(input, enclosing);
     }
@@ -322,7 +314,8 @@ internal sealed partial class LogicalSchemaAnalysisSession
         var bodyIndex = call.Arguments
             .Select((argument, index) => (argument, index))
             .Single(item => item.argument.Parameter.Name == "body").index;
-        var body = call.Arguments[bodyIndex].Value!;
+        var body = call.Arguments[bodyIndex].Value
+            ?? throw new InvalidOperationException("The 'with' body argument must have a value.");
         var bodyRequirement = Require(body, expected, $"{path}.arguments[{bodyIndex}].value");
         var temporary = Intersect(
             bodyRequirement.Input,
@@ -384,22 +377,39 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 continue;
             var expected = FromType(argument.Parameter.Type);
             var requirement = Require(argument.Value, expected, $"{path}.arguments[{index}]");
-            var evaluation = argument.Parameter.Evaluation;
-            if (evaluation?.Context == "traversal" && input is ArrayLogicalSchema array)
+            var applied = ApplyArgumentRequirement(
+                argument.Parameter.Evaluation,
+                requirement,
+                input,
+                enclosing,
+                path);
+            input = applied.Input;
+            enclosing = applied.Enclosing;
+        }
+        return new Requirement(input, enclosing);
+    }
+
+    private Requirement ApplyArgumentRequirement(
+        PlannerEvaluationDescriptor? evaluation,
+        Requirement requirement,
+        LogicalSchema input,
+        LogicalSchema enclosing,
+        string path)
+    {
+        if (evaluation?.Context == "traversal" && input is ArrayLogicalSchema array)
+        {
+            input = array with
             {
-                input = array with
-                {
-                    Items = Intersect(array.Items, requirement.Input, $"{path}.traversal"),
-                };
-            }
-            else if (evaluation?.Source is "enclosing" or "surrounding")
-            {
-                enclosing = Intersect(enclosing, requirement.Input, $"{path}.enclosing");
-            }
-            else if (evaluation?.Source == "incoming")
-            {
-                input = Intersect(input, requirement.Input, $"{path}.incoming");
-            }
+                Items = Intersect(array.Items, requirement.Input, $"{path}.traversal"),
+            };
+        }
+        else if (evaluation?.Source is "enclosing" or "surrounding")
+        {
+            enclosing = Intersect(enclosing, requirement.Input, $"{path}.enclosing");
+        }
+        else if (evaluation?.Source == "incoming")
+        {
+            input = Intersect(input, requirement.Input, $"{path}.incoming");
         }
         return new Requirement(input, enclosing);
     }
@@ -469,6 +479,28 @@ internal sealed partial class LogicalSchemaAnalysisSession
         var bindings = new Dictionary<string, LogicalSchema>(StringComparer.Ordinal);
         if (contract.Input is not null)
             schemaBinder.Bind(SchemaExpressionParser.Parse(contract.Input), input, bindings, $"{path}.input");
+        var parameterResults = InferContractArguments(call, input, enclosing, path, contract, bindings);
+        if (contract.Input is not null && contract.Output == contract.Input
+            && SchemaExpressionParser.Parse(contract.Input).ContainsVariable)
+        {
+            return input;
+        }
+        var output = contract.Output is null
+            ? FromType(call.Function.Output)
+            : schemaBinder.Resolve(SchemaExpressionParser.Parse(contract.Output), bindings);
+        return IsConditionallyNullable(contract, input, parameterResults)
+            ? WithNullability(output, true)
+            : output;
+    }
+
+    private IReadOnlyDictionary<string, List<LogicalSchema>> InferContractArguments(
+        LogicalCall call,
+        LogicalSchema input,
+        LogicalSchema enclosing,
+        string path,
+        PlannerSchemaDescriptor contract,
+        Dictionary<string, LogicalSchema> bindings)
+    {
         var parameterOutputs = new Dictionary<
             string,
             (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)>(StringComparer.Ordinal);
@@ -510,21 +542,15 @@ internal sealed partial class LogicalSchemaAnalysisSession
         }
         foreach (var parameter in parameterOutputs)
         {
+            if (parameter.Value.Contract.Output is not string expression)
+                continue;
             schemaBinder.Bind(
-                SchemaExpressionParser.Parse(parameter.Value.Contract.Output!),
+                SchemaExpressionParser.Parse(expression),
                 CombineParameterOutputs(parameter.Value.Outputs, parameter.Value.Contract.Combine),
                 bindings,
                 $"{path}.parameters.{parameter.Key}.output");
         }
-        if (contract.Input is not null && contract.Output == contract.Input
-            && SchemaExpressionParser.Parse(contract.Input).ContainsVariable)
-            return input;
-        var output = contract.Output is null
-            ? FromType(call.Function.Output)
-            : schemaBinder.Resolve(SchemaExpressionParser.Parse(contract.Output), bindings);
-        return IsConditionallyNullable(contract, input, parameterResults)
-            ? WithNullability(output, true)
-            : output;
+        return parameterResults;
     }
 
     private static bool IsConditionallyNullable(
@@ -750,9 +776,9 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 items.Add(value);
                 continue;
             }
-            if (!argument.IsSpread)
+            if (!argument.IsSpread && additionalItems is LogicalSchema existing)
             {
-                additionalItems = Union(additionalItems!, value);
+                additionalItems = Union(existing, value);
                 continue;
             }
             switch (value)
@@ -764,7 +790,7 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 case TupleLogicalSchema tuple:
                     additionalItems = tuple.Items
                         .Append(tuple.AdditionalItems ?? new AnyLogicalSchema())
-                        .Aggregate(additionalItems!, Union);
+                        .Aggregate(additionalItems, Union);
                     break;
                 case ArrayLogicalSchema array:
                     additionalItems = additionalItems is null
@@ -848,8 +874,10 @@ internal sealed partial class LogicalSchemaAnalysisSession
         var body = call.Arguments
             .Select((argument, index) => (argument, index))
             .Single(item => item.argument.Parameter.Name == "body");
+        var bodyValue = body.argument.Value
+            ?? throw new InvalidOperationException("The 'with' body argument must have a value.");
         return Infer(
-            body.argument.Value!,
+            bodyValue,
             temporary,
             temporary,
             $"{path}.arguments[{body.index}].value");
@@ -982,45 +1010,48 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 .Select(item => SelectTuplePosition(item, position, path))
                 .Aggregate(Union);
         }
-        if (input is PairLogicalSchema pair)
+        return input switch
         {
-            var selected = position switch
-            {
-                0 => pair.Key,
-                1 or -1 => pair.Value,
-                -2 => pair.Key,
-                _ => new AnyLogicalSchema(true),
-            };
-            return IsNullable(input) ? WithNullability(selected, true) : selected;
-        }
-        if (input is TupleLogicalSchema tuple)
+            PairLogicalSchema pair => SelectPairPosition(pair, position),
+            TupleLogicalSchema tuple => SelectTuplePosition(tuple, position),
+            _ => Dynamic(path, "tuple position selected from an unknown positional shape"),
+        };
+    }
+
+    private static LogicalSchema SelectPairPosition(PairLogicalSchema pair, int position)
+    {
+        var selected = position switch
         {
-            var index = position < 0 && tuple.AdditionalItems is null
-                ? tuple.Items.Count + position
-                : position;
-            LogicalSchema selected;
-            if (index >= 0 && index < tuple.Items.Count)
-            {
-                selected = tuple.Items[index];
-            }
-            else if (index >= tuple.Items.Count && tuple.AdditionalItems is not null)
-            {
-                selected = WithNullability(tuple.AdditionalItems, true);
-            }
-            else if (position < 0 && tuple.AdditionalItems is not null)
-            {
-                selected = tuple.Items
-                    .Append(tuple.AdditionalItems)
-                    .Aggregate(Union);
-                selected = WithNullability(selected, true);
-            }
-            else
-            {
-                selected = new AnyLogicalSchema(true);
-            }
-            return IsNullable(input) ? WithNullability(selected, true) : selected;
+            0 or -2 => pair.Key,
+            1 or -1 => pair.Value,
+            _ => new AnyLogicalSchema(true),
+        };
+        return pair.IsNullable ? WithNullability(selected, true) : selected;
+    }
+
+    private static LogicalSchema SelectTuplePosition(TupleLogicalSchema tuple, int position)
+    {
+        var index = position < 0 && tuple.AdditionalItems is null
+            ? tuple.Items.Count + position
+            : position;
+        var selected = SelectTupleItem(tuple, position, index);
+        return tuple.IsNullable ? WithNullability(selected, true) : selected;
+    }
+
+    private static LogicalSchema SelectTupleItem(TupleLogicalSchema tuple, int position, int index)
+    {
+        if (index >= 0 && index < tuple.Items.Count)
+            return tuple.Items[index];
+        if (index >= tuple.Items.Count && tuple.AdditionalItems is not null)
+            return WithNullability(tuple.AdditionalItems, true);
+        if (position < 0 && tuple.AdditionalItems is not null)
+        {
+            var selected = tuple.Items
+                .Append(tuple.AdditionalItems)
+                .Aggregate(Union);
+            return WithNullability(selected, true);
         }
-        return Dynamic(path, "tuple position selected from an unknown positional shape");
+        return new AnyLogicalSchema(true);
     }
 
     private LogicalSchema InferGenericCall(
@@ -1181,7 +1212,10 @@ internal sealed partial class LogicalSchemaAnalysisSession
             when array.Arguments.Where(argument => argument.IsExplicit)
                 .All(argument => argument.Value is LogicalLiteral { Value: string })
             => array.Arguments.Where(argument => argument.IsExplicit)
-                .Select(argument => (string)((LogicalLiteral)argument.Value!).Value!)
+                .Select(argument => argument.Value)
+                .OfType<LogicalLiteral>()
+                .Select(literal => literal.Value)
+                .OfType<string>()
                 .ToArray(),
         _ => null,
     };
