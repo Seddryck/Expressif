@@ -41,7 +41,6 @@ public class SchemaAlgebraTest
     [Test]
     public void RecordContributionFold_PreservesOrderAndOptionalFieldSemantics()
     {
-        var algebra = new SchemaAlgebra([]);
         IRecordSchemaContribution[] contributions =
         [
             new NamedRecordContribution("value", new LogicalSchemaField(new ScalarLogicalSchema("decimal"))),
@@ -51,7 +50,7 @@ public class SchemaAlgebraTest
             new NamedRecordContribution("last", new LogicalSchemaField(new ScalarLogicalSchema("date"))),
         ];
 
-        var result = RecordSchemaContributionFold.Apply(contributions, algebra);
+        var result = RecordSchemaContributionFold.Apply(contributions);
 
         Assert.Multiple(() =>
         {
@@ -66,13 +65,12 @@ public class SchemaAlgebraTest
     [Test]
     public void RecordContributionFold_OpenOrDynamicContribution_OpensShape()
     {
-        var algebra = new SchemaAlgebra([]);
         var open = Record(("known", new ScalarLogicalSchema("text"), false))
             with
         { AllowsAdditionalFields = true };
 
-        var spread = RecordSchemaContributionFold.Apply([new RecordShapeContribution(open)], algebra);
-        var dynamic = RecordSchemaContributionFold.Apply([DynamicRecordContribution.Instance], algebra);
+        var spread = RecordSchemaContributionFold.Apply([new RecordShapeContribution(open)]);
+        var dynamic = RecordSchemaContributionFold.Apply([DynamicRecordContribution.Instance]);
 
         Assert.Multiple(() =>
         {
