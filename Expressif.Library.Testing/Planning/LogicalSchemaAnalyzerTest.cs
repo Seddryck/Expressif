@@ -509,7 +509,12 @@ public class LogicalSchemaAnalyzerTest
         });
         var pair = new PairLogicalSchema(
             new ScalarLogicalSchema("text"),
-            new ScalarLogicalSchema("integer"));
+            new ScalarLogicalSchema("integer"),
+            IsNullable: true);
+        var variadic = new TupleLogicalSchema(
+            [new ScalarLogicalSchema("text")],
+            AdditionalItems: new ScalarLogicalSchema("integer"));
+        var union = new UnionLogicalSchema([tuple, pair]);
 
         Assert.Multiple(() =>
         {
@@ -520,7 +525,18 @@ public class LogicalSchemaAnalyzerTest
             Assert.That(Analyze("tuple-at(-1)", tuple).Output,
                 Is.EqualTo(new ScalarLogicalSchema("decimal")));
             Assert.That(Analyze("tuple-at(1)", pair).Output,
-                Is.EqualTo(new ScalarLogicalSchema("integer")));
+                Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(0)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(-2)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(-1)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(1)", variadic).Output,
+                Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(-1)", variadic).Output, Is.TypeOf<UnionLogicalSchema>());
+            Assert.That(Analyze("tuple-at(0)", union).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
             Assert.That(Analyze("tuple-at(3)", tuple).Output,
                 Is.EqualTo(new AnyLogicalSchema(true)));
         });
