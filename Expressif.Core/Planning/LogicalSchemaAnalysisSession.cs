@@ -510,36 +510,86 @@ internal sealed partial class LogicalSchemaAnalysisSession
             var argument = call.Arguments[index];
             if (!argument.IsExplicit || argument.Value is null)
                 continue;
-            PlannerParameterSchemaDescriptor? parameterContract = null;
-            contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
-            var context = parameterContract?.Input is null
-                ? ArgumentContext(argument, input, enclosing)
-                : schemaBinder.Resolve(SchemaExpressionParser.Parse(parameterContract.Input), bindings);
-            if (parameterContract?.Input is not null)
-            {
-                schemaBinder.Bind(
-                    SchemaExpressionParser.Parse(parameterContract.Input),
-                    context,
-                    bindings,
-                    $"{path}.parameters.{argument.Parameter.Name}.input");
-            }
-            var result = Infer(argument.Value, context, context, $"{path}.arguments[{index}].value");
-            if (!parameterResults.TryGetValue(argument.Parameter.Name, out var results))
-            {
-                results = [];
-                parameterResults.Add(argument.Parameter.Name, results);
-            }
-            results.Add(result);
-            if (parameterContract?.Output is not null)
-            {
-                if (!parameterOutputs.TryGetValue(argument.Parameter.Name, out var collected))
-                {
-                    collected = (parameterContract, []);
-                    parameterOutputs.Add(argument.Parameter.Name, collected);
-                }
-                collected.Outputs.Add(result);
-            }
+            InferContractArgument(
+                argument,
+                argument.Value,
+                index,
+                input,
+                enclosing,
+                path,
+                contract,
+                bindings,
+                parameterResults,
+                parameterOutputs);
         }
+        BindParameterOutputs(parameterOutputs, bindings, path);
+        return parameterResults;
+    }
+
+    private void InferContractArgument(
+        LogicalArgument argument,
+        LogicalValue value,
+        int index,
+        LogicalSchema input,
+        LogicalSchema enclosing,
+        string path,
+        PlannerSchemaDescriptor contract,
+        Dictionary<string, LogicalSchema> bindings,
+        IDictionary<string, List<LogicalSchema>> parameterResults,
+        IDictionary<string, (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)> parameterOutputs)
+    {
+        PlannerParameterSchemaDescriptor? parameterContract = null;
+        contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
+        var context = parameterContract?.Input is null
+            ? ArgumentContext(argument, input, enclosing)
+            : schemaBinder.Resolve(SchemaExpressionParser.Parse(parameterContract.Input), bindings);
+        if (parameterContract?.Input is not null)
+        {
+            schemaBinder.Bind(
+                SchemaExpressionParser.Parse(parameterContract.Input),
+                context,
+                bindings,
+                $"{path}.parameters.{argument.Parameter.Name}.input");
+        }
+        var result = Infer(value, context, context, $"{path}.arguments[{index}].value");
+        CollectParameterResult(parameterResults, argument.Parameter.Name, result);
+        CollectParameterOutput(parameterOutputs, argument.Parameter.Name, parameterContract, result);
+    }
+
+    private static void CollectParameterResult(
+        IDictionary<string, List<LogicalSchema>> parameterResults,
+        string name,
+        LogicalSchema result)
+    {
+        if (!parameterResults.TryGetValue(name, out var results))
+        {
+            results = [];
+            parameterResults.Add(name, results);
+        }
+        results.Add(result);
+    }
+
+    private static void CollectParameterOutput(
+        IDictionary<string, (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)> parameterOutputs,
+        string name,
+        PlannerParameterSchemaDescriptor? contract,
+        LogicalSchema result)
+    {
+        if (contract?.Output is null)
+            return;
+        if (!parameterOutputs.TryGetValue(name, out var collected))
+        {
+            collected = (contract, []);
+            parameterOutputs.Add(name, collected);
+        }
+        collected.Outputs.Add(result);
+    }
+
+    private void BindParameterOutputs(
+        IReadOnlyDictionary<string, (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)> parameterOutputs,
+        IDictionary<string, LogicalSchema> bindings,
+        string path)
+    {
         foreach (var parameter in parameterOutputs)
         {
             if (parameter.Value.Contract.Output is not string expression)
@@ -550,7 +600,6 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 bindings,
                 $"{path}.parameters.{parameter.Key}.output");
         }
-        return parameterResults;
     }
 
     private static bool IsConditionallyNullable(
