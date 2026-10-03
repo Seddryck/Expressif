@@ -5,6 +5,78 @@ namespace Expressif.Testing.Planning;
 public class SchemaAlgebraTest
 {
     [Test]
+    public void Intersect_SpecialSchemas_PreservesIdentityAndNullability()
+    {
+        var algebra = new SchemaAlgebra([]);
+        var noInput = new NoInputLogicalSchema();
+        var scalar = new ScalarLogicalSchema("text");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(algebra.Intersect(noInput, new AnyLogicalSchema(), "root"), Is.SameAs(noInput));
+            Assert.That(algebra.Intersect(new AnyLogicalSchema(), noInput, "root"), Is.SameAs(noInput));
+            Assert.That(
+                algebra.Intersect(new AnyLogicalSchema(IsNullable: true), scalar, "root"),
+                Is.EqualTo(new ScalarLogicalSchema("text", IsNullable: true)));
+        });
+    }
+
+    [Test]
+    public void Intersect_Union_FiltersAlternativesAndPreservesNullability()
+    {
+        var diagnostics = new List<SchemaAnalysisDiagnostic>();
+        var algebra = new SchemaAlgebra(diagnostics);
+        var union = new UnionLogicalSchema(
+            [new ScalarLogicalSchema("text"), new ScalarLogicalSchema("integer")],
+            IsNullable: true);
+
+        var result = algebra.Intersect(union, new ScalarLogicalSchema("numeric"), "root");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(diagnostics, Is.Empty);
+        });
+    }
+
+    [Test]
+    public void Intersect_IncompatibleRoots_ReturnsConflictAndDiagnostic()
+    {
+        var diagnostics = new List<SchemaAnalysisDiagnostic>();
+        var algebra = new SchemaAlgebra(diagnostics);
+        var left = new ScalarLogicalSchema("text");
+        var right = new ArrayLogicalSchema(new AnyLogicalSchema());
+
+        var result = algebra.Intersect(left, right, "root");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(new ConflictingLogicalSchema(left, right)));
+            Assert.That(diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Code == "schema.conflict" && diagnostic.Path == "root"));
+        });
+    }
+
+    [Test]
+    public void Intersect_IncompatibleTupleLengths_ReturnsConflict()
+    {
+        var diagnostics = new List<SchemaAnalysisDiagnostic>();
+        var algebra = new SchemaAlgebra(diagnostics);
+        var left = new TupleLogicalSchema(
+            [new ScalarLogicalSchema("text"), new ScalarLogicalSchema("integer")]);
+        var right = new TupleLogicalSchema([new ScalarLogicalSchema("text")]);
+
+        var result = algebra.Intersect(left, right, "root");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.EqualTo(new ConflictingLogicalSchema(left, right)));
+            Assert.That(diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Code == "schema.conflict" && diagnostic.Path == "root"));
+        });
+    }
+
+    [Test]
     public void Intersect_RecordConstraints_MergesFieldsAndReportsConflicts()
     {
         var diagnostics = new List<SchemaAnalysisDiagnostic>();
@@ -29,8 +101,6 @@ public class SchemaAlgebraTest
     [Test]
     public void Union_NumericScalars_NormalizesToNumericAndPreservesNullability()
     {
-        var algebra = new SchemaAlgebra([]);
-
         var result = SchemaAlgebra.Union(
             new ScalarLogicalSchema("integer"),
             new ScalarLogicalSchema("decimal", IsNullable: true));
