@@ -46,11 +46,12 @@ internal sealed partial class LogicalSchemaAnalysisSession
                 return;
             }
 
+            var duplicate = rule.Intrinsics.FirstOrDefault(rules.ContainsKey);
+            if (duplicate is not null)
+                throw new InvalidOperationException($"A schema rule is already registered for '{duplicate}'.");
+
             foreach (var intrinsic in rule.Intrinsics)
-            {
-                if (!rules.TryAdd(intrinsic, rule))
-                    throw new InvalidOperationException($"A schema rule is already registered for '{intrinsic}'.");
-            }
+                rules.Add(intrinsic, rule);
         }
 
         public Requirement Require(

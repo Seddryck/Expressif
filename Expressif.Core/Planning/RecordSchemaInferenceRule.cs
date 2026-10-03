@@ -19,7 +19,7 @@ internal sealed class RecordSchemaInferenceRule(
         return Fold(contributions, path);
     }
 
-    private static RecordSchemaContribution Classify(
+    private static IRecordSchemaContribution Classify(
         LogicalArgument argument,
         LogicalSchema? schema,
         Func<LogicalCall, string?> literalName)
@@ -45,7 +45,7 @@ internal sealed class RecordSchemaInferenceRule(
         return DynamicRecordContribution.Instance;
     }
 
-    private LogicalSchema Fold(IReadOnlyList<RecordSchemaContribution> contributions, string path)
+    private LogicalSchema Fold(IReadOnlyList<IRecordSchemaContribution> contributions, string path)
     {
         var result = RecordSchemaContributionFold.Apply(contributions, algebra);
         var opensShape = result.AllowsAdditionalFields;
@@ -60,16 +60,16 @@ internal sealed class RecordSchemaInferenceRule(
     }
 }
 
-internal abstract record RecordSchemaContribution;
+internal interface IRecordSchemaContribution;
 
 internal sealed record NamedRecordContribution(
     string Name,
-    LogicalSchemaField Field) : RecordSchemaContribution;
+    LogicalSchemaField Field) : IRecordSchemaContribution;
 
 internal sealed record RecordShapeContribution(
-    RecordLogicalSchema Schema) : RecordSchemaContribution;
+    RecordLogicalSchema Schema) : IRecordSchemaContribution;
 
-internal sealed record DynamicRecordContribution : RecordSchemaContribution
+internal sealed record DynamicRecordContribution : IRecordSchemaContribution
 {
     public static DynamicRecordContribution Instance { get; } = new();
 }
@@ -77,7 +77,7 @@ internal sealed record DynamicRecordContribution : RecordSchemaContribution
 internal static class RecordSchemaContributionFold
 {
     public static RecordLogicalSchema Apply(
-        IReadOnlyList<RecordSchemaContribution> contributions,
+        IReadOnlyList<IRecordSchemaContribution> contributions,
         SchemaAlgebra algebra)
     {
         var fields = new SortedDictionary<string, LogicalSchemaField>(StringComparer.Ordinal);
@@ -111,7 +111,7 @@ internal static class RecordSchemaContributionFold
             if (field.Value.Optional && fields.TryGetValue(field.Key, out var existing))
             {
                 fields[field.Key] = new LogicalSchemaField(
-                    algebra.Union(existing.Schema, field.Value.Schema),
+                    SchemaAlgebra.Union(existing.Schema, field.Value.Schema),
                     existing.Optional);
             }
             else

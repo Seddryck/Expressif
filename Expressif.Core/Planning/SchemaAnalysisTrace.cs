@@ -4,7 +4,7 @@ internal sealed class SchemaAnalysisTrace
 {
     private readonly Dictionary<string, SchemaAnalysisNode> nodes = new(StringComparer.Ordinal);
 
-    public IReadOnlyList<SchemaAnalysisNode> Nodes
+    public IReadOnlyList<SchemaAnalysisNode> GetNodes()
         => nodes.Values.OrderBy(node => node.Path, StringComparer.Ordinal).ToArray();
 
     public void Capture(LogicalValue value, string path, LogicalSchema input, LogicalSchema output)

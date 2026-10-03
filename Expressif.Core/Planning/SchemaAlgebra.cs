@@ -2,6 +2,9 @@ namespace Expressif.Planning;
 
 internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagnostics)
 {
+    private const string NumericTypeName = "numeric";
+    private const string TemporalTypeName = "temporal";
+
     public LogicalSchema Intersect(LogicalSchema left, LogicalSchema right, string path)
     {
         if (left is NoInputLogicalSchema && right is AnyLogicalSchema)
@@ -125,7 +128,7 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
         return conflict;
     }
 
-    public LogicalSchema Union(LogicalSchema left, LogicalSchema right)
+    public static LogicalSchema Union(LogicalSchema left, LogicalSchema right)
     {
         if (left is AnyLogicalSchema leftAny)
             return leftAny.IsNullable ? WithNullability(right, true) : left;
@@ -136,9 +139,9 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
         if (left is ScalarLogicalSchema leftScalar && right is ScalarLogicalSchema rightScalar)
         {
             if (IsNumeric(leftScalar.Type) && IsNumeric(rightScalar.Type))
-                return new ScalarLogicalSchema("numeric", IsNullable(left) || IsNullable(right));
+                return new ScalarLogicalSchema(NumericTypeName, IsNullable(left) || IsNullable(right));
             if (IsTemporal(leftScalar.Type) && IsTemporal(rightScalar.Type))
-                return new ScalarLogicalSchema("temporal", IsNullable(left) || IsNullable(right));
+                return new ScalarLogicalSchema(TemporalTypeName, IsNullable(left) || IsNullable(right));
         }
         var alternatives = FlattenUnion(left)
             .Concat(FlattenUnion(right))
@@ -291,18 +294,18 @@ internal sealed class SchemaAlgebra(ICollection<SchemaAnalysisDiagnostic> diagno
             return right;
         if (right == "scalar")
             return left;
-        if (left == "numeric" && IsNumeric(right))
+        if (left == NumericTypeName && IsNumeric(right))
             return right;
-        if (right == "numeric" && IsNumeric(left))
+        if (right == NumericTypeName && IsNumeric(left))
             return left;
-        if (left == "temporal" && IsTemporal(right))
+        if (left == TemporalTypeName && IsTemporal(right))
             return right;
-        if (right == "temporal" && IsTemporal(left))
+        if (right == TemporalTypeName && IsTemporal(left))
             return left;
         return null;
     }
 
-    private static bool IsNumeric(string type) => Normalize(type) is "integer" or "decimal" or "numeric";
+    private static bool IsNumeric(string type) => Normalize(type) is "integer" or "decimal" or NumericTypeName;
 
-    private static bool IsTemporal(string type) => Normalize(type) is "date" or "datetime" or "time" or "temporal";
+    private static bool IsTemporal(string type) => Normalize(type) is "date" or "datetime" or "time" or TemporalTypeName;
 }
