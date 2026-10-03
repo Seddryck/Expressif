@@ -501,59 +501,40 @@ internal sealed partial class LogicalSchemaAnalysisSession
         PlannerSchemaDescriptor contract,
         Dictionary<string, LogicalSchema> bindings)
     {
-        var parameterOutputs = new Dictionary<
-            string,
-            (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)>(StringComparer.Ordinal);
-        var parameterResults = new Dictionary<string, List<LogicalSchema>>(StringComparer.Ordinal);
+        var state = new ContractInferenceState(input, enclosing, path, contract, bindings);
         for (var index = 0; index < call.Arguments.Count; index++)
         {
             var argument = call.Arguments[index];
             if (!argument.IsExplicit || argument.Value is null)
                 continue;
-            InferContractArgument(
-                argument,
-                argument.Value,
-                index,
-                input,
-                enclosing,
-                path,
-                contract,
-                bindings,
-                parameterResults,
-                parameterOutputs);
+            InferContractArgument(argument, argument.Value, index, state);
         }
-        BindParameterOutputs(parameterOutputs, bindings, path);
-        return parameterResults;
+        BindParameterOutputs(state.ParameterOutputs, bindings, path);
+        return state.ParameterResults;
     }
 
     private void InferContractArgument(
         LogicalArgument argument,
         LogicalValue value,
         int index,
-        LogicalSchema input,
-        LogicalSchema enclosing,
-        string path,
-        PlannerSchemaDescriptor contract,
-        Dictionary<string, LogicalSchema> bindings,
-        IDictionary<string, List<LogicalSchema>> parameterResults,
-        IDictionary<string, (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)> parameterOutputs)
+        ContractInferenceState state)
     {
         PlannerParameterSchemaDescriptor? parameterContract = null;
-        contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
+        state.Contract.Parameters?.TryGetValue(argument.Parameter.Name, out parameterContract);
         var context = parameterContract?.Input is null
-            ? ArgumentContext(argument, input, enclosing)
-            : schemaBinder.Resolve(SchemaExpressionParser.Parse(parameterContract.Input), bindings);
+            ? ArgumentContext(argument, state.Input, state.Enclosing)
+            : schemaBinder.Resolve(SchemaExpressionParser.Parse(parameterContract.Input), state.Bindings);
         if (parameterContract?.Input is not null)
         {
             schemaBinder.Bind(
                 SchemaExpressionParser.Parse(parameterContract.Input),
                 context,
-                bindings,
-                $"{path}.parameters.{argument.Parameter.Name}.input");
+                state.Bindings,
+                $"{state.Path}.parameters.{argument.Parameter.Name}.input");
         }
-        var result = Infer(value, context, context, $"{path}.arguments[{index}].value");
-        CollectParameterResult(parameterResults, argument.Parameter.Name, result);
-        CollectParameterOutput(parameterOutputs, argument.Parameter.Name, parameterContract, result);
+        var result = Infer(value, context, context, $"{state.Path}.arguments[{index}].value");
+        CollectParameterResult(state.ParameterResults, argument.Parameter.Name, result);
+        CollectParameterOutput(state.ParameterOutputs, argument.Parameter.Name, parameterContract, result);
     }
 
     private static void CollectParameterResult(
@@ -1302,5 +1283,30 @@ internal sealed partial class LogicalSchemaAnalysisSession
         Always,
         WhenPresent,
         WhenAbsent,
+    }
+
+    private sealed class ContractInferenceState(
+        LogicalSchema input,
+        LogicalSchema enclosing,
+        string path,
+        PlannerSchemaDescriptor contract,
+        Dictionary<string, LogicalSchema> bindings)
+    {
+        public LogicalSchema Input { get; } = input;
+
+        public LogicalSchema Enclosing { get; } = enclosing;
+
+        public string Path { get; } = path;
+
+        public PlannerSchemaDescriptor Contract { get; } = contract;
+
+        public Dictionary<string, LogicalSchema> Bindings { get; } = bindings;
+
+        public Dictionary<string, List<LogicalSchema>> ParameterResults { get; } = new(StringComparer.Ordinal);
+
+        public Dictionary<
+            string,
+            (PlannerParameterSchemaDescriptor Contract, List<LogicalSchema> Outputs)> ParameterOutputs { get; }
+            = new(StringComparer.Ordinal);
     }
 }
