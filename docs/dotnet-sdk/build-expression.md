@@ -11,7 +11,8 @@ There are two ways to create an expression from C#.
 Use `ExpressionBuilder` when the transformation is part of the program itself. The C# code names each function and supplies its parameters:
 
 ```csharp
-var expression = new ExpressionBuilder()
+var environment = ExpressifEnvironment.Default;
+var expression = environment.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain<FirstChars>(5)
     .Build();
@@ -19,11 +20,11 @@ var expression = new ExpressionBuilder()
 var result = expression.Evaluate("Nikola Tesla");
 ```
 
-Use `Expression.Create(...)` when the transformation arrives as text—for example, from a configuration file, database, or user interface:
+Use `CreateExpression(...)` when the transformation arrives as text—for example, from a configuration file, database, or user interface:
 
 ```csharp
 var source = configuration["NameTransformation"];
-var expression = Expression.Create(source);
+var expression = environment.CreateExpression(source);
 
 var result = expression.Evaluate("Nikola Tesla");
 ```
@@ -33,7 +34,7 @@ If `NameTransformation` contains `lower | first-chars(5)`, both examples return 
 The practical difference is who defines the transformation:
 
 - With `ExpressionBuilder`, the developer defines it in C# and changing it normally requires rebuilding the program.
-- With `Expression.Create(...)`, the transformation is data and can change without changing the C# code.
+- With `CreateExpression(...)`, the transformation is data and can change without changing the C# code.
 
 See [Evaluate an expression](../evaluate-expression/) for the text-based API.
 
@@ -43,7 +44,7 @@ Call `Chain<T>()` once for each function, then call `Build()`:
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_MultipleWithoutParameters_CorrectlyEvaluate" -->
 ```csharp
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain<Length>();
 
@@ -61,7 +62,7 @@ Pass constructor parameters to `Chain<T>(...)`:
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_WithParameters_CorrectlyEvaluate" -->
 ```csharp
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain<PadRight>(15, '*');
 
 var expression = builder.Build();
@@ -77,11 +78,11 @@ Chain another builder to insert its functions into the pipeline:
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_SubExpression_CorrectlyEvaluate" -->
 ```csharp
-var middle = new ExpressionBuilder()
+var middle = environment.CreateExpressionBuilder()
     .Chain<FirstChars>(5)
     .Chain<PadRight>(7, '*');
 
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain(middle)
     .Chain<Upper>();
@@ -99,7 +100,7 @@ When the function type is known only at runtime, use the non-generic overload:
 
 <!-- START INCLUDE "ExpressionBuilderTest.cs/Chain_NotGeneric_CorrectlyEvaluate" -->
 ```csharp
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain(typeof(Lower))
     .Chain(typeof(FirstChars), 5)
     .Chain(typeof(PadRight), 7, '*');
@@ -119,7 +120,7 @@ The type must implement `IFunction`.
 If you need both the Expressif source and the executable expression, serialize first and build last:
 
 ```csharp
-var builder = new ExpressionBuilder()
+var builder = environment.CreateExpressionBuilder()
     .Chain<Lower>()
     .Chain<Length>();
 

@@ -9,16 +9,13 @@ description: Register independently released Expressif libraries in an isolated 
 An `ExpressifEnvironment` is an immutable snapshot of the libraries available to one host. Register a library assembly before creating the binder that will compile expressions against it:
 
 ```csharp
-using Expressif;
-using Expressif.Bindings;
 using Expressif.Hosting;
 using Expressif.Library.SemVer;
 
 var environment = ExpressifEnvironment.Default
     .RegisterLibrary<SemVerLibrary>();
 
-var factory = new ExpressionFactory(new ExpressionBinder(environment));
-var expression = factory.CreateClosed(
+var expression = environment.CreateClosedExpression(
     "#\"1.2.3-rc.1+build.7\":semver | bump-patch");
 
 var result = expression.Evaluate(null); // 1.2.4
@@ -28,7 +25,7 @@ var result = expression.Evaluate(null); // 1.2.4
 
 Registration validates the library manifest, core API compatibility, declared library dependencies, embedded callable catalogs, type and literal parsers, coercions, and implementation names. A failure throws `LibraryRegistrationException` and leaves the original environment unchanged.
 
-Each registration returns a new environment. Existing environments and expressions already bound from them keep their previous capabilities, so separate hosts can safely use different library sets or versions.
+Each registration returns a new environment. Existing environments and expressions already bound from them keep their previous capabilities, so separate hosts can safely use different library sets or versions. Create textual expressions, textual predications, and typed builders from the registered environment; all of them then use that exact library snapshot. Registration never changes `ExpressifEnvironment.Default` and does not scan ambient assemblies.
 
 ## Library assembly contract
 

@@ -8,11 +8,17 @@ description: Compose predicates, negation, and Boolean combinations with Predica
 
 `PredicationBuilder` composes a Boolean rule from predicate types. Start the rule with `Create<T>()` or `Not<T>()`, add combinations, and call `Build()` to obtain an executable predicate.
 
+Create builders from the environment that owns the available predicate library:
+
+```csharp
+var environment = ExpressifEnvironment.Default;
+```
+
 ## Start a rule
 
 <!-- START INCLUDE "PredicationBuilderTest.cs/Chain_WithParameter_CorrectlyEvaluate" -->
 ```csharp
-var builder = new PredicationBuilder()
+var builder = environment.CreatePredicationBuilder()
     .Create<StartsWith>("Nik");
 
 var predicate = builder.Build();
@@ -28,7 +34,7 @@ Append predicates with `And<T>()`, `Or<T>()`, and `Xor<T>()`:
 
 <!-- START INCLUDE "PredicationBuilderTest.cs/AndOrXor_Generic_CorrectlyEvaluate" -->
 ```csharp
-var builder = new PredicationBuilder()
+var builder = environment.CreatePredicationBuilder()
     .Create<StartsWith>("ola")
     .Or<EndsWith>("sla")
     .And<SortedAfter>("Alan Turing")
@@ -47,7 +53,7 @@ Use `AndNot<T>()`, `OrNot<T>()`, or `XorNot<T>()`:
 
 <!-- START INCLUDE "PredicationBuilderTest.cs/Chain_NegateGenericFluent_CorrectlyEvaluate" -->
 ```csharp
-var builder = new PredicationBuilder()
+var builder = environment.CreatePredicationBuilder()
     .Create<StartsWith>("ola")
     .OrNot<EndsWith>("Tes");
 
@@ -63,11 +69,11 @@ Build a subrule and pass it to `And(...)`, `Or(...)`, or `Xor(...)`. The subrule
 {% raw %}
 <!-- START INCLUDE "PredicationBuilderTest.cs/Serialize_SubPredication_CorrectlySerialized" -->
 ```csharp
-var name = new PredicationBuilder()
+var name = environment.CreatePredicationBuilder()
     .Create<StartsWith>("Nik")
     .And<EndsWith>("sla");
 
-var builder = new PredicationBuilder()
+var builder = environment.CreatePredicationBuilder()
     .Create<LowerCase>()
     .Or(name)
     .Or<UpperCase>();
@@ -96,7 +102,7 @@ As with `ExpressionBuilder`, parameter expressions can read variables and the cu
 var context = new Context();
 context.Variables.Add<string>("prefix", "Nik");
 
-var builder = new PredicationBuilder(context)
+var builder = environment.CreatePredicationBuilder(context)
     .Create<StartsWith>(ctx => ctx.Variables["prefix"]);
 
 var predicate = builder.Build();

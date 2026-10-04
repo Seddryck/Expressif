@@ -9,17 +9,18 @@ description: Evaluate Expressif expressions from C# and supply input and context
 Create an expression from its Expressif source, then pass the value to transform to `Evaluate(...)`:
 
 ```csharp
-var normalizeName = Expression.Create("trim | upper");
+var environment = ExpressifEnvironment.Default;
+var normalizeName = environment.CreateExpression("trim | upper");
 
 var firstResult = normalizeName.Evaluate("  Nikola Tesla  ");
 var secondResult = normalizeName.Evaluate("  Ada Lovelace  ");
 ```
 
-`Expression.Create(...)` parses the source and returns an executable `IExpression`. Parsing happens only once; the same object can then transform any number of values. Here, `firstResult` is `"NIKOLA TESLA"` and `secondResult` is `"ADA LOVELACE"`.
+`CreateExpression(...)` parses the source against the environment's registered libraries and returns an executable `IExpression`. Parsing happens only once; the same object can then transform any number of values. Here, `firstResult` is `"NIKOLA TESLA"` and `secondResult` is `"ADA LOVELACE"`.
 
 The two calls play different roles:
 
-- `Expression.Create("trim | upper")` defines what to do.
+- `environment.CreateExpression("trim | upper")` defines what to do and which library snapshot supplies the operators.
 - `Evaluate("  Nikola Tesla  ")` supplies the value on which to do it.
 
 `Evaluate(...)` accepts any supported .NET value and returns `object?` because different expressions can produce different types. Check or cast that result when your C# code needs a specific type:
@@ -36,7 +37,7 @@ See [Expressions](../../language/expressions/) for the Expressif pipeline and fu
 Variables hold values that are not part of the input itself, such as a user preference or application setting. Create the expression first, then attach an `EvaluationContext` containing those values:
 
 ```csharp
-var expression = Expression.Create("suffix(@suffix)");
+var expression = environment.CreateExpression("append(@suffix)");
 
 var context = new EvaluationContext(
     new Dictionary<string, object?>
@@ -54,7 +55,7 @@ var result = configuredExpression.Evaluate("Hello");
 `WithContext(...)` returns a new expression. It does not modify the original one. This lets the application reuse one parsed expression with different immutable contexts:
 
 ```csharp
-var expression = Expression.Create("suffix(@suffix)");
+var expression = environment.CreateExpression("append(@suffix)");
 
 var excited = expression.WithContext(new EvaluationContext(
     new Dictionary<string, object?> { ["suffix"] = "!" }
@@ -70,12 +71,14 @@ var second = questioning.Evaluate("Really"); // "Really?"
 
 `EvaluationContext` copies the supplied variables and exposes them as a read-only dictionary. An expression configured this way can be evaluated concurrently.
 
+`Context` has a different lifetime. Pass it to `CreateExpression(...)`, `CreateExpressionBuilder(...)`, or `CreatePredicationBuilder(...)` when binding or builder parameter delegates need host-supplied values. Use `EvaluationContext` with `WithContext(...)` for immutable variables attached to an already-created executable object. Keeping those roles separate lets one environment create many independently configured expressions.
+
 ## Evaluate structured .NET values
 
 Pass a structured value directly to `Evaluate(...)`. Expressif can read fields from dictionaries and supported .NET objects:
 
 ```csharp
-var formatName = Expression.Create(".name | trim | suffix(^.suffix)");
+var formatName = environment.CreateExpression(".name | trim | append(^.suffix)");
 
 var input = new Dictionary<string, object?>
 {
@@ -153,7 +156,7 @@ sealed class FunctionMetricsObserver : IExpressionObserver
 }
 
 var observer = new FunctionMetricsObserver();
-var factory = new ExpressionFactory(new ExpressionBinder(), observer: observer);
+var factory = environment.CreateExpressionFactory(observer: observer);
 var expression = factory.Create("trim | upper");
 var result = expression.Evaluate("  hello  ");
 ```
