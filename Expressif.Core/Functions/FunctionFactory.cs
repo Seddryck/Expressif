@@ -472,8 +472,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
 
     private IFunction BuildNamedExpressionInvocation(Bindings.Function function, IContext context)
     {
-        if (function.Parameters is not [LiteralParameter { Value: string name }, .. var arguments])
+        if (function.Parameters is not [LiteralParameter { Value: string name }, ..])
             throw new BindingException("A named-expression invocation must contain a target name.");
+        var arguments = function.Parameters.Skip(1);
         var providers = arguments.Select(argument => CreateParameter(argument, typeof(object), context)).ToArray();
         return new DelegatedFunction(input => NamedExpressionRuntime.Invoke(
             name,
@@ -552,7 +553,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         Bindings.Function function,
         IContext context)
     {
-        if (function.Arguments.Length == 0 && type.GetConstructor(Type.EmptyTypes) is { } parameterless)
+        if (function.Arguments.Count == 0 && type.GetConstructor(Type.EmptyTypes) is { } parameterless)
         {
             return parameterless.Invoke([]) as IFunction
                 ?? throw new InvalidOperationException(
@@ -659,8 +660,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return new AccumulatorFunction(create);
         }
 
-        if (function.Parameters.Length != 0)
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        if (function.Parameters.Count != 0)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         return new AccumulatorFunction(() => Activator.CreateInstance(accumulatorType) as IIncrementalAggregation
             ?? throw new InvalidOperationException(
@@ -681,7 +682,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
                     $"The constructor for accumulator '{function.Name}' did not create an accumulator.");
         }
         else if (constructors.TryGetAnnotated(accumulatorType, out var annotated)
-            && (function.Arguments.Length > 0 || accumulatorType.GetConstructor(Type.EmptyTypes) is null))
+            && (function.Arguments.Count > 0 || accumulatorType.GetConstructor(Type.EmptyTypes) is null))
         {
             create = () => InstantiateAnnotated(accumulatorType, annotated, function, context) as IIncrementalAggregation
                 ?? throw new InvalidOperationException(
@@ -700,8 +701,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     {
         if (function.Identity == new OperatorIdentity("system", "identity"))
         {
-            if (function.Parameters.Length != 0)
-                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            if (function.Parameters.Count != 0)
+                throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
             return new DelegatedFunction(value => value);
         }
         if (function.Syntax == FunctionSyntax.ScopedTupleProjectionShorthand
@@ -732,7 +733,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private static IFunction BuildRootFieldFunction(Bindings.Function function)
     {
         if (!TryGetFieldName(function.Parameters, out var fieldName))
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null), fieldName));
     }
@@ -740,7 +741,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     private static IFunction BuildEnclosingRootFieldFunction(Bindings.Function function)
     {
         if (!TryGetFieldName(function.Parameters, out var fieldName))
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         return new DelegatedFunction(_ => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), fieldName));
     }
@@ -900,7 +901,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         }
     }
 
-    private static bool TryGetFieldName(IParameter[] parameters, out string fieldName)
+    private static bool TryGetFieldName(IReadOnlyList<IParameter> parameters, out string fieldName)
     {
         fieldName = parameters switch
         {
@@ -952,7 +953,7 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
     }
 
     private static bool IsSingleTokenExpression(OpenExpressionParameter open)
-        => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Length == 0;
+        => open.Expression.Members.Count() == 1 && open.Expression.Members.First().Parameters.Count == 0;
 
     private bool TryInstantiateWithAccumulatorProvider(
         Type type,
@@ -970,9 +971,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return false;
         }
 
-        if (function.Parameters.Length != 1)
+        if (function.Parameters.Count != 1)
         {
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
         }
 
         aggregation = (IFunction)ctor.Invoke([BuildAccumulatorProvider(function.Parameters[0], context)]);
@@ -987,8 +988,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             if (accumulatorRegistry.TryResolve(call.Name, out var accumulatorType)
                 && TryBuildAccumulatorConstructor(call, accumulatorType, context, out var create))
                 return create;
-            if (call.Arguments.Length != 0)
-                throw new MissingOrUnexpectedParametersFunctionException(call.Name, call.Parameters.Length);
+            if (call.Arguments.Count != 0)
+                throw new MissingOrUnexpectedParametersFunctionException(call.Name, call.Parameters.Count);
         }
         var nameProvider = BuildAccumulatorNameProvider(parameter, context);
         return () => accumulatorRegistry.Create(nameProvider.Invoke());
@@ -1010,8 +1011,8 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
         if (ctor is null)
             return false;
 
-        if (function.Parameters.Length != ctor.GetParameters().Length)
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+        if (function.Parameters.Count != ctor.GetParameters().Length)
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         var bound = ParameterArgumentBinder.Bind(type, function.Arguments).Parameters;
 
@@ -1052,9 +1053,9 @@ internal sealed partial class FunctionFactoryRuntime : BaseExpressionFactory, IF
             return false;
         }
 
-        if (function.Parameters.Length != 1)
+        if (function.Parameters.Count != 1)
         {
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
         }
 
         if (function.Parameters[0] is not PredicationParameter && !TryGetOpenExpression(function.Parameters[0], out _))

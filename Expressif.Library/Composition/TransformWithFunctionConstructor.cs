@@ -6,10 +6,10 @@ internal sealed class TransformWithFunctionConstructor : IFunctionConstructor<Ex
 {
     public IFunction Construct(Bindings.Function function, IContext context, IFunctionConstructionContext constructionContext)
     {
-        if (function.Parameters.Length < 2
+        if (function.Parameters.Count < 2
             || !FunctionConstructorSupport.TryGetOpenExpression(function.Parameters[0], out var open))
         {
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
         }
 
         var operation = constructionContext.CreateOpenExpression(open.Expression, context);

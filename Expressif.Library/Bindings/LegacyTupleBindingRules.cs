@@ -8,7 +8,7 @@ internal static class LegacyTupleBindingRules
         if (rule is null) return false;
         if (expression.InputBinding is not null || TupleBindingOperations.LeadingLength(expression) > 0) return false;
         var members = expression.Members.ToArray();
-        return members is [{ Parameters.Length: 0 }, ..]
+        return members is [{ Parameters.Count: 0 }, ..]
             && (rule.AllowFollowingStages || members.Length == 1);
     }
 

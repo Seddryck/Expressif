@@ -10,7 +10,7 @@ internal static class FunctionConstructorSupport
         [NotNullWhen(true)] out OpenExpressionParameter? expression)
         => ExpressionShapeNormalizer.TryGetOpenExpression(parameter, out expression);
 
-    public static bool TryGetFieldName(IParameter[] parameters, out string fieldName)
+    public static bool TryGetFieldName(IReadOnlyList<IParameter> parameters, out string fieldName)
     {
         fieldName = parameters switch
         {

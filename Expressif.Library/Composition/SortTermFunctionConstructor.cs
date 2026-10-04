@@ -9,7 +9,7 @@ internal sealed class SortTermFunctionConstructor : IFunctionConstructor<Express
 {
     public IFunction Construct(Bindings.Function function, IContext context, IFunctionConstructionContext constructionContext)
     {
-        if (function.Parameters.Length is not (2 or 4))
+        if (function.Parameters.Count is not (2 or 4))
         {
             throw new BindingException(
                 "The comparer for 'sort-term' must be a tuple-bound callable reference.");

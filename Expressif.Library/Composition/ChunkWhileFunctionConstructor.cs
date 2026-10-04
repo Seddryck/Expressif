@@ -7,10 +7,10 @@ internal sealed class ChunkWhileFunctionConstructor : IFunctionConstructor<Expre
 {
     public IFunction Construct(Bindings.Function function, IContext context, IFunctionConstructionContext constructionContext)
     {
-        if (function.Parameters.Length != 1
+        if (function.Parameters.Count != 1
             || !FunctionConstructorSupport.TryGetOpenExpression(function.Parameters[0], out var open))
         {
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
         }
 
         var members = open.Expression.Members.ToArray();

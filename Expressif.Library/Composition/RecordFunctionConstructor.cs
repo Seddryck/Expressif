@@ -14,15 +14,15 @@ internal sealed class RecordFunctionConstructor : IFunctionConstructor<Expressif
     {
         if (function.Arguments.FirstOrDefault(argument => argument.Name is not null) is { } named)
             throw new UnknownParameterNameException(function.Name, named.Name!);
-        if (function.Parameters.Length == 0)
+        if (function.Parameters.Count == 0)
             return new Expressif.Library.Record.Record();
 
-        if (function.Parameters.Length != 1
+        if (function.Parameters.Count != 1
             || function.Parameters[0] is not RecordDefinitionParameter definition)
         {
             throw new MissingOrUnexpectedParametersFunctionException(
                 function.Name,
-                function.Parameters.Length);
+                function.Parameters.Count);
         }
 
         var explicitNames = new HashSet<string>(StringComparer.Ordinal);
@@ -98,5 +98,5 @@ internal sealed class RecordFunctionConstructor : IFunctionConstructor<Expressif
 
     private static bool IsSingleTokenExpression(OpenExpressionParameter open)
         => open.Expression.Members.Count() == 1
-            && open.Expression.Members.First().Parameters.Length == 0;
+            && open.Expression.Members.First().Parameters.Count == 0;
 }

@@ -15,7 +15,7 @@ internal static class DirectionalMapConstruction
         var type = mapOver ? typeof(Expressif.Library.Array.MapOver) : typeof(Expressif.Library.Array.MapWith);
         var binding = ParameterArgumentBinder.Bind(type, function.Arguments);
         if (binding.Parameters is not [OpenExpressionParameter expression, var values])
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
 
         var valuesEvaluator = constructionContext.CreateValueEvaluator(values, context);
         Func<System.Collections.IEnumerable?> valuesProvider = () =>

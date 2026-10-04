@@ -16,7 +16,7 @@ public static class TupleBindingOperations
 
     internal static bool IsDefaultRotation(Function function)
         => function.Name.Equals("rotate", StringComparison.OrdinalIgnoreCase)
-            && (function.Arguments.Length == 0
+            && (function.Arguments.Count == 0
                 || (function.Arguments is [{ Name: null or "offset", Value: LiteralParameter { Value: { } offset } }]
                     && decimal.TryParse(Convert.ToString(offset, System.Globalization.CultureInfo.InvariantCulture),
                         System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var value) && value == 1));

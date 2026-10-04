@@ -10,7 +10,7 @@ internal sealed class LetFunctionConstructor : IFunctionConstructor<Expressif.Li
         IFunctionConstructionContext constructionContext)
     {
         if (function.Parameters is not [LetDefinitionParameter definition])
-            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Length);
+            throw new MissingOrUnexpectedParametersFunctionException(function.Name, function.Parameters.Count);
         var bindings = definition.Bindings.Select(binding => new Expressif.Library.Flow.NamedExpressionEvaluator(
             binding.Name,
             constructionContext.CreateValueEvaluator(binding.Value, context))).ToArray();

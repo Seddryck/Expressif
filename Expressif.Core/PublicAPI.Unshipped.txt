@@ -29,13 +29,12 @@ Expressif.Bindings.ArrayElementParameter.Value.get -> Expressif.Bindings.IParame
 Expressif.Bindings.ArrayElementParameter.Value.init -> void
 Expressif.Bindings.ArrayParameter
 Expressif.Bindings.ArrayParameter.<Clone>$() -> Expressif.Bindings.ArrayParameter!
-Expressif.Bindings.ArrayParameter.ArrayParameter(Expressif.Bindings.ArrayElementParameter![]! Elements) -> void
-Expressif.Bindings.ArrayParameter.ArrayParameter(Expressif.Bindings.IParameter![]! values) -> void
-Expressif.Bindings.ArrayParameter.Deconstruct(out Expressif.Bindings.ArrayElementParameter![]! Elements) -> void
-Expressif.Bindings.ArrayParameter.Elements.get -> Expressif.Bindings.ArrayElementParameter![]!
-Expressif.Bindings.ArrayParameter.Elements.init -> void
+Expressif.Bindings.ArrayParameter.ArrayParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.ArrayElementParameter!>! elements) -> void
+Expressif.Bindings.ArrayParameter.ArrayParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.IParameter!>! values) -> void
+Expressif.Bindings.ArrayParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.ArrayElementParameter!>! elements) -> void
+Expressif.Bindings.ArrayParameter.Elements.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.ArrayElementParameter!>!
 Expressif.Bindings.ArrayParameter.Equals(Expressif.Bindings.ArrayParameter? other) -> bool
-Expressif.Bindings.ArrayParameter.Values.get -> Expressif.Bindings.IParameter![]!
+Expressif.Bindings.ArrayParameter.Values.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.IParameter!>!
 Expressif.Bindings.BindingException
 Expressif.Bindings.BindingException.BindingException(string! message) -> void
 Expressif.Bindings.CallableReferenceParameter
@@ -80,10 +79,9 @@ Expressif.Bindings.ControlFlowBranchParameter.Predicate.get -> Expressif.Binding
 Expressif.Bindings.ControlFlowBranchParameter.Predicate.init -> void
 Expressif.Bindings.DictionaryParameter
 Expressif.Bindings.DictionaryParameter.<Clone>$() -> Expressif.Bindings.DictionaryParameter!
-Expressif.Bindings.DictionaryParameter.Deconstruct(out Expressif.Bindings.PairParameter![]! Entries) -> void
-Expressif.Bindings.DictionaryParameter.DictionaryParameter(Expressif.Bindings.PairParameter![]! Entries) -> void
-Expressif.Bindings.DictionaryParameter.Entries.get -> Expressif.Bindings.PairParameter![]!
-Expressif.Bindings.DictionaryParameter.Entries.init -> void
+Expressif.Bindings.DictionaryParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.PairParameter!>! entries) -> void
+Expressif.Bindings.DictionaryParameter.DictionaryParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.PairParameter!>! entries) -> void
+Expressif.Bindings.DictionaryParameter.Entries.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.PairParameter!>!
 Expressif.Bindings.DictionaryParameter.Equals(Expressif.Bindings.DictionaryParameter? other) -> bool
 Expressif.Bindings.DuplicateNamedArgumentException
 Expressif.Bindings.DuplicateNamedArgumentException.DuplicateNamedArgumentException(string! parameterName) -> void
@@ -101,10 +99,10 @@ Expressif.Bindings.FieldCoercionParameter.Field.get -> string!
 Expressif.Bindings.FieldCoercionParameter.Field.init -> void
 Expressif.Bindings.FieldCoercionParameter.FieldCoercionParameter(string! Field, System.Type! TargetType) -> void
 Expressif.Bindings.Function
-Expressif.Bindings.Function.Arguments.get -> Expressif.Bindings.FunctionArgument![]!
-Expressif.Bindings.Function.Function(string! name, Expressif.Bindings.IParameter![]! parameters, Expressif.Bindings.FunctionSyntax syntax = Expressif.Bindings.FunctionSyntax.Standard) -> void
+Expressif.Bindings.Function.Arguments.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.FunctionArgument!>!
+Expressif.Bindings.Function.Function(string! name, System.Collections.Generic.IEnumerable<Expressif.Bindings.IParameter!>! parameters, Expressif.Bindings.FunctionSyntax syntax = Expressif.Bindings.FunctionSyntax.Standard) -> void
 Expressif.Bindings.Function.Name.get -> string!
-Expressif.Bindings.Function.Parameters.get -> Expressif.Bindings.IParameter![]!
+Expressif.Bindings.Function.Parameters.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.IParameter!>!
 Expressif.Bindings.Function.SourceSpan.get -> Expressif.Syntax.SourceSpan?
 Expressif.Bindings.Function.Syntax.get -> Expressif.Bindings.FunctionSyntax
 Expressif.Bindings.FunctionArgument
@@ -139,11 +137,10 @@ Expressif.Bindings.FunctionSyntax.Standard = 0 -> Expressif.Bindings.FunctionSyn
 Expressif.Bindings.FunctionSyntax.TupleProjectionShorthand = 9 -> Expressif.Bindings.FunctionSyntax
 Expressif.Bindings.GroupingParameter
 Expressif.Bindings.GroupingParameter.<Clone>$() -> Expressif.Bindings.GroupingParameter!
-Expressif.Bindings.GroupingParameter.Deconstruct(out Expressif.Bindings.PairParameter![]! Entries) -> void
-Expressif.Bindings.GroupingParameter.Entries.get -> Expressif.Bindings.PairParameter![]!
-Expressif.Bindings.GroupingParameter.Entries.init -> void
+Expressif.Bindings.GroupingParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.PairParameter!>! entries) -> void
+Expressif.Bindings.GroupingParameter.Entries.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.PairParameter!>!
 Expressif.Bindings.GroupingParameter.Equals(Expressif.Bindings.GroupingParameter? other) -> bool
-Expressif.Bindings.GroupingParameter.GroupingParameter(Expressif.Bindings.PairParameter![]! Entries) -> void
+Expressif.Bindings.GroupingParameter.GroupingParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.PairParameter!>! entries) -> void
 Expressif.Bindings.IBoundExpression
 Expressif.Bindings.IExpressionBinder
 Expressif.Bindings.IExpressionBinder.Bind(Expressif.Planning.LogicalPlan! plan) -> Expressif.IExpression!
@@ -221,11 +218,10 @@ Expressif.Bindings.LetBinding.Value.get -> Expressif.Bindings.IParameter!
 Expressif.Bindings.LetBinding.Value.init -> void
 Expressif.Bindings.LetDefinitionParameter
 Expressif.Bindings.LetDefinitionParameter.<Clone>$() -> Expressif.Bindings.LetDefinitionParameter!
-Expressif.Bindings.LetDefinitionParameter.Bindings.get -> Expressif.Bindings.LetBinding![]!
-Expressif.Bindings.LetDefinitionParameter.Bindings.init -> void
-Expressif.Bindings.LetDefinitionParameter.Deconstruct(out Expressif.Bindings.LetBinding![]! Bindings) -> void
+Expressif.Bindings.LetDefinitionParameter.Bindings.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.LetBinding!>!
+Expressif.Bindings.LetDefinitionParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.LetBinding!>! bindings) -> void
 Expressif.Bindings.LetDefinitionParameter.Equals(Expressif.Bindings.LetDefinitionParameter? other) -> bool
-Expressif.Bindings.LetDefinitionParameter.LetDefinitionParameter(Expressif.Bindings.LetBinding![]! Bindings) -> void
+Expressif.Bindings.LetDefinitionParameter.LetDefinitionParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.LetBinding!>! bindings) -> void
 Expressif.Bindings.LiteralParameter
 Expressif.Bindings.LiteralParameter.<Clone>$() -> Expressif.Bindings.LiteralParameter!
 Expressif.Bindings.LiteralParameter.Deconstruct(out object? Value, out string? LiteralType, out bool IsLiteralTypeExplicit) -> void
@@ -321,11 +317,10 @@ Expressif.Bindings.QuotedLiteralParameter.Value.get -> string!
 Expressif.Bindings.QuotedLiteralParameter.Value.init -> void
 Expressif.Bindings.RecordDefinitionParameter
 Expressif.Bindings.RecordDefinitionParameter.<Clone>$() -> Expressif.Bindings.RecordDefinitionParameter!
-Expressif.Bindings.RecordDefinitionParameter.Deconstruct(out Expressif.Bindings.IRecordDefinitionEntry![]! Entries) -> void
-Expressif.Bindings.RecordDefinitionParameter.Entries.get -> Expressif.Bindings.IRecordDefinitionEntry![]!
-Expressif.Bindings.RecordDefinitionParameter.Entries.init -> void
+Expressif.Bindings.RecordDefinitionParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.IRecordDefinitionEntry!>! entries) -> void
+Expressif.Bindings.RecordDefinitionParameter.Entries.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.IRecordDefinitionEntry!>!
 Expressif.Bindings.RecordDefinitionParameter.Equals(Expressif.Bindings.RecordDefinitionParameter? other) -> bool
-Expressif.Bindings.RecordDefinitionParameter.RecordDefinitionParameter(Expressif.Bindings.IRecordDefinitionEntry![]! Entries) -> void
+Expressif.Bindings.RecordDefinitionParameter.RecordDefinitionParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.IRecordDefinitionEntry!>! entries) -> void
 Expressif.Bindings.RecordExpansionSelector
 Expressif.Bindings.RecordExpansionSelector.<Clone>$() -> Expressif.Bindings.RecordExpansionSelector!
 Expressif.Bindings.RecordExpansionSelector.Deconstruct(out string? Field, out System.Func<object?, object?>! Evaluate) -> void
@@ -346,11 +341,10 @@ Expressif.Bindings.RecordLiteralField.Value.get -> Expressif.Bindings.IParameter
 Expressif.Bindings.RecordLiteralField.Value.init -> void
 Expressif.Bindings.RecordLiteralParameter
 Expressif.Bindings.RecordLiteralParameter.<Clone>$() -> Expressif.Bindings.RecordLiteralParameter!
-Expressif.Bindings.RecordLiteralParameter.Deconstruct(out Expressif.Bindings.RecordLiteralField![]! Fields) -> void
+Expressif.Bindings.RecordLiteralParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.RecordLiteralField!>! fields) -> void
 Expressif.Bindings.RecordLiteralParameter.Equals(Expressif.Bindings.RecordLiteralParameter? other) -> bool
-Expressif.Bindings.RecordLiteralParameter.Fields.get -> Expressif.Bindings.RecordLiteralField![]!
-Expressif.Bindings.RecordLiteralParameter.Fields.init -> void
-Expressif.Bindings.RecordLiteralParameter.RecordLiteralParameter(Expressif.Bindings.RecordLiteralField![]! Fields) -> void
+Expressif.Bindings.RecordLiteralParameter.Fields.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.RecordLiteralField!>!
+Expressif.Bindings.RecordLiteralParameter.RecordLiteralParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.RecordLiteralField!>! fields) -> void
 Expressif.Bindings.RecordNamedEntry
 Expressif.Bindings.RecordNamedEntry.<Clone>$() -> Expressif.Bindings.RecordNamedEntry!
 Expressif.Bindings.RecordNamedEntry.Deconstruct(out string! Name, out Expressif.Bindings.IParameter! Value) -> void
@@ -426,13 +420,12 @@ Expressif.Bindings.TupleElementParameter.Value.get -> Expressif.Bindings.IParame
 Expressif.Bindings.TupleElementParameter.Value.init -> void
 Expressif.Bindings.TupleParameter
 Expressif.Bindings.TupleParameter.<Clone>$() -> Expressif.Bindings.TupleParameter!
-Expressif.Bindings.TupleParameter.Deconstruct(out Expressif.Bindings.TupleElementParameter![]! Elements) -> void
-Expressif.Bindings.TupleParameter.Elements.get -> Expressif.Bindings.TupleElementParameter![]!
-Expressif.Bindings.TupleParameter.Elements.init -> void
+Expressif.Bindings.TupleParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.TupleElementParameter!>! elements) -> void
+Expressif.Bindings.TupleParameter.Elements.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.TupleElementParameter!>!
 Expressif.Bindings.TupleParameter.Equals(Expressif.Bindings.TupleParameter? other) -> bool
-Expressif.Bindings.TupleParameter.TupleParameter(Expressif.Bindings.IParameter![]! values) -> void
-Expressif.Bindings.TupleParameter.TupleParameter(Expressif.Bindings.TupleElementParameter![]! Elements) -> void
-Expressif.Bindings.TupleParameter.Values.get -> Expressif.Bindings.IParameter![]!
+Expressif.Bindings.TupleParameter.TupleParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.IParameter!>! values) -> void
+Expressif.Bindings.TupleParameter.TupleParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.TupleElementParameter!>! elements) -> void
+Expressif.Bindings.TupleParameter.Values.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.IParameter!>!
 Expressif.Bindings.TupleProjectionParameter
 Expressif.Bindings.TupleProjectionParameter.<Clone>$() -> Expressif.Bindings.TupleProjectionParameter!
 Expressif.Bindings.TupleProjectionParameter.Deconstruct(out int Index, out bool FromEnd) -> void
@@ -453,20 +446,17 @@ Expressif.Bindings.VariableParameter.Name.init -> void
 Expressif.Bindings.VariableParameter.VariableParameter(string! Name) -> void
 Expressif.Bindings.VectorParameter
 Expressif.Bindings.VectorParameter.<Clone>$() -> Expressif.Bindings.VectorParameter!
-Expressif.Bindings.VectorParameter.Deconstruct(out Expressif.Bindings.TupleElementParameter![]! Elements) -> void
-Expressif.Bindings.VectorParameter.Elements.get -> Expressif.Bindings.TupleElementParameter![]!
-Expressif.Bindings.VectorParameter.Elements.init -> void
+Expressif.Bindings.VectorParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.TupleElementParameter!>! elements) -> void
+Expressif.Bindings.VectorParameter.Elements.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.TupleElementParameter!>!
 Expressif.Bindings.VectorParameter.Equals(Expressif.Bindings.VectorParameter? other) -> bool
-Expressif.Bindings.VectorParameter.VectorParameter(Expressif.Bindings.TupleElementParameter![]! Elements) -> void
+Expressif.Bindings.VectorParameter.VectorParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.TupleElementParameter!>! elements) -> void
 Expressif.Bindings.WithDefinitionParameter
 Expressif.Bindings.WithDefinitionParameter.<Clone>$() -> Expressif.Bindings.WithDefinitionParameter!
 Expressif.Bindings.WithDefinitionParameter.Body.get -> Expressif.Bindings.IParameter!
-Expressif.Bindings.WithDefinitionParameter.Body.init -> void
-Expressif.Bindings.WithDefinitionParameter.Deconstruct(out Expressif.Bindings.WithProjection![]! Projections, out Expressif.Bindings.IParameter! Body) -> void
+Expressif.Bindings.WithDefinitionParameter.Deconstruct(out System.Collections.Generic.IReadOnlyList<Expressif.Bindings.WithProjection!>! projections, out Expressif.Bindings.IParameter! body) -> void
 Expressif.Bindings.WithDefinitionParameter.Equals(Expressif.Bindings.WithDefinitionParameter? other) -> bool
-Expressif.Bindings.WithDefinitionParameter.Projections.get -> Expressif.Bindings.WithProjection![]!
-Expressif.Bindings.WithDefinitionParameter.Projections.init -> void
-Expressif.Bindings.WithDefinitionParameter.WithDefinitionParameter(Expressif.Bindings.WithProjection![]! Projections, Expressif.Bindings.IParameter! Body) -> void
+Expressif.Bindings.WithDefinitionParameter.Projections.get -> System.Collections.Generic.IReadOnlyList<Expressif.Bindings.WithProjection!>!
+Expressif.Bindings.WithDefinitionParameter.WithDefinitionParameter(System.Collections.Generic.IEnumerable<Expressif.Bindings.WithProjection!>! projections, Expressif.Bindings.IParameter! body) -> void
 Expressif.Bindings.WithProjection
 Expressif.Bindings.WithProjection.<Clone>$() -> Expressif.Bindings.WithProjection!
 Expressif.Bindings.WithProjection.Deconstruct(out string! Name, out Expressif.Bindings.IParameter! Value) -> void
