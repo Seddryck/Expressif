@@ -29,7 +29,6 @@ flowchart LR
 | `ExpressionBuilder` | Compose a function pipeline with C# types; create it from an environment. |
 | `PredicationBuilder` | Compose predicates, negation, and Boolean operators with C# types; create it from an environment. |
 | `SemanticAnalyzer` | Locate field-reference input and enclosing scopes without evaluation. |
-| `Context` | Supply values while binding or building an executable object. |
 | `EvaluationContext` | Supply immutable variables to a reusable expression or predication at evaluation time. |
 
 ## A first evaluation

@@ -47,7 +47,7 @@ var configuredExpression = expression.WithContext(context);
 var result = configuredExpression.Evaluate("Hello");
 ```
 
-`result` is `"Hello Nikola!"`. The dictionary stores the name as `suffix`; the Expressif source refers to it as `@suffix`.
+`result` is `"Hello Nikola!"`. The evaluation context stores the name as `suffix`; the Expressif source refers to it as `@suffix`.
 
 `WithContext(...)` returns a new expression. It does not modify the original one. This lets the application reuse one parsed expression with different immutable contexts:
 
@@ -77,7 +77,7 @@ var context = EvaluationContext.CreateBuilder()
     .Build();
 ```
 
-All providers are materialized once per `Evaluate(...)` call. Repeated references during that evaluation observe the same value. A later evaluation materializes them again. Providers receive the top-level input through `EvaluationStartContext.Input`; exceptions propagate directly, and deferred results retain the materialized values while they are enumerated.
+All providers are materialized once per `Evaluate(...)` call, in registration order. Repeated references during that evaluation observe the same value. A later evaluation materializes them again. Providers receive the top-level input through `EvaluationStartContext.Input`; exceptions propagate directly, and deferred results retain the materialized values while they are enumerated. When the same context is used by concurrent evaluations, its provider delegates may also run concurrently and must be thread-safe.
 
 For typed builder arguments that must inspect the current invocation scope, use `Argument.From<T>(...)` with `ArgumentEvaluationContext`. Host values, once-per-evaluation providers, and per-argument providers deliberately have different lifetimes.
 
