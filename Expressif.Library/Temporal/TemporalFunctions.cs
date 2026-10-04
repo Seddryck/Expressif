@@ -59,8 +59,7 @@ public class Age : BaseTemporalFunction<int?>
     }
 
     private static DateTime GetCurrentDate()
-        => EvaluationRuntime.Context is { } context
-            && context.TryGetVariable("current-date", out var value)
+        => EvaluationRuntime.TryGetVariable("current-date", out var value)
             && value is not null
                 ? new DateTimeCaster().Cast(value).Date
                 : DateTime.Today;

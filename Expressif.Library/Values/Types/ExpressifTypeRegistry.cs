@@ -1,6 +1,6 @@
 using Expressif.Functions;
 
-namespace Expressif.Values.Types;
+namespace Expressif.Types;
 
 /// <summary>
 /// Provides the type registry composed from the Expressif Core value model and official Library type descriptors.

@@ -21,7 +21,7 @@ public sealed class Tuple : IFunction<object?, TupleValue>
         => Values = values;
 
     public TupleValue Evaluate(object? value)
-        => new Expressif.Values.Tuple(Values.Invoke(value));
+        => new Expressif.Values.TupleValue(Values.Invoke(value));
 
     object? IFunction.Evaluate(object? value) => Evaluate(value);
 }

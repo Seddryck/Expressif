@@ -1,3 +1,4 @@
+using Expressif.Bindings;
 using Expressif.Syntax;
 using Expressif.Types;
 
@@ -120,7 +121,10 @@ public sealed class LogicalPlanner
                 yield return PlanTupleReference(projection);
                 yield break;
             case GroupingMapShorthandSyntax map:
-                yield return CreateCall("map-groups", [Raw(PlanOpen(map.Expression))], expectedKind);
+                yield return CreateCall("map-groups", [Raw(PlanOpen(map.Expression))], expectedKind) with
+                {
+                    SourceNotation = SourceNotation.GroupMapShorthand,
+                };
                 yield break;
             case ControlFlowCallSyntax controlFlow:
                 yield return PlanControlFlow(controlFlow, expectedKind);
@@ -132,10 +136,16 @@ public sealed class LogicalPlanner
                 yield return CreateCall(access.Component == PairComponent.Key ? "pair-key" : "pair-value", [], expectedKind);
                 yield break;
             case MapShorthandSyntax map:
-                yield return CreateCall("map", [Raw(PlanOpen(map.Expression))], expectedKind);
+                yield return CreateCall("map", [Raw(PlanOpen(map.Expression))], expectedKind) with
+                {
+                    SourceNotation = SourceNotation.MapShorthand,
+                };
                 yield break;
             case ParameterizedExpressionSyntax parameterized:
-                yield return CreateCall("map", [Raw(PlanOpen(parameterized.Expression))], expectedKind);
+                yield return CreateCall("map", [Raw(PlanOpen(parameterized.Expression))], expectedKind) with
+                {
+                    SourceNotation = SourceNotation.MapShorthand,
+                };
                 yield break;
             default:
                 throw Unsupported(syntax);

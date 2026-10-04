@@ -1,6 +1,6 @@
 using Expressif.Functions;
 using Expressif.Syntax;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 

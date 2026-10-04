@@ -99,7 +99,7 @@ public class BindCommandTests
         Assert.Multiple(() =>
         {
             Assert.That(result.ExitCode, Is.EqualTo(ExitCodes.Success));
-            Assert.That(result.StdOut, Does.Contain("Function: field (from FieldShorthand)"));
+            Assert.That(result.StdOut, Does.Contain("Function: field (from CurrentField)"));
             Assert.That(result.StdOut, Does.Contain("Arg[0]: Literal = \"name\""));
             Assert.That(result.StdErr, Is.Empty);
         });

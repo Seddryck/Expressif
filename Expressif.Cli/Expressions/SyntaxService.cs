@@ -5,7 +5,7 @@ using Expressif.Functions;
 using Expressif.Library.Composition;
 using Expressif.Planning;
 using Expressif.Syntax;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Cli.Expressions;
 

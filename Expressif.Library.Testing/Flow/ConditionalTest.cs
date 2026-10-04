@@ -32,16 +32,18 @@ public class ConditionalTest
     public void Evaluate_Conditional(string source, int input, int expected)
         => Assert.That(TestExpression.Create(source).Evaluate(input), Is.EqualTo(expected));
 
-    [TestCase("conditional-forward", FunctionSyntax.ConditionalForward)]
-    [TestCase("CONDITIONAL-FORWARD", FunctionSyntax.ConditionalForward)]
-    [TestCase("Conditional-Forward", FunctionSyntax.ConditionalForward)]
-    [TestCase("conditional-backward", FunctionSyntax.ConditionalBackward)]
-    [TestCase("CONDITIONAL-BACKWARD", FunctionSyntax.ConditionalBackward)]
-    [TestCase("Conditional-Backward", FunctionSyntax.ConditionalBackward)]
-    public void Bind_ConditionalName_IgnoresCase(string name, FunctionSyntax expected)
+    [TestCase("conditional-forward", false)]
+    [TestCase("CONDITIONAL-FORWARD", false)]
+    [TestCase("Conditional-Forward", false)]
+    [TestCase("conditional-backward", true)]
+    [TestCase("CONDITIONAL-BACKWARD", true)]
+    [TestCase("Conditional-Backward", true)]
+    public void Bind_ConditionalName_IgnoresCase(string name, bool backward)
     {
         var function = ExpressifBinderFactory.Create().BindSingleFunction(ExpressionParser.Parse($"{name}(#true, #false)"));
-        Assert.That(function.Syntax, Is.EqualTo(expected));
+        Assert.That(
+            function.Role,
+            Is.EqualTo(backward ? BoundFunctionRole.ConditionalBackward : BoundFunctionRole.ConditionalForward));
     }
 
     [TestCase("is-negative ?> absolute // trailing comment", -12, 12)]

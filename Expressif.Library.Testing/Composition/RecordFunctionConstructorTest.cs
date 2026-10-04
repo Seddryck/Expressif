@@ -49,7 +49,7 @@ public sealed class RecordFunctionConstructorTest
             new RecordNamedEntry("incoming", new IncomingValueParameter()),
             new RecordNamedEntry("quoted", new QuotedLiteralParameter("quoted-value")),
             new RecordNamedEntry("literal", new LiteralParameter(42)),
-            new RecordNamedEntry("provided", new ContextParameter(_ => "provided-value")),
+            new RecordNamedEntry("provided", new ArgumentProviderParameter(_ => "provided-value")),
             new RecordSpreadEntry(new IncomingValueParameter()),
         ]);
         var construction = new StubConstructionContext

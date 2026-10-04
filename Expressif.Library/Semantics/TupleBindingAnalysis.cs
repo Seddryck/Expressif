@@ -149,7 +149,7 @@ public sealed class TupleBindingAnalyzer
         LiteralParameter literal => literal.Value,
         QuotedLiteralParameter quoted => quoted.Value,
         TupleParameter tuple when tuple.Elements.All(element => !element.IsSpread)
-            => new Values.Tuple(tuple.Values.Select(KnownValue).ToArray()),
+            => new Expressif.Values.TupleValue(tuple.Values.Select(KnownValue).ToArray()),
         ArrayParameter array when array.Elements.All(element => !element.IsSpread)
             => array.Values.Select(KnownValue).ToArray(),
         _ => null,

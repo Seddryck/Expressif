@@ -4,46 +4,72 @@ namespace Expressif.Testing.Expressions.Evaluation;
 public class EvaluationContextTest
 {
     [Test]
-    public void Constructor_CopiesVariables()
+    public void Build_CreatesImmutableRegistrationSnapshot()
     {
-        var variables = new Dictionary<string, object?> { ["suffix"] = "!" };
-        var context = new EvaluationContext(variables);
+        var builder = EvaluationContext.CreateBuilder().AddValue("suffix", "!");
+        var context = builder.Build();
+        builder.AddValue("other", "?");
 
-        variables["suffix"] = "?";
-
-        Assert.That(context.Variables["suffix"], Is.EqualTo("!"));
+        var expression = TestExpression.Create("append(@suffix)").WithContext(context);
+        Assert.That(expression.Evaluate("hello"), Is.EqualTo("hello!"));
     }
 
     [Test]
     public void WithContext_ReturnsNewExpressionWithoutChangingOriginal()
     {
-        var legacy = new Context(new Dictionary<string, object?> { ["suffix"] = "?" });
-        var expression = TestExpression.Create("append(@suffix)", legacy);
-        var contextual = expression.WithContext(
-            new EvaluationContext(new Dictionary<string, object?> { ["suffix"] = "!" }));
+        var expression = TestExpression.Create("append(@suffix)");
+        var question = EvaluationContext.CreateBuilder().AddValue("suffix", "?").Build();
+        var exclamation = EvaluationContext.CreateBuilder().AddValue("suffix", "!").Build();
 
         Assert.Multiple(() =>
         {
-            Assert.That(expression.Evaluate("hello"), Is.EqualTo("hello?"));
-            Assert.That(contextual.Evaluate("hello"), Is.EqualTo("hello!"));
+            Assert.That(expression.WithContext(question).Evaluate("hello"), Is.EqualTo("hello?"));
+            Assert.That(expression.WithContext(exclamation).Evaluate("hello"), Is.EqualTo("hello!"));
         });
     }
 
     [Test]
-    public void WithContext_NullVariable_DoesNotFallBackToBindingContext()
+    public void WithContext_NullValue_IsAvailableWithoutFallback()
     {
-        var legacy = new Context(new Dictionary<string, object?> { ["value"] = "fallback" });
-        var expression = TestExpression.Create("append(@value)", legacy).WithContext(
-            new EvaluationContext(new Dictionary<string, object?> { ["value"] = null }));
+        var context = EvaluationContext.CreateBuilder().AddValue<string?>("value", null).Build();
+        var expression = TestExpression.Create("append(@value)").WithContext(context);
 
         Assert.That(expression.Evaluate("input"), Is.EqualTo("input"));
     }
 
     [Test]
+    public void Provider_RunsOnceForEachTopLevelEvaluation()
+    {
+        var calls = 0;
+        var context = EvaluationContext.CreateBuilder()
+            .AddProvider("suffix", _ => { calls++; return "!"; })
+            .Build();
+        var expression = TestExpression.Create("append(@suffix) | append(@suffix)").WithContext(context);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(expression.Evaluate("hello"), Is.EqualTo("hello!!"));
+            Assert.That(expression.Evaluate("again"), Is.EqualTo("again!!"));
+            Assert.That(calls, Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void Provider_ReceivesTopLevelInput()
+    {
+        var context = EvaluationContext.CreateBuilder()
+            .AddProvider("suffix", start => $"-{start.Input}")
+            .Build();
+        var expression = TestExpression.Create("append(@suffix)").WithContext(context);
+
+        Assert.That(expression.Evaluate("value"), Is.EqualTo("value-value"));
+    }
+
+    [Test]
     public void WithContext_IsSafeForConcurrentEvaluation()
     {
-        var expression = TestExpression.Create("append(@suffix)").WithContext(
-            new EvaluationContext(new Dictionary<string, object?> { ["suffix"] = "!" }));
+        var context = EvaluationContext.CreateBuilder().AddValue("suffix", "!").Build();
+        var expression = TestExpression.Create("append(@suffix)").WithContext(context);
 
         var results = ParallelEnumerable.Range(0, 100)
             .Select(index => expression.Evaluate(index.ToString()))
@@ -53,27 +79,10 @@ public class EvaluationContextTest
     }
 
     [Test]
-    public void PredicationWithContext_ReturnsNewPredicationWithoutChangingOriginal()
-    {
-        var legacy = new Context(new Dictionary<string, object?> { ["prefix"] = "old" });
-        var predication = TestPredication.Create("starts-with(@prefix)", legacy);
-        var contextual = predication.WithContext(
-            new EvaluationContext(new Dictionary<string, object?> { ["prefix"] = "new" }));
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(predication.Evaluate("old value"), Is.True);
-            Assert.That(predication.Evaluate("new value"), Is.False);
-            Assert.That(contextual.Evaluate("new value"), Is.True);
-            Assert.That(contextual.Evaluate("old value"), Is.False);
-        });
-    }
-
-    [Test]
     public void PredicationWithContext_IsSafeForConcurrentEvaluation()
     {
-        var predication = TestPredication.Create("starts-with(@prefix)").WithContext(
-            new EvaluationContext(new Dictionary<string, object?> { ["prefix"] = "value-" }));
+        var context = EvaluationContext.CreateBuilder().AddValue("prefix", "value-").Build();
+        var predication = TestPredication.Create("starts-with(@prefix)").WithContext(context);
 
         var results = ParallelEnumerable.Range(0, 100)
             .Select(index => predication.Evaluate($"value-{index}"))

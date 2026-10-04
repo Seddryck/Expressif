@@ -1,7 +1,7 @@
 using Expressif.Functions;
 using Expressif.Library.Special;
 using Expressif.Syntax;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Bindings;
 

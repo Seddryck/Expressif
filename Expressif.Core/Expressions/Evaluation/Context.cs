@@ -7,7 +7,7 @@ using Expressif.Values;
 
 namespace Expressif;
 
-public class Context : IContext
+internal sealed class Context : IContext
 {
     public Context()
         : this([]) { }
@@ -22,7 +22,7 @@ public class Context : IContext
     public ContextObject CurrentObject { get; } = new();
 }
 
-public interface IContext
+internal interface IContext
 {
     ContextVariables Variables { get; }
     ContextObject CurrentObject { get; }

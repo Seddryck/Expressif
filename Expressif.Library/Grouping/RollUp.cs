@@ -1,4 +1,3 @@
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Grouping;
 

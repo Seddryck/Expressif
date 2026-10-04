@@ -65,14 +65,14 @@ internal sealed class ExpressionSerializer
     {
         foreach (var function in functions)
         {
-            if (function.Syntax == FunctionSyntax.MapShorthand)
+            if (function.Notation == SourceNotation.MapShorthand)
             {
                 stringBuilder.Append(" |> (");
                 var expression = (OpenExpressionParameter)function.Parameters.Single();
                 Serialize(expression.Expression, ref stringBuilder);
                 stringBuilder.Append(')');
             }
-            else if (function.Syntax == FunctionSyntax.GroupMapShorthand)
+            else if (function.Notation == SourceNotation.GroupMapShorthand)
             {
                 stringBuilder.Append(" |#> ");
                 var expression = (OpenExpressionParameter)function.Parameters.Single();

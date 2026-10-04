@@ -17,7 +17,7 @@ internal static class ExpressionShapeNormalizer
     {
         name = parameter is OpenExpressionParameter open
             && open.Expression.Members.FirstOrDefault() is
-                { Syntax: FunctionSyntax.FieldShorthand, Parameters: [LiteralParameter { Value: string field }] }
+                { Notation: SourceNotation.CurrentField, Parameters: [LiteralParameter { Value: string field }] }
                     ? field
                     : null;
         return name is not null;
@@ -43,7 +43,7 @@ internal static class ExpressionShapeNormalizer
         {
             OpenExpressionParameter open => open,
             ScopedTupleProjectionParameter projection => new OpenExpressionParameter(new OpenExpression([
-                new Function("tuple-at", [projection], FunctionSyntax.ScopedTupleProjectionShorthand),
+                new Function("tuple-at", [projection], SourceNotation.ScopedTupleProjectionShorthand),
             ])),
             LiteralParameter { Value: string value } => new OpenExpressionParameter(
                 new OpenExpression([new Function(value, [])])),

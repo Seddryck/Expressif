@@ -8,7 +8,6 @@ using Expressif.Observability;
 using Expressif.Predicates;
 using Expressif.Syntax;
 using Expressif.Types;
-using Expressif.Values.Types;
 
 namespace Expressif.Hosting;
 
@@ -80,51 +79,44 @@ public sealed class ExpressifEnvironment
         => new(Source);
 
     /// <summary>Creates a syntax binder for this environment's registered libraries.</summary>
-    public ExpressionBinder CreateExpressionBinder(IContext? context = null)
-        => context is null ? new(this) : new(context, this);
+    public ExpressionBinder CreateExpressionBinder() => new(this);
 
     /// <summary>Creates a textual expression factory for this environment.</summary>
     public ExpressionFactory CreateExpressionFactory(
-        IContext? context = null,
         IExpressionParser? parser = null,
         IExpressionObserver? observer = null)
-        => new(CreateExpressionBinder(context), parser, observer);
+        => new(CreateExpressionBinder(), parser, observer);
 
     /// <summary>Creates a typed expression builder for this environment.</summary>
-    public ExpressionBuilder CreateExpressionBuilder(IContext? context = null)
-        => new(CreateFunctionFactory(), context);
+    public ExpressionBuilder CreateExpressionBuilder() => new(CreateFunctionFactory());
 
     /// <summary>Creates a typed predication builder for this environment.</summary>
-    public PredicationBuilder CreatePredicationBuilder(IContext? context = null)
-        => new(CreateFunctionFactory(), context);
+    public PredicationBuilder CreatePredicationBuilder() => new(CreateFunctionFactory());
 
     /// <summary>Creates an expression from source text using this environment.</summary>
     public IExpression CreateExpression(
         string text,
-        IContext? context = null,
         IExpressionParser? parser = null,
         IExpressionObserver? observer = null)
-        => CreateExpressionFactory(context, parser, observer).Create(text);
+        => CreateExpressionFactory(parser, observer).Create(text);
 
     /// <summary>Creates an input-independent expression from source text using this environment.</summary>
     public IExpression CreateClosedExpression(
         string text,
-        IContext? context = null,
         IExpressionParser? parser = null,
         IExpressionObserver? observer = null)
-        => CreateExpressionFactory(context, parser, observer).CreateClosed(text);
+        => CreateExpressionFactory(parser, observer).CreateClosed(text);
 
     /// <summary>Creates a Boolean predication from source text using this environment.</summary>
     public Predication CreatePredication(
         string text,
-        IContext? context = null,
         IExpressionParser? parser = null)
     {
         ArgumentNullException.ThrowIfNull(text);
         var syntax = (parser ?? new ExpressionParser()).Parse(text);
         var plan = LogicalPlannerFactory.Create(this).Build(syntax);
         var bound = new LogicalPlanBinder(Source, Types, QuotedLiterals).Bind(plan);
-        var function = CreateFunctionFactory().Instantiate(bound, context ?? new Context());
+        var function = CreateFunctionFactory().Instantiate(bound);
         return new Predication(new BooleanFunctionPredicate(function));
     }
 

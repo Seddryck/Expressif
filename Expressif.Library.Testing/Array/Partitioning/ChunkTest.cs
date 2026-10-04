@@ -30,8 +30,7 @@ public class ChunkTest
     [Test]
     public void Expression_ParameterExpression_EvaluatesSizeFromContext()
     {
-        var context = new Context();
-        context.Variables.Add<int>("size", 1);
+        var context = EvaluationContext.CreateBuilder().AddValue("size", 1).Build();
 
         Assert.That(TestExpression.Create("chunk({@size | increment})", context).Evaluate(new[] { 1, 2, 3 }),
             Is.EqualTo(new object?[][] { [1, 2], [3] }));

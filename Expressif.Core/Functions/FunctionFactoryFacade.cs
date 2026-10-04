@@ -17,10 +17,16 @@ public sealed class FunctionFactory
     internal FunctionFactory(IImplementationRegistry registry, ITypeSource source)
         => runtime = new FunctionFactoryRuntime(registry, source);
 
-    public IFunction Instantiate(IRootExpression rootExpression, IContext context)
+    public IFunction Instantiate(IRootExpression rootExpression)
+        => runtime.Instantiate(rootExpression, new Context());
+
+    internal IFunction Instantiate(IRootExpression rootExpression, IContext context)
         => runtime.Instantiate(rootExpression, context);
 
-    public IFunction InstantiateClosed(IRootExpression rootExpression, IContext context)
+    public IFunction InstantiateClosed(IRootExpression rootExpression)
+        => runtime.InstantiateClosed(rootExpression, new Context());
+
+    internal IFunction InstantiateClosed(IRootExpression rootExpression, IContext context)
         => runtime.InstantiateClosed(rootExpression, context);
 
     internal IFunction Instantiate(string name, IParameter[] parameters, IContext context)
@@ -34,6 +40,9 @@ public sealed class FunctionFactory
 
     internal IPredicate InstantiatePredication(IPredication predication, IContext context)
         => runtime.InstantiatePredication(predication, context);
+
+    internal IPredicate InstantiatePredication(IPredication predication)
+        => runtime.InstantiatePredication(predication, new Context());
 
     internal bool TryBuildTypedChain(
         IReadOnlyList<Bindings.Function> members,

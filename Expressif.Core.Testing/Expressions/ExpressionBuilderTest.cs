@@ -1,3 +1,4 @@
+using Expressif.Hosting;
 using Expressif.Library.Temporal;
 using Expressif.Library.Text;
 using Expressif.Library.Text.Selection;
@@ -6,112 +7,105 @@ namespace Expressif.Testing.Expressions;
 
 public class ExpressionBuilderTest
 {
-    [Test]
-    public void Build_NoPredicate_ThrowException()
-        => Assert.That(() => new TestExpressionBuilder().Build(), Throws.TypeOf<InvalidOperationException>());
+    private static ExpressionBuilder CreateBuilder()
+        => ExpressifEnvironment.Default.CreateExpressionBuilder();
 
     [Test]
-    public void Chain_WithoutParameter_CorrectlyEvaluate()
+    public void Create_WithoutParameter_CorrectlyEvaluates()
     {
-        var builder = new TestExpressionBuilder().Chain<Lower>();
-        var expression = builder.Build();
+        var expression = CreateBuilder().Create<Lower>().Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla"));
     }
 
     [Test]
-    public void Chain_WithParameter_CorrectlyEvaluate()
+    public void Create_WithParameter_PreservesLiteralRuntimeValue()
     {
-        var builder = new TestExpressionBuilder().Chain<FirstChars>(5);
-        var expression = builder.Build();
-        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("Nikol"));
+        var instant = new DateTime(2026, 10, 4, 12, 30, 0, DateTimeKind.Utc);
+        var expression = CreateBuilder().Create<DurationBetween>(instant).Build();
+        Assert.That(expression.Evaluate(instant.AddHours(4)), Is.EqualTo(TimeSpan.FromHours(4)));
     }
 
     [Test]
-    public void Chain_WithParameters_CorrectlyEvaluate()
+    public void Then_ChainsMultipleFunctions()
     {
-        var builder = new TestExpressionBuilder().Chain<PadRight>(15, '*');
-        var expression = builder.Build();
-        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("Nikola Tesla***"));
-    }
+        var expression = CreateBuilder()
+            .Create<Lower>()
+            .Then<FirstChars>(5)
+            .Then<PadRight>(7, '*')
+            .Build();
 
-    [Test]
-    public void Chain_MultipleWithoutParameters_CorrectlyEvaluate()
-    {
-        var builder = new TestExpressionBuilder()
-            .Chain<Lower>()
-            .Chain<Length>();
-        var expression = builder.Build();
-        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo(12));
-    }
-
-    [Test]
-    public void Chain_Multiple_CorrectlyEvaluate()
-    {
-        var builder = new TestExpressionBuilder()
-            .Chain<Lower>()
-            .Chain<FirstChars>(5)
-            .Chain<PadRight>(7, '*');
-        var expression = builder.Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol**"));
     }
 
     [Test]
-    public void Chain_MultipleWithContext_CorrectlyEvaluate()
+    public void Then_TypeOverload_ChainsMultipleFunctions()
     {
-        var context = new Context();
-        var builder = new TestExpressionBuilder(context)
-            .Chain<Lower>()
-            .Chain<PadRight>(ctx => ctx.Variables["myVar"], ctx => ctx.CurrentObject[1]);
-        var expression = builder.Build();
+        var expression = CreateBuilder()
+            .Create(typeof(Lower))
+            .Then(typeof(FirstChars), 5)
+            .Then(typeof(PadRight), 7, '*')
+            .Build();
 
-        context.Variables.Add<int>("myVar", 15);
-        context.CurrentObject.Set(new List<char>() { '-', '*', ' ' });
-        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla***"));
-
-        context.Variables.Set("myVar", 16);
-        context.CurrentObject.Set(new List<char>() { '*', '+' });
-        Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikola tesla++++"));
-    }
-
-    [Test]
-    public void Chain_NotGeneric_CorrectlyEvaluate()
-    {
-        var builder = new TestExpressionBuilder()
-            .Chain(typeof(Lower))
-            .Chain(typeof(FirstChars), 5)
-            .Chain(typeof(PadRight), 7, '*');
-        var expression = builder.Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("nikol**"));
     }
 
     [Test]
-    public void Chain_SubExpression_CorrectlyEvaluate()
+    public void Then_Pipeline_ComposesPipelinesFromSameBuilder()
     {
-        var subExpressionBuilder = new TestExpressionBuilder()
-            .Chain<FirstChars>(5)
-            .Chain<PadRight>(7, '*');
+        var builder = CreateBuilder();
+        var suffix = builder.Create<FirstChars>(5).Then<PadRight>(7, '*');
+        var expression = builder.Create<Lower>().Then(suffix).Then<Upper>().Build();
 
-        var builder = new TestExpressionBuilder()
-            .Chain<Lower>()
-            .Chain(subExpressionBuilder)
-            .Chain<Upper>();
-
-        var expression = builder.Build();
         Assert.That(expression.Evaluate("Nikola Tesla"), Is.EqualTo("NIKOL**"));
     }
 
     [Test]
-    public void Serialize_WithParameters_CorrectlySerialized()
+    public void Then_DoesNotMutateEarlierPipeline()
     {
-        var builder = new TestExpressionBuilder()
-            .Chain<Lower>()
-            .Chain<FirstChars>(5)
-            .Chain<PadRight>(7, '*');
-        var str = builder.Serialize();
-        Assert.That(str, Is.EqualTo("lower | first-chars(5) | pad-right(7, \"*\")"));
+        var lower = CreateBuilder().Create<Lower>();
+        var shortened = lower.Then<FirstChars>(3);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(lower.ToSource(), Is.EqualTo("lower"));
+            Assert.That(shortened.ToSource(), Is.EqualTo("lower | first-chars(3)"));
+        });
     }
 
     [Test]
-    public void Serialize_NoPredicate_ThrowException()
-        => Assert.That(() => new TestExpressionBuilder().Serialize(), Throws.TypeOf<InvalidOperationException>());
+    public void Build_CanBeRepeated()
+    {
+        var pipeline = CreateBuilder().Create<Lower>().Then<Length>();
+        var first = pipeline.Build();
+        var second = pipeline.Build();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.Not.SameAs(second));
+            Assert.That(first.Evaluate("Nikola Tesla"), Is.EqualTo(12));
+            Assert.That(second.Evaluate("Ada"), Is.EqualTo(3));
+        });
+    }
+
+    [Test]
+    public void ArgumentProvider_UsesEvaluationContext()
+    {
+        var pipeline = CreateBuilder().Create<FirstChars>(
+            Argument.From<int>(scope => scope.GetVariable<int>("length")));
+        var context = EvaluationContext.CreateBuilder().AddValue("length", 6).Build();
+
+        Assert.That(pipeline.Build().WithContext(context).Evaluate("Nikola Tesla"), Is.EqualTo("Nikola"));
+    }
+
+    [Test]
+    public void ToSource_SerializesPipeline()
+    {
+        var source = CreateBuilder()
+            .Create<Lower>()
+            .Then<FirstChars>(5)
+            .Then<PadRight>(7, '*')
+            .ToSource();
+
+        Assert.That(source, Is.EqualTo("lower | first-chars(5) | pad-right(7, \"*\")"));
+    }
 }

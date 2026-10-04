@@ -1,6 +1,6 @@
 using Expressif.Syntax;
 
-namespace Expressif.Testing.Syntax;
+namespace Expressif.Testing.Notation;
 
 [TestFixture]
 public class ExpressionParserTest

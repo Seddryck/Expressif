@@ -30,25 +30,25 @@ public class VectorFunctionsTest
     [Test]
     public void TupleOperations_Vector_PreserveVectorOrReturnNull()
     {
-        var vector = new Expressif.Values.Vector(1, 2, 3);
+        var vector = new Expressif.Values.VectorValue(1, 2, 3);
 
         Assert.Multiple(() =>
         {
-            Assert.That(new Swap().Evaluate(vector), Is.TypeOf<Expressif.Values.Vector>());
+            Assert.That(new Swap().Evaluate(vector), Is.TypeOf<Expressif.Values.VectorValue>());
             Assert.That(new Pick(() => [2, 0]).Evaluate(vector),
-                Is.TypeOf<Expressif.Values.Vector>().And.EqualTo(new VectorValue(3, 1)));
+                Is.TypeOf<Expressif.Values.VectorValue>().And.EqualTo(new VectorValue(3, 1)));
             Assert.That(new Extend(_ => 4).Evaluate(vector),
-                Is.TypeOf<Expressif.Values.Vector>().And.EqualTo(new VectorValue(1, 2, 3, 4)));
+                Is.TypeOf<Expressif.Values.VectorValue>().And.EqualTo(new VectorValue(1, 2, 3, 4)));
             Assert.That(new Extend(_ => "x").Evaluate(vector), Is.Null);
-            Assert.That(new Extend(_ => new Expressif.Values.Tuple(4, "x")).Evaluate(vector), Is.Null);
+            Assert.That(new Extend(_ => new Expressif.Values.TupleValue(4, "x")).Evaluate(vector), Is.Null);
         });
     }
 
     [Test]
     public void NumericTuple_IsNeverPromotedToVector()
         => Assert.That(
-            new Swap().Evaluate(new Expressif.Values.Tuple(1, 2)),
-            Is.TypeOf<Expressif.Values.Tuple>());
+            new Swap().Evaluate(new Expressif.Values.TupleValue(1, 2)),
+            Is.TypeOf<Expressif.Values.TupleValue>());
 
     [TestCase("V(1, 2) | swap", "V(2, 1)")]
     [TestCase("V(1, 2, 3) | pick(2, 0)", "V(3, 1)")]

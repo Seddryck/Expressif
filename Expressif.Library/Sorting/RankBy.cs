@@ -5,7 +5,7 @@ namespace Expressif.Library.Sorting;
 /// <summary>Groups array elements by their one-based SQL rank using typed criteria.</summary>
 [Function(prefix: "")]
 [Scope("sorting")]
-public sealed class RankBy : IFunction<IEnumerable, Values.Grouping>
+public sealed class RankBy : IFunction<IEnumerable, Values.GroupingValue>
 {
     private readonly IReadOnlyList<SortByCriterion> criteria;
 
@@ -17,7 +17,7 @@ public sealed class RankBy : IFunction<IEnumerable, Values.Grouping>
             throw new ArgumentException("Ranking requires at least one criterion.", nameof(criteria));
     }
 
-    public Values.Grouping Evaluate(IEnumerable value)
+    public Values.GroupingValue Evaluate(IEnumerable value)
         => new Rank().Evaluate(SortBy.BuildTable(value, criteria));
 
     object? IFunction.Evaluate(object? value)

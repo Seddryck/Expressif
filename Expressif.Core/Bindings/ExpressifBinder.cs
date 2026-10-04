@@ -1,9 +1,8 @@
 using Expressif.Syntax;
 using Expressif.Functions;
-using Expressif.Values.Types;
+using Expressif.Types;
 using Expressif.Values;
 using Expressif.Functions.Accumulation;
-using Expressif.Types;
 
 namespace Expressif.Bindings;
 
@@ -148,8 +147,8 @@ internal sealed class ExpressifBinder : IFunctionBindingContext
                     : "conditional-backward",
                 [BindArgument(syntax.Left), BindArgument(syntax.Right)],
                 syntax.Operator.Direction is ConditionalDirection.Forward
-                    ? FunctionSyntax.ConditionalForward
-                    : FunctionSyntax.ConditionalBackward)
+                    ? BoundFunctionRole.ConditionalForward
+                    : BoundFunctionRole.ConditionalBackward)
         ]);
 
     private OpenExpression BindExpression(ExpressionSyntax syntax) => syntax switch
@@ -192,24 +191,24 @@ internal sealed class ExpressifBinder : IFunctionBindingContext
 
     private Function BindPipelineMemberCore(ExpressionSyntax syntax) => syntax switch
     {
-        InputBindingExpressionSyntax binding => new Function("apply", [new OpenExpressionParameter(BindInputBound(binding))], FunctionSyntax.InputBindingStage),
+        InputBindingExpressionSyntax binding => new Function("apply", [new OpenExpressionParameter(BindInputBound(binding))], BoundFunctionRole.InputBinding),
         ValueReferenceStageSyntax reference => new Function("apply", [new VariableParameter(reference.Reference.Name)]),
         TupleProjectionSyntax { RootDepth: > 0 } reference => new Function(
             "tuple-at",
             [new ScopedTupleProjectionParameter(reference.Index, reference.RootDepth)],
-            FunctionSyntax.ScopedTupleProjectionShorthand),
+            SourceNotation.ScopedTupleProjectionShorthand),
         GroupingMapShorthandSyntax map => new Function(
             "map-groups",
             [new OpenExpressionParameter(BindOpen(map.Expression))],
-            FunctionSyntax.GroupMapShorthand),
+            SourceNotation.GroupMapShorthand),
         ControlFlowCallSyntax controlFlow => BindControlFlowCall(controlFlow),
         FunctionCallSyntax call => BindFunction(call),
         TupleProjectionSyntax projection => BindTupleProjection(projection),
         PairComponentAccessSyntax access => new Function(
             access.Component is PairComponent.Key ? "pair-key" : "pair-value",
             []),
-        MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], FunctionSyntax.MapShorthand),
-        ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], FunctionSyntax.MapShorthand),
+        MapShorthandSyntax map => new Function("map", [new OpenExpressionParameter(BindOpen(map.Expression))], SourceNotation.MapShorthand),
+        ParameterizedExpressionSyntax parameterized => new Function("map", [new OpenExpressionParameter(BindOpen(parameterized.Expression))], SourceNotation.MapShorthand),
         _ => throw Unsupported(syntax),
     };
 
@@ -222,7 +221,7 @@ internal sealed class ExpressifBinder : IFunctionBindingContext
                 [new TupleProjectionParameter(
                     projection.Index,
                     projection.Direction == TupleProjectionDirection.FromEnd)],
-                FunctionSyntax.InputTupleProjectionShorthand);
+                SourceNotation.InputTupleProjectionShorthand);
         }
 
         var position = projection.Direction == TupleProjectionDirection.FromEnd
@@ -231,7 +230,7 @@ internal sealed class ExpressifBinder : IFunctionBindingContext
         return new Function(
             "tuple-at",
             [new LiteralParameter(position.ToString())],
-            FunctionSyntax.TupleProjectionShorthand);
+            SourceNotation.TupleProjectionShorthand);
     }
 
     private Function BindControlFlowCall(ControlFlowCallSyntax syntax)
@@ -275,10 +274,9 @@ internal sealed class ExpressifBinder : IFunctionBindingContext
             return binder.Bind(syntax, this);
 
         var arguments = BindFunctionArguments(syntax);
-        var functionSyntax = arguments.Length == 0 && IsAccumulator(syntax.Name)
-            ? FunctionSyntax.ImplicitFoldAccumulator
-            : FunctionSyntax.Standard;
-        return Function.FromArguments(syntax.Name, arguments, functionSyntax);
+        return arguments.Length == 0 && IsAccumulator(syntax.Name)
+            ? Function.FromArguments(syntax.Name, arguments, BoundFunctionRole.ImplicitAccumulator)
+            : Function.FromArguments(syntax.Name, arguments);
     }
 
     private bool IsAccumulator(string name)
@@ -577,10 +575,10 @@ internal sealed class ExpressifBinder : IFunctionBindingContext
             })],
             (index == 0 ? syntax.RootDepth : 0) switch
             {
-                0 when index == 0 && inputBoundBody => FunctionSyntax.InputFieldShorthand,
-                0 => FunctionSyntax.FieldShorthand,
-                1 => FunctionSyntax.RootFieldShorthand,
-                2 => FunctionSyntax.EnclosingRootFieldShorthand,
+                0 when index == 0 && inputBoundBody => SourceNotation.InputFieldShorthand,
+                0 => SourceNotation.CurrentField,
+                1 => SourceNotation.RootField,
+                2 => SourceNotation.EnclosingRootField,
                 _ => throw new BindingException($"Expression root depth '{syntax.RootDepth}' is not supported."),
             }), syntax, index)).ToArray();
     }

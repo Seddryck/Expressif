@@ -5,8 +5,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using Expressif.Values;
 
-namespace Expressif.Values.Types;
+namespace Expressif.Types;
 
 public sealed class TypeLiteralMetadata
 {

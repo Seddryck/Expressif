@@ -1,4 +1,4 @@
-namespace Expressif.Values.Types;
+namespace Expressif.Types;
 
 /// <summary>The common type family for non-structured values.</summary>
 [ExpressifType(Name = "scalar")]

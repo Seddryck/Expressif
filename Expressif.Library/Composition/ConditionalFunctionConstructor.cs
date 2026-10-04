@@ -9,7 +9,7 @@ internal sealed class ConditionalFunctionConstructor : IFunctionConstructor<Expr
         IContext context,
         IFunctionConstructionContext constructionContext)
     {
-        var backward = function.Syntax == FunctionSyntax.ConditionalBackward;
+        var backward = function.Role == BoundFunctionRole.ConditionalBackward;
         return new Expressif.Library.Flow.ConditionalForward(
             BuildEvaluator(function.Parameters[backward ? 0 : 1], context, constructionContext),
             BuildEvaluator(function.Parameters[backward ? 1 : 0], context, constructionContext),

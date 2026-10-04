@@ -83,7 +83,7 @@ public class ExpressionSerializerTest
         var function = new Function(
             "field",
             [new QuotedLiteralParameter("threshold")],
-            FunctionSyntax.EnclosingRootFieldShorthand);
+            SourceNotation.EnclosingRootField);
 
         Assert.That(new FunctionSerializer().Serialize(function), Is.EqualTo("^^.threshold"));
     }

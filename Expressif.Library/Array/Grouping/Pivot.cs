@@ -30,7 +30,7 @@ public sealed class Pivot : BaseArrayFunction<RecordValue[]>
 
         var keys = row.Select<NamedFieldSelector, Func<object?, object?>>(selector => value => Scalar(selector.Evaluate(value)))
             .Append(value => Scalar(column(value))).ToArray();
-        var grouping = (Expressif.Values.Grouping)new GroupBy(keys).Evaluate(enumerable)!;
+        var grouping = (Expressif.Values.GroupingValue)new GroupBy(keys).Evaluate(enumerable)!;
         if (summary.Invoke(grouping) is not DictionaryValue cells
             || cells.Count != grouping.Count
             || cells.Any(cell => !grouping.Any(group => StructuralComparisons.StructuralEqualityComparer.Equals(group.Key, cell.Key))))

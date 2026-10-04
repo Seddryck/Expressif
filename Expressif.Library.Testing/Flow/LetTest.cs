@@ -95,12 +95,10 @@ public class LetTest
     [Test]
     public void ContextValues_AreShadowedWithoutMutation()
     {
-        var context = new Context();
-        context.Variables.Add<int>("value", 100);
+        var context = EvaluationContext.CreateBuilder().AddValue("value", 100).Build();
         var expression = TestExpression.Create("let(value := @_) | @value", context);
         Assert.That(expression.Evaluate(10), Is.EqualTo(10));
         Assert.That(TestExpression.CreateClosed("@value", context).Evaluate(null), Is.EqualTo(100));
-        Assert.That(context.Variables["value"], Is.EqualTo(100));
     }
 
     [Test]
@@ -108,7 +106,7 @@ public class LetTest
     {
         var expression = TestExpression.Create("let(original := @_) | @original");
         var passThrough = TestExpression.Create("let(value := 1)");
-        foreach (var value in new object?[] { null, 42, "text", new[] { 1, 2 }, new Expressif.Values.Tuple(1, 2) })
+        foreach (var value in new object?[] { null, 42, "text", new[] { 1, 2 }, new Expressif.Values.TupleValue(1, 2) })
         {
             Assert.That(expression.Evaluate(value), Is.SameAs(value));
             Assert.That(passThrough.Evaluate(value), Is.SameAs(value));
@@ -144,17 +142,16 @@ public class LetTest
     }
 
     [Test]
-    public void Failure_StopsRemainingBindingsAndPipelineStages()
+    public void Failure_StopsRemainingBindingsAndPipelineStagesAfterProvidersMaterialize()
     {
         var calls = 0;
-        var context = new Context();
-        context.Variables.Add<int>("next", (Func<int>)(() => ++calls));
+        var context = EvaluationContext.CreateBuilder().AddProvider("next", _ => ++calls).Build();
         var failing = TestExpression.Create("let(a := @missing, b := @next) | add(@next)", context);
         Assert.That(() => failing.Evaluate(1), Throws.TypeOf<UnexpectedVariableException>());
-        Assert.That(calls, Is.Zero);
-        var successful = TestExpression.Create("let(a := @next) | add(@a) | multiply(@a)", context);
-        Assert.That(successful.Evaluate(1), Is.EqualTo(2));
         Assert.That(calls, Is.EqualTo(1));
+        var successful = TestExpression.Create("let(a := @next) | add(@a) | multiply(@a)", context);
+        Assert.That(successful.Evaluate(1), Is.EqualTo(6));
+        Assert.That(calls, Is.EqualTo(2));
     }
 
     [Test]
@@ -164,8 +161,7 @@ public class LetTest
     [Test]
     public void FailedInvocation_DoesNotLeakSuccessfullyEstablishedBindings()
     {
-        var context = new Context();
-        context.Variables.Add<int>("value", 100);
+        var context = EvaluationContext.CreateBuilder().AddValue("value", 100).Build();
         var expression = TestExpression.Create("let(value := 10) | let(a := 1, b := @missing)", context);
         Assert.Catch(() => expression.Evaluate(1));
         Assert.That(TestExpression.CreateClosed("@value", context).Evaluate(null), Is.EqualTo(100));
@@ -175,8 +171,9 @@ public class LetTest
     public void SeparateExpressionInvocation_DoesNotInheritCallerBindings()
     {
         var callee = TestExpression.CreateClosed("@local");
-        var context = new Context();
-        context.Variables.Add<object?>("invoke", () => callee.Evaluate(null));
+        var context = EvaluationContext.CreateBuilder()
+            .AddProvider<object?>("invoke", _ => callee.Evaluate(null))
+            .Build();
         var caller = TestExpression.Create("let(local := 10) | @invoke", context);
         Assert.Catch(() => caller.Evaluate(1));
     }

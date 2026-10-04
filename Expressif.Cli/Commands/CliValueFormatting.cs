@@ -8,13 +8,13 @@ internal static class CliValueFormatting
         new Dictionary<string, Type[]>(StringComparer.OrdinalIgnoreCase)
         {
             ["array"] = [typeof(object[])],
-            ["tuple"] = [typeof(TupleValue), typeof(Expressif.Values.Tuple)],
-            ["vector"] = [typeof(VectorValue), typeof(Expressif.Values.Vector)],
-            ["pair"] = [typeof(PairValue), typeof(Expressif.Values.Pair)],
-            ["group"] = [typeof(Group)],
+            ["tuple"] = [typeof(TupleValue)],
+            ["vector"] = [typeof(VectorValue)],
+            ["pair"] = [typeof(PairValue)],
+            ["group"] = [typeof(GroupValue)],
             ["record"] = [typeof(RecordValue)],
-            ["dictionary"] = [typeof(DictionaryValue), typeof(Expressif.Values.Dictionary)],
-            ["grouping"] = [typeof(Grouping)],
+            ["dictionary"] = [typeof(DictionaryValue)],
+            ["grouping"] = [typeof(GroupingValue)],
         };
 
     public static ValueFormattingOptions Create(

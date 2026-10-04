@@ -19,9 +19,9 @@ public class NestTest
     public void ShortTupleKeys_ThrowExplicitly()
     {
         var nest = new Expressif.Library.Dictionary.Nest();
-        foreach (var key in new[] { new Expressif.Values.Tuple(), new Expressif.Values.Tuple(1) })
+        foreach (var key in new[] { new Expressif.Values.TupleValue(), new Expressif.Values.TupleValue(1) })
         {
-            var input = new Expressif.Values.Dictionary([new Expressif.Values.Pair(key, 2)]);
+            var input = new Expressif.Values.DictionaryValue([new Expressif.Values.PairValue(key, 2)]);
             Assert.That(() => nest.Evaluate(input),
                 Throws.ArgumentException.With.Message.StartsWith("Every nest key must be a tuple"));
         }
@@ -30,22 +30,22 @@ public class NestTest
     [Test]
     public void StructuralPrefixKeys_CollapseIntoOneBranch()
     {
-        var input = new Expressif.Values.Dictionary([
-            new Expressif.Values.Pair(new Expressif.Values.Tuple(new[] { 1, 2 }, "first"), 10),
-            new Expressif.Values.Pair(new Expressif.Values.Tuple(new[] { 1, 2 }, "second"), 20),
+        var input = new Expressif.Values.DictionaryValue([
+            new Expressif.Values.PairValue(new Expressif.Values.TupleValue(new[] { 1, 2 }, "first"), 10),
+            new Expressif.Values.PairValue(new Expressif.Values.TupleValue(new[] { 1, 2 }, "second"), 20),
         ]);
 
         var result = new Expressif.Library.Dictionary.Nest().Evaluate(input);
         Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result[0].Value, Is.TypeOf<Expressif.Values.Dictionary>());
+        Assert.That(result[0].Value, Is.TypeOf<Expressif.Values.DictionaryValue>());
         Assert.That(((DictionaryValue)result[0].Value!).Count, Is.EqualTo(2));
     }
 
     [Test]
     public void PairKey_UsesItsTwoTuplePositions()
     {
-        var input = new Expressif.Values.Dictionary([
-            new Expressif.Values.Pair(new Expressif.Values.Pair("BE", 2025), 100),
+        var input = new Expressif.Values.DictionaryValue([
+            new Expressif.Values.PairValue(new Expressif.Values.PairValue("BE", 2025), 100),
         ]);
 
         var result = new Expressif.Library.Dictionary.Nest().Evaluate(input);

@@ -1,6 +1,5 @@
 using System.Collections;
 using Expressif.Values;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Library.Grouping;
 
@@ -36,7 +35,7 @@ internal static class GroupingLevels
             foreach (var group in value)
             {
                 object? key = tupleKeys
-                    ? new Values.Tuple(((TupleValue)group.Key!).Select((component, index) => aggregated[index] ? AllDimension.Instance : component).ToArray())
+                    ? new Expressif.Values.TupleValue(((TupleValue)group.Key!).Select((component, index) => aggregated[index] ? AllDimension.Instance : component).ToArray())
                     : AllDimension.Instance;
                 var index = buckets.FindIndex(bucket => StructuralComparisons.StructuralEqualityComparer.Equals(bucket.Key, key));
                 if (index < 0)

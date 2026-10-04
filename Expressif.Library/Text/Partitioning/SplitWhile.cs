@@ -36,7 +36,7 @@ public sealed class SplitWhile : BaseTextFunction<string[]>
         {
             var segment = value[start..index];
             var candidate = value[index].ToString();
-            if (operation.Evaluate(new Values.Tuple(segment, candidate)) is not bool continues)
+            if (operation.Evaluate(new Expressif.Values.TupleValue(segment, candidate)) is not bool continues)
                 return null;
             if (!continues)
             {

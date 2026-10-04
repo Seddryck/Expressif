@@ -1,5 +1,7 @@
 namespace Expressif.Planning;
 
+#pragma warning disable SA1313 // Preserve record-compatible public constructor parameter names.
+
 /// <summary>
 /// Static schema information discovered from a logical plan.
 /// </summary>
@@ -40,11 +42,23 @@ public sealed record LogicalSchemaField(LogicalSchema Schema, bool Optional = fa
 /// <summary>
 /// A record with statically known fields.
 /// </summary>
-public sealed record RecordLogicalSchema(
-    IReadOnlyDictionary<string, LogicalSchemaField> Fields,
-    bool AllowsAdditionalFields = true,
-    bool IsNullable = false) : LogicalSchema
+public sealed record RecordLogicalSchema : LogicalSchema
 {
+    private IReadOnlyDictionary<string, LogicalSchemaField> fields =
+        PlanningCollections.Freeze(new Dictionary<string, LogicalSchemaField>());
+    public RecordLogicalSchema(
+        IReadOnlyDictionary<string, LogicalSchemaField> Fields,
+        bool AllowsAdditionalFields = true,
+        bool IsNullable = false)
+        => (this.Fields, this.AllowsAdditionalFields, this.IsNullable) =
+            (PlanningCollections.Freeze(Fields), AllowsAdditionalFields, IsNullable);
+    public IReadOnlyDictionary<string, LogicalSchemaField> Fields
+    {
+        get => fields;
+        init => fields = PlanningCollections.Freeze(value);
+    }
+    public bool AllowsAdditionalFields { get; init; }
+    public bool IsNullable { get; init; }
     internal override bool IsKnownVariant => true;
 }
 
@@ -59,12 +73,22 @@ public sealed record ArrayLogicalSchema(LogicalSchema Items, bool IsNullable = f
 /// <summary>
 /// A fixed-size tuple with a schema for each position.
 /// </summary>
-public sealed record TupleLogicalSchema(
-    IReadOnlyList<LogicalSchema> Items,
-    bool IsNullable = false,
-    LogicalSchema? AdditionalItems = null)
-    : LogicalSchema
+public sealed record TupleLogicalSchema : LogicalSchema
 {
+    private IReadOnlyList<LogicalSchema> items = PlanningCollections.Empty<LogicalSchema>();
+    public TupleLogicalSchema(
+        IReadOnlyList<LogicalSchema> Items,
+        bool IsNullable = false,
+        LogicalSchema? AdditionalItems = null)
+        => (this.Items, this.IsNullable, this.AdditionalItems) =
+            (PlanningCollections.Freeze(Items), IsNullable, AdditionalItems);
+    public IReadOnlyList<LogicalSchema> Items
+    {
+        get => items;
+        init => items = PlanningCollections.Freeze(value);
+    }
+    public bool IsNullable { get; init; }
+    public LogicalSchema? AdditionalItems { get; init; }
     internal override bool IsKnownVariant => true;
 }
 
@@ -114,10 +138,17 @@ public sealed record SortTableLogicalSchema(
 /// <summary>
 /// A value matching one of several alternative schemas.
 /// </summary>
-public sealed record UnionLogicalSchema(
-    IReadOnlyList<LogicalSchema> Alternatives,
-    bool IsNullable = false) : LogicalSchema
+public sealed record UnionLogicalSchema : LogicalSchema
 {
+    private IReadOnlyList<LogicalSchema> alternatives = PlanningCollections.Empty<LogicalSchema>();
+    public UnionLogicalSchema(IReadOnlyList<LogicalSchema> Alternatives, bool IsNullable = false)
+        => (this.Alternatives, this.IsNullable) = (PlanningCollections.Freeze(Alternatives), IsNullable);
+    public IReadOnlyList<LogicalSchema> Alternatives
+    {
+        get => alternatives;
+        init => alternatives = PlanningCollections.Freeze(value);
+    }
+    public bool IsNullable { get; init; }
     internal override bool IsKnownVariant => true;
 }
 
@@ -158,9 +189,31 @@ public sealed record SchemaAnalysisNode(
 /// <summary>
 /// The input requirements and output schema discovered for a logical plan.
 /// </summary>
-public sealed record SchemaAnalysis(
-    LogicalSchema Input,
-    LogicalSchema Output,
-    SchemaAnalysisCompleteness Completeness,
-    IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics,
-    IReadOnlyList<SchemaAnalysisNode> Nodes);
+public sealed record SchemaAnalysis
+{
+    private IReadOnlyList<SchemaAnalysisDiagnostic> diagnostics = PlanningCollections.Empty<SchemaAnalysisDiagnostic>();
+    private IReadOnlyList<SchemaAnalysisNode> nodes = PlanningCollections.Empty<SchemaAnalysisNode>();
+    public SchemaAnalysis(
+        LogicalSchema input,
+        LogicalSchema output,
+        SchemaAnalysisCompleteness completeness,
+        IReadOnlyList<SchemaAnalysisDiagnostic> diagnostics,
+        IReadOnlyList<SchemaAnalysisNode> nodes)
+        => (Input, Output, Completeness, Diagnostics, Nodes) =
+            (input, output, completeness, PlanningCollections.Freeze(diagnostics), PlanningCollections.Freeze(nodes));
+    public LogicalSchema Input { get; init; }
+    public LogicalSchema Output { get; init; }
+    public SchemaAnalysisCompleteness Completeness { get; init; }
+    public IReadOnlyList<SchemaAnalysisDiagnostic> Diagnostics
+    {
+        get => diagnostics;
+        init => diagnostics = PlanningCollections.Freeze(value);
+    }
+    public IReadOnlyList<SchemaAnalysisNode> Nodes
+    {
+        get => nodes;
+        init => nodes = PlanningCollections.Freeze(value);
+    }
+}
+
+#pragma warning restore SA1313

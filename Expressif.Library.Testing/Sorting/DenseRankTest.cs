@@ -35,7 +35,7 @@ public class DenseRankTest
     {
         var first = new object();
         var table = new SortTableValue([], [new SortRow([], first), new SortRow([], null)]);
-        IFunction<SortTableValue, Expressif.Values.Grouping> function = new DenseRank();
+        IFunction<SortTableValue, Expressif.Values.GroupingValue> function = new DenseRank();
         var result = function.Evaluate(table);
         Assert.Multiple(() =>
         {

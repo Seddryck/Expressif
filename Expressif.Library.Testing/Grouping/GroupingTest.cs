@@ -1,6 +1,5 @@
 using Expressif.Testing.Conformance;
 using Expressif.Values;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Testing.Grouping;
 
@@ -69,7 +68,7 @@ public class GroupingTest
         Assert.Multiple(() =>
         {
             Assert.That(grouping.Select(group => group.Key), Is.EqualTo(new[] { "BE", "FR" }));
-            Assert.That(grouping, Has.All.TypeOf<Group>());
+            Assert.That(grouping, Has.All.TypeOf<GroupValue>());
         });
     }
 
@@ -103,7 +102,7 @@ public class GroupingTest
         Assert.Multiple(() =>
         {
             Assert.That(parsed, Is.TypeOf<GroupingValue>().And.EqualTo(source));
-            Assert.That(((GroupingValue)parsed!).ToArray(), Has.All.TypeOf<Group>());
+            Assert.That(((GroupingValue)parsed!).ToArray(), Has.All.TypeOf<GroupValue>());
         });
     }
 
@@ -124,7 +123,7 @@ public class GroupingTest
     public void OrdinaryPairLiteral_RemainsPair()
         => Assert.That(
             TestExpression.CreateClosed("(\"BE\" => {\"alice\"})").Evaluate(null),
-            Is.TypeOf<Expressif.Values.Pair>());
+            Is.TypeOf<Expressif.Values.PairValue>());
 
     [TestCase("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"claire\"})} | cardinality", "2")]
     [TestCase("#{(\"BE\" => {\"alice\", \"bob\"}), (\"FR\" => {\"claire\"})} | map($key)", "{\"BE\", \"FR\"}")]

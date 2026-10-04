@@ -19,7 +19,6 @@ public class SerializationVisibilityTest
     }
 
     [TestCase(typeof(ExpressionBuilder))]
-    [TestCase(typeof(AbstractPredicationBuilder))]
     [TestCase(typeof(PredicationBuilder))]
     public void BuilderApi_DoesNotExposeSourceRenderers(Type builderType)
     {

@@ -11,5 +11,5 @@ namespace Expressif.Library.Array;
 public sealed class ToTuple : BaseArrayFunction<TupleValue>
 {
     protected override object EvaluateArray(IEnumerable enumerable)
-        => new Values.Tuple(enumerable.Cast<object?>().ToArray());
+        => new Expressif.Values.TupleValue(enumerable.Cast<object?>().ToArray());
 }

@@ -1,7 +1,7 @@
 using Expressif.Functions.Coercions;
 using Expressif.Discovery;
 using Expressif.Introspection;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Library.Composition;
 

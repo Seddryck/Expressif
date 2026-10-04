@@ -11,7 +11,8 @@ internal static class EvaluationRuntime
     private static readonly AsyncLocal<FunctionObservationContext?> CurrentFunction = new();
 
     public static EvaluationFrame? Frame => CurrentState.Value?.Frame;
-    public static EvaluationContext? Context => CurrentState.Value?.Context;
+    public static IReadOnlyDictionary<string, object?>? Values => CurrentState.Value?.Values;
+    public static object? ArgumentInput => CurrentState.Value?.ArgumentInput;
     internal static bool HasFunctionObservations => CurrentObservation.Value?.Functions.Length > 0;
     internal static bool HasFlowDecisionObservations => CurrentObservation.Value?.FlowDecisions.Length > 0;
     internal static bool HasDetailedObservations => HasFunctionObservations || HasFlowDecisionObservations;
@@ -74,7 +75,7 @@ internal static class EvaluationRuntime
     public static IDisposable Enter(EvaluationFrame frame, EvaluationContext context)
     {
         var previous = CurrentState.Value;
-        CurrentState.Value = new State(frame, context);
+        CurrentState.Value = new State(frame, context.Materialize(frame.Current));
         return new Scope(previous);
     }
 
@@ -86,13 +87,34 @@ internal static class EvaluationRuntime
         var current = CurrentState.Value;
         if (current is null)
         {
-            CurrentState.Value = new State(new EvaluationFrame(currentInput, input), EvaluationContext.Empty);
+            CurrentState.Value = new State(
+                new EvaluationFrame(currentInput, input),
+                EvaluationContext.Empty.Materialize(input));
             return new Scope(null);
         }
 
         var previous = current;
-        CurrentState.Value = new State(new EvaluationFrame(current.Frame.Scope.Derive(input) with { Current = currentInput }, current.Frame), current.Context, current.Bindings);
+        CurrentState.Value = new State(
+            new EvaluationFrame(current.Frame.Scope.Derive(input) with { Current = currentInput }, current.Frame),
+            current.Values,
+            current.Bindings,
+            current.ArgumentInput);
         return new Scope(previous);
+    }
+
+    public static IDisposable EnterArgument(object? input)
+    {
+        var current = CurrentState.Value;
+        if (current is null)
+        {
+            CurrentState.Value = new State(
+                new EvaluationFrame(input, input),
+                EvaluationContext.Empty.Materialize(input));
+            return new Scope(null);
+        }
+
+        CurrentState.Value = current with { ArgumentInput = input };
+        return new Scope(current);
     }
 
     public static IDisposable BindInput(object? input, IReadOnlyDictionary<string, object?> names)
@@ -117,8 +139,9 @@ internal static class EvaluationRuntime
             bindings[binding.Key] = binding.Value;
         CurrentState.Value = new State(
             new EvaluationFrame(input, input, parent: inheritBindings ? previous?.Frame : null) { IsInputBound = true },
-            previous?.Context ?? EvaluationContext.Empty,
-            bindings);
+            previous?.Values ?? EvaluationContext.Empty.Materialize(input),
+            bindings,
+            previous?.ArgumentInput);
         return new Scope(previous);
     }
 
@@ -145,6 +168,15 @@ internal static class EvaluationRuntime
         return CurrentState.Value?.Bindings?.TryGetValue(name, out value) == true;
     }
 
+    public static bool TryGetVariable(string name, out object? value)
+    {
+        name = EvaluationContext.NormalizeName(name);
+        if (TryGetBinding(name, out value))
+            return true;
+        value = null;
+        return CurrentState.Value?.Values.TryGetValue(name, out value) == true;
+    }
+
     public static object? EvaluateNested(Functions.IFunction expression, object? input)
         => EvaluateNested(expression, input, input);
 
@@ -158,7 +190,7 @@ internal static class EvaluationRuntime
 
     public static object? CaptureDeferredResult(object? result)
         => result is System.Collections.IEnumerable sequence
-            && result is not string and not System.Collections.ICollection and not Values.IExpressifValueType
+            && result is not string and not System.Collections.ICollection and not Expressif.Values.IExpressifValueType
             && CurrentState.Value is { } state
                 ? EnumerateInScope(sequence, state)
                 : result;
@@ -198,8 +230,9 @@ internal static class EvaluationRuntime
 
     private sealed record State(
         EvaluationFrame Frame,
-        EvaluationContext Context,
-        IReadOnlyDictionary<string, object?>? Bindings = null);
+        IReadOnlyDictionary<string, object?> Values,
+        IReadOnlyDictionary<string, object?>? Bindings = null,
+        object? ArgumentInput = null);
 
     private sealed class Scope(State? previous) : IDisposable
     {

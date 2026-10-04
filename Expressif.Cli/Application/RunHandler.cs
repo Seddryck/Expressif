@@ -98,7 +98,7 @@ internal sealed class RunHandler(
 
         try
         {
-            foreach (var result in RunEvaluator.Evaluate(expression, context, inputs))
+            foreach (var result in RunEvaluator.Evaluate(expression, inputs))
                 Console.Out.WriteLine(serializer.Serialize(result, formatting));
             observation?.Complete();
             return ExitCodes.Success;

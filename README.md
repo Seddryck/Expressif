@@ -84,6 +84,8 @@ var result = expression.Evaluate("  Alice  ");
 
 `ExpressifEnvironment.Default` is the composition root for textual expressions, textual predications, and typed builders. Register extension libraries on a derived immutable environment and create every executable object from that same snapshot.
 
+Typed builders use staged, reusable values: start an expression with `Create<T>()`, append with `Then<T>()`, and call `Build()` or `ToSource()` repeatedly without consuming the pipeline. Runtime variables are supplied through an immutable `EvaluationContext`; per-argument providers use `ArgumentEvaluationContext`.
+
 The .NET SDK also provides APIs for predications, typed builders, runtime context, and serialization. Continue with the [.NET SDK guide](https://seddryck.github.io/Expressif/dotnet-sdk/), or use the [v2 to v3 migration guide](https://seddryck.github.io/Expressif/dotnet-sdk/migrate-v2-to-v3/) when upgrading an application.
 
 Advanced hosts that supply their own vocabulary can reference `Expressif.Core` without installing the official library. `Expressif`, `Expressif.Core`, and `Expressif.Library` are released in lockstep and should always use the same version. See the [installation guide](https://seddryck.github.io/Expressif/dotnet-sdk/installation/) for the package responsibilities and dependency graph.

@@ -8,7 +8,7 @@ using Expressif.Library.Array.Selection;
 using Expressif.Library.Composition;
 using Expressif.Library.Temporal;
 using Expressif.Library.Text;
-using Expressif.Values.Types;
+using Expressif.Types;
 using System.Reflection;
 
 namespace Expressif.Testing.Functions;
@@ -18,7 +18,7 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_EnclosingRootFieldWithoutName_Throws()
     {
-        var function = new Function("field", [], FunctionSyntax.EnclosingRootFieldShorthand);
+        var function = new Function("field", [], SourceNotation.EnclosingRootField);
 
         Assert.That(
             () => new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
@@ -175,61 +175,67 @@ public class FunctionFactoryTest
     [Test]
     public void Instantiate_RoundVariableParameter_Valid()
     {
-        var context = new Context();
-        context.Variables.Add<int>("myVar", 2);
-        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new VariableParameter("myVar") }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
+            typeof(Round), new[] { new VariableParameter("myVar") }, new Context());
+        var context = EvaluationContext.CreateBuilder().AddValue("myVar", 2).Build();
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
-        Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(2));
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(current: null, ambient: null), context);
+        Assert.That(((Round)function).Digits.Invoke(), Is.EqualTo(2));
     }
 
     [Test]
     public void Instantiate_RoundObjectPropertyParameter_Valid()
     {
-        var context = new Context();
-        context.CurrentObject.Set(new { Digits = 3 });
-        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, context);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
+            typeof(Round), new[] { new ObjectPropertyParameter("Digits") }, new Context());
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
-        Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(3));
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(new { Digits = 3 }, new { Digits = 3 }), EvaluationContext.Empty);
+        Assert.That(((Round)function).Digits.Invoke(), Is.EqualTo(3));
     }
 
     [Test]
     public void Instantiate_RoundObjectIndexParameter_Valid()
     {
-        var context = new Context();
-        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { new ObjectIndexParameter(1) }, context);
-        context.CurrentObject.Set(new List<int> { 0, 4 });
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
+            typeof(Round), new[] { new ObjectIndexParameter(1) }, new Context());
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
+        var input = new List<int> { 0, 4 };
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(input, input), EvaluationContext.Empty);
         Assert.That(((Round)function).Digits.Invoke(), Is.EqualTo(4));
     }
 
     [Test]
     public void Instantiate_RoundExpressionParameter_Valid()
     {
-        var context = new Context();
         var subFunction = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar"), new[] { new Function("numeric-to-increment", []) }));
-        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { subFunction }, context);
-        context.Variables.Add<int>("myVar", 4);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
+            typeof(Round), new[] { subFunction }, new Context());
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
-        Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(5));
+        var context = EvaluationContext.CreateBuilder().AddValue("myVar", 4).Build();
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(current: null, ambient: null), context);
+        Assert.That(((Round)function).Digits.Invoke(), Is.EqualTo(5));
     }
 
     [Test]
     public void Instantiate_RoundMultipleExpressionParameter_Valid()
     {
-        var context = new Context();
         var subFunction1 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-decrement", []) }));
         var subFunction2 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar2"), new[] { new Function("numeric-to-increment", []) }));
         var subFunction3 = new InputExpressionParameter(new Expressif.Bindings.ClosedExpression(new VariableParameter("myVar1"), new[] { new Function("numeric-to-add", [subFunction1]), new Function("numeric-to-multiply", [subFunction2]) }));
-        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(typeof(Round), new[] { subFunction3 }, context);
-        context.Variables.Add<int>("myVar1", 4);
-        context.Variables.Add<int>("myVar2", 5);
+        var function = new FunctionFactory(TestExpression.LibraryTypeSource).Instantiate(
+            typeof(Round), new[] { subFunction3 }, new Context());
         Assert.That(function, Is.Not.Null);
         Assert.That(function, Is.TypeOf<Round>());
-        Assert.That((function as Round)!.Digits.Invoke(), Is.EqualTo(42)); // (4+3)*6
+        var context = EvaluationContext.CreateBuilder()
+            .AddValue("myVar1", 4)
+            .AddValue("myVar2", 5)
+            .Build();
+        using var scope = EvaluationRuntime.Enter(new EvaluationFrame(current: null, ambient: null), context);
+        Assert.That(((Round)function).Digits.Invoke(), Is.EqualTo(42)); // (4+3)*6
     }
 
     [Test]

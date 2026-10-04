@@ -130,9 +130,9 @@ public class ValueFormatterTest
     [Test]
     public void Format_Pretty_FormatsPairsDictionariesAndGroupings()
     {
-        var pair = new Pair("BE", new object?[] { "Alice", "Bob" });
-        var dictionary = new Dictionary([pair]);
-        var grouping = new Grouping([pair]);
+        var pair = new PairValue("BE", new object?[] { "Alice", "Bob" });
+        var dictionary = new DictionaryValue([pair]);
+        var grouping = new GroupingValue([pair]);
 
         Assert.Multiple(() =>
         {
@@ -153,8 +153,8 @@ public class ValueFormatterTest
             Assert.That(ValueFormatter.Format(Array.Empty<object?>(), ValueFormat.Pretty), Is.EqualTo("{}"));
             Assert.That(ValueFormatter.Format(new TupleValue(), ValueFormat.Pretty), Is.EqualTo("T()"));
             Assert.That(ValueFormatter.Format(new RecordValue(), ValueFormat.Pretty), Is.EqualTo("{}"));
-            Assert.That(ValueFormatter.Format(new Dictionary([]), ValueFormat.Pretty), Is.EqualTo("!{}"));
-            Assert.That(ValueFormatter.Format(new Grouping([]), ValueFormat.Pretty), Is.EqualTo("#{}"));
+            Assert.That(ValueFormatter.Format(new DictionaryValue([]), ValueFormat.Pretty), Is.EqualTo("!{}"));
+            Assert.That(ValueFormatter.Format(new GroupingValue([]), ValueFormat.Pretty), Is.EqualTo("#{}"));
         });
     }
 

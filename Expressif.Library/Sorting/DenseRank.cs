@@ -5,9 +5,9 @@ namespace Expressif.Library.Sorting;
 /// <summary>Groups original sort table row values by their one-based dense rank without gaps.</summary>
 [Function(prefix: "")]
 [Scope("sorting")]
-public sealed class DenseRank : IFunction<SortTableValue, Values.Grouping>
+public sealed class DenseRank : IFunction<SortTableValue, Values.GroupingValue>
 {
-    public Values.Grouping Evaluate(SortTableValue value)
+    public Values.GroupingValue Evaluate(SortTableValue value)
         => Rank.EvaluateGroups(value, dense: true);
 
     object? IFunction.Evaluate(object? value)

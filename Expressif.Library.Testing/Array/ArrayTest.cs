@@ -41,8 +41,7 @@ public class ArrayTest
     [Test]
     public void Expression_VariableSpread_ExpandsInPlace()
     {
-        var context = new Context();
-        context.Variables.Add<int[]>("values", new[] { 2, 3 });
+        var context = EvaluationContext.CreateBuilder().AddValue("values", new[] { 2, 3 }).Build();
 
         Assert.That(
             TestExpression.Create("array(1, ...@values, 4)", context).Evaluate(null),
@@ -58,8 +57,7 @@ public class ArrayTest
     [Test]
     public void Expression_VariablePipeline_ImplicitSpread_ExpandsCurrentInput()
     {
-        var context = new Context();
-        context.Variables.Add<int[]>("items", new[] { 1, 2, 3 });
+        var context = EvaluationContext.CreateBuilder().AddValue("items", new[] { 1, 2, 3 }).Build();
 
         Assert.That(
             TestExpression.Create("@items | array(0, ..., 4)", context).Evaluate(null),
@@ -69,8 +67,7 @@ public class ArrayTest
     [Test]
     public void Expression_VariablePipeline_ExplicitCurrentInputSpread_ExpandsCurrentInput()
     {
-        var context = new Context();
-        context.Variables.Add<int[]>("items", new[] { 1, 2, 3 });
+        var context = EvaluationContext.CreateBuilder().AddValue("items", new[] { 1, 2, 3 }).Build();
 
         Assert.That(
             TestExpression.Create("@items | array(0, ...@_, 4)", context).Evaluate(null),
@@ -86,8 +83,7 @@ public class ArrayTest
     [Test]
     public void Expression_VariablePipeline_ComputedSpread_EvaluatesAgainstCurrentInput()
     {
-        var context = new Context();
-        context.Variables.Add<int[]>("items", new[] { 1, 2, 3 });
+        var context = EvaluationContext.CreateBuilder().AddValue("items", new[] { 1, 2, 3 }).Build();
 
         Assert.That(
             TestExpression.Create("@items | array(0, ...(filter(greater-than(1))), 4)", context).Evaluate(null),

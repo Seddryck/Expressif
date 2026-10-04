@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Expressif.Values;
 
-public sealed class ContextVariables
+internal sealed class ContextVariables
 {
     private IDictionary<string, object?> Variables { get; }
     private IReadOnlyCollection<string> VariableNames { get; }

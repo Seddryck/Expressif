@@ -3,7 +3,7 @@ using Expressif.Functions.Accumulation;
 using Expressif.Functions;
 using Expressif.Predicates;
 using Expressif.Values;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Introspection;
 
@@ -32,12 +32,12 @@ internal sealed class ExpressifTypeMapper
             [typeof(long)] = IntegerType,
             [typeof(ulong)] = IntegerType,
             [typeof(IPositionalValue)] = "tuple",
-            [typeof(Expressif.Values.Tuple)] = "tuple",
-            [typeof(Vector)] = "vector",
-            [typeof(Pair)] = "pair",
-            [typeof(Group)] = "group",
-            [typeof(Expressif.Values.Grouping)] = "grouping",
-            [typeof(Dictionary)] = "dictionary",
+            [typeof(Expressif.Values.TupleValue)] = "tuple",
+            [typeof(VectorValue)] = "vector",
+            [typeof(PairValue)] = "pair",
+            [typeof(GroupValue)] = "group",
+            [typeof(Expressif.Values.GroupingValue)] = "grouping",
+            [typeof(DictionaryValue)] = "dictionary",
             [typeof(RecordValue)] = "record",
             [typeof(OrderingValue)] = "ordering",
             [typeof(SortTerm)] = "sort-term",

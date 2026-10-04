@@ -1,16 +1,16 @@
 using System.Collections;
-using Expressif.Values.Types;
+using Expressif.Types;
 using Expressif.Values.Casters;
 
 namespace Expressif.Values;
 
 /// <summary>Represents an immutable, fixed-size positional collection of numeric components.</summary>
 [ExpressifType(Parent = "tuple", LiteralSyntax = "V followed by parenthesized comma-separated numeric values", LiteralExamples = ["V(1, 2, 3)"])]
-public sealed class Vector : IReadOnlyList<object?>, IEquatable<Vector>, IExpressifValueType, IPositionalValue
+public sealed class VectorValue : IReadOnlyList<object?>, IEquatable<VectorValue>, IExpressifValueType, IPositionalValue
 {
     private readonly object?[] values;
 
-    public Vector(params object?[] values)
+    public VectorValue(params object?[] values)
         => this.values = Validate(values);
 
     public int Count => values.Length;
@@ -24,7 +24,7 @@ public sealed class Vector : IReadOnlyList<object?>, IEquatable<Vector>, IExpres
     IEnumerator IEnumerable.GetEnumerator()
         => values.GetEnumerator();
 
-    public bool Equals(Vector? other)
+    public bool Equals(VectorValue? other)
         => other is not null && PositionalValueEquality.Equals(this, other);
 
     public override bool Equals(object? obj)

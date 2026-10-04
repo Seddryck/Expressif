@@ -1,4 +1,3 @@
-using Expressif.Bindings;
 using Expressif.Functions;
 
 namespace Expressif;
@@ -7,12 +6,6 @@ public class Expression : IExpression
 {
     private readonly IFunction expression;
     private readonly EvaluationContext context;
-
-    public static IExpression Create(string text, IExpressionBinder binder)
-        => new ExpressionFactory(binder).Create(text);
-
-    public static IExpression CreateClosed(string text, IExpressionBinder binder)
-        => new ExpressionFactory(binder).CreateClosed(text);
 
     public Expression(IFunction expression)
         : this(expression, EvaluationContext.Empty) { }

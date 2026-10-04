@@ -41,7 +41,7 @@ public class TemporalFunctionsTest
     [Test]
     public void CircularDistance_BindsByCanonicalName()
     {
-        var expression = TestExpression.Create("circular-distance(#\"01:00:00\")", new Context());
+        var expression = TestExpression.Create("circular-distance(#\"01:00:00\")");
 
         Assert.That(expression.Evaluate(new TimeOnly(23, 45)), Is.EqualTo(TimeSpan.FromMinutes(75)));
     }
@@ -113,10 +113,9 @@ public class TemporalFunctionsTest
     [Conformance]
     public void Age_Valid_FixedCurrentDate(object? value, DateTime currentDate, int? expected)
     {
-        var context = new EvaluationContext(new Dictionary<string, object?>
-        {
-            ["current-date"] = currentDate,
-        });
+        var context = EvaluationContext.CreateBuilder()
+            .AddValue("current-date", currentDate)
+            .Build();
         var expression = new Expression(new Age()).WithContext(context);
 
         Assert.That(expression.Evaluate(value), Is.EqualTo(expected));

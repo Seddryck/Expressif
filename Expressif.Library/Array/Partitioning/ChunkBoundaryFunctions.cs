@@ -27,7 +27,7 @@ public sealed class ChunkOn : BaseArrayFunction<TupleValue>
 
         position = Math.Min(position, values.Length);
 
-        return new Values.Tuple(values[..position], values[position..]);
+        return new Expressif.Values.TupleValue(values[..position], values[position..]);
     }
 }
 
@@ -51,6 +51,6 @@ public sealed class ChunkAround : BaseArrayFunction<TupleValue>
         if (position < 0 || position >= values.Length)
             return null;
 
-        return new Values.Tuple(values[..position], values[position], values[(position + 1)..]);
+        return new Expressif.Values.TupleValue(values[..position], values[position], values[(position + 1)..]);
     }
 }

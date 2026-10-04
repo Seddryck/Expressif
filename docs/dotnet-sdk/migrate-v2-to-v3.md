@@ -19,7 +19,12 @@ Expressif v3 separates the portable Core runtime from the official function Libr
 | `Predication.Create(source)` | `ExpressifEnvironment.Default.CreatePredication(source)` |
 | `new ExpressionBuilder()` | `ExpressifEnvironment.Default.CreateExpressionBuilder()` |
 | `new PredicationBuilder()` | `ExpressifEnvironment.Default.CreatePredicationBuilder()` |
-| Mutable context values used as runtime variables | Attach an immutable `EvaluationContext` with `WithContext(...)`. |
+| `.Chain<T>()` and consuming expression builders | `.Create<T>().Then<T>()`; pipelines are persistent and reusable. |
+| `AndNot<T>()`, `OrNot<T>()`, or `XorNot<T>()` | Compose a rule and call `Not()` on that leaf or group. |
+| Mutable `Context` variables | Build an immutable `EvaluationContext` and attach it with `WithContext(...)`. |
+| Context-backed builder delegates | `Argument.From<T>(ArgumentEvaluationContext => ...)` |
+| `Expressif.Values.Types` | `Expressif.Types` |
+| `Pair`, `Tuple`, `Vector`, `Dictionary`, `Group`, `Grouping` runtime types | `PairValue`, `TupleValue`, `VectorValue`, `DictionaryValue`, `GroupValue`, `GroupingValue` |
 | Implicit extension discovery | Register the library assembly with `ExpressifEnvironment.RegisterLibrary(...)`. |
 
 ## Select the package
@@ -58,7 +63,16 @@ var normalizeName = expressions.Create("trim | upper");
 var normalizeCode = expressions.Create("trim | lower");
 ```
 
-Advanced hosts can still create binders and factories explicitly through `CreateExpressionBinder()` and `CreateFunctionFactory()`. Prefer the higher-level environment methods unless the host is replacing a parser or attaching an observer.
+The Core static methods `Expression.Create(text, binder)` and `Expression.CreateClosed(text, binder)` are removed. They looked like application conveniences but could not select the official Library vocabulary from Core. Normal applications use `ExpressifEnvironment`. A Core-only or custom host explicitly owns its binder:
+
+```csharp
+IExpressionBinder binder = CreateCustomBinder();
+var expressions = new ExpressionFactory(binder);
+var expression = expressions.Create("trim | upper");
+var closed = expressions.CreateClosed("42 | increment");
+```
+
+No implicit assembly scanning or global mutable factory is involved. Applications can also obtain the environment-owned lower-level objects through `CreateExpressionBinder()`, `CreateExpressionFactory()`, and `CreateFunctionFactory()`.
 
 ## Create strongly typed predications
 
@@ -88,8 +102,8 @@ using Expressif.Library.Text.Casing;
 using Expressif.Library.Text.Selection;
 
 var expression = ExpressifEnvironment.Default.CreateExpressionBuilder()
-    .Chain<Lower>()
-    .Chain<FirstChars>(5)
+    .Create<Lower>()
+    .Then<FirstChars>(5)
     .Build();
 ```
 
@@ -103,36 +117,58 @@ var predication = ExpressifEnvironment.Default.CreatePredicationBuilder()
     .Build();
 ```
 
-Builder lifecycle rules are unchanged: serialize an `ExpressionBuilder` before calling `Build()`, because building consumes its queued pipeline.
+The starter cannot build an empty pipeline or rule. `Create(...)` returns the valid nested state. Pipelines and rules are immutable: composition returns a new value, `Build()` is non-consuming, and `ToSource()` works before or after repeated builds.
 
-## Separate binding context from runtime context
+## Separate evaluation values from argument scope
 
-V3 distinguishes two context roles.
-
-`EvaluationContext` contains immutable runtime variables referenced by textual expressions with `@name`. Attach it to an executable expression or predication:
+`EvaluationContext` is the only public source of host-provided variables referenced by textual expressions with `@name`. Build an immutable registration snapshot and attach it to an executable expression or predication:
 
 ```csharp
 var expression = ExpressifEnvironment.Default
     .CreateExpression("suffix(@suffix)")
-    .WithContext(new EvaluationContext(
-        new Dictionary<string, object?> { ["suffix"] = "!" }));
+    .WithContext(EvaluationContext.CreateBuilder()
+        .AddValue("suffix", "!")
+        .Build());
 
 var result = expression.Evaluate("Hello"); // "Hello!"
 ```
 
-`Context` remains the mutable input to C# builder parameter delegates. Pass it when creating the builder:
+Register dynamic host data with `AddProvider(...)`. Each provider runs exactly once at the start of a top-level evaluation, receives its top-level input, and is materialized for nested and deferred work:
 
 ```csharp
-var context = new Context();
-context.Variables.Add<string>("prefix", "Nik");
-
-var predication = ExpressifEnvironment.Default
-    .CreatePredicationBuilder(context)
-    .Create<StartsWith>(value => value.Variables["prefix"])
+var context = EvaluationContext.CreateBuilder()
+    .AddProvider("current-date", start => clock.Today)
     .Build();
 ```
 
-Do not use a mutable `Context` as shared runtime-variable storage for otherwise reusable expressions. Use separate immutable `EvaluationContext` instances and `WithContext(...)` instead.
+Builder arguments use a separate immutable invocation scope:
+
+```csharp
+var builder = ExpressifEnvironment.Default.CreatePredicationBuilder();
+
+var predication = builder
+    .Create<StartsWith>(Argument.From<string>(scope =>
+        scope.GetVariable<string>("prefix")))
+    .Build();
+```
+
+`ArgumentEvaluationContext` exposes `Current`, `Root`, `EnclosingRoot`, and read-only variable lookup. Its provider follows the operator's documented argument-evaluation frequency. The mutable `Context`, `IContext`, `ContextVariables`, `ContextObject`, and `ContextParameter` hierarchy is no longer public.
+
+## Update public model and type names
+
+All type-authoring APIs now live under one namespace:
+
+```csharp
+using Expressif.Types;
+```
+
+This includes `ExpressifTypeAttribute`, `ExpressifTypeDefinition<T>`, descriptors, registries, quoted-literal parsers, and their exceptions. Semantic type names and catalog/JSON formats do not change.
+
+Runtime value implementations now use explicit names that avoid BCL collisions: `PairValue`, `TupleValue`, `VectorValue`, `DictionaryValue`, `GroupValue`, and `GroupingValue`. The shorter public CLR type names are removed; no parallel hierarchy or forwarding types are retained.
+
+Binding, logical-plan, and logical-schema collection properties now snapshot their inputs. Mutating a caller-owned list or dictionary after construction cannot change a model. Collection-bearing records use structural equality and compatible hash codes, while existing logical-plan and schema JSON shapes remain compatible.
+
+External binders construct canonical calls through `Function.FromArguments(...)` or the positional convenience `Function.FromParameters(...)`. `FunctionArgument` preserves names and spread markers. `FunctionSyntax` is no longer public; source notation and runtime roles are internal metadata.
 
 ## Register extension libraries
 
@@ -157,7 +193,7 @@ After updating the integration:
 1. Confirm that all Expressif packages use the same version.
 2. Replace every unsupported static or parameterless creation pattern listed above.
 3. Register every extension library before creating factories or executable rules.
-4. Verify whether each existing `Context` value belongs to binding-time builder configuration or runtime evaluation.
+4. Replace `Context` variables with `EvaluationContext` values/providers and builder delegates with `Argument.From<T>(...)`.
 5. Build and run the application against each target framework it supports.
 
 See [Load runtime libraries](runtime-libraries.md) for library manifests and compatibility checks, and [Evaluate an expression](evaluate-expression.md) for expression reuse and runtime contexts.

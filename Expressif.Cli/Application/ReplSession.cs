@@ -31,7 +31,7 @@ internal sealed class ReplSession
     private object? currentInput;
 
     public ReplSession(IExpressionService expressions, CliConfiguration? configuration = null)
-        : this(expressions, new Context(), new EvaluationContext())
+        : this(expressions, new Context(), EvaluationContext.Empty)
         => this.configuration = configuration;
 
     internal ReplSession(

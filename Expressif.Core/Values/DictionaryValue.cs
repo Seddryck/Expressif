@@ -1,30 +1,30 @@
 using System.Collections;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Values;
 
 /// <summary>Represents an immutable ordered mapping with structurally unique keys.</summary>
 [ExpressifType(Parent = "structured", LiteralSyntax = "Pair entries enclosed in !{ and }", LiteralExamples = ["!{(\"BE\" => \"Belgium\")}"])]
-public sealed class Dictionary : IReadOnlyList<Pair>, IEquatable<Dictionary>, IExpressifValueType
+public sealed class DictionaryValue : IReadOnlyList<PairValue>, IEquatable<DictionaryValue>, IExpressifValueType
 {
     private static readonly IEqualityComparer Comparer = StructuralComparisons.StructuralEqualityComparer;
-    private readonly Pair[] entries;
+    private readonly PairValue[] entries;
 
-    public Dictionary(IEnumerable<Pair> entries)
+    public DictionaryValue(IEnumerable<PairValue> entries)
     {
         ArgumentNullException.ThrowIfNull(entries);
-        var values = new List<Pair>();
+        var values = new List<PairValue>();
         foreach (var pair in entries)
         {
             if (values.Any(entry => Comparer.Equals(entry.Key, pair.Key)))
                 throw new ArgumentException($"A dictionary cannot contain duplicate key '{ValueFormatter.Format(pair.Key)}'.", nameof(entries));
-            values.Add(new Pair(pair.Key, pair.Value));
+            values.Add(new PairValue(pair.Key, pair.Value));
         }
         this.entries = values.ToArray();
     }
 
     public int Count => entries.Length;
-    public Pair this[int index] => entries[index];
+    public PairValue this[int index] => entries[index];
     /// <summary>Finds a value using the same structural key equality as dictionary construction.</summary>
     public bool TryGetValue(object? key, out object? value)
     {
@@ -38,10 +38,10 @@ public sealed class Dictionary : IReadOnlyList<Pair>, IEquatable<Dictionary>, IE
         return false;
     }
 
-    public IEnumerator<Pair> GetEnumerator() => ((IEnumerable<Pair>)entries).GetEnumerator();
+    public IEnumerator<PairValue> GetEnumerator() => ((IEnumerable<PairValue>)entries).GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => entries.GetEnumerator();
-    public bool Equals(Dictionary? other) => other is not null && entries.SequenceEqual(other.entries);
-    public override bool Equals(object? obj) => obj is Dictionary other && Equals(other);
+    public bool Equals(DictionaryValue? other) => other is not null && entries.SequenceEqual(other.entries);
+    public override bool Equals(object? obj) => obj is DictionaryValue other && Equals(other);
     public override int GetHashCode()
     {
         var hash = default(HashCode);

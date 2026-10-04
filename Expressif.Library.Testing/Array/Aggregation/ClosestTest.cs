@@ -38,7 +38,7 @@ public class ClosestTest
     [Test]
     public void Evaluate_TargetExpression_UsesContext()
     {
-        var context = new Context(new Dictionary<string, object?> { ["target"] = 31 });
+        var context = EvaluationContext.CreateBuilder().AddValue("target", 31).Build();
         var expression = TestExpression.Create("closest({@target | increment})", context);
         Assert.That(expression.Evaluate(new[] { 10, 30, 50 }), Is.EqualTo(30));
     }

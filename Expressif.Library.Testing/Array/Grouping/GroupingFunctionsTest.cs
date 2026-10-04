@@ -9,7 +9,6 @@ using Expressif.Testing.Conformance;
 using Expressif.Values;
 using GroupByFunction = Expressif.Library.Array.Grouping.GroupBy;
 using GroupFunction = Expressif.Library.Array.Grouping.Group;
-using GroupingValue = Expressif.Values.Grouping;
 
 namespace Expressif.Testing.Array.Grouping;
 

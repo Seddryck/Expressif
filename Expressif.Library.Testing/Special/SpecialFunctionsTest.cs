@@ -12,9 +12,7 @@ public class SpecialFunctionsTest
     [Conformance]
     public void Coalesce_Valid_Expressions(object? value, string[] expressions, object? expected)
     {
-        var context = new Context();
-        context.CurrentObject.Set(value);
-        var function = TestExpression.Create($"coalesce({string.Join(", ", expressions)})", context);
+        var function = TestExpression.Create($"coalesce({string.Join(", ", expressions)})");
 
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
@@ -61,7 +59,7 @@ public class SpecialFunctionsTest
     [Test]
     public void Coalesce_OneParsedExpression_ThrowsBindingError()
         => Assert.That(
-            () => TestExpression.Create("coalesce(^.name)", new Context()),
+            () => TestExpression.Create("coalesce(^.name)"),
             Throws.TypeOf<MissingOrUnexpectedParametersFunctionException>());
 
     [Test]
@@ -72,11 +70,7 @@ public class SpecialFunctionsTest
             ["nickname"] = null,
             ["name"] = "Alice"
         };
-        var context = new Context();
-        context.CurrentObject.Set(value);
-        var function = TestExpression.Create(
-            "coalesce(^.nickname, ^.name, \"Anonymous\") | upper",
-            context);
+        var function = TestExpression.Create("coalesce(^.nickname, ^.name, \"Anonymous\") | upper");
 
         Assert.That(function.Evaluate(value), Is.EqualTo("ALICE"));
     }
@@ -89,11 +83,7 @@ public class SpecialFunctionsTest
             ["nickname"] = null,
             ["name"] = "Alice"
         };
-        var context = new Context();
-        context.CurrentObject.Set(value);
-        var function = TestExpression.Create(
-            "coalesce(field(nickname), .name)",
-            context);
+        var function = TestExpression.Create("coalesce(field(nickname), .name)");
 
         Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
     }
@@ -108,9 +98,7 @@ public class SpecialFunctionsTest
     public void Coalesce_MissingField_ContinuesWithNextCandidate(string expression, object? expected)
     {
         var value = new Dictionary<string, object?> { ["name"] = "Alice" };
-        var context = new Context();
-        context.CurrentObject.Set(value);
-        var function = TestExpression.Create(expression, context);
+        var function = TestExpression.Create(expression);
 
         Assert.That(function.Evaluate(value), Is.EqualTo(expected));
     }
@@ -123,9 +111,7 @@ public class SpecialFunctionsTest
             ["nickname"] = null,
             ["name"] = "Alice"
         };
-        var context = new Context();
-        context.CurrentObject.Set(value);
-        var function = TestExpression.Create("coalesce(.nickname, .name)", context);
+        var function = TestExpression.Create("coalesce(.nickname, .name)");
 
         Assert.That(function.Evaluate(value), Is.EqualTo("Alice"));
     }

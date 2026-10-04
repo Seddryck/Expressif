@@ -93,16 +93,17 @@ internal abstract class BaseExpressionFactory
             QuotedLiteralParameter quoted => CreateCast(quoted.Value, scalarType),
             LiteralParameter { Value: null } => CreateFunctionCast(() => null, scalarType),
             LiteralParameter literal => CreateCast(literal.Value, scalarType),
-            ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(context, index.Index), scalarType),
+            ObjectIndexParameter index => CreateFunctionCast(() => GetAmbientValue(index.Index), scalarType),
             ScopedTupleProjectionParameter projection => CreateFunctionCast(() => ResolveScopedTupleProjection(projection), scalarType),
-            TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(context), projection), scalarType),
-            ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(context, prop.Name), scalarType),
+            TupleProjectionParameter projection => CreateFunctionCast(() => ResolveTupleProjection(GetCurrent(), projection), scalarType),
+            ObjectPropertyParameter prop => CreateFunctionCast(() => GetAmbientValue(prop.Name), scalarType),
             EnclosingObjectPropertyParameter prop => CreateFunctionCast(
                 () => NamedValueAccessor.Get(EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.EnclosingExpressionRoot, null, null), prop.Name),
                 scalarType),
-            VariableParameter variable => CreateFunctionCast(() => GetVariable(context, variable.Name), scalarType),
-            IncomingValueParameter => CreateFunctionCast(() => GetCurrent(context), scalarType),
-            ContextParameter contextReference => CreateFunctionCast(() => contextReference.Function.Invoke(context), scalarType),
+            VariableParameter variable => CreateFunctionCast(() => GetVariable(variable.Name), scalarType),
+            IncomingValueParameter => CreateFunctionCast(GetCurrent, scalarType),
+            ArgumentProviderParameter provider => CreateFunctionCast(
+                () => provider.Provider(ArgumentEvaluationContext.CurrentScope), scalarType),
             _ => throw new BindingException($"Cannot handle the parameter type '{parameter.GetType().Name}'.")
         };
     }
@@ -123,7 +124,7 @@ internal abstract class BaseExpressionFactory
         return values.ToArray();
     }
 
-    private Expressif.Values.Tuple BuildTuple(TupleParameter tuple, IContext currentContext)
+    private Expressif.Values.TupleValue BuildTuple(TupleParameter tuple, IContext currentContext)
     {
         var values = new List<object?>();
         foreach (var element in tuple.Elements)
@@ -144,10 +145,10 @@ internal abstract class BaseExpressionFactory
             }
         }
 
-        return new Expressif.Values.Tuple(values.ToArray());
+        return new Expressif.Values.TupleValue(values.ToArray());
     }
 
-    private Expressif.Values.Vector BuildVector(VectorParameter vector, IContext currentContext)
+    private Expressif.Values.VectorValue BuildVector(VectorParameter vector, IContext currentContext)
     {
         var values = new List<object?>();
         foreach (var element in vector.Elements)
@@ -158,7 +159,7 @@ internal abstract class BaseExpressionFactory
             {
                 if (evaluated is null)
                     throw new SpreadArgumentException("Spread argument cannot be null.");
-                if (evaluated is not Vector spread)
+                if (evaluated is not VectorValue spread)
                     throw new SpreadArgumentException("Vector spread argument must evaluate to a vector.");
                 values.AddRange(spread);
             }
@@ -168,7 +169,7 @@ internal abstract class BaseExpressionFactory
             }
         }
 
-        return new Expressif.Values.Vector(values.ToArray());
+        return new Expressif.Values.VectorValue(values.ToArray());
     }
 
     private ValueRecord BuildRecord(RecordLiteralParameter record, IContext currentContext)
@@ -257,26 +258,25 @@ internal abstract class BaseExpressionFactory
         return ResolveTupleProjection(frame?.Ambient, new TupleProjectionParameter(projection.Index));
     }
 
-    private static object? GetAmbient(IContext context)
-        => ArgumentScope.Root(context.CurrentObject.Value, EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null));
+    private static object? GetAmbient()
+        => ArgumentScope.Root(
+            EvaluationRuntime.ArgumentInput,
+            EvaluationRuntime.Frame?.Scope.Resolve(FieldReferenceKind.ExpressionRoot, null, null));
 
-    private static object? GetCurrent(IContext context)
-        => EvaluationRuntime.Frame is { } frame ? frame.Current : context.CurrentObject.Value;
+    private static object? GetCurrent() => EvaluationRuntime.Frame?.Current;
 
-    private static object? GetVariable(IContext context, string name)
-        => EvaluationRuntime.TryGetBinding(name, out var bound) ? bound
-            : EvaluationRuntime.Context is { } evaluationContext
-            && evaluationContext.TryGetVariable(name, out var value)
-                ? value
-                : context.Variables[name];
+    private static object? GetVariable(string name)
+        => EvaluationRuntime.TryGetVariable(name, out var value)
+            ? value
+            : throw new UnexpectedVariableException(name);
 
-    private static object? GetAmbientValue(IContext context, string name)
-        => NamedValueAccessor.Get(GetAmbient(context), name);
+    private static object? GetAmbientValue(string name)
+        => NamedValueAccessor.Get(GetAmbient(), name);
 
-    private static object? GetAmbientValue(IContext context, int index)
+    private static object? GetAmbientValue(int index)
     {
         var ambient = new ContextObject();
-        ambient.Set(GetAmbient(context));
+        ambient.Set(GetAmbient());
         return ambient[index];
     }
 

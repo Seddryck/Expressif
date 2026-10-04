@@ -1,6 +1,7 @@
 namespace Expressif.Cli.Expressions;
 
 using Expressif.Planning;
+using Expressif.Functions;
 
 internal interface IExpressionService
 {
@@ -14,10 +15,10 @@ internal interface IExpressionService
 internal sealed class ExpressionService : IExpressionService
 {
     public IExpression CompileOpen(string code, Context context)
-        => Expression.Create(code, new Bindings.ExpressionBinder(context));
+        => new ExpressionFactory(new Bindings.ExpressionBinder(context)).Create(code);
 
     public IExpression CompileClosed(string code, Context context)
-        => Expression.CreateClosed(code, new Bindings.ExpressionBinder(context));
+        => new ExpressionFactory(new Bindings.ExpressionBinder(context)).CreateClosed(code);
 
     public IExpression CompileOpen(LogicalPlan plan, Context context)
         => ((Bindings.IExpressionBinder)new Bindings.ExpressionBinder(context)).Bind(plan);

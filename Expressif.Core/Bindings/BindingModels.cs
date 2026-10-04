@@ -1,5 +1,6 @@
-using Expressif.Values.Types;
+using Expressif.Types;
 using Expressif.Discovery;
+using Expressif.Collections;
 
 namespace Expressif.Bindings;
 
@@ -8,22 +9,27 @@ public interface IRootExpression { }
 public sealed record OpenRootExpression(OpenExpression Expression) : IRootExpression;
 public sealed record ClosedRootExpression(ClosedExpression Expression) : IRootExpression;
 
-public enum FunctionSyntax
+internal enum BoundFunctionRole
 {
-    Standard,
-    InputBindingStage,
+    Operator,
+    InputBinding,
     ConditionalForward,
     ConditionalBackward,
+    ImplicitAccumulator,
+}
+
+internal enum SourceNotation
+{
+    StandardCall,
     MapShorthand,
     GroupMapShorthand,
-    FieldShorthand,
-    RootFieldShorthand,
-    EnclosingRootFieldShorthand,
+    CurrentField,
+    RootField,
+    EnclosingRootField,
     TupleProjectionShorthand,
     ScopedTupleProjectionShorthand,
     InputFieldShorthand,
     InputTupleProjectionShorthand,
-    ImplicitFoldAccumulator,
 }
 
 internal enum FunctionImplementationKind
@@ -38,69 +44,130 @@ public sealed record FunctionArgument(string? Name, IParameter Value, bool IsSpr
 
 public sealed class Function : IBoundExpression
 {
-    public Function(string name, IEnumerable<IParameter> parameters, FunctionSyntax syntax = FunctionSyntax.Standard)
+    internal Function(
+        string name,
+        IEnumerable<IParameter> parameters,
+        BoundFunctionRole role = BoundFunctionRole.Operator,
+        SourceNotation notation = SourceNotation.StandardCall)
         : this(
             OperatorIdentity.Parse(name),
             parameters.Select(x => new FunctionArgument(null, x)),
-            syntax,
+            role,
+            notation,
             FunctionImplementationKind.Unspecified,
             !name.Contains("::", StringComparison.Ordinal)) { }
+
+    internal Function(string name, IEnumerable<IParameter> parameters, SourceNotation notation)
+        : this(name, parameters, BoundFunctionRole.Operator, notation) { }
 
     private Function(
         OperatorIdentity identity,
         IEnumerable<FunctionArgument> arguments,
-        FunctionSyntax syntax,
+        BoundFunctionRole role,
+        SourceNotation notation,
         FunctionImplementationKind implementationKind,
         bool isUnqualified = false)
     {
         Identity = identity;
-        Arguments = BindingCollections.Freeze(arguments);
-        Parameters = BindingCollections.Freeze(Arguments.Select(argument => argument.Value));
-        Syntax = syntax;
+        Arguments = ValidateArguments(arguments);
+        Role = role;
+        Notation = notation;
         ImplementationKind = implementationKind;
         IsUnqualified = isUnqualified;
     }
 
-    internal static Function FromArguments(string name, IEnumerable<FunctionArgument> arguments)
-        => new(OperatorIdentity.Parse(name), arguments, FunctionSyntax.Standard,
+    public static Function FromArguments(string name, IEnumerable<FunctionArgument> arguments)
+        => new(OperatorIdentity.Parse(name), arguments, BoundFunctionRole.Operator, SourceNotation.StandardCall,
             FunctionImplementationKind.Unspecified, !name.Contains("::", StringComparison.Ordinal));
 
-    internal static Function FromArguments(OperatorIdentity identity, IEnumerable<FunctionArgument> arguments)
-        => new(identity, arguments, FunctionSyntax.Standard, FunctionImplementationKind.Unspecified);
+    public static Function FromArguments(OperatorIdentity identity, IEnumerable<FunctionArgument> arguments)
+        => new(identity, arguments, BoundFunctionRole.Operator, SourceNotation.StandardCall,
+            FunctionImplementationKind.Unspecified);
 
-    internal static Function FromArguments(string name, IEnumerable<FunctionArgument> arguments, FunctionSyntax syntax)
-        => new(OperatorIdentity.Parse(name), arguments, syntax,
+    public static Function FromParameters(string name, IEnumerable<IParameter> parameters)
+    {
+        ArgumentNullException.ThrowIfNull(parameters);
+        return FromArguments(name, parameters.Select(parameter => new FunctionArgument(null, parameter)));
+    }
+
+    internal static Function FromArguments(
+        string name,
+        IEnumerable<FunctionArgument> arguments,
+        SourceNotation notation)
+        => new(OperatorIdentity.Parse(name), arguments, BoundFunctionRole.Operator, notation,
             FunctionImplementationKind.Unspecified, !name.Contains("::", StringComparison.Ordinal));
 
     internal static Function FromArguments(
         string name,
         IEnumerable<FunctionArgument> arguments,
-        FunctionSyntax syntax,
+        BoundFunctionRole role)
+        => new(OperatorIdentity.Parse(name), arguments, role, SourceNotation.StandardCall,
+            FunctionImplementationKind.Unspecified, !name.Contains("::", StringComparison.Ordinal));
+
+    internal static Function FromArguments(
+        OperatorIdentity identity,
+        IEnumerable<FunctionArgument> arguments,
+        SourceNotation notation,
         FunctionImplementationKind implementationKind)
-        => new(OperatorIdentity.Parse(name), arguments, syntax, implementationKind,
+        => new(identity, arguments, BoundFunctionRole.Operator, notation, implementationKind);
+
+    internal static Function FromArguments(
+        string name,
+        IEnumerable<FunctionArgument> arguments,
+        BoundFunctionRole role,
+        SourceNotation notation,
+        FunctionImplementationKind implementationKind)
+        => new(OperatorIdentity.Parse(name), arguments, role, notation, implementationKind,
             !name.Contains("::", StringComparison.Ordinal));
 
     internal static Function FromArguments(
         OperatorIdentity identity,
         IEnumerable<FunctionArgument> arguments,
-        FunctionSyntax syntax,
+        BoundFunctionRole role,
+        SourceNotation notation,
         FunctionImplementationKind implementationKind)
-        => new(identity, arguments, syntax, implementationKind);
+        => new(identity, arguments, role, notation, implementationKind);
 
     public Expressif.Syntax.SourceSpan? SourceSpan { get; internal set; }
     public OperatorIdentity Identity { get; }
     public string Name => Identity.Name;
     public string Namespace => Identity.Namespace;
     public IReadOnlyList<FunctionArgument> Arguments { get; }
-    public IReadOnlyList<IParameter> Parameters { get; }
-    public FunctionSyntax Syntax { get; }
+    /// <value>Gets a positional projection that omits argument names and spread markers.</value>
+    public IReadOnlyList<IParameter> Parameters => BindingCollections.Freeze(
+        Arguments.Select(argument => argument.Value));
+    internal BoundFunctionRole Role { get; }
+    internal SourceNotation Notation { get; }
     internal FunctionImplementationKind ImplementationKind { get; }
     internal bool IsUnqualified { get; }
+
+    private static IReadOnlyList<FunctionArgument> ValidateArguments(IEnumerable<FunctionArgument> arguments)
+    {
+        ArgumentNullException.ThrowIfNull(arguments);
+        var snapshot = BindingCollections.Freeze(arguments);
+        var named = false;
+        foreach (var argument in snapshot)
+        {
+            ArgumentNullException.ThrowIfNull(argument);
+            ArgumentNullException.ThrowIfNull(argument.Value);
+            if (argument.Name is { } name)
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                    throw new ArgumentException("Argument names cannot be empty.", nameof(arguments));
+                named = true;
+            }
+            else if (named)
+            {
+                throw new ArgumentException("Positional arguments cannot follow named arguments.", nameof(arguments));
+            }
+        }
+        return snapshot;
+    }
 }
 
 public sealed class OpenExpression(IEnumerable<Function> members) : IBoundExpression
 {
-    public IEnumerable<Function> Members { get; } = members;
+    public IReadOnlyList<Function> Members { get; } = BindingCollections.Freeze(members);
 
     internal OpenExpression(InputBoundExpression inputBinding)
         : this([]) => InputBinding = inputBinding;
@@ -111,7 +178,7 @@ public sealed class OpenExpression(IEnumerable<Function> members) : IBoundExpres
 public sealed class ClosedExpression(IParameter parameter, IEnumerable<Function> members) : IBoundExpression
 {
     public IParameter Parameter { get; } = parameter;
-    public IEnumerable<Function> Members { get; } = members;
+    public IReadOnlyList<Function> Members { get; } = BindingCollections.Freeze(members);
 }
 
 public interface IParameter { }
@@ -144,7 +211,7 @@ public sealed record EnclosingObjectPropertyParameter(string Name) : IParameter;
 public sealed record ObjectIndexParameter(int Index) : IParameter;
 public sealed record TupleProjectionParameter(int Index, bool FromEnd = false) : IParameter;
 public sealed record ScopedTupleProjectionParameter(int Index, int ScopeDepth) : IParameter;
-public sealed record ContextParameter(Func<IContext, object?> Function) : IParameter;
+internal sealed record ArgumentProviderParameter(Func<ArgumentEvaluationContext, object?> Provider) : IParameter;
 public sealed record ArrayElementParameter(IParameter Value, bool IsSpread = false);
 public sealed record ArrayParameter : IParameter
 {
@@ -288,5 +355,5 @@ public sealed record ControlFlowBranchParameter(IParameter Expression, IParamete
 internal static class BindingCollections
 {
     internal static IReadOnlyList<T> Freeze<T>(IEnumerable<T> values)
-        => Array.AsReadOnly(values.ToArray());
+        => StructuralReadOnlyList<T>.Create(values);
 }

@@ -3,7 +3,7 @@ using Expressif.Predicates;
 using Expressif.Functions;
 using Expressif.Library.Composition;
 using Expressif.Syntax;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Testing.Expressions;
 
@@ -18,10 +18,4 @@ internal static class TestPredication
         var function = new FunctionFactory(source).Instantiate(bound, evaluationContext);
         return new Predication(new BooleanFunctionPredicate(function));
     }
-}
-
-internal sealed class TestPredicationBuilder : PredicationBuilder
-{
-    public TestPredicationBuilder(IContext? context = null)
-        : base(new FunctionFactory(TestExpression.LibraryTypeSource), context) { }
 }

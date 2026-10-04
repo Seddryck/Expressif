@@ -53,7 +53,7 @@ public class RecodeTest
         {
             var input = new RecordValue();
             input.Set("code", "A");
-            input.Set("status-codes", new DictionaryValue([new Expressif.Values.Pair("A", i)]));
+            input.Set("status-codes", new DictionaryValue([new Expressif.Values.PairValue("A", i)]));
             Assert.That(expression.Evaluate(input), Is.EqualTo(i));
         });
     }

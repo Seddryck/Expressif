@@ -54,4 +54,6 @@ The assembly contributes capabilities through the public Core extension contract
 - quoted literal parsers implementing `IQuotedLiteralParser`;
 - `Expressif.FunctionCatalog.json` and `Expressif.PredicateCatalog.json` embedded resources.
 
+Type authoring and quoted-literal parsing use the consolidated `Expressif.Types` namespace. A custom semantic type and its quoted-literal parser no longer require an additional `Expressif.Values.Types` import.
+
 The combined catalog and type registry are available through `environment.Catalog` and `environment.Types` for host introspection.

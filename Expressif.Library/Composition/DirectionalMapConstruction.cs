@@ -88,17 +88,17 @@ internal static class DirectionalMapConstruction
         {
             var invocation = GetInput(value);
             var inputs = DirectionalScope<object?>.Create(mapOver, invocation.Outer, invocation.Item);
-            var arguments = mapOver && invocation.Item is Values.Tuple tuple
+            var arguments = mapOver && invocation.Item is Expressif.Values.TupleValue tuple
                 ? tuple.ToArray()
                 : [invocation.Item];
-            var prepared = new Values.Tuple([invocation.Outer, .. arguments]);
+            var prepared = new Expressif.Values.TupleValue([invocation.Outer, .. arguments]);
             using var scope = EvaluationRuntime.Derive(inputs.Arguments);
             return explicitOperation.Evaluate(prepared);
         });
     }
 
     private static IParameter[] GetMapOverArguments(object? item)
-        => item is Values.Tuple tuple
+        => item is Expressif.Values.TupleValue tuple
             ? tuple.Select(value => (IParameter)new LiteralParameter(value)).ToArray()
             : [new LiteralParameter(item)];
 
@@ -116,7 +116,7 @@ internal static class DirectionalMapConstruction
                 {
                     Value = NormalizeMapOverProjection(argument.Value),
                 }).ToArray(),
-                member.Syntax);
+                member.Notation);
             normalized.SourceSpan = member.SourceSpan;
             return normalized;
         }));

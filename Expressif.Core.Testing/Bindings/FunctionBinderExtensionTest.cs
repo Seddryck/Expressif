@@ -1,7 +1,7 @@
 using Expressif.Bindings;
 using Expressif.Functions;
 using Expressif.Syntax;
-using Expressif.Values.Types;
+using Expressif.Types;
 
 namespace Expressif.Testing.Bindings;
 
@@ -28,7 +28,7 @@ public sealed class FunctionBinderExtensionTest
     private sealed class CustomFunctionBinder : IFunctionBinder<CustomFunction>
     {
         public Function Bind(FunctionCallSyntax syntax, IFunctionBindingContext context)
-            => new(syntax.Name, [new LiteralParameter("specialized")]);
+            => Function.FromParameters(syntax.Name, [new LiteralParameter("specialized")]);
     }
 
     private sealed class CustomFunction : IFunction

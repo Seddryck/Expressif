@@ -17,8 +17,8 @@ public class ExpressionShapeNormalizerTest
     public void DirectField_RejectsComputedAndNestedPaths()
     {
         var nested = new OpenExpressionParameter(new OpenExpression([
-            new Function("field", [new LiteralParameter("customer")], FunctionSyntax.FieldShorthand),
-            new Function("field", [new LiteralParameter("tags")], FunctionSyntax.FieldShorthand),
+            new Function("field", [new LiteralParameter("customer")], SourceNotation.CurrentField),
+            new Function("field", [new LiteralParameter("tags")], SourceNotation.CurrentField),
         ]));
         var computed = new OpenExpressionParameter(new OpenExpression([new Function("upper", [])]));
 
@@ -46,6 +46,6 @@ public class ExpressionShapeNormalizerTest
 
     private static OpenExpressionParameter Field(string name)
         => new(new OpenExpression([
-            new Function("field", [new LiteralParameter(name)], FunctionSyntax.FieldShorthand),
+            new Function("field", [new LiteralParameter(name)], SourceNotation.CurrentField),
         ]));
 }

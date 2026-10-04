@@ -2,7 +2,7 @@ using System.Collections;
 using System.Data;
 using Expressif.Bindings;
 using Expressif.Values;
-using Expressif.Values.Types;
+using Expressif.Types;
 using ValueRecord = Expressif.Values.RecordValue;
 
 namespace Expressif.Library.Record;

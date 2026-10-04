@@ -46,7 +46,7 @@ internal sealed class SortByFunctionConstructor :
                 target,
                 (left, right) => constructionContext.InvokeTuple(
                     comparerName,
-                    new Values.Tuple(left, right)) as OrderingValue);
+                    new Expressif.Values.TupleValue(left, right)) as OrderingValue);
             return new SortByCriterion(
                 EvaluateCriterion,
                 comparer,

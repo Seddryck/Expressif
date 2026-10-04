@@ -217,7 +217,7 @@ public class ReplSessionTests
     public void Execute_ReusesOneEvaluationContext()
     {
         var expressions = new TrackingExpressionService();
-        var context = new EvaluationContext();
+        var context = EvaluationContext.Empty;
         var session = new ReplSession(expressions, new Context(), context);
 
         _ = session.Execute("1");

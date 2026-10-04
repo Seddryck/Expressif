@@ -35,7 +35,7 @@ public class RankTest
     {
         var first = new object();
         var table = new SortTableValue([], [new SortRow([], first), new SortRow([], null)]);
-        IFunction<SortTableValue, Expressif.Values.Grouping> function = new Rank();
+        IFunction<SortTableValue, Expressif.Values.GroupingValue> function = new Rank();
         var result = function.Evaluate(table);
         Assert.Multiple(() =>
         {
