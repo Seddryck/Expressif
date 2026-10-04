@@ -509,7 +509,12 @@ public class LogicalSchemaAnalyzerTest
         });
         var pair = new PairLogicalSchema(
             new ScalarLogicalSchema("text"),
-            new ScalarLogicalSchema("integer"));
+            new ScalarLogicalSchema("integer"),
+            IsNullable: true);
+        var variadic = new TupleLogicalSchema(
+            [new ScalarLogicalSchema("text")],
+            AdditionalItems: new ScalarLogicalSchema("integer"));
+        var union = new UnionLogicalSchema([tuple, pair]);
 
         Assert.Multiple(() =>
         {
@@ -520,7 +525,18 @@ public class LogicalSchemaAnalyzerTest
             Assert.That(Analyze("tuple-at(-1)", tuple).Output,
                 Is.EqualTo(new ScalarLogicalSchema("decimal")));
             Assert.That(Analyze("tuple-at(1)", pair).Output,
-                Is.EqualTo(new ScalarLogicalSchema("integer")));
+                Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(0)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(-2)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(-1)", pair).Output,
+                Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(1)", variadic).Output,
+                Is.EqualTo(new ScalarLogicalSchema("integer", IsNullable: true)));
+            Assert.That(Analyze("tuple-at(-1)", variadic).Output, Is.TypeOf<UnionLogicalSchema>());
+            Assert.That(Analyze("tuple-at(0)", union).Output,
+                Is.EqualTo(new ScalarLogicalSchema("text")));
             Assert.That(Analyze("tuple-at(3)", tuple).Output,
                 Is.EqualTo(new AnyLogicalSchema(true)));
         });
@@ -591,6 +607,52 @@ public class LogicalSchemaAnalyzerTest
             Assert.That(mappedRecord.Fields["code"].Schema, Is.EqualTo(new ScalarLogicalSchema("text")));
             Assert.That(mappedRecord.Fields["score"].Schema, Is.EqualTo(new ScalarLogicalSchema("numeric")));
             Assert.That(mappedRecord.AllowsAdditionalFields, Is.False);
+        });
+    }
+
+    [Test]
+    public void Analyze_Record_NestedAndDynamicContributionsRetainKnownShape()
+    {
+        var nested = AsRecord(Analyze("record(parent := record(child := 1))").Output);
+        var nestedParent = AsRecord(nested.Fields["parent"].Schema);
+        var plan = LogicalPlannerFactory.Create().Build(ExpressionParser.Parse("record(value := 1)"));
+        var record = (LogicalCall)plan.Pipeline.Items.Single();
+        var nestedRecord = (LogicalCall)record.Arguments.Single().Value!;
+        var entry = (LogicalCall)nestedRecord.Arguments.Single().Value!;
+        var dynamicName = LogicalPlannerFactory.Create()
+            .Build(ExpressionParser.Parse("upper"))
+            .Pipeline.Items.Single();
+        var dynamicEntry = entry with
+        {
+            Arguments = entry.Arguments.Select(argument => argument.Parameter.Name == "name"
+                ? argument with { Value = dynamicName }
+                : argument).ToArray(),
+        };
+        var dynamicNestedRecord = nestedRecord with
+        {
+            Arguments = [nestedRecord.Arguments.Single() with { Value = dynamicEntry }],
+        };
+        var dynamicPlan = plan with
+        {
+            Pipeline = new LogicalPipeline([
+                record with
+                {
+                    Arguments = [record.Arguments.Single() with { Value = dynamicNestedRecord }],
+                },
+            ]),
+        };
+
+        var dynamic = LogicalSchemaAnalyzer.Analyze(dynamicPlan);
+        var dynamicRecord = AsRecord(dynamic.Output);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(nestedParent.Fields["child"].Schema,
+                Is.EqualTo(new ScalarLogicalSchema("decimal")));
+            Assert.That(dynamicRecord.Fields, Is.Empty);
+            Assert.That(dynamicRecord.AllowsAdditionalFields, Is.True);
+            Assert.That(dynamic.Diagnostics, Has.One.Matches<SchemaAnalysisDiagnostic>(diagnostic =>
+                diagnostic.Code == "schema.dynamic" && diagnostic.Path == "plan.items[0]"));
         });
     }
 
@@ -944,7 +1006,8 @@ public class LogicalSchemaAnalyzerTest
             OutputContract: new LogicalTypeContract("text"));
         var plan = new LogicalPlan(new LogicalPipeline([
             new LogicalNamedExpressionInvocation("convert", []),
-        ])) { Definitions = [definition] };
+        ]))
+        { Definitions = [definition] };
 
         var analysis = LogicalSchemaAnalyzer.Analyze(plan);
 
