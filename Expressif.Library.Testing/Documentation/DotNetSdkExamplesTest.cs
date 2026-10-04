@@ -1,3 +1,4 @@
+using Expressif.Hosting;
 using Expressif.Library.Temporal;
 using Expressif.Library.Text;
 using Expressif.Library.Text.Casing;
@@ -8,11 +9,13 @@ namespace Expressif.Testing.Documentation;
 
 public class DotNetSdkExamplesTest
 {
+    private static ExpressifEnvironment Environment => ExpressifEnvironment.Default;
+
     [Test]
     [Category("documentation")]
     public void FirstEvaluation_ReturnsUppercaseTrimmedText()
     {
-        var expression = TestExpression.Create("trim | upper");
+        var expression = Environment.CreateExpression("trim | upper");
         var result = expression.Evaluate("  Alice  ");
 
         Assert.That(result, Is.EqualTo("ALICE"));
@@ -22,7 +25,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void InstalledPackage_EvaluatesExpression()
     {
-        var expression = TestExpression.Create("lower");
+        var expression = Environment.CreateExpression("lower");
         var result = expression.Evaluate("Nikola Tesla");
 
         Assert.That(result, Is.EqualTo("nikola tesla"));
@@ -32,7 +35,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Expression_EvaluatesMultipleInputs()
     {
-        var normalizeName = TestExpression.Create("trim | upper");
+        var normalizeName = Environment.CreateExpression("trim | upper");
 
         var firstResult = normalizeName.Evaluate("  Nikola Tesla  ");
         var secondResult = normalizeName.Evaluate("  Ada Lovelace  ");
@@ -48,7 +51,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Expression_ResultCanBePatternMatched()
     {
-        var firstResult = TestExpression.Create("trim | upper").Evaluate("  Nikola Tesla  ");
+        var firstResult = Environment.CreateExpression("trim | upper").Evaluate("  Nikola Tesla  ");
         string? normalizedName = null;
 
         if (firstResult is string value)
@@ -61,7 +64,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Expression_UsesVariablesFromEvaluationContext()
     {
-        var expression = TestExpression.Create("append(@suffix)");
+        var expression = Environment.CreateExpression("suffix(@suffix)");
 
         var context = new EvaluationContext(
             new Dictionary<string, object?>
@@ -79,7 +82,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Expression_CanBeReusedWithDifferentContexts()
     {
-        var expression = TestExpression.Create("append(@suffix)");
+        var expression = Environment.CreateExpression("suffix(@suffix)");
 
         var excited = expression.WithContext(new EvaluationContext(
             new Dictionary<string, object?> { ["suffix"] = "!" }));
@@ -101,7 +104,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Expression_EvaluatesStructuredValue()
     {
-        var formatName = TestExpression.Create(".name | trim | append(^.suffix)");
+        var formatName = Environment.CreateExpression(".name | trim | suffix(^.suffix)");
 
         var input = new Dictionary<string, object?>
         {
@@ -118,7 +121,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Predication_ReturnsBoolean()
     {
-        var predication = TestPredication.Create("lower-case");
+        var predication = Environment.CreatePredication("lower-case");
 
         bool first = predication.Evaluate("Nikola Tesla");
         bool second = predication.Evaluate("nikola tesla");
@@ -134,10 +137,10 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void Predication_HasStronglyTypedResult()
     {
-        object? expressionResult = TestExpression.Create("lower-case")
+        object? expressionResult = Environment.CreateExpression("lower-case")
             .Evaluate("nikola tesla");
 
-        bool predicationResult = TestPredication.Create("lower-case")
+        bool predicationResult = Environment.CreatePredication("lower-case")
             .Evaluate("nikola tesla");
 
         Assert.Multiple(() =>
@@ -151,7 +154,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void ExpressionBuilder_CreatesPipeline()
     {
-        var expression = new TestExpressionBuilder()
+        var expression = Environment.CreateExpressionBuilder()
             .Chain<Lower>()
             .Chain<FirstChars>(5)
             .Build();
@@ -165,7 +168,7 @@ public class DotNetSdkExamplesTest
     [Category("documentation")]
     public void ExpressionBuilder_SerializesBeforeBuild()
     {
-        var builder = new TestExpressionBuilder()
+        var builder = Environment.CreateExpressionBuilder()
             .Chain<Lower>()
             .Chain<Length>();
 
@@ -186,7 +189,7 @@ public class DotNetSdkExamplesTest
         var context = new Context();
         context.Variables.Add<string>("prefix", "Nik");
 
-        var builder = new TestPredicationBuilder(context)
+        var builder = Environment.CreatePredicationBuilder(context)
             .Create<StartsWith>(ctx => ctx.Variables["prefix"]);
 
         var predicate = builder.Build();
